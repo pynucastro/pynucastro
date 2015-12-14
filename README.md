@@ -24,3 +24,12 @@ print r.function_string()
 print r.eval(1.0e9)
 
 ```
+
+
+# TODO
+
+* output Fortran functions as an option
+
+* output Cython code
+
+* interface to the nuclei properties (Z, A, binding energies)
