@@ -116,24 +116,20 @@ class Rate(object):
                 elif self.chapter == 2:
                     # e1 -> e2 + e3
                     self.reactants.append(f[0])
-                    self.products.append(f[1])
-                    self.products.append(f[2])
+                    self.products += [f[1], f[2]]
 
                     self.string = "{} -> {} + {}".format(*(self.reactants + self.products))
 
                 elif self.chapter == 3:
                     # e1 -> e2 + e3 + e4
                     self.reactants.append(f[0])
-                    self.products.append(f[1])
-                    self.products.append(f[2])
-                    self.products.append(f[3])
+                    self.products += [f[1], f[2], f[3]]
 
                     self.string = "{} -> {} + {} + {}".format(*(self.reactants + self.products))
 
                 elif self.chapter == 4:
                     # e1 + e2 -> e3
-                    self.reactants.append(f[0])
-                    self.reactants.append(f[1])
+                    self.reactants += [f[0], f[1]]
                     self.products.append(f[2])
 
                     if len(set(self.reactants)) == 1:
@@ -145,10 +141,8 @@ class Rate(object):
 
                 elif self.chapter == 5:
                     # e1 + e2 -> e3 + e4
-                    self.reactants.append(f[0])
-                    self.reactants.append(f[1])
-                    self.products.append(f[2])
-                    self.products.append(f[3])
+                    self.reactants += [f[0], f[1]]
+                    self.products += [f[2], f[3]]
 
                     if len(set(self.reactants)) == 1:
                         self.prefactor = 1./2.
@@ -159,11 +153,8 @@ class Rate(object):
 
                 elif self.chapter == 6:
                     # e1 + e2 -> e3 + e4 + e5
-                    self.reactants.append(f[0])
-                    self.reactants.append(f[1])
-                    self.products.append(f[2])
-                    self.products.append(f[3])
-                    self.products.append(f[4])
+                    self.reactants += [f[0], f[1]]
+                    self.products += [f[2], f[3], f[4]]
 
                     if len(set(self.reactants)) == 1:
                         self.prefactor = 1./2.
@@ -174,12 +165,8 @@ class Rate(object):
 
                 elif self.chapter == 7:
                     # e1 + e2 -> e3 + e4 + e5 + e6
-                    self.reactants.append(f[0])
-                    self.reactants.append(f[1])
-                    self.products.append(f[2])
-                    self.products.append(f[3])
-                    self.products.append(f[4])
-                    self.products.append(f[5])
+                    self.reactants += [f[0], f[1]]
+                    self.products += [f[2], f[3], f[4], f[5]]
 
                     if len(set(self.reactants)) == 1:
                         self.prefactor = 1./2.
@@ -190,9 +177,7 @@ class Rate(object):
 
                 elif self.chapter == 8:
                     # e1 + e2 + e3 -> e4
-                    self.reactants.append(f[0])
-                    self.reactants.append(f[1])
-                    self.reactants.append(f[2])
+                    self.reactants += [f[0], f[1], f[2]]
                     self.products.append(f[3])
 
                     if len(set(self.reactants)) == 1:
@@ -206,11 +191,8 @@ class Rate(object):
 
                 elif self.chapter == 9:
                     # e1 + e2 + e3 -> e4 + e5
-                    self.reactants.append(f[0])
-                    self.reactants.append(f[1])
-                    self.reactants.append(f[2])
-                    self.products.append(f[3])
-                    self.products.append(f[4])
+                    self.reactants += [f[0], f[1], f[2]]
+                    self.products += [f[3], f[4]]
 
                     if len(set(self.reactants)) == 1:
                         self.prefactor = 1./6.  # 1/3!
@@ -223,12 +205,8 @@ class Rate(object):
 
                 elif self.chapter == 10:
                     # e1 + e2 + e3 + e4 -> e5 + e6
-                    self.reactants.append(f[0])
-                    self.reactants.append(f[1])
-                    self.reactants.append(f[2])
-                    self.reactants.append(f[3])
-                    self.products.append(f[4])
-                    self.products.append(f[5])
+                    self.reactants += [f[0], f[1], f[2], f[3]]
+                    self.products += [f[4], f[5]]
 
                     if len(set(self.reactants)) == 1:
                         self.prefactor = 1./24.  # 1/4!
@@ -238,7 +216,7 @@ class Rate(object):
                         self.prefactor = 1./6. # 1/3!
                     elif len(set(self.reactants)) == 3:
                         self.prefactor = 1./2.
-
+c
                     self.dens_exp = 4
 
                     self.string = "{} + {} + {} + {} -> {} + {}".format(*(self.reactants + self.products))
@@ -246,10 +224,7 @@ class Rate(object):
                 elif self.chapter == 11:
                     # e1 -> e2 + e3 + e4 + e5
                     self.reactants.append(f[0])
-                    self.products.append(f[1])
-                    self.products.append(f[2])
-                    self.products.append(f[3])
-                    self.products.append(f[4])
+                    self.products += [f[1], f[2], f[3], f[4]]
 
                     self.string = "{} -> {} + {} + {} + {}".format(*(self.reactants + self.products))
 
@@ -303,7 +278,6 @@ class Rate(object):
         string += "    return rate\n\n"
 
         return string
-
 
 
 class RateCollection(object):
@@ -374,7 +348,6 @@ class RateCollection(object):
         for r in self.rates:
             string += "{}\n".format(r.string)
         return string
-
 
 
 
