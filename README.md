@@ -13,7 +13,9 @@ into each rate function to get the rate.
 # example
 
 ```
-r = Rate("c13-pg-n14-nacr")
+import reaclib
+
+r = reaclib.Rate("c13-pg-n14-nacr")
 
 # output python code for this rate
 print r.function_string()
