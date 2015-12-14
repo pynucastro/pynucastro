@@ -37,3 +37,7 @@ print r.eval(1.0e9)
 * return a polynomial fit to a rate in a given interval
 
 * create a RateCollection that can write the entire RHS of a network
+
+* draw a diagram of the nuclei in a RateCollection along with arrows
+  indicating the flows
+  

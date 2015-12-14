@@ -1,5 +1,7 @@
 # parse the reaclib stuff
 
+import glob
+
 import numpy as np
 
 class Tfactors(object):
@@ -33,7 +35,7 @@ class SingleSet(object):
 
     def f(self):
         """ return a function for this set -- note: Tf here is a Tfactors object """
-        return lambda tf: np.exp(self.a[0] + 
+        return lambda tf: np.exp(self.a[0] +
                                  self.a[1]*tf.T9i +
                                  self.a[2]*tf.T913i +
                                  self.a[3]*tf.T913 +
@@ -118,7 +120,7 @@ class Rate(object):
                     self.products.append(f[2])
 
                     self.string = "{} -> {} + {}".format(*(self.reactants + self.products))
-                    
+
                 elif self.chapter == 3:
                     # e1 -> e2 + e3 + e4
                     self.reactants.append(f[0])
@@ -127,13 +129,13 @@ class Rate(object):
                     self.products.append(f[3])
 
                     self.string = "{} -> {} + {} + {}".format(*(self.reactants + self.products))
-                    
+
                 elif self.chapter == 4:
                     # e1 + e2 -> e3
                     self.reactants.append(f[0])
                     self.reactants.append(f[1])
                     self.products.append(f[2])
-                    
+
                     if len(set(self.reactants)) == 1:
                         self.prefactor = 1./2.
 
@@ -147,7 +149,7 @@ class Rate(object):
                     self.reactants.append(f[1])
                     self.products.append(f[2])
                     self.products.append(f[3])
-                    
+
                     if len(set(self.reactants)) == 1:
                         self.prefactor = 1./2.
 
@@ -162,7 +164,7 @@ class Rate(object):
                     self.products.append(f[2])
                     self.products.append(f[3])
                     self.products.append(f[4])
-                    
+
                     if len(set(self.reactants)) == 1:
                         self.prefactor = 1./2.
 
@@ -209,7 +211,7 @@ class Rate(object):
                     self.reactants.append(f[2])
                     self.products.append(f[3])
                     self.products.append(f[4])
-                    
+
                     if len(set(self.reactants)) == 1:
                         self.prefactor = 1./6.  # 1/3!
                     elif len(set(self.reactants)) == 2:
@@ -227,13 +229,13 @@ class Rate(object):
                     self.reactants.append(f[3])
                     self.products.append(f[4])
                     self.products.append(f[5])
-                    
+
                     if len(set(self.reactants)) == 1:
                         self.prefactor = 1./24.  # 1/4!
                     elif len(set(self.reactants)) == 2:
-                        # there may be some instances where we have a + a + b + b, 
+                        # there may be some instances where we have a + a + b + b,
                         # so prefactor = 1/4?
-                        self.prefactor = 1./6. # 1/3!   
+                        self.prefactor = 1./6. # 1/3!
                     elif len(set(self.reactants)) == 3:
                         self.prefactor = 1./2.
 
@@ -242,7 +244,7 @@ class Rate(object):
                     self.string = "{} + {} + {} + {} -> {} + {}".format(*(self.reactants + self.products))
 
                 elif self.chapter == 11:
-                    # e1 -> e2 + e3 + e4 + e5 
+                    # e1 -> e2 + e3 + e4 + e5
                     self.reactants.append(f[0])
                     self.products.append(f[1])
                     self.products.append(f[2])
@@ -252,18 +254,18 @@ class Rate(object):
                     self.string = "{} -> {} + {} + {} + {}".format(*(self.reactants + self.products))
 
                 first = 0
-                
+
             # the second line contains the first 4 coefficients
             # the third lines contains the final 3
             # we can't just use split() here, since the fields run into one another
             n = 13  # length of the field
             a = [s2[i:i+n] for i in range(0, len(s2), n)]
             a += [s3[i:i+n] for i in range(0, len(s3), n)]
-            
+
             a = [float(e) for e in a if not e.strip() == ""]
             self.sets.append(SingleSet(a, label=label))
 
-            
+
     def eval(self, T):
         """ evauate the reaction rate for temperature T """
         tf = Tfactors(T)
@@ -290,7 +292,7 @@ class Rate(object):
 
         return string
 
-    
+
     def function_string(self):
         idx = self.file.rfind("-")
         fname = self.file[:idx].replace("--","-").replace("-","_")
@@ -303,8 +305,51 @@ class Rate(object):
         return string
 
 
+class RateCollection(object):
+    """ a collection of rates that together define a network """
+
+    def __init__(self, rate_files):
+        """
+        rate_files are the files that together define the network.  This
+        can be any iterable or single string, and can include
+        wildcards
+
+        """
+
+        self.files = []
+        self.rates = []
+
+        if type(rate_files) is str:
+            rate_files = [rate_files]
+
+        # get the rates
+        for p in rate_files:
+            self.files += glob.glob(p)
+
+        for rf in self.files:
+            self.rates.append(Rate(rf))
+
+    def get_unique_nuclei(self):
+        u = []
+        for r in self.rates:
+            t = list(set(r.reactants + r.products))
+            u = list(set(u + t))
+        
+        return u
+
+    def __repr__(self):
+        string = ""
+        for r in self.rates:
+            string += "{}\n".format(r.string)
+        return string
+
+
+
 if __name__ == "__main__":
-    r = Rate("c13-pg-n14-nacr")
+    r = Rate("examples/CNO/c13-pg-n14-nacr")
     print r.rate_string(indent=3)
     print r.eval(1.0e9)
 
+    rc = RateCollection("examples/CNO/*-*")
+    print rc
+    print rc.get_unique_nuclei()
