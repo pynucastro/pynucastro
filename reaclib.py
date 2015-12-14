@@ -194,7 +194,7 @@ class Rate(object):
                     self.products.append(f[3])
 
                     if len(set(self.reactants)) == 1:
-                        self.prefactor = 1./3.
+                        self.prefactor = 1./6.  # 1/3!
                     elif len(set(self.reactants)) == 2:
                         self.prefactor = 1./2.
 
@@ -211,7 +211,7 @@ class Rate(object):
                     self.products.append(f[4])
                     
                     if len(set(self.reactants)) == 1:
-                        self.prefactor = 1./3.
+                        self.prefactor = 1./6.  # 1/3!
                     elif len(set(self.reactants)) == 2:
                         self.prefactor = 1./2.
 
@@ -229,11 +229,11 @@ class Rate(object):
                     self.products.append(f[5])
                     
                     if len(set(self.reactants)) == 1:
-                        self.prefactor = 1./4.
+                        self.prefactor = 1./24.  # 1/4!
                     elif len(set(self.reactants)) == 2:
                         # there may be some instances where we have a + a + b + b, 
                         # so prefactor = 1/4?
-                        self.prefactor = 1./3.    
+                        self.prefactor = 1./6. # 1/3!   
                     elif len(set(self.reactants)) == 3:
                         self.prefactor = 1./2.
 

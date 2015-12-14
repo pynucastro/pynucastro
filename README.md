@@ -33,3 +33,7 @@ print r.eval(1.0e9)
 * output Cython code
 
 * interface to the nuclei properties (Z, A, binding energies)
+
+* return a polynomial fit to a rate in a given interval
+
+* create a RateCollection that can write the entire RHS of a network
