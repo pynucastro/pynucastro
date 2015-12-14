@@ -305,6 +305,7 @@ class Rate(object):
         return string
 
 
+
 class RateCollection(object):
     """ a collection of rates that together define a network """
 
@@ -329,19 +330,51 @@ class RateCollection(object):
         for rf in self.files:
             self.rates.append(Rate(rf))
 
-    def get_unique_nuclei(self):
+
+        # get the unique nuclei
         u = []
         for r in self.rates:
             t = list(set(r.reactants + r.products))
             u = list(set(u + t))
         
-        return u
+        self.unique_nuclei = u
+
+        # now make a list of each rate that touches each nucleus
+        self.nuclei_consumed = {}
+        self.nuclei_produced = {}
+
+        for n in self.unique_nuclei:
+            self.nuclei_consumed[n] = []
+            for r in self.rates:
+                if n in r.reactants:
+                    self.nuclei_consumed[n].append(r)
+
+            self.nuclei_produced[n] = []
+            for r in self.rates:
+                if n in r.products:
+                    self.nuclei_produced[n].append(r)
+
+
+    def make_network(self):
+        for n in self.unique_nuclei:
+            print n
+            print "  consumed by: "
+            for r in self.nuclei_consumed[n]:
+                print "     {}".format(r.string)
+
+            print "  produced by: "
+            for r in self.nuclei_produced[n]:
+                print "     {}".format(r.string)
+            
+            print " "
+
 
     def __repr__(self):
         string = ""
         for r in self.rates:
             string += "{}\n".format(r.string)
         return string
+
 
 
 
@@ -352,4 +385,4 @@ if __name__ == "__main__":
 
     rc = RateCollection("examples/CNO/*-*")
     print rc
-    print rc.get_unique_nuclei()
+    rc.make_network()
