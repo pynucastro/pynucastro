@@ -11,17 +11,10 @@ files = ["c12-pg-n13-ls09",
          "o14--n14-wc12",
          "o15--n15-wc12"]
 
-rf = open("cno_rates.py", "w")
+rc = reaclib.RateCollection(files)
 
-rf.write("import numpy as np\n")
+rc.make_network(outfile="cno_rhs.py")
 
-for f in files:
-    r = reaclib.Rate(f)
-    rf.write(r.function_string())
-
-rf.close()
-
-             
 
 
 

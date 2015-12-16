@@ -2,8 +2,12 @@
 
 import glob
 import os
+import re
 
 import numpy as np
+
+import periodictable
+
 
 class Tfactors(object):
     """ precompute temperature factors for speed """
@@ -50,7 +54,7 @@ class SingleSet(object):
 
 
     def set_string(self, prefix="set", plus_equal=False):
-        """ 
+        """
         return a string containing the python code for this set
         """
         if plus_equal:
@@ -76,7 +80,7 @@ class Rate(object):
     def __init__(self, file):
         self.file = os.path.basename(file)
         self.chapter = None    # the Reaclib chapter for this reaction
-        self.original_source = None   # the contents of the original rate file 
+        self.original_source = None   # the contents of the original rate file
         self.reactants = []
         self.products = []
         self.sets = []
@@ -413,21 +417,36 @@ class RateCollection(object):
         this is the actual RHS for the system of ODEs that
         this network describes
         """
-        
+
         try: of = open(outfile, "w")
         except: raise
 
+        of.write("import numpy as np\n")
         of.write("import reaclib\n\n")
 
         # integer keys
         for i, n in enumerate(self.unique_nuclei):
             of.write("i{} = {}\n".format(n, i))
 
+        of.write("nnuc = {}\n\n".format(len(self.unique_nuclei)))
+
+        of.write("A = np.zeros((nnuc), dtype=np.int32)\n\n")
+        for n in self.unique_nuclei:
+            if n == "p":
+                el = "H"
+                A = 1
+            else:
+                e = re.match("([a-zA-Z]*)(\d*)", n)
+                el = e.group(1).title()  # chemical symbol
+                A = e.group(2)
+
+            of.write("A[i{}] = {}\n".format(n, A))
+
         of.write("\n")
 
         for r in self.rates:
             of.write(r.function_string())
-        
+
         of.write("def rhs(t, Y, rho, T):\n\n")
 
         indent = 4*" "
@@ -438,6 +457,8 @@ class RateCollection(object):
             of.write("{}lambda_{} = {}(tf)\n".format(indent, r.fname, r.fname))
 
         of.write("\n")
+
+        of.write("{}dYdt = np.zeros((nnuc), dtype=np.float64)\n\n".format(indent))
 
         # now make the RHSs
         for n in self.unique_nuclei:
@@ -452,6 +473,7 @@ class RateCollection(object):
                 of.write("{}   +{}\n".format(indent, r.ydot_string()))
             of.write("{}   )\n\n".format(indent))
 
+        of.write("{}return dYdt\n".format(indent))
 
     def __repr__(self):
         string = ""
