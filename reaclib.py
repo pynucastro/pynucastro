@@ -415,7 +415,17 @@ class RateCollection(object):
         this is the actual RHS for the system of ODEs that
         this network describes
         """
-        pass
+        for n in self.unique_nuclei:
+            print "dYdt[ix.{}] = (".format(n)
+            for r in self.nuclei_consumed[n]:
+                c = r.reactants.count(n)
+                if c == 1:
+                    print "   -{}".format(r.ydot_string())
+                else:
+                    print "   -{}*{}".format(c, r.ydot_string())
+            for r in self.nuclei_produced[n]:
+                print "   +{}".format(r.ydot_string())
+            print "   )\n\n"
 
 
     def __repr__(self):
@@ -434,3 +444,4 @@ if __name__ == "__main__":
     rc = RateCollection("examples/CNO/*-*")
     print rc
     rc.print_network_overview()
+    rc.make_network()
