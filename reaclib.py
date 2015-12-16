@@ -68,6 +68,7 @@ class Rate(object):
     def __init__(self, file):
         self.file = os.path.basename(file)
         self.chapter = None    # the Reaclib chapter for this reaction
+        self.original_source = None   # the contents of the original rate file 
         self.reactants = []
         self.products = []
         self.sets = []
@@ -81,6 +82,8 @@ class Rate(object):
         # SingleSet objects in sets[]
         f = open(file, "r")
         lines = f.readlines()
+
+        self.original_source = "".join(lines)
 
         # first line is the chapter
         self.chapter = int(lines[0])
@@ -246,6 +249,9 @@ class Rate(object):
             a = [float(e) for e in a if not e.strip() == ""]
             self.sets.append(SingleSet(a, label=label))
 
+
+    def __repr__(self):
+        return self.string
 
     def eval(self, T):
         """ evauate the reaction rate for temperature T """
