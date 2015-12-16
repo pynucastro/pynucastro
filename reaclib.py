@@ -4,6 +4,7 @@ import numpy as np
 
 class Tfactors(object):
     """ precompute temperature factors for speed """
+
     def __init__(self, T):
         """ return the Tfactors object.  Here, T is temperature in Kelvin """
         self.T9 = T/1.e9
@@ -32,7 +33,10 @@ class SingleSet(object):
 
 
     def f(self):
-        """ return a function for this set -- note: Tf here is a Tfactors object """
+        """
+        return a function for this set -- note: Tf here is a Tfactors
+        object
+        """
         return lambda tf: np.exp(self.a[0] + 
                                  self.a[1]*tf.T9i +
                                  self.a[2]*tf.T913i +
@@ -43,6 +47,9 @@ class SingleSet(object):
 
 
     def set_string(self, prefix="set", plus_equal=False):
+        """ 
+        return a string containing the python code for this set
+        """
         if plus_equal:
             string =  "{} += np.exp( ".format(prefix)
         else:
