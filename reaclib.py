@@ -61,11 +61,12 @@ class SingleSet(object):
         if not self.a[1] == 0.0: string += " + {}*tf.T9i".format(self.a[1])
         if not self.a[2] == 0.0: string += " + {}*tf.T913i".format(self.a[2])
         if not self.a[3] == 0.0: string += " + {}*tf.T913".format(self.a[3])
-        string += "\n{}         ".format(len(prefix)*" ")
+        if not (self.a[4] == 0.0 and self.a[5] == 0.0 and self.a[6] == 0.0):
+            string += "\n{}         ".format(len(prefix)*" ")
         if not self.a[4] == 0.0: string += " + {}*tf.T9".format(self.a[4])
         if not self.a[5] == 0.0: string += " + {}*tf.T953".format(self.a[5])
         if not self.a[6] == 0.0: string += " + {}*tf.lnT9".format(self.a[6])
-        string += ")\n"
+        string += ")"
         return string
 
 
@@ -82,6 +83,9 @@ class Rate(object):
 
         self.dens_exp = 1
         self.prefactor = 1.0    # this is 1/2 for rates like a + a (double counting)
+
+        idx = self.file.rfind("-")
+        self.fname = self.file[:idx].replace("--","-").replace("-","_")
 
         self.Q = 0.0
 
@@ -298,11 +302,8 @@ class Rate(object):
         rate
         """
 
-        idx = self.file.rfind("-")
-        fname = self.file[:idx].replace("--","-").replace("-","_")
-
         string = ""
-        string += "def {}(tf):\n".format(fname)
+        string += "def {}(tf):\n".format(self.fname)
         string += "{}".format(self.rate_string(indent=4))
         string += "    return rate\n\n"
 
@@ -315,17 +316,14 @@ class Rate(object):
         in a reaction network corresponding to this rate
         """
 
-        idx = self.file.rfind("-")
-        fname = self.file[:idx].replace("--","-").replace("-","_")
-
         # composition dependence
         Y_string = ""
         for n, r in enumerate(set(self.reactants)):
             c = self.reactants.count(r)
             if c > 1:
-                Y_string += "Y[ix.{}]**{}".format(r, c)
+                Y_string += "Y[i{}]**{}".format(r, c)
             else:
-                Y_string += "Y[ix.{}]".format(r, c)
+                Y_string += "Y[i{}]".format(r, c)
 
             if n < len(set(self.reactants))-1:
                 Y_string += "*"
@@ -344,7 +342,7 @@ class Rate(object):
         else:
             prefactor_string = ""
 
-        return "{}{}{}*lambda_{}".format(prefactor_string, dens_string, Y_string, fname)
+        return "{}{}{}*lambda_{}".format(prefactor_string, dens_string, Y_string, self.fname)
 
 
 class RateCollection(object):
@@ -410,22 +408,49 @@ class RateCollection(object):
 
             print " "
 
-    def make_network(self):
+    def make_network(self, outfile="net.py"):
         """
         this is the actual RHS for the system of ODEs that
         this network describes
         """
+        
+        try: of = open(outfile, "w")
+        except: raise
+
+        of.write("import reaclib\n\n")
+
+        # integer keys
+        for i, n in enumerate(self.unique_nuclei):
+            of.write("i{} = {}\n".format(n, i))
+
+        of.write("\n")
+
+        for r in self.rates:
+            of.write(r.function_string())
+        
+        of.write("def rhs(t, Y, rho, T):\n\n")
+
+        indent = 4*" "
+
+        # get the rates
+        of.write("{}tf = reaclib.Tfactors(T)\n\n".format(indent))
+        for r in self.rates:
+            of.write("{}lambda_{} = {}(tf)\n".format(indent, r.fname, r.fname))
+
+        of.write("\n")
+
+        # now make the RHSs
         for n in self.unique_nuclei:
-            print "dYdt[ix.{}] = (".format(n)
+            of.write("{}dYdt[i{}] = (\n".format(indent, n))
             for r in self.nuclei_consumed[n]:
                 c = r.reactants.count(n)
                 if c == 1:
-                    print "   -{}".format(r.ydot_string())
+                    of.write("{}   -{}\n".format(indent, r.ydot_string()))
                 else:
-                    print "   -{}*{}".format(c, r.ydot_string())
+                    of.write("{}   -{}*{}\n".format(indent, c, r.ydot_string()))
             for r in self.nuclei_produced[n]:
-                print "   +{}".format(r.ydot_string())
-            print "   )\n\n"
+                of.write("{}   +{}\n".format(indent, r.ydot_string()))
+            of.write("{}   )\n\n".format(indent))
 
 
     def __repr__(self):
