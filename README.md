@@ -25,6 +25,15 @@ print r.eval(1.0e9)
 
 ```
 
+# requirements
+
+This package requires
+
+* `numpy`
+
+* `scipy`
+
+* `periodictable` -- this is used for the list of elements
 
 # TODO
 
