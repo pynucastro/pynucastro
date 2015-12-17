@@ -7,6 +7,7 @@ import os
 import re
 
 import numpy as np
+import matplotlib.pyplot as plt
 
 import periodictable
 
@@ -279,6 +280,22 @@ class Rate(object):
             r += f(tf)
 
         return r
+
+
+    def plot(self, Tmin=1.e7, Tmax=1.e10):
+
+        T = np.logspace(np.log10(Tmin), np.log10(Tmax), 100)
+        r = np.zeros_like(T)
+
+        for n in range(len(T)):
+            r[n] = self.eval(T[n])
+
+        plt.loglog(T, r)
+
+        plt.xlabel(r"$T$")
+        plt.ylabel(r"$N_A <\sigma v>$")
+
+        plt.show()
 
 
     def rate_string(self, indent=0, prefix="rate"):
