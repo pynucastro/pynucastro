@@ -293,7 +293,15 @@ class Rate(object):
         plt.loglog(T, r)
 
         plt.xlabel(r"$T$")
-        plt.ylabel(r"$N_A <\sigma v>$")
+
+        if self.dens_exp == 0:
+            plt.ylabel(r"\tau")
+        elif self.dens_exp == 1:
+            plt.ylabel(r"$N_A <\sigma v>$")
+        elif self.dens_exp == 2:
+            plt.ylabel(r"$N_A^2 <n_a n_b n_c v>$")
+
+        plt.title(r"${}$".format(self.string.replace("->",r"\rightarrow")))
 
         plt.show()
 
