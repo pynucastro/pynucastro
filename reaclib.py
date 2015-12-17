@@ -1,5 +1,7 @@
 # parse the reaclib stuff
 
+from __future__ import print_function
+
 import glob
 import os
 import re
@@ -401,16 +403,16 @@ class RateCollection(object):
 
     def print_network_overview(self):
         for n in self.unique_nuclei:
-            print n
-            print "  consumed by: "
+            print(n)
+            print("  consumed by: ")
             for r in self.nuclei_consumed[n]:
-                print "     {} : {}".format(r.string, r.ydot_string())
+                print("     {} : {}".format(r.string, r.ydot_string()))
 
-            print "  produced by: "
+            print("  produced by: ")
             for r in self.nuclei_produced[n]:
-                print "     {} : {}".format(r.string, r.ydot_string())
+                print("     {} : {}".format(r.string, r.ydot_string()))
 
-            print " "
+            print(" ")
 
     def make_network(self, outfile="net.py"):
         """
@@ -485,10 +487,10 @@ class RateCollection(object):
 
 if __name__ == "__main__":
     r = Rate("examples/CNO/c13-pg-n14-nacr")
-    print r.rate_string(indent=3)
-    print r.eval(1.0e9)
+    print(r.rate_string(indent=3))
+    print(r.eval(1.0e9))
 
     rc = RateCollection("examples/CNO/*-*")
-    print rc
+    print(rc)
     rc.print_network_overview()
     rc.make_network()
