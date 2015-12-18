@@ -38,6 +38,8 @@ This package requires
 
 * `matplotlib`: needed for plotting the rate
 
+* `networkx`: for visualizing the network
+
 
 # TODO
 
