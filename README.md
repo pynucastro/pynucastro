@@ -35,16 +35,24 @@ This package requires
 
 * `periodictable` -- this is used for the list of elements
 
+
 # TODO
 
 * output Fortran functions as an option
 
-* output Cython code
+  - integrate OpenACC support
 
-* interface to the nuclei properties (Z, A, binding energies)
+* output Cython code
 
 * return a polynomial fit to a rate in a given interval
 
+* create a Ydot() class that can both output dYdt[nucleus] and
+  evaluate dYdt.
+
 * draw a diagram of the nuclei in a RateCollection along with arrows
   indicating the flows
-  
+
+  - use NetworkX for this -- nuclei are nodes, positioned along
+    Z-N plane and colored according to dYdt
+
+
