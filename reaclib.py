@@ -468,7 +468,7 @@ class RateCollection(object):
             t = list(set(r.reactants + r.products))
             u = list(set(u + t))
 
-        self.unique_nuclei = u
+        self.unique_nuclei = sorted(u)
 
         # now make a list of each rate that touches each nucleus
         # we'll store this in a dictionary keyed on the nucleus
