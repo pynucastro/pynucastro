@@ -6,6 +6,7 @@ import glob
 import os
 import re
 
+import networkx as nx
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -29,15 +30,16 @@ class Nucleus(object):
         else:
             e = re.match("([a-zA-Z]*)(\d*)", name)
             self.el = e.group(1).title()  # chemical symbol
-            self.A = e.group(2)
+            self.A = int(e.group(2))
 
         # atomic number comes from periodtable
         i = elements.isotope("{}-{}".format(self.A, self.el))
         self.Z = i.number
+        self.N = self.A - self.Z
 
         # latex formatted style
         self.pretty = r"{{}}^{{{}}}\mathrm{{{}}}".format(self.A, self.el)
-
+ 
     def __repr__(self):
         return self.raw
 
@@ -500,6 +502,7 @@ class RateCollection(object):
 
             print(" ")
 
+    
     def make_network(self, outfile="net.py"):
         """
         this is the actual RHS for the system of ODEs that
@@ -554,6 +557,33 @@ class RateCollection(object):
             of.write("{}   )\n\n".format(indent))
 
         of.write("{}return dYdt\n".format(indent))
+
+
+    def plot(self):
+        G = nx.Graph()
+        G.position={}
+        G.labels = {}
+
+        plt.plot([0,0], [8,8], 'b-')
+
+        # nodes
+        for n in self.unique_nuclei:
+            G.add_node(n)
+            G.position[n] = (n.N, n.Z)
+            G.labels[n] = r"${}$".format(n.pretty)
+
+        # edges
+        for n in self.unique_nuclei:
+            for r in self.nuclei_consumed[n]:
+                for p in r.products:
+                    G.add_edge(n, p)
+
+        nx.draw_networkx_nodes(G, G.position, 
+                               node_color="blue", alpha=0.3, 
+                               node_shape="s", node_size=1000)
+        nx.draw_networkx_edges(G, G.position, edge_color="0.5")
+        nx.draw_networkx_labels(G, G.position, G.labels, font_size=14)
+        plt.show()
 
     def __repr__(self):
         string = ""
