@@ -31,9 +31,12 @@ This package requires
 
 * `numpy`
 
-* `scipy`
+* `scipy`: only needed for the example integrator
 
-* `periodictable` -- this is used for the list of elements
+* `periodictable`: needed to get Z from element symbol, necessary for
+   sorting
+
+* `matplotlib`: needed for plotting the rate
 
 
 # TODO
