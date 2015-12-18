@@ -583,6 +583,11 @@ class RateCollection(object):
                                node_shape="s", node_size=1000)
         nx.draw_networkx_edges(G, G.position, edge_color="0.5")
         nx.draw_networkx_labels(G, G.position, G.labels, font_size=14)
+
+        plt.xlim(-0.5,)
+        plt.xlabel(r"$N$")
+        plt.ylabel(r"$Z$")
+        
         plt.show()
 
     def __repr__(self):
