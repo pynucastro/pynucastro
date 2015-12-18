@@ -281,7 +281,20 @@ class Rate(object):
 
         return r
 
+    def get_rate_exponent(self, T0):
+        """ 
+        for a rate written as a power law, r = r_0 (T/T0)**nu, return
+        nu corresponding to T0
+        """
+        
+        # nu = dln r /dln T, so we need dr/dT
+        r1 = self.eval(T0)
+        dT = 1.e-8*T0
+        r2 = self.eval(T0 + dT)
 
+        drdT = (r2 - r1)/dT
+        return (T0/r1)*drdT
+        
     def plot(self, Tmin=1.e7, Tmax=1.e10):
 
         T = np.logspace(np.log10(Tmin), np.log10(Tmax), 100)
@@ -514,8 +527,12 @@ if __name__ == "__main__":
     r = Rate("examples/CNO/c13-pg-n14-nacr")
     print(r.rate_string(indent=3))
     print(r.eval(1.0e9))
+    print(r.get_rate_exponent(2.e7))
+
 
     rc = RateCollection("examples/CNO/*-*")
     print(rc)
     rc.print_network_overview()
     rc.make_network()
+
+    
