@@ -25,6 +25,10 @@ print r.eval(1.0e9)
 
 ```
 
+Also see the Jupyter notebook:
+[pyreaclib-examples.ipynb](https://github.com/zingale/pyreaclib/blob/master/pyreaclib-examples.ipynb)
+
+
 # requirements
 
 This package requires

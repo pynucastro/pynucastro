@@ -579,10 +579,10 @@ class RateCollection(object):
                     G.add_edge(n, p)
 
         nx.draw_networkx_nodes(G, G.position, 
-                               node_color="blue", alpha=0.3, 
+                               node_color="blue", alpha=0.8, 
                                node_shape="s", node_size=1000)
         nx.draw_networkx_edges(G, G.position, edge_color="0.5")
-        nx.draw_networkx_labels(G, G.position, G.labels, font_size=14)
+        nx.draw_networkx_labels(G, G.position, G.labels, font_size=14, font_color="1.0")
         plt.show()
 
     def __repr__(self):
