@@ -582,7 +582,7 @@ class RateCollection(object):
                                node_color="blue", alpha=0.8, 
                                node_shape="s", node_size=1000)
         nx.draw_networkx_edges(G, G.position, edge_color="0.5")
-        nx.draw_networkx_labels(G, G.position, G.labels, font_size=14)
+        nx.draw_networkx_labels(G, G.position, G.labels, font_size=14, font_color="1.0")
 
         plt.xlim(-0.5,)
         plt.xlabel(r"$N$")
