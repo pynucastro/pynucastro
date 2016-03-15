@@ -58,10 +58,8 @@ This package requires
 * create a Ydot() class that can both output dYdt[nucleus] and
   evaluate dYdt.
 
-* draw a diagram of the nuclei in a RateCollection along with arrows
-  indicating the flows
-
-  - use NetworkX for this -- nuclei are nodes, positioned along
-    Z-N plane and colored according to dYdt
-
+* color the edges on the `RateCollection` plot according to which
+  nuclear process they are (e.g., a,p), and add a legend showing
+  the basics
+  
 
