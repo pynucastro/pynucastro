@@ -39,7 +39,7 @@ class Nucleus(object):
 
         # latex formatted style
         self.pretty = r"{{}}^{{{}}}\mathrm{{{}}}".format(self.A, self.el)
- 
+
     def __repr__(self):
         return self.raw
 
@@ -332,11 +332,11 @@ class Rate(object):
         return r
 
     def get_rate_exponent(self, T0):
-        """ 
+        """
         for a rate written as a power law, r = r_0 (T/T0)**nu, return
         nu corresponding to T0
         """
-        
+
         # nu = dln r /dln T, so we need dr/dT
         r1 = self.eval(T0)
         dT = 1.e-8*T0
@@ -344,7 +344,7 @@ class Rate(object):
 
         drdT = (r2 - r1)/dT
         return (T0/r1)*drdT
-        
+
     def plot(self, Tmin=1.e7, Tmax=1.e10):
 
         T = np.logspace(np.log10(Tmin), np.log10(Tmax), 100)
@@ -502,7 +502,7 @@ class RateCollection(object):
 
             print(" ")
 
-    
+
     def make_network(self, outfile="net.py"):
         """
         this is the actual RHS for the system of ODEs that
@@ -560,7 +560,7 @@ class RateCollection(object):
 
 
     def plot(self):
-        G = nx.Graph()
+        G = nx.DiGraph()
         G.position={}
         G.labels = {}
 
@@ -576,18 +576,29 @@ class RateCollection(object):
         for n in self.unique_nuclei:
             for r in self.nuclei_consumed[n]:
                 for p in r.products:
-                    G.add_edge(n, p)
+                    G.add_edges_from([(n, p)])
 
-        nx.draw_networkx_nodes(G, G.position, 
-                               node_color="blue", alpha=0.8, 
+
+        nx.draw_networkx_nodes(G, G.position,
+                               node_color="1.0", alpha=0.4,
                                node_shape="s", node_size=1000)
         nx.draw_networkx_edges(G, G.position, edge_color="0.5")
-        nx.draw_networkx_labels(G, G.position, G.labels, font_size=14, font_color="1.0")
+        nx.draw_networkx_labels(G, G.position, G.labels, 
+                                font_size=14, font_color="r", zorder=100)
 
         plt.xlim(-0.5,)
-        plt.xlabel(r"$N$")
-        plt.ylabel(r"$Z$")
-        
+        plt.xlabel(r"$N$", fontsize="large")
+        plt.ylabel(r"$Z$", fontsize="large")
+
+        ax = plt.gca()
+        ax.spines['right'].set_visible(False)
+        ax.spines['top'].set_visible(False)
+        ax.spines['right'].set_visible(False)
+        ax.spines['top'].set_visible(False)
+        ax.spines['right'].set_visible(False)
+        ax.spines['top'].set_visible(False)
+        ax.xaxis.set_ticks_position('bottom')
+        ax.yaxis.set_ticks_position('left')
         plt.show()
 
     def __repr__(self):
@@ -609,5 +620,3 @@ if __name__ == "__main__":
     print(rc)
     rc.print_network_overview()
     rc.make_network()
-
-    
