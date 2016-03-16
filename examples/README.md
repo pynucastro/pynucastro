@@ -26,3 +26,10 @@ t
 [number of header lines to eat before the first line of data]
 [number of density*ye values]
 [number of temperature values]
+
+--------------------------------------------------------------------------------
+
+The URCA example uses A=23 URCA rates from Suzuki et al., 2016, ApJ 817:163
+They can be downloaded from the web at:
+http://w3p.phys.chs.nihon-u.ac.jp/~suzuki/data2/link.html
+(as of March 16, 2016)
