@@ -390,14 +390,6 @@ contains
          )
 
 
-      write(*,*) '-------------------------------'
-      do i = 1, NEQ
-         do j = 1, NEQ
-            write(*,*) 'DJAC(', j, ', ', i, ') = ', DJAC(j, i)
-         end do
-      end do
-      write(*,*) '-------------------------------'
-      stop
     end if
 
     IER = 0 ! Success

@@ -9,7 +9,7 @@ module CVODE_PARAMETERS
      double precision :: R_TOL = 1.0d-10 ! Relative tolerance (was using 1d-12)
      double precision :: A_TOL = 1.0d-10 ! Absolute tolerance (was using 1d-12)
      integer :: MAX_NSTEPS = 1500000 ! Maximum number of steps to solution
-     integer :: SET_JAC_FLAG = 0 ! Do use my supplied Jacobian
+     integer :: SET_JAC_FLAG = 1 ! Do use my supplied Jacobian
      integer :: ITASK = 1 ! Normal mode (overshoot and interpolate)
   end type cv_pars_t
   
