@@ -1,5 +1,10 @@
-The CNO directory builds a python network. C_f90, CNO_f90, and
-URCA_f90 build Fortran 90 networks.
+# Examples
+
+CNO builds a python network.
+
+C_f90, CNO_f90, and URCA_f90 build Fortran 90 networks.
+
+# Fortran Instructions
 
 To make your own Fortran network, copy
 pyreaclib/templates/sundials-cvode to your own directory. Obtain

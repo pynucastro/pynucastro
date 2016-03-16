@@ -1,3 +1,5 @@
+# Fortran: C12-burning with A=23 URCA reactions
+
 The URCA_f90 example integrates a reaction network which implements
 simple C12-burning along with the A=23 URCA reactions until either
 23Ne or 23Na are depleted.
