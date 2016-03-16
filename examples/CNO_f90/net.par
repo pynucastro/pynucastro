@@ -1,0 +1,18 @@
+&intparams
+	cv_pars%DT_SAVE  = 2.0d0 ! seconds, cf half life of n13 is ~600s
+	cv_pars%NDT_SAVE = 11295
+	cv_pars%dens = 1.0d4 ! Average Solar Density in g/cm^3 is 1.0d6
+	cv_pars%temp = 1.0d8 ! Temperature in K, hot CNO transition around 0.54GK
+/
+
+&netpars
+	net_initial_abundances%yp  = 0.70d0
+	net_initial_abundances%yhe4 = 0.07d0
+	net_initial_abundances%yc12 = 0.0017d0
+	net_initial_abundances%yc13 = 0.0d0
+	net_initial_abundances%yn13 = 0.0d0 ! was 0
+	net_initial_abundances%yn14 = 0.0d0
+	net_initial_abundances%yn15 = 0.0d0
+	net_initial_abundances%yo14 = 0.0d0 ! was 0
+	net_initial_abundances%yo15 = 0.0d0 ! was 0
+/			    

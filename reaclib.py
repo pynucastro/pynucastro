@@ -27,6 +27,9 @@ class Nucleus(object):
         if name == "p":
             self.el = "H"
             self.A = 1
+        elif name == "n":
+            self.el = "n"
+            self.A = 1
         else:
             e = re.match("([a-zA-Z]*)(\d*)", name)
             self.el = e.group(1).title()  # chemical symbol
@@ -148,176 +151,198 @@ class Rate(object):
         self.original_source = "".join(lines)
 
         # first line is the chapter
-        self.chapter = int(lines[0])
+        self.chapter = lines[0].strip()
+        # catch table prescription
+        if self.chapter != "t":
+            self.chapter = int(self.chapter)
 
         # remove any black lines
         set_lines = [l for l in lines[1:] if not l.strip() == ""]
 
-        # the rest is the sets
-        first = 1
-        while len(set_lines) > 0:
-            # sets are 3 lines long
+        if self.chapter == "t":
+            # e1 -> e2
             s1 = set_lines.pop(0)
             s2 = set_lines.pop(0)
             s3 = set_lines.pop(0)
-
-            # first line of a set has up to 6 nuclei, then the label,
-            # and finally the Q value
+            s4 = set_lines.pop(0)
+            s5 = set_lines.pop(0)
             f = s1.split()
-            Q = f.pop()
-            label = f.pop()
+            self.reactants.append(Nucleus(f[0]))
+            self.products.append(Nucleus(f[1]))
 
-            if first:
-                self.Q = Q
+            self.table_file = s2.strip()
+            self.table_header_lines = int(s3.strip())
+            self.table_rhoy_lines   = int(s4.strip())
+            self.table_temp_lines   = int(s5.strip())
+            self.table_num_vars     = 6 # Hard-coded number of variables in tables for now.
+            self.table_index_name = 'j_{}_{}'.format(self.reactants[0], self.products[0])
+            
+            self.string = "{} -> {}".format(*(self.reactants + self.products))
+            self.dens_exp = 0
+        else:
+            # the rest is the sets
+            first = 1
+            while len(set_lines) > 0:
+                # sets are 3 lines long
+                s1 = set_lines.pop(0)
+                s2 = set_lines.pop(0)
+                s3 = set_lines.pop(0)
 
-                # what's left are the nuclei -- their interpretation
-                # depends on the chapter
-                if self.chapter == 1:
-                    # e1 -> e2
-                    self.reactants.append(Nucleus(f[0]))
-                    self.products.append(Nucleus(f[1]))
+                # first line of a set has up to 6 nuclei, then the label,
+                # and finally the Q value
+                f = s1.split()
+                Q = f.pop()
+                label = f.pop()
 
-                    self.string = "{} -> {}".format(*(self.reactants + self.products))
-                    self.dens_exp = 0
+                if first:
+                    self.Q = Q
 
-                elif self.chapter == 2:
-                    # e1 -> e2 + e3
-                    self.reactants.append(Nucleus(f[0]))
-                    self.products += [Nucleus(f[1]), Nucleus(f[2])]
+                    # what's left are the nuclei -- their interpretation
+                    # depends on the chapter
+                    if self.chapter == 1:
+                        # e1 -> e2
+                        self.reactants.append(Nucleus(f[0]))
+                        self.products.append(Nucleus(f[1]))
 
-                    self.string = "{} -> {} + {}".format(*(self.reactants + self.products))
-                    self.dens_exp = 0
+                        self.string = "{} -> {}".format(*(self.reactants + self.products))
+                        self.dens_exp = 0
 
-                elif self.chapter == 3:
-                    # e1 -> e2 + e3 + e4
-                    self.reactants.append(Nucleus(f[0]))
-                    self.products += [Nucleus(f[1]), Nucleus(f[2]), Nucleus(f[3])]
+                    elif self.chapter == 2:
+                        # e1 -> e2 + e3
+                        self.reactants.append(Nucleus(f[0]))
+                        self.products += [Nucleus(f[1]), Nucleus(f[2])]
 
-                    self.string = "{} -> {} + {} + {}".format(*(self.reactants + self.products))
-                    self.dens_exp = 0
+                        self.string = "{} -> {} + {}".format(*(self.reactants + self.products))
+                        self.dens_exp = 0
 
-                elif self.chapter == 4:
-                    # e1 + e2 -> e3
-                    self.reactants += [Nucleus(f[0]), Nucleus(f[1])]
-                    self.products.append(Nucleus(f[2]))
+                    elif self.chapter == 3:
+                        # e1 -> e2 + e3 + e4
+                        self.reactants.append(Nucleus(f[0]))
+                        self.products += [Nucleus(f[1]), Nucleus(f[2]), Nucleus(f[3])]
 
-                    if len(set(self.reactants)) == 1:
-                        self.prefactor = 1./2.
+                        self.string = "{} -> {} + {} + {}".format(*(self.reactants + self.products))
+                        self.dens_exp = 0
 
-                    self.dens_exp = 1
+                    elif self.chapter == 4:
+                        # e1 + e2 -> e3
+                        self.reactants += [Nucleus(f[0]), Nucleus(f[1])]
+                        self.products.append(Nucleus(f[2]))
 
-                elif self.chapter == 5:
-                    # e1 + e2 -> e3 + e4
-                    self.reactants += [Nucleus(f[0]), Nucleus(f[1])]
-                    self.products += [Nucleus(f[2]), Nucleus(f[3])]
+                        if len(set(self.reactants)) == 1:
+                            self.prefactor = 1./2.
 
-                    if len(set(self.reactants)) == 1:
-                        self.prefactor = 1./2.
+                        self.dens_exp = 1
 
-                    self.dens_exp = 1
+                    elif self.chapter == 5:
+                        # e1 + e2 -> e3 + e4
+                        self.reactants += [Nucleus(f[0]), Nucleus(f[1])]
+                        self.products += [Nucleus(f[2]), Nucleus(f[3])]
 
-                elif self.chapter == 6:
-                    # e1 + e2 -> e3 + e4 + e5
-                    self.reactants += [Nucleus(f[0]), Nucleus(f[1])]
-                    self.products += [Nucleus(f[2]), Nucleus(f[3]), Nucleus(f[4])]
+                        if len(set(self.reactants)) == 1:
+                            self.prefactor = 1./2.
 
-                    if len(set(self.reactants)) == 1:
-                        self.prefactor = 1./2.
+                        self.dens_exp = 1
 
-                    self.dens_exp = 1
+                    elif self.chapter == 6:
+                        # e1 + e2 -> e3 + e4 + e5
+                        self.reactants += [Nucleus(f[0]), Nucleus(f[1])]
+                        self.products += [Nucleus(f[2]), Nucleus(f[3]), Nucleus(f[4])]
 
-                elif self.chapter == 7:
-                    # e1 + e2 -> e3 + e4 + e5 + e6
-                    self.reactants += [Nucleus(f[0]), Nucleus(f[1])]
-                    self.products += [Nucleus(f[2]), Nucleus(f[3]), Nucleus(f[4]), Nucleus(f[5])]
+                        if len(set(self.reactants)) == 1:
+                            self.prefactor = 1./2.
 
-                    if len(set(self.reactants)) == 1:
-                        self.prefactor = 1./2.
+                        self.dens_exp = 1
 
-                    self.dens_exp = 1
+                    elif self.chapter == 7:
+                        # e1 + e2 -> e3 + e4 + e5 + e6
+                        self.reactants += [Nucleus(f[0]), Nucleus(f[1])]
+                        self.products += [Nucleus(f[2]), Nucleus(f[3]), Nucleus(f[4]), Nucleus(f[5])]
 
-                elif self.chapter == 8:
-                    # e1 + e2 + e3 -> e4
-                    self.reactants += [Nucleus(f[0]), Nucleus(f[1]), Nucleus(f[2])]
-                    self.products.append(Nucleus(f[3]))
+                        if len(set(self.reactants)) == 1:
+                            self.prefactor = 1./2.
 
-                    if len(set(self.reactants)) == 1:
-                        self.prefactor = 1./6.  # 1/3!
-                    elif len(set(self.reactants)) == 2:
-                        self.prefactor = 1./2.
+                        self.dens_exp = 1
 
-                    self.dens_exp = 2
+                    elif self.chapter == 8:
+                        # e1 + e2 + e3 -> e4
+                        self.reactants += [Nucleus(f[0]), Nucleus(f[1]), Nucleus(f[2])]
+                        self.products.append(Nucleus(f[3]))
 
-                elif self.chapter == 9:
-                    # e1 + e2 + e3 -> e4 + e5
-                    self.reactants += [Nucleus(f[0]), Nucleus(f[1]), Nucleus(f[2])]
-                    self.products += [Nucleus(f[3]), Nucleus(f[4])]
+                        if len(set(self.reactants)) == 1:
+                            self.prefactor = 1./6.  # 1/3!
+                        elif len(set(self.reactants)) == 2:
+                            self.prefactor = 1./2.
 
-                    if len(set(self.reactants)) == 1:
-                        self.prefactor = 1./6.  # 1/3!
-                    elif len(set(self.reactants)) == 2:
-                        self.prefactor = 1./2.
+                        self.dens_exp = 2
 
-                    self.dens_exp = 2
+                    elif self.chapter == 9:
+                        # e1 + e2 + e3 -> e4 + e5
+                        self.reactants += [Nucleus(f[0]), Nucleus(f[1]), Nucleus(f[2])]
+                        self.products += [Nucleus(f[3]), Nucleus(f[4])]
 
-                elif self.chapter == 10:
-                    # e1 + e2 + e3 + e4 -> e5 + e6
-                    self.reactants += [Nucleus(f[0]), Nucleus(f[1]), Nucleus(f[2]), Nucleus(f[3])]
-                    self.products += [Nucleus(f[4]), Nucleus(f[5])]
+                        if len(set(self.reactants)) == 1:
+                            self.prefactor = 1./6.  # 1/3!
+                        elif len(set(self.reactants)) == 2:
+                            self.prefactor = 1./2.
 
-                    if len(set(self.reactants)) == 1:
-                        self.prefactor = 1./24.  # 1/4!
-                    elif len(set(self.reactants)) == 2:
-                        # there may be some instances where we have a + a + b + b,
-                        # so prefactor = 1/4?
-                        self.prefactor = 1./6. # 1/3!
-                    elif len(set(self.reactants)) == 3:
-                        self.prefactor = 1./2.
+                        self.dens_exp = 2
 
-                    self.dens_exp = 3
+                    elif self.chapter == 10:
+                        # e1 + e2 + e3 + e4 -> e5 + e6
+                        self.reactants += [Nucleus(f[0]), Nucleus(f[1]), Nucleus(f[2]), Nucleus(f[3])]
+                        self.products += [Nucleus(f[4]), Nucleus(f[5])]
 
-                elif self.chapter == 11:
-                    # e1 -> e2 + e3 + e4 + e5
-                    self.reactants.append(Nucleus(f[0]))
-                    self.products += [Nucleus(f[1]), Nucleus(f[2]), Nucleus(f[3]), Nucleus(f[4])]
+                        if len(set(self.reactants)) == 1:
+                            self.prefactor = 1./24.  # 1/4!
+                        elif len(set(self.reactants)) == 2:
+                            # there may be some instances where we have a + a + b + b,
+                            # so prefactor = 1/4?
+                            self.prefactor = 1./6. # 1/3!
+                        elif len(set(self.reactants)) == 3:
+                            self.prefactor = 1./2.
 
-                    self.dens_exp = 0
+                        self.dens_exp = 3
 
+                    elif self.chapter == 11:
+                        # e1 -> e2 + e3 + e4 + e5
+                        self.reactants.append(Nucleus(f[0]))
+                        self.products += [Nucleus(f[1]), Nucleus(f[2]), Nucleus(f[3]), Nucleus(f[4])]
 
-                self.string = ""
-                self.pretty_string = r"$"
-                for n, r in enumerate(self.reactants):
-                    self.string += "{}".format(r)
-                    self.pretty_string += r"{}".format(r.pretty)
-                    if not n == len(self.reactants)-1:
-                        self.string += " + "
-                        self.pretty_string += r" + "
+                        self.dens_exp = 0
+       
+                    first = 0
 
-                self.string += " --> "
-                self.pretty_string += r" \rightarrow "
+                # the second line contains the first 4 coefficients
+                # the third lines contains the final 3
+                # we can't just use split() here, since the fields run into one another
+                n = 13  # length of the field
+                a = [s2[i:i+n] for i in range(0, len(s2), n)]
+                a += [s3[i:i+n] for i in range(0, len(s3), n)]
 
-                for n, p in enumerate(self.products):
-                    self.string += "{}".format(p)
-                    self.pretty_string += r"{}".format(p.pretty)
-                    if not n == len(self.products)-1:
-                        self.string += " + "
-                        self.pretty_string += r" + "
+                a = [float(e) for e in a if not e.strip() == ""]
+                self.sets.append(SingleSet(a, label=label))
 
-                self.pretty_string += r"$"
+        self.string = ""
+        self.pretty_string = r"$"
+        for n, r in enumerate(self.reactants):
+            self.string += "{}".format(r)
+            self.pretty_string += r"{}".format(r.pretty)
+            if not n == len(self.reactants)-1:
+                self.string += " + "
+                self.pretty_string += r" + "
 
-                first = 0
+        self.string += " --> "
+        self.pretty_string += r" \rightarrow "
 
-            # the second line contains the first 4 coefficients
-            # the third lines contains the final 3
-            # we can't just use split() here, since the fields run into one another
-            n = 13  # length of the field
-            a = [s2[i:i+n] for i in range(0, len(s2), n)]
-            a += [s3[i:i+n] for i in range(0, len(s3), n)]
+        for n, p in enumerate(self.products):
+            self.string += "{}".format(p)
+            self.pretty_string += r"{}".format(p.pretty)
+            if not n == len(self.products)-1:
+                self.string += " + "
+                self.pretty_string += r" + "
 
-            a = [float(e) for e in a if not e.strip() == ""]
-            self.sets.append(SingleSet(a, label=label))
-
-
+        self.pretty_string += r"$"
+        
     def __repr__(self):
         return self.string
 
@@ -438,6 +463,149 @@ class Rate(object):
 
         return "{}{}{}*lambda_{}".format(prefactor_string, dens_string, Y_string, self.fname)
 
+    def jacobian_string(self, ydot_j, y_i):
+        """
+        return a string containing the term in a jacobian matrix 
+        in a reaction network corresponding to this rate
+
+        Returns the derivative of the j-th YDOT wrt. the i-th Y
+        If the derivative is zero, returns the empty string ''
+
+        ydot_j and y_i are objects of the class 'Nucleus'
+        """
+        if ((ydot_j not in self.reactants and ydot_j not in self.products) or
+            y_i not in self.reactants):
+            return ''
+
+        # composition dependence
+        Y_string = ""
+        for n, r in enumerate(set(self.reactants)):
+            c = self.reactants.count(r)
+            if y_i == r:
+                if c == 1:
+                    continue
+                if n>0 and n < len(set(self.reactants))-1:
+                    Y_string += "*"
+                if c > 2:
+                    Y_string += "{}*Y[i{}]**{}".format(c, r, c-1)
+                elif c==2:
+                    Y_string += "2*Y[i{}]".format(r)
+            else:
+                if n>0 and n < len(set(self.reactants))-1:
+                    Y_string += "*"
+                if c > 1:
+                    Y_string += "Y[i{}]**{}".format(r, c)
+                else:
+                    Y_string += "Y[i{}]".format(r, c)
+
+        # density dependence
+        if self.dens_exp == 0:
+            dens_string = ""
+        elif self.dens_exp == 1:
+            dens_string = "rho*"
+        else:
+            dens_string = "rho**{}*".format(self.dens_exp)
+
+        # prefactor
+        if not self.prefactor == 1.0:
+            prefactor_string = "{}*".format(self.prefactor)
+        else:
+            prefactor_string = ""
+
+        if Y_string=="" and dens_string=="" and prefactor_string=="":
+            rstring = "{}{}{}lambda_{}"
+        else:
+            rstring = "{}{}{}*lambda_{}"
+        return rstring.format(prefactor_string, dens_string, Y_string, self.fname)
+    
+    def ydot_string_f90(self):
+        """
+        return a string containing the term in a dY/dt equation
+        in a reaction network corresponding to this rate for Fortran 90.
+        """
+
+        # composition dependence
+        Y_string = ""
+        for n, r in enumerate(set(self.reactants)):
+            c = self.reactants.count(r)
+            if c > 1:
+                Y_string += "Y(net_meta%i{})**{}".format(r, c)
+            else:
+                Y_string += "Y(net_meta%i{})".format(r, c)
+
+            if n < len(set(self.reactants))-1:
+                Y_string += " * "
+
+        # density dependence
+        if self.dens_exp == 0:
+            dens_string = ""
+        elif self.dens_exp == 1:
+            dens_string = "dens * "
+        else:
+            dens_string = "dens**{} * ".format(self.dens_exp)
+
+        # prefactor
+        if not self.prefactor == 1.0:
+            prefactor_string = "{} * ".format(self.prefactor)
+        else:
+            prefactor_string = ""
+
+        return "{}{}{} * rxn_rates(net_meta%k_{})".format(prefactor_string, dens_string, Y_string, self.fname)
+
+    def jacobian_string_f90(self, ydot_j, y_i):
+        """
+        return a string containing the term in a jacobian matrix 
+        in a reaction network corresponding to this rate
+
+        Returns the derivative of the j-th YDOT wrt. the i-th Y
+        If the derivative is zero, returns the empty string ''
+
+        ydot_j and y_i are objects of the class 'Nucleus'
+        """
+        if ((ydot_j not in self.reactants and ydot_j not in self.products) or
+            y_i not in self.reactants):
+            return ''
+
+        # composition dependence
+        Y_string = ""
+        for n, r in enumerate(set(self.reactants)):
+            c = self.reactants.count(r)
+            if y_i == r:
+                if c == 1:
+                    continue
+                if n>0 and n < len(set(self.reactants))-1:
+                    Y_string += "*"
+                if c > 2:
+                    Y_string += "{}*Y(net_meta%i{})**{}".format(c, r, c-1)
+                elif c==2:
+                    Y_string += "2*Y(net_meta%i{})".format(r)
+            else:
+                if n>0 and n < len(set(self.reactants))-1:
+                    Y_string += "*"
+                if c > 1:
+                    Y_string += "Y(net_meta%i{})**{}".format(r, c)
+                else:
+                    Y_string += "Y(net_meta%i{})".format(r, c)
+
+        # density dependence
+        if self.dens_exp == 0:
+            dens_string = ""
+        elif self.dens_exp == 1:
+            dens_string = "dens * "
+        else:
+            dens_string = "dens**{} * ".format(self.dens_exp)
+
+        # prefactor
+        if not self.prefactor == 1.0:
+            prefactor_string = "{} * ".format(self.prefactor)
+        else:
+            prefactor_string = ""
+
+        if Y_string=="" and dens_string=="" and prefactor_string=="":
+            rstring = "{}{}{}   rxn_rates(net_meta%k_{})"
+        else:
+            rstring = "{}{}{} * rxn_rates(net_meta%k_{})"
+        return rstring.format(prefactor_string, dens_string, Y_string, self.fname)
 
 class RateCollection(object):
     """ a collection of rates that together define a network """
@@ -463,7 +631,6 @@ class RateCollection(object):
         for rf in self.files:
             self.rates.append(Rate(rf))
 
-
         # get the unique nuclei
         u = []
         for r in self.rates:
@@ -488,6 +655,16 @@ class RateCollection(object):
                 if n in r.products:
                     self.nuclei_produced[n].append(r)
 
+        self.tabular_rates = []
+        self.reaclib_rates = []
+        for n,r in enumerate(self.rates):
+            if r.chapter == 't':
+                self.tabular_rates.append(n)
+            elif type(r.chapter)==int:
+                self.reaclib_rates.append(n)
+            else:
+                print('ERROR: Chapter type unknown for rate chapter {}'.format(str(r.chapter)))
+                exit()
 
     def print_network_overview(self):
         for n in self.unique_nuclei:
@@ -558,7 +735,276 @@ class RateCollection(object):
 
         of.write("{}return dYdt\n".format(indent))
 
+    def fmt_to_dp_f90(self, i):
+        return '{:1.6e}'.format(float(i)).replace('e','d')
 
+    def get_indent_amt(self, l, k):
+        rem = re.match('\A'+k+'\(([0-9]*)\)\Z',l)
+        return int(rem.group(1))
+
+    def make_network_f90(self):
+        """
+        this writes the RHS, jacobian and ancillary files for the system of ODEs that
+        this network describes, using the following template files:
+        net_rates.f90.template
+        network.f90.template
+        data_wrangler.f90.template
+        """
+
+        indent = '  '
+        
+        # Network specification and rates
+        outfile = 'net_rates.f90'
+        infile  = 'net_rates.f90.template'
+        try: of = open(outfile, "w")
+        except: raise
+        try: ifile = open(infile, 'r')
+        except: raise
+        for l in ifile:
+            ls = l.strip()
+            k_0 = '<number_declare>'
+            k_1 = '<ctemp_declare>'
+            k_2 = '<ynuc_declare>'
+            k_3 = '<inuc_declare>'
+            k_4 = '<krxn_declare>'
+            k_5 = '<rmul_declare>'
+            k_6 = '<ebind_declare>'
+            k_7 = '<anuc_declare>'
+            k_8 = '<alloc_ctemp>'
+            k_9 = '<dealloc_ctemp>'
+            k_10 = '<switch_ctemp>'
+            
+            if k_0 in ls:
+                n_indent = self.get_indent_amt(ls, k_0)
+                of.write('{}integer, parameter :: number_equations = {}\n'.format(indent*n_indent, len(self.unique_nuclei)+1))
+                of.write('{}integer, parameter :: number_nuclides = {}\n'.format(indent*n_indent, len(self.unique_nuclei)))
+                of.write('{}integer, parameter :: number_reactions = {}\n'.format(indent*n_indent, len(self.rates)))
+            elif k_1 in ls:
+                n_indent = self.get_indent_amt(ls, k_1)
+                for n in self.reaclib_rates:
+                    of.write('{}double precision, target, dimension(:,:), allocatable :: ctemp_rate_{}\n'.format(indent*n_indent, n+1))
+            elif k_2 in ls:
+                n_indent = self.get_indent_amt(ls, k_2)
+                for nuc in self.unique_nuclei:
+                    of.write('{}double precision :: y{}\n'.format(indent*n_indent, nuc))
+            elif k_3 in ls:
+                n_indent = self.get_indent_amt(ls, k_3)
+                for i,nuc in enumerate(self.unique_nuclei):
+                    of.write('{}integer :: i{}   = {}\n'.format(indent*n_indent, nuc, i+1))
+                of.write('{}! Energy Generation Rate\n'.format(indent*n_indent))
+                of.write('{}integer :: ienuc   = {}\n'.format(indent*n_indent, len(self.unique_nuclei)+1))
+            elif k_4 in ls:
+                n_indent = self.get_indent_amt(ls, k_4)
+                for i,r in enumerate(self.rates):
+                    of.write('{}integer :: k_{}   = {}\n'.format(indent*n_indent, r.fname, i+1))
+            elif k_5 in ls:
+                n_indent = self.get_indent_amt(ls, k_5)
+                for i,r in enumerate(self.rates):
+                    of.write('{}{}'.format(indent*n_indent, len(r.sets)))
+                    if i==len(self.rates)-1:
+                        of.write(' /)\n')
+                    else:
+                        of.write(', &\n')
+            elif k_6 in ls:
+                n_indent = self.get_indent_amt(ls, k_6)
+                for nuc in self.unique_nuclei:
+                    of.write('{}self%ebind_per_nucleon(self%i{})   = 0.0d0\n'.format(indent*n_indent, nuc))
+            elif k_7 in ls:
+                n_indent = self.get_indent_amt(ls, k_7)
+                for nuc in self.unique_nuclei:
+                    of.write('{}self%anuc(self%i{})   = {}\n'.format(indent*n_indent, nuc, self.fmt_to_dp_f90(nuc.A)))
+            elif k_8 in ls:
+                n_indent = self.get_indent_amt(ls, k_8)
+                for nr in self.reaclib_rates:
+                    r = self.rates[nr]
+                    of.write('{}allocate( ctemp_rate_{}(7, self%rate_mult({})) )\n'.format(indent*n_indent, nr+1, nr+1))
+                    of.write('{}! {}\n'.format(indent*n_indent, r.fname))
+                    for ns,s in enumerate(r.sets):
+                        of.write('{}ctemp_rate_{}(:, {}) = (/  &\n'.format(indent*n_indent, nr+1, ns+1))
+                        for na,an in enumerate(s.a):
+                            of.write('{}{}'.format(indent*n_indent*2, self.fmt_to_dp_f90(an)))
+                            if na==len(s.a)-1:
+                                of.write(' /)\n')
+                            else:
+                                of.write(', &\n')
+                        of.write('\n')
+                if len(self.tabular_rates) > 0:
+                    of.write('{}call init_table_meta()\n'.format(indent*n_indent))
+                of.write('\n')
+            elif k_9 in ls:
+                n_indent = self.get_indent_amt(ls, k_9)
+                for nr in self.reaclib_rates:
+                    of.write('{}deallocate( ctemp_rate_{} )\n'.format(indent*n_indent, nr+1))
+            elif k_10 in ls:
+                n_indent = self.get_indent_amt(ls, k_10)
+                for nr,r in enumerate(self.rates):
+                    of.write('{}'.format(indent*n_indent))
+                    if nr!=0:
+                        of.write('else ')
+                    of.write('if (iwhich == {}) then\n'.format(nr+1))
+                    if nr in self.reaclib_rates:
+                        of.write('{}ctemp => ctemp_rate_{}\n'.format(indent*(n_indent+1), nr+1))
+                    elif nr in self.tabular_rates:
+                        of.write('{}call table_meta({})%bl_lookup(rhoy, temp, jtab_rate, rate)\n'.format(indent*(n_indent+1), r.table_index_name))
+                        of.write('{}return\n'.format(indent*(n_indent+1)))
+                    else:
+                        print('ERROR: rate not in self.reaclib_rates or self.tabular_rates!')
+                        exit()
+                of.write('{}end if\n'.format(indent*n_indent))
+            else:
+                of.write(l)    
+        of.close()
+
+        # Table specification and rates
+        outfile = 'table_rates.f90'
+        infile  = 'table_rates.f90.template'
+        try: of = open(outfile, "w")
+        except: raise
+        try: ifile = open(infile, 'r')
+        except: raise
+        for l in ifile:
+            ls = l.strip()
+            k_1 = '<numtab>'
+            k_2 = '<tab_indices>'
+            k_3 = '<init_table_meta>'
+            if k_1 in ls:
+                n_indent = self.get_indent_amt(ls, k_1)
+                of.write('{}integer, parameter :: num_tables   = {}\n'.format(indent*n_indent, len(self.tabular_rates)))
+            elif k_2 in ls:
+                n_indent = self.get_indent_amt(ls, k_2)
+                for n,irate in enumerate(self.tabular_rates):
+                    r = self.rates[irate]
+                    of.write('{}integer, parameter :: {}   = {}\n'.format(indent*n_indent, r.table_index_name, n+1))
+            elif k_3 in ls:
+                n_indent = self.get_indent_amt(ls, k_3)
+                for n,irate in enumerate(self.tabular_rates):
+                    r = self.rates[irate]
+                    of.write('{}table_meta({})%rate_table_file = \'{}\'\n'.format(indent*n_indent, r.table_index_name, r.table_file))
+                    of.write('{}table_meta({})%num_header = {}\n'.format(indent*n_indent, r.table_index_name, r.table_header_lines))
+                    of.write('{}table_meta({})%num_rhoy = {}\n'.format(indent*n_indent, r.table_index_name, r.table_rhoy_lines))
+                    of.write('{}table_meta({})%num_temp = {}\n'.format(indent*n_indent, r.table_index_name, r.table_temp_lines))
+                    of.write('{}table_meta({})%num_vars = {}\n'.format(indent*n_indent, r.table_index_name, r.table_num_vars))
+                    of.write('\n')
+            else:
+                of.write(l)
+        of.close()
+        
+        # Network ydot and jacobian
+        outfile = 'network.f90'
+        infile  = 'network.f90.template'
+        try: of = open(outfile, "w")
+        except: raise
+        try: ifile = open(infile, 'r')
+        except: raise
+        for l in ifile:
+            ls = l.strip()
+            k_1 = '<ydot>'
+            k_2 = '<jacobian>'
+            if k_1 in ls:
+                n_indent = self.get_indent_amt(ls, k_1)
+                # now make the RHSs
+                for n in self.unique_nuclei:
+                    of.write("{}YDOT(net_meta%i{}) = ( &\n".format(indent*n_indent, n))
+                    for r in self.nuclei_consumed[n]:
+                        c = r.reactants.count(n)
+                        if c == 1:
+                            of.write("{}   - {} &\n".format(indent*n_indent, r.ydot_string_f90()))
+                        else:
+                            of.write("{}   - {} * {} &\n".format(indent*n_indent, c, r.ydot_string_f90()))
+                    for r in self.nuclei_produced[n]:
+                        of.write("{}   + {} &\n".format(indent*n_indent, r.ydot_string_f90()))
+                    of.write("{}   )\n\n".format(indent*n_indent))
+            elif k_2 in ls:
+                n_indent = self.get_indent_amt(ls, k_2)
+                # now make the JACOBIAN
+                for nj in self.unique_nuclei:
+                    for ni in self.unique_nuclei:
+                        jac_identically_zero = True
+                        of.write("{}DJAC(net_meta%i{},net_meta%i{}) = ( &\n".format(indent*n_indent, nj, ni))
+                        for r in self.nuclei_consumed[nj]:
+                            sjac = r.jacobian_string_f90(nj, ni)
+                            if sjac != '':
+                                jac_identically_zero = False
+                                c = r.reactants.count(nj)
+                                if c == 1:
+                                    of.write("{}   - {} &\n".format(indent*n_indent, sjac))
+                                else:
+                                    of.write("{}   - {} * {} &\n".format(indent*n_indent, c, sjac))
+                        for r in self.nuclei_produced[nj]:
+                            sjac = r.jacobian_string_f90(nj, ni)
+                            if sjac != '':
+                                jac_identically_zero = False
+                                of.write("{}   + {} &\n".format(indent*n_indent, sjac))
+                        if jac_identically_zero:
+                            of.write("{}   + {} &\n".format(indent*n_indent, '0.0d0'))
+                        of.write("{}   )\n\n".format(indent*n_indent))
+            else:
+                of.write(l)    
+        of.close()
+
+        # Integrator 
+        outfile = 'integrator.f90'
+        infile  = 'integrator.f90.template'
+        try: of = open(outfile, "w")
+        except: raise
+        try: ifile = open(infile, 'r')
+        except: raise
+        for l in ifile:
+            ls = l.strip()
+            k_1 = '<y0_nuc_initialize>'
+            k_2 = '<final_net_print>'
+            if k_1 in ls:
+                n_indent = self.get_indent_amt(ls, k_1)
+                for n in self.unique_nuclei:
+                    of.write("{}cv_data%Y0(net_meta%i{})   = net_initial_abundances%y{}\n".format(indent*n_indent, n, n))
+            elif k_2 in ls:
+                n_indent = self.get_indent_amt(ls, k_2)
+                for n in self.unique_nuclei:
+                    of.write("{}write(*,'(A,ES25.14)') '{}: ', cv_data%Y(net_meta%i{})\n".format(indent*n_indent, n, n))
+            else:
+                of.write(l)    
+        of.close()
+
+        # history data storage and output
+        outfile = 'data_wrangler.f90'
+        infile  = 'data_wrangler.f90.template'
+        try: of = open(outfile, "w")
+        except: raise
+        try: ifile = open(infile, 'r')
+        except: raise
+        for l in ifile:
+            ls = l.strip()
+            k_1 = '<headerline>'
+            if k_1 in ls:
+                n_indent = self.get_indent_amt(ls, k_1)
+                of.write('{}write(2, fmt=hfmt) '.format(indent*n_indent))
+                for nuc in self.unique_nuclei:
+                    of.write("'Y_{}', ".format(nuc))
+                of.write("'E_nuc', 'Time'\n")
+            else:
+                of.write(l)    
+        of.close()
+        ifile.close()
+
+        # Parameter file for cvode
+        outfile = 'cvode_parameters.f90'
+        infile  = 'cvode_parameters.f90.template'
+        try: of = open(outfile, "w")
+        except: raise
+        try: ifile = open(infile, 'r')
+        except: raise
+        for l in ifile:
+            ls = l.strip()
+            k_1 = '<cvodeneq>'
+            if k_1 in ls:
+                n_indent = self.get_indent_amt(ls, k_1)
+                of.write('{} '.format(indent*n_indent))
+                of.write('integer*8 :: NEQ = {} ! Size of ODE system\n'.format(len(self.unique_nuclei)+1))
+            else:
+                of.write(l)    
+        of.close()
+        ifile.close()
+        
     def plot(self):
         G = nx.DiGraph()
         G.position={}
