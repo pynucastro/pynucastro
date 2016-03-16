@@ -145,7 +145,7 @@ class Rate(object):
 
         # read in the file, parse the different sets and store them as
         # SingleSet objects in sets[]
-        f = open(file, "r")
+        f = open(file, "r")                            
         lines = f.readlines()
 
         self.original_source = "".join(lines)
@@ -625,8 +625,24 @@ class RateCollection(object):
             rate_files = [rate_files]
 
         # get the rates
+        self.pyreaclib_rates_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)),
+                                                'reaclib-rates')
+        exit_program = False
         for p in rate_files:
-            self.files += glob.glob(p)
+            # check to see if the rate file is in pyreaclib/reaclib-rates
+            fp = glob.glob(os.path.join(self.pyreaclib_rates_dir, p))
+            if fp:
+                self.files += fp
+            else:
+                # otherwise, check to see if the rate file is in the working dir
+                fp = glob.glob(p)
+                if fp:
+                    self.files += fp
+                else: # Notify of all missing files before exiting
+                    print('ERROR: File {} not found in {} or the working directory!'.format(p,self.pyreaclib_rates_dir))
+                    exit_program = True 
+        if exit_program:
+            exit()
 
         for rf in self.files:
             self.rates.append(Rate(rf))
