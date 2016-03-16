@@ -95,14 +95,6 @@ contains
 
  <jacobian>(3)
 
-      write(*,*) '-------------------------------'
-      do i = 1, NEQ
-         do j = 1, NEQ
-            write(*,*) 'DJAC(', j, ', ', i, ') = ', DJAC(j, i)
-         end do
-      end do
-      write(*,*) '-------------------------------'
-      stop
     end if
 
     IER = 0 ! Success
@@ -117,7 +109,8 @@ contains
     integer, intent(out) :: IER
 
     IER = -1
-    G(1) = min(Y(net_meta%ine23), Y(net_meta%ina23))
+    ! Here you can add custom abundance stopping criteria
+    G(1) = 1.0d0
     IER = 0
   end subroutine FCVROOTFN
 
