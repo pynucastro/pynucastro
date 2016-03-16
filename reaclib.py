@@ -629,13 +629,13 @@ class RateCollection(object):
                                                 'reaclib-rates')
         exit_program = False
         for p in rate_files:
-            # check to see if the rate file is in pyreaclib/reaclib-rates
-            fp = glob.glob(os.path.join(self.pyreaclib_rates_dir, p))
+            # check to see if the rate file is in the working dir
+            fp = glob.glob(p)
             if fp:
                 self.files += fp
             else:
-                # otherwise, check to see if the rate file is in the working dir
-                fp = glob.glob(p)
+                # check to see if the rate file is in pyreaclib/reaclib-rates
+                fp = glob.glob(os.path.join(self.pyreaclib_rates_dir, p))
                 if fp:
                     self.files += fp
                 else: # Notify of all missing files before exiting
