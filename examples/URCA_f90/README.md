@@ -40,8 +40,8 @@ init_net_info subroutine: (relative to proton BE)
 ```
 
 3) Edit network.f90 and revise the stopping root solver condition in
-subroutine FCVROOTFN if desired. For example, to stop when H is
-depleted, use the following:
+subroutine FCVROOTFN if desired. For example, to stop when either
+Ne-23 or Na-23 are depleted, use the following:
 
 ```
     G(1) = min(Y(net_meta%ine23),Y(net_meta%ina23))
