@@ -11,8 +11,11 @@ to perform. The simulation end time is NDT_SAVE*DT_SAVE unless the
 stopping-condition root solver in subroutine FCVROOTFN (network.f90)
 finds a root.
 
+If you don't add a stopping condition (step 3 is recommended), the
+following timing is recommended to use in net.par:
+
 ```
-  cv_pars%DT_SAVE  = 2.0 
+  cv_pars%DT_SAVE  = 1.0d-7
   cv_pars%NDT_SAVE = 10000
 ```
 
@@ -40,8 +43,10 @@ init_net_info subroutine: (relative to proton BE)
 ```
 
 3) Edit network.f90 and revise the stopping root solver condition in
-subroutine FCVROOTFN if desired. For example, to stop when either
-Ne-23 or Na-23 are depleted, use the following:
+subroutine FCVROOTFN if desired. If you don't want a stopping
+condition, start with the recommended timing DT_SAVE and NDT_SAVE
+above. For example, to stop when either Ne-23 or Na-23 are depleted,
+use the following:
 
 ```
     G(1) = min(Y(net_meta%ine23),Y(net_meta%ina23))
