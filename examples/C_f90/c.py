@@ -9,7 +9,7 @@ files = ["c12-c12a-ne20-cf88",
 
 rc = reaclib.RateCollection(files)
 
-rc.make_network_f90()
+rc.make_network_f90('sundials')
 
 
 

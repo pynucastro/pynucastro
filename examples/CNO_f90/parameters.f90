@@ -1,5 +1,5 @@
 module parameters
-  use CVODE_PARAMETERS
+  use cvode_parameters
   use net_rates
   
   implicit none

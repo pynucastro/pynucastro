@@ -104,7 +104,7 @@ contains
     self%ebind_per_nucleon(self%ine20)   = 8.032240d0
     self%ebind_per_nucleon(self%ina23)   = 8.111493d0
     self%ebind_per_nucleon(self%img23)   = 7.901104d0
-    
+
     self%anuc(self%in)   = 1.000000d+00
     self%anuc(self%ip)   = 1.000000d+00
     self%anuc(self%ihe4)   = 4.000000d+00

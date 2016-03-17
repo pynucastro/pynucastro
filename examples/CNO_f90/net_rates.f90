@@ -113,15 +113,15 @@ contains
     type(reaclib_coefs), pointer :: prate
     integer :: i
 
-    self%ebind_per_nucleon(self%ip)   = 0.0d0
-    self%ebind_per_nucleon(self%ihe4)  = 7.073915d0
-    self%ebind_per_nucleon(self%ic12)  = 7.680144d0
-    self%ebind_per_nucleon(self%ic13)  = 7.469849d0
-    self%ebind_per_nucleon(self%in13)  = 7.238863d0
-    self%ebind_per_nucleon(self%in14)  = 7.475614d0
-    self%ebind_per_nucleon(self%in15)  = 7.699460d0
-    self%ebind_per_nucleon(self%io14)  = 7.052301d0
-    self%ebind_per_nucleon(self%io15)  = 7.46369d0
+    self%ebind_per_nucleon(self%ip) = 0.0d0
+    self%ebind_per_nucleon(self%ihe4) = 7.073915d0
+    self%ebind_per_nucleon(self%ic12) = 7.680144d0
+    self%ebind_per_nucleon(self%ic13) = 7.469849d0
+    self%ebind_per_nucleon(self%in13) = 7.238863d0
+    self%ebind_per_nucleon(self%in14) = 7.475614d0
+    self%ebind_per_nucleon(self%in15) = 7.699460d0
+    self%ebind_per_nucleon(self%io14) = 7.052301d0
+    self%ebind_per_nucleon(self%io15) = 7.46369d0
     
     self%anuc(self%ip)   = 1.000000d+00
     self%anuc(self%ihe4)   = 4.000000d+00

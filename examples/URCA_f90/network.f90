@@ -404,6 +404,7 @@ contains
     integer, intent(out) :: IER
 
     IER = -1
+    ! Here you can add custom abundance stopping criteria
     G(1) = min(Y(net_meta%ine23),Y(net_meta%ina23))
     IER = 0
   end subroutine FCVROOTFN

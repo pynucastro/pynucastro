@@ -489,7 +489,7 @@ contains
 
     IER = -1
     ! Here you can add custom abundance stopping criteria
-    G(1) = 1.0d0
+    G(1) = Y(net_meta%ip)
     IER = 0
   end subroutine FCVROOTFN
 

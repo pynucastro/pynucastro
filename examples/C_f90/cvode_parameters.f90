@@ -1,4 +1,4 @@
-module CVODE_PARAMETERS
+module cvode_parameters
 
   implicit none
 
@@ -53,4 +53,4 @@ contains
     read(unit=pfile_unit, nml=intparams)
   end subroutine cvode_init
 
-end module CVODE_PARAMETERS
+end module cvode_parameters
