@@ -4,6 +4,7 @@ from __future__ import print_function
 
 import glob
 import os
+import shutil
 import re
 
 import networkx as nx
@@ -618,6 +619,7 @@ class RateCollection(object):
 
         """
 
+        self.pyreaclib_dir = os.path.dirname(os.path.realpath(__file__))
         self.files = []
         self.rates = []
 
@@ -625,7 +627,7 @@ class RateCollection(object):
             rate_files = [rate_files]
 
         # get the rates
-        self.pyreaclib_rates_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)),
+        self.pyreaclib_rates_dir = os.path.join(self.pyreaclib_dir,
                                                 'reaclib-rates')
         exit_program = False
         for p in rate_files:
@@ -758,268 +760,319 @@ class RateCollection(object):
         rem = re.match('\A'+k+'\(([0-9]*)\)\Z',l)
         return int(rem.group(1))
 
-    def make_network_f90(self):
+    def make_network_f90(self,typenet):
         """
-        this writes the RHS, jacobian and ancillary files for the system of ODEs that
-        this network describes, using the following template files:
-        net_rates.f90.template
-        network.f90.template
-        data_wrangler.f90.template
+        Figure out which network to make.
         """
-
-        indent = '  '
         
-        # Network specification and rates
-        outfile = 'net_rates.f90'
-        infile  = 'net_rates.f90.template'
-        try: of = open(outfile, "w")
-        except: raise
-        try: ifile = open(infile, 'r')
-        except: raise
-        for l in ifile:
-            ls = l.strip()
-            k_0 = '<number_declare>'
-            k_1 = '<ctemp_declare>'
-            k_2 = '<ynuc_declare>'
-            k_3 = '<inuc_declare>'
-            k_4 = '<krxn_declare>'
-            k_5 = '<rmul_declare>'
-            k_6 = '<ebind_declare>'
-            k_7 = '<anuc_declare>'
-            k_8 = '<alloc_ctemp>'
-            k_9 = '<dealloc_ctemp>'
-            k_10 = '<switch_ctemp>'
-            
-            if k_0 in ls:
-                n_indent = self.get_indent_amt(ls, k_0)
-                of.write('{}integer, parameter :: number_equations = {}\n'.format(indent*n_indent, len(self.unique_nuclei)+1))
-                of.write('{}integer, parameter :: number_nuclides = {}\n'.format(indent*n_indent, len(self.unique_nuclei)))
-                of.write('{}integer, parameter :: number_reactions = {}\n'.format(indent*n_indent, len(self.rates)))
-            elif k_1 in ls:
-                n_indent = self.get_indent_amt(ls, k_1)
-                for n in self.reaclib_rates:
-                    of.write('{}double precision, target, dimension(:,:), allocatable :: ctemp_rate_{}\n'.format(indent*n_indent, n+1))
-            elif k_2 in ls:
-                n_indent = self.get_indent_amt(ls, k_2)
-                for nuc in self.unique_nuclei:
-                    of.write('{}double precision :: y{}\n'.format(indent*n_indent, nuc))
-            elif k_3 in ls:
-                n_indent = self.get_indent_amt(ls, k_3)
-                for i,nuc in enumerate(self.unique_nuclei):
-                    of.write('{}integer :: i{}   = {}\n'.format(indent*n_indent, nuc, i+1))
-                of.write('{}! Energy Generation Rate\n'.format(indent*n_indent))
-                of.write('{}integer :: ienuc   = {}\n'.format(indent*n_indent, len(self.unique_nuclei)+1))
-            elif k_4 in ls:
-                n_indent = self.get_indent_amt(ls, k_4)
-                for i,r in enumerate(self.rates):
-                    of.write('{}integer :: k_{}   = {}\n'.format(indent*n_indent, r.fname, i+1))
-            elif k_5 in ls:
-                n_indent = self.get_indent_amt(ls, k_5)
-                for i,r in enumerate(self.rates):
-                    of.write('{}{}'.format(indent*n_indent, len(r.sets)))
-                    if i==len(self.rates)-1:
-                        of.write(' /)\n')
-                    else:
-                        of.write(', &\n')
-            elif k_6 in ls:
-                n_indent = self.get_indent_amt(ls, k_6)
-                for nuc in self.unique_nuclei:
-                    of.write('{}self%ebind_per_nucleon(self%i{})   = 0.0d0\n'.format(indent*n_indent, nuc))
-            elif k_7 in ls:
-                n_indent = self.get_indent_amt(ls, k_7)
-                for nuc in self.unique_nuclei:
-                    of.write('{}self%anuc(self%i{})   = {}\n'.format(indent*n_indent, nuc, self.fmt_to_dp_f90(nuc.A)))
-            elif k_8 in ls:
-                n_indent = self.get_indent_amt(ls, k_8)
-                for nr in self.reaclib_rates:
-                    r = self.rates[nr]
-                    of.write('{}allocate( ctemp_rate_{}(7, self%rate_mult({})) )\n'.format(indent*n_indent, nr+1, nr+1))
-                    of.write('{}! {}\n'.format(indent*n_indent, r.fname))
-                    for ns,s in enumerate(r.sets):
-                        of.write('{}ctemp_rate_{}(:, {}) = (/  &\n'.format(indent*n_indent, nr+1, ns+1))
-                        for na,an in enumerate(s.a):
-                            of.write('{}{}'.format(indent*n_indent*2, self.fmt_to_dp_f90(an)))
-                            if na==len(s.a)-1:
+        typenet_avail = ['sundials']
+        if typenet=='sundials':
+            self.make_network_sundials()
+        else:
+            print("Network type '{}' unknown! Available types are:".format(typenet))
+            for tn in typenet_avail:
+                print(tn)
+            exit()
+
+    def make_network_sundials(self):
+        """
+        This writes the RHS, jacobian and ancillary files for the system of ODEs that
+        this network describes, using the template files.
+        """
+        
+        sundials_dir = os.path.join(self.pyreaclib_dir,
+                                    'templates',
+                                    'sundials-cvode')
+        template_file_select = os.path.join(sundials_dir,
+                                            '*.template')
+        template_files = glob.glob(template_file_select)
+        
+        indent = '  '
+
+        for tfile in template_files:
+            tfile_basename = os.path.basename(tfile)
+            if tfile_basename=='net_rates.f90.template':
+                # Network specification and rates
+                outfile = 'net_rates.f90'
+                try: of = open(outfile, "w")
+                except: raise
+                try: ifile = open(tfile, 'r')
+                except: raise
+                for l in ifile:
+                    ls = l.strip()
+                    k_0 = '<number_declare>'
+                    k_1 = '<ctemp_declare>'
+                    k_2 = '<ynuc_declare>'
+                    k_3 = '<inuc_declare>'
+                    k_4 = '<krxn_declare>'
+                    k_5 = '<rmul_declare>'
+                    k_6 = '<ebind_declare>'
+                    k_7 = '<anuc_declare>'
+                    k_8 = '<alloc_ctemp>'
+                    k_9 = '<dealloc_ctemp>'
+                    k_10 = '<switch_ctemp>'
+
+                    if k_0 in ls:
+                        n_indent = self.get_indent_amt(ls, k_0)
+                        of.write('{}integer, parameter :: number_equations = {}\n'.format(indent*n_indent, len(self.unique_nuclei)+1))
+                        of.write('{}integer, parameter :: number_nuclides = {}\n'.format(indent*n_indent, len(self.unique_nuclei)))
+                        of.write('{}integer, parameter :: number_reactions = {}\n'.format(indent*n_indent, len(self.rates)))
+                    elif k_1 in ls:
+                        n_indent = self.get_indent_amt(ls, k_1)
+                        for n in self.reaclib_rates:
+                            of.write('{}double precision, target, dimension(:,:), allocatable :: ctemp_rate_{}\n'.format(indent*n_indent, n+1))
+                    elif k_2 in ls:
+                        n_indent = self.get_indent_amt(ls, k_2)
+                        for nuc in self.unique_nuclei:
+                            of.write('{}double precision :: y{}\n'.format(indent*n_indent, nuc))
+                    elif k_3 in ls:
+                        n_indent = self.get_indent_amt(ls, k_3)
+                        for i,nuc in enumerate(self.unique_nuclei):
+                            of.write('{}integer :: i{}   = {}\n'.format(indent*n_indent, nuc, i+1))
+                        of.write('{}! Energy Generation Rate\n'.format(indent*n_indent))
+                        of.write('{}integer :: ienuc   = {}\n'.format(indent*n_indent, len(self.unique_nuclei)+1))
+                    elif k_4 in ls:
+                        n_indent = self.get_indent_amt(ls, k_4)
+                        for i,r in enumerate(self.rates):
+                            of.write('{}integer :: k_{}   = {}\n'.format(indent*n_indent, r.fname, i+1))
+                    elif k_5 in ls:
+                        n_indent = self.get_indent_amt(ls, k_5)
+                        for i,r in enumerate(self.rates):
+                            of.write('{}{}'.format(indent*n_indent, len(r.sets)))
+                            if i==len(self.rates)-1:
                                 of.write(' /)\n')
                             else:
                                 of.write(', &\n')
+                    elif k_6 in ls:
+                        n_indent = self.get_indent_amt(ls, k_6)
+                        for nuc in self.unique_nuclei:
+                            of.write('{}self%ebind_per_nucleon(self%i{})   = 0.0d0\n'.format(indent*n_indent, nuc))
+                    elif k_7 in ls:
+                        n_indent = self.get_indent_amt(ls, k_7)
+                        for nuc in self.unique_nuclei:
+                            of.write('{}self%anuc(self%i{})   = {}\n'.format(indent*n_indent, nuc, self.fmt_to_dp_f90(nuc.A)))
+                    elif k_8 in ls:
+                        n_indent = self.get_indent_amt(ls, k_8)
+                        for nr in self.reaclib_rates:
+                            r = self.rates[nr]
+                            of.write('{}allocate( ctemp_rate_{}(7, self%rate_mult({})) )\n'.format(indent*n_indent, nr+1, nr+1))
+                            of.write('{}! {}\n'.format(indent*n_indent, r.fname))
+                            for ns,s in enumerate(r.sets):
+                                of.write('{}ctemp_rate_{}(:, {}) = (/  &\n'.format(indent*n_indent, nr+1, ns+1))
+                                for na,an in enumerate(s.a):
+                                    of.write('{}{}'.format(indent*n_indent*2, self.fmt_to_dp_f90(an)))
+                                    if na==len(s.a)-1:
+                                        of.write(' /)\n')
+                                    else:
+                                        of.write(', &\n')
+                                of.write('\n')
+                        if len(self.tabular_rates) > 0:
+                            of.write('{}call init_table_meta()\n'.format(indent*n_indent))
                         of.write('\n')
-                if len(self.tabular_rates) > 0:
-                    of.write('{}call init_table_meta()\n'.format(indent*n_indent))
-                of.write('\n')
-            elif k_9 in ls:
-                n_indent = self.get_indent_amt(ls, k_9)
-                for nr in self.reaclib_rates:
-                    of.write('{}deallocate( ctemp_rate_{} )\n'.format(indent*n_indent, nr+1))
-            elif k_10 in ls:
-                n_indent = self.get_indent_amt(ls, k_10)
-                for nr,r in enumerate(self.rates):
-                    of.write('{}'.format(indent*n_indent))
-                    if nr!=0:
-                        of.write('else ')
-                    of.write('if (iwhich == {}) then\n'.format(nr+1))
-                    if nr in self.reaclib_rates:
-                        of.write('{}ctemp => ctemp_rate_{}\n'.format(indent*(n_indent+1), nr+1))
-                    elif nr in self.tabular_rates:
-                        of.write('{}call table_meta({})%bl_lookup(rhoy, temp, jtab_rate, rate)\n'.format(indent*(n_indent+1), r.table_index_name))
-                        of.write('{}return\n'.format(indent*(n_indent+1)))
+                    elif k_9 in ls:
+                        n_indent = self.get_indent_amt(ls, k_9)
+                        for nr in self.reaclib_rates:
+                            of.write('{}deallocate( ctemp_rate_{} )\n'.format(indent*n_indent, nr+1))
+                    elif k_10 in ls:
+                        n_indent = self.get_indent_amt(ls, k_10)
+                        for nr,r in enumerate(self.rates):
+                            of.write('{}'.format(indent*n_indent))
+                            if nr!=0:
+                                of.write('else ')
+                            of.write('if (iwhich == {}) then\n'.format(nr+1))
+                            if nr in self.reaclib_rates:
+                                of.write('{}ctemp => ctemp_rate_{}\n'.format(indent*(n_indent+1), nr+1))
+                            elif nr in self.tabular_rates:
+                                of.write('{}call table_meta({})%bl_lookup(rhoy, temp, jtab_rate, rate)\n'.format(indent*(n_indent+1), r.table_index_name))
+                                of.write('{}return\n'.format(indent*(n_indent+1)))
+                            else:
+                                print('ERROR: rate not in self.reaclib_rates or self.tabular_rates!')
+                                exit()
+                        of.write('{}end if\n'.format(indent*n_indent))
                     else:
-                        print('ERROR: rate not in self.reaclib_rates or self.tabular_rates!')
-                        exit()
-                of.write('{}end if\n'.format(indent*n_indent))
-            else:
-                of.write(l)    
-        of.close()
-
-        # Table specification and rates
-        outfile = 'table_rates.f90'
-        infile  = 'table_rates.f90.template'
-        try: of = open(outfile, "w")
-        except: raise
-        try: ifile = open(infile, 'r')
-        except: raise
-        for l in ifile:
-            ls = l.strip()
-            k_1 = '<numtab>'
-            k_2 = '<tab_indices>'
-            k_3 = '<init_table_meta>'
-            if k_1 in ls:
-                n_indent = self.get_indent_amt(ls, k_1)
-                of.write('{}integer, parameter :: num_tables   = {}\n'.format(indent*n_indent, len(self.tabular_rates)))
-            elif k_2 in ls:
-                n_indent = self.get_indent_amt(ls, k_2)
-                for n,irate in enumerate(self.tabular_rates):
-                    r = self.rates[irate]
-                    of.write('{}integer, parameter :: {}   = {}\n'.format(indent*n_indent, r.table_index_name, n+1))
-            elif k_3 in ls:
-                n_indent = self.get_indent_amt(ls, k_3)
-                for n,irate in enumerate(self.tabular_rates):
-                    r = self.rates[irate]
-                    of.write('{}table_meta({})%rate_table_file = \'{}\'\n'.format(indent*n_indent, r.table_index_name, r.table_file))
-                    of.write('{}table_meta({})%num_header = {}\n'.format(indent*n_indent, r.table_index_name, r.table_header_lines))
-                    of.write('{}table_meta({})%num_rhoy = {}\n'.format(indent*n_indent, r.table_index_name, r.table_rhoy_lines))
-                    of.write('{}table_meta({})%num_temp = {}\n'.format(indent*n_indent, r.table_index_name, r.table_temp_lines))
-                    of.write('{}table_meta({})%num_vars = {}\n'.format(indent*n_indent, r.table_index_name, r.table_num_vars))
-                    of.write('\n')
-            else:
-                of.write(l)
-        of.close()
-        
-        # Network ydot and jacobian
-        outfile = 'network.f90'
-        infile  = 'network.f90.template'
-        try: of = open(outfile, "w")
-        except: raise
-        try: ifile = open(infile, 'r')
-        except: raise
-        for l in ifile:
-            ls = l.strip()
-            k_1 = '<ydot>'
-            k_2 = '<jacobian>'
-            if k_1 in ls:
-                n_indent = self.get_indent_amt(ls, k_1)
-                # now make the RHSs
-                for n in self.unique_nuclei:
-                    of.write("{}YDOT(net_meta%i{}) = ( &\n".format(indent*n_indent, n))
-                    for r in self.nuclei_consumed[n]:
-                        c = r.reactants.count(n)
-                        if c == 1:
-                            of.write("{}   - {} &\n".format(indent*n_indent, r.ydot_string_f90()))
-                        else:
-                            of.write("{}   - {} * {} &\n".format(indent*n_indent, c, r.ydot_string_f90()))
-                    for r in self.nuclei_produced[n]:
-                        of.write("{}   + {} &\n".format(indent*n_indent, r.ydot_string_f90()))
-                    of.write("{}   )\n\n".format(indent*n_indent))
-            elif k_2 in ls:
-                n_indent = self.get_indent_amt(ls, k_2)
-                # now make the JACOBIAN
-                for nj in self.unique_nuclei:
-                    for ni in self.unique_nuclei:
-                        jac_identically_zero = True
-                        of.write("{}DJAC(net_meta%i{},net_meta%i{}) = ( &\n".format(indent*n_indent, nj, ni))
-                        for r in self.nuclei_consumed[nj]:
-                            sjac = r.jacobian_string_f90(nj, ni)
-                            if sjac != '':
-                                jac_identically_zero = False
-                                c = r.reactants.count(nj)
+                        of.write(l)    
+                of.close()
+                
+            elif tfile_basename=='table_rates.f90.template':
+                # Table specification and rates
+                outfile = 'table_rates.f90'
+                try: of = open(outfile, "w")
+                except: raise
+                try: ifile = open(tfile, 'r')
+                except: raise
+                for l in ifile:
+                    ls = l.strip()
+                    k_1 = '<numtab>'
+                    k_2 = '<tab_indices>'
+                    k_3 = '<init_table_meta>'
+                    if k_1 in ls:
+                        n_indent = self.get_indent_amt(ls, k_1)
+                        of.write('{}integer, parameter :: num_tables   = {}\n'.format(indent*n_indent, len(self.tabular_rates)))
+                    elif k_2 in ls:
+                        n_indent = self.get_indent_amt(ls, k_2)
+                        for n,irate in enumerate(self.tabular_rates):
+                            r = self.rates[irate]
+                            of.write('{}integer, parameter :: {}   = {}\n'.format(indent*n_indent, r.table_index_name, n+1))
+                    elif k_3 in ls:
+                        n_indent = self.get_indent_amt(ls, k_3)
+                        for n,irate in enumerate(self.tabular_rates):
+                            r = self.rates[irate]
+                            of.write('{}table_meta({})%rate_table_file = \'{}\'\n'.format(indent*n_indent, r.table_index_name, r.table_file))
+                            of.write('{}table_meta({})%num_header = {}\n'.format(indent*n_indent, r.table_index_name, r.table_header_lines))
+                            of.write('{}table_meta({})%num_rhoy = {}\n'.format(indent*n_indent, r.table_index_name, r.table_rhoy_lines))
+                            of.write('{}table_meta({})%num_temp = {}\n'.format(indent*n_indent, r.table_index_name, r.table_temp_lines))
+                            of.write('{}table_meta({})%num_vars = {}\n'.format(indent*n_indent, r.table_index_name, r.table_num_vars))
+                            of.write('\n')
+                    else:
+                        of.write(l)
+                of.close()
+                
+            elif tfile_basename=='network.f90.template':
+                # Network ydot and jacobian
+                outfile = 'network.f90'
+                try: of = open(outfile, "w")
+                except: raise
+                try: ifile = open(tfile, 'r')
+                except: raise
+                for l in ifile:
+                    ls = l.strip()
+                    k_1 = '<ydot>'
+                    k_2 = '<jacobian>'
+                    if k_1 in ls:
+                        n_indent = self.get_indent_amt(ls, k_1)
+                        # now make the RHSs
+                        for n in self.unique_nuclei:
+                            of.write("{}YDOT(net_meta%i{}) = ( &\n".format(indent*n_indent, n))
+                            for r in self.nuclei_consumed[n]:
+                                c = r.reactants.count(n)
                                 if c == 1:
-                                    of.write("{}   - {} &\n".format(indent*n_indent, sjac))
+                                    of.write("{}   - {} &\n".format(indent*n_indent, r.ydot_string_f90()))
                                 else:
-                                    of.write("{}   - {} * {} &\n".format(indent*n_indent, c, sjac))
-                        for r in self.nuclei_produced[nj]:
-                            sjac = r.jacobian_string_f90(nj, ni)
-                            if sjac != '':
-                                jac_identically_zero = False
-                                of.write("{}   + {} &\n".format(indent*n_indent, sjac))
-                        if jac_identically_zero:
-                            of.write("{}   + {} &\n".format(indent*n_indent, '0.0d0'))
-                        of.write("{}   )\n\n".format(indent*n_indent))
-            else:
-                of.write(l)    
-        of.close()
+                                    of.write("{}   - {} * {} &\n".format(indent*n_indent, c, r.ydot_string_f90()))
+                            for r in self.nuclei_produced[n]:
+                                of.write("{}   + {} &\n".format(indent*n_indent, r.ydot_string_f90()))
+                            of.write("{}   )\n\n".format(indent*n_indent))
+                    elif k_2 in ls:
+                        n_indent = self.get_indent_amt(ls, k_2)
+                        # now make the JACOBIAN
+                        for nj in self.unique_nuclei:
+                            for ni in self.unique_nuclei:
+                                jac_identically_zero = True
+                                of.write("{}DJAC(net_meta%i{},net_meta%i{}) = ( &\n".format(indent*n_indent, nj, ni))
+                                for r in self.nuclei_consumed[nj]:
+                                    sjac = r.jacobian_string_f90(nj, ni)
+                                    if sjac != '':
+                                        jac_identically_zero = False
+                                        c = r.reactants.count(nj)
+                                        if c == 1:
+                                            of.write("{}   - {} &\n".format(indent*n_indent, sjac))
+                                        else:
+                                            of.write("{}   - {} * {} &\n".format(indent*n_indent, c, sjac))
+                                for r in self.nuclei_produced[nj]:
+                                    sjac = r.jacobian_string_f90(nj, ni)
+                                    if sjac != '':
+                                        jac_identically_zero = False
+                                        of.write("{}   + {} &\n".format(indent*n_indent, sjac))
+                                if jac_identically_zero:
+                                    of.write("{}   + {} &\n".format(indent*n_indent, '0.0d0'))
+                                of.write("{}   )\n\n".format(indent*n_indent))
+                    else:
+                        of.write(l)    
+                of.close()
+                
+            elif tfile_basename=='integrator.f90.template':
+                # Integrator 
+                outfile = 'integrator.f90'
+                try: of = open(outfile, "w")
+                except: raise
+                try: ifile = open(tfile, 'r')
+                except: raise
+                for l in ifile:
+                    ls = l.strip()
+                    k_1 = '<y0_nuc_initialize>'
+                    k_2 = '<final_net_print>'
+                    if k_1 in ls:
+                        n_indent = self.get_indent_amt(ls, k_1)
+                        for n in self.unique_nuclei:
+                            of.write("{}cv_data%Y0(net_meta%i{})   = net_initial_abundances%y{}\n".format(indent*n_indent, n, n))
+                    elif k_2 in ls:
+                        n_indent = self.get_indent_amt(ls, k_2)
+                        for n in self.unique_nuclei:
+                            of.write("{}write(*,'(A,ES25.14)') '{}: ', cv_data%Y(net_meta%i{})\n".format(indent*n_indent, n, n))
+                    else:
+                        of.write(l)    
+                of.close()
 
-        # Integrator 
-        outfile = 'integrator.f90'
-        infile  = 'integrator.f90.template'
-        try: of = open(outfile, "w")
-        except: raise
-        try: ifile = open(infile, 'r')
-        except: raise
-        for l in ifile:
-            ls = l.strip()
-            k_1 = '<y0_nuc_initialize>'
-            k_2 = '<final_net_print>'
-            if k_1 in ls:
-                n_indent = self.get_indent_amt(ls, k_1)
-                for n in self.unique_nuclei:
-                    of.write("{}cv_data%Y0(net_meta%i{})   = net_initial_abundances%y{}\n".format(indent*n_indent, n, n))
-            elif k_2 in ls:
-                n_indent = self.get_indent_amt(ls, k_2)
-                for n in self.unique_nuclei:
-                    of.write("{}write(*,'(A,ES25.14)') '{}: ', cv_data%Y(net_meta%i{})\n".format(indent*n_indent, n, n))
-            else:
-                of.write(l)    
-        of.close()
+            elif tfile_basename=='data_wrangler.f90.template':
+                # history data storage and output
+                outfile = 'data_wrangler.f90'
+                try: of = open(outfile, "w")
+                except: raise
+                try: ifile = open(tfile, 'r')
+                except: raise
+                for l in ifile:
+                    ls = l.strip()
+                    k_1 = '<headerline>'
+                    if k_1 in ls:
+                        n_indent = self.get_indent_amt(ls, k_1)
+                        of.write('{}write(2, fmt=hfmt) '.format(indent*n_indent))
+                        for nuc in self.unique_nuclei:
+                            of.write("'Y_{}', ".format(nuc))
+                        of.write("'E_nuc', 'Time'\n")
+                    else:
+                        of.write(l)    
+                of.close()
+                ifile.close()
 
-        # history data storage and output
-        outfile = 'data_wrangler.f90'
-        infile  = 'data_wrangler.f90.template'
-        try: of = open(outfile, "w")
-        except: raise
-        try: ifile = open(infile, 'r')
-        except: raise
-        for l in ifile:
-            ls = l.strip()
-            k_1 = '<headerline>'
-            if k_1 in ls:
-                n_indent = self.get_indent_amt(ls, k_1)
-                of.write('{}write(2, fmt=hfmt) '.format(indent*n_indent))
-                for nuc in self.unique_nuclei:
-                    of.write("'Y_{}', ".format(nuc))
-                of.write("'E_nuc', 'Time'\n")
-            else:
-                of.write(l)    
-        of.close()
-        ifile.close()
+            elif tfile_basename=='cvode_parameters.f90.template':
+                # Parameter file for cvode
+                outfile = 'cvode_parameters.f90'
+                try: of = open(outfile, "w")
+                except: raise
+                try: ifile = open(tfile, 'r')
+                except: raise
+                for l in ifile:
+                    ls = l.strip()
+                    k_1 = '<cvodeneq>'
+                    if k_1 in ls:
+                        n_indent = self.get_indent_amt(ls, k_1)
+                        of.write('{} '.format(indent*n_indent))
+                        of.write('integer*8 :: NEQ = {} ! Size of ODE system\n'.format(len(self.unique_nuclei)+1))
+                    else:
+                        of.write(l)    
+                of.close()
+                ifile.close()
 
-        # Parameter file for cvode
-        outfile = 'cvode_parameters.f90'
-        infile  = 'cvode_parameters.f90.template'
-        try: of = open(outfile, "w")
-        except: raise
-        try: ifile = open(infile, 'r')
-        except: raise
-        for l in ifile:
-            ls = l.strip()
-            k_1 = '<cvodeneq>'
-            if k_1 in ls:
-                n_indent = self.get_indent_amt(ls, k_1)
-                of.write('{} '.format(indent*n_indent))
-                of.write('integer*8 :: NEQ = {} ! Size of ODE system\n'.format(len(self.unique_nuclei)+1))
+            elif tfile_basename=='net.par.template':
+                # net.par Namelist parameter inputs
+                outfile = 'net.par'
+                try: of = open(outfile, "w")
+                except: raise
+                try: ifile = open(tfile, 'r')
+                except: raise
+                for l in ifile:
+                    ls = l.strip()
+                    k_1 = '<net_ymass_init>'
+                    if k_1 in ls:
+                        n_indent = self.get_indent_amt(ls, k_1)
+                        for n in self.unique_nuclei:
+                            of.write('{}net_initial_abundances%y{} = 0.0d0\n'.format(indent*n_indent, n))
+                    else:
+                        of.write(l)    
+                of.close()
+                ifile.close()
+                
+            elif tfile_basename=='parameters.f90.template':
+                shutil.copyfile(tfile, 'parameters.f90')
+                
+            elif tfile_basename=='physical_constants.f90.template':
+                shutil.copyfile(tfile, 'physical_constants.f90')
+
+            elif tfile_basename=='GNUmakefile.template':
+                shutil.copyfile(tfile, 'GNUmakefile')
+                
             else:
-                of.write(l)    
-        of.close()
-        ifile.close()
+                print('WARNING: Template file {} present in {} with no rule for processing. Continuing...'.format(tfile, sundials_dir))
         
     def plot(self):
         G = nx.DiGraph()
