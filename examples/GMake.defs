@@ -1,0 +1,14 @@
+# executable
+ifdef ACC
+   acc_suf := .acc
+endif
+
+ifdef OMP
+   omp_suf := .omp
+endif
+
+suf=$(FC)$(omp_suf)$(acc_suf)
+
+
+pnames = $(addsuffix .$(suf).exe, $(basename $(program)))
+

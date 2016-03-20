@@ -1,0 +1,120 @@
+module net_rates
+  use physical_constants
+  use table_rates
+
+  implicit none
+
+<number_declare>(1)
+
+  ! Temperature coefficient arrays (numbers correspond to reaction numbers in net_info)
+<ctemp_declare>(1)
+
+  type :: net_initials_t
+    ! Initial abundances
+<ynuc_declare>(2)
+    double precision :: yenuc = 0.0d0
+  end type net_initials_t
+
+  type :: reaclib_coefs
+    ! how many rates in this reaction
+    integer :: m
+    ! coefficient array
+    ! ! First Index: Rate coefficients 1..7
+    ! ! Second Index: Reaction index 1..m
+    double precision, dimension(:,:), allocatable :: ctemp
+  end type reaclib_coefs
+
+  type :: net_info
+    integer :: neqs  = number_equations
+    integer :: nnuc  = number_nuclides
+    integer :: nrxn  = number_reactions
+    ! Nuclides
+<inuc_declare>(2)
+
+    ! Reactions
+<krxn_declare>(2)
+
+    ! Reaction multiplicities (how many rates contribute)
+    ! array indexed by the Reactions indices above
+    integer, dimension(number_reactions) :: rate_mult = (/ &
+<rmul_declare>(2)
+
+    ! Binding Energies Per Nucleon (MeV)
+    double precision, dimension(number_nuclides) :: ebind_per_nucleon
+
+    ! Nucleon number A
+    double precision, dimension(number_nuclides) :: anuc
+
+    ! Binding Energies (ergs)
+    double precision, dimension(number_nuclides) :: ebind
+
+  contains
+    procedure :: initialize => init_net_info
+    procedure :: terminate => term_net_info
+    procedure :: evaluate => rates_eval
+  end type net_info
+
+  type(net_info), target, save :: net_meta
+  type(net_initials_t), save :: net_initial_abundances
+
+contains
+
+  subroutine init_net_pars(pfile_unit)
+    integer, intent(in) :: pfile_unit
+
+    namelist /netpars/ net_initial_abundances
+    rewind(unit=pfile_unit)
+    read(unit=pfile_unit, nml=netpars)
+  end subroutine init_net_pars
+
+  subroutine init_net_info(self)
+    class(net_info) :: self
+    type(reaclib_coefs), pointer :: prate
+    integer :: i
+
+<ebind_declare>(2)
+
+<anuc_declare>(2)
+
+    do i = 1, self%nnuc
+      self%ebind(i) = self%ebind_per_nucleon(i) * self%anuc(i) * pc%erg_per_MeV
+    end do
+
+<alloc_ctemp>(2)
+
+
+
+  end subroutine init_net_info
+
+  subroutine term_net_info(self)
+    class(net_info) :: self
+<dealloc_ctemp>(2)
+  end subroutine term_net_info
+
+  subroutine rates_eval(self, rhoy, temp, iwhich, rate)
+    class(net_info) :: self
+    double precision, intent(in) :: temp, rhoy
+    integer, intent(in) :: iwhich
+    double precision, intent(out) :: rate
+    double precision, pointer :: ctemp(:,:)
+
+    double precision :: ri, T9, lnrate
+    integer :: i, j, m
+
+    ri = 0.0d0
+    rate = 0.0d0
+    T9 = temp/1.0d9
+
+<switch_ctemp>(2)
+
+    m = self%rate_mult(iwhich)
+    do i = 1, m
+      lnrate = ctemp(1,i) + ctemp(7,i) * LOG(T9)
+      do j = 2, 6
+        lnrate = lnrate + ctemp(j,i) * T9**((2.0d0*dble(j-1)-5.0d0)/3.0d0)
+      end do
+      rate = rate + EXP(lnrate)
+    end do
+  end subroutine rates_eval
+
+end module net_rates

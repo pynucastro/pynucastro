@@ -1,2 +1,10 @@
 *~
 *.pyc
+
+*.o
+*.mod
+*.exe
+
+_build.*
+
+*.pdf
