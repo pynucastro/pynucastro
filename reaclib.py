@@ -28,6 +28,12 @@ class Nucleus(object):
         if name == "p":
             self.el = "H"
             self.A = 1
+        elif name == "d":
+            self.el = "H"
+            self.A = 2
+        elif name == "t":
+            self.el = "H"
+            self.A = 3
         elif name == "n":
             self.el = "n"
             self.A = 1
@@ -592,8 +598,12 @@ class RateCollection(object):
             exit()
 
         for rf in self.files:
-            self.rates.append(Rate(rf))
-
+            try:
+                self.rates.append(Rate(rf))
+            except:
+                print("Error with file: {}".format(rf))
+                raise
+            
         # get the unique nuclei
         u = []
         for r in self.rates:
