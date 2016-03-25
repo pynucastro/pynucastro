@@ -693,7 +693,11 @@ class RateCollection(object):
                 else:
                     of.write("{}   -{}*{}\n".format(indent, c, r.ydot_string()))
             for r in self.nuclei_produced[n]:
-                of.write("{}   +{}\n".format(indent, r.ydot_string()))
+                c = r.products.count(n)
+                if c == 1:
+                    of.write("{}   +{}\n".format(indent, r.ydot_string()))
+                else:
+                    of.write("{}   +{}*{}\n".format(indent, c, r.ydot_string()))
             of.write("{}   )\n\n".format(indent))
 
         of.write("{}return dYdt\n".format(indent))
@@ -895,7 +899,11 @@ class RateCollection(object):
                                 else:
                                     of.write("{}   - {} * {} &\n".format(indent*n_indent, c, r.ydot_string_f90()))
                             for r in self.nuclei_produced[n]:
-                                of.write("{}   + {} &\n".format(indent*n_indent, r.ydot_string_f90()))
+                                c = r.products.count(n)
+                                if c == 1:
+                                    of.write("{}   + {} &\n".format(indent*n_indent, r.ydot_string_f90()))
+                                else:
+                                    of.write("{}   + {} * {} &\n".format(indent*n_indent, c, r.ydot_string_f90()))
                             of.write("{}   )\n\n".format(indent*n_indent))
                     elif k_2 in ls:
                         n_indent = self.get_indent_amt(ls, k_2)
@@ -917,7 +925,12 @@ class RateCollection(object):
                                     sjac = r.jacobian_string_f90(nj, ni)
                                     if sjac != '':
                                         jac_identically_zero = False
-                                        of.write("{}   + {} &\n".format(indent*n_indent, sjac))
+                                        c = r.products.count(nj)
+                                        if c == 1:
+                                            of.write("{}   + {} &\n".format(indent*n_indent, sjac))
+                                        else:
+                                            of.write("{}   + {} * {} &\n".format(indent*n_indent, c, sjac))
+
                                 if jac_identically_zero:
                                     of.write("{}   + {} &\n".format(indent*n_indent, '0.0d0'))
                                 of.write("{}   )\n\n".format(indent*n_indent))
