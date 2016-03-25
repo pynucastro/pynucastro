@@ -136,9 +136,6 @@ class Rate(object):
         self.products = []
         self.sets = []
 
-        self.dens_exp = 1
-        self.prefactor = 1.0    # this is 1/2 for rates like a + a (double counting)
-
         idx = self.file.rfind("-")
         self.fname = self.file[:idx].replace("--","-").replace("-","_")
 
@@ -161,7 +158,7 @@ class Rate(object):
         set_lines = [l for l in lines[1:] if not l.strip() == ""]
 
         if self.chapter == "t":
-            # e1 -> e2
+            # e1 -> e2, Tabulated
             s1 = set_lines.pop(0)
             s2 = set_lines.pop(0)
             s3 = set_lines.pop(0)
@@ -177,9 +174,7 @@ class Rate(object):
             self.table_temp_lines   = int(s5.strip())
             self.table_num_vars     = 6 # Hard-coded number of variables in tables for now.
             self.table_index_name = 'j_{}_{}'.format(self.reactants[0], self.products[0])
-            
-            self.string = "{} -> {}".format(*(self.reactants + self.products))
-            self.dens_exp = 0
+
         else:
             # the rest is the sets
             first = 1
@@ -205,112 +200,56 @@ class Rate(object):
                         self.reactants.append(Nucleus(f[0]))
                         self.products.append(Nucleus(f[1]))
 
-                        self.string = "{} -> {}".format(*(self.reactants + self.products))
-                        self.dens_exp = 0
-
                     elif self.chapter == 2:
                         # e1 -> e2 + e3
                         self.reactants.append(Nucleus(f[0]))
                         self.products += [Nucleus(f[1]), Nucleus(f[2])]
-
-                        self.string = "{} -> {} + {}".format(*(self.reactants + self.products))
-                        self.dens_exp = 0
 
                     elif self.chapter == 3:
                         # e1 -> e2 + e3 + e4
                         self.reactants.append(Nucleus(f[0]))
                         self.products += [Nucleus(f[1]), Nucleus(f[2]), Nucleus(f[3])]
 
-                        self.string = "{} -> {} + {} + {}".format(*(self.reactants + self.products))
-                        self.dens_exp = 0
-
                     elif self.chapter == 4:
                         # e1 + e2 -> e3
                         self.reactants += [Nucleus(f[0]), Nucleus(f[1])]
                         self.products.append(Nucleus(f[2]))
-
-                        if len(set(self.reactants)) == 1:
-                            self.prefactor = 1./2.
-
-                        self.dens_exp = 1
 
                     elif self.chapter == 5:
                         # e1 + e2 -> e3 + e4
                         self.reactants += [Nucleus(f[0]), Nucleus(f[1])]
                         self.products += [Nucleus(f[2]), Nucleus(f[3])]
 
-                        if len(set(self.reactants)) == 1:
-                            self.prefactor = 1./2.
-
-                        self.dens_exp = 1
-
                     elif self.chapter == 6:
                         # e1 + e2 -> e3 + e4 + e5
                         self.reactants += [Nucleus(f[0]), Nucleus(f[1])]
                         self.products += [Nucleus(f[2]), Nucleus(f[3]), Nucleus(f[4])]
-
-                        if len(set(self.reactants)) == 1:
-                            self.prefactor = 1./2.
-
-                        self.dens_exp = 1
 
                     elif self.chapter == 7:
                         # e1 + e2 -> e3 + e4 + e5 + e6
                         self.reactants += [Nucleus(f[0]), Nucleus(f[1])]
                         self.products += [Nucleus(f[2]), Nucleus(f[3]), Nucleus(f[4]), Nucleus(f[5])]
 
-                        if len(set(self.reactants)) == 1:
-                            self.prefactor = 1./2.
-
-                        self.dens_exp = 1
-
                     elif self.chapter == 8:
                         # e1 + e2 + e3 -> e4
                         self.reactants += [Nucleus(f[0]), Nucleus(f[1]), Nucleus(f[2])]
                         self.products.append(Nucleus(f[3]))
-
-                        if len(set(self.reactants)) == 1:
-                            self.prefactor = 1./6.  # 1/3!
-                        elif len(set(self.reactants)) == 2:
-                            self.prefactor = 1./2.
-
-                        self.dens_exp = 2
 
                     elif self.chapter == 9:
                         # e1 + e2 + e3 -> e4 + e5
                         self.reactants += [Nucleus(f[0]), Nucleus(f[1]), Nucleus(f[2])]
                         self.products += [Nucleus(f[3]), Nucleus(f[4])]
 
-                        if len(set(self.reactants)) == 1:
-                            self.prefactor = 1./6.  # 1/3!
-                        elif len(set(self.reactants)) == 2:
-                            self.prefactor = 1./2.
-
-                        self.dens_exp = 2
-
                     elif self.chapter == 10:
                         # e1 + e2 + e3 + e4 -> e5 + e6
                         self.reactants += [Nucleus(f[0]), Nucleus(f[1]), Nucleus(f[2]), Nucleus(f[3])]
                         self.products += [Nucleus(f[4]), Nucleus(f[5])]
 
-                        if len(set(self.reactants)) == 1:
-                            self.prefactor = 1./24.  # 1/4!
-                        elif len(set(self.reactants)) == 2:
-                            # there may be some instances where we have a + a + b + b,
-                            # so prefactor = 1/4?
-                            self.prefactor = 1./6. # 1/3!
-                        elif len(set(self.reactants)) == 3:
-                            self.prefactor = 1./2.
-
-                        self.dens_exp = 3
-
                     elif self.chapter == 11:
                         # e1 -> e2 + e3 + e4 + e5
                         self.reactants.append(Nucleus(f[0]))
                         self.products += [Nucleus(f[1]), Nucleus(f[2]), Nucleus(f[3]), Nucleus(f[4])]
-
-                        self.dens_exp = 0
-       
+                    
                     first = 0
 
                 # the second line contains the first 4 coefficients
@@ -322,7 +261,13 @@ class Rate(object):
 
                 a = [float(e) for e in a if not e.strip() == ""]
                 self.sets.append(SingleSet(a, label=label))
-
+                
+        # compute self.prefactor and self.dens_exp from the reactants
+        self.prefactor = 1.0  # this is 1/2 for rates like a + a (double counting)
+        for r in list(set(self.reactants)):
+            self.prefactor = self.prefactor/np.math.factorial(self.reactants.count(r))
+        self.dens_exp = len(self.reactants)-1
+        
         self.string = ""
         self.pretty_string = r"$"
         for n, r in enumerate(self.reactants):
