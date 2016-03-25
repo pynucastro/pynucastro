@@ -1,6 +1,6 @@
 # test-chapters
 
-Network generator containing one rate from each of the Reaclib chapters for testing.
+Network generator containing one rate from each of the 11 Reaclib chapters for testing.
 
 This would be a good place to start adding unit testing.
 
