@@ -73,10 +73,8 @@ program integrator
         ! Y = Y(TK) not Y(T) so we have to find Y(T)
         call FCVODE(cv_data%T, cv_data%T, cv_data%Y, cv_pars%ITASK, cv_data%IER)
         if (cv_data%IER == 0) then
-           if (cv_data%Y(net_meta%ip) > 0.0d0) then
-              call store_solution(cv_data%Y, cv_data%net_history, KOUNTER, cv_data%T)
-              cv_data%KFIN = KOUNTER
-           end if
+           call store_solution(cv_data%Y, cv_data%net_history, KOUNTER, cv_data%T)
+           cv_data%KFIN = KOUNTER
            write(*,*) 'Root Found! Integration halting.'
         else
            write(*,*) 'Error: Root find was unsuccessful!'
