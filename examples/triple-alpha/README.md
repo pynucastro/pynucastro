@@ -1,0 +1,1 @@
+Triple-alpha fusion to C-12 and the reverse rate.
