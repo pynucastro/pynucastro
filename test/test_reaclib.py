@@ -6,29 +6,31 @@ import datetime
 import subprocess
 import nose.tools
 
-test_cases = ['CNO',
-              'chapters',
-              'triple-alpha',
-              'C_f90',
-              'CNO_f90',
-              'triple-alpha_f90',
-              'URCA_f90']
-
+# Setup some directory names
 dir_test = os.path.dirname(os.path.realpath(__file__))
 dir_reaclib = os.path.split(dir_test)[0]
 dir_examples = os.path.join(dir_reaclib, 'examples')
 dir_runs = os.path.join(dir_test, 'runs')
 dir_standard = os.path.join(dir_test, 'standard')
+
+# Make a list of test cases from the directories in pyreaclib/test/standard
+test_cases = []
+for entry in os.listdir(dir_standard):
+    if os.path.isdir(os.path.join(dir_standard, entry)):
+        test_cases.append(entry)
+
+# Use the current date and time to create a unique testrun directory name
 dtnow = datetime.datetime.now()
 sdtnow = dtnow.strftime("%Y-%m-%d--%H-%M-%S-%f")
 dir_now = os.path.join(dir_runs, sdtnow)
-
 # Make a directory for these tests in runs
 os.mkdir(dir_now)
 print('Using test suite directory {}'.format(dir_now))
 
 def test_all():
     for tc in test_cases:
+        print('\nTesting {}:\n'.format(tc))
+        
         # Make dirs and copy script file
         dir_tc = os.path.join(dir_now, tc)
         dir_std_tc = os.path.join(dir_standard, tc)
