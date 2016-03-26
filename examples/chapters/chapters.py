@@ -17,7 +17,7 @@ files = ["b17-nnn-c14-wc12",
 
 rc = reaclib.RateCollection(files)
 
-rc.make_network(outfile="test-chapters.py")
+rc.make_network(outfile="chapters_rhs.py")
 
 
 
