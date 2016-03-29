@@ -28,6 +28,12 @@ class Nucleus(object):
         if name == "p":
             self.el = "H"
             self.A = 1
+        elif name == "d":
+            self.el = "H"
+            self.A = 2
+        elif name == "t":
+            self.el = "H"
+            self.A = 3
         elif name == "n":
             self.el = "n"
             self.A = 1
@@ -136,9 +142,6 @@ class Rate(object):
         self.products = []
         self.sets = []
 
-        self.dens_exp = 1
-        self.prefactor = 1.0    # this is 1/2 for rates like a + a (double counting)
-
         idx = self.file.rfind("-")
         self.fname = self.file[:idx].replace("--","-").replace("-","_")
 
@@ -161,7 +164,7 @@ class Rate(object):
         set_lines = [l for l in lines[1:] if not l.strip() == ""]
 
         if self.chapter == "t":
-            # e1 -> e2
+            # e1 -> e2, Tabulated
             s1 = set_lines.pop(0)
             s2 = set_lines.pop(0)
             s3 = set_lines.pop(0)
@@ -177,9 +180,7 @@ class Rate(object):
             self.table_temp_lines   = int(s5.strip())
             self.table_num_vars     = 6 # Hard-coded number of variables in tables for now.
             self.table_index_name = 'j_{}_{}'.format(self.reactants[0], self.products[0])
-            
-            self.string = "{} -> {}".format(*(self.reactants + self.products))
-            self.dens_exp = 0
+
         else:
             # the rest is the sets
             first = 1
@@ -205,112 +206,56 @@ class Rate(object):
                         self.reactants.append(Nucleus(f[0]))
                         self.products.append(Nucleus(f[1]))
 
-                        self.string = "{} -> {}".format(*(self.reactants + self.products))
-                        self.dens_exp = 0
-
                     elif self.chapter == 2:
                         # e1 -> e2 + e3
                         self.reactants.append(Nucleus(f[0]))
                         self.products += [Nucleus(f[1]), Nucleus(f[2])]
-
-                        self.string = "{} -> {} + {}".format(*(self.reactants + self.products))
-                        self.dens_exp = 0
 
                     elif self.chapter == 3:
                         # e1 -> e2 + e3 + e4
                         self.reactants.append(Nucleus(f[0]))
                         self.products += [Nucleus(f[1]), Nucleus(f[2]), Nucleus(f[3])]
 
-                        self.string = "{} -> {} + {} + {}".format(*(self.reactants + self.products))
-                        self.dens_exp = 0
-
                     elif self.chapter == 4:
                         # e1 + e2 -> e3
                         self.reactants += [Nucleus(f[0]), Nucleus(f[1])]
                         self.products.append(Nucleus(f[2]))
-
-                        if len(set(self.reactants)) == 1:
-                            self.prefactor = 1./2.
-
-                        self.dens_exp = 1
 
                     elif self.chapter == 5:
                         # e1 + e2 -> e3 + e4
                         self.reactants += [Nucleus(f[0]), Nucleus(f[1])]
                         self.products += [Nucleus(f[2]), Nucleus(f[3])]
 
-                        if len(set(self.reactants)) == 1:
-                            self.prefactor = 1./2.
-
-                        self.dens_exp = 1
-
                     elif self.chapter == 6:
                         # e1 + e2 -> e3 + e4 + e5
                         self.reactants += [Nucleus(f[0]), Nucleus(f[1])]
                         self.products += [Nucleus(f[2]), Nucleus(f[3]), Nucleus(f[4])]
-
-                        if len(set(self.reactants)) == 1:
-                            self.prefactor = 1./2.
-
-                        self.dens_exp = 1
 
                     elif self.chapter == 7:
                         # e1 + e2 -> e3 + e4 + e5 + e6
                         self.reactants += [Nucleus(f[0]), Nucleus(f[1])]
                         self.products += [Nucleus(f[2]), Nucleus(f[3]), Nucleus(f[4]), Nucleus(f[5])]
 
-                        if len(set(self.reactants)) == 1:
-                            self.prefactor = 1./2.
-
-                        self.dens_exp = 1
-
                     elif self.chapter == 8:
                         # e1 + e2 + e3 -> e4
                         self.reactants += [Nucleus(f[0]), Nucleus(f[1]), Nucleus(f[2])]
                         self.products.append(Nucleus(f[3]))
-
-                        if len(set(self.reactants)) == 1:
-                            self.prefactor = 1./6.  # 1/3!
-                        elif len(set(self.reactants)) == 2:
-                            self.prefactor = 1./2.
-
-                        self.dens_exp = 2
 
                     elif self.chapter == 9:
                         # e1 + e2 + e3 -> e4 + e5
                         self.reactants += [Nucleus(f[0]), Nucleus(f[1]), Nucleus(f[2])]
                         self.products += [Nucleus(f[3]), Nucleus(f[4])]
 
-                        if len(set(self.reactants)) == 1:
-                            self.prefactor = 1./6.  # 1/3!
-                        elif len(set(self.reactants)) == 2:
-                            self.prefactor = 1./2.
-
-                        self.dens_exp = 2
-
                     elif self.chapter == 10:
                         # e1 + e2 + e3 + e4 -> e5 + e6
                         self.reactants += [Nucleus(f[0]), Nucleus(f[1]), Nucleus(f[2]), Nucleus(f[3])]
                         self.products += [Nucleus(f[4]), Nucleus(f[5])]
 
-                        if len(set(self.reactants)) == 1:
-                            self.prefactor = 1./24.  # 1/4!
-                        elif len(set(self.reactants)) == 2:
-                            # there may be some instances where we have a + a + b + b,
-                            # so prefactor = 1/4?
-                            self.prefactor = 1./6. # 1/3!
-                        elif len(set(self.reactants)) == 3:
-                            self.prefactor = 1./2.
-
-                        self.dens_exp = 3
-
                     elif self.chapter == 11:
                         # e1 -> e2 + e3 + e4 + e5
                         self.reactants.append(Nucleus(f[0]))
                         self.products += [Nucleus(f[1]), Nucleus(f[2]), Nucleus(f[3]), Nucleus(f[4])]
-
-                        self.dens_exp = 0
-       
+                    
                     first = 0
 
                 # the second line contains the first 4 coefficients
@@ -322,7 +267,13 @@ class Rate(object):
 
                 a = [float(e) for e in a if not e.strip() == ""]
                 self.sets.append(SingleSet(a, label=label))
-
+                
+        # compute self.prefactor and self.dens_exp from the reactants
+        self.prefactor = 1.0  # this is 1/2 for rates like a + a (double counting)
+        for r in list(set(self.reactants)):
+            self.prefactor = self.prefactor/np.math.factorial(self.reactants.count(r))
+        self.dens_exp = len(self.reactants)-1
+        
         self.string = ""
         self.pretty_string = r"$"
         for n, r in enumerate(self.reactants):
@@ -443,7 +394,7 @@ class Rate(object):
             if c > 1:
                 Y_string += "Y[i{}]**{}".format(r, c)
             else:
-                Y_string += "Y[i{}]".format(r, c)
+                Y_string += "Y[i{}]".format(r)
 
             if n < len(set(self.reactants))-1:
                 Y_string += "*"
@@ -497,7 +448,7 @@ class Rate(object):
                 if c > 1:
                     Y_string += "Y[i{}]**{}".format(r, c)
                 else:
-                    Y_string += "Y[i{}]".format(r, c)
+                    Y_string += "Y[i{}]".format(r)
 
         # density dependence
         if self.dens_exp == 0:
@@ -532,7 +483,7 @@ class Rate(object):
             if c > 1:
                 Y_string += "Y(net_meta%i{})**{}".format(r, c)
             else:
-                Y_string += "Y(net_meta%i{})".format(r, c)
+                Y_string += "Y(net_meta%i{})".format(r)
 
             if n < len(set(self.reactants))-1:
                 Y_string += " * "
@@ -586,7 +537,7 @@ class Rate(object):
                 if c > 1:
                     Y_string += "Y(net_meta%i{})**{}".format(r, c)
                 else:
-                    Y_string += "Y(net_meta%i{})".format(r, c)
+                    Y_string += "Y(net_meta%i{})".format(r)
 
         # density dependence
         if self.dens_exp == 0:
@@ -647,8 +598,12 @@ class RateCollection(object):
             exit()
 
         for rf in self.files:
-            self.rates.append(Rate(rf))
-
+            try:
+                self.rates.append(Rate(rf))
+            except:
+                print("Error with file: {}".format(rf))
+                raise
+            
         # get the unique nuclei
         u = []
         for r in self.rates:
@@ -748,7 +703,11 @@ class RateCollection(object):
                 else:
                     of.write("{}   -{}*{}\n".format(indent, c, r.ydot_string()))
             for r in self.nuclei_produced[n]:
-                of.write("{}   +{}\n".format(indent, r.ydot_string()))
+                c = r.products.count(n)
+                if c == 1:
+                    of.write("{}   +{}\n".format(indent, r.ydot_string()))
+                else:
+                    of.write("{}   +{}*{}\n".format(indent, c, r.ydot_string()))
             of.write("{}   )\n\n".format(indent))
 
         of.write("{}return dYdt\n".format(indent))
@@ -950,7 +909,11 @@ class RateCollection(object):
                                 else:
                                     of.write("{}   - {} * {} &\n".format(indent*n_indent, c, r.ydot_string_f90()))
                             for r in self.nuclei_produced[n]:
-                                of.write("{}   + {} &\n".format(indent*n_indent, r.ydot_string_f90()))
+                                c = r.products.count(n)
+                                if c == 1:
+                                    of.write("{}   + {} &\n".format(indent*n_indent, r.ydot_string_f90()))
+                                else:
+                                    of.write("{}   + {} * {} &\n".format(indent*n_indent, c, r.ydot_string_f90()))
                             of.write("{}   )\n\n".format(indent*n_indent))
                     elif k_2 in ls:
                         n_indent = self.get_indent_amt(ls, k_2)
@@ -972,7 +935,12 @@ class RateCollection(object):
                                     sjac = r.jacobian_string_f90(nj, ni)
                                     if sjac != '':
                                         jac_identically_zero = False
-                                        of.write("{}   + {} &\n".format(indent*n_indent, sjac))
+                                        c = r.products.count(nj)
+                                        if c == 1:
+                                            of.write("{}   + {} &\n".format(indent*n_indent, sjac))
+                                        else:
+                                            of.write("{}   + {} * {} &\n".format(indent*n_indent, c, sjac))
+
                                 if jac_identically_zero:
                                     of.write("{}   + {} &\n".format(indent*n_indent, '0.0d0'))
                                 of.write("{}   )\n\n".format(indent*n_indent))

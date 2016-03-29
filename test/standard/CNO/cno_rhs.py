@@ -149,8 +149,8 @@ def rhs(t, Y, rho, T):
     dYdt[ip] = (
        -rho*Y[ip]*Y[ic12]*lambda_c12_pg_n13
        -rho*Y[ic13]*Y[ip]*lambda_c13_pg_n14
-       -rho*Y[in13]*Y[ip]*lambda_n13_pg_o14
-       -rho*Y[in14]*Y[ip]*lambda_n14_pg_o15
+       -rho*Y[ip]*Y[in13]*lambda_n13_pg_o14
+       -rho*Y[ip]*Y[in14]*lambda_n14_pg_o15
        -rho*Y[ip]*Y[in15]*lambda_n15_pa_c12
        )
 
@@ -170,12 +170,12 @@ def rhs(t, Y, rho, T):
 
     dYdt[in13] = (
        -Y[in13]*lambda_n13_c13
-       -rho*Y[in13]*Y[ip]*lambda_n13_pg_o14
+       -rho*Y[ip]*Y[in13]*lambda_n13_pg_o14
        +rho*Y[ip]*Y[ic12]*lambda_c12_pg_n13
        )
 
     dYdt[in14] = (
-       -rho*Y[in14]*Y[ip]*lambda_n14_pg_o15
+       -rho*Y[ip]*Y[in14]*lambda_n14_pg_o15
        +rho*Y[ic13]*Y[ip]*lambda_c13_pg_n14
        +Y[io14]*lambda_o14_n14
        )
@@ -187,12 +187,12 @@ def rhs(t, Y, rho, T):
 
     dYdt[io14] = (
        -Y[io14]*lambda_o14_n14
-       +rho*Y[in13]*Y[ip]*lambda_n13_pg_o14
+       +rho*Y[ip]*Y[in13]*lambda_n13_pg_o14
        )
 
     dYdt[io15] = (
        -Y[io15]*lambda_o15_n15
-       +rho*Y[in14]*Y[ip]*lambda_n14_pg_o15
+       +rho*Y[ip]*Y[in14]*lambda_n14_pg_o15
        )
 
     return dYdt

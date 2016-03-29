@@ -25,7 +25,15 @@ program integrator
   write(*,'(A,ES25.14)') 'Density = ', cv_pars%dens
 
   ! Initialize the Integration
-<y0_nuc_initialize>(1)
+  cv_data%Y0(net_meta%ip)   = net_initial_abundances%yp
+  cv_data%Y0(net_meta%ihe4)   = net_initial_abundances%yhe4
+  cv_data%Y0(net_meta%ic12)   = net_initial_abundances%yc12
+  cv_data%Y0(net_meta%ic13)   = net_initial_abundances%yc13
+  cv_data%Y0(net_meta%in13)   = net_initial_abundances%yn13
+  cv_data%Y0(net_meta%in14)   = net_initial_abundances%yn14
+  cv_data%Y0(net_meta%in15)   = net_initial_abundances%yn15
+  cv_data%Y0(net_meta%io14)   = net_initial_abundances%yo14
+  cv_data%Y0(net_meta%io15)   = net_initial_abundances%yo15
   cv_data%Y0(net_meta%ienuc)   = net_initial_abundances%yenuc
 
   write(*,*) 'Initialization at time 0: '
@@ -102,7 +110,15 @@ program integrator
   write(*,'(A,ES25.14)') 'Integrated to time: ', cv_data%T
   write(*,'(A,ES25.14)') 'Final enuc: ', cv_data%Y(net_meta%ienuc)
   write(*,'(A,ES25.14)') 'Average enuc_dot: ', cv_data%Y(net_meta%ienuc)/cv_data%T
-<final_net_print>(1)
+  write(*,'(A,ES25.14)') 'p: ', cv_data%Y(net_meta%ip)
+  write(*,'(A,ES25.14)') 'he4: ', cv_data%Y(net_meta%ihe4)
+  write(*,'(A,ES25.14)') 'c12: ', cv_data%Y(net_meta%ic12)
+  write(*,'(A,ES25.14)') 'c13: ', cv_data%Y(net_meta%ic13)
+  write(*,'(A,ES25.14)') 'n13: ', cv_data%Y(net_meta%in13)
+  write(*,'(A,ES25.14)') 'n14: ', cv_data%Y(net_meta%in14)
+  write(*,'(A,ES25.14)') 'n15: ', cv_data%Y(net_meta%in15)
+  write(*,'(A,ES25.14)') 'o14: ', cv_data%Y(net_meta%io14)
+  write(*,'(A,ES25.14)') 'o15: ', cv_data%Y(net_meta%io15)
 
   deallocate( cv_data%net_history )
 
