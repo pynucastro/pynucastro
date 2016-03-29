@@ -48,7 +48,8 @@ def test_all():
         pycall_stdout, pycall_stderr = pycall.communicate()
 
         if pycall_stderr:
-            print('Error in python call of script {}!'.format(script_name))
+            print('Error in python call of script {}:'.format(os.path.join(dir_tc, script_name)))
+            print(pycall_stderr)
             exit()
 
         # Compare with standard
@@ -61,7 +62,8 @@ def test_all():
             diffcall_stdout, diffcall_stderr = diffcall.communicate()
 
             if diffcall_stderr:
-                print('Error in diff call between {} and {}!'.format(f_tc, f_std_tc))
+                print('Error in diff call between {} and {}:'.format(f_tc, f_std_tc))
+                print(diffcall_stderr)
                 exit()
 
             yield nose.tools.assert_equals, diffcall_stdout, ''
