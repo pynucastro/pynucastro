@@ -394,7 +394,7 @@ class Rate(object):
             if c > 1:
                 Y_string += "Y[i{}]**{}".format(r, c)
             else:
-                Y_string += "Y[i{}]".format(r, c)
+                Y_string += "Y[i{}]".format(r)
 
             if n < len(set(self.reactants))-1:
                 Y_string += "*"
@@ -448,7 +448,7 @@ class Rate(object):
                 if c > 1:
                     Y_string += "Y[i{}]**{}".format(r, c)
                 else:
-                    Y_string += "Y[i{}]".format(r, c)
+                    Y_string += "Y[i{}]".format(r)
 
         # density dependence
         if self.dens_exp == 0:
@@ -483,7 +483,7 @@ class Rate(object):
             if c > 1:
                 Y_string += "Y(net_meta%i{})**{}".format(r, c)
             else:
-                Y_string += "Y(net_meta%i{})".format(r, c)
+                Y_string += "Y(net_meta%i{})".format(r)
 
             if n < len(set(self.reactants))-1:
                 Y_string += " * "
@@ -537,7 +537,7 @@ class Rate(object):
                 if c > 1:
                     Y_string += "Y(net_meta%i{})**{}".format(r, c)
                 else:
-                    Y_string += "Y(net_meta%i{})".format(r, c)
+                    Y_string += "Y(net_meta%i{})".format(r)
 
         # density dependence
         if self.dens_exp == 0:
