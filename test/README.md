@@ -10,7 +10,9 @@ The ```test/standard``` subdirectory contains subdirectories for each problem in
 
 The ```runs``` directory is an empty directory (contents will be ignored by git) which holds the output of each unit test in a directory named according to the following pattern:
 
-```[year]-[month]-[day]--[hh]-[mm]-[ss]-[microseconds]```
+```
+[year]-[month]-[day]--[hh]-[mm]-[ss]-[microseconds]
+```
 
 Within each such directory (eg. XYZ), ```test_reaclib.py``` will mirror the directory structure in ```test/standard``` while copying in the contents of the corresponding directories in ```pyreaclib/examples```. Next, ```test_reaclib.py``` runs the reaclib script in each of the directories in ```test/runs/XYZ``` and calls ```diff``` to compare each corresponding file in ```test/standard``` with the files produced in ```test/runs/XYZ```.
 
