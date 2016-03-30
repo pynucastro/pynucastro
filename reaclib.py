@@ -1035,18 +1035,11 @@ class RateCollection(object):
                         of.write(l)    
                 of.close()
                 ifile.close()
-                
-            elif tfile_basename=='parameters.f90.template':
-                shutil.copyfile(tfile, 'parameters.f90')
-                
-            elif tfile_basename=='physical_constants.f90.template':
-                shutil.copyfile(tfile, 'physical_constants.f90')
 
-            elif tfile_basename=='GNUmakefile.template':
-                shutil.copyfile(tfile, 'GNUmakefile')
-                
             else:
-                print('WARNING: Template file {} present in {} with no rule for processing. Continuing...'.format(tfile, sundials_dir))
+                # Copy any other files, stripping the '.template' suffix.
+                tfile_basename_copy, ext = os.path.splitext(tfile_basename)
+                shutil.copyfile(tfile, tfile_basename_copy)
         
     def plot(self):
         G = nx.DiGraph()
