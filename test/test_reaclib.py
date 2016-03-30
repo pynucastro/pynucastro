@@ -63,9 +63,15 @@ def test_all():
 
             if diffcall_stderr:
                 print('Error in diff call between {} and {}:'.format(f_tc, f_std_tc))
-                print(diffcall_stderr)
+                print(diffcall_stderr.decode('utf-8'))
                 exit()
 
-            yield nose.tools.assert_equals, diffcall_stdout, ''
+            if diffcall_stdout!=b'':
+                print('--------------------')
+                print(file)
+                print(diffcall_stdout.decode('utf-8'))
+                print('--------------------')
+
+            yield nose.tools.assert_equals, diffcall_stdout, b''
     
 

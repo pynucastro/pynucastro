@@ -39,7 +39,7 @@ contains
     write(*,*) "T: ", T
     YDOT(net_meta%ip) = ( &
        - dens * Y(net_meta%ip) * Y(net_meta%ic12) * rxn_rates(net_meta%k_c12_pg_n13) &
-       - dens * Y(net_meta%ic13) * Y(net_meta%ip) * rxn_rates(net_meta%k_c13_pg_n14) &
+       - dens * Y(net_meta%ip) * Y(net_meta%ic13) * rxn_rates(net_meta%k_c13_pg_n14) &
        - dens * Y(net_meta%ip) * Y(net_meta%in14) * rxn_rates(net_meta%k_n14_pg_o15) &
        - dens * Y(net_meta%ip) * Y(net_meta%in15) * rxn_rates(net_meta%k_n15_pa_c12) &
        - dens * Y(net_meta%ip) * Y(net_meta%in13) * rxn_rates(net_meta%k_n13_pg_o14) &
@@ -55,7 +55,7 @@ contains
        )
 
     YDOT(net_meta%ic13) = ( &
-       - dens * Y(net_meta%ic13) * Y(net_meta%ip) * rxn_rates(net_meta%k_c13_pg_n14) &
+       - dens * Y(net_meta%ip) * Y(net_meta%ic13) * rxn_rates(net_meta%k_c13_pg_n14) &
        + Y(net_meta%in13) * rxn_rates(net_meta%k_n13_c13) &
        )
 
@@ -67,7 +67,7 @@ contains
 
     YDOT(net_meta%in14) = ( &
        - dens * Y(net_meta%ip) * Y(net_meta%in14) * rxn_rates(net_meta%k_n14_pg_o15) &
-       + dens * Y(net_meta%ic13) * Y(net_meta%ip) * rxn_rates(net_meta%k_c13_pg_n14) &
+       + dens * Y(net_meta%ip) * Y(net_meta%ic13) * rxn_rates(net_meta%k_c13_pg_n14) &
        + Y(net_meta%io14) * rxn_rates(net_meta%k_o14_n14) &
        )
 
