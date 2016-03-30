@@ -13,6 +13,12 @@ import matplotlib.pyplot as plt
 
 from periodictable import elements
 
+def list_unique(inlist):
+    outlist = []
+    for x in inlist:
+        if not x in outlist:
+            outlist.append(x)
+    return outlist
 
 class Nucleus(object):
     """
@@ -270,7 +276,7 @@ class Rate(object):
                 
         # compute self.prefactor and self.dens_exp from the reactants
         self.prefactor = 1.0  # this is 1/2 for rates like a + a (double counting)
-        for r in list(set(self.reactants)):
+        for r in list_unique(self.reactants):
             self.prefactor = self.prefactor/np.math.factorial(self.reactants.count(r))
         self.dens_exp = len(self.reactants)-1
         
@@ -389,14 +395,14 @@ class Rate(object):
 
         # composition dependence
         Y_string = ""
-        for n, r in enumerate(set(self.reactants)):
+        for n, r in enumerate(list_unique(self.reactants)):
             c = self.reactants.count(r)
             if c > 1:
                 Y_string += "Y[i{}]**{}".format(r, c)
             else:
                 Y_string += "Y[i{}]".format(r)
 
-            if n < len(set(self.reactants))-1:
+            if n < len(list_unique(self.reactants))-1:
                 Y_string += "*"
 
         # density dependence
@@ -409,7 +415,7 @@ class Rate(object):
 
         # prefactor
         if not self.prefactor == 1.0:
-            prefactor_string = "{}*".format(self.prefactor)
+            prefactor_string = "{:0.15f}*".format(self.prefactor)
         else:
             prefactor_string = ""
 
@@ -431,19 +437,19 @@ class Rate(object):
 
         # composition dependence
         Y_string = ""
-        for n, r in enumerate(set(self.reactants)):
+        for n, r in enumerate(list_unique(self.reactants)):
             c = self.reactants.count(r)
             if y_i == r:
                 if c == 1:
                     continue
-                if n>0 and n < len(set(self.reactants))-1:
+                if n>0 and n < len(list_unique(self.reactants))-1:
                     Y_string += "*"
                 if c > 2:
                     Y_string += "{}*Y[i{}]**{}".format(c, r, c-1)
                 elif c==2:
                     Y_string += "2*Y[i{}]".format(r)
             else:
-                if n>0 and n < len(set(self.reactants))-1:
+                if n>0 and n < len(list_unique(self.reactants))-1:
                     Y_string += "*"
                 if c > 1:
                     Y_string += "Y[i{}]**{}".format(r, c)
@@ -460,7 +466,7 @@ class Rate(object):
 
         # prefactor
         if not self.prefactor == 1.0:
-            prefactor_string = "{}*".format(self.prefactor)
+            prefactor_string = "{:0.15f}*".format(self.prefactor)
         else:
             prefactor_string = ""
 
@@ -478,14 +484,14 @@ class Rate(object):
 
         # composition dependence
         Y_string = ""
-        for n, r in enumerate(set(self.reactants)):
+        for n, r in enumerate(list_unique(self.reactants)):
             c = self.reactants.count(r)
             if c > 1:
                 Y_string += "Y(net_meta%i{})**{}".format(r, c)
             else:
                 Y_string += "Y(net_meta%i{})".format(r)
 
-            if n < len(set(self.reactants))-1:
+            if n < len(list_unique(self.reactants))-1:
                 Y_string += " * "
 
         # density dependence
@@ -498,7 +504,7 @@ class Rate(object):
 
         # prefactor
         if not self.prefactor == 1.0:
-            prefactor_string = "{} * ".format(self.prefactor)
+            prefactor_string = "{:0.15f} * ".format(self.prefactor)
         else:
             prefactor_string = ""
 
@@ -520,19 +526,19 @@ class Rate(object):
 
         # composition dependence
         Y_string = ""
-        for n, r in enumerate(set(self.reactants)):
+        for n, r in enumerate(list_unique(self.reactants)):
             c = self.reactants.count(r)
             if y_i == r:
                 if c == 1:
                     continue
-                if n>0 and n < len(set(self.reactants))-1:
+                if n>0 and n < len(list_unique(self.reactants))-1:
                     Y_string += "*"
                 if c > 2:
                     Y_string += "{}*Y(net_meta%i{})**{}".format(c, r, c-1)
                 elif c==2:
                     Y_string += "2*Y(net_meta%i{})".format(r)
             else:
-                if n>0 and n < len(set(self.reactants))-1:
+                if n>0 and n < len(list_unique(self.reactants))-1:
                     Y_string += "*"
                 if c > 1:
                     Y_string += "Y(net_meta%i{})**{}".format(r, c)
@@ -549,7 +555,7 @@ class Rate(object):
 
         # prefactor
         if not self.prefactor == 1.0:
-            prefactor_string = "{} * ".format(self.prefactor)
+            prefactor_string = "{:0.15f} * ".format(self.prefactor)
         else:
             prefactor_string = ""
 
@@ -607,8 +613,8 @@ class RateCollection(object):
         # get the unique nuclei
         u = []
         for r in self.rates:
-            t = list(set(r.reactants + r.products))
-            u = list(set(u + t))
+            t = list_unique(r.reactants + r.products)
+            u = list_unique(u + t)
 
         self.unique_nuclei = sorted(u)
 

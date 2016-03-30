@@ -173,50 +173,50 @@ def rhs(t, Y, rho, T):
     dYdt = np.zeros((nnuc), dtype=np.float64)
 
     dYdt[in] = (
-       -0.5*rho**3*Y[ihe4]**2*Y[ip]*Y[in]*lambda_he4_npahe3_li7
+       -0.500000000000000*rho**3*Y[in]*Y[ip]*Y[ihe4]**2*lambda_he4_npahe3_li7
        -Y[in]*lambda_n_p
-       -rho*Y[ip]*Y[in]*lambda_p_ng_d
+       -rho*Y[in]*Y[ip]*lambda_p_ng_d
        +3*Y[ib17]*lambda_b17_nnn_c14
        +2*Y[ihe6]*lambda_he6_gnn_he4
-       +2*rho*Y[ili7]*Y[it]*lambda_li7_tnna_he4
+       +2*rho*Y[it]*Y[ili7]*lambda_li7_tnna_he4
        +Y[it]*lambda_t_gn_d
        +rho*Y[ip]*Y[it]*lambda_t_pn_he3
        )
 
     dYdt[ip] = (
-       -0.5*rho**3*Y[ihe4]**2*Y[ip]*Y[in]*lambda_he4_npahe3_li7
-       -2*0.5*rho**2*Y[ihe4]*Y[ip]**2*lambda_he4_pphe3_he3
-       -rho*Y[ip]*Y[in]*lambda_p_ng_d
+       -0.500000000000000*rho**3*Y[in]*Y[ip]*Y[ihe4]**2*lambda_he4_npahe3_li7
+       -2*0.500000000000000*rho**2*Y[ip]**2*Y[ihe4]*lambda_he4_pphe3_he3
+       -rho*Y[in]*Y[ip]*lambda_p_ng_d
        -rho*Y[ip]*Y[it]*lambda_t_pn_he3
-       +2*0.5*rho*Y[ihe3]**2*lambda_he3_he3pp_he4
+       +2*0.500000000000000*rho*Y[ihe3]**2*lambda_he3_he3pp_he4
        +Y[in]*lambda_n_p
        )
 
     dYdt[id] = (
-       +rho*Y[ip]*Y[in]*lambda_p_ng_d
+       +rho*Y[in]*Y[ip]*lambda_p_ng_d
        +Y[it]*lambda_t_gn_d
        )
 
     dYdt[it] = (
-       -rho*Y[ili7]*Y[it]*lambda_li7_tnna_he4
+       -rho*Y[it]*Y[ili7]*lambda_li7_tnna_he4
        -Y[it]*lambda_t_gn_d
        -rho*Y[ip]*Y[it]*lambda_t_pn_he3
        )
 
     dYdt[ihe3] = (
-       -2*0.5*rho*Y[ihe3]**2*lambda_he3_he3pp_he4
-       +0.5*rho**3*Y[ihe4]**2*Y[ip]*Y[in]*lambda_he4_npahe3_li7
-       +2*0.5*rho**2*Y[ihe4]*Y[ip]**2*lambda_he4_pphe3_he3
+       -2*0.500000000000000*rho*Y[ihe3]**2*lambda_he3_he3pp_he4
+       +0.500000000000000*rho**3*Y[in]*Y[ip]*Y[ihe4]**2*lambda_he4_npahe3_li7
+       +2*0.500000000000000*rho**2*Y[ip]**2*Y[ihe4]*lambda_he4_pphe3_he3
        +rho*Y[ip]*Y[it]*lambda_t_pn_he3
        )
 
     dYdt[ihe4] = (
-       -3*0.166666666667*rho**2*Y[ihe4]**3*lambda_he4_aag_c12
-       -2*0.5*rho**3*Y[ihe4]**2*Y[ip]*Y[in]*lambda_he4_npahe3_li7
-       -0.5*rho**2*Y[ihe4]*Y[ip]**2*lambda_he4_pphe3_he3
-       +0.5*rho*Y[ihe3]**2*lambda_he3_he3pp_he4
+       -3*0.166666666666667*rho**2*Y[ihe4]**3*lambda_he4_aag_c12
+       -2*0.500000000000000*rho**3*Y[in]*Y[ip]*Y[ihe4]**2*lambda_he4_npahe3_li7
+       -0.500000000000000*rho**2*Y[ip]**2*Y[ihe4]*lambda_he4_pphe3_he3
+       +0.500000000000000*rho*Y[ihe3]**2*lambda_he3_he3pp_he4
        +Y[ihe6]*lambda_he6_gnn_he4
-       +2*rho*Y[ili7]*Y[it]*lambda_li7_tnna_he4
+       +2*rho*Y[it]*Y[ili7]*lambda_li7_tnna_he4
        )
 
     dYdt[ihe6] = (
@@ -224,8 +224,8 @@ def rhs(t, Y, rho, T):
        )
 
     dYdt[ili7] = (
-       -rho*Y[ili7]*Y[it]*lambda_li7_tnna_he4
-       +0.5*rho**3*Y[ihe4]**2*Y[ip]*Y[in]*lambda_he4_npahe3_li7
+       -rho*Y[it]*Y[ili7]*lambda_li7_tnna_he4
+       +0.500000000000000*rho**3*Y[in]*Y[ip]*Y[ihe4]**2*lambda_he4_npahe3_li7
        )
 
     dYdt[ib17] = (
@@ -233,7 +233,7 @@ def rhs(t, Y, rho, T):
        )
 
     dYdt[ic12] = (
-       +0.166666666667*rho**2*Y[ihe4]**3*lambda_he4_aag_c12
+       +0.166666666666667*rho**2*Y[ihe4]**3*lambda_he4_aag_c12
        )
 
     dYdt[ic14] = (

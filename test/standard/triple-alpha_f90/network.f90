@@ -38,13 +38,13 @@ contains
 
     write(*,*) "T: ", T
     YDOT(net_meta%ihe4) = ( &
-       - 3 * 0.166666666667 * dens**2 * Y(net_meta%ihe4)**3 * rxn_rates(net_meta%k_he4_aag_c12) &
+       - 3 * 0.166666666666667 * dens**2 * Y(net_meta%ihe4)**3 * rxn_rates(net_meta%k_he4_aag_c12) &
        + 3 * Y(net_meta%ic12) * rxn_rates(net_meta%k_c12_gaa_he4) &
        )
 
     YDOT(net_meta%ic12) = ( &
        - Y(net_meta%ic12) * rxn_rates(net_meta%k_c12_gaa_he4) &
-       + 0.166666666667 * dens**2 * Y(net_meta%ihe4)**3 * rxn_rates(net_meta%k_he4_aag_c12) &
+       + 0.166666666666667 * dens**2 * Y(net_meta%ihe4)**3 * rxn_rates(net_meta%k_he4_aag_c12) &
        )
 
 
@@ -103,7 +103,7 @@ contains
       ! DJAC(j, i) = d(YDOT(j))/dY(i)
 
       DJAC(net_meta%ihe4,net_meta%ihe4) = ( &
-         - 3 * 0.166666666667 * dens**2 * 3*Y(net_meta%ihe4)**2 * rxn_rates(net_meta%k_he4_aag_c12) &
+         - 3 * 0.166666666666667 * dens**2 * 3*Y(net_meta%ihe4)**2 * rxn_rates(net_meta%k_he4_aag_c12) &
          )
 
       DJAC(net_meta%ihe4,net_meta%ic12) = ( &
@@ -111,7 +111,7 @@ contains
          )
 
       DJAC(net_meta%ic12,net_meta%ihe4) = ( &
-         + 0.166666666667 * dens**2 * 3*Y(net_meta%ihe4)**2 * rxn_rates(net_meta%k_he4_aag_c12) &
+         + 0.166666666666667 * dens**2 * 3*Y(net_meta%ihe4)**2 * rxn_rates(net_meta%k_he4_aag_c12) &
          )
 
       DJAC(net_meta%ic12,net_meta%ic12) = ( &
