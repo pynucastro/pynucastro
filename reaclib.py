@@ -415,7 +415,7 @@ class Rate(object):
 
         # prefactor
         if not self.prefactor == 1.0:
-            prefactor_string = "{:0.15f}*".format(self.prefactor)
+            prefactor_string = "{:1.14e}*".format(self.prefactor)
         else:
             prefactor_string = ""
 
@@ -466,7 +466,7 @@ class Rate(object):
 
         # prefactor
         if not self.prefactor == 1.0:
-            prefactor_string = "{:0.15f}*".format(self.prefactor)
+            prefactor_string = "{:1.14e}*".format(self.prefactor)
         else:
             prefactor_string = ""
 
@@ -504,7 +504,7 @@ class Rate(object):
 
         # prefactor
         if not self.prefactor == 1.0:
-            prefactor_string = "{:0.15f} * ".format(self.prefactor)
+            prefactor_string = "{:1.14e} * ".format(self.prefactor).replace('e','d')
         else:
             prefactor_string = ""
 
@@ -555,7 +555,7 @@ class Rate(object):
 
         # prefactor
         if not self.prefactor == 1.0:
-            prefactor_string = "{:0.15f} * ".format(self.prefactor)
+            prefactor_string = "{:1.14e} * ".format(self.prefactor).replace('e','d')
         else:
             prefactor_string = ""
 
