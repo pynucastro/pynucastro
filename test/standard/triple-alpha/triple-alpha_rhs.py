@@ -52,13 +52,13 @@ def rhs(t, Y, rho, T):
     dYdt = np.zeros((nnuc), dtype=np.float64)
 
     dYdt[ihe4] = (
-       -3*0.166666666666667*rho**2*Y[ihe4]**3*lambda_he4_aag_c12
+       -3*1.66666666666667e-01*rho**2*Y[ihe4]**3*lambda_he4_aag_c12
        +3*Y[ic12]*lambda_c12_gaa_he4
        )
 
     dYdt[ic12] = (
        -Y[ic12]*lambda_c12_gaa_he4
-       +0.166666666666667*rho**2*Y[ihe4]**3*lambda_he4_aag_c12
+       +1.66666666666667e-01*rho**2*Y[ihe4]**3*lambda_he4_aag_c12
        )
 
     return dYdt
