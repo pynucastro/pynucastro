@@ -49,10 +49,10 @@ def test_all():
 
         # Run test case
         mk = sys.modules.keys()
-        mk_before = mk[:]
+        mk_before = [k for k in mk]
         tcmod = importlib.import_module(script_module_name)
         mk = sys.modules.keys()
-        mk_after = mk[:]
+        mk_after = [k for k in mk]
 
         # Necessary if muliple test case paths use the same script name:
         ## Remove test case module and modules it imported from module list
@@ -85,6 +85,6 @@ def test_all():
             if diffreport.strip() != b'':
                 print('')
                 print(diffreport)
-            yield nose.tools.assert_equals, diffreport.strip(), b''
+            yield nose.tools.assert_equals, diffreport.strip(), ''
     
 
