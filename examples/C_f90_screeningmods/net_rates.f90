@@ -1,13 +1,13 @@
 module net_rates
   use physical_constants
   use screening_module, only: screen5, add_screening_factor, screening_init, plasma_state, fill_plasma_state
-  use network, only: nspec, aion, zion
+  use network, only: nspec, aion, zion, net_meta
   use table_rates
 
   implicit none
 
   integer, parameter :: nreact = 4
-  logical :: screen_reaclib = .false.
+  logical :: screen_reaclib = .true.
 
   ! Temperature coefficient arrays (numbers correspond to reaction numbers in net_info)
   double precision, target, dimension(:,:), allocatable :: ctemp_rate_1
@@ -31,6 +31,13 @@ module net_rates
        1, &
        1, &
        1 /)
+
+  ! Should these reactions be screened?
+  logical, dimension(nreact) :: do_screening = (/ &
+       .true., &
+       .true., &
+       .true., &
+       .false. /)
 
 contains
 
@@ -100,7 +107,20 @@ contains
 
   subroutine net_screening_init()
     ! Adds screening factors and calls screening_init
-!    <add_screening>(2)
+    !    <add_screening>(2)
+
+    call add_screening_factor(zion(net_meta%ic12), aion(net_meta%ic12), &
+         zion(net_meta%ic12), aion(net_meta%ic12))
+
+    call add_screening_factor(zion(net_meta%ic12), aion(net_meta%ic12), &
+         zion(net_meta%ic12), aion(net_meta%ic12))
+
+    call add_screening_factor(zion(net_meta%ic12), aion(net_meta%ic12), &
+         zion(net_meta%ic12), aion(net_meta%ic12))
+
+!    call add_screening_factor(zion(net_meta%in), aion(net_meta%in), &
+!         zion(net_meta%ip), aion(net_meta%ip)) ! Is this right for n --> p ?
+        
     call screening_init()    
   end subroutine net_screening_init
 
@@ -158,7 +178,7 @@ contains
       drate_dt = drate_dt + dirate_dt
     end do
     
-    if ( screen_reaclib ) then
+    if ( screen_reaclib .and. do_screening(iwhich) ) then
       call screen5(state, iwhich, scor, dscor_dt, dscor_dd)
     end if
 

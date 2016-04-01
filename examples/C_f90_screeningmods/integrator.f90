@@ -1,7 +1,7 @@
 program integrator
   use cvode_parameters, only: cv_data, cv_pars, number_equations
   use network, only: init_network, net_meta, net_initial_abundances
-  use net_rates, only: init_reaclib
+  use net_rates, only: init_reaclib, net_screening_init
   use data_wrangler, only: store_solution, write_solution
   use parameters, only: init_parameters
 
@@ -10,10 +10,11 @@ program integrator
   integer KOUNTER
   integer jk
   
-  ! Initialize parameters
+  ! Initialization
   call init_parameters()
   call init_network()
   call init_reaclib()
+  call net_screening_init()
 
   ! Allocate data storage
   allocate( cv_data%net_history(number_equations+1, cv_pars%NDT_SAVE) )
