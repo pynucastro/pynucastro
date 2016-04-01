@@ -1,0 +1,2519 @@
+# GNU Make 4.0
+# Built for x86_64-redhat-linux-gnu
+# Copyright (C) 1988-2013 Free Software Foundation, Inc.
+# License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+# This is free software: you are free to change and redistribute it.
+# There is NO WARRANTY, to the extent permitted by law.
+
+# Make data base, printed on Thu Mar 31 03:04:10 2016
+
+# Variables
+
+# 'override' directive
+GNUMAKEFLAGS := 
+# automatic
+<D = $(patsubst %/,%,$(dir $<))
+# automatic
+?F = $(notdir $?)
+# environment
+DESKTOP_SESSION = awesome
+# default
+.SHELLFLAGS := -c
+# makefile (from '../../GMake.defs', line 15)
+suf = $(FC)$(omp_suf)$(acc_suf)
+# environment
+QTDIR = /usr/lib64/qt-3.3
+# environment
+XDG_SESSION_TYPE = x11
+# environment
+MODULEPATH = /etc/scl/modulefiles:/etc/scl/modulefiles:/usr/share/Modules/modulefiles:/etc/modulefiles:/usr/share/modulefiles
+# default
+CWEAVE = cweave
+# automatic
+?D = $(patsubst %/,%,$(dir $?))
+# makefile (from 'deps', line 1)
+f90sources := 
+# environment
+SBCL_HOME = /home/eugene/local/lisp/sbcl/install/lib/sbcl
+# automatic
+@D = $(patsubst %/,%,$(dir $@))
+# environment
+XAUTHORITY = /run/user/1000/gdm/Xauthority
+# environment
+GDMSESSION = awesome
+# default
+MAKE_VERSION := 4.0
+# makefile
+CURDIR := /home/eugene/codes/astro/pyreaclib/examples/C_f90/_build.gfortran
+# makefile
+SHELL = /bin/sh
+# default
+RM = rm -f
+# environment
+GDM_LANG = en_US.UTF-8
+# environment
+XTERM_SHELL = /bin/bash
+# environment
+_ = /usr/bin/make
+# default
+PREPROCESS.F = $(FC) $(FFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -F
+# makefile (from '../../GMake.common', line 29)
+link := gfortran
+# default
+LINK.m = $(OBJC) $(OBJCFLAGS) $(CPPFLAGS) $(LDFLAGS) $(TARGET_ARCH)
+# default
+LINK.o = $(CC) $(LDFLAGS) $(TARGET_ARCH)
+# default
+OUTPUT_OPTION = -o $@
+# makefile (from '/home/eugene/codes/astro/pyreaclib/examples/C_f90/GNUmakefile', line 1)
+w = $(filter _%,$(notdir $(CURDIR)))
+# default
+COMPILE.cpp = $(COMPILE.cc)
+# makefile (from 'deps', line 1)
+MAKEFILE_LIST :=  /home/eugene/codes/astro/pyreaclib/examples/C_f90/GNUmakefile ../../GMake.defs ../../GMake.common deps
+# makefile (from '../../GMake.common', line 4)
+f90sources_dir = $(foreach dir, $(SRCDIRS), $(wildcard $(dir)/*.f90))
+# automatic
+@F = $(notdir $@)
+# environment
+HISTCONTROL = ignoredups
+# environment
+USERNAME = eugene
+# default
+LINK.p = $(PC) $(PFLAGS) $(CPPFLAGS) $(LDFLAGS) $(TARGET_ARCH)
+# environment
+DBUS_SESSION_BUS_ADDRESS = unix:abstract=/tmp/dbus-Bhb8YenQHS,guid=2a6f55b8f38a9b494ec0a00756f353ed
+# default
+CC = cc
+# makefile (from '/home/eugene/codes/astro/pyreaclib/examples/C_f90/GNUmakefile', line 17)
+ACC := 
+# default
+CHECKOUT,v = +$(if $(wildcard $@),,$(CO) $(COFLAGS) $< $@)
+# environment
+LESSOPEN = |/usr/bin/lesspipe.sh %s
+# default
+CPP = $(CC) -E
+# makefile (from '/home/eugene/codes/astro/pyreaclib/examples/C_f90/GNUmakefile', line 10)
+SCREENING_DIR := /home/eugene/codes/astro/Microphysics/screening
+# default
+LINK.cc = $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(LDFLAGS) $(TARGET_ARCH)
+# default
+MAKE_HOST := x86_64-redhat-linux-gnu
+# environment
+PATH = /home/eugene/local/anaconda2/bin:/home/eugene/local/lisp/sbcl/install/bin:/home/eugene/codes/pyjournal:/home/eugene/codes/astro/pybib:/home/eugene/local/pdfgrep/bin:/home/eugene/local/bin:/home/eugene/codes/scripts:/home/eugene/local/lisp/sbcl/install/bin:/home/eugene/codes/pyjournal:/home/eugene/codes/astro/pybib:/home/eugene/local/pdfgrep/bin:/home/eugene/local/anaconda2/bin:/home/eugene/local/bin:/home/eugene/codes/scripts:/usr/lib64/qt-3.3/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/home/eugene/.local/bin:/home/eugene/bin
+# default
+LD = ld
+# makefile (from '/home/eugene/codes/astro/pyreaclib/examples/C_f90/GNUmakefile', line 11)
+BOXLIB_HOME := /home/eugene/codes/astro/BoxLib
+# default
+TEXI2DVI = texi2dvi
+# environment
+QT_GRAPHICSSYSTEM_CHECKED = 1
+# makefile (from '../../GMake.common', line 32)
+SUNLIBDIR := /home/eugene/local/sundials/instdir/lib
+# default
+COMPILE.mod = $(M2C) $(M2FLAGS) $(MODFLAGS) $(TARGET_ARCH)
+# environment
+XDG_RUNTIME_DIR = /run/user/1000
+# makefile (from '../../GMake.common', line 18)
+FFLAGS := -c -O2 -g -fbounds-check -fbacktrace -Wuninitialized -Wunused -ffpe-trap=invalid,zero,overflow,underflow -finit-real=snan -ffree-line-length-none
+# default
+ARFLAGS = rv
+# default
+LINK.r = $(FC) $(FFLAGS) $(RFLAGS) $(LDFLAGS) $(TARGET_ARCH)
+# environment
+WINDOWID = 102760482
+# default
+COMPILE.f = $(FC) $(FFLAGS) $(TARGET_ARCH) -c
+# default
+LINT.c = $(LINT) $(LINTFLAGS) $(CPPFLAGS) $(TARGET_ARCH)
+# default
+YACC.m = $(YACC) $(YFLAGS)
+# default
+LINT = lint
+# makefile (from '../../GMake.common', line 40)
+BLASDIR := /usr/lib64
+# default
+YACC.y = $(YACC) $(YFLAGS)
+# makefile (from '/home/eugene/codes/astro/pyreaclib/examples/C_f90/GNUmakefile', line 15)
+VPATH := /home/eugene/codes/astro/pyreaclib/examples/C_f90 /home/eugene/codes/astro/Microphysics/screening /home/eugene/codes/astro/BoxLib/Src/F_BaseLib
+# default
+AR = ar
+# default
+.FEATURES := target-specific order-only second-expansion else-if shortest-stem undefine oneshell archives jobserver output-sync check-symlink load
+# default
+TANGLE = tangle
+# environment
+LS_COLORS = rs=0:di=38;5;33:ln=38;5;51:mh=00:pi=40;38;5;11:so=38;5;13:do=38;5;5:bd=48;5;232;38;5;11:cd=48;5;232;38;5;3:or=48;5;232;38;5;9:mi=01;05;37;41:su=48;5;196;38;5;15:sg=48;5;11;38;5;16:ca=48;5;196;38;5;226:tw=48;5;10;38;5;16:ow=48;5;10;38;5;21:st=48;5;21;38;5;15:ex=38;5;40:*.tar=38;5;9:*.tgz=38;5;9:*.arc=38;5;9:*.arj=38;5;9:*.taz=38;5;9:*.lha=38;5;9:*.lz4=38;5;9:*.lzh=38;5;9:*.lzma=38;5;9:*.tlz=38;5;9:*.txz=38;5;9:*.tzo=38;5;9:*.t7z=38;5;9:*.zip=38;5;9:*.z=38;5;9:*.Z=38;5;9:*.dz=38;5;9:*.gz=38;5;9:*.lrz=38;5;9:*.lz=38;5;9:*.lzo=38;5;9:*.xz=38;5;9:*.bz2=38;5;9:*.bz=38;5;9:*.tbz=38;5;9:*.tbz2=38;5;9:*.tz=38;5;9:*.deb=38;5;9:*.rpm=38;5;9:*.jar=38;5;9:*.war=38;5;9:*.ear=38;5;9:*.sar=38;5;9:*.rar=38;5;9:*.alz=38;5;9:*.ace=38;5;9:*.zoo=38;5;9:*.cpio=38;5;9:*.7z=38;5;9:*.rz=38;5;9:*.cab=38;5;9:*.jpg=38;5;13:*.jpeg=38;5;13:*.gif=38;5;13:*.bmp=38;5;13:*.pbm=38;5;13:*.pgm=38;5;13:*.ppm=38;5;13:*.tga=38;5;13:*.xbm=38;5;13:*.xpm=38;5;13:*.tif=38;5;13:*.tiff=38;5;13:*.png=38;5;13:*.svg=38;5;13:*.svgz=38;5;13:*.mng=38;5;13:*.pcx=38;5;13:*.mov=38;5;13:*.mpg=38;5;13:*.mpeg=38;5;13:*.m2v=38;5;13:*.mkv=38;5;13:*.webm=38;5;13:*.ogm=38;5;13:*.mp4=38;5;13:*.m4v=38;5;13:*.mp4v=38;5;13:*.vob=38;5;13:*.qt=38;5;13:*.nuv=38;5;13:*.wmv=38;5;13:*.asf=38;5;13:*.rm=38;5;13:*.rmvb=38;5;13:*.flc=38;5;13:*.avi=38;5;13:*.fli=38;5;13:*.flv=38;5;13:*.gl=38;5;13:*.dl=38;5;13:*.xcf=38;5;13:*.xwd=38;5;13:*.yuv=38;5;13:*.cgm=38;5;13:*.emf=38;5;13:*.ogv=38;5;13:*.ogx=38;5;13:*.aac=38;5;45:*.au=38;5;45:*.flac=38;5;45:*.m4a=38;5;45:*.mid=38;5;45:*.midi=38;5;45:*.mka=38;5;45:*.mp3=38;5;45:*.mpc=38;5;45:*.ogg=38;5;45:*.ra=38;5;45:*.wav=38;5;45:*.oga=38;5;45:*.opus=38;5;45:*.spx=38;5;45:*.xspf=38;5;45:
+# makefile (from '/home/eugene/codes/astro/pyreaclib/examples/C_f90/GNUmakefile', line 20)
+program := integrator
+# environment
+XDG_SESSION_DESKTOP = awesome
+# environment
+SSH_AUTH_SOCK = /tmp/ssh-Gt7AOaiTOGGf/agent.2011
+# command line
+SRCDIR = /home/eugene/codes/astro/pyreaclib/examples/C_f90
+# default
+GET = get
+# environment
+XTERM_VERSION = XTerm(318)
+# environment
+DISPLAY = :0
+# default
+MAKEFILES := 
+# default
+COMPILE.F = $(FC) $(FFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c
+# default
+CTANGLE = ctangle
+# makefile (from '../../GMake.common', line 36)
+LAPACKDIR := /usr/lib64
+# default
+.LIBPATTERNS = lib%.so lib%.a
+# default
+LINK.C = $(LINK.cc)
+# environment
+PWD = /home/eugene/codes/astro/pyreaclib/examples/C_f90
+# default
+LINK.S = $(CC) $(ASFLAGS) $(CPPFLAGS) $(LDFLAGS) $(TARGET_MACH)
+# environment
+XDG_SEAT = seat0
+# default
+PREPROCESS.r = $(FC) $(FFLAGS) $(RFLAGS) $(TARGET_ARCH) -F
+# environment
+SSH_AGENT_PID = 2026
+# default
+LINK.c = $(CC) $(CFLAGS) $(CPPFLAGS) $(LDFLAGS) $(TARGET_ARCH)
+# environment
+XTERM_LOCALE = en_US.UTF-8
+# default
+LINK.s = $(CC) $(ASFLAGS) $(LDFLAGS) $(TARGET_MACH)
+# environment
+HOME = /home/eugene
+# environment
+LD_LIBRARY_PATH = /home/eugene/local/sundials/instdir/lib:/home/eugene/local/sundials/instdir/lib:
+# environment
+MODULESHOME = /usr/share/Modules
+# environment
+LOGNAME = eugene
+# automatic
++F = $(notdir $+)
+# makefile (from '/home/eugene/codes/astro/pyreaclib/examples/C_f90/GNUmakefile', line 21)
+pnames = $(addsuffix .$(suf).exe, $(basename $(program)))
+# default
+CO = co
+# automatic
+^D = $(patsubst %/,%,$(dir $^))
+# environment
+HOSTNAME = snia
+# environment
+XDG_VTNR = 2
+# environment
+MAKELEVEL := 1
+# default
+COMPILE.m = $(OBJC) $(OBJCFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c
+# environment
+SSH_ASKPASS = /usr/libexec/openssh/gnome-ssh-askpass
+# default
+MAKE = $(MAKE_COMMAND)
+# default
+MAKECMDGOALS := clean
+# environment
+SHLVL = 2
+# default
+AS = as
+# default
+PREPROCESS.S = $(CC) -E $(CPPFLAGS)
+# environment
+MAKEOVERRIDES = ${-*-command-variables-*-}
+# environment
+MESASDK_ROOT = /home/eugene/codes/astro/mesa/mesasdk
+# default
+COMPILE.p = $(PC) $(PFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c
+# environment
+XDG_SESSION_ID = 1
+# environment
+USER = eugene
+# makefile (from '../../GMake.common', line 3)
+fsources := $(subst ,, )
+# makefile (from '../../GMake.defs', line 4)
+FC := gfortran
+# environment
+QTLIB = /usr/lib64/qt-3.3/lib
+# automatic
+%D = $(patsubst %/,%,$(dir $%))
+# environment
+define BASH_FUNC_module()
+() {  eval `/usr/bin/modulecmd bash $*`
+}
+endef
+# default
+WEAVE = weave
+# default
+MAKE_COMMAND := make
+# default
+LINK.cpp = $(LINK.cc)
+# default
+F77 = $(FC)
+# environment
+OLDPWD = /home/eugene/codes/astro/pyreaclib/examples/C_f90/_build.gfortran
+# default
+.VARIABLES := 
+# default
+PC = pc
+# environment
+CVS_RSH = ssh
+# automatic
+*F = $(notdir $*)
+# default
+COMPILE.def = $(M2C) $(M2FLAGS) $(DEFFLAGS) $(TARGET_ARCH)
+# environment
+PYTHONPATH = /home/eugene/codes/astro/pyreaclib:/home/eugene/codes/astro/mesautils:/home/eugene/codes/astro/pyreaclib:/home/eugene/codes/astro/mesautils:
+# default
+LEX = lex
+# makefile
+MAKEFLAGS = p --no-print-directory -- $(MAKEOVERRIDES)
+# environment
+MFLAGS = -p --no-print-directory
+# automatic
+*D = $(patsubst %/,%,$(dir $*))
+# environment
+MAIL = /var/spool/mail/eugene
+# environment
+LOADEDMODULES = 
+# default
+LEX.l = $(LEX) $(LFLAGS) -t
+# default
+LEX.m = $(LEX) $(LFLAGS) -t
+# automatic
++D = $(patsubst %/,%,$(dir $+))
+# default
+COMPILE.r = $(FC) $(FFLAGS) $(RFLAGS) $(TARGET_ARCH) -c
+# automatic
+-*-command-variables-*- := SRCDIR=/home/eugene/codes/astro/pyreaclib/examples/C_f90
+# default
+M2C = m2c
+# automatic
+%F = $(notdir $%)
+# environment
+SVN_EDITOR = emacsclient -nw
+# environment
+define BASH_FUNC_scl()
+() {  local CMD=$1;
+ if [ "$CMD" = "load" -o "$CMD" = "unload" ]; then
+ eval "module $@";
+ else
+ /usr/bin/scl "$@";
+ fi
+}
+endef
+# default
+YACC = yacc
+# default
+COMPILE.cc = $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c
+# automatic
+<F = $(notdir $<)
+# default
+CXX = g++
+# default
+COFLAGS = 
+# environment
+EDITOR = emacsclient -nw
+# default
+COMPILE.C = $(COMPILE.cc)
+# makefile (from '../../GMake.common', line 41)
+LINKLIBS :=  -L/home/eugene/local/sundials/instdir/lib -lsundials_fcvode -lsundials_cvode -lsundials_fnvecserial -lsundials_nvecserial -L/usr/lib64 -llapack -L/usr/lib64 -lblas
+# automatic
+^F = $(notdir $^)
+# default
+COMPILE.S = $(CC) $(ASFLAGS) $(CPPFLAGS) $(TARGET_MACH) -c
+# default
+LINK.F = $(FC) $(FFLAGS) $(CPPFLAGS) $(LDFLAGS) $(TARGET_ARCH)
+# makefile (from '../../GMake.common', line 28)
+wrapper := gfortran
+# default
+SUFFIXES := .out .a .ln .o .c .cc .C .cpp .p .f .F .m .r .y .l .ym .yl .s .S .mod .sym .def .h .info .dvi .tex .texinfo .texi .txinfo .w .ch .web .sh .elc .el
+# environment
+HISTSIZE = 1000
+# default
+COMPILE.c = $(CC) $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c
+# environment
+WINDOWPATH = 2
+# default
+COMPILE.s = $(AS) $(ASFLAGS) $(TARGET_MACH)
+# default
+.INCLUDE_DIRS = /usr/include /usr/local/include /usr/include
+# environment
+QTINC = /usr/lib64/qt-3.3/include
+# default
+.RECIPEPREFIX := 
+# makefile (from '../../GMake.common', line 56)
+OBJECTS := $(subst ,, )
+# default
+MAKEINFO = makeinfo
+# makefile
+.DEFAULT_GOAL := ALL
+# default
+OBJC = cc
+# environment
+MESA_DIR = /home/eugene/codes/astro/mesa/mesa
+# default
+TEX = tex
+# environment
+LANG = en_US.UTF-8
+# environment
+TERM = xterm-256color
+# default
+F77FLAGS = $(FFLAGS)
+# default
+LINK.f = $(FC) $(FFLAGS) $(LDFLAGS) $(TARGET_ARCH)
+# variable set hash-table stats:
+# Load=173/1024=17%, Rehash=0, Collisions=48/263=18%
+
+# Pattern-specific Variable Values
+
+# No pattern-specific variable values.
+
+# Directories
+
+# /home/eugene/codes/astro/pyreaclib/examples/C_f90/../.. (device 64770, inode 78381318): 15 files, no impossibilities.
+# /home/eugene/codes/astro/Microphysics/screening (device 64770, inode 79170732): 5 files, no impossibilities.
+# /home/eugene/codes/astro/pyreaclib/examples/C_f90 (device 64770, inode 79298852): 22 files, 19 impossibilities.
+# SCCS: could not be stat'd.
+# /home/eugene/codes/astro/pyreaclib/examples/C_f90/RCS: could not be stat'd.
+# /home/eugene/codes/astro/Microphysics/screening/SCCS: could not be stat'd.
+# ../.. (device 64770, inode 79298716): 14 files, 38 impossibilities.
+# /home/eugene/codes/astro/Microphysics/screening/../../SCCS: could not be stat'd.
+# /home/eugene/codes/astro/BoxLib/Src/F_BaseLib/RCS: could not be stat'd.
+# /home/eugene/codes/astro/BoxLib/Src/F_BaseLib/SCCS: could not be stat'd.
+# /home/eugene/codes/astro/Microphysics/screening/../../RCS: could not be stat'd.
+# . (device 64770, inode 80747601): 3 files, 19 impossibilities.
+# /home/eugene/codes/astro/BoxLib/Src/F_BaseLib/../.. (device 64770, inode 78381299): 13 files, no impossibilities.
+# /home/eugene/codes/astro/pyreaclib/examples/C_f90/../../SCCS: could not be stat'd.
+# /home/eugene/codes/astro/Microphysics/screening/RCS: could not be stat'd.
+# /home/eugene/codes/astro/pyreaclib/examples/C_f90/../../RCS: could not be stat'd.
+# ../../SCCS: could not be stat'd.
+# /home/eugene/codes/astro/BoxLib/Src/F_BaseLib (device 64770, inode 78382601): 85 files, no impossibilities.
+# ../../RCS: could not be stat'd.
+# /home/eugene/codes/astro/BoxLib/Src/F_BaseLib/../../SCCS: could not be stat'd.
+# /home/eugene/codes/astro/Microphysics/screening/../.. (device 64770, inode 77336961): 32 files, no impossibilities.
+# /home/eugene/codes/astro/pyreaclib/examples/C_f90/SCCS: could not be stat'd.
+# /home/eugene/codes/astro/BoxLib/Src/F_BaseLib/../../RCS: could not be stat'd.
+# RCS: could not be stat'd.
+
+# 189 files, 76 impossibilities in 24 directories.
+
+# Implicit Rules
+
+print-%:
+#  recipe to execute (from '../../GMake.common', line 58):
+	 @echo $* is $($*)
+
+%.gfortran.exe:
+#  recipe to execute (from '/home/eugene/codes/astro/pyreaclib/examples/C_f90/GNUmakefile', line 29):
+	@echo " "
+	@echo "Linking..."
+	$(link) -o $@  $(OBJECTS) $(LINKLIBS)
+
+%.out:
+
+%.a:
+
+%.ln:
+
+%.o:
+
+%: %.o
+#  recipe to execute (from '../../GMake.common', line 49):
+	$(wrapper) $(FFLAGS) -o $@ $<
+
+%.c:
+
+%: %.c
+#  recipe to execute (built-in):
+	$(LINK.c) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+%.ln: %.c
+#  recipe to execute (built-in):
+	$(LINT.c) -C$* $<
+
+%.o: %.c
+#  recipe to execute (built-in):
+	$(COMPILE.c) $(OUTPUT_OPTION) $<
+
+%.cc:
+
+%: %.cc
+#  recipe to execute (built-in):
+	$(LINK.cc) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+%.o: %.cc
+#  recipe to execute (built-in):
+	$(COMPILE.cc) $(OUTPUT_OPTION) $<
+
+%.C:
+
+%: %.C
+#  recipe to execute (built-in):
+	$(LINK.C) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+%.o: %.C
+#  recipe to execute (built-in):
+	$(COMPILE.C) $(OUTPUT_OPTION) $<
+
+%.cpp:
+
+%: %.cpp
+#  recipe to execute (built-in):
+	$(LINK.cpp) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+%.o: %.cpp
+#  recipe to execute (built-in):
+	$(COMPILE.cpp) $(OUTPUT_OPTION) $<
+
+%.p:
+
+%: %.p
+#  recipe to execute (built-in):
+	$(LINK.p) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+%.o: %.p
+#  recipe to execute (built-in):
+	$(COMPILE.p) $(OUTPUT_OPTION) $<
+
+%.f:
+
+%: %.f
+#  recipe to execute (built-in):
+	$(LINK.f) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+%.o: %.f
+#  recipe to execute (built-in):
+	$(COMPILE.f) $(OUTPUT_OPTION) $<
+
+%.F:
+
+%: %.F
+#  recipe to execute (built-in):
+	$(LINK.F) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+%.o: %.F
+#  recipe to execute (built-in):
+	$(COMPILE.F) $(OUTPUT_OPTION) $<
+
+%.f: %.F
+#  recipe to execute (built-in):
+	$(PREPROCESS.F) $(OUTPUT_OPTION) $<
+
+%.m:
+
+%: %.m
+#  recipe to execute (built-in):
+	$(LINK.m) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+%.o: %.m
+#  recipe to execute (built-in):
+	$(COMPILE.m) $(OUTPUT_OPTION) $<
+
+%.r:
+
+%: %.r
+#  recipe to execute (built-in):
+	$(LINK.r) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+%.o: %.r
+#  recipe to execute (built-in):
+	$(COMPILE.r) $(OUTPUT_OPTION) $<
+
+%.f: %.r
+#  recipe to execute (built-in):
+	$(PREPROCESS.r) $(OUTPUT_OPTION) $<
+
+%.y:
+
+%.ln: %.y
+#  recipe to execute (built-in):
+	$(YACC.y) $< 
+	 $(LINT.c) -C$* y.tab.c 
+	 $(RM) y.tab.c
+
+%.c: %.y
+#  recipe to execute (built-in):
+	$(YACC.y) $< 
+	 mv -f y.tab.c $@
+
+%.l:
+
+%.ln: %.l
+#  recipe to execute (built-in):
+	@$(RM) $*.c
+	 $(LEX.l) $< > $*.c
+	$(LINT.c) -i $*.c -o $@
+	 $(RM) $*.c
+
+%.c: %.l
+#  recipe to execute (built-in):
+	@$(RM) $@ 
+	 $(LEX.l) $< > $@
+
+%.r: %.l
+#  recipe to execute (built-in):
+	$(LEX.l) $< > $@ 
+	 mv -f lex.yy.r $@
+
+%.ym:
+
+%.m: %.ym
+#  recipe to execute (built-in):
+	$(YACC.m) $< 
+	 mv -f y.tab.c $@
+
+%.yl:
+
+%.s:
+
+%: %.s
+#  recipe to execute (built-in):
+	$(LINK.s) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+%.o: %.s
+#  recipe to execute (built-in):
+	$(COMPILE.s) -o $@ $<
+
+%.S:
+
+%: %.S
+#  recipe to execute (built-in):
+	$(LINK.S) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+%.o: %.S
+#  recipe to execute (built-in):
+	$(COMPILE.S) -o $@ $<
+
+%.s: %.S
+#  recipe to execute (built-in):
+	$(PREPROCESS.S) $< > $@
+
+%.mod:
+
+%: %.mod
+#  recipe to execute (built-in):
+	$(COMPILE.mod) -o $@ -e $@ $^
+
+%.o: %.mod
+#  recipe to execute (built-in):
+	$(COMPILE.mod) -o $@ $<
+
+%.sym:
+
+%.def:
+
+%.sym: %.def
+#  recipe to execute (built-in):
+	$(COMPILE.def) -o $@ $<
+
+%.h:
+
+%.info:
+
+%.dvi:
+
+%.tex:
+
+%.dvi: %.tex
+#  recipe to execute (built-in):
+	$(TEX) $<
+
+%.texinfo:
+
+%.info: %.texinfo
+#  recipe to execute (built-in):
+	$(MAKEINFO) $(MAKEINFO_FLAGS) $< -o $@
+
+%.dvi: %.texinfo
+#  recipe to execute (built-in):
+	$(TEXI2DVI) $(TEXI2DVI_FLAGS) $<
+
+%.texi:
+
+%.info: %.texi
+#  recipe to execute (built-in):
+	$(MAKEINFO) $(MAKEINFO_FLAGS) $< -o $@
+
+%.dvi: %.texi
+#  recipe to execute (built-in):
+	$(TEXI2DVI) $(TEXI2DVI_FLAGS) $<
+
+%.txinfo:
+
+%.info: %.txinfo
+#  recipe to execute (built-in):
+	$(MAKEINFO) $(MAKEINFO_FLAGS) $< -o $@
+
+%.dvi: %.txinfo
+#  recipe to execute (built-in):
+	$(TEXI2DVI) $(TEXI2DVI_FLAGS) $<
+
+%.w:
+
+%.c: %.w
+#  recipe to execute (built-in):
+	$(CTANGLE) $< - $@
+
+%.tex: %.w
+#  recipe to execute (built-in):
+	$(CWEAVE) $< - $@
+
+%.ch:
+
+%.web:
+
+%.p: %.web
+#  recipe to execute (built-in):
+	$(TANGLE) $<
+
+%.tex: %.web
+#  recipe to execute (built-in):
+	$(WEAVE) $<
+
+%.sh:
+
+%: %.sh
+#  recipe to execute (built-in):
+	cat $< >$@ 
+	 chmod a+x $@
+
+%.elc:
+
+%.el:
+
+(%): %
+#  recipe to execute (built-in):
+	$(AR) $(ARFLAGS) $@ $<
+
+%.out: %
+#  recipe to execute (built-in):
+	@rm -f $@ 
+	 cp $< $@
+
+%.c: %.w %.ch
+#  recipe to execute (built-in):
+	$(CTANGLE) $^ $@
+
+%.tex: %.w %.ch
+#  recipe to execute (built-in):
+	$(CWEAVE) $^ $@
+
+%:: %,v
+#  recipe to execute (built-in):
+	$(CHECKOUT,v)
+
+%:: RCS/%,v
+#  recipe to execute (built-in):
+	$(CHECKOUT,v)
+
+%:: RCS/%
+#  recipe to execute (built-in):
+	$(CHECKOUT,v)
+
+%:: s.%
+#  recipe to execute (built-in):
+	$(GET) $(GFLAGS) $(SCCS_OUTPUT_OPTION) $<
+
+%:: SCCS/s.%
+#  recipe to execute (built-in):
+	$(GET) $(GFLAGS) $(SCCS_OUTPUT_OPTION) $<
+
+# 94 implicit rules, 5 (5.3%) terminal.
+
+# Files
+
+# Not a target:
+.web.p:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(TANGLE) $<
+
+# Not a target:
+.l.r:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(LEX.l) $< > $@ 
+	 mv -f lex.yy.r $@
+
+# Not a target:
+.dvi:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+ALL: integrator.gfortran.exe
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+.ym:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+.f.o:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(COMPILE.f) $(OUTPUT_OPTION) $<
+
+# Not a target:
+.l:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+.m:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(LINK.m) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+# Not a target:
+.ln:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+.o:: %.f90
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (from '../../GMake.common', line 49):
+	$(wrapper) $(FFLAGS) -o $@ $<
+
+.o:: %.f
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (from '../../GMake.common', line 52):
+	$(wrapper) $(FFLAGS) -o $@ $<
+
+# Not a target:
+.y:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+.def.sym:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(COMPILE.def) -o $@ $<
+
+# Not a target:
+.p.o:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(COMPILE.p) $(OUTPUT_OPTION) $<
+
+# Not a target:
+.p:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(LINK.p) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+# Not a target:
+integrator.gfortran.exe:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+.txinfo.dvi:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(TEXI2DVI) $(TEXI2DVI_FLAGS) $<
+
+# Not a target:
+.a:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+.yl:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+.l.ln:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	@$(RM) $*.c
+	 $(LEX.l) $< > $*.c
+	$(LINT.c) -i $*.c -o $@
+	 $(RM) $*.c
+
+# Not a target:
+.F.o:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(COMPILE.F) $(OUTPUT_OPTION) $<
+
+# Not a target:
+.texi.info:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(MAKEINFO) $(MAKEINFO_FLAGS) $< -o $@
+
+# Not a target:
+.w.c:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(CTANGLE) $< - $@
+
+# Not a target:
+.texi.dvi:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(TEXI2DVI) $(TEXI2DVI_FLAGS) $<
+
+# Not a target:
+.ch:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+.m.o:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(COMPILE.m) $(OUTPUT_OPTION) $<
+
+# Not a target:
+.cc:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(LINK.cc) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+# Not a target:
+.cc.o:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(COMPILE.cc) $(OUTPUT_OPTION) $<
+
+# Not a target:
+.def:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+.SUFFIXES: .out .a .ln .o .c .cc .C .cpp .p .f .F .m .r .y .l .ym .yl .s .S .mod .sym .def .h .info .dvi .tex .texinfo .texi .txinfo .w .ch .web .sh .elc .el
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+%.f:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+.c.o:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(COMPILE.c) $(OUTPUT_OPTION) $<
+
+# Not a target:
+.r.o:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(COMPILE.r) $(OUTPUT_OPTION) $<
+
+# Not a target:
+.r:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(LINK.r) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+# Not a target:
+.ym.m:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(YACC.m) $< 
+	 mv -f y.tab.c $@
+
+# Not a target:
+.y.ln:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(YACC.y) $< 
+	 $(LINT.c) -C$* y.tab.c 
+	 $(RM) y.tab.c
+
+# Not a target:
+../../GMake.defs:
+#  Implicit rule search has been done.
+#  Last modified 2016-03-30 22:46:16.218399264
+#  File has been updated.
+#  Successfully updated.
+
+# Not a target:
+.elc:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+.l.c:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	@$(RM) $@ 
+	 $(LEX.l) $< > $@
+
+# Not a target:
+.out:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+deps:
+#  Implicit rule search has not been done.
+#  Last modified 2016-03-31 02:57:50.180638242
+#  File has been updated.
+#  Successfully updated.
+#  recipe to execute (from '../../GMake.common', line 8):
+	../../../util/dep.py --program $(program) $(f90sources_dir) > deps
+
+# Not a target:
+.C:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(LINK.C) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+# Not a target:
+.r.f:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(PREPROCESS.r) $(OUTPUT_OPTION) $<
+
+# Not a target:
+.S:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(LINK.S) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+# Not a target:
+.texinfo.info:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(MAKEINFO) $(MAKEINFO_FLAGS) $< -o $@
+
+# Not a target:
+.c:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(LINK.c) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+# Not a target:
+.w.tex:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(CWEAVE) $< - $@
+
+# Not a target:
+.c.ln:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(LINT.c) -C$* $<
+
+# Not a target:
+.s.o:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(COMPILE.s) -o $@ $<
+
+# Not a target:
+.s:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(LINK.s) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+# Not a target:
+.texinfo.dvi:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(TEXI2DVI) $(TEXI2DVI_FLAGS) $<
+
+# Not a target:
+.el:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+.lm.m:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	@$(RM) $@ 
+	 $(LEX.m) $< > $@
+
+# Not a target:
+.y.c:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(YACC.y) $< 
+	 mv -f y.tab.c $@
+
+# Not a target:
+.web.tex:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(WEAVE) $<
+
+# Not a target:
+.texinfo:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+.DEFAULT:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+.h:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+.tex.dvi:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(TEX) $<
+
+# Not a target:
+.cpp.o:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(COMPILE.cpp) $(OUTPUT_OPTION) $<
+
+# Not a target:
+.cpp:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(LINK.cpp) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+# Not a target:
+clean:
+#  Command line target.
+#  Implicit rule search has been done.
+#  File does not exist.
+#  File has not been updated.
+
+# Not a target:
+.C.o:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(COMPILE.C) $(OUTPUT_OPTION) $<
+
+# Not a target:
+.texi:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+.txinfo:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+.tex:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+.txinfo.info:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(MAKEINFO) $(MAKEINFO_FLAGS) $< -o $@
+
+# Not a target:
+.sh:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	cat $< >$@ 
+	 chmod a+x $@
+
+# Not a target:
+.S.s:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(PREPROCESS.S) $< > $@
+
+# Not a target:
+.mod:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(COMPILE.mod) -o $@ -e $@ $^
+
+# Not a target:
+../../GMake.common:
+#  Implicit rule search has been done.
+#  Last modified 2016-03-31 02:55:48.549717578
+#  File has been updated.
+#  Successfully updated.
+
+# Not a target:
+.mod.o:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(COMPILE.mod) -o $@ $<
+
+# Not a target:
+.F.f:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(PREPROCESS.F) $(OUTPUT_OPTION) $<
+
+# Not a target:
+/home/eugene/codes/astro/pyreaclib/examples/C_f90/GNUmakefile:
+#  Implicit rule search has been done.
+#  Last modified 2016-03-31 02:57:44.472548106
+#  File has been updated.
+#  Successfully updated.
+
+# Not a target:
+.w:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+.S.o:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(COMPILE.S) -o $@ $<
+
+# Not a target:
+.F:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(LINK.F) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+# Not a target:
+.web:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+.sym:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+.f:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(LINK.f) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+# Not a target:
+%.f90:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+.info:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# files hash-table stats:
+# Load=81/1024=8%, Rehash=0, Collisions=664/3808=17%
+# VPATH Search Paths
+
+# No 'vpath' search paths.
+
+# General ('VPATH' variable) search path:
+# /home/eugene/codes/astro/pyreaclib/examples/C_f90:/home/eugene/codes/astro/Microphysics/screening:/home/eugene/codes/astro/BoxLib/Src/F_BaseLib
+
+# strcache buffers: 3 (2) / strings = 846 / storage = 19960 B / avg = 23 B
+# current buf: size = 8162 B / used = 3651 B / count = 221 / avg = 16 B
+# other used: total = 11798 B / count = 625 / avg = 18 B
+# other free: total = 15 B / max = 11 B / min = 4 B / avg = 7 B
+
+# strcache performance: lookups = 1232 / hit rate = 31%
+# hash-table stats:
+# Load=846/8192=10%, Rehash=0, Collisions=279/1232=23%
+# Finished Make data base on Thu Mar 31 03:04:10 2016
+
+GMake.target:13: recipe for target '_build.gfortran' failed
+# GNU Make 4.0
+# Built for x86_64-redhat-linux-gnu
+# Copyright (C) 1988-2013 Free Software Foundation, Inc.
+# License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+# This is free software: you are free to change and redistribute it.
+# There is NO WARRANTY, to the extent permitted by law.
+
+# Make data base, printed on Thu Mar 31 03:04:10 2016
+
+# Variables
+
+# 'override' directive
+GNUMAKEFLAGS := 
+# automatic
+<D = $(patsubst %/,%,$(dir $<))
+# automatic
+?F = $(notdir $?)
+# environment
+DESKTOP_SESSION = awesome
+# default
+.SHELLFLAGS := -c
+# makefile (from '../GMake.defs', line 15)
+suf = $(FC)$(omp_suf)$(acc_suf)
+# environment
+QTDIR = /usr/lib64/qt-3.3
+# environment
+XDG_SESSION_TYPE = x11
+# environment
+MODULEPATH = /etc/scl/modulefiles:/etc/scl/modulefiles:/usr/share/Modules/modulefiles:/etc/modulefiles:/usr/share/modulefiles
+# default
+CWEAVE = cweave
+# automatic
+?D = $(patsubst %/,%,$(dir $?))
+# environment
+SBCL_HOME = /home/eugene/local/lisp/sbcl/install/lib/sbcl
+# automatic
+@D = $(patsubst %/,%,$(dir $@))
+# environment
+XAUTHORITY = /run/user/1000/gdm/Xauthority
+# environment
+GDMSESSION = awesome
+# default
+MAKE_VERSION := 4.0
+# makefile
+CURDIR := /home/eugene/codes/astro/pyreaclib/examples/C_f90
+# makefile
+SHELL = /bin/sh
+# default
+RM = rm -f
+# environment
+GDM_LANG = en_US.UTF-8
+# environment
+XTERM_SHELL = /bin/bash
+# environment
+_ = /usr/bin/make
+# default
+PREPROCESS.F = $(FC) $(FFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -F
+# default
+LINK.m = $(OBJC) $(OBJCFLAGS) $(CPPFLAGS) $(LDFLAGS) $(TARGET_ARCH)
+# default
+LINK.o = $(CC) $(LDFLAGS) $(TARGET_ARCH)
+# default
+OUTPUT_OPTION = -o $@
+# makefile (from 'GNUmakefile', line 1)
+w = $(filter _%,$(notdir $(CURDIR)))
+# default
+COMPILE.cpp = $(COMPILE.cc)
+# makefile (from '../GMake.defs', line 1)
+MAKEFILE_LIST :=  GNUmakefile GMake.target ../GMake.defs
+# automatic
+@F = $(notdir $@)
+# environment
+HISTCONTROL = ignoredups
+# environment
+USERNAME = eugene
+# default
+LINK.p = $(PC) $(PFLAGS) $(CPPFLAGS) $(LDFLAGS) $(TARGET_ARCH)
+# environment
+DBUS_SESSION_BUS_ADDRESS = unix:abstract=/tmp/dbus-Bhb8YenQHS,guid=2a6f55b8f38a9b494ec0a00756f353ed
+# default
+CC = cc
+# default
+CHECKOUT,v = +$(if $(wildcard $@),,$(CO) $(COFLAGS) $< $@)
+# environment
+LESSOPEN = |/usr/bin/lesspipe.sh %s
+# default
+CPP = $(CC) -E
+# default
+LINK.cc = $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(LDFLAGS) $(TARGET_ARCH)
+# default
+MAKE_HOST := x86_64-redhat-linux-gnu
+# environment
+PATH = /home/eugene/local/anaconda2/bin:/home/eugene/local/lisp/sbcl/install/bin:/home/eugene/codes/pyjournal:/home/eugene/codes/astro/pybib:/home/eugene/local/pdfgrep/bin:/home/eugene/local/bin:/home/eugene/codes/scripts:/home/eugene/local/lisp/sbcl/install/bin:/home/eugene/codes/pyjournal:/home/eugene/codes/astro/pybib:/home/eugene/local/pdfgrep/bin:/home/eugene/local/anaconda2/bin:/home/eugene/local/bin:/home/eugene/codes/scripts:/usr/lib64/qt-3.3/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/home/eugene/.local/bin:/home/eugene/bin
+# default
+LD = ld
+# environment
+BOXLIB_HOME = /home/eugene/codes/astro/BoxLib
+# default
+TEXI2DVI = texi2dvi
+# environment
+QT_GRAPHICSSYSTEM_CHECKED = 1
+# default
+COMPILE.mod = $(M2C) $(M2FLAGS) $(MODFLAGS) $(TARGET_ARCH)
+# environment
+XDG_RUNTIME_DIR = /run/user/1000
+# default
+ARFLAGS = rv
+# default
+LINK.r = $(FC) $(FFLAGS) $(RFLAGS) $(LDFLAGS) $(TARGET_ARCH)
+# environment
+WINDOWID = 102760482
+# default
+COMPILE.f = $(FC) $(FFLAGS) $(TARGET_ARCH) -c
+# default
+LINT.c = $(LINT) $(LINTFLAGS) $(CPPFLAGS) $(TARGET_ARCH)
+# default
+YACC.m = $(YACC) $(YFLAGS)
+# default
+LINT = lint
+# default
+YACC.y = $(YACC) $(YFLAGS)
+# makefile (from 'GMake.target', line 5)
+ODIR := _build.gfortran
+# default
+AR = ar
+# default
+.FEATURES := target-specific order-only second-expansion else-if shortest-stem undefine oneshell archives jobserver output-sync check-symlink load
+# default
+TANGLE = tangle
+# environment
+LS_COLORS = rs=0:di=38;5;33:ln=38;5;51:mh=00:pi=40;38;5;11:so=38;5;13:do=38;5;5:bd=48;5;232;38;5;11:cd=48;5;232;38;5;3:or=48;5;232;38;5;9:mi=01;05;37;41:su=48;5;196;38;5;15:sg=48;5;11;38;5;16:ca=48;5;196;38;5;226:tw=48;5;10;38;5;16:ow=48;5;10;38;5;21:st=48;5;21;38;5;15:ex=38;5;40:*.tar=38;5;9:*.tgz=38;5;9:*.arc=38;5;9:*.arj=38;5;9:*.taz=38;5;9:*.lha=38;5;9:*.lz4=38;5;9:*.lzh=38;5;9:*.lzma=38;5;9:*.tlz=38;5;9:*.txz=38;5;9:*.tzo=38;5;9:*.t7z=38;5;9:*.zip=38;5;9:*.z=38;5;9:*.Z=38;5;9:*.dz=38;5;9:*.gz=38;5;9:*.lrz=38;5;9:*.lz=38;5;9:*.lzo=38;5;9:*.xz=38;5;9:*.bz2=38;5;9:*.bz=38;5;9:*.tbz=38;5;9:*.tbz2=38;5;9:*.tz=38;5;9:*.deb=38;5;9:*.rpm=38;5;9:*.jar=38;5;9:*.war=38;5;9:*.ear=38;5;9:*.sar=38;5;9:*.rar=38;5;9:*.alz=38;5;9:*.ace=38;5;9:*.zoo=38;5;9:*.cpio=38;5;9:*.7z=38;5;9:*.rz=38;5;9:*.cab=38;5;9:*.jpg=38;5;13:*.jpeg=38;5;13:*.gif=38;5;13:*.bmp=38;5;13:*.pbm=38;5;13:*.pgm=38;5;13:*.ppm=38;5;13:*.tga=38;5;13:*.xbm=38;5;13:*.xpm=38;5;13:*.tif=38;5;13:*.tiff=38;5;13:*.png=38;5;13:*.svg=38;5;13:*.svgz=38;5;13:*.mng=38;5;13:*.pcx=38;5;13:*.mov=38;5;13:*.mpg=38;5;13:*.mpeg=38;5;13:*.m2v=38;5;13:*.mkv=38;5;13:*.webm=38;5;13:*.ogm=38;5;13:*.mp4=38;5;13:*.m4v=38;5;13:*.mp4v=38;5;13:*.vob=38;5;13:*.qt=38;5;13:*.nuv=38;5;13:*.wmv=38;5;13:*.asf=38;5;13:*.rm=38;5;13:*.rmvb=38;5;13:*.flc=38;5;13:*.avi=38;5;13:*.fli=38;5;13:*.flv=38;5;13:*.gl=38;5;13:*.dl=38;5;13:*.xcf=38;5;13:*.xwd=38;5;13:*.yuv=38;5;13:*.cgm=38;5;13:*.emf=38;5;13:*.ogv=38;5;13:*.ogx=38;5;13:*.aac=38;5;45:*.au=38;5;45:*.flac=38;5;45:*.m4a=38;5;45:*.mid=38;5;45:*.midi=38;5;45:*.mka=38;5;45:*.mp3=38;5;45:*.mpc=38;5;45:*.ogg=38;5;45:*.ra=38;5;45:*.wav=38;5;45:*.oga=38;5;45:*.opus=38;5;45:*.spx=38;5;45:*.xspf=38;5;45:
+# environment
+XDG_SESSION_DESKTOP = awesome
+# environment
+SSH_AUTH_SOCK = /tmp/ssh-Gt7AOaiTOGGf/agent.2011
+# default
+GET = get
+# environment
+XTERM_VERSION = XTerm(318)
+# environment
+DISPLAY = :0
+# default
+MAKEFILES := 
+# default
+COMPILE.F = $(FC) $(FFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c
+# default
+CTANGLE = ctangle
+# default
+.LIBPATTERNS = lib%.so lib%.a
+# default
+LINK.C = $(LINK.cc)
+# environment
+PWD = /home/eugene/codes/astro/pyreaclib/examples/C_f90
+# default
+LINK.S = $(CC) $(ASFLAGS) $(CPPFLAGS) $(LDFLAGS) $(TARGET_MACH)
+# environment
+XDG_SEAT = seat0
+# default
+PREPROCESS.r = $(FC) $(FFLAGS) $(RFLAGS) $(TARGET_ARCH) -F
+# environment
+SSH_AGENT_PID = 2026
+# default
+LINK.c = $(CC) $(CFLAGS) $(CPPFLAGS) $(LDFLAGS) $(TARGET_ARCH)
+# environment
+XTERM_LOCALE = en_US.UTF-8
+# default
+LINK.s = $(CC) $(ASFLAGS) $(LDFLAGS) $(TARGET_MACH)
+# environment
+HOME = /home/eugene
+# environment
+LD_LIBRARY_PATH = /home/eugene/local/sundials/instdir/lib:/home/eugene/local/sundials/instdir/lib:
+# environment
+MODULESHOME = /usr/share/Modules
+# environment
+LOGNAME = eugene
+# default
+CO = co
+# automatic
+^D = $(patsubst %/,%,$(dir $^))
+# environment
+HOSTNAME = snia
+# environment
+XDG_VTNR = 2
+# environment
+MAKELEVEL := 0
+# default
+COMPILE.m = $(OBJC) $(OBJCFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c
+# environment
+SSH_ASKPASS = /usr/libexec/openssh/gnome-ssh-askpass
+# default
+MAKE = $(MAKE_COMMAND)
+# default
+MAKECMDGOALS := clean
+# environment
+SHLVL = 2
+# default
+AS = as
+# default
+PREPROCESS.S = $(CC) -E $(CPPFLAGS)
+# environment
+MESASDK_ROOT = /home/eugene/codes/astro/mesa/mesasdk
+# default
+COMPILE.p = $(PC) $(PFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c
+# environment
+XDG_SESSION_ID = 1
+# environment
+USER = eugene
+# makefile (from '../GMake.defs', line 4)
+FC := gfortran
+# environment
+QTLIB = /usr/lib64/qt-3.3/lib
+# makefile (from 'GMake.target', line 8)
+MAKETARGET = $(MAKE) --no-print-directory -C $@ -f $(CURDIR)/GNUmakefile SRCDIR=$(CURDIR) $(MAKECMDGOALS)
+# automatic
+%D = $(patsubst %/,%,$(dir $%))
+# environment
+define BASH_FUNC_module()
+() {  eval `/usr/bin/modulecmd bash $*`
+}
+endef
+# default
+WEAVE = weave
+# default
+MAKE_COMMAND := make
+# default
+LINK.cpp = $(LINK.cc)
+# default
+F77 = $(FC)
+# environment
+OLDPWD = /home/eugene/codes/astro/pyreaclib/examples/C_f90/_build.gfortran
+# default
+.VARIABLES := 
+# default
+PC = pc
+# environment
+CVS_RSH = ssh
+# automatic
+*F = $(notdir $*)
+# default
+COMPILE.def = $(M2C) $(M2FLAGS) $(DEFFLAGS) $(TARGET_ARCH)
+# environment
+PYTHONPATH = /home/eugene/codes/astro/pyreaclib:/home/eugene/codes/astro/mesautils:/home/eugene/codes/astro/pyreaclib:/home/eugene/codes/astro/mesautils:
+# default
+LEX = lex
+# makefile
+MAKEFLAGS = p
+# environment
+MFLAGS = -p
+# automatic
+*D = $(patsubst %/,%,$(dir $*))
+# environment
+MAIL = /var/spool/mail/eugene
+# environment
+LOADEDMODULES = 
+# default
+LEX.l = $(LEX) $(LFLAGS) -t
+# default
+LEX.m = $(LEX) $(LFLAGS) -t
+# automatic
++D = $(patsubst %/,%,$(dir $+))
+# default
+COMPILE.r = $(FC) $(FFLAGS) $(RFLAGS) $(TARGET_ARCH) -c
+# automatic
++F = $(notdir $+)
+# default
+M2C = m2c
+# automatic
+%F = $(notdir $%)
+# environment
+SVN_EDITOR = emacsclient -nw
+# environment
+define BASH_FUNC_scl()
+() {  local CMD=$1;
+ if [ "$CMD" = "load" -o "$CMD" = "unload" ]; then
+ eval "module $@";
+ else
+ /usr/bin/scl "$@";
+ fi
+}
+endef
+# default
+YACC = yacc
+# default
+COMPILE.cc = $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c
+# automatic
+<F = $(notdir $<)
+# default
+CXX = g++
+# default
+COFLAGS = 
+# environment
+EDITOR = emacsclient -nw
+# default
+COMPILE.C = $(COMPILE.cc)
+# automatic
+^F = $(notdir $^)
+# default
+COMPILE.S = $(CC) $(ASFLAGS) $(CPPFLAGS) $(TARGET_MACH) -c
+# default
+LINK.F = $(FC) $(FFLAGS) $(CPPFLAGS) $(LDFLAGS) $(TARGET_ARCH)
+# default
+SUFFIXES := .out .a .ln .o .c .cc .C .cpp .p .f .F .m .r .y .l .ym .yl .s .S .mod .sym .def .h .info .dvi .tex .texinfo .texi .txinfo .w .ch .web .sh .elc .el
+# environment
+HISTSIZE = 1000
+# default
+COMPILE.c = $(CC) $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c
+# environment
+WINDOWPATH = 2
+# default
+COMPILE.s = $(AS) $(ASFLAGS) $(TARGET_MACH)
+# default
+.INCLUDE_DIRS = /usr/include /usr/local/include /usr/include
+# environment
+QTINC = /usr/lib64/qt-3.3/include
+# default
+.RECIPEPREFIX := 
+# default
+MAKEINFO = makeinfo
+# makefile
+.DEFAULT_GOAL := _build.gfortran
+# default
+OBJC = cc
+# environment
+MESA_DIR = /home/eugene/codes/astro/mesa/mesa
+# default
+TEX = tex
+# environment
+LANG = en_US.UTF-8
+# environment
+TERM = xterm-256color
+# default
+F77FLAGS = $(FFLAGS)
+# default
+LINK.f = $(FC) $(FFLAGS) $(LDFLAGS) $(TARGET_ARCH)
+# variable set hash-table stats:
+# Load=156/1024=15%, Rehash=0, Collisions=39/213=18%
+
+# Pattern-specific Variable Values
+
+# No pattern-specific variable values.
+
+# Directories
+
+# SCCS: could not be stat'd.
+# . (device 64770, inode 79298852): 14 files, no impossibilities so far.
+# RCS: could not be stat'd.
+
+# 14 files, no impossibilities in 3 directories.
+
+# Implicit Rules
+
+%.mk::
+#  recipe to execute (from 'GMake.target', line 17):
+	
+
+%:: _build.gfortran
+#  recipe to execute (from 'GMake.target', line 19):
+	 :
+
+(%): %
+#  recipe to execute (built-in):
+	$(AR) $(ARFLAGS) $@ $<
+
+%.out: %
+#  recipe to execute (built-in):
+	@rm -f $@ 
+	 cp $< $@
+
+%.c: %.w %.ch
+#  recipe to execute (built-in):
+	$(CTANGLE) $^ $@
+
+%.tex: %.w %.ch
+#  recipe to execute (built-in):
+	$(CWEAVE) $^ $@
+
+%:: %,v
+#  recipe to execute (built-in):
+	$(CHECKOUT,v)
+
+%:: RCS/%,v
+#  recipe to execute (built-in):
+	$(CHECKOUT,v)
+
+%:: RCS/%
+#  recipe to execute (built-in):
+	$(CHECKOUT,v)
+
+%:: s.%
+#  recipe to execute (built-in):
+	$(GET) $(GFLAGS) $(SCCS_OUTPUT_OPTION) $<
+
+%:: SCCS/s.%
+#  recipe to execute (built-in):
+	$(GET) $(GFLAGS) $(SCCS_OUTPUT_OPTION) $<
+
+# 11 implicit rules, 7 (63.6%) terminal.
+
+# Files
+
+# Not a target:
+.web.p:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(TANGLE) $<
+
+# Not a target:
+.l.r:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(LEX.l) $< > $@ 
+	 mv -f lex.yy.r $@
+
+# Not a target:
+.dvi:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+.ym:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+.f.o:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(COMPILE.f) $(OUTPUT_OPTION) $<
+
+# Not a target:
+.l:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+.m:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(LINK.m) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+# Not a target:
+.ln:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+.o:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(LINK.o) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+# Not a target:
+.y:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+.def.sym:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(COMPILE.def) -o $@ $<
+
+.PHONY: _build.gfortran clean
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+.p.o:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(COMPILE.p) $(OUTPUT_OPTION) $<
+
+# Not a target:
+.p:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(LINK.p) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+# Not a target:
+.txinfo.dvi:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(TEXI2DVI) $(TEXI2DVI_FLAGS) $<
+
+# Not a target:
+.a:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+.yl:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+.l.ln:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	@$(RM) $*.c
+	 $(LEX.l) $< > $*.c
+	$(LINT.c) -i $*.c -o $@
+	 $(RM) $*.c
+
+# Not a target:
+.F.o:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(COMPILE.F) $(OUTPUT_OPTION) $<
+
+# Not a target:
+.texi.info:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(MAKEINFO) $(MAKEINFO_FLAGS) $< -o $@
+
+# Not a target:
+.w.c:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(CTANGLE) $< - $@
+
+# Not a target:
+.texi.dvi:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(TEXI2DVI) $(TEXI2DVI_FLAGS) $<
+
+# Not a target:
+.ch:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+.m.o:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(COMPILE.m) $(OUTPUT_OPTION) $<
+
+# Not a target:
+.cc:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(LINK.cc) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+# Not a target:
+.cc.o:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(COMPILE.cc) $(OUTPUT_OPTION) $<
+
+# Not a target:
+.def:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+.SUFFIXES:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+.c.o:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(COMPILE.c) $(OUTPUT_OPTION) $<
+
+# Not a target:
+.r.o:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(COMPILE.r) $(OUTPUT_OPTION) $<
+
+# Not a target:
+.r:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(LINK.r) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+# Not a target:
+.ym.m:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(YACC.m) $< 
+	 mv -f y.tab.c $@
+
+# Not a target:
+.y.ln:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(YACC.y) $< 
+	 $(LINT.c) -C$* y.tab.c 
+	 $(RM) y.tab.c
+
+# Not a target:
+.elc:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+.l.c:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	@$(RM) $@ 
+	 $(LEX.l) $< > $@
+
+# Not a target:
+.out:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+.C:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(LINK.C) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+# Not a target:
+.r.f:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(PREPROCESS.r) $(OUTPUT_OPTION) $<
+
+# Not a target:
+.S:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(LINK.S) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+# Not a target:
+.texinfo.info:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(MAKEINFO) $(MAKEINFO_FLAGS) $< -o $@
+
+# Not a target:
+.c:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(LINK.c) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+# Not a target:
+.w.tex:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(CWEAVE) $< - $@
+
+# Not a target:
+.c.ln:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(LINT.c) -C$* $<
+
+# Not a target:
+.s.o:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(COMPILE.s) -o $@ $<
+
+# Not a target:
+.s:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(LINK.s) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+# Not a target:
+.texinfo.dvi:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(TEXI2DVI) $(TEXI2DVI_FLAGS) $<
+
+# Not a target:
+.el:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+.lm.m:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	@$(RM) $@ 
+	 $(LEX.m) $< > $@
+
+# Not a target:
+.y.c:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(YACC.y) $< 
+	 mv -f y.tab.c $@
+
+# Not a target:
+.web.tex:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(WEAVE) $<
+
+# Not a target:
+.texinfo:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+.DEFAULT:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+.h:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+.tex.dvi:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(TEX) $<
+
+# Not a target:
+.cpp.o:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(COMPILE.cpp) $(OUTPUT_OPTION) $<
+
+# Not a target:
+.cpp:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(LINK.cpp) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+clean:
+#  Phony target (prerequisite of .PHONY).
+#  Command line target.
+#  Implicit rule search has not been done.
+#  File does not exist.
+#  File has not been updated.
+#  recipe to execute (from 'GMake.target', line 23):
+	rm -rf $(ODIR)
+	rm -f *.exe
+	
+
+# Not a target:
+.C.o:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(COMPILE.C) $(OUTPUT_OPTION) $<
+
+# Not a target:
+.texi:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+.txinfo:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+.tex:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+.txinfo.info:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(MAKEINFO) $(MAKEINFO_FLAGS) $< -o $@
+
+GNUmakefile:
+#  Implicit rule search has not been done.
+#  Last modified 2016-03-31 02:57:44.472548106
+#  File has not been updated.
+#  recipe to execute (from 'GMake.target', line 16):
+	
+
+../GMake.defs: _build.gfortran
+#  Implicit rule search has been done.
+#  Implicit/static pattern stem: '../GMake.defs'
+#  Last modified 2016-03-30 22:46:16.218399264
+#  File has not been updated.
+# variable set hash-table stats:
+# Load=0/32=0%, Rehash=0, Collisions=0/12=0%
+#  recipe to execute (from 'GMake.target', line 19):
+	 :
+
+# Not a target:
+.sh:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	cat $< >$@ 
+	 chmod a+x $@
+
+_build.gfortran:
+#  Phony target (prerequisite of .PHONY).
+#  Implicit rule search has been done.
+#  Implicit/static pattern stem: ''
+#  File does not exist.
+#  File has been updated.
+#  Failed to be updated.
+# automatic
+# @ := _build.gfortran
+# automatic
+# % := 
+# automatic
+# * := 
+# automatic
+# + := 
+# automatic
+# | := 
+# automatic
+# < := 
+# automatic
+# ^ := 
+# automatic
+# ? := 
+# variable set hash-table stats:
+# Load=8/32=25%, Rehash=0, Collisions=4/23=17%
+#  recipe to execute (from 'GMake.target', line 13):
+	+@[ -d $@ ] || mkdir -p $@
+	+@$(MAKETARGET)
+
+# Not a target:
+.S.s:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(PREPROCESS.S) $< > $@
+
+# Not a target:
+.mod:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(COMPILE.mod) -o $@ -e $@ $^
+
+# Not a target:
+.mod.o:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(COMPILE.mod) -o $@ $<
+
+# Not a target:
+.F.f:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(PREPROCESS.F) $(OUTPUT_OPTION) $<
+
+# Not a target:
+.w:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+.S.o:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(COMPILE.S) -o $@ $<
+
+# Not a target:
+.F:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(LINK.F) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+# Not a target:
+.web:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+.sym:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+.f:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (built-in):
+	$(LINK.f) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+# Not a target:
+GMake.target:
+#  Implicit rule search has not been done.
+#  Last modified 2016-03-31 03:03:27.111953533
+#  File has not been updated.
+
+# Not a target:
+.info:
+#  Builtin rule
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# files hash-table stats:
+# Load=78/1024=8%, Rehash=0, Collisions=34/151=23%
+# VPATH Search Paths
+
+# No 'vpath' search paths.
+
+# No general ('VPATH' variable) search path.
+
+# strcache buffers: 1 (0) / strings = 103 / storage = 699 B / avg = 6 B
+# current buf: size = 8162 B / used = 699 B / count = 103 / avg = 6 B
+
+# strcache performance: lookups = 145 / hit rate = 28%
+# hash-table stats:
+# Load=103/8192=1%, Rehash=0, Collisions=15/145=10%
+# Finished Make data base on Thu Mar 31 03:04:10 2016
+

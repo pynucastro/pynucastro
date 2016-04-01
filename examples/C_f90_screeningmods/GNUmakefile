@@ -1,0 +1,36 @@
+w = $(filter _%,$(notdir $(CURDIR)))
+$(warning $(CURDIR))
+$(warning $(notdir $(CURDIR)))
+$(warning $w)
+ifeq (,$w)
+$(warning Not in target directory.)
+include GMake.target.mk
+else
+$(warning In target directory.)
+SCREENING_DIR := /home/eugene/codes/astro/Microphysics/screening
+BOXLIB_HOME := /home/eugene/codes/astro/BoxLib
+
+VPATH := $(SRCDIR)
+VPATH += $(SCREENING_DIR)
+VPATH += $(BOXLIB_HOME)/Src/F_BaseLib
+
+ACC :=
+
+include ../../GMake.defs.mk
+program := integrator
+pnames = $(addsuffix .$(suf).exe, $(basename $(program)))
+$(warning Using program: $(program))
+$(warning Using pnames: $(pnames))
+ALL: $(pnames)
+
+include ../../GMake.common.mk
+
+$(warning Here are all the objects $(OBJECTS))
+# default target -- this is the executable
+%.$(suf).exe: $(OBJECTS)
+	@echo " "
+	@echo "Linking..."
+	$(link) -o $@  $(OBJECTS) $(LINKLIBS)
+	@cp $@ ../$@
+
+endif
