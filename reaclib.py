@@ -28,6 +28,12 @@ class Nucleus(object):
         if name == "p":
             self.el = "H"
             self.A = 1
+        elif name == "d":
+            self.el = "H"
+            self.A = 2
+        elif name == "t":
+            self.el = "H"
+            self.A = 3
         elif name == "n":
             self.el = "n"
             self.A = 1
@@ -136,9 +142,6 @@ class Rate(object):
         self.products = []
         self.sets = []
 
-        self.dens_exp = 1
-        self.prefactor = 1.0    # this is 1/2 for rates like a + a (double counting)
-
         idx = self.file.rfind("-")
         self.fname = self.file[:idx].replace("--","-").replace("-","_")
 
@@ -146,7 +149,7 @@ class Rate(object):
 
         # read in the file, parse the different sets and store them as
         # SingleSet objects in sets[]
-        f = open(file, "r")
+        f = open(file, "r")                            
         lines = f.readlines()
 
         self.original_source = "".join(lines)
@@ -161,7 +164,7 @@ class Rate(object):
         set_lines = [l for l in lines[1:] if not l.strip() == ""]
 
         if self.chapter == "t":
-            # e1 -> e2
+            # e1 -> e2, Tabulated
             s1 = set_lines.pop(0)
             s2 = set_lines.pop(0)
             s3 = set_lines.pop(0)
@@ -178,8 +181,6 @@ class Rate(object):
             self.table_num_vars     = 6 # Hard-coded number of variables in tables for now.
             self.table_index_name = 'j_{}_{}'.format(self.reactants[0], self.products[0])
 
-            self.string = "{} -> {}".format(*(self.reactants + self.products))
-            self.dens_exp = 0
         else:
             # the rest is the sets
             first = 1
@@ -205,112 +206,56 @@ class Rate(object):
                         self.reactants.append(Nucleus(f[0]))
                         self.products.append(Nucleus(f[1]))
 
-                        self.string = "{} -> {}".format(*(self.reactants + self.products))
-                        self.dens_exp = 0
-
                     elif self.chapter == 2:
                         # e1 -> e2 + e3
                         self.reactants.append(Nucleus(f[0]))
                         self.products += [Nucleus(f[1]), Nucleus(f[2])]
-
-                        self.string = "{} -> {} + {}".format(*(self.reactants + self.products))
-                        self.dens_exp = 0
 
                     elif self.chapter == 3:
                         # e1 -> e2 + e3 + e4
                         self.reactants.append(Nucleus(f[0]))
                         self.products += [Nucleus(f[1]), Nucleus(f[2]), Nucleus(f[3])]
 
-                        self.string = "{} -> {} + {} + {}".format(*(self.reactants + self.products))
-                        self.dens_exp = 0
-
                     elif self.chapter == 4:
                         # e1 + e2 -> e3
                         self.reactants += [Nucleus(f[0]), Nucleus(f[1])]
                         self.products.append(Nucleus(f[2]))
-
-                        if len(set(self.reactants)) == 1:
-                            self.prefactor = 1./2.
-
-                        self.dens_exp = 1
 
                     elif self.chapter == 5:
                         # e1 + e2 -> e3 + e4
                         self.reactants += [Nucleus(f[0]), Nucleus(f[1])]
                         self.products += [Nucleus(f[2]), Nucleus(f[3])]
 
-                        if len(set(self.reactants)) == 1:
-                            self.prefactor = 1./2.
-
-                        self.dens_exp = 1
-
                     elif self.chapter == 6:
                         # e1 + e2 -> e3 + e4 + e5
                         self.reactants += [Nucleus(f[0]), Nucleus(f[1])]
                         self.products += [Nucleus(f[2]), Nucleus(f[3]), Nucleus(f[4])]
-
-                        if len(set(self.reactants)) == 1:
-                            self.prefactor = 1./2.
-
-                        self.dens_exp = 1
 
                     elif self.chapter == 7:
                         # e1 + e2 -> e3 + e4 + e5 + e6
                         self.reactants += [Nucleus(f[0]), Nucleus(f[1])]
                         self.products += [Nucleus(f[2]), Nucleus(f[3]), Nucleus(f[4]), Nucleus(f[5])]
 
-                        if len(set(self.reactants)) == 1:
-                            self.prefactor = 1./2.
-
-                        self.dens_exp = 1
-
                     elif self.chapter == 8:
                         # e1 + e2 + e3 -> e4
                         self.reactants += [Nucleus(f[0]), Nucleus(f[1]), Nucleus(f[2])]
                         self.products.append(Nucleus(f[3]))
-
-                        if len(set(self.reactants)) == 1:
-                            self.prefactor = 1./6.  # 1/3!
-                        elif len(set(self.reactants)) == 2:
-                            self.prefactor = 1./2.
-
-                        self.dens_exp = 2
 
                     elif self.chapter == 9:
                         # e1 + e2 + e3 -> e4 + e5
                         self.reactants += [Nucleus(f[0]), Nucleus(f[1]), Nucleus(f[2])]
                         self.products += [Nucleus(f[3]), Nucleus(f[4])]
 
-                        if len(set(self.reactants)) == 1:
-                            self.prefactor = 1./6.  # 1/3!
-                        elif len(set(self.reactants)) == 2:
-                            self.prefactor = 1./2.
-
-                        self.dens_exp = 2
-
                     elif self.chapter == 10:
                         # e1 + e2 + e3 + e4 -> e5 + e6
                         self.reactants += [Nucleus(f[0]), Nucleus(f[1]), Nucleus(f[2]), Nucleus(f[3])]
                         self.products += [Nucleus(f[4]), Nucleus(f[5])]
 
-                        if len(set(self.reactants)) == 1:
-                            self.prefactor = 1./24.  # 1/4!
-                        elif len(set(self.reactants)) == 2:
-                            # there may be some instances where we have a + a + b + b,
-                            # so prefactor = 1/4?
-                            self.prefactor = 1./6. # 1/3!
-                        elif len(set(self.reactants)) == 3:
-                            self.prefactor = 1./2.
-
-                        self.dens_exp = 3
-
                     elif self.chapter == 11:
                         # e1 -> e2 + e3 + e4 + e5
                         self.reactants.append(Nucleus(f[0]))
                         self.products += [Nucleus(f[1]), Nucleus(f[2]), Nucleus(f[3]), Nucleus(f[4])]
-
-                        self.dens_exp = 0
-
+                    
                     first = 0
 
                 # the second line contains the first 4 coefficients
@@ -322,7 +267,13 @@ class Rate(object):
 
                 a = [float(e) for e in a if not e.strip() == ""]
                 self.sets.append(SingleSet(a, label=label))
-
+                
+        # compute self.prefactor and self.dens_exp from the reactants
+        self.prefactor = 1.0  # this is 1/2 for rates like a + a (double counting)
+        for r in list(set(self.reactants)):
+            self.prefactor = self.prefactor/np.math.factorial(self.reactants.count(r))
+        self.dens_exp = len(self.reactants)-1
+        
         self.string = ""
         self.pretty_string = r"$"
         for n, r in enumerate(self.reactants):
@@ -343,7 +294,7 @@ class Rate(object):
                 self.pretty_string += r" + "
 
         self.pretty_string += r"$"
-
+        
     def __repr__(self):
         return self.string
 
@@ -443,7 +394,7 @@ class Rate(object):
             if c > 1:
                 Y_string += "Y[i{}]**{}".format(r, c)
             else:
-                Y_string += "Y[i{}]".format(r, c)
+                Y_string += "Y[i{}]".format(r)
 
             if n < len(set(self.reactants))-1:
                 Y_string += "*"
@@ -466,7 +417,7 @@ class Rate(object):
 
     def jacobian_string(self, ydot_j, y_i):
         """
-        return a string containing the term in a jacobian matrix
+        return a string containing the term in a jacobian matrix 
         in a reaction network corresponding to this rate
 
         Returns the derivative of the j-th YDOT wrt. the i-th Y
@@ -497,7 +448,7 @@ class Rate(object):
                 if c > 1:
                     Y_string += "Y[i{}]**{}".format(r, c)
                 else:
-                    Y_string += "Y[i{}]".format(r, c)
+                    Y_string += "Y[i{}]".format(r)
 
         # density dependence
         if self.dens_exp == 0:
@@ -518,7 +469,7 @@ class Rate(object):
         else:
             rstring = "{}{}{}*lambda_{}"
         return rstring.format(prefactor_string, dens_string, Y_string, self.fname)
-
+    
     def ydot_string_f90(self):
         """
         return a string containing the term in a dY/dt equation
@@ -532,7 +483,7 @@ class Rate(object):
             if c > 1:
                 Y_string += "Y(net_meta%i{})**{}".format(r, c)
             else:
-                Y_string += "Y(net_meta%i{})".format(r, c)
+                Y_string += "Y(net_meta%i{})".format(r)
 
             if n < len(set(self.reactants))-1:
                 Y_string += " * "
@@ -555,7 +506,7 @@ class Rate(object):
 
     def jacobian_string_f90(self, ydot_j, y_i):
         """
-        return a string containing the term in a jacobian matrix
+        return a string containing the term in a jacobian matrix 
         in a reaction network corresponding to this rate
 
         Returns the derivative of the j-th YDOT wrt. the i-th Y
@@ -586,7 +537,7 @@ class Rate(object):
                 if c > 1:
                     Y_string += "Y(net_meta%i{})**{}".format(r, c)
                 else:
-                    Y_string += "Y(net_meta%i{})".format(r, c)
+                    Y_string += "Y(net_meta%i{})".format(r)
 
         # density dependence
         if self.dens_exp == 0:
@@ -615,7 +566,7 @@ class RateCollection(object):
         """
         rate_files are the files that together define the network.  This
         can be any iterable or single string, and can include
-        wildcards.
+        wildcards
 
         """
 
@@ -642,13 +593,17 @@ class RateCollection(object):
                     self.files += fp
                 else: # Notify of all missing files before exiting
                     print('ERROR: File {} not found in {} or the working directory!'.format(p,self.pyreaclib_rates_dir))
-                    exit_program = True
+                    exit_program = True 
         if exit_program:
             exit()
 
         for rf in self.files:
-            self.rates.append(Rate(rf))
-
+            try:
+                self.rates.append(Rate(rf))
+            except:
+                print("Error with file: {}".format(rf))
+                raise
+            
         # get the unique nuclei
         u = []
         for r in self.rates:
@@ -748,7 +703,11 @@ class RateCollection(object):
                 else:
                     of.write("{}   -{}*{}\n".format(indent, c, r.ydot_string()))
             for r in self.nuclei_produced[n]:
-                of.write("{}   +{}\n".format(indent, r.ydot_string()))
+                c = r.products.count(n)
+                if c == 1:
+                    of.write("{}   +{}\n".format(indent, r.ydot_string()))
+                else:
+                    of.write("{}   +{}*{}\n".format(indent, c, r.ydot_string()))
             of.write("{}   )\n\n".format(indent))
 
         of.write("{}return dYdt\n".format(indent))
@@ -764,7 +723,7 @@ class RateCollection(object):
         """
         Figure out which network to make.
         """
-
+        
         typenet_avail = ['sundials']
         if typenet=='sundials':
             self.make_network_sundials()
@@ -779,14 +738,14 @@ class RateCollection(object):
         This writes the RHS, jacobian and ancillary files for the system of ODEs that
         this network describes, using the template files.
         """
-
+        
         sundials_dir = os.path.join(self.pyreaclib_dir,
                                     'templates',
                                     'sundials-cvode')
         template_file_select = os.path.join(sundials_dir,
                                             '*.template')
         template_files = glob.glob(template_file_select)
-
+        
         indent = '  '
 
         for tfile in template_files:
@@ -890,9 +849,9 @@ class RateCollection(object):
                                 exit()
                         of.write('{}end if\n'.format(indent*n_indent))
                     else:
-                        of.write(l)
+                        of.write(l)    
                 of.close()
-
+                
             elif tfile_basename=='table_rates.f90.template':
                 # Table specification and rates
                 outfile = 'table_rates.f90'
@@ -926,7 +885,7 @@ class RateCollection(object):
                     else:
                         of.write(l)
                 of.close()
-
+                
             elif tfile_basename=='network.f90.template':
                 # Network ydot and jacobian
                 outfile = 'network.f90'
@@ -950,7 +909,11 @@ class RateCollection(object):
                                 else:
                                     of.write("{}   - {} * {} &\n".format(indent*n_indent, c, r.ydot_string_f90()))
                             for r in self.nuclei_produced[n]:
-                                of.write("{}   + {} &\n".format(indent*n_indent, r.ydot_string_f90()))
+                                c = r.products.count(n)
+                                if c == 1:
+                                    of.write("{}   + {} &\n".format(indent*n_indent, r.ydot_string_f90()))
+                                else:
+                                    of.write("{}   + {} * {} &\n".format(indent*n_indent, c, r.ydot_string_f90()))
                             of.write("{}   )\n\n".format(indent*n_indent))
                     elif k_2 in ls:
                         n_indent = self.get_indent_amt(ls, k_2)
@@ -972,16 +935,21 @@ class RateCollection(object):
                                     sjac = r.jacobian_string_f90(nj, ni)
                                     if sjac != '':
                                         jac_identically_zero = False
-                                        of.write("{}   + {} &\n".format(indent*n_indent, sjac))
+                                        c = r.products.count(nj)
+                                        if c == 1:
+                                            of.write("{}   + {} &\n".format(indent*n_indent, sjac))
+                                        else:
+                                            of.write("{}   + {} * {} &\n".format(indent*n_indent, c, sjac))
+
                                 if jac_identically_zero:
                                     of.write("{}   + {} &\n".format(indent*n_indent, '0.0d0'))
                                 of.write("{}   )\n\n".format(indent*n_indent))
                     else:
-                        of.write(l)
+                        of.write(l)    
                 of.close()
-
+                
             elif tfile_basename=='integrator.f90.template':
-                # Integrator
+                # Integrator 
                 outfile = 'integrator.f90'
                 try: of = open(outfile, "w")
                 except: raise
@@ -1000,7 +968,7 @@ class RateCollection(object):
                         for n in self.unique_nuclei:
                             of.write("{}write(*,'(A,ES25.14)') '{}: ', cv_data%Y(net_meta%i{})\n".format(indent*n_indent, n, n))
                     else:
-                        of.write(l)
+                        of.write(l)    
                 of.close()
 
             elif tfile_basename=='data_wrangler.f90.template':
@@ -1020,7 +988,7 @@ class RateCollection(object):
                             of.write("'Y_{}', ".format(nuc))
                         of.write("'E_nuc', 'Time'\n")
                     else:
-                        of.write(l)
+                        of.write(l)    
                 of.close()
                 ifile.close()
 
@@ -1039,7 +1007,7 @@ class RateCollection(object):
                         of.write('{} '.format(indent*n_indent))
                         of.write('integer*8 :: NEQ = {} ! Size of ODE system\n'.format(len(self.unique_nuclei)+1))
                     else:
-                        of.write(l)
+                        of.write(l)    
                 of.close()
                 ifile.close()
 
@@ -1058,22 +1026,22 @@ class RateCollection(object):
                         for n in self.unique_nuclei:
                             of.write('{}net_initial_abundances%y{} = 0.0d0\n'.format(indent*n_indent, n))
                     else:
-                        of.write(l)
+                        of.write(l)    
                 of.close()
                 ifile.close()
-
+                
             elif tfile_basename=='parameters.f90.template':
                 shutil.copyfile(tfile, 'parameters.f90')
-
+                
             elif tfile_basename=='physical_constants.f90.template':
                 shutil.copyfile(tfile, 'physical_constants.f90')
 
             elif tfile_basename=='GNUmakefile.template':
                 shutil.copyfile(tfile, 'GNUmakefile')
-
+                
             else:
                 print('WARNING: Template file {} present in {} with no rule for processing. Continuing...'.format(tfile, sundials_dir))
-
+        
     def plot(self):
         G = nx.DiGraph()
         G.position={}
@@ -1098,7 +1066,7 @@ class RateCollection(object):
                                node_color="1.0", alpha=0.4,
                                node_shape="s", node_size=1000)
         nx.draw_networkx_edges(G, G.position, edge_color="0.5")
-        nx.draw_networkx_labels(G, G.position, G.labels,
+        nx.draw_networkx_labels(G, G.position, G.labels, 
                                 font_size=14, font_color="r", zorder=100)
 
         plt.xlim(-0.5,)
