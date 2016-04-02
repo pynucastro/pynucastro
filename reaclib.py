@@ -146,7 +146,7 @@ class Rate(object):
 
         # read in the file, parse the different sets and store them as
         # SingleSet objects in sets[]
-        f = open(file, "r")                            
+        f = open(file, "r")
         lines = f.readlines()
 
         self.original_source = "".join(lines)
@@ -177,7 +177,7 @@ class Rate(object):
             self.table_temp_lines   = int(s5.strip())
             self.table_num_vars     = 6 # Hard-coded number of variables in tables for now.
             self.table_index_name = 'j_{}_{}'.format(self.reactants[0], self.products[0])
-            
+
             self.string = "{} -> {}".format(*(self.reactants + self.products))
             self.dens_exp = 0
         else:
@@ -310,7 +310,7 @@ class Rate(object):
                         self.products += [Nucleus(f[1]), Nucleus(f[2]), Nucleus(f[3]), Nucleus(f[4])]
 
                         self.dens_exp = 0
-       
+
                     first = 0
 
                 # the second line contains the first 4 coefficients
@@ -343,7 +343,7 @@ class Rate(object):
                 self.pretty_string += r" + "
 
         self.pretty_string += r"$"
-        
+
     def __repr__(self):
         return self.string
 
@@ -466,7 +466,7 @@ class Rate(object):
 
     def jacobian_string(self, ydot_j, y_i):
         """
-        return a string containing the term in a jacobian matrix 
+        return a string containing the term in a jacobian matrix
         in a reaction network corresponding to this rate
 
         Returns the derivative of the j-th YDOT wrt. the i-th Y
@@ -518,7 +518,7 @@ class Rate(object):
         else:
             rstring = "{}{}{}*lambda_{}"
         return rstring.format(prefactor_string, dens_string, Y_string, self.fname)
-    
+
     def ydot_string_f90(self):
         """
         return a string containing the term in a dY/dt equation
@@ -555,7 +555,7 @@ class Rate(object):
 
     def jacobian_string_f90(self, ydot_j, y_i):
         """
-        return a string containing the term in a jacobian matrix 
+        return a string containing the term in a jacobian matrix
         in a reaction network corresponding to this rate
 
         Returns the derivative of the j-th YDOT wrt. the i-th Y
@@ -615,7 +615,7 @@ class RateCollection(object):
         """
         rate_files are the files that together define the network.  This
         can be any iterable or single string, and can include
-        wildcards
+        wildcards.
 
         """
 
@@ -642,7 +642,7 @@ class RateCollection(object):
                     self.files += fp
                 else: # Notify of all missing files before exiting
                     print('ERROR: File {} not found in {} or the working directory!'.format(p,self.pyreaclib_rates_dir))
-                    exit_program = True 
+                    exit_program = True
         if exit_program:
             exit()
 
@@ -764,7 +764,7 @@ class RateCollection(object):
         """
         Figure out which network to make.
         """
-        
+
         typenet_avail = ['sundials']
         if typenet=='sundials':
             self.make_network_sundials()
@@ -779,14 +779,14 @@ class RateCollection(object):
         This writes the RHS, jacobian and ancillary files for the system of ODEs that
         this network describes, using the template files.
         """
-        
+
         sundials_dir = os.path.join(self.pyreaclib_dir,
                                     'templates',
                                     'sundials-cvode')
         template_file_select = os.path.join(sundials_dir,
                                             '*.template')
         template_files = glob.glob(template_file_select)
-        
+
         indent = '  '
 
         for tfile in template_files:
@@ -890,9 +890,9 @@ class RateCollection(object):
                                 exit()
                         of.write('{}end if\n'.format(indent*n_indent))
                     else:
-                        of.write(l)    
+                        of.write(l)
                 of.close()
-                
+
             elif tfile_basename=='table_rates.f90.template':
                 # Table specification and rates
                 outfile = 'table_rates.f90'
@@ -926,7 +926,7 @@ class RateCollection(object):
                     else:
                         of.write(l)
                 of.close()
-                
+
             elif tfile_basename=='network.f90.template':
                 # Network ydot and jacobian
                 outfile = 'network.f90'
@@ -977,11 +977,11 @@ class RateCollection(object):
                                     of.write("{}   + {} &\n".format(indent*n_indent, '0.0d0'))
                                 of.write("{}   )\n\n".format(indent*n_indent))
                     else:
-                        of.write(l)    
+                        of.write(l)
                 of.close()
-                
+
             elif tfile_basename=='integrator.f90.template':
-                # Integrator 
+                # Integrator
                 outfile = 'integrator.f90'
                 try: of = open(outfile, "w")
                 except: raise
@@ -1000,7 +1000,7 @@ class RateCollection(object):
                         for n in self.unique_nuclei:
                             of.write("{}write(*,'(A,ES25.14)') '{}: ', cv_data%Y(net_meta%i{})\n".format(indent*n_indent, n, n))
                     else:
-                        of.write(l)    
+                        of.write(l)
                 of.close()
 
             elif tfile_basename=='data_wrangler.f90.template':
@@ -1020,7 +1020,7 @@ class RateCollection(object):
                             of.write("'Y_{}', ".format(nuc))
                         of.write("'E_nuc', 'Time'\n")
                     else:
-                        of.write(l)    
+                        of.write(l)
                 of.close()
                 ifile.close()
 
@@ -1039,7 +1039,7 @@ class RateCollection(object):
                         of.write('{} '.format(indent*n_indent))
                         of.write('integer*8 :: NEQ = {} ! Size of ODE system\n'.format(len(self.unique_nuclei)+1))
                     else:
-                        of.write(l)    
+                        of.write(l)
                 of.close()
                 ifile.close()
 
@@ -1058,22 +1058,22 @@ class RateCollection(object):
                         for n in self.unique_nuclei:
                             of.write('{}net_initial_abundances%y{} = 0.0d0\n'.format(indent*n_indent, n))
                     else:
-                        of.write(l)    
+                        of.write(l)
                 of.close()
                 ifile.close()
-                
+
             elif tfile_basename=='parameters.f90.template':
                 shutil.copyfile(tfile, 'parameters.f90')
-                
+
             elif tfile_basename=='physical_constants.f90.template':
                 shutil.copyfile(tfile, 'physical_constants.f90')
 
             elif tfile_basename=='GNUmakefile.template':
                 shutil.copyfile(tfile, 'GNUmakefile')
-                
+
             else:
                 print('WARNING: Template file {} present in {} with no rule for processing. Continuing...'.format(tfile, sundials_dir))
-        
+
     def plot(self):
         G = nx.DiGraph()
         G.position={}
@@ -1098,7 +1098,7 @@ class RateCollection(object):
                                node_color="1.0", alpha=0.4,
                                node_shape="s", node_size=1000)
         nx.draw_networkx_edges(G, G.position, edge_color="0.5")
-        nx.draw_networkx_labels(G, G.position, G.labels, 
+        nx.draw_networkx_labels(G, G.position, G.labels,
                                 font_size=14, font_color="r", zorder=100)
 
         plt.xlim(-0.5,)
