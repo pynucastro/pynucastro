@@ -7,7 +7,7 @@ module table_rates
   public table_meta
   
 
-<numtab>(1)
+<table_num>(1)
   integer, parameter :: jtab_mu      = 1
   integer, parameter :: jtab_dq      = 2
   integer, parameter :: jtab_vs      = 3
@@ -15,7 +15,7 @@ module table_rates
   integer, parameter :: jtab_nuloss  = 5
   integer, parameter :: jtab_gamma   = 6
 
-<tab_indices>(1)
+<table_indices>(1)
 
   type :: table_info
      double precision, dimension(:,:,:), allocatable :: rate_table
@@ -38,7 +38,7 @@ contains
 
   subroutine init_table_meta()
     integer :: n
-<init_table_meta>(2)
+<table_init_meta>(2)
     do n = 1, num_tables
        call table_meta(n)%initialize()
     end do

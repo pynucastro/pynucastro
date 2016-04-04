@@ -14,7 +14,7 @@ files = ["c12-pg-n13-ls09",
 
 rc = reaclib.RateCollection(files)
 
-rc.make_network_f90('sundials')
+rc.make_network('sundials')
 
 
 

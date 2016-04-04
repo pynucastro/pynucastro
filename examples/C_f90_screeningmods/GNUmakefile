@@ -4,7 +4,7 @@ $(warning $(notdir $(CURDIR)))
 $(warning $w)
 ifeq (,$w)
 $(warning Not in target directory.)
-include GMake.target.mk
+include ../GMake.target.mk
 else
 $(warning In target directory.)
 SCREENING_DIR := /home/eugene/codes/astro/Microphysics/screening

@@ -1,120 +1,104 @@
 module net_rates
   use physical_constants
+  use screening_module, only: screen5, add_screening_factor, screening_init, plasma_state, fill_plasma_state
+  use network, only: nspec, aion, zion, net_meta
   use table_rates
 
   implicit none
 
-<number_declare>(1)
+<nreact>(1)
 
   ! Temperature coefficient arrays (numbers correspond to reaction numbers in net_info)
 <ctemp_declare>(1)
 
-  type :: net_initials_t
-    ! Initial abundances
-<ynuc_declare>(2)
-    double precision :: yenuc = 0.0d0
-  end type net_initials_t
+  ! Reaction multiplicities (how many rates contribute)
+  ! array indexed by the Reactions indices above
+  integer, dimension(nreact) :: rate_mult = (/ &
+<rmul>(2)
 
-  type :: reaclib_coefs
-    ! how many rates in this reaction
-    integer :: m
-    ! coefficient array
-    ! ! First Index: Rate coefficients 1..7
-    ! ! Second Index: Reaction index 1..m
-    double precision, dimension(:,:), allocatable :: ctemp
-  end type reaclib_coefs
-
-  type :: net_info
-    integer :: neqs  = number_equations
-    integer :: nnuc  = number_nuclides
-    integer :: nrxn  = number_reactions
-    ! Nuclides
-<inuc_declare>(2)
-
-    ! Reactions
-<krxn_declare>(2)
-
-    ! Reaction multiplicities (how many rates contribute)
-    ! array indexed by the Reactions indices above
-    integer, dimension(number_reactions) :: rate_mult = (/ &
-<rmul_declare>(2)
-
-    ! Binding Energies Per Nucleon (MeV)
-    double precision, dimension(number_nuclides) :: ebind_per_nucleon
-
-    ! Nucleon number A
-    double precision, dimension(number_nuclides) :: anuc
-
-    ! Binding Energies (ergs)
-    double precision, dimension(number_nuclides) :: ebind
-
-  contains
-    procedure :: initialize => init_net_info
-    procedure :: terminate => term_net_info
-    procedure :: evaluate => rates_eval
-  end type net_info
-
-  type(net_info), target, save :: net_meta
-  type(net_initials_t), save :: net_initial_abundances
+  ! Should these reactions be screened?
+  logical, dimension(nreact) :: do_screening = (/ &
+<screen>(2)
 
 contains
 
-  subroutine init_net_pars(pfile_unit)
+  subroutine init_reaclib_pars(pfile_unit)
     integer, intent(in) :: pfile_unit
-
-    namelist /netpars/ net_initial_abundances
+    
+    namelist /reaclibpars/ screen_reaclib
+    
     rewind(unit=pfile_unit)
-    read(unit=pfile_unit, nml=netpars)
-  end subroutine init_net_pars
+    read(unit=pfile_unit, nml=reaclibpars)
+  end subroutine init_reaclib_pars
 
-  subroutine init_net_info(self)
-    class(net_info) :: self
-    type(reaclib_coefs), pointer :: prate
-    integer :: i
+  subroutine init_reaclib()
+<ctemp_allocate>(2)
+  end subroutine init_reaclib
 
-<ebind_declare>(2)
+  subroutine term_reaclib()
+<ctemp_deallocate>(2)
+  end subroutine term_reaclib
 
-<anuc_declare>(2)
+  subroutine net_screening_init()
+    ! Adds screening factors and calls screening_init
+<add_screening>(2)
+    call screening_init()    
+  end subroutine net_screening_init
 
-    do i = 1, self%nnuc
-      self%ebind(i) = self%ebind_per_nucleon(i) * self%anuc(i) * pc%erg_per_MeV
-    end do
-
-<alloc_ctemp>(2)
-
-
-
-  end subroutine init_net_info
-
-  subroutine term_net_info(self)
-    class(net_info) :: self
-<dealloc_ctemp>(2)
-  end subroutine term_net_info
-
-  subroutine rates_eval(self, rhoy, temp, iwhich, rate)
-    class(net_info) :: self
+  subroutine rate_evaluate(state, rhoy, temp, iwhich, ratevec)
+    type(plasma_state), intent(in) :: state
     double precision, intent(in) :: temp, rhoy
     integer, intent(in) :: iwhich
-    double precision, intent(out) :: rate
+
+    double precision, intent(out), dimension(:) :: ratevec
+    ! ratevec(1) = rate     , the reaction rate
+    ! ratevec(2) = drate_dt , the Temperature derivative of rate
+    ! ratevec(3) = scor     , the screening factor
+    ! ratevec(4) = dscor_dt , the Temperature derivative of scor
+
+    double precision  :: rate, scor ! Rate and Screening Factor
+    double precision  :: drate_dt, dscor_dt ! Temperature derivatives
+    double precision :: dscor_dd
     double precision, pointer :: ctemp(:,:)
-
-    double precision :: ri, T9, lnrate
+    double precision :: ri, T9, T9_exp, lnirate, irate, dirate_dt, dlnirate_dt
     integer :: i, j, m
-
+    
     ri = 0.0d0
     rate = 0.0d0
+    drate_dt = 0.0d0
+    irate = 0.0d0
+    dirate_dt = 0.0d0
     T9 = temp/1.0d9
+    T9_exp = 0.0d0
+    scor = 1.0d0
+    dscor_dt = 0.0d0
+    dscor_dd = 0.0d0
 
-<switch_ctemp>(2)
+<ctemp_switch>(2)
 
-    m = self%rate_mult(iwhich)
+    m = rate_mult(iwhich)
     do i = 1, m
-      lnrate = ctemp(1,i) + ctemp(7,i) * LOG(T9)
+      lnirate = ctemp(1,i) + ctemp(7,i) * LOG(T9)
+      dlnirate_dt = ctemp(7,i)/T9
       do j = 2, 6
-        lnrate = lnrate + ctemp(j,i) * T9**((2.0d0*dble(j-1)-5.0d0)/3.0d0)
+        T9_exp = (2.0d0*dble(j-1)-5.0d0)/3.0d0 
+        lnirate = lnirate + ctemp(j,i) * T9**T9_exp
+        dlnirate_dt = dlnirate_dt + T9_exp * ctemp(j,i) * T9**(T9_exp-1.0d0)
       end do
-      rate = rate + EXP(lnrate)
+      irate = EXP(lnirate)
+      rate = rate + irate
+      dirate_dt = irate * dlnirate_dt/1.0d9
+      drate_dt = drate_dt + dirate_dt
     end do
-  end subroutine rates_eval
+    
+    if ( screen_reaclib .and. do_screening(iwhich) ) then
+      call screen5(state, iwhich, scor, dscor_dt, dscor_dd)
+    end if
+
+    ratevec(1) = rate
+    ratevec(2) = drate_dt
+    ratevec(3) = scor
+    ratevec(4) = dscor_dt
+  end subroutine rate_evaluate
 
 end module net_rates

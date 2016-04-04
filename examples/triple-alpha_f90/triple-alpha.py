@@ -6,7 +6,7 @@ files = ["c12-gaa-he4-fy05",
 
 rc = reaclib.RateCollection(files)
 
-rc.make_network_f90('sundials')
+rc.make_network('sundials')
 
 
 

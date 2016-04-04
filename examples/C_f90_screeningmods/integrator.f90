@@ -1,5 +1,5 @@
 program integrator
-  use cvode_parameters, only: cv_data, cv_pars, number_equations
+  use cvode_parameters, only: cv_data, cv_pars
   use network, only: init_network, net_meta, net_initial_abundances
   use net_rates, only: init_reaclib, net_screening_init
   use data_wrangler, only: store_solution, write_solution
@@ -9,7 +9,7 @@ program integrator
 
   integer KOUNTER
   integer jk
-  
+
   ! Initialization
   call init_parameters()
   call init_network()
@@ -17,9 +17,9 @@ program integrator
   call net_screening_init()
 
   ! Allocate data storage
-  allocate( cv_data%net_history(number_equations+1, cv_pars%NDT_SAVE) )
-  allocate( cv_data%Y0(number_equations) )
-  allocate( cv_data%Y(number_equations) )
+  allocate( cv_data%net_history(cv_data%NEQ+1, cv_pars%NDT_SAVE) )
+  allocate( cv_data%Y0(cv_data%NEQ) )
+  allocate( cv_data%Y(cv_data%NEQ) )
 
   ! Print Physical Parameters
   write(*,*) 'Integrating starting with:'
@@ -37,7 +37,7 @@ program integrator
   cv_data%Y0(net_meta%ienuc)   = net_initial_abundances%yenuc
 
   write(*,*) 'Initialization at time 0: '
-  do jk = 1, number_equations
+  do jk = 1, cv_data%NEQ
      write(*,*) 'index: ', jk, ' : ', cv_data%Y0(jk)
   end do
 

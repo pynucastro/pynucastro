@@ -2,8 +2,6 @@ module cvode_parameters
 
   implicit none
 
-  integer, parameter :: number_equations = 8
-  
   type :: cv_pars_t
      double precision :: dens, temp, ye
      double precision :: DT_SAVE ! Save solution each DT_SAVE (s)

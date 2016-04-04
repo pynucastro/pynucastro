@@ -1,5 +1,5 @@
 module data_wrangler
-  use cvode_parameters, only: number_equations
+  use cvode_parameters, only: cv_data
 
   implicit none
 
@@ -12,10 +12,10 @@ contains
     double precision, intent(in) :: t
     integer :: i
 
-    do i = 1, number_equations
+    do i = 1, cv_data%NEQ
        net_history(i, k) = ysol(i)
     end do
-    net_history(number_equations+1, k) = t
+    net_history(cv_data%NEQ+1, k) = t
   end subroutine store_solution
   
   subroutine write_solution(net_history, KFIN)
@@ -28,7 +28,7 @@ contains
     character(len=50) :: hfmt
     character(len=*), parameter  :: profile_file_name = 'net_history.dat'
 
-    NPROFILE = number_equations + 1
+    NPROFILE = cv_data%NEQ + 1
     write(*,*) 'NPROFILE: ', NPROFILE
     write(*,*) 'size(net_history, 1): ', size(net_history,1)
     write(*,*) 'size(net_history, 2): ', size(net_history,2)
