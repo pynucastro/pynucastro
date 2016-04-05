@@ -41,10 +41,24 @@ module cvode_parameters
      double precision, dimension(:,:), allocatable :: net_history
   end type cv_data_t
 
+  type :: net_initials_t
+    ! Initial abundances (Y = X/A)
+    double precision :: yn
+    double precision :: yp
+    double precision :: yhe4
+    double precision :: yc12
+    double precision :: yne20
+    double precision :: yna23
+    double precision :: ymg23
+    double precision :: yenuc = 0.0d0
+  end type net_initials_t
+
+  type(net_initials_t), save :: net_initial_abundances
   type(cv_data_t), save :: cv_data
   type(cv_pars_t), save :: cv_pars
 
 contains
+  
   subroutine cvode_init(pfile_unit)
     integer, intent(in) :: pfile_unit
     ! Read runtime parameters
@@ -53,4 +67,13 @@ contains
     read(unit=pfile_unit, nml=intparams)
   end subroutine cvode_init
 
+  subroutine init_net_pars(pfile_unit)
+    integer, intent(in) :: pfile_unit
+
+    namelist /netpars/ net_initial_abundances
+
+    rewind(unit=pfile_unit)
+    read(unit=pfile_unit, nml=netpars)
+  end subroutine init_net_pars
+  
 end module cvode_parameters

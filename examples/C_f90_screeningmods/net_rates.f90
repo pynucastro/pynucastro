@@ -1,7 +1,6 @@
 module net_rates
-  use physical_constants
   use screening_module, only: screen5, add_screening_factor, screening_init, plasma_state, fill_plasma_state
-  use network, only: nspec, aion, zion, net_meta
+  use network
   use table_rates
 
   implicit none
@@ -27,17 +26,17 @@ module net_rates
   ! Reaction multiplicities (how many rates contribute)
   ! array indexed by the Reactions indices above
   integer, dimension(nreact) :: rate_mult = (/ &
-       1, &
-       1, &
-       1, &
-       1 /)
+    1, &
+    1, &
+    1, &
+    1 /)
 
   ! Should these reactions be screened?
   logical, dimension(nreact) :: do_screening = (/ &
-       .true., &
-       .true., &
-       .true., &
-       .false. /)
+    .true., &
+    .true., &
+    .true., &
+    .false. /)
 
 contains
 
@@ -107,19 +106,15 @@ contains
 
   subroutine net_screening_init()
     ! Adds screening factors and calls screening_init
-    !    <add_screening>(2)
 
-    call add_screening_factor(zion(net_meta%ic12), aion(net_meta%ic12), &
-         zion(net_meta%ic12), aion(net_meta%ic12))
+    call add_screening_factor(zion(jc12), aion(jc12), &
+      zion(jc12), aion(jc12))
 
-    call add_screening_factor(zion(net_meta%ic12), aion(net_meta%ic12), &
-         zion(net_meta%ic12), aion(net_meta%ic12))
+    call add_screening_factor(zion(jc12), aion(jc12), &
+      zion(jc12), aion(jc12))
 
-    call add_screening_factor(zion(net_meta%ic12), aion(net_meta%ic12), &
-         zion(net_meta%ic12), aion(net_meta%ic12))
-
-!    call add_screening_factor(zion(net_meta%in), aion(net_meta%in), &
-!         zion(net_meta%ip), aion(net_meta%ip)) ! Is this right for n --> p ?
+    call add_screening_factor(zion(jc12), aion(jc12), &
+      zion(jc12), aion(jc12))
         
     call screening_init()    
   end subroutine net_screening_init

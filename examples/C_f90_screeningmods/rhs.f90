@@ -1,7 +1,7 @@
 module rhs
-  use physical_constants, only: pc
+  use physical_constants, only: N_AVO
   use cvode_parameters, only: cv_pars
-  use network, only: nspec, ebind, net_meta
+  use network
   use net_rates, only: nreact, screen_reaclib, rate_evaluate
   use screening_module, only: plasma_state, fill_plasma_state
 
@@ -42,45 +42,44 @@ contains
       call rate_evaluate(state, rhoy, cv_pars%temp, i, rxn_rates(:,i))
     end do
    
-    ! Add screening factors to the rates
     
     write(*,*) "T: ", T
-    YDOT(net_meta%in) = ( &
-       - Y(net_meta%in) * rxn_rates(3,net_meta%k_n_p) * rxn_rates(1,net_meta%k_n_p) &
-       + 0.500000000000000 * dens * Y(net_meta%ic12)**2 * rxn_rates(3,net_meta%k_c12_c12n_mg23) * rxn_rates(1,net_meta%k_c12_c12n_mg23) &
+    YDOT(jn) = ( &
+       - Y(jn) * rxn_rates(3, k_n_p) * rxn_rates(1, k_n_p) &
+       + 0.500000000000000 * dens * Y(jc12)**2 * rxn_rates(3, k_c12_c12n_mg23) * rxn_rates(1, k_c12_c12n_mg23) &
        )
 
-    YDOT(net_meta%ip) = ( &
-       + 0.500000000000000 * dens * Y(net_meta%ic12)**2 * rxn_rates(3,net_meta%k_c12_c12p_na23) * rxn_rates(1,net_meta%k_c12_c12p_na23) &
-       + Y(net_meta%in) * rxn_rates(3,net_meta%k_n_p) * rxn_rates(1,net_meta%k_n_p) &
+    YDOT(jp) = ( &
+       + 0.500000000000000 * dens * Y(jc12)**2 * rxn_rates(3, k_c12_c12p_na23) * rxn_rates(1, k_c12_c12p_na23) &
+       + Y(jn) * rxn_rates(3, k_n_p) * rxn_rates(1, k_n_p) &
        )
 
-    YDOT(net_meta%ihe4) = ( &
-       + 0.500000000000000 * dens * Y(net_meta%ic12)**2 * rxn_rates(3,net_meta%k_c12_c12a_ne20) * rxn_rates(1,net_meta%k_c12_c12a_ne20) &
+    YDOT(jhe4) = ( &
+       + 0.500000000000000 * dens * Y(jc12)**2 * rxn_rates(3, k_c12_c12a_ne20) * rxn_rates(1, k_c12_c12a_ne20) &
        )
 
-    YDOT(net_meta%ic12) = ( &
-       - 2 * 0.500000000000000 * dens * Y(net_meta%ic12)**2 * rxn_rates(3,net_meta%k_c12_c12a_ne20) * rxn_rates(1,net_meta%k_c12_c12a_ne20) &
-       - 2 * 0.500000000000000 * dens * Y(net_meta%ic12)**2 * rxn_rates(3,net_meta%k_c12_c12n_mg23) * rxn_rates(1,net_meta%k_c12_c12n_mg23) &
-       - 2 * 0.500000000000000 * dens * Y(net_meta%ic12)**2 * rxn_rates(3,net_meta%k_c12_c12p_na23) * rxn_rates(1,net_meta%k_c12_c12p_na23) &
+    YDOT(jc12) = ( &
+       - 2 * 0.500000000000000 * dens * Y(jc12)**2 * rxn_rates(3, k_c12_c12a_ne20) * rxn_rates(1, k_c12_c12a_ne20) &
+       - 2 * 0.500000000000000 * dens * Y(jc12)**2 * rxn_rates(3, k_c12_c12n_mg23) * rxn_rates(1, k_c12_c12n_mg23) &
+       - 2 * 0.500000000000000 * dens * Y(jc12)**2 * rxn_rates(3, k_c12_c12p_na23) * rxn_rates(1, k_c12_c12p_na23) &
        )
 
-    YDOT(net_meta%ine20) = ( &
-       + 0.500000000000000 * dens * Y(net_meta%ic12)**2 * rxn_rates(3,net_meta%k_c12_c12a_ne20) * rxn_rates(1,net_meta%k_c12_c12a_ne20) &
+    YDOT(jne20) = ( &
+       + 0.500000000000000 * dens * Y(jc12)**2 * rxn_rates(3, k_c12_c12a_ne20) * rxn_rates(1, k_c12_c12a_ne20) &
        )
 
-    YDOT(net_meta%ina23) = ( &
-       + 0.500000000000000 * dens * Y(net_meta%ic12)**2 * rxn_rates(3,net_meta%k_c12_c12p_na23) * rxn_rates(1,net_meta%k_c12_c12p_na23) &
+    YDOT(jna23) = ( &
+       + 0.500000000000000 * dens * Y(jc12)**2 * rxn_rates(3, k_c12_c12p_na23) * rxn_rates(1, k_c12_c12p_na23) &
        )
 
-    YDOT(net_meta%img23) = ( &
-       + 0.500000000000000 * dens * Y(net_meta%ic12)**2 * rxn_rates(3,net_meta%k_c12_c12n_mg23) * rxn_rates(1,net_meta%k_c12_c12n_mg23) &
+    YDOT(jmg23) = ( &
+       + 0.500000000000000 * dens * Y(jc12)**2 * rxn_rates(3, k_c12_c12n_mg23) * rxn_rates(1, k_c12_c12n_mg23) &
        )
 
 
-    YDOT(net_meta%ienuc) = 0.0d0
+    YDOT(jenuc) = 0.0d0
     do i = 1, nspec
-      YDOT(net_meta%ienuc) = YDOT(net_meta%ienuc) + pc%N_Avogadro * ebind(i) * YDOT(i)
+      YDOT(jenuc) = YDOT(jenuc) + N_AVO * ebind(i) * YDOT(i)
     end do
 
     write(*,*) '______________________________'
@@ -128,7 +127,7 @@ contains
       end do
 
     else
-       ! Add screening to the jacobian
+
        if ( screen_reaclib ) then
          call fill_plasma_state(state, temp, dens, Y(1:nspec))
        end if
@@ -139,201 +138,201 @@ contains
 
       ! DJAC(j, i) = d(YDOT(j))/dY(i)
 
-      DJAC(net_meta%in,net_meta%in) = ( &
-         -    rxn_rates(3,net_meta%k_n_p) * rxn_rates(1,net_meta%k_n_p) &
+      DJAC(jn,jn) = ( &
+         -    rxn_rates(3, k_n_p) * rxn_rates(1, k_n_p) &
          )
 
-      DJAC(net_meta%in,net_meta%ip) = ( &
+      DJAC(jn,jp) = ( &
          + 0.0d0 &
          )
 
-      DJAC(net_meta%in,net_meta%ihe4) = ( &
+      DJAC(jn,jhe4) = ( &
          + 0.0d0 &
          )
 
-      DJAC(net_meta%in,net_meta%ic12) = ( &
-         + 0.500000000000000 * dens * 2*Y(net_meta%ic12) * rxn_rates(3,net_meta%k_c12_c12n_mg23) * rxn_rates(1,net_meta%k_c12_c12n_mg23) &
+      DJAC(jn,jc12) = ( &
+         + 0.500000000000000 * dens * 2*Y(jc12) * rxn_rates(3, k_c12_c12n_mg23) * rxn_rates(1, k_c12_c12n_mg23) &
          )
 
-      DJAC(net_meta%in,net_meta%ine20) = ( &
+      DJAC(jn,jne20) = ( &
          + 0.0d0 &
          )
 
-      DJAC(net_meta%in,net_meta%ina23) = ( &
+      DJAC(jn,jna23) = ( &
          + 0.0d0 &
          )
 
-      DJAC(net_meta%in,net_meta%img23) = ( &
+      DJAC(jn,jmg23) = ( &
          + 0.0d0 &
          )
 
-      DJAC(net_meta%ip,net_meta%in) = ( &
-         +    rxn_rates(3,net_meta%k_n_p) * rxn_rates(1,net_meta%k_n_p) &
+      DJAC(jp,jn) = ( &
+         +    rxn_rates(3, k_n_p) * rxn_rates(1, k_n_p) &
          )
 
-      DJAC(net_meta%ip,net_meta%ip) = ( &
+      DJAC(jp,jp) = ( &
          + 0.0d0 &
          )
 
-      DJAC(net_meta%ip,net_meta%ihe4) = ( &
+      DJAC(jp,jhe4) = ( &
          + 0.0d0 &
          )
 
-      DJAC(net_meta%ip,net_meta%ic12) = ( &
-         + 0.500000000000000 * dens * 2*Y(net_meta%ic12) * rxn_rates(3,net_meta%k_c12_c12p_na23) * rxn_rates(1,net_meta%k_c12_c12p_na23) &
+      DJAC(jp,jc12) = ( &
+         + 0.500000000000000 * dens * 2*Y(jc12) * rxn_rates(3, k_c12_c12p_na23) * rxn_rates(1, k_c12_c12p_na23) &
          )
 
-      DJAC(net_meta%ip,net_meta%ine20) = ( &
+      DJAC(jp,jne20) = ( &
          + 0.0d0 &
          )
 
-      DJAC(net_meta%ip,net_meta%ina23) = ( &
+      DJAC(jp,jna23) = ( &
          + 0.0d0 &
          )
 
-      DJAC(net_meta%ip,net_meta%img23) = ( &
+      DJAC(jp,jmg23) = ( &
          + 0.0d0 &
          )
 
-      DJAC(net_meta%ihe4,net_meta%in) = ( &
+      DJAC(jhe4,jn) = ( &
          + 0.0d0 &
          )
 
-      DJAC(net_meta%ihe4,net_meta%ip) = ( &
+      DJAC(jhe4,jp) = ( &
          + 0.0d0 &
          )
 
-      DJAC(net_meta%ihe4,net_meta%ihe4) = ( &
+      DJAC(jhe4,jhe4) = ( &
          + 0.0d0 &
          )
 
-      DJAC(net_meta%ihe4,net_meta%ic12) = ( &
-         + 0.500000000000000 * dens * 2*Y(net_meta%ic12) * rxn_rates(3,net_meta%k_c12_c12a_ne20) * rxn_rates(1,net_meta%k_c12_c12a_ne20) &
+      DJAC(jhe4,jc12) = ( &
+         + 0.500000000000000 * dens * 2*Y(jc12) * rxn_rates(3, k_c12_c12a_ne20) * rxn_rates(1, k_c12_c12a_ne20) &
          )
 
-      DJAC(net_meta%ihe4,net_meta%ine20) = ( &
+      DJAC(jhe4,jne20) = ( &
          + 0.0d0 &
          )
 
-      DJAC(net_meta%ihe4,net_meta%ina23) = ( &
+      DJAC(jhe4,jna23) = ( &
          + 0.0d0 &
          )
 
-      DJAC(net_meta%ihe4,net_meta%img23) = ( &
+      DJAC(jhe4,jmg23) = ( &
          + 0.0d0 &
          )
 
-      DJAC(net_meta%ic12,net_meta%in) = ( &
+      DJAC(jc12,jn) = ( &
          + 0.0d0 &
          )
 
-      DJAC(net_meta%ic12,net_meta%ip) = ( &
+      DJAC(jc12,jp) = ( &
          + 0.0d0 &
          )
 
-      DJAC(net_meta%ic12,net_meta%ihe4) = ( &
+      DJAC(jc12,jhe4) = ( &
          + 0.0d0 &
          )
 
-      DJAC(net_meta%ic12,net_meta%ic12) = ( &
-         - 2 * 0.500000000000000 * dens * 2*Y(net_meta%ic12) * rxn_rates(3,net_meta%k_c12_c12a_ne20) * rxn_rates(1,net_meta%k_c12_c12a_ne20) &
-         - 2 * 0.500000000000000 * dens * 2*Y(net_meta%ic12) * rxn_rates(3,net_meta%k_c12_c12n_mg23) * rxn_rates(1,net_meta%k_c12_c12n_mg23) &
-         - 2 * 0.500000000000000 * dens * 2*Y(net_meta%ic12) * rxn_rates(3,net_meta%k_c12_c12p_na23) * rxn_rates(1,net_meta%k_c12_c12p_na23) &
+      DJAC(jc12,jc12) = ( &
+         - 2 * 0.500000000000000 * dens * 2*Y(jc12) * rxn_rates(3, k_c12_c12a_ne20) * rxn_rates(1, k_c12_c12a_ne20) &
+         - 2 * 0.500000000000000 * dens * 2*Y(jc12) * rxn_rates(3, k_c12_c12n_mg23) * rxn_rates(1, k_c12_c12n_mg23) &
+         - 2 * 0.500000000000000 * dens * 2*Y(jc12) * rxn_rates(3, k_c12_c12p_na23) * rxn_rates(1, k_c12_c12p_na23) &
          )
 
-      DJAC(net_meta%ic12,net_meta%ine20) = ( &
+      DJAC(jc12,jne20) = ( &
          + 0.0d0 &
          )
 
-      DJAC(net_meta%ic12,net_meta%ina23) = ( &
+      DJAC(jc12,jna23) = ( &
          + 0.0d0 &
          )
 
-      DJAC(net_meta%ic12,net_meta%img23) = ( &
+      DJAC(jc12,jmg23) = ( &
          + 0.0d0 &
          )
 
-      DJAC(net_meta%ine20,net_meta%in) = ( &
+      DJAC(jne20,jn) = ( &
          + 0.0d0 &
          )
 
-      DJAC(net_meta%ine20,net_meta%ip) = ( &
+      DJAC(jne20,jp) = ( &
          + 0.0d0 &
          )
 
-      DJAC(net_meta%ine20,net_meta%ihe4) = ( &
+      DJAC(jne20,jhe4) = ( &
          + 0.0d0 &
          )
 
-      DJAC(net_meta%ine20,net_meta%ic12) = ( &
-         + 0.500000000000000 * dens * 2*Y(net_meta%ic12) * rxn_rates(3,net_meta%k_c12_c12a_ne20) * rxn_rates(1,net_meta%k_c12_c12a_ne20) &
+      DJAC(jne20,jc12) = ( &
+         + 0.500000000000000 * dens * 2*Y(jc12) * rxn_rates(3, k_c12_c12a_ne20) * rxn_rates(1, k_c12_c12a_ne20) &
          )
 
-      DJAC(net_meta%ine20,net_meta%ine20) = ( &
+      DJAC(jne20,jne20) = ( &
          + 0.0d0 &
          )
 
-      DJAC(net_meta%ine20,net_meta%ina23) = ( &
+      DJAC(jne20,jna23) = ( &
          + 0.0d0 &
          )
 
-      DJAC(net_meta%ine20,net_meta%img23) = ( &
+      DJAC(jne20,jmg23) = ( &
          + 0.0d0 &
          )
 
-      DJAC(net_meta%ina23,net_meta%in) = ( &
+      DJAC(jna23,jn) = ( &
          + 0.0d0 &
          )
 
-      DJAC(net_meta%ina23,net_meta%ip) = ( &
+      DJAC(jna23,jp) = ( &
          + 0.0d0 &
          )
 
-      DJAC(net_meta%ina23,net_meta%ihe4) = ( &
+      DJAC(jna23,jhe4) = ( &
          + 0.0d0 &
          )
 
-      DJAC(net_meta%ina23,net_meta%ic12) = ( &
-         + 0.500000000000000 * dens * 2*Y(net_meta%ic12) * rxn_rates(3,net_meta%k_c12_c12p_na23) * rxn_rates(1,net_meta%k_c12_c12p_na23) &
+      DJAC(jna23,jc12) = ( &
+         + 0.500000000000000 * dens * 2*Y(jc12) * rxn_rates(3, k_c12_c12p_na23) * rxn_rates(1, k_c12_c12p_na23) &
          )
 
-      DJAC(net_meta%ina23,net_meta%ine20) = ( &
+      DJAC(jna23,jne20) = ( &
          + 0.0d0 &
          )
 
-      DJAC(net_meta%ina23,net_meta%ina23) = ( &
+      DJAC(jna23,jna23) = ( &
          + 0.0d0 &
          )
 
-      DJAC(net_meta%ina23,net_meta%img23) = ( &
+      DJAC(jna23,jmg23) = ( &
          + 0.0d0 &
          )
 
-      DJAC(net_meta%img23,net_meta%in) = ( &
+      DJAC(jmg23,jn) = ( &
          + 0.0d0 &
          )
 
-      DJAC(net_meta%img23,net_meta%ip) = ( &
+      DJAC(jmg23,jp) = ( &
          + 0.0d0 &
          )
 
-      DJAC(net_meta%img23,net_meta%ihe4) = ( &
+      DJAC(jmg23,jhe4) = ( &
          + 0.0d0 &
          )
 
-      DJAC(net_meta%img23,net_meta%ic12) = ( &
-         + 0.500000000000000 * dens * 2*Y(net_meta%ic12) * rxn_rates(3,net_meta%k_c12_c12n_mg23) * rxn_rates(1,net_meta%k_c12_c12n_mg23) &
+      DJAC(jmg23,jc12) = ( &
+         + 0.500000000000000 * dens * 2*Y(jc12) * rxn_rates(3, k_c12_c12n_mg23) * rxn_rates(1, k_c12_c12n_mg23) &
          )
 
-      DJAC(net_meta%img23,net_meta%ine20) = ( &
+      DJAC(jmg23,jne20) = ( &
          + 0.0d0 &
          )
 
-      DJAC(net_meta%img23,net_meta%ina23) = ( &
+      DJAC(jmg23,jna23) = ( &
          + 0.0d0 &
          )
 
-      DJAC(net_meta%img23,net_meta%img23) = ( &
+      DJAC(jmg23,jmg23) = ( &
          + 0.0d0 &
          )
 

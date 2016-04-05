@@ -1,6 +1,6 @@
 program integrator
-  use cvode_parameters, only: cv_data, cv_pars
-  use network, only: init_network, net_meta, net_initial_abundances
+  use cvode_parameters, only: cv_data, cv_pars, net_initial_abundances
+  use network
   use net_rates, only: init_reaclib, net_screening_init
   use data_wrangler, only: store_solution, write_solution
   use parameters, only: init_parameters
@@ -28,7 +28,7 @@ program integrator
 
   ! Initialize the Integration
 <yinit_nuc>(1)
-  cv_data%Y0(net_meta%ienuc)   = net_initial_abundances%yenuc
+  cv_data%Y0(jenuc)   = net_initial_abundances%yenuc
 
   write(*,*) 'Initialization at time 0: '
   do jk = 1, cv_data%NEQ
@@ -102,8 +102,8 @@ program integrator
 
   ! Print output to console
   write(*,'(A,ES25.14)') 'Integrated to time: ', cv_data%T
-  write(*,'(A,ES25.14)') 'Final enuc: ', cv_data%Y(net_meta%ienuc)
-  write(*,'(A,ES25.14)') 'Average enuc_dot: ', cv_data%Y(net_meta%ienuc)/cv_data%T
+  write(*,'(A,ES25.14)') 'Final enuc: ', cv_data%Y(jenuc)
+  write(*,'(A,ES25.14)') 'Average enuc_dot: ', cv_data%Y(jenuc)/cv_data%T
 <final_net_print>(1)
 
   deallocate( cv_data%net_history )

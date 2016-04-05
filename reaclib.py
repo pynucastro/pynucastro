@@ -148,6 +148,13 @@ class Rate(object):
         self.products = []
         self.sets = []
 
+        # Tells if this rate is eligible for screening
+        # using screenz.f90 provided by BoxLib Microphysics.
+        # If not eligible for screening, set to None
+        # If eligible for screening, then
+        # Rate.ion_screen is a 2-element list of Nucleus objects for screening
+        self.ion_screen = None 
+
         idx = self.file.rfind("-")
         self.fname = self.file[:idx].replace("--","-").replace("-","_")
 
@@ -282,6 +289,17 @@ class Rate(object):
         for r in list_unique(self.reactants):
             self.prefactor = self.prefactor/np.math.factorial(self.reactants.count(r))
         self.dens_exp = len(self.reactants)-1
+
+        # determine if this rate is eligible for screening
+        nucz = []
+        for parent in self.reactants:
+            if parent.Z != 0:
+                nucz.append(parent)
+        if len(nucz) > 1:
+            nucz.sort(key=lambda x: x.Z)
+            self.ion_screen = []
+            self.ion_screen.append(nucz[0])
+            self.ion_screen.append(nucz[1])
         
         self.string = ""
         self.pretty_string = r"$"
@@ -719,9 +737,17 @@ class Network_f90(RateCollection):
     def __init__(self):
         self.ftags = {}
         self.ftags['<nreact>'] = self.nreact
+        self.ftags['<nspec>'] = self.nspec
+        self.ftags['<net_ynuc>'] = self.ynuc
+        self.ftags['<nrxn>'] = self.nrxn
+        self.ftags['<jion>'] = self.jion
+        self.ftags['<ebind>'] = self.ebind
+        self.ftags['<aion>'] = self.aion
+        self.ftags['<zion>'] = self.zion
         self.ftags['<ctemp_declare>'] = self.ctemp_declare
         self.ftags['<rmul>'] = self.rmul
-        self.ftags['<screen>'] = self.screen
+        self.ftags['<screen_logical>'] = self.screen_logical
+        self.ftags['<screen_add>'] = self.screen_add
         self.ftags['<ctemp_allocate>'] = self.ctemp_allocate
         self.ftags['<ctemp_deallocate>'] = self.ctemp_deallocate
         self.ftags['<ctemp_switch>'] = self.ctemp_switch
@@ -748,9 +774,9 @@ class Network_f90(RateCollection):
         for n, r in enumerate(list_unique(rate.reactants)):
             c = rate.reactants.count(r)
             if c > 1:
-                Y_string += "Y(net_meta%i{})**{}".format(r, c)
+                Y_string += "Y(j{})**{}".format(r, c)
             else:
-                Y_string += "Y(net_meta%i{})".format(r)
+                Y_string += "Y(j{})".format(r)
 
             if n < len(list_unique(rate.reactants))-1:
                 Y_string += " * "
@@ -769,9 +795,11 @@ class Network_f90(RateCollection):
         else:
             prefactor_string = ""
 
-        return "{}{}{} * rxn_rates(net_meta%k_{})".format(prefactor_string,
-                                                          dens_string,
-                                                          Y_string, rate.fname)
+        return "{}{}{} * rxn_rates(3, k_{}) * rxn_rates(1, k_{})".format(prefactor_string,
+                                                                         dens_string,
+                                                                         Y_string,
+                                                                         rate.fname,
+                                                                         rate.fname)
 
     def jacobian_string(self, rate, ydot_j, y_i):
         """
@@ -797,16 +825,16 @@ class Network_f90(RateCollection):
                 if n>0 and n < len(list_unique(rate.reactants))-1:
                     Y_string += "*"
                 if c > 2:
-                    Y_string += "{}*Y(net_meta%i{})**{}".format(c, r, c-1)
+                    Y_string += "{}*Y(j{})**{}".format(c, r, c-1)
                 elif c==2:
-                    Y_string += "2*Y(net_meta%i{})".format(r)
+                    Y_string += "2*Y(j{})".format(r)
             else:
                 if n>0 and n < len(list_unique(rate.reactants))-1:
                     Y_string += "*"
                 if c > 1:
-                    Y_string += "Y(net_meta%i{})**{}".format(r, c)
+                    Y_string += "Y(j{})**{}".format(r, c)
                 else:
-                    Y_string += "Y(net_meta%i{})".format(r)
+                    Y_string += "Y(j{})".format(r)
 
         # density dependence
         if rate.dens_exp == 0:
@@ -823,10 +851,11 @@ class Network_f90(RateCollection):
             prefactor_string = ""
 
         if Y_string=="" and dens_string=="" and prefactor_string=="":
-            rstring = "{}{}{}   rxn_rates(net_meta%k_{})"
+            rstring = "{}{}{}   rxn_rates(3, k_{}) * rxn_rates(1, k_{})"
         else:
-            rstring = "{}{}{} * rxn_rates(net_meta%k_{})"
-        return rstring.format(prefactor_string, dens_string, Y_string, rate.fname)
+            rstring = "{}{}{} * rxn_rates(3, k_{}) * rxn_rates(1, k_{})"
+        return rstring.format(prefactor_string, dens_string, Y_string,
+                              rate.fname, rate.fname)
 
     
     def io_open(self, infile, outfile):
@@ -873,19 +902,24 @@ class Network_f90(RateCollection):
         of.write('{}integer, parameter :: nreact = {}\n'.format(
             self.indent*n_indent,
             len(self.rates)))
+
+    def nspec(self, n_indent, of):
+        of.write('{}integer, parameter :: nspec = {}\n'.format(
+            self.indent*n_indent,
+            len(self.unique_nuclei)))
         
     def ynuc(self, n_indent, of):
         for nuc in self.unique_nuclei:
             of.write('{}double precision :: y{}\n'.format(
                 self.indent*n_indent, nuc))
 
-    def inuc(self, n_indent, of):
+    def jion(self, n_indent, of):
         for i,nuc in enumerate(self.unique_nuclei):
-            of.write('{}integer :: i{}   = {}\n'.format(
+            of.write('{}integer :: j{}   = {}\n'.format(
                 self.indent*n_indent, nuc, i+1))
         of.write('{}! Energy Generation Rate\n'.format(
             self.indent*n_indent))
-        of.write('{}integer :: ienuc   = {}\n'.format(
+        of.write('{}integer :: jenuc   = {}\n'.format(
             self.indent*n_indent,
             len(self.unique_nuclei)+1))
 
@@ -896,17 +930,24 @@ class Network_f90(RateCollection):
 
     def ebind(self, n_indent, of):
         for nuc in self.unique_nuclei:
-            of.write('{}self%ebind_per_nucleon(self%i{})   = 0.0d0\n'.format(
+            of.write('{}ebind_per_nucleon(j{})   = 0.0d0\n'.format(
                 self.indent*n_indent,
                 nuc))
 
     def aion(self, n_indent, of):
         for nuc in self.unique_nuclei:
-            of.write('{}self%aion(self%i{})   = {}\n'.format(
+            of.write('{}aion(j{})   = {}\n'.format(
                 self.indent*n_indent,
                 nuc,
                 self.fmt_to_dp_f90(nuc.A)))
 
+    def zion(self, n_indent, of):
+        for nuc in self.unique_nuclei:
+            of.write('{}zion(j{})   = {}\n'.format(
+                self.indent*n_indent,
+                nuc,
+                self.fmt_to_dp_f90(nuc.Z)))
+            
     def ctemp_declare(self, n_indent, of):
         for n in self.reaclib_rates:
             of.write('{}double precision, target, dimension(:,:), allocatable :: ctemp_rate_{}\n'.format(self.indent*n_indent, n+1))
@@ -919,13 +960,31 @@ class Network_f90(RateCollection):
             else:
                 of.write(', &\n')
 
-    def screen(self, n_indent, of):
-        return
+    def screen_logical(self, n_indent, of):
+        for i, r in enumerate(self.rates):
+            if r.ion_screen:
+                of.write('{}{}'.format(self.indent*n_indent, '.true.'))
+            else:
+                of.write('{}{}'.format(self.indent*n_indent, '.false.'))
+            if i==len(self.rates)-1:
+                of.write(' /)\n')
+            else:
+                of.write(', &\n')
+
+    def screen_add(self, n_indent, of):
+        for i, r in enumerate(self.rates):
+            if r.ion_screen:
+                of.write('{}call add_screening_factor('.format(self.indent*n_indent))
+                of.write('zion(j{}), aion(j{}), &\n'.format(r.ion_screen[0],
+                                                            r.ion_screen[0]))
+                of.write('{}zion(j{}), aion(j{}))\n\n'.format(self.indent*(n_indent+1),
+                                                              r.ion_screen[1],
+                                                              r.ion_screen[1]))
 
     def ctemp_allocate(self, n_indent, of):
         for nr in self.reaclib_rates:
             r = self.rates[nr]
-            of.write('{}allocate( ctemp_rate_{}(7, self%rate_mult({})) )\n'.format(
+            of.write('{}allocate( ctemp_rate_{}(7, rate_mult({})) )\n'.format(
                 self.indent*n_indent, nr+1, nr+1))
             of.write('{}! {}\n'.format(self.indent*n_indent, r.fname))
             for ns,s in enumerate(r.sets):
@@ -961,7 +1020,7 @@ class Network_f90(RateCollection):
                 of.write(
                     '{}call table_meta({})%bl_lookup(rhoy, temp, jtab_rate, rate)\n'.format(
                         self.indent*(n_indent+1), r.table_index_name))
-                of.write('{}return\n'.format(self.indent*(n_indent+1)))
+                of.write('{}return_from_table = .true.\n'.format(self.indent*(n_indent+1)))
             else:
                 print('ERROR: rate not in self.reaclib_rates or self.tabular_rates!')
                 exit()
@@ -995,7 +1054,7 @@ class Network_f90(RateCollection):
     def ydot(self, n_indent, of):
         # now make the RHSs
         for n in self.unique_nuclei:
-            of.write("{}YDOT(net_meta%i{}) = ( &\n".format(self.indent*n_indent, n))
+            of.write("{}YDOT(j{}) = ( &\n".format(self.indent*n_indent, n))
             for r in self.nuclei_consumed[n]:
                 c = r.reactants.count(n)
                 if c == 1:
@@ -1019,7 +1078,7 @@ class Network_f90(RateCollection):
         for nj in self.unique_nuclei:
             for ni in self.unique_nuclei:
                 jac_identically_zero = True
-                of.write("{}DJAC(net_meta%i{},net_meta%i{}) = ( &\n".format(
+                of.write("{}DJAC(j{},j{}) = ( &\n".format(
                     self.indent*n_indent, nj, ni))
                 for r in self.nuclei_consumed[nj]:
                     sjac = self.jacobian_string(r, nj, ni)
@@ -1050,12 +1109,12 @@ class Network_f90(RateCollection):
 
     def yinit_nuc(self, n_indent, of):
         for n in self.unique_nuclei:
-            of.write("{}cv_data%Y0(net_meta%i{})   = net_initial_abundances%y{}\n".format(
+            of.write("{}cv_data%Y0(j{})   = net_initial_abundances%y{}\n".format(
                 self.indent*n_indent, n, n))        
 
     def final_net_print(self, n_indent, of):
         for n in self.unique_nuclei:
-            of.write("{}write(*,'(A,ES25.14)') '{}: ', cv_data%Y(net_meta%i{})\n".format(
+            of.write("{}write(*,'(A,ES25.14)') '{}: ', cv_data%Y(j{})\n".format(
                 self.indent*n_indent, n, n))
 
     def headerline(self, n_indent, of):

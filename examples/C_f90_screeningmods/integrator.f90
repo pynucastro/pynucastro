@@ -1,6 +1,6 @@
 program integrator
-  use cvode_parameters, only: cv_data, cv_pars
-  use network, only: init_network, net_meta, net_initial_abundances
+  use cvode_parameters, only: cv_data, cv_pars, net_initial_abundances
+  use network
   use net_rates, only: init_reaclib, net_screening_init
   use data_wrangler, only: store_solution, write_solution
   use parameters, only: init_parameters
@@ -27,14 +27,14 @@ program integrator
   write(*,'(A,ES25.14)') 'Density = ', cv_pars%dens
 
   ! Initialize the Integration
-  cv_data%Y0(net_meta%in)   = net_initial_abundances%yn
-  cv_data%Y0(net_meta%ip)   = net_initial_abundances%yp
-  cv_data%Y0(net_meta%ihe4)   = net_initial_abundances%yhe4
-  cv_data%Y0(net_meta%ic12)   = net_initial_abundances%yc12
-  cv_data%Y0(net_meta%ine20)   = net_initial_abundances%yne20
-  cv_data%Y0(net_meta%ina23)   = net_initial_abundances%yna23
-  cv_data%Y0(net_meta%img23)   = net_initial_abundances%ymg23
-  cv_data%Y0(net_meta%ienuc)   = net_initial_abundances%yenuc
+  cv_data%Y0(jn)   = net_initial_abundances%yn
+  cv_data%Y0(jp)   = net_initial_abundances%yp
+  cv_data%Y0(jhe4)   = net_initial_abundances%yhe4
+  cv_data%Y0(jc12)   = net_initial_abundances%yc12
+  cv_data%Y0(jne20)   = net_initial_abundances%yne20
+  cv_data%Y0(jna23)   = net_initial_abundances%yna23
+  cv_data%Y0(jmg23)   = net_initial_abundances%ymg23
+  cv_data%Y0(jenuc)   = net_initial_abundances%yenuc
 
   write(*,*) 'Initialization at time 0: '
   do jk = 1, cv_data%NEQ
@@ -108,15 +108,15 @@ program integrator
 
   ! Print output to console
   write(*,'(A,ES25.14)') 'Integrated to time: ', cv_data%T
-  write(*,'(A,ES25.14)') 'Final enuc: ', cv_data%Y(net_meta%ienuc)
-  write(*,'(A,ES25.14)') 'Average enuc_dot: ', cv_data%Y(net_meta%ienuc)/cv_data%T
-  write(*,'(A,ES25.14)') 'n: ', cv_data%Y(net_meta%in)
-  write(*,'(A,ES25.14)') 'p: ', cv_data%Y(net_meta%ip)
-  write(*,'(A,ES25.14)') 'he4: ', cv_data%Y(net_meta%ihe4)
-  write(*,'(A,ES25.14)') 'c12: ', cv_data%Y(net_meta%ic12)
-  write(*,'(A,ES25.14)') 'ne20: ', cv_data%Y(net_meta%ine20)
-  write(*,'(A,ES25.14)') 'na23: ', cv_data%Y(net_meta%ina23)
-  write(*,'(A,ES25.14)') 'mg23: ', cv_data%Y(net_meta%img23)
+  write(*,'(A,ES25.14)') 'Final enuc: ', cv_data%Y(jenuc)
+  write(*,'(A,ES25.14)') 'Average enuc_dot: ', cv_data%Y(jenuc)/cv_data%T
+  write(*,'(A,ES25.14)') 'n: ', cv_data%Y(jn)
+  write(*,'(A,ES25.14)') 'p: ', cv_data%Y(jp)
+  write(*,'(A,ES25.14)') 'he4: ', cv_data%Y(jhe4)
+  write(*,'(A,ES25.14)') 'c12: ', cv_data%Y(jc12)
+  write(*,'(A,ES25.14)') 'ne20: ', cv_data%Y(jne20)
+  write(*,'(A,ES25.14)') 'na23: ', cv_data%Y(jna23)
+  write(*,'(A,ES25.14)') 'mg23: ', cv_data%Y(jmg23)
 
   deallocate( cv_data%net_history )
 

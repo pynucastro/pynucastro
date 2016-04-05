@@ -1,15 +1,24 @@
 module net_rates
-  use physical_constants
   use screening_module, only: screen5, add_screening_factor, screening_init, plasma_state, fill_plasma_state
-  use network, only: nspec, aion, zion, net_meta
+  use network
   use table_rates
 
   implicit none
 
 <nreact>(1)
-
+  logical :: screen_reaclib = .true.
+  
   ! Temperature coefficient arrays (numbers correspond to reaction numbers in net_info)
 <ctemp_declare>(1)
+
+  type :: reaclib_coefs
+    ! how many rates in this reaction
+    integer :: m
+    ! coefficient array
+    ! ! First Index: Rate coefficients 1..7
+    ! ! Second Index: Reaction index 1..m
+    double precision, dimension(:,:), allocatable :: ctemp
+  end type reaclib_coefs
 
   ! Reaction multiplicities (how many rates contribute)
   ! array indexed by the Reactions indices above
@@ -18,7 +27,7 @@ module net_rates
 
   ! Should these reactions be screened?
   logical, dimension(nreact) :: do_screening = (/ &
-<screen>(2)
+<screen_logical>(2)
 
 contains
 
@@ -41,7 +50,8 @@ contains
 
   subroutine net_screening_init()
     ! Adds screening factors and calls screening_init
-<add_screening>(2)
+
+<screen_add>(2)
     call screening_init()    
   end subroutine net_screening_init
 
@@ -62,6 +72,7 @@ contains
     double precision, pointer :: ctemp(:,:)
     double precision :: ri, T9, T9_exp, lnirate, irate, dirate_dt, dlnirate_dt
     integer :: i, j, m
+    logical :: return_from_table = .false.
     
     ri = 0.0d0
     rate = 0.0d0
@@ -76,25 +87,27 @@ contains
 
 <ctemp_switch>(2)
 
-    m = rate_mult(iwhich)
-    do i = 1, m
-      lnirate = ctemp(1,i) + ctemp(7,i) * LOG(T9)
-      dlnirate_dt = ctemp(7,i)/T9
-      do j = 2, 6
-        T9_exp = (2.0d0*dble(j-1)-5.0d0)/3.0d0 
-        lnirate = lnirate + ctemp(j,i) * T9**T9_exp
-        dlnirate_dt = dlnirate_dt + T9_exp * ctemp(j,i) * T9**(T9_exp-1.0d0)
-      end do
-      irate = EXP(lnirate)
-      rate = rate + irate
-      dirate_dt = irate * dlnirate_dt/1.0d9
-      drate_dt = drate_dt + dirate_dt
-    end do
-    
-    if ( screen_reaclib .and. do_screening(iwhich) ) then
-      call screen5(state, iwhich, scor, dscor_dt, dscor_dd)
-    end if
+    if (.not. return_from_table) then
+       m = rate_mult(iwhich)
+       do i = 1, m
+          lnirate = ctemp(1,i) + ctemp(7,i) * LOG(T9)
+          dlnirate_dt = ctemp(7,i)/T9
+          do j = 2, 6
+             T9_exp = (2.0d0*dble(j-1)-5.0d0)/3.0d0 
+             lnirate = lnirate + ctemp(j,i) * T9**T9_exp
+             dlnirate_dt = dlnirate_dt + T9_exp * ctemp(j,i) * T9**(T9_exp-1.0d0)
+          end do
+          irate = EXP(lnirate)
+          rate = rate + irate
+          dirate_dt = irate * dlnirate_dt/1.0d9
+          drate_dt = drate_dt + dirate_dt
+       end do
 
+       if ( screen_reaclib .and. do_screening(iwhich) ) then
+          call screen5(state, iwhich, scor, dscor_dt, dscor_dd)
+       end if
+    end if
+ 
     ratevec(1) = rate
     ratevec(2) = drate_dt
     ratevec(3) = scor
