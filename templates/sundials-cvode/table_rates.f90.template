@@ -166,9 +166,12 @@ contains
     fb = self%rate_table( itemp_hi, irhoy_lo, ivar )
     fc = self%rate_table( itemp_hi, irhoy_hi, ivar )
     fd = self%rate_table( itemp_lo, irhoy_hi, ivar )
-    fab = ( fa * ( temp_hi - logtemp ) + fb * ( logtemp - temp_lo ) )/( temp_hi - temp_lo )
-    fcd = ( fd * ( temp_hi - logtemp ) + fc * ( logtemp - temp_lo ) )/( temp_hi - temp_lo )
-    fvar = ( fab * ( rhoy_hi - logrhoy ) + fcd * ( logrhoy - rhoy_lo ) )/( rhoy_hi - rhoy_lo )
+    fab = ( fa * ( temp_hi - logtemp ) + fb * ( logtemp - temp_lo ) ) / &
+         ( temp_hi - temp_lo )
+    fcd = ( fd * ( temp_hi - logtemp ) + fc * ( logtemp - temp_lo ) ) / &
+         ( temp_hi - temp_lo )
+    fvar = ( fab * ( rhoy_hi - logrhoy ) + fcd * ( logrhoy - rhoy_lo ) ) / &
+         ( rhoy_hi - rhoy_lo )
   end subroutine bl_lu_tab_info
 
 end module table_rates
