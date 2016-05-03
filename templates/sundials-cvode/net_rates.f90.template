@@ -9,19 +9,19 @@ module net_rates
   logical :: screen_reaclib = .true.
   
   ! Temperature coefficient arrays (numbers correspond to reaction numbers in net_info)
-<ctemp_declare>(1)
+  <ctemp_declare>(1)
 
-  type :: reaclib_coefs
-    ! how many rates in this reaction
-    integer :: m
-    ! coefficient array
-    ! ! First Index: Rate coefficients 1..7
-    ! ! Second Index: Reaction index 1..m
-    double precision, dimension(:,:), allocatable :: ctemp
-  end type reaclib_coefs
+  type :: ctemp_ptr
+     double precision, dimension(:,:), pointer :: p
+  end type ctemp_ptr
 
+  ! Declare an array of pointers to ctemp arrays
+  <ctemp_ptr_declare>(1)
+  
   ! Reaction multiplicities (how many rates contribute)
-  ! array indexed by the Reactions indices above
+  ! Array indexed by the Reactions indices above.
+  ! If the entry is negative, interpret as an index into table_meta
+  ! and calculate the rate using module table_rates.
   integer, dimension(nreact) :: rate_mult = (/ &
 <rmul>(2)
 

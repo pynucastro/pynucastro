@@ -63,8 +63,8 @@ contains
   end subroutine init_reaclib_pars
 
   subroutine init_reaclib()
-    ctemp_point(1)%p => ctemp_rate_1    
     allocate( ctemp_rate_1(7, rate_mult(1)) )
+    ctemp_point(1)%p => ctemp_rate_1    
     ! c12_c12a_ne20
     ctemp_rate_1(:, 1) = (/  &
         6.128630d+01, &
@@ -75,8 +75,8 @@ contains
         -7.279700d-02, &
         -6.666670d-01 /)
 
-    ctemp_point(2)%p => ctemp_rate_2
     allocate( ctemp_rate_2(7, rate_mult(2)) )
+    ctemp_point(2)%p => ctemp_rate_2
     ! c12_c12n_mg23
     ctemp_rate_2(:, 1) = (/  &
         -1.280560d+01, &
@@ -87,8 +87,8 @@ contains
         -3.484400d-01, &
         0.000000d+00 /)
 
-    ctemp_point(3)%p => ctemp_rate_3
     allocate( ctemp_rate_3(7, rate_mult(3)) )
+    ctemp_point(3)%p => ctemp_rate_3
     ! c12_c12p_na23
     ctemp_rate_3(:, 1) = (/  &
         6.096490d+01, &
@@ -99,8 +99,8 @@ contains
         -7.030700d-02, &
         -6.666670d-01 /)
     
-    ctemp_point(4)%p => ctemp_rate_4
     allocate( ctemp_rate_4(7, rate_mult(4)) )
+    ctemp_point(4)%p => ctemp_rate_4
     ! n_p
     ctemp_rate_4(:, 1) = (/  &
         -6.781610d+00, &
@@ -165,6 +165,7 @@ contains
     double precision, pointer :: ctemp(:,:)
     double precision :: ri, T9, T9_exp, lnirate, irate, dirate_dt, dlnirate_dt
     integer :: i, j, m
+
     
     ri = 0.0d0
     rate = 0.0d0
@@ -181,8 +182,8 @@ contains
     m = rate_mult(iwhich)
     if ( m .gt. 0 ) then
        ! This must be a Reaclib rate
-       ctemp = ctemp_point(iwhich)%p
-       
+       ctemp => ctemp_point(iwhich)%p
+
        do i = 1, m
           lnirate = ctemp(1,i) + ctemp(7,i) * LOG(T9)
           dlnirate_dt = ctemp(7,i)/T9
@@ -191,6 +192,11 @@ contains
              lnirate = lnirate + ctemp(j,i) * T9**T9_exp
              dlnirate_dt = dlnirate_dt + T9_exp * ctemp(j,i) * T9**(T9_exp-1.0d0)
           end do
+          ! If the rate will be in the approx. interval [0.0, 1.0E-100], replace by 0.0
+          ! This avoids issues with passing very large negative values to EXP
+          ! and getting results between 0.0 and 1.0E-308, the limit for IEEE 754.
+          ! And avoids SIGFPE in CVODE due to tiny rates.
+          lnirate = max(lnirate, -230.0d0)
           irate = EXP(lnirate)
           rate = rate + irate
           dirate_dt = irate * dlnirate_dt/1.0d9
@@ -201,12 +207,12 @@ contains
           call screen5(state, iwhich, scor, dscor_dt, dscor_dd)
        end if
  
-       reactvec(1) = rate
-       reactvec(2) = drate_dt
-       reactvec(3) = scor
-       reactvec(4) = dscor_dt
-       reactvec(5) = 0.0d0
-       reactvec(6) = 0.0d0
+       reactvec(i_rate)     = rate
+       reactvec(i_drate_dt) = drate_dt
+       reactvec(i_scor)     = scor
+       reactvec(i_dscor_dt) = dscor_dt
+       reactvec(i_dqweak)   = 0.0d0
+       reactvec(i_epart)    = 0.0d0
     else
        ! This is a Table rate (unless m=0)
        ! table_rates returns dq in reactvec(5)

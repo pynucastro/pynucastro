@@ -748,6 +748,7 @@ class Network_f90(RateCollection):
         self.ftags['<rmul>'] = self.rmul
         self.ftags['<screen_logical>'] = self.screen_logical
         self.ftags['<screen_add>'] = self.screen_add
+        self.ftags['<ctemp_ptr_declare>'] = self.ctemp_ptr_declare
         self.ftags['<ctemp_allocate>'] = self.ctemp_allocate
         self.ftags['<ctemp_deallocate>'] = self.ctemp_deallocate
         self.ftags['<ctemp_switch>'] = self.ctemp_switch
@@ -755,6 +756,8 @@ class Network_f90(RateCollection):
         self.ftags['<table_indices>'] = self.table_indices
         self.ftags['<table_init_meta>'] = self.table_init_meta
         self.ftags['<ydot>'] = self.ydot
+        self.ftags['<enuc_dqweak>'] = self.enuc_dqweak
+        self.ftags['<enuc_epart>'] = self.enuc_epart
         self.ftags['<jacobian>'] = self.jacobian
         self.ftags['<yinit_nuc>'] = self.yinit_nuc
         self.ftags['<final_net_print>'] = self.final_net_print
@@ -795,11 +798,12 @@ class Network_f90(RateCollection):
         else:
             prefactor_string = ""
 
-        return "{}{}{} * rxn_rates(3, k_{}) * rxn_rates(1, k_{})".format(prefactor_string,
-                                                                         dens_string,
-                                                                         Y_string,
-                                                                         rate.fname,
-                                                                         rate.fname)
+        return "{}{}{} * reactvec(i_scor, k_{}) * reactvec(i_rate, k_{})".format(
+            prefactor_string,
+            dens_string,
+            Y_string,
+            rate.fname,
+            rate.fname)
 
     def jacobian_string(self, rate, ydot_j, y_i):
         """
@@ -851,9 +855,9 @@ class Network_f90(RateCollection):
             prefactor_string = ""
 
         if Y_string=="" and dens_string=="" and prefactor_string=="":
-            rstring = "{}{}{}   rxn_rates(3, k_{}) * rxn_rates(1, k_{})"
+            rstring = "{}{}{}   reactvec(i_scor, k_{}) * reactvec(i_rate, k_{})"
         else:
-            rstring = "{}{}{} * rxn_rates(3, k_{}) * rxn_rates(1, k_{})"
+            rstring = "{}{}{} * reactvec(i_scor, k_{}) * reactvec(i_rate, k_{})"
         return rstring.format(prefactor_string, dens_string, Y_string,
                               rate.fname, rate.fname)
 
@@ -981,6 +985,11 @@ class Network_f90(RateCollection):
                                                               r.ion_screen[1],
                                                               r.ion_screen[1]))
 
+    def ctemp_ptr_declare(self, n_indent, of):
+        of.write('{}type(ctemp_ptr), dimension({}) :: ctemp_point\n'.format(
+            self.indent*n_indent,
+            len(self.reaclib_rates)))
+                
     def ctemp_allocate(self, n_indent, of):
         for nr in self.reaclib_rates:
             r = self.rates[nr]
@@ -1073,6 +1082,29 @@ class Network_f90(RateCollection):
                                                          c, self.ydot_string(r)))
             of.write("{}   )\n\n".format(self.indent*n_indent))
 
+    def enuc_dqweak(self, n_indent, of):
+        # Add tabular dQ corrections to the energy generation rate
+        for nr, r in enumerate(self.rates):
+            if nr in self.tabular_rates:
+                if len(r.reactants) != 1:
+                    print('ERROR: Unknown tabular dQ corrections for a reaction where the number of reactants is not 1.')
+                    exit()
+                else:
+                    reactant = r.reactants[0]
+                    of.write('{}YDOT(jenuc) = YDOT(jenuc) + N_AVO * YDOT(j{}) * reactvec(i_dqweak, k_{})\n'.format(self.indent*n_indent, reactant, r.fname))
+        
+    def enuc_epart(self, n_indent, of):
+        # Add particle energy generation rates (gamma heating and neutrino loss from decays)
+        # to the energy generation rate (doesn't include plasma neutrino losses)
+        for nr, r in enumerate(self.rates):
+            if nr in self.tabular_rates:
+                if len(r.reactants) != 1:
+                    print('ERROR: Unknown particle energy corrections for a reaction where the number of reactants is not 1.')
+                    exit()
+                else:
+                    reactant = r.reactants[0]
+                    of.write('{}YDOT(jenuc) = YDOT(jenuc) + N_AVO * Y(j{}) * reactvec(i_epart, k_{})\n'.format(self.indent*n_indent, reactant, r.fname))
+        
     def jacobian(self, n_indent, of):
         # now make the JACOBIAN
         for nj in self.unique_nuclei:

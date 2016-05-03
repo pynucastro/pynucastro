@@ -54,14 +54,14 @@ contains
   subroutine init_network()
     integer :: i
 
-    ebind_per_nucleon(jn)   = 0.0d0
-    ebind_per_nucleon(jp)   = 0.0d0
-    ebind_per_nucleon(jhe4)   = 0.0d0
-    ebind_per_nucleon(jc12)   = 0.0d0
-    ebind_per_nucleon(jne20)   = 0.0d0
-    ebind_per_nucleon(jne23)   = 0.0d0
-    ebind_per_nucleon(jna23)   = 0.0d0
-    ebind_per_nucleon(jmg23)   = 0.0d0
+    ebind_per_nucleon(jn)      = 0.782347d0
+    ebind_per_nucleon(jp)      = 0.0d0
+    ebind_per_nucleon(jhe4)    = 7.073915d0
+    ebind_per_nucleon(jc12)    = 7.680144d0
+    ebind_per_nucleon(jne20)   = 8.032240d0
+    ebind_per_nucleon(jne23)   = 7.955255d0
+    ebind_per_nucleon(jna23)   = 8.111493d0
+    ebind_per_nucleon(jmg23)   = 7.901104d0
     
     aion(jn)   = 1.000000d+00
     aion(jp)   = 1.000000d+00

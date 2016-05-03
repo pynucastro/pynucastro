@@ -17,7 +17,7 @@ contains
     double precision, intent(in) :: T
     integer, intent(out) :: IER
 
-    double precision, dimension(4, nreact) :: rxn_rates
+    double precision, dimension(nreactvec, nreact) :: reactvec
     integer :: i
     double precision :: dens, temp, ye, rhoy
 
@@ -39,20 +39,28 @@ contains
 
     call fill_plasma_state(state, temp, dens, Y(1:nspec))
     do i = 1, nreact
-      call rate_evaluate(state, rhoy, cv_pars%temp, i, rxn_rates(:,i))
+       call rate_evaluate(state, rhoy, cv_pars%temp, i, reactvec(:,i))
     end do
 
-    write(*,*) "T: ", T
-<ydot>(2)
+    write(*,*) "RHS Time: ", T
+    <ydot>(2)
 
     YDOT(jenuc) = 0.0d0
+    ! ion binding energy contributions
     do i = 1, nspec
-      YDOT(jenuc) = YDOT(jenuc) + N_AVO * ebind(i) * YDOT(i)
+       YDOT(jenuc) = YDOT(jenuc) + N_AVO * ebind(i) * YDOT(i)
     end do
 
+    ! weak Q-value modification dqweak (density and temperature dependent)
+    <enuc_dqweak>(2)
+    
+    ! weak particle energy generation rates from gamma heating and neutrino loss
+    ! (does not include plasma neutrino losses)
+    <enuc_epart>(2)
+    
     write(*,*) '______________________________'
-    do i = 1, nspec
-      write(*,*) 'YDOT(',i,'): ',YDOT(i)
+    do i = 1, nspec+1
+       write(*,*) 'YDOT(',i,'): ',YDOT(i)
     end do
 
     IER = 0 ! Successful
@@ -70,7 +78,7 @@ contains
     double precision, dimension(NEQ), intent(in) :: WK1, WK2, WK3
     integer, intent(out) :: IER
 
-    double precision, dimension(4, nreact) :: rxn_rates
+    double precision, dimension(nreactvec, nreact) :: reactvec
     double precision :: dens, temp, ye, rhoy
     integer :: i, j
 
@@ -87,26 +95,26 @@ contains
     rhoy = dens*ye
 
     if (T == 0.0d0) then
-    
-      do i = 1, NEQ
-        do j = 1, NEQ
-          DJAC(j, i) = 0.0d0
-        end do
-      end do
+
+       do i = 1, NEQ
+          do j = 1, NEQ
+             DJAC(j, i) = 0.0d0
+          end do
+       end do
 
     else
 
        if ( screen_reaclib ) then
-         call fill_plasma_state(state, temp, dens, Y(1:nspec))
+          call fill_plasma_state(state, temp, dens, Y(1:nspec))
        end if
 
        do i = 1, nreact
-         call rate_evaluate(state, rhoy, cv_pars%temp, i, rxn_rates(:,i))
+          call rate_evaluate(state, rhoy, cv_pars%temp, i, reactvec(:,i))
        end do
 
-      ! DJAC(j, i) = d(YDOT(j))/dY(i)
+       ! DJAC(j, i) = d(YDOT(j))/dY(i)
 
- <jacobian>(3)
+       <jacobian>(3)
 
     end if
 

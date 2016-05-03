@@ -114,7 +114,7 @@ class Search(object):
         f = open(file, "r")
         for line in f:
             # strip off the comments
-            idx = string.find(line, "!")
+            idx = line.find("!")
             line = line[:idx]
             rebreak = self.use_re.search(line)
             if rebreak:

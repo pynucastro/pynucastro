@@ -17,7 +17,7 @@ contains
     double precision, intent(in) :: T
     integer, intent(out) :: IER
 
-    double precision, dimension(6, nreact) :: reactvec
+    double precision, dimension(nreactvec, nreact) :: reactvec
     integer :: i
     double precision :: dens, temp, ye, rhoy
 
@@ -42,7 +42,7 @@ contains
       call rate_evaluate(state, rhoy, cv_pars%temp, i, reactvec(:,i))
     end do
 
-    write(*,*) "T: ", T
+    write(*,*) "RHS Time: ", T
     YDOT(jn) = ( &
        - Y(jn) * reactvec(i_scor, k_n_p) * reactvec(i_rate, k_n_p) &
        + 0.500000000000000 * dens * Y(jc12)**2 * reactvec(i_scor, k_c12_c12n_mg23) * reactvec(i_rate, k_c12_c12n_mg23) &
@@ -89,16 +89,16 @@ contains
     end do
     
     ! weak Q-value modification dqweak (density and temperature dependent)
-    YDOT(jenuc) = YDOT(jenuc) + N_AVO * YDOT(jne23) * reactvec(i_dqweak, k_ne23_na23)
     YDOT(jenuc) = YDOT(jenuc) + N_AVO * YDOT(jna23) * reactvec(i_dqweak, k_na23_ne23)
+    YDOT(jenuc) = YDOT(jenuc) + N_AVO * YDOT(jne23) * reactvec(i_dqweak, k_ne23_na23)
 
     ! weak particle energy generation rates from gamma heating and neutrino loss
     ! (does not include plasma neutrino losses)
-    YDOT(jenuc) = YDOT(jenuc) + N_AVO * Y(jne23) * reactvec(i_epart, k_ne23_na23)
     YDOT(jenuc) = YDOT(jenuc) + N_AVO * Y(jna23) * reactvec(i_epart, k_na23_ne23)
+    YDOT(jenuc) = YDOT(jenuc) + N_AVO * Y(jne23) * reactvec(i_epart, k_ne23_na23)
 
     write(*,*) '______________________________'
-    do i = 1, nspec
+    do i = 1, nspec+1
       write(*,*) 'YDOT(',i,'): ',YDOT(i)
     end do
 
@@ -117,7 +117,7 @@ contains
     double precision, dimension(NEQ), intent(in) :: WK1, WK2, WK3
     integer, intent(out) :: IER
 
-    double precision, dimension(4, nreact) :: reactvec
+    double precision, dimension(nreactvec, nreact) :: reactvec
     double precision :: dens, temp, ye, rhoy
     integer :: i, j
 
@@ -427,7 +427,7 @@ contains
 
     IER = -1
     ! Here you can add custom abundance stopping criteria
-    G(1) = 1.0d0
+    G(1) = min( Y(jne23), Y(jna23) ) - cv_pars%A_TOL
     IER = 0
   end subroutine FCVROOTFN
 

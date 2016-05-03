@@ -45,13 +45,13 @@ contains
 
   subroutine init_table_meta()
     integer :: n
-    table_meta(j_na23_ne23)%rate_table_file = '23Na-23Ne_electroncapture.dat'
+    table_meta(j_na23_ne23)%rate_table_file = '23Na-23Ne_electroncapture.prep2.dat'
     table_meta(j_na23_ne23)%num_header = 7
     table_meta(j_na23_ne23)%num_rhoy = 152
     table_meta(j_na23_ne23)%num_temp = 39
     table_meta(j_na23_ne23)%num_vars = 6
 
-    table_meta(j_ne23_na23)%rate_table_file = '23Ne-23Na_betadecay.dat'
+    table_meta(j_ne23_na23)%rate_table_file = '23Ne-23Na_betadecay.prep2.dat'
     table_meta(j_ne23_na23)%num_header = 6
     table_meta(j_ne23_na23)%num_rhoy = 152
     table_meta(j_ne23_na23)%num_temp = 39
@@ -124,10 +124,8 @@ contains
     n = size(vector)
     if ( fvar .lt. vector(1) ) then
        index = 1
-       return
     else if ( fvar .gt. vector(n) ) then
-       index = n
-       return
+       index = n - 1
     else
        nup = n
        ndn = 1
@@ -197,6 +195,9 @@ contains
     ! This deals with out-of-range inputs via linear extrapolation
     call vector_index_lu(self%rhoy_table, rhoy, irhoy_lo)
     call vector_index_lu(self%temp_table, temp, itemp_lo)
+    write(*,*) 'upper self temp table: ', self%temp_table(39)
+    write(*,*) 'temp: ', temp
+    write(*,*) 'itemp_lo: ', itemp_lo
     irhoy_hi = irhoy_lo + 1
     itemp_hi = itemp_lo + 1
 
@@ -237,8 +238,8 @@ contains
             self%rate_table( itemp_lo, irhoy_hi, jtab_rate ), &
             rhoy, f_i)
        call bl_clamp(rhoy_lo, rhoy_hi, &
-            self%rate_table( itemp_hi, irhoy_lo, ivar ), &
-            self%rate_table( itemp_hi, irhoy_hi, ivar ), &
+            self%rate_table( itemp_hi, irhoy_lo, jtab_rate ), &
+            self%rate_table( itemp_hi, irhoy_hi, jtab_rate ), &
             rhoy, f_ip1)
        ! Approximate d(rate)/d(t) via forward differencing
        entries(k_drate_dt) = (f_ip1 - f_i) / (temp_hi - temp_lo)
