@@ -1,8 +1,11 @@
 """
 Integrate a grid of dens and temp using the defaults in net.par.default
 
+This could use some updating to be more user-friendly
+
 Donald Willcox
 """
+from __future__ import print_function
 import numpy as np
 import subprocess
 import re

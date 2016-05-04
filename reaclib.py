@@ -418,7 +418,7 @@ class RateCollection(object):
             except:
                 print("Error with file: {}".format(rf))
                 raise
-            
+                    
         # get the unique nuclei
         u = []
         for r in self.rates:
@@ -443,6 +443,15 @@ class RateCollection(object):
                 if n in r.products:
                     self.nuclei_produced[n].append(r)
 
+        # Re-order self.rates so Reaclib rates come first,
+        # followed by Tabular rates. This is needed if
+        # reaclib coefficients are targets of a pointer array
+        # in the Fortran network.
+        # It is desired to avoid wasting array size
+        # storing meaningless Tabular coefficient pointers.
+        self.rates = sorted(self.rates,
+                            key = lambda r: r.chapter=='t')
+        
         self.tabular_rates = []
         self.reaclib_rates = []
         for n,r in enumerate(self.rates):
@@ -454,7 +463,6 @@ class RateCollection(object):
                 print('ERROR: Chapter type unknown for rate chapter {}'.format(
                     str(r.chapter)))
                 exit()
-
 
     def make_network(self, outfile):
         typenet_avail = {
@@ -919,17 +927,17 @@ class Network_f90(RateCollection):
 
     def jion(self, n_indent, of):
         for i,nuc in enumerate(self.unique_nuclei):
-            of.write('{}integer :: j{}   = {}\n'.format(
+            of.write('{}integer, parameter :: j{}   = {}\n'.format(
                 self.indent*n_indent, nuc, i+1))
         of.write('{}! Energy Generation Rate\n'.format(
             self.indent*n_indent))
-        of.write('{}integer :: jenuc   = {}\n'.format(
+        of.write('{}integer, parameter :: jenuc   = {}\n'.format(
             self.indent*n_indent,
             len(self.unique_nuclei)+1))
 
     def nrxn(self, n_indent, of):
         for i,r in enumerate(self.rates):
-            of.write('{}integer :: k_{}   = {}\n'.format(
+            of.write('{}integer, parameter :: k_{}   = {}\n'.format(
                 self.indent*n_indent, r.fname, i+1))
 
     def ebind(self, n_indent, of):
@@ -958,7 +966,17 @@ class Network_f90(RateCollection):
 
     def rmul(self, n_indent, of):
         for i,r in enumerate(self.rates):
-            of.write('{}{}'.format(self.indent*n_indent, len(r.sets)))
+            if i in self.reaclib_rates:
+                of.write('{}{}'.format(
+                    self.indent*n_indent,
+                    len(r.sets)))
+            elif i in self.tabular_rates:
+                of.write('{}-{}'.format(
+                    self.indent*n_indent,
+                    r.table_index_name))
+            else:
+                print('ERROR: unknown rate index {}'.format(i))
+                exit()
             if i==len(self.rates)-1:
                 of.write(' /)\n')
             else:
@@ -995,6 +1013,7 @@ class Network_f90(RateCollection):
             r = self.rates[nr]
             of.write('{}allocate( ctemp_rate_{}(7, rate_mult({})) )\n'.format(
                 self.indent*n_indent, nr+1, nr+1))
+            of.write('{}ctemp_point({})%p => ctemp_rate_{}\n'.format(self.indent*n_indent, nr+1, nr+1))
             of.write('{}! {}\n'.format(self.indent*n_indent, r.fname))
             for ns,s in enumerate(r.sets):
                 of.write('{}ctemp_rate_{}(:, {}) = (/  &\n'.format(

@@ -6,6 +6,9 @@ module network
   ! Number of nuclear species in the network
 <nspec>(1)
 
+  ! Number of entries in reactvec returned by rate_evaluate
+  integer, parameter :: nreactvec = 6
+
   ! Binding Energies Per Nucleon (MeV)
   double precision, dimension(nspec) :: ebind_per_nucleon
 
@@ -23,7 +26,15 @@ module network
 
   ! Reactions
 <nrxn>(1)
-  
+
+  ! reactvec indices
+  integer, parameter :: i_rate        = 1
+  integer, parameter :: i_drate_dt    = 2
+  integer, parameter :: i_scor        = 3
+  integer, parameter :: i_dscor_dt    = 4
+  integer, parameter :: i_dqweak      = 5
+  integer, parameter :: i_epart       = 6
+
 contains
 
   subroutine init_network()

@@ -55,16 +55,27 @@ contains
     call screening_init()    
   end subroutine net_screening_init
 
-  subroutine rate_evaluate(state, rhoy, temp, iwhich, ratevec)
+  subroutine rate_evaluate(state, rhoy, temp, iwhich, reactvec)
     type(plasma_state), intent(in) :: state
     double precision, intent(in) :: temp, rhoy
     integer, intent(in) :: iwhich
 
-    double precision, intent(out), dimension(:) :: ratevec
-    ! ratevec(1) = rate     , the reaction rate
-    ! ratevec(2) = drate_dt , the Temperature derivative of rate
-    ! ratevec(3) = scor     , the screening factor
-    ! ratevec(4) = dscor_dt , the Temperature derivative of scor
+    double precision, intent(out), dimension(:) :: reactvec
+    ! reactvec(1) = rate     , the reaction rate
+    ! reactvec(2) = drate_dt , the Temperature derivative of rate
+    ! reactvec(3) = scor     , the screening factor
+    ! reactvec(4) = dscor_dt , the Temperature derivative of scor
+    ! reactvec(5) = dqweak   , the weak reaction dq-value (ergs)
+    !                          (This accounts for modification of the reaction Q
+    !                           due to the local density and temperature of the plasma.
+    !                           For Reaclib rates, this is 0.0d0.)
+    ! reactvec(6) = epart    , the particle energy generation rate (ergs/s)
+    ! NOTE: The particle energy generation rate (returned in ergs/s)
+    !       is the contribution to enuc from non-ion particles associated
+    !       with the reaction.
+    !       For example, this accounts for neutrino energy losses
+    !       in weak reactions and/or gamma heating of the plasma
+    !       from nuclear transitions in daughter nuclei.
 
     double precision  :: rate, scor ! Rate and Screening Factor
     double precision  :: drate_dt, dscor_dt ! Temperature derivatives
@@ -72,7 +83,7 @@ contains
     double precision, pointer :: ctemp(:,:)
     double precision :: ri, T9, T9_exp, lnirate, irate, dirate_dt, dlnirate_dt
     integer :: i, j, m
-    logical :: return_from_table = .false.
+
     
     ri = 0.0d0
     rate = 0.0d0
@@ -85,10 +96,12 @@ contains
     dscor_dt = 0.0d0
     dscor_dd = 0.0d0
 
-<ctemp_switch>(2)
+    ! Use reaction multiplicities to tell whether the rate is Reaclib
+    m = rate_mult(iwhich)
+    if ( m .gt. 0 ) then
+       ! This must be a Reaclib rate
+       ctemp => ctemp_point(iwhich)%p
 
-    if (.not. return_from_table) then
-       m = rate_mult(iwhich)
        do i = 1, m
           lnirate = ctemp(1,i) + ctemp(7,i) * LOG(T9)
           dlnirate_dt = ctemp(7,i)/T9
@@ -97,6 +110,11 @@ contains
              lnirate = lnirate + ctemp(j,i) * T9**T9_exp
              dlnirate_dt = dlnirate_dt + T9_exp * ctemp(j,i) * T9**(T9_exp-1.0d0)
           end do
+          ! If the rate will be in the approx. interval [0.0, 1.0E-100], replace by 0.0
+          ! This avoids issues with passing very large negative values to EXP
+          ! and getting results between 0.0 and 1.0E-308, the limit for IEEE 754.
+          ! And avoids SIGFPE in CVODE due to tiny rates.
+          lnirate = max(lnirate, -230.0d0)
           irate = EXP(lnirate)
           rate = rate + irate
           dirate_dt = irate * dlnirate_dt/1.0d9
@@ -106,12 +124,19 @@ contains
        if ( screen_reaclib .and. do_screening(iwhich) ) then
           call screen5(state, iwhich, scor, dscor_dt, dscor_dd)
        end if
-    end if
  
-    ratevec(1) = rate
-    ratevec(2) = drate_dt
-    ratevec(3) = scor
-    ratevec(4) = dscor_dt
+       reactvec(i_rate)     = rate
+       reactvec(i_drate_dt) = drate_dt
+       reactvec(i_scor)     = scor
+       reactvec(i_dscor_dt) = dscor_dt
+       reactvec(i_dqweak)   = 0.0d0
+       reactvec(i_epart)    = 0.0d0
+    else
+       ! This is a Table rate (unless m=0)
+       ! table_rates returns dq in reactvec(5)
+       ! reflecting the dependence of Q on dens*ye and temperature.
+       call table_meta(-m)%reaction(rhoy, temp, reactvec)
+    end if
   end subroutine rate_evaluate
-
+  
 end module net_rates
