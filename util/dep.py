@@ -162,13 +162,18 @@ class Search(object):
             raise
         found = False
         for line in f:
-            remod = self.module_re.search(line)
-            procmod = self.module_proc_re.search(line)
-            if remod and not procmod:
-                found_module_name = remod.group(4)
-                if module==found_module_name:
-                    found = True
-                    break
+            # Only look for a module declaration if the line is not commented
+            ls = line.strip()
+            if ls == '':
+                continue
+            if ls[0] != '!':
+                remod = self.module_re.search(line)
+                procmod = self.module_proc_re.search(line)
+                if remod and not procmod:
+                    found_module_name = remod.group(4)
+                    if module==found_module_name:
+                        found = True
+                        break
         f.close()
         return found
 
