@@ -23,27 +23,27 @@ must be in your PYTHONPATH):
 $ python cno.py
 ```
 
-2) Edit net_rates.f90 and fill in the binding energies (MeV) in the
+2) Edit network.f90 and fill in the binding energies (MeV) in the
 init_net_info subroutine:
 
 ```
-    self%ebind_per_nucleon(self%ip) = 0.0d0
-    self%ebind_per_nucleon(self%ihe4) = 7.073915d0
-    self%ebind_per_nucleon(self%ic12) = 7.680144d0
-    self%ebind_per_nucleon(self%ic13) = 7.469849d0
-    self%ebind_per_nucleon(self%in13) = 7.238863d0
-    self%ebind_per_nucleon(self%in14) = 7.475614d0
-    self%ebind_per_nucleon(self%in15) = 7.699460d0
-    self%ebind_per_nucleon(self%io14) = 7.052301d0
-    self%ebind_per_nucleon(self%io15) = 7.46369d0
+    ebind_per_nucleon(jp) = 0.0d0
+    ebind_per_nucleon(jhe4) = 7.073915d0
+    ebind_per_nucleon(jc12) = 7.680144d0
+    ebind_per_nucleon(jc13) = 7.469849d0
+    ebind_per_nucleon(jn13) = 7.238863d0
+    ebind_per_nucleon(jn14) = 7.475614d0
+    ebind_per_nucleon(jn15) = 7.699460d0
+    ebind_per_nucleon(jo14) = 7.052301d0
+    ebind_per_nucleon(jo15) = 7.46369d0
 ```
 
-3) Edit network.f90 and revise the stopping root solver condition in
+3) Edit rhs.f90 and revise the stopping root solver condition in
 subroutine FCVROOTFN if desired. For example, to stop when H is
 depleted, use the following:
 
 ```
-    G(1) = Y(net_meta%ip)
+    G(1) = Y(jp)
 ```
 
 4) Add your SUNDIALS, LAPACK, and BLAS libraries to ../GMake.common, eg.
