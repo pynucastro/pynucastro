@@ -28,28 +28,28 @@ must be in your PYTHONPATH):
 $ python urca.py
 ```
 
-2) Edit net_rates.f90 and fill in the binding energies (MeV) in the
+2) Edit network.f90 and fill in the binding energies (MeV) in the
 init_net_info subroutine: (relative to proton BE)
 
 ```
-    self%ebind_per_nucleon(self%in)   = 0.782347d0
-    self%ebind_per_nucleon(self%ip)   = 0.0d0
-    self%ebind_per_nucleon(self%ihe4)   = 7.073915d0
-    self%ebind_per_nucleon(self%ic12)   = 7.680144d0
-    self%ebind_per_nucleon(self%ine20)   = 8.032240d0
-    self%ebind_per_nucleon(self%ine23)   = 7.955255d0
-    self%ebind_per_nucleon(self%ina23)   = 8.111493d0
-    self%ebind_per_nucleon(self%img23)   = 7.901104d0
+    ebind_per_nucleon(jn)   = 0.782347d0
+    ebind_per_nucleon(jp)   = 0.0d0
+    ebind_per_nucleon(jhe4)   = 7.073915d0
+    ebind_per_nucleon(jc12)   = 7.680144d0
+    ebind_per_nucleon(jne20)   = 8.032240d0
+    ebind_per_nucleon(jne23)   = 7.955255d0
+    ebind_per_nucleon(jna23)   = 8.111493d0
+    ebind_per_nucleon(jmg23)   = 7.901104d0
 ```
 
-3) Edit network.f90 and revise the stopping root solver condition in
+3) Edit rhs.f90 and revise the stopping root solver condition in
 subroutine FCVROOTFN if desired. If you don't want a stopping
 condition, start with the recommended timing DT_SAVE and NDT_SAVE
 above. For example, to stop when either Ne-23 or Na-23 are depleted,
 use the following:
 
 ```
-    G(1) = min(Y(net_meta%ine23),Y(net_meta%ina23))
+    G(1) = min(Y(jne23),Y(jna23))
 ```
 
 4) Add your SUNDIALS, LAPACK, and BLAS libraries to ../GMake.common, eg.

@@ -148,6 +148,13 @@ class Rate(object):
         self.products = []
         self.sets = []
 
+        # Tells if this rate is eligible for screening
+        # using screenz.f90 provided by BoxLib Microphysics.
+        # If not eligible for screening, set to None
+        # If eligible for screening, then
+        # Rate.ion_screen is a 2-element list of Nucleus objects for screening
+        self.ion_screen = None 
+
         idx = self.file.rfind("-")
         self.fname = self.file[:idx].replace("--","-").replace("-","_")
 
@@ -240,7 +247,8 @@ class Rate(object):
                     elif self.chapter == 7:
                         # e1 + e2 -> e3 + e4 + e5 + e6
                         self.reactants += [Nucleus(f[0]), Nucleus(f[1])]
-                        self.products += [Nucleus(f[2]), Nucleus(f[3]), Nucleus(f[4]), Nucleus(f[5])]
+                        self.products += [Nucleus(f[2]), Nucleus(f[3]),
+                                          Nucleus(f[4]), Nucleus(f[5])]
 
                     elif self.chapter == 8:
                         # e1 + e2 + e3 -> e4
@@ -254,13 +262,15 @@ class Rate(object):
 
                     elif self.chapter == 10:
                         # e1 + e2 + e3 + e4 -> e5 + e6
-                        self.reactants += [Nucleus(f[0]), Nucleus(f[1]), Nucleus(f[2]), Nucleus(f[3])]
+                        self.reactants += [Nucleus(f[0]), Nucleus(f[1]),
+                                           Nucleus(f[2]), Nucleus(f[3])]
                         self.products += [Nucleus(f[4]), Nucleus(f[5])]
 
                     elif self.chapter == 11:
                         # e1 -> e2 + e3 + e4 + e5
                         self.reactants.append(Nucleus(f[0]))
-                        self.products += [Nucleus(f[1]), Nucleus(f[2]), Nucleus(f[3]), Nucleus(f[4])]
+                        self.products += [Nucleus(f[1]), Nucleus(f[2]),
+                                          Nucleus(f[3]), Nucleus(f[4])]
                     
                     first = 0
 
@@ -279,6 +289,17 @@ class Rate(object):
         for r in list_unique(self.reactants):
             self.prefactor = self.prefactor/np.math.factorial(self.reactants.count(r))
         self.dens_exp = len(self.reactants)-1
+
+        # determine if this rate is eligible for screening
+        nucz = []
+        for parent in self.reactants:
+            if parent.Z != 0:
+                nucz.append(parent)
+        if len(nucz) > 1:
+            nucz.sort(key=lambda x: x.Z)
+            self.ion_screen = []
+            self.ion_screen.append(nucz[0])
+            self.ion_screen.append(nucz[1])
         
         self.string = ""
         self.pretty_string = r"$"
@@ -352,219 +373,6 @@ class Rate(object):
         plt.show()
 
 
-    def rate_string(self, indent=0, prefix="rate"):
-        """
-        return the functional form of rate as a function of
-        the temperature (as Tfactors)
-        """
-
-        tstring = "# {}\n".format(self.string)
-        tstring += "{} = 0.0\n\n".format(prefix)
-
-        for s in self.sets:
-            tstring += "# {}\n".format(s.label)
-            tstring += "{}\n".format(s.set_string(prefix=prefix, plus_equal=True))
-
-
-        string = ""
-        for t in tstring.split("\n"):
-            string += indent*" " + t + "\n"
-
-        return string
-
-
-    def function_string(self):
-        """
-        return a string containing python function that computes the
-        rate
-        """
-
-        string = ""
-        string += "def {}(tf):\n".format(self.fname)
-        string += "{}".format(self.rate_string(indent=4))
-        string += "    return rate\n\n"
-
-        return string
-
-
-    def ydot_string(self):
-        """
-        return a string containing the term in a dY/dt equation
-        in a reaction network corresponding to this rate
-        """
-
-        # composition dependence
-        Y_string = ""
-        for n, r in enumerate(list_unique(self.reactants)):
-            c = self.reactants.count(r)
-            if c > 1:
-                Y_string += "Y[i{}]**{}".format(r, c)
-            else:
-                Y_string += "Y[i{}]".format(r)
-
-            if n < len(list_unique(self.reactants))-1:
-                Y_string += "*"
-
-        # density dependence
-        if self.dens_exp == 0:
-            dens_string = ""
-        elif self.dens_exp == 1:
-            dens_string = "rho*"
-        else:
-            dens_string = "rho**{}*".format(self.dens_exp)
-
-        # prefactor
-        if not self.prefactor == 1.0:
-            prefactor_string = "{:1.14e}*".format(self.prefactor)
-        else:
-            prefactor_string = ""
-
-        return "{}{}{}*lambda_{}".format(prefactor_string, dens_string, Y_string, self.fname)
-
-    def jacobian_string(self, ydot_j, y_i):
-        """
-        return a string containing the term in a jacobian matrix 
-        in a reaction network corresponding to this rate
-
-        Returns the derivative of the j-th YDOT wrt. the i-th Y
-        If the derivative is zero, returns the empty string ''
-
-        ydot_j and y_i are objects of the class 'Nucleus'
-        """
-        if ((ydot_j not in self.reactants and ydot_j not in self.products) or
-            y_i not in self.reactants):
-            return ''
-
-        # composition dependence
-        Y_string = ""
-        for n, r in enumerate(list_unique(self.reactants)):
-            c = self.reactants.count(r)
-            if y_i == r:
-                if c == 1:
-                    continue
-                if n>0 and n < len(list_unique(self.reactants))-1:
-                    Y_string += "*"
-                if c > 2:
-                    Y_string += "{}*Y[i{}]**{}".format(c, r, c-1)
-                elif c==2:
-                    Y_string += "2*Y[i{}]".format(r)
-            else:
-                if n>0 and n < len(list_unique(self.reactants))-1:
-                    Y_string += "*"
-                if c > 1:
-                    Y_string += "Y[i{}]**{}".format(r, c)
-                else:
-                    Y_string += "Y[i{}]".format(r)
-
-        # density dependence
-        if self.dens_exp == 0:
-            dens_string = ""
-        elif self.dens_exp == 1:
-            dens_string = "rho*"
-        else:
-            dens_string = "rho**{}*".format(self.dens_exp)
-
-        # prefactor
-        if not self.prefactor == 1.0:
-            prefactor_string = "{:1.14e}*".format(self.prefactor)
-        else:
-            prefactor_string = ""
-
-        if Y_string=="" and dens_string=="" and prefactor_string=="":
-            rstring = "{}{}{}lambda_{}"
-        else:
-            rstring = "{}{}{}*lambda_{}"
-        return rstring.format(prefactor_string, dens_string, Y_string, self.fname)
-    
-    def ydot_string_f90(self):
-        """
-        return a string containing the term in a dY/dt equation
-        in a reaction network corresponding to this rate for Fortran 90.
-        """
-
-        # composition dependence
-        Y_string = ""
-        for n, r in enumerate(list_unique(self.reactants)):
-            c = self.reactants.count(r)
-            if c > 1:
-                Y_string += "Y(net_meta%i{})**{}".format(r, c)
-            else:
-                Y_string += "Y(net_meta%i{})".format(r)
-
-            if n < len(list_unique(self.reactants))-1:
-                Y_string += " * "
-
-        # density dependence
-        if self.dens_exp == 0:
-            dens_string = ""
-        elif self.dens_exp == 1:
-            dens_string = "dens * "
-        else:
-            dens_string = "dens**{} * ".format(self.dens_exp)
-
-        # prefactor
-        if not self.prefactor == 1.0:
-            prefactor_string = "{:1.14e} * ".format(self.prefactor).replace('e','d')
-        else:
-            prefactor_string = ""
-
-        return "{}{}{} * rxn_rates(net_meta%k_{})".format(prefactor_string, dens_string, Y_string, self.fname)
-
-    def jacobian_string_f90(self, ydot_j, y_i):
-        """
-        return a string containing the term in a jacobian matrix 
-        in a reaction network corresponding to this rate
-
-        Returns the derivative of the j-th YDOT wrt. the i-th Y
-        If the derivative is zero, returns the empty string ''
-
-        ydot_j and y_i are objects of the class 'Nucleus'
-        """
-        if ((ydot_j not in self.reactants and ydot_j not in self.products) or
-            y_i not in self.reactants):
-            return ''
-
-        # composition dependence
-        Y_string = ""
-        for n, r in enumerate(list_unique(self.reactants)):
-            c = self.reactants.count(r)
-            if y_i == r:
-                if c == 1:
-                    continue
-                if n>0 and n < len(list_unique(self.reactants))-1:
-                    Y_string += "*"
-                if c > 2:
-                    Y_string += "{}*Y(net_meta%i{})**{}".format(c, r, c-1)
-                elif c==2:
-                    Y_string += "2*Y(net_meta%i{})".format(r)
-            else:
-                if n>0 and n < len(list_unique(self.reactants))-1:
-                    Y_string += "*"
-                if c > 1:
-                    Y_string += "Y(net_meta%i{})**{}".format(r, c)
-                else:
-                    Y_string += "Y(net_meta%i{})".format(r)
-
-        # density dependence
-        if self.dens_exp == 0:
-            dens_string = ""
-        elif self.dens_exp == 1:
-            dens_string = "dens * "
-        else:
-            dens_string = "dens**{} * ".format(self.dens_exp)
-
-        # prefactor
-        if not self.prefactor == 1.0:
-            prefactor_string = "{:1.14e} * ".format(self.prefactor).replace('e','d')
-        else:
-            prefactor_string = ""
-
-        if Y_string=="" and dens_string=="" and prefactor_string=="":
-            rstring = "{}{}{}   rxn_rates(net_meta%k_{})"
-        else:
-            rstring = "{}{}{} * rxn_rates(net_meta%k_{})"
-        return rstring.format(prefactor_string, dens_string, Y_string, self.fname)
-
 class RateCollection(object):
     """ a collection of rates that together define a network """
 
@@ -598,7 +406,8 @@ class RateCollection(object):
                 if fp:
                     self.files += fp
                 else: # Notify of all missing files before exiting
-                    print('ERROR: File {} not found in {} or the working directory!'.format(p,self.pyreaclib_rates_dir))
+                    print('ERROR: File {} not found in {} or the working directory!'.format(
+                        p,self.pyreaclib_rates_dir))
                     exit_program = True 
         if exit_program:
             exit()
@@ -609,7 +418,7 @@ class RateCollection(object):
             except:
                 print("Error with file: {}".format(rf))
                 raise
-            
+                    
         # get the unique nuclei
         u = []
         for r in self.rates:
@@ -634,6 +443,15 @@ class RateCollection(object):
                 if n in r.products:
                     self.nuclei_produced[n].append(r)
 
+        # Re-order self.rates so Reaclib rates come first,
+        # followed by Tabular rates. This is needed if
+        # reaclib coefficients are targets of a pointer array
+        # in the Fortran network.
+        # It is desired to avoid wasting array size
+        # storing meaningless Tabular coefficient pointers.
+        self.rates = sorted(self.rates,
+                            key = lambda r: r.chapter=='t')
+        
         self.tabular_rates = []
         self.reaclib_rates = []
         for n,r in enumerate(self.rates):
@@ -642,412 +460,32 @@ class RateCollection(object):
             elif type(r.chapter)==int:
                 self.reaclib_rates.append(n)
             else:
-                print('ERROR: Chapter type unknown for rate chapter {}'.format(str(r.chapter)))
+                print('ERROR: Chapter type unknown for rate chapter {}'.format(
+                    str(r.chapter)))
                 exit()
 
-    def print_network_overview(self):
-        for n in self.unique_nuclei:
-            print(n)
-            print("  consumed by: ")
-            for r in self.nuclei_consumed[n]:
-                print("     {} : {}".format(r.string, r.ydot_string()))
-
-            print("  produced by: ")
-            for r in self.nuclei_produced[n]:
-                print("     {} : {}".format(r.string, r.ydot_string()))
-
-            print(" ")
-
-
-    def make_network(self, outfile="net.py"):
-        """
-        this is the actual RHS for the system of ODEs that
-        this network describes
-        """
-
-        try: of = open(outfile, "w")
-        except: raise
-
-        of.write("import numpy as np\n")
-        of.write("import reaclib\n\n")
-
-        # integer keys
-        for i, n in enumerate(self.unique_nuclei):
-            of.write("i{} = {}\n".format(n, i))
-
-        of.write("nnuc = {}\n\n".format(len(self.unique_nuclei)))
-
-        of.write("A = np.zeros((nnuc), dtype=np.int32)\n\n")
-        for n in self.unique_nuclei:
-            of.write("A[i{}] = {}\n".format(n, n.A))
-
-        of.write("\n")
-
-        for r in self.rates:
-            of.write(r.function_string())
-
-        of.write("def rhs(t, Y, rho, T):\n\n")
-
-        indent = 4*" "
-
-        # get the rates
-        of.write("{}tf = reaclib.Tfactors(T)\n\n".format(indent))
-        for r in self.rates:
-            of.write("{}lambda_{} = {}(tf)\n".format(indent, r.fname, r.fname))
-
-        of.write("\n")
-
-        of.write("{}dYdt = np.zeros((nnuc), dtype=np.float64)\n\n".format(indent))
-
-        # now make the RHSs
-        for n in self.unique_nuclei:
-            of.write("{}dYdt[i{}] = (\n".format(indent, n))
-            for r in self.nuclei_consumed[n]:
-                c = r.reactants.count(n)
-                if c == 1:
-                    of.write("{}   -{}\n".format(indent, r.ydot_string()))
-                else:
-                    of.write("{}   -{}*{}\n".format(indent, c, r.ydot_string()))
-            for r in self.nuclei_produced[n]:
-                c = r.products.count(n)
-                if c == 1:
-                    of.write("{}   +{}\n".format(indent, r.ydot_string()))
-                else:
-                    of.write("{}   +{}*{}\n".format(indent, c, r.ydot_string()))
-            of.write("{}   )\n\n".format(indent))
-
-        of.write("{}return dYdt\n".format(indent))
-
-    def fmt_to_dp_f90(self, i):
-        return '{:1.6e}'.format(float(i)).replace('e','d')
-
-    def get_indent_amt(self, l, k):
-        rem = re.match('\A'+k+'\(([0-9]*)\)\Z',l)
-        return int(rem.group(1))
-
-    def make_network_f90(self,typenet):
-        """
-        Figure out which network to make.
-        """
-        
-        typenet_avail = ['sundials']
-        if typenet=='sundials':
-            self.make_network_sundials()
+    def make_network(self, outfile):
+        typenet_avail = {
+            'python'   : Network_py,
+            'sundials' : Network_sundials
+        }
+        base, ext = os.path.splitext(outfile)
+        if ext == '.py' or outfile == 'python':
+            self.output_file = outfile
+            print(self.output_file)
+            net = typenet_avail['python'](self)
+            net.write_network(outfile)
         else:
-            print("Network type '{}' unknown! Available types are:".format(typenet))
-            for tn in typenet_avail:
-                print(tn)
-            exit()
+            try:
+                net = typenet_avail[outfile](self)
+                net.write_network()
+            except KeyError:
+                print('Network type {} not available. Available networks are:')
+                for k in typenet_avail.keys():
+                    print(k)
+                exit()
 
-    def make_network_sundials(self):
-        """
-        This writes the RHS, jacobian and ancillary files for the system of ODEs that
-        this network describes, using the template files.
-        """
-        
-        sundials_dir = os.path.join(self.pyreaclib_dir,
-                                    'templates',
-                                    'sundials-cvode')
-        template_file_select = os.path.join(sundials_dir,
-                                            '*.template')
-        template_files = glob.glob(template_file_select)
-        
-        indent = '  '
-
-        for tfile in template_files:
-            tfile_basename = os.path.basename(tfile)
-            if tfile_basename=='net_rates.f90.template':
-                # Network specification and rates
-                outfile = 'net_rates.f90'
-                try: of = open(outfile, "w")
-                except: raise
-                try: ifile = open(tfile, 'r')
-                except: raise
-                for l in ifile:
-                    ls = l.strip()
-                    k_0 = '<number_declare>'
-                    k_1 = '<ctemp_declare>'
-                    k_2 = '<ynuc_declare>'
-                    k_3 = '<inuc_declare>'
-                    k_4 = '<krxn_declare>'
-                    k_5 = '<rmul_declare>'
-                    k_6 = '<ebind_declare>'
-                    k_7 = '<anuc_declare>'
-                    k_8 = '<alloc_ctemp>'
-                    k_9 = '<dealloc_ctemp>'
-                    k_10 = '<switch_ctemp>'
-
-                    if k_0 in ls:
-                        n_indent = self.get_indent_amt(ls, k_0)
-                        of.write('{}integer, parameter :: number_equations = {}\n'.format(indent*n_indent, len(self.unique_nuclei)+1))
-                        of.write('{}integer, parameter :: number_nuclides = {}\n'.format(indent*n_indent, len(self.unique_nuclei)))
-                        of.write('{}integer, parameter :: number_reactions = {}\n'.format(indent*n_indent, len(self.rates)))
-                    elif k_1 in ls:
-                        n_indent = self.get_indent_amt(ls, k_1)
-                        for n in self.reaclib_rates:
-                            of.write('{}double precision, target, dimension(:,:), allocatable :: ctemp_rate_{}\n'.format(indent*n_indent, n+1))
-                    elif k_2 in ls:
-                        n_indent = self.get_indent_amt(ls, k_2)
-                        for nuc in self.unique_nuclei:
-                            of.write('{}double precision :: y{}\n'.format(indent*n_indent, nuc))
-                    elif k_3 in ls:
-                        n_indent = self.get_indent_amt(ls, k_3)
-                        for i,nuc in enumerate(self.unique_nuclei):
-                            of.write('{}integer :: i{}   = {}\n'.format(indent*n_indent, nuc, i+1))
-                        of.write('{}! Energy Generation Rate\n'.format(indent*n_indent))
-                        of.write('{}integer :: ienuc   = {}\n'.format(indent*n_indent, len(self.unique_nuclei)+1))
-                    elif k_4 in ls:
-                        n_indent = self.get_indent_amt(ls, k_4)
-                        for i,r in enumerate(self.rates):
-                            of.write('{}integer :: k_{}   = {}\n'.format(indent*n_indent, r.fname, i+1))
-                    elif k_5 in ls:
-                        n_indent = self.get_indent_amt(ls, k_5)
-                        for i,r in enumerate(self.rates):
-                            of.write('{}{}'.format(indent*n_indent, len(r.sets)))
-                            if i==len(self.rates)-1:
-                                of.write(' /)\n')
-                            else:
-                                of.write(', &\n')
-                    elif k_6 in ls:
-                        n_indent = self.get_indent_amt(ls, k_6)
-                        for nuc in self.unique_nuclei:
-                            of.write('{}self%ebind_per_nucleon(self%i{})   = 0.0d0\n'.format(indent*n_indent, nuc))
-                    elif k_7 in ls:
-                        n_indent = self.get_indent_amt(ls, k_7)
-                        for nuc in self.unique_nuclei:
-                            of.write('{}self%anuc(self%i{})   = {}\n'.format(indent*n_indent, nuc, self.fmt_to_dp_f90(nuc.A)))
-                    elif k_8 in ls:
-                        n_indent = self.get_indent_amt(ls, k_8)
-                        for nr in self.reaclib_rates:
-                            r = self.rates[nr]
-                            of.write('{}allocate( ctemp_rate_{}(7, self%rate_mult({})) )\n'.format(indent*n_indent, nr+1, nr+1))
-                            of.write('{}! {}\n'.format(indent*n_indent, r.fname))
-                            for ns,s in enumerate(r.sets):
-                                of.write('{}ctemp_rate_{}(:, {}) = (/  &\n'.format(indent*n_indent, nr+1, ns+1))
-                                for na,an in enumerate(s.a):
-                                    of.write('{}{}'.format(indent*n_indent*2, self.fmt_to_dp_f90(an)))
-                                    if na==len(s.a)-1:
-                                        of.write(' /)\n')
-                                    else:
-                                        of.write(', &\n')
-                                of.write('\n')
-                        if len(self.tabular_rates) > 0:
-                            of.write('{}call init_table_meta()\n'.format(indent*n_indent))
-                        of.write('\n')
-                    elif k_9 in ls:
-                        n_indent = self.get_indent_amt(ls, k_9)
-                        for nr in self.reaclib_rates:
-                            of.write('{}deallocate( ctemp_rate_{} )\n'.format(indent*n_indent, nr+1))
-                    elif k_10 in ls:
-                        n_indent = self.get_indent_amt(ls, k_10)
-                        for nr,r in enumerate(self.rates):
-                            of.write('{}'.format(indent*n_indent))
-                            if nr!=0:
-                                of.write('else ')
-                            of.write('if (iwhich == {}) then\n'.format(nr+1))
-                            if nr in self.reaclib_rates:
-                                of.write('{}ctemp => ctemp_rate_{}\n'.format(indent*(n_indent+1), nr+1))
-                            elif nr in self.tabular_rates:
-                                of.write('{}call table_meta({})%bl_lookup(rhoy, temp, jtab_rate, rate)\n'.format(indent*(n_indent+1), r.table_index_name))
-                                of.write('{}return\n'.format(indent*(n_indent+1)))
-                            else:
-                                print('ERROR: rate not in self.reaclib_rates or self.tabular_rates!')
-                                exit()
-                        of.write('{}end if\n'.format(indent*n_indent))
-                    else:
-                        of.write(l)    
-                of.close()
                 
-            elif tfile_basename=='table_rates.f90.template':
-                # Table specification and rates
-                outfile = 'table_rates.f90'
-                try: of = open(outfile, "w")
-                except: raise
-                try: ifile = open(tfile, 'r')
-                except: raise
-                for l in ifile:
-                    ls = l.strip()
-                    k_1 = '<numtab>'
-                    k_2 = '<tab_indices>'
-                    k_3 = '<init_table_meta>'
-                    if k_1 in ls:
-                        n_indent = self.get_indent_amt(ls, k_1)
-                        of.write('{}integer, parameter :: num_tables   = {}\n'.format(indent*n_indent, len(self.tabular_rates)))
-                    elif k_2 in ls:
-                        n_indent = self.get_indent_amt(ls, k_2)
-                        for n,irate in enumerate(self.tabular_rates):
-                            r = self.rates[irate]
-                            of.write('{}integer, parameter :: {}   = {}\n'.format(indent*n_indent, r.table_index_name, n+1))
-                    elif k_3 in ls:
-                        n_indent = self.get_indent_amt(ls, k_3)
-                        for n,irate in enumerate(self.tabular_rates):
-                            r = self.rates[irate]
-                            of.write('{}table_meta({})%rate_table_file = \'{}\'\n'.format(indent*n_indent, r.table_index_name, r.table_file))
-                            of.write('{}table_meta({})%num_header = {}\n'.format(indent*n_indent, r.table_index_name, r.table_header_lines))
-                            of.write('{}table_meta({})%num_rhoy = {}\n'.format(indent*n_indent, r.table_index_name, r.table_rhoy_lines))
-                            of.write('{}table_meta({})%num_temp = {}\n'.format(indent*n_indent, r.table_index_name, r.table_temp_lines))
-                            of.write('{}table_meta({})%num_vars = {}\n'.format(indent*n_indent, r.table_index_name, r.table_num_vars))
-                            of.write('\n')
-                    else:
-                        of.write(l)
-                of.close()
-                
-            elif tfile_basename=='network.f90.template':
-                # Network ydot and jacobian
-                outfile = 'network.f90'
-                try: of = open(outfile, "w")
-                except: raise
-                try: ifile = open(tfile, 'r')
-                except: raise
-                for l in ifile:
-                    ls = l.strip()
-                    k_1 = '<ydot>'
-                    k_2 = '<jacobian>'
-                    if k_1 in ls:
-                        n_indent = self.get_indent_amt(ls, k_1)
-                        # now make the RHSs
-                        for n in self.unique_nuclei:
-                            of.write("{}YDOT(net_meta%i{}) = ( &\n".format(indent*n_indent, n))
-                            for r in self.nuclei_consumed[n]:
-                                c = r.reactants.count(n)
-                                if c == 1:
-                                    of.write("{}   - {} &\n".format(indent*n_indent, r.ydot_string_f90()))
-                                else:
-                                    of.write("{}   - {} * {} &\n".format(indent*n_indent, c, r.ydot_string_f90()))
-                            for r in self.nuclei_produced[n]:
-                                c = r.products.count(n)
-                                if c == 1:
-                                    of.write("{}   + {} &\n".format(indent*n_indent, r.ydot_string_f90()))
-                                else:
-                                    of.write("{}   + {} * {} &\n".format(indent*n_indent, c, r.ydot_string_f90()))
-                            of.write("{}   )\n\n".format(indent*n_indent))
-                    elif k_2 in ls:
-                        n_indent = self.get_indent_amt(ls, k_2)
-                        # now make the JACOBIAN
-                        for nj in self.unique_nuclei:
-                            for ni in self.unique_nuclei:
-                                jac_identically_zero = True
-                                of.write("{}DJAC(net_meta%i{},net_meta%i{}) = ( &\n".format(indent*n_indent, nj, ni))
-                                for r in self.nuclei_consumed[nj]:
-                                    sjac = r.jacobian_string_f90(nj, ni)
-                                    if sjac != '':
-                                        jac_identically_zero = False
-                                        c = r.reactants.count(nj)
-                                        if c == 1:
-                                            of.write("{}   - {} &\n".format(indent*n_indent, sjac))
-                                        else:
-                                            of.write("{}   - {} * {} &\n".format(indent*n_indent, c, sjac))
-                                for r in self.nuclei_produced[nj]:
-                                    sjac = r.jacobian_string_f90(nj, ni)
-                                    if sjac != '':
-                                        jac_identically_zero = False
-                                        c = r.products.count(nj)
-                                        if c == 1:
-                                            of.write("{}   + {} &\n".format(indent*n_indent, sjac))
-                                        else:
-                                            of.write("{}   + {} * {} &\n".format(indent*n_indent, c, sjac))
-
-                                if jac_identically_zero:
-                                    of.write("{}   + {} &\n".format(indent*n_indent, '0.0d0'))
-                                of.write("{}   )\n\n".format(indent*n_indent))
-                    else:
-                        of.write(l)    
-                of.close()
-                
-            elif tfile_basename=='integrator.f90.template':
-                # Integrator 
-                outfile = 'integrator.f90'
-                try: of = open(outfile, "w")
-                except: raise
-                try: ifile = open(tfile, 'r')
-                except: raise
-                for l in ifile:
-                    ls = l.strip()
-                    k_1 = '<y0_nuc_initialize>'
-                    k_2 = '<final_net_print>'
-                    if k_1 in ls:
-                        n_indent = self.get_indent_amt(ls, k_1)
-                        for n in self.unique_nuclei:
-                            of.write("{}cv_data%Y0(net_meta%i{})   = net_initial_abundances%y{}\n".format(indent*n_indent, n, n))
-                    elif k_2 in ls:
-                        n_indent = self.get_indent_amt(ls, k_2)
-                        for n in self.unique_nuclei:
-                            of.write("{}write(*,'(A,ES25.14)') '{}: ', cv_data%Y(net_meta%i{})\n".format(indent*n_indent, n, n))
-                    else:
-                        of.write(l)    
-                of.close()
-
-            elif tfile_basename=='data_wrangler.f90.template':
-                # history data storage and output
-                outfile = 'data_wrangler.f90'
-                try: of = open(outfile, "w")
-                except: raise
-                try: ifile = open(tfile, 'r')
-                except: raise
-                for l in ifile:
-                    ls = l.strip()
-                    k_1 = '<headerline>'
-                    if k_1 in ls:
-                        n_indent = self.get_indent_amt(ls, k_1)
-                        of.write('{}write(2, fmt=hfmt) '.format(indent*n_indent))
-                        for nuc in self.unique_nuclei:
-                            of.write("'Y_{}', ".format(nuc))
-                        of.write("'E_nuc', 'Time'\n")
-                    else:
-                        of.write(l)    
-                of.close()
-                ifile.close()
-
-            elif tfile_basename=='cvode_parameters.f90.template':
-                # Parameter file for cvode
-                outfile = 'cvode_parameters.f90'
-                try: of = open(outfile, "w")
-                except: raise
-                try: ifile = open(tfile, 'r')
-                except: raise
-                for l in ifile:
-                    ls = l.strip()
-                    k_1 = '<cvodeneq>'
-                    if k_1 in ls:
-                        n_indent = self.get_indent_amt(ls, k_1)
-                        of.write('{} '.format(indent*n_indent))
-                        of.write('integer*8 :: NEQ = {} ! Size of ODE system\n'.format(len(self.unique_nuclei)+1))
-                    else:
-                        of.write(l)    
-                of.close()
-                ifile.close()
-
-            elif tfile_basename=='net.par.template':
-                # net.par Namelist parameter inputs
-                outfile = 'net.par'
-                try: of = open(outfile, "w")
-                except: raise
-                try: ifile = open(tfile, 'r')
-                except: raise
-                for l in ifile:
-                    ls = l.strip()
-                    k_1 = '<net_ymass_init>'
-                    if k_1 in ls:
-                        n_indent = self.get_indent_amt(ls, k_1)
-                        for n in self.unique_nuclei:
-                            of.write('{}net_initial_abundances%y{} = 0.0d0\n'.format(indent*n_indent, n))
-                    else:
-                        of.write(l)    
-                of.close()
-                ifile.close()
-                
-            elif tfile_basename=='parameters.f90.template':
-                shutil.copyfile(tfile, 'parameters.f90')
-                
-            elif tfile_basename=='physical_constants.f90.template':
-                shutil.copyfile(tfile, 'physical_constants.f90')
-
-            elif tfile_basename=='GNUmakefile.template':
-                shutil.copyfile(tfile, 'GNUmakefile')
-                
-            else:
-                print('WARNING: Template file {} present in {} with no rule for processing. Continuing...'.format(tfile, sundials_dir))
-        
     def plot(self):
         G = nx.DiGraph()
         G.position={}
@@ -1096,8 +534,702 @@ class RateCollection(object):
             string += "{}\n".format(r.string)
         return string
 
+    
+class Network_py(RateCollection):
+    def __init__(self, parent_instance_object=None):
+        # Inherit all the instance attributes of
+        # the parent_instance_object if it's passed.
+        rem = re.compile('__(.*)__')
+        if parent_instance_object:
+            for d in dir(parent_instance_object):
+                if not rem.match(d):
+                    setattr(self, d, getattr(parent_instance_object, d))
+    
+    def rate_string(self, rate, indent=0, prefix="rate"):
+        """
+        return the functional form of rate as a function of
+        the temperature (as Tfactors)
+
+        rate is an object of class Rate
+        """
+
+        tstring = "# {}\n".format(rate.string)
+        tstring += "{} = 0.0\n\n".format(prefix)
+
+        for s in rate.sets:
+            tstring += "# {}\n".format(s.label)
+            tstring += "{}\n".format(s.set_string(prefix=prefix, plus_equal=True))
+
+        string = ""
+        for t in tstring.split("\n"):
+            string += indent*" " + t + "\n"
+        return string
 
 
+    def function_string(self, rate):
+        """
+        return a string containing python function that computes the
+        rate
+        """
+
+        string = ""
+        string += "def {}(tf):\n".format(rate.fname)
+        string += "{}".format(self.rate_string(rate, indent=4))
+        string += "    return rate\n\n"
+        return string
+
+
+    def ydot_string(self, rate):
+        """
+        return a string containing the term in a dY/dt equation
+        in a reaction network corresponding to this rate
+        """
+
+        # composition dependence
+        Y_string = ""
+        for n, r in enumerate(list_unique(rate.reactants)):
+            c = rate.reactants.count(r)
+            if c > 1:
+                Y_string += "Y[i{}]**{}".format(r, c)
+            else:
+                Y_string += "Y[i{}]".format(r)
+
+            if n < len(list_unique(rate.reactants))-1:
+                Y_string += "*"
+
+        # density dependence
+        if rate.dens_exp == 0:
+            dens_string = ""
+        elif rate.dens_exp == 1:
+            dens_string = "rho*"
+        else:
+            dens_string = "rho**{}*".format(rate.dens_exp)
+
+        # prefactor
+        if not self.prefactor == 1.0:
+            prefactor_string = "{:1.14e}*".format(self.prefactor)
+        else:
+            prefactor_string = ""
+
+        return "{}{}{}*lambda_{}".format(prefactor_string, dens_string,
+                                         Y_string, rate.fname)
+
+    def jacobian_string(self, rate, ydot_j, y_i):
+        """
+        return a string containing the term in a jacobian matrix 
+        in a reaction network corresponding to this rate
+
+        Returns the derivative of the j-th YDOT wrt. the i-th Y
+        If the derivative is zero, returns the empty string ''
+
+        ydot_j and y_i are objects of the class 'Nucleus'
+        """
+        if ((ydot_j not in rate.reactants and ydot_j not in rate.products) or
+            y_i not in rate.reactants):
+            return ''
+
+        # composition dependence
+        Y_string = ""
+        for n, r in enumerate(list_unique(rate.reactants)):
+            c = rate.reactants.count(r)
+            if y_i == r:
+                if c == 1:
+                    continue
+                if n>0 and n < len(list_unique(rate.reactants))-1:
+                    Y_string += "*"
+                if c > 2:
+                    Y_string += "{}*Y[i{}]**{}".format(c, r, c-1)
+                elif c==2:
+                    Y_string += "2*Y[i{}]".format(r)
+            else:
+                if n>0 and n < len(list_unique(rate.reactants))-1:
+                    Y_string += "*"
+                if c > 1:
+                    Y_string += "Y[i{}]**{}".format(r, c)
+                else:
+                    Y_string += "Y[i{}]".format(r)
+
+        # density dependence
+        if rate.dens_exp == 0:
+            dens_string = ""
+        elif rate.dens_exp == 1:
+            dens_string = "rho*"
+        else:
+            dens_string = "rho**{}*".format(rate.dens_exp)
+
+        # prefactor
+        if not self.prefactor == 1.0:
+            prefactor_string = "{:1.14e}*".format(self.prefactor)
+        else:
+            prefactor_string = ""
+
+        if Y_string=="" and dens_string=="" and prefactor_string=="":
+            rstring = "{}{}{}lambda_{}"
+        else:
+            rstring = "{}{}{}*lambda_{}"
+        return rstring.format(prefactor_string, dens_string, Y_string, rate.fname)
+
+    def print_network_overview(self, rate):
+        for n in self.unique_nuclei:
+            print(n)
+            print("  consumed by: ")
+            for r in self.nuclei_consumed[n]:
+                print("     {} : {}".format(r.string, self.ydot_string(r)))
+
+            print("  produced by: ")
+            for r in self.nuclei_produced[n]:
+                print("     {} : {}".format(r.string, self.ydot_string(r)))
+
+            print(" ")
+    
+    def write_network(self, outfile):
+        """
+        this is the actual RHS for the system of ODEs that
+        this network describes
+        """
+        try: of = open(outfile, "w")
+        except: raise
+
+        of.write("import numpy as np\n")
+        of.write("import reaclib\n\n")
+
+        # integer keys
+        for i, n in enumerate(self.unique_nuclei):
+            of.write("i{} = {}\n".format(n, i))
+
+        of.write("nnuc = {}\n\n".format(len(self.unique_nuclei)))
+
+        of.write("A = np.zeros((nnuc), dtype=np.int32)\n\n")
+        for n in self.unique_nuclei:
+            of.write("A[i{}] = {}\n".format(n, n.A))
+
+        of.write("\n")
+
+        for r in self.rates:
+            of.write(self.function_string(r))
+
+        of.write("def rhs(t, Y, rho, T):\n\n")
+
+        indent = 4*" "
+
+        # get the rates
+        of.write("{}tf = reaclib.Tfactors(T)\n\n".format(indent))
+        for r in self.rates:
+            of.write("{}lambda_{} = {}(tf)\n".format(indent, r.fname, r.fname))
+
+        of.write("\n")
+
+        of.write("{}dYdt = np.zeros((nnuc), dtype=np.float64)\n\n".format(indent))
+
+        # now make the RHSs
+        for n in self.unique_nuclei:
+            of.write("{}dYdt[i{}] = (\n".format(indent, n))
+            for r in self.nuclei_consumed[n]:
+                c = r.reactants.count(n)
+                if c == 1:
+                    of.write("{}   -{}\n".format(indent, self.ydot_string(r)))
+                else:
+                    of.write("{}   -{}*{}\n".format(indent, c, self.ydot_string(r)))
+            for r in self.nuclei_produced[n]:
+                c = r.products.count(n)
+                if c == 1:
+                    of.write("{}   +{}\n".format(indent, self.ydot_string(r)))
+                else:
+                    of.write("{}   +{}*{}\n".format(indent, c, self.ydot_string(r)))
+            of.write("{}   )\n\n".format(indent))
+
+        of.write("{}return dYdt\n".format(indent))
+
+    
+class Network_f90(RateCollection):
+    def __init__(self):
+        self.ftags = {}
+        self.ftags['<nreact>'] = self.nreact
+        self.ftags['<nspec>'] = self.nspec
+        self.ftags['<net_ynuc>'] = self.ynuc
+        self.ftags['<nrxn>'] = self.nrxn
+        self.ftags['<jion>'] = self.jion
+        self.ftags['<ebind>'] = self.ebind
+        self.ftags['<aion>'] = self.aion
+        self.ftags['<zion>'] = self.zion
+        self.ftags['<ctemp_declare>'] = self.ctemp_declare
+        self.ftags['<rmul>'] = self.rmul
+        self.ftags['<screen_logical>'] = self.screen_logical
+        self.ftags['<screen_add>'] = self.screen_add
+        self.ftags['<ctemp_ptr_declare>'] = self.ctemp_ptr_declare
+        self.ftags['<ctemp_allocate>'] = self.ctemp_allocate
+        self.ftags['<ctemp_deallocate>'] = self.ctemp_deallocate
+        self.ftags['<ctemp_switch>'] = self.ctemp_switch
+        self.ftags['<table_num>'] = self.table_num
+        self.ftags['<table_indices>'] = self.table_indices
+        self.ftags['<table_init_meta>'] = self.table_init_meta
+        self.ftags['<ydot>'] = self.ydot
+        self.ftags['<enuc_dqweak>'] = self.enuc_dqweak
+        self.ftags['<enuc_epart>'] = self.enuc_epart
+        self.ftags['<jacobian>'] = self.jacobian
+        self.ftags['<yinit_nuc>'] = self.yinit_nuc
+        self.ftags['<final_net_print>'] = self.final_net_print
+        self.ftags['<headerline>'] = self.headerline
+        self.ftags['<cvodeneq>'] = self.cvodeneq
+        self.ftags['<net_ymass_init>'] = self.net_ymass_init
+        self.indent = '  '
+
+    def ydot_string(self, rate):
+        """
+        return a string containing the term in a dY/dt equation
+        in a reaction network corresponding to this rate for Fortran 90.
+        """
+
+        # composition dependence
+        Y_string = ""
+        for n, r in enumerate(list_unique(rate.reactants)):
+            c = rate.reactants.count(r)
+            if c > 1:
+                Y_string += "Y(j{})**{}".format(r, c)
+            else:
+                Y_string += "Y(j{})".format(r)
+
+            if n < len(list_unique(rate.reactants))-1:
+                Y_string += " * "
+
+        # density dependence
+        if rate.dens_exp == 0:
+            dens_string = ""
+        elif rate.dens_exp == 1:
+            dens_string = "dens * "
+        else:
+            dens_string = "dens**{} * ".format(rate.dens_exp)
+
+        # prefactor
+        if not rate.prefactor == 1.0:
+            prefactor_string = "{:1.14e} * ".format(rate.prefactor).replace('e','d')
+        else:
+            prefactor_string = ""
+
+        return "{}{}{} * reactvec(i_scor, k_{}) * reactvec(i_rate, k_{})".format(
+            prefactor_string,
+            dens_string,
+            Y_string,
+            rate.fname,
+            rate.fname)
+
+    def jacobian_string(self, rate, ydot_j, y_i):
+        """
+        return a string containing the term in a jacobian matrix 
+        in a reaction network corresponding to this rate
+
+        Returns the derivative of the j-th YDOT wrt. the i-th Y
+        If the derivative is zero, returns the empty string ''
+
+        ydot_j and y_i are objects of the class 'Nucleus'
+        """
+        if ((ydot_j not in rate.reactants and ydot_j not in rate.products) or
+            y_i not in rate.reactants):
+            return ''
+
+        # composition dependence
+        Y_string = ""
+        for n, r in enumerate(list_unique(rate.reactants)):
+            c = rate.reactants.count(r)
+            if y_i == r:
+                if c == 1:
+                    continue
+                if n>0 and n < len(list_unique(rate.reactants))-1:
+                    Y_string += "*"
+                if c > 2:
+                    Y_string += "{}*Y(j{})**{}".format(c, r, c-1)
+                elif c==2:
+                    Y_string += "2*Y(j{})".format(r)
+            else:
+                if n>0 and n < len(list_unique(rate.reactants))-1:
+                    Y_string += "*"
+                if c > 1:
+                    Y_string += "Y(j{})**{}".format(r, c)
+                else:
+                    Y_string += "Y(j{})".format(r)
+
+        # density dependence
+        if rate.dens_exp == 0:
+            dens_string = ""
+        elif rate.dens_exp == 1:
+            dens_string = "dens * "
+        else:
+            dens_string = "dens**{} * ".format(rate.dens_exp)
+
+        # prefactor
+        if not rate.prefactor == 1.0:
+            prefactor_string = "{:1.14e} * ".format(rate.prefactor).replace('e','d')
+        else:
+            prefactor_string = ""
+
+        if Y_string=="" and dens_string=="" and prefactor_string=="":
+            rstring = "{}{}{}   reactvec(i_scor, k_{}) * reactvec(i_rate, k_{})"
+        else:
+            rstring = "{}{}{} * reactvec(i_scor, k_{}) * reactvec(i_rate, k_{})"
+        return rstring.format(prefactor_string, dens_string, Y_string,
+                              rate.fname, rate.fname)
+
+    
+    def io_open(self, infile, outfile):
+        try: of = open(outfile, "w")
+        except: raise
+        try: ifile = open(infile, 'r')
+        except: raise
+        return (ifile, of)
+
+    def io_close(self, infile, outfile):
+        infile.close()
+        outfile.close()
+        
+    def fmt_to_dp_f90(self, i):
+        return '{:1.6e}'.format(float(i)).replace('e','d')
+
+    def get_indent_amt(self, l, k):
+        rem = re.match('\A'+k+'\(([0-9]*)\)\Z',l)
+        return int(rem.group(1))
+
+    def write_network(self):
+        """
+        This writes the RHS, jacobian and ancillary files for the system of ODEs that
+        this network describes, using the template files.
+        """
+
+        for tfile in self.template_files:
+            tfile_basename = os.path.basename(tfile)
+            outfile    = tfile_basename.replace('.template', '')
+            ifile, of = self.io_open(tfile, outfile)
+            for l in ifile:
+                ls = l.strip()
+                foundkey = False
+                for k in self.ftags.keys():
+                    if k in ls:
+                        foundkey = True
+                        n_indent = self.get_indent_amt(ls, k)
+                        self.ftags[k](n_indent, of)
+                if not foundkey:
+                    of.write(l)    
+            self.io_close(ifile, of)
+
+    def nreact(self, n_indent, of):
+        of.write('{}integer, parameter :: nreact = {}\n'.format(
+            self.indent*n_indent,
+            len(self.rates)))
+
+    def nspec(self, n_indent, of):
+        of.write('{}integer, parameter :: nspec = {}\n'.format(
+            self.indent*n_indent,
+            len(self.unique_nuclei)))
+        
+    def ynuc(self, n_indent, of):
+        for nuc in self.unique_nuclei:
+            of.write('{}double precision :: y{}\n'.format(
+                self.indent*n_indent, nuc))
+
+    def jion(self, n_indent, of):
+        for i,nuc in enumerate(self.unique_nuclei):
+            of.write('{}integer, parameter :: j{}   = {}\n'.format(
+                self.indent*n_indent, nuc, i+1))
+        of.write('{}! Energy Generation Rate\n'.format(
+            self.indent*n_indent))
+        of.write('{}integer, parameter :: jenuc   = {}\n'.format(
+            self.indent*n_indent,
+            len(self.unique_nuclei)+1))
+
+    def nrxn(self, n_indent, of):
+        for i,r in enumerate(self.rates):
+            of.write('{}integer, parameter :: k_{}   = {}\n'.format(
+                self.indent*n_indent, r.fname, i+1))
+
+    def ebind(self, n_indent, of):
+        for nuc in self.unique_nuclei:
+            of.write('{}ebind_per_nucleon(j{})   = 0.0d0\n'.format(
+                self.indent*n_indent,
+                nuc))
+
+    def aion(self, n_indent, of):
+        for nuc in self.unique_nuclei:
+            of.write('{}aion(j{})   = {}\n'.format(
+                self.indent*n_indent,
+                nuc,
+                self.fmt_to_dp_f90(nuc.A)))
+
+    def zion(self, n_indent, of):
+        for nuc in self.unique_nuclei:
+            of.write('{}zion(j{})   = {}\n'.format(
+                self.indent*n_indent,
+                nuc,
+                self.fmt_to_dp_f90(nuc.Z)))
+            
+    def ctemp_declare(self, n_indent, of):
+        for n in self.reaclib_rates:
+            of.write('{}double precision, target, dimension(:,:), allocatable :: ctemp_rate_{}\n'.format(self.indent*n_indent, n+1))
+
+    def rmul(self, n_indent, of):
+        for i,r in enumerate(self.rates):
+            if i in self.reaclib_rates:
+                of.write('{}{}'.format(
+                    self.indent*n_indent,
+                    len(r.sets)))
+            elif i in self.tabular_rates:
+                of.write('{}-{}'.format(
+                    self.indent*n_indent,
+                    r.table_index_name))
+            else:
+                print('ERROR: unknown rate index {}'.format(i))
+                exit()
+            if i==len(self.rates)-1:
+                of.write(' /)\n')
+            else:
+                of.write(', &\n')
+
+    def screen_logical(self, n_indent, of):
+        for i, r in enumerate(self.rates):
+            if r.ion_screen:
+                of.write('{}{}'.format(self.indent*n_indent, '.true.'))
+            else:
+                of.write('{}{}'.format(self.indent*n_indent, '.false.'))
+            if i==len(self.rates)-1:
+                of.write(' /)\n')
+            else:
+                of.write(', &\n')
+
+    def screen_add(self, n_indent, of):
+        for i, r in enumerate(self.rates):
+            if r.ion_screen:
+                of.write('{}call add_screening_factor('.format(self.indent*n_indent))
+                of.write('zion(j{}), aion(j{}), &\n'.format(r.ion_screen[0],
+                                                            r.ion_screen[0]))
+                of.write('{}zion(j{}), aion(j{}))\n\n'.format(self.indent*(n_indent+1),
+                                                              r.ion_screen[1],
+                                                              r.ion_screen[1]))
+
+    def ctemp_ptr_declare(self, n_indent, of):
+        of.write('{}type(ctemp_ptr), dimension({}) :: ctemp_point\n'.format(
+            self.indent*n_indent,
+            len(self.reaclib_rates)))
+                
+    def ctemp_allocate(self, n_indent, of):
+        for nr in self.reaclib_rates:
+            r = self.rates[nr]
+            of.write('{}allocate( ctemp_rate_{}(7, rate_mult({})) )\n'.format(
+                self.indent*n_indent, nr+1, nr+1))
+            of.write('{}ctemp_point({})%p => ctemp_rate_{}\n'.format(self.indent*n_indent, nr+1, nr+1))
+            of.write('{}! {}\n'.format(self.indent*n_indent, r.fname))
+            for ns,s in enumerate(r.sets):
+                of.write('{}ctemp_rate_{}(:, {}) = (/  &\n'.format(
+                    self.indent*n_indent, nr+1, ns+1))
+                for na,an in enumerate(s.a):
+                    of.write('{}{}'.format(self.indent*n_indent*2,
+                                           self.fmt_to_dp_f90(an)))
+                    if na==len(s.a)-1:
+                        of.write(' /)\n')
+                    else:
+                        of.write(', &\n')
+                of.write('\n')
+        if len(self.tabular_rates) > 0:
+            of.write('{}call init_table_meta()\n'.format(self.indent*n_indent))
+        of.write('\n')
+
+    def ctemp_deallocate(self, n_indent, of):
+        for nr in self.reaclib_rates:
+            of.write('{}deallocate( ctemp_rate_{} )\n'.format(
+                self.indent*n_indent, nr+1))
+
+    def ctemp_switch(self, n_indent, of):
+        for nr,r in enumerate(self.rates):
+            of.write('{}'.format(self.indent*n_indent))
+            if nr!=0:
+                of.write('else ')
+            of.write('if (iwhich == {}) then\n'.format(nr+1))
+            if nr in self.reaclib_rates:
+                of.write('{}ctemp => ctemp_rate_{}\n'.format(
+                    self.indent*(n_indent+1), nr+1))
+            elif nr in self.tabular_rates:
+                of.write(
+                    '{}call table_meta({})%bl_lookup(rhoy, temp, jtab_rate, rate)\n'.format(
+                        self.indent*(n_indent+1), r.table_index_name))
+                of.write('{}return_from_table = .true.\n'.format(self.indent*(n_indent+1)))
+            else:
+                print('ERROR: rate not in self.reaclib_rates or self.tabular_rates!')
+                exit()
+        of.write('{}end if\n'.format(self.indent*n_indent))
+
+    def table_num(self, n_indent, of):
+        of.write('{}integer, parameter :: num_tables   = {}\n'.format(
+            self.indent*n_indent, len(self.tabular_rates)))
+
+    def table_indices(self, n_indent, of):
+        for n,irate in enumerate(self.tabular_rates):
+            r = self.rates[irate]
+            of.write('{}integer, parameter :: {}   = {}\n'.format(
+                self.indent*n_indent, r.table_index_name, n+1))
+
+    def table_init_meta(self, n_indent, of):
+        for n,irate in enumerate(self.tabular_rates):
+            r = self.rates[irate]
+            of.write('{}table_meta({})%rate_table_file = \'{}\'\n'.format(
+                self.indent*n_indent, r.table_index_name, r.table_file))
+            of.write('{}table_meta({})%num_header = {}\n'.format(
+                self.indent*n_indent, r.table_index_name, r.table_header_lines))
+            of.write('{}table_meta({})%num_rhoy = {}\n'.format(
+                self.indent*n_indent, r.table_index_name, r.table_rhoy_lines))
+            of.write('{}table_meta({})%num_temp = {}\n'.format(
+                self.indent*n_indent, r.table_index_name, r.table_temp_lines))
+            of.write('{}table_meta({})%num_vars = {}\n'.format(
+                self.indent*n_indent, r.table_index_name, r.table_num_vars))
+            of.write('\n')
+
+    def ydot(self, n_indent, of):
+        # now make the RHSs
+        for n in self.unique_nuclei:
+            of.write("{}YDOT(j{}) = ( &\n".format(self.indent*n_indent, n))
+            for r in self.nuclei_consumed[n]:
+                c = r.reactants.count(n)
+                if c == 1:
+                    of.write("{}   - {} &\n".format(self.indent*n_indent,
+                                                    self.ydot_string(r)))
+                else:
+                    of.write("{}   - {} * {} &\n".format(self.indent*n_indent,
+                                                         c, self.ydot_string(r)))
+            for r in self.nuclei_produced[n]:
+                c = r.products.count(n)
+                if c == 1:
+                    of.write("{}   + {} &\n".format(self.indent*n_indent,
+                                                    self.ydot_string(r)))
+                else:
+                    of.write("{}   + {} * {} &\n".format(self.indent*n_indent,
+                                                         c, self.ydot_string(r)))
+            of.write("{}   )\n\n".format(self.indent*n_indent))
+
+    def enuc_dqweak(self, n_indent, of):
+        # Add tabular dQ corrections to the energy generation rate
+        for nr, r in enumerate(self.rates):
+            if nr in self.tabular_rates:
+                if len(r.reactants) != 1:
+                    print('ERROR: Unknown tabular dQ corrections for a reaction where the number of reactants is not 1.')
+                    exit()
+                else:
+                    reactant = r.reactants[0]
+                    of.write('{}YDOT(jenuc) = YDOT(jenuc) + N_AVO * YDOT(j{}) * reactvec(i_dqweak, k_{})\n'.format(self.indent*n_indent, reactant, r.fname))
+        
+    def enuc_epart(self, n_indent, of):
+        # Add particle energy generation rates (gamma heating and neutrino loss from decays)
+        # to the energy generation rate (doesn't include plasma neutrino losses)
+        for nr, r in enumerate(self.rates):
+            if nr in self.tabular_rates:
+                if len(r.reactants) != 1:
+                    print('ERROR: Unknown particle energy corrections for a reaction where the number of reactants is not 1.')
+                    exit()
+                else:
+                    reactant = r.reactants[0]
+                    of.write('{}YDOT(jenuc) = YDOT(jenuc) + N_AVO * Y(j{}) * reactvec(i_epart, k_{})\n'.format(self.indent*n_indent, reactant, r.fname))
+        
+    def jacobian(self, n_indent, of):
+        # now make the JACOBIAN
+        for nj in self.unique_nuclei:
+            for ni in self.unique_nuclei:
+                jac_identically_zero = True
+                of.write("{}DJAC(j{},j{}) = ( &\n".format(
+                    self.indent*n_indent, nj, ni))
+                for r in self.nuclei_consumed[nj]:
+                    sjac = self.jacobian_string(r, nj, ni)
+                    if sjac != '':
+                        jac_identically_zero = False
+                        c = r.reactants.count(nj)
+                        if c == 1:
+                            of.write("{}   - {} &\n".format(
+                                self.indent*n_indent, sjac))
+                        else:
+                            of.write("{}   - {} * {} &\n".format(self.indent*n_indent,
+                                                                 c, sjac))
+                for r in self.nuclei_produced[nj]:
+                    sjac = self.jacobian_string(r, nj, ni)
+                    if sjac != '':
+                        jac_identically_zero = False
+                        c = r.products.count(nj)
+                        if c == 1:
+                            of.write("{}   + {} &\n".format(
+                                self.indent*n_indent, sjac))
+                        else:
+                            of.write("{}   + {} * {} &\n".format(self.indent*n_indent,
+                                                                 c, sjac))
+
+                if jac_identically_zero:
+                    of.write("{}   + {} &\n".format(self.indent*n_indent, '0.0d0'))
+                of.write("{}   )\n\n".format(self.indent*n_indent))
+
+    def yinit_nuc(self, n_indent, of):
+        for n in self.unique_nuclei:
+            of.write("{}cv_data%Y0(j{})   = net_initial_abundances%y{}\n".format(
+                self.indent*n_indent, n, n))        
+
+    def final_net_print(self, n_indent, of):
+        for n in self.unique_nuclei:
+            of.write("{}write(*,'(A,ES25.14)') '{}: ', cv_data%Y(j{})\n".format(
+                self.indent*n_indent, n, n))
+
+    def headerline(self, n_indent, of):
+        of.write('{}write(2, fmt=hfmt) '.format(self.indent*n_indent))
+        for nuc in self.unique_nuclei:
+            of.write("'Y_{}', ".format(nuc))
+        of.write("'E_nuc', 'Time'\n")
+
+    def cvodeneq(self, n_indent, of):
+        of.write('{} '.format(self.indent*n_indent))
+        of.write('integer*8 :: NEQ = {} ! Size of ODE system\n'.format(
+            len(self.unique_nuclei)+1))
+
+    def net_ymass_init(self, n_indent, of):
+        for n in self.unique_nuclei:
+            of.write('{}net_initial_abundances%y{} = 0.0d0\n'.format(
+                self.indent*n_indent, n))
+
+
+class Network_sundials(Network_f90):
+    def __init__(self, parent_instance_object=None):
+        # Inherit all the instance attributes of
+        # the parent_instance_object if it's passed.
+        rem = re.compile('__(.*)__')
+        if parent_instance_object:
+            for d in dir(parent_instance_object):
+                if not rem.match(d):
+                    setattr(self, d, getattr(parent_instance_object, d))
+
+        # Initialize Network_f90 stuff
+        Network_f90.__init__(self)
+
+        # Set up some directories
+        self.sundials_dir = os.path.join(self.pyreaclib_dir,
+                                    'templates',
+                                    'sundials-cvode')
+        self.template_file_select = os.path.join(self.sundials_dir,
+                                            '*.template')
+        self.template_files = glob.glob(self.template_file_select)
+
+
+    
+class Network_boxlib(Network_f90):
+    def __init__(self, parent_instance_object=None):
+        # Inherit all the instance attributes of
+        # the parent_instance_object if it's passed.
+        rem = re.compile('__(.*)__')
+        if parent_instance_object:
+            for d in dir(parent_instance_object):
+                if not rem.match(d):
+                    setattr(self, d, getattr(parent_instance_object, d))
+
+        # Initialize Network_f90 stuff
+        Network_f90.__init__(self)
+                    
+        # Set up some directories
+        self.boxlib_dir = os.path.join(self.pyreaclib_dir,
+                                       'templates',
+                                       'boxlib')
+        self.template_file_select = os.path.join(self.boxlib_dir,
+                                                 '*.template')
+        self.template_files = glob.glob(self.template_file_select)
+
+        
 if __name__ == "__main__":
     r = Rate("examples/CNO/c13-pg-n14-nacr")
     print(r.rate_string(indent=3))
