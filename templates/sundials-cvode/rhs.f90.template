@@ -21,6 +21,8 @@ contains
     integer :: i
     double precision :: dens, temp, ye, rhoy
 
+    <ydot_declare_scratch>(2)
+    
     IER = -1
 
     ! Enforce all Y's are positive
@@ -43,6 +45,8 @@ contains
     end do
 
     write(*,*) "RHS Time: ", T
+    <ydot_scratch>(2)
+    
     <ydot>(2)
 
     YDOT(jenuc) = 0.0d0
@@ -82,6 +86,8 @@ contains
     double precision :: dens, temp, ye, rhoy
     integer :: i, j
 
+    <jacobian_declare_scratch>(2)
+    
     IER = -1
 
     ! Enforce all Y's are positive
@@ -112,6 +118,8 @@ contains
           call rate_evaluate(state, rhoy, cv_pars%temp, i, reactvec(:,i))
        end do
 
+       <jacobian_scratch>(3)
+       
        ! DJAC(j, i) = d(YDOT(j))/dY(i)
 
        <jacobian>(3)

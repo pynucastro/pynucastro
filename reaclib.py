@@ -6,6 +6,7 @@ import glob
 import os
 import shutil
 import re
+import sympy
 
 import networkx as nx
 import numpy as np
@@ -286,8 +287,10 @@ class Rate(object):
                 
         # compute self.prefactor and self.dens_exp from the reactants
         self.prefactor = 1.0  # this is 1/2 for rates like a + a (double counting)
+        self.inv_prefactor = 1
         for r in list_unique(self.reactants):
-            self.prefactor = self.prefactor/np.math.factorial(self.reactants.count(r))
+            self.inv_prefactor = self.inv_prefactor * np.math.factorial(self.reactants.count(r))
+        self.prefactor = self.prefactor/float(self.inv_prefactor)
         self.dens_exp = len(self.reactants)-1
 
         # determine if this rate is eligible for screening
@@ -476,14 +479,14 @@ class RateCollection(object):
             net = typenet_avail['python'](self)
             net.write_network(outfile)
         else:
-            try:
-                net = typenet_avail[outfile](self)
-                net.write_network()
-            except KeyError:
-                print('Network type {} not available. Available networks are:')
-                for k in typenet_avail.keys():
-                    print(k)
-                exit()
+#            try:
+            net = typenet_avail[outfile](self)
+            net.write_network()
+            # except KeyError:
+            #     print('Network type {} not available. Available networks are:'.format(outfile))
+            #     for k in typenet_avail.keys():
+            #         print(k)
+            #     exit()
 
                 
     def plot(self):
@@ -606,8 +609,8 @@ class Network_py(RateCollection):
             dens_string = "rho**{}*".format(rate.dens_exp)
 
         # prefactor
-        if not self.prefactor == 1.0:
-            prefactor_string = "{:1.14e}*".format(self.prefactor)
+        if not rate.prefactor == 1.0:
+            prefactor_string = "{:1.14e}*".format(rate.prefactor)
         else:
             prefactor_string = ""
 
@@ -658,8 +661,8 @@ class Network_py(RateCollection):
             dens_string = "rho**{}*".format(rate.dens_exp)
 
         # prefactor
-        if not self.prefactor == 1.0:
-            prefactor_string = "{:1.14e}*".format(self.prefactor)
+        if not rate.prefactor == 1.0:
+            prefactor_string = "{:1.14e}*".format(rate.prefactor)
         else:
             prefactor_string = ""
 
@@ -763,9 +766,13 @@ class Network_f90(RateCollection):
         self.ftags['<table_num>'] = self.table_num
         self.ftags['<table_indices>'] = self.table_indices
         self.ftags['<table_init_meta>'] = self.table_init_meta
+        self.ftags['<ydot_declare_scratch>'] = self.ydot_declare_scratch
+        self.ftags['<ydot_scratch>'] = self.ydot_scratch
         self.ftags['<ydot>'] = self.ydot
         self.ftags['<enuc_dqweak>'] = self.enuc_dqweak
         self.ftags['<enuc_epart>'] = self.enuc_epart
+        self.ftags['<jacobian_declare_scratch>'] = self.jacobian_declare_scratch
+        self.ftags['<jacobian_scratch>'] = self.jacobian_scratch
         self.ftags['<jacobian>'] = self.jacobian
         self.ftags['<yinit_nuc>'] = self.yinit_nuc
         self.ftags['<final_net_print>'] = self.final_net_print
@@ -773,6 +780,18 @@ class Network_f90(RateCollection):
         self.ftags['<cvodeneq>'] = self.cvodeneq
         self.ftags['<net_ymass_init>'] = self.net_ymass_init
         self.indent = '  '
+
+        self.ydot_cse_scratch = None
+        self.ydot_cse_result  = None
+        self.jac_cse_scratch  = None
+        self.jac_cse_result   = None
+        self.symbol_ludict = {} # Symbol lookup dictionary
+
+        # Define these for the particular network
+        self.name_rate_data = None
+        self.name_y         = None
+        self.name_ydot      = None
+        self.name_jacobian  = None
 
     def ydot_string(self, rate):
         """
@@ -785,9 +804,9 @@ class Network_f90(RateCollection):
         for n, r in enumerate(list_unique(rate.reactants)):
             c = rate.reactants.count(r)
             if c > 1:
-                Y_string += "Y(j{})**{}".format(r, c)
+                Y_string += self.name_y + "(j{})**{}".format(r, c)
             else:
-                Y_string += "Y(j{})".format(r)
+                Y_string += self.name_y + "(j{})".format(r)
 
             if n < len(list_unique(rate.reactants))-1:
                 Y_string += " * "
@@ -806,13 +825,89 @@ class Network_f90(RateCollection):
         else:
             prefactor_string = ""
 
-        return "{}{}{} * reactvec(i_scor, k_{}) * reactvec(i_rate, k_{})".format(
+        return "{}{}{} * {}(i_scor, k_{}) * {}(i_rate, k_{})".format(
             prefactor_string,
             dens_string,
             Y_string,
+            self.name_rate_data,
             rate.fname,
+            self.name_rate_data,
             rate.fname)
 
+    def ydot_term_symbol(self, rate, y_i):
+        """
+        return a sympy expression containing this rate's contribution to 
+        the ydot term for nuclide y_i.
+        """
+        srate = self.specific_rate_symbol(rate)
+
+        # Check if y_i is a reactant or product
+        c_reac = rate.reactants.count(y_i)
+        c_prod = rate.products.count(y_i)
+        if c_reac > 0 and c_prod > 0:
+            # Something weird happened and y_i seems to be a reactant and product!
+            print('WARNING: {} occurs as both reactant and product in rate {}'.format(
+                y_i, rate))
+            exit()
+        elif c_reac == 0 and c_prod == 0:
+            # The rate doesn't contribute to the ydot for this y_i
+            ydot_sym = sympy.sympify(0)
+        elif c_reac > 0:
+            # y_i appears as a reactant
+            ydot_sym = -c_reac * srate
+        elif c_prod > 0:
+            # y_i appears as a product
+            ydot_sym = +c_prod * srate
+        return ydot_sym
+    
+    def specific_rate_symbol(self, rate):
+        """
+        return a sympy expression containing the term in a dY/dt equation
+        in a reaction network corresponding to this rate.
+
+        Also enter the symbol and substitution in the lookup table.
+        """
+
+        # composition dependence
+        Y_sym = 1
+        for n, r in enumerate(list_unique(rate.reactants)):
+            c = rate.reactants.count(r)
+            sym_final = self.name_y + '(j{})'.format(r)
+            sym_temp  = self.name_y + '__j{}__'.format(r)
+            self.symbol_ludict[sym_temp] = sym_final
+            Y_sym = Y_sym * sympy.symbols(sym_temp)**c
+
+        # density dependence
+        dens_sym = sympy.symbols('dens')**rate.dens_exp
+
+        # prefactor
+        prefactor_sym = sympy.sympify(1)/sympy.sympify(rate.inv_prefactor)
+
+        # screening
+        sym_final = self.name_rate_data + '(i_scor, k_{})'.format(rate.fname)
+        sym_temp  = self.name_rate_data + '__i_scor__k_{}__'.format(rate.fname)
+        self.symbol_ludict[sym_temp] = sym_final
+        screen_sym = sympy.symbols(sym_temp)
+        
+        # rate
+        sym_final = self.name_rate_data + '(i_rate, k_{})'.format(rate.fname)
+        sym_temp  = self.name_rate_data + '__i_rate__k_{}__'.format(rate.fname)
+        self.symbol_ludict[sym_temp] = sym_final
+        rate_sym = sympy.symbols(sym_temp)
+
+        srate_sym = prefactor_sym * dens_sym * Y_sym * screen_sym * rate_sym
+        return srate_sym
+
+    def fortranify(self, s):
+        """
+        Given string s, will replace the symbols appearing as keys in 
+        self.symbol_ludict with their corresponding entries.
+        """
+        for k in self.symbol_ludict.keys():
+            v = self.symbol_ludict[k]
+            s = s.replace(k,v)
+        return s
+    
     def jacobian_string(self, rate, ydot_j, y_i):
         """
         return a string containing the term in a jacobian matrix 
@@ -837,16 +932,16 @@ class Network_f90(RateCollection):
                 if n>0 and n < len(list_unique(rate.reactants))-1:
                     Y_string += "*"
                 if c > 2:
-                    Y_string += "{}*Y(j{})**{}".format(c, r, c-1)
+                    Y_string += "{}*{}(j{})**{}".format(c, self.name_y, r, c-1)
                 elif c==2:
-                    Y_string += "2*Y(j{})".format(r)
+                    Y_string += "2*{}(j{})".format(self.name_y, r)
             else:
                 if n>0 and n < len(list_unique(rate.reactants))-1:
                     Y_string += "*"
                 if c > 1:
-                    Y_string += "Y(j{})**{}".format(r, c)
+                    Y_string += "{}(j{})**{}".format(self.name_y, r, c)
                 else:
-                    Y_string += "Y(j{})".format(r)
+                    Y_string += "{}(j{})".format(self.name_y, r)
 
         # density dependence
         if rate.dens_exp == 0:
@@ -863,12 +958,27 @@ class Network_f90(RateCollection):
             prefactor_string = ""
 
         if Y_string=="" and dens_string=="" and prefactor_string=="":
-            rstring = "{}{}{}   reactvec(i_scor, k_{}) * reactvec(i_rate, k_{})"
+            rstring = "{}{}{}   {}(i_scor, k_{}) * {}(i_rate, k_{})"
         else:
-            rstring = "{}{}{} * reactvec(i_scor, k_{}) * reactvec(i_rate, k_{})"
+            rstring = "{}{}{} * {}(i_scor, k_{}) * {}(i_rate, k_{})"
         return rstring.format(prefactor_string, dens_string, Y_string,
-                              rate.fname, rate.fname)
+                              self.name_rate_data, rate.fname,
+                              self.name_rate_data, rate.fname)
 
+    def jacobian_term_symbol(self, rate, ydot_j, y_i):
+        """
+        return a sympy expression containing the term in a jacobian matrix 
+        in a reaction network corresponding to this rate
+
+        Returns the derivative of the j-th YDOT wrt. the i-th Y
+        If the derivative is zero, returns 0.
+
+        ydot_j and y_i are objects of the class 'Nucleus'
+        """
+        ydot_sym = self.ydot_term_symbol(rate, ydot_j)
+        deriv_sym = sympy.symbols('{}__j{}__'.format(self.name_y, y_i))
+        jac_sym = sympy.diff(ydot_sym, deriv_sym)
+        return jac_sym
     
     def io_open(self, infile, outfile):
         try: of = open(outfile, "w")
@@ -894,6 +1004,10 @@ class Network_f90(RateCollection):
         this network describes, using the template files.
         """
 
+        # Prepare CSE RHS terms
+        self.ydot_cse()
+        self.jacobian_cse()
+        
         for tfile in self.template_files:
             tfile_basename = os.path.basename(tfile)
             outfile    = tfile_basename.replace('.template', '')
@@ -1079,28 +1193,48 @@ class Network_f90(RateCollection):
                 self.indent*n_indent, r.table_index_name, r.table_num_vars))
             of.write('\n')
 
-    def ydot(self, n_indent, of):
-        # now make the RHSs
+    def ydot_cse(self):
+        # now make the CSE RHS
+        ydot = []
         for n in self.unique_nuclei:
-            of.write("{}YDOT(j{}) = ( &\n".format(self.indent*n_indent, n))
+            ydot_sym = sympy.sympify(0)
             for r in self.nuclei_consumed[n]:
-                c = r.reactants.count(n)
-                if c == 1:
-                    of.write("{}   - {} &\n".format(self.indent*n_indent,
-                                                    self.ydot_string(r)))
-                else:
-                    of.write("{}   - {} * {} &\n".format(self.indent*n_indent,
-                                                         c, self.ydot_string(r)))
+                ydot_sym = ydot_sym + self.ydot_term_symbol(r, n)
             for r in self.nuclei_produced[n]:
-                c = r.products.count(n)
-                if c == 1:
-                    of.write("{}   + {} &\n".format(self.indent*n_indent,
-                                                    self.ydot_string(r)))
-                else:
-                    of.write("{}   + {} * {} &\n".format(self.indent*n_indent,
-                                                         c, self.ydot_string(r)))
-            of.write("{}   )\n\n".format(self.indent*n_indent))
+                ydot_sym = ydot_sym + self.ydot_term_symbol(r, n)
+            ydot.append(ydot_sym)
 
+        scratch_sym = sympy.utilities.numbered_symbols('scratch_')
+        scratch, result = sympy.cse(ydot, symbols=scratch_sym, order='none')
+        self.ydot_cse_scratch = scratch
+        self.ydot_cse_result  = result
+
+    def ydot_declare_scratch(self, n_indent, of):
+        # Declare scratch variables
+        for si in self.ydot_cse_scratch:
+            siname = si[0]
+            of.write('{}double precision :: {}\n'.format(self.indent*n_indent, siname))
+
+    def ydot_scratch(self, n_indent, of):
+        # Assign scratch variables
+        for si in self.ydot_cse_scratch:
+            siname = si[0]
+            sivalue = self.fortranify(sympy.fcode(si[1], precision = 15,
+                                                  source_format = 'free',
+                                                  standard = 95))
+            of.write('{}{} = {}\n'.format(self.indent*n_indent, siname, sivalue))
+
+    def ydot(self, n_indent, of):
+        # Write YDOT
+        for i, n in enumerate(self.unique_nuclei):
+            sol_value = self.fortranify(sympy.fcode(self.ydot_cse_result[i], precision = 15,
+                                                    source_format = 'free',
+                                                    standard = 95))
+            of.write('{}{}(j{}) = ( &\n'.format(self.indent*n_indent,
+                                                self.name_ydot, n, sol_value))
+            of.write("{}{} &\n".format(self.indent*(n_indent+1), sol_value))
+            of.write("{}   )\n\n".format(self.indent*n_indent))
+            
     def enuc_dqweak(self, n_indent, of):
         # Add tabular dQ corrections to the energy generation rate
         for nr, r in enumerate(self.rates):
@@ -1110,7 +1244,7 @@ class Network_f90(RateCollection):
                     exit()
                 else:
                     reactant = r.reactants[0]
-                    of.write('{}YDOT(jenuc) = YDOT(jenuc) + N_AVO * YDOT(j{}) * reactvec(i_dqweak, k_{})\n'.format(self.indent*n_indent, reactant, r.fname))
+                    of.write('{}{}(jenuc) = {}(jenuc) + N_AVO * {}(j{}) * {}(i_dqweak, k_{})\n'.format(self.indent*n_indent, self.name_ydot, self.name_ydot, self.name_ydot, reactant, self.name_rate_data, r.fname))
         
     def enuc_epart(self, n_indent, of):
         # Add particle energy generation rates (gamma heating and neutrino loss from decays)
@@ -1122,40 +1256,52 @@ class Network_f90(RateCollection):
                     exit()
                 else:
                     reactant = r.reactants[0]
-                    of.write('{}YDOT(jenuc) = YDOT(jenuc) + N_AVO * Y(j{}) * reactvec(i_epart, k_{})\n'.format(self.indent*n_indent, reactant, r.fname))
+                    of.write('{}{}(jenuc) = {}(jenuc) + N_AVO * {}(j{}) * {}(i_epart, k_{})\n'.format(self.indent*n_indent, self.name_ydot, self.name_ydot, self.name_y, reactant, self.name_rate_data, r.fname))
         
-    def jacobian(self, n_indent, of):
-        # now make the JACOBIAN
+    def jacobian_cse(self):
+        jac_sym = []
         for nj in self.unique_nuclei:
             for ni in self.unique_nuclei:
-                jac_identically_zero = True
-                of.write("{}DJAC(j{},j{}) = ( &\n".format(
-                    self.indent*n_indent, nj, ni))
+                rsym = sympy.sympify(0)
                 for r in self.nuclei_consumed[nj]:
-                    sjac = self.jacobian_string(r, nj, ni)
-                    if sjac != '':
-                        jac_identically_zero = False
-                        c = r.reactants.count(nj)
-                        if c == 1:
-                            of.write("{}   - {} &\n".format(
-                                self.indent*n_indent, sjac))
-                        else:
-                            of.write("{}   - {} * {} &\n".format(self.indent*n_indent,
-                                                                 c, sjac))
+                    rsym = rsym + self.jacobian_term_symbol(r, nj, ni)
                 for r in self.nuclei_produced[nj]:
-                    sjac = self.jacobian_string(r, nj, ni)
-                    if sjac != '':
-                        jac_identically_zero = False
-                        c = r.products.count(nj)
-                        if c == 1:
-                            of.write("{}   + {} &\n".format(
-                                self.indent*n_indent, sjac))
-                        else:
-                            of.write("{}   + {} * {} &\n".format(self.indent*n_indent,
-                                                                 c, sjac))
+                    rsym = rsym + self.jacobian_term_symbol(r, nj, ni)
+                jac_sym.append(rsym)
 
-                if jac_identically_zero:
-                    of.write("{}   + {} &\n".format(self.indent*n_indent, '0.0d0'))
+        scratch_sym = sympy.utilities.numbered_symbols('scratch_')
+        scratch, result = sympy.cse(jac_sym, symbols=scratch_sym, order='none')
+        self.jac_cse_scratch = scratch
+        self.jac_cse_result  = result
+
+    def jacobian_declare_scratch(self, n_indent, of):
+        # Declare scratch variables
+        for si in self.jac_cse_scratch:
+            siname = si[0]
+            of.write('{}double precision :: {}\n'.format(self.indent*n_indent, siname))
+
+    def jacobian_scratch(self, n_indent, of):
+        # Assign scratch variables
+        for si in self.jac_cse_scratch:
+            siname = si[0]
+            sivalue = self.fortranify(sympy.fcode(si[1], precision = 15,
+                                                  source_format = 'free',
+                                                  standard = 95))
+            of.write('{}{} = {}\n'.format(self.indent*n_indent, siname, sivalue))
+
+    def jacobian(self, n_indent, of):
+        # now make the JACOBIAN
+        n_unique_nuclei = len(self.unique_nuclei)
+        for jnj, nj in enumerate(self.unique_nuclei):
+            for ini, ni in enumerate(self.unique_nuclei):
+                jac_idx = n_unique_nuclei*jnj + ini
+                jvalue = self.fortranify(sympy.fcode(self.jac_cse_result[jac_idx],
+                                                     precision = 15,
+                                                     source_format = 'free',
+                                                     standard = 95))
+                of.write("{}{}(j{},j{}) = ( &\n".format(self.indent*n_indent,
+                                                        self.name_jacobian, nj, ni))
+                of.write("{}{} &\n".format(self.indent*(n_indent+1), jvalue))
                 of.write("{}   )\n\n".format(self.indent*n_indent))
 
     def yinit_nuc(self, n_indent, of):
@@ -1206,6 +1352,11 @@ class Network_sundials(Network_f90):
                                             '*.template')
         self.template_files = glob.glob(self.template_file_select)
 
+        # Initialize values specific to this network
+        self.name_rate_data = 'reactvec'
+        self.name_y         = 'Y'
+        self.name_ydot      = 'YDOT'
+        self.name_jacobian  = 'DJAC'
 
     
 class Network_boxlib(Network_f90):
@@ -1228,6 +1379,13 @@ class Network_boxlib(Network_f90):
         self.template_file_select = os.path.join(self.boxlib_dir,
                                                  '*.template')
         self.template_files = glob.glob(self.template_file_select)
+
+        # Initialize values specific to this network
+        self.name_rate_data = 'reactvec'
+        self.name_y         = 'Y'
+        self.name_ydot      = 'YDOT'
+        self.name_jacobian  = 'DJAC'
+
 
         
 if __name__ == "__main__":
