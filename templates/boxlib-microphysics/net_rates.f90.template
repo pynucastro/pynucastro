@@ -49,13 +49,15 @@ contains
   subroutine reaclib_evaluate(pstate, temp, iwhich, reactvec)
     !$acc routine seq
 
+    use burn_type_module, only: num_rate_groups
+
     implicit none
     
     type(plasma_state), intent(in) :: pstate
     double precision, intent(in) :: temp
     integer, intent(in) :: iwhich
 
-    double precision, intent(inout) :: reactvec(6)
+    double precision, intent(inout) :: reactvec(num_rate_groups+2)
     ! reactvec(1) = rate     , the reaction rate
     ! reactvec(2) = drate_dt , the Temperature derivative of rate
     ! reactvec(3) = scor     , the screening factor

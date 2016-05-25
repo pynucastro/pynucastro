@@ -1,0 +1,157 @@
+module actual_rhs_module
+
+  use bl_types
+  use bl_constants_module
+  use physical_constants, only: N_AVO
+  use network
+  use actual_network_data, only: nrat_reaclib, nrat_tabular
+  use net_rates, only: screen_reaclib, reaclib_evaluate
+  use table_rates, only: table_meta, tabular_evaluate
+  use screening_module, only: plasma_state, fill_plasma_state
+  use burn_type_module
+
+  implicit none
+
+contains
+
+  subroutine actual_rhs(state)
+    
+    !$acc routine seq
+
+    use extern_probin_module, only: do_constant_volume_burn
+    use burn_type_module, only: num_rate_groups, net_itemp, net_ienuc
+
+    implicit none
+
+    type(burn_t) :: state
+    type(plasma_state) :: pstate
+    double precision, dimension(nspec) :: Y
+    double precision :: reactvec(num_rate_groups+2)
+    double precision :: dqweak(nrat_tabular)
+    double precision :: epart(nrat_tabular)
+    integer :: i, j
+    double precision :: dens, temp, rhoy, ye
+
+    <ydot_declare_scratch>(2)
+    
+    ! ! Notify
+    ! write(*,*) '(Executing subroutine actual_rhs)'
+
+    ! ! Print out the composition
+    ! do i = 1, nspec
+    !    write(*,*) 'state%xn(', i, '): ', state%xn(i)
+    ! end do
+
+    ! Set molar abundances and enforce them to be positive
+    do i = 1, nspec
+       Y(i) = max(0.0d0, state%xn(i)/aion(i))
+    end do
+
+    dens = state%rho
+    temp = state%T
+    ye   = state%y_e
+    rhoy = dens*ye
+
+    ! For now this doesn't have dqweak or epart, need to add those
+    ! Calculate Reaclib rates
+    call fill_plasma_state(pstate, temp, dens, Y(1:nspec))
+    do i = 1, nrat_reaclib
+       call reaclib_evaluate(pstate, temp, i, reactvec)
+       state%rates(:,i) = reactvec(1:4)
+    end do
+
+    ! Include only if there are tabular rates
+    do i = 1, nrat_tabular
+       call tabular_evaluate(table_meta(i), rhoy, temp, reactvec)
+       j = i + nrat_reaclib
+       state%rates(:,j) = reactvec(1:4)
+    end do
+
+    <ydot_scratch>(2)
+
+    <ydot>(2)
+    
+    state%ydot(net_ienuc) = 0.0d0
+    ! ion binding energy contributions
+    do i = 1, nspec
+       state%ydot(net_ienuc) = state%ydot(net_ienuc) + N_AVO * bion(i) * state%ydot(i)
+    end do
+    
+    ! weak Q-value modification dqweak (density and temperature dependent)
+    <enuc_dqweak>(2)
+    
+    ! weak particle energy generation rates from gamma heating and neutrino loss
+    ! (does not include plasma neutrino losses)
+    <enuc_epart>(2)
+
+    ! Let temperature be a constant
+    state%ydot(net_itemp) = 0.0d0
+    
+    ! write(*,*) '______________________________'
+    ! do i = 1, nspec+2
+    !    write(*,*) 'state%ydot(',i,'): ',state%ydot(i)
+    ! end do
+  end subroutine actual_rhs
+
+  subroutine actual_jac(state)
+
+    !$acc routine seq
+
+    use burn_type_module, only: num_rate_groups, net_itemp, net_ienuc
+    
+    implicit none
+    
+    type(burn_t) :: state
+    type(plasma_state) :: pstate
+    double precision :: reactvec(num_rate_groups+2)
+    double precision :: Y(nspec)
+    double precision :: dens, temp, ye, rhoy
+    integer :: i, j
+
+    <jacobian_declare_scratch>(2)
+
+    ! ! Notify
+    ! write(*,*) '(Executing subroutine actual_jac)'
+
+    ! ! Print out the composition
+    ! do i = 1, nspec
+    !    write(*,*) 'state%xn(', i, '): ', state%xn(i)
+    ! end do
+    
+    dens = state%rho
+    temp = state%T
+    ye   = state%y_e
+    rhoy = dens*ye
+
+    ! Set molar abundances and enforce them to be positive
+    do i = 1, nspec
+       Y(i) = max(0.0d0, state%xn(i)/aion(i))
+    end do
+
+    state%jac(:,:) = ZERO
+    
+    if (.not. state%have_rates) then
+       ! Calculate Reaclib rates
+       call fill_plasma_state(pstate, temp, dens, Y(1:nspec))
+       do i = 1, nrat_reaclib
+          call reaclib_evaluate(pstate, temp, i, reactvec)
+          state%rates(:,i) = reactvec(1:4)
+       end do
+
+       ! Include only if there are tabular rates
+       do i = 1, nrat_tabular
+          call tabular_evaluate(table_meta(i), rhoy, temp, reactvec)
+          j = i + nrat_reaclib
+          state%rates(:,j) = reactvec(1:4)
+       end do
+    end if
+
+    <jacobian_scratch>(2)
+    
+    ! state%jac(j, i) = d(YDOT(j))/dY(i)
+    
+    <jacobian>(3)
+
+  end subroutine actual_jac
+
+end module actual_rhs_module

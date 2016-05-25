@@ -54,6 +54,15 @@ class Nucleus(object):
         self.Z = i.number
         self.N = self.A - self.Z
 
+        # short name
+        self.short_spec_name = name
+            
+        # long name
+        if self.A == 1:
+            self.spec_name = i.name
+        else:
+            self.spec_name = '{}-{}'.format(i.name, self.A)
+
         # latex formatted style
         self.pretty = r"{{}}^{{{}}}\mathrm{{{}}}".format(self.A, self.el)
 
@@ -470,7 +479,8 @@ class RateCollection(object):
     def make_network(self, outfile):
         typenet_avail = {
             'python'   : Network_py,
-            'sundials' : Network_sundials
+            'sundials' : Network_sundials,
+            'boxlib'   : Network_boxlib
         }
         base, ext = os.path.splitext(outfile)
         if ext == '.py' or outfile == 'python':
@@ -479,15 +489,14 @@ class RateCollection(object):
             net = typenet_avail['python'](self)
             net.write_network(outfile)
         else:
-#            try:
-            net = typenet_avail[outfile](self)
-            net.write_network()
-            # except KeyError:
-            #     print('Network type {} not available. Available networks are:'.format(outfile))
-            #     for k in typenet_avail.keys():
-            #         print(k)
-            #     exit()
-
+            if outfile in typenet_avail:
+                net = typenet_avail[outfile](self)
+                net.write_network()
+            else:
+                print('Network type {} not available. Available networks are:'.format(outfile))
+                for k in typenet_avail.keys():
+                    print(k)
+                exit()
                 
     def plot(self):
         G = nx.DiGraph()
@@ -747,15 +756,22 @@ class Network_py(RateCollection):
 class Network_f90(RateCollection):
     def __init__(self):
         self.ftags = {}
-        self.ftags['<nreact>'] = self.nreact
+        self.ftags['<nrates>'] = self.nrates
+        self.ftags['<nrat_reaclib>'] = self.nrat_reaclib
+        self.ftags['<nrat_tabular>'] = self.nrat_tabular
         self.ftags['<nspec>'] = self.nspec
+        self.ftags['<nspec_evolve>'] = self.nspec_evolve
         self.ftags['<net_ynuc>'] = self.ynuc
         self.ftags['<nrxn>'] = self.nrxn
         self.ftags['<jion>'] = self.jion
+        self.ftags['<spec_names>'] = self.spec_names
+        self.ftags['<short_spec_names>'] = self.short_spec_names
         self.ftags['<ebind>'] = self.ebind
         self.ftags['<aion>'] = self.aion
         self.ftags['<zion>'] = self.zion
         self.ftags['<ctemp_declare>'] = self.ctemp_declare
+        self.ftags['<rate_start_idx>'] = self.rate_start_idx
+        self.ftags['<rate_extra_mult>'] = self.rate_extra_mult
         self.ftags['<rmul>'] = self.rmul
         self.ftags['<screen_logical>'] = self.screen_logical
         self.ftags['<screen_add>'] = self.screen_add
@@ -781,6 +797,8 @@ class Network_f90(RateCollection):
         self.ftags['<net_ymass_init>'] = self.net_ymass_init
         self.indent = '  '
 
+        self.float_explicit_num_digits = 17
+        
         self.ydot_cse_scratch = None
         self.ydot_cse_result  = None
         self.jac_cse_scratch  = None
@@ -851,14 +869,14 @@ class Network_f90(RateCollection):
             exit()
         elif c_reac == 0 and c_prod == 0:
             # The rate doesn't contribute to the ydot for this y_i
-            ydot_sym = sympy.sympify(0)
+            ydot_sym = float(sympy.sympify(0.0))
         elif c_reac > 0:
             # y_i appears as a reactant
             ydot_sym = -c_reac * srate
         elif c_prod > 0:
             # y_i appears as a product
             ydot_sym = +c_prod * srate
-        return ydot_sym
+        return ydot_sym.evalf(n=self.float_explicit_num_digits)
     
     def specific_rate_symbol(self, rate):
         """
@@ -873,7 +891,7 @@ class Network_f90(RateCollection):
         for n, r in enumerate(list_unique(rate.reactants)):
             c = rate.reactants.count(r)
             sym_final = self.name_y + '(j{})'.format(r)
-            sym_temp  = self.name_y + '__j{}__'.format(r)
+            sym_temp  = 'Y__j{}__'.format(r)
             self.symbol_ludict[sym_temp] = sym_final
             Y_sym = Y_sym * sympy.symbols(sym_temp)**c
 
@@ -885,13 +903,13 @@ class Network_f90(RateCollection):
 
         # screening
         sym_final = self.name_rate_data + '(i_scor, k_{})'.format(rate.fname)
-        sym_temp  = self.name_rate_data + '__i_scor__k_{}__'.format(rate.fname)
+        sym_temp  = 'NRD__i_scor__k_{}__'.format(rate.fname)
         self.symbol_ludict[sym_temp] = sym_final
         screen_sym = sympy.symbols(sym_temp)
         
         # rate
         sym_final = self.name_rate_data + '(i_rate, k_{})'.format(rate.fname)
-        sym_temp  = self.name_rate_data + '__i_rate__k_{}__'.format(rate.fname)
+        sym_temp  = 'NRD__i_rate__k_{}__'.format(rate.fname)
         self.symbol_ludict[sym_temp] = sym_final
         rate_sym = sympy.symbols(sym_temp)
 
@@ -906,6 +924,8 @@ class Network_f90(RateCollection):
         for k in self.symbol_ludict.keys():
             v = self.symbol_ludict[k]
             s = s.replace(k,v)
+        if s == '0':
+            s = '0.0d0'
         return s
     
     def jacobian_string(self, rate, ydot_j, y_i):
@@ -976,9 +996,9 @@ class Network_f90(RateCollection):
         ydot_j and y_i are objects of the class 'Nucleus'
         """
         ydot_sym = self.ydot_term_symbol(rate, ydot_j)
-        deriv_sym = sympy.symbols('{}__j{}__'.format(self.name_y, y_i))
+        deriv_sym = sympy.symbols('Y__j{}__'.format(y_i))
         jac_sym = sympy.diff(ydot_sym, deriv_sym)
-        return jac_sym
+        return jac_sym.evalf(n=self.float_explicit_num_digits)
     
     def io_open(self, infile, outfile):
         try: of = open(outfile, "w")
@@ -1024,13 +1044,31 @@ class Network_f90(RateCollection):
                     of.write(l)    
             self.io_close(ifile, of)
 
-    def nreact(self, n_indent, of):
-        of.write('{}integer, parameter :: nreact = {}\n'.format(
+    def nrates(self, n_indent, of):
+        of.write('{}integer, parameter :: nrates = {}\n'.format(
             self.indent*n_indent,
             len(self.rates)))
 
+    def nrat_reaclib(self, n_indent, of):
+        # Writes the number of Reaclib rates
+        of.write('{}integer, parameter :: nrat_reaclib = {}\n'.format(
+            self.indent*n_indent,
+            len(self.reaclib_rates)))
+
+    def nrat_tabular(self, n_indent, of):
+        # Writes the number of tabular rates
+        of.write('{}integer, parameter :: nrat_tabular = {}\n'.format(
+            self.indent*n_indent,
+            len(self.tabular_rates)))
+        
     def nspec(self, n_indent, of):
         of.write('{}integer, parameter :: nspec = {}\n'.format(
+            self.indent*n_indent,
+            len(self.unique_nuclei)))
+
+    def nspec_evolve(self, n_indent, of):
+        # Evolve all the nuclei at the moment
+        of.write('{}integer, parameter :: nspec_evolve = {}\n'.format(
             self.indent*n_indent,
             len(self.unique_nuclei)))
         
@@ -1049,6 +1087,16 @@ class Network_f90(RateCollection):
             self.indent*n_indent,
             len(self.unique_nuclei)+1))
 
+    def spec_names(self, n_indent, of):
+        for i,nuc in enumerate(self.unique_nuclei):
+            of.write('{}spec_names(j{})   = "{}"\n'.format(
+                self.indent*n_indent, nuc, nuc.spec_name))
+
+    def short_spec_names(self, n_indent, of):
+        for i,nuc in enumerate(self.unique_nuclei):
+            of.write('{}short_spec_names(j{})   = "{}"\n'.format(
+                self.indent*n_indent, nuc, nuc.short_spec_name))
+            
     def nrxn(self, n_indent, of):
         for i,r in enumerate(self.rates):
             of.write('{}integer, parameter :: k_{}   = {}\n'.format(
@@ -1078,6 +1126,27 @@ class Network_f90(RateCollection):
         for n in self.reaclib_rates:
             of.write('{}double precision, target, dimension(:,:), allocatable :: ctemp_rate_{}\n'.format(self.indent*n_indent, n+1))
 
+    def rate_start_idx(self, n_indent, of):
+        j = 1
+        for i, r in enumerate(self.rates):
+            if i in self.reaclib_rates:
+                of.write('{}{}'.format(self.indent*n_indent,j))
+                j = j + len(r.sets)
+                if i==len(self.reaclib_rates)-1:
+                    of.write(' /)\n')
+                else:
+                    of.write(', &\n')
+
+    def rate_extra_mult(self, n_indent, of):
+        for i, r in enumerate(self.rates):
+            if i in self.reaclib_rates:
+                j = len(r.sets)-1
+                of.write('{}{}'.format(self.indent*n_indent,j))
+                if i==len(self.reaclib_rates)-1:
+                    of.write(' /)\n')
+                else:
+                    of.write(', &\n')
+                
     def rmul(self, n_indent, of):
         for i,r in enumerate(self.rates):
             if i in self.reaclib_rates:
@@ -1098,14 +1167,15 @@ class Network_f90(RateCollection):
 
     def screen_logical(self, n_indent, of):
         for i, r in enumerate(self.rates):
-            if r.ion_screen:
-                of.write('{}{}'.format(self.indent*n_indent, '.true.'))
-            else:
-                of.write('{}{}'.format(self.indent*n_indent, '.false.'))
-            if i==len(self.rates)-1:
-                of.write(' /)\n')
-            else:
-                of.write(', &\n')
+            if i in self.reaclib_rates:
+                if r.ion_screen:
+                    of.write('{}{}'.format(self.indent*n_indent, '.true.'))
+                else:
+                    of.write('{}{}'.format(self.indent*n_indent, '.false.'))
+                if i==len(self.reaclib_rates)-1:
+                    of.write(' /)\n')
+                else:
+                    of.write(', &\n')
 
     def screen_add(self, n_indent, of):
         for i, r in enumerate(self.rates):
@@ -1121,17 +1191,25 @@ class Network_f90(RateCollection):
         of.write('{}type(ctemp_ptr), dimension({}) :: ctemp_point\n'.format(
             self.indent*n_indent,
             len(self.reaclib_rates)))
-                
+
     def ctemp_allocate(self, n_indent, of):
+        nreaclib = len(self.reaclib_rates)
+        nreaclib_sets = 0
         for nr in self.reaclib_rates:
             r = self.rates[nr]
-            of.write('{}allocate( ctemp_rate_{}(7, rate_mult({})) )\n'.format(
-                self.indent*n_indent, nr+1, nr+1))
-            of.write('{}ctemp_point({})%p => ctemp_rate_{}\n'.format(self.indent*n_indent, nr+1, nr+1))
+            nreaclib_sets = nreaclib_sets + len(r.sets)
+            
+        of.write('{}allocate( ctemp_rate(7, {}) )\n'.format(
+            self.indent*n_indent, nreaclib_sets))
+
+        jset = 0
+        for nr in self.reaclib_rates:
+            r = self.rates[nr]
             of.write('{}! {}\n'.format(self.indent*n_indent, r.fname))
             for ns,s in enumerate(r.sets):
-                of.write('{}ctemp_rate_{}(:, {}) = (/  &\n'.format(
-                    self.indent*n_indent, nr+1, ns+1))
+                jset = jset + 1
+                of.write('{}ctemp_rate(:, {}) = (/  &\n'.format(
+                    self.indent*n_indent, jset))
                 for na,an in enumerate(s.a):
                     of.write('{}{}'.format(self.indent*n_indent*2,
                                            self.fmt_to_dp_f90(an)))
@@ -1140,9 +1218,29 @@ class Network_f90(RateCollection):
                     else:
                         of.write(', &\n')
                 of.write('\n')
-        if len(self.tabular_rates) > 0:
-            of.write('{}call init_table_meta()\n'.format(self.indent*n_indent))
         of.write('\n')
+        
+    # def ctemp_allocate(self, n_indent, of):
+    #     for nr in self.reaclib_rates:
+    #         r = self.rates[nr]
+    #         of.write('{}allocate( ctemp_rate_{}(7, rate_mult({})) )\n'.format(
+    #             self.indent*n_indent, nr+1, nr+1))
+    #         of.write('{}ctemp_point({})%p => ctemp_rate_{}\n'.format(self.indent*n_indent, nr+1, nr+1))
+    #         of.write('{}! {}\n'.format(self.indent*n_indent, r.fname))
+    #         for ns,s in enumerate(r.sets):
+    #             of.write('{}ctemp_rate_{}(:, {}) = (/  &\n'.format(
+    #                 self.indent*n_indent, nr+1, ns+1))
+    #             for na,an in enumerate(s.a):
+    #                 of.write('{}{}'.format(self.indent*n_indent*2,
+    #                                        self.fmt_to_dp_f90(an)))
+    #                 if na==len(s.a)-1:
+    #                     of.write(' /)\n')
+    #                 else:
+    #                     of.write(', &\n')
+    #             of.write('\n')
+    #     if len(self.tabular_rates) > 0:
+    #         of.write('{}call init_table_meta()\n'.format(self.indent*n_indent))
+    #     of.write('\n')
 
     def ctemp_deallocate(self, n_indent, of):
         for nr in self.reaclib_rates:
@@ -1181,9 +1279,9 @@ class Network_f90(RateCollection):
     def table_init_meta(self, n_indent, of):
         for n,irate in enumerate(self.tabular_rates):
             r = self.rates[irate]
-            of.write('{}table_meta({})%rate_table_file = \'{}\'\n'.format(
+            of.write('{}table_read_meta({})%rate_table_file = \'{}\'\n'.format(
                 self.indent*n_indent, r.table_index_name, r.table_file))
-            of.write('{}table_meta({})%num_header = {}\n'.format(
+            of.write('{}table_read_meta({})%num_header = {}\n'.format(
                 self.indent*n_indent, r.table_index_name, r.table_header_lines))
             of.write('{}table_meta({})%num_rhoy = {}\n'.format(
                 self.indent*n_indent, r.table_index_name, r.table_rhoy_lines))
@@ -1197,7 +1295,7 @@ class Network_f90(RateCollection):
         # now make the CSE RHS
         ydot = []
         for n in self.unique_nuclei:
-            ydot_sym = sympy.sympify(0)
+            ydot_sym = float(sympy.sympify(0.0))
             for r in self.nuclei_consumed[n]:
                 ydot_sym = ydot_sym + self.ydot_term_symbol(r, n)
             for r in self.nuclei_produced[n]:
@@ -1206,8 +1304,15 @@ class Network_f90(RateCollection):
 
         scratch_sym = sympy.utilities.numbered_symbols('scratch_')
         scratch, result = sympy.cse(ydot, symbols=scratch_sym, order='none')
-        self.ydot_cse_scratch = scratch
-        self.ydot_cse_result  = result
+
+        result_out = []
+        for r in result:
+            result_out.append(r.evalf(n=self.float_explicit_num_digits))
+        scratch_out = []
+        for s in scratch:
+            scratch_out.append([s[0], s[1].evalf(n=self.float_explicit_num_digits)])
+        self.ydot_cse_scratch = scratch_out
+        self.ydot_cse_result  = result_out
 
     def ydot_declare_scratch(self, n_indent, of):
         # Declare scratch variables
@@ -1262,7 +1367,7 @@ class Network_f90(RateCollection):
         jac_sym = []
         for nj in self.unique_nuclei:
             for ni in self.unique_nuclei:
-                rsym = sympy.sympify(0)
+                rsym = float(sympy.sympify(0.0))
                 for r in self.nuclei_consumed[nj]:
                     rsym = rsym + self.jacobian_term_symbol(r, nj, ni)
                 for r in self.nuclei_produced[nj]:
@@ -1271,8 +1376,15 @@ class Network_f90(RateCollection):
 
         scratch_sym = sympy.utilities.numbered_symbols('scratch_')
         scratch, result = sympy.cse(jac_sym, symbols=scratch_sym, order='none')
-        self.jac_cse_scratch = scratch
-        self.jac_cse_result  = result
+
+        result_out = []
+        for r in result:
+            result_out.append(r.evalf(n=self.float_explicit_num_digits))
+        scratch_out = []
+        for s in scratch:
+            scratch_out.append([s[0], s[1].evalf(n=self.float_explicit_num_digits)])
+        self.jac_cse_scratch = scratch_out
+        self.jac_cse_result  = result_out
 
     def jacobian_declare_scratch(self, n_indent, of):
         # Declare scratch variables
@@ -1375,19 +1487,17 @@ class Network_boxlib(Network_f90):
         # Set up some directories
         self.boxlib_dir = os.path.join(self.pyreaclib_dir,
                                        'templates',
-                                       'boxlib')
+                                       'boxlib-microphysics')
         self.template_file_select = os.path.join(self.boxlib_dir,
                                                  '*.template')
         self.template_files = glob.glob(self.template_file_select)
 
         # Initialize values specific to this network
-        self.name_rate_data = 'reactvec'
+        self.name_rate_data = 'state%rates'
         self.name_y         = 'Y'
-        self.name_ydot      = 'YDOT'
-        self.name_jacobian  = 'DJAC'
+        self.name_ydot      = 'state%ydot'
+        self.name_jacobian  = 'state%jac'
 
-
-        
 if __name__ == "__main__":
     r = Rate("examples/CNO/c13-pg-n14-nacr")
     print(r.rate_string(indent=3))

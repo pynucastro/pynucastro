@@ -26,17 +26,22 @@ module table_rates
      double precision, dimension(:,:,:), allocatable :: rate_table
      double precision, dimension(:), allocatable :: rhoy_table
      double precision, dimension(:), allocatable :: temp_table
-     character(len=50) :: rate_table_file
-     integer :: num_header 
      integer :: num_rhoy
      integer :: num_temp
      integer :: num_vars
   end type table_info
 
-  type(table_info), target, dimension(num_tables) :: table_meta
+  type :: table_read_info
+     character(len=50) :: rate_table_file
+     integer :: num_header 
+  end type table_read_info
 
-  !$acc declare create(table_meta)
+  type(table_info), dimension(num_tables) :: table_meta
+  type(table_read_info), dimension(num_tables) :: table_read_meta
 
+  ! Create the device pointers for this array of derived type.
+  !$acc declare create(table_meta)    
+  
 contains
 
   subroutine init_tabular()
@@ -45,8 +50,20 @@ contains
     <table_init_meta>(2)
     
     do n = 1, num_tables
-       call init_tab_info(table_meta(n))
-       !$acc update device(table_meta(n))
+       call init_tab_info(table_meta(n), table_read_meta(n))
+       ! For scalars or arrays with size known at compile-time, do update device
+       ! to move them to the device and point the derived type pointers at them.
+       !$acc update device(table_meta(n)%num_rhoy)
+       !$acc update device(table_meta(n)%num_temp)
+       !$acc update device(table_meta(n)%num_vars)
+
+       ! For dynamic arrays, do enter data copyin to move their data to the device
+       ! and then point the derived type pointers to these arrays on the device.
+       ! If you do update device instead, the device gets the host memory addresses
+       ! for these dynamic arrays instead of device memory addresses.
+       !$acc enter data copyin(table_meta(n)%rate_table)
+       !$acc enter data copyin(table_meta(n)%rhoy_table)
+       !$acc enter data copyin(table_meta(n)%temp_table)
     end do
   end subroutine init_tabular
 
@@ -56,9 +73,10 @@ contains
        call term_tab_info(table_meta(n))
     end do
   end subroutine term_table_meta
-  
-  subroutine init_tab_info(self)
+
+  subroutine init_tab_info(self, self_read)
     type(table_info) :: self
+    type(table_read_info) :: self_read
     double precision, target, dimension(:,:,:), allocatable :: rate_table_scratch
     integer :: i, j, k
 
@@ -67,8 +85,8 @@ contains
     allocate( self%temp_table( self%num_temp ) )
     allocate( rate_table_scratch( self%num_temp, self%num_rhoy, self%num_vars+2 ) )
 
-    open(unit=11, file=self%rate_table_file)
-    do i = 1, self%num_header
+    open(unit=11, file=self_read%rate_table_file)
+    do i = 1, self_read%num_header
        read(11,*)
     end do
     do j = 1, self%num_rhoy
@@ -273,11 +291,12 @@ contains
   subroutine tabular_evaluate(self, rhoy, temp, reactvec)
     !$acc routine seq
     
+    use burn_type_module, only: num_rate_groups
     implicit none
     
     type(table_info) :: self
     double precision, intent(in) :: rhoy, temp
-    double precision, dimension(6), intent(inout) :: reactvec
+    double precision, dimension(num_rate_groups+2), intent(inout) :: reactvec
     double precision, dimension(self%num_vars+add_vars) :: entries
     
     ! Get the table entries at this rhoy, temp

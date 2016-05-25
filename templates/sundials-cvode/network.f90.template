@@ -4,7 +4,11 @@ module network
   implicit none
 
   ! Number of nuclear species in the network
-<nspec>(1)
+  <nspec>(1)
+
+  <nrat_tabular>(1)
+
+  <nrat_reaclib>(1)
 
   ! Number of entries in reactvec returned by rate_evaluate
   integer, parameter :: nreactvec = 6

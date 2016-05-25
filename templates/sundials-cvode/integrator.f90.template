@@ -2,6 +2,7 @@ program integrator
   use cvode_parameters, only: cv_data, cv_pars, net_initial_abundances
   use network
   use net_rates, only: init_reaclib, net_screening_init
+  use table_rates, only: init_tabular
   use data_wrangler, only: store_solution, write_solution
   use parameters, only: init_parameters
 
@@ -16,6 +17,7 @@ program integrator
   call init_parameters()
   call init_network()
   call init_reaclib()
+  call init_tabular()
   call net_screening_init()
 
   ! Allocate data storage
