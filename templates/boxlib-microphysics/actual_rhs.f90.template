@@ -3,12 +3,13 @@ module actual_rhs_module
   use bl_types
   use bl_constants_module
   use physical_constants, only: N_AVO
-  use actual_burner_data, only: c_light
+  use actual_burner_data, only: ener_gener_rate
   use network
   use actual_network_data, only: nrat_reaclib, nrat_tabular
   use net_rates, only: screen_reaclib, reaclib_evaluate
   use table_rates
   use screening_module, only: plasma_state, fill_plasma_state
+  use temperature_integration_module, only: temperature_rhs, temperature_jac
   use burn_type_module
 
   implicit none
@@ -26,27 +27,18 @@ contains
 
     type(burn_t) :: state
     type(plasma_state) :: pstate
-    double precision, dimension(nspec) :: Y
+    double precision :: Y(nspec)
+    double precision :: ydot_nuc(nspec)
     double precision :: reactvec(num_rate_groups+2)
+    double precision :: screened_rates(nrates)
     double precision :: dqweak(nrat_tabular)
     double precision :: epart(nrat_tabular)
     integer :: i, j
-    double precision :: dens, temp, rhoy, ye
+    double precision :: dens, temp, rhoy, ye, enuc
+    double precision :: sneut
 
-    <ydot_declare_scratch>(2)
-    
-    ! ! Notify
-    ! write(*,*) '(Executing subroutine actual_rhs)'
-
-    ! ! Print out the composition
-    ! do i = 1, nspec
-    !    write(*,*) 'state%xn(', i, '): ', state%xn(i)
-    ! end do
-
-    ! Set molar abundances and enforce them to be positive
-    do i = 1, nspec
-       Y(i) = max(0.0d0, state%xn(i)/aion(i))
-    end do
+    ! Set molar abundances
+    Y(:) = state%xn(:)/aion(:)
 
     dens = state%rho
     temp = state%T
@@ -70,15 +62,13 @@ contains
        epart(i)  = reactvec(6)
     end do
 
-    <ydot_scratch>(2)
-
-    <ydot>(2)
+    screened_rates = state%rates(i_rate, :) * state%rates(i_scor, :)
     
-    state%ydot(net_ienuc) = 0.0d0
+    call rhs_nuc(ydot_nuc, Y, screened_rates, dens)
+    state%ydot(1:nspec) = ydot_nuc
+
     ! ion binding energy contributions
-    do i = 1, nspec
-       state%ydot(net_ienuc) = state%ydot(net_ienuc) - N_AVO * mion(i) * c_light * c_light * state%ydot(i)
-    end do
+    call ener_gener_rate(ydot_nuc, enuc)
     
     ! weak Q-value modification dqweak (density and temperature dependent)
     <enuc_dqweak>(2)
@@ -87,8 +77,16 @@ contains
     ! (does not include plasma neutrino losses)
     <enuc_epart>(2)
 
-    ! Let temperature be a constant
-    state%ydot(net_itemp) = 0.0d0
+
+    ! Get the neutrino losses
+    !call sneut5(temp, rho, abar, zbar, sneut, dsneutdt, dsneutdd, snuda, snudz)
+    sneut = 0.0d0
+
+    ! Append the energy equation (this is erg/g/s)
+    state%ydot(net_ienuc) = enuc - sneut
+
+    ! Append the temperature equation
+    call temperature_rhs(state)
     
     ! write(*,*) '______________________________'
     ! do i = 1, nspec+2
@@ -96,10 +94,33 @@ contains
     ! end do
   end subroutine actual_rhs
 
+  subroutine rhs_nuc(ydot_nuc, Y, screened_rates, dens)
+
+    !$acc routine seq
+
+    use actual_burner_data, only: nrates
+    use actual_network_data, only: nspec
+    
+    double precision, intent(out) :: ydot_nuc(nspec)
+    double precision, intent(in)  :: Y(nspec)
+    double precision, intent(in)  :: screened_rates(nrates)
+    double precision, intent(in)  :: dens
+
+    <ydot_declare_scratch>(2)
+
+    <ydot_scratch>(2)
+
+    <ydot>(2)
+
+  end subroutine rhs_nuc
+
+  
   subroutine actual_jac(state)
 
     !$acc routine seq
 
+    use actual_burner_data, only: nrates
+    use actual_network_data, only: nspec
     use burn_type_module, only: num_rate_groups, net_itemp, net_ienuc
     
     implicit none
@@ -107,31 +128,21 @@ contains
     type(burn_t) :: state
     type(plasma_state) :: pstate
     double precision :: reactvec(num_rate_groups+2)
+    double precision :: screened_rates(nrates)
+    double precision :: screened_rates_dt(nrates)
+    double precision :: dfdy_nuc(nspec, nspec)
     double precision :: Y(nspec)
     double precision :: dens, temp, ye, rhoy
+    double precision :: dsneutdt
     integer :: i, j
 
-    <jacobian_declare_scratch>(2)
-
-    ! ! Notify
-    ! write(*,*) '(Executing subroutine actual_jac)'
-
-    ! ! Print out the composition
-    ! do i = 1, nspec
-    !    write(*,*) 'state%xn(', i, '): ', state%xn(i)
-    ! end do
-    
     dens = state%rho
     temp = state%T
     ye   = state%y_e
     rhoy = dens*ye
 
-    ! Set molar abundances and enforce them to be positive
-    do i = 1, nspec
-       Y(i) = max(0.0d0, state%xn(i)/aion(i))
-    end do
-
-    state%jac(:,:) = ZERO
+    ! Set molar abundances
+    Y(:) = state%xn(:)/aion(:)
     
     if (.not. state%have_rates) then
        ! Calculate Reaclib rates
@@ -149,12 +160,66 @@ contains
        end do
     end if
 
-    <jacobian_scratch>(2)
+    screened_rates = state%rates(i_rate, :) * state%rates(i_scor, :)
     
-    ! state%jac(j, i) = d(YDOT(j))/dY(i)
+    ! Species Jacobian elements with respect to other species
+    call jac_nuc(dfdy_nuc, Y, screened_rates, dens)
+    state%jac(1:nspec, 1:nspec) = dfdy_nuc
+
+    ! Species Jacobian elements with respect to energy generation rate
+    state%jac(1:nspec, net_ienuc) = 0.0d0
+
+    ! Evaluate the species Jacobian elements with respect to temperature by
+    ! calling the RHS using the temperature derivative of the screened rate
+    screened_rates_dt = state%rates(i_rate, :) * state%rates(i_dscor_dt, :) + &
+         state%rates(i_drate_dt, :) * state%rates(i_scor, :)
+    call rhs_nuc(state%jac(1:nspec, net_itemp), Y, screened_rates_dt, dens)
     
-    <jacobian>(3)
+    ! Energy generation rate Jacobian elements with respect to species
+    do j = 1, nspec
+       call ener_gener_rate(state % jac(1:nspec,j), state % jac(net_ienuc,j))
+    enddo
+
+    ! Account for the thermal neutrino losses
+    ! call sneut5(temp, rho, abar, zbar, sneut, dsneutdt, dsneutdd, snuda, snudz)
+    ! do j = 1, nspec
+    !    b1 = ((aion(j) - abar) * abar * snuda + (zion(j) - zbar) * abar * snudz)
+    !    state % jac(net_ienuc,j) = state % jac(net_ienuc,j) - b1
+    ! enddo
+    dsneutdt = 0.0d0
+
+    ! Energy generation rate Jacobian element with respect to energy generation rate
+    state%jac(net_ienuc, net_ienuc) = 0.0d0
+
+    ! Energy generation rate Jacobian element with respect to temperature
+    call ener_gener_rate(state%jac(1:nspec, net_itemp), state%jac(net_ienuc, net_itemp))
+    state%jac(net_ienuc, net_itemp) = state%jac(net_ienuc, net_itemp) - dsneutdt
+
+    ! Add dqweak and epart contributions!!!
+
+    ! Temperature Jacobian elements
+    call temperature_jac(state)
 
   end subroutine actual_jac
+
+  subroutine jac_nuc(dfdy_nuc, Y, screened_rates, dens)
+
+    !$acc routine seq
+    
+    use actual_burner_data, only: nrates
+    use actual_network_data, only: nspec
+
+    double precision, intent(out) :: dfdy_nuc(nspec, nspec)
+    double precision, intent(in)  :: Y(nspec)
+    double precision, intent(in)  :: screened_rates(nrates)
+    double precision, intent(in)  :: dens
+
+    <jacnuc_declare_scratch>(2)
+
+    <jacnuc_scratch>(2)
+
+    <jacnuc>(2)
+    
+  end subroutine jac_nuc
 
 end module actual_rhs_module

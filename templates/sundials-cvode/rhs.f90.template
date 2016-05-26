@@ -19,6 +19,7 @@ contains
     integer, intent(out) :: IER
     double precision :: rvec(6)
     double precision, dimension(nreactvec, nrat_reaclib+nrat_tabular) :: reactvec
+    double precision :: screened_rates(nrat_reaclib+nrat_tabular)
     integer :: i, j
     double precision :: dens, temp, ye, rhoy
 
@@ -53,6 +54,8 @@ contains
        j = i + nrat_reaclib
        reactvec(:,j) = rvec
     end do
+
+    screened_rates(:) = reactvec(i_rate,:) * reactvec(i_scor,:)
     
     write(*,*) "RHS Time: ", T
     <ydot_scratch>(2)
@@ -94,10 +97,11 @@ contains
     
     double precision :: rvec(6)
     double precision, dimension(nreactvec, nrat_reaclib+nrat_tabular) :: reactvec
+    double precision :: screened_rates(nrat_reaclib+nrat_tabular)
     double precision :: dens, temp, ye, rhoy
     integer :: i, j
 
-    <jacobian_declare_scratch>(2)
+    <jacnuc_declare_scratch>(2)
     
     IER = -1
 
@@ -138,12 +142,14 @@ contains
           j = i + nrat_reaclib
           reactvec(:,j) = rvec
        end do
+       
+       screened_rates(:) = reactvec(i_rate,:) * reactvec(i_scor,:)
 
-       <jacobian_scratch>(3)
+       <jacnuc_scratch>(3)
        
        ! DJAC(j, i) = d(YDOT(j))/dY(i)
 
-       <jacobian>(3)
+       <jacnuc>(3)
 
     end if
 

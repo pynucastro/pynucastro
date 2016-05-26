@@ -791,9 +791,9 @@ class Network_f90(RateCollection):
         self.ftags['<ydot>'] = self.ydot
         self.ftags['<enuc_dqweak>'] = self.enuc_dqweak
         self.ftags['<enuc_epart>'] = self.enuc_epart
-        self.ftags['<jacobian_declare_scratch>'] = self.jacobian_declare_scratch
-        self.ftags['<jacobian_scratch>'] = self.jacobian_scratch
-        self.ftags['<jacobian>'] = self.jacobian
+        self.ftags['<jacnuc_declare_scratch>'] = self.jacnuc_declare_scratch
+        self.ftags['<jacnuc_scratch>'] = self.jacnuc_scratch
+        self.ftags['<jacnuc>'] = self.jacnuc
         self.ftags['<yinit_nuc>'] = self.yinit_nuc
         self.ftags['<final_net_print>'] = self.final_net_print
         self.ftags['<headerline>'] = self.headerline
@@ -905,19 +905,13 @@ class Network_f90(RateCollection):
         # prefactor
         prefactor_sym = sympy.sympify(1)/sympy.sympify(rate.inv_prefactor)
 
-        # screening
-        sym_final = self.name_rate_data + '(i_scor, k_{})'.format(rate.fname)
-        sym_temp  = 'NRD__i_scor__k_{}__'.format(rate.fname)
+        # screened rate
+        sym_final = self.name_rate_data + '(k_{})'.format(rate.fname)
+        sym_temp  = 'NRD__k_{}__'.format(rate.fname)
         self.symbol_ludict[sym_temp] = sym_final
-        screen_sym = sympy.symbols(sym_temp)
+        screened_rate_sym = sympy.symbols(sym_temp)
         
-        # rate
-        sym_final = self.name_rate_data + '(i_rate, k_{})'.format(rate.fname)
-        sym_temp  = 'NRD__i_rate__k_{}__'.format(rate.fname)
-        self.symbol_ludict[sym_temp] = sym_final
-        rate_sym = sympy.symbols(sym_temp)
-
-        srate_sym = prefactor_sym * dens_sym * Y_sym * screen_sym * rate_sym
+        srate_sym = prefactor_sym * dens_sym * Y_sym * screened_rate_sym
         return srate_sym
 
     def fortranify(self, s):
@@ -1398,13 +1392,13 @@ class Network_f90(RateCollection):
         self.jac_cse_scratch = scratch_out
         self.jac_cse_result  = result_out
 
-    def jacobian_declare_scratch(self, n_indent, of):
+    def jacnuc_declare_scratch(self, n_indent, of):
         # Declare scratch variables
         for si in self.jac_cse_scratch:
             siname = si[0]
             of.write('{}double precision :: {}\n'.format(self.indent*n_indent, siname))
 
-    def jacobian_scratch(self, n_indent, of):
+    def jacnuc_scratch(self, n_indent, of):
         # Assign scratch variables
         for si in self.jac_cse_scratch:
             siname = si[0]
@@ -1413,7 +1407,7 @@ class Network_f90(RateCollection):
                                                   standard = 95))
             of.write('{}{} = {}\n'.format(self.indent*n_indent, siname, sivalue))
 
-    def jacobian(self, n_indent, of):
+    def jacnuc(self, n_indent, of):
         # now make the JACOBIAN
         n_unique_nuclei = len(self.unique_nuclei)
         for jnj, nj in enumerate(self.unique_nuclei):
@@ -1478,7 +1472,7 @@ class Network_sundials(Network_f90):
         self.template_files = glob.glob(self.template_file_select)
 
         # Initialize values specific to this network
-        self.name_rate_data = 'reactvec'
+        self.name_rate_data = 'screened_rates'
         self.name_y         = 'Y'
         self.name_ydot      = 'YDOT'
         self.name_jacobian  = 'DJAC'
@@ -1529,10 +1523,10 @@ class Network_boxlib(Network_f90):
         self.template_files = glob.glob(self.template_file_select)
 
         # Initialize values specific to this network
-        self.name_rate_data = 'state%rates'
+        self.name_rate_data = 'screened_rates'
         self.name_y         = 'Y'
-        self.name_ydot      = 'state%ydot'
-        self.name_jacobian  = 'state%jac'
+        self.name_ydot      = 'ydot_nuc'
+        self.name_jacobian  = 'dfdy_nuc'
 
     def enuc_dqweak(self, n_indent, of):
         # Add tabular dQ corrections to the energy generation rate
