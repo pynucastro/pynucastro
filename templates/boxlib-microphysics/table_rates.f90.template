@@ -4,7 +4,12 @@ module table_rates
   
   implicit none
 
-  public table_meta
+  public table_meta, tabular_evaluate
+  <public_table_indices>(1)
+
+  private num_tables, jtab_mu, jtab_dq, jtab_vs, jtab_rate, jtab_nuloss, jtab_gamma
+  private k_drate_dt, add_vars
+  private table_read_meta
   
   <table_num>(1)
   integer, parameter :: jtab_mu      = 1

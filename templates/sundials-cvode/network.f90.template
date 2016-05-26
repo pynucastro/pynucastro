@@ -34,7 +34,7 @@ module network
   ! Nuclides
 <jion>(1)
 
-  integer :: jenuc = nspec + 1
+  integer :: net_ienuc = nspec + 1
 
   ! Reactions
 <nrxn>(1)

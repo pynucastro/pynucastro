@@ -59,10 +59,10 @@ contains
     
     <ydot>(2)
 
-    YDOT(jenuc) = 0.0d0
+    YDOT(net_ienuc) = 0.0d0
     ! ion binding energy contributions
     do i = 1, nspec
-       YDOT(jenuc) = YDOT(jenuc) - N_AVO * mion(i) * YDOT(i)
+       YDOT(net_ienuc) = YDOT(net_ienuc) - N_AVO * mion(i) * YDOT(i)
     end do
     
     ! weak Q-value modification dqweak (density and temperature dependent)

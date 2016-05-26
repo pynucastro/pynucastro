@@ -7,8 +7,7 @@ module actual_rhs_module
   use network
   use actual_network_data, only: nrat_reaclib, nrat_tabular
   use net_rates, only: screen_reaclib, reaclib_evaluate
-  use table_rates, only: table_meta, tabular_evaluate, &
-      		         <table_rates_indices>(5)
+  use table_rates
   use screening_module, only: plasma_state, fill_plasma_state
   use burn_type_module
 

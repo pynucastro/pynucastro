@@ -33,7 +33,7 @@ program integrator
 
   ! Initialize the Integration
   <yinit_nuc>(1)
-  cv_data%Y0(jenuc)   = net_initial_abundances%yenuc
+  cv_data%Y0(net_ienuc)   = net_initial_abundances%yenuc
   
   write(*,*) 'Initialization at time 0: '
   do jk = 1, cv_data%NEQ
@@ -137,8 +137,8 @@ program integrator
 
   ! Print output to console
   write(*,'(A,ES25.14)') 'Integrated to time: ', cv_data%T
-  write(*,'(A,ES25.14)') 'Final enuc: ', cv_data%Y(jenuc)
-  write(*,'(A,ES25.14)') 'Average enuc_dot: ', cv_data%Y(jenuc)/cv_data%T
+  write(*,'(A,ES25.14)') 'Final enuc: ', cv_data%Y(net_ienuc)
+  write(*,'(A,ES25.14)') 'Average enuc_dot: ', cv_data%Y(net_ienuc)/cv_data%T
 
   <final_net_print>(1)
 

@@ -782,6 +782,7 @@ class Network_f90(RateCollection):
         self.ftags['<ctemp_deallocate>'] = self.ctemp_deallocate
         self.ftags['<ctemp_switch>'] = self.ctemp_switch
         self.ftags['<table_num>'] = self.table_num
+        self.ftags['<public_table_indices>'] = self.public_table_indices
         self.ftags['<table_indices>'] = self.table_indices
         self.ftags['<table_init_meta>'] = self.table_init_meta
         self.ftags['<table_rates_indices>'] = self.table_rates_indices
@@ -1279,6 +1280,11 @@ class Network_f90(RateCollection):
         of.write('{}integer, parameter :: num_tables   = {}\n'.format(
             self.indent*n_indent, len(self.tabular_rates)))
 
+    def public_table_indices(self, n_indent, of):
+        for n,irate in enumerate(self.tabular_rates):
+            r = self.rates[irate]
+            of.write('{}public {}\n'.format(self.indent*n_indent, r.table_index_name))
+        
     def table_indices(self, n_indent, of):
         for n,irate in enumerate(self.tabular_rates):
             r = self.rates[irate]
@@ -1358,27 +1364,16 @@ class Network_f90(RateCollection):
             of.write("{}   )\n\n".format(self.indent*n_indent))
             
     def enuc_dqweak(self, n_indent, of):
-        # Add tabular dQ corrections to the energy generation rate
-        for nr, r in enumerate(self.rates):
-            if nr in self.tabular_rates:
-                if len(r.reactants) != 1:
-                    print('ERROR: Unknown tabular dQ corrections for a reaction where the number of reactants is not 1.')
-                    exit()
-                else:
-                    reactant = r.reactants[0]
-                    of.write('{}{}(net_ienuc) = {}(net_ienuc) + N_AVO * {}(j{}) * dqweak(j_{})\n'.format(self.indent*n_indent, self.name_ydot, self.name_ydot, self.name_ydot, reactant, r.fname))
-        
+        """
+        STUB
+        """
+        return
+    
     def enuc_epart(self, n_indent, of):
-        # Add particle energy generation rates (gamma heating and neutrino loss from decays)
-        # to the energy generation rate (doesn't include plasma neutrino losses)
-        for nr, r in enumerate(self.rates):
-            if nr in self.tabular_rates:
-                if len(r.reactants) != 1:
-                    print('ERROR: Unknown particle energy corrections for a reaction where the number of reactants is not 1.')
-                    exit()
-                else:
-                    reactant = r.reactants[0]
-                    of.write('{}{}(net_ienuc) = {}(net_ienuc) + N_AVO * {}(j{}) * epart(j_{})\n'.format(self.indent*n_indent, self.name_ydot, self.name_ydot, self.name_y, reactant, r.fname))
+        """
+        STUB
+        """
+        return
         
     def jacobian_cse(self):
         jac_sym = []
@@ -1488,6 +1483,29 @@ class Network_sundials(Network_f90):
         self.name_ydot      = 'YDOT'
         self.name_jacobian  = 'DJAC'
 
+    def enuc_dqweak(self, n_indent, of):
+        # Add tabular dQ corrections to the energy generation rate
+        for nr, r in enumerate(self.rates):
+            if nr in self.tabular_rates:
+                if len(r.reactants) != 1:
+                    print('ERROR: Unknown tabular dQ corrections for a reaction where the number of reactants is not 1.')
+                    exit()
+                else:
+                    reactant = r.reactants[0]
+                    of.write('{}{}(net_ienuc) = {}(net_ienuc) + N_AVO * {}(j{}) * {}(i_dqweak, k_{})\n'.format(self.indent*n_indent, self.name_ydot, self.name_ydot, self.name_ydot, reactant, self.name_rate_data, r.fname))
+        
+    def enuc_epart(self, n_indent, of):
+        # Add particle energy generation rates (gamma heating and neutrino loss from decays)
+        # to the energy generation rate (doesn't include plasma neutrino losses)
+        for nr, r in enumerate(self.rates):
+            if nr in self.tabular_rates:
+                if len(r.reactants) != 1:
+                    print('ERROR: Unknown particle energy corrections for a reaction where the number of reactants is not 1.')
+                    exit()
+                else:
+                    reactant = r.reactants[0]
+                    of.write('{}{}(net_ienuc) = {}(net_ienuc) + N_AVO * {}(j{}) * {}(i_epart, k_{})\n'.format(self.indent*n_indent, self.name_ydot, self.name_ydot, self.name_y, reactant, self.name_rate_data, r.fname))
+
     
 class Network_boxlib(Network_f90):
     def __init__(self, parent_instance_object=None):
@@ -1515,6 +1533,30 @@ class Network_boxlib(Network_f90):
         self.name_y         = 'Y'
         self.name_ydot      = 'state%ydot'
         self.name_jacobian  = 'state%jac'
+
+    def enuc_dqweak(self, n_indent, of):
+        # Add tabular dQ corrections to the energy generation rate
+        for nr, r in enumerate(self.rates):
+            if nr in self.tabular_rates:
+                if len(r.reactants) != 1:
+                    print('ERROR: Unknown tabular dQ corrections for a reaction where the number of reactants is not 1.')
+                    exit()
+                else:
+                    reactant = r.reactants[0]
+                    of.write('{}{}(net_ienuc) = {}(net_ienuc) + N_AVO * {}(j{}) * dqweak(j_{})\n'.format(self.indent*n_indent, self.name_ydot, self.name_ydot, self.name_ydot, reactant, r.fname))
+        
+    def enuc_epart(self, n_indent, of):
+        # Add particle energy generation rates (gamma heating and neutrino loss from decays)
+        # to the energy generation rate (doesn't include plasma neutrino losses)
+        for nr, r in enumerate(self.rates):
+            if nr in self.tabular_rates:
+                if len(r.reactants) != 1:
+                    print('ERROR: Unknown particle energy corrections for a reaction where the number of reactants is not 1.')
+                    exit()
+                else:
+                    reactant = r.reactants[0]
+                    of.write('{}{}(net_ienuc) = {}(net_ienuc) + N_AVO * {}(j{}) * epart(j_{})\n'.format(self.indent*n_indent, self.name_ydot, self.name_ydot, self.name_y, reactant, r.fname))
+
 
 if __name__ == "__main__":
     r = Rate("examples/CNO/c13-pg-n14-nacr")
