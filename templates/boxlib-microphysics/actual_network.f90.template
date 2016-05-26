@@ -33,22 +33,22 @@ contains
     <aion>(2)
 
     <zion>(2)
-    
+
+    <nion>(2)
+
     do i = 1, nspec
        bion(i) = ebind_per_nucleon(i) * aion(i) * ERG_PER_MeV
     end do
 
-    ! Set the number of neutrons
-    nion(:) = aion(:) - zion(:)
-
     ! Set the mass
-    mion(:) = nion(:) * mn + zion(:) * (mp + me) - bion(:) * mev2gr
+    mion(:) = nion(:) * mn + zion(:) * (mp + me) &
+         - bion(:)/(c_light**2)
 
     ! Molar mass
     wion(:) = avo * mion(:)
 
     ! Common approximation
-    wion(:) = aion(:)
+    !wion(:) = aion(:)
 
     !$acc update device(aion, zion, bion, nion, mion, wion)
   end subroutine actual_network_init

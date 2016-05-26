@@ -26,16 +26,18 @@ module table_rates
      double precision, dimension(:,:,:), allocatable :: rate_table
      double precision, dimension(:), allocatable :: rhoy_table
      double precision, dimension(:), allocatable :: temp_table
-     character(len=50) :: rate_table_file
-     integer :: num_header 
      integer :: num_rhoy
      integer :: num_temp
      integer :: num_vars
   end type table_info
 
-  type(table_info), target, dimension(num_tables) :: table_meta
+  type :: table_read_info
+     character(len=50) :: rate_table_file
+     integer :: num_header 
+  end type table_read_info
 
-  !$acc declare create(table_meta)
+  type(table_info), dimension(num_tables) :: table_meta
+  type(table_read_info), dimension(num_tables) :: table_read_meta
 
 contains
 
@@ -45,8 +47,7 @@ contains
     <table_init_meta>(2)
     
     do n = 1, num_tables
-       call init_tab_info(table_meta(n))
-       !$acc update device(table_meta(n))
+       call init_tab_info(table_meta(n), table_read_meta(n))
     end do
   end subroutine init_tabular
 
@@ -56,9 +57,10 @@ contains
        call term_tab_info(table_meta(n))
     end do
   end subroutine term_table_meta
-  
-  subroutine init_tab_info(self)
+
+  subroutine init_tab_info(self, self_read)
     type(table_info) :: self
+    type(table_read_info) :: self_read
     double precision, target, dimension(:,:,:), allocatable :: rate_table_scratch
     integer :: i, j, k
 
@@ -67,8 +69,8 @@ contains
     allocate( self%temp_table( self%num_temp ) )
     allocate( rate_table_scratch( self%num_temp, self%num_rhoy, self%num_vars+2 ) )
 
-    open(unit=11, file=self%rate_table_file)
-    do i = 1, self%num_header
+    open(unit=11, file=self_read%rate_table_file)
+    do i = 1, self_read%num_header
        read(11,*)
     end do
     do j = 1, self%num_rhoy
@@ -90,7 +92,7 @@ contains
     end do
     deallocate( rate_table_scratch )
   end subroutine init_tab_info
-
+  
   subroutine term_tab_info(self)
     type(table_info) :: self
 
@@ -100,7 +102,6 @@ contains
   end subroutine term_tab_info
 
   subroutine vector_index_lu(vector, fvar, index)
-    !$acc routine seq
 
     ! Returns the greatest index of vector for which vector(index) < fvar.
     ! Return 1 if fvar < vector(1)
@@ -135,7 +136,6 @@ contains
   end subroutine vector_index_lu
 
   subroutine bl_clamp(xlo, xhi, flo, fhi, x, f)
-    !$acc routine seq
     
     ! Perform bilinear interpolation within the interval [xlo, xhi]
     ! where the function values at the endpoints are defined by:
@@ -156,7 +156,6 @@ contains
   end subroutine bl_clamp
 
   subroutine bl_extrap(xlo, xhi, flo, fhi, x, f)
-    !$acc routine seq
     
     ! Perform bilinear interpolation within the interval [xlo, xhi]
     ! where the function values at the endpoints are defined by:
@@ -170,7 +169,6 @@ contains
   end subroutine bl_extrap
   
   subroutine get_entries(self, rhoy, temp, entries)
-    !$acc routine seq
     
     type(table_info) :: self
     double precision, intent(in) :: rhoy, temp
@@ -271,7 +269,6 @@ contains
   end subroutine get_entries
 
   subroutine tabular_evaluate(self, rhoy, temp, reactvec)
-    !$acc routine seq
     
     implicit none
     

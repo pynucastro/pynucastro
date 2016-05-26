@@ -23,22 +23,7 @@ must be in your PYTHONPATH):
 $ python cno.py
 ```
 
-2) Edit network.f90 and fill in the binding energies (MeV) in the
-init_net_info subroutine:
-
-```
-    ebind_per_nucleon(jp) = 0.0d0
-    ebind_per_nucleon(jhe4) = 7.073915d0
-    ebind_per_nucleon(jc12) = 7.680144d0
-    ebind_per_nucleon(jc13) = 7.469849d0
-    ebind_per_nucleon(jn13) = 7.238863d0
-    ebind_per_nucleon(jn14) = 7.475614d0
-    ebind_per_nucleon(jn15) = 7.699460d0
-    ebind_per_nucleon(jo14) = 7.052301d0
-    ebind_per_nucleon(jo15) = 7.46369d0
-```
-
-3) Edit rhs.f90 and revise the stopping root solver condition in
+2) Edit rhs.f90 and revise the stopping root solver condition in
 subroutine FCVROOTFN if desired. For example, to stop when H is
 depleted, use the following:
 
@@ -46,7 +31,7 @@ depleted, use the following:
     G(1) = Y(jp)
 ```
 
-4) Add your SUNDIALS, LAPACK, and BLAS libraries to ../GMake.common, eg.
+3) Add your SUNDIALS, LAPACK, and BLAS libraries to ../GMake.common, eg.
 
 ```
   # SUNDIALS libraries
@@ -62,7 +47,7 @@ depleted, use the following:
   LINKLIBS += -L${BLASDIR} -lblas
 ```
 
-5) Make and run
+4) Make and run
 
 ```
 $ make

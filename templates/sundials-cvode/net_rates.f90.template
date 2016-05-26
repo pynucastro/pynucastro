@@ -20,9 +20,6 @@ module net_rates
   ! Should these reactions be screened?
   logical, dimension(nrat_reaclib) :: do_screening = (/ &
     <screen_logical>(2)
-  
-  !$acc declare create(ctemp_rate)
-  !$acc declare copyin(rate_extra_mult, rate_start_idx, screen_reaclib, do_screening)
 
 contains
 
@@ -30,8 +27,6 @@ contains
 
     <ctemp_allocate>(2)
 
-    !$acc update device(ctemp_rate)
-    
   end subroutine init_reaclib
 
   subroutine term_reaclib()
@@ -47,7 +42,6 @@ contains
   end subroutine net_screening_init
 
   subroutine reaclib_evaluate(pstate, temp, iwhich, reactvec)
-    !$acc routine seq
 
     implicit none
     

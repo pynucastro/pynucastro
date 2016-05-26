@@ -13,6 +13,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from periodictable import elements
+import amemass
 
 def list_unique(inlist):
     outlist = []
@@ -769,6 +770,7 @@ class Network_f90(RateCollection):
         self.ftags['<ebind>'] = self.ebind
         self.ftags['<aion>'] = self.aion
         self.ftags['<zion>'] = self.zion
+        self.ftags['<nion>'] = self.nion
         self.ftags['<ctemp_declare>'] = self.ctemp_declare
         self.ftags['<rate_start_idx>'] = self.rate_start_idx
         self.ftags['<rate_extra_mult>'] = self.rate_extra_mult
@@ -782,6 +784,7 @@ class Network_f90(RateCollection):
         self.ftags['<table_num>'] = self.table_num
         self.ftags['<table_indices>'] = self.table_indices
         self.ftags['<table_init_meta>'] = self.table_init_meta
+        self.ftags['<table_rates_indices>'] = self.table_rates_indices
         self.ftags['<ydot_declare_scratch>'] = self.ydot_declare_scratch
         self.ftags['<ydot_scratch>'] = self.ydot_scratch
         self.ftags['<ydot>'] = self.ydot
@@ -1012,7 +1015,7 @@ class Network_f90(RateCollection):
         outfile.close()
         
     def fmt_to_dp_f90(self, i):
-        return '{:1.6e}'.format(float(i)).replace('e','d')
+        return '{:1.14e}'.format(float(i)).replace('e','d')
 
     def get_indent_amt(self, l, k):
         rem = re.match('\A'+k+'\(([0-9]*)\)\Z',l)
@@ -1081,11 +1084,6 @@ class Network_f90(RateCollection):
         for i,nuc in enumerate(self.unique_nuclei):
             of.write('{}integer, parameter :: j{}   = {}\n'.format(
                 self.indent*n_indent, nuc, i+1))
-        of.write('{}! Energy Generation Rate\n'.format(
-            self.indent*n_indent))
-        of.write('{}integer, parameter :: jenuc   = {}\n'.format(
-            self.indent*n_indent,
-            len(self.unique_nuclei)+1))
 
     def spec_names(self, n_indent, of):
         for i,nuc in enumerate(self.unique_nuclei):
@@ -1103,10 +1101,14 @@ class Network_f90(RateCollection):
                 self.indent*n_indent, r.fname, i+1))
 
     def ebind(self, n_indent, of):
+        massfile = os.path.join(self.pyreaclib_dir,
+                                'nucmass', 'mass.mas12')
+        ame = amemass.AME2012(massfile)
         for nuc in self.unique_nuclei:
-            of.write('{}ebind_per_nucleon(j{})   = 0.0d0\n'.format(
-                self.indent*n_indent,
-                nuc))
+            nucdata = ame.get_nuclide(n=nuc.N, z=nuc.Z)
+            str_nucbind = self.fmt_to_dp_f90(nucdata.nucbind)
+            of.write('{}ebind_per_nucleon(j{})   = {}\n'.format(
+                self.indent*n_indent, nuc, str_nucbind))
 
     def aion(self, n_indent, of):
         for nuc in self.unique_nuclei:
@@ -1121,6 +1123,13 @@ class Network_f90(RateCollection):
                 self.indent*n_indent,
                 nuc,
                 self.fmt_to_dp_f90(nuc.Z)))
+
+    def nion(self, n_indent, of):
+        for nuc in self.unique_nuclei:
+            of.write('{}nion(j{})   = {}\n'.format(
+                self.indent*n_indent,
+                nuc,
+                self.fmt_to_dp_f90(nuc.N)))
             
     def ctemp_declare(self, n_indent, of):
         for n in self.reaclib_rates:
@@ -1291,6 +1300,14 @@ class Network_f90(RateCollection):
                 self.indent*n_indent, r.table_index_name, r.table_num_vars))
             of.write('\n')
 
+    def table_rates_indices(self, n_indent, of):
+        for n,irate in enumerate(self.tabular_rates):
+            r = self.rates[irate]
+            of.write('{}{}'.format(self.indent*n_indent, r.table_index_name))
+            if n != len(self.tabular_rates)-1:
+                of.write(', &')
+            of.write('\n')
+            
     def ydot_cse(self):
         # now make the CSE RHS
         ydot = []
@@ -1349,7 +1366,7 @@ class Network_f90(RateCollection):
                     exit()
                 else:
                     reactant = r.reactants[0]
-                    of.write('{}{}(jenuc) = {}(jenuc) + N_AVO * {}(j{}) * {}(i_dqweak, k_{})\n'.format(self.indent*n_indent, self.name_ydot, self.name_ydot, self.name_ydot, reactant, self.name_rate_data, r.fname))
+                    of.write('{}{}(net_ienuc) = {}(net_ienuc) + N_AVO * {}(j{}) * dqweak(j_{})\n'.format(self.indent*n_indent, self.name_ydot, self.name_ydot, self.name_ydot, reactant, r.fname))
         
     def enuc_epart(self, n_indent, of):
         # Add particle energy generation rates (gamma heating and neutrino loss from decays)
@@ -1361,7 +1378,7 @@ class Network_f90(RateCollection):
                     exit()
                 else:
                     reactant = r.reactants[0]
-                    of.write('{}{}(jenuc) = {}(jenuc) + N_AVO * {}(j{}) * {}(i_epart, k_{})\n'.format(self.indent*n_indent, self.name_ydot, self.name_ydot, self.name_y, reactant, self.name_rate_data, r.fname))
+                    of.write('{}{}(net_ienuc) = {}(net_ienuc) + N_AVO * {}(j{}) * epart(j_{})\n'.format(self.indent*n_indent, self.name_ydot, self.name_ydot, self.name_y, reactant, r.fname))
         
     def jacobian_cse(self):
         jac_sym = []
@@ -1422,9 +1439,10 @@ class Network_f90(RateCollection):
                 self.indent*n_indent, n, n))        
 
     def final_net_print(self, n_indent, of):
+        of.write('{}write(*,*) "MASS FRACTIONS:"\n'.format(self.indent*n_indent))
         for n in self.unique_nuclei:
-            of.write("{}write(*,'(A,ES25.14)') '{}: ', cv_data%Y(j{})\n".format(
-                self.indent*n_indent, n, n))
+            of.write("{}write(*,'(A,ES25.14)') '{}: ', cv_data%Y(j{})*aion(j{})\n".format(
+                self.indent*n_indent, n, n, n))
 
     def headerline(self, n_indent, of):
         of.write('{}write(2, fmt=hfmt) '.format(self.indent*n_indent))

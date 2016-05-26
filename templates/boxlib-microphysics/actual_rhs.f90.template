@@ -3,10 +3,12 @@ module actual_rhs_module
   use bl_types
   use bl_constants_module
   use physical_constants, only: N_AVO
+  use actual_burner_data, only: c_light
   use network
   use actual_network_data, only: nrat_reaclib, nrat_tabular
   use net_rates, only: screen_reaclib, reaclib_evaluate
-  use table_rates, only: table_meta, tabular_evaluate
+  use table_rates, only: table_meta, tabular_evaluate, &
+      		         <table_rates_indices>(5)
   use screening_module, only: plasma_state, fill_plasma_state
   use burn_type_module
 
@@ -65,6 +67,8 @@ contains
        call tabular_evaluate(table_meta(i), rhoy, temp, reactvec)
        j = i + nrat_reaclib
        state%rates(:,j) = reactvec(1:4)
+       dqweak(i) = reactvec(5)
+       epart(i)  = reactvec(6)
     end do
 
     <ydot_scratch>(2)
@@ -74,7 +78,7 @@ contains
     state%ydot(net_ienuc) = 0.0d0
     ! ion binding energy contributions
     do i = 1, nspec
-       state%ydot(net_ienuc) = state%ydot(net_ienuc) + N_AVO * bion(i) * state%ydot(i)
+       state%ydot(net_ienuc) = state%ydot(net_ienuc) - N_AVO * mion(i) * c_light * c_light * state%ydot(i)
     end do
     
     ! weak Q-value modification dqweak (density and temperature dependent)

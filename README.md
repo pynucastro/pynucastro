@@ -47,10 +47,6 @@ This package requires
 
 # TODO
 
-* output Fortran functions as an option
-
-  - integrate OpenACC support
-
 * output Cython code
 
 * return a polynomial fit to a rate in a given interval
