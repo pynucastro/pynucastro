@@ -46,7 +46,6 @@ contains
     ye   = state%y_e
     rhoy = dens*ye
 
-    ! For now this doesn't have dqweak or epart, need to add those
     ! Calculate Reaclib rates
     call fill_plasma_state(pstate, temp, dens, Y)
     do i = 1, nrat_reaclib
@@ -54,14 +53,7 @@ contains
        state%rates(:,i) = reactvec(1:4)
     end do
 
-    ! Include only if there are tabular rates
-    do i = 1, nrat_tabular
-       call tabular_evaluate(table_meta(i), rhoy, temp, reactvec)
-       j = i + nrat_reaclib
-       state%rates(:,j) = reactvec(1:4)
-       dqweak(i) = reactvec(5)
-       epart(i)  = reactvec(6)
-    end do
+    <compute_tabular_rates_rhs>(2)
 
     screened_rates = state%rates(i_rate, :) * state%rates(i_scor, :)
     
@@ -152,12 +144,8 @@ contains
           state%rates(:,i) = reactvec(1:4)
        end do
 
-       ! Include only if there are tabular rates
-       do i = 1, nrat_tabular
-          call tabular_evaluate(table_meta(i), rhoy, temp, reactvec)
-          j = i + nrat_reaclib
-          state%rates(:,j) = reactvec(1:4)
-       end do
+       <compute_tabular_rates_jac>(3)
+       
     end if
 
     screened_rates = state%rates(i_rate, :) * state%rates(i_scor, :)

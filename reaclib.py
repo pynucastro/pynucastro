@@ -786,6 +786,8 @@ class Network_f90(RateCollection):
         self.ftags['<table_indices>'] = self.table_indices
         self.ftags['<table_init_meta>'] = self.table_init_meta
         self.ftags['<table_rates_indices>'] = self.table_rates_indices
+        self.ftags['<compute_tabular_rates_rhs>'] = self.compute_tabular_rates_rhs
+        self.ftags['<compute_tabular_rates_jac>'] = self.compute_tabular_rates_jac
         self.ftags['<ydot_declare_scratch>'] = self.ydot_declare_scratch
         self.ftags['<ydot_scratch>'] = self.ydot_scratch
         self.ftags['<ydot>'] = self.ydot
@@ -1333,6 +1335,16 @@ class Network_f90(RateCollection):
         self.ydot_cse_scratch = scratch_out
         self.ydot_cse_result  = result_out
 
+    def compute_tabular_rates_rhs(self, n_indent, of):
+        """
+        STUB
+        """
+
+    def compute_tabular_rates_jac(self, n_indent, of):
+        """
+        STUB
+        """
+        
     def ydot_declare_scratch(self, n_indent, of):
         # Declare scratch variables
         for si in self.ydot_cse_scratch:
@@ -1534,6 +1546,26 @@ class Network_boxlib(Network_f90):
         self.name_ydot_nuc  = 'ydot_nuc'
         self.name_jacobian  = 'state%jac'
         self.name_jacobian_nuc  = 'dfdy_nuc'
+
+    def compute_tabular_rates_rhs(self, n_indent, of):
+        if len(self.tabular_rates) > 0:
+            of.write('{}! Included only if there are tabular rates\n'.format(self.indent*n_indent))
+            of.write('{}do i = 1, nrat_tabular\n'.format(self.indent*n_indent))
+            of.write('{}call tabular_evaluate(table_meta(i), rhoy, temp, reactvec)\n'.format(self.indent*(n_indent+1)))
+            of.write('{}j = i + nrat_reaclib\n'.format(self.indent*(n_indent+1)))
+            of.write('{}state%rates(:,j) = reactvec(1:4)\n'.format(self.indent*(n_indent+1)))
+            of.write('{}dqweak(i) = reactvec(5)\n'.format(self.indent*(n_indent+1)))
+            of.write('{}epart(i)  = reactvec(6)\n'.format(self.indent*(n_indent+1)))
+            of.write('{}end do\n'.format(self.indent*n_indent))
+
+    def compute_tabular_rates_jac(self, n_indent, of):
+        if len(self.tabular_rates) > 0:
+            of.write('{}! Included only if there are tabular rates\n'.format(self.indent*n_indent))
+            of.write('{}do i = 1, nrat_tabular\n'.format(self.indent*n_indent))
+            of.write('{}call tabular_evaluate(table_meta(i), rhoy, temp, reactvec)\n'.format(self.indent*(n_indent+1)))
+            of.write('{}j = i + nrat_reaclib\n'.format(self.indent*(n_indent+1)))
+            of.write('{}state%rates(:,j) = reactvec(1:4)\n'.format(self.indent*(n_indent+1)))
+            of.write('{}end do\n'.format(self.indent*n_indent))
 
     def enuc_dqweak(self, n_indent, of):
         # Add tabular dQ corrections to the energy generation rate
