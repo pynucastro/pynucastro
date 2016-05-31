@@ -9,6 +9,7 @@ module actual_rhs_module
   use net_rates, only: screen_reaclib, reaclib_evaluate
   use table_rates
   use screening_module, only: plasma_state, fill_plasma_state
+  use sneut_module, only: sneut5
   use temperature_integration_module, only: temperature_rhs, temperature_jac
   use burn_type_module
 
@@ -35,7 +36,7 @@ contains
     double precision :: epart(nrat_tabular)
     integer :: i, j
     double precision :: dens, temp, rhoy, ye, enuc
-    double precision :: sneut
+    double precision :: sneut, dsneutdt, dsneutdd, snuda, snudz
 
     ! Set molar abundances
     Y(:) = state%xn(:)/aion(:)
@@ -47,7 +48,7 @@ contains
 
     ! For now this doesn't have dqweak or epart, need to add those
     ! Calculate Reaclib rates
-    call fill_plasma_state(pstate, temp, dens, Y(1:nspec))
+    call fill_plasma_state(pstate, temp, dens, Y)
     do i = 1, nrat_reaclib
        call reaclib_evaluate(pstate, temp, i, reactvec)
        state%rates(:,i) = reactvec(1:4)
@@ -79,8 +80,7 @@ contains
 
 
     ! Get the neutrino losses
-    !call sneut5(temp, rho, abar, zbar, sneut, dsneutdt, dsneutdd, snuda, snudz)
-    sneut = 0.0d0
+    call sneut5(temp, dens, state%abar, state%zbar, sneut, dsneutdt, dsneutdd, snuda, snudz)
 
     ! Append the energy equation (this is erg/g/s)
     state%ydot(net_ienuc) = enuc - sneut
@@ -132,8 +132,8 @@ contains
     double precision :: screened_rates_dt(nrates)
     double precision :: dfdy_nuc(nspec, nspec)
     double precision :: Y(nspec)
-    double precision :: dens, temp, ye, rhoy
-    double precision :: dsneutdt
+    double precision :: dens, temp, ye, rhoy, b1
+    double precision :: sneut, dsneutdt, dsneutdd, snuda, snudz
     integer :: i, j
 
     dens = state%rho
@@ -181,12 +181,11 @@ contains
     enddo
 
     ! Account for the thermal neutrino losses
-    ! call sneut5(temp, rho, abar, zbar, sneut, dsneutdt, dsneutdd, snuda, snudz)
-    ! do j = 1, nspec
-    !    b1 = ((aion(j) - abar) * abar * snuda + (zion(j) - zbar) * abar * snudz)
-    !    state % jac(net_ienuc,j) = state % jac(net_ienuc,j) - b1
-    ! enddo
-    dsneutdt = 0.0d0
+    call sneut5(temp, dens, state%abar, state%zbar, sneut, dsneutdt, dsneutdd, snuda, snudz)
+    do j = 1, nspec
+       b1 = ((aion(j) - state%abar) * state%abar * snuda + (zion(j) - state%zbar) * state%abar * snudz)
+       state % jac(net_ienuc,j) = state % jac(net_ienuc,j) - b1
+    enddo
 
     ! Energy generation rate Jacobian element with respect to energy generation rate
     state%jac(net_ienuc, net_ienuc) = 0.0d0

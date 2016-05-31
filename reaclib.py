@@ -813,7 +813,9 @@ class Network_f90(RateCollection):
         self.name_rate_data = None
         self.name_y         = None
         self.name_ydot      = None
+        self.name_ydot_nuc      = None
         self.name_jacobian  = None
+        self.name_jacobian_nuc  = None
 
     def ydot_string(self, rate):
         """
@@ -1353,7 +1355,7 @@ class Network_f90(RateCollection):
                                                     source_format = 'free',
                                                     standard = 95))
             of.write('{}{}(j{}) = ( &\n'.format(self.indent*n_indent,
-                                                self.name_ydot, n, sol_value))
+                                                self.name_ydot_nuc, n, sol_value))
             of.write("{}{} &\n".format(self.indent*(n_indent+1), sol_value))
             of.write("{}   )\n\n".format(self.indent*n_indent))
             
@@ -1418,7 +1420,7 @@ class Network_f90(RateCollection):
                                                      source_format = 'free',
                                                      standard = 95))
                 of.write("{}{}(j{},j{}) = ( &\n".format(self.indent*n_indent,
-                                                        self.name_jacobian, nj, ni))
+                                                        self.name_jacobian_nuc, nj, ni))
                 of.write("{}{} &\n".format(self.indent*(n_indent+1), jvalue))
                 of.write("{}   )\n\n".format(self.indent*n_indent))
 
@@ -1473,9 +1475,12 @@ class Network_sundials(Network_f90):
 
         # Initialize values specific to this network
         self.name_rate_data = 'screened_rates'
+        self.name_reactvec = 'reactvec'
         self.name_y         = 'Y'
         self.name_ydot      = 'YDOT'
+        self.name_ydot_nuc      = 'YDOT'
         self.name_jacobian  = 'DJAC'
+        self.name_jacobian_nuc  = 'DJAC'
 
     def enuc_dqweak(self, n_indent, of):
         # Add tabular dQ corrections to the energy generation rate
@@ -1486,7 +1491,7 @@ class Network_sundials(Network_f90):
                     exit()
                 else:
                     reactant = r.reactants[0]
-                    of.write('{}{}(net_ienuc) = {}(net_ienuc) + N_AVO * {}(j{}) * {}(i_dqweak, k_{})\n'.format(self.indent*n_indent, self.name_ydot, self.name_ydot, self.name_ydot, reactant, self.name_rate_data, r.fname))
+                    of.write('{}{}(net_ienuc) = {}(net_ienuc) + N_AVO * {}(j{}) * {}(i_dqweak, k_{})\n'.format(self.indent*n_indent, self.name_ydot, self.name_ydot, self.name_ydot, reactant, self.name_reactvec, r.fname))
         
     def enuc_epart(self, n_indent, of):
         # Add particle energy generation rates (gamma heating and neutrino loss from decays)
@@ -1498,7 +1503,7 @@ class Network_sundials(Network_f90):
                     exit()
                 else:
                     reactant = r.reactants[0]
-                    of.write('{}{}(net_ienuc) = {}(net_ienuc) + N_AVO * {}(j{}) * {}(i_epart, k_{})\n'.format(self.indent*n_indent, self.name_ydot, self.name_ydot, self.name_y, reactant, self.name_rate_data, r.fname))
+                    of.write('{}{}(net_ienuc) = {}(net_ienuc) + N_AVO * {}(j{}) * {}(i_epart, k_{})\n'.format(self.indent*n_indent, self.name_ydot, self.name_ydot, self.name_y, reactant, self.name_reactvec, r.fname))
 
     
 class Network_boxlib(Network_f90):
@@ -1525,8 +1530,10 @@ class Network_boxlib(Network_f90):
         # Initialize values specific to this network
         self.name_rate_data = 'screened_rates'
         self.name_y         = 'Y'
-        self.name_ydot      = 'ydot_nuc'
-        self.name_jacobian  = 'dfdy_nuc'
+        self.name_ydot      = 'state%ydot'
+        self.name_ydot_nuc  = 'ydot_nuc'
+        self.name_jacobian  = 'state%jac'
+        self.name_jacobian_nuc  = 'dfdy_nuc'
 
     def enuc_dqweak(self, n_indent, of):
         # Add tabular dQ corrections to the energy generation rate
@@ -1537,7 +1544,7 @@ class Network_boxlib(Network_f90):
                     exit()
                 else:
                     reactant = r.reactants[0]
-                    of.write('{}{}(net_ienuc) = {}(net_ienuc) + N_AVO * {}(j{}) * dqweak(j_{})\n'.format(self.indent*n_indent, self.name_ydot, self.name_ydot, self.name_ydot, reactant, r.fname))
+                    of.write('{}enuc = enuc + N_AVO * {}(j{}) * dqweak(j_{})\n'.format(self.indent*n_indent, self.name_ydot, reactant, r.fname))
         
     def enuc_epart(self, n_indent, of):
         # Add particle energy generation rates (gamma heating and neutrino loss from decays)
@@ -1549,7 +1556,7 @@ class Network_boxlib(Network_f90):
                     exit()
                 else:
                     reactant = r.reactants[0]
-                    of.write('{}{}(net_ienuc) = {}(net_ienuc) + N_AVO * {}(j{}) * epart(j_{})\n'.format(self.indent*n_indent, self.name_ydot, self.name_ydot, self.name_y, reactant, r.fname))
+                    of.write('{}enuc = enuc + N_AVO * {}(j{}) * epart(j_{})\n'.format(self.indent*n_indent, self.name_y, reactant, r.fname))
 
 
 if __name__ == "__main__":

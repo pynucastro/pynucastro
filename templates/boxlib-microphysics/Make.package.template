@@ -10,6 +10,7 @@ ifeq ($(USE_REACT),TRUE)
 f90EXE_sources += actual_burner.f90
 f90EXE_sources += actual_burner_data.f90
 f90EXE_sources += actual_rhs.f90
+f90EXE_sources += sneut5.f90
 f90EXE_sources += burn_type.f90
 f90EXE_sources += net_rates.f90
 f90EXE_sources += table_rates.f90
