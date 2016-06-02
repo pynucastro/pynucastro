@@ -1188,6 +1188,8 @@ contains
 
   function ifermi12(f)
 
+    !$acc routine seq
+
     implicit none
 
     ! this routine applies a rational function expansion to get the inverse
@@ -1244,6 +1246,8 @@ contains
 
 
   function zfermim12(x)
+
+    !$acc routine seq
 
     implicit none
 
