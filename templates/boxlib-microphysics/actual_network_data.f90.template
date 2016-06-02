@@ -2,6 +2,8 @@ module actual_network_data
 
   implicit none
 
+  <nrates>(1)
+
   ! Evolution and auxiliary
   <nspec_evolve>(1)
   integer, parameter :: naux  = 0
