@@ -1,4 +1,4 @@
-module net_rates
+module reaclib_rates
   use screening_module, only: screen5, add_screening_factor, screening_init, plasma_state, fill_plasma_state
   use network
 
@@ -139,4 +139,4 @@ contains
 
   end subroutine reaclib_evaluate
   
-end module net_rates
+end module reaclib_rates

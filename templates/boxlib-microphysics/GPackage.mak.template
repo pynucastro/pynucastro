@@ -1,6 +1,6 @@
 f90sources += actual_network.f90
 f90sources += burn_type.f90
-f90sources += net_rates.f90
+f90sources += reaclib_rates.f90
 f90sources += table_rates.f90
 f90sources += physical_constants.f90
 f90sources += terminator.f90

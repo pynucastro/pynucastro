@@ -5,7 +5,7 @@ module terminator_module
 contains
   
   subroutine terminate()
-    use net_rates, only: term_reaclib
+    use reaclib_rates, only: term_reaclib
     use table_rates, only: term_table_meta
 
     implicit none
