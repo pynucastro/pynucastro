@@ -3,9 +3,7 @@ module actual_rhs_module
   use bl_types
   use bl_constants_module
   use physical_constants, only: N_AVO
-  use actual_burner_data, only: ener_gener_rate
   use network
-  use actual_network_data, only: nrat_reaclib, nrat_tabular
   use net_rates, only: screen_reaclib, reaclib_evaluate
   use table_rates
   use screening_module, only: plasma_state, fill_plasma_state
@@ -90,7 +88,6 @@ contains
 
     !$acc routine seq
 
-    use actual_network_data, only: nspec, nrates
     
     double precision, intent(out) :: ydot_nuc(nspec)
     double precision, intent(in)  :: Y(nspec)
@@ -110,7 +107,6 @@ contains
 
     !$acc routine seq
 
-    use actual_network_data, only: nspec, nrates
     use burn_type_module, only: num_rate_groups, net_itemp, net_ienuc
     
     implicit none
@@ -191,7 +187,6 @@ contains
 
     !$acc routine seq
     
-    use actual_network_data, only: nspec, nrates
 
     double precision, intent(out) :: dfdy_nuc(nspec, nspec)
     double precision, intent(in)  :: Y(nspec)
