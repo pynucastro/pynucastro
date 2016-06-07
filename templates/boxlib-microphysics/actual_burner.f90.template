@@ -14,7 +14,6 @@ contains
 
     use integrator_module, only: integrator_init
     use integration_data, only: temp_scale, ener_scale
-    use actual_network, only: actual_network_init
     use net_rates, only: init_reaclib, net_screening_init
     use table_rates, only: init_tabular
 
