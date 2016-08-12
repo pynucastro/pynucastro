@@ -102,6 +102,10 @@ contains
     !$acc update device(aion, zion, bion, nion, mion, wion)
   end subroutine actual_network_init
 
+  subroutine actual_network_finalize()
+    ! STUB FOR MAESTRO
+    return
+  end subroutine actual_network_finalize
   
   subroutine ener_gener_rate(dydt, enuc)
     ! Computes the instantaneous energy generation rate
