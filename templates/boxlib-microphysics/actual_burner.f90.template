@@ -13,17 +13,12 @@ contains
 
     use integrator_module, only: integrator_init
     use integration_data, only: temp_scale, ener_scale
-    use reaclib_rates, only: init_reaclib, net_screening_init
-    use table_rates, only: init_tabular
 
     implicit none
 
     call integrator_init()
     
     call actual_network_init()
-    call init_reaclib()
-    call init_tabular()
-    call net_screening_init()
     
     temp_scale = 1.0d0
     ener_scale = c_light * c_light
