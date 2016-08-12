@@ -68,8 +68,6 @@ module actual_network
 contains
 
   subroutine actual_network_init()
-    use reaclib_rates, only: init_reaclib, net_screening_init
-    use table_rates, only: init_tabular
     
     implicit none
     
@@ -102,20 +100,10 @@ contains
     !wion(:) = aion(:)
 
     !$acc update device(aion, zion, bion, nion, mion, wion)
-
-    call init_reaclib()
-    call init_tabular()
-    call net_screening_init()
   end subroutine actual_network_init
 
   subroutine actual_network_finalize()
-    use reaclib_rates, only: term_reaclib
-    use table_rates, only: term_table_meta
-
-    implicit none
-    
-    call term_reaclib()
-    call term_table_meta()
+    ! STUB FOR MAESTRO
   end subroutine actual_network_finalize
   
   subroutine ener_gener_rate(dydt, enuc)
