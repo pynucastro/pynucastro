@@ -19,7 +19,13 @@ module actual_rhs_module
   
 contains
 
-    subroutine evaluate_rates(state)
+  subroutine update_unevolved_species(state)
+    ! STUB FOR INTEGRATOR
+    type(burn_t)     :: state
+    return
+  end subroutine update_unevolved_species
+
+  subroutine evaluate_rates(state)
     type(burn_t)     :: state
     type(plasma_state) :: pstate
     double precision :: Y(nspec)
