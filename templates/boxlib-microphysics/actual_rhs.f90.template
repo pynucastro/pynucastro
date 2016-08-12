@@ -84,7 +84,7 @@ contains
 
     call evaluate_rates(state)
 
-    screened_rates = state%rates(i_rate, :) * state%rates(i_scor, :)
+    screened_rates = unscreened_rates(i_rate, :) * unscreened_rates(i_scor, :)
     
     call rhs_nuc(ydot_nuc, Y, screened_rates, dens)
     state%ydot(1:nspec) = ydot_nuc
@@ -161,7 +161,7 @@ contains
     
     call evaluate_rates(state)
     
-    screened_rates = state%rates(i_rate, :) * state%rates(i_scor, :)
+    screened_rates = unscreened_rates(i_rate, :) * unscreened_rates(i_scor, :)
     
     ! Species Jacobian elements with respect to other species
     call jac_nuc(dfdy_nuc, Y, screened_rates, dens)
@@ -172,8 +172,8 @@ contains
 
     ! Evaluate the species Jacobian elements with respect to temperature by
     ! calling the RHS using the temperature derivative of the screened rate
-    screened_rates_dt = state%rates(i_rate, :) * state%rates(i_dscor_dt, :) + &
-         state%rates(i_drate_dt, :) * state%rates(i_scor, :)
+    screened_rates_dt = unscreened_rates(i_rate, :) * unscreened_rates(i_dscor_dt, :) + &
+         unscreened_rates(i_drate_dt, :) * unscreened_rates(i_scor, :)
     call rhs_nuc(state%jac(1:nspec, net_itemp), Y, screened_rates_dt, dens)
     
     ! Energy generation rate Jacobian elements with respect to species
