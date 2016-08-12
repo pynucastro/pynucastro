@@ -296,7 +296,7 @@ contains
   subroutine tabular_evaluate(self, rhoy, temp, reactvec)
     !$acc routine seq
     
-    use burn_type_module, only: num_rate_groups
+    use actual_network, only: num_rate_groups
     implicit none
     
     type(table_info) :: self

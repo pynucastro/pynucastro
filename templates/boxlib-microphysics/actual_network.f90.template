@@ -4,6 +4,8 @@ module actual_network
   
   implicit none
 
+  public num_rate_groups
+
   double precision, parameter :: avo = 6.0221417930d23
   double precision, parameter :: c_light = 2.99792458d10
   double precision, parameter :: enuc_conv2 = -avo*c_light*c_light
@@ -17,6 +19,7 @@ module actual_network
   double precision, parameter :: me = 9.1093821545d-28
 
   <nrates>(1)
+  integer, parameter :: num_rate_groups = 4
 
   ! Evolution and auxiliary
   <nspec_evolve>(1)
