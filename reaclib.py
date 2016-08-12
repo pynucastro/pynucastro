@@ -1553,7 +1553,7 @@ class Network_boxlib(Network_f90):
             of.write('{}do i = 1, nrat_tabular\n'.format(self.indent*n_indent))
             of.write('{}call tabular_evaluate(table_meta(i), rhoy, temp, reactvec)\n'.format(self.indent*(n_indent+1)))
             of.write('{}j = i + nrat_reaclib\n'.format(self.indent*(n_indent+1)))
-            of.write('{}state%rates(:,j) = reactvec(1:4)\n'.format(self.indent*(n_indent+1)))
+            of.write('{}unscreened_rates(:,j) = reactvec(1:4)\n'.format(self.indent*(n_indent+1)))
             of.write('{}dqweak(i) = reactvec(5)\n'.format(self.indent*(n_indent+1)))
             of.write('{}epart(i)  = reactvec(6)\n'.format(self.indent*(n_indent+1)))
             of.write('{}end do\n'.format(self.indent*n_indent))
@@ -1564,7 +1564,7 @@ class Network_boxlib(Network_f90):
             of.write('{}do i = 1, nrat_tabular\n'.format(self.indent*n_indent))
             of.write('{}call tabular_evaluate(table_meta(i), rhoy, temp, reactvec)\n'.format(self.indent*(n_indent+1)))
             of.write('{}j = i + nrat_reaclib\n'.format(self.indent*(n_indent+1)))
-            of.write('{}state%rates(:,j) = reactvec(1:4)\n'.format(self.indent*(n_indent+1)))
+            of.write('{}unscreened_rates(:,j) = reactvec(1:4)\n'.format(self.indent*(n_indent+1)))
             of.write('{}end do\n'.format(self.indent*n_indent))
 
     def enuc_dqweak(self, n_indent, of):

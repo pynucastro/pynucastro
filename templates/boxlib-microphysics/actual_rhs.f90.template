@@ -4,7 +4,7 @@ module actual_rhs_module
   use bl_constants_module
   use physical_constants, only: N_AVO
   use network
-  use reaclib_rates, only: screen_reaclib, reaclib_evaluate
+  use reaclib_rates, only: screen_reaclib, reaclib_evaluate, num_rate_groups
   use table_rates
   use screening_module, only: plasma_state, fill_plasma_state
   use sneut_module, only: sneut5
@@ -13,14 +13,43 @@ module actual_rhs_module
 
   implicit none
 
+  double precision :: unscreened_rates(4, nrates)
+  double precision :: dqweak(nrat_tabular)
+  double precision :: epart(nrat_tabular)
+  
 contains
+
+    subroutine evaluate_rates(state)
+    type(burn_t)     :: state
+    type(plasma_state) :: pstate
+    double precision :: Y(nspec)
+    double precision :: raw_rates(4, nrates)
+    double precision :: reactvec(num_rate_groups+2)
+    integer :: i, j
+    double precision :: dens, temp, rhoy
+
+    Y(:) = state%xn(:)/aion(:)
+    dens = state%rho
+    temp = state%T
+    rhoy = dens*state%y_e
+    
+    ! Calculate Reaclib rates
+    call fill_plasma_state(pstate, temp, dens, Y)
+    do i = 1, nrat_reaclib
+       call reaclib_evaluate(pstate, temp, i, reactvec)
+       unscreened_rates(:,i) = reactvec(1:4)
+    end do
+
+    ! Included only if there are tabular rates
+    <compute_tabular_rates_rhs>(2)
+  end subroutine evaluate_rates
 
   subroutine actual_rhs(state)
     
     !$acc routine seq
 
     use extern_probin_module, only: do_constant_volume_burn
-    use burn_type_module, only: num_rate_groups, net_itemp, net_ienuc
+    use burn_type_module, only: net_itemp, net_ienuc
 
     implicit none
 
@@ -41,17 +70,8 @@ contains
 
     dens = state%rho
     temp = state%T
-    ye   = state%y_e
-    rhoy = dens*ye
 
-    ! Calculate Reaclib rates
-    call fill_plasma_state(pstate, temp, dens, Y)
-    do i = 1, nrat_reaclib
-       call reaclib_evaluate(pstate, temp, i, reactvec)
-       state%rates(:,i) = reactvec(1:4)
-    end do
-
-    <compute_tabular_rates_rhs>(2)
+    call evaluate_rates(state)
 
     screened_rates = state%rates(i_rate, :) * state%rates(i_scor, :)
     
@@ -107,7 +127,7 @@ contains
 
     !$acc routine seq
 
-    use burn_type_module, only: num_rate_groups, net_itemp, net_ienuc
+    use burn_type_module, only: net_itemp, net_ienuc
     
     implicit none
     
@@ -124,24 +144,12 @@ contains
 
     dens = state%rho
     temp = state%T
-    ye   = state%y_e
-    rhoy = dens*ye
 
     ! Set molar abundances
     Y(:) = state%xn(:)/aion(:)
     
-    if (.not. state%have_rates) then
-       ! Calculate Reaclib rates
-       call fill_plasma_state(pstate, temp, dens, Y(1:nspec))
-       do i = 1, nrat_reaclib
-          call reaclib_evaluate(pstate, temp, i, reactvec)
-          state%rates(:,i) = reactvec(1:4)
-       end do
-
-       <compute_tabular_rates_jac>(3)
-       
-    end if
-
+    call evaluate_rates(state)
+    
     screened_rates = state%rates(i_rate, :) * state%rates(i_scor, :)
     
     ! Species Jacobian elements with respect to other species

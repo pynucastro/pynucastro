@@ -4,7 +4,10 @@ module reaclib_rates
 
   implicit none
 
+  public num_rate_groups
+
   logical, parameter :: screen_reaclib = .true.
+  integer, parameter :: num_rate_groups = 4
   
   ! Temperature coefficient arrays (numbers correspond to reaction numbers in net_info)
   double precision, allocatable :: ctemp_rate(:,:)
@@ -48,8 +51,6 @@ contains
 
   subroutine reaclib_evaluate(pstate, temp, iwhich, reactvec)
     !$acc routine seq
-
-    use burn_type_module, only: num_rate_groups
 
     implicit none
     
