@@ -121,9 +121,4 @@ contains
 
   end subroutine ener_gener_rate
 
-  
-  subroutine network_finalize()
-    ! stub for Maestro
-  end subroutine network_finalize
-  
 end module actual_network
