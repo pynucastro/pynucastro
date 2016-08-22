@@ -14,9 +14,9 @@ module actual_network
   double precision, parameter :: mev2erg = ev2erg*1.0d6
   double precision, parameter :: mev2gr  = mev2erg/c_light**2
 
-  double precision, parameter :: mn = 1.67492721184d-24
-  double precision, parameter :: mp = 1.67262163783d-24
-  double precision, parameter :: me = 9.1093821545d-28
+  double precision, parameter :: mass_neutron  = 1.67492721184d-24
+  double precision, parameter :: mass_proton   = 1.67262163783d-24
+  double precision, parameter :: mass_electron = 9.10938215450d-28
 
   <nrates>(1)
   integer, parameter :: num_rate_groups = 4
@@ -90,7 +90,7 @@ contains
     end do
 
     ! Set the mass
-    mion(:) = nion(:) * mn + zion(:) * (mp + me) &
+    mion(:) = nion(:) * mass_neutron + zion(:) * (mass_proton + mass_electron) &
          - bion(:)/(c_light**2)
 
     ! Molar mass
