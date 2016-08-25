@@ -59,10 +59,11 @@ class Nucleus(object):
         self.short_spec_name = name
             
         # long name
-        if self.A == 1:
+        if i.name == 'neutron':
             self.spec_name = i.name
         else:
             self.spec_name = '{}-{}'.format(i.name, self.A)
+            
 
         # latex formatted style
         self.pretty = r"{{}}^{{{}}}\mathrm{{{}}}".format(self.A, self.el)
