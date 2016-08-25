@@ -36,34 +36,35 @@ class Nucleus(object):
         if name == "p":
             self.el = "H"
             self.A = 1
+            self.short_spec_name = "h1"
         elif name == "d":
             self.el = "H"
             self.A = 2
+            self.short_spec_name = "h2"
         elif name == "t":
             self.el = "H"
             self.A = 3
+            self.short_spec_name = "h3"
         elif name == "n":
             self.el = "n"
             self.A = 1
+            self.short_spec_name = "n"
         else:
             e = re.match("([a-zA-Z]*)(\d*)", name)
             self.el = e.group(1).title()  # chemical symbol
             self.A = int(e.group(2))
+            self.short_spec_name = name
 
         # atomic number comes from periodtable
         i = elements.isotope("{}-{}".format(self.A, self.el))
         self.Z = i.number
         self.N = self.A - self.Z
 
-        # short name
-        self.short_spec_name = name
-            
         # long name
         if i.name == 'neutron':
             self.spec_name = i.name
         else:
             self.spec_name = '{}-{}'.format(i.name, self.A)
-            
 
         # latex formatted style
         self.pretty = r"{{}}^{{{}}}\mathrm{{{}}}".format(self.A, self.el)
