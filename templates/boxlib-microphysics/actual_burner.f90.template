@@ -26,11 +26,6 @@ contains
     call init_tabular()
     call net_screening_init()
     
-    temp_scale = 1.0d0
-    ener_scale = c_light * c_light
-
-    !$acc update device(temp_scale, ener_scale)
-
   end subroutine actual_burner_init
 
   subroutine actual_burner_finalize
