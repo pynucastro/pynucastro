@@ -70,8 +70,6 @@ contains
     double precision :: ydot_nuc(nspec)
     double precision :: reactvec(num_rate_groups+2)
     double precision :: screened_rates(nrates)
-    double precision :: dqweak(nrat_tabular)
-    double precision :: epart(nrat_tabular)
     integer :: i, j
     double precision :: dens, temp, rhoy, ye, enuc
     double precision :: sneut, dsneutdt, dsneutdd, snuda, snudz
