@@ -12,7 +12,6 @@ contains
   subroutine actual_burner_init()
 
     use integrator_module, only: integrator_init
-    use integration_data, only: temp_scale, ener_scale
     use reaclib_rates, only: init_reaclib, net_screening_init
     use table_rates, only: init_tabular
 
