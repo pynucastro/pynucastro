@@ -1,9 +1,21 @@
 """
 Reads the AME 2012 mass data file and supplies table data.
 """
-
+# Common Imports
 from __future__ import print_function
+
+import glob
+import os
+import sys
+import shutil
+import re
+import sympy
+
+import networkx as nx
 import numpy as np
+import matplotlib.pyplot as plt
+
+from periodictable import elements
 
 def str_head_pop(s,n):
     """
