@@ -1,6 +1,6 @@
 # CNO rate module generator
 
-import reaclib
+import pyreaclib
 
 files = ["c12-pg-n13-ls09",
          "n13--c13-wc12",
@@ -12,9 +12,7 @@ files = ["c12-pg-n13-ls09",
          "o14--n14-wc12"]
 
 
-rc = reaclib.RateCollection(files)
-
-rc.make_network('sundials')
+pyreaclib.make_network(files, 'sundials')
 
 
 
