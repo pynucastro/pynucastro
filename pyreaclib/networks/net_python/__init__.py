@@ -153,19 +153,6 @@ class Network_py(RateCollection):
         else:
             rstring = "{}{}{}*lambda_{}"
         return rstring.format(prefactor_string, dens_string, Y_string, rate.fname)
-
-    def print_network_overview(self, rate):
-        for n in self.unique_nuclei:
-            print(n)
-            print("  consumed by: ")
-            for r in self.nuclei_consumed[n]:
-                print("     {} : {}".format(r.string, self.ydot_string(r)))
-
-            print("  produced by: ")
-            for r in self.nuclei_produced[n]:
-                print("     {} : {}".format(r.string, self.ydot_string(r)))
-
-            print(" ")
     
     def write_network(self, outfile):
         """
@@ -176,7 +163,7 @@ class Network_py(RateCollection):
         except: raise
 
         of.write("import numpy as np\n")
-        of.write("import reaclib\n\n")
+        of.write("from pyreaclib.rates import Tfactors\n\n")
 
         # integer keys
         for i, n in enumerate(self.unique_nuclei):
@@ -198,7 +185,7 @@ class Network_py(RateCollection):
         indent = 4*" "
 
         # get the rates
-        of.write("{}tf = reaclib.Tfactors(T)\n\n".format(indent))
+        of.write("{}tf = Tfactors(T)\n\n".format(indent))
         for r in self.rates:
             of.write("{}lambda_{} = {}(tf)\n".format(indent, r.fname, r.fname))
 
