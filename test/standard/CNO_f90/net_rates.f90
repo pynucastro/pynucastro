@@ -1,378 +1,340 @@
 module net_rates
-  use physical_constants
-  use table_rates
+  use screening_module, only: screen5, add_screening_factor, screening_init, plasma_state, fill_plasma_state
+  use network
 
   implicit none
 
-  integer, parameter :: number_equations = 10
-  integer, parameter :: number_nuclides = 9
-  integer, parameter :: number_reactions = 8
-
+  logical, parameter :: screen_reaclib = .true.
+  
   ! Temperature coefficient arrays (numbers correspond to reaction numbers in net_info)
-  double precision, target, dimension(:,:), allocatable :: ctemp_rate_1
-  double precision, target, dimension(:,:), allocatable :: ctemp_rate_2
-  double precision, target, dimension(:,:), allocatable :: ctemp_rate_3
-  double precision, target, dimension(:,:), allocatable :: ctemp_rate_4
-  double precision, target, dimension(:,:), allocatable :: ctemp_rate_5
-  double precision, target, dimension(:,:), allocatable :: ctemp_rate_6
-  double precision, target, dimension(:,:), allocatable :: ctemp_rate_7
-  double precision, target, dimension(:,:), allocatable :: ctemp_rate_8
+  double precision, allocatable :: ctemp_rate(:,:)
 
-  type :: net_initials_t
-    ! Initial abundances
-    double precision :: yp
-    double precision :: yhe4
-    double precision :: yc12
-    double precision :: yc13
-    double precision :: yn13
-    double precision :: yn14
-    double precision :: yn15
-    double precision :: yo14
-    double precision :: yo15
-    double precision :: yenuc = 0.0d0
-  end type net_initials_t
-
-  type :: reaclib_coefs
-    ! how many rates in this reaction
-    integer :: m
-    ! coefficient array
-    ! ! First Index: Rate coefficients 1..7
-    ! ! Second Index: Reaction index 1..m
-    double precision, dimension(:,:), allocatable :: ctemp
-  end type reaclib_coefs
-
-  type :: net_info
-    integer :: neqs  = number_equations
-    integer :: nnuc  = number_nuclides
-    integer :: nrxn  = number_reactions
-    ! Nuclides
-    integer :: ip   = 1
-    integer :: ihe4   = 2
-    integer :: ic12   = 3
-    integer :: ic13   = 4
-    integer :: in13   = 5
-    integer :: in14   = 6
-    integer :: in15   = 7
-    integer :: io14   = 8
-    integer :: io15   = 9
-    ! Energy Generation Rate
-    integer :: ienuc   = 10
-
-    ! Reactions
-    integer :: k_c12_pg_n13   = 1
-    integer :: k_n13_c13   = 2
-    integer :: k_c13_pg_n14   = 3
-    integer :: k_n14_pg_o15   = 4
-    integer :: k_o15_n15   = 5
-    integer :: k_n15_pa_c12   = 6
-    integer :: k_n13_pg_o14   = 7
-    integer :: k_o14_n14   = 8
-
-    ! Reaction multiplicities (how many rates contribute)
-    ! array indexed by the Reactions indices above
-    integer, dimension(number_reactions) :: rate_mult = (/ &
-    2, &
+  ! Index into ctemp_rate, dimension 2, where each rate's coefficients start  
+  integer, dimension(nrat_reaclib) :: rate_start_idx = (/ &
     1, &
     3, &
     4, &
+    7, &
+    11, &
+    12, &
+    16, &
+    18 /)
+  
+  ! Reaction multiplicities-1 (how many rates contribute - 1)
+  integer, dimension(nrat_reaclib) :: rate_extra_mult = (/ &
     1, &
-    4, &
+    0, &
     2, &
-    1 /)
+    3, &
+    0, &
+    3, &
+    1, &
+    0 /)
 
-    ! Binding Energies Per Nucleon (MeV)
-    double precision, dimension(number_nuclides) :: ebind_per_nucleon
-
-    ! Nucleon number A
-    double precision, dimension(number_nuclides) :: anuc
-
-    ! Binding Energies (ergs)
-    double precision, dimension(number_nuclides) :: ebind
-
-  contains
-    procedure :: initialize => init_net_info
-    procedure :: terminate => term_net_info
-    procedure :: evaluate => rates_eval
-  end type net_info
-
-  type(net_info), target, save :: net_meta
-  type(net_initials_t), save :: net_initial_abundances
+  ! Should these reactions be screened?
+  logical, dimension(nrat_reaclib) :: do_screening = (/ &
+    .true., &
+    .false., &
+    .true., &
+    .true., &
+    .false., &
+    .true., &
+    .true., &
+    .false. /)
 
 contains
 
-  subroutine init_net_pars(pfile_unit)
-    integer, intent(in) :: pfile_unit
+  subroutine init_reaclib()
 
-    namelist /netpars/ net_initial_abundances
-    rewind(unit=pfile_unit)
-    read(unit=pfile_unit, nml=netpars)
-  end subroutine init_net_pars
-
-  subroutine init_net_info(self)
-    class(net_info) :: self
-    type(reaclib_coefs), pointer :: prate
-    integer :: i
-
-    self%ebind_per_nucleon(self%ip)   = 0.0d0
-    self%ebind_per_nucleon(self%ihe4)   = 0.0d0
-    self%ebind_per_nucleon(self%ic12)   = 0.0d0
-    self%ebind_per_nucleon(self%ic13)   = 0.0d0
-    self%ebind_per_nucleon(self%in13)   = 0.0d0
-    self%ebind_per_nucleon(self%in14)   = 0.0d0
-    self%ebind_per_nucleon(self%in15)   = 0.0d0
-    self%ebind_per_nucleon(self%io14)   = 0.0d0
-    self%ebind_per_nucleon(self%io15)   = 0.0d0
-
-    self%anuc(self%ip)   = 1.000000d+00
-    self%anuc(self%ihe4)   = 4.000000d+00
-    self%anuc(self%ic12)   = 1.200000d+01
-    self%anuc(self%ic13)   = 1.300000d+01
-    self%anuc(self%in13)   = 1.300000d+01
-    self%anuc(self%in14)   = 1.400000d+01
-    self%anuc(self%in15)   = 1.500000d+01
-    self%anuc(self%io14)   = 1.400000d+01
-    self%anuc(self%io15)   = 1.500000d+01
-
-    do i = 1, self%nnuc
-      self%ebind(i) = self%ebind_per_nucleon(i) * self%anuc(i) * pc%erg_per_MeV
-    end do
-
-    allocate( ctemp_rate_1(7, self%rate_mult(1)) )
+    allocate( ctemp_rate(7, 18) )
     ! c12_pg_n13
-    ctemp_rate_1(:, 1) = (/  &
-        1.714820d+01, &
-        0.000000d+00, &
-        -1.369200d+01, &
-        -2.308810d-01, &
-        4.443620d+00, &
-        -3.158980d+00, &
-        -6.666670d-01 /)
+    ctemp_rate(:, 1) = (/  &
+        1.71482000000000d+01, &
+        0.00000000000000d+00, &
+        -1.36920000000000d+01, &
+        -2.30881000000000d-01, &
+        4.44362000000000d+00, &
+        -3.15898000000000d+00, &
+        -6.66667000000000d-01 /)
 
-    ctemp_rate_1(:, 2) = (/  &
-        1.754280d+01, &
-        -3.778490d+00, &
-        -5.107350d+00, &
-        -2.241110d+00, &
-        1.488830d-01, &
-        0.000000d+00, &
-        -1.500000d+00 /)
+    ctemp_rate(:, 2) = (/  &
+        1.75428000000000d+01, &
+        -3.77849000000000d+00, &
+        -5.10735000000000d+00, &
+        -2.24111000000000d+00, &
+        1.48883000000000d-01, &
+        0.00000000000000d+00, &
+        -1.50000000000000d+00 /)
 
-    allocate( ctemp_rate_2(7, self%rate_mult(2)) )
     ! n13_c13
-    ctemp_rate_2(:, 1) = (/  &
-        -6.760100d+00, &
-        0.000000d+00, &
-        0.000000d+00, &
-        0.000000d+00, &
-        0.000000d+00, &
-        0.000000d+00, &
-        0.000000d+00 /)
+    ctemp_rate(:, 3) = (/  &
+        -6.76010000000000d+00, &
+        0.00000000000000d+00, &
+        0.00000000000000d+00, &
+        0.00000000000000d+00, &
+        0.00000000000000d+00, &
+        0.00000000000000d+00, &
+        0.00000000000000d+00 /)
 
-    allocate( ctemp_rate_3(7, self%rate_mult(3)) )
     ! c13_pg_n14
-    ctemp_rate_3(:, 1) = (/  &
-        1.851550d+01, &
-        0.000000d+00, &
-        -1.372000d+01, &
-        -4.500180d-01, &
-        3.708230d+00, &
-        -1.705450d+00, &
-        -6.666670d-01 /)
+    ctemp_rate(:, 4) = (/  &
+        1.85155000000000d+01, &
+        0.00000000000000d+00, &
+        -1.37200000000000d+01, &
+        -4.50018000000000d-01, &
+        3.70823000000000d+00, &
+        -1.70545000000000d+00, &
+        -6.66667000000000d-01 /)
 
-    ctemp_rate_3(:, 2) = (/  &
-        1.396370d+01, &
-        -5.781470d+00, &
-        0.000000d+00, &
-        -1.967030d-01, &
-        1.421260d-01, &
-        -2.389120d-02, &
-        -1.500000d+00 /)
+    ctemp_rate(:, 5) = (/  &
+        1.39637000000000d+01, &
+        -5.78147000000000d+00, &
+        0.00000000000000d+00, &
+        -1.96703000000000d-01, &
+        1.42126000000000d-01, &
+        -2.38912000000000d-02, &
+        -1.50000000000000d+00 /)
 
-    ctemp_rate_3(:, 3) = (/  &
-        1.518250d+01, &
-        -1.355430d+01, &
-        0.000000d+00, &
-        0.000000d+00, &
-        0.000000d+00, &
-        0.000000d+00, &
-        -1.500000d+00 /)
+    ctemp_rate(:, 6) = (/  &
+        1.51825000000000d+01, &
+        -1.35543000000000d+01, &
+        0.00000000000000d+00, &
+        0.00000000000000d+00, &
+        0.00000000000000d+00, &
+        0.00000000000000d+00, &
+        -1.50000000000000d+00 /)
 
-    allocate( ctemp_rate_4(7, self%rate_mult(4)) )
     ! n14_pg_o15
-    ctemp_rate_4(:, 1) = (/  &
-        1.701000d+01, &
-        0.000000d+00, &
-        -1.519300d+01, &
-        -1.619540d-01, &
-        -7.521230d+00, &
-        -9.875650d-01, &
-        -6.666670d-01 /)
+    ctemp_rate(:, 7) = (/  &
+        1.70100000000000d+01, &
+        0.00000000000000d+00, &
+        -1.51930000000000d+01, &
+        -1.61954000000000d-01, &
+        -7.52123000000000d+00, &
+        -9.87565000000000d-01, &
+        -6.66667000000000d-01 /)
 
-    ctemp_rate_4(:, 2) = (/  &
-        6.735780d+00, &
-        -4.891000d+00, &
-        0.000000d+00, &
-        0.000000d+00, &
-        0.000000d+00, &
-        0.000000d+00, &
-        6.820000d-02 /)
+    ctemp_rate(:, 8) = (/  &
+        6.73578000000000d+00, &
+        -4.89100000000000d+00, &
+        0.00000000000000d+00, &
+        0.00000000000000d+00, &
+        0.00000000000000d+00, &
+        0.00000000000000d+00, &
+        6.82000000000000d-02 /)
 
-    ctemp_rate_4(:, 3) = (/  &
-        7.654440d+00, &
-        -2.998000d+00, &
-        0.000000d+00, &
-        0.000000d+00, &
-        0.000000d+00, &
-        0.000000d+00, &
-        -1.500000d+00 /)
+    ctemp_rate(:, 9) = (/  &
+        7.65444000000000d+00, &
+        -2.99800000000000d+00, &
+        0.00000000000000d+00, &
+        0.00000000000000d+00, &
+        0.00000000000000d+00, &
+        0.00000000000000d+00, &
+        -1.50000000000000d+00 /)
 
-    ctemp_rate_4(:, 4) = (/  &
-        2.011690d+01, &
-        0.000000d+00, &
-        -1.519300d+01, &
-        -4.639750d+00, &
-        9.734580d+00, &
-        -9.550510d+00, &
-        3.333330d-01 /)
+    ctemp_rate(:, 10) = (/  &
+        2.01169000000000d+01, &
+        0.00000000000000d+00, &
+        -1.51930000000000d+01, &
+        -4.63975000000000d+00, &
+        9.73458000000000d+00, &
+        -9.55051000000000d+00, &
+        3.33333000000000d-01 /)
 
-    allocate( ctemp_rate_5(7, self%rate_mult(5)) )
     ! o15_n15
-    ctemp_rate_5(:, 1) = (/  &
-        -5.170530d+00, &
-        0.000000d+00, &
-        0.000000d+00, &
-        0.000000d+00, &
-        0.000000d+00, &
-        0.000000d+00, &
-        0.000000d+00 /)
+    ctemp_rate(:, 11) = (/  &
+        -5.17053000000000d+00, &
+        0.00000000000000d+00, &
+        0.00000000000000d+00, &
+        0.00000000000000d+00, &
+        0.00000000000000d+00, &
+        0.00000000000000d+00, &
+        0.00000000000000d+00 /)
 
-    allocate( ctemp_rate_6(7, self%rate_mult(6)) )
     ! n15_pa_c12
-    ctemp_rate_6(:, 1) = (/  &
-        2.747640d+01, &
-        0.000000d+00, &
-        -1.525300d+01, &
-        1.593180d+00, &
-        2.447900d+00, &
-        -2.197080d+00, &
-        -6.666670d-01 /)
+    ctemp_rate(:, 12) = (/  &
+        2.74764000000000d+01, &
+        0.00000000000000d+00, &
+        -1.52530000000000d+01, &
+        1.59318000000000d+00, &
+        2.44790000000000d+00, &
+        -2.19708000000000d+00, &
+        -6.66667000000000d-01 /)
 
-    ctemp_rate_6(:, 2) = (/  &
-        -6.575220d+00, &
-        -1.163800d+00, &
-        0.000000d+00, &
-        2.271050d+01, &
-        -2.907070d+00, &
-        2.057540d-01, &
-        -1.500000d+00 /)
+    ctemp_rate(:, 13) = (/  &
+        -6.57522000000000d+00, &
+        -1.16380000000000d+00, &
+        0.00000000000000d+00, &
+        2.27105000000000d+01, &
+        -2.90707000000000d+00, &
+        2.05754000000000d-01, &
+        -1.50000000000000d+00 /)
 
-    ctemp_rate_6(:, 3) = (/  &
-        2.089720d+01, &
-        -7.406000d+00, &
-        0.000000d+00, &
-        0.000000d+00, &
-        0.000000d+00, &
-        0.000000d+00, &
-        -1.500000d+00 /)
+    ctemp_rate(:, 14) = (/  &
+        2.08972000000000d+01, &
+        -7.40600000000000d+00, &
+        0.00000000000000d+00, &
+        0.00000000000000d+00, &
+        0.00000000000000d+00, &
+        0.00000000000000d+00, &
+        -1.50000000000000d+00 /)
 
-    ctemp_rate_6(:, 4) = (/  &
-        -4.873470d+00, &
-        -2.021170d+00, &
-        0.000000d+00, &
-        3.084970d+01, &
-        -8.504330d+00, &
-        -1.544260d+00, &
-        -1.500000d+00 /)
+    ctemp_rate(:, 15) = (/  &
+        -4.87347000000000d+00, &
+        -2.02117000000000d+00, &
+        0.00000000000000d+00, &
+        3.08497000000000d+01, &
+        -8.50433000000000d+00, &
+        -1.54426000000000d+00, &
+        -1.50000000000000d+00 /)
 
-    allocate( ctemp_rate_7(7, self%rate_mult(7)) )
     ! n13_pg_o14
-    ctemp_rate_7(:, 1) = (/  &
-        1.813560d+01, &
-        0.000000d+00, &
-        -1.516760d+01, &
-        9.551660d-02, &
-        3.065900d+00, &
-        -5.073390d-01, &
-        -6.666670d-01 /)
+    ctemp_rate(:, 16) = (/  &
+        1.81356000000000d+01, &
+        0.00000000000000d+00, &
+        -1.51676000000000d+01, &
+        9.55166000000000d-02, &
+        3.06590000000000d+00, &
+        -5.07339000000000d-01, &
+        -6.66667000000000d-01 /)
 
-    ctemp_rate_7(:, 2) = (/  &
-        1.099710d+01, &
-        -6.126020d+00, &
-        1.571220d+00, &
-        0.000000d+00, &
-        0.000000d+00, &
-        0.000000d+00, &
-        -1.500000d+00 /)
+    ctemp_rate(:, 17) = (/  &
+        1.09971000000000d+01, &
+        -6.12602000000000d+00, &
+        1.57122000000000d+00, &
+        0.00000000000000d+00, &
+        0.00000000000000d+00, &
+        0.00000000000000d+00, &
+        -1.50000000000000d+00 /)
 
-    allocate( ctemp_rate_8(7, self%rate_mult(8)) )
     ! o14_n14
-    ctemp_rate_8(:, 1) = (/  &
-        -4.623540d+00, &
-        0.000000d+00, &
-        0.000000d+00, &
-        0.000000d+00, &
-        0.000000d+00, &
-        0.000000d+00, &
-        0.000000d+00 /)
+    ctemp_rate(:, 18) = (/  &
+        -4.62354000000000d+00, &
+        0.00000000000000d+00, &
+        0.00000000000000d+00, &
+        0.00000000000000d+00, &
+        0.00000000000000d+00, &
+        0.00000000000000d+00, &
+        0.00000000000000d+00 /)
 
 
 
+  end subroutine init_reaclib
+
+  subroutine term_reaclib()
+    deallocate( ctemp_rate )
+  end subroutine term_reaclib
+
+  subroutine net_screening_init()
+    ! Adds screening factors and calls screening_init
+
+    call add_screening_factor(zion(jp), aion(jp), &
+      zion(jc12), aion(jc12))
+
+    call add_screening_factor(zion(jp), aion(jp), &
+      zion(jc13), aion(jc13))
+
+    call add_screening_factor(zion(jp), aion(jp), &
+      zion(jn14), aion(jn14))
+
+    call add_screening_factor(zion(jp), aion(jp), &
+      zion(jn15), aion(jn15))
+
+    call add_screening_factor(zion(jp), aion(jp), &
+      zion(jn13), aion(jn13))
 
 
-  end subroutine init_net_info
+    call screening_init()    
+  end subroutine net_screening_init
 
-  subroutine term_net_info(self)
-    class(net_info) :: self
-    deallocate( ctemp_rate_1 )
-    deallocate( ctemp_rate_2 )
-    deallocate( ctemp_rate_3 )
-    deallocate( ctemp_rate_4 )
-    deallocate( ctemp_rate_5 )
-    deallocate( ctemp_rate_6 )
-    deallocate( ctemp_rate_7 )
-    deallocate( ctemp_rate_8 )
-  end subroutine term_net_info
+  subroutine reaclib_evaluate(pstate, temp, iwhich, reactvec)
 
-  subroutine rates_eval(self, rhoy, temp, iwhich, rate)
-    class(net_info) :: self
-    double precision, intent(in) :: temp, rhoy
+    implicit none
+    
+    type(plasma_state), intent(in) :: pstate
+    double precision, intent(in) :: temp
     integer, intent(in) :: iwhich
-    double precision, intent(out) :: rate
-    double precision, pointer :: ctemp(:,:)
 
-    double precision :: ri, T9, lnrate
-    integer :: i, j, m
+    double precision, intent(inout) :: reactvec(6)
+    ! reactvec(1) = rate     , the reaction rate
+    ! reactvec(2) = drate_dt , the Temperature derivative of rate
+    ! reactvec(3) = scor     , the screening factor
+    ! reactvec(4) = dscor_dt , the Temperature derivative of scor
+    ! reactvec(5) = dqweak   , the weak reaction dq-value (ergs)
+    !                          (This accounts for modification of the reaction Q
+    !                           due to the local density and temperature of the plasma.
+    !                           For Reaclib rates, this is 0.0d0.)
+    ! reactvec(6) = epart    , the particle energy generation rate (ergs/s)
+    ! NOTE: The particle energy generation rate (returned in ergs/s)
+    !       is the contribution to enuc from non-ion particles associated
+    !       with the reaction.
+    !       For example, this accounts for neutrino energy losses
+    !       in weak reactions and/or gamma heating of the plasma
+    !       from nuclear transitions in daughter nuclei.
+
+    double precision  :: rate, scor ! Rate and Screening Factor
+    double precision  :: drate_dt, dscor_dt ! Temperature derivatives
+    double precision :: dscor_dd
+    double precision :: ri, T9, T9_exp, lnirate, irate, dirate_dt, dlnirate_dt
+    integer :: i, j, m, istart
 
     ri = 0.0d0
     rate = 0.0d0
+    drate_dt = 0.0d0
+    irate = 0.0d0
+    dirate_dt = 0.0d0
     T9 = temp/1.0d9
+    T9_exp = 0.0d0
+    scor = 1.0d0
+    dscor_dt = 0.0d0
+    dscor_dd = 0.0d0
 
-    if (iwhich == 1) then
-      ctemp => ctemp_rate_1
-    else if (iwhich == 2) then
-      ctemp => ctemp_rate_2
-    else if (iwhich == 3) then
-      ctemp => ctemp_rate_3
-    else if (iwhich == 4) then
-      ctemp => ctemp_rate_4
-    else if (iwhich == 5) then
-      ctemp => ctemp_rate_5
-    else if (iwhich == 6) then
-      ctemp => ctemp_rate_6
-    else if (iwhich == 7) then
-      ctemp => ctemp_rate_7
-    else if (iwhich == 8) then
-      ctemp => ctemp_rate_8
+    ! Use reaction multiplicities to tell whether the rate is Reaclib
+    m = rate_extra_mult(iwhich)
+
+    istart = rate_start_idx(iwhich)
+
+    do i = 0, m
+       lnirate = ctemp_rate(1, istart+i) + ctemp_rate(7, istart+i) * LOG(T9)
+       dlnirate_dt = ctemp_rate(7, istart+i)/T9
+       do j = 2, 6
+          T9_exp = (2.0d0*dble(j-1)-5.0d0)/3.0d0 
+          lnirate = lnirate + ctemp_rate(j, istart+i) * T9**T9_exp
+          dlnirate_dt = dlnirate_dt + &
+               T9_exp * ctemp_rate(j, istart+i) * T9**(T9_exp-1.0d0)
+       end do
+       ! If the rate will be in the approx. interval [0.0, 1.0E-100], replace by 0.0
+       ! This avoids issues with passing very large negative values to EXP
+       ! and getting results between 0.0 and 1.0E-308, the limit for IEEE 754.
+       ! And avoids SIGFPE in CVODE due to tiny rates.
+       lnirate = max(lnirate, -230.0d0)
+       irate = EXP(lnirate)
+       rate = rate + irate
+       dirate_dt = irate * dlnirate_dt/1.0d9
+       drate_dt = drate_dt + dirate_dt
+    end do
+
+    if ( screen_reaclib .and. do_screening(iwhich) ) then
+       call screen5(pstate, iwhich, scor, dscor_dt, dscor_dd)
     end if
 
-    m = self%rate_mult(iwhich)
-    do i = 1, m
-      lnrate = ctemp(1,i) + ctemp(7,i) * LOG(T9)
-      do j = 2, 6
-        lnrate = lnrate + ctemp(j,i) * T9**((2.0d0*dble(j-1)-5.0d0)/3.0d0)
-      end do
-      rate = rate + EXP(lnrate)
-    end do
-  end subroutine rates_eval
+    reactvec(i_rate)     = rate
+    reactvec(i_drate_dt) = drate_dt
+    reactvec(i_scor)     = scor
+    reactvec(i_dscor_dt) = dscor_dt
+    reactvec(i_dqweak)   = 0.0d0
+    reactvec(i_epart)    = 0.0d0
 
+    ! write(*,*) '----------------------------------------'
+    ! write(*,*) 'IWHICH: ', iwhich
+    ! write(*,*) 'reactvec(i_rate)', reactvec(i_rate)
+    ! write(*,*) 'reactvec(i_drate_dt)', reactvec(i_drate_dt)
+    ! write(*,*) 'reactvec(i_scor)', reactvec(i_scor)    
+    ! write(*,*) 'reactvec(i_dscor_dt)', reactvec(i_dscor_dt)
+    ! write(*,*) 'reactvec(i_dqweak)', reactvec(i_dqweak)
+    ! write(*,*) 'reactvec(i_epart)', reactvec(i_epart)
+    ! write(*,*) '----------------------------------------'
+
+  end subroutine reaclib_evaluate
+  
 end module net_rates
