@@ -111,6 +111,19 @@ class RateCollection(object):
                     str(r.chapter)))
                 exit()
 
+    def print_network_overview(self):
+        for n in self.unique_nuclei:
+            print(n)
+            print("  consumed by: ")
+            for r in self.nuclei_consumed[n]:
+                print("     {}".format(r.string))
+
+            print("  produced by: ")
+            for r in self.nuclei_produced[n]:
+                print("     {}".format(r.string))
+
+            print(" ")
+                
     def make_network(self, outfile):
         typenet_avail = {
             'python'   : pyreaclib.networks.net_python.Network_py,
