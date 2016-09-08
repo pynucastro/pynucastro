@@ -10,7 +10,7 @@ files = ["c12-c12a-ne20-cf88",
          "ne23--na23-toki",
          "n--p-wc12"]
 
-pyreaclib.make_network(files, 'boxlib')
+pyreaclib.make_network(files, 'boxlib', use_cse=True)
 
 
 
