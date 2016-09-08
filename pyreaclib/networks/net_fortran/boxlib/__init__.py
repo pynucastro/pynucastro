@@ -52,9 +52,9 @@ class Network_boxlib(Network_f90):
             of.write('{}do i = 1, nrat_tabular\n'.format(self.indent*n_indent))
             of.write('{}call tabular_evaluate(table_meta(i), rhoy, temp, reactvec)\n'.format(self.indent*(n_indent+1)))
             of.write('{}j = i + nrat_reaclib\n'.format(self.indent*(n_indent+1)))
-            of.write('{}unscreened_rates(:,j) = reactvec(1:4)\n'.format(self.indent*(n_indent+1)))
-            of.write('{}dqweak(i) = reactvec(5)\n'.format(self.indent*(n_indent+1)))
-            of.write('{}epart(i)  = reactvec(6)\n'.format(self.indent*(n_indent+1)))
+            of.write('{}rate_eval % unscreened_rates(:,j) = reactvec(1:4)\n'.format(self.indent*(n_indent+1)))
+            of.write('{}rate_eval % dqweak(i) = reactvec(5)\n'.format(self.indent*(n_indent+1)))
+            of.write('{}rate_eval % epart(i)  = reactvec(6)\n'.format(self.indent*(n_indent+1)))
             of.write('{}end do\n'.format(self.indent*n_indent))
 
     def compute_tabular_rates_jac(self, n_indent, of):
@@ -63,7 +63,7 @@ class Network_boxlib(Network_f90):
             of.write('{}do i = 1, nrat_tabular\n'.format(self.indent*n_indent))
             of.write('{}call tabular_evaluate(table_meta(i), rhoy, temp, reactvec)\n'.format(self.indent*(n_indent+1)))
             of.write('{}j = i + nrat_reaclib\n'.format(self.indent*(n_indent+1)))
-            of.write('{}unscreened_rates(:,j) = reactvec(1:4)\n'.format(self.indent*(n_indent+1)))
+            of.write('{}rate_eval % unscreened_rates(:,j) = reactvec(1:4)\n'.format(self.indent*(n_indent+1)))
             of.write('{}end do\n'.format(self.indent*n_indent))
 
     def enuc_dqweak(self, n_indent, of):
@@ -75,7 +75,7 @@ class Network_boxlib(Network_f90):
                     exit()
                 else:
                     reactant = r.reactants[0]
-                    of.write('{}enuc = enuc + N_AVO * {}(j{}) * dqweak(j_{})\n'.format(self.indent*n_indent, self.name_ydot, reactant, r.fname))
+                    of.write('{}enuc = enuc + N_AVO * {}(j{}) * rate_eval % dqweak(j_{})\n'.format(self.indent*n_indent, self.name_ydot, reactant, r.fname))
         
     def enuc_epart(self, n_indent, of):
         # Add particle energy generation rates (gamma heating and neutrino loss from decays)
@@ -87,4 +87,4 @@ class Network_boxlib(Network_f90):
                     exit()
                 else:
                     reactant = r.reactants[0]
-                    of.write('{}enuc = enuc + N_AVO * {}(j{}) * epart(j_{})\n'.format(self.indent*n_indent, self.name_y, reactant, r.fname))
+                    of.write('{}enuc = enuc + N_AVO * {}(j{}) * rate_eval % epart(j_{})\n'.format(self.indent*n_indent, self.name_y, reactant, r.fname))
