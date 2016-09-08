@@ -71,10 +71,10 @@ class Network_f90(RateCollection):
 
         self.float_explicit_num_digits = 17
         
-        self.ydot_cse_scratch = None
-        self.ydot_cse_result  = None
-        self.jac_cse_scratch  = None
-        self.jac_cse_result   = None
+        self.ydot_out_scratch = None
+        self.ydot_out_result  = None
+        self.jac_out_scratch  = None
+        self.jac_out_result   = None
         self.symbol_ludict = {} # Symbol lookup dictionary
 
         # Define these for the particular network
@@ -292,9 +292,9 @@ class Network_f90(RateCollection):
         this network describes, using the template files.
         """
 
-        # Prepare CSE RHS terms
-        self.ydot_cse()
-        self.jacobian_cse()
+        # Prepare RHS terms
+        self.compose_ydot()
+        self.compose_jacobian()
         
         for tfile in self.template_files:
             tfile_basename = os.path.basename(tfile)
@@ -578,8 +578,8 @@ class Network_f90(RateCollection):
                 of.write(', &')
             of.write('\n')
             
-    def ydot_cse(self):
-        # now make the CSE RHS
+    def compose_ydot(self):
+        # now compose the RHS ydot expressions
         ydot = []
         for n in self.unique_nuclei:
             ydot_sym = float(sympy.sympify(0.0))
@@ -589,17 +589,21 @@ class Network_f90(RateCollection):
                 ydot_sym = ydot_sym + self.ydot_term_symbol(r, n)
             ydot.append(ydot_sym)
 
-        scratch_sym = sympy.utilities.numbered_symbols('scratch_')
-        scratch, result = sympy.cse(ydot, symbols=scratch_sym, order='none')
+        if self.use_cse:
+            scratch_sym = sympy.utilities.numbered_symbols('scratch_')
+            scratch, result = sympy.cse(ydot, symbols=scratch_sym, order='none')
 
-        result_out = []
-        for r in result:
-            result_out.append(r.evalf(n=self.float_explicit_num_digits))
-        scratch_out = []
-        for s in scratch:
-            scratch_out.append([s[0], s[1].evalf(n=self.float_explicit_num_digits)])
-        self.ydot_cse_scratch = scratch_out
-        self.ydot_cse_result  = result_out
+            result_out = []
+            for r in result:
+                result_out.append(r.evalf(n=self.float_explicit_num_digits))
+            scratch_out = []
+            for s in scratch:
+                scratch_out.append([s[0], s[1].evalf(n=self.float_explicit_num_digits)])
+            self.ydot_out_scratch = scratch_out
+            self.ydot_out_result  = result_out
+        else:
+            self.ydot_out_scratch = None
+            self.ydot_out_result  = ydot
 
     def compute_tabular_rates_rhs(self, n_indent, of):
         """
@@ -613,23 +617,25 @@ class Network_f90(RateCollection):
         
     def ydot_declare_scratch(self, n_indent, of):
         # Declare scratch variables
-        for si in self.ydot_cse_scratch:
-            siname = si[0]
-            of.write('{}double precision :: {}\n'.format(self.indent*n_indent, siname))
+        if self.use_cse:
+            for si in self.ydot_out_scratch:
+                siname = si[0]
+                of.write('{}double precision :: {}\n'.format(self.indent*n_indent, siname))
 
     def ydot_scratch(self, n_indent, of):
         # Assign scratch variables
-        for si in self.ydot_cse_scratch:
-            siname = si[0]
-            sivalue = self.fortranify(sympy.fcode(si[1], precision = 15,
-                                                  source_format = 'free',
-                                                  standard = 95))
-            of.write('{}{} = {}\n'.format(self.indent*n_indent, siname, sivalue))
+        if self.use_cse:
+            for si in self.ydot_out_scratch:
+                siname = si[0]
+                sivalue = self.fortranify(sympy.fcode(si[1], precision = 15,
+                                                      source_format = 'free',
+                                                      standard = 95))
+                of.write('{}{} = {}\n'.format(self.indent*n_indent, siname, sivalue))
 
     def ydot(self, n_indent, of):
         # Write YDOT
         for i, n in enumerate(self.unique_nuclei):
-            sol_value = self.fortranify(sympy.fcode(self.ydot_cse_result[i], precision = 15,
+            sol_value = self.fortranify(sympy.fcode(self.ydot_out_result[i], precision = 15,
                                                     source_format = 'free',
                                                     standard = 95))
             of.write('{}{}(j{}) = ( &\n'.format(self.indent*n_indent,
@@ -649,7 +655,8 @@ class Network_f90(RateCollection):
         """
         return
         
-    def jacobian_cse(self):
+    def compose_jacobian(self):
+        # Now compose the RHS jacobian expressions
         jac_sym = []
         for nj in self.unique_nuclei:
             for ni in self.unique_nuclei:
@@ -660,32 +667,38 @@ class Network_f90(RateCollection):
                     rsym = rsym + self.jacobian_term_symbol(r, nj, ni)
                 jac_sym.append(rsym)
 
-        scratch_sym = sympy.utilities.numbered_symbols('scratch_')
-        scratch, result = sympy.cse(jac_sym, symbols=scratch_sym, order='none')
+        if self.use_cse:
+            scratch_sym = sympy.utilities.numbered_symbols('scratch_')
+            scratch, result = sympy.cse(jac_sym, symbols=scratch_sym, order='none')
 
-        result_out = []
-        for r in result:
-            result_out.append(r.evalf(n=self.float_explicit_num_digits))
-        scratch_out = []
-        for s in scratch:
-            scratch_out.append([s[0], s[1].evalf(n=self.float_explicit_num_digits)])
-        self.jac_cse_scratch = scratch_out
-        self.jac_cse_result  = result_out
+            result_out = []
+            for r in result:
+                result_out.append(r.evalf(n=self.float_explicit_num_digits))
+            scratch_out = []
+            for s in scratch:
+                scratch_out.append([s[0], s[1].evalf(n=self.float_explicit_num_digits)])
+            self.jac_out_scratch = scratch_out
+            self.jac_out_result  = result_out
+        else:
+            self.jac_out_scratch = None
+            self.jac_out_result  = jac_sym
 
     def jacnuc_declare_scratch(self, n_indent, of):
         # Declare scratch variables
-        for si in self.jac_cse_scratch:
-            siname = si[0]
-            of.write('{}double precision :: {}\n'.format(self.indent*n_indent, siname))
+        if self.use_cse:
+            for si in self.jac_out_scratch:
+                siname = si[0]
+                of.write('{}double precision :: {}\n'.format(self.indent*n_indent, siname))
 
     def jacnuc_scratch(self, n_indent, of):
         # Assign scratch variables
-        for si in self.jac_cse_scratch:
-            siname = si[0]
-            sivalue = self.fortranify(sympy.fcode(si[1], precision = 15,
-                                                  source_format = 'free',
-                                                  standard = 95))
-            of.write('{}{} = {}\n'.format(self.indent*n_indent, siname, sivalue))
+        if self.use_cse:
+            for si in self.jac_out_scratch:
+                siname = si[0]
+                sivalue = self.fortranify(sympy.fcode(si[1], precision = 15,
+                                                      source_format = 'free',
+                                                      standard = 95))
+                of.write('{}{} = {}\n'.format(self.indent*n_indent, siname, sivalue))
 
     def jacnuc(self, n_indent, of):
         # now make the JACOBIAN
@@ -693,7 +706,7 @@ class Network_f90(RateCollection):
         for jnj, nj in enumerate(self.unique_nuclei):
             for ini, ni in enumerate(self.unique_nuclei):
                 jac_idx = n_unique_nuclei*jnj + ini
-                jvalue = self.fortranify(sympy.fcode(self.jac_cse_result[jac_idx],
+                jvalue = self.fortranify(sympy.fcode(self.jac_out_result[jac_idx],
                                                      precision = 15,
                                                      source_format = 'free',
                                                      standard = 95))

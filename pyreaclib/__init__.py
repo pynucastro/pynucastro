@@ -21,7 +21,7 @@ import pyreaclib.networks
 import pyreaclib.rates
 
 
-def make_network(file_list, net_type):
-    rc = pyreaclib.networks.RateCollection(file_list)
+def make_network(file_list, net_type, use_cse=False):
+    rc = pyreaclib.networks.RateCollection(file_list, use_cse)
     rc.make_network(net_type)
 
