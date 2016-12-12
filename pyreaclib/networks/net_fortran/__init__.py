@@ -401,10 +401,12 @@ class Network_f90(RateCollection):
             of.write('{}double precision, target, dimension(:,:), allocatable :: ctemp_rate_{}\n'.format(self.indent*n_indent, n+1))
 
     def rate_start_idx(self, n_indent, of):
+        of.write('{}allocate( rate_start_idx(nrat_reaclib) )\n'.format(self.indent*n_indent))
+        of.write('{}rate_start_idx(:) = (/ &\n'.format(self.indent*n_indent))
         j = 1
         for i, r in enumerate(self.rates):
             if i in self.reaclib_rates:
-                of.write('{}{}'.format(self.indent*n_indent,j))
+                of.write('{}{}'.format(self.indent*(n_indent+1),j))
                 j = j + len(r.sets)
                 if i==len(self.reaclib_rates)-1:
                     of.write(' /)\n')
@@ -412,10 +414,13 @@ class Network_f90(RateCollection):
                     of.write(', &\n')
 
     def rate_extra_mult(self, n_indent, of):
+        of.write('{}allocate( rate_extra_mult(nrat_reaclib) )\n'.format(
+            self.indent*n_indent))
+        of.write('{}rate_extra_mult(:) = (/ &\n'.format(self.indent*n_indent))
         for i, r in enumerate(self.rates):
             if i in self.reaclib_rates:
                 j = len(r.sets)-1
-                of.write('{}{}'.format(self.indent*n_indent,j))
+                of.write('{}{}'.format(self.indent*(n_indent+1),j))
                 if i==len(self.reaclib_rates)-1:
                     of.write(' /)\n')
                 else:
@@ -440,12 +445,14 @@ class Network_f90(RateCollection):
                 of.write(', &\n')
 
     def screen_logical(self, n_indent, of):
+        of.write('{}allocate( do_screening(nrat_reaclib) )\n'.format(self.indent*n_indent))
+        of.write('{}do_screening(:) = (/ &\n'.format(self.indent*n_indent))
         for i, r in enumerate(self.rates):
             if i in self.reaclib_rates:
                 if r.ion_screen:
-                    of.write('{}{}'.format(self.indent*n_indent, '.true.'))
+                    of.write('{}{}'.format(self.indent*(n_indent+1), '.true.'))
                 else:
-                    of.write('{}{}'.format(self.indent*n_indent, '.false.'))
+                    of.write('{}{}'.format(self.indent*(n_indent+1), '.false.'))
                 if i==len(self.reaclib_rates)-1:
                     of.write(' /)\n')
                 else:
