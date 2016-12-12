@@ -34,6 +34,7 @@ contains
   end subroutine update_unevolved_species
 
   subroutine evaluate_rates(state, rate_eval)
+    !$acc routine seq
     type(burn_t)     :: state
     type(rate_eval_t), intent(out) :: rate_eval
     type(plasma_state) :: pstate
