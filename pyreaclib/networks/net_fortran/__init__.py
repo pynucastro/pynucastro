@@ -494,28 +494,6 @@ class Network_f90(RateCollection):
                 of.write('\n')
         of.write('\n')
         
-    # def ctemp_allocate(self, n_indent, of):
-    #     for nr in self.reaclib_rates:
-    #         r = self.rates[nr]
-    #         of.write('{}allocate( ctemp_rate_{}(7, rate_mult({})) )\n'.format(
-    #             self.indent*n_indent, nr+1, nr+1))
-    #         of.write('{}ctemp_point({})%p => ctemp_rate_{}\n'.format(self.indent*n_indent, nr+1, nr+1))
-    #         of.write('{}! {}\n'.format(self.indent*n_indent, r.fname))
-    #         for ns,s in enumerate(r.sets):
-    #             of.write('{}ctemp_rate_{}(:, {}) = (/  &\n'.format(
-    #                 self.indent*n_indent, nr+1, ns+1))
-    #             for na,an in enumerate(s.a):
-    #                 of.write('{}{}'.format(self.indent*n_indent*2,
-    #                                        self.fmt_to_dp_f90(an)))
-    #                 if na==len(s.a)-1:
-    #                     of.write(' /)\n')
-    #                 else:
-    #                     of.write(', &\n')
-    #             of.write('\n')
-    #     if len(self.tabular_rates) > 0:
-    #         of.write('{}call init_table_meta()\n'.format(self.indent*n_indent))
-    #     of.write('\n')
-
     def ctemp_deallocate(self, n_indent, of):
         for nr in self.reaclib_rates:
             of.write('{}deallocate( ctemp_rate_{} )\n'.format(
