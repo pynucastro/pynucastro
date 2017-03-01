@@ -358,9 +358,7 @@ class FortranNetwork(RateCollection):
                 self.indent*n_indent, r.fname, i+1))
 
     def ebind(self, n_indent, of):
-        massfile = os.path.join(self.pyreaclib_dir,
-                                'amemass', 'mass.mas12')
-        ame = AME2012(massfile)
+        ame = AME2012()
         for nuc in self.unique_nuclei:
             nucdata = ame.get_nuclide(n=nuc.N, z=nuc.Z)
             str_nucbind = self.fmt_to_dp_f90(nucdata.nucbind)

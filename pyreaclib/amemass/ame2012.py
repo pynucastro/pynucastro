@@ -4,6 +4,8 @@ Reads the AME 2012 mass data file and supplies table data.
 
 # Common Imports
 from __future__ import print_function
+import os
+
 from pyreaclib.amemass import AMENuclide
 
 def str_head_pop(s,n):
@@ -31,9 +33,17 @@ class AME2012(object):
         """
         Initialize
         """
-        self.datfile = datfile
+        self.datfile = None
+        if datfile:
+            self.datfile = datfile
+        else:
+            thisdir = os.path.dirname(os.path.realpath(__file__))
+            fname   = os.path.join(thisdir, 'mass.mas12')
+            if os.path.isfile(fname):
+                self.datfile = fname
+                
         self.nuclides = []
-        
+
         if self.datfile:
             self.read()
 
@@ -91,6 +101,27 @@ class AME2012(object):
                 self.nuclides.append(nuclide)
         f.close()
 
+    def abbrev_get_nuclide(self, isostring):
+        """
+        Returns the nuclide object given an identifying string
+        isostring which consists of:
+
+        [A]-[Abbreviation]
+
+        E.g. "4-He", "7-li", etc.
+        """
+        try:
+            a, abb = tuple(isostring.split('-'))
+        except:
+            print('ERROR: Supply an isotope string in the form "4-He"')
+            raise
+        a = int(a)
+        abb = abb.strip().lower()
+        for nuc in self.nuclides:
+            if (nuc.a == a) and (nuc.element.lower() == abb):
+                return nuc
+        print('ERROR: Could not find a nuclide by the specification {}'.format(isostring))
+        
     def get_nuclide(self, n=-1, z=-1, a=-1):
         """
         Returns the nuclide object given at least 2 of n, z, a.
@@ -114,4 +145,3 @@ class AME2012(object):
                 return nuc
 
         print('Nuclide not found for (N, Z, A) = ({}, {}, {})!'.format(n, z, a))
-        exit()
