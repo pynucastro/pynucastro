@@ -13,20 +13,26 @@ into each rate function to get the rate.
 # example
 
 ```
-import reaclib
+import pyreaclib
 
-r = reaclib.Rate("c13-pg-n14-nacr")
+r = pyreaclib.Rate("c13-pg-n14-nacr")
 
 # output python code for this rate
-print r.function_string()
+print(r.function_string())
 
 # evaluate this rate at T = 1.e9 K
-print r.eval(1.0e9)
+print(r.eval(1.0e9))
 
 ```
 
 Also see the Jupyter notebook:
 [pyreaclib-examples.ipynb](https://github.com/zingale/pyreaclib/blob/master/pyreaclib-examples.ipynb)
+
+
+# setup
+
+To set this up, you should include the root pyreaclib path in your
+`PYTHONPATH` environment variable.
 
 
 # requirements
