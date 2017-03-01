@@ -402,27 +402,27 @@ class Network_f90(RateCollection):
 
     def rate_start_idx(self, n_indent, of):
         of.write('{}allocate( rate_start_idx(nrat_reaclib) )\n'.format(self.indent*n_indent))
-        of.write('{}rate_start_idx(:) = (/ &\n'.format(self.indent*n_indent))
+        of.write('{}rate_start_idx(:) = [ &\n'.format(self.indent*n_indent))
         j = 1
         for i, r in enumerate(self.rates):
             if i in self.reaclib_rates:
                 of.write('{}{}'.format(self.indent*(n_indent+1),j))
                 j = j + len(r.sets)
                 if i==len(self.reaclib_rates)-1:
-                    of.write(' /)\n')
+                    of.write(' ]\n')
                 else:
                     of.write(', &\n')
 
     def rate_extra_mult(self, n_indent, of):
         of.write('{}allocate( rate_extra_mult(nrat_reaclib) )\n'.format(
             self.indent*n_indent))
-        of.write('{}rate_extra_mult(:) = (/ &\n'.format(self.indent*n_indent))
+        of.write('{}rate_extra_mult(:) = [ &\n'.format(self.indent*n_indent))
         for i, r in enumerate(self.rates):
             if i in self.reaclib_rates:
                 j = len(r.sets)-1
                 of.write('{}{}'.format(self.indent*(n_indent+1),j))
                 if i==len(self.reaclib_rates)-1:
-                    of.write(' /)\n')
+                    of.write(' ]\n')
                 else:
                     of.write(', &\n')
                 
@@ -440,13 +440,13 @@ class Network_f90(RateCollection):
                 print('ERROR: unknown rate index {}'.format(i))
                 exit()
             if i==len(self.rates)-1:
-                of.write(' /)\n')
+                of.write(' ]\n')
             else:
                 of.write(', &\n')
 
     def screen_logical(self, n_indent, of):
         of.write('{}allocate( do_screening(nrat_reaclib) )\n'.format(self.indent*n_indent))
-        of.write('{}do_screening(:) = (/ &\n'.format(self.indent*n_indent))
+        of.write('{}do_screening(:) = [ &\n'.format(self.indent*n_indent))
         for i, r in enumerate(self.rates):
             if i in self.reaclib_rates:
                 if r.ion_screen:
@@ -454,7 +454,7 @@ class Network_f90(RateCollection):
                 else:
                     of.write('{}{}'.format(self.indent*(n_indent+1), '.false.'))
                 if i==len(self.reaclib_rates)-1:
-                    of.write(' /)\n')
+                    of.write(' ]\n')
                 else:
                     of.write(', &\n')
 
@@ -489,13 +489,13 @@ class Network_f90(RateCollection):
             of.write('{}! {}\n'.format(self.indent*n_indent, r.fname))
             for ns,s in enumerate(r.sets):
                 jset = jset + 1
-                of.write('{}ctemp_rate(:, {}) = (/  &\n'.format(
+                of.write('{}ctemp_rate(:, {}) = [  &\n'.format(
                     self.indent*n_indent, jset))
                 for na,an in enumerate(s.a):
                     of.write('{}{}'.format(self.indent*n_indent*2,
                                            self.fmt_to_dp_f90(an)))
                     if na==len(s.a)-1:
-                        of.write(' /)\n')
+                        of.write(' ]\n')
                     else:
                         of.write(', &\n')
                 of.write('\n')

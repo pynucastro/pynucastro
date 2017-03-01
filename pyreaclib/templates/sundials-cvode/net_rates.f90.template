@@ -10,16 +10,13 @@ module net_rates
   double precision, allocatable :: ctemp_rate(:,:)
 
   ! Index into ctemp_rate, dimension 2, where each rate's coefficients start  
-  integer, dimension(nrat_reaclib) :: rate_start_idx = (/ &
-    <rate_start_idx>(2)
+  integer, allocatable :: rate_start_idx(:)
   
   ! Reaction multiplicities-1 (how many rates contribute - 1)
-  integer, dimension(nrat_reaclib) :: rate_extra_mult = (/ &
-    <rate_extra_mult>(2)
+  integer, allocatable :: rate_extra_mult(:)
 
   ! Should these reactions be screened?
-  logical, dimension(nrat_reaclib) :: do_screening = (/ &
-    <screen_logical>(2)
+  logical, allocatable :: do_screening(:)
 
 contains
 
@@ -27,10 +24,17 @@ contains
 
     <ctemp_allocate>(2)
 
+    <rate_start_idx>(2)
+    <rate_extra_mult>(2)
+    <screen_logical>(2)
+    
   end subroutine init_reaclib
 
   subroutine term_reaclib()
     deallocate( ctemp_rate )
+	deallocate( rate_start_idx )
+	deallocate( rate_extra_mult )
+	deallocate( do_screening )
   end subroutine term_reaclib
 
   subroutine net_screening_init()
