@@ -1,10 +1,12 @@
 # triple-alpha rate module generator
-import pyreaclib
+
+from pyreaclib.networks import PythonNetwork
 
 files = ["c12-gaa-he4-fy05",
          "he4-aag-c12-fy05"]
 
-pyreaclib.make_network(files, "triple-alpha_rhs.py")
+triple_alpha_net = PythonNetwork(files)
+triple_alpha_net.write_network("triple-alpha_rhs.py")
 
 
 
