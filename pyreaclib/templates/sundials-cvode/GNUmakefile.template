@@ -7,8 +7,9 @@ $(warning Not in target directory.)
 include ../GMake.target.mk
 else
 $(warning In target directory.)
-SCREENING_DIR := /home/eugene/codes/astro/Microphysics/screening
-BOXLIB_HOME := /home/eugene/codes/astro/BoxLib
+
+SCREENING_DIR := ${MICROPHYSICS_HOME}/screening
+BOXLIB_HOME ?= /home/eugene/codes/astro/BoxLib
 
 VPATH := $(SRCDIR)
 VPATH += $(SCREENING_DIR)
