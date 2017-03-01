@@ -25,7 +25,9 @@ contains
     <ctemp_allocate>(2)
 
     <rate_start_idx>(2)
+	
     <rate_extra_mult>(2)
+	
     <screen_logical>(2)
     
   end subroutine init_reaclib
