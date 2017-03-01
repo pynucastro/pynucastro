@@ -8,7 +8,7 @@ import networkx as nx
 import matplotlib.pyplot as plt
 
 # Import Rate
-from pyreaclib.rates.Rate import Rate
+from pyreaclib.rates import Rate
 
 # Import Util function
 from pyreaclib.util import list_unique

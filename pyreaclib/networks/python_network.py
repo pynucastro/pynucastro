@@ -3,7 +3,7 @@ from __future__ import print_function
 
 import re
 
-from pyreaclib.networks.RateCollection import RateCollection
+from pyreaclib.networks import RateCollection
 from pyreaclib.util import list_unique
 
 class PythonNetwork(RateCollection):
