@@ -1,1 +1,1 @@
-from .Rate import Tfactors
+from .rate import Tfactors
