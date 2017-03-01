@@ -1,7 +1,9 @@
+from __future__ import print_function
+
 import numpy as np
 from scipy.integrate import ode
 import cno_rhs as cno
-import reaclib
+import pyreaclib
 import matplotlib.pyplot as plt
 
 def burn(Y0, rho, T, tmax, nsave):
@@ -26,7 +28,7 @@ def burn(Y0, rho, T, tmax, nsave):
     O15_out = []
 
     while r.successful() and r.t < tmax:
-        print r.t, r.y[cno.ip], r.y[cno.io14]
+        print(r.t, r.y[cno.ip], r.y[cno.io14])
         r.integrate(r.t+dt)
         
         t_out.append(r.t)
