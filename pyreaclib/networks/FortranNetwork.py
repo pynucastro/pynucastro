@@ -1,27 +1,19 @@
 # Common Imports
 from __future__ import print_function
 
-import glob
 import os
-import sys
-import shutil
 import re
 import sympy
 
-import networkx as nx
-import numpy as np
-import matplotlib.pyplot as plt
-
-from periodictable import elements
-
-# Import RateCollection
 from pyreaclib.networks import RateCollection
-
-# Import Util function
 from pyreaclib.util import list_unique
+from pyreaclib.amemass import AME2012
 
-class Network_f90(RateCollection):
-    def __init__(self):
+class FortranNetwork(RateCollection):
+    def __init__(self, *args, **kwargs):
+        # Initialize RateCollection parent class
+        super(FortranNetwork, self).__init__(*args, **kwargs)        
+        
         self.ftags = {}
         self.ftags['<nrates>'] = self.nrates
         self.ftags['<nrat_reaclib>'] = self.nrat_reaclib
@@ -368,7 +360,7 @@ class Network_f90(RateCollection):
     def ebind(self, n_indent, of):
         massfile = os.path.join(self.pyreaclib_dir,
                                 'amemass', 'mass.mas12')
-        ame = pyreaclib.amemass.AME2012(massfile)
+        ame = AME2012(massfile)
         for nuc in self.unique_nuclei:
             nucdata = ame.get_nuclide(n=nuc.N, z=nuc.Z)
             str_nucbind = self.fmt_to_dp_f90(nucdata.nucbind)
@@ -726,7 +718,3 @@ class Network_f90(RateCollection):
         for n in self.unique_nuclei:
             of.write('{}net_initial_abundances%y{} = 0.0d0\n'.format(
                 self.indent*n_indent, n))
-
-# Import Network Modules
-import pyreaclib.networks.net_fortran.boxlib
-import pyreaclib.networks.net_fortran.sundials

@@ -1,35 +1,18 @@
 # Common Imports
 from __future__ import print_function
 
-import glob
 import os
-import sys
-import shutil
 import re
-import sympy
+import glob
 
-import networkx as nx
-import numpy as np
-import matplotlib.pyplot as plt
+# Import FortranNetwork
+from pyreaclib.networks import FortranNetwork
 
-from periodictable import elements
-
-# Import Network_f90
-from pyreaclib.networks.net_fortran import Network_f90
-
-class Network_sundials(Network_f90):
-    def __init__(self, parent_instance_object=None):
-        # Inherit all the instance attributes of
-        # the parent_instance_object if it's passed.
-        rem = re.compile('__(.*)__')
-        if parent_instance_object:
-            for d in dir(parent_instance_object):
-                if not rem.match(d):
-                    setattr(self, d, getattr(parent_instance_object, d))
-
-        # Initialize Network_f90 stuff
-        Network_f90.__init__(self)
-
+class SundialsNetwork(FortranNetwork):
+    def __init__(self, *args, **kwargs):
+        # Initialize FortranNetwork parent class
+        super(SundialsNetwork, self).__init__(*args, **kwargs)
+        
         # Set up some directories
         self.sundials_dir = os.path.join(self.pyreaclib_dir,
                                     'templates',

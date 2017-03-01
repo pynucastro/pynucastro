@@ -1,35 +1,16 @@
 # Common Imports
 from __future__ import print_function
 
-import glob
-import os
-import sys
-import shutil
 import re
-import sympy
 
-import networkx as nx
-import numpy as np
-import matplotlib.pyplot as plt
-
-from periodictable import elements
-
-# Import RateCollection
-from pyreaclib.networks import RateCollection
-
-# Import util function
+from pyreaclib.networks.RateCollection import RateCollection
 from pyreaclib.util import list_unique
 
-class Network_py(RateCollection):
-    def __init__(self, parent_instance_object=None):
-        # Inherit all the instance attributes of
-        # the parent_instance_object if it's passed.
-        rem = re.compile('__(.*)__')
-        if parent_instance_object:
-            for d in dir(parent_instance_object):
-                if not rem.match(d):
-                    setattr(self, d, getattr(parent_instance_object, d))
-    
+class PythonNetwork(RateCollection):
+    def __init__(self, *args, **kwargs):
+        # Initialize RateCollection parent class
+        super(PythonNetwork, self).__init__(*args, **kwargs)
+
     def rate_string(self, rate, indent=0, prefix="rate"):
         """
         return the functional form of rate as a function of
