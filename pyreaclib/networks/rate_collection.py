@@ -142,8 +142,8 @@ class RateCollection(object):
 
 
         nx.draw_networkx_nodes(G, G.position,
-                               node_color="1.0", alpha=0.4,
-                               node_shape="s", node_size=1000)
+                               node_color="0.5", alpha=0.4,
+                               node_shape="s", node_size=1000, linewidth=2.0)
         nx.draw_networkx_edges(G, G.position, edge_color="0.5")
         nx.draw_networkx_labels(G, G.position, G.labels, 
                                 font_size=14, font_color="r", zorder=100)
