@@ -10,3 +10,5 @@ __pycache__
 _build.*
 
 *.pdf
+
+.ipynb_checkpoints/
