@@ -4,12 +4,11 @@ from __future__ import print_function
 import glob
 import os
 
-# Import FortranNetwork
-from pyreaclib.networks import FortranNetwork
+from pyreaclib.networks import BaseFortranNetwork
 
-class BoxLibNetwork(FortranNetwork):
+class BoxLibNetwork(BaseFortranNetwork):
     def __init__(self, *args, **kwargs):
-        # Initialize FortranNetwork parent class
+        # Initialize BaseFortranNetwork parent class
         super(BoxLibNetwork, self).__init__(*args, **kwargs)        
                     
         # Set up some directories

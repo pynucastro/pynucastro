@@ -1,5 +1,5 @@
 from .rate_collection import RateCollection
 from .python_network import PythonNetwork
-from .fortran_network import FortranNetwork
+from .base_fortran_network import BaseFortranNetwork
 from .boxlib_network import BoxLibNetwork
 from .sundials_network import SundialsNetwork

@@ -5,12 +5,11 @@ import os
 import re
 import glob
 
-# Import FortranNetwork
-from pyreaclib.networks import FortranNetwork
+from pyreaclib.networks import BaseFortranNetwork
 
-class SundialsNetwork(FortranNetwork):
+class SundialsNetwork(BaseFortranNetwork):
     def __init__(self, *args, **kwargs):
-        # Initialize FortranNetwork parent class
+        # Initialize BaseFortranNetwork parent class
         super(SundialsNetwork, self).__init__(*args, **kwargs)
         
         # Set up some directories

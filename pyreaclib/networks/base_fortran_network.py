@@ -8,10 +8,10 @@ import sympy
 from pyreaclib.networks import RateCollection
 from pyreaclib.amemass import AME2012
 
-class FortranNetwork(RateCollection):
+class BaseFortranNetwork(RateCollection):
     def __init__(self, *args, **kwargs):
         # Initialize RateCollection parent class
-        super(FortranNetwork, self).__init__(*args, **kwargs)        
+        super(BaseFortranNetwork, self).__init__(*args, **kwargs)        
         
         self.ftags = {}
         self.ftags['<nrates>'] = self.nrates
