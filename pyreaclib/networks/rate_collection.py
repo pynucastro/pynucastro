@@ -10,9 +10,6 @@ import matplotlib.pyplot as plt
 # Import Rate
 from pyreaclib.rates import Rate
 
-# Import Util function
-from pyreaclib.util import list_unique
-
 class RateCollection(object):
     """ a collection of rates that together define a network """
 
@@ -62,8 +59,8 @@ class RateCollection(object):
         # get the unique nuclei
         u = []
         for r in self.rates:
-            t = list_unique(r.reactants + r.products)
-            u = list_unique(u + t)
+            t = set(r.reactants + r.products)
+            u = set(u + t)
 
         self.unique_nuclei = sorted(u)
 

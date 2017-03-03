@@ -6,7 +6,6 @@ import re
 import sympy
 
 from pyreaclib.networks import RateCollection
-from pyreaclib.util import list_unique
 from pyreaclib.amemass import AME2012
 
 class FortranNetwork(RateCollection):
@@ -85,14 +84,14 @@ class FortranNetwork(RateCollection):
 
         # composition dependence
         Y_string = ""
-        for n, r in enumerate(list_unique(rate.reactants)):
+        for n, r in enumerate(set(rate.reactants)):
             c = rate.reactants.count(r)
             if c > 1:
                 Y_string += self.name_y + "(j{})**{}".format(r, c)
             else:
                 Y_string += self.name_y + "(j{})".format(r)
 
-            if n < len(list_unique(rate.reactants))-1:
+            if n < len(set(rate.reactants))-1:
                 Y_string += " * "
 
         # density dependence
@@ -154,7 +153,7 @@ class FortranNetwork(RateCollection):
 
         # composition dependence
         Y_sym = 1
-        for n, r in enumerate(list_unique(rate.reactants)):
+        for n, r in enumerate(set(rate.reactants)):
             c = rate.reactants.count(r)
             sym_final = self.name_y + '(j{})'.format(r)
             sym_temp  = 'Y__j{}__'.format(r)
@@ -204,19 +203,19 @@ class FortranNetwork(RateCollection):
 
         # composition dependence
         Y_string = ""
-        for n, r in enumerate(list_unique(rate.reactants)):
+        for n, r in enumerate(set(rate.reactants)):
             c = rate.reactants.count(r)
             if y_i == r:
                 if c == 1:
                     continue
-                if n>0 and n < len(list_unique(rate.reactants))-1:
+                if n>0 and n < len(set(rate.reactants))-1:
                     Y_string += "*"
                 if c > 2:
                     Y_string += "{}*{}(j{})**{}".format(c, self.name_y, r, c-1)
                 elif c==2:
                     Y_string += "2*{}(j{})".format(self.name_y, r)
             else:
-                if n>0 and n < len(list_unique(rate.reactants))-1:
+                if n>0 and n < len(set(rate.reactants))-1:
                     Y_string += "*"
                 if c > 1:
                     Y_string += "{}(j{})**{}".format(self.name_y, r, c)

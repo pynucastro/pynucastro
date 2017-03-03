@@ -4,7 +4,6 @@ from __future__ import print_function
 import re
 
 from pyreaclib.networks import RateCollection
-from pyreaclib.util import list_unique
 
 class PythonNetwork(RateCollection):
     def __init__(self, *args, **kwargs):
@@ -53,14 +52,14 @@ class PythonNetwork(RateCollection):
 
         # composition dependence
         Y_string = ""
-        for n, r in enumerate(list_unique(rate.reactants)):
+        for n, r in enumerate(set(rate.reactants)):
             c = rate.reactants.count(r)
             if c > 1:
                 Y_string += "Y[i{}]**{}".format(r, c)
             else:
                 Y_string += "Y[i{}]".format(r)
 
-            if n < len(list_unique(rate.reactants))-1:
+            if n < len(set(rate.reactants))-1:
                 Y_string += "*"
 
         # density dependence
@@ -96,19 +95,19 @@ class PythonNetwork(RateCollection):
 
         # composition dependence
         Y_string = ""
-        for n, r in enumerate(list_unique(rate.reactants)):
+        for n, r in enumerate(set(rate.reactants)):
             c = rate.reactants.count(r)
             if y_i == r:
                 if c == 1:
                     continue
-                if n>0 and n < len(list_unique(rate.reactants))-1:
+                if n>0 and n < len(set(rate.reactants))-1:
                     Y_string += "*"
                 if c > 2:
                     Y_string += "{}*Y[i{}]**{}".format(c, r, c-1)
                 elif c==2:
                     Y_string += "2*Y[i{}]".format(r)
             else:
-                if n>0 and n < len(list_unique(rate.reactants))-1:
+                if n>0 and n < len(set(rate.reactants))-1:
                     Y_string += "*"
                 if c > 1:
                     Y_string += "Y[i{}]**{}".format(r, c)
