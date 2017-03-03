@@ -1,9 +1,12 @@
 # Test the examples against the outputs in their corresponding ./standard/... subdirectories
 from __future__ import print_function
 import os
+import sys
+import importlib
 import shutil
 import datetime
-import subprocess
+import time
+import difflib
 import nose.tools
 
 # Setup some directory names
@@ -36,36 +39,52 @@ def test_all():
         dir_std_tc = os.path.join(dir_standard, tc)
         os.mkdir(dir_tc)
         example_path = os.path.join(dir_examples, tc)
-        script_name = tc.split('_')[0].lower() + '.py'
+        script_module_name = tc.split('_')[0].lower()
         for file in os.listdir(example_path):
             shutil.copy(os.path.join(example_path, file), dir_tc)
         os.chdir(dir_tc)
 
+        # Add the test directory to path so I can import its script
+        sys.path.insert(0, dir_tc)
+
         # Run test case
-        pycall = subprocess.Popen(['python',script_name],
-                                  stdout=subprocess.PIPE,
-                                  stderr=subprocess.PIPE)
-        pycall_stdout, pycall_stderr = pycall.communicate()
+        mk = sys.modules.keys()
+        mk_before = [k for k in mk]
+        tcmod = importlib.import_module(script_module_name)
+        mk = sys.modules.keys()
+        mk_after = [k for k in mk]
 
-        if pycall_stderr:
-            print('Error in python call of script {}:'.format(os.path.join(dir_tc, script_name)))
-            print(pycall_stderr)
-            exit()
+        # Necessary if muliple test case paths use the same script name:
+        ## Remove test case module and modules it imported from module list
+        mk_to_del = list(set(mk_after)-set(mk_before))
+        for k in mk_to_del:
+            sys.modules.pop(k)
 
+        ## Remove test directory from path
+        sys.path.pop(0)
+        
         # Compare with standard
         for file in os.listdir(dir_std_tc):
             f_tc = os.path.join(dir_tc, file)
             f_std_tc = os.path.join(dir_std_tc, file)
-            diffcall = subprocess.Popen(['diff', f_tc, f_std_tc],
-                                        stdout=subprocess.PIPE,
-                                        stderr=subprocess.PIPE)
-            diffcall_stdout, diffcall_stderr = diffcall.communicate()
-
-            if diffcall_stderr:
-                print('Error in diff call between {} and {}:'.format(f_tc, f_std_tc))
-                print(diffcall_stderr)
-                exit()
-
-            yield nose.tools.assert_equals, diffcall_stdout, ''
+            try:
+                lines_tc = open(f_tc, 'U').readlines()
+                date_tc  = time.ctime(os.stat(f_tc).st_mtime)
+            except:
+                raise
+            try:
+                lines_std_tc = open(f_std_tc, 'U').readlines()
+                date_std_tc = time.ctime(os.stat(f_std_tc).st_mtime)
+            except:
+                raise
+            diff = difflib.unified_diff(lines_tc, lines_std_tc,
+                                        f_tc, f_std_tc,
+                                        date_tc, date_std_tc,
+                                        n=3)
+            diffreport = ''.join(diff)
+            if diffreport.strip() != b'':
+                print('')
+                print(diffreport)
+            yield nose.tools.assert_equals, diffreport.strip(), ''
     
 
