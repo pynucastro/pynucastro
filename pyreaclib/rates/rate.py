@@ -4,7 +4,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from periodictable import elements
-from pyreaclib.util import list_unique
 
 class Tfactors(object):
     """ precompute temperature factors for speed """
@@ -282,7 +281,7 @@ class Rate(object):
         # compute self.prefactor and self.dens_exp from the reactants
         self.prefactor = 1.0  # this is 1/2 for rates like a + a (double counting)
         self.inv_prefactor = 1
-        for r in list_unique(self.reactants):
+        for r in set(self.reactants):
             self.inv_prefactor = self.inv_prefactor * np.math.factorial(self.reactants.count(r))
         self.prefactor = self.prefactor/float(self.inv_prefactor)
         self.dens_exp = len(self.reactants)-1
