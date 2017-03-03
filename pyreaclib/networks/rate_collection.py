@@ -60,7 +60,7 @@ class RateCollection(object):
         u = []
         for r in self.rates:
             t = set(r.reactants + r.products)
-            u = set(u + t)
+            u = set(list(u) + list(t))
 
         self.unique_nuclei = sorted(u)
 
