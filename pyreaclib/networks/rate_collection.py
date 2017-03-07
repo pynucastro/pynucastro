@@ -118,7 +118,7 @@ class RateCollection(object):
         print('To create network integration source code, use a class that implements a specific network type.')
         return
                 
-    def plot(self):
+    def plot(self, outfile=None):
         G = nx.DiGraph()
         G.position={}
         G.labels = {}
@@ -158,7 +158,15 @@ class RateCollection(object):
         ax.spines['top'].set_visible(False)
         ax.xaxis.set_ticks_position('bottom')
         ax.yaxis.set_ticks_position('left')
-        plt.show()
+
+        if outfile is None:
+            plt.show()
+        else:
+            ax = plt.gca()
+            ax.set_aspect("equal", "datalim")
+            plt.tight_layout()
+            plt.savefig(outfile, dpi=100)
+            
 
     def __repr__(self):
         string = ""
