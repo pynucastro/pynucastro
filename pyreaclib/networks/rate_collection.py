@@ -41,6 +41,12 @@ class Composition(object):
         for k in self.X:
             self.X[k] /= X_sum
 
+    def get_molar(self):
+        """ return a dictionary of molar fractions"""
+        molar_frac = {}
+        for k in self.X:
+            molar_frac[k] = self.X[k]/k.A
+        return molar_frac
 
     def __str__(self):
         ostr = ""
