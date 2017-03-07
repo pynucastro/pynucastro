@@ -4,6 +4,9 @@ from __future__ import print_function
 import glob
 import os
 
+import functools
+from operator import mul
+
 import networkx as nx
 import matplotlib.pyplot as plt
 
@@ -112,15 +115,8 @@ class RateCollection(object):
         self.nuclei_produced = {}
 
         for n in self.unique_nuclei:
-            self.nuclei_consumed[n] = []
-            for r in self.rates:
-                if n in r.reactants:
-                    self.nuclei_consumed[n].append(r)
-
-            self.nuclei_produced[n] = []
-            for r in self.rates:
-                if n in r.products:
-                    self.nuclei_produced[n].append(r)
+            self.nuclei_consumed[n] = [r for r in self.rates if n in r.reactants]
+            self.nuclei_produced[n] = [r for r in self.rates if n in r.products]
 
         # Re-order self.rates so Reaclib rates come first,
         # followed by Tabular rates. This is needed if
@@ -133,7 +129,7 @@ class RateCollection(object):
         
         self.tabular_rates = []
         self.reaclib_rates = []
-        for n,r in enumerate(self.rates):
+        for n, r in enumerate(self.rates):
             if r.chapter == 't':
                 self.tabular_rates.append(n)
             elif type(r.chapter)==int:
@@ -146,6 +142,20 @@ class RateCollection(object):
     def get_nuclei(self):
         """ get all the nuclei that are part of the network """
         return self.unique_nuclei
+
+
+    def evaluate_rates(self, rho, T, composition):
+        """evaluate the rates for a specific density, temperature, and
+        composition"""
+        rvals = {}
+        ys = composition.get_molar()
+
+        for r in self.rates:
+            val = r.prefactor * rho**r.dens_exp * r.eval(T)
+            yfac = functools.reduce(mul, [ys[q] for q in r.reactants])
+            rvals[r] = yfac * val
+
+        return rvals
 
     def print_network_overview(self):
         for n in self.unique_nuclei:
