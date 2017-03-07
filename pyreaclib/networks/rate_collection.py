@@ -174,34 +174,55 @@ class RateCollection(object):
         print('To create network integration source code, use a class that implements a specific network type.')
         return
                 
-    def plot(self, outfile=None):
+    def plot(self, outfile=None, rho=None, T=None, comp=None):
         G = nx.DiGraph()
         G.position={}
         G.labels = {}
 
         plt.plot([0,0], [8,8], 'b-')
 
-        # nodes
+        # nodes -- the node nuclei will be all of the heavies, but not
+        # p, n, alpha, unless we have p + p, 3-a, etc.
+        node_nuclei = []
         for n in self.unique_nuclei:
+            if n.raw not in ["p", "n", "he4"]:
+                node_nuclei.append(n)
+            else:
+                for r in self.rates:
+                    if r.reactants.count(n) > 1:
+                        node_nuclei.append(n)
+                        break
+
+        for n in node_nuclei:
             G.add_node(n)
             G.position[n] = (n.N, n.Z)
             G.labels[n] = r"${}$".format(n.pretty)
 
         # edges
-        for n in self.unique_nuclei:
+        for n in node_nuclei:
             for r in self.nuclei_consumed[n]:
                 for p in r.products:
-                    G.add_edges_from([(n, p)])
+                    if p in node_nuclei:
+                        G.add_edges_from([(n, p)])
 
 
         nx.draw_networkx_nodes(G, G.position,
                                node_color="0.5", alpha=0.4,
                                node_shape="s", node_size=1000, linewidth=2.0)
-        nx.draw_networkx_edges(G, G.position, edge_color="0.5")
+        if rho is not None and T is not None and comp is not None:
+            colors = self.evaluate_rates(rho, T, comp)
+            nx.draw_networkx_edges(G, G.position, 
+                                   edge_color=colors, edge_cmap=plt.cm.viridis)
+        else:
+            nx.draw_networkx_edges(G, G.position, edge_color="0.5")
+
         nx.draw_networkx_labels(G, G.position, G.labels, 
                                 font_size=14, font_color="r", zorder=100)
 
-        plt.xlim(-0.5,)
+        Zs = [n.Z for n in node_nuclei]
+        Ns = [n.N for n in node_nuclei]
+
+        plt.xlim(min(Zs), max(Zs))
         plt.xlabel(r"$N$", fontsize="large")
         plt.ylabel(r"$Z$", fontsize="large")
 
