@@ -8,7 +8,43 @@ import networkx as nx
 import matplotlib.pyplot as plt
 
 # Import Rate
-from pyreaclib.rates import Rate
+from pyreaclib.rates import Rate, Nucleus
+
+class Composition(object):
+    """a composition holds the mass fractions of the nuclei in a network
+    -- useful for evaluating the rates
+
+    """
+    def __init__(self, nuclei, small=1.e-16):
+        """nuclei is an iterable of the nuclei in the network, if it is a
+        list of Nucleus objects, we extract their names"""
+        if isinstance(nuclei[0], Nucleus):
+            names = [n.raw for n in nuclei]
+        else:
+            names = nuclei
+        self.X = {k: small for k in names}
+
+    def set_all(self, xval):
+        """ set all species to a particular value """
+        for k in self.X:
+            self.X[k] = xval
+
+    def set_nuc(self, name, xval):
+        """ set nuclei name to the mass fraction xval """
+        self.X[name] = xval
+
+    def normalize(self):
+        """ normalize the mass fractions to sum to 1 """
+        X_sum = sum([self.X[k] for k in self.X])
+
+        for k in self.X:
+            self.X[k] /= X_sum
+
+    def __str__(self):
+        ostr = ""
+        for k in self.X:
+            ostr += "  X({}) : {}\n".format(k, self.X[k])
+        return ostr
 
 class RateCollection(object):
     """ a collection of rates that together define a network """
@@ -100,6 +136,10 @@ class RateCollection(object):
                 print('ERROR: Chapter type unknown for rate chapter {}'.format(
                     str(r.chapter)))
                 exit()
+
+    def get_nuclei(self):
+        """ get all the nuclei that are part of the network """
+        return self.unique_nuclei
 
     def print_network_overview(self):
         for n in self.unique_nuclei:
