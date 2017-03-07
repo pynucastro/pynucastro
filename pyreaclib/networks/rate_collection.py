@@ -7,6 +7,8 @@ import os
 import functools
 from operator import mul
 
+import math
+
 import networkx as nx
 import matplotlib.pyplot as plt
 
@@ -175,7 +177,7 @@ class RateCollection(object):
         return
                 
     def plot(self, outfile=None, rho=None, T=None, comp=None):
-        G = nx.DiGraph()
+        G = nx.MultiDiGraph()
         G.position={}
         G.labels = {}
 
@@ -198,31 +200,34 @@ class RateCollection(object):
             G.position[n] = (n.N, n.Z)
             G.labels[n] = r"${}$".format(n.pretty)
 
+        if rho is not None and T is not None and comp is not None:
+            ydots = self.evaluate_rates(rho, T, comp)
+
         # edges
+        edge_colors = []
         for n in node_nuclei:
             for r in self.nuclei_consumed[n]:
                 for p in r.products:
                     if p in node_nuclei:
                         G.add_edges_from([(n, p)])
-
+                        edge_colors.append(math.log10(ydots[r]))
 
         nx.draw_networkx_nodes(G, G.position,
-                               node_color="0.5", alpha=0.4,
-                               node_shape="s", node_size=1000, linewidth=2.0)
-        if rho is not None and T is not None and comp is not None:
-            colors = self.evaluate_rates(rho, T, comp)
-            nx.draw_networkx_edges(G, G.position, 
-                                   edge_color=colors, edge_cmap=plt.cm.viridis)
-        else:
-            nx.draw_networkx_edges(G, G.position, edge_color="0.5")
+                               node_color="#A0CBE2", alpha=1.0,
+                               node_shape="o", node_size=1000, linewidth=2.0, zorder=10)
 
         nx.draw_networkx_labels(G, G.position, G.labels, 
-                                font_size=14, font_color="r", zorder=100)
+                                font_size=13, font_color="w", zorder=100)
+
+        edges = nx.draw_networkx_edges(G, G.position, width=3,
+                                       edge_color=edge_colors, edge_cmap=plt.cm.viridis, zorder=1)
+
+        plt.colorbar(edges)
 
         Zs = [n.Z for n in node_nuclei]
         Ns = [n.N for n in node_nuclei]
 
-        plt.xlim(min(Zs), max(Zs))
+        plt.xlim(min(Zs)-1, max(Zs)+1)
         plt.xlabel(r"$N$", fontsize="large")
         plt.ylabel(r"$Z$", fontsize="large")
 

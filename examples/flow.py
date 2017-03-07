@@ -23,4 +23,4 @@ print(comp.get_molar())
 #rr = rc.evaluate_rates(200, 1.e8, comp)
 #print(rr)
 
-rc.plot(outfile="flow.png") #, rho=200, T=1.e8, comp=comp)
+rc.plot(outfile="flow.png", rho=200, T=1.e8, comp=comp)
