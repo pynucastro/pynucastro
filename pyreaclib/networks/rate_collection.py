@@ -16,13 +16,11 @@ class Composition(object):
 
     """
     def __init__(self, nuclei, small=1.e-16):
-        """nuclei is an iterable of the nuclei in the network, if it is a
-        list of Nucleus objects, we extract their names"""
-        if isinstance(nuclei[0], Nucleus):
-            names = [n.raw for n in nuclei]
+        """nuclei is an iterable of the nuclei (Nucleus objects) in the network"""
+        if not isinstance(nuclei[0], Nucleus):
+            raise ValueError("must supply an iterable of Nucleus objects")
         else:
-            names = nuclei
-        self.X = {k: small for k in names}
+            self.X = {k: small for k in nuclei}
 
     def set_all(self, xval):
         """ set all species to a particular value """
@@ -31,7 +29,10 @@ class Composition(object):
 
     def set_nuc(self, name, xval):
         """ set nuclei name to the mass fraction xval """
-        self.X[name] = xval
+        for k in self.X:
+            if k.raw == name:
+                self.X[k] = xval
+                break
 
     def normalize(self):
         """ normalize the mass fractions to sum to 1 """
@@ -39,6 +40,7 @@ class Composition(object):
 
         for k in self.X:
             self.X[k] /= X_sum
+
 
     def __str__(self):
         ostr = ""
