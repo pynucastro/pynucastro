@@ -203,6 +203,9 @@ class RateCollection(object):
         if rho is not None and T is not None and comp is not None:
             ydots = self.evaluate_rates(rho, T, comp)
 
+        #for rr in ydots:
+        #    print("{}: {}".format(rr, ydots[rr]))
+
         # edges
         edge_colors = []
         for n in node_nuclei:

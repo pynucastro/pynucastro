@@ -17,10 +17,13 @@ comp.set_all(0.005)
 comp.set_nuc("p", 0.7)
 comp.set_nuc("he4", 0.28)
 comp.normalize()
-print(comp)
-print(comp.get_molar())
 
-#rr = rc.evaluate_rates(200, 1.e8, comp)
-#print(rr)
+rho = 2000
+T = 1.e8
 
-rc.plot(outfile="flow.png", rho=200, T=1.e8, comp=comp)
+rr = rc.evaluate_rates(rho, T, comp)
+for k, v in rr.items():
+    print("{}: {}".format(k, v))
+
+
+rc.plot(outfile="flow.png", rho=rho, T=T, comp=comp)
