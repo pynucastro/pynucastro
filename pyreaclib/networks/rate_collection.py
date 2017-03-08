@@ -12,6 +12,10 @@ from operator import mul
 import math
 
 import networkx as nx
+
+import matplotlib
+matplotlib.rcParams['figure.dpi'] = 100
+
 import matplotlib.pyplot as plt
 
 # Import Rate
@@ -219,6 +223,8 @@ class RateCollection(object):
 
         if rho is not None and T is not None and comp is not None:
             ydots = self.evaluate_rates(rho, T, comp)
+        else:
+            ydots = None
 
         #for rr in ydots:
         #    print("{}: {}".format(rr, ydots[rr]))
@@ -233,7 +239,10 @@ class RateCollection(object):
                         # to the edges here directly, in this case,
                         # the reaction rate, which will be used to
                         # color it
-                        G.add_edges_from([(n, p)], weight=math.log10(ydots[r]))
+                        if ydots is None:
+                            G.add_edges_from([(n, p)], weight=0.5)
+                        else:
+                            G.add_edges_from([(n, p)], weight=math.log10(ydots[r]))
 
         nx.draw_networkx_nodes(G, G.position,
                                node_color="#A0CBE2", alpha=1.0,
@@ -251,7 +260,8 @@ class RateCollection(object):
 
         # draw_networkx_edges returns a LineCollection matplotlib type
         # which we can use for the colorbar
-        plt.colorbar(edges_lc)
+        if ydots is not None:
+            plt.colorbar(edges_lc)
 
         Zs = [n.Z for n in node_nuclei]
         Ns = [n.N for n in node_nuclei]
