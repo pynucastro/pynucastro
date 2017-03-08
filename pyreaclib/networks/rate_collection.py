@@ -4,7 +4,7 @@ from __future__ import print_function
 import glob
 import os
 
-from IPython.html.widgets import interact
+from ipywidgets import interact
 
 import functools
 from operator import mul
