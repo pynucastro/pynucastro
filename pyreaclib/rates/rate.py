@@ -299,7 +299,16 @@ class Rate(object):
         
         self.string = ""
         self.pretty_string = r"$"
-        for n, r in enumerate(self.reactants):
+
+        # put p, n, and alpha second
+        treactants = []
+        for n in self.reactants:
+            if n.raw not in ["p", "he4", "n"]:
+                treactants.insert(0, n)
+            else:
+                treactants.append(n)
+                
+        for n, r in enumerate(treactants):
             self.string += "{}".format(r)
             self.pretty_string += r"{}".format(r.pretty)
             if not n == len(self.reactants)-1:
