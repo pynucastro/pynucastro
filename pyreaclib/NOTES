@@ -1,0 +1,9 @@
+networkx does not seem to preserve the order of the edges, so they
+become uncorrelated with the edge color from the rates.  Maybe we need
+a weighted graph:
+
+https://networkx.github.io/documentation/networkx-1.9/examples/drawing/weighted_graph.html
+
+https://networkx.github.io/documentation/networkx-1.10/reference/generated/networkx.DiGraph.add_weighted_edges_from.html
+
+
