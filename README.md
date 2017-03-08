@@ -59,7 +59,15 @@ This package requires
 
 # TODO
 
-* output Cython code
+* output Cython code (rhs)
+
+  * probably want to use a cdef class for the TFactors:
+    http://stackoverflow.com/questions/21012348/cython-how-to-make-an-python-object-as-a-property-of-cython-class
+	http://cython.readthedocs.io/en/latest/src/tutorial/cdef_classes.html
+	http://cython.readthedocs.io/en/latest/src/userguide/early_binding_for_speed.html
+	
+
+
 
 * return a polynomial fit to a rate in a given interval
 
