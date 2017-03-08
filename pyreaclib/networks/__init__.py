@@ -1,4 +1,4 @@
-from .rate_collection import RateCollection, Composition
+from .rate_collection import RateCollection, Composition, Explorer
 from .python_network import PythonNetwork
 from .base_fortran_network import BaseFortranNetwork
 from .boxlib_network import BoxLibNetwork

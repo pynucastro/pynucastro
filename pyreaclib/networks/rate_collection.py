@@ -4,6 +4,8 @@ from __future__ import print_function
 import glob
 import os
 
+from IPython.html.widgets import interact
+
 import functools
 from operator import mul
 
@@ -26,6 +28,21 @@ class Composition(object):
             raise ValueError("must supply an iterable of Nucleus objects")
         else:
             self.X = {k: small for k in nuclei}
+
+    def set_solar_like(self, Z=0.02):
+        """ approximate a solar abundance, setting p to 0.7, He4 to 0.3 - Z and 
+        the remainder evenly distributed with Z """
+        num = len(self.X)
+        rem = Z/(num-2)
+        for k in self.X:
+            if k.raw == "p":
+                self.X[k] = 0.7
+            elif k.raw == "he4":
+                self.X[k] = 0.3 - Z
+            else:
+                self.X[k] = rem
+
+        self.normalize()
 
     def set_all(self, xval):
         """ set all species to a particular value """
@@ -92,7 +109,7 @@ class RateCollection(object):
                 else: # Notify of all missing files before exiting
                     print('ERROR: File {} not found in {} or the working directory!'.format(
                         p,self.pyreaclib_rates_dir))
-                    exit_program = True 
+                    exit_program = True
         if exit_program:
             exit()
 
@@ -102,7 +119,7 @@ class RateCollection(object):
             except:
                 print("Error with file: {}".format(rf))
                 raise
-                    
+
         # get the unique nuclei
         u = []
         for r in self.rates:
@@ -128,7 +145,7 @@ class RateCollection(object):
         # storing meaningless Tabular coefficient pointers.
         self.rates = sorted(self.rates,
                             key = lambda r: r.chapter=='t')
-        
+
         self.tabular_rates = []
         self.reaclib_rates = []
         for n, r in enumerate(self.rates):
@@ -171,11 +188,11 @@ class RateCollection(object):
                 print("     {}".format(r.string))
 
             print(" ")
-                
+
     def write_network(self):
         print('To create network integration source code, use a class that implements a specific network type.')
         return
-                
+
     def plot(self, outfile=None, rho=None, T=None, comp=None):
         G = nx.MultiDiGraph()
         G.position={}
@@ -222,14 +239,14 @@ class RateCollection(object):
                                node_color="#A0CBE2", alpha=1.0,
                                node_shape="o", node_size=1000, linewidth=2.0, zorder=10)
 
-        nx.draw_networkx_labels(G, G.position, G.labels, 
+        nx.draw_networkx_labels(G, G.position, G.labels,
                                 font_size=13, font_color="w", zorder=100)
 
         # get the edges and weights coupled in the same order
         edges, weights = zip(*nx.get_edge_attributes(G, 'weight').items())
 
         edges_lc = nx.draw_networkx_edges(G, G.position, width=3,
-                                          edgelist=edges, edge_color=weights, 
+                                          edgelist=edges, edge_color=weights,
                                           edge_cmap=plt.cm.viridis, zorder=1)
 
         # draw_networkx_edges returns a LineCollection matplotlib type
@@ -253,17 +270,32 @@ class RateCollection(object):
         ax.xaxis.set_ticks_position('bottom')
         ax.yaxis.set_ticks_position('left')
 
+        ax = plt.gca()
+        ax.set_aspect("equal", "datalim")
+
         if outfile is None:
             plt.show()
         else:
-            ax = plt.gca()
-            ax.set_aspect("equal", "datalim")
             plt.tight_layout()
             plt.savefig(outfile, dpi=100)
-            
 
     def __repr__(self):
         string = ""
         for r in self.rates:
             string += "{}\n".format(r.string)
         return string
+
+
+class Explorer(object):
+    """ interactively explore a rate collection """
+    def __init__(self, rc, comp):
+        """ take a RateCollection and a composition """
+        self.rc = rc
+        self.comp = comp
+
+    def _make_plot(self, logrho, logT):
+        self.rc.plot(rho=10.0**logrho, T=10.0**logT, comp=self.comp)
+
+    def explore(self):
+        interact(self._make_plot, logrho=(2, 6, 0.1), logT=(7, 9, 0.1))
+
