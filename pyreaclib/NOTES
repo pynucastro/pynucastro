@@ -7,3 +7,6 @@ https://networkx.github.io/documentation/networkx-1.9/examples/drawing/weighted_
 https://networkx.github.io/documentation/networkx-1.10/reference/generated/networkx.DiGraph.add_weighted_edges_from.html
 
 
+this seems promising:
+
+http://stackoverflow.com/questions/22967086/colouring-edges-by-weight-in-networkx
