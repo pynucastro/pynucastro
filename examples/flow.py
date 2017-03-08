@@ -19,7 +19,7 @@ comp.set_nuc("he4", 0.28)
 comp.normalize()
 
 rho = 2000
-T = 1.e8
+T = 2.e8
 
 rr = rc.evaluate_rates(rho, T, comp)
 for k, v in rr.items():

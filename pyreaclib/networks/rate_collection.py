@@ -207,13 +207,16 @@ class RateCollection(object):
         #    print("{}: {}".format(rr, ydots[rr]))
 
         # edges
-        edge_colors = []
         for n in node_nuclei:
             for r in self.nuclei_consumed[n]:
                 for p in r.products:
                     if p in node_nuclei:
-                        G.add_edges_from([(n, p)])
-                        edge_colors.append(math.log10(ydots[r]))
+                        # networkx doesn't seem to keep the edges in
+                        # any particular order, so we associate data
+                        # to the edges here directly, in this case,
+                        # the reaction rate, which will be used to
+                        # color it
+                        G.add_edges_from([(n, p)], weight=math.log10(ydots[r]))
 
         nx.draw_networkx_nodes(G, G.position,
                                node_color="#A0CBE2", alpha=1.0,
@@ -222,10 +225,16 @@ class RateCollection(object):
         nx.draw_networkx_labels(G, G.position, G.labels, 
                                 font_size=13, font_color="w", zorder=100)
 
-        edges = nx.draw_networkx_edges(G, G.position, width=3,
-                                       edge_color=edge_colors, edge_cmap=plt.cm.viridis, zorder=1)
+        # get the edges and weights coupled in the same order
+        edges, weights = zip(*nx.get_edge_attributes(G, 'weight').items())
 
-        plt.colorbar(edges)
+        edges_lc = nx.draw_networkx_edges(G, G.position, width=3,
+                                          edgelist=edges, edge_color=weights, 
+                                          edge_cmap=plt.cm.viridis, zorder=1)
+
+        # draw_networkx_edges returns a LineCollection matplotlib type
+        # which we can use for the colorbar
+        plt.colorbar(edges_lc)
 
         Zs = [n.Z for n in node_nuclei]
         Ns = [n.N for n in node_nuclei]
