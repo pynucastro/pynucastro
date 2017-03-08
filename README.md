@@ -1,13 +1,19 @@
 # pyreaclib
 
-Python interfaces to the JINA reaclib nuclear reactions database.  The
-main goal is to provide a parser for the reaclib format to produce
-either a callable python function for a rate or output the python code
-for a function that can be incorporated into a rate module.
+Python interfaces to the JINA reaclib nuclear reactions database.  This
+project has 2 goals:
 
-For performance reasons, the common temperature factors needed by a
-rate are stored in a `Tfactors` class---a `Tfactors` object is passed
-into each rate function to get the rate.
+  * allow for an exploration of rates and collection of rates (networks)
+    in Jupyter notebooks
+
+  * allow for the easy creation of the righthand side routines for
+    reaction network integration (the ODEs) 
+
+To do this, pyreaclib providea a parser for the reaclib format to
+produce either a callable python function for a rate or output the
+python code for a function that can be incorporated into a rate
+module.
+
 
 
 # example
@@ -17,16 +23,16 @@ import pyreaclib
 
 r = pyreaclib.Rate("c13-pg-n14-nacr")
 
-# output python code for this rate
-print(r.function_string())
-
 # evaluate this rate at T = 1.e9 K
 print(r.eval(1.0e9))
 
 ```
 
-Also see the Jupyter notebook:
-[pyreaclib-examples.ipynb](https://github.com/zingale/pyreaclib/blob/master/pyreaclib-examples.ipynb)
+Also see the Jupyter notebooks:
+
+  * [pyreaclib-examples.ipynb](https://github.com/zingale/pyreaclib/blob/master/pyreaclib-examples.ipynb)
+
+  * [interactive-examples.ipynb](https://github.com/zingale/pyreaclib/blob/master/interactive-examples.ipynb)
 
 
 # setup
@@ -59,9 +65,5 @@ This package requires
 
 * create a Ydot() class that can both output dYdt[nucleus] and
   evaluate dYdt.
-
-* color the edges on the `RateCollection` plot according to which
-  nuclear process they are (e.g., a,p), and add a legend showing
-  the basics
   
 
