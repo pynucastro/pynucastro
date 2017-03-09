@@ -1,17 +1,18 @@
 cimport numpy as np
+import numpy as np
 
-cdef int ip = 0
-cdef int ihe4 = 1
-cdef int ic12 = 2
-cdef int ic13 = 3
-cdef int in13 = 4
-cdef int in14 = 5
-cdef int in15 = 6
-cdef int io14 = 7
-cdef int io15 = 8
-cdef int nnuc = 9
+ip = 0
+ihe4 = 1
+ic12 = 2
+ic13 = 3
+in13 = 4
+in14 = 5
+in15 = 6
+io14 = 7
+io15 = 8
+nnuc = 9
 
-cdef np.ndarray A = np.zeros((nnuc), dtype=np.int)
+A = np.zeros((nnuc), dtype=np.int)
 
 A[ip] = 1
 A[ihe4] = 4
