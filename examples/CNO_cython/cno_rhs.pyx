@@ -29,7 +29,7 @@ cdef class Tfactors:
 
     cdef public double T9, T9i, T913i, T913, T953, lnT9
 
-    def __cinit__(self, T):
+    def __cinit__(self, double T):
         """ return the Tfactors object.  Here, T is temperature in Kelvin """
         self.T9 = T/1.e9
         self.T9i = 1.0/self.T9
@@ -39,7 +39,7 @@ cdef class Tfactors:
         self.lnT9 = np.log(self.T9)
 
 
-def c12_pg_n13(tf):
+def c12_pg_n13(Tfactors tf):
     # p + c12 --> n13
     cdef double rate = 0.0
     
@@ -52,7 +52,7 @@ def c12_pg_n13(tf):
     
     return rate
 
-def c13_pg_n14(tf):
+def c13_pg_n14(Tfactors tf):
     # p + c13 --> n14
     rate = 0.0
     
@@ -68,7 +68,7 @@ def c13_pg_n14(tf):
     
     return rate
 
-def n13_c13(tf):
+def n13_c13(Tfactors tf):
     # n13 --> c13
     cdef double rate = 0.0
     
@@ -77,7 +77,7 @@ def n13_c13(tf):
     
     return rate
 
-def n13_pg_o14(tf):
+def n13_pg_o14(Tfactors tf):
     # p + n13 --> o14
     cdef double rate = 0.0
     
@@ -90,7 +90,7 @@ def n13_pg_o14(tf):
     
     return rate
 
-def n14_pg_o15(tf):
+def n14_pg_o15(Tfactors tf):
     # p + n14 --> o15
     cdef double rate = 0.0
     
@@ -109,7 +109,7 @@ def n14_pg_o15(tf):
     
     return rate
 
-def n15_pa_c12(tf):
+def n15_pa_c12(Tfactors tf):
     # p + n15 --> he4 + c12
     cdef double rate = 0.0
     
@@ -128,7 +128,7 @@ def n15_pa_c12(tf):
     
     return rate
 
-def o14_n14(tf):
+def o14_n14(Tfactors tf):
     # o14 --> n14
     cdef double rate = 0.0
     
@@ -137,7 +137,7 @@ def o14_n14(tf):
     
     return rate
 
-def o15_n15(tf):
+def o15_n15(Tfactors tf):
     # o15 --> n15
     cdef double rate = 0.0
     
@@ -146,18 +146,18 @@ def o15_n15(tf):
     
     return rate
 
-def rhs(t, Y, rho, T):
+def rhs(double t, np.ndarray[double, ndim=1] Y, double rho, double T):
 
-    tf = Tfactors(T)
+    cdef Tfactors tf = Tfactors(T)
 
-    lambda_c12_pg_n13 = c12_pg_n13(tf)
-    lambda_c13_pg_n14 = c13_pg_n14(tf)
-    lambda_n13_c13 = n13_c13(tf)
-    lambda_n13_pg_o14 = n13_pg_o14(tf)
-    lambda_n14_pg_o15 = n14_pg_o15(tf)
-    lambda_n15_pa_c12 = n15_pa_c12(tf)
-    lambda_o14_n14 = o14_n14(tf)
-    lambda_o15_n15 = o15_n15(tf)
+    cdef double lambda_c12_pg_n13 = c12_pg_n13(tf)
+    cdef double lambda_c13_pg_n14 = c13_pg_n14(tf)
+    cdef double lambda_n13_c13 = n13_c13(tf)
+    cdef double lambda_n13_pg_o14 = n13_pg_o14(tf)
+    cdef double lambda_n14_pg_o15 = n14_pg_o15(tf)
+    cdef double lambda_n15_pa_c12 = n15_pa_c12(tf)
+    cdef double lambda_o14_n14 = o14_n14(tf)
+    cdef double lambda_o15_n15 = o15_n15(tf)
 
     cdef np.ndarray[double, ndim=1] dYdt = np.zeros((nnuc), dtype=np.float64)
 
