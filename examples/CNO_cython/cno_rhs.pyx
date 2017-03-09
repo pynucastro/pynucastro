@@ -27,6 +27,8 @@ A[io15] = 15
 cdef class Tfactors:
     """ precompute temperature factors for speed """
 
+    cdef public double T9, T9i, T913i, T913, T953, lnT9
+
     def __cinit__(self, T):
         """ return the Tfactors object.  Here, T is temperature in Kelvin """
         self.T9 = T/1.e9
