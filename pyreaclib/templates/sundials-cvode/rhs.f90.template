@@ -1,0 +1,173 @@
+module rhs
+  use physical_constants, only: N_AVO
+  use cvode_parameters, only: cv_pars
+  use network
+  use net_rates, only: screen_reaclib, reaclib_evaluate
+  use table_rates, only: table_meta, tabular_evaluate
+  use screening_module, only: plasma_state, fill_plasma_state
+
+  implicit none
+
+contains
+
+  subroutine FCVFUN(T, Y, YDOT, IPAR, RPAR, IER) bind(C, name='fcvfun_')
+    type(plasma_state) :: pstate
+    double precision, dimension(*), intent(inout) :: Y, RPAR
+    integer, dimension(*), intent(in) :: IPAR
+    double precision, dimension(*), intent(out) :: YDOT
+    double precision, intent(in) :: T
+    integer, intent(out) :: IER
+    double precision :: rvec(6)
+    double precision, dimension(nreactvec, nrat_reaclib+nrat_tabular) :: reactvec
+    double precision :: screened_rates(nrat_reaclib+nrat_tabular)
+    integer :: i, j
+    double precision :: dens, temp, ye, rhoy
+
+    <ydot_declare_scratch>(2)
+    
+    IER = -1
+
+    ! Enforce all Y's are positive
+    do i = 1, nspec
+       Y(i) = max(0.0d0, Y(i))
+    end do
+
+    ! Calculate rates
+    ! density is cv_pars%dens
+    ! temperature is cv_pars%temp
+
+    dens = cv_pars%dens
+    temp = cv_pars%temp
+    ye   = cv_pars%ye
+    rhoy = dens*ye
+
+    ! Calculate Reaclib rates
+    call fill_plasma_state(pstate, temp, dens, Y(1:nspec))
+    do i = 1, nrat_reaclib
+       call reaclib_evaluate(pstate, temp, i, rvec)
+       reactvec(:,i) = rvec
+    end do
+
+    ! Include only if there are tabular rates
+    do i = 1, nrat_tabular
+       call tabular_evaluate(table_meta(i), rhoy, temp, rvec)
+       j = i + nrat_reaclib
+       reactvec(:,j) = rvec
+    end do
+
+    screened_rates(:) = reactvec(i_rate,:) * reactvec(i_scor,:)
+    
+    write(*,*) "RHS Time: ", T
+    <ydot_scratch>(2)
+    
+    <ydot>(2)
+
+    YDOT(net_ienuc) = 0.0d0
+    ! ion binding energy contributions
+    do i = 1, nspec
+       YDOT(net_ienuc) = YDOT(net_ienuc) - N_AVO * mion(i) * YDOT(i)
+    end do
+    
+    ! weak Q-value modification dqweak (density and temperature dependent)
+    <enuc_dqweak>(2)
+    
+    ! weak particle energy generation rates from gamma heating and neutrino loss
+    ! (does not include plasma neutrino losses)
+    <enuc_epart>(2)
+    
+    write(*,*) '______________________________'
+    do i = 1, nspec+1
+       write(*,*) 'YDOT(',i,'): ',YDOT(i)
+    end do
+
+    IER = 0 ! Successful
+  end subroutine FCVFUN
+
+  subroutine FCVDJAC(NEQ, T, Y, FY, DJAC, H_STEP, IPAR, RPAR, WK1, WK2, WK3, IER) bind(C, name='fcvdjac_')
+    type(plasma_state) :: pstate
+    integer, intent(in) :: NEQ ! number of ODEs
+    double precision, intent(in) :: T ! independent variable
+    double precision, dimension(*), intent(inout) :: Y, FY ! y and its derivative
+    double precision, dimension(NEQ,*), intent(out) :: DJAC ! dense Jacobian
+    double precision, intent(in) :: H_STEP ! current stepsize
+    integer, dimension(*), intent(in) :: IPAR
+    double precision, dimension(*), intent(in) :: RPAR
+    double precision, dimension(NEQ), intent(in) :: WK1, WK2, WK3
+    integer, intent(out) :: IER
+    
+    double precision :: rvec(6)
+    double precision, dimension(nreactvec, nrat_reaclib+nrat_tabular) :: reactvec
+    double precision :: screened_rates(nrat_reaclib+nrat_tabular)
+    double precision :: dens, temp, ye, rhoy
+    integer :: i, j
+
+    <jacnuc_declare_scratch>(2)
+    
+    IER = -1
+
+    ! Enforce all Y's are positive
+    do i = 1, nspec
+       Y(i) = max(0.0d0, Y(i))
+    end do
+
+    dens = cv_pars%dens
+    temp = cv_pars%temp
+    ye   = cv_pars%ye
+    rhoy = dens*ye
+
+    if (T == 0.0d0) then
+
+       do i = 1, NEQ
+          do j = 1, NEQ
+             DJAC(j, i) = 0.0d0
+          end do
+       end do
+
+    else
+
+       if ( screen_reaclib ) then
+          call fill_plasma_state(pstate, temp, dens, Y(1:nspec))
+       end if
+
+       ! Calculate Reaclib rates
+       call fill_plasma_state(pstate, temp, dens, Y(1:nspec))
+       do i = 1, nrat_reaclib
+          call reaclib_evaluate(pstate, temp, i, rvec)
+          reactvec(:,i) = rvec
+       end do
+
+       ! Include only if there are tabular rates
+       do i = 1, nrat_tabular
+          call tabular_evaluate(table_meta(i), rhoy, temp, rvec)
+          j = i + nrat_reaclib
+          reactvec(:,j) = rvec
+       end do
+       
+       screened_rates(:) = reactvec(i_rate,:) * reactvec(i_scor,:)
+
+       <jacnuc_scratch>(3)
+       
+       ! DJAC(j, i) = d(YDOT(j))/dY(i)
+
+       <jacnuc>(3)
+
+    end if
+
+    IER = 0 ! Success
+  end subroutine FCVDJAC
+
+  subroutine FCVROOTFN(T, Y, G, IPAR, RPAR, IER) bind(C, name='fcvrootfn_')
+    double precision, intent(in) :: T
+    double precision, dimension(*), intent(in) :: Y
+    double precision, dimension(*), intent(inout) :: G
+    integer, dimension(*), intent(in) :: IPAR
+    double precision, dimension(*), intent(in) :: RPAR
+    integer, intent(out) :: IER
+
+    IER = -1
+    ! Here you can add custom abundance stopping criteria
+    G(1) = 1.0d0
+    IER = 0
+  end subroutine FCVROOTFN
+
+end module rhs

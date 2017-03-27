@@ -1,141 +1,79 @@
 module network
-
-  use physical_constants
-  use cvode_parameters
-  use net_rates
-
+  use physical_constants, only: ERG_PER_MeV, me, mn, mp, CLIGHT, mev2gr
+  
   implicit none
+
+  ! Number of nuclear species in the network
+  integer, parameter :: nspec = 2
+
+  integer, parameter :: nrat_tabular = 0
+
+  integer, parameter :: nrat_reaclib = 2
+
+  ! Number of entries in reactvec returned by rate_evaluate
+  integer, parameter :: nreactvec = 6
+
+  ! Binding Energies Per Nucleon (MeV)
+  double precision, dimension(nspec) :: ebind_per_nucleon
+
+  ! Nucleon mass number A
+  double precision, dimension(nspec) :: aion
+
+  ! Nucleon atomic number Z
+  double precision, dimension(nspec) :: zion
+
+  ! Nucleon atomic number N
+  double precision, dimension(nspec) :: nion
+
+  ! Nucleon mass energy
+  double precision, dimension(nspec) :: mion
+  
+  ! Binding Energies (ergs)
+  double precision, dimension(nspec) :: ebind
+
+  ! Nuclides
+  integer, parameter :: jhe4   = 1
+  integer, parameter :: jc12   = 2
+
+  integer :: net_ienuc = nspec + 1
+
+  ! Reactions
+  integer, parameter :: k_c12_gaa_he4   = 1
+  integer, parameter :: k_he4_aag_c12   = 2
+
+  ! reactvec indices
+  integer, parameter :: i_rate        = 1
+  integer, parameter :: i_drate_dt    = 2
+  integer, parameter :: i_scor        = 3
+  integer, parameter :: i_dscor_dt    = 4
+  integer, parameter :: i_dqweak      = 5
+  integer, parameter :: i_epart       = 6
 
 contains
 
-  subroutine FCVFUN(T, Y, YDOT, IPAR, RPAR, IER) bind(C, name='fcvfun_')
-    double precision, dimension(*), intent(in) :: Y, RPAR
-    integer, dimension(*), intent(in) :: IPAR
-    double precision, dimension(*), intent(out) :: YDOT
-    double precision, intent(in) :: T
-    integer, intent(out) :: IER
-
-    double precision, dimension(net_meta%nrxn) :: rxn_rates
+  subroutine init_network()
     integer :: i
-    double precision :: ri, dens, temp, ye, rhoy
 
-    IER = -1
-
-    ! Calculate rates
-    ! density is cv_pars%dens
-    ! temperature is cv_pars%temp
-
-    dens = cv_pars%dens
-    temp = cv_pars%temp
-    ye   = cv_pars%ye
-    rhoy = dens*ye
-
-    ri = 0.0d0
-    do i = 1, net_meta%nrxn
-      call net_meta%evaluate(rhoy, cv_pars%temp, i, ri)
-      rxn_rates(i) = ri
-    end do
-
-    write(*,*) "T: ", T
-    YDOT(net_meta%ihe4) = ( &
-       - 3 * 1.66666666666667d-01 * dens**2 * Y(net_meta%ihe4)**3 * rxn_rates(net_meta%k_he4_aag_c12) &
-       + 3 * Y(net_meta%ic12) * rxn_rates(net_meta%k_c12_gaa_he4) &
-       )
-
-    YDOT(net_meta%ic12) = ( &
-       - Y(net_meta%ic12) * rxn_rates(net_meta%k_c12_gaa_he4) &
-       + 1.66666666666667d-01 * dens**2 * Y(net_meta%ihe4)**3 * rxn_rates(net_meta%k_he4_aag_c12) &
-       )
-
-
-    YDOT(net_meta%ienuc) = 0.0d0
-    do i = 1, net_meta%nnuc
-      YDOT(net_meta%ienuc) = YDOT(net_meta%ienuc) + pc%N_Avogadro * net_meta%ebind(i) * YDOT(i)
-    end do
-
-    write(*,*) '______________________________'
-    do i = 1, net_meta%nnuc
-      write(*,*) 'YDOT(',i,'): ',YDOT(i)
-    end do
-
-    IER = 0 ! Successful
-  end subroutine FCVFUN
-
-  subroutine FCVDJAC(NEQ, T, Y, FY, DJAC, H_STEP, IPAR, RPAR, WK1, WK2, WK3, IER) bind(C, name='fcvdjac_')
-    integer, intent(in) :: NEQ ! number of ODEs
-    double precision, intent(in) :: T ! independent variable
-    double precision, dimension(*), intent(in) :: Y, FY ! y and its derivative
-    double precision, dimension(NEQ,*), intent(out) :: DJAC ! dense Jacobian
-    double precision, intent(in) :: H_STEP ! current stepsize
-    integer, dimension(*), intent(in) :: IPAR
-    double precision, dimension(*), intent(in) :: RPAR
-    double precision, dimension(NEQ), intent(in) :: WK1, WK2, WK3
-    integer, intent(out) :: IER
-
-    double precision, dimension(net_meta%nrxn) :: rxn_rates
-    double precision :: ri, dens, temp, ye, rhoy
-    integer :: i, j
-
-    IER = -1
-
-    dens = cv_pars%dens
-    temp = cv_pars%temp
-    ye   = cv_pars%ye
-    rhoy = dens*ye
-
-    if (T == 0.0d0) then
+    ebind_per_nucleon(jhe4)   = 7.07391500000000d+00
+    ebind_per_nucleon(jc12)   = 7.68014400000000d+00
     
-      do i = 1, NEQ
-        do j = 1, NEQ
-          DJAC(j, i) = 0.0d0
-        end do
-      end do
+    aion(jhe4)   = 4.00000000000000d+00
+    aion(jc12)   = 1.20000000000000d+01
 
-    else
+    zion(jhe4)   = 2.00000000000000d+00
+    zion(jc12)   = 6.00000000000000d+00
+
+    nion(jhe4)   = 2.00000000000000d+00
+    nion(jc12)   = 6.00000000000000d+00
     
-       ri = 0.0d0
+    do i = 1, nspec
+       ebind(i) = ebind_per_nucleon(i) * aion(i) 
+    end do
 
-       do i = 1, net_meta%nrxn
-          call net_meta%evaluate(rhoy, temp, i, ri)
-          rxn_rates(i) = ri
-       end do
+    ! Set the mass energy in erg
+    mion(:) = (nion(:) * mn + zion(:) * (mp + me) &
+         - ebind(:) * mev2gr)*CLIGHT*CLIGHT
 
-      ! DJAC(j, i) = d(YDOT(j))/dY(i)
-
-      DJAC(net_meta%ihe4,net_meta%ihe4) = ( &
-         - 3 * 1.66666666666667d-01 * dens**2 * 3*Y(net_meta%ihe4)**2 * rxn_rates(net_meta%k_he4_aag_c12) &
-         )
-
-      DJAC(net_meta%ihe4,net_meta%ic12) = ( &
-         + 3 *    rxn_rates(net_meta%k_c12_gaa_he4) &
-         )
-
-      DJAC(net_meta%ic12,net_meta%ihe4) = ( &
-         + 1.66666666666667d-01 * dens**2 * 3*Y(net_meta%ihe4)**2 * rxn_rates(net_meta%k_he4_aag_c12) &
-         )
-
-      DJAC(net_meta%ic12,net_meta%ic12) = ( &
-         -    rxn_rates(net_meta%k_c12_gaa_he4) &
-         )
-
-
-    end if
-
-    IER = 0 ! Success
-  end subroutine FCVDJAC
-
-  subroutine FCVROOTFN(T, Y, G, IPAR, RPAR, IER) bind(C, name='fcvrootfn_')
-    double precision, intent(in) :: T
-    double precision, dimension(*), intent(in) :: Y
-    double precision, dimension(*), intent(inout) :: G
-    integer, dimension(*), intent(in) :: IPAR
-    double precision, dimension(*), intent(in) :: RPAR
-    integer, intent(out) :: IER
-
-    IER = -1
-    ! Here you can add custom abundance stopping criteria
-    G(1) = 1.0d0
-    IER = 0
-  end subroutine FCVROOTFN
+  end subroutine init_network
 
 end module network

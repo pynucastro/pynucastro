@@ -1,6 +1,5 @@
 # CNO rate module generator
-
-import reaclib
+from pyreaclib.networks import SundialsNetwork
 
 files = ["c12-pg-n13-ls09",
          "n13--c13-wc12",
@@ -11,10 +10,8 @@ files = ["c12-pg-n13-ls09",
          "n13-pg-o14-lg06",
          "o14--n14-wc12"]
 
-
-rc = reaclib.RateCollection(files)
-
-rc.make_network_f90('sundials')
+cno_net = SundialsNetwork(files)
+cno_net.write_network()
 
 
 
