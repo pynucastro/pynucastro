@@ -197,7 +197,7 @@ class RateCollection(object):
         print('To create network integration source code, use a class that implements a specific network type.')
         return
 
-    def plot(self, outfile=None, rho=None, T=None, comp=None):
+    def plot(self, outfile=None, rho=None, T=None, comp=None, size=(800,600), dpi=100):
         G = nx.MultiDiGraph()
         G.position={}
         G.labels = {}
@@ -283,11 +283,14 @@ class RateCollection(object):
         ax = plt.gca()
         ax.set_aspect("equal", "datalim")
 
+        f = plt.gcf()
+        f.set_size_inches(size[0]/dpi, size[1]/dpi)
+
         if outfile is None:
             plt.show()
         else:
             plt.tight_layout()
-            plt.savefig(outfile, dpi=100)
+            plt.savefig(outfile, dpi=dpi)
 
     def __repr__(self):
         string = ""
@@ -298,13 +301,14 @@ class RateCollection(object):
 
 class Explorer(object):
     """ interactively explore a rate collection """
-    def __init__(self, rc, comp):
+    def __init__(self, rc, comp, size=(800,600)):
         """ take a RateCollection and a composition """
         self.rc = rc
         self.comp = comp
+        self.size = size
 
     def _make_plot(self, logrho, logT):
-        self.rc.plot(rho=10.0**logrho, T=10.0**logT, comp=self.comp)
+        self.rc.plot(rho=10.0**logrho, T=10.0**logT, comp=self.comp, size=self.size)
 
     def explore(self):
         interact(self._make_plot, logrho=(2, 6, 0.1), logT=(7, 9, 0.1))
