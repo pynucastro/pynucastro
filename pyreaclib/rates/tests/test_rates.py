@@ -78,3 +78,51 @@ class TestNucleus(object):
         assert self.d < self.he4
         assert self.ni56 > self.c12
         assert self.he4_also == self.he4
+
+class TestRate(object):
+
+    @classmethod
+    def setup_class(cls):
+        """ this is run once for each class before any tests """
+        pass
+
+    @classmethod
+    def teardown_class(cls):
+        """ this is run once for each class after all tests """
+        pass
+
+    def setup_method(self):
+        """ this is run before each test """
+        self.rate1 = rates.Rate("../../library/c12-ag-o16-nac2")
+        self.rate2 = rates.Rate("../../library/he4-aag-c12-fy05")
+
+        self.he4 = rates.Nucleus("he4")
+        self.c12 = rates.Nucleus("c12")
+        self.o16 = rates.Nucleus("o16")
+
+    def teardown_method(self):
+        """ this is run after each test """
+        pass
+
+    def test_reactants(self):
+        assert self.rate1.reactants[0] == self.he4
+        assert self.rate1.reactants[1] == self.c12
+
+        assert self.rate2.reactants[0] == self.he4
+        assert self.rate2.reactants[1] == self.he4
+        assert self.rate2.reactants[2] == self.he4
+
+    def test_products(self):
+        assert self.rate1.products[0] == self.o16
+        assert self.rate2.products[0] == self.c12
+
+    def test_prefactor(self):
+        assert self.rate1.prefactor == 1.0
+        assert self.rate2.prefactor == approx(0.16666666)
+
+    def test_rate_exponent(self):
+        assert self.rate2.get_rate_exponent(1.e8) == approx(40.9106396)
+
+    def test_eval(self):
+        assert self.rate2.eval(1.e8) == approx(2.0403192412842946e-24)
+
