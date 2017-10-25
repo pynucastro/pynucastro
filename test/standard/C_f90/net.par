@@ -11,6 +11,7 @@
   net_initial_abundances%yp = 0.0d0
   net_initial_abundances%yhe4 = 0.0d0
   net_initial_abundances%yc12 = 0.0d0
+  net_initial_abundances%yo16 = 0.0d0
   net_initial_abundances%yne20 = 0.0d0
   net_initial_abundances%yna23 = 0.0d0
   net_initial_abundances%ymg23 = 0.0d0

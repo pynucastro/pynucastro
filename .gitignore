@@ -1,5 +1,7 @@
 *~
 *.pyc
+__pycache__
+.ipynb_checkpoints
 
 *.o
 *.mod
@@ -8,3 +10,8 @@
 _build.*
 
 *.pdf
+
+.ipynb_checkpoints/
+
+\#*
+.#*

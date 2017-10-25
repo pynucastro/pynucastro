@@ -1,0 +1,15 @@
+f90EXE_sources += actual_network.f90
+f90EXE_sources += reaclib_rates.f90
+f90EXE_sources += table_rates.f90
+f90EXE_sources += physical_constants.f90
+
+ifeq ($(USE_REACT),TRUE)
+f90EXE_sources += actual_burner.f90
+f90EXE_sources += actual_rhs.f90
+f90EXE_sources += reaclib_rates.f90
+f90EXE_sources += table_rates.f90
+f90EXE_sources += physical_constants.f90
+
+USE_SCREENING = TRUE
+USE_NEUTRINOS = TRUE
+endif

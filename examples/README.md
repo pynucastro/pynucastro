@@ -15,16 +15,15 @@ are the main steps:
 CNO_f90/cno.py, replacing the list of 'files' with your own (e.g.
 working.py)
 
+* Choose either the 'sundials', 'python', or 'boxlib' types of output networks.
+
 * Run your python script (pyreaclib must be in your PYTHONPATH).
 
 ```
 $ python working.py
 ```
 
-* Fill in the binding energies per nucleon in MeV in net_rates.f90,
-  subroutine init_net_info().
-
-* Finally, by default the network will output data based on the
+* (SUNDIALS) By default the sundials networks will output data based on the
 cv_pars%DT_SAVE (timestep) and cv_pars%NDT_SAVE (number of time steps
 to take) parameters in the net.par file. If you would like to add
 custom stopping criteria, edit the FCVROOTFN subroutine in network.f90
@@ -45,15 +44,15 @@ t
 [number of temperature values]
 ```
 
-* Make
+* (SUNDIALS) Make
 
 ```
 $ make
 ```
 
-* Specify initial abundances, density, temperature, ye in net.par
+* (SUNDIALS) Specify initial abundances, density, temperature, ye in net.par
 
-* Run
+* (SUNDIALS) Run 
 
 ```
 $ ./integrator.gfortran.exe

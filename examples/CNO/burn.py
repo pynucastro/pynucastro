@@ -1,14 +1,16 @@
+from __future__ import print_function
+
 import numpy as np
 from scipy.integrate import ode
 import cno_rhs as cno
-import reaclib
+import pyreaclib
 import matplotlib.pyplot as plt
 
 def burn(Y0, rho, T, tmax, nsave):
 
     r = ode(cno.rhs).set_integrator("vode", method="bdf",
                                     with_jacobian=False,
-                                    atol=1.e-10, rtol=1.e-10,
+                                    atol=1.e-8, rtol=1.e-8,
                                     nsteps = 1500000, order=5) #, min_step=dt)
 
     t = 0.0
@@ -26,9 +28,9 @@ def burn(Y0, rho, T, tmax, nsave):
     O15_out = []
 
     while r.successful() and r.t < tmax:
-        print r.t, r.y[cno.ip], r.y[cno.io14]
+        print(r.t, r.y[cno.ip], r.y[cno.io14])
         r.integrate(r.t+dt)
-        
+
         t_out.append(r.t)
         H_out.append(r.y[cno.ip])
         He_out.append(r.y[cno.ihe4])
@@ -72,4 +74,3 @@ if __name__ == "__main__":
     plt.legend(frameon=False)
 
     plt.savefig("burn.png")
-

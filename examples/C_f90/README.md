@@ -22,28 +22,15 @@ be in your PYTHONPATH):
 $ python c.py
 ```
 
-2) Edit net_rates.f90 and fill in the binding energies (MeV) in the
-init_net_info subroutine: (relative to proton BE)
-
-```
-    self%ebind_per_nucleon(self%in)   = 0.782347d0
-    self%ebind_per_nucleon(self%ip)   = 0.0d0
-    self%ebind_per_nucleon(self%ihe4)   = 7.073915d0
-    self%ebind_per_nucleon(self%ic12)   = 7.680144d0
-    self%ebind_per_nucleon(self%ine20)   = 8.032240d0
-    self%ebind_per_nucleon(self%ina23)   = 8.111493d0
-    self%ebind_per_nucleon(self%img23)   = 7.901104d0
-```
-
-3) Edit network.f90 and revise the stopping root solver condition in
+2) Edit rhs.f90 and revise the stopping root solver condition in
 subroutine FCVROOTFN if desired. For example, to stop when C12 is
 depleted, use the following:
 
 ```
-    G(1) = Y(net_meta%ic12)
+    G(1) = Y(jc12)
 ```
 
-4) Add your SUNDIALS, LAPACK, and BLAS libraries to ../GMake.common, eg.
+3) Add your SUNDIALS, LAPACK, and BLAS libraries to ../GMake.common, eg.
 
 ```
   # SUNDIALS libraries
@@ -59,7 +46,7 @@ depleted, use the following:
   LINKLIBS += -L${BLASDIR} -lblas
 ```
 
-5) Make and run
+4) Make and run
 
 ```
 $ make

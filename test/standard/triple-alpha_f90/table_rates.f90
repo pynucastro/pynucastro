@@ -1,12 +1,11 @@
 module table_rates
-
-  ! Table is expected to be in terms of log10(dens*ye) and log10(temp)
+  ! Table is expected to be in terms of dens*ye and temp (non-logarithmic, cgs units)
+  ! Table energy units are expected in terms of ergs
   
   implicit none
 
   public table_meta
   
-
   integer, parameter :: num_tables   = 0
   integer, parameter :: jtab_mu      = 1
   integer, parameter :: jtab_dq      = 2
@@ -15,42 +14,51 @@ module table_rates
   integer, parameter :: jtab_nuloss  = 5
   integer, parameter :: jtab_gamma   = 6
 
+  ! k_drate_dt is used only for calculating the derivative
+  ! of rate with temperature from the table, it isn't an index
+  ! into the table but into the 'entries' array in, eg. get_entries.
+  integer, parameter :: k_drate_dt   = 7
+  integer, parameter :: add_vars     = 1 ! 1 Additional Var in entries
+
 
   type :: table_info
      double precision, dimension(:,:,:), allocatable :: rate_table
      double precision, dimension(:), allocatable :: rhoy_table
      double precision, dimension(:), allocatable :: temp_table
-     character(len=50) :: rate_table_file
-     integer :: num_header 
      integer :: num_rhoy
      integer :: num_temp
      integer :: num_vars
-   contains
-     procedure :: initialize => init_tab_info
-     procedure :: terminate => term_tab_info
-     procedure :: bl_lookup => bl_lu_tab_info
   end type table_info
 
-  type(table_info), target, dimension(num_tables) :: table_meta
+  type :: table_read_info
+     character(len=50) :: rate_table_file
+     integer :: num_header 
+  end type table_read_info
+
+  type(table_info), dimension(num_tables) :: table_meta
+  type(table_read_info), dimension(num_tables) :: table_read_meta
 
 contains
 
-  subroutine init_table_meta()
+  subroutine init_tabular()
     integer :: n
+
+    
     do n = 1, num_tables
-       call table_meta(n)%initialize()
+       call init_tab_info(table_meta(n), table_read_meta(n))
     end do
-  end subroutine init_table_meta
+  end subroutine init_tabular
 
   subroutine term_table_meta()
     integer :: n
     do n = 1, num_tables
-       call table_meta(n)%terminate()
+       call term_tab_info(table_meta(n))
     end do
   end subroutine term_table_meta
-  
-  subroutine init_tab_info(self)
-    class(table_info) :: self
+
+  subroutine init_tab_info(self, self_read)
+    type(table_info) :: self
+    type(table_read_info) :: self_read
     double precision, target, dimension(:,:,:), allocatable :: rate_table_scratch
     integer :: i, j, k
 
@@ -59,8 +67,8 @@ contains
     allocate( self%temp_table( self%num_temp ) )
     allocate( rate_table_scratch( self%num_temp, self%num_rhoy, self%num_vars+2 ) )
 
-    open(unit=11, file=self%rate_table_file)
-    do i = 1, self%num_header
+    open(unit=11, file=self_read%rate_table_file)
+    do i = 1, self_read%num_header
        read(11,*)
     end do
     do j = 1, self%num_rhoy
@@ -82,9 +90,9 @@ contains
     end do
     deallocate( rate_table_scratch )
   end subroutine init_tab_info
-
+  
   subroutine term_tab_info(self)
-    class(table_info) :: self
+    type(table_info) :: self
 
     deallocate( self%rate_table )
     deallocate( self%rhoy_table )
@@ -92,6 +100,7 @@ contains
   end subroutine term_tab_info
 
   subroutine vector_index_lu(vector, fvar, index)
+
     ! Returns the greatest index of vector for which vector(index) < fvar.
     ! Return 1 if fvar < vector(1)
     ! Return size(vector)-1 if fvar > vector(size(vector))
@@ -104,10 +113,8 @@ contains
     n = size(vector)
     if ( fvar .lt. vector(1) ) then
        index = 1
-       return
     else if ( fvar .gt. vector(n) ) then
-       index = n
-       return
+       index = n - 1
     else
        nup = n
        ndn = 1
@@ -125,48 +132,159 @@ contains
        end do
     end if
   end subroutine vector_index_lu
+
+  subroutine bl_clamp(xlo, xhi, flo, fhi, x, f)
+    
+    ! Perform bilinear interpolation within the interval [xlo, xhi]
+    ! where the function values at the endpoints are defined by:
+    ! flo = f(xlo)
+    ! fhi = f(xhi)
+    ! Returns f(x), the values flo and fhi interpolated at x
+    ! f(x) = flo if x <= xlo
+    ! f(x) = fhi if x >= xhi
+    double precision, intent(in)  :: xlo, xhi, flo, fhi, x
+    double precision, intent(out) :: f
+    if ( x .le. xlo ) then
+       f = flo
+    else if ( x .ge. xhi ) then
+       f = fhi
+    else
+       f = ( flo * ( xhi - x ) + fhi * ( x - xlo ) ) / ( xhi - xlo )
+    end if
+  end subroutine bl_clamp
+
+  subroutine bl_extrap(xlo, xhi, flo, fhi, x, f)
+    
+    ! Perform bilinear interpolation within the interval [xlo, xhi]
+    ! where the function values at the endpoints are defined by:
+    ! flo = f(xlo)
+    ! fhi = f(xhi)
+    ! Returns f(x), the values flo and fhi interpolated at x
+    ! If x <= xlo or x >= xhi, f(x) is extrapolated at x
+    double precision, intent(in)  :: xlo, xhi, flo, fhi, x
+    double precision, intent(out) :: f
+    f = ( flo * ( xhi - x ) + fhi * ( x - xlo ) ) / ( xhi - xlo )
+  end subroutine bl_extrap
   
-  subroutine bl_lu_tab_info(self, rhoy, temp, ivar, fvar)
-    class(table_info) :: self
+  subroutine get_entries(self, rhoy, temp, entries)
+    
+    type(table_info) :: self
     double precision, intent(in) :: rhoy, temp
-    integer, intent(in) :: ivar            ! variable index
-    double precision, intent(out) :: fvar  ! return variable value
-    double precision :: logrhoy, logtemp
-    double precision :: fab, fcd, fa, fb, fc, fd
+
+    double precision, dimension(self%num_vars+1), intent(out) :: entries
+    ! The last element of entries is the derivative of rate with temperature
+    ! drate_dt, evaluated by central differencing at the box corners
+    ! and then performing a bilinear interpolation on those central differences.
+
+    double precision :: f_im1, f_i, f_ip1, f_ip2
+    double precision :: t_im1, t_i, t_ip1, t_ip2
+    double precision :: drdt_i, drdt_ip1
     double precision :: temp_lo, temp_hi, rhoy_lo, rhoy_hi
     integer :: irhoy_lo, irhoy_hi, itemp_lo, itemp_hi
-
-    ! The table is in terms of log(rho*ye) and log(temp) so convert
-    logrhoy = log10(rhoy)
-    logtemp = log10(temp)
+    integer :: ivar
 
     ! Get box-corner points for interpolation
     ! This deals with out-of-range inputs via linear extrapolation
-    call vector_index_lu(self%rhoy_table, logrhoy, irhoy_lo)
-    call vector_index_lu(self%temp_table, logtemp, itemp_lo)
+    call vector_index_lu(self%rhoy_table, rhoy, irhoy_lo)
+    call vector_index_lu(self%temp_table, temp, itemp_lo)
+    ! write(*,*) 'upper self temp table: ', self%temp_table(39)
+    ! write(*,*) 'temp: ', temp
+    ! write(*,*) 'itemp_lo: ', itemp_lo
     irhoy_hi = irhoy_lo + 1
     itemp_hi = itemp_lo + 1
-    
-    ! Bilinear interpolation within the box (log=log10)
+
+    ! Bilinear interpolation within the box
     ! The desired point is denoted by ABCD, within the box.
     ! The value of ivar at ABCD is denoted by fvar.
     ! T ^   B .      . C
     !   |
-    ! g |  AB   ABCD   CD
-    ! o |     .      . 
-    ! l |   A          D
-    !   |___________________> log rho*Ye
+    !   |  AB   ABCD   CD
+    !   |     .      . 
+    !   |   A          D
+    !   |___________________> rho*Ye
     temp_lo = self%temp_table( itemp_lo )
     temp_hi = self%temp_table( itemp_hi )
     rhoy_lo = self%rhoy_table( irhoy_lo )
     rhoy_hi = self%rhoy_table( irhoy_hi )
-    fa = self%rate_table( itemp_lo, irhoy_lo, ivar )
-    fb = self%rate_table( itemp_hi, irhoy_lo, ivar )
-    fc = self%rate_table( itemp_hi, irhoy_hi, ivar )
-    fd = self%rate_table( itemp_lo, irhoy_hi, ivar )
-    fab = ( fa * ( temp_hi - logtemp ) + fb * ( logtemp - temp_lo ) )/( temp_hi - temp_lo )
-    fcd = ( fd * ( temp_hi - logtemp ) + fc * ( logtemp - temp_lo ) )/( temp_hi - temp_lo )
-    fvar = ( fab * ( rhoy_hi - logrhoy ) + fcd * ( logrhoy - rhoy_lo ) )/( rhoy_hi - rhoy_lo )
-  end subroutine bl_lu_tab_info
 
+    ! Interpolate for each table entry
+    do ivar = 1, self%num_vars
+       call bl_extrap(temp_lo, temp_hi, &
+            self%rate_table( itemp_lo, irhoy_lo, ivar ), &
+            self%rate_table( itemp_hi, irhoy_lo, ivar ), &
+            temp, f_i)
+       call bl_extrap(temp_lo, temp_hi, &
+            self%rate_table( itemp_lo, irhoy_hi, ivar ), &
+            self%rate_table( itemp_hi, irhoy_hi, ivar ), &
+            temp, f_ip1)
+       call bl_extrap(rhoy_lo, rhoy_hi, f_i, f_ip1, rhoy, entries(ivar))
+    end do
+
+    ! Calculate the derivative of rate with temperature, d(rate)/d(t)
+    ! (Clamp interpolations in rhoy to avoid unphysical temperature derivatives)
+    if (( itemp_lo .eq. 1 ) .or. ( itemp_lo .eq. self%num_temp-1 )) then
+       ! We're at the first or last table cell (in temperature)
+       ! First do bilinear interpolation in rhoy for the table at tlo and thi
+       call bl_clamp(rhoy_lo, rhoy_hi, &
+            self%rate_table( itemp_lo, irhoy_lo, jtab_rate ), &
+            self%rate_table( itemp_lo, irhoy_hi, jtab_rate ), &
+            rhoy, f_i)
+       call bl_clamp(rhoy_lo, rhoy_hi, &
+            self%rate_table( itemp_hi, irhoy_lo, jtab_rate ), &
+            self%rate_table( itemp_hi, irhoy_hi, jtab_rate ), &
+            rhoy, f_ip1)
+       ! Approximate d(rate)/d(t) via forward differencing
+       entries(k_drate_dt) = (f_ip1 - f_i) / (temp_hi - temp_lo)
+    else
+       ! Approximate d(rate)/d(t) via bilinear interpolation on central differences
+       t_im1 = self%temp_table( itemp_lo-1 )
+       t_i   = self%temp_table( itemp_lo )
+       t_ip1 = self%temp_table( itemp_hi )
+       t_ip2 = self%temp_table( itemp_lo+2 )
+       call bl_clamp(rhoy_lo, rhoy_hi, &
+            self%rate_table( itemp_lo-1, irhoy_lo, jtab_rate ), &
+            self%rate_table( itemp_lo-1, irhoy_hi, jtab_rate ), &
+            rhoy, f_im1)
+       call bl_clamp(rhoy_lo, rhoy_hi, &
+            self%rate_table( itemp_lo, irhoy_lo, jtab_rate ), &
+            self%rate_table( itemp_lo, irhoy_hi, jtab_rate ), &
+            rhoy, f_i)
+       call bl_clamp(rhoy_lo, rhoy_hi, &
+            self%rate_table( itemp_hi, irhoy_lo, jtab_rate ), &
+            self%rate_table( itemp_hi, irhoy_hi, jtab_rate ), &
+            rhoy, f_ip1)
+       call bl_clamp(rhoy_lo, rhoy_hi, &
+            self%rate_table( itemp_lo+2, irhoy_lo, jtab_rate ), &
+            self%rate_table( itemp_lo+2, irhoy_hi, jtab_rate ), &
+            rhoy, f_ip2)
+       ! Get central difference derivatives at the box corners
+       drdt_i   = (f_ip1 - f_im1) / (t_ip1 - t_im1)
+       drdt_ip1 = (f_ip2 - f_i)   / (t_ip2 - t_i)
+       ! Interpolate in temperature
+       ! (Since we're inside the table in temp, use bl_extrap, it's faster)
+       call bl_extrap(t_i, t_ip1, drdt_i, drdt_ip1, temp, entries(k_drate_dt))
+    end if
+  end subroutine get_entries
+
+  subroutine tabular_evaluate(self, rhoy, temp, reactvec)
+    
+    implicit none
+    
+    type(table_info) :: self
+    double precision, intent(in) :: rhoy, temp
+    double precision, dimension(6), intent(inout) :: reactvec
+    double precision, dimension(self%num_vars+add_vars) :: entries
+    
+    ! Get the table entries at this rhoy, temp
+    call get_entries(self, rhoy, temp, entries)
+
+    ! Recast entries into reactvec
+    reactvec(1) = entries(jtab_rate)
+    reactvec(2) = entries(k_drate_dt)
+    reactvec(3) = 1.0d0 
+    reactvec(4) = 0.0d0
+    reactvec(5) = entries(jtab_dq) 
+    reactvec(6) = entries(jtab_gamma) - entries(jtab_nuloss)
+  end subroutine tabular_evaluate
+  
 end module table_rates

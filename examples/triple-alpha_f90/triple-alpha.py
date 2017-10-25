@@ -1,12 +1,12 @@
 # triple-alpha rate module generator for a fortran network
-import reaclib
+
+from pyreaclib.networks import SundialsNetwork
 
 files = ["c12-gaa-he4-fy05",
          "he4-aag-c12-fy05"]
 
-rc = reaclib.RateCollection(files)
-
-rc.make_network_f90('sundials')
+triple_alpha_net = SundialsNetwork(files)
+triple_alpha_net.write_network()
 
 
 

@@ -1,23 +1,30 @@
 program integrator
-  use cvode_parameters
+  use cvode_parameters, only: cv_data, cv_pars, net_initial_abundances
   use network
-  use net_rates
-  use data_wrangler
-  use parameters
+  use net_rates, only: init_reaclib, net_screening_init
+  use table_rates, only: init_tabular
+  use data_wrangler, only: store_solution, write_solution
+  use parameters, only: init_parameters
 
   implicit none
 
   integer KOUNTER
-  integer jk
-
-  ! Initialize parameters
+  integer jk, i
+  double precision, dimension(:), allocatable :: YPREV
+  logical :: move_along = .false.
+  
+  ! Initialization
   call init_parameters()
-  call net_meta%initialize()
+  call init_network()
+  call init_reaclib()
+  call init_tabular()
+  call net_screening_init()
 
   ! Allocate data storage
-  allocate( cv_data%net_history(net_meta%neqs+1, cv_pars%NDT_SAVE) )
-  allocate( cv_data%Y0(net_meta%neqs) )
-  allocate( cv_data%Y(net_meta%neqs) )
+  allocate( cv_data%net_history(cv_data%NEQ+1, cv_pars%NDT_SAVE) )
+  allocate( cv_data%Y0(cv_data%NEQ) )
+  allocate( cv_data%Y(cv_data%NEQ) )
+  allocate( YPREV(cv_data%NEQ) )
 
   ! Print Physical Parameters
   write(*,*) 'Integrating starting with:'
@@ -25,12 +32,12 @@ program integrator
   write(*,'(A,ES25.14)') 'Density = ', cv_pars%dens
 
   ! Initialize the Integration
-  cv_data%Y0(net_meta%ihe4)   = net_initial_abundances%yhe4
-  cv_data%Y0(net_meta%ic12)   = net_initial_abundances%yc12
-  cv_data%Y0(net_meta%ienuc)   = net_initial_abundances%yenuc
-
+  cv_data%Y0(jhe4)   = net_initial_abundances%yhe4
+  cv_data%Y0(jc12)   = net_initial_abundances%yc12
+  cv_data%Y0(net_ienuc)   = net_initial_abundances%yenuc
+  
   write(*,*) 'Initialization at time 0: '
-  do jk = 1, number_equations
+  do jk = 1, cv_data%NEQ
      write(*,*) 'index: ', jk, ' : ', cv_data%Y0(jk)
   end do
 
@@ -64,11 +71,13 @@ program integrator
   end if
 
   call store_solution(cv_data%Y0, cv_data%net_history, 1, 0.0d0)
+  YPREV = cv_data%Y0
   ! Do the integration
   do KOUNTER = 1, cv_pars%NDT_SAVE
      cv_data%TK = min(cv_data%T0 + DBLE(KOUNTER)*cv_pars%DT_SAVE, cv_data%T_TARGET)
      write(*,*) 'Attempting integration to: ', cv_data%TK
      call FCVODE(cv_data%TK, cv_data%T, cv_data%Y, cv_pars%ITASK, cv_data%IER)
+     
      if (cv_data%IER == 2) then
         ! The root was found
         ! Y = Y(TK) not Y(T) so we have to find Y(T)
@@ -86,6 +95,34 @@ program integrator
         call store_solution(cv_data%Y, cv_data%net_history, KOUNTER, cv_data%T)
         cv_data%KFIN = KOUNTER
      end if
+
+     write(*,*) '______________________________'
+     do i = 1, nspec+1
+        write(*,*) 'Y(',i,'): ',cv_data%Y(i)
+     end do
+     write(*,*) '______________________________'
+     
+     !! Stop integration if none of the nuclide abundances are changing by
+     !! at least A_TOL, the absolute tolerance of the ODE solver.
+     !! It turns out that incorporating A_TOL into the root-solver stopping
+     !! condition is better because you can integrate to the exact time the condition
+     !! is satisfied instead of checking the stopping condition at each output interval.
+     ! move_along = .false.
+     ! do i = 1, nspec
+     !    if ( cv_data%Y(i) == 0.0d0 ) then
+     !       cycle
+     !    else if ( abs(cv_data%Y(i)-YPREV(i)) > cv_pars%A_TOL ) then
+     !       move_along = .true.
+     !    end if
+     ! end do
+     
+     ! if ( .not. move_along ) then
+     !    ! None of the species are changing by more than the absolute tolerance.
+     !    ! Stop the integration
+     !    exit
+     ! end if
+     ! YPREV = cv_data%Y
+     
   end do
 
   if (cv_data%KFIN == cv_pars%NDT_SAVE) then
@@ -101,11 +138,16 @@ program integrator
 
   ! Print output to console
   write(*,'(A,ES25.14)') 'Integrated to time: ', cv_data%T
-  write(*,'(A,ES25.14)') 'Final enuc: ', cv_data%Y(net_meta%ienuc)
-  write(*,'(A,ES25.14)') 'Average enuc_dot: ', cv_data%Y(net_meta%ienuc)/cv_data%T
-  write(*,'(A,ES25.14)') 'he4: ', cv_data%Y(net_meta%ihe4)
-  write(*,'(A,ES25.14)') 'c12: ', cv_data%Y(net_meta%ic12)
+  write(*,'(A,ES25.14)') 'Final enuc: ', cv_data%Y(net_ienuc)
+  write(*,'(A,ES25.14)') 'Average enuc_dot: ', cv_data%Y(net_ienuc)/cv_data%T
+
+  write(*,*) "MASS FRACTIONS:"
+  write(*,'(A,ES25.14)') 'he4: ', cv_data%Y(jhe4)*aion(jhe4)
+  write(*,'(A,ES25.14)') 'c12: ', cv_data%Y(jc12)*aion(jc12)
 
   deallocate( cv_data%net_history )
+  deallocate( cv_data%Y0 )
+  deallocate( cv_data%Y )
+  deallocate( YPREV )
 
 end program integrator
