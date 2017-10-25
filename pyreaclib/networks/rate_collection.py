@@ -98,7 +98,7 @@ class RateCollection(object):
 
         # get the rates
         self.pyreaclib_rates_dir = os.path.join(self.pyreaclib_dir,
-                                                'rates')
+                                                'library')
         exit_program = False
         for p in rate_files:
             # check to see if the rate file is in the working dir
