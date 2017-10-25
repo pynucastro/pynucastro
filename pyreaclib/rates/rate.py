@@ -148,7 +148,7 @@ class Rate(object):
         # If not eligible for screening, set to None
         # If eligible for screening, then
         # Rate.ion_screen is a 2-element list of Nucleus objects for screening
-        self.ion_screen = None 
+        self.ion_screen = None
 
         idx = self.file.rfind("-")
         self.fname = self.file[:idx].replace("--","-").replace("-","_")
@@ -157,7 +157,7 @@ class Rate(object):
 
         # read in the file, parse the different sets and store them as
         # SingleSet objects in sets[]
-        f = open(file, "r")                            
+        f = open(file, "r")
         lines = f.readlines()
 
         self.original_source = "".join(lines)
@@ -266,7 +266,7 @@ class Rate(object):
                         self.reactants.append(Nucleus(f[0]))
                         self.products += [Nucleus(f[1]), Nucleus(f[2]),
                                           Nucleus(f[3]), Nucleus(f[4])]
-                    
+
                     first = 0
 
                 # the second line contains the first 4 coefficients
@@ -278,7 +278,7 @@ class Rate(object):
 
                 a = [float(e) for e in a if not e.strip() == ""]
                 self.sets.append(SingleSet(a, label=label))
-                
+
         # compute self.prefactor and self.dens_exp from the reactants
         self.prefactor = 1.0  # this is 1/2 for rates like a + a (double counting)
         self.inv_prefactor = 1
@@ -297,7 +297,7 @@ class Rate(object):
             self.ion_screen = []
             self.ion_screen.append(nucz[0])
             self.ion_screen.append(nucz[1])
-        
+
         self.string = ""
         self.pretty_string = r"$"
 
@@ -308,7 +308,7 @@ class Rate(object):
                 treactants.insert(0, n)
             else:
                 treactants.append(n)
-                
+
         for n, r in enumerate(treactants):
             self.string += "{}".format(r)
             self.pretty_string += r"{}".format(r.pretty)
@@ -327,7 +327,7 @@ class Rate(object):
                 self.pretty_string += r" + "
 
         self.pretty_string += r"$"
-        
+
     def __repr__(self):
         return self.string
 
