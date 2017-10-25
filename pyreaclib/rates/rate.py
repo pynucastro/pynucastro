@@ -123,7 +123,8 @@ class Nucleus(object):
         return hash(self.__repr__())
 
     def __eq__(self, other):
-        return self.raw == other.raw
+        return self.el.lower() == other.el.lower() and \
+               self.Z == other.Z and self.A == other.A
 
     def __lt__(self, other):
         if not self.Z == other.Z:
