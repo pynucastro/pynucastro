@@ -39,7 +39,7 @@ class Composition(object):
         num = len(self.X)
         rem = Z/(num-2)
         for k in self.X:
-            if k.raw == "p":
+            if k == Nucleus("p"):
                 self.X[k] = 0.7
             elif k.raw == "he4":
                 self.X[k] = 0.3 - Z
@@ -85,7 +85,7 @@ class RateCollection(object):
         """
         rate_files are the files that together define the network.  This
         can be any iterable or single string, and can include
-        wildcards
+        wildcards.
         """
 
         self.pyreaclib_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
