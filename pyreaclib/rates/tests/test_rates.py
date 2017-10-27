@@ -1,5 +1,6 @@
 # unit tests for rates
 import math
+import os
 
 import pyreaclib.rates as rates
 from pytest import approx
@@ -84,7 +85,8 @@ class TestRate(object):
     @classmethod
     def setup_class(cls):
         """ this is run once for each class before any tests """
-        pass
+        base_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__))).split("pyreaclib")[0]
+        cls.library_path = os.path.join(base_dir, "pyreaclib/pyreaclib/library/")
 
     @classmethod
     def teardown_class(cls):
@@ -93,8 +95,8 @@ class TestRate(object):
 
     def setup_method(self):
         """ this is run before each test """
-        self.rate1 = rates.Rate("../../library/c12-ag-o16-nac2")
-        self.rate2 = rates.Rate("../../library/he4-aag-c12-fy05")
+        self.rate1 = rates.Rate(os.path.join(self.library_path, "c12-ag-o16-nac2"))
+        self.rate2 = rates.Rate(os.path.join(self.library_path, "he4-aag-c12-fy05"))
 
         self.he4 = rates.Nucleus("he4")
         self.c12 = rates.Nucleus("c12")
