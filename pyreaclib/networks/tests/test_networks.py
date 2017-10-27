@@ -65,9 +65,24 @@ class TestRateCollection(object):
                  "o15--n15-wc12"]
         self.rc = networks.RateCollection(files)
 
+        self.p = rates.Nucleus("p")
+        self.he4 = rates.Nucleus("he4")
+        self.c12 = rates.Nucleus("c12")
+        self.c13 = rates.Nucleus("c13")
+        self.n13 = rates.Nucleus("n13")
+        self.n14 = rates.Nucleus("n14")
+        self.n15 = rates.Nucleus("n15")
+        self.o14 = rates.Nucleus("o14")
+        self.o15 = rates.Nucleus("o15")
+
     def teardown_method(self):
         """ this is run after each test """
         self.tf = None
+
+    def test_nuclei(self):
+        nuc = self.rc.get_nuclei()
+        assert nuc == [self.p, self.he4, self.c12, self.c13,
+                       self.n13, self.n14, self.n15, self.o14, self.o15]
 
     def test_overview(self):
 
@@ -131,3 +146,4 @@ class TestRateCollection(object):
        n14 + p --> o15
 """
         assert self.rc.network_overview().replace(" ","").strip() == ostr.replace(" ","").strip()
+
