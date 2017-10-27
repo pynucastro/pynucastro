@@ -84,6 +84,25 @@ class TestRateCollection(object):
         assert nuc == [self.p, self.he4, self.c12, self.c13,
                        self.n13, self.n14, self.n15, self.o14, self.o15]
 
+    def test_eval(self):
+        c = networks.Composition(self.rc.unique_nuclei)
+        c.set_solar_like()
+
+        rates = {"c12 + p --> n13": 4.3825344233265815e-05,
+                 "c13 + p --> n14": 0.00012943869407433355,
+                 "n13 --> c13": 2.5475016632596765e-07,
+                 "n13 + p --> o14": 4.8517620910445875e-06,
+                 "n14 + p --> o15": 9.8137074572314962e-07,
+                 "n15 + p --> he4 + c12": 0.087518552257659241,
+                 "o14 --> n14": 2.0036691481625654e-06,
+                 "o15 --> n15": 1.0822012944765837e-06}
+
+        rv = self.rc.evaluate_rates(1.e4, 1.e8, c)
+
+        for r in rv:
+            assert rv[r] == approx(rates[str(r)])
+
+
     def test_overview(self):
 
         ostr = """
