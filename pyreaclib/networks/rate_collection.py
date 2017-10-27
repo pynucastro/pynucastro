@@ -180,18 +180,21 @@ class RateCollection(object):
 
         return rvals
 
-    def print_network_overview(self):
+    def network_overview(self):
+        """ return a verbose network overview """
+        ostr = ""
         for n in self.unique_nuclei:
-            print(n)
-            print("  consumed by: ")
+            ostr += "{}\n".format(n)
+            ostr += "  consumed by:\n"
             for r in self.nuclei_consumed[n]:
-                print("     {}".format(r.string))
+                ostr += "     {}\n".format(r.string)
 
-            print("  produced by: ")
+            ostr += "  produced by:\n"
             for r in self.nuclei_produced[n]:
-                print("     {}".format(r.string))
+                ostr += "     {}\n".format(r.string)
 
-            print(" ")
+            ostr += "\n"
+        return ostr
 
     def write_network(self):
         print('To create network integration source code, use a class that implements a specific network type.')
