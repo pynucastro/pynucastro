@@ -133,7 +133,7 @@ class PythonNetwork(RateCollection):
         else:
             rstring = "{}{}{}*lambda_{}"
         return rstring.format(prefactor_string, dens_string, Y_string, rate.fname)
-    
+
     def write_network(self, outfile):
         """
         this is the actual RHS for the system of ODEs that

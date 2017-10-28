@@ -42,6 +42,13 @@ class TestPythonNetwork(object):
                ydot == "rho*Y[ip]*Y[ic13]*lambda_c13_pg_n14"
 
 
+    def test_jacobian_string(self):
+        jac = self.pyn.jacobian_string(self.rate,
+                                       self.rate.products[0],
+                                       self.rate.reactants[0])
+        assert jac == "rho*Y[ic13]*lambda_c13_pg_n14"
+
+
     def test_function_string(self):
 
         ostr = """
