@@ -9,8 +9,8 @@ from pyreaclib.networks import BaseFortranNetwork
 class BoxLibNetwork(BaseFortranNetwork):
     def __init__(self, *args, **kwargs):
         # Initialize BaseFortranNetwork parent class
-        super(BoxLibNetwork, self).__init__(*args, **kwargs)        
-                    
+        super(BoxLibNetwork, self).__init__(*args, **kwargs)
+
         # Set up some directories
         self.boxlib_dir = os.path.join(self.pyreaclib_dir,
                                        'templates',
@@ -57,7 +57,7 @@ class BoxLibNetwork(BaseFortranNetwork):
                 else:
                     reactant = r.reactants[0]
                     of.write('{}enuc = enuc + N_AVO * {}(j{}) * rate_eval % dqweak(j_{})\n'.format(self.indent*n_indent, self.name_ydot, reactant, r.fname))
-        
+
     def enuc_epart(self, n_indent, of):
         # Add particle energy generation rates (gamma heating and neutrino loss from decays)
         # to the energy generation rate (doesn't include plasma neutrino losses)
