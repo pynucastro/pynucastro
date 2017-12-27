@@ -1,0 +1,10 @@
+To build the webpages:
+
+   make html
+
+
+To automatically generate the API docs:
+
+   sphinx-apidoc -o docs/source/ pyreaclib/
+
+
