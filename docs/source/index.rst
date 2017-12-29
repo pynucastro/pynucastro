@@ -3,13 +3,20 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to pyreaclib's documentation!
-=====================================
+``pyreaclib``
+=============
+
+``pyreaclib`` is a set of python interfaces to the JINA reaclib
+nuclear reaction rate database.  It is meant for both interactive
+exploration of rates (through Jupyter notebooks) and to create
+reaction networks for use in simulation codes.
+
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
+   intro
    modules
 
 
