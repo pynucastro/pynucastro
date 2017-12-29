@@ -35,3 +35,8 @@ The main classes are:
   rates and make a plot of the links between rates.
 
 * :func:`PythonNetwork <pyreaclib.networks.python_network.PythonNetwork>`
+
+
+An example notebook showing the basic use of these classes is here:
+
+:ref:`pyreaclib-examples.ipynb`

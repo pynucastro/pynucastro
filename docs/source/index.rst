@@ -18,7 +18,7 @@ reaction networks for use in simulation codes.
 
    intro
    modules
-
+   pyreaclib-examples.ipynb
 
 Indices and tables
 ==================

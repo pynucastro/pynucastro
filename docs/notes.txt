@@ -8,3 +8,7 @@ To automatically generate the API docs:
    sphinx-apidoc -o docs/source/ pyreaclib/
 
 
+To support notebooks:
+
+pip3 install nbsphinx --user
+dnf install pandoc
