@@ -12,3 +12,9 @@ To support notebooks:
 
 pip3 install nbsphinx --user
 dnf install pandoc
+
+
+For the theme:
+
+pip install sphinx_rtd_theme
+
