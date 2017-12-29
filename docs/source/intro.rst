@@ -15,27 +15,29 @@ The preferred way of importing ``pyreaclib`` is as:
 
 The main classes are:
 
-* :func:`Nucleus <pyreaclib.rates.rate.Nucleus>`
+* :func:`Nucleus <pyreaclib.rates.rate.Nucleus>`: This is a single
+  nucleus.  It knows its proton number, Z, neutron number, N, and
+  weight, A.
 
-  This is a single nucleus.  It knows its proton number, Z, neutron
-  number, N, and weight, A.
+* :func:`Rate <pyreaclib.rates.rate.Rate>`: This is a single rate.  It
+  knows the reactants and products and has methods that allow you to
+  evaluate it at a specified temperature and plot its temperature
+  dependence.
 
-* :func:`Rate <pyreaclib.rates.rate.Rate>`
+* :func:`Composition
+  <pyreaclib.networks.rate_collection.Composition>`: This is a
+  collection of nuclei and their mass fractions.  A ``Composition`` is
+  used when evaluating the full rates in a network.
 
-  This is a single rate.  It knows the reactants and products and has
-  methods that allow you to evaluate it at a specified temperature and
-  plot its temperature dependence.
-
-* :func:`Composition <pyreaclib.networks.rate_collection.Composition>`
-
-* :func:`RateCollection <pyreaclib.networks.rate_collection.RateCollection>`
-
+* :func:`RateCollection <pyreaclib.networks.rate_collection.RateCollection>`:
   This is a group of rates.  This acts as the base class for different
   reaction networks.  A `RateCollection` has methods to evaluate the
   rates and make a plot of the links between rates.
 
-* :func:`PythonNetwork <pyreaclib.networks.python_network.PythonNetwork>`
+* :func:`PythonNetwork <pyreaclib.networks.python_network.PythonNetwork>`:
 
+Usage
+-----
 
 An example notebook showing the basic use of these classes is here:
 
