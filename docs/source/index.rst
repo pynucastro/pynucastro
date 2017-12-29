@@ -14,11 +14,12 @@ reaction networks for use in simulation codes.
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
+   :caption: Contents
 
    intro
-   modules
    pyreaclib-examples.ipynb
+   networks
+   modules
 
 Indices and tables
 ==================
