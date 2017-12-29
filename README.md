@@ -57,6 +57,18 @@ This package requires
 * `networkx`: for visualizing the network
 
 
+# unit tests
+
+We use py.test to do unit tests.  In `pyreaclib/`, do:
+```
+py.test-3 -v .
+```
+
+to see coverage, do:
+```
+py.test-3 --cov=pyreaclib .
+```
+
 # TODO
 
 * output Cython code (rhs)
