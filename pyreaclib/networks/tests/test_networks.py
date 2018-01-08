@@ -42,6 +42,23 @@ class TestComposition(object):
         assert sum == approx(1.0)
         assert self.comp.X[rates.Nucleus("h1")] == approx(0.7)
 
+    def test_set_all(self):
+        val = 1.0/len(self.nuclei)
+        self.comp.set_all(1.0/len(self.nuclei))
+        for n in self.nuclei:
+            assert self.comp.X[n] == val
+
+    def test_set_nuc(self):
+        n = self.nuclei[0]
+        self.comp.set_nuc(n.raw, 0.55)
+        assert self.comp.X[n] == 0.55
+
+    def test_get_molar(self):
+        self.comp.set_solar_like(Z=0.02)
+        molar = self.comp.get_molar()
+        assert molar[rates.Nucleus("he4")] == (0.3-0.02)/4.0
+
+
 class TestRateCollection(object):
     @classmethod
     def setup_class(cls):
