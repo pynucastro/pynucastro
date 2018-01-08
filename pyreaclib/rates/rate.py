@@ -1,3 +1,5 @@
+""" Classes and methods to deal with a single nuclear reaction rate."""
+
 import os
 import re
 import numpy as np
@@ -53,18 +55,24 @@ class SingleSet(object):
         return a string containing the python code for this set
         """
         if plus_equal:
-            string =  "{} += np.exp( ".format(prefix)
+            string = "{} += np.exp( ".format(prefix)
         else:
-            string =  "{} = np.exp( ".format(prefix)
+            string = "{} = np.exp( ".format(prefix)
         string += " {}".format(self.a[0])
-        if not self.a[1] == 0.0: string += " + {}*tf.T9i".format(self.a[1])
-        if not self.a[2] == 0.0: string += " + {}*tf.T913i".format(self.a[2])
-        if not self.a[3] == 0.0: string += " + {}*tf.T913".format(self.a[3])
+        if not self.a[1] == 0.0:
+            string += " + {}*tf.T9i".format(self.a[1])
+        if not self.a[2] == 0.0:
+            string += " + {}*tf.T913i".format(self.a[2])
+        if not self.a[3] == 0.0:
+            string += " + {}*tf.T913".format(self.a[3])
         if not (self.a[4] == 0.0 and self.a[5] == 0.0 and self.a[6] == 0.0):
             string += "\n{}         ".format(len(prefix)*" ")
-        if not self.a[4] == 0.0: string += " + {}*tf.T9".format(self.a[4])
-        if not self.a[5] == 0.0: string += " + {}*tf.T953".format(self.a[5])
-        if not self.a[6] == 0.0: string += " + {}*tf.lnT9".format(self.a[6])
+        if not self.a[4] == 0.0:
+            string += " + {}*tf.T9".format(self.a[4])
+        if not self.a[5] == 0.0:
+            string += " + {}*tf.T953".format(self.a[5])
+        if not self.a[6] == 0.0:
+            string += " + {}*tf.lnT9".format(self.a[6])
         string += ")"
         return string
 
@@ -96,7 +104,7 @@ class Nucleus(object):
             self.A = 1
             self.short_spec_name = "n"
         else:
-            e = re.match("([a-zA-Z]*)(\d*)", name)
+            e = re.match(r"([a-zA-Z]*)(\d*)", name)
             self.el = e.group(1).title()  # chemical symbol
 
             self.A = int(e.group(2))
@@ -151,7 +159,7 @@ class Rate(object):
         self.ion_screen = None
 
         idx = self.rfile.rfind("-")
-        self.fname = self.rfile[:idx].replace("--","-").replace("-","_")
+        self.fname = self.rfile[:idx].replace("--", "-").replace("-", "_")
 
         self.Q = 0.0
 
@@ -188,9 +196,9 @@ class Rate(object):
 
             self.table_file = s2.strip()
             self.table_header_lines = int(s3.strip())
-            self.table_rhoy_lines   = int(s4.strip())
-            self.table_temp_lines   = int(s5.strip())
-            self.table_num_vars     = 6 # Hard-coded number of variables in tables for now.
+            self.table_rhoy_lines = int(s4.strip())
+            self.table_temp_lines = int(s5.strip())
+            self.table_num_vars = 6 # Hard-coded number of variables in tables for now.
             self.table_index_name = 'j_{}_{}'.format(self.reactants[0], self.products[0])
 
         else:
@@ -360,14 +368,15 @@ class Rate(object):
         return (T0/r1)*drdT
 
     def plot(self, Tmin=1.e7, Tmax=1.e10):
+        """plot the rate's temperature sensitivity vs temperature"""
 
-        T = np.logspace(np.log10(Tmin), np.log10(Tmax), 100)
-        r = np.zeros_like(T)
+        temps = np.logspace(np.log10(Tmin), np.log10(Tmax), 100)
+        r = np.zeros_like(temps)
 
-        for n in range(len(T)):
-            r[n] = self.eval(T[n])
+        for n, T in enumerate(temps):
+            r[n] = self.eval(T)
 
-        plt.loglog(T, r)
+        plt.loglog(temps, r)
 
         plt.xlabel(r"$T$")
 
