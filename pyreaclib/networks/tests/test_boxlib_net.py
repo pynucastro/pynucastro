@@ -47,11 +47,9 @@ class TestFortranNetwork(object):
     def test_ydot_string(self):
         """ test the ydot string for this network """
 
-        answer_a = "dens * Y(jc12) * Y(jp) * screened_rates(i_scor, k_c12_pg_n13) * screened_rates(i_rate, k_c12_pg_n13)"
-
-        answer_b = "dens * Y(jp) * Y(jc12) * screened_rates(i_scor, k_c12_pg_n13) * screened_rates(i_rate, k_c12_pg_n13)"
+        answer = "dens * Y(jp) * Y(jc12) * screened_rates(i_scor, k_c12_pg_n13) * screened_rates(i_rate, k_c12_pg_n13)"
 
         ydot = self.fn.ydot_string(self.fn.rates[0])
-        assert ydot == answer_a or ydot == answer_b
+        assert ydot == answer
 
 
