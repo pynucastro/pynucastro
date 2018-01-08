@@ -52,7 +52,7 @@ class PythonNetwork(RateCollection):
 
         # composition dependence
         Y_string = ""
-        for n, r in enumerate(set(rate.reactants)):
+        for n, r in enumerate(sorted(set(rate.reactants))):
             c = rate.reactants.count(r)
             if c > 1:
                 Y_string += "Y[i{}]**{}".format(r, c)
@@ -95,7 +95,7 @@ class PythonNetwork(RateCollection):
 
         # composition dependence
         Y_string = ""
-        for n, r in enumerate(set(rate.reactants)):
+        for n, r in enumerate(sorted(set(rate.reactants))):
             c = rate.reactants.count(r)
             if y_i == r:
                 if c == 1:

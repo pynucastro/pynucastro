@@ -84,7 +84,7 @@ class BaseFortranNetwork(RateCollection):
 
         # composition dependence
         Y_string = ""
-        for n, r in enumerate(set(rate.reactants)):
+        for n, r in enumerate(sorted(set(rate.reactants))):
             c = rate.reactants.count(r)
             if c > 1:
                 Y_string += self.name_y + "(j{})**{}".format(r, c)
@@ -153,7 +153,7 @@ class BaseFortranNetwork(RateCollection):
 
         # composition dependence
         Y_sym = 1
-        for n, r in enumerate(set(rate.reactants)):
+        for n, r in enumerate(sorted(set(rate.reactants))):
             c = rate.reactants.count(r)
             sym_final = self.name_y + '(j{})'.format(r)
             sym_temp  = 'Y__j{}__'.format(r)
@@ -203,7 +203,7 @@ class BaseFortranNetwork(RateCollection):
 
         # composition dependence
         Y_string = ""
-        for n, r in enumerate(set(rate.reactants)):
+        for n, r in enumerate(sorted(set(rate.reactants))):
             c = rate.reactants.count(r)
             if y_i == r:
                 if c == 1:
