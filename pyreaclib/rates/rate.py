@@ -135,8 +135,8 @@ class Nucleus(object):
 class Rate(object):
     """ a single Reaclib rate, which can be composed of multiple sets """
 
-    def __init__(self, file):
-        self.file = os.path.basename(file)
+    def __init__(self, rfile):
+        self.rfile = os.path.basename(rfile)
         self.chapter = None    # the Reaclib chapter for this reaction
         self.original_source = None   # the contents of the original rate file
         self.reactants = []
@@ -150,14 +150,18 @@ class Rate(object):
         # Rate.ion_screen is a 2-element list of Nucleus objects for screening
         self.ion_screen = None
 
-        idx = self.file.rfind("-")
-        self.fname = self.file[:idx].replace("--","-").replace("-","_")
+        idx = self.rfile.rfind("-")
+        self.fname = self.rfile[:idx].replace("--","-").replace("-","_")
 
         self.Q = 0.0
 
         # read in the file, parse the different sets and store them as
         # SingleSet objects in sets[]
-        f = open(file, "r")
+        if not os.path.isfile(rfile):
+            _tmp = rfile
+            rfile = "{}/../library/{}".format(os.path.dirname(__file__), _tmp)
+
+        f = open(rfile, "r")
         lines = f.readlines()
 
         self.original_source = "".join(lines)
