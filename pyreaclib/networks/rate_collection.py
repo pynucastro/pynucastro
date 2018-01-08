@@ -1,25 +1,25 @@
+"""A collection of classes and methods to deal with collections of
+rates that together make up a network."""
+
 # Common Imports
 from __future__ import print_function
 
+import functools
 import glob
+import math
+from operator import mul
 import os
 
 from ipywidgets import interact
 
-import functools
-from operator import mul
-
-import math
-
-import networkx as nx
-
 import matplotlib
-matplotlib.rcParams['figure.dpi'] = 100
-
 import matplotlib.pyplot as plt
+import networkx as nx
 
 # Import Rate
 from pyreaclib.rates import Rate, Nucleus
+
+matplotlib.rcParams['figure.dpi'] = 100
 
 class Composition(object):
     """a composition holds the mass fractions of the nuclei in a network
@@ -34,7 +34,7 @@ class Composition(object):
             self.X = {k: small for k in nuclei}
 
     def set_solar_like(self, Z=0.02):
-        """ approximate a solar abundance, setting p to 0.7, He4 to 0.3 - Z and 
+        """ approximate a solar abundance, setting p to 0.7, He4 to 0.3 - Z and
         the remainder evenly distributed with Z """
         num = len(self.X)
         rem = Z/(num-2)
@@ -93,7 +93,7 @@ class RateCollection(object):
         self.rates = []
         self.use_cse = use_cse
 
-        if type(rate_files) is str:
+        if isinstance(rate_files, str):
             rate_files = [rate_files]
 
         # get the rates
@@ -112,7 +112,7 @@ class RateCollection(object):
                     self.files += fp
                 else: # Notify of all missing files before exiting
                     print('ERROR: File {} not found in {} or the working directory!'.format(
-                        p,self.pyreaclib_rates_dir))
+                        p, self.pyreaclib_rates_dir))
                     exit_program = True
         if exit_program:
             exit()
@@ -148,14 +148,14 @@ class RateCollection(object):
         # It is desired to avoid wasting array size
         # storing meaningless Tabular coefficient pointers.
         self.rates = sorted(self.rates,
-                            key = lambda r: r.chapter=='t')
+                            key=lambda r: r.chapter == 't')
 
         self.tabular_rates = []
         self.reaclib_rates = []
         for n, r in enumerate(self.rates):
             if r.chapter == 't':
                 self.tabular_rates.append(n)
-            elif type(r.chapter)==int:
+            elif isinstance(r.chapter, int):
                 self.reaclib_rates.append(n)
             else:
                 print('ERROR: Chapter type unknown for rate chapter {}'.format(
@@ -197,15 +197,19 @@ class RateCollection(object):
         return ostr
 
     def write_network(self):
+        """A stub for function to output the network -- this is implementation
+        dependent."""
         print('To create network integration source code, use a class that implements a specific network type.')
         return
 
-    def plot(self, outfile=None, rho=None, T=None, comp=None, size=(800,600), dpi=100):
+    def plot(self, outfile=None, rho=None, T=None, comp=None, size=(800, 600), dpi=100):
+        """Make a plot of the network structure showing the links between nuclei"""
+
         G = nx.MultiDiGraph()
-        G.position={}
+        G.position = {}
         G.labels = {}
 
-        plt.plot([0,0], [8,8], 'b-')
+        plt.plot([0, 0], [8, 8], 'b-')
 
         # nodes -- the node nuclei will be all of the heavies, but not
         # p, n, alpha, unless we have p + p, 3-a, etc.
@@ -267,7 +271,6 @@ class RateCollection(object):
             plt.colorbar(edges_lc)
 
         Zs = [n.Z for n in node_nuclei]
-        Ns = [n.N for n in node_nuclei]
 
         plt.xlim(min(Zs)-1, max(Zs)+1)
         plt.xlabel(r"$N$", fontsize="large")
@@ -304,7 +307,7 @@ class RateCollection(object):
 
 class Explorer(object):
     """ interactively explore a rate collection """
-    def __init__(self, rc, comp, size=(800,600)):
+    def __init__(self, rc, comp, size=(800, 600)):
         """ take a RateCollection and a composition """
         self.rc = rc
         self.comp = comp
@@ -314,5 +317,5 @@ class Explorer(object):
         self.rc.plot(rho=10.0**logrho, T=10.0**logT, comp=self.comp, size=self.size)
 
     def explore(self):
+        """Perform interactive exploration of the network structure."""
         interact(self._make_plot, logrho=(2, 6, 0.1), logT=(7, 9, 0.1))
-
