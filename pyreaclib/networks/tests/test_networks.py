@@ -56,7 +56,7 @@ class TestComposition(object):
     def test_get_molar(self):
         self.comp.set_solar_like(Z=0.02)
         molar = self.comp.get_molar()
-        assert molar[rates.Nucleus("he4")] == (0.3-0.02)/4.0
+        assert molar[rates.Nucleus("he4")] == approx((0.3-0.02)/4.0)
 
 
 class TestRateCollection(object):
