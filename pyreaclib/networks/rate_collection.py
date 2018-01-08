@@ -81,7 +81,7 @@ class Composition(object):
 class RateCollection(object):
     """ a collection of rates that together define a network """
 
-    def __init__(self, rate_files, use_cse=False):
+    def __init__(self, rate_files):
         """
         rate_files are the files that together define the network.  This
         can be any iterable or single string, and can include
@@ -91,7 +91,6 @@ class RateCollection(object):
         self.pyreaclib_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
         self.files = []
         self.rates = []
-        self.use_cse = use_cse
 
         if isinstance(rate_files, str):
             rate_files = [rate_files]

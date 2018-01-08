@@ -9,8 +9,8 @@ files = ["c12-c12a-ne20-cf88",
          "ne23--na23-toki",
          "n--p-wc12"]
 
-urca_net = SundialsNetwork(files, use_cse=True)
-urca_net.write_network()
+urca_net = SundialsNetwork(files)
+urca_net.write_network(use_cse=True)
 
 
 

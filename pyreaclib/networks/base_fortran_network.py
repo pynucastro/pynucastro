@@ -60,6 +60,8 @@ class BaseFortranNetwork(RateCollection):
         self.ftags['<net_ymass_init>'] = self.net_ymass_init
         self.indent = '  '
 
+        self.use_cse = False
+
         self.float_explicit_num_digits = 17
         
         self.ydot_out_scratch = None
@@ -277,11 +279,12 @@ class BaseFortranNetwork(RateCollection):
         rem = re.match('\A'+k+'\(([0-9]*)\)\Z',l)
         return int(rem.group(1))
 
-    def write_network(self):
+    def write_network(self, use_cse=False):
         """
         This writes the RHS, jacobian and ancillary files for the system of ODEs that
         this network describes, using the template files.
         """
+        self.use_cse = use_cse
 
         # Prepare RHS terms
         self.compose_ydot()
