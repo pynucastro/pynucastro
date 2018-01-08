@@ -20,6 +20,7 @@ class TestFortranNetwork(object):
     def setup_method(self):
         """ this is run before each test """
         files = ["c12-pg-n13-ls09",
+                 "c12-c12p-na23-cf88",
                  "c13-pg-n14-nacr",
                  "n13--c13-wc12",
                  "n13-pg-o14-lg06",
@@ -38,6 +39,7 @@ class TestFortranNetwork(object):
         self.n15 = rates.Nucleus("n15")
         self.o14 = rates.Nucleus("o14")
         self.o15 = rates.Nucleus("o15")
+        self.na23 = rates.Nucleus("na23")
 
     def teardown_method(self):
         """ this is run after each test """
@@ -47,9 +49,14 @@ class TestFortranNetwork(object):
     def test_ydot_string(self):
         """ test the ydot string for this network """
 
+        # Test a reaction of the type A + B -> C where A != B
         answer = "dens * Y(jp) * Y(jc12) * screened_rates(i_scor, k_c12_pg_n13) * screened_rates(i_rate, k_c12_pg_n13)"
 
         ydot = self.fn.ydot_string(self.fn.rates[0])
         assert ydot == answer
 
+        # Test a reaction of the type A + B -> C + D where A == B
+        answer = "5.00000000000000d-01 * dens * Y(jc12)**2 * screened_rates(i_scor, k_c12_c12p_na23) * screened_rates(i_rate, k_c12_c12p_na23)"
 
+        ydot = self.fn.ydot_string(self.fn.rates[1])
+        assert ydot == answer
