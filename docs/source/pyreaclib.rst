@@ -1,6 +1,11 @@
 pyreaclib package
 =================
 
+.. automodule:: pyreaclib
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Subpackages
 -----------
 
@@ -10,10 +15,3 @@ Subpackages
     pyreaclib.networks
     pyreaclib.rates
 
-Module contents
----------------
-
-.. automodule:: pyreaclib
-    :members:
-    :undoc-members:
-    :show-inheritance:

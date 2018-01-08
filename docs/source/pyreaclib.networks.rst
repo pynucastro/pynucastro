@@ -1,6 +1,11 @@
 pyreaclib\.networks package
 ===========================
 
+.. automodule:: pyreaclib.networks
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Submodules
 ----------
 
@@ -45,10 +50,3 @@ pyreaclib\.networks\.sundials\_network module
     :show-inheritance:
 
 
-Module contents
----------------
-
-.. automodule:: pyreaclib.networks
-    :members:
-    :undoc-members:
-    :show-inheritance:

@@ -1,6 +1,11 @@
 pyreaclib\.amemass package
 ==========================
 
+.. automodule:: pyreaclib.amemass
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Submodules
 ----------
 
@@ -21,10 +26,3 @@ pyreaclib\.amemass\.ame\_nuclide module
     :show-inheritance:
 
 
-Module contents
----------------
-
-.. automodule:: pyreaclib.amemass
-    :members:
-    :undoc-members:
-    :show-inheritance:

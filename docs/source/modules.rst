@@ -1,5 +1,5 @@
-pyreaclib API
-=============
+pyreaclib
+=========
 
 .. toctree::
    :maxdepth: 4

@@ -21,7 +21,7 @@ def str_head_pop(s,n):
 
 def cleanup(s):
     """
-    Given string s, removes # and *.
+    Given string s, removes "#" and "*".
     """
     s = s.replace('#','')
     s = s.replace('*','')

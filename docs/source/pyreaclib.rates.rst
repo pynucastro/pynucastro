@@ -1,6 +1,11 @@
 pyreaclib\.rates package
 ========================
 
+.. automodule:: pyreaclib.rates
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Submodules
 ----------
 
@@ -13,10 +18,3 @@ pyreaclib\.rates\.rate module
     :show-inheritance:
 
 
-Module contents
----------------
-
-.. automodule:: pyreaclib.rates
-    :members:
-    :undoc-members:
-    :show-inheritance:
