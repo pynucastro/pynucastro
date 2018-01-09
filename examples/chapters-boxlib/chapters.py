@@ -1,7 +1,7 @@
 # Test module for generating a network containing
 # one rate from each Reaclib chapter
 
-from pyreaclib.networks import BoxlibNetwork
+from pyreaclib.networks import BoxLibNetwork
 
 files = ["b17-nnn-c14-wc12",
          "he3-he3pp-he4-nacr",
@@ -15,7 +15,7 @@ files = ["b17-nnn-c14-wc12",
          "t-gn-d-nk06",
          "t-pn-he3-de04"]
 
-net_py = BoxlibNetwork(files)
+net_py = BoxLibNetwork(files)
 net_py.write_network()
 
 
