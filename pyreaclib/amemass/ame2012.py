@@ -8,7 +8,7 @@ import os
 
 from pyreaclib.amemass import AMENuclide
 
-def str_head_pop(s,n):
+def str_head_pop(s, n):
     """
     Pop n characters from string s from the beginning.
 
@@ -23,12 +23,15 @@ def cleanup(s):
     """
     Given string s, removes "#" and "*".
     """
-    s = s.replace('#','')
-    s = s.replace('*','')
-    s = s.replace(' ','')
+    s = s.replace('#', '')
+    s = s.replace('*', '')
+    s = s.replace(' ', '')
     return s
 
 class AME2012(object):
+    """A simple class to manage reading and parsing the AMR 2012 data
+    file."""
+
     def __init__(self, datfile=None):
         """
         Initialize
@@ -38,10 +41,10 @@ class AME2012(object):
             self.datfile = datfile
         else:
             thisdir = os.path.dirname(os.path.realpath(__file__))
-            fname   = os.path.join(thisdir, 'mass.mas12')
+            fname = os.path.join(thisdir, 'mass.mas12')
             if os.path.isfile(fname):
                 self.datfile = fname
-                
+
         self.nuclides = []
 
         if self.datfile:
@@ -52,13 +55,13 @@ class AME2012(object):
         Read the AME data file 'datfile'
         """
         try:
-            f = open(self.datfile,'r')
+            f = open(self.datfile, 'r')
         except:
             print('ERROR: data file not found!')
             exit()
 
         # Get rid of the 39-line header
-        for x in range(39):
+        for _ in range(39):
             f.readline()
 
         # Read nuclide mass data
@@ -66,14 +69,14 @@ class AME2012(object):
             ls = line.strip()
             if ls:
                 # Pull data out of the line
-                line, junk = str_head_pop(line, 4)
+                line, _ = str_head_pop(line, 4)
                 line, n = str_head_pop(line, 5)
                 line, z = str_head_pop(line, 5)
                 line, a = str_head_pop(line, 5)
-                line, junk = str_head_pop(line, 1)
+                line, _ = str_head_pop(line, 1)
                 line, element = str_head_pop(line, 3)
                 line, origin = str_head_pop(line, 4)
-                line, junk = str_head_pop(line, 1)
+                line, _ = str_head_pop(line, 1)
                 line, mexcess = str_head_pop(line, 13)
                 mexcess = cleanup(mexcess)
                 line, d_mexcess = str_head_pop(line, 11)
@@ -82,22 +85,23 @@ class AME2012(object):
                 nucbind = cleanup(nucbind)
                 line, d_nucbind = str_head_pop(line, 9)
                 d_nucbind = cleanup(d_nucbind)
-                line, junk = str_head_pop(line, 1)
+                line, _ = str_head_pop(line, 1)
                 line, decay_type = str_head_pop(line, 2)
                 line, ebeta = str_head_pop(line, 11)
                 ebeta = cleanup(ebeta)
                 line, d_ebeta = str_head_pop(line, 9)
                 d_ebeta = cleanup(d_ebeta)
-                line, junk = str_head_pop(line, 1)
+                line, _ = str_head_pop(line, 1)
                 line, mass = str_head_pop(line, 16)
                 mass = cleanup(mass)
                 line, d_mass = str_head_pop(line, 11)
                 d_mass = cleanup(d_mass)
+
                 # Store nuclide data
                 nuclide = AMENuclide(n, z, a, element.strip(), origin.strip(),
-                                  mexcess, d_mexcess, nucbind,
-                                  d_nucbind, decay_type.strip(), ebeta,
-                                  d_ebeta, mass, d_mass)
+                                     mexcess, d_mexcess, nucbind,
+                                     d_nucbind, decay_type.strip(), ebeta,
+                                     d_ebeta, mass, d_mass)
                 self.nuclides.append(nuclide)
         f.close()
 
@@ -118,30 +122,30 @@ class AME2012(object):
         a = int(a)
         abb = abb.strip().lower()
         for nuc in self.nuclides:
-            if (nuc.a == a) and (nuc.element.lower() == abb):
+            if nuc.a == a and nuc.element.lower() == abb:
                 return nuc
         print('ERROR: Could not find a nuclide by the specification {}'.format(isostring))
-        
+
     def get_nuclide(self, n=-1, z=-1, a=-1):
         """
         Returns the nuclide object given at least 2 of n, z, a.
-        
+
         Complains if A-Z-N != 0.
         """
-        if n>=0 and z>=0 and a>=0:
+        if n >= 0 and z >= 0 and a >= 0:
             if a - z - n != 0:
                 print('ERROR: Z+N != A')
                 exit()
         else:
-            if n==-1:
+            if n == -1:
                 n = a - z
-            elif z==-1:
+            elif z == -1:
                 z = a - n
             else:
                 a = n + z
 
         for nuc in self.nuclides:
-            if (nuc.n == n) and (nuc.z == z):
+            if nuc.n == n and nuc.z == z:
                 return nuc
 
         print('Nuclide not found for (N, Z, A) = ({}, {}, {})!'.format(n, z, a))
