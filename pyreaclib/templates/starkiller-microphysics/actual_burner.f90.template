@@ -1,9 +1,6 @@
 module actual_burner_module
 
-  use bl_types
-  use bl_constants_module
   use network
-  use burn_type_module
 
   implicit none
 
@@ -42,14 +39,15 @@ contains
     !$acc routine seq
 
     use integrator_module, only: integrator
+    use burn_type_module, only: burn_t
+    use bl_types, only: dp_t
 
     implicit none
 
     type (burn_t),    intent(in   ) :: state_in
     type (burn_t),    intent(inout) :: state_out
-    double precision, intent(in   ) :: dt, time
+    real(kind=dp_t),  intent(in   ) :: dt, time
 
-    ! Calling integrator ...
     call integrator(state_in, state_out, dt, time)
   end subroutine actual_burner
 
