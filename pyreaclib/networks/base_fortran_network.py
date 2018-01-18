@@ -362,8 +362,8 @@ class BaseFortranNetwork(RateCollection):
     def ebind(self, n_indent, of):
         bintable = BindingTable()
         for nuc in self.unique_nuclei:
-            nucdata = bintable.get_nuclide(n=nuc.N, z=nuc.Z)
-            str_nucbind = self.fmt_to_dp_f90(nucdata.nucbind)
+            nuc_in_table = bintable.get_nuclide(n=nuc.N, z=nuc.Z)
+            str_nucbind = self.fmt_to_dp_f90(nuc_in_table.nucbind)
             of.write('{}ebind_per_nucleon(j{})   = {}\n'.format(
                 self.indent*n_indent, nuc, str_nucbind))
 
