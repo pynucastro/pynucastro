@@ -1,2 +1,2 @@
-from .ame_nuclide import AMENuclide
-from .ame2012 import AME2012
+from .binding_nuclide import BindingNuclide
+from .binding_table import BindingTable

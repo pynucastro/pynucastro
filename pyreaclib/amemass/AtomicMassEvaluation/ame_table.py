@@ -1,12 +1,12 @@
 """
-Reads the AME 2012 mass data file and supplies table data.
+Reads AME tabular mass data file and supplies table data.
 """
 
 # Common Imports
 from __future__ import print_function
 import os
 
-from pyreaclib.amemass import AMENuclide
+from ame_nuclide import AMENuclide
 
 def str_head_pop(s, n):
     """
@@ -22,15 +22,21 @@ def str_head_pop(s, n):
 def cleanup(s):
     """
     Given string s, removes "#" and "*".
+
+    # is a standin for a decimal point for estimated values.
+
+    * represents a non-computable quantity.
     """
-    s = s.replace('#', '')
+    s = s.replace('#', '.')
     s = s.replace('*', '')
     s = s.replace(' ', '')
     return s
 
-class AME2012(object):
-    """A simple class to manage reading and parsing the AMR 2012 data
-    file."""
+class AMETable(object):
+    """A simple class to manage reading and parsing the AME Table data
+    files (2012, 2016)."""
+
+    header_length = 39
 
     def __init__(self, datfile=None):
         """
@@ -60,8 +66,8 @@ class AME2012(object):
             print('ERROR: data file not found!')
             exit()
 
-        # Get rid of the 39-line header
-        for _ in range(39):
+        # Get rid of the header
+        for _ in range(self.header_length):
             f.readline()
 
         # Read nuclide mass data

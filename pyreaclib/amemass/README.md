@@ -1,5 +1,10 @@
-# Atomic Mass Evaluation 2012
+# Binding Energy Tables
 
-Included is the atomic mass table from the 2012 Atomic Mass Evaluation, retrieved from https://www-nds.iaea.org/amdc on May 26, 2016.
+Included here are tables of binding energy per nucleon in MeV for
+nuclides specified by (N, Z).
 
-The Atomic Mass Evaluation 2012 is published as Chinese Physics C 36 (2012) 1287-1602.
+The data for these tables is derived from the Atomic Mass Evaluations
+2012 and 2016. By default, pynucastro uses Atomic Mass Evaluation
+2016. Scripts for reading the Atomic Mass Evaluation tables,
+citations, and links for the tables are provided in the
+`AtomicMassEvaluation` directory.

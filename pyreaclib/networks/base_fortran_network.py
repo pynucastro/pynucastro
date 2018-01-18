@@ -6,7 +6,7 @@ import re
 import sympy
 
 from pyreaclib.networks import RateCollection
-from pyreaclib.amemass import AME2012
+from pyreaclib.amemass import BindingTable
 
 class BaseFortranNetwork(RateCollection):
     def __init__(self, *args, **kwargs):
@@ -360,9 +360,9 @@ class BaseFortranNetwork(RateCollection):
                 self.indent*n_indent, r.fname, i+1))
 
     def ebind(self, n_indent, of):
-        ame = AME2012()
+        bintable = BindingTable()
         for nuc in self.unique_nuclei:
-            nucdata = ame.get_nuclide(n=nuc.N, z=nuc.Z)
+            nucdata = bintable.get_nuclide(n=nuc.N, z=nuc.Z)
             str_nucbind = self.fmt_to_dp_f90(nucdata.nucbind)
             of.write('{}ebind_per_nucleon(j{})   = {}\n'.format(
                 self.indent*n_indent, nuc, str_nucbind))
