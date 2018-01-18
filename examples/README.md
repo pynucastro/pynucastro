@@ -15,8 +15,6 @@ are the main steps:
 CNO_f90/cno.py, replacing the list of 'files' with your own (e.g.
 working.py)
 
-* Choose either the 'sundials', 'python', or 'boxlib' types of output networks.
-
 * Run your python script (pyreaclib must be in your PYTHONPATH).
 
 ```
