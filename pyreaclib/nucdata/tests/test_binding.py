@@ -24,8 +24,8 @@ class TestAME(object):
         self.bintable = None
 
     def test_get(self):
-        nuc = self.bintable.get_nuclide(n=0, z=1)
+        nuc = self.bintable.get_nuclide(n=1, z=1)
         assert nuc.z == 1
-        assert nuc.n == 0
-        assert nuc.mexcess == 7.28897061
+        assert nuc.n == 1
+        assert nuc.nucbind == 1.112283
 
