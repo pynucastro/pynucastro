@@ -152,7 +152,7 @@ class Rate(object):
         self.sets = []
 
         # Tells if this rate is eligible for screening
-        # using screenz.f90 provided by BoxLib Microphysics.
+        # using screenz.f90 provided by StarKiller Microphysics.
         # If not eligible for screening, set to None
         # If eligible for screening, then
         # Rate.ion_screen is a 2-element list of Nucleus objects for screening
