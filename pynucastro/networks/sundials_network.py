@@ -5,7 +5,7 @@ import os
 import re
 import glob
 
-from pyreaclib.networks import BaseFortranNetwork
+from pynucastro.networks import BaseFortranNetwork
 
 class SundialsNetwork(BaseFortranNetwork):
     def __init__(self, *args, **kwargs):
@@ -13,7 +13,7 @@ class SundialsNetwork(BaseFortranNetwork):
         super(SundialsNetwork, self).__init__(*args, **kwargs)
         
         # Set up some directories
-        self.sundials_dir = os.path.join(self.pyreaclib_dir,
+        self.sundials_dir = os.path.join(self.pynucastro_dir,
                                     'templates',
                                     'sundials-cvode')
         self.template_file_select = os.path.join(self.sundials_dir,

@@ -3,7 +3,7 @@ from __future__ import print_function
 
 import re
 
-from pyreaclib.networks import RateCollection
+from pynucastro.networks import RateCollection
 
 class PythonNetwork(RateCollection):
     def __init__(self, *args, **kwargs):
@@ -143,7 +143,7 @@ class PythonNetwork(RateCollection):
         except: raise
 
         of.write("import numpy as np\n")
-        of.write("from pyreaclib.rates import Tfactors\n\n")
+        of.write("from pynucastro.rates import Tfactors\n\n")
 
         # integer keys
         for i, n in enumerate(self.unique_nuclei):
