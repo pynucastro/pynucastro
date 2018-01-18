@@ -1,8 +1,8 @@
 # unit tests for rates
 import math
 
-import pyreaclib.networks as networks
-import pyreaclib.rates as rates
+import pynucastro.networks as networks
+import pynucastro.rates as rates
 
 from pytest import approx
 

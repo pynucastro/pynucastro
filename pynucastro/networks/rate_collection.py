@@ -17,7 +17,7 @@ import matplotlib.pyplot as plt
 import networkx as nx
 
 # Import Rate
-from pyreaclib.rates import Rate, Nucleus
+from pynucastro.rates import Rate, Nucleus
 
 matplotlib.rcParams['figure.dpi'] = 100
 
@@ -88,7 +88,7 @@ class RateCollection(object):
         wildcards.
         """
 
-        self.pyreaclib_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+        self.pynucastro_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
         self.files = []
         self.rates = []
 
@@ -96,8 +96,8 @@ class RateCollection(object):
             rate_files = [rate_files]
 
         # get the rates
-        self.pyreaclib_rates_dir = os.path.join(self.pyreaclib_dir,
-                                                'library')
+        self.pynucastro_rates_dir = os.path.join(self.pynucastro_dir,
+                                                 'library')
         exit_program = False
         for p in rate_files:
             # check to see if the rate file is in the working dir
@@ -105,13 +105,13 @@ class RateCollection(object):
             if fp:
                 self.files += fp
             else:
-                # check to see if the rate file is in pyreaclib/reaclib-rates
-                fp = glob.glob(os.path.join(self.pyreaclib_rates_dir, p))
+                # check to see if the rate file is in pynucastro/reaclib-rates
+                fp = glob.glob(os.path.join(self.pynucastro_rates_dir, p))
                 if fp:
                     self.files += fp
                 else: # Notify of all missing files before exiting
                     print('ERROR: File {} not found in {} or the working directory!'.format(
-                        p, self.pyreaclib_rates_dir))
+                        p, self.pynucastro_rates_dir))
                     exit_program = True
         if exit_program:
             exit()

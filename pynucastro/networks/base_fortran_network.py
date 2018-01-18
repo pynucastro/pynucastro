@@ -5,8 +5,8 @@ import os
 import re
 import sympy
 
-from pyreaclib.networks import RateCollection
-from pyreaclib.amemass import AME2012
+from pynucastro.networks import RateCollection
+from pynucastro.amemass import AME2012
 
 class BaseFortranNetwork(RateCollection):
     def __init__(self, *args, **kwargs):

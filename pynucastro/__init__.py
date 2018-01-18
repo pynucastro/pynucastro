@@ -1,6 +1,6 @@
 """
-pyreaclib is a python module that interprets the nuclear reaction rates
-cataloged by the JINA ReacLib project:
+pynucastro is a python module that interprets the nuclear reaction rates,
+including those cataloged by the JINA ReacLib project:
 
 https://groups.nscl.msu.edu/jina/reaclib/db/
 
@@ -28,7 +28,7 @@ rates, including:
 
 * Composition : this is a container of Nucleus objects along with
   associated mass fractions.  This is used for evaluating rates
-  when doing interactive exploration with pyreaclib.
+  when doing interactive exploration with pynucastro.
 
 * RateCollection : this is simply a collection of rates.  It will 
   determine all of the links between the rates and allow you to 
@@ -72,7 +72,7 @@ reaction rates, including:
 
 __version__ = "1.0"
 
-from pyreaclib.networks import \
+from pynucastro.networks import \
     RateCollection, \
     Composition, \
     Explorer, \
@@ -80,7 +80,7 @@ from pyreaclib.networks import \
     StarKillerNetwork, \
     SundialsNetwork
 
-from pyreaclib.rates import \
+from pynucastro.rates import \
     Tfactors, \
     Nucleus, \
     Rate

@@ -2,7 +2,7 @@
 import math
 import os
 
-import pyreaclib.rates as rates
+import pynucastro.rates as rates
 from pytest import approx
 
 class TestTfactors(object):
@@ -87,8 +87,8 @@ class TestRate(object):
     @classmethod
     def setup_class(cls):
         """ this is run once for each class before any tests """
-        base_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__))).split("pyreaclib")[0]
-        cls.library_path = os.path.join(base_dir, "pyreaclib/pyreaclib/library/")
+        base_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__))).split("pynucastro")[0]
+        cls.library_path = os.path.join(base_dir, "pynucastro/pynucastro/library/")
 
     @classmethod
     def teardown_class(cls):

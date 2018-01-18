@@ -6,7 +6,7 @@ Reads the AME 2012 mass data file and supplies table data.
 from __future__ import print_function
 import os
 
-from pyreaclib.amemass import AMENuclide
+from pynucastro.amemass import AMENuclide
 
 def str_head_pop(s, n):
     """
