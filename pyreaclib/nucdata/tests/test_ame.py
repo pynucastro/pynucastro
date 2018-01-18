@@ -1,8 +1,8 @@
-# unit tests for AME database
+# unit tests for Binding Energy database taken from AME 2016.
 
 import os
 
-import pyreaclib.amemass as amemass
+from pyreaclib.nucdata import BindingTable
 
 class TestAME(object):
     @classmethod
@@ -17,16 +17,15 @@ class TestAME(object):
 
     def setup_method(self):
         """ this is run before each test """
-        self.ame = amemass.ame2012.AME2012()
+        self.bintable = BindingTable()
 
     def teardown_method(self):
         """ this is run after each test """
-        self.ame = None
+        self.bintable = None
 
     def test_get(self):
-        nuc = self.ame.get_nuclide(n=0, z=1, a=1)
+        nuc = self.bintable.get_nuclide(n=0, z=1)
         assert nuc.z == 1
-        assert nuc.a == 1
         assert nuc.n == 0
-        assert nuc.mexcess == 7.28897059
+        assert nuc.mexcess == 7.28897061
 

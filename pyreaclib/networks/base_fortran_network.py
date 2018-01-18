@@ -6,7 +6,7 @@ import re
 import sympy
 
 from pyreaclib.networks import RateCollection
-from pyreaclib.amemass import BindingTable
+from pyreaclib.nucdata import BindingTable
 
 class BaseFortranNetwork(RateCollection):
     def __init__(self, *args, **kwargs):
