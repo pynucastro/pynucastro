@@ -2,26 +2,28 @@
 from __future__ import print_function
 
 class AMENuclide(object):
+    """Hold the information for a single nucleus from the AME
+    database."""
     def __init__(self, n=None, z=None, a=None, element=None, origin=None,
                  mexcess=None, d_mexcess=None, nucbind=None,
                  d_nucbind=None, decay_type=None, ebeta=None,
                  d_ebeta=None, mass=None, d_mass=None):
 
-        self.n=None
-        self.z=None
-        self.a=None
-        self.element=None
-        self.origin=None
-        self.mexcess=None
-        self.d_mexcess=None
-        self.nucbind=None
-        self.d_nucbind=None
-        self.decay_type=None
-        self.ebeta=None
-        self.d_ebeta=None
-        self.mass=None
-        self.d_mass=None
-        
+        self.n = None
+        self.z = None
+        self.a = None
+        self.element = None
+        self.origin = None
+        self.mexcess = None
+        self.d_mexcess = None
+        self.nucbind = None
+        self.d_nucbind = None
+        self.decay_type = None
+        self.ebeta = None
+        self.d_ebeta = None
+        self.mass = None
+        self.d_mass = None
+
         if n:
             self.n = int(n)
         if z:
@@ -69,7 +71,7 @@ class AMENuclide(object):
         print('d_ebeta = {}'.format(self.d_ebeta))
         print('mass = {}'.format(self.mass))
         print('d_mass = {}'.format(self.d_mass))
-        
+
     def convert_MeV(self):
         """
         Convert keV to MeV
@@ -96,3 +98,5 @@ class AMENuclide(object):
         if self.d_mass:
             self.d_mass = self.d_mass/1.0e6
 
+    def __str__(self):
+        return "{}-{}".format(self.element, self.a)
