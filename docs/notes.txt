@@ -5,7 +5,7 @@ To build the webpages:
 
 To automatically generate the API docs:
 
-   sphinx-apidoc -o docs/source/ pyreaclib/
+   sphinx-apidoc -f -M -o docs/source/ .
 
 
 To support notebooks:

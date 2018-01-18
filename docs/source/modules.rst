@@ -1,7 +1,8 @@
-pyreaclib
-=========
+pynucastro
+==========
 
 .. toctree::
    :maxdepth: 4
 
-   pyreaclib
+   pynucastro
+   setup

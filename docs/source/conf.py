@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# pyreaclib documentation build configuration file, created by
+# pynucastro documentation build configuration file, created by
 # sphinx-quickstart on Wed Dec 27 11:54:03 2017.
 #
 # This file is execfile()d with the current directory set to its
@@ -52,8 +52,8 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = 'pyreaclib'
-copyright = '2017, Michael Zingale and Donald Willcox'
+project = 'pynucastro'
+copyright = '2018, Michael Zingale and Donald Willcox'
 author = 'Michael Zingale and Donald Willcox'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -120,7 +120,7 @@ html_sidebars = {
 # -- Options for HTMLHelp output ------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'pyreaclibdoc'
+htmlhelp_basename = 'pynucastrodoc'
 
 
 # -- Options for LaTeX output ---------------------------------------------
@@ -147,7 +147,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'pyreaclib.tex', 'pyreaclib Documentation',
+    (master_doc, 'pynucastro.tex', 'pynucastro Documentation',
      'Michael Zingale and Donald Willcox', 'manual'),
 ]
 
@@ -157,7 +157,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'pyreaclib', 'pyreaclib Documentation',
+    (master_doc, 'pynucastro', 'pynucastro Documentation',
      [author], 1)
 ]
 
@@ -168,8 +168,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'pyreaclib', 'pyreaclib Documentation',
-     author, 'pyreaclib', 'One line description of project.',
+    (master_doc, 'pynucastro', 'pynucastro Documentation',
+     author, 'pynucastro', 'One line description of project.',
      'Miscellaneous'),
 ]
 
