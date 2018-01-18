@@ -6,16 +6,16 @@ import os
 
 from pyreaclib.networks import BaseFortranNetwork
 
-class BoxLibNetwork(BaseFortranNetwork):
+class StarKillerNetwork(BaseFortranNetwork):
     def __init__(self, *args, **kwargs):
         # Initialize BaseFortranNetwork parent class
-        super(BoxLibNetwork, self).__init__(*args, **kwargs)
+        super(StarKillerNetwork, self).__init__(*args, **kwargs)
 
         # Set up some directories
-        self.boxlib_dir = os.path.join(self.pyreaclib_dir,
-                                       'templates',
-                                       'boxlib-microphysics')
-        self.template_file_select = os.path.join(self.boxlib_dir,
+        self.template_dir = os.path.join(self.pyreaclib_dir,
+                                         'templates',
+                                         'starkiller-microphysics')
+        self.template_file_select = os.path.join(self.template_dir,
                                                  '*.template')
         self.template_files = glob.glob(self.template_file_select)
 

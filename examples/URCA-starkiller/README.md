@@ -1,9 +1,9 @@
 # Fortran: C12-burning with A=23 URCA reactions
 
-The URCA-boxlib example creates a reaction network which implements
+The URCA-starkiller example creates a reaction network which implements
 simple C12-burning along with the A=23 URCA reactions until either
 23Ne or 23Na are depleted. It is intended to generate a network for
-BoxLib/Microphysics for use in MAESTRO or CASTRO.
+StarKiller/Microphysics for use in MAESTRO or CASTRO.
 
 To use, generate the reaction network using urca.py (pyreaclib directory
 must be in your PYTHONPATH):

@@ -28,7 +28,7 @@ class TestFortranNetwork(object):
                  "n15-pa-c12-nacr",
                  "o14--n14-wc12",
                  "o15--n15-wc12"]
-        self.fn = networks.BoxLibNetwork(files)
+        self.fn = networks.StarKillerNetwork(files)
 
         self.p = rates.Nucleus("p")
         self.he4 = rates.Nucleus("he4")

@@ -122,7 +122,7 @@ class AME2012(object):
         a = int(a)
         abb = abb.strip().lower()
         for nuc in self.nuclides:
-            if (nuc.a == a) and (nuc.element.lower() == abb):
+            if nuc.a == a and nuc.element.lower() == abb:
                 return nuc
         print('ERROR: Could not find a nuclide by the specification {}'.format(isostring))
 

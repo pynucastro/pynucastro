@@ -19,7 +19,7 @@ reaction networks for use in simulation codes.
    intro
    pyreaclib-examples.ipynb
    networks
-   modules
+   API <modules>
 
 Indices and tables
 ==================

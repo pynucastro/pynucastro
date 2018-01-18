@@ -5,13 +5,12 @@ module table_rates
   implicit none
 
   public table_meta, tabular_evaluate
-  <public_table_indices>(1)
 
   private num_tables, jtab_mu, jtab_dq, jtab_vs, jtab_rate, jtab_nuloss, jtab_gamma
   private k_drate_dt, add_vars
   private table_read_meta
   
-  <table_num>(1)
+  integer, parameter :: num_tables   = 0
   integer, parameter :: jtab_mu      = 1
   integer, parameter :: jtab_dq      = 2
   integer, parameter :: jtab_vs      = 3
@@ -25,7 +24,6 @@ module table_rates
   integer, parameter :: k_drate_dt   = 7
   integer, parameter :: add_vars     = 1 ! 1 Additional Var in entries
 
-  <table_indices>(1)
 
   type :: table_info
      double precision, dimension(:,:,:), allocatable :: rate_table
@@ -52,7 +50,6 @@ contains
   subroutine init_tabular()
     integer :: n
 
-    <table_init_meta>(2)
     
     do n = 1, num_tables
        call init_tab_info(table_meta(n), table_read_meta(n))

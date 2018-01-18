@@ -46,9 +46,10 @@ rates, including:
   output of Fortran code that can be used with the sundials 
   ODE integrators.
 
-* BoxLibNetwork : this extends the RateCollection to enable
-  output of Fortran code that can be used to add a network to
-  the BoxLib hydrodynamics codes Castro and Maestro.
+* StarKillerNetwork : this extends the RateCollection to enable output
+  of Fortran code that can be used to add a network to the
+  hydrodynamics codes Castro and Maestro via the StarKiller
+  Microphysics repository.
 
 
 rates
@@ -64,7 +65,7 @@ reaction rates, including:
   evaluating it.
 
 * Tfactors : this is a simple container class that holds the various
-  temperature powers needed to evaluate a rate. 
+  temperature powers needed to evaluate a rate.
 
 
 """
@@ -76,7 +77,7 @@ from pyreaclib.networks import \
     Composition, \
     Explorer, \
     PythonNetwork, \
-    BoxLibNetwork, \
+    StarKillerNetwork, \
     SundialsNetwork
 
 from pyreaclib.rates import \

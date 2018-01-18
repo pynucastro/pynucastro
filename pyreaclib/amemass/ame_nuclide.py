@@ -97,3 +97,6 @@ class AMENuclide(object):
             self.mass = self.mass/1.0e6
         if self.d_mass:
             self.d_mass = self.d_mass/1.0e6
+
+    def __str__(self):
+        return "{}-{}".format(self.element, self.a)
