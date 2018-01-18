@@ -2,7 +2,7 @@
 
 import os
 
-import pyreaclib.amemass as amemass
+import pynucastro.amemass as amemass
 
 class TestAME(object):
     @classmethod
