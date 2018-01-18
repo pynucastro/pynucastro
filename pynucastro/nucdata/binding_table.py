@@ -6,7 +6,7 @@ Reads tabular binding energy/nucleon data file and supplies table data.
 from __future__ import print_function
 import os
 
-from pyreaclib.nucdata import BindingNuclide
+from pynucastro.nucdata import BindingNuclide
 
 class BindingTable(object):
     """A simple class to manage reading and parsing the table of binding energy/nucleon."""

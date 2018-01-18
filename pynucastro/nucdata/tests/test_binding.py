@@ -2,7 +2,7 @@
 
 import os
 
-from pyreaclib.nucdata import BindingTable
+from pynucastro.nucdata import BindingTable
 
 class TestAME(object):
     @classmethod
