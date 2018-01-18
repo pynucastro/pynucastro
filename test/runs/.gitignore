@@ -1,4 +1,0 @@
-# Ignore everything in scratch directory
-*
-# Except this file
-!.gitignore
