@@ -5,8 +5,8 @@ import os
 import re
 import sympy
 
-from pyreaclib.networks import RateCollection
-from pyreaclib.nucdata import BindingTable
+from pynucastro.networks import RateCollection
+from pynucastro.nucdata import BindingTable
 
 class BaseFortranNetwork(RateCollection):
     def __init__(self, *args, **kwargs):
