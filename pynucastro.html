@@ -1,0 +1,372 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pynucastro package &mdash; pynucastro 1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="pynucastro 1.0 documentation" href="index.html"/>
+        <link rel="up" title="pynucastro" href="modules.html"/>
+        <link rel="next" title="pynucastro.networks package" href="pynucastro.networks.html"/>
+        <link rel="prev" title="pynucastro" href="modules.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> pynucastro
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Overview of <code class="docutils literal"><span class="pre">pynucastro</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="pynucastro-examples.html"><code class="docutils literal"><span class="pre">pynucastro</span></code> usage examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="networks.html">Creating networks</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">API</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">pynucastro package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#amemass">amemass</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#networks">networks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#rates">rates</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#subpackages">Subpackages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.html">pynucastro.networks package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.html">pynucastro.nucdata package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.html">pynucastro.rates package</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="setup.html">setup module</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pynucastro</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="modules.html">pynucastro</a> &raquo;</li>
+        
+      <li>pynucastro package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/pynucastro.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast,
+.nboutput.nblast {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast + .nbinput {
+    margin-top: -19px;
+}
+
+/* nice headers on first paragraph of info/warning boxes */
+.admonition .first {
+    margin: -12px;
+    padding: 6px 12px;
+    margin-bottom: 12px;
+    color: #fff;
+    line-height: 1;
+    display: block;
+}
+.admonition.warning .first {
+    background: #f0b37e;
+}
+.admonition.note .first {
+    background: #6ab0de;
+}
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+</style>
+<div class="section" id="module-pynucastro">
+<span id="pynucastro-package"></span><h1>pynucastro package<a class="headerlink" href="#module-pynucastro" title="Permalink to this headline">¶</a></h1>
+<p>pynucastro is a python module that interprets the nuclear reaction rates,
+including those cataloged by the JINA ReacLib project:</p>
+<p><a class="reference external" href="https://groups.nscl.msu.edu/jina/reaclib/db/">https://groups.nscl.msu.edu/jina/reaclib/db/</a></p>
+<p>It provides both interactive access to the rates, for use in Jupyter
+notebooks as well as methods for writing python and Fortran nuclear
+reaction networks, including the the righthand side and Jacobian
+routines.</p>
+<p>Several different packages provide the data structures needed to
+interpret rates and build networks</p>
+<div class="section" id="amemass">
+<h2>amemass<a class="headerlink" href="#amemass" title="Permalink to this headline">¶</a></h2>
+<p>amemass provides the 2012 atomic mass evaluation.  The main interfaces
+is the AME2012 class, which reads in the data table and provides
+methods to get nuclide properties.</p>
+</div>
+<div class="section" id="networks">
+<h2>networks<a class="headerlink" href="#networks" title="Permalink to this headline">¶</a></h2>
+<p>networks provides classes and functions for organizing collection of
+rates, including:</p>
+<ul class="simple">
+<li>Composition : this is a container of Nucleus objects along with
+associated mass fractions.  This is used for evaluating rates
+when doing interactive exploration with pynucastro.</li>
+<li>RateCollection : this is simply a collection of rates.  It will 
+determine all of the links between the rates and allow you to 
+visualize the dependencies.</li>
+<li>Explorer : an explorer takes a rate composition and composition
+and produces an interactive visualization that can be explored
+in Jupyter notebooks.</li>
+<li>PythonNetwork : this extends the RateCollection to enable output
+of python code that can be used with ODE integrators to solve
+a network.</li>
+<li>SundialsNetwork : this extends the RateCollection to enable
+output of Fortran code that can be used with the sundials 
+ODE integrators.</li>
+<li>StarKillerNetwork : this extends the RateCollection to enable output
+of Fortran code that can be used to add a network to the
+hydrodynamics codes Castro and Maestro via the StarKiller
+Microphysics repository.</li>
+</ul>
+</div>
+<div class="section" id="rates">
+<h2>rates<a class="headerlink" href="#rates" title="Permalink to this headline">¶</a></h2>
+<p>rates provides classes and functions for interpreting individual
+reaction rates, including:</p>
+<ul class="simple">
+<li>Nucleus : a single nucleus, with a descriptive name and its 
+properties.</li>
+<li>Rate : a single Reaclib rate, with methods for plotting and 
+evaluating it.</li>
+<li>Tfactors : this is a simple container class that holds the various
+temperature powers needed to evaluate a rate.</li>
+</ul>
+</div>
+<div class="section" id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="pynucastro.networks.html">pynucastro.networks package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pynucastro.networks.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pynucastro.networks.html#module-pynucastro.networks.base_fortran_network">pynucastro.networks.base_fortran_network module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pynucastro.networks.html#module-pynucastro.networks.python_network">pynucastro.networks.python_network module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pynucastro.networks.html#module-pynucastro.networks.rate_collection">pynucastro.networks.rate_collection module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pynucastro.networks.html#module-pynucastro.networks.starkiller_network">pynucastro.networks.starkiller_network module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pynucastro.networks.html#module-pynucastro.networks.sundials_network">pynucastro.networks.sundials_network module</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pynucastro.nucdata.html">pynucastro.nucdata package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pynucastro.nucdata.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pynucastro.nucdata.html#module-pynucastro.nucdata.binding_nuclide">pynucastro.nucdata.binding_nuclide module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pynucastro.nucdata.html#module-pynucastro.nucdata.binding_table">pynucastro.nucdata.binding_table module</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pynucastro.rates.html">pynucastro.rates package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pynucastro.rates.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pynucastro.rates.html#module-pynucastro.rates.rate">pynucastro.rates.rate module</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="pynucastro.networks.html" class="btn btn-neutral float-right" title="pynucastro.networks package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="modules.html" class="btn btn-neutral" title="pynucastro" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Michael Zingale and Donald Willcox.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

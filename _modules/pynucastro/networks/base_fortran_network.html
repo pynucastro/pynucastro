@@ -1,0 +1,947 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pynucastro.networks.base_fortran_network &mdash; pynucastro 1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../search.html"/>
+    <link rel="top" title="pynucastro 1.0 documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> pynucastro
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Overview of <code class="docutils literal"><span class="pre">pynucastro</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pynucastro-examples.html"><code class="docutils literal"><span class="pre">pynucastro</span></code> usage examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../networks.html">Creating networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">API</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">pynucastro</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>pynucastro.networks.base_fortran_network</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pynucastro.networks.base_fortran_network</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Common Imports</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">sympy</span>
+
+<span class="kn">from</span> <span class="nn">pynucastro.networks</span> <span class="k">import</span> <span class="n">RateCollection</span>
+<span class="kn">from</span> <span class="nn">pynucastro.nucdata</span> <span class="k">import</span> <span class="n">BindingTable</span>
+
+<div class="viewcode-block" id="BaseFortranNetwork"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.base_fortran_network.BaseFortranNetwork">[docs]</a><span class="k">class</span> <span class="nc">BaseFortranNetwork</span><span class="p">(</span><span class="n">RateCollection</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="c1"># Initialize RateCollection parent class</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">BaseFortranNetwork</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>        
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">&#39;&lt;nrates&gt;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nrates</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">&#39;&lt;nrat_reaclib&gt;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nrat_reaclib</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">&#39;&lt;nrat_tabular&gt;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nrat_tabular</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">&#39;&lt;nspec&gt;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nspec</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">&#39;&lt;nspec_evolve&gt;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nspec_evolve</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">&#39;&lt;net_ynuc&gt;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ynuc</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">&#39;&lt;nrxn&gt;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nrxn</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">&#39;&lt;jion&gt;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">jion</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">&#39;&lt;spec_names&gt;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">spec_names</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">&#39;&lt;short_spec_names&gt;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">short_spec_names</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">&#39;&lt;ebind&gt;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ebind</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">&#39;&lt;aion&gt;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">aion</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">&#39;&lt;zion&gt;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">zion</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">&#39;&lt;nion&gt;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nion</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">&#39;&lt;ctemp_declare&gt;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ctemp_declare</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">&#39;&lt;rate_start_idx&gt;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rate_start_idx</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">&#39;&lt;rate_extra_mult&gt;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rate_extra_mult</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">&#39;&lt;rmul&gt;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rmul</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">&#39;&lt;screen_logical&gt;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">screen_logical</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">&#39;&lt;screen_add&gt;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">screen_add</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">&#39;&lt;ctemp_ptr_declare&gt;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ctemp_ptr_declare</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">&#39;&lt;ctemp_allocate&gt;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ctemp_allocate</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">&#39;&lt;ctemp_deallocate&gt;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ctemp_deallocate</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">&#39;&lt;ctemp_switch&gt;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ctemp_switch</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">&#39;&lt;table_num&gt;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">table_num</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">&#39;&lt;public_table_indices&gt;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">public_table_indices</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">&#39;&lt;table_indices&gt;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">table_indices</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">&#39;&lt;table_init_meta&gt;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">table_init_meta</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">&#39;&lt;table_rates_indices&gt;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">table_rates_indices</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">&#39;&lt;compute_tabular_rates_rhs&gt;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_tabular_rates_rhs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">&#39;&lt;compute_tabular_rates_jac&gt;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_tabular_rates_jac</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">&#39;&lt;ydot_declare_scratch&gt;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ydot_declare_scratch</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">&#39;&lt;ydot_scratch&gt;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ydot_scratch</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">&#39;&lt;ydot&gt;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ydot</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">&#39;&lt;enuc_dqweak&gt;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">enuc_dqweak</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">&#39;&lt;enuc_epart&gt;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">enuc_epart</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">&#39;&lt;jacnuc_declare_scratch&gt;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">jacnuc_declare_scratch</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">&#39;&lt;jacnuc_scratch&gt;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">jacnuc_scratch</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">&#39;&lt;jacnuc&gt;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">jacnuc</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">&#39;&lt;yinit_nuc&gt;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">yinit_nuc</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">&#39;&lt;final_net_print&gt;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">final_net_print</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">&#39;&lt;headerline&gt;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">headerline</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">&#39;&lt;cvodeneq&gt;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cvodeneq</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">&#39;&lt;net_ymass_init&gt;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">net_ymass_init</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">indent</span> <span class="o">=</span> <span class="s1">&#39;  &#39;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">use_cse</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">float_explicit_num_digits</span> <span class="o">=</span> <span class="mi">17</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">ydot_out_scratch</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ydot_out_result</span>  <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">jac_out_scratch</span>  <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">jac_out_result</span>   <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">symbol_ludict</span> <span class="o">=</span> <span class="p">{}</span> <span class="c1"># Symbol lookup dictionary</span>
+
+        <span class="c1"># Define these for the particular network</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name_rate_data</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name_y</span>         <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name_ydot</span>      <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name_ydot_nuc</span>      <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name_jacobian</span>  <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name_jacobian_nuc</span>  <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="BaseFortranNetwork.ydot_string"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.base_fortran_network.BaseFortranNetwork.ydot_string">[docs]</a>    <span class="k">def</span> <span class="nf">ydot_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rate</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        return a string containing the term in a dY/dt equation</span>
+<span class="sd">        in a reaction network corresponding to this rate for Fortran 90.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># composition dependence</span>
+        <span class="n">Y_string</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">rate</span><span class="o">.</span><span class="n">reactants</span><span class="p">))):</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="n">rate</span><span class="o">.</span><span class="n">reactants</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">c</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">Y_string</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name_y</span> <span class="o">+</span> <span class="s2">&quot;(j</span><span class="si">{}</span><span class="s2">)**</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">Y_string</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name_y</span> <span class="o">+</span> <span class="s2">&quot;(j</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">rate</span><span class="o">.</span><span class="n">reactants</span><span class="p">))</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                <span class="n">Y_string</span> <span class="o">+=</span> <span class="s2">&quot; * &quot;</span>
+
+        <span class="c1"># density dependence</span>
+        <span class="k">if</span> <span class="n">rate</span><span class="o">.</span><span class="n">dens_exp</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">dens_string</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">elif</span> <span class="n">rate</span><span class="o">.</span><span class="n">dens_exp</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">dens_string</span> <span class="o">=</span> <span class="s2">&quot;dens * &quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dens_string</span> <span class="o">=</span> <span class="s2">&quot;dens**</span><span class="si">{}</span><span class="s2"> * &quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">rate</span><span class="o">.</span><span class="n">dens_exp</span><span class="p">)</span>
+
+        <span class="c1"># prefactor</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">rate</span><span class="o">.</span><span class="n">prefactor</span> <span class="o">==</span> <span class="mf">1.0</span><span class="p">:</span>
+            <span class="n">prefactor_string</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{:1.14e}</span><span class="s2"> * &quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">rate</span><span class="o">.</span><span class="n">prefactor</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;e&#39;</span><span class="p">,</span><span class="s1">&#39;d&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">prefactor_string</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{}{}{}</span><span class="s2"> * </span><span class="si">{}</span><span class="s2">(i_scor, k_</span><span class="si">{}</span><span class="s2">) * </span><span class="si">{}</span><span class="s2">(i_rate, k_</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">prefactor_string</span><span class="p">,</span>
+            <span class="n">dens_string</span><span class="p">,</span>
+            <span class="n">Y_string</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">name_rate_data</span><span class="p">,</span>
+            <span class="n">rate</span><span class="o">.</span><span class="n">fname</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">name_rate_data</span><span class="p">,</span>
+            <span class="n">rate</span><span class="o">.</span><span class="n">fname</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BaseFortranNetwork.ydot_term_symbol"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.base_fortran_network.BaseFortranNetwork.ydot_term_symbol">[docs]</a>    <span class="k">def</span> <span class="nf">ydot_term_symbol</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rate</span><span class="p">,</span> <span class="n">y_i</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        return a sympy expression containing this rate&#39;s contribution to </span>
+<span class="sd">        the ydot term for nuclide y_i.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">srate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">specific_rate_symbol</span><span class="p">(</span><span class="n">rate</span><span class="p">)</span>
+
+        <span class="c1"># Check if y_i is a reactant or product</span>
+        <span class="n">c_reac</span> <span class="o">=</span> <span class="n">rate</span><span class="o">.</span><span class="n">reactants</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">y_i</span><span class="p">)</span>
+        <span class="n">c_prod</span> <span class="o">=</span> <span class="n">rate</span><span class="o">.</span><span class="n">products</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">y_i</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">c_reac</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">c_prod</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># Something weird happened and y_i seems to be a reactant and product!</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;WARNING: </span><span class="si">{}</span><span class="s1"> occurs as both reactant and product in rate </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">y_i</span><span class="p">,</span> <span class="n">rate</span><span class="p">))</span>
+            <span class="n">exit</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">c_reac</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">c_prod</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># The rate doesn&#39;t contribute to the ydot for this y_i</span>
+            <span class="n">ydot_sym</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">sympy</span><span class="o">.</span><span class="n">sympify</span><span class="p">(</span><span class="mf">0.0</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">c_reac</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># y_i appears as a reactant</span>
+            <span class="n">ydot_sym</span> <span class="o">=</span> <span class="o">-</span><span class="n">c_reac</span> <span class="o">*</span> <span class="n">srate</span>
+        <span class="k">elif</span> <span class="n">c_prod</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># y_i appears as a product</span>
+            <span class="n">ydot_sym</span> <span class="o">=</span> <span class="o">+</span><span class="n">c_prod</span> <span class="o">*</span> <span class="n">srate</span>
+        <span class="k">return</span> <span class="n">ydot_sym</span><span class="o">.</span><span class="n">evalf</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">float_explicit_num_digits</span><span class="p">)</span></div>
+    
+<div class="viewcode-block" id="BaseFortranNetwork.specific_rate_symbol"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.base_fortran_network.BaseFortranNetwork.specific_rate_symbol">[docs]</a>    <span class="k">def</span> <span class="nf">specific_rate_symbol</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rate</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        return a sympy expression containing the term in a dY/dt equation</span>
+<span class="sd">        in a reaction network corresponding to this rate.</span>
+
+<span class="sd">        Also enter the symbol and substitution in the lookup table.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># composition dependence</span>
+        <span class="n">Y_sym</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">rate</span><span class="o">.</span><span class="n">reactants</span><span class="p">))):</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="n">rate</span><span class="o">.</span><span class="n">reactants</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+            <span class="n">sym_final</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name_y</span> <span class="o">+</span> <span class="s1">&#39;(j</span><span class="si">{}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+            <span class="n">sym_temp</span>  <span class="o">=</span> <span class="s1">&#39;Y__j</span><span class="si">{}</span><span class="s1">__&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">symbol_ludict</span><span class="p">[</span><span class="n">sym_temp</span><span class="p">]</span> <span class="o">=</span> <span class="n">sym_final</span>
+            <span class="n">Y_sym</span> <span class="o">=</span> <span class="n">Y_sym</span> <span class="o">*</span> <span class="n">sympy</span><span class="o">.</span><span class="n">symbols</span><span class="p">(</span><span class="n">sym_temp</span><span class="p">)</span><span class="o">**</span><span class="n">c</span>
+
+        <span class="c1"># density dependence</span>
+        <span class="n">dens_sym</span> <span class="o">=</span> <span class="n">sympy</span><span class="o">.</span><span class="n">symbols</span><span class="p">(</span><span class="s1">&#39;dens&#39;</span><span class="p">)</span><span class="o">**</span><span class="n">rate</span><span class="o">.</span><span class="n">dens_exp</span>
+
+        <span class="c1"># prefactor</span>
+        <span class="n">prefactor_sym</span> <span class="o">=</span> <span class="n">sympy</span><span class="o">.</span><span class="n">sympify</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="n">sympy</span><span class="o">.</span><span class="n">sympify</span><span class="p">(</span><span class="n">rate</span><span class="o">.</span><span class="n">inv_prefactor</span><span class="p">)</span>
+
+        <span class="c1"># screened rate</span>
+        <span class="n">sym_final</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name_rate_data</span> <span class="o">+</span> <span class="s1">&#39;(k_</span><span class="si">{}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">rate</span><span class="o">.</span><span class="n">fname</span><span class="p">)</span>
+        <span class="n">sym_temp</span>  <span class="o">=</span> <span class="s1">&#39;NRD__k_</span><span class="si">{}</span><span class="s1">__&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">rate</span><span class="o">.</span><span class="n">fname</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">symbol_ludict</span><span class="p">[</span><span class="n">sym_temp</span><span class="p">]</span> <span class="o">=</span> <span class="n">sym_final</span>
+        <span class="n">screened_rate_sym</span> <span class="o">=</span> <span class="n">sympy</span><span class="o">.</span><span class="n">symbols</span><span class="p">(</span><span class="n">sym_temp</span><span class="p">)</span>
+        
+        <span class="n">srate_sym</span> <span class="o">=</span> <span class="n">prefactor_sym</span> <span class="o">*</span> <span class="n">dens_sym</span> <span class="o">*</span> <span class="n">Y_sym</span> <span class="o">*</span> <span class="n">screened_rate_sym</span>
+        <span class="k">return</span> <span class="n">srate_sym</span></div>
+
+<div class="viewcode-block" id="BaseFortranNetwork.fortranify"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.base_fortran_network.BaseFortranNetwork.fortranify">[docs]</a>    <span class="k">def</span> <span class="nf">fortranify</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Given string s, will replace the symbols appearing as keys in </span>
+<span class="sd">        self.symbol_ludict with their corresponding entries.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">symbol_ludict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">symbol_ludict</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+            <span class="n">s</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">s</span> <span class="o">==</span> <span class="s1">&#39;0&#39;</span><span class="p">:</span>
+            <span class="n">s</span> <span class="o">=</span> <span class="s1">&#39;0.0d0&#39;</span>
+        <span class="k">return</span> <span class="n">s</span></div>
+    
+<div class="viewcode-block" id="BaseFortranNetwork.jacobian_string"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.base_fortran_network.BaseFortranNetwork.jacobian_string">[docs]</a>    <span class="k">def</span> <span class="nf">jacobian_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rate</span><span class="p">,</span> <span class="n">ydot_j</span><span class="p">,</span> <span class="n">y_i</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        return a string containing the term in a jacobian matrix </span>
+<span class="sd">        in a reaction network corresponding to this rate</span>
+
+<span class="sd">        Returns the derivative of the j-th YDOT wrt. the i-th Y</span>
+<span class="sd">        If the derivative is zero, returns the empty string &#39;&#39;</span>
+
+<span class="sd">        ydot_j and y_i are objects of the class &#39;Nucleus&#39;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="p">((</span><span class="n">ydot_j</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">rate</span><span class="o">.</span><span class="n">reactants</span> <span class="ow">and</span> <span class="n">ydot_j</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">rate</span><span class="o">.</span><span class="n">products</span><span class="p">)</span> <span class="ow">or</span>
+            <span class="n">y_i</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">rate</span><span class="o">.</span><span class="n">reactants</span><span class="p">):</span>
+            <span class="k">return</span> <span class="s1">&#39;&#39;</span>
+
+        <span class="c1"># composition dependence</span>
+        <span class="n">Y_string</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">rate</span><span class="o">.</span><span class="n">reactants</span><span class="p">))):</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="n">rate</span><span class="o">.</span><span class="n">reactants</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">y_i</span> <span class="o">==</span> <span class="n">r</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">c</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="k">if</span> <span class="n">n</span><span class="o">&gt;</span><span class="mi">0</span> <span class="ow">and</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">rate</span><span class="o">.</span><span class="n">reactants</span><span class="p">))</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                    <span class="n">Y_string</span> <span class="o">+=</span> <span class="s2">&quot;*&quot;</span>
+                <span class="k">if</span> <span class="n">c</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+                    <span class="n">Y_string</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">*</span><span class="si">{}</span><span class="s2">(j</span><span class="si">{}</span><span class="s2">)**</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name_y</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">c</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">c</span><span class="o">==</span><span class="mi">2</span><span class="p">:</span>
+                    <span class="n">Y_string</span> <span class="o">+=</span> <span class="s2">&quot;2*</span><span class="si">{}</span><span class="s2">(j</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name_y</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">n</span><span class="o">&gt;</span><span class="mi">0</span> <span class="ow">and</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">rate</span><span class="o">.</span><span class="n">reactants</span><span class="p">))</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                    <span class="n">Y_string</span> <span class="o">+=</span> <span class="s2">&quot;*&quot;</span>
+                <span class="k">if</span> <span class="n">c</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">Y_string</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">(j</span><span class="si">{}</span><span class="s2">)**</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name_y</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">Y_string</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">(j</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name_y</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span>
+
+        <span class="c1"># density dependence</span>
+        <span class="k">if</span> <span class="n">rate</span><span class="o">.</span><span class="n">dens_exp</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">dens_string</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">elif</span> <span class="n">rate</span><span class="o">.</span><span class="n">dens_exp</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">dens_string</span> <span class="o">=</span> <span class="s2">&quot;dens * &quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dens_string</span> <span class="o">=</span> <span class="s2">&quot;dens**</span><span class="si">{}</span><span class="s2"> * &quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">rate</span><span class="o">.</span><span class="n">dens_exp</span><span class="p">)</span>
+
+        <span class="c1"># prefactor</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">rate</span><span class="o">.</span><span class="n">prefactor</span> <span class="o">==</span> <span class="mf">1.0</span><span class="p">:</span>
+            <span class="n">prefactor_string</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{:1.14e}</span><span class="s2"> * &quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">rate</span><span class="o">.</span><span class="n">prefactor</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;e&#39;</span><span class="p">,</span><span class="s1">&#39;d&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">prefactor_string</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">Y_string</span><span class="o">==</span><span class="s2">&quot;&quot;</span> <span class="ow">and</span> <span class="n">dens_string</span><span class="o">==</span><span class="s2">&quot;&quot;</span> <span class="ow">and</span> <span class="n">prefactor_string</span><span class="o">==</span><span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="n">rstring</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}{}{}</span><span class="s2">   </span><span class="si">{}</span><span class="s2">(i_scor, k_</span><span class="si">{}</span><span class="s2">) * </span><span class="si">{}</span><span class="s2">(i_rate, k_</span><span class="si">{}</span><span class="s2">)&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">rstring</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}{}{}</span><span class="s2"> * </span><span class="si">{}</span><span class="s2">(i_scor, k_</span><span class="si">{}</span><span class="s2">) * </span><span class="si">{}</span><span class="s2">(i_rate, k_</span><span class="si">{}</span><span class="s2">)&quot;</span>
+        <span class="k">return</span> <span class="n">rstring</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefactor_string</span><span class="p">,</span> <span class="n">dens_string</span><span class="p">,</span> <span class="n">Y_string</span><span class="p">,</span>
+                              <span class="bp">self</span><span class="o">.</span><span class="n">name_rate_data</span><span class="p">,</span> <span class="n">rate</span><span class="o">.</span><span class="n">fname</span><span class="p">,</span>
+                              <span class="bp">self</span><span class="o">.</span><span class="n">name_rate_data</span><span class="p">,</span> <span class="n">rate</span><span class="o">.</span><span class="n">fname</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BaseFortranNetwork.jacobian_term_symbol"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.base_fortran_network.BaseFortranNetwork.jacobian_term_symbol">[docs]</a>    <span class="k">def</span> <span class="nf">jacobian_term_symbol</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rate</span><span class="p">,</span> <span class="n">ydot_j</span><span class="p">,</span> <span class="n">y_i</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        return a sympy expression containing the term in a jacobian matrix </span>
+<span class="sd">        in a reaction network corresponding to this rate</span>
+
+<span class="sd">        Returns the derivative of the j-th YDOT wrt. the i-th Y</span>
+<span class="sd">        If the derivative is zero, returns 0.</span>
+
+<span class="sd">        ydot_j and y_i are objects of the class &#39;Nucleus&#39;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ydot_sym</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ydot_term_symbol</span><span class="p">(</span><span class="n">rate</span><span class="p">,</span> <span class="n">ydot_j</span><span class="p">)</span>
+        <span class="n">deriv_sym</span> <span class="o">=</span> <span class="n">sympy</span><span class="o">.</span><span class="n">symbols</span><span class="p">(</span><span class="s1">&#39;Y__j</span><span class="si">{}</span><span class="s1">__&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">y_i</span><span class="p">))</span>
+        <span class="n">jac_sym</span> <span class="o">=</span> <span class="n">sympy</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">ydot_sym</span><span class="p">,</span> <span class="n">deriv_sym</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">jac_sym</span><span class="o">.</span><span class="n">evalf</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">float_explicit_num_digits</span><span class="p">)</span></div>
+    
+<div class="viewcode-block" id="BaseFortranNetwork.io_open"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.base_fortran_network.BaseFortranNetwork.io_open">[docs]</a>    <span class="k">def</span> <span class="nf">io_open</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">infile</span><span class="p">,</span> <span class="n">outfile</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span> <span class="n">of</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">outfile</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span> <span class="k">raise</span>
+        <span class="k">try</span><span class="p">:</span> <span class="n">ifile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">infile</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span> <span class="k">raise</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">ifile</span><span class="p">,</span> <span class="n">of</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BaseFortranNetwork.io_close"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.base_fortran_network.BaseFortranNetwork.io_close">[docs]</a>    <span class="k">def</span> <span class="nf">io_close</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">infile</span><span class="p">,</span> <span class="n">outfile</span><span class="p">):</span>
+        <span class="n">infile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">outfile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+        
+<div class="viewcode-block" id="BaseFortranNetwork.fmt_to_dp_f90"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.base_fortran_network.BaseFortranNetwork.fmt_to_dp_f90">[docs]</a>    <span class="k">def</span> <span class="nf">fmt_to_dp_f90</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;</span><span class="si">{:1.14e}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">i</span><span class="p">))</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;e&#39;</span><span class="p">,</span><span class="s1">&#39;d&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BaseFortranNetwork.get_indent_amt"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.base_fortran_network.BaseFortranNetwork.get_indent_amt">[docs]</a>    <span class="k">def</span> <span class="nf">get_indent_amt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+        <span class="n">rem</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="s1">&#39;\A&#39;</span><span class="o">+</span><span class="n">k</span><span class="o">+</span><span class="s1">&#39;\(([0-9]*)\)\Z&#39;</span><span class="p">,</span><span class="n">l</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">rem</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="BaseFortranNetwork.write_network"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.base_fortran_network.BaseFortranNetwork.write_network">[docs]</a>    <span class="k">def</span> <span class="nf">write_network</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">use_cse</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This writes the RHS, jacobian and ancillary files for the system of ODEs that</span>
+<span class="sd">        this network describes, using the template files.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">use_cse</span> <span class="o">=</span> <span class="n">use_cse</span>
+
+        <span class="c1"># Prepare RHS terms</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">compose_ydot</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">compose_jacobian</span><span class="p">()</span>
+        
+        <span class="k">for</span> <span class="n">tfile</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">template_files</span><span class="p">:</span>
+            <span class="n">tfile_basename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">tfile</span><span class="p">)</span>
+            <span class="n">outfile</span>    <span class="o">=</span> <span class="n">tfile_basename</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.template&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+            <span class="n">ifile</span><span class="p">,</span> <span class="n">of</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">io_open</span><span class="p">(</span><span class="n">tfile</span><span class="p">,</span> <span class="n">outfile</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">ifile</span><span class="p">:</span>
+                <span class="n">ls</span> <span class="o">=</span> <span class="n">l</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="n">foundkey</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">ls</span><span class="p">:</span>
+                        <span class="n">foundkey</span> <span class="o">=</span> <span class="kc">True</span>
+                        <span class="n">n_indent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_indent_amt</span><span class="p">(</span><span class="n">ls</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="n">k</span><span class="p">](</span><span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">foundkey</span><span class="p">:</span>
+                    <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">l</span><span class="p">)</span>    
+            <span class="bp">self</span><span class="o">.</span><span class="n">io_close</span><span class="p">(</span><span class="n">ifile</span><span class="p">,</span> <span class="n">of</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BaseFortranNetwork.nrates"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.base_fortran_network.BaseFortranNetwork.nrates">[docs]</a>    <span class="k">def</span> <span class="nf">nrates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+        <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">integer, parameter :: nrates = </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="p">,</span>
+            <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">)))</span></div>
+
+<div class="viewcode-block" id="BaseFortranNetwork.nrat_reaclib"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.base_fortran_network.BaseFortranNetwork.nrat_reaclib">[docs]</a>    <span class="k">def</span> <span class="nf">nrat_reaclib</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+        <span class="c1"># Writes the number of Reaclib rates</span>
+        <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">integer, parameter :: nrat_reaclib = </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="p">,</span>
+            <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reaclib_rates</span><span class="p">)))</span></div>
+
+<div class="viewcode-block" id="BaseFortranNetwork.nrat_tabular"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.base_fortran_network.BaseFortranNetwork.nrat_tabular">[docs]</a>    <span class="k">def</span> <span class="nf">nrat_tabular</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+        <span class="c1"># Writes the number of tabular rates</span>
+        <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">integer, parameter :: nrat_tabular = </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="p">,</span>
+            <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tabular_rates</span><span class="p">)))</span></div>
+        
+<div class="viewcode-block" id="BaseFortranNetwork.nspec"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.base_fortran_network.BaseFortranNetwork.nspec">[docs]</a>    <span class="k">def</span> <span class="nf">nspec</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+        <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">integer, parameter :: nspec = </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="p">,</span>
+            <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">)))</span></div>
+
+<div class="viewcode-block" id="BaseFortranNetwork.nspec_evolve"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.base_fortran_network.BaseFortranNetwork.nspec_evolve">[docs]</a>    <span class="k">def</span> <span class="nf">nspec_evolve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+        <span class="c1"># Evolve all the nuclei at the moment</span>
+        <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">integer, parameter :: nspec_evolve = </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="p">,</span>
+            <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">)))</span></div>
+        
+<div class="viewcode-block" id="BaseFortranNetwork.ynuc"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.base_fortran_network.BaseFortranNetwork.ynuc">[docs]</a>    <span class="k">def</span> <span class="nf">ynuc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">:</span>
+            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">double precision :: y</span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="p">,</span> <span class="n">nuc</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="BaseFortranNetwork.jion"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.base_fortran_network.BaseFortranNetwork.jion">[docs]</a>    <span class="k">def</span> <span class="nf">jion</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">nuc</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">):</span>
+            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">integer, parameter :: j</span><span class="si">{}</span><span class="s1">   = </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="p">,</span> <span class="n">nuc</span><span class="p">,</span> <span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="BaseFortranNetwork.spec_names"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.base_fortran_network.BaseFortranNetwork.spec_names">[docs]</a>    <span class="k">def</span> <span class="nf">spec_names</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">nuc</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">):</span>
+            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">spec_names(j</span><span class="si">{}</span><span class="s1">)   = &quot;</span><span class="si">{}</span><span class="s1">&quot;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="p">,</span> <span class="n">nuc</span><span class="p">,</span> <span class="n">nuc</span><span class="o">.</span><span class="n">spec_name</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="BaseFortranNetwork.short_spec_names"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.base_fortran_network.BaseFortranNetwork.short_spec_names">[docs]</a>    <span class="k">def</span> <span class="nf">short_spec_names</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">nuc</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">):</span>
+            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">short_spec_names(j</span><span class="si">{}</span><span class="s1">)   = &quot;</span><span class="si">{}</span><span class="s1">&quot;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="p">,</span> <span class="n">nuc</span><span class="p">,</span> <span class="n">nuc</span><span class="o">.</span><span class="n">short_spec_name</span><span class="p">))</span></div>
+            
+<div class="viewcode-block" id="BaseFortranNetwork.nrxn"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.base_fortran_network.BaseFortranNetwork.nrxn">[docs]</a>    <span class="k">def</span> <span class="nf">nrxn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">r</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">):</span>
+            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">integer, parameter :: k_</span><span class="si">{}</span><span class="s1">   = </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">fname</span><span class="p">,</span> <span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="BaseFortranNetwork.ebind"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.base_fortran_network.BaseFortranNetwork.ebind">[docs]</a>    <span class="k">def</span> <span class="nf">ebind</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+        <span class="n">bintable</span> <span class="o">=</span> <span class="n">BindingTable</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">:</span>
+            <span class="n">nuc_in_table</span> <span class="o">=</span> <span class="n">bintable</span><span class="o">.</span><span class="n">get_nuclide</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">nuc</span><span class="o">.</span><span class="n">N</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="n">nuc</span><span class="o">.</span><span class="n">Z</span><span class="p">)</span>
+            <span class="n">str_nucbind</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fmt_to_dp_f90</span><span class="p">(</span><span class="n">nuc_in_table</span><span class="o">.</span><span class="n">nucbind</span><span class="p">)</span>
+            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">ebind_per_nucleon(j</span><span class="si">{}</span><span class="s1">)   = </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="p">,</span> <span class="n">nuc</span><span class="p">,</span> <span class="n">str_nucbind</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="BaseFortranNetwork.aion"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.base_fortran_network.BaseFortranNetwork.aion">[docs]</a>    <span class="k">def</span> <span class="nf">aion</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">:</span>
+            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">aion(j</span><span class="si">{}</span><span class="s1">)   = </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="p">,</span>
+                <span class="n">nuc</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">fmt_to_dp_f90</span><span class="p">(</span><span class="n">nuc</span><span class="o">.</span><span class="n">A</span><span class="p">)))</span></div>
+
+<div class="viewcode-block" id="BaseFortranNetwork.zion"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.base_fortran_network.BaseFortranNetwork.zion">[docs]</a>    <span class="k">def</span> <span class="nf">zion</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">:</span>
+            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">zion(j</span><span class="si">{}</span><span class="s1">)   = </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="p">,</span>
+                <span class="n">nuc</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">fmt_to_dp_f90</span><span class="p">(</span><span class="n">nuc</span><span class="o">.</span><span class="n">Z</span><span class="p">)))</span></div>
+
+<div class="viewcode-block" id="BaseFortranNetwork.nion"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.base_fortran_network.BaseFortranNetwork.nion">[docs]</a>    <span class="k">def</span> <span class="nf">nion</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">:</span>
+            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">nion(j</span><span class="si">{}</span><span class="s1">)   = </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="p">,</span>
+                <span class="n">nuc</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">fmt_to_dp_f90</span><span class="p">(</span><span class="n">nuc</span><span class="o">.</span><span class="n">N</span><span class="p">)))</span></div>
+            
+<div class="viewcode-block" id="BaseFortranNetwork.ctemp_declare"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.base_fortran_network.BaseFortranNetwork.ctemp_declare">[docs]</a>    <span class="k">def</span> <span class="nf">ctemp_declare</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reaclib_rates</span><span class="p">:</span>
+            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">double precision, target, dimension(:,:), allocatable :: ctemp_rate_</span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="p">,</span> <span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="BaseFortranNetwork.rate_start_idx"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.base_fortran_network.BaseFortranNetwork.rate_start_idx">[docs]</a>    <span class="k">def</span> <span class="nf">rate_start_idx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+        <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">allocate( rate_start_idx(nrat_reaclib) )</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="p">))</span>
+        <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">rate_start_idx(:) = [ &amp;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="p">))</span>
+        <span class="n">j</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reaclib_rates</span><span class="p">:</span>
+                <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="p">(</span><span class="n">n_indent</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span><span class="n">j</span><span class="p">))</span>
+                <span class="n">j</span> <span class="o">=</span> <span class="n">j</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">sets</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">i</span><span class="o">==</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reaclib_rates</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                    <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39; ]</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;, &amp;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BaseFortranNetwork.rate_extra_mult"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.base_fortran_network.BaseFortranNetwork.rate_extra_mult">[docs]</a>    <span class="k">def</span> <span class="nf">rate_extra_mult</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+        <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">allocate( rate_extra_mult(nrat_reaclib) )</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="p">))</span>
+        <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">rate_extra_mult(:) = [ &amp;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reaclib_rates</span><span class="p">:</span>
+                <span class="n">j</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">sets</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span>
+                <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="p">(</span><span class="n">n_indent</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span><span class="n">j</span><span class="p">))</span>
+                <span class="k">if</span> <span class="n">i</span><span class="o">==</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reaclib_rates</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                    <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39; ]</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;, &amp;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span></div>
+                
+<div class="viewcode-block" id="BaseFortranNetwork.rmul"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.base_fortran_network.BaseFortranNetwork.rmul">[docs]</a>    <span class="k">def</span> <span class="nf">rmul</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">r</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reaclib_rates</span><span class="p">:</span>
+                <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="p">,</span>
+                    <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">sets</span><span class="p">)))</span>
+            <span class="k">elif</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabular_rates</span><span class="p">:</span>
+                <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">-</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="p">,</span>
+                    <span class="n">r</span><span class="o">.</span><span class="n">table_index_name</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ERROR: unknown rate index </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+                <span class="n">exit</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">i</span><span class="o">==</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39; ]</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;, &amp;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BaseFortranNetwork.screen_logical"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.base_fortran_network.BaseFortranNetwork.screen_logical">[docs]</a>    <span class="k">def</span> <span class="nf">screen_logical</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+        <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">allocate( do_screening(nrat_reaclib) )</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="p">))</span>
+        <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">do_screening(:) = [ &amp;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reaclib_rates</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">ion_screen</span><span class="p">:</span>
+                    <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="p">(</span><span class="n">n_indent</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span> <span class="s1">&#39;.true.&#39;</span><span class="p">))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="p">(</span><span class="n">n_indent</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span> <span class="s1">&#39;.false.&#39;</span><span class="p">))</span>
+                <span class="k">if</span> <span class="n">i</span><span class="o">==</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reaclib_rates</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                    <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39; ]</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;, &amp;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BaseFortranNetwork.screen_add"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.base_fortran_network.BaseFortranNetwork.screen_add">[docs]</a>    <span class="k">def</span> <span class="nf">screen_add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">ion_screen</span><span class="p">:</span>
+                <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">call add_screening_factor(&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="p">))</span>
+                <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;zion(j</span><span class="si">{}</span><span class="s1">), aion(j</span><span class="si">{}</span><span class="s1">), &amp;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">ion_screen</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                                            <span class="n">r</span><span class="o">.</span><span class="n">ion_screen</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+                <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">zion(j</span><span class="si">{}</span><span class="s1">), aion(j</span><span class="si">{}</span><span class="s1">))</span><span class="se">\n\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="p">(</span><span class="n">n_indent</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span>
+                                                              <span class="n">r</span><span class="o">.</span><span class="n">ion_screen</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                                                              <span class="n">r</span><span class="o">.</span><span class="n">ion_screen</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span></div>
+
+<div class="viewcode-block" id="BaseFortranNetwork.ctemp_ptr_declare"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.base_fortran_network.BaseFortranNetwork.ctemp_ptr_declare">[docs]</a>    <span class="k">def</span> <span class="nf">ctemp_ptr_declare</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+        <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">type(ctemp_ptr), dimension(</span><span class="si">{}</span><span class="s1">) :: ctemp_point</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="p">,</span>
+            <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reaclib_rates</span><span class="p">)))</span></div>
+
+<div class="viewcode-block" id="BaseFortranNetwork.ctemp_allocate"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.base_fortran_network.BaseFortranNetwork.ctemp_allocate">[docs]</a>    <span class="k">def</span> <span class="nf">ctemp_allocate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+        <span class="n">nreaclib</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reaclib_rates</span><span class="p">)</span>
+        <span class="n">nreaclib_sets</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">nr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reaclib_rates</span><span class="p">:</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="n">nr</span><span class="p">]</span>
+            <span class="n">nreaclib_sets</span> <span class="o">=</span> <span class="n">nreaclib_sets</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">sets</span><span class="p">)</span>
+            
+        <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">allocate( ctemp_rate(7, </span><span class="si">{}</span><span class="s1">) )</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="p">,</span> <span class="n">nreaclib_sets</span><span class="p">))</span>
+
+        <span class="n">jset</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">nr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reaclib_rates</span><span class="p">:</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="n">nr</span><span class="p">]</span>
+            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">! </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">fname</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">ns</span><span class="p">,</span><span class="n">s</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">sets</span><span class="p">):</span>
+                <span class="n">jset</span> <span class="o">=</span> <span class="n">jset</span> <span class="o">+</span> <span class="mi">1</span>
+                <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">ctemp_rate(:, </span><span class="si">{}</span><span class="s1">) = [  &amp;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="p">,</span> <span class="n">jset</span><span class="p">))</span>
+                <span class="k">for</span> <span class="n">na</span><span class="p">,</span><span class="n">an</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">a</span><span class="p">):</span>
+                    <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span>
+                                           <span class="bp">self</span><span class="o">.</span><span class="n">fmt_to_dp_f90</span><span class="p">(</span><span class="n">an</span><span class="p">)))</span>
+                    <span class="k">if</span> <span class="n">na</span><span class="o">==</span><span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">a</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                        <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39; ]</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;, &amp;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span></div>
+        
+<div class="viewcode-block" id="BaseFortranNetwork.ctemp_deallocate"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.base_fortran_network.BaseFortranNetwork.ctemp_deallocate">[docs]</a>    <span class="k">def</span> <span class="nf">ctemp_deallocate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">nr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reaclib_rates</span><span class="p">:</span>
+            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">deallocate( ctemp_rate_</span><span class="si">{}</span><span class="s1"> )</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="p">,</span> <span class="n">nr</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="BaseFortranNetwork.ctemp_switch"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.base_fortran_network.BaseFortranNetwork.ctemp_switch">[docs]</a>    <span class="k">def</span> <span class="nf">ctemp_switch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">nr</span><span class="p">,</span><span class="n">r</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">):</span>
+            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">nr</span><span class="o">!=</span><span class="mi">0</span><span class="p">:</span>
+                <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;else &#39;</span><span class="p">)</span>
+            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;if (iwhich == </span><span class="si">{}</span><span class="s1">) then</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">nr</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">nr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reaclib_rates</span><span class="p">:</span>
+                <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">ctemp =&gt; ctemp_rate_</span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="p">(</span><span class="n">n_indent</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span> <span class="n">nr</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="n">nr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabular_rates</span><span class="p">:</span>
+                <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+                    <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">call table_meta(</span><span class="si">{}</span><span class="s1">)%bl_lookup(rhoy, temp, jtab_rate, rate)</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="p">(</span><span class="n">n_indent</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span> <span class="n">r</span><span class="o">.</span><span class="n">table_index_name</span><span class="p">))</span>
+                <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">return_from_table = .true.</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="p">(</span><span class="n">n_indent</span><span class="o">+</span><span class="mi">1</span><span class="p">)))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ERROR: rate not in self.reaclib_rates or self.tabular_rates!&#39;</span><span class="p">)</span>
+                <span class="n">exit</span><span class="p">()</span>
+        <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">end if</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="BaseFortranNetwork.table_num"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.base_fortran_network.BaseFortranNetwork.table_num">[docs]</a>    <span class="k">def</span> <span class="nf">table_num</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+        <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">integer, parameter :: num_tables   = </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tabular_rates</span><span class="p">)))</span></div>
+
+<div class="viewcode-block" id="BaseFortranNetwork.public_table_indices"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.base_fortran_network.BaseFortranNetwork.public_table_indices">[docs]</a>    <span class="k">def</span> <span class="nf">public_table_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">n</span><span class="p">,</span><span class="n">irate</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tabular_rates</span><span class="p">):</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="n">irate</span><span class="p">]</span>
+            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">public </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">table_index_name</span><span class="p">))</span></div>
+        
+<div class="viewcode-block" id="BaseFortranNetwork.table_indices"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.base_fortran_network.BaseFortranNetwork.table_indices">[docs]</a>    <span class="k">def</span> <span class="nf">table_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">n</span><span class="p">,</span><span class="n">irate</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tabular_rates</span><span class="p">):</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="n">irate</span><span class="p">]</span>
+            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">integer, parameter :: </span><span class="si">{}</span><span class="s1">   = </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">table_index_name</span><span class="p">,</span> <span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="BaseFortranNetwork.table_init_meta"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.base_fortran_network.BaseFortranNetwork.table_init_meta">[docs]</a>    <span class="k">def</span> <span class="nf">table_init_meta</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">n</span><span class="p">,</span><span class="n">irate</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tabular_rates</span><span class="p">):</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="n">irate</span><span class="p">]</span>
+            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">table_read_meta(</span><span class="si">{}</span><span class="s1">)</span><span class="si">%r</span><span class="s1">ate_table_file = </span><span class="se">\&#39;</span><span class="si">{}</span><span class="se">\&#39;\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">table_index_name</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">table_file</span><span class="p">))</span>
+            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">table_read_meta(</span><span class="si">{}</span><span class="s1">)%num_header = </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">table_index_name</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">table_header_lines</span><span class="p">))</span>
+            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">table_meta(</span><span class="si">{}</span><span class="s1">)%num_rhoy = </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">table_index_name</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">table_rhoy_lines</span><span class="p">))</span>
+            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">table_meta(</span><span class="si">{}</span><span class="s1">)%num_temp = </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">table_index_name</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">table_temp_lines</span><span class="p">))</span>
+            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">table_meta(</span><span class="si">{}</span><span class="s1">)%num_vars = </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">table_index_name</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">table_num_vars</span><span class="p">))</span>
+            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BaseFortranNetwork.table_rates_indices"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.base_fortran_network.BaseFortranNetwork.table_rates_indices">[docs]</a>    <span class="k">def</span> <span class="nf">table_rates_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">n</span><span class="p">,</span><span class="n">irate</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tabular_rates</span><span class="p">):</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="n">irate</span><span class="p">]</span>
+            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">table_index_name</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">n</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tabular_rates</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;, &amp;&#39;</span><span class="p">)</span>
+            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span></div>
+            
+<div class="viewcode-block" id="BaseFortranNetwork.compose_ydot"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.base_fortran_network.BaseFortranNetwork.compose_ydot">[docs]</a>    <span class="k">def</span> <span class="nf">compose_ydot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># now compose the RHS ydot expressions</span>
+        <span class="n">ydot</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">:</span>
+            <span class="n">ydot_sym</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">sympy</span><span class="o">.</span><span class="n">sympify</span><span class="p">(</span><span class="mf">0.0</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nuclei_consumed</span><span class="p">[</span><span class="n">n</span><span class="p">]:</span>
+                <span class="n">ydot_sym</span> <span class="o">=</span> <span class="n">ydot_sym</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">ydot_term_symbol</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nuclei_produced</span><span class="p">[</span><span class="n">n</span><span class="p">]:</span>
+                <span class="n">ydot_sym</span> <span class="o">=</span> <span class="n">ydot_sym</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">ydot_term_symbol</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+            <span class="n">ydot</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ydot_sym</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_cse</span><span class="p">:</span>
+            <span class="n">scratch_sym</span> <span class="o">=</span> <span class="n">sympy</span><span class="o">.</span><span class="n">utilities</span><span class="o">.</span><span class="n">numbered_symbols</span><span class="p">(</span><span class="s1">&#39;scratch_&#39;</span><span class="p">)</span>
+            <span class="n">scratch</span><span class="p">,</span> <span class="n">result</span> <span class="o">=</span> <span class="n">sympy</span><span class="o">.</span><span class="n">cse</span><span class="p">(</span><span class="n">ydot</span><span class="p">,</span> <span class="n">symbols</span><span class="o">=</span><span class="n">scratch_sym</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">)</span>
+
+            <span class="n">result_out</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
+                <span class="n">result_out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">evalf</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">float_explicit_num_digits</span><span class="p">))</span>
+            <span class="n">scratch_out</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">scratch</span><span class="p">:</span>
+                <span class="n">scratch_out</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">evalf</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">float_explicit_num_digits</span><span class="p">)])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ydot_out_scratch</span> <span class="o">=</span> <span class="n">scratch_out</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ydot_out_result</span>  <span class="o">=</span> <span class="n">result_out</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ydot_out_scratch</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ydot_out_result</span>  <span class="o">=</span> <span class="n">ydot</span></div>
+
+<div class="viewcode-block" id="BaseFortranNetwork.compute_tabular_rates_rhs"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.base_fortran_network.BaseFortranNetwork.compute_tabular_rates_rhs">[docs]</a>    <span class="k">def</span> <span class="nf">compute_tabular_rates_rhs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        STUB</span>
+<span class="sd">        &quot;&quot;&quot;</span></div>
+
+<div class="viewcode-block" id="BaseFortranNetwork.compute_tabular_rates_jac"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.base_fortran_network.BaseFortranNetwork.compute_tabular_rates_jac">[docs]</a>    <span class="k">def</span> <span class="nf">compute_tabular_rates_jac</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        STUB</span>
+<span class="sd">        &quot;&quot;&quot;</span></div>
+        
+<div class="viewcode-block" id="BaseFortranNetwork.ydot_declare_scratch"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.base_fortran_network.BaseFortranNetwork.ydot_declare_scratch">[docs]</a>    <span class="k">def</span> <span class="nf">ydot_declare_scratch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+        <span class="c1"># Declare scratch variables</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_cse</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">si</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">ydot_out_scratch</span><span class="p">:</span>
+                <span class="n">siname</span> <span class="o">=</span> <span class="n">si</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">double precision :: </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="p">,</span> <span class="n">siname</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="BaseFortranNetwork.ydot_scratch"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.base_fortran_network.BaseFortranNetwork.ydot_scratch">[docs]</a>    <span class="k">def</span> <span class="nf">ydot_scratch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+        <span class="c1"># Assign scratch variables</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_cse</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">si</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">ydot_out_scratch</span><span class="p">:</span>
+                <span class="n">siname</span> <span class="o">=</span> <span class="n">si</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">sivalue</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fortranify</span><span class="p">(</span><span class="n">sympy</span><span class="o">.</span><span class="n">fcode</span><span class="p">(</span><span class="n">si</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">precision</span> <span class="o">=</span> <span class="mi">15</span><span class="p">,</span>
+                                                      <span class="n">source_format</span> <span class="o">=</span> <span class="s1">&#39;free&#39;</span><span class="p">,</span>
+                                                      <span class="n">standard</span> <span class="o">=</span> <span class="mi">95</span><span class="p">))</span>
+                <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}{}</span><span class="s1"> = </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="p">,</span> <span class="n">siname</span><span class="p">,</span> <span class="n">sivalue</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="BaseFortranNetwork.ydot"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.base_fortran_network.BaseFortranNetwork.ydot">[docs]</a>    <span class="k">def</span> <span class="nf">ydot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+        <span class="c1"># Write YDOT</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">):</span>
+            <span class="n">sol_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fortranify</span><span class="p">(</span><span class="n">sympy</span><span class="o">.</span><span class="n">fcode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ydot_out_result</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">precision</span> <span class="o">=</span> <span class="mi">15</span><span class="p">,</span>
+                                                    <span class="n">source_format</span> <span class="o">=</span> <span class="s1">&#39;free&#39;</span><span class="p">,</span>
+                                                    <span class="n">standard</span> <span class="o">=</span> <span class="mi">95</span><span class="p">))</span>
+            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}{}</span><span class="s1">(j</span><span class="si">{}</span><span class="s1">) = ( &amp;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="p">,</span>
+                                                <span class="bp">self</span><span class="o">.</span><span class="n">name_ydot_nuc</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">sol_value</span><span class="p">))</span>
+            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}{}</span><span class="s2"> &amp;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="p">(</span><span class="n">n_indent</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span> <span class="n">sol_value</span><span class="p">))</span>
+            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">   )</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="p">))</span></div>
+            
+<div class="viewcode-block" id="BaseFortranNetwork.enuc_dqweak"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.base_fortran_network.BaseFortranNetwork.enuc_dqweak">[docs]</a>    <span class="k">def</span> <span class="nf">enuc_dqweak</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        STUB</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span></div>
+    
+<div class="viewcode-block" id="BaseFortranNetwork.enuc_epart"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.base_fortran_network.BaseFortranNetwork.enuc_epart">[docs]</a>    <span class="k">def</span> <span class="nf">enuc_epart</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        STUB</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span></div>
+        
+<div class="viewcode-block" id="BaseFortranNetwork.compose_jacobian"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.base_fortran_network.BaseFortranNetwork.compose_jacobian">[docs]</a>    <span class="k">def</span> <span class="nf">compose_jacobian</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Now compose the RHS jacobian expressions</span>
+        <span class="n">jac_sym</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">nj</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">ni</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">:</span>
+                <span class="n">rsym</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">sympy</span><span class="o">.</span><span class="n">sympify</span><span class="p">(</span><span class="mf">0.0</span><span class="p">))</span>
+                <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nuclei_consumed</span><span class="p">[</span><span class="n">nj</span><span class="p">]:</span>
+                    <span class="n">rsym</span> <span class="o">=</span> <span class="n">rsym</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">jacobian_term_symbol</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">nj</span><span class="p">,</span> <span class="n">ni</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nuclei_produced</span><span class="p">[</span><span class="n">nj</span><span class="p">]:</span>
+                    <span class="n">rsym</span> <span class="o">=</span> <span class="n">rsym</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">jacobian_term_symbol</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">nj</span><span class="p">,</span> <span class="n">ni</span><span class="p">)</span>
+                <span class="n">jac_sym</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rsym</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_cse</span><span class="p">:</span>
+            <span class="n">scratch_sym</span> <span class="o">=</span> <span class="n">sympy</span><span class="o">.</span><span class="n">utilities</span><span class="o">.</span><span class="n">numbered_symbols</span><span class="p">(</span><span class="s1">&#39;scratch_&#39;</span><span class="p">)</span>
+            <span class="n">scratch</span><span class="p">,</span> <span class="n">result</span> <span class="o">=</span> <span class="n">sympy</span><span class="o">.</span><span class="n">cse</span><span class="p">(</span><span class="n">jac_sym</span><span class="p">,</span> <span class="n">symbols</span><span class="o">=</span><span class="n">scratch_sym</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">)</span>
+
+            <span class="n">result_out</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
+                <span class="n">result_out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">evalf</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">float_explicit_num_digits</span><span class="p">))</span>
+            <span class="n">scratch_out</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">scratch</span><span class="p">:</span>
+                <span class="n">scratch_out</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">evalf</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">float_explicit_num_digits</span><span class="p">)])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">jac_out_scratch</span> <span class="o">=</span> <span class="n">scratch_out</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">jac_out_result</span>  <span class="o">=</span> <span class="n">result_out</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">jac_out_scratch</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">jac_out_result</span>  <span class="o">=</span> <span class="n">jac_sym</span></div>
+
+<div class="viewcode-block" id="BaseFortranNetwork.jacnuc_declare_scratch"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.base_fortran_network.BaseFortranNetwork.jacnuc_declare_scratch">[docs]</a>    <span class="k">def</span> <span class="nf">jacnuc_declare_scratch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+        <span class="c1"># Declare scratch variables</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_cse</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">si</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">jac_out_scratch</span><span class="p">:</span>
+                <span class="n">siname</span> <span class="o">=</span> <span class="n">si</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">double precision :: </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="p">,</span> <span class="n">siname</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="BaseFortranNetwork.jacnuc_scratch"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.base_fortran_network.BaseFortranNetwork.jacnuc_scratch">[docs]</a>    <span class="k">def</span> <span class="nf">jacnuc_scratch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+        <span class="c1"># Assign scratch variables</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_cse</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">si</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">jac_out_scratch</span><span class="p">:</span>
+                <span class="n">siname</span> <span class="o">=</span> <span class="n">si</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">sivalue</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fortranify</span><span class="p">(</span><span class="n">sympy</span><span class="o">.</span><span class="n">fcode</span><span class="p">(</span><span class="n">si</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">precision</span> <span class="o">=</span> <span class="mi">15</span><span class="p">,</span>
+                                                      <span class="n">source_format</span> <span class="o">=</span> <span class="s1">&#39;free&#39;</span><span class="p">,</span>
+                                                      <span class="n">standard</span> <span class="o">=</span> <span class="mi">95</span><span class="p">))</span>
+                <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}{}</span><span class="s1"> = </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="p">,</span> <span class="n">siname</span><span class="p">,</span> <span class="n">sivalue</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="BaseFortranNetwork.jacnuc"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.base_fortran_network.BaseFortranNetwork.jacnuc">[docs]</a>    <span class="k">def</span> <span class="nf">jacnuc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+        <span class="c1"># now make the JACOBIAN</span>
+        <span class="n">n_unique_nuclei</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">jnj</span><span class="p">,</span> <span class="n">nj</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">ini</span><span class="p">,</span> <span class="n">ni</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">):</span>
+                <span class="n">jac_idx</span> <span class="o">=</span> <span class="n">n_unique_nuclei</span><span class="o">*</span><span class="n">jnj</span> <span class="o">+</span> <span class="n">ini</span>
+                <span class="n">jvalue</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fortranify</span><span class="p">(</span><span class="n">sympy</span><span class="o">.</span><span class="n">fcode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">jac_out_result</span><span class="p">[</span><span class="n">jac_idx</span><span class="p">],</span>
+                                                     <span class="n">precision</span> <span class="o">=</span> <span class="mi">15</span><span class="p">,</span>
+                                                     <span class="n">source_format</span> <span class="o">=</span> <span class="s1">&#39;free&#39;</span><span class="p">,</span>
+                                                     <span class="n">standard</span> <span class="o">=</span> <span class="mi">95</span><span class="p">))</span>
+                <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}{}</span><span class="s2">(j</span><span class="si">{}</span><span class="s2">,j</span><span class="si">{}</span><span class="s2">) = ( &amp;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="p">,</span>
+                                                        <span class="bp">self</span><span class="o">.</span><span class="n">name_jacobian_nuc</span><span class="p">,</span> <span class="n">nj</span><span class="p">,</span> <span class="n">ni</span><span class="p">))</span>
+                <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}{}</span><span class="s2"> &amp;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="p">(</span><span class="n">n_indent</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span> <span class="n">jvalue</span><span class="p">))</span>
+                <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">   )</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="BaseFortranNetwork.yinit_nuc"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.base_fortran_network.BaseFortranNetwork.yinit_nuc">[docs]</a>    <span class="k">def</span> <span class="nf">yinit_nuc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">:</span>
+            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">cv_data%Y0(j</span><span class="si">{}</span><span class="s2">)   = net_initial_abundances%y</span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="p">))</span>        </div>
+
+<div class="viewcode-block" id="BaseFortranNetwork.final_net_print"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.base_fortran_network.BaseFortranNetwork.final_net_print">[docs]</a>    <span class="k">def</span> <span class="nf">final_net_print</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+        <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">write(*,*) &quot;MASS FRACTIONS:&quot;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">:</span>
+            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">write(*,&#39;(A,ES25.14)&#39;) &#39;</span><span class="si">{}</span><span class="s2">: &#39;, cv_data%Y(j</span><span class="si">{}</span><span class="s2">)*aion(j</span><span class="si">{}</span><span class="s2">)</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="BaseFortranNetwork.headerline"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.base_fortran_network.BaseFortranNetwork.headerline">[docs]</a>    <span class="k">def</span> <span class="nf">headerline</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+        <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">write(2, fmt=hfmt) &#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">:</span>
+            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;&#39;Y_</span><span class="si">{}</span><span class="s2">&#39;, &quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">nuc</span><span class="p">))</span>
+        <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;&#39;E_nuc&#39;, &#39;Time&#39;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BaseFortranNetwork.cvodeneq"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.base_fortran_network.BaseFortranNetwork.cvodeneq">[docs]</a>    <span class="k">def</span> <span class="nf">cvodeneq</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+        <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> &#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="p">))</span>
+        <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;integer*8 :: NEQ = </span><span class="si">{}</span><span class="s1"> ! Size of ODE system</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="BaseFortranNetwork.net_ymass_init"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.base_fortran_network.BaseFortranNetwork.net_ymass_init">[docs]</a>    <span class="k">def</span> <span class="nf">net_ymass_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">:</span>
+            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">net_initial_abundances%y</span><span class="si">{}</span><span class="s1"> = 0.0d0</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="p">,</span> <span class="n">n</span><span class="p">))</span></div></div>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Michael Zingale and Donald Willcox.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

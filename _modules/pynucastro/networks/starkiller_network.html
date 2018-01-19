@@ -1,0 +1,298 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pynucastro.networks.starkiller_network &mdash; pynucastro 1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../search.html"/>
+    <link rel="top" title="pynucastro 1.0 documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> pynucastro
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Overview of <code class="docutils literal"><span class="pre">pynucastro</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pynucastro-examples.html"><code class="docutils literal"><span class="pre">pynucastro</span></code> usage examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../networks.html">Creating networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">API</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">pynucastro</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>pynucastro.networks.starkiller_network</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pynucastro.networks.starkiller_network</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Common Imports</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
+
+<span class="kn">import</span> <span class="nn">glob</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">from</span> <span class="nn">pynucastro.networks</span> <span class="k">import</span> <span class="n">BaseFortranNetwork</span>
+
+<div class="viewcode-block" id="StarKillerNetwork"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.starkiller_network.StarKillerNetwork">[docs]</a><span class="k">class</span> <span class="nc">StarKillerNetwork</span><span class="p">(</span><span class="n">BaseFortranNetwork</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="c1"># Initialize BaseFortranNetwork parent class</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">StarKillerNetwork</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="c1"># Set up some directories</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">template_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pynucastro_dir</span><span class="p">,</span>
+                                         <span class="s1">&#39;templates&#39;</span><span class="p">,</span>
+                                         <span class="s1">&#39;starkiller-microphysics&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">template_file_select</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">template_dir</span><span class="p">,</span>
+                                                 <span class="s1">&#39;*.template&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">template_files</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">template_file_select</span><span class="p">)</span>
+
+        <span class="c1"># Initialize values specific to this network</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name_rate_data</span> <span class="o">=</span> <span class="s1">&#39;screened_rates&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name_y</span>         <span class="o">=</span> <span class="s1">&#39;Y&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name_ydot</span>      <span class="o">=</span> <span class="s1">&#39;state%ydot&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name_ydot_nuc</span>  <span class="o">=</span> <span class="s1">&#39;ydot_nuc&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name_jacobian</span>  <span class="o">=</span> <span class="s1">&#39;state%jac&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name_jacobian_nuc</span>  <span class="o">=</span> <span class="s1">&#39;dfdy_nuc&#39;</span>
+
+<div class="viewcode-block" id="StarKillerNetwork.compute_tabular_rates_rhs"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.starkiller_network.StarKillerNetwork.compute_tabular_rates_rhs">[docs]</a>    <span class="k">def</span> <span class="nf">compute_tabular_rates_rhs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tabular_rates</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">! Included only if there are tabular rates</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="p">))</span>
+            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">do i = 1, nrat_tabular</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="p">))</span>
+            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">call tabular_evaluate(table_meta(i), rhoy, temp, reactvec)</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="p">(</span><span class="n">n_indent</span><span class="o">+</span><span class="mi">1</span><span class="p">)))</span>
+            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">j = i + nrat_reaclib</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="p">(</span><span class="n">n_indent</span><span class="o">+</span><span class="mi">1</span><span class="p">)))</span>
+            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">rate_eval </span><span class="si">% u</span><span class="s1">nscreened_rates(:,j) = reactvec(1:4)</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="p">(</span><span class="n">n_indent</span><span class="o">+</span><span class="mi">1</span><span class="p">)))</span>
+            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">rate_eval </span><span class="si">% d</span><span class="s1">qweak(i) = reactvec(5)</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="p">(</span><span class="n">n_indent</span><span class="o">+</span><span class="mi">1</span><span class="p">)))</span>
+            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">rate_eval </span><span class="si">% e</span><span class="s1">part(i)  = reactvec(6)</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="p">(</span><span class="n">n_indent</span><span class="o">+</span><span class="mi">1</span><span class="p">)))</span>
+            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">end do</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="StarKillerNetwork.compute_tabular_rates_jac"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.starkiller_network.StarKillerNetwork.compute_tabular_rates_jac">[docs]</a>    <span class="k">def</span> <span class="nf">compute_tabular_rates_jac</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tabular_rates</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">! Included only if there are tabular rates</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="p">))</span>
+            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">do i = 1, nrat_tabular</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="p">))</span>
+            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">call tabular_evaluate(table_meta(i), rhoy, temp, reactvec)</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="p">(</span><span class="n">n_indent</span><span class="o">+</span><span class="mi">1</span><span class="p">)))</span>
+            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">j = i + nrat_reaclib</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="p">(</span><span class="n">n_indent</span><span class="o">+</span><span class="mi">1</span><span class="p">)))</span>
+            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">rate_eval </span><span class="si">% u</span><span class="s1">nscreened_rates(:,j) = reactvec(1:4)</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="p">(</span><span class="n">n_indent</span><span class="o">+</span><span class="mi">1</span><span class="p">)))</span>
+            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">end do</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="StarKillerNetwork.enuc_dqweak"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.starkiller_network.StarKillerNetwork.enuc_dqweak">[docs]</a>    <span class="k">def</span> <span class="nf">enuc_dqweak</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+        <span class="c1"># Add tabular dQ corrections to the energy generation rate</span>
+        <span class="k">for</span> <span class="n">nr</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">nr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabular_rates</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ERROR: Unknown tabular dQ corrections for a reaction where the number of reactants is not 1.&#39;</span><span class="p">)</span>
+                    <span class="n">exit</span><span class="p">()</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">reactant</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">enuc = enuc + N_AVO * </span><span class="si">{}</span><span class="s1">(j</span><span class="si">{}</span><span class="s1">) * rate_eval </span><span class="si">% d</span><span class="s1">qweak(j_</span><span class="si">{}</span><span class="s1">)</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name_ydot</span><span class="p">,</span> <span class="n">reactant</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">fname</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="StarKillerNetwork.enuc_epart"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.starkiller_network.StarKillerNetwork.enuc_epart">[docs]</a>    <span class="k">def</span> <span class="nf">enuc_epart</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+        <span class="c1"># Add particle energy generation rates (gamma heating and neutrino loss from decays)</span>
+        <span class="c1"># to the energy generation rate (doesn&#39;t include plasma neutrino losses)</span>
+        <span class="k">for</span> <span class="n">nr</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">nr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabular_rates</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ERROR: Unknown particle energy corrections for a reaction where the number of reactants is not 1.&#39;</span><span class="p">)</span>
+                    <span class="n">exit</span><span class="p">()</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">reactant</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">enuc = enuc + N_AVO * </span><span class="si">{}</span><span class="s1">(j</span><span class="si">{}</span><span class="s1">) * rate_eval </span><span class="si">% e</span><span class="s1">part(j_</span><span class="si">{}</span><span class="s1">)</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name_y</span><span class="p">,</span> <span class="n">reactant</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">fname</span><span class="p">))</span></div></div>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Michael Zingale and Donald Willcox.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
