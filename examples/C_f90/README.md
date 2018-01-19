@@ -15,7 +15,7 @@ subroutine FCVROOTFN (network.f90) finds a root.
 
 To run:
 
-1) Generate the reaction network using c.py (pyreaclib directory must
+1) Generate the reaction network using c.py (pynucastro directory must
 be in your PYTHONPATH):
 
 ```

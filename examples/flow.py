@@ -1,5 +1,5 @@
-import pyreaclib
-from pyreaclib.networks import RateCollection, PythonNetwork, Composition
+import pynucastro
+from pynucastro.networks import RateCollection, PythonNetwork, Composition
 
 files = ["c12-pg-n13-ls09", 
          "c13-pg-n14-nacr",

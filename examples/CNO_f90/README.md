@@ -16,7 +16,7 @@ finds a root.
 
 To run:
 
-1) Generate the reaction network using cno.py (pyreaclib directory
+1) Generate the reaction network using cno.py (pynucastro directory
 must be in your PYTHONPATH):
 
 ```

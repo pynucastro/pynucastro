@@ -5,7 +5,7 @@ simple C12-burning along with the A=23 URCA reactions until either
 23Ne or 23Na are depleted. It is intended to generate a network for
 StarKiller/Microphysics for use in MAESTRO or CASTRO.
 
-To use, generate the reaction network using urca.py (pyreaclib directory
+To use, generate the reaction network using urca.py (pynucastro directory
 must be in your PYTHONPATH):
 
 ```

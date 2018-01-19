@@ -1,5 +1,5 @@
 # CNO rate module generator
-from pyreaclib.networks import PythonNetwork
+from pynucastro.networks import PythonNetwork
 
 files = ["c12-pg-n13-ls09", 
          "c13-pg-n14-nacr",

@@ -1,5 +1,5 @@
 # CNO rate module generator
-from pyreaclib.networks import SundialsNetwork
+from pynucastro.networks import SundialsNetwork
 
 files = ["c12-pg-n13-ls09",
          "n13--c13-wc12",

@@ -1,6 +1,6 @@
 # triple-alpha rate module generator
 
-from pyreaclib.networks import PythonNetwork
+from pynucastro.networks import PythonNetwork
 
 files = ["c12-gaa-he4-fy05",
          "he4-aag-c12-fy05"]

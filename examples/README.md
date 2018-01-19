@@ -9,13 +9,13 @@ are the main steps:
 * Create a directory under examples/ (e.g. examples/working)
 
 * Obtain Reaclib v.2 rate files for your problem and either place them
-  in examples/working or pyreaclib/reaclib-rates.
+  in examples/working or pynucastro/reaclib-rates.
 
 * Write your own version of C_f90/c.py, URCA_f90/urca.py, or
 CNO_f90/cno.py, replacing the list of 'files' with your own (e.g.
 working.py)
 
-* Run your python script (pyreaclib must be in your PYTHONPATH).
+* Run your python script (pynucastro must be in your PYTHONPATH).
 
 ```
 $ python working.py

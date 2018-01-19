@@ -6,7 +6,7 @@ Now with the correct prefactor for C-12 photodisintegration.
 
 To run:
 
-1) Generate the reaction network using triple-alpha.py (pyreaclib directory
+1) Generate the reaction network using triple-alpha.py (pynucastro directory
 must be in your PYTHONPATH):
 
 ```

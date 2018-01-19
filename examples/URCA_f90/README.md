@@ -21,7 +21,7 @@ following timing is recommended to use in net.par:
 
 To run:
 
-1) Generate the reaction network using urca.py (pyreaclib directory
+1) Generate the reaction network using urca.py (pynucastro directory
 must be in your PYTHONPATH):
 
 ```

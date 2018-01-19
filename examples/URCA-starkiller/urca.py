@@ -1,6 +1,6 @@
 # C-burning with A=23 URCA rate module generator
 
-from pyreaclib.networks import StarKillerNetwork
+from pynucastro.networks import StarKillerNetwork
 
 files = ["c12-c12a-ne20-cf88",
          "c12-c12n-mg23-cf88",

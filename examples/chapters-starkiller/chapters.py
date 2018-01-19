@@ -1,7 +1,7 @@
 # Test module for generating a network containing
 # one rate from each Reaclib chapter
 
-from pyreaclib.networks import StarKillerNetwork
+from pynucastro.networks import StarKillerNetwork
 
 files = ["b17-nnn-c14-wc12",
          "he3-he3pp-he4-nacr",
