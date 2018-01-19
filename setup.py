@@ -8,4 +8,6 @@ setup(name='pynucastro',
       author_email='michael.zingale@stonybrook.edu',
       license='BSD',
       packages=['pynucastro'],
+      install_requires=['networkx', 'periodictable', 'numpy',
+                        'sympy', 'matplotlib'],
       zip_safe=False)
