@@ -123,11 +123,11 @@ contains
 
     screened_rates(:) = reactvec(i_rate,:) * reactvec(i_scor,:)
 
-    <jacnuc_scratch>(3)
+    <jacnuc_scratch>(2)
 
     ! state % jac(j, i) = d(YDOT(j))/dY(i)
 
-    <jacnuc>(3)
+    <jacnuc>(2)
 
   end subroutine netjac
 
