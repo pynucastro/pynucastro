@@ -19,6 +19,10 @@ class StarKillerNetwork(BaseFortranNetwork):
                                                  '*.template')
         self.template_files = glob.glob(self.template_file_select)
 
+        # Set up network-specific tags
+        self.ftags['<compute_tabular_rates_rhs>'] = self.compute_tabular_rates_rhs
+        self.ftags['<compute_tabular_rates_jac>'] = self.compute_tabular_rates_jac
+
         # Initialize values specific to this network
         self.name_rate_data = 'screened_rates'
         self.name_y         = 'Y'
