@@ -1,0 +1,134 @@
+module rhs_module
+  use physical_constants, only: N_AVO
+  use burn_type_module, only: burn_t
+  use network
+  use reaclib_rates, only: screen_reaclib, reaclib_evaluate
+  use table_rates, only: table_meta, tabular_evaluate
+  use screening_module, only: plasma_state, fill_plasma_state
+  use burn_type_module, only: burn_t, update_electron_fraction
+
+  implicit none
+
+contains
+
+  subroutine update_unevolved_species(state)
+
+    implicit none
+
+    type(burn_t), intent(inout) :: state
+
+    return
+
+  end subroutine update_unevolved_species
+
+  subroutine netrhs(state)
+    type(burn_t), intent(inout) :: state
+    type(plasma_state) :: pstate
+    double precision :: rvec(6)
+    double precision, dimension(nreactvec, nrat_reaclib+nrat_tabular) :: reactvec
+    double precision :: screened_rates(nrat_reaclib+nrat_tabular)
+    integer :: i, j
+    double precision :: Y(nspec)
+    double precision :: dens, temp, ye, rhoy
+
+    <ydot_declare_scratch>(2)
+
+    call update_electron_fraction(state)
+
+    ! Set molar abundances
+    Y(:) = state%xn(:) * aion_inv(:)
+
+    ! Calculate rates
+
+    dens = state%rho
+    temp = state%T
+    ye   = state%ye
+    rhoy = dens*ye
+
+    ! Calculate Reaclib rates
+    call fill_plasma_state(pstate, temp, dens, Y(1:nspec))
+    do i = 1, nrat_reaclib
+       call reaclib_evaluate(pstate, temp, i, rvec)
+       reactvec(:,i) = rvec
+    end do
+
+    ! Include only if there are tabular rates
+    do i = 1, nrat_tabular
+       call tabular_evaluate(table_meta(i), rhoy, temp, rvec)
+       j = i + nrat_reaclib
+       reactvec(:,j) = rvec
+    end do
+
+    screened_rates(:) = reactvec(i_rate,:) * reactvec(i_scor,:)
+
+    <ydot_scratch>(2)
+
+    <ydot>(2)
+
+    state % ydot(net_ienuc) = 0.0d0
+    ! ion binding energy contributions
+    do i = 1, nspec
+       state % ydot(net_ienuc) = state % ydot(net_ienuc) - N_AVO * mion(i) * state % ydot(i)
+    end do
+    
+    ! weak Q-value modification dqweak (density and temperature dependent)
+    <enuc_dqweak>(2)
+
+    ! weak particle energy generation rates from gamma heating and neutrino loss
+    ! (does not include plasma neutrino losses)
+    <enuc_epart>(2)
+
+  end subroutine netrhs
+
+  subroutine netjac(state)
+    type(burn_t), intent(inout) :: state
+    type(plasma_state) :: pstate
+
+    double precision :: rvec(6)
+    double precision, dimension(nreactvec, nrat_reaclib+nrat_tabular) :: reactvec
+    double precision :: screened_rates(nrat_reaclib+nrat_tabular)
+    double precision :: dens, temp, ye, rhoy
+    integer :: i, j
+    double precision :: Y(nspec)
+
+    <jacnuc_declare_scratch>(2)
+
+    call update_electron_fraction(state)
+
+    ! Set molar abundances
+    Y(:) = state%xn(:) * aion_inv(:)
+
+    dens = state % rho
+    temp = state % T
+    ye   = state % ye
+    rhoy = dens*ye
+
+    if ( screen_reaclib ) then
+       call fill_plasma_state(pstate, temp, dens, Y(1:nspec))
+    end if
+
+    ! Calculate Reaclib rates
+    call fill_plasma_state(pstate, temp, dens, Y(1:nspec))
+    do i = 1, nrat_reaclib
+       call reaclib_evaluate(pstate, temp, i, rvec)
+       reactvec(:,i) = rvec
+    end do
+
+    ! Include only if there are tabular rates
+    do i = 1, nrat_tabular
+       call tabular_evaluate(table_meta(i), rhoy, temp, rvec)
+       j = i + nrat_reaclib
+       reactvec(:,j) = rvec
+    end do
+
+    screened_rates(:) = reactvec(i_rate,:) * reactvec(i_scor,:)
+
+    <jacnuc_scratch>(3)
+
+    ! state % jac(j, i) = d(YDOT(j))/dY(i)
+
+    <jacnuc>(3)
+
+  end subroutine netjac
+
+end module rhs_module
