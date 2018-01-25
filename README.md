@@ -69,6 +69,11 @@ to see coverage, do:
 py.test-3 --cov=pynucastro .
 ```
 
+to test the notebooks, do:
+```
+py.test-3 --nbval examples
+```
+
 # TODO
 
 * output Cython code (rhs)
