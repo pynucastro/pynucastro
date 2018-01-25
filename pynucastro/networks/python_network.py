@@ -2,6 +2,7 @@
 from __future__ import print_function
 
 import re
+import sys
 
 from pynucastro.networks import RateCollection
 
@@ -134,13 +135,18 @@ class PythonNetwork(RateCollection):
             rstring = "{}{}{}*lambda_{}"
         return rstring.format(prefactor_string, dens_string, Y_string, rate.fname)
 
-    def write_network(self, outfile):
+    def write_network(self, outfile=None):
         """
         this is the actual RHS for the system of ODEs that
         this network describes
         """
-        try: of = open(outfile, "w")
-        except: raise
+        if outfile is None:
+            of = sys.stdout
+        else:
+            try:
+                of = open(outfile, "w")
+            except:
+                raise
 
         of.write("import numpy as np\n")
         of.write("from pynucastro.rates import Tfactors\n\n")
