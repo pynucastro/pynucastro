@@ -24,7 +24,7 @@ module burn_type_module
     real(dp_t) :: e
     real(dp_t) :: xn(nspec)
 
-    real(dp_t) :: ye
+    real(dp_t) :: y_e
 
     ! The following are the actual integration data.
     ! To avoid potential incompatibilities we won't
@@ -74,7 +74,7 @@ contains
     type (burn_t), intent(inout) :: state
 
     call normalize_abundances_burn(state)
-    state % ye = sum(state % xn(:)*zion(:)*aion_inv(:))
+    state % y_e = sum(state % xn(:)*zion(:)*aion_inv(:))
     
   end subroutine update_electron_fraction
 
