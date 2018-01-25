@@ -51,6 +51,8 @@ class BaseFortranNetwork(RateCollection):
         self.ftags['<table_indices>'] = self.table_indices
         self.ftags['<table_init_meta>'] = self.table_init_meta
         self.ftags['<table_rates_indices>'] = self.table_rates_indices
+        self.ftags['<compute_tabular_rates_rhs>'] = self.compute_tabular_rates_rhs
+        self.ftags['<compute_tabular_rates_jac>'] = self.compute_tabular_rates_jac
         self.ftags['<ydot_declare_scratch>'] = self.ydot_declare_scratch
         self.ftags['<ydot_scratch>'] = self.ydot_scratch
         self.ftags['<ydot>'] = self.ydot
@@ -79,12 +81,11 @@ class BaseFortranNetwork(RateCollection):
 
         # Define these for the particular network
         self.name_rate_data = 'screened_rates'
-        self.name_reactvec = 'reactvec'
-        self.name_y = 'Y'
-        self.name_ydot = 'state % ydot'
-        self.name_ydot_nuc = 'state % ydot'
-        self.name_jacobian = 'state % jac'
-        self.name_jacobian_nuc = 'state % jac'
+        self.name_y         = 'Y'
+        self.name_ydot      = 'state % ydot'
+        self.name_ydot_nuc  = 'ydot_nuc'
+        self.name_jacobian  = 'state % jac'
+        self.name_jacobian_nuc  = 'dfdy_nuc'
 
     def ydot_string(self, rate):
         """
@@ -614,15 +615,25 @@ class BaseFortranNetwork(RateCollection):
             of.write('\n')
 
     def compute_tabular_rates_rhs(self, n_indent, of):
-        """
-        STUB
-        """
+        if len(self.tabular_rates) > 0:
+            of.write('{}! Included only if there are tabular rates\n'.format(self.indent*n_indent))
+            of.write('{}do i = 1, nrat_tabular\n'.format(self.indent*n_indent))
+            of.write('{}call tabular_evaluate(table_meta(i), rhoy, temp, reactvec)\n'.format(self.indent*(n_indent+1)))
+            of.write('{}j = i + nrat_reaclib\n'.format(self.indent*(n_indent+1)))
+            of.write('{}rate_eval % unscreened_rates(:,j) = reactvec(1:4)\n'.format(self.indent*(n_indent+1)))
+            of.write('{}rate_eval % dqweak(i) = reactvec(5)\n'.format(self.indent*(n_indent+1)))
+            of.write('{}rate_eval % epart(i)  = reactvec(6)\n'.format(self.indent*(n_indent+1)))
+            of.write('{}end do\n'.format(self.indent*n_indent))
 
     def compute_tabular_rates_jac(self, n_indent, of):
-        """
-        STUB
-        """
-        
+        if len(self.tabular_rates) > 0:
+            of.write('{}! Included only if there are tabular rates\n'.format(self.indent*n_indent))
+            of.write('{}do i = 1, nrat_tabular\n'.format(self.indent*n_indent))
+            of.write('{}call tabular_evaluate(table_meta(i), rhoy, temp, reactvec)\n'.format(self.indent*(n_indent+1)))
+            of.write('{}j = i + nrat_reaclib\n'.format(self.indent*(n_indent+1)))
+            of.write('{}rate_eval % unscreened_rates(:,j) = reactvec(1:4)\n'.format(self.indent*(n_indent+1)))
+            of.write('{}end do\n'.format(self.indent*n_indent))
+
     def ydot_declare_scratch(self, n_indent, of):
         # Declare scratch variables
         if self.use_cse:
@@ -660,7 +671,7 @@ class BaseFortranNetwork(RateCollection):
                     exit()
                 else:
                     reactant = r.reactants[0]
-                    of.write('{}{}(net_ienuc) = {}(net_ienuc) + N_AVO * {}(j{}) * {}(i_dqweak, k_{})\n'.format(self.indent*n_indent, self.name_ydot, self.name_ydot, self.name_ydot, reactant, self.name_reactvec, r.fname))
+                    of.write('{}enuc = enuc + N_AVO * {}(j{}) * rate_eval % dqweak(j_{})\n'.format(self.indent*n_indent, self.name_ydot, reactant, r.fname))
 
     def enuc_epart(self, n_indent, of):
         # Add particle energy generation rates (gamma heating and neutrino loss from decays)
@@ -672,7 +683,7 @@ class BaseFortranNetwork(RateCollection):
                     exit()
                 else:
                     reactant = r.reactants[0]
-                    of.write('{}{}(net_ienuc) = {}(net_ienuc) + N_AVO * {}(j{}) * {}(i_epart, k_{})\n'.format(self.indent*n_indent, self.name_ydot, self.name_ydot, self.name_y, reactant, self.name_reactvec, r.fname))
+                    of.write('{}enuc = enuc + N_AVO * {}(j{}) * rate_eval % epart(j_{})\n'.format(self.indent*n_indent, self.name_y, reactant, r.fname))
 
     def jacnuc_declare_scratch(self, n_indent, of):
         # Declare scratch variables

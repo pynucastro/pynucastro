@@ -23,4 +23,7 @@ module physical_constants
   double precision, parameter :: mp = 1.67262163783d-24
   double precision, parameter :: me = 9.1093821545d-28
 
+  ! For conversions
+  double precision, parameter :: enuc_conv2 = -N_AVO*CLIGHT*CLIGHT
+
 end module physical_constants

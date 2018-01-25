@@ -1,18 +1,20 @@
 module network
-  use physical_constants, only: ERG_PER_MeV, me, mn, mp, CLIGHT, mev2gr
+  use physical_constants, only: ERG_PER_MeV, me, mn, mp, CLIGHT, mev2gr, enuc_conv2
   
   implicit none
+
+  public num_rate_groups
 
   ! Number of nuclear species in the network
   <nspec>(1)
   <nspec_evolve>(1)
 
+  <nrates>(1)
+  integer, parameter :: num_rate_groups = 4
+
   <nrat_tabular>(1)
 
   <nrat_reaclib>(1)
-
-  ! Number of entries in reactvec returned by rate_evaluate
-  integer, parameter :: nreactvec = 6
 
   ! Binding Energies Per Nucleon (MeV)
   double precision, dimension(nspec) :: ebind_per_nucleon
@@ -76,5 +78,18 @@ contains
     aion_inv(:) = 1.0d0/aion(:)
 
   end subroutine init_network
+
+  subroutine ener_gener_rate(dydt, enuc)
+    ! Computes the instantaneous energy generation rate
+  
+    implicit none
+
+    double precision :: dydt(nspec), enuc
+
+    ! This is basically e = m c**2
+
+    enuc = sum(dydt(:) * mion(:)) * enuc_conv2
+
+  end subroutine ener_gener_rate
 
 end module network

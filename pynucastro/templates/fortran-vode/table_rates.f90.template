@@ -4,7 +4,12 @@ module table_rates
   
   implicit none
 
-  public table_meta
+  public table_meta, tabular_evaluate
+  <public_table_indices>(1)
+
+  private num_tables, jtab_mu, jtab_dq, jtab_vs, jtab_rate, jtab_nuloss, jtab_gamma
+  private k_drate_dt, add_vars
+  private table_read_meta
   
   <table_num>(1)
   integer, parameter :: jtab_mu      = 1
@@ -23,9 +28,9 @@ module table_rates
   <table_indices>(1)
 
   type :: table_info
-     double precision, dimension(:,:,:), allocatable :: rate_table
-     double precision, dimension(:), allocatable :: rhoy_table
-     double precision, dimension(:), allocatable :: temp_table
+     double precision, allocatable :: rate_table(:,:,:)
+     double precision, allocatable :: rhoy_table(:)
+     double precision, allocatable :: temp_table(:)
      integer :: num_rhoy
      integer :: num_temp
      integer :: num_vars
@@ -92,7 +97,7 @@ contains
     end do
     deallocate( rate_table_scratch )
   end subroutine init_tab_info
-  
+
   subroutine term_tab_info(self)
     type(table_info) :: self
 
@@ -270,11 +275,12 @@ contains
 
   subroutine tabular_evaluate(self, rhoy, temp, reactvec)
     
+    use network, only: num_rate_groups
     implicit none
     
     type(table_info) :: self
     double precision, intent(in) :: rhoy, temp
-    double precision, dimension(6), intent(inout) :: reactvec
+    double precision, dimension(num_rate_groups+2), intent(inout) :: reactvec
     double precision, dimension(self%num_vars+add_vars) :: entries
     
     ! Get the table entries at this rhoy, temp
