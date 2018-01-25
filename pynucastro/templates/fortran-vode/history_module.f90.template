@@ -1,0 +1,10 @@
+module history_module
+
+  implicit none
+  
+  type :: history_t
+     double precision, allocatable :: T(:) ! Time vector
+     double precision, allocatable :: X(:,:) ! Integration vector
+  end type history_t
+
+end module history_module

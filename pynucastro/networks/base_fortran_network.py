@@ -3,6 +3,7 @@ from __future__ import print_function
 
 import os
 import re
+import glob
 import sympy
 
 from pynucastro.networks import RateCollection
@@ -12,14 +13,21 @@ class BaseFortranNetwork(RateCollection):
     def __init__(self, *args, **kwargs):
         # Initialize RateCollection parent class
         super(BaseFortranNetwork, self).__init__(*args, **kwargs)        
-        
+
+        # Set up some directories
+        self.fortran_vode_dir = os.path.join(self.pynucastro_dir,
+                                             'templates',
+                                             'fortran-vode')
+        self.template_file_select = os.path.join(self.fortran_vode_dir,
+                                                 '*.template')
+        self.template_files = glob.glob(self.template_file_select)
+
         self.ftags = {}
         self.ftags['<nrates>'] = self.nrates
         self.ftags['<nrat_reaclib>'] = self.nrat_reaclib
         self.ftags['<nrat_tabular>'] = self.nrat_tabular
         self.ftags['<nspec>'] = self.nspec
         self.ftags['<nspec_evolve>'] = self.nspec_evolve
-        self.ftags['<net_ynuc>'] = self.ynuc
         self.ftags['<nrxn>'] = self.nrxn
         self.ftags['<jion>'] = self.jion
         self.ftags['<spec_names>'] = self.spec_names
@@ -54,10 +62,11 @@ class BaseFortranNetwork(RateCollection):
         self.ftags['<jacnuc_scratch>'] = self.jacnuc_scratch
         self.ftags['<jacnuc>'] = self.jacnuc
         self.ftags['<yinit_nuc>'] = self.yinit_nuc
+        self.ftags['<initial_mass_fractions>'] = self.initial_mass_fractions
+        self.ftags['<probin_mass_fractions>'] = self.probin_mass_fractions
+        self.ftags['<parameters_mass_fractions>'] = self.parameters_mass_fractions
         self.ftags['<final_net_print>'] = self.final_net_print
         self.ftags['<headerline>'] = self.headerline
-        self.ftags['<cvodeneq>'] = self.cvodeneq
-        self.ftags['<net_ymass_init>'] = self.net_ymass_init
         self.indent = '  '
 
         self.use_cse = False
@@ -71,12 +80,12 @@ class BaseFortranNetwork(RateCollection):
         self.symbol_ludict = {} # Symbol lookup dictionary
 
         # Define these for the particular network
-        self.name_rate_data = None
-        self.name_y         = None
-        self.name_ydot      = None
-        self.name_ydot_nuc      = None
-        self.name_jacobian  = None
-        self.name_jacobian_nuc  = None
+        self.name_rate_data = 'screened_rates'
+        self.name_y         = 'Y'
+        self.name_ydot      = 'state % ydot'
+        self.name_ydot_nuc  = 'ydot_nuc'
+        self.name_jacobian  = 'state % jac'
+        self.name_jacobian_nuc  = 'dfdy_nuc'
 
     def ydot_string(self, rate):
         """
@@ -260,7 +269,62 @@ class BaseFortranNetwork(RateCollection):
         deriv_sym = sympy.symbols('Y__j{}__'.format(y_i))
         jac_sym = sympy.diff(ydot_sym, deriv_sym)
         return jac_sym.evalf(n=self.float_explicit_num_digits)
-    
+
+    def compose_ydot(self):
+        # now compose the RHS ydot expressions
+        ydot = []
+        for n in self.unique_nuclei:
+            ydot_sym = float(sympy.sympify(0.0))
+            for r in self.nuclei_consumed[n]:
+                ydot_sym = ydot_sym + self.ydot_term_symbol(r, n)
+            for r in self.nuclei_produced[n]:
+                ydot_sym = ydot_sym + self.ydot_term_symbol(r, n)
+            ydot.append(ydot_sym)
+
+        if self.use_cse:
+            scratch_sym = sympy.utilities.numbered_symbols('scratch_')
+            scratch, result = sympy.cse(ydot, symbols=scratch_sym, order='none')
+
+            result_out = []
+            for r in result:
+                result_out.append(r.evalf(n=self.float_explicit_num_digits))
+            scratch_out = []
+            for s in scratch:
+                scratch_out.append([s[0], s[1].evalf(n=self.float_explicit_num_digits)])
+            self.ydot_out_scratch = scratch_out
+            self.ydot_out_result  = result_out
+        else:
+            self.ydot_out_scratch = None
+            self.ydot_out_result  = ydot
+
+    def compose_jacobian(self):
+        # Now compose the RHS jacobian expressions
+        jac_sym = []
+        for nj in self.unique_nuclei:
+            for ni in self.unique_nuclei:
+                rsym = float(sympy.sympify(0.0))
+                for r in self.nuclei_consumed[nj]:
+                    rsym = rsym + self.jacobian_term_symbol(r, nj, ni)
+                for r in self.nuclei_produced[nj]:
+                    rsym = rsym + self.jacobian_term_symbol(r, nj, ni)
+                jac_sym.append(rsym)
+
+        if self.use_cse:
+            scratch_sym = sympy.utilities.numbered_symbols('scratch_')
+            scratch, result = sympy.cse(jac_sym, symbols=scratch_sym, order='none')
+
+            result_out = []
+            for r in result:
+                result_out.append(r.evalf(n=self.float_explicit_num_digits))
+            scratch_out = []
+            for s in scratch:
+                scratch_out.append([s[0], s[1].evalf(n=self.float_explicit_num_digits)])
+            self.jac_out_scratch = scratch_out
+            self.jac_out_result  = result_out
+        else:
+            self.jac_out_scratch = None
+            self.jac_out_result  = jac_sym
+
     def io_open(self, infile, outfile):
         try: of = open(outfile, "w")
         except: raise
@@ -333,11 +397,6 @@ class BaseFortranNetwork(RateCollection):
         of.write('{}integer, parameter :: nspec_evolve = {}\n'.format(
             self.indent*n_indent,
             len(self.unique_nuclei)))
-        
-    def ynuc(self, n_indent, of):
-        for nuc in self.unique_nuclei:
-            of.write('{}double precision :: y{}\n'.format(
-                self.indent*n_indent, nuc))
 
     def jion(self, n_indent, of):
         for i,nuc in enumerate(self.unique_nuclei):
@@ -554,44 +613,27 @@ class BaseFortranNetwork(RateCollection):
             if n != len(self.tabular_rates)-1:
                 of.write(', &')
             of.write('\n')
-            
-    def compose_ydot(self):
-        # now compose the RHS ydot expressions
-        ydot = []
-        for n in self.unique_nuclei:
-            ydot_sym = float(sympy.sympify(0.0))
-            for r in self.nuclei_consumed[n]:
-                ydot_sym = ydot_sym + self.ydot_term_symbol(r, n)
-            for r in self.nuclei_produced[n]:
-                ydot_sym = ydot_sym + self.ydot_term_symbol(r, n)
-            ydot.append(ydot_sym)
-
-        if self.use_cse:
-            scratch_sym = sympy.utilities.numbered_symbols('scratch_')
-            scratch, result = sympy.cse(ydot, symbols=scratch_sym, order='none')
-
-            result_out = []
-            for r in result:
-                result_out.append(r.evalf(n=self.float_explicit_num_digits))
-            scratch_out = []
-            for s in scratch:
-                scratch_out.append([s[0], s[1].evalf(n=self.float_explicit_num_digits)])
-            self.ydot_out_scratch = scratch_out
-            self.ydot_out_result  = result_out
-        else:
-            self.ydot_out_scratch = None
-            self.ydot_out_result  = ydot
 
     def compute_tabular_rates_rhs(self, n_indent, of):
-        """
-        STUB
-        """
+        if len(self.tabular_rates) > 0:
+            of.write('{}! Included only if there are tabular rates\n'.format(self.indent*n_indent))
+            of.write('{}do i = 1, nrat_tabular\n'.format(self.indent*n_indent))
+            of.write('{}call tabular_evaluate(table_meta(i), rhoy, temp, reactvec)\n'.format(self.indent*(n_indent+1)))
+            of.write('{}j = i + nrat_reaclib\n'.format(self.indent*(n_indent+1)))
+            of.write('{}rate_eval % unscreened_rates(:,j) = reactvec(1:4)\n'.format(self.indent*(n_indent+1)))
+            of.write('{}rate_eval % dqweak(i) = reactvec(5)\n'.format(self.indent*(n_indent+1)))
+            of.write('{}rate_eval % epart(i)  = reactvec(6)\n'.format(self.indent*(n_indent+1)))
+            of.write('{}end do\n'.format(self.indent*n_indent))
 
     def compute_tabular_rates_jac(self, n_indent, of):
-        """
-        STUB
-        """
-        
+        if len(self.tabular_rates) > 0:
+            of.write('{}! Included only if there are tabular rates\n'.format(self.indent*n_indent))
+            of.write('{}do i = 1, nrat_tabular\n'.format(self.indent*n_indent))
+            of.write('{}call tabular_evaluate(table_meta(i), rhoy, temp, reactvec)\n'.format(self.indent*(n_indent+1)))
+            of.write('{}j = i + nrat_reaclib\n'.format(self.indent*(n_indent+1)))
+            of.write('{}rate_eval % unscreened_rates(:,j) = reactvec(1:4)\n'.format(self.indent*(n_indent+1)))
+            of.write('{}end do\n'.format(self.indent*n_indent))
+
     def ydot_declare_scratch(self, n_indent, of):
         # Declare scratch variables
         if self.use_cse:
@@ -619,46 +661,29 @@ class BaseFortranNetwork(RateCollection):
                                                 self.name_ydot_nuc, n, sol_value))
             of.write("{}{} &\n".format(self.indent*(n_indent+1), sol_value))
             of.write("{}   )\n\n".format(self.indent*n_indent))
-            
+
     def enuc_dqweak(self, n_indent, of):
-        """
-        STUB
-        """
-        return
-    
+        # Add tabular dQ corrections to the energy generation rate
+        for nr, r in enumerate(self.rates):
+            if nr in self.tabular_rates:
+                if len(r.reactants) != 1:
+                    print('ERROR: Unknown tabular dQ corrections for a reaction where the number of reactants is not 1.')
+                    exit()
+                else:
+                    reactant = r.reactants[0]
+                    of.write('{}enuc = enuc + N_AVO * {}(j{}) * rate_eval % dqweak(j_{})\n'.format(self.indent*n_indent, self.name_ydot, reactant, r.fname))
+
     def enuc_epart(self, n_indent, of):
-        """
-        STUB
-        """
-        return
-        
-    def compose_jacobian(self):
-        # Now compose the RHS jacobian expressions
-        jac_sym = []
-        for nj in self.unique_nuclei:
-            for ni in self.unique_nuclei:
-                rsym = float(sympy.sympify(0.0))
-                for r in self.nuclei_consumed[nj]:
-                    rsym = rsym + self.jacobian_term_symbol(r, nj, ni)
-                for r in self.nuclei_produced[nj]:
-                    rsym = rsym + self.jacobian_term_symbol(r, nj, ni)
-                jac_sym.append(rsym)
-
-        if self.use_cse:
-            scratch_sym = sympy.utilities.numbered_symbols('scratch_')
-            scratch, result = sympy.cse(jac_sym, symbols=scratch_sym, order='none')
-
-            result_out = []
-            for r in result:
-                result_out.append(r.evalf(n=self.float_explicit_num_digits))
-            scratch_out = []
-            for s in scratch:
-                scratch_out.append([s[0], s[1].evalf(n=self.float_explicit_num_digits)])
-            self.jac_out_scratch = scratch_out
-            self.jac_out_result  = result_out
-        else:
-            self.jac_out_scratch = None
-            self.jac_out_result  = jac_sym
+        # Add particle energy generation rates (gamma heating and neutrino loss from decays)
+        # to the energy generation rate (doesn't include plasma neutrino losses)
+        for nr, r in enumerate(self.rates):
+            if nr in self.tabular_rates:
+                if len(r.reactants) != 1:
+                    print('ERROR: Unknown particle energy corrections for a reaction where the number of reactants is not 1.')
+                    exit()
+                else:
+                    reactant = r.reactants[0]
+                    of.write('{}enuc = enuc + N_AVO * {}(j{}) * rate_eval % epart(j_{})\n'.format(self.indent*n_indent, self.name_y, reactant, r.fname))
 
     def jacnuc_declare_scratch(self, n_indent, of):
         # Declare scratch variables
@@ -694,27 +719,34 @@ class BaseFortranNetwork(RateCollection):
 
     def yinit_nuc(self, n_indent, of):
         for n in self.unique_nuclei:
-            of.write("{}cv_data%Y0(j{})   = net_initial_abundances%y{}\n".format(
-                self.indent*n_indent, n, n))        
+            of.write("{}state_in % xn(j{}) = initial_mass_fraction_{}\n".format(
+                self.indent*n_indent, n, n))
+
+    def initial_mass_fractions(self, n_indent, of):
+        for n in self.unique_nuclei:
+            of.write("{}initial_mass_fraction_{} = 0.0d0\n".format(
+                self.indent*n_indent, n))
+
+    def probin_mass_fractions(self, n_indent, of):
+        num_unique_nuclei = len(self.unique_nuclei)
+        for j, n in enumerate(self.unique_nuclei):
+            of.write("{}initial_mass_fraction_{}".format(
+                self.indent*n_indent, n))
+            if j < num_unique_nuclei - 1:
+                of.write(", &\n")
+
+    def parameters_mass_fractions(self, n_indent, of):
+        for n in self.unique_nuclei:
+            of.write("{}initial_mass_fraction_{}          real          0.0d0\n".format(
+                self.indent*n_indent, n))
 
     def final_net_print(self, n_indent, of):
-        of.write('{}write(*,*) "MASS FRACTIONS:"\n'.format(self.indent*n_indent))
         for n in self.unique_nuclei:
-            of.write("{}write(*,'(A,ES25.14)') '{}: ', cv_data%Y(j{})*aion(j{})\n".format(
-                self.indent*n_indent, n, n, n))
+            of.write("{}write(*,'(A,ES25.14)') '{}: ', history % X(j{}, end_index)\n".format(self.indent*n_indent, n, n))
 
     def headerline(self, n_indent, of):
         of.write('{}write(2, fmt=hfmt) '.format(self.indent*n_indent))
+        of.write("'Time', ")
         for nuc in self.unique_nuclei:
             of.write("'Y_{}', ".format(nuc))
-        of.write("'E_nuc', 'Time'\n")
-
-    def cvodeneq(self, n_indent, of):
-        of.write('{} '.format(self.indent*n_indent))
-        of.write('integer*8 :: NEQ = {} ! Size of ODE system\n'.format(
-            len(self.unique_nuclei)+1))
-
-    def net_ymass_init(self, n_indent, of):
-        for n in self.unique_nuclei:
-            of.write('{}net_initial_abundances%y{} = 0.0d0\n'.format(
-                self.indent*n_indent, n))
+        of.write("'E_nuc'\n")

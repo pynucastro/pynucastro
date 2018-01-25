@@ -20,34 +20,47 @@ class SundialsNetwork(BaseFortranNetwork):
                                             '*.template')
         self.template_files = glob.glob(self.template_file_select)
 
+        # Tags specific to this network
+        self.ftags['<net_ynuc>'] = self.ynuc
+        self.ftags['<cvodeneq>'] = self.cvodeneq
+        self.ftags['<net_ymass_init>'] = self.net_ymass_init
+
         # Initialize values specific to this network
         self.name_rate_data = 'screened_rates'
         self.name_reactvec = 'reactvec'
-        self.name_y         = 'Y'
-        self.name_ydot      = 'YDOT'
-        self.name_ydot_nuc      = 'YDOT'
-        self.name_jacobian  = 'DJAC'
-        self.name_jacobian_nuc  = 'DJAC'
+        self.name_y = 'Y'
+        self.name_ydot = 'YDOT'
+        self.name_ydot_nuc = 'YDOT'
+        self.name_jacobian = 'DJAC'
+        self.name_jacobian_nuc = 'DJAC'
 
-    def enuc_dqweak(self, n_indent, of):
-        # Add tabular dQ corrections to the energy generation rate
-        for nr, r in enumerate(self.rates):
-            if nr in self.tabular_rates:
-                if len(r.reactants) != 1:
-                    print('ERROR: Unknown tabular dQ corrections for a reaction where the number of reactants is not 1.')
-                    exit()
-                else:
-                    reactant = r.reactants[0]
-                    of.write('{}{}(net_ienuc) = {}(net_ienuc) + N_AVO * {}(j{}) * {}(i_dqweak, k_{})\n'.format(self.indent*n_indent, self.name_ydot, self.name_ydot, self.name_ydot, reactant, self.name_reactvec, r.fname))
-        
-    def enuc_epart(self, n_indent, of):
-        # Add particle energy generation rates (gamma heating and neutrino loss from decays)
-        # to the energy generation rate (doesn't include plasma neutrino losses)
-        for nr, r in enumerate(self.rates):
-            if nr in self.tabular_rates:
-                if len(r.reactants) != 1:
-                    print('ERROR: Unknown particle energy corrections for a reaction where the number of reactants is not 1.')
-                    exit()
-                else:
-                    reactant = r.reactants[0]
-                    of.write('{}{}(net_ienuc) = {}(net_ienuc) + N_AVO * {}(j{}) * {}(i_epart, k_{})\n'.format(self.indent*n_indent, self.name_ydot, self.name_ydot, self.name_y, reactant, self.name_reactvec, r.fname))
+    def headerline(self, n_indent, of):
+        of.write('{}write(2, fmt=hfmt) '.format(self.indent*n_indent))
+        for nuc in self.unique_nuclei:
+            of.write("'Y_{}', ".format(nuc))
+        of.write("'E_nuc', 'Time'\n")
+
+    def ynuc(self, n_indent, of):
+        for nuc in self.unique_nuclei:
+            of.write('{}double precision :: y{}\n'.format(
+                self.indent*n_indent, nuc))
+
+    def yinit_nuc(self, n_indent, of):
+        for n in self.unique_nuclei:
+            of.write("{}cv_data%Y0(j{})   = net_initial_abundances%y{}\n".format(
+                self.indent*n_indent, n, n))
+
+    def final_net_print(self, n_indent, of):
+        of.write('{}write(*,*) "MASS FRACTIONS:"\n'.format(self.indent*n_indent))
+        for n in self.unique_nuclei:
+            of.write("{}write(*,'(A,ES25.14)') '{}: ', cv_data%Y(j{})*aion(j{})\n".format(self.indent*n_indent, n, n, n))
+
+    def cvodeneq(self, n_indent, of):
+        of.write('{} '.format(self.indent*n_indent))
+        of.write('integer*8 :: NEQ = {} ! Size of ODE system\n'.format(
+            len(self.unique_nuclei)+1))
+
+    def net_ymass_init(self, n_indent, of):
+        for n in self.unique_nuclei:
+            of.write('{}net_initial_abundances%y{} = 0.0d0\n'.format(
+                self.indent*n_indent, n))
