@@ -55,7 +55,6 @@ class BaseFortranNetwork(RateCollection):
         self.ftags['<nion>'] = self._nion
         self.ftags['<rate_start_idx>'] = self._rate_start_idx
         self.ftags['<rate_extra_mult>'] = self._rate_extra_mult
-        self.ftags['<rmul>'] = self._rmul
         self.ftags['<screen_logical>'] = self._screen_logical
         self.ftags['<screen_add>'] = self._screen_add
         self.ftags['<ctemp_ptr_declare>'] = self._ctemp_ptr_declare
@@ -513,24 +512,6 @@ class BaseFortranNetwork(RateCollection):
                     of.write(' ]\n')
                 else:
                     of.write(', &\n')
-
-    def _rmul(self, n_indent, of):
-        for i,r in enumerate(self.rates):
-            if i in self.reaclib_rates:
-                of.write('{}{}'.format(
-                    self.indent*n_indent,
-                    len(r.sets)))
-            elif i in self.tabular_rates:
-                of.write('{}-{}'.format(
-                    self.indent*n_indent,
-                    r.table_index_name))
-            else:
-                print('ERROR: unknown rate index {}'.format(i))
-                exit()
-            if i==len(self.rates)-1:
-                of.write(' ]\n')
-            else:
-                of.write(', &\n')
 
     def _screen_logical(self, n_indent, of):
         of.write('{}allocate( do_screening(nrat_reaclib) )\n'.format(self.indent*n_indent))
