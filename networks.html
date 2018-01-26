@@ -236,9 +236,9 @@ doing:</p>
 <li><p class="first">Write a short python script to generate your network,
 e.g. <code class="docutils literal"><span class="pre">mynet.py</span></code>, based on the following example scripts:</p>
 <ul class="simple">
-<li>For Python networks, <code class="docutils literal"><span class="pre">examples/CNO/cno.py</span></code></li>
-<li>For standalone Fortran networks, <code class="docutils literal"><span class="pre">examples/urca-23_f90/urca.py</span></code></li>
-<li>For StarKiller Microphysics networks, <code class="docutils literal"><span class="pre">examples/urca-23_starkiller/urca.py</span></code></li>
+<li>For Python networks, <a class="reference external" href="https://github.com/pynucastro/pynucastro/blob/master/examples/CNO/cno.py">examples/CNO/cno.py</a></li>
+<li>For standalone Fortran networks, <a class="reference external" href="https://github.com/pynucastro/pynucastro/blob/master/examples/urca-23_f90/urca.py">examples/urca-23_f90/urca.py</a></li>
+<li>For StarKiller Microphysics networks, <a class="reference external" href="https://github.com/pynucastro/pynucastro/blob/master/examples/urca-23_starkiller/urca.py">examples/urca-23_starkiller/urca.py</a></li>
 </ul>
 </li>
 <li><p class="first">Run your python script (<code class="docutils literal"><span class="pre">pynucastro</span></code> must be in your PYTHONPATH).</p>
@@ -252,14 +252,15 @@ e.g. <code class="docutils literal"><span class="pre">mynet.py</span></code>, ba
 <h2>Python network<a class="headerlink" href="#python-network" title="Permalink to this headline">¶</a></h2>
 <p>First follow the steps above for all networks. To integrate a Python
 network using the SciPy integration routines, customize
-<code class="docutils literal"><span class="pre">examples/CNO/burn.py</span></code> to initialize and run your network using the
+<a class="reference external" href="https://github.com/pynucastro/pynucastro/blob/master/examples/CNO/burn.py">examples/CNO/burn.py</a> to initialize and run your network using the
 right hand side module you generated above.</p>
 </div>
 <div class="section" id="standalone-fortran-network">
 <h2>Standalone Fortran network<a class="headerlink" href="#standalone-fortran-network" title="Permalink to this headline">¶</a></h2>
-<p>The <code class="docutils literal"><span class="pre">examples/urca-23_f90</span></code> example builds a Fortran 90 network together with a
-GNU Makefile and integration driver program using the included VODE
-package for ODE integration.</p>
+<p>The <a class="reference external" href="https://github.com/pynucastro/pynucastro/tree/master/examples/urca-23_f90">examples/urca-23_f90</a>
+example builds a Fortran 90 network together with a GNU Makefile and
+integration driver program using the included VODE package for ODE
+integration.</p>
 <ul>
 <li><p class="first">In the steps for all networks above, <code class="docutils literal"><span class="pre">pynucastro</span></code> will create several
 Fortran 90 files as well as a GNU Makefile set up to compile the
@@ -284,7 +285,7 @@ default <code class="docutils literal"><span class="pre">integration_history.dat
 </div>
 <div class="section" id="starkiller-microphysics-network">
 <h2>StarKiller Microphysics network<a class="headerlink" href="#starkiller-microphysics-network" title="Permalink to this headline">¶</a></h2>
-<p>The <code class="docutils literal"><span class="pre">examples/urca-23_starkiller</span></code> example builds the right hand side, Jacobian,
+<p>The <a class="reference external" href="https://github.com/pynucastro/pynucastro/tree/master/examples/urca-23_starkiller">examples/urca-23_starkiller</a> example builds the right hand side, Jacobian,
 and helper Fortran modules to copy into the <code class="docutils literal"><span class="pre">networks/</span></code> subdirectory
 of the StarKiller Microphysics repository.</p>
 <p>No additional customization is required after running the steps for
@@ -296,14 +297,14 @@ all networks above.</p>
 are supported by the standalone Fortran and StarKiller Microphysics
 network outputs.</p>
 <p>If you would like to include tabular rates, for now they must be in
-the form of, e.g. <code class="docutils literal"><span class="pre">23Na-23Ne_electroncapture.dat</span></code> in
+the form of, e.g. <a class="reference external" href="https://github.com/pynucastro/pynucastro/blob/master/examples/urca-23_f90/23Na-23Ne_electroncapture.dat">23Na-23Ne_electroncapture.dat</a> in
 <code class="docutils literal"><span class="pre">examples/urca-23_f90</span></code>, indexed by the product of density and
 electron fraction <span class="math">\(\rm{\rho Y_e}\)</span> and temperature
 <span class="math">\(\rm{T}\)</span>, with the same number and order of variables.</p>
 <p>To generate a network with a tabular rate, prepare a rate file to
 describe how to read the table as below and then list it as you would
 a Reaclib rate file in your network generation script. For example,
-<code class="docutils literal"><span class="pre">examples/urca-23_f90/na23--ne23-toki</span></code> demonstrates the following
+<a class="reference external" href="https://github.com/pynucastro/pynucastro/blob/master/examples/urca-23_f90/na23--ne23-toki">examples/urca-23_f90/na23–ne23-toki</a> demonstrates the following
 format:</p>
 <div class="highlight-none"><div class="highlight"><pre><span></span>t
 [parent nuclide]  [daughter nuclide]
