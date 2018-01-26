@@ -53,7 +53,6 @@ class BaseFortranNetwork(RateCollection):
         self.ftags['<aion>'] = self._aion
         self.ftags['<zion>'] = self._zion
         self.ftags['<nion>'] = self._nion
-        self.ftags['<ctemp_declare>'] = self._ctemp_declare
         self.ftags['<rate_start_idx>'] = self._rate_start_idx
         self.ftags['<rate_extra_mult>'] = self._rate_extra_mult
         self.ftags['<rmul>'] = self._rmul
@@ -488,11 +487,6 @@ class BaseFortranNetwork(RateCollection):
                 self.indent*n_indent,
                 nuc,
                 self.fmt_to_dp_f90(nuc.N)))
-
-    def _ctemp_declare(self, n_indent, of):
-        for n in self.reaclib_rates:
-            of.write('{}double precision, target, dimension(:,:), allocatable :: ctemp_rate_{}\n'.format(
-                self.indent*n_indent, n+1))
 
     def _rate_start_idx(self, n_indent, of):
         of.write('{}allocate( rate_start_idx(nrat_reaclib) )\n'.format(self.indent*n_indent))
