@@ -598,7 +598,8 @@ the reaclib files. The <code class="docutils literal"><span class="pre">plot()</
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span>c13pg.plot()
+<span></span>#PYTEST_VALIDATE_IGNORE_OUTPUT
+c13pg.plot()
 </pre></div>
 </div>
 </div>
@@ -773,7 +774,8 @@ o15
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span>rc.plot()
+<span></span>#PYTEST_VALIDATE_IGNORE_OUTPUT
+rc.plot()
 </pre></div>
 </div>
 </div>
@@ -808,7 +810,8 @@ takes a <code class="docutils literal"><span class="pre">RateCollection</span></
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span>re = pyrl.Explorer(rc, comp)
+<span></span>#PYTEST_VALIDATE_IGNORE_OUTPUT
+re = pyrl.Explorer(rc, comp)
 re.explore()
 </pre></div>
 </div>
@@ -817,8 +820,7 @@ re.explore()
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/pynucastro-examples_34_0.png" src="_images/pynucastro-examples_34_0.png" />
-</div>
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "d365b79bde1148f998aa1f461fe21c91", "version_major": 2, "version_minor": 0}</script></div>
 </div>
 </div>
 <div class="section" id="Integrating-networks">
@@ -894,23 +896,21 @@ def c13_pg_n14(tf):
 </div>
 <p>The <code class="docutils literal"><span class="pre">write_network()</span></code> method will output the python code needed to
 define the RHS of a network for integration with the SciPy integrators</p>
-<div class="nbinput nblast docutils container">
+<div class="nbinput docutils container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
 <span></span>In [23]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span>pynet.write_network(&quot;test.py&quot;)
+<span></span>pynet.write_network()
 </pre></div>
 </div>
 </div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>In [24]:
-</pre></div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
 </div>
-<div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span># %load test.py
+<div class="output_area docutils container">
+<div class="highlight"><pre>
 import numpy as np
 from pynucastro.rates import Tfactors
 
@@ -1109,9 +1109,7 @@ def rhs(t, Y, rho, T):
        )
 
     return dYdt
-
-</pre></div>
-</div>
+</pre></div></div>
 </div>
 </div>
 </div>

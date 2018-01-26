@@ -41,12 +41,4 @@ pynucastro\.networks\.starkiller\_network module
     :undoc-members:
     :show-inheritance:
 
-pynucastro\.networks\.sundials\_network module
-----------------------------------------------
-
-.. automodule:: pynucastro.networks.sundials_network
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 
