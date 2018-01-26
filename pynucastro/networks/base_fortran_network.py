@@ -704,7 +704,7 @@ class BaseFortranNetwork(RateCollection):
                                                     source_format = 'free',
                                                     standard = 95))
             of.write('{}{}(j{}) = ( &\n'.format(self.indent*n_indent,
-                                                self.name_ydot_nuc, n, sol_value))
+                                                self.name_ydot_nuc, n))
             of.write("{}{} &\n".format(self.indent*(n_indent+1), sol_value))
             of.write("{}   )\n\n".format(self.indent*n_indent))
 
