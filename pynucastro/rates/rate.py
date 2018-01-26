@@ -159,6 +159,7 @@ class Rate(object):
     """ a single Reaclib rate, which can be composed of multiple sets """
 
     def __init__(self, rfile):
+        self.rfile_path = rfile
         self.rfile = os.path.basename(rfile)
         self.chapter = None    # the Reaclib chapter for this reaction
         self.original_source = None   # the contents of the original rate file
@@ -180,11 +181,7 @@ class Rate(object):
 
         # read in the file, parse the different sets and store them as
         # SingleSet objects in sets[]
-        if not os.path.isfile(rfile):
-            _tmp = rfile
-            rfile = "{}/../library/{}".format(os.path.dirname(__file__), _tmp)
-
-        f = open(rfile, "r")
+        f = open(self.rfile_path, "r")
         lines = f.readlines()
 
         self.original_source = "".join(lines)

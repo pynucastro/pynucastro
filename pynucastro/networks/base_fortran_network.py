@@ -2,6 +2,7 @@
 from __future__ import print_function
 
 import os
+import shutil
 import re
 import glob
 import sympy
@@ -353,7 +354,8 @@ class BaseFortranNetwork(RateCollection):
         # Prepare RHS terms
         self.compose_ydot()
         self.compose_jacobian()
-        
+
+        # Process template files
         for tfile in self.template_files:
             tfile_basename = os.path.basename(tfile)
             outfile    = tfile_basename.replace('.template', '')
@@ -369,6 +371,18 @@ class BaseFortranNetwork(RateCollection):
                 if not foundkey:
                     of.write(l)    
             self.io_close(ifile, of)
+
+        # Copy any tables in the network to the current directory
+        # if the table file cannot be found, print a warning and continue.
+        for i_tab in self.tabular_rates:
+            tr = self.rates[i_tab]
+            tdir = os.path.dirname(tr.rfile_path)
+            if tdir != os.getcwd():
+                tdat_file = os.path.join(tdir, tr.table_file)
+                if os.path.isfile(tdat_file):
+                    shutil.copy(tdat_file, os.getcwd())
+                else:
+                    print('WARNING: Table data file {} not found.'.format(tr.table_file))
 
     def nrates(self, n_indent, of):
         of.write('{}integer, parameter :: nrates = {}\n'.format(

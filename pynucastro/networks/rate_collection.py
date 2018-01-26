@@ -98,23 +98,10 @@ class RateCollection(object):
         # get the rates
         self.pynucastro_rates_dir = os.path.join(self.pynucastro_dir,
                                                  'library')
-        exit_program = False
-        for p in rate_files:
-            # check to see if the rate file is in the working dir
-            fp = glob.glob(p)
-            if fp:
-                self.files += fp
-            else:
-                # check to see if the rate file is in pynucastro/reaclib-rates
-                fp = glob.glob(os.path.join(self.pynucastro_rates_dir, p))
-                if fp:
-                    self.files += fp
-                else: # Notify of all missing files before exiting
-                    print('ERROR: File {} not found in {} or the working directory!'.format(
-                        p, self.pynucastro_rates_dir))
-                    exit_program = True
-        if exit_program:
-            exit()
+        self.pynucastro_tabular_dir = os.path.join(self.pynucastro_rates_dir,
+                                                 'tabular')
+
+        self.files = [self._find_rate_file(p) for p in rate_files]
 
         for rf in self.files:
             try:
@@ -160,6 +147,29 @@ class RateCollection(object):
                 print('ERROR: Chapter type unknown for rate chapter {}'.format(
                     str(r.chapter)))
                 exit()
+
+    def _find_rate_file(self, ratename):
+        """locate the Reaclib or tabular rate file given its name.  Return
+        None if the file cannot be located, otherwise return its path."""
+
+        # check to see if the rate file is in the working dir
+        x = ratename
+        if os.path.isfile(x):
+            return os.path.realpath(x)
+
+        # check to see if the rate file is in pynucastro/library
+        x = os.path.join(self.pynucastro_rates_dir, ratename)
+        if os.path.isfile(x):
+            return os.path.realpath(x)
+
+        # check to see if the rate file is in pynucastro/library/tabular
+        x = os.path.join(self.pynucastro_tabular_dir, ratename)
+        if os.path.isfile(x):
+            return os.path.realpath(x)
+
+        # notify user we can't find the file
+        raise Exception('File {} not found in the working directory, {}, or {}'.format(
+            ratename, self.pynucastro_rates_dir, self.pynucastro_tabular_dir))
 
     def get_nuclei(self):
         """ get all the nuclei that are part of the network """
