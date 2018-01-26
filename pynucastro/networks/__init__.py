@@ -9,9 +9,9 @@ code to output networks for integration.
 :meth:`python_network <pynucastro.networks.python_network>`: the
 support routines to generate a full, integrable network in python.
 
-:meth:`base_fortran_network
-<pynucastro.networks.base_fortran_network`: the support routines to
-generate a standalone integrable network in pure Fortran.
+:meth:`base_fortran_network <pynucastro.networks.base_fortran_network>`:
+the support routines to generate a standalone integrable network in
+pure Fortran.
 
 :meth:`starkiller_network <pynucastro.networks.starkiller_network>`:
 the support routines to generate a network that can be incorporated

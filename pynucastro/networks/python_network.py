@@ -1,19 +1,18 @@
-# Common Imports
+"""Support modules to write a pure python reaction network ODE
+source"""
+
 from __future__ import print_function
 
-import re
 import sys
 
 from pynucastro.networks import RateCollection
 
 class PythonNetwork(RateCollection):
-    def __init__(self, *args, **kwargs):
-        # Initialize RateCollection parent class
-        super(PythonNetwork, self).__init__(*args, **kwargs)
+    """A pure python reaction network."""
 
     def rate_string(self, rate, indent=0, prefix="rate"):
         """
-        return the functional form of rate as a function of
+        Return the functional form of rate as a function of
         the temperature (as Tfactors)
 
         rate is an object of class Rate
@@ -34,7 +33,7 @@ class PythonNetwork(RateCollection):
 
     def function_string(self, rate):
         """
-        return a string containing python function that computes the
+        Return a string containing python function that computes the
         rate
         """
 
@@ -47,8 +46,8 @@ class PythonNetwork(RateCollection):
 
     def ydot_string(self, rate):
         """
-        return a string containing the term in a dY/dt equation
-        in a reaction network corresponding to this rate
+        Return a string containing the term in a dY/dt equation
+        in a reaction network corresponding to this rate.
         """
 
         # composition dependence
@@ -82,16 +81,16 @@ class PythonNetwork(RateCollection):
 
     def jacobian_string(self, rate, ydot_j, y_i):
         """
-        return a string containing the term in a jacobian matrix 
-        in a reaction network corresponding to this rate
+        Return a string containing the term in a jacobian matrix
+        in a reaction network corresponding to this rate.
 
         Returns the derivative of the j-th YDOT wrt. the i-th Y
         If the derivative is zero, returns the empty string ''
 
-        ydot_j and y_i are objects of the class 'Nucleus'
+        ydot_j and y_i are objects of the class ``Nucleus``.
         """
-        if ((ydot_j not in rate.reactants and ydot_j not in rate.products) or
-            y_i not in rate.reactants):
+        if (ydot_j not in rate.reactants and ydot_j not in rate.products) or \
+           y_i not in rate.reactants:
             return ''
 
         # composition dependence
@@ -137,8 +136,8 @@ class PythonNetwork(RateCollection):
 
     def write_network(self, outfile=None):
         """
-        this is the actual RHS for the system of ODEs that
-        this network describes
+        This is the actual RHS for the system of ODEs that
+        this network describes.
         """
         if outfile is None:
             of = sys.stdout
