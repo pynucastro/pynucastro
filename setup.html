@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pynucastro &mdash; pynucastro 1.0 documentation</title>
+  <title>setup module &mdash; pynucastro 1.0 documentation</title>
   
 
   
@@ -36,8 +36,8 @@
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
     <link rel="top" title="pynucastro 1.0 documentation" href="index.html"/>
-        <link rel="next" title="pynucastro package" href="pynucastro.html"/>
-        <link rel="prev" title="Creating networks" href="networks.html"/> 
+        <link rel="up" title="pynucastro" href="modules.html"/>
+        <link rel="prev" title="pynucastro.rates package" href="pynucastro.rates.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -95,9 +95,9 @@
 <li class="toctree-l1"><a class="reference internal" href="intro.html">Overview of <code class="docutils literal"><span class="pre">pynucastro</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="pynucastro-examples.html"><code class="docutils literal"><span class="pre">pynucastro</span></code> usage examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="networks.html">Creating networks</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">API</a><ul>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">API</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="pynucastro.html">pynucastro package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="setup.html">setup module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">setup module</a></li>
 </ul>
 </li>
 </ul>
@@ -144,13 +144,15 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>pynucastro</li>
+          <li><a href="modules.html">pynucastro</a> &raquo;</li>
+        
+      <li>setup module</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="_sources/modules.rst.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/setup.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -197,41 +199,8 @@
     margin-right: 4px;  /* make room for the exclamation icon */
 }
 </style>
-<div class="section" id="pynucastro">
-<h1>pynucastro<a class="headerlink" href="#pynucastro" title="Permalink to this headline">¶</a></h1>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="pynucastro.html">pynucastro package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="pynucastro.html#amemass">amemass</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pynucastro.html#networks">networks</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pynucastro.html#rates">rates</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pynucastro.html#subpackages">Subpackages</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="pynucastro.networks.html">pynucastro.networks package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.html#module-pynucastro.networks.base_fortran_network">pynucastro.networks.base_fortran_network module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.html#module-pynucastro.networks.python_network">pynucastro.networks.python_network module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.html#module-pynucastro.networks.rate_collection">pynucastro.networks.rate_collection module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.html#module-pynucastro.networks.starkiller_network">pynucastro.networks.starkiller_network module</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="pynucastro.nucdata.html">pynucastro.nucdata package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.html#module-pynucastro.nucdata.binding_nuclide">pynucastro.nucdata.binding_nuclide module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.html#module-pynucastro.nucdata.binding_table">pynucastro.nucdata.binding_table module</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="pynucastro.rates.html">pynucastro.rates package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.html#module-pynucastro.rates.rate">pynucastro.rates.rate module</a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="setup.html">setup module</a></li>
-</ul>
-</div>
+<div class="section" id="setup-module">
+<h1>setup module<a class="headerlink" href="#setup-module" title="Permalink to this headline">¶</a></h1>
 </div>
 
 
@@ -244,10 +213,8 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="pynucastro.html" class="btn btn-neutral float-right" title="pynucastro package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
-      
-        <a href="networks.html" class="btn btn-neutral" title="Creating networks" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="pynucastro.rates.html" class="btn btn-neutral" title="pynucastro.rates package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

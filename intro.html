@@ -220,12 +220,21 @@ collection of nuclei and their mass fractions.  A <code class="docutils literal"
 used when evaluating the full rates in a network.</li>
 <li><a class="reference internal" href="pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection" title="pynucastro.networks.rate_collection.RateCollection"><code class="xref py py-func docutils literal"><span class="pre">RateCollection</span></code></a>:
 This is a group of rates.  This acts as the base class for different
-reaction networks.  A <cite>RateCollection</cite> has methods to evaluate the
+reaction networks.  A <code class="docutils literal"><span class="pre">RateCollection</span></code> has methods to evaluate the
 rates and make a plot of the links between rates.</li>
-<li><a class="reference internal" href="pynucastro.networks.html#pynucastro.networks.python_network.PythonNetwork" title="pynucastro.networks.python_network.PythonNetwork"><code class="xref py py-func docutils literal"><span class="pre">PythonNetwork</span></code></a>:</li>
+<li><a class="reference internal" href="pynucastro.networks.html#pynucastro.networks.python_network.PythonNetwork" title="pynucastro.networks.python_network.PythonNetwork"><code class="xref py py-func docutils literal"><span class="pre">PythonNetwork</span></code></a>: This is a
+collection of rates with functions that known how to write python
+code to express the righthand side of the system of ODEs.</li>
 </ul>
 <div class="section" id="usage">
 <h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
+<p>There are two modes of usage for <code class="docutils literal"><span class="pre">pynucastro</span></code>.  Within a Jupyter
+notebook, one can evaluate the rates and interactively visualize a
+network and see the flow between nuclei as connections colored by the
+rate linking them.  The other usage mode is to use <code class="docutils literal"><span class="pre">pynucastro</span></code> to
+write the righthand side routine for the system of ODEs that must be
+integrated to evolve a reaction network.  One can use this to add
+reaction networks to existing simulation codes, for example.</p>
 <p>An example notebook showing the basic use of these classes is here:</p>
 <p><span class="xref std std-ref">pynucastro-examples.ipynb</span></p>
 </div>

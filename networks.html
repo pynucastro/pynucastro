@@ -212,7 +212,7 @@ driver program using the included VODE integrator in
 integration at constant temperature, as <code class="docutils literal"><span class="pre">pynucastro</span></code> does not include
 an equation of state.</li>
 <li>Microphysics: Generate network files to copy directly into the
-StarKiller Microphysics repository for use with astrophysical
+<a class="reference external" href="https://github.com/StarKiller-astro/Microphysics/">StarKiller Microphysics repository</a> for use with astrophysical
 simulation codes. These networks implement species, temperature, and
 energy integration.</li>
 </ul>
@@ -221,22 +221,32 @@ energy integration.</li>
 <p>The first few steps to setting up any of the available network options
 are as follows. See the following section for details about the
 particular kind of network you are interested in creating.</p>
+<ul>
+<li><p class="first">Create a working directory for you network (this does not have to
+be in the <code class="docutils literal"><span class="pre">pynucastro/</span></code> directory tree).</p>
+</li>
+<li><p class="first">Obtain Reaclib rate files (in Reaclib 1 format) for your problem and
+either place them in your working directory or <code class="docutils literal"><span class="pre">pynucastro/library</span></code>.</p>
+<p>You can find the rates that are already provided in the library by
+doing:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">pynucastro</span><span class="o">.</span><span class="n">list_known_rates</span><span class="p">()</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Write a short python script to generate your network,
+e.g. <code class="docutils literal"><span class="pre">mynet.py</span></code>, based on the following example scripts:</p>
 <ul class="simple">
-<li>Create a working directory under <code class="docutils literal"><span class="pre">examples/</span></code></li>
-<li>Obtain Reaclib rate files (in Reaclib 1 format) for your problem and
-either place them in your working directory or <code class="docutils literal"><span class="pre">pynucastro/library</span></code>.</li>
-<li>Write a short python script to generate your network,
-e.g. <code class="docutils literal"><span class="pre">mynet.py</span></code>, based on the following example scripts:<ul>
 <li>For Python networks, <code class="docutils literal"><span class="pre">examples/CNO/cno.py</span></code></li>
 <li>For standalone Fortran networks, <code class="docutils literal"><span class="pre">examples/urca-23_f90/urca.py</span></code></li>
 <li>For StarKiller Microphysics networks, <code class="docutils literal"><span class="pre">examples/urca-23_starkiller/urca.py</span></code></li>
 </ul>
 </li>
-<li>Run your python script (<code class="docutils literal"><span class="pre">pynucastro</span></code> must be in your PYTHONPATH).</li>
-</ul>
+<li><p class="first">Run your python script (<code class="docutils literal"><span class="pre">pynucastro</span></code> must be in your PYTHONPATH).</p>
 <div class="highlight-bash"><div class="highlight"><pre><span></span>$ python mynet.py
 </pre></div>
 </div>
+</li>
+</ul>
 </div>
 <div class="section" id="python-network">
 <h2>Python network<a class="headerlink" href="#python-network" title="Permalink to this headline">¶</a></h2>
@@ -250,31 +260,31 @@ right hand side module you generated above.</p>
 <p>The <code class="docutils literal"><span class="pre">examples/urca-23_f90</span></code> example builds a Fortran 90 network together with a
 GNU Makefile and integration driver program using the included VODE
 package for ODE integration.</p>
-<ul class="simple">
-<li>In the steps for all networks above, <code class="docutils literal"><span class="pre">pynucastro</span></code> will create several
+<ul>
+<li><p class="first">In the steps for all networks above, <code class="docutils literal"><span class="pre">pynucastro</span></code> will create several
 Fortran 90 files as well as a GNU Makefile set up to compile the
-integrator using gfortran. So next do:</li>
-</ul>
+integrator using gfortran. So next do:</p>
 <div class="highlight-bash"><div class="highlight"><pre><span></span>$ make
 </pre></div>
 </div>
-<ul class="simple">
-<li>Edit the generated <code class="docutils literal"><span class="pre">inputs_integration</span></code> file to specify your initial
+</li>
+<li><p class="first">Edit the generated <code class="docutils literal"><span class="pre">inputs_integration</span></code> file to specify your initial
 conditions as well as integration tolerances, stop time, and output
-sampling interval.</li>
-<li>Run the integrator as:</li>
-</ul>
+sampling interval.</p>
+</li>
+<li><p class="first">Run the integrator as:</p>
 <div class="highlight-bash"><div class="highlight"><pre><span></span>$ ./main.Linux.gfortran.exe inputs_integration
 </pre></div>
 </div>
-<ul class="simple">
-<li>The integration results will be stored in a text file named by
-default <code class="docutils literal"><span class="pre">integration_history.dat</span></code></li>
+</li>
+<li><p class="first">The integration results will be stored in a text file named by
+default <code class="docutils literal"><span class="pre">integration_history.dat</span></code></p>
+</li>
 </ul>
 </div>
 <div class="section" id="starkiller-microphysics-network">
 <h2>StarKiller Microphysics network<a class="headerlink" href="#starkiller-microphysics-network" title="Permalink to this headline">¶</a></h2>
-<p>The <code class="docutils literal"><span class="pre">examples/urca-23_starkiller</span></code> example builds the right hand side, jacobian,
+<p>The <code class="docutils literal"><span class="pre">examples/urca-23_starkiller</span></code> example builds the right hand side, Jacobian,
 and helper Fortran modules to copy into the <code class="docutils literal"><span class="pre">networks/</span></code> subdirectory
 of the StarKiller Microphysics repository.</p>
 <p>No additional customization is required after running the steps for
@@ -286,7 +296,7 @@ all networks above.</p>
 are supported by the standalone Fortran and StarKiller Microphysics
 network outputs.</p>
 <p>If you would like to include tabular rates, for now they must be in
-the form of, eg. <code class="docutils literal"><span class="pre">23Na-23Ne_electroncapture.dat</span></code> in
+the form of, e.g. <code class="docutils literal"><span class="pre">23Na-23Ne_electroncapture.dat</span></code> in
 <code class="docutils literal"><span class="pre">examples/urca-23_f90</span></code>, indexed by the product of density and
 electron fraction <span class="math">\(\rm{\rho Y_e}\)</span> and temperature
 <span class="math">\(\rm{T}\)</span>, with the same number and order of variables.</p>
