@@ -13,7 +13,7 @@ For Fortran code generation, ``pynucastro`` offers two options.
   an equation of state.
 
 - Microphysics: Generate network files to copy directly into the
-  StarKiller Microphysics repository for use with astrophysical
+  `StarKiller Microphysics repository <https://github.com/StarKiller-astro/Microphysics/>`_ for use with astrophysical
   simulation codes. These networks implement species, temperature, and
   energy integration.
 
@@ -24,7 +24,8 @@ The first few steps to setting up any of the available network options
 are as follows. See the following section for details about the
 particular kind of network you are interested in creating.
 
-* Create a working directory under ``examples/``
+* Create a working directory for you network (this does not have to
+  be in the ``pynucastro/`` directory tree).
 
 * Obtain Reaclib rate files (in Reaclib 1 format) for your problem and
   either place them in your working directory or ``pynucastro/library``.
@@ -81,7 +82,7 @@ package for ODE integration.
 StarKiller Microphysics network
 -------------------------------
 
-The ``examples/urca-23_starkiller`` example builds the right hand side, jacobian,
+The ``examples/urca-23_starkiller`` example builds the right hand side, Jacobian,
 and helper Fortran modules to copy into the ``networks/`` subdirectory
 of the StarKiller Microphysics repository.
 
@@ -96,7 +97,7 @@ are supported by the standalone Fortran and StarKiller Microphysics
 network outputs.
 
 If you would like to include tabular rates, for now they must be in
-the form of, eg. ``23Na-23Ne_electroncapture.dat`` in
+the form of, e.g. ``23Na-23Ne_electroncapture.dat`` in
 ``examples/urca-23_f90``, indexed by the product of density and
 electron fraction :math:`\rm{\rho Y_e}` and temperature
 :math:`\rm{T}`, with the same number and order of variables.
