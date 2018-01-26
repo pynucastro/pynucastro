@@ -7,6 +7,21 @@ import matplotlib.pyplot as plt
 
 from periodictable import elements
 
+def list_known_rates():
+    """ list the rates found in the library """
+
+    lib_path = "{}/../library/".format(os.path.dirname(__file__))
+
+    for _, _, filenames in os.walk(lib_path):
+        for f in filenames:
+            try:
+                r = Rate(f)
+            except:
+                continue
+            else:
+                print("{:32} : {}".format(f, r))
+
+
 class Tfactors(object):
     """ precompute temperature factors for speed """
 

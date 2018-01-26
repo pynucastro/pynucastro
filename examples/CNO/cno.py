@@ -1,7 +1,7 @@
 # CNO rate module generator
 from pynucastro.networks import PythonNetwork
 
-files = ["c12-pg-n13-ls09", 
+files = ["c12-pg-n13-ls09",
          "c13-pg-n14-nacr",
          "n13--c13-wc12",
          "n13-pg-o14-lg06",

@@ -81,4 +81,6 @@ from pynucastro.networks import \
 from pynucastro.rates import \
     Tfactors, \
     Nucleus, \
-    Rate
+    Rate, \
+    list_known_rates
+
