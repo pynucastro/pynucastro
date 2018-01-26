@@ -31,13 +31,24 @@ The main classes are:
 
 * :func:`RateCollection <pynucastro.networks.rate_collection.RateCollection>`:
   This is a group of rates.  This acts as the base class for different
-  reaction networks.  A `RateCollection` has methods to evaluate the
+  reaction networks.  A ``RateCollection`` has methods to evaluate the
   rates and make a plot of the links between rates.
 
-* :func:`PythonNetwork <pynucastro.networks.python_network.PythonNetwork>`:
+* :func:`PythonNetwork
+  <pynucastro.networks.python_network.PythonNetwork>`: This is a
+  collection of rates with functions that known how to write python
+  code to express the righthand side of the system of ODEs.
 
 Usage
 -----
+
+There are two modes of usage for ``pynucastro``.  Within a Jupyter
+notebook, one can evaluate the rates and interactively visualize a
+network and see the flow between nuclei as connections colored by the
+rate linking them.  The other usage mode is to use ``pynucastro`` to
+write the righthand side routine for the system of ODEs that must be
+integrated to evolve a reaction network.  One can use this to add
+reaction networks to existing simulation codes, for example.
 
 An example notebook showing the basic use of these classes is here:
 

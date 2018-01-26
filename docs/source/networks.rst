@@ -30,6 +30,14 @@ particular kind of network you are interested in creating.
 * Obtain Reaclib rate files (in Reaclib 1 format) for your problem and
   either place them in your working directory or ``pynucastro/library``.
 
+  You can find the rates that are already provided in the library by
+  doing:
+
+  .. code-block:: python
+
+     pynucastro.list_known_rates()
+
+
 * Write a short python script to generate your network,
   e.g. ``mynet.py``, based on the following example scripts:
 
@@ -39,9 +47,9 @@ particular kind of network you are interested in creating.
 
 * Run your python script (``pynucastro`` must be in your PYTHONPATH).
 
-.. code-block:: bash
+  .. code-block:: bash
 
-   $ python mynet.py
+     $ python mynet.py
 
 Python network
 --------------
@@ -62,9 +70,9 @@ package for ODE integration.
   Fortran 90 files as well as a GNU Makefile set up to compile the
   integrator using gfortran. So next do:
 
-.. code-block:: bash
+  .. code-block:: bash
 
-   $ make
+     $ make
 
 * Edit the generated ``inputs_integration`` file to specify your initial
   conditions as well as integration tolerances, stop time, and output
@@ -72,9 +80,9 @@ package for ODE integration.
 
 * Run the integrator as:
 
-.. code-block:: bash
+  .. code-block:: bash
 
-   $ ./main.Linux.gfortran.exe inputs_integration
+     $ ./main.Linux.gfortran.exe inputs_integration
 
 * The integration results will be stored in a text file named by
   default ``integration_history.dat``
