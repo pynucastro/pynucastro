@@ -1,4 +1,7 @@
-# Common Imports
+"""A Fortran reaction network for integration into the StarKiller
+Microphysics set of reaction networks used by astrophysical hydrodynamics
+codes"""
+
 from __future__ import print_function
 
 import glob
