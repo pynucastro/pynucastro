@@ -1,5 +1,4 @@
-"""
-pynucastro is a python module that interprets the nuclear reaction rates,
+"""pynucastro is a python module that interprets the nuclear reaction rates,
 including those cataloged by the JINA ReacLib project:
 
 https://groups.nscl.msu.edu/jina/reaclib/db/
@@ -42,9 +41,9 @@ rates, including:
   of python code that can be used with ODE integrators to solve
   a network.
 
-* SundialsNetwork : this extends the RateCollection to enable
-  output of Fortran code that can be used with the sundials 
-  ODE integrators.
+* BaseFortranNetwork : this extends the RateCollection to enable
+  output of Fortran code that can be used to integrate the network
+  with the included VODE package for ODE integration.
 
 * StarKillerNetwork : this extends the RateCollection to enable output
   of Fortran code that can be used to add a network to the
@@ -67,7 +66,6 @@ reaction rates, including:
 * Tfactors : this is a simple container class that holds the various
   temperature powers needed to evaluate a rate.
 
-
 """
 
 __version__ = "1.0"
@@ -77,8 +75,8 @@ from pynucastro.networks import \
     Composition, \
     Explorer, \
     PythonNetwork, \
-    StarKillerNetwork, \
-    SundialsNetwork
+    BaseFortranNetwork, \
+    StarKillerNetwork
 
 from pynucastro.rates import \
     Tfactors, \

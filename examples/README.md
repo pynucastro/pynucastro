@@ -1,37 +1,95 @@
-The CNO directory builds a python network.
+# Network Examples
 
-C_f90, CNO_f90, and URCA_f90 build Fortran 90 networks.
+Included are a few examples using pynucastro to generate reaction
+networks in Python and Fortran.
 
-To make your own Fortran network, it will be useful to look at the
-readme files for a problem in examples/ similar to your own, but here
-are the main steps:
+For Fortran code generation, pynucastro offers two options.
 
-* Create a directory under examples/ (e.g. examples/working)
+- Standalone: Generate right hand side routines and an integration
+  driver program using the included VODE integrator in
+  `util/VODE/`. These networks implement only species and energy
+  integration at constant temperature, as pynucastro does not include
+  an equation of state.
 
-* Obtain Reaclib v.2 rate files for your problem and either place them
-  in examples/working or pynucastro/reaclib-rates.
+- Microphysics: Generate network files to copy directly into the
+  StarKiller Microphysics repository for use with astrophysical
+  simulation codes. These networks implement species, temperature, and
+  energy integration.
 
-* Write your own version of C_f90/c.py, URCA_f90/urca.py, or
-CNO_f90/cno.py, replacing the list of 'files' with your own (e.g.
-working.py)
+## All networks
+
+The first few steps to setting up any of the available network options
+are as follows. See the following section for details about the
+particular kind of network you are interested in creating.
+
+* Create a working directory under `examples/`
+
+* Obtain Reaclib rate files (in Reaclib 1 format) for your problem and
+  either place them in your working directory or `pynucastro/library`.
+
+* Write a short python script to generate your network,
+  e.g. `mynet.py`, based on the following example scripts:
+    - For Python networks, `CNO/cno.py`
+    - For standalone Fortran networks, `urca-23_f90/urca.py`
+    - For StarKiller Microphysics networks, `urca-23_starkiller/urca.py`
 
 * Run your python script (pynucastro must be in your PYTHONPATH).
 
 ```
-$ python working.py
+$ python mynet.py
 ```
 
-* (SUNDIALS) By default the sundials networks will output data based on the
-cv_pars%DT_SAVE (timestep) and cv_pars%NDT_SAVE (number of time steps
-to take) parameters in the net.par file. If you would like to add
-custom stopping criteria, edit the FCVROOTFN subroutine in network.f90
-so G(1) is the root to solve for.
+## Python network
 
-* If you would like to include tabular rates, for now they must be in
-the form of, eg. 23Na-23Ne_electroncapture.dat in examples/URCA_f90,
-indexed by density*ye and temperature, with the same number and order
-of variables. Prepare a rate file to describe how to read the table in
-the form of, eg. URCA_f90/na23--ne23-toki:
+To integrate a Python network using the SciPy integration routines,
+customize `CNO/burn.py` to initialize and run your network using the
+right hand side module you generated above.
+
+## Standalone Fortran network
+
+The `urca-23_f90` example builds a Fortran 90 network together with a
+GNU Makefile and integration driver program using the included VODE
+package for ODE integration.
+
+* In the steps for all networks above, pynucastro will create several
+  Fortran 90 files as well as a GNU Makefile set up to compile the
+  integrator using gfortran. So next do:
+
+```
+$ make
+```
+
+* Edit the generated `inputs_integration` file to specify your initial
+  conditions as well as integration tolerances, stop time, and output
+  sampling interval.
+
+* Run the integrator as:
+
+```
+$ main.Linux.gfortran.exe inputs_integration
+```
+
+* The integration results will be stored in a text file named by
+  default, `integration_history.dat`
+
+## StarKiller Microphysics network
+
+The `urca-23_starkiller` example builds the right hand side, jacobian,
+and helper Fortran modules to copy into the `networks/` subdirectory
+of the StarKiller Microphysics repository.
+
+No additional customization is required after running the steps for
+all networks above.
+
+## Tabular Rates
+
+Tabular rates for reactions of the form `A -> B` are supported by the
+standalone Fortran and StarKiller Microphysics network outputs. If you
+would like to include tabular rates, for now they must be in the form
+of, eg. `23Na-23Ne_electroncapture.dat` in `urca-23_f90/`, indexed by
+density*ye and temperature, with the same number and order of
+variables. Prepare a rate file to describe how to read the table in
+the form of, eg. `urca-23_f90/na23--ne23-toki`:
 
 ```
 t
@@ -40,18 +98,4 @@ t
 [number of header lines to eat before the first line of data]
 [number of density*ye values]
 [number of temperature values]
-```
-
-* (SUNDIALS) Make
-
-```
-$ make
-```
-
-* (SUNDIALS) Specify initial abundances, density, temperature, ye in net.par
-
-* (SUNDIALS) Run 
-
-```
-$ ./integrator.gfortran.exe
 ```
