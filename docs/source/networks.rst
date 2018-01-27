@@ -1,4 +1,4 @@
-Creating networks
+Creating Networks
 =================
 
 ``pynucastro`` can output the righthand side functions for ODE integration
