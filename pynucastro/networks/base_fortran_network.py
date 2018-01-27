@@ -82,6 +82,7 @@ class BaseFortranNetwork(RateCollection):
         self.ftags['<parameters_mass_fractions>'] = self._parameters_mass_fractions
         self.ftags['<final_net_print>'] = self._final_net_print
         self.ftags['<headerline>'] = self._headerline
+        self.ftags['<pynucastro_home>'] = self._pynucastro_home
         self.indent = '  '
 
         self.use_cse = False
@@ -773,3 +774,7 @@ class BaseFortranNetwork(RateCollection):
         for nuc in self.unique_nuclei:
             of.write("'Y_{}', ".format(nuc))
         of.write("'E_nuc'\n")
+
+    def _pynucastro_home(self, n_indent, of):
+        of.write('{}PYNUCASTRO_HOME := {}\n'.format(self.indent*n_indent,
+                                                    os.path.dirname(self.pynucastro_dir)))

@@ -8,7 +8,7 @@ MKVERBOSE := t
 
 programs += main
 
-PYNUCASTRO_HOME := ../..
+<pynucastro_home>(0)
 
 PROGRAM_DIR := $(shell pwd)
 
