@@ -9,15 +9,32 @@ reaction networks, including the the righthand side and Jacobian
 routines.
 
 Several different packages provide the data structures needed to
-interpret rates and build networks
+interpret rates and build networks.
 
-amemass
+library
 -------
 
-amemass provides the 2012 atomic mass evaluation.  The main interfaces
-is the AME2012 class, which reads in the data table and provides
-methods to get nuclide properties.
+library stores Reaclib rate files in Reaclib 1 format as well as the
+directory `library/tabular` containing tabulated rates. pynucastro
+will search these directories for rate files as well as the current
+working directory.
 
+Adding Reaclib rate files simply requires downloading them from the
+JINA ReacLib project and placing them in the library folder. They must
+be in the Reaclib 1 format.
+
+nucdata
+-------
+
+nucdata provides tables of binding energy per nucleon in MeV for
+nuclides specified by their number of neutrons N and atomic
+number Z.
+
+The data for these tables is derived from the Atomic Mass Evaluations
+2012 and 2016. By default, pynucastro uses Atomic Mass Evaluation
+2016. Scripts for reading the Atomic Mass Evaluation tables and
+generating binding energy tables for pynucastro are provided in
+`pynucastro/nucdata/AtomicMassEvaluation`.
 
 networks
 --------
@@ -65,6 +82,27 @@ reaction rates, including:
 
 * Tfactors : this is a simple container class that holds the various
   temperature powers needed to evaluate a rate.
+
+screening
+---------
+
+screening provides routines used by the BaseFortranNetwork to screen
+Reaclib reaction rates in the weak, intermediate, and strong
+regimes. Tabulated rates are not screened.
+
+The Fortran module in `pynucastro/screening` is only used for the
+standalone Fortran network. StarKiller Microphysics networks also use
+rate screening, but they use the screening module in the StarKiller
+Microphysics repository.
+
+templates
+---------
+
+templates contains subdirectories for generating BaseFortranNetwork
+and StarKillerNetwork Fortran modules implementing the ODE right hand
+side, jacobian, and integration driver routines. pynucastro processes
+these template files by replacing tags of the form `<tag>` with
+generated code specific to a given choice of reaction rates.
 
 """
 
