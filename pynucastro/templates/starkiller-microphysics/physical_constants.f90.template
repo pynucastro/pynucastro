@@ -2,17 +2,18 @@ module physical_constants
 
   implicit none
 
-  double precision, parameter :: PI = 3.141592653589793238462643383279502884197d0
-  double precision, parameter :: CM_PER_FM = 1.0d-13
+  double precision, parameter :: pi = 3.141592653589793238462643383279502884197d0
+  double precision, parameter :: cm_per_fm = 1.0d-13
 
-  ! From PDG 2014
-  double precision, parameter :: CLIGHT  = 299792458d2 ! cm/s
-  double precision, parameter :: KB_MeV_PER_K = 8.6173324d-11 ! MeV/K
-  double precision, parameter :: GNEWTON  = 6.67384d-8 ! cm^3/g/s^2
-  double precision, parameter :: ERG_PER_MeV = 1.602176565d-6
-  double precision, parameter :: N_AVO = 6.02214129d23
+  ! From 2014 CODATA recommended values
+  double precision, parameter :: clight  = 299792458d2  ! cm/s
 
-  ! From AME 2012 Atomic Mass Evaluation
-  double precision, parameter :: GRAM_PER_AMU = 1660538.921d-30 ! g
+  double precision, parameter :: N_avo = 6.022140857d23 ! 1/mol
+
+  double precision, parameter :: gram_per_amu = 1660539.040d-30
+
+  double precision, parameter :: erg_per_eV  = 1.6021766208d-12
+  double precision, parameter :: erg_per_MeV = erg_per_eV*1.0d6
+  double precision, parameter :: gram_per_MeV = erg_per_MeV/CLIGHT**2
 
 end module physical_constants
