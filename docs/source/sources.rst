@@ -20,8 +20,9 @@ The weak reaction rate tables `23Na-23Ne_electroncapture.dat
 <https://github.com/pynucastro/pynucastro/blob/master/pynucastro/library/tabular/23Na-23Ne_electroncapture.dat>`_
 and `23Ne-23Na_betadecay.dat
 <https://github.com/pynucastro/pynucastro/blob/master/pynucastro/library/tabular/23Ne-23Na_betadecay.dat>`_
-were obtained from
-`<http://www.phys.chs.nihon-u.ac.jp/suzuki/data2/link.html>`_.
+were obtained from:
+
+`<http://www.phys.chs.nihon-u.ac.jp/suzuki/data2/link.html>`_
 
 `Suzuki et al., ApJ 817 (2016) 163 <http://iopscience.iop.org/article/10.3847/0004-637X/817/2/163>`_
 
