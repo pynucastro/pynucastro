@@ -11,7 +11,7 @@ Nuclear reaction rates from JINA Reaclib
 The reaction rate parameterizations in `pynucastro/library <https://github.com/pynucastro/pynucastro/tree/master/pynucastro/library>`_
 were obtained from the `JINA Reaclib database <https://groups.nscl.msu.edu/jina/reaclib/db/>`_.
 
-`Cyburt et al., ApJS 189 (2010) 240 <http://iopscience.iop.org/article/10.1088/0067-0049/189/1/240/meta>`_
+`Cyburt et al., ApJS 189 (2010) 240 <http://iopscience.iop.org/article/10.1088/0067-0049/189/1/240>`_
 
 Tabulated weak nuclear reaction rates
 -------------------------------------
@@ -49,10 +49,10 @@ The Atomic Mass Evaluation 2016 and 2012 are available `online <https://www-nds.
 
 Atomic Mass Evaluation 2016:
 
-* `Huang et al., Chinese Physics C 41, 030002 <https://www-nds.iaea.org/amdc/ame2016/AME2016-a.pdf>`_
-* `Wang et al., Chinese Physics C 41, 030003 <https://www-nds.iaea.org/amdc/ame2016/AME2016-b.pdf>`_
+* `Huang et al., Chinese Physics C 41, 030002 <http://iopscience.iop.org/article/10.1088/1674-1137/41/3/030002>`_
+* `Wang et al., Chinese Physics C 41, 030003 <http://iopscience.iop.org/article/10.1088/1674-1137/41/3/030003>`_
 
 Atomic Mass Evaluation 2012:
 
-* `Audi et al., Chinese Physics C 36, 1287-1602 <https://www-nds.iaea.org/amdc/ame2012/AME2012-1.pdf>`_
-* `Wang et al., Chinese Physics C 36, 1603-2014 <https://www-nds.iaea.org/amdc/ame2012/AME2012-2.pdf>`_
+* `Audi et al., Chinese Physics C 36, 1287-1602 <http://iopscience.iop.org/article/10.1088/1674-1137/36/12/002>`_
+* `Wang et al., Chinese Physics C 36, 1603-2014 <http://iopscience.iop.org/article/10.1088/1674-1137/36/12/003>`_
