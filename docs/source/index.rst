@@ -21,6 +21,7 @@ codes.
    pynucastro-examples.ipynb
    networks
    API <modules>
+   sources
 
 Indices and tables
 ==================
