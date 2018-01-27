@@ -24,7 +24,7 @@ The first few steps to setting up any of the available network options
 are as follows. See the following section for details about the
 particular kind of network you are interested in creating.
 
-* Create a working directory for you network (this does not have to
+* Create a working directory for your network (this does not have to
   be in the ``pynucastro/`` directory tree).
 
 * Obtain Reaclib rate files (in Reaclib 1 format) for your problem and
@@ -107,15 +107,15 @@ are supported by the standalone Fortran and StarKiller Microphysics
 network outputs.
 
 If you would like to include tabular rates, for now they must be in
-the form of, e.g. `23Na-23Ne_electroncapture.dat <https://github.com/pynucastro/pynucastro/blob/master/examples/urca-23_f90/23Na-23Ne_electroncapture.dat>`_ in
-``examples/urca-23_f90``, indexed by the product of density and
+the form of, e.g. `23Na-23Ne_electroncapture.dat <https://github.com/pynucastro/pynucastro/blob/master/pynucastro/library/tabular/23Na-23Ne_electroncapture.dat>`_ in
+``pynucastro/library/tabular/``, indexed by the product of density and
 electron fraction :math:`\rm{\rho Y_e}` and temperature
 :math:`\rm{T}`, with the same number and order of variables.
 
 To generate a network with a tabular rate, prepare a rate file to
 describe how to read the table as below and then list it as you would
 a Reaclib rate file in your network generation script. For example,
-`examples/urca-23_f90/na23--ne23-toki <https://github.com/pynucastro/pynucastro/blob/master/examples/urca-23_f90/na23--ne23-toki>`_ demonstrates the following
+`pynucastro/library/tabular/na23--ne23-toki <https://github.com/pynucastro/pynucastro/blob/master/pynucastro/library/tabular/na23--ne23-toki>`_ demonstrates the following
 format:
 
 .. code-block:: none
@@ -123,6 +123,6 @@ format:
    t
    [parent nuclide]  [daughter nuclide]
    [rate table file name]
-   [number of header lines to eat before the first line of data]
+   [number of header lines before the first line of data]
    [number of density*ye values]
    [number of temperature values]
