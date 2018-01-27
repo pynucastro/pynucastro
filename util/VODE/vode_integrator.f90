@@ -211,7 +211,9 @@ contains
 
        status % integration_complete = .false.
        return
-    endif
+    else
+       status % integration_complete = .true.
+    end if
 
     y(net_ienuc) = y(net_ienuc) + energy_offset
     
