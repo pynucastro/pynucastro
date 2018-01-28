@@ -35,7 +35,13 @@ accomplishes this by interfacing with nuclear reaction rate
 parameterizations published by the JINA Reaclib project
 [@Reaclib.2010].
 
-(describe rate and network visualization)
+Interactive exploration is enabled by a set of classes that provide
+methods to visualize the temperature dependency of a rate, evaluate it
+at a particular temperature, and find the exponent, n, for a simply
+T**n parameterization.  From a collection of rates, the flow between
+the nuclei can be visualized interactively using Jupyter widgets.
+These features help both with designing a network for a simulation as
+well as for teaching nuclear astrophysics in the classroom.
 
 After selecting a set of rates for a given problem, pynucastro can
 construct a reaction network from those rates, using sympy to
