@@ -16,6 +16,12 @@ python code for a function that can be incorporated into a rate
 module.
 
 
+# documentation
+
+Documentation for pynucastro is available here:
+
+http://pynucastro.github.io/pynucastro/
+
 
 # example
 ```
