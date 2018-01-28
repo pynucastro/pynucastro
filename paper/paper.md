@@ -28,6 +28,11 @@ bibliography: paper.bib
 
 # Summary
 
-
+pynucastro addresses two needs in the field of nuclear astrophysics:
+interactive exploration of nuclear reaction rates or networks and
+automated code generation for integrating systems of differential
+equations representing reaction networks. pynucastro accomplishes this
+by interfacing with nuclear reaction rate parameterizations published
+by the JINA Reaclib project [@Reaclib.2010].
 
 # References
