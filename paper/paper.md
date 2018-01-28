@@ -29,10 +29,33 @@ bibliography: paper.bib
 # Summary
 
 pynucastro addresses two needs in the field of nuclear astrophysics:
-interactive exploration of nuclear reaction rates or networks and
-automated code generation for integrating systems of differential
-equations representing reaction networks. pynucastro accomplishes this
-by interfacing with nuclear reaction rate parameterizations published
-by the JINA Reaclib project [@Reaclib.2010].
+visual exploration of nuclear reaction rates or networks and automated
+code generation for integrating reaction network ODEs. pynucastro
+accomplishes this by interfacing with nuclear reaction rate
+parameterizations published by the JINA Reaclib project
+[@Reaclib.2010].
+
+(describe rate and network visualization)
+
+After selecting a set of rates for a given problem, pynucastro can
+construct a reaction network from those rates, using sympy to
+determine the system of ODEs comprising the network. From the symbolic
+expressions for the ODE right hand side, pynucastro can then generate
+Python or Fortran code to calculate the right hand side. For Fortran
+networks, pynucastro will also generate a routine to compute the
+analytic jacobian matrix for implicit integration.
+
+pynucastro is capable of generating two kinds of Fortran reaction
+networks. The first is a standalone network with a driver program to
+integrate species and energy generation using the variable-order ODE
+integration package VODE. Secondly, pynucastro can generate a Fortran
+network consisting of right hand side and jacobian modules that evolve
+species, temperature, and energy generation for the StarKiller
+Microphysics code. Both types of Fortran networks incorporate weak,
+intermediate, and strong reaction rate screening. Fortran networks can
+also incorporate selected weak reaction rate tabulations from
+[@Suzuki.2016]. Via StarKiller Microphysics, pynucastro can generate
+reaction networks for astrophysical simulation codes such as Castro
+and MAESTRO [@Zingale.astronum.2017].
 
 # References
