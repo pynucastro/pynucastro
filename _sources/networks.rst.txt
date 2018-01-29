@@ -1,15 +1,15 @@
-Creating networks
+Creating Networks
 =================
 
-``pynucastro`` can output the righthand side functions for ODE integration
+pynucastro can output the righthand side functions for ODE integration
 in Python and Fortran.
 
-For Fortran code generation, ``pynucastro`` offers two options.
+For Fortran code generation, pynucastro offers two options.
 
 - Standalone: Generate right hand side routines and an integration
   driver program using the included VODE integrator in
   ``util/VODE/``. These networks implement only species and energy
-  integration at constant temperature, as ``pynucastro`` does not include
+  integration at constant temperature, as pynucastro does not include
   an equation of state.
 
 - Microphysics: Generate network files to copy directly into the
@@ -24,7 +24,7 @@ The first few steps to setting up any of the available network options
 are as follows. See the following section for details about the
 particular kind of network you are interested in creating.
 
-* Create a working directory for you network (this does not have to
+* Create a working directory for your network (this does not have to
   be in the ``pynucastro/`` directory tree).
 
 * Obtain Reaclib rate files (in Reaclib 1 format) for your problem and
@@ -45,7 +45,7 @@ particular kind of network you are interested in creating.
   - For standalone Fortran networks, `examples/urca-23_f90/urca.py <https://github.com/pynucastro/pynucastro/blob/master/examples/urca-23_f90/urca.py>`_
   - For StarKiller Microphysics networks, `examples/urca-23_starkiller/urca.py <https://github.com/pynucastro/pynucastro/blob/master/examples/urca-23_starkiller/urca.py>`_
 
-* Run your python script (``pynucastro`` must be in your PYTHONPATH).
+* Run your python script (pynucastro must be in your PYTHONPATH).
 
   .. code-block:: bash
 
@@ -68,7 +68,7 @@ example builds a Fortran 90 network together with a GNU Makefile and
 integration driver program using the included VODE package for ODE
 integration.
 
-* In the steps for all networks above, ``pynucastro`` will create several
+* In the steps for all networks above, pynucastro will create several
   Fortran 90 files as well as a GNU Makefile set up to compile the
   integrator using gfortran. So next do:
 
@@ -107,15 +107,15 @@ are supported by the standalone Fortran and StarKiller Microphysics
 network outputs.
 
 If you would like to include tabular rates, for now they must be in
-the form of, e.g. `23Na-23Ne_electroncapture.dat <https://github.com/pynucastro/pynucastro/blob/master/examples/urca-23_f90/23Na-23Ne_electroncapture.dat>`_ in
-``examples/urca-23_f90``, indexed by the product of density and
+the form of, e.g. `23Na-23Ne_electroncapture.dat <https://github.com/pynucastro/pynucastro/blob/master/pynucastro/library/tabular/23Na-23Ne_electroncapture.dat>`_ in
+``pynucastro/library/tabular/``, indexed by the product of density and
 electron fraction :math:`\rm{\rho Y_e}` and temperature
 :math:`\rm{T}`, with the same number and order of variables.
 
 To generate a network with a tabular rate, prepare a rate file to
 describe how to read the table as below and then list it as you would
 a Reaclib rate file in your network generation script. For example,
-`examples/urca-23_f90/na23--ne23-toki <https://github.com/pynucastro/pynucastro/blob/master/examples/urca-23_f90/na23--ne23-toki>`_ demonstrates the following
+`pynucastro/library/tabular/na23--ne23-toki <https://github.com/pynucastro/pynucastro/blob/master/pynucastro/library/tabular/na23--ne23-toki>`_ demonstrates the following
 format:
 
 .. code-block:: none
@@ -123,6 +123,6 @@ format:
    t
    [parent nuclide]  [daughter nuclide]
    [rate table file name]
-   [number of header lines to eat before the first line of data]
+   [number of header lines before the first line of data]
    [number of density*ye values]
    [number of temperature values]

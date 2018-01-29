@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pynucastro &mdash; pynucastro 1.0 documentation</title>
+  <title>Third Party Data &mdash; pynucastro 1.0 documentation</title>
   
 
   
@@ -36,8 +36,7 @@
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
     <link rel="top" title="pynucastro 1.0 documentation" href="index.html"/>
-        <link rel="next" title="pynucastro package" href="pynucastro.html"/>
-        <link rel="prev" title="Creating Networks" href="networks.html"/> 
+        <link rel="prev" title="setup module" href="setup.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -95,12 +94,14 @@
 <li class="toctree-l1"><a class="reference internal" href="intro.html">Overview of pynucastro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pynucastro-examples.html"><code class="docutils literal"><span class="pre">pynucastro</span></code> usage examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="networks.html">Creating Networks</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">API</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="pynucastro.html">pynucastro package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="setup.html">setup module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">API</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Third Party Data</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#nuclear-reaction-rates-from-jina-reaclib">Nuclear reaction rates from JINA Reaclib</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tabulated-weak-nuclear-reaction-rates">Tabulated weak nuclear reaction rates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#physical-constants-from-codata">Physical constants from CODATA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#nuclear-binding-energies-from-the-atomic-mass-data-center">Nuclear binding energies from the Atomic Mass Data Center</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="sources.html">Third Party Data</a></li>
 </ul>
 
             
@@ -145,13 +146,13 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>pynucastro</li>
+      <li>Third Party Data</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="_sources/modules.rst.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/sources.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -198,42 +199,49 @@
     margin-right: 4px;  /* make room for the exclamation icon */
 }
 </style>
-<div class="section" id="pynucastro">
-<h1>pynucastro<a class="headerlink" href="#pynucastro" title="Permalink to this headline">¶</a></h1>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="pynucastro.html">pynucastro package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="pynucastro.html#library">library</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pynucastro.html#nucdata">nucdata</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pynucastro.html#networks">networks</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pynucastro.html#rates">rates</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pynucastro.html#screening">screening</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pynucastro.html#templates">templates</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pynucastro.html#subpackages">Subpackages</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="pynucastro.networks.html">pynucastro.networks package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.html#module-pynucastro.networks.base_fortran_network">pynucastro.networks.base_fortran_network module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.html#module-pynucastro.networks.python_network">pynucastro.networks.python_network module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.html#module-pynucastro.networks.rate_collection">pynucastro.networks.rate_collection module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.html#module-pynucastro.networks.starkiller_network">pynucastro.networks.starkiller_network module</a></li>
+<div class="section" id="third-party-data">
+<h1>Third Party Data<a class="headerlink" href="#third-party-data" title="Permalink to this headline">¶</a></h1>
+<p>pynucastro incorporates the following publicly-available
+third-party data. Links to this data as well as citations to the
+relevant publications are as follows.</p>
+<div class="section" id="nuclear-reaction-rates-from-jina-reaclib">
+<h2>Nuclear reaction rates from JINA Reaclib<a class="headerlink" href="#nuclear-reaction-rates-from-jina-reaclib" title="Permalink to this headline">¶</a></h2>
+<p>The reaction rate parameterizations in <a class="reference external" href="https://github.com/pynucastro/pynucastro/tree/master/pynucastro/library">pynucastro/library</a>
+were obtained from the <a class="reference external" href="https://groups.nscl.msu.edu/jina/reaclib/db/">JINA Reaclib database</a>.</p>
+<p><a class="reference external" href="http://iopscience.iop.org/article/10.1088/0067-0049/189/1/240">Cyburt et al., ApJS 189 (2010) 240</a></p>
+</div>
+<div class="section" id="tabulated-weak-nuclear-reaction-rates">
+<h2>Tabulated weak nuclear reaction rates<a class="headerlink" href="#tabulated-weak-nuclear-reaction-rates" title="Permalink to this headline">¶</a></h2>
+<p>The weak reaction rate tables <a class="reference external" href="https://github.com/pynucastro/pynucastro/blob/master/pynucastro/library/tabular/23Na-23Ne_electroncapture.dat">23Na-23Ne_electroncapture.dat</a>
+and <a class="reference external" href="https://github.com/pynucastro/pynucastro/blob/master/pynucastro/library/tabular/23Ne-23Na_betadecay.dat">23Ne-23Na_betadecay.dat</a>
+were obtained from:</p>
+<p><a class="reference external" href="http://www.phys.chs.nihon-u.ac.jp/suzuki/data2/link.html">http://www.phys.chs.nihon-u.ac.jp/suzuki/data2/link.html</a></p>
+<p><a class="reference external" href="http://iopscience.iop.org/article/10.3847/0004-637X/817/2/163">Suzuki et al., ApJ 817 (2016) 163</a></p>
+</div>
+<div class="section" id="physical-constants-from-codata">
+<h2>Physical constants from CODATA<a class="headerlink" href="#physical-constants-from-codata" title="Permalink to this headline">¶</a></h2>
+<p>The standalone Fortran networks and the StarKiller Microphysics
+networks rely on physical constants sourced from the 2014 CODATA
+recommended values.</p>
+<p><a class="reference external" href="http://physics.nist.gov/constants">P.J. Mohr, D.B. Newell, and B.N. Taylor (2016), “The 2014 CODATA Recommended Values of the Fundamental Physical Constants”</a></p>
+<p><a class="reference external" href="https://journals.aps.org/rmp/abstract/10.1103/RevModPhys.88.035009">Mohr et al., Rev. Mod. Phys. 88, 035009</a></p>
+</div>
+<div class="section" id="nuclear-binding-energies-from-the-atomic-mass-data-center">
+<h2>Nuclear binding energies from the Atomic Mass Data Center<a class="headerlink" href="#nuclear-binding-energies-from-the-atomic-mass-data-center" title="Permalink to this headline">¶</a></h2>
+<p>The standalone Fortran networks and the StarKiller Microphysics
+networks rely on binding energy per nucleon sourced from the Atomic
+Mass Evaluation 2016 (default) and 2012 of the Atomic Mass Data
+Center.</p>
+<p>The Atomic Mass Evaluation 2016 and 2012 are available <a class="reference external" href="https://www-nds.iaea.org/amdc/">online</a>.</p>
+<p>Atomic Mass Evaluation 2016:</p>
+<ul class="simple">
+<li><a class="reference external" href="http://iopscience.iop.org/article/10.1088/1674-1137/41/3/030002">Huang et al., Chinese Physics C 41, 030002</a></li>
+<li><a class="reference external" href="http://iopscience.iop.org/article/10.1088/1674-1137/41/3/030003">Wang et al., Chinese Physics C 41, 030003</a></li>
 </ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="pynucastro.nucdata.html">pynucastro.nucdata package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.html#module-pynucastro.nucdata.binding_nuclide">pynucastro.nucdata.binding_nuclide module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.html#module-pynucastro.nucdata.binding_table">pynucastro.nucdata.binding_table module</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="pynucastro.rates.html">pynucastro.rates package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.html#module-pynucastro.rates.rate">pynucastro.rates.rate module</a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="setup.html">setup module</a></li>
+<p>Atomic Mass Evaluation 2012:</p>
+<ul class="simple">
+<li><a class="reference external" href="http://iopscience.iop.org/article/10.1088/1674-1137/36/12/002">Audi et al., Chinese Physics C 36, 1287-1602</a></li>
+<li><a class="reference external" href="http://iopscience.iop.org/article/10.1088/1674-1137/36/12/003">Wang et al., Chinese Physics C 36, 1603-2014</a></li>
 </ul>
 </div>
 </div>
@@ -248,10 +256,8 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="pynucastro.html" class="btn btn-neutral float-right" title="pynucastro package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
-      
-        <a href="networks.html" class="btn btn-neutral" title="Creating Networks" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="setup.html" class="btn btn-neutral" title="setup module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

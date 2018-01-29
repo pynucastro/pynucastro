@@ -92,13 +92,14 @@
             
               <p class="caption"><span class="caption-text">Contents</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Overview of <code class="docutils literal"><span class="pre">pynucastro</span></code></a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Overview of pynucastro</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#usage">Usage</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="pynucastro-examples.html"><code class="docutils literal"><span class="pre">pynucastro</span></code> usage examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="networks.html">Creating networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="networks.html">Creating Networks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modules.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sources.html">Third Party Data</a></li>
 </ul>
 
             
@@ -143,7 +144,7 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>Overview of <code class="docutils literal"><span class="pre">pynucastro</span></code></li>
+      <li>Overview of pynucastro</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -197,12 +198,12 @@
 }
 </style>
 <div class="section" id="overview-of-pynucastro">
-<h1>Overview of <code class="docutils literal"><span class="pre">pynucastro</span></code><a class="headerlink" href="#overview-of-pynucastro" title="Permalink to this headline">¶</a></h1>
-<p><code class="docutils literal"><span class="pre">pynucastro</span></code> is a set of python interfaces to the JINA reaclib
-nuclear reaction rate database.  It is meant for both interactive
-exploration of rates (through Jupyter notebooks) and to create
-reaction networks for use in simulation codes.</p>
-<p>The preferred way of importing <code class="docutils literal"><span class="pre">pynucastro</span></code> is as:</p>
+<h1>Overview of pynucastro<a class="headerlink" href="#overview-of-pynucastro" title="Permalink to this headline">¶</a></h1>
+<p>pynucastro is a set of python interfaces nuclear reaction rates
+(currently via the JINA reaclib database).  It is meant for both
+interactive exploration of rates (through Jupyter notebooks) and to
+create reaction networks for use in simulation codes.</p>
+<p>The preferred way of importing pynucastro is as:</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pynucastro</span> <span class="kn">as</span> <span class="nn">pyrl</span>
 </pre></div>
 </div>
@@ -228,13 +229,22 @@ code to express the righthand side of the system of ODEs.</li>
 </ul>
 <div class="section" id="usage">
 <h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
-<p>There are two modes of usage for <code class="docutils literal"><span class="pre">pynucastro</span></code>.  Within a Jupyter
+<p>There are two modes of usage for pynucastro.  Within a Jupyter
 notebook, one can evaluate the rates and interactively visualize a
 network and see the flow between nuclei as connections colored by the
-rate linking them.  The other usage mode is to use <code class="docutils literal"><span class="pre">pynucastro</span></code> to
-write the righthand side routine for the system of ODEs that must be
-integrated to evolve a reaction network.  One can use this to add
-reaction networks to existing simulation codes, for example.</p>
+rate linking them.</p>
+<p>The other usage mode is to use pynucastro to write the righthand
+side routine for the system of ODEs that must be integrated to evolve
+a reaction network.  A reaction network takes the form:</p>
+<div class="math">
+\[\frac{dY_i}{dt} = - \sum_{j,k} Y_i Y_j \lambda_{i(j,k)l} + \sum_{j,k} Y_l Y_k \lambda_{l(j,k)i}\]</div>
+<p>where the <span class="math">\(\lambda\)</span>‘s are the rates of destruction and creation
+of species i, represented by the molar fraction <span class="math">\(Y_i\)</span> (see,
+e.g., <a class="reference external" href="http://adsabs.harvard.edu/abs/1999ApJS..124..241T">Timmes 1999</a>).  pynucastro
+will create the righthand sides of this system of ODEs (as python or
+Fortran code) from the list of rates you provide. One can use this to
+add reaction networks to existing simulation codes, for example, the
+<a class="reference external" href="https://amrex-astro.github.io/MAESTRO/">Maestro</a> and <a class="reference external" href="https://amrex-astro.github.io/Castro/">Castro</a> codes.</p>
 <p>An example notebook showing the basic use of these classes is here:</p>
 <p><span class="xref std std-ref">pynucastro-examples.ipynb</span></p>
 </div>

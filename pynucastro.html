@@ -95,12 +95,15 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="intro.html">Overview of <code class="docutils literal"><span class="pre">pynucastro</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="pynucastro-examples.html"><code class="docutils literal"><span class="pre">pynucastro</span></code> usage examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="networks.html">Creating networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="networks.html">Creating Networks</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="modules.html">API</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#">pynucastro package</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#amemass">amemass</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#library">library</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#nucdata">nucdata</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#networks">networks</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#rates">rates</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#screening">screening</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#templates">templates</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#subpackages">Subpackages</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.html">pynucastro.networks package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.html">pynucastro.nucdata package</a></li>
@@ -112,6 +115,7 @@
 <li class="toctree-l2"><a class="reference internal" href="setup.html">setup module</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="sources.html">Third Party Data</a></li>
 </ul>
 
             
@@ -221,12 +225,27 @@ notebooks as well as methods for writing python and Fortran nuclear
 reaction networks, including the the righthand side and Jacobian
 routines.</p>
 <p>Several different packages provide the data structures needed to
-interpret rates and build networks</p>
-<div class="section" id="amemass">
-<h2>amemass<a class="headerlink" href="#amemass" title="Permalink to this headline">¶</a></h2>
-<p>amemass provides the 2012 atomic mass evaluation.  The main interfaces
-is the AME2012 class, which reads in the data table and provides
-methods to get nuclide properties.</p>
+interpret rates and build networks.</p>
+<div class="section" id="library">
+<h2>library<a class="headerlink" href="#library" title="Permalink to this headline">¶</a></h2>
+<p>library stores Reaclib rate files in Reaclib 1 format as well as the
+directory <cite>library/tabular</cite> containing tabulated rates. pynucastro
+will search these directories for rate files as well as the current
+working directory.</p>
+<p>Adding Reaclib rate files simply requires downloading them from the
+JINA ReacLib project and placing them in the library folder. They must
+be in the Reaclib 1 format.</p>
+</div>
+<div class="section" id="nucdata">
+<h2>nucdata<a class="headerlink" href="#nucdata" title="Permalink to this headline">¶</a></h2>
+<p>nucdata provides tables of binding energy per nucleon in MeV for
+nuclides specified by their number of neutrons N and atomic
+number Z.</p>
+<p>The data for these tables is derived from the Atomic Mass Evaluations
+2012 and 2016. By default, pynucastro uses Atomic Mass Evaluation
+2016. Scripts for reading the Atomic Mass Evaluation tables and
+generating binding energy tables for pynucastro are provided in
+<cite>pynucastro/nucdata/AtomicMassEvaluation</cite>.</p>
 </div>
 <div class="section" id="networks">
 <h2>networks<a class="headerlink" href="#networks" title="Permalink to this headline">¶</a></h2>
@@ -266,6 +285,24 @@ evaluating it.</li>
 <li>Tfactors : this is a simple container class that holds the various
 temperature powers needed to evaluate a rate.</li>
 </ul>
+</div>
+<div class="section" id="screening">
+<h2>screening<a class="headerlink" href="#screening" title="Permalink to this headline">¶</a></h2>
+<p>screening provides routines used by the BaseFortranNetwork to screen
+Reaclib reaction rates in the weak, intermediate, and strong
+regimes. Tabulated rates are not screened.</p>
+<p>The Fortran module in <cite>pynucastro/screening</cite> is only used for the
+standalone Fortran network. StarKiller Microphysics networks also use
+rate screening, but they use the screening module in the StarKiller
+Microphysics repository.</p>
+</div>
+<div class="section" id="templates">
+<h2>templates<a class="headerlink" href="#templates" title="Permalink to this headline">¶</a></h2>
+<p>templates contains subdirectories for generating BaseFortranNetwork
+and StarKillerNetwork Fortran modules implementing the ODE right hand
+side, jacobian, and integration driver routines. pynucastro processes
+these template files by replacing tags of the form <cite>&lt;tag&gt;</cite> with
+generated code specific to a given choice of reaction rates.</p>
 </div>
 <div class="section" id="subpackages">
 <h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>

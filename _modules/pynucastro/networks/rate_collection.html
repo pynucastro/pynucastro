@@ -91,10 +91,11 @@
             
               <p class="caption"><span class="caption-text">Contents</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Overview of <code class="docutils literal"><span class="pre">pynucastro</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Overview of pynucastro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../pynucastro-examples.html"><code class="docutils literal"><span class="pre">pynucastro</span></code> usage examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../networks.html">Creating networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../networks.html">Creating Networks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../modules.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../sources.html">Third Party Data</a></li>
 </ul>
 
             
@@ -259,23 +260,10 @@
         <span class="c1"># get the rates</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pynucastro_rates_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pynucastro_dir</span><span class="p">,</span>
                                                  <span class="s1">&#39;library&#39;</span><span class="p">)</span>
-        <span class="n">exit_program</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">rate_files</span><span class="p">:</span>
-            <span class="c1"># check to see if the rate file is in the working dir</span>
-            <span class="n">fp</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">fp</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">files</span> <span class="o">+=</span> <span class="n">fp</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="c1"># check to see if the rate file is in pynucastro/reaclib-rates</span>
-                <span class="n">fp</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pynucastro_rates_dir</span><span class="p">,</span> <span class="n">p</span><span class="p">))</span>
-                <span class="k">if</span> <span class="n">fp</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">files</span> <span class="o">+=</span> <span class="n">fp</span>
-                <span class="k">else</span><span class="p">:</span> <span class="c1"># Notify of all missing files before exiting</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ERROR: File </span><span class="si">{}</span><span class="s1"> not found in </span><span class="si">{}</span><span class="s1"> or the working directory!&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                        <span class="n">p</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pynucastro_rates_dir</span><span class="p">))</span>
-                    <span class="n">exit_program</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="k">if</span> <span class="n">exit_program</span><span class="p">:</span>
-            <span class="n">exit</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pynucastro_tabular_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pynucastro_rates_dir</span><span class="p">,</span>
+                                                 <span class="s1">&#39;tabular&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">files</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_find_rate_file</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">rate_files</span><span class="p">]</span>
 
         <span class="k">for</span> <span class="n">rf</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
@@ -321,6 +309,29 @@
                 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ERROR: Chapter type unknown for rate chapter </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                     <span class="nb">str</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">chapter</span><span class="p">)))</span>
                 <span class="n">exit</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_find_rate_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ratename</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;locate the Reaclib or tabular rate file given its name.  Return</span>
+<span class="sd">        None if the file cannot be located, otherwise return its path.&quot;&quot;&quot;</span>
+
+        <span class="c1"># check to see if the rate file is in the working dir</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">ratename</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+        <span class="c1"># check to see if the rate file is in pynucastro/library</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pynucastro_rates_dir</span><span class="p">,</span> <span class="n">ratename</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+        <span class="c1"># check to see if the rate file is in pynucastro/library/tabular</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pynucastro_tabular_dir</span><span class="p">,</span> <span class="n">ratename</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+        <span class="c1"># notify user we can&#39;t find the file</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;File </span><span class="si">{}</span><span class="s1"> not found in the working directory, </span><span class="si">{}</span><span class="s1">, or </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">ratename</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pynucastro_rates_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pynucastro_tabular_dir</span><span class="p">))</span>
 
 <div class="viewcode-block" id="RateCollection.get_nuclei"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.get_nuclei">[docs]</a>    <span class="k">def</span> <span class="nf">get_nuclei</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; get all the nuclei that are part of the network &quot;&quot;&quot;</span>
