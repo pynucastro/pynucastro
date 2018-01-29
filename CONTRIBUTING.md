@@ -9,6 +9,9 @@ Creating an issue on github is a good way to request new features,
 file a bug report, or notify us of any difficulties that arise using
 pynucastro.
 
+To request support using pynucastro, please create an issue on the
+pynucastro github and the developers will be happy to assist you.
+
 If you are reporting a bug, please indicate any information necessary to
 reproduce the bug including your version of python.
 
