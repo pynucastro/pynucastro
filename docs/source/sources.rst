@@ -1,7 +1,7 @@
 Third Party Data
 ================
 
-``pynucastro`` incorporates the following publicly-available
+pynucastro incorporates the following publicly-available
 third-party data. Links to this data as well as citations to the
 relevant publications are as follows.
 

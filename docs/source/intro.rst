@@ -1,12 +1,12 @@
-Overview of ``pynucastro``
+Overview of pynucastro
 ==========================
 
-``pynucastro`` is a set of python interfaces to the JINA reaclib
-nuclear reaction rate database.  It is meant for both interactive
-exploration of rates (through Jupyter notebooks) and to create
-reaction networks for use in simulation codes.
+pynucastro is a set of python interfaces nuclear reaction rates
+(currently via the JINA reaclib database).  It is meant for both
+interactive exploration of rates (through Jupyter notebooks) and to
+create reaction networks for use in simulation codes.
 
-The preferred way of importing ``pynucastro`` is as:
+The preferred way of importing pynucastro is as:
 
 .. code-block:: python
 
@@ -42,13 +42,28 @@ The main classes are:
 Usage
 -----
 
-There are two modes of usage for ``pynucastro``.  Within a Jupyter
+There are two modes of usage for pynucastro.  Within a Jupyter
 notebook, one can evaluate the rates and interactively visualize a
 network and see the flow between nuclei as connections colored by the
-rate linking them.  The other usage mode is to use ``pynucastro`` to
-write the righthand side routine for the system of ODEs that must be
-integrated to evolve a reaction network.  One can use this to add
-reaction networks to existing simulation codes, for example.
+rate linking them.  
+
+The other usage mode is to use pynucastro to write the righthand
+side routine for the system of ODEs that must be integrated to evolve
+a reaction network.  A reaction network takes the form:
+
+.. math::
+
+   \frac{dY_i}{dt} = - \sum_{j,k} Y_i Y_j \lambda_{i(j,k)l} + \sum_{j,k} Y_l Y_k \lambda_{l(j,k)i}
+
+where the :math:`\lambda`'s are the rates of destruction and creation
+of species i, represented by the molar fraction :math:`Y_i` (see,
+e.g., `Timmes 1999
+<http://adsabs.harvard.edu/abs/1999ApJS..124..241T>`_).  pynucastro
+will create the righthand sides of this system of ODEs (as python or
+Fortran code) from the list of rates you provide. One can use this to
+add reaction networks to existing simulation codes, for example, the
+`Maestro <https://amrex-astro.github.io/MAESTRO/>`_ and `Castro
+<https://amrex-astro.github.io/Castro/>`_ codes.
 
 An example notebook showing the basic use of these classes is here:
 

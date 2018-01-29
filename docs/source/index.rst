@@ -3,10 +3,10 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-``pynucastro``
+pynucastro
 ==============
 
-``pynucastro`` is a set of python interfaces to nuclear reaction rate
+pynucastro is a set of python interfaces to nuclear reaction rate
 databases (including the JINA reaclib nuclear reaction rate database).
 It is meant for both interactive exploration of rates (through Jupyter
 notebooks) and to create reaction networks for use in simulation

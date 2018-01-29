@@ -1,15 +1,15 @@
 Creating Networks
 =================
 
-``pynucastro`` can output the righthand side functions for ODE integration
+pynucastro can output the righthand side functions for ODE integration
 in Python and Fortran.
 
-For Fortran code generation, ``pynucastro`` offers two options.
+For Fortran code generation, pynucastro offers two options.
 
 - Standalone: Generate right hand side routines and an integration
   driver program using the included VODE integrator in
   ``util/VODE/``. These networks implement only species and energy
-  integration at constant temperature, as ``pynucastro`` does not include
+  integration at constant temperature, as pynucastro does not include
   an equation of state.
 
 - Microphysics: Generate network files to copy directly into the
@@ -45,7 +45,7 @@ particular kind of network you are interested in creating.
   - For standalone Fortran networks, `examples/urca-23_f90/urca.py <https://github.com/pynucastro/pynucastro/blob/master/examples/urca-23_f90/urca.py>`_
   - For StarKiller Microphysics networks, `examples/urca-23_starkiller/urca.py <https://github.com/pynucastro/pynucastro/blob/master/examples/urca-23_starkiller/urca.py>`_
 
-* Run your python script (``pynucastro`` must be in your PYTHONPATH).
+* Run your python script (pynucastro must be in your PYTHONPATH).
 
   .. code-block:: bash
 
@@ -68,7 +68,7 @@ example builds a Fortran 90 network together with a GNU Makefile and
 integration driver program using the included VODE package for ODE
 integration.
 
-* In the steps for all networks above, ``pynucastro`` will create several
+* In the steps for all networks above, pynucastro will create several
   Fortran 90 files as well as a GNU Makefile set up to compile the
   integrator using gfortran. So next do:
 
