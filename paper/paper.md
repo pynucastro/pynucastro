@@ -38,30 +38,32 @@ parameterizations published by the JINA Reaclib project
 Interactive exploration is enabled by a set of classes that provide
 methods to visualize the temperature dependency of a rate, evaluate it
 at a particular temperature, and find the exponent, n, for a simply
-$\rm{T^n}$ parameterization.  From a collection of rates, the flow between
-the nuclei can be visualized interactively using Jupyter widgets.
-These features help both with designing a network for a simulation as
-well as for teaching nuclear astrophysics in the classroom.
+$\rm{T^n}$ parameterization.  From a collection of rates, the flow
+between the nuclei can be visualized interactively using Jupyter
+widgets.  These features help both with designing a network for a
+simulation as well as for teaching nuclear astrophysics in the
+classroom.
 
 After selecting a set of rates for a given problem, pynucastro can
-construct a reaction network from those rates, using SymPy
-[@SymPy.2017] to determine the system of ODEs comprising the
-network. From the symbolic expressions for the ODE right hand side,
-pynucastro can then generate Python or Fortran code to calculate the
-right hand side. Generated Python right hand sides evolve species in
-the reaction network and pynucastro includes a Python example
-integrating the CNO cycle for hydrogen burning.
+construct a reaction network from those rates consisting of Python
+code to calculate the ODE right hand side. Generated Python right hand
+sides evolve species in the reaction network, and pynucastro includes
+a Python example integrating the CNO cycle for hydrogen burning.
 
-For Fortran networks, pynucastro will also generate a routine to
-compute the analytic jacobian matrix for implicit integration. These
-networks incorporate weak, intermediate, and strong reaction rate
-screening for the Reaclib rates [@Screening.Graboske.1973;
-@Screening.Alastuey.1978; @Screening.Itoh.1979]. Fortran networks can
-also incorporate selected weak reaction rate tabulations
+pynucastro can also generate Fortran code implementing reaction
+networks, using SymPy [@SymPy.2017] to determine the system of ODEs
+comprising the network. From the symbolic expressions for the ODE
+right hand side, pynucastro also generates a routine to compute the
+analytic jacobian matrix for implicit integration.
+
+Fortran networks incorporate weak, intermediate, and strong reaction
+rate screening for the Reaclib rates [@Screening.Graboske.1973;
+@Screening.Alastuey.1978; @Screening.Itoh.1979]. These networks can
+also include selected weak reaction rate tabulations
 [@Suzuki.2016]. To calculate energy generation in Fortran networks,
-pynucastro incorporates nuclear binding energies from the Atomic Mass
-Data Center [@AME2016.1; @AME2016.2] and the 2014 CODATA recommended
-values for the fundamental physical constants [@CODATA.2014].
+pynucastro uses nuclear binding energies from the Atomic Mass Data
+Center [@AME2016.1; @AME2016.2] and the 2014 CODATA recommended values
+for the fundamental physical constants [@CODATA.2014].
 
 pynucastro is capable of generating two kinds of Fortran reaction
 networks. The first type is a standalone network with a driver program
@@ -76,7 +78,7 @@ right hand side and jacobian modules that evolve species, temperature,
 and energy generation for the StarKiller Microphysics code. Via
 StarKiller Microphysics, astrophysical simulation codes such as Castro
 and Maestro can directly use pynucastro reaction networks. pynucastro
-includes a carbon-burning network with tabulated $\rm{A=23}$ Urca weak
+includes a carbon burning network with tabulated $\rm{A=23}$ Urca weak
 reactions currently used for research with Maestro
 [@Zingale.astronum.2017].
 
