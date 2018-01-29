@@ -8,6 +8,8 @@ tags:
 - physics
 - visualization
 - code generation
+- integration
+- differential equations
 
 authors:
 - name: Donald E. Willcox
