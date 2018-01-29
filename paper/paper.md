@@ -54,14 +54,14 @@ analytic jacobian matrix for implicit integration.
 pynucastro is capable of generating two kinds of Fortran reaction
 networks. The first is a standalone network with a driver program to
 integrate species and energy generation using the variable-order ODE
-integration package VODE. Secondly, pynucastro can generate a Fortran
-network consisting of right hand side and jacobian modules that evolve
-species, temperature, and energy generation for the StarKiller
-Microphysics code. Both types of Fortran networks incorporate weak,
-intermediate, and strong reaction rate screening. Fortran networks can
-also incorporate selected weak reaction rate tabulations from
-[@Suzuki.2016]. Via StarKiller Microphysics, pynucastro can generate
-reaction networks for astrophysical simulation codes such as Castro
-and MAESTRO [@Zingale.astronum.2017].
+integration package VODE [@VODE.1989]. Secondly, pynucastro can
+generate a Fortran network consisting of right hand side and jacobian
+modules that evolve species, temperature, and energy generation for
+the StarKiller Microphysics code. Both types of Fortran networks
+incorporate weak, intermediate, and strong reaction rate
+screening. Fortran networks can also incorporate selected weak
+reaction rate tabulations [@Suzuki.2016]. Via StarKiller Microphysics,
+pynucastro can generate reaction networks for astrophysical simulation
+codes such as Castro and MAESTRO [@Zingale.astronum.2017].
 
 # References
