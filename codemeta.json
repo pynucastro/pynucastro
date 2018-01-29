@@ -26,5 +26,5 @@
   "keywords": "nuclear, reactions, astrophysics, physics, visualization, code generation, integration, differential equations",
   "license": "BSD",
   "title": "pynucastro",
-  "version": "v1.0.0"
+  "version": "1.0.0"
 }
