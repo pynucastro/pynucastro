@@ -79,7 +79,7 @@ and energy generation for the StarKiller Microphysics code. Via
 StarKiller Microphysics, astrophysical simulation codes such as Castro
 and Maestro can directly use pynucastro reaction networks. pynucastro
 includes a carbon burning network with tabulated $\rm{A=23}$ Urca weak
-reactions currently used for research with Maestro
-[@Zingale.astronum.2017].
+reactions currently used for studying white dwarf convection with
+Maestro [@Zingale.astronum.2017].
 
 # References
