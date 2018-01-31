@@ -89,6 +89,20 @@ integration.
 * The integration results will be stored in a text file named by
   default ``integration_history.dat``
 
+Notes on the build system:
+
+* If you would like to compile with debugging symbols, do:
+
+  .. code-block:: bash
+
+	 $ make NDEBUG=
+
+* To remove the executable and object files produced during compilation, do:
+
+  .. code-block:: bash
+
+     $ make realclean
+
 StarKiller Microphysics network
 -------------------------------
 

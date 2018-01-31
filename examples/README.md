@@ -72,6 +72,20 @@ $ main.Linux.gfortran.exe inputs_integration
 * The integration results will be stored in a text file named by
   default, `integration_history.dat`
 
+Notes on the build system:
+
+* If you would like to compile with debugging symbols, do:
+
+```
+$ make NDEBUG=
+```
+
+* To remove the executable and object files produced during compilation, do:
+
+```
+$ make realclean
+```
+
 ## StarKiller Microphysics network
 
 The `urca-23_starkiller` example builds the right hand side, jacobian,
