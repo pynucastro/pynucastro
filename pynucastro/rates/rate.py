@@ -121,8 +121,9 @@ class Nucleus(object):
         else:
             e = re.match(r"([a-zA-Z]*)(\d*)", name)
             self.el = e.group(1).title()  # chemical symbol
-
+            assert(self.el)
             self.A = int(e.group(2))
+            assert(self.A >= 0)
             self.short_spec_name = name
 
         # atomic number comes from periodtable
@@ -155,6 +156,47 @@ class Nucleus(object):
         else:
             return self.A < other.A
 
+class LibraryFile(object):
+    """ a single file containing one or many Reaclib rates,
+    possibly containing multiple sets per rate. """
+
+    def __init__(self, libfile):
+        self.library_file = libfile
+        self.rate_list = []
+        self.library_source_lines = []
+
+        # loop through library file, read lines
+        try:
+            flib = open(self.library_file, 'r')
+        except:
+            print('Could not open file {}'.format(self.library_file))
+            raise
+        for line in flib:
+            ls = line.strip()
+            if ls:
+                self.library_source_lines.append(ls)
+        flib.close()
+
+        # identify distinct rates from library lines
+        chapter = 0
+        for i, line in enumerate(self.library_source_lines):
+            # detect chapter if it's supplied
+            try:
+                chapter = int(line)
+                continue
+            except:
+                if line == 't' or line == 'T':
+                    chapter = 't'
+                    continue
+            # line was not a chapter, so see if it contains a nuclide
+            ls = line.split()
+            for x in ls:
+                # is x a specification for a nucleus?
+                
+
+        # Send rate text to the Rate object (needs modding) to create the Rate
+        # Return a list of Rate objects
+
 class Rate(object):
     """ a single Reaclib rate, which can be composed of multiple sets """
 
@@ -182,6 +224,7 @@ class Rate(object):
         # read in the file, parse the different sets and store them as
         # SingleSet objects in sets[]
         f = open(self.rfile_path, "r")
+
         lines = f.readlines()
 
         self.original_source = "".join(lines)
