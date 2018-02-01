@@ -129,7 +129,11 @@ class Nucleus(object):
         # atomic number comes from periodtable
         i = elements.isotope("{}-{}".format(self.A, self.el))
         self.Z = i.number
+        assert(type(self.Z)==int)
+        assert(self.Z >= 0)
         self.N = self.A - self.Z
+        assert(type(self.N)==int)
+        assert(self.N >= 0)
 
         # long name
         if i.name == 'neutron':
@@ -161,25 +165,25 @@ class LibraryFile(object):
     possibly containing multiple sets per rate. """
 
     def __init__(self, libfile):
-        self.library_file = libfile
-        self.rate_list = []
-        self.library_source_lines = []
+        self._library_file = libfile
+        self._rate_list = []
+        self._library_source_lines = []
 
         # loop through library file, read lines
         try:
-            flib = open(self.library_file, 'r')
+            flib = open(self._library_file, 'r')
         except:
-            print('Could not open file {}'.format(self.library_file))
+            print('Could not open file {}'.format(self._library_file))
             raise
         for line in flib:
             ls = line.strip()
             if ls:
-                self.library_source_lines.append(ls)
+                self._library_source_lines.append(ls)
         flib.close()
 
         # identify distinct rates from library lines
         chapter = 0
-        for i, line in enumerate(self.library_source_lines):
+        for i, line in enumerate(self._library_source_lines):
             # detect chapter if it's supplied
             try:
                 chapter = int(line)
@@ -190,16 +194,34 @@ class LibraryFile(object):
                     continue
             # line was not a chapter, so see if it contains a nuclide
             ls = line.split()
-            for x in ls:
-                # is x a specification for a nucleus?
-                
+            try:
+                scratch = Nucleus(ls[0])
+            except:
+                # ls[0] is not a Nucleus, so line must be a Set line
+                # do nothing, continue to the next line
+                continue
+            # ls[0] is a Nucleus, so create a Rate from this and
+            # the following two lines.
+            try:
+                #NEED TO CONVERT STRINGS INTO A STRINGIO OBJECT?
+                self._rate_list.append(Rate(self._library_source_lines[i:i+3],
+                                           chapter=chapter))
+            except:
+                print('Could not extract Set from {}, line {} and following.'.format(
+                    self._library_file, i))
+                raise
 
-        # Send rate text to the Rate object (needs modding) to create the Rate
-        # Return a list of Rate objects
+    def rates(self):
+        """ return the rates in this library file. """
+        return self._rate_list[:]
+
+    def text(self):
+        """ return the source text of this library file. """
+        return '\n'.join(self._library_source_lines)
 
 class Rate(object):
     """ a single Reaclib rate, which can be composed of multiple sets """
-
+    #NEED TO REVISE API FOR LIBRARY
     def __init__(self, rfile):
         self.rfile_path = rfile
         self.rfile = os.path.basename(rfile)
