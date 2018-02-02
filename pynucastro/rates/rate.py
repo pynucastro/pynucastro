@@ -16,12 +16,13 @@ def list_known_rates():
     for _, _, filenames in os.walk(lib_path):
         for f in filenames:
             try:
-                r = Rate(f)
+                lib = Library(f)
             except:
                 continue
             else:
-                print("{:32} : {}".format(f, r))
-
+                print("{:32} : ")
+                for r in lib.get_rates():
+                    print("                                 : {}".format(r))
 
 class Tfactors(object):
     """ precompute temperature factors for speed """
@@ -92,6 +93,10 @@ class SingleSet(object):
         string += ")"
         return string
 
+class UnsupportedNucleus(BaseException):
+    def __init__(self):
+        return
+
 class Nucleus(object):
     """
     a nucleus that participates in a reaction -- we store it in a
@@ -123,13 +128,37 @@ class Nucleus(object):
             e = re.match(r"([a-zA-Z]*)(\d*)", name)
             self.el = e.group(1).title()  # chemical symbol
             assert(self.el)
-            self.A = int(e.group(2))
+            try:
+                self.A = int(e.group(2))
+            except:
+                if (name.strip().lower() == 'al-6' or
+                    name.strip().lower() == 'al*6'):
+                    raise UnsupportedNucleus()
+                else:
+                    raise
             assert(self.A >= 0)
             self.short_spec_name = name
 
         # atomic number comes from periodtable
-        i = elements.isotope("{}-{}".format(self.A, self.el))
-        self.Z = i.number
+        number = None
+        try:
+            i = elements.isotope("{}-{}".format(self.A, self.el))
+            number = i.number
+            name = i.name
+        except:
+            # If we couldn't find the nuclide in the periodic table,
+            # try isotopes with different mass number.
+            for atest in range(1, 2*self.A):
+                try:
+                    itest = elements.isotope("{}-{}".format(atest, self.el))
+                except:
+                    continue
+                else:
+                    number = itest.number
+                    name = itest.name
+                    break
+
+        self.Z = number
         assert(type(self.Z)==int)
         assert(self.Z >= 0)
         self.N = self.A - self.Z
@@ -137,10 +166,10 @@ class Nucleus(object):
         assert(self.N >= 0)
 
         # long name
-        if i.name == 'neutron':
-            self.spec_name = i.name
+        if name == 'neutron':
+            self.spec_name = name
         else:
-            self.spec_name = '{}-{}'.format(i.name, self.A)
+            self.spec_name = '{}-{}'.format(name, self.A)
 
         # latex formatted style
         self.pretty = r"{{}}^{{{}}}\mathrm{{{}}}".format(self.A, self.el)
@@ -177,35 +206,37 @@ class Library(object):
             print('Could not open file {}'.format(self._library_file))
             raise
         for line in flib:
-            ls = line.strip()
+            ls = line.rstrip()
             if ls:
                 self._library_source_lines.append(ls)
         flib.close()
 
         # identify distinct rates from library lines
-        chapter = None
-        for i, line in enumerate(self._library_source_lines):
-            # detect chapter if it's supplied
+        while True:
+            if len(self._library_source_lines) == 0:
+                break
+            line = self._library_source_lines.pop(0)
+            chapter = None
             try:
                 chapter = int(line)
             except:
                 if line == 't' or line == 'T':
                     chapter = 't'
-                    continue
-            else:
-                continue
-            # line was not a chapter, so see if it can be parsed as a single Set
-            try:
-                assert(chapter)
-            except:
-                print('Could not identify chapter in {}'.format(self._library_file))
-                raise
-            sio = io.StringIO('\n'.join(['{}'.format(chapter)] +
-                                        self._library_source_lines[i:i+3]))
-            try:
-                self._rate_list.append(Rate(sio))
-            except:
-                pass
+            rlines = None
+            if chapter == 't':
+                rlines = [self._library_source_lines.pop(0) for i in range(5)]
+            elif type(chapter) == int:
+                rlines = [self._library_source_lines.pop(0) for i in range(3)]
+            if rlines:
+                sio = io.StringIO('\n'.join(['{}'.format(chapter)] +
+                                            rlines))
+                print(sio.getvalue())
+                try:
+                    self._rate_list.append(Rate(sio))
+                except UnsupportedNucleus:
+                    pass
+                except:
+                    raise
 
         # gather Sets into unique Rate objects
         #self._rate_list = self._consolidate_rates(self._rate_list)
@@ -326,7 +357,7 @@ class Rate(object):
                 self.reactants.append(Nucleus(f[0]))
                 self.products.append(Nucleus(f[1]))
             except:
-                print('Nucleus objects could not be identified in {}'.format(self.original_source))
+                print('Nucleus objects not be identified in {}'.format(self.original_source))
                 raise
 
             self.table_file = s2.strip()
@@ -348,8 +379,17 @@ class Rate(object):
                 # first line of a set has up to 6 nuclei, then the label,
                 # and finally the Q value
                 f = s1.split()
-                Q = f.pop()
-                label = f.pop()
+                f, Q = s1.rsplit(maxsplit=1)
+                f, label = f.rsplit(maxsplit=1)
+                f = f.rstrip()
+                f = f[5:]
+                fnuc = []
+                for i in range(0,len(f),5):
+                    x = f[i:i+5].strip()
+                    if x:
+                        fnuc.append(x)
+                f = fnuc
+                print(f)
 
                 if first:
                     self.Q = Q
@@ -418,7 +458,7 @@ class Rate(object):
                             print('Chapter could not be identified in {}'.format(self.original_source))
                             assert(type(self.chapter) == int and self.chapter <= 11)
                     except:
-                        print('Error parsing Rate from {}'.format(self.original_source))
+                        # print('Error parsing Rate from {}'.format(self.original_source))
                         raise
 
                     first = 0
