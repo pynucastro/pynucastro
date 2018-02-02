@@ -230,7 +230,7 @@ class Library(object):
             if rlines:
                 sio = io.StringIO('\n'.join(['{}'.format(chapter)] +
                                             rlines))
-                print(sio.getvalue())
+                # print(sio.getvalue())
                 try:
                     self._rate_list.append(Rate(sio))
                 except UnsupportedNucleus:
@@ -389,7 +389,6 @@ class Rate(object):
                     if x:
                         fnuc.append(x)
                 f = fnuc
-                print(f)
 
                 if first:
                     self.Q = Q
