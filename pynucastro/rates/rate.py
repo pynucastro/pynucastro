@@ -2,6 +2,7 @@
 
 import os
 import re
+import io
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -160,7 +161,7 @@ class Nucleus(object):
         else:
             return self.A < other.A
 
-class LibraryFile(object):
+class Library(object):
     """ a single file containing one or many Reaclib rates,
     possibly containing multiple sets per rate. """
 
@@ -182,72 +183,125 @@ class LibraryFile(object):
         flib.close()
 
         # identify distinct rates from library lines
-        chapter = 0
+        chapter = None
         for i, line in enumerate(self._library_source_lines):
             # detect chapter if it's supplied
             try:
                 chapter = int(line)
-                continue
             except:
                 if line == 't' or line == 'T':
                     chapter = 't'
                     continue
-            # line was not a chapter, so see if it contains a nuclide
-            ls = line.split()
-            try:
-                scratch = Nucleus(ls[0])
-            except:
-                # ls[0] is not a Nucleus, so line must be a Set line
-                # do nothing, continue to the next line
+            else:
                 continue
-            # ls[0] is a Nucleus, so create a Rate from this and
-            # the following two lines.
+            # line was not a chapter, so see if it can be parsed as a single Set
             try:
-                #NEED TO CONVERT STRINGS INTO A STRINGIO OBJECT?
-                self._rate_list.append(Rate(self._library_source_lines[i:i+3],
-                                           chapter=chapter))
+                assert(chapter)
             except:
-                print('Could not extract Set from {}, line {} and following.'.format(
-                    self._library_file, i))
+                print('Could not identify chapter in {}'.format(self._library_file))
                 raise
+            sio = io.StringIO('\n'.join(['{}'.format(chapter)] +
+                                        self._library_source_lines[i:i+3]))
+            try:
+                self._rate_list.append(Rate(sio))
+            except:
+                pass
 
-    def rates(self):
+        # gather Sets into unique Rate objects
+        #self._rate_list = self._consolidate_rates(self._rate_list)
+
+    def get_rates(self):
         """ return the rates in this library file. """
         return self._rate_list[:]
 
-    def text(self):
+    def get_text(self):
         """ return the source text of this library file. """
         return '\n'.join(self._library_source_lines)
 
+    def _consolidate_rates(self, rates=[]):
+        """ Detect multiple rates for the same reaction and consolidate them
+        into a single rate.  Returns a list of combined rates. """
+        scratch = []
+        for i, irate in enumerate(rates):
+            for j, jrate in enumerate(rates):
+                if i != j:
+                    try:
+                        new_rate = irate + jrate
+                    except:
+                        continue
+                    else:
+                        scratch.append(new_rate)
+                        for k, krate in enumerate(rates):
+                            if i != k and j != k:
+                                scratch.append(krate)
+                        scratch = self.consolidate_rates(scratch)
+                        return scratch
+        return rates
+
 class Rate(object):
     """ a single Reaclib rate, which can be composed of multiple sets """
-    #NEED TO REVISE API FOR LIBRARY
-    def __init__(self, rfile):
-        self.rfile_path = rfile
-        self.rfile = os.path.basename(rfile)
-        self.chapter = None    # the Reaclib chapter for this reaction
-        self.original_source = None   # the contents of the original rate file
-        self.reactants = []
-        self.products = []
-        self.sets = []
+    def __init__(self, rfile=None, chapter=None, original_source=None,
+                 reactants=[], products=[], sets=[], Q=None):
+        """ rfile can be either a string specifying the path to a rate file or
+        an io.StringIO object from which to read rate information. """
 
-        # Tells if this rate is eligible for screening
-        # using screenz.f90 provided by StarKiller Microphysics.
-        # If not eligible for screening, set to None
-        # If eligible for screening, then
-        # Rate.ion_screen is a 2-element list of Nucleus objects for screening
-        self.ion_screen = None
+        if type(rfile) == io.StringIO:
+            self.rfile_path = None
+            self.rfile = None
+        elif type(rfile) == str:
+            self.rfile_path = rfile
+            self.rfile = os.path.basename(rfile)
 
-        idx = self.rfile.rfind("-")
-        self.fname = self.rfile[:idx].replace("--", "-").replace("-", "_")
+        self.chapter = chapter    # the Reaclib chapter for this reaction
+        self.original_source = original_source   # the contents of the original rate file
+        self.reactants = reactants
+        self.products = products
+        self.sets = sets
+        self.Q = Q
 
-        self.Q = 0.0
+        if type(rfile) == str:
+            idx = self.rfile.rfind("-")
+            self.fname = self.rfile[:idx].replace("--", "-").replace("-", "_")
+            # read in the file, parse the different sets and store them as
+            # SingleSet objects in sets[]
+            f = open(self.rfile_path, "r")
+        elif type(rfile) == io.StringIO:
+            # Set f to the io.StringIO object
+            f = rfile
+        else:
+            f = None
 
-        # read in the file, parse the different sets and store them as
-        # SingleSet objects in sets[]
-        f = open(self.rfile_path, "r")
+        if f:
+            self._read_from_file(f)
+            f.close()
 
+        self._set_rhs_properties()
+        self._set_screening()
+        self._set_print_representation()
+
+    def __repr__(self):
+        return self.string
+
+    def __add__(self, other):
+        """Combine the sets of two Rate objects if they describe the same
+           reaction. Must be Reaclib rates."""
+        assert(self.reactants == other.reactants)
+        assert(self.products == other.products)
+        assert(self.chapter == other.chapter)
+        assert(type(self.chapter) == int)
+        new_rate = Rate(chapter=self.chapter,
+                        original_source='\n'.join(self.original_source,
+                                                  other.original_source),
+                        reactants=self.reactants,
+                        products=self.products,
+                        sets=self.sets + other.sets,
+                        Q=self.Q)
+        return new_rate
+
+    def _read_from_file(self, f):
+        """ given a file object, read rate data from the file. """
         lines = f.readlines()
+        f.close()
 
         self.original_source = "".join(lines)
 
@@ -268,8 +322,12 @@ class Rate(object):
             s4 = set_lines.pop(0)
             s5 = set_lines.pop(0)
             f = s1.split()
-            self.reactants.append(Nucleus(f[0]))
-            self.products.append(Nucleus(f[1]))
+            try:
+                self.reactants.append(Nucleus(f[0]))
+                self.products.append(Nucleus(f[1]))
+            except:
+                print('Nucleus objects could not be identified in {}'.format(self.original_source))
+                raise
 
             self.table_file = s2.strip()
             self.table_header_lines = int(s3.strip())
@@ -296,65 +354,72 @@ class Rate(object):
                 if first:
                     self.Q = Q
 
-                    # what's left are the nuclei -- their interpretation
-                    # depends on the chapter
-                    if self.chapter == 1:
-                        # e1 -> e2
-                        self.reactants.append(Nucleus(f[0]))
-                        self.products.append(Nucleus(f[1]))
+                    try:
+                        # what's left are the nuclei -- their interpretation
+                        # depends on the chapter
+                        if self.chapter == 1:
+                            # e1 -> e2
+                            self.reactants.append(Nucleus(f[0]))
+                            self.products.append(Nucleus(f[1]))
 
-                    elif self.chapter == 2:
-                        # e1 -> e2 + e3
-                        self.reactants.append(Nucleus(f[0]))
-                        self.products += [Nucleus(f[1]), Nucleus(f[2])]
+                        elif self.chapter == 2:
+                            # e1 -> e2 + e3
+                            self.reactants.append(Nucleus(f[0]))
+                            self.products += [Nucleus(f[1]), Nucleus(f[2])]
 
-                    elif self.chapter == 3:
-                        # e1 -> e2 + e3 + e4
-                        self.reactants.append(Nucleus(f[0]))
-                        self.products += [Nucleus(f[1]), Nucleus(f[2]), Nucleus(f[3])]
+                        elif self.chapter == 3:
+                            # e1 -> e2 + e3 + e4
+                            self.reactants.append(Nucleus(f[0]))
+                            self.products += [Nucleus(f[1]), Nucleus(f[2]), Nucleus(f[3])]
 
-                    elif self.chapter == 4:
-                        # e1 + e2 -> e3
-                        self.reactants += [Nucleus(f[0]), Nucleus(f[1])]
-                        self.products.append(Nucleus(f[2]))
+                        elif self.chapter == 4:
+                            # e1 + e2 -> e3
+                            self.reactants += [Nucleus(f[0]), Nucleus(f[1])]
+                            self.products.append(Nucleus(f[2]))
 
-                    elif self.chapter == 5:
-                        # e1 + e2 -> e3 + e4
-                        self.reactants += [Nucleus(f[0]), Nucleus(f[1])]
-                        self.products += [Nucleus(f[2]), Nucleus(f[3])]
+                        elif self.chapter == 5:
+                            # e1 + e2 -> e3 + e4
+                            self.reactants += [Nucleus(f[0]), Nucleus(f[1])]
+                            self.products += [Nucleus(f[2]), Nucleus(f[3])]
 
-                    elif self.chapter == 6:
-                        # e1 + e2 -> e3 + e4 + e5
-                        self.reactants += [Nucleus(f[0]), Nucleus(f[1])]
-                        self.products += [Nucleus(f[2]), Nucleus(f[3]), Nucleus(f[4])]
+                        elif self.chapter == 6:
+                            # e1 + e2 -> e3 + e4 + e5
+                            self.reactants += [Nucleus(f[0]), Nucleus(f[1])]
+                            self.products += [Nucleus(f[2]), Nucleus(f[3]), Nucleus(f[4])]
 
-                    elif self.chapter == 7:
-                        # e1 + e2 -> e3 + e4 + e5 + e6
-                        self.reactants += [Nucleus(f[0]), Nucleus(f[1])]
-                        self.products += [Nucleus(f[2]), Nucleus(f[3]),
-                                          Nucleus(f[4]), Nucleus(f[5])]
+                        elif self.chapter == 7:
+                            # e1 + e2 -> e3 + e4 + e5 + e6
+                            self.reactants += [Nucleus(f[0]), Nucleus(f[1])]
+                            self.products += [Nucleus(f[2]), Nucleus(f[3]),
+                                              Nucleus(f[4]), Nucleus(f[5])]
 
-                    elif self.chapter == 8:
-                        # e1 + e2 + e3 -> e4
-                        self.reactants += [Nucleus(f[0]), Nucleus(f[1]), Nucleus(f[2])]
-                        self.products.append(Nucleus(f[3]))
+                        elif self.chapter == 8:
+                            # e1 + e2 + e3 -> e4
+                            self.reactants += [Nucleus(f[0]), Nucleus(f[1]), Nucleus(f[2])]
+                            self.products.append(Nucleus(f[3]))
 
-                    elif self.chapter == 9:
-                        # e1 + e2 + e3 -> e4 + e5
-                        self.reactants += [Nucleus(f[0]), Nucleus(f[1]), Nucleus(f[2])]
-                        self.products += [Nucleus(f[3]), Nucleus(f[4])]
+                        elif self.chapter == 9:
+                            # e1 + e2 + e3 -> e4 + e5
+                            self.reactants += [Nucleus(f[0]), Nucleus(f[1]), Nucleus(f[2])]
+                            self.products += [Nucleus(f[3]), Nucleus(f[4])]
 
-                    elif self.chapter == 10:
-                        # e1 + e2 + e3 + e4 -> e5 + e6
-                        self.reactants += [Nucleus(f[0]), Nucleus(f[1]),
-                                           Nucleus(f[2]), Nucleus(f[3])]
-                        self.products += [Nucleus(f[4]), Nucleus(f[5])]
+                        elif self.chapter == 10:
+                            # e1 + e2 + e3 + e4 -> e5 + e6
+                            self.reactants += [Nucleus(f[0]), Nucleus(f[1]),
+                                               Nucleus(f[2]), Nucleus(f[3])]
+                            self.products += [Nucleus(f[4]), Nucleus(f[5])]
 
-                    elif self.chapter == 11:
-                        # e1 -> e2 + e3 + e4 + e5
-                        self.reactants.append(Nucleus(f[0]))
-                        self.products += [Nucleus(f[1]), Nucleus(f[2]),
-                                          Nucleus(f[3]), Nucleus(f[4])]
+                        elif self.chapter == 11:
+                            # e1 -> e2 + e3 + e4 + e5
+                            self.reactants.append(Nucleus(f[0]))
+                            self.products += [Nucleus(f[1]), Nucleus(f[2]),
+                                              Nucleus(f[3]), Nucleus(f[4])]
+                        else:
+                            print('Chapter could not be identified in {}'.format(self.original_source))
+                            assert(type(self.chapter) == int and self.chapter <= 11)
+                    except:
+                        print('Error parsing Rate from {}'.format(self.original_source))
+                        raise
 
                     first = 0
 
@@ -368,7 +433,8 @@ class Rate(object):
                 a = [float(e) for e in a if not e.strip() == ""]
                 self.sets.append(SingleSet(a, label=label))
 
-        # compute self.prefactor and self.dens_exp from the reactants
+    def _set_rhs_properties(self):
+        """ compute statistical prefactor and density exponent from the reactants. """
         self.prefactor = 1.0  # this is 1/2 for rates like a + a (double counting)
         self.inv_prefactor = 1
         for r in set(self.reactants):
@@ -376,7 +442,14 @@ class Rate(object):
         self.prefactor = self.prefactor/float(self.inv_prefactor)
         self.dens_exp = len(self.reactants)-1
 
-        # determine if this rate is eligible for screening
+    def _set_screening(self):
+        """ determine if this rate is eligible for screening and the nuclei to use. """
+        # Tells if this rate is eligible for screening
+        # using screenz.f90 provided by StarKiller Microphysics.
+        # If not eligible for screening, set to None
+        # If eligible for screening, then
+        # Rate.ion_screen is a 2-element list of Nucleus objects for screening
+        self.ion_screen = []
         nucz = []
         for parent in self.reactants:
             if parent.Z != 0:
@@ -387,6 +460,8 @@ class Rate(object):
             self.ion_screen.append(nucz[0])
             self.ion_screen.append(nucz[1])
 
+    def _set_print_representation(self):
+        """ compose the string representations of this Rate. """
         self.string = ""
         self.pretty_string = r"$"
 
@@ -416,9 +491,6 @@ class Rate(object):
                 self.pretty_string += r" + "
 
         self.pretty_string += r"$"
-
-    def __repr__(self):
-        return self.string
 
     def eval(self, T):
         """ evauate the reaction rate for temperature T """
