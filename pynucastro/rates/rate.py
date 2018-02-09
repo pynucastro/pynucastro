@@ -5,8 +5,9 @@ import re
 import io
 import numpy as np
 import matplotlib.pyplot as plt
+import collections
 
-from periodictable import elements
+from pynucastro.nucdata import Element, UnidentifiedElement, PeriodicTable
 
 def list_known_rates():
     """ list the rates found in the library """
@@ -123,7 +124,11 @@ class Nucleus(object):
         elif name == "n":
             self.el = "n"
             self.A = 1
+            self.Z = 0
+            self.N = 1
             self.short_spec_name = "n"
+            self.spec_name = "neutron"
+            self.pretty = r"\mathrm{{{}}}".format(self.el)            
         else:
             e = re.match(r"([a-zA-Z]*)(\d*)", name)
             self.el = e.group(1).title()  # chemical symbol
@@ -139,40 +144,28 @@ class Nucleus(object):
             assert(self.A >= 0)
             self.short_spec_name = name
 
-        # atomic number comes from periodtable
-        number = None
-        try:
-            i = elements.isotope("{}-{}".format(self.A, self.el))
-            number = i.number
-            name = i.name
-        except:
-            # If we couldn't find the nuclide in the periodic table,
-            # try isotopes with different mass number.
-            for atest in range(1, 2*self.A):
-                try:
-                    itest = elements.isotope("{}-{}".format(atest, self.el))
-                except:
-                    continue
-                else:
-                    number = itest.number
-                    name = itest.name
-                    break
+        # atomic number comes from periodictable
+        if name != "n":
+            try:
+                i = PeriodicTable.lookup_abbreviation(self.el)
+            except UnidentifiedElement:
+                print('Could not identify element: {}'.format(self.el))
+                raise
+            except:
+                raise
+            else:
+                self.Z = i.Z
+                assert(type(self.Z)==int)
+                assert(self.Z >= 0)
+                self.N = self.A - self.Z
+                assert(type(self.N)==int)
+                assert(self.N >= 0)
 
-        self.Z = number
-        assert(type(self.Z)==int)
-        assert(self.Z >= 0)
-        self.N = self.A - self.Z
-        assert(type(self.N)==int)
-        assert(self.N >= 0)
+                # long name
+                self.spec_name = '{}-{}'.format(i.name, self.A)
 
-        # long name
-        if name == 'neutron':
-            self.spec_name = name
-        else:
-            self.spec_name = '{}-{}'.format(name, self.A)
-
-        # latex formatted style
-        self.pretty = r"{{}}^{{{}}}\mathrm{{{}}}".format(self.A, self.el)
+                # latex formatted style
+                self.pretty = r"{{}}^{{{}}}\mathrm{{{}}}".format(self.A, self.el)
 
     def __repr__(self):
         return self.raw
@@ -196,7 +189,7 @@ class Library(object):
 
     def __init__(self, libfile):
         self._library_file = libfile
-        self._rate_list = []
+        self._rates = {}
         self._library_source_lines = []
 
         # loop through library file, read lines
@@ -206,7 +199,7 @@ class Library(object):
             print('Could not open file {}'.format(self._library_file))
             raise
         for line in flib:
-            ls = line.rstrip()
+            ls = line.rstrip('\n')
             if ls:
                 self._library_source_lines.append(ls)
         flib.close()
@@ -232,47 +225,147 @@ class Library(object):
                                             rlines))
                 # print(sio.getvalue())
                 try:
-                    self._rate_list.append(Rate(sio))
+                    r = Rate(sio)
                 except UnsupportedNucleus:
                     pass
                 except:
                     raise
-
-        # gather Sets into unique Rate objects
-        #self._rate_list = self._consolidate_rates(self._rate_list)
-
-    def get_rates(self):
-        """ return the rates in this library file. """
-        return self._rate_list[:]
-
-    def get_text(self):
-        """ return the source text of this library file. """
-        return '\n'.join(self._library_source_lines)
-
-    def _consolidate_rates(self, rates=[]):
-        """ Detect multiple rates for the same reaction and consolidate them
-        into a single rate.  Returns a list of combined rates. """
-        scratch = []
-        for i, irate in enumerate(rates):
-            for j, jrate in enumerate(rates):
-                if i != j:
-                    try:
-                        new_rate = irate + jrate
-                    except:
-                        continue
+                else:
+                    id = r.get_rate_id()
+                    if id in self._rates:
+                        self._rates[id] = self._rates[id] + r
                     else:
-                        scratch.append(new_rate)
-                        for k, krate in enumerate(rates):
-                            if i != k and j != k:
-                                scratch.append(krate)
-                        scratch = self.consolidate_rates(scratch)
-                        return scratch
-        return rates
+                        self._rates[id] = r
+
+    def rates(self):
+        """ Generator yielding the rates in this library. """
+        for id, r in self._rates.items():
+            yield r
+
+    def filter(self, filter_spec):
+        """
+        filter_specs should be an iterable of RateFilter objects or a
+        single RateFilter object. Library.filter yields all rates
+        matching any RateFilter in filter_specs.  If RateFilter.exact,
+        then return rates with exactly the reactants or products
+        passed in as arguments.
+        """
+        if type(filter_spec) == RateFilter:
+            filter_specifications = [filter_spec]
+        else:
+            try:
+                iter(filter_spec)
+            except:
+                raise
+            else:
+                filter_specifications = filter_spec
+        for r in self.rates():
+            for f in filter_specifications:
+                if f.matches(r):
+                    yield r
+
+class RateFilter(object):
+    def __init__(self, reactants=None, products=None, exact=True,
+                 reverse=None, min_reactants=None, max_reactants=None,
+                 min_products=None, max_products=None):
+        self.reactants = []
+        self.products = []
+        self.exact = exact
+        self.reverse = reverse
+        self.min_reactants = min_reactants
+        self.min_products = min_products        
+        self.max_reactants = max_reactants
+        self.max_products = max_products
+
+        if reactants:
+            self.reactants = [self._cast_nucleus(r) for r in reactants]
+        if products:
+            self.products = [self._cast_nucleus(r) for r in products]
+
+    @staticmethod
+    def _cast_nucleus(r):
+        """ Make sure r is of type Nucleus. """
+        if not type(r)==Nucleus:
+            try:
+                rnuc = Nucleus(r)
+            except:
+                raise
+            else:
+                return rnuc
+        else:
+            return r
+
+    @staticmethod
+    def _contents_equal(a, b):
+        """
+        Return True if the contents of a and b exactly match, ignoring ordering.
+        If either a or b is None, return True only if both a and b are None.
+        """
+        if a and b:
+            return collections.Counter(a) == collections.Counter(b)
+        else:
+            return (not a) and (not b)
+
+    @staticmethod
+    def _compare_nuclides(test, reference, exact=True):
+        """
+        test and reference should be iterables of Nucleus objects.
+        If an exact match is desired, test and reference should exactly match, ignoring ordering.
+        Otherwise, return True only if every element of test appears at least one time in reference.
+        """
+        matches = True
+        if exact:
+            matches = RateFilter._contents_equal(test, reference)
+        else:
+            for nuc in test:
+                if not (nuc in reference):
+                    matches = False
+                    break
+        return matches
+
+    def matches(self, r):
+        """ Given a Rate r, see if it matches this RateFilter. """
+        matches_reactants = True
+        matches_products = True
+        matches_reverse = True
+        matches_min_reactants = True
+        matches_min_products = True        
+        matches_max_reactants = True
+        matches_max_products = True
+        if self.reactants:
+            matches_reactants = self._compare_nuclides(self.reactants, r.reactants, self.exact)
+        if self.products:
+            matches_products = self._compare_nuclides(self.products, r.products, self.exact)
+        if type(self.reverse)==type(True):
+            matches_reverse = self.reverse == r.reverse
+        if type(self.min_reactants)==int:
+            matches_min_reactants = len(r.reactants) >= self.min_reactants
+        if type(self.min_products)==int:
+            matches_min_products = len(r.products) >= self.min_products
+        if type(self.max_reactants)==int:
+            matches_max_reactants = len(r.reactants) <= self.max_reactants
+        if type(self.max_products)==int:
+            matches_max_products = len(r.products) <= self.max_products            
+        return (matches_reactants and matches_products and matches_reverse and
+                matches_min_reactants and matches_max_reactants and
+                matches_min_products and matches_max_products)
+
+    def invert(self):
+        """ Return a RateFilter matching the inverse rate. """
+        newfilter = RateFilter(reactants=self.products,
+                               products=self.reactants,
+                               exact=self.exact,
+                               reverse=self.reverse,
+                               min_reactants=self.min_products,
+                               max_reactants=self.max_products,
+                               min_products=self.min_reactants,
+                               max_products=self.max_reactants)
+        return newfilter
 
 class Rate(object):
     """ a single Reaclib rate, which can be composed of multiple sets """
     def __init__(self, rfile=None, chapter=None, original_source=None,
-                 reactants=[], products=[], sets=[], Q=None):
+                 reactants=None, products=None, sets=None, labelprops=None, Q=None):
         """ rfile can be either a string specifying the path to a rate file or
         an io.StringIO object from which to read rate information. """
 
@@ -285,9 +378,24 @@ class Rate(object):
 
         self.chapter = chapter    # the Reaclib chapter for this reaction
         self.original_source = original_source   # the contents of the original rate file
-        self.reactants = reactants
-        self.products = products
-        self.sets = sets
+
+        if reactants:
+            self.reactants = reactants
+        else:
+            self.reactants = []
+
+        if products:
+            self.products = products
+        else:
+            self.products = []
+
+        if sets:
+            self.sets = sets
+        else:
+            self.sets = []
+
+        self.labelprops = labelprops
+
         self.Q = Q
 
         if type(rfile) == str:
@@ -305,6 +413,8 @@ class Rate(object):
         if f:
             self._read_from_file(f)
             f.close()
+        else:
+            self._set_label_properties()
 
         self._set_rhs_properties()
         self._set_screening()
@@ -320,14 +430,45 @@ class Rate(object):
         assert(self.products == other.products)
         assert(self.chapter == other.chapter)
         assert(type(self.chapter) == int)
+        assert(self.label == other.label)
+        assert(self.weak == other.weak)
+        assert(self.tabular == other.tabular)
+        assert(self.reverse == other.reverse)
+        labelprops = self.labelprops[:]
+        if self.resonant != other.resonant:
+            llp = list(labelprops)
+            llp[4] = 'c'
+            labelprops = ''.join(llp)
         new_rate = Rate(chapter=self.chapter,
-                        original_source='\n'.join(self.original_source,
-                                                  other.original_source),
+                        original_source='\n'.join([self.original_source,
+                                                   other.original_source]),
                         reactants=self.reactants,
                         products=self.products,
                         sets=self.sets + other.sets,
+                        labelprops=labelprops,
                         Q=self.Q)
         return new_rate
+
+    def _set_label_properties(self):
+        """ Set label and flags indicating Rate is resonant, weak, or reverse. """
+        assert(type(self.labelprops)==str)
+        try:
+            assert(len(self.labelprops)==6)
+        except:
+            assert(self.labelprops=='tabular')
+            self.label = 'tabular'
+            self.resonant = False
+            self.resonance_combined = False
+            self.weak = False # The tabular rate might or might not be weak
+            self.reverse = False
+            self.tabular = True
+        else:
+            self.label = self.labelprops[0:4]
+            self.resonant = self.labelprops[4] == 'r'
+            self.resonance_combined = self.labelprops[4] == 'c'
+            self.weak = self.labelprops[4] == 'w'
+            self.reverse = self.labelprops[5] == 'v'
+            self.tabular = False
 
     def _read_from_file(self, f):
         """ given a file object, read rate data from the file. """
@@ -366,6 +507,8 @@ class Rate(object):
             self.table_temp_lines = int(s5.strip())
             self.table_num_vars = 6 # Hard-coded number of variables in tables for now.
             self.table_index_name = 'j_{}_{}'.format(self.reactants[0], self.products[0])
+            self.labelprops = 'tabular'
+            self._set_label_properties()
 
         else:
             # the rest is the sets
@@ -378,17 +521,33 @@ class Rate(object):
 
                 # first line of a set has up to 6 nuclei, then the label,
                 # and finally the Q value
-                f = s1.split()
-                f, Q = s1.rsplit(maxsplit=1)
-                f, label = f.rsplit(maxsplit=1)
-                f = f.rstrip()
-                f = f[5:]
-                fnuc = []
-                for i in range(0,len(f),5):
-                    x = f[i:i+5].strip()
-                    if x:
-                        fnuc.append(x)
-                f = fnuc
+
+                # get rid of first 5 spaces
+                s1 = s1[5:]
+
+                # next follows 6 fields of 5 characters containing nuclei
+                # the 6 fields are padded with spaces
+                f = []
+                for i in range(6):
+                    ni = s1[:5]
+                    s1 = s1[5:]
+                    ni = ni.strip()
+                    if ni:
+                        f.append(ni)
+
+                # next come 8 spaces, so get rid of them
+                s1 = s1[8:]
+
+                # next is a 4-character set label and 2 character flags
+                self.labelprops = s1[:6]
+                s1 = s1[6:]
+                self._set_label_properties()
+
+                # next come 3 spaces
+                s1 = s1[3:]
+
+                # next comes a 12 character Q value followed by 10 spaces
+                Q = s1.strip()
 
                 if first:
                     self.Q = Q
@@ -470,7 +629,7 @@ class Rate(object):
                 a += [s3[i:i+n] for i in range(0, len(s3), n)]
 
                 a = [float(e) for e in a if not e.strip() == ""]
-                self.sets.append(SingleSet(a, label=label))
+                self.sets.append(SingleSet(a, label=self.label))
 
     def _set_rhs_properties(self):
         """ compute statistical prefactor and density exponent from the reactants. """
@@ -530,6 +689,22 @@ class Rate(object):
                 self.pretty_string += r" + "
 
         self.pretty_string += r"$"
+
+    def get_rate_id(self):
+        """ Get an identifying string for this rate.
+        Don't include resonance state since we combine resonant and
+        non-resonant versions of reactions. """
+        sweak = ''
+        if self.weak:
+            sweak = '_weak'
+        srev = ''
+        if self.reverse:
+            srev = '_reverse'
+        ssrc = 'reaclib'
+        if self.tabular:
+            ssrc = 'tabular'
+        return '{}_{}_{}{}{}'.format(self.__repr__(), self.label.strip(),
+                                    ssrc, sweak, srev)
 
     def eval(self, T):
         """ evauate the reaction rate for temperature T """
