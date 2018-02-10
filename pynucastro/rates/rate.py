@@ -45,14 +45,28 @@ class SingleSet(object):
         A single rate in Reaclib can be composed of multiple sets
     """
 
-    def __init__(self, a, label=None):
+    def __init__(self, a, labelprops=None):
         """here a is iterable (e.g., list or numpy array), storing the
            coefficients, a0, ..., a6
 
         """
         self.a = a
-        self.label = label
+        self.labelprops = labelprops
+        self._update_label_properties()
 
+    def _update_label_properties(self):
+        """ Set label and flags indicating Set is resonant, 
+            weak, or reverse. """
+        assert(type(self.labelprops)==str)
+        try:
+            assert(len(self.labelprops)==6)
+        except:
+            raise
+        else:
+            self.label = self.labelprops[0:4]
+            self.resonant = self.labelprops[4] == 'r'
+            self.weak = self.labelprops[4] == 'w'
+            self.reverse = self.labelprops[5] == 'v'
 
     def f(self):
         """
@@ -436,21 +450,49 @@ class Rate(object):
         assert(self.reverse == other.reverse)
         labelprops = self.labelprops[:]
         if self.resonant != other.resonant:
-            llp = list(labelprops)
-            llp[4] = 'c'
-            labelprops = ''.join(llp)
+            self._labelprops_combine_resonance()
         new_rate = Rate(chapter=self.chapter,
                         original_source='\n'.join([self.original_source,
                                                    other.original_source]),
                         reactants=self.reactants,
                         products=self.products,
                         sets=self.sets + other.sets,
-                        labelprops=labelprops,
+                        labelprops=self.labelprops,
                         Q=self.Q)
         return new_rate
 
-    def _set_label_properties(self):
-        """ Set label and flags indicating Rate is resonant, weak, or reverse. """
+    def _set_label_properties(self, labelprops=None):
+        """ Calls _update_resonance_combined and then
+            _update_label_properties. """
+        if labelprops:
+            self.labelprops = labelprops
+
+        # Update labelprops based on the Sets in this Rate
+        # to set the resonance_combined flag properly
+        self._update_resonance_combined()
+        self._update_label_properties()
+
+    def _update_resonance_combined(self):
+        """ Checks the Sets in this Rate and updates the 
+            resonance_combined flag as well as 
+            self.labelprops[4] """
+        sres = [s.resonant for s in self.sets]
+        if True in sres and False in sres:
+            self._labelprops_combine_resonance()
+        else:
+            self.resonance_combined = False
+
+    def _labelprops_combine_resonance(self):
+        """ Update self.labelprops[4] = 'c'. 
+            Also set the resonance_combined flag. """
+        llp = list(self.labelprops)
+        llp[4] = 'c'
+        self.labelprops = ''.join(llp)
+        self.resonance_combined = True
+
+    def _update_label_properties(self):
+        """ Set label and flags indicating Rate is resonant, 
+            weak, or reverse. """
         assert(type(self.labelprops)==str)
         try:
             assert(len(self.labelprops)==6)
@@ -465,7 +507,6 @@ class Rate(object):
         else:
             self.label = self.labelprops[0:4]
             self.resonant = self.labelprops[4] == 'r'
-            self.resonance_combined = self.labelprops[4] == 'c'
             self.weak = self.labelprops[4] == 'w'
             self.reverse = self.labelprops[5] == 'v'
             self.tabular = False
@@ -539,9 +580,8 @@ class Rate(object):
                 s1 = s1[8:]
 
                 # next is a 4-character set label and 2 character flags
-                self.labelprops = s1[:6]
+                labelprops = s1[:6]
                 s1 = s1[6:]
-                self._set_label_properties()
 
                 # next come 3 spaces
                 s1 = s1[3:]
@@ -629,7 +669,8 @@ class Rate(object):
                 a += [s3[i:i+n] for i in range(0, len(s3), n)]
 
                 a = [float(e) for e in a if not e.strip() == ""]
-                self.sets.append(SingleSet(a, label=self.label))
+                self.sets.append(SingleSet(a, labelprops=labelprops))
+                self._set_label_properties(labelprops)
 
     def _set_rhs_properties(self):
         """ compute statistical prefactor and density exponent from the reactants. """

@@ -22,7 +22,7 @@ class PythonNetwork(RateCollection):
         tstring += "{} = 0.0\n\n".format(prefix)
 
         for s in rate.sets:
-            tstring += "# {}\n".format(s.label)
+            tstring += "# {}\n".format(s.labelprops[0:5])
             tstring += "{}\n".format(s.set_string(prefix=prefix, plus_equal=True))
 
         string = ""
