@@ -424,15 +424,16 @@ class Rate(object):
         """ rfile can be either a string specifying the path to a rate file or
         an io.StringIO object from which to read rate information. """
 
-        if type(rfile) == io.StringIO:
-            self.rfile_path = None
-            self.rfile = None
-        elif type(rfile) == str:
+        self.rfile_path = None
+        self.rfile = None
+
+        if type(rfile) == str:
             self.rfile_path = rfile
             self.rfile = os.path.basename(rfile)
 
         self.chapter = chapter    # the Reaclib chapter for this reaction
         self.original_source = original_source   # the contents of the original rate file
+        self.fname = None
 
         if reactants:
             self.reactants = reactants
@@ -454,8 +455,6 @@ class Rate(object):
         self.Q = Q
 
         if type(rfile) == str:
-            idx = self.rfile.rfind("-")
-            self.fname = self.rfile[:idx].replace("--", "-").replace("-", "_")
             # read in the file, parse the different sets and store them as
             # SingleSet objects in sets[]
             f = open(self.rfile_path, "r")
@@ -791,6 +790,11 @@ class Rate(object):
                 self.pretty_string += r" + "
 
         self.pretty_string += r"$"
+
+        if not self.fname:
+            reactants_str = '_'.join([repr(nuc) for nuc in self.reactants])
+            products_str = '_'.join([repr(nuc) for nuc in self.products])
+            self.fname = '{}__{}'.format(reactants_str, products_str)
 
     def get_rate_id(self):
         """ Get an identifying string for this rate.

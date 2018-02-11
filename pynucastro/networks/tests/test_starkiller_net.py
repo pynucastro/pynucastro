@@ -76,13 +76,13 @@ class TestStarKillerNetwork(object):
     def test_nrxn(self):
         """ test the _nrxn function """
 
-        answer = ('  integer, parameter :: k_c12_c12a_ne20   = 1\n'+
-                  '  integer, parameter :: k_c12_c12n_mg23   = 2\n'+
-                  '  integer, parameter :: k_c12_c12p_na23   = 3\n'+
-                  '  integer, parameter :: k_c12_ag_o16   = 4\n'+
-                  '  integer, parameter :: k_n_p   = 5\n'+
-                  '  integer, parameter :: k_na23_ne23   = 6\n'+
-                  '  integer, parameter :: k_ne23_na23   = 7\n')
+        answer = ('  integer, parameter :: k_c12_c12__he4_ne20   = 1\n'+
+                  '  integer, parameter :: k_c12_c12__n_mg23   = 2\n'+
+                  '  integer, parameter :: k_c12_c12__p_na23   = 3\n'+
+                  '  integer, parameter :: k_he4_c12__o16   = 4\n'+
+                  '  integer, parameter :: k_n__p   = 5\n'+
+                  '  integer, parameter :: k_na23__ne23   = 6\n'+
+                  '  integer, parameter :: k_ne23__na23   = 7\n')
         assert self.cromulent_ftag(self.fn._nrxn, answer, n_indent=1)
 
     def test_jion(self):

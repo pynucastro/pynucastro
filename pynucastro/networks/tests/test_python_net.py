@@ -38,21 +38,21 @@ class TestPythonNetwork(object):
 
     def test_ydot_string(self):
         ydot = self.pyn.ydot_string(self.rate)
-        assert ydot == "rho*Y[ic13]*Y[ip]*lambda_c13_pg_n14" or \
-               ydot == "rho*Y[ip]*Y[ic13]*lambda_c13_pg_n14"
+        assert ydot == "rho*Y[ic13]*Y[ip]*lambda_p_c13__n14" or \
+               ydot == "rho*Y[ip]*Y[ic13]*lambda_p_c13__n14"
 
 
     def test_jacobian_string(self):
         jac = self.pyn.jacobian_string(self.rate,
                                        self.rate.products[0],
                                        self.rate.reactants[0])
-        assert jac == "rho*Y[ic13]*lambda_c13_pg_n14"
+        assert jac == "rho*Y[ic13]*lambda_p_c13__n14"
 
 
     def test_function_string(self):
 
         ostr = """
-def c13_pg_n14(tf):
+def p_c13__n14(tf):
     # c13 + p --> n14
     rate = 0.0
 
