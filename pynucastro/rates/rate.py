@@ -221,21 +221,39 @@ class Library(object):
             raise
         for line in flib:
             ls = line.rstrip('\n')
-            if ls:
+            if ls.strip():
                 self._library_source_lines.append(ls)
         flib.close()
 
         # identify distinct rates from library lines
+        current_chapter = None
         while True:
             if len(self._library_source_lines) == 0:
                 break
-            line = self._library_source_lines.pop(0)
+
+            # Check to see if there is a chapter ID, if not then use current_chapter
+            # (for Reaclib v1 formatted library files)
+            line = self._library_source_lines[0].strip()
             chapter = None
-            try:
-                chapter = int(line)
-            except:
-                if line == 't' or line == 'T':
-                    chapter = 't'
+            if line == 't' or line == 'T':
+                chapter = 't'
+                self._library_source_lines.pop(0)
+            else:
+                try:
+                    chapter = int(line)
+                except:
+                    # we can't interpret line as a chapter so use current_chapter
+                    try:
+                        assert(current_chapter)
+                    except:
+                        print('ERROR: malformed library file {}, cannot identify chapter.'.format(self._library_file))
+                        raise
+                    else:
+                        chapter = current_chapter
+                else:
+                    self._library_source_lines.pop(0)
+            current_chapter = chapter
+
             rlines = None
             if chapter == 't':
                 rlines = [self._library_source_lines.pop(0) for i in range(5)]
@@ -244,7 +262,7 @@ class Library(object):
             if rlines:
                 sio = io.StringIO('\n'.join(['{}'.format(chapter)] +
                                             rlines))
-                # print(sio.getvalue())
+                #print(sio.getvalue())
                 try:
                     r = Rate(sio)
                 except UnsupportedNucleus:
@@ -274,10 +292,10 @@ class Library(object):
                               read_library=False)
         return new_library
 
-    def rates(self):
-        """ Generator yielding the rates in this library. """
-        for id, r in self._rates.items():
-            yield r
+    def get_rates(self):
+        """ Return a list of the rates in this library. """
+        rlist = [r for id, r in self._rates.items()]
+        return rlist
 
     def filter(self, filter_spec):
         """

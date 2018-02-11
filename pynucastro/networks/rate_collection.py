@@ -17,7 +17,7 @@ import matplotlib.pyplot as plt
 import networkx as nx
 
 # Import Rate
-from pynucastro.rates import Rate, Nucleus
+from pynucastro.rates import Rate, Nucleus, Library
 
 matplotlib.rcParams['figure.dpi'] = 100
 
@@ -81,34 +81,65 @@ class Composition(object):
 class RateCollection(object):
     """ a collection of rates that together define a network """
 
-    def __init__(self, rate_files):
+    def __init__(self, rate_files=None, libraries=None, rates=None):
         """
         rate_files are the files that together define the network.  This
-        can be any iterable or single string, and can include
-        wildcards.
+        can be any iterable or single string.
+
+        This can include Reaclib library files storing multiple rates.
+
+        If libraries is supplied, initialize a RateCollection using the rates 
+        in the Library object(s) in list 'libraries'.
+
+        If rates is supplied, initialize a RateCollection using the 
+        Rate objects in the list 'rates'.
+
+        Any combination of these options may be combined.
         """
 
         self.pynucastro_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-        self.files = []
-        self.rates = []
-
-        if isinstance(rate_files, str):
-            rate_files = [rate_files]
-
-        # get the rates
         self.pynucastro_rates_dir = os.path.join(self.pynucastro_dir,
                                                  'library')
         self.pynucastro_tabular_dir = os.path.join(self.pynucastro_rates_dir,
                                                  'tabular')
+        self.files = []
+        self.rates = []
+        self.library = None
 
-        self.files = [self._find_rate_file(p) for p in rate_files]
+        if rate_files:
+            if isinstance(rate_files, str):
+                rate_files = [rate_files]
+            self._read_rate_files(rate_files)
 
-        for rf in self.files:
+        if rates:
+            if isinstance(rates, Rate):
+                rates = [rates]
             try:
-                self.rates.append(Rate(rf))
+                for r in rates:
+                    assert(isinstance(r, Rate))
             except:
-                print("Error with file: {}".format(rf))
+                print('Expected Rate object or list of Rate objects passed as the rates argument.')
                 raise
+            else:
+                self.rates = self.rates + rates
+
+        if libraries:
+            if isinstance(libraries, Library):
+                libraries = [libraries]
+            try:
+                for lib in libraries:
+                    assert(isinstance(lib, Library))
+            except:
+                print('Expected Library object or list of Library objects passed as the libraries argument.')
+                raise
+            else:
+                if not self.library:
+                    self.library = libraries.pop(0)
+                for lib in libraries:
+                    self.library = self.library + lib
+
+        if self.library:
+            self.rates = self.rates + self.library.get_rates()
 
         # get the unique nuclei
         u = []
@@ -148,8 +179,24 @@ class RateCollection(object):
                     str(r.chapter)))
                 exit()
 
+    def _read_rate_files(self, rate_files):
+        # get the rates
+        self.files = [self._find_rate_file(p) for p in rate_files]
+
+        for rf in self.files:
+            try:
+                rflib = Library(rf)
+            except:
+                print("Error reading library from file: {}".format(rf))
+                raise
+            else:
+                if not self.library:
+                    self.library = rflib
+                else:
+                    self.library = self.library + rflib
+
     def _find_rate_file(self, ratename):
-        """locate the Reaclib or tabular rate file given its name.  Return
+        """locate the Reaclib or tabular rate or library file given its name.  Return
         None if the file cannot be located, otherwise return its path."""
 
         # check to see if the rate file is in the working dir
