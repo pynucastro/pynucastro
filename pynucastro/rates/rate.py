@@ -314,10 +314,18 @@ class Library(object):
                 raise
             else:
                 filter_specifications = filter_spec
-        for r in self.rates():
+        matching_rates = {}
+        for id, r in self._rates.items():
             for f in filter_specifications:
                 if f.matches(r):
-                    yield r
+                    matching_rates[id] = r
+                    break
+        if matching_rates:
+            return Library(libfile=self._library_file,
+                           rates=matching_rates,
+                           read_library=False)
+        else:
+            return None
 
 class RateFilter(object):
     def __init__(self, reactants=None, products=None, exact=True,
