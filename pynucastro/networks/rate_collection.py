@@ -252,7 +252,19 @@ class RateCollection(object):
             ostr += "\n"
         return ostr
 
-    def write_network(self):
+    def write_network(self, *args, **kwargs):
+        """Before writing the network, check to make sure the rates
+        are distinguishable by name."""
+        assert self._distinguishable_rates(), "ERROR: Rates not uniquely identified by Rate.fname"
+        self._write_network(*args, **kwargs)
+
+    def _distinguishable_rates(self):
+        """Every Rate in this RateCollection should have a unique Rate.fname,
+        as the network writers distinguish the rates on this basis."""
+        names = [r.fname for r in self.rates]
+        return len(set(names)) == len(self.rates)
+
+    def _write_network(self, *args, **kwargs):
         """A stub for function to output the network -- this is implementation
         dependent."""
         print('To create network integration source code, use a class that implements a specific network type.')
