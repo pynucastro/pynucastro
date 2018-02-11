@@ -201,11 +201,18 @@ class Library(object):
     """ a single file containing one or many Reaclib rates,
     possibly containing multiple sets per rate. """
 
-    def __init__(self, libfile):
+    def __init__(self, libfile=None, rates=None, read_library=True):
         self._library_file = libfile
-        self._rates = {}
+        if rates:
+            self._rates = rates
+        else:
+            self._rates = {}
         self._library_source_lines = []
 
+        if self._library_file and read_library:
+            self._read_library_file()
+
+    def _read_library_file(self):
         # loop through library file, read lines
         try:
             flib = open(self._library_file, 'r')
@@ -250,6 +257,22 @@ class Library(object):
                         self._rates[id] = self._rates[id] + r
                     else:
                         self._rates[id] = r
+
+    def __add__(self, other):
+        """ Add two libraries to get a library containing rates from both. """
+        new_rates = self._rates
+        for id, r in other._rates.items():
+            try:
+                assert(not id in new_rates)
+            except:
+                print('ERROR: rate {} defined in both libraries {} and {}'.format(r, self._library_file, other._library_file))
+                raise
+            else:
+                new_rates[id] = r
+        new_library = Library(libfile='{} + {}'.format(self._library_file, other._library_file),
+                              rates=new_rates,
+                              read_library=False)
+        return new_library
 
     def rates(self):
         """ Generator yielding the rates in this library. """
@@ -524,7 +547,7 @@ class Rate(object):
         if self.chapter != "t":
             self.chapter = int(self.chapter)
 
-        # remove any black lines
+        # remove any blank lines
         set_lines = [l for l in lines[1:] if not l.strip() == ""]
 
         if self.chapter == "t":
@@ -555,6 +578,26 @@ class Rate(object):
             # the rest is the sets
             first = 1
             while len(set_lines) > 0:
+                # check for a new chapter id in case of Reaclib v2 format
+                check_chapter = set_lines[0].strip()
+                try:
+                    # see if there is a chapter number preceding the set
+                    check_chapter = int(check_chapter)
+                except:
+                    # there was no chapter number, proceed reading a set
+                    pass
+                else:
+                    # there was a chapter number so check that the chapter number
+                    # is the same as the first set in this rate file
+                    try:
+                        assert(check_chapter == self.chapter)
+                    except:
+                        print('ERROR: read chapter {}, expected chapter {} for this rate set.'.format(check_chapter, self.chapter))
+                        raise
+                    else:
+                        # get rid of chapter number so we can read a rate set
+                        set_lines.pop(0)
+
                 # sets are 3 lines long
                 s1 = set_lines.pop(0)
                 s2 = set_lines.pop(0)
