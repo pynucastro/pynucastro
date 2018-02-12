@@ -10,6 +10,10 @@ from pynucastro.networks import RateCollection
 class PythonNetwork(RateCollection):
     """A pure python reaction network."""
 
+    def __init__(self, *args, **kwargs):
+        """ Initialize the Python network. """
+        super(PythonNetwork, self).__init__(*args, **kwargs)
+
     def rate_string(self, rate, indent=0, prefix="rate"):
         """
         Return the functional form of rate as a function of
