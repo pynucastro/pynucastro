@@ -609,7 +609,14 @@ class Rate(object):
         x = x and (self.reactants == other.reactants)
         x = x and (self.products == other.products)
         x = x and (len(self.sets) == len(other.sets))
-        x = x and (set(self.sets) == set(other.sets))
+
+        for si in self.sets:
+            scomp = False
+            for sj in other.sets:
+                if si == sj:
+                    scomp = True
+                    break
+            x = x and scomp
 
         return x
 
