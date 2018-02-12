@@ -55,9 +55,6 @@ This package requires
 
 * `scipy`: only needed for the example integrator
 
-* `periodictable`: needed to get Z from element symbol, necessary for
-   sorting
-
 * `matplotlib`: needed for plotting the rate
 
 * `networkx`: for visualizing the network
