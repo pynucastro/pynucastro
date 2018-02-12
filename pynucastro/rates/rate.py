@@ -68,6 +68,19 @@ class SingleSet(object):
             self.weak = self.labelprops[4] == 'w'
             self.reverse = self.labelprops[5] == 'v'
 
+    def __eq__(self, other):
+        """ Determine whether two SingleSet objects are equal to each other. """
+        x = True
+
+        for ai, aj in zip(self.a, other.a):
+            x = x and (ai == aj)
+
+        x = x and (self.label == other.label)
+        x = x and (self.resonant == other.resonant)
+        x = x and (self.weak == other.weak)
+        x = x and (self.reverse == other.reverse)
+        return x
+
     def f(self):
         """
         return a function for this set -- note: Tf here is a Tfactors
@@ -158,7 +171,7 @@ class Nucleus(object):
             assert(self.A >= 0)
             self.short_spec_name = name
 
-        # atomic number comes from periodictable
+        # atomic number comes from periodic table
         if name != "n":
             try:
                 i = PeriodicTable.lookup_abbreviation(self.el)
@@ -224,6 +237,30 @@ class Library(object):
         if self._library_file and read_library:
             self._library_file = self._find_rate_file(self._library_file)
             self._read_library_file()
+
+    def heaviest(self):
+        """ Return the heaviest nuclide in this library. """
+        nuc = None
+        for id, r in self._rates.items():
+            rnuc = r.heaviest()
+            if nuc:
+                if rnuc.A > nuc.A or (rnuc.A == nuc.A and rnuc.Z < nuc.Z):
+                    nuc = rnuc
+            else:
+                nuc = rnuc
+        return nuc
+
+    def lightest(self):
+        """ Return the lightest nuclide in this library. """
+        nuc = None
+        for id, r in self._rates.items():
+            rnuc = r.lightest()
+            if nuc:
+                if rnuc.A < nuc.A or (rnuc.A == nuc.A and rnuc.Z > nuc.Z):
+                    nuc = rnuc
+            else:
+                nuc = rnuc
+        return nuc
 
     def _add_from_rate_list(self, ratelist):
         """ Add to the rate dictionary from the supplied list of Rate objects. """
@@ -327,7 +364,7 @@ class Library(object):
         """ Return a string containing the rates IDs in this library. """
         rstrings = []
         for id, r in self._rates.items():
-            rstrings.append('{} : {}'.format(id, r))
+            rstrings.append('{}    ({})'.format(r, id))
         return '\n'.join(rstrings)
 
     def __add__(self, other):
@@ -335,10 +372,11 @@ class Library(object):
         new_rates = self._rates
         for id, r in other._rates.items():
             try:
-                assert(not id in new_rates)
+                assert not id in new_rates
             except:
-                print('ERROR: rate {} defined in both libraries {} and {}'.format(r, self._library_file, other._library_file))
-                raise
+                if r != new_rates[id]:
+                    print('ERROR: rate {} defined differently in libraries {} and {}\n'.format(r, self._library_file, other._library_file))
+                    raise
             else:
                 new_rates[id] = r
         new_library = Library(libfile='{} + {}'.format(self._library_file, other._library_file),
@@ -350,6 +388,14 @@ class Library(object):
         """ Return a list of the rates in this library. """
         rlist = [r for id, r in self._rates.items()]
         return rlist
+
+    def get_rate(self, id):
+        """ Return a rate matching the id provided. """
+        try:
+            return self._rates[id]
+        except:
+            print("ERROR: rate identifier does not match a rate in this library.")
+            raise
 
     def filter(self, filter_spec):
         """
@@ -538,6 +584,23 @@ class Rate(object):
 
     def __repr__(self):
         return self.string
+
+    def __hash__(self):
+        return hash(self.__repr__())
+
+    def __eq__(self, other):
+        """ Determine whether two Rate objects are equal.
+        They are equal if they contain identical reactants and products and
+        if they contain the same SingleSet sets and if their chapters are equal."""
+        x = True
+
+        x = x and (self.chapter == other.chapter)
+        x = x and (self.reactants == other.reactants)
+        x = x and (self.products == other.products)
+        x = x and (len(self.sets) == len(other.sets))
+        x = x and (set(self.sets) == set(other.sets))
+
+        return x
 
     def __add__(self, other):
         """Combine the sets of two Rate objects if they describe the same
@@ -873,6 +936,32 @@ class Rate(object):
             ssrc = 'tabular'
         return '{}_{}_{}{}{}'.format(self.__repr__(), self.label.strip(),
                                     ssrc, sweak, srev)
+
+    def heaviest(self):
+        """
+        Return the heaviest nuclide in this Rate.
+
+        If two nuclei are tied in mass number, return the one with the
+        lowest atomic number.
+        """
+        nuc = self.reactants[0]
+        for n in self.reactants + self.products:
+            if n.A > nuc.A or (n.A == nuc.A and n.Z < nuc.Z):
+                nuc = n
+        return nuc
+
+    def lightest(self):
+        """
+        Return the lightest nuclide in this Rate. 
+
+        If two nuclei are tied in mass number, return the one with the
+        highest atomic number.
+        """
+        nuc = self.reactants[0]
+        for n in self.reactants + self.products:
+            if n.A < nuc.A or (n.A == nuc.A and n.Z > nuc.Z):
+                nuc = n
+        return nuc
 
     def eval(self, T):
         """ evauate the reaction rate for temperature T """
