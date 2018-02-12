@@ -204,13 +204,28 @@ class Library(object):
     def __init__(self, libfile=None, rates=None, read_library=True):
         self._library_file = libfile
         if rates:
-            self._rates = rates
+            if isinstance(rates, Rate):
+                rates = [rates]
+            assert (isinstance(rates, dict) or isinstance(rates, list)), "ERROR: rates in Library constructor must be a Rate object, list of Rate objects, or dictionary of Rate objects keyed by Rate.get_rate_id()"                
+            if isinstance(rates, dict):
+                self._rates = rates
+            elif isinstance(rates, list):
+                self._add_from_rate_list(rates)
         else:
             self._rates = {}
         self._library_source_lines = []
 
         if self._library_file and read_library:
             self._read_library_file()
+
+    def _add_from_rate_list(self, ratelist):
+        """ Add to the rate dictionary from the supplied list of Rate objects. """
+        if not self._rates:
+            self._rates = {}
+        for r in ratelist:
+            id = r.get_rate_id()
+            assert (not id in self._rates), "ERROR: supplied a Rate object already in the Library."
+            self._rates[id] = r
 
     def _read_library_file(self):
         # loop through library file, read lines
