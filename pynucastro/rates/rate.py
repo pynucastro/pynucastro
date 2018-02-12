@@ -1,4 +1,6 @@
-""" Classes and methods to deal with a single nuclear reaction rate."""
+"""
+Classes and methods to interface with files storing rate data.
+"""
 
 import os
 import re
@@ -211,8 +213,14 @@ class Nucleus(object):
             return self.A < other.A
 
 class Library(object):
-    """ a single file containing one or many Reaclib rates,
-    possibly containing multiple sets per rate. """
+    """
+    A Library is a Rate container that reads a single file
+    containing one or many Reaclib rates, possibly containing multiple
+    sets per rate.
+
+    The Library class also implements searching based on rules
+    specified by RateFilter objects.
+    """
 
     pynucastro_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
     pynucastro_rates_dir = os.path.join(pynucastro_dir,
@@ -428,6 +436,9 @@ class Library(object):
             return None
 
 class RateFilter(object):
+    """RateFilter stores selection rules specifying a rate or group of
+    rates to assist searching for rates stored in a Library."""
+
     def __init__(self, reactants=None, products=None, exact=True,
                  reverse=None, min_reactants=None, max_reactants=None,
                  min_products=None, max_products=None):
