@@ -24,7 +24,7 @@ particular kind of network you are interested in creating.
 
 * Create a working directory under `examples/`
 
-* Obtain Reaclib rate files (in Reaclib 1 format) for your problem and
+* Obtain Reaclib rate files (in Reaclib 1 or 2 formats) for your problem and
   either place them in your working directory or `pynucastro/library`.
 
 * Write a short python script to generate your network,
