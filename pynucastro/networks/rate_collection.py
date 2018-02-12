@@ -293,7 +293,16 @@ class RateCollection(object):
                         if ydots is None:
                             G.add_edges_from([(n, p)], weight=0.5)
                         else:
-                            G.add_edges_from([(n, p)], weight=math.log10(ydots[r]))
+                            try:
+                                rate_weight = math.log10(ydots[r])
+                            except ValueError:
+                                # if ydots[r] is zero, then set the weight
+                                # to roughly the minimum exponent possible
+                                # for python floats
+                                rate_weight = -308
+                            except:
+                                raise
+                            G.add_edges_from([(n, p)], weight=rate_weight)
 
         nx.draw_networkx_nodes(G, G.position,
                                node_color="#A0CBE2", alpha=1.0,
