@@ -276,6 +276,13 @@ class Library(object):
                     else:
                         self._rates[id] = r
 
+    def __repr__(self):
+        """ Return a string containing the rates IDs in this library. """
+        rstrings = []
+        for id, r in self._rates.items():
+            rstrings.append('{} : {}'.format(id, r))
+        return '\n'.join(rstrings)
+
     def __add__(self, other):
         """ Add two libraries to get a library containing rates from both. """
         new_rates = self._rates
