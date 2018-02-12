@@ -121,7 +121,11 @@ class RateCollection(object):
                 print('Expected Rate object or list of Rate objects passed as the rates argument.')
                 raise
             else:
-                self.rates = self.rates + rates
+                rlib = Library(rates=rates)
+                if not self.library:
+                    self.library = rlib
+                else:
+                    self.library = self.library + rlib
 
         if libraries:
             if isinstance(libraries, Library):
