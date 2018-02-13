@@ -11,6 +11,9 @@ install:
   - pip install .
   - pip install -r requirements.txt
 
+before_script:
+  - export PYTHONPATH=$PYTHONPATH:$(pwd)
+
 script:
   - pytest --cov=pynucastro --nbval pynucastro examples -v
   - travis-sphinx build --source=docs
