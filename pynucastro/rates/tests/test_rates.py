@@ -87,8 +87,7 @@ class TestRate(object):
     @classmethod
     def setup_class(cls):
         """ this is run once for each class before any tests """
-        base_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__))).split("pynucastro")[0]
-        cls.library_path = os.path.join(base_dir, "pynucastro/pynucastro/library/")
+        pass
 
     @classmethod
     def teardown_class(cls):
@@ -99,37 +98,37 @@ class TestRate(object):
         """ this is run before each test """
 
         # chapter-1
-        self.rate1 = rates.Rate(os.path.join(self.library_path, "o15--n15-wc12"))
+        self.rate1 = rates.Rate("o15--n15-wc12")
 
         # chapter-2
-        self.rate2 = rates.Rate(os.path.join(self.library_path, "t-gn-d-nk06"))
+        self.rate2 = rates.Rate("t-gn-d-nk06")
 
         # chapter-3
-        self.rate3 = rates.Rate(os.path.join(self.library_path, "he6-gnn-he4-cf88"))
+        self.rate3 = rates.Rate("he6-gnn-he4-cf88")
         
         # chapter-4
-        self.rate4 = rates.Rate(os.path.join(self.library_path, "c12-ag-o16-nac2"))
+        self.rate4 = rates.Rate("c12-ag-o16-nac2")
 
         # chapter-5
-        self.rate5 = rates.Rate(os.path.join(self.library_path, "n15-pa-c12-nacr")) 
+        self.rate5 = rates.Rate("n15-pa-c12-nacr")
 
         # chapter-6
-        self.rate6 = rates.Rate(os.path.join(self.library_path, "he3-he3pp-he4-nacr")) 
+        self.rate6 = rates.Rate("he3-he3pp-he4-nacr")
 
         # chapter-7
-        self.rate7 = rates.Rate(os.path.join(self.library_path, "li7-tnna-he4-mafo")) 
+        self.rate7 = rates.Rate("li7-tnna-he4-mafo")
 
         # chapter-8
-        self.rate8 = rates.Rate(os.path.join(self.library_path, "he4-aag-c12-fy05"))
+        self.rate8 = rates.Rate("he4-aag-c12-fy05")
 
         # chapter-9
-        self.rate9 = rates.Rate(os.path.join(self.library_path, "he4-pphe3-he3-nacr"))
+        self.rate9 = rates.Rate("he4-pphe3-he3-nacr")
 
         # chapter-10
-        self.rate10 = rates.Rate(os.path.join(self.library_path, "he4-npahe3-li7-mafo"))
+        self.rate10 = rates.Rate("he4-npahe3-li7-mafo")
 
         # chapter-11
-        self.rate11 = rates.Rate(os.path.join(self.library_path, "b17-nnn-c14-wc12"))
+        self.rate11 = rates.Rate("b17-nnn-c14-wc12")
 
         self.n = rates.Nucleus("n")
 

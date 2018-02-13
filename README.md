@@ -1,5 +1,7 @@
 # pynucastro
 
+[![Build Status](https://travis-ci.org/pynucastro/pynucastro.svg?branch=master)](https://travis-ci.org/pynucastro/pynucastro)
+
 Python interfaces to the nuclear reaction rate databases, including
 the JINA reaclib nuclear reactions database.  This
 project has 2 goals:
@@ -54,9 +56,6 @@ This package requires
 * `numpy`
 
 * `scipy`: only needed for the example integrator
-
-* `periodictable`: needed to get Z from element symbol, necessary for
-   sorting
 
 * `matplotlib`: needed for plotting the rate
 

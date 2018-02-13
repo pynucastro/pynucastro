@@ -371,7 +371,7 @@ class BaseFortranNetwork(RateCollection):
         rem = re.match(r'\A'+k+r'\(([0-9]*)\)\Z',l)
         return int(rem.group(1))
 
-    def write_network(self, use_cse=False):
+    def _write_network(self, use_cse=False):
         """
         This writes the RHS, jacobian and ancillary files for the system of ODEs that
         this network describes, using the template files.

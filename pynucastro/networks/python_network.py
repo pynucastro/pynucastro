@@ -22,7 +22,7 @@ class PythonNetwork(RateCollection):
         tstring += "{} = 0.0\n\n".format(prefix)
 
         for s in rate.sets:
-            tstring += "# {}\n".format(s.label)
+            tstring += "# {}\n".format(s.labelprops[0:5])
             tstring += "{}\n".format(s.set_string(prefix=prefix, plus_equal=True))
 
         string = ""
@@ -134,7 +134,7 @@ class PythonNetwork(RateCollection):
             rstring = "{}{}{}*lambda_{}"
         return rstring.format(prefactor_string, dens_string, Y_string, rate.fname)
 
-    def write_network(self, outfile=None):
+    def _write_network(self, outfile=None):
         """
         This is the actual RHS for the system of ODEs that
         this network describes.

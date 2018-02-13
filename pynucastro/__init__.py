@@ -14,7 +14,7 @@ interpret rates and build networks.
 library
 -------
 
-library stores Reaclib rate files in Reaclib 1 format as well as the
+library stores Reaclib rate files in Reaclib 1 or 2 formats as well as the
 directory `library/tabular` containing tabulated rates. pynucastro
 will search these directories for rate files as well as the current
 working directory.
@@ -82,6 +82,13 @@ reaction rates, including:
 
 * Tfactors : this is a simple container class that holds the various
   temperature powers needed to evaluate a rate.
+
+* RateLibrary: a container class for Reaclib rates that provides a
+  high level interface for reading Reaclib-formatted files containing
+  one or more rates.
+
+* RateFilter: a class implementing search constraints to look up a
+  desired rate or group of rates from a RateLibrary.
 
 screening
 ---------

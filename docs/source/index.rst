@@ -19,6 +19,7 @@ codes.
 
    intro
    pynucastro-examples.ipynb
+   library-filtering-examples.ipynb
    networks
    API <modules>
    sources

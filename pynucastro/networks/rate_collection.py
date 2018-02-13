@@ -17,7 +17,7 @@ import matplotlib.pyplot as plt
 import networkx as nx
 
 # Import Rate
-from pynucastro.rates import Rate, Nucleus
+from pynucastro.rates import Rate, Nucleus, Library
 
 matplotlib.rcParams['figure.dpi'] = 100
 
@@ -81,34 +81,66 @@ class Composition(object):
 class RateCollection(object):
     """ a collection of rates that together define a network """
 
-    def __init__(self, rate_files):
+    pynucastro_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+
+    def __init__(self, rate_files=None, libraries=None, rates=None):
         """
         rate_files are the files that together define the network.  This
-        can be any iterable or single string, and can include
-        wildcards.
+        can be any iterable or single string.
+
+        This can include Reaclib library files storing multiple rates.
+
+        If libraries is supplied, initialize a RateCollection using the rates 
+        in the Library object(s) in list 'libraries'.
+
+        If rates is supplied, initialize a RateCollection using the 
+        Rate objects in the list 'rates'.
+
+        Any combination of these options may be combined.
         """
 
-        self.pynucastro_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
         self.files = []
         self.rates = []
+        self.library = None
 
-        if isinstance(rate_files, str):
-            rate_files = [rate_files]
+        if rate_files:
+            if isinstance(rate_files, str):
+                rate_files = [rate_files]
+            self._read_rate_files(rate_files)
 
-        # get the rates
-        self.pynucastro_rates_dir = os.path.join(self.pynucastro_dir,
-                                                 'library')
-        self.pynucastro_tabular_dir = os.path.join(self.pynucastro_rates_dir,
-                                                 'tabular')
-
-        self.files = [self._find_rate_file(p) for p in rate_files]
-
-        for rf in self.files:
+        if rates:
+            if isinstance(rates, Rate):
+                rates = [rates]
             try:
-                self.rates.append(Rate(rf))
+                for r in rates:
+                    assert(isinstance(r, Rate))
             except:
-                print("Error with file: {}".format(rf))
+                print('Expected Rate object or list of Rate objects passed as the rates argument.')
                 raise
+            else:
+                rlib = Library(rates=rates)
+                if not self.library:
+                    self.library = rlib
+                else:
+                    self.library = self.library + rlib
+
+        if libraries:
+            if isinstance(libraries, Library):
+                libraries = [libraries]
+            try:
+                for lib in libraries:
+                    assert(isinstance(lib, Library))
+            except:
+                print('Expected Library object or list of Library objects passed as the libraries argument.')
+                raise
+            else:
+                if not self.library:
+                    self.library = libraries.pop(0)
+                for lib in libraries:
+                    self.library = self.library + lib
+
+        if self.library:
+            self.rates = self.rates + self.library.get_rates()
 
         # get the unique nuclei
         u = []
@@ -148,33 +180,24 @@ class RateCollection(object):
                     str(r.chapter)))
                 exit()
 
-    def _find_rate_file(self, ratename):
-        """locate the Reaclib or tabular rate file given its name.  Return
-        None if the file cannot be located, otherwise return its path."""
-
-        # check to see if the rate file is in the working dir
-        x = ratename
-        if os.path.isfile(x):
-            return os.path.realpath(x)
-
-        # check to see if the rate file is in pynucastro/library
-        x = os.path.join(self.pynucastro_rates_dir, ratename)
-        if os.path.isfile(x):
-            return os.path.realpath(x)
-
-        # check to see if the rate file is in pynucastro/library/tabular
-        x = os.path.join(self.pynucastro_tabular_dir, ratename)
-        if os.path.isfile(x):
-            return os.path.realpath(x)
-
-        # notify user we can't find the file
-        raise Exception('File {} not found in the working directory, {}, or {}'.format(
-            ratename, self.pynucastro_rates_dir, self.pynucastro_tabular_dir))
+    def _read_rate_files(self, rate_files):
+        # get the rates
+        self.files = rate_files
+        for rf in self.files:
+            try:
+                rflib = Library(rf)
+            except:
+                print("Error reading library from file: {}".format(rf))
+                raise
+            else:
+                if not self.library:
+                    self.library = rflib
+                else:
+                    self.library = self.library + rflib
 
     def get_nuclei(self):
         """ get all the nuclei that are part of the network """
         return self.unique_nuclei
-
 
     def evaluate_rates(self, rho, T, composition):
         """evaluate the rates for a specific density, temperature, and
@@ -205,7 +228,19 @@ class RateCollection(object):
             ostr += "\n"
         return ostr
 
-    def write_network(self):
+    def write_network(self, *args, **kwargs):
+        """Before writing the network, check to make sure the rates
+        are distinguishable by name."""
+        assert self._distinguishable_rates(), "ERROR: Rates not uniquely identified by Rate.fname"
+        self._write_network(*args, **kwargs)
+
+    def _distinguishable_rates(self):
+        """Every Rate in this RateCollection should have a unique Rate.fname,
+        as the network writers distinguish the rates on this basis."""
+        names = [r.fname for r in self.rates]
+        return len(set(names)) == len(self.rates)
+
+    def _write_network(self, *args, **kwargs):
         """A stub for function to output the network -- this is implementation
         dependent."""
         print('To create network integration source code, use a class that implements a specific network type.')
@@ -258,7 +293,16 @@ class RateCollection(object):
                         if ydots is None:
                             G.add_edges_from([(n, p)], weight=0.5)
                         else:
-                            G.add_edges_from([(n, p)], weight=math.log10(ydots[r]))
+                            try:
+                                rate_weight = math.log10(ydots[r])
+                            except ValueError:
+                                # if ydots[r] is zero, then set the weight
+                                # to roughly the minimum exponent possible
+                                # for python floats
+                                rate_weight = -308
+                            except:
+                                raise
+                            G.add_edges_from([(n, p)], weight=rate_weight)
 
         nx.draw_networkx_nodes(G, G.position,
                                node_color="#A0CBE2", alpha=1.0,
