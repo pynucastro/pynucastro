@@ -1,0 +1,20 @@
+To build the webpages:
+
+   make html
+
+
+To automatically generate the API docs:
+
+   sphinx-apidoc -f -M -o docs/source/ .
+
+
+To support notebooks:
+
+pip3 install nbsphinx --user
+dnf install pandoc
+
+
+For the theme:
+
+pip install sphinx_rtd_theme
+
