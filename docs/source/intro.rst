@@ -64,7 +64,3 @@ Fortran code) from the list of rates you provide. One can use this to
 add reaction networks to existing simulation codes, for example, the
 `Maestro <https://amrex-astro.github.io/MAESTRO/>`_ and `Castro
 <https://amrex-astro.github.io/Castro/>`_ codes.
-
-An example notebook showing the basic use of these classes is here:
-
-:ref:`pynucastro-examples.ipynb`
