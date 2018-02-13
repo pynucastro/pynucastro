@@ -15,11 +15,11 @@ before_script:
   - export PYTHONPATH=$PYTHONPATH:$(pwd)
 
 script:
-  - pytest --cov=pynucastro --nbval pynucastro examples -v
-  - travis-sphinx build --source=docs
+  - pytest --cov=pynucastro -v
+#  - travis-sphinx build --source=docs
 
-after_success:
-  - travis-sphinx deploy
+#after_success:
+#  - travis-sphinx deploy
 
 deploy:
   provider: pages
