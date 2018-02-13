@@ -1,0 +1,918 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Using the Library Interface &mdash; pynucastro 1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="pynucastro 1.0 documentation" href="index.html"/>
+        <link rel="next" title="Creating Networks" href="networks.html"/>
+        <link rel="prev" title="pynucastro usage examples" href="pynucastro-examples.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> pynucastro
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Overview of pynucastro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pynucastro-examples.html"><code class="docutils literal"><span class="pre">pynucastro</span></code> usage examples</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Using the Library Interface</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#Reading-a-rate-snapshot">Reading a rate snapshot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Filtering-the-Library">Filtering the Library</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Inexact-Filtering">Inexact Filtering</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Exact-Filtering">Exact Filtering</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#Example:-Building-an-Alpha-Capture-Network">Example: Building an Alpha Capture Network</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="networks.html">Creating Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sources.html">Third Party Data</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pynucastro</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Using the Library Interface</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/library-filtering-examples.ipynb.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput,
+div.nbinput div.prompt,
+div.nbinput div.input_area,
+div.nbinput div[class*=highlight],
+div.nbinput div[class*=highlight] pre,
+div.nboutput,
+div.nbinput div.prompt,
+div.nbinput div.output_area,
+div.nboutput div[class*=highlight],
+div.nboutput div[class*=highlight] pre {
+    background: none;
+    border: none;
+    padding: 0 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+/* avoid gaps between output lines */
+div.nboutput div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput,
+div.nboutput {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput,
+    div.nboutput {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput div.prompt pre {
+    color: #303F9F;
+}
+
+/* output prompt */
+div.nboutput div.prompt pre {
+    color: #D84315;
+}
+
+/* all prompts */
+div.nbinput div.prompt,
+div.nboutput div.prompt {
+    min-width: 8ex;
+    padding-top: 0.4em;
+    padding-right: 0.4em;
+    text-align: right;
+    flex: 0;
+}
+@media (max-width: 540px) {
+    div.nbinput div.prompt,
+    div.nboutput div.prompt {
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput div.prompt.empty {
+        padding: 0;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput div.prompt pre,
+div.nboutput div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput div.input_area,
+div.nboutput div.output_area {
+    padding: 0.4em;
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput div.input_area,
+    div.nboutput div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput div.input_area {
+    border: 1px solid #cfcfcf;
+    border-radius: 2px;
+    background: #f7f7f7;
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.pngmath center alignment in output cells */
+div.nboutput div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast,
+.nboutput.nblast {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast + .nbinput {
+    margin-top: -19px;
+}
+
+/* nice headers on first paragraph of info/warning boxes */
+.admonition .first {
+    margin: -12px;
+    padding: 6px 12px;
+    margin-bottom: 12px;
+    color: #fff;
+    line-height: 1;
+    display: block;
+}
+.admonition.warning .first {
+    background: #f0b37e;
+}
+.admonition.note .first {
+    background: #6ab0de;
+}
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+</style>
+<div class="section" id="Using-the-Library-Interface">
+<h1>Using the Library Interface<a class="headerlink" href="#Using-the-Library-Interface" title="Permalink to this headline">¶</a></h1>
+<p>The <code class="docutils literal"><span class="pre">Library</span></code> class in <code class="docutils literal"><span class="pre">pynucastro</span></code> provides a high level interface
+for reading files containing one or more Reaclib rates and then
+filtering these rates based on user-specified criteria for the nuclei
+involved in the reactions. We can then use the resulting rates to build
+a network.</p>
+<p>This example uses a Reaclib snapshot downloaded from:</p>
+<p><a class="reference external" href="https://groups.nscl.msu.edu/jina/reaclib/db/library.php?action=viewsnapshots">https://groups.nscl.msu.edu/jina/reaclib/db/library.php?action=viewsnapshots</a>.</p>
+<div class="section" id="Reading-a-rate-snapshot">
+<h2>Reading a rate snapshot<a class="headerlink" href="#Reading-a-rate-snapshot" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal"><span class="pre">Library</span></code> class will look for the library file in the working
+directory or in the <code class="docutils literal"><span class="pre">pynucastro/library</span></code> subdirectory of the
+<code class="docutils literal"><span class="pre">pynucastro</span></code> package.</p>
+<p>When the constructor is supplied a file name, <code class="docutils literal"><span class="pre">pynucastro</span></code> will read
+the contents of this file and interpret them as Reaclib rates in either
+the Reaclib 1 or 2 formats. The <code class="docutils literal"><span class="pre">Library</span></code> then stores the rates from
+the file as <code class="docutils literal"><span class="pre">Rate</span></code> objects.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="o">%</span><span class="k">matplotlib</span> inline
+<span class="kn">import</span> <span class="nn">pynucastro</span> <span class="k">as</span> <span class="nn">pyna</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">library_file</span> <span class="o">=</span> <span class="s1">&#39;20180201ReaclibV2.22&#39;</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">mylibrary</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">rates</span><span class="o">.</span><span class="n">Library</span><span class="p">(</span><span class="n">library_file</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="Filtering-the-Library">
+<h2>Filtering the Library<a class="headerlink" href="#Filtering-the-Library" title="Permalink to this headline">¶</a></h2>
+<p>This example introduces the <code class="docutils literal"><span class="pre">RateFilter</span></code> class which allows us to
+define a set of reactants and products to search for in a <code class="docutils literal"><span class="pre">Library</span></code>
+object.</p>
+<div class="section" id="Inexact-Filtering">
+<h3>Inexact Filtering<a class="headerlink" href="#Inexact-Filtering" title="Permalink to this headline">¶</a></h3>
+<p>Inexact filtering is like using wildcards: in the following example, the
+rate filter we define will match any rates in which
+<span class="math">\(\mathrm{^{12}C}\)</span> is a reactant.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">c12_inexact_filter</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">rates</span><span class="o">.</span><span class="n">RateFilter</span><span class="p">(</span><span class="n">reactants</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;c12&#39;</span><span class="p">],</span> <span class="n">exact</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>Once we construct a <code class="docutils literal"><span class="pre">RateFilter</span></code> object, we can apply it to our
+<code class="docutils literal"><span class="pre">Library</span></code> by passing it to the <code class="docutils literal"><span class="pre">Library.filter</span></code> function.</p>
+<p><code class="docutils literal"><span class="pre">Library.filter</span></code> returns a new <code class="docutils literal"><span class="pre">Library</span></code> object containing the rates
+that match our <code class="docutils literal"><span class="pre">RateFilter</span></code>.</p>
+<p>We can print a <code class="docutils literal"><span class="pre">Library</span></code> to see the rates it contains. In parentheses
+the rate identifier is printed, showing the Reaclib rate label as well
+as whether the rate is forward or reverse.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">c12_inexact_library</span> <span class="o">=</span> <span class="n">mylibrary</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">c12_inexact_filter</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">c12_inexact_library</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+c12 --&gt; n + c11    (c12 --&gt; n + c11_bb92_reaclib_reverse)
+c12 --&gt; p + b11    (c12 --&gt; p + b11_nw00_reaclib_reverse)
+c12 --&gt; he4 + he4 + he4    (c12 --&gt; he4 + he4 + he4_fy05_reaclib_reverse)
+c12 + n --&gt; c13    (c12 + n --&gt; c13_ka02_reaclib)
+c12 + p --&gt; n13    (c12 + p --&gt; n13_ls09_reaclib)
+c12 + he4 --&gt; o16    (c12 + he4 --&gt; o16_nac2_reaclib)
+c12 + n --&gt; p + b12    (c12 + n --&gt; p + b12_wag_reaclib_reverse)
+c12 + n --&gt; he4 + be9    (c12 + n --&gt; he4 + be9_cf88_reaclib_reverse)
+c12 + he4 --&gt; n + o15    (c12 + he4 --&gt; n + o15_cf88_reaclib_reverse)
+c12 + he4 --&gt; p + n15    (c12 + he4 --&gt; p + n15_nacr_reaclib_reverse)
+c12 + c12 --&gt; n + mg23    (c12 + c12 --&gt; n + mg23_cf88_reaclib_reverse)
+c12 + c12 --&gt; p + na23    (c12 + c12 --&gt; p + na23_cf88_reaclib)
+c12 + c12 --&gt; he4 + ne20    (c12 + c12 --&gt; he4 + ne20_cf88_reaclib)
+o16 + c12 --&gt; n + si27    (o16 + c12 --&gt; n + si27_cf88_reaclib_reverse)
+o16 + c12 --&gt; p + al27    (o16 + c12 --&gt; p + al27_cf88_reaclib)
+o16 + c12 --&gt; he4 + mg24    (o16 + c12 --&gt; he4 + mg24_cf88_reaclib)
+ne20 + c12 --&gt; n + s31    (ne20 + c12 --&gt; n + s31_rolf_reaclib)
+ne20 + c12 --&gt; p + p31    (ne20 + c12 --&gt; p + p31_rolf_reaclib)
+ne20 + c12 --&gt; he4 + si28    (ne20 + c12 --&gt; he4 + si28_rolf_reaclib)
+</pre></div></div>
+</div>
+<p>The rate identifiers above can be used to access individual <code class="docutils literal"><span class="pre">Rate</span></code>
+objects within a <code class="docutils literal"><span class="pre">Library</span></code> as follows:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">cago</span> <span class="o">=</span> <span class="n">c12_inexact_library</span><span class="o">.</span><span class="n">get_rate</span><span class="p">(</span><span class="s1">&#39;c12 + he4 --&gt; o16_nac2_reaclib&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="c1">#PYTEST_VALIDATE_IGNORE_OUTPUT</span>
+<span class="n">cago</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/library-filtering-examples_12_0.png" src="_images/library-filtering-examples_12_0.png" />
+</div>
+</div>
+</div>
+<div class="section" id="Exact-Filtering">
+<h3>Exact Filtering<a class="headerlink" href="#Exact-Filtering" title="Permalink to this headline">¶</a></h3>
+<p>Exact filtering is useful when you have a specific rate in mind or a
+specific combination of reactants or products. In the following example,
+we look for all rates of the form
+<span class="math">\(\mathrm{^{12}C + ^{12}C \rightarrow \ldots}\)</span></p>
+<p>To use exact filtering, omit the <code class="docutils literal"><span class="pre">exact</span></code> keyword to the <code class="docutils literal"><span class="pre">RateFilter</span></code>
+constructor, as it is turned on by default.</p>
+<p>Exact filtering does not mean all the nuclei involved in the rate must
+be specified, it means that all filtering options passed to the
+<code class="docutils literal"><span class="pre">RateFilter</span></code> constructor are strictly applied. In this case, the
+filter will return rates with exactly two reactants, both of which are
+<span class="math">\(\mathrm{^{12}C}\)</span>. However, the filter places no constraint on the
+products or number of products in the rate.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">c12_exact_filter</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">rates</span><span class="o">.</span><span class="n">RateFilter</span><span class="p">(</span><span class="n">reactants</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;c12&#39;</span><span class="p">,</span> <span class="s1">&#39;c12&#39;</span><span class="p">])</span>
+<span class="n">c12_exact_library</span> <span class="o">=</span> <span class="n">mylibrary</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">c12_exact_filter</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">c12_exact_library</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+c12 + c12 --&gt; n + mg23    (c12 + c12 --&gt; n + mg23_cf88_reaclib_reverse)
+c12 + c12 --&gt; p + na23    (c12 + c12 --&gt; p + na23_cf88_reaclib)
+c12 + c12 --&gt; he4 + ne20    (c12 + c12 --&gt; he4 + ne20_cf88_reaclib)
+</pre></div></div>
+</div>
+</div>
+</div>
+<div class="section" id="Example:-Building-an-Alpha-Capture-Network">
+<h2>Example: Building an Alpha Capture Network<a class="headerlink" href="#Example:-Building-an-Alpha-Capture-Network" title="Permalink to this headline">¶</a></h2>
+<p>In the next example, we use rate filtering to iteratively construct a
+<code class="docutils literal"><span class="pre">Library</span></code> containing the alpha capture rates linking
+<span class="math">\(\mathrm{^{12}C}\)</span> to <span class="math">\(\mathrm{^{56}Ni}\)</span>.</p>
+<p>After finding each successive link in the alpha capture chain, we call
+<code class="docutils literal"><span class="pre">Library.heaviest()</span></code> to find the heaviest nucleus in the filtered
+rates. This corresponds to the nucleus with the largest mass number, and
+in case of a tie between isobars, this returns the isobar with the
+smallest atomic number. We use this feature to find the reverse rate for
+each alpha capture reaction.</p>
+<p>In the example below, we add each filtered library to our alpha capture
+library <code class="docutils literal"><span class="pre">alpha_library</span></code>, initialized as an empty <code class="docutils literal"><span class="pre">Library</span></code>. The
+<code class="docutils literal"><span class="pre">Library</span></code> class supports the addition operator by returning a new
+library containing the rates in the two libraries we added together.</p>
+<p>This example also introduces the <code class="docutils literal"><span class="pre">max_products</span></code> keyword, which
+specifies we are looking for reactions producing at most
+<code class="docutils literal"><span class="pre">max_products</span></code> product nuclei.</p>
+<p>Similarly, the <code class="docutils literal"><span class="pre">RateFilter</span></code> constructor supports the following
+keywords constraining the number of reactants and products:</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">min_reactants</span></code></li>
+<li><code class="docutils literal"><span class="pre">max_reactants</span></code></li>
+<li><code class="docutils literal"><span class="pre">min_products</span></code></li>
+<li><code class="docutils literal"><span class="pre">max_products</span></code></li>
+</ul>
+<p>Because we have omitted the argument <code class="docutils literal"><span class="pre">exact=False</span></code>, the filter
+constraints we apply are exact.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">alpha_library</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">rates</span><span class="o">.</span><span class="n">Library</span><span class="p">()</span>
+
+<span class="n">capture</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">rates</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s1">&#39;he4&#39;</span><span class="p">)</span>
+<span class="n">seed</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">rates</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s1">&#39;c12&#39;</span><span class="p">)</span>
+
+<span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+    <span class="n">ac_filter</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">rates</span><span class="o">.</span><span class="n">RateFilter</span><span class="p">(</span><span class="n">reactants</span><span class="o">=</span><span class="p">[</span><span class="n">capture</span><span class="p">,</span> <span class="n">seed</span><span class="p">],</span> <span class="n">max_products</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">ac_library</span> <span class="o">=</span> <span class="n">mylibrary</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">ac_filter</span><span class="p">)</span>
+    <span class="n">alpha_library</span> <span class="o">=</span> <span class="n">alpha_library</span> <span class="o">+</span> <span class="n">ac_library</span>
+
+    <span class="n">heavy</span> <span class="o">=</span> <span class="n">ac_library</span><span class="o">.</span><span class="n">heaviest</span><span class="p">()</span>
+    <span class="n">ac_filter_inv</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">rates</span><span class="o">.</span><span class="n">RateFilter</span><span class="p">(</span><span class="n">reactants</span><span class="o">=</span><span class="p">[</span><span class="n">heavy</span><span class="p">],</span> <span class="n">products</span><span class="o">=</span><span class="p">[</span><span class="n">capture</span><span class="p">,</span> <span class="n">seed</span><span class="p">])</span>
+    <span class="n">ac_inv_library</span> <span class="o">=</span> <span class="n">mylibrary</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">ac_filter_inv</span><span class="p">)</span>
+    <span class="n">alpha_library</span> <span class="o">=</span> <span class="n">alpha_library</span> <span class="o">+</span> <span class="n">ac_inv_library</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="n">heavy</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">heavy</span><span class="o">.</span><span class="n">A</span> <span class="o">==</span> <span class="mi">56</span><span class="p">:</span>
+        <span class="k">break</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">seed</span> <span class="o">=</span> <span class="n">heavy</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+o16
+ne20
+mg24
+si28
+s32
+ar36
+ca40
+ti44
+cr48
+fe52
+ni56
+</pre></div></div>
+</div>
+<p>We will next print out the library we constructed, seeing that we have
+both forward and reverse rates for the alpha chain.</p>
+<p>Note that at this time <code class="docutils literal"><span class="pre">pynucastro</span></code> has not yet implemented nuclear
+partition functions, so these reverse rates are calculated only from
+detailed balance in the Reaclib library.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="nb">print</span><span class="p">(</span><span class="n">alpha_library</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+c12 + he4 --&gt; o16    (c12 + he4 --&gt; o16_nac2_reaclib)
+o16 --&gt; he4 + c12    (o16 --&gt; he4 + c12_nac2_reaclib_reverse)
+o16 + he4 --&gt; ne20    (o16 + he4 --&gt; ne20_co10_reaclib)
+ne20 --&gt; he4 + o16    (ne20 --&gt; he4 + o16_co10_reaclib_reverse)
+ne20 + he4 --&gt; mg24    (ne20 + he4 --&gt; mg24_il10_reaclib)
+mg24 --&gt; he4 + ne20    (mg24 --&gt; he4 + ne20_il10_reaclib_reverse)
+mg24 + he4 --&gt; si28    (mg24 + he4 --&gt; si28_st08_reaclib)
+si28 --&gt; he4 + mg24    (si28 --&gt; he4 + mg24_st08_reaclib_reverse)
+si28 + he4 --&gt; s32    (si28 + he4 --&gt; s32_ths8_reaclib)
+s32 --&gt; he4 + si28    (s32 --&gt; he4 + si28_ths8_reaclib_reverse)
+s32 + he4 --&gt; ar36    (s32 + he4 --&gt; ar36_ths8_reaclib)
+ar36 --&gt; he4 + s32    (ar36 --&gt; he4 + s32_ths8_reaclib_reverse)
+ar36 + he4 --&gt; ca40    (ar36 + he4 --&gt; ca40_ths8_reaclib)
+ca40 --&gt; he4 + ar36    (ca40 --&gt; he4 + ar36_ths8_reaclib_reverse)
+ca40 + he4 --&gt; ti44    (ca40 + he4 --&gt; ti44_chw0_reaclib)
+ti44 --&gt; he4 + ca40    (ti44 --&gt; he4 + ca40_chw0_reaclib_reverse)
+ti44 + he4 --&gt; cr48    (ti44 + he4 --&gt; cr48_ths8_reaclib)
+cr48 --&gt; he4 + ti44    (cr48 --&gt; he4 + ti44_ths8_reaclib_reverse)
+cr48 + he4 --&gt; fe52    (cr48 + he4 --&gt; fe52_ths8_reaclib)
+fe52 --&gt; he4 + cr48    (fe52 --&gt; he4 + cr48_ths8_reaclib_reverse)
+fe52 + he4 --&gt; ni56    (fe52 + he4 --&gt; ni56_ths8_reaclib)
+ni56 --&gt; he4 + fe52    (ni56 --&gt; he4 + fe52_ths8_reaclib_reverse)
+</pre></div></div>
+</div>
+<p>Next we can create a reaction network from our filtered alpha capture
+library by passing our library to a network constructor using the
+<code class="docutils literal"><span class="pre">libraries</span></code> keyword.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">alpha_network</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">networks</span><span class="o">.</span><span class="n">PythonNetwork</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="n">alpha_library</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>And finally we can print an overview of the network as well as a Z-N
+plot of the nuclei linked via the reactions we selected.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="nb">print</span><span class="p">(</span><span class="n">alpha_network</span><span class="o">.</span><span class="n">network_overview</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+he4
+  consumed by:
+     c12 + he4 --&gt; o16
+     o16 + he4 --&gt; ne20
+     ne20 + he4 --&gt; mg24
+     mg24 + he4 --&gt; si28
+     si28 + he4 --&gt; s32
+     s32 + he4 --&gt; ar36
+     ar36 + he4 --&gt; ca40
+     ca40 + he4 --&gt; ti44
+     ti44 + he4 --&gt; cr48
+     cr48 + he4 --&gt; fe52
+     fe52 + he4 --&gt; ni56
+  produced by:
+     o16 --&gt; he4 + c12
+     ne20 --&gt; he4 + o16
+     mg24 --&gt; he4 + ne20
+     si28 --&gt; he4 + mg24
+     s32 --&gt; he4 + si28
+     ar36 --&gt; he4 + s32
+     ca40 --&gt; he4 + ar36
+     ti44 --&gt; he4 + ca40
+     cr48 --&gt; he4 + ti44
+     fe52 --&gt; he4 + cr48
+     ni56 --&gt; he4 + fe52
+
+c12
+  consumed by:
+     c12 + he4 --&gt; o16
+  produced by:
+     o16 --&gt; he4 + c12
+
+o16
+  consumed by:
+     o16 --&gt; he4 + c12
+     o16 + he4 --&gt; ne20
+  produced by:
+     c12 + he4 --&gt; o16
+     ne20 --&gt; he4 + o16
+
+ne20
+  consumed by:
+     ne20 --&gt; he4 + o16
+     ne20 + he4 --&gt; mg24
+  produced by:
+     o16 + he4 --&gt; ne20
+     mg24 --&gt; he4 + ne20
+
+mg24
+  consumed by:
+     mg24 --&gt; he4 + ne20
+     mg24 + he4 --&gt; si28
+  produced by:
+     ne20 + he4 --&gt; mg24
+     si28 --&gt; he4 + mg24
+
+si28
+  consumed by:
+     si28 --&gt; he4 + mg24
+     si28 + he4 --&gt; s32
+  produced by:
+     mg24 + he4 --&gt; si28
+     s32 --&gt; he4 + si28
+
+s32
+  consumed by:
+     s32 --&gt; he4 + si28
+     s32 + he4 --&gt; ar36
+  produced by:
+     si28 + he4 --&gt; s32
+     ar36 --&gt; he4 + s32
+
+ar36
+  consumed by:
+     ar36 --&gt; he4 + s32
+     ar36 + he4 --&gt; ca40
+  produced by:
+     s32 + he4 --&gt; ar36
+     ca40 --&gt; he4 + ar36
+
+ca40
+  consumed by:
+     ca40 --&gt; he4 + ar36
+     ca40 + he4 --&gt; ti44
+  produced by:
+     ar36 + he4 --&gt; ca40
+     ti44 --&gt; he4 + ca40
+
+ti44
+  consumed by:
+     ti44 --&gt; he4 + ca40
+     ti44 + he4 --&gt; cr48
+  produced by:
+     ca40 + he4 --&gt; ti44
+     cr48 --&gt; he4 + ti44
+
+cr48
+  consumed by:
+     cr48 --&gt; he4 + ti44
+     cr48 + he4 --&gt; fe52
+  produced by:
+     ti44 + he4 --&gt; cr48
+     fe52 --&gt; he4 + cr48
+
+fe52
+  consumed by:
+     fe52 --&gt; he4 + cr48
+     fe52 + he4 --&gt; ni56
+  produced by:
+     cr48 + he4 --&gt; fe52
+     ni56 --&gt; he4 + fe52
+
+ni56
+  consumed by:
+     ni56 --&gt; he4 + fe52
+  produced by:
+     fe52 + he4 --&gt; ni56
+
+
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="c1">#PYTEST_VALIDATE_IGNORE_OUTPUT</span>
+<span class="n">alpha_network</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/library-filtering-examples_23_0.png" src="_images/library-filtering-examples_23_0.png" />
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="networks.html" class="btn btn-neutral float-right" title="Creating Networks" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="pynucastro-examples.html" class="btn btn-neutral" title="pynucastro usage examples" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Michael Zingale and Donald Willcox.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
