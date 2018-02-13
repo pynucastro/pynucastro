@@ -93,6 +93,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="intro.html">Overview of pynucastro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pynucastro-examples.html"><code class="docutils literal"><span class="pre">pynucastro</span></code> usage examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="library-filtering-examples.html">Using the Library Interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="networks.html">Creating Networks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modules.html">API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sources.html">Third Party Data</a></li>
@@ -170,11 +171,13 @@
  | <a href="#I"><strong>I</strong></a>
  | <a href="#J"><strong>J</strong></a>
  | <a href="#L"><strong>L</strong></a>
+ | <a href="#M"><strong>M</strong></a>
  | <a href="#N"><strong>N</strong></a>
  | <a href="#P"><strong>P</strong></a>
  | <a href="#R"><strong>R</strong></a>
  | <a href="#S"><strong>S</strong></a>
  | <a href="#T"><strong>T</strong></a>
+ | <a href="#U"><strong>U</strong></a>
  | <a href="#W"><strong>W</strong></a>
  | <a href="#Y"><strong>Y</strong></a>
  
@@ -228,10 +231,12 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pynucastro.rates.html#pynucastro.rates.rate.SingleSet.f">f() (pynucastro.rates.rate.SingleSet method)</a>
 </li>
-      <li><a href="pynucastro.networks.html#pynucastro.networks.base_fortran_network.BaseFortranNetwork.fmt_to_dp_f90">fmt_to_dp_f90() (pynucastro.networks.base_fortran_network.BaseFortranNetwork method)</a>
+      <li><a href="pynucastro.rates.html#pynucastro.rates.rate.Library.filter">filter() (pynucastro.rates.rate.Library method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pynucastro.networks.html#pynucastro.networks.base_fortran_network.BaseFortranNetwork.fmt_to_dp_f90">fmt_to_dp_f90() (pynucastro.networks.base_fortran_network.BaseFortranNetwork method)</a>
+</li>
       <li><a href="pynucastro.networks.html#pynucastro.networks.base_fortran_network.BaseFortranNetwork.fortranify">fortranify() (pynucastro.networks.base_fortran_network.BaseFortranNetwork method)</a>
 </li>
       <li><a href="pynucastro.networks.html#pynucastro.networks.python_network.PythonNetwork.function_string">function_string() (pynucastro.networks.python_network.PythonNetwork method)</a>
@@ -246,13 +251,19 @@
 </li>
       <li><a href="pynucastro.networks.html#pynucastro.networks.rate_collection.Composition.get_molar">get_molar() (pynucastro.networks.rate_collection.Composition method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.get_nuclei">get_nuclei() (pynucastro.networks.rate_collection.RateCollection method)</a>
 </li>
       <li><a href="pynucastro.nucdata.html#pynucastro.nucdata.binding_table.BindingTable.get_nuclide">get_nuclide() (pynucastro.nucdata.binding_table.BindingTable method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pynucastro.rates.html#pynucastro.rates.rate.Library.get_rate">get_rate() (pynucastro.rates.rate.Library method)</a>
+</li>
       <li><a href="pynucastro.rates.html#pynucastro.rates.rate.Rate.get_rate_exponent">get_rate_exponent() (pynucastro.rates.rate.Rate method)</a>
+</li>
+      <li><a href="pynucastro.rates.html#pynucastro.rates.rate.Rate.get_rate_id">get_rate_id() (pynucastro.rates.rate.Rate method)</a>
+</li>
+      <li><a href="pynucastro.rates.html#pynucastro.rates.rate.Library.get_rates">get_rates() (pynucastro.rates.rate.Library method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -263,15 +274,25 @@
       <li><a href="pynucastro.nucdata.html#pynucastro.nucdata.binding_table.BindingTable.header_length">header_length (pynucastro.nucdata.binding_table.BindingTable attribute)</a>
 </li>
   </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pynucastro.rates.html#pynucastro.rates.rate.Library.heaviest">heaviest() (pynucastro.rates.rate.Library method)</a>
+
+      <ul>
+        <li><a href="pynucastro.rates.html#pynucastro.rates.rate.Rate.heaviest">(pynucastro.rates.rate.Rate method)</a>
+</li>
+      </ul></li>
+  </ul></td>
 </tr></table>
 
 <h2 id="I">I</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pynucastro.networks.html#pynucastro.networks.base_fortran_network.BaseFortranNetwork.io_close">io_close() (pynucastro.networks.base_fortran_network.BaseFortranNetwork method)</a>
+      <li><a href="pynucastro.rates.html#pynucastro.rates.rate.RateFilter.invert">invert() (pynucastro.rates.rate.RateFilter method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pynucastro.networks.html#pynucastro.networks.base_fortran_network.BaseFortranNetwork.io_close">io_close() (pynucastro.networks.base_fortran_network.BaseFortranNetwork method)</a>
+</li>
       <li><a href="pynucastro.networks.html#pynucastro.networks.base_fortran_network.BaseFortranNetwork.io_open">io_open() (pynucastro.networks.base_fortran_network.BaseFortranNetwork method)</a>
 </li>
   </ul></td>
@@ -296,7 +317,25 @@
 <h2 id="L">L</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pynucastro.rates.html#pynucastro.rates.rate.Library">Library (class in pynucastro.rates.rate)</a>
+</li>
+      <li><a href="pynucastro.rates.html#pynucastro.rates.rate.Library.lightest">lightest() (pynucastro.rates.rate.Library method)</a>
+
+      <ul>
+        <li><a href="pynucastro.rates.html#pynucastro.rates.rate.Rate.lightest">(pynucastro.rates.rate.Rate method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pynucastro.rates.html#pynucastro.rates.rate.list_known_rates">list_known_rates() (in module pynucastro.rates.rate)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="M">M</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pynucastro.rates.html#pynucastro.rates.rate.RateFilter.matches">matches() (pynucastro.rates.rate.RateFilter method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -334,12 +373,12 @@
 </li>
       <li><a href="pynucastro.networks.html#module-pynucastro.networks.python_network">pynucastro.networks.python_network (module)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pynucastro.networks.html#module-pynucastro.networks.rate_collection">pynucastro.networks.rate_collection (module)</a>
 </li>
       <li><a href="pynucastro.networks.html#module-pynucastro.networks.starkiller_network">pynucastro.networks.starkiller_network (module)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pynucastro.nucdata.html#module-pynucastro.nucdata">pynucastro.nucdata (module)</a>
 </li>
       <li><a href="pynucastro.nucdata.html#module-pynucastro.nucdata.binding_nuclide">pynucastro.nucdata.binding_nuclide (module)</a>
@@ -349,6 +388,16 @@
       <li><a href="pynucastro.rates.html#module-pynucastro.rates">pynucastro.rates (module)</a>
 </li>
       <li><a href="pynucastro.rates.html#module-pynucastro.rates.rate">pynucastro.rates.rate (module)</a>
+</li>
+      <li><a href="pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.pynucastro_dir">pynucastro_dir (pynucastro.networks.rate_collection.RateCollection attribute)</a>
+
+      <ul>
+        <li><a href="pynucastro.rates.html#pynucastro.rates.rate.Library.pynucastro_dir">(pynucastro.rates.rate.Library attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="pynucastro.rates.html#pynucastro.rates.rate.Library.pynucastro_rates_dir">pynucastro_rates_dir (pynucastro.rates.rate.Library attribute)</a>
+</li>
+      <li><a href="pynucastro.rates.html#pynucastro.rates.rate.Library.pynucastro_tabular_dir">pynucastro_tabular_dir (pynucastro.rates.rate.Library attribute)</a>
 </li>
       <li><a href="pynucastro.networks.html#pynucastro.networks.python_network.PythonNetwork">PythonNetwork (class in pynucastro.networks.python_network)</a>
 </li>
@@ -365,6 +414,8 @@
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection">RateCollection (class in pynucastro.networks.rate_collection)</a>
+</li>
+      <li><a href="pynucastro.rates.html#pynucastro.rates.rate.RateFilter">RateFilter (class in pynucastro.rates.rate)</a>
 </li>
       <li><a href="pynucastro.nucdata.html#pynucastro.nucdata.binding_table.BindingTable.read">read() (pynucastro.nucdata.binding_table.BindingTable method)</a>
 </li>
@@ -401,17 +452,19 @@
   </ul></td>
 </tr></table>
 
+<h2 id="U">U</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pynucastro.rates.html#pynucastro.rates.rate.UnsupportedNucleus">UnsupportedNucleus</a>
+</li>
+  </ul></td>
+</tr></table>
+
 <h2 id="W">W</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pynucastro.networks.html#pynucastro.networks.base_fortran_network.BaseFortranNetwork.write_network">write_network() (pynucastro.networks.base_fortran_network.BaseFortranNetwork method)</a>
-
-      <ul>
-        <li><a href="pynucastro.networks.html#pynucastro.networks.python_network.PythonNetwork.write_network">(pynucastro.networks.python_network.PythonNetwork method)</a>
+      <li><a href="pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.write_network">write_network() (pynucastro.networks.rate_collection.RateCollection method)</a>
 </li>
-        <li><a href="pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.write_network">(pynucastro.networks.rate_collection.RateCollection method)</a>
-</li>
-      </ul></li>
   </ul></td>
 </tr></table>
 

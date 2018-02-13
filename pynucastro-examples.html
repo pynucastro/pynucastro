@@ -36,7 +36,7 @@
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
     <link rel="top" title="pynucastro 1.0 documentation" href="index.html"/>
-        <link rel="next" title="Creating networks" href="networks.html"/>
+        <link rel="next" title="Using the Library Interface" href="library-filtering-examples.html"/>
         <link rel="prev" title="Overview of pynucastro" href="intro.html"/> 
 
   
@@ -92,7 +92,7 @@
             
               <p class="caption"><span class="caption-text">Contents</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="intro.html">Overview of <code class="docutils literal"><span class="pre">pynucastro</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Overview of pynucastro</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#"><code class="docutils literal"><span class="pre">pynucastro</span></code> usage examples</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#Loading-a-single-rate">Loading a single rate</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#the-original-reaclib-source">the original reaclib source</a></li>
@@ -111,8 +111,10 @@
 <li class="toctree-l2"><a class="reference internal" href="#Integrating-networks">Integrating networks</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="networks.html">Creating networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="library-filtering-examples.html">Using the Library Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="networks.html">Creating Networks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modules.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sources.html">Third Party Data</a></li>
 </ul>
 
             
@@ -386,7 +388,7 @@ div.nboutput div.output_area.stderr {
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span>%matplotlib inline
+<span></span><span class="o">%</span><span class="k">matplotlib</span> inline
 </pre></div>
 </div>
 </div>
@@ -396,7 +398,7 @@ div.nboutput div.output_area.stderr {
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span>import pynucastro as pyrl
+<span></span><span class="kn">import</span> <span class="nn">pynucastro</span> <span class="k">as</span> <span class="nn">pyrl</span>
 </pre></div>
 </div>
 </div>
@@ -411,7 +413,7 @@ you to explore the rate.</p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span>c13pg = pyrl.Rate(&quot;../pynucastro/library/c13-pg-n14-nacr&quot;)
+<span></span><span class="n">c13pg</span> <span class="o">=</span> <span class="n">pyrl</span><span class="o">.</span><span class="n">Rate</span><span class="p">(</span><span class="s2">&quot;../pynucastro/library/c13-pg-n14-nacr&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -423,7 +425,7 @@ you to explore the rate.</p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span>print(c13pg.original_source)
+<span></span><span class="nb">print</span><span class="p">(</span><span class="n">c13pg</span><span class="o">.</span><span class="n">original_source</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -456,7 +458,7 @@ you to explore the rate.</p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span>c13pg.eval(1.e9)
+<span></span><span class="n">c13pg</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="mf">1.e9</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -479,7 +481,7 @@ you to explore the rate.</p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span>print(c13pg)
+<span></span><span class="nb">print</span><span class="p">(</span><span class="n">c13pg</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -499,8 +501,8 @@ and <code class="docutils literal"><span class="pre">N</span></code> that give t
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span>print(c13pg.reactants)
-print(c13pg.products)
+<span></span><span class="nb">print</span><span class="p">(</span><span class="n">c13pg</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">c13pg</span><span class="o">.</span><span class="n">products</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -519,7 +521,7 @@ print(c13pg.products)
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span>r2 = c13pg.reactants[1]
+<span></span><span class="n">r2</span> <span class="o">=</span> <span class="n">c13pg</span><span class="o">.</span><span class="n">reactants</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
@@ -529,7 +531,7 @@ print(c13pg.products)
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span>type(r2)
+<span></span><span class="nb">type</span><span class="p">(</span><span class="n">r2</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -549,7 +551,7 @@ print(c13pg.products)
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span>print(r2.Z, r2.N)
+<span></span><span class="nb">print</span><span class="p">(</span><span class="n">r2</span><span class="o">.</span><span class="n">Z</span><span class="p">,</span> <span class="n">r2</span><span class="o">.</span><span class="n">N</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -573,7 +575,7 @@ given a reference temperature, <span class="math">\(T_0\)</span></p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span>c13pg.get_rate_exponent(2.e7)
+<span></span><span class="n">c13pg</span><span class="o">.</span><span class="n">get_rate_exponent</span><span class="p">(</span><span class="mf">2.e7</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -598,8 +600,8 @@ the reaclib files. The <code class="docutils literal"><span class="pre">plot()</
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span>#PYTEST_VALIDATE_IGNORE_OUTPUT
-c13pg.plot()
+<span></span><span class="c1">#PYTEST_VALIDATE_IGNORE_OUTPUT</span>
+<span class="n">c13pg</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -620,7 +622,7 @@ per gram, this number is 1 less than the number of nuclei</p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span>c13pg.dens_exp
+<span></span><span class="n">c13pg</span><span class="o">.</span><span class="n">dens_exp</span>
 </pre></div>
 </div>
 </div>
@@ -648,15 +650,15 @@ directly.</p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span>files = [&quot;c12-pg-n13-ls09&quot;,
-         &quot;c13-pg-n14-nacr&quot;,
-         &quot;n13--c13-wc12&quot;,
-         &quot;n13-pg-o14-lg06&quot;,
-         &quot;n14-pg-o15-im05&quot;,
-         &quot;n15-pa-c12-nacr&quot;,
-         &quot;o14--n14-wc12&quot;,
-         &quot;o15--n15-wc12&quot;]
-rc = pyrl.RateCollection(files)
+<span></span><span class="n">files</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;c12-pg-n13-ls09&quot;</span><span class="p">,</span>
+         <span class="s2">&quot;c13-pg-n14-nacr&quot;</span><span class="p">,</span>
+         <span class="s2">&quot;n13--c13-wc12&quot;</span><span class="p">,</span>
+         <span class="s2">&quot;n13-pg-o14-lg06&quot;</span><span class="p">,</span>
+         <span class="s2">&quot;n14-pg-o15-im05&quot;</span><span class="p">,</span>
+         <span class="s2">&quot;n15-pa-c12-nacr&quot;</span><span class="p">,</span>
+         <span class="s2">&quot;o14--n14-wc12&quot;</span><span class="p">,</span>
+         <span class="s2">&quot;o15--n15-wc12&quot;</span><span class="p">]</span>
+<span class="n">rc</span> <span class="o">=</span> <span class="n">pyrl</span><span class="o">.</span><span class="n">RateCollection</span><span class="p">(</span><span class="n">files</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -668,7 +670,7 @@ rc = pyrl.RateCollection(files)
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span>print(rc)
+<span></span><span class="nb">print</span><span class="p">(</span><span class="n">rc</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -694,7 +696,7 @@ o15 --&gt; n15
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span>print(rc.network_overview())
+<span></span><span class="nb">print</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">network_overview</span><span class="p">())</span>
 </pre></div>
 </div>
 </div>
@@ -774,8 +776,8 @@ o15
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span>#PYTEST_VALIDATE_IGNORE_OUTPUT
-rc.plot()
+<span></span><span class="c1">#PYTEST_VALIDATE_IGNORE_OUTPUT</span>
+<span class="n">rc</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -797,8 +799,8 @@ rc.plot()
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span>comp = pyrl.Composition(rc.get_nuclei())
-comp.set_solar_like()
+<span></span><span class="n">comp</span> <span class="o">=</span> <span class="n">pyrl</span><span class="o">.</span><span class="n">Composition</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">get_nuclei</span><span class="p">())</span>
+<span class="n">comp</span><span class="o">.</span><span class="n">set_solar_like</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -810,9 +812,9 @@ takes a <code class="docutils literal"><span class="pre">RateCollection</span></
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span>#PYTEST_VALIDATE_IGNORE_OUTPUT
-re = pyrl.Explorer(rc, comp)
-re.explore()
+<span></span><span class="c1">#PYTEST_VALIDATE_IGNORE_OUTPUT</span>
+<span class="n">re</span> <span class="o">=</span> <span class="n">pyrl</span><span class="o">.</span><span class="n">Explorer</span><span class="p">(</span><span class="n">rc</span><span class="p">,</span> <span class="n">comp</span><span class="p">)</span>
+<span class="n">re</span><span class="o">.</span><span class="n">explore</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -820,7 +822,7 @@ re.explore()
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<script type="application/vnd.jupyter.widget-view+json">{"model_id": "d365b79bde1148f998aa1f461fe21c91", "version_major": 2, "version_minor": 0}</script></div>
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "a7c85864029045c2835fa98717c3ad21", "version_major": 2, "version_minor": 0}</script></div>
 </div>
 </div>
 <div class="section" id="Integrating-networks">
@@ -834,7 +836,7 @@ one of <code class="docutils literal"><span class="pre">PythonNetwork</span></co
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span>pynet = pyrl.PythonNetwork(files)
+<span></span><span class="n">pynet</span> <span class="o">=</span> <span class="n">pyrl</span><span class="o">.</span><span class="n">PythonNetwork</span><span class="p">(</span><span class="n">files</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -847,7 +849,7 @@ the <span class="math">\({}^{13}\mathrm{C} (p,\gamma) {}^{14}\mathrm{N}\)</span>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span>print(pynet.ydot_string(c13pg))
+<span></span><span class="nb">print</span><span class="p">(</span><span class="n">pynet</span><span class="o">.</span><span class="n">ydot_string</span><span class="p">(</span><span class="n">c13pg</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
@@ -856,7 +858,7 @@ the <span class="math">\({}^{13}\mathrm{C} (p,\gamma) {}^{14}\mathrm{N}\)</span>
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-rho*Y[ip]*Y[ic13]*lambda_c13_pg_n14
+rho*Y[ip]*Y[ic13]*lambda_p_c13__n14
 </pre></div></div>
 </div>
 <p>and the code needed to evaluate that rate (the T-dependent part) as:</p>
@@ -866,7 +868,7 @@ rho*Y[ip]*Y[ic13]*lambda_c13_pg_n14
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span>print(pynet.function_string(c13pg))
+<span></span><span class="nb">print</span><span class="p">(</span><span class="n">pynet</span><span class="o">.</span><span class="n">function_string</span><span class="p">(</span><span class="n">c13pg</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
@@ -875,7 +877,7 @@ rho*Y[ip]*Y[ic13]*lambda_c13_pg_n14
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-def c13_pg_n14(tf):
+def p_c13__n14(tf):
     # c13 + p --&gt; n14
     rate = 0.0
 
@@ -902,7 +904,7 @@ define the RHS of a network for integration with the SciPy integrators</p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span>pynet.write_network()
+<span></span><span class="n">pynet</span><span class="o">.</span><span class="n">write_network</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -937,7 +939,7 @@ A[in15] = 15
 A[io14] = 14
 A[io15] = 15
 
-def c12_pg_n13(tf):
+def p_c12__n13(tf):
     # c12 + p --&gt; n13
     rate = 0.0
 
@@ -950,7 +952,7 @@ def c12_pg_n13(tf):
 
     return rate
 
-def c13_pg_n14(tf):
+def p_c13__n14(tf):
     # c13 + p --&gt; n14
     rate = 0.0
 
@@ -966,7 +968,7 @@ def c13_pg_n14(tf):
 
     return rate
 
-def n13_c13(tf):
+def n13__c13(tf):
     # n13 --&gt; c13
     rate = 0.0
 
@@ -975,7 +977,7 @@ def n13_c13(tf):
 
     return rate
 
-def n13_pg_o14(tf):
+def p_n13__o14(tf):
     # n13 + p --&gt; o14
     rate = 0.0
 
@@ -988,7 +990,7 @@ def n13_pg_o14(tf):
 
     return rate
 
-def n14_pg_o15(tf):
+def p_n14__o15(tf):
     # n14 + p --&gt; o15
     rate = 0.0
 
@@ -1007,7 +1009,7 @@ def n14_pg_o15(tf):
 
     return rate
 
-def n15_pa_c12(tf):
+def p_n15__he4_c12(tf):
     # n15 + p --&gt; he4 + c12
     rate = 0.0
 
@@ -1026,7 +1028,7 @@ def n15_pa_c12(tf):
 
     return rate
 
-def o14_n14(tf):
+def o14__n14(tf):
     # o14 --&gt; n14
     rate = 0.0
 
@@ -1035,7 +1037,7 @@ def o14_n14(tf):
 
     return rate
 
-def o15_n15(tf):
+def o15__n15(tf):
     # o15 --&gt; n15
     rate = 0.0
 
@@ -1048,64 +1050,64 @@ def rhs(t, Y, rho, T):
 
     tf = Tfactors(T)
 
-    lambda_c12_pg_n13 = c12_pg_n13(tf)
-    lambda_c13_pg_n14 = c13_pg_n14(tf)
-    lambda_n13_c13 = n13_c13(tf)
-    lambda_n13_pg_o14 = n13_pg_o14(tf)
-    lambda_n14_pg_o15 = n14_pg_o15(tf)
-    lambda_n15_pa_c12 = n15_pa_c12(tf)
-    lambda_o14_n14 = o14_n14(tf)
-    lambda_o15_n15 = o15_n15(tf)
+    lambda_p_c12__n13 = p_c12__n13(tf)
+    lambda_p_c13__n14 = p_c13__n14(tf)
+    lambda_n13__c13 = n13__c13(tf)
+    lambda_p_n13__o14 = p_n13__o14(tf)
+    lambda_p_n14__o15 = p_n14__o15(tf)
+    lambda_p_n15__he4_c12 = p_n15__he4_c12(tf)
+    lambda_o14__n14 = o14__n14(tf)
+    lambda_o15__n15 = o15__n15(tf)
 
     dYdt = np.zeros((nnuc), dtype=np.float64)
 
     dYdt[ip] = (
-       -rho*Y[ip]*Y[ic12]*lambda_c12_pg_n13
-       -rho*Y[ip]*Y[ic13]*lambda_c13_pg_n14
-       -rho*Y[ip]*Y[in13]*lambda_n13_pg_o14
-       -rho*Y[ip]*Y[in14]*lambda_n14_pg_o15
-       -rho*Y[ip]*Y[in15]*lambda_n15_pa_c12
+       -rho*Y[ip]*Y[ic12]*lambda_p_c12__n13
+       -rho*Y[ip]*Y[ic13]*lambda_p_c13__n14
+       -rho*Y[ip]*Y[in13]*lambda_p_n13__o14
+       -rho*Y[ip]*Y[in14]*lambda_p_n14__o15
+       -rho*Y[ip]*Y[in15]*lambda_p_n15__he4_c12
        )
 
     dYdt[ihe4] = (
-       +rho*Y[ip]*Y[in15]*lambda_n15_pa_c12
+       +rho*Y[ip]*Y[in15]*lambda_p_n15__he4_c12
        )
 
     dYdt[ic12] = (
-       -rho*Y[ip]*Y[ic12]*lambda_c12_pg_n13
-       +rho*Y[ip]*Y[in15]*lambda_n15_pa_c12
+       -rho*Y[ip]*Y[ic12]*lambda_p_c12__n13
+       +rho*Y[ip]*Y[in15]*lambda_p_n15__he4_c12
        )
 
     dYdt[ic13] = (
-       -rho*Y[ip]*Y[ic13]*lambda_c13_pg_n14
-       +Y[in13]*lambda_n13_c13
+       -rho*Y[ip]*Y[ic13]*lambda_p_c13__n14
+       +Y[in13]*lambda_n13__c13
        )
 
     dYdt[in13] = (
-       -Y[in13]*lambda_n13_c13
-       -rho*Y[ip]*Y[in13]*lambda_n13_pg_o14
-       +rho*Y[ip]*Y[ic12]*lambda_c12_pg_n13
+       -Y[in13]*lambda_n13__c13
+       -rho*Y[ip]*Y[in13]*lambda_p_n13__o14
+       +rho*Y[ip]*Y[ic12]*lambda_p_c12__n13
        )
 
     dYdt[in14] = (
-       -rho*Y[ip]*Y[in14]*lambda_n14_pg_o15
-       +rho*Y[ip]*Y[ic13]*lambda_c13_pg_n14
-       +Y[io14]*lambda_o14_n14
+       -rho*Y[ip]*Y[in14]*lambda_p_n14__o15
+       +rho*Y[ip]*Y[ic13]*lambda_p_c13__n14
+       +Y[io14]*lambda_o14__n14
        )
 
     dYdt[in15] = (
-       -rho*Y[ip]*Y[in15]*lambda_n15_pa_c12
-       +Y[io15]*lambda_o15_n15
+       -rho*Y[ip]*Y[in15]*lambda_p_n15__he4_c12
+       +Y[io15]*lambda_o15__n15
        )
 
     dYdt[io14] = (
-       -Y[io14]*lambda_o14_n14
-       +rho*Y[ip]*Y[in13]*lambda_n13_pg_o14
+       -Y[io14]*lambda_o14__n14
+       +rho*Y[ip]*Y[in13]*lambda_p_n13__o14
        )
 
     dYdt[io15] = (
-       -Y[io15]*lambda_o15_n15
-       +rho*Y[ip]*Y[in14]*lambda_n14_pg_o15
+       -Y[io15]*lambda_o15__n15
+       +rho*Y[ip]*Y[in14]*lambda_p_n14__o15
        )
 
     return dYdt
@@ -1124,7 +1126,7 @@ def rhs(t, Y, rho, T):
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="networks.html" class="btn btn-neutral float-right" title="Creating networks" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="library-filtering-examples.html" class="btn btn-neutral float-right" title="Using the Library Interface" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="intro.html" class="btn btn-neutral" title="Overview of pynucastro" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>

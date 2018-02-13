@@ -93,6 +93,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Overview of pynucastro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../pynucastro-examples.html"><code class="docutils literal"><span class="pre">pynucastro</span></code> usage examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../library-filtering-examples.html">Using the Library Interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../networks.html">Creating Networks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../modules.html">API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../sources.html">Third Party Data</a></li>
@@ -179,7 +180,7 @@
 <span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
 
 <span class="c1"># Import Rate</span>
-<span class="kn">from</span> <span class="nn">pynucastro.rates</span> <span class="k">import</span> <span class="n">Rate</span><span class="p">,</span> <span class="n">Nucleus</span>
+<span class="kn">from</span> <span class="nn">pynucastro.rates</span> <span class="k">import</span> <span class="n">Rate</span><span class="p">,</span> <span class="n">Nucleus</span><span class="p">,</span> <span class="n">Library</span>
 
 <span class="n">matplotlib</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;figure.dpi&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">100</span>
 
@@ -243,34 +244,66 @@
 <div class="viewcode-block" id="RateCollection"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection">[docs]</a><span class="k">class</span> <span class="nc">RateCollection</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; a collection of rates that together define a network &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rate_files</span><span class="p">):</span>
+    <span class="n">pynucastro_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)))</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rate_files</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">libraries</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rates</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        rate_files are the files that together define the network.  This</span>
-<span class="sd">        can be any iterable or single string, and can include</span>
-<span class="sd">        wildcards.</span>
+<span class="sd">        can be any iterable or single string.</span>
+
+<span class="sd">        This can include Reaclib library files storing multiple rates.</span>
+
+<span class="sd">        If libraries is supplied, initialize a RateCollection using the rates </span>
+<span class="sd">        in the Library object(s) in list &#39;libraries&#39;.</span>
+
+<span class="sd">        If rates is supplied, initialize a RateCollection using the </span>
+<span class="sd">        Rate objects in the list &#39;rates&#39;.</span>
+
+<span class="sd">        Any combination of these options may be combined.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">pynucastro_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">files</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rates</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">library</span> <span class="o">=</span> <span class="kc">None</span>
 
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rate_files</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="n">rate_files</span> <span class="o">=</span> <span class="p">[</span><span class="n">rate_files</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">rate_files</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rate_files</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">rate_files</span> <span class="o">=</span> <span class="p">[</span><span class="n">rate_files</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_read_rate_files</span><span class="p">(</span><span class="n">rate_files</span><span class="p">)</span>
 
-        <span class="c1"># get the rates</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">pynucastro_rates_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pynucastro_dir</span><span class="p">,</span>
-                                                 <span class="s1">&#39;library&#39;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">pynucastro_tabular_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pynucastro_rates_dir</span><span class="p">,</span>
-                                                 <span class="s1">&#39;tabular&#39;</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">files</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_find_rate_file</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">rate_files</span><span class="p">]</span>
-
-        <span class="k">for</span> <span class="n">rf</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">rates</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rates</span><span class="p">,</span> <span class="n">Rate</span><span class="p">):</span>
+                <span class="n">rates</span> <span class="o">=</span> <span class="p">[</span><span class="n">rates</span><span class="p">]</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Rate</span><span class="p">(</span><span class="n">rf</span><span class="p">))</span>
+                <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">rates</span><span class="p">:</span>
+                    <span class="k">assert</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">Rate</span><span class="p">))</span>
             <span class="k">except</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error with file: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">rf</span><span class="p">))</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Expected Rate object or list of Rate objects passed as the rates argument.&#39;</span><span class="p">)</span>
                 <span class="k">raise</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">rlib</span> <span class="o">=</span> <span class="n">Library</span><span class="p">(</span><span class="n">rates</span><span class="o">=</span><span class="n">rates</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">library</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">library</span> <span class="o">=</span> <span class="n">rlib</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">library</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">library</span> <span class="o">+</span> <span class="n">rlib</span>
+
+        <span class="k">if</span> <span class="n">libraries</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">libraries</span><span class="p">,</span> <span class="n">Library</span><span class="p">):</span>
+                <span class="n">libraries</span> <span class="o">=</span> <span class="p">[</span><span class="n">libraries</span><span class="p">]</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">lib</span> <span class="ow">in</span> <span class="n">libraries</span><span class="p">:</span>
+                    <span class="k">assert</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">lib</span><span class="p">,</span> <span class="n">Library</span><span class="p">))</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Expected Library object or list of Library objects passed as the libraries argument.&#39;</span><span class="p">)</span>
+                <span class="k">raise</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">library</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">library</span> <span class="o">=</span> <span class="n">libraries</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">lib</span> <span class="ow">in</span> <span class="n">libraries</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">library</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">library</span> <span class="o">+</span> <span class="n">lib</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">library</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rates</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">library</span><span class="o">.</span><span class="n">get_rates</span><span class="p">()</span>
 
         <span class="c1"># get the unique nuclei</span>
         <span class="n">u</span> <span class="o">=</span> <span class="p">[]</span>
@@ -310,33 +343,24 @@
                     <span class="nb">str</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">chapter</span><span class="p">)))</span>
                 <span class="n">exit</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">_find_rate_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ratename</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;locate the Reaclib or tabular rate file given its name.  Return</span>
-<span class="sd">        None if the file cannot be located, otherwise return its path.&quot;&quot;&quot;</span>
-
-        <span class="c1"># check to see if the rate file is in the working dir</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="n">ratename</span>
-        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-            <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-
-        <span class="c1"># check to see if the rate file is in pynucastro/library</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pynucastro_rates_dir</span><span class="p">,</span> <span class="n">ratename</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-            <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-
-        <span class="c1"># check to see if the rate file is in pynucastro/library/tabular</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pynucastro_tabular_dir</span><span class="p">,</span> <span class="n">ratename</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-            <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-
-        <span class="c1"># notify user we can&#39;t find the file</span>
-        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;File </span><span class="si">{}</span><span class="s1"> not found in the working directory, </span><span class="si">{}</span><span class="s1">, or </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-            <span class="n">ratename</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pynucastro_rates_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pynucastro_tabular_dir</span><span class="p">))</span>
+    <span class="k">def</span> <span class="nf">_read_rate_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rate_files</span><span class="p">):</span>
+        <span class="c1"># get the rates</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">files</span> <span class="o">=</span> <span class="n">rate_files</span>
+        <span class="k">for</span> <span class="n">rf</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">rflib</span> <span class="o">=</span> <span class="n">Library</span><span class="p">(</span><span class="n">rf</span><span class="p">)</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error reading library from file: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">rf</span><span class="p">))</span>
+                <span class="k">raise</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">library</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">library</span> <span class="o">=</span> <span class="n">rflib</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">library</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">library</span> <span class="o">+</span> <span class="n">rflib</span>
 
 <div class="viewcode-block" id="RateCollection.get_nuclei"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.get_nuclei">[docs]</a>    <span class="k">def</span> <span class="nf">get_nuclei</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; get all the nuclei that are part of the network &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span></div>
-
 
 <div class="viewcode-block" id="RateCollection.evaluate_rates"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.evaluate_rates">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate_rates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">composition</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;evaluate the rates for a specific density, temperature, and</span>
@@ -367,11 +391,23 @@
             <span class="n">ostr</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="k">return</span> <span class="n">ostr</span></div>
 
-<div class="viewcode-block" id="RateCollection.write_network"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.write_network">[docs]</a>    <span class="k">def</span> <span class="nf">write_network</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="RateCollection.write_network"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.write_network">[docs]</a>    <span class="k">def</span> <span class="nf">write_network</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Before writing the network, check to make sure the rates</span>
+<span class="sd">        are distinguishable by name.&quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_distinguishable_rates</span><span class="p">(),</span> <span class="s2">&quot;ERROR: Rates not uniquely identified by Rate.fname&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_write_network</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_distinguishable_rates</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Every Rate in this RateCollection should have a unique Rate.fname,</span>
+<span class="sd">        as the network writers distinguish the rates on this basis.&quot;&quot;&quot;</span>
+        <span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span><span class="o">.</span><span class="n">fname</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">]</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">names</span><span class="p">))</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_write_network</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;A stub for function to output the network -- this is implementation</span>
 <span class="sd">        dependent.&quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;To create network integration source code, use a class that implements a specific network type.&#39;</span><span class="p">)</span>
-        <span class="k">return</span></div>
+        <span class="k">return</span>
 
 <div class="viewcode-block" id="RateCollection.plot"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outfile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">800</span><span class="p">,</span> <span class="mi">600</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Make a plot of the network structure showing the links between nuclei&quot;&quot;&quot;</span>
@@ -420,7 +456,16 @@
                         <span class="k">if</span> <span class="n">ydots</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                             <span class="n">G</span><span class="o">.</span><span class="n">add_edges_from</span><span class="p">([(</span><span class="n">n</span><span class="p">,</span> <span class="n">p</span><span class="p">)],</span> <span class="n">weight</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
                         <span class="k">else</span><span class="p">:</span>
-                            <span class="n">G</span><span class="o">.</span><span class="n">add_edges_from</span><span class="p">([(</span><span class="n">n</span><span class="p">,</span> <span class="n">p</span><span class="p">)],</span> <span class="n">weight</span><span class="o">=</span><span class="n">math</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">ydots</span><span class="p">[</span><span class="n">r</span><span class="p">]))</span>
+                            <span class="k">try</span><span class="p">:</span>
+                                <span class="n">rate_weight</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">ydots</span><span class="p">[</span><span class="n">r</span><span class="p">])</span>
+                            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                                <span class="c1"># if ydots[r] is zero, then set the weight</span>
+                                <span class="c1"># to roughly the minimum exponent possible</span>
+                                <span class="c1"># for python floats</span>
+                                <span class="n">rate_weight</span> <span class="o">=</span> <span class="o">-</span><span class="mi">308</span>
+                            <span class="k">except</span><span class="p">:</span>
+                                <span class="k">raise</span>
+                            <span class="n">G</span><span class="o">.</span><span class="n">add_edges_from</span><span class="p">([(</span><span class="n">n</span><span class="p">,</span> <span class="n">p</span><span class="p">)],</span> <span class="n">weight</span><span class="o">=</span><span class="n">rate_weight</span><span class="p">)</span>
 
         <span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx_nodes</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">G</span><span class="o">.</span><span class="n">position</span><span class="p">,</span>
                                <span class="n">node_color</span><span class="o">=</span><span class="s2">&quot;#A0CBE2&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>

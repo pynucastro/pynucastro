@@ -93,6 +93,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Overview of pynucastro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../pynucastro-examples.html"><code class="docutils literal"><span class="pre">pynucastro</span></code> usage examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../library-filtering-examples.html">Using the Library Interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../networks.html">Creating Networks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../modules.html">API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../sources.html">Third Party Data</a></li>
@@ -160,14 +161,18 @@
            <div itemprop="articleBody">
             
   <h1>Source code for pynucastro.rates.rate</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot; Classes and methods to deal with a single nuclear reaction rate.&quot;&quot;&quot;</span>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Classes and methods to interface with files storing rate data.</span>
+<span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">io</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">collections</span>
 
-<span class="kn">from</span> <span class="nn">periodictable</span> <span class="k">import</span> <span class="n">elements</span>
+<span class="kn">from</span> <span class="nn">pynucastro.nucdata</span> <span class="k">import</span> <span class="n">Element</span><span class="p">,</span> <span class="n">UnidentifiedElement</span><span class="p">,</span> <span class="n">PeriodicTable</span>
 
 <div class="viewcode-block" id="list_known_rates"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.list_known_rates">[docs]</a><span class="k">def</span> <span class="nf">list_known_rates</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot; list the rates found in the library &quot;&quot;&quot;</span>
@@ -177,12 +182,13 @@
     <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">filenames</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">lib_path</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">filenames</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">r</span> <span class="o">=</span> <span class="n">Rate</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+                <span class="n">lib</span> <span class="o">=</span> <span class="n">Library</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
             <span class="k">except</span><span class="p">:</span>
                 <span class="k">continue</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{:32}</span><span class="s2"> : </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">r</span><span class="p">))</span></div>
-
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{:32}</span><span class="s2"> : &quot;</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">lib</span><span class="o">.</span><span class="n">get_rates</span><span class="p">():</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;                                 : </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">r</span><span class="p">))</span></div>
 
 <div class="viewcode-block" id="Tfactors"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.Tfactors">[docs]</a><span class="k">class</span> <span class="nc">Tfactors</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; precompute temperature factors for speed &quot;&quot;&quot;</span>
@@ -204,14 +210,41 @@
 <span class="sd">        A single rate in Reaclib can be composed of multiple sets</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">labelprops</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;here a is iterable (e.g., list or numpy array), storing the</span>
 <span class="sd">           coefficients, a0, ..., a6</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="n">a</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="n">label</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span> <span class="o">=</span> <span class="n">labelprops</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_label_properties</span><span class="p">()</span>
 
+    <span class="k">def</span> <span class="nf">_update_label_properties</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set label and flags indicating Set is resonant, </span>
+<span class="sd">            weak, or reverse. &quot;&quot;&quot;</span>
+        <span class="k">assert</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span><span class="p">)</span><span class="o">==</span><span class="nb">str</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">assert</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span><span class="p">)</span><span class="o">==</span><span class="mi">6</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">raise</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">resonant</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;r&#39;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">weak</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;w&#39;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">reverse</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;v&#39;</span>
+
+    <span class="k">def</span> <span class="nf">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Determine whether two SingleSet objects are equal to each other. &quot;&quot;&quot;</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">for</span> <span class="n">ai</span><span class="p">,</span> <span class="n">aj</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">a</span><span class="p">):</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="ow">and</span> <span class="p">(</span><span class="n">ai</span> <span class="o">==</span> <span class="n">aj</span><span class="p">)</span>
+
+        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">label</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">label</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">resonant</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">resonant</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">weak</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">weak</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reverse</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">reverse</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">x</span>
 
 <div class="viewcode-block" id="SingleSet.f"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.SingleSet.f">[docs]</a>    <span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -253,6 +286,10 @@
         <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;)&quot;</span>
         <span class="k">return</span> <span class="n">string</span></div></div>
 
+<div class="viewcode-block" id="UnsupportedNucleus"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.UnsupportedNucleus">[docs]</a><span class="k">class</span> <span class="nc">UnsupportedNucleus</span><span class="p">(</span><span class="ne">BaseException</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span></div>
+
 <div class="viewcode-block" id="Nucleus"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.Nucleus">[docs]</a><span class="k">class</span> <span class="nc">Nucleus</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    a nucleus that participates in a reaction -- we store it in a</span>
@@ -279,27 +316,48 @@
         <span class="k">elif</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;n&quot;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">el</span> <span class="o">=</span> <span class="s2">&quot;n&quot;</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">A</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">Z</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">N</span> <span class="o">=</span> <span class="mi">1</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">short_spec_name</span> <span class="o">=</span> <span class="s2">&quot;n&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">spec_name</span> <span class="o">=</span> <span class="s2">&quot;neutron&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;\mathrm{{</span><span class="si">{}</span><span class="s2">}}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">el</span><span class="p">)</span>            
         <span class="k">else</span><span class="p">:</span>
             <span class="n">e</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;([a-zA-Z]*)(\d*)&quot;</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">el</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">title</span><span class="p">()</span>  <span class="c1"># chemical symbol</span>
-
-            <span class="bp">self</span><span class="o">.</span><span class="n">A</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+            <span class="k">assert</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">el</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">A</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">name</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;al-6&#39;</span> <span class="ow">or</span>
+                    <span class="n">name</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;al*6&#39;</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="n">UnsupportedNucleus</span><span class="p">()</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span>
+            <span class="k">assert</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">A</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">short_spec_name</span> <span class="o">=</span> <span class="n">name</span>
 
-        <span class="c1"># atomic number comes from periodtable</span>
-        <span class="n">i</span> <span class="o">=</span> <span class="n">elements</span><span class="o">.</span><span class="n">isotope</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">-</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">A</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">el</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">Z</span> <span class="o">=</span> <span class="n">i</span><span class="o">.</span><span class="n">number</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">N</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">A</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">Z</span>
+        <span class="c1"># atomic number comes from periodic table</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="o">!=</span> <span class="s2">&quot;n&quot;</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">i</span> <span class="o">=</span> <span class="n">PeriodicTable</span><span class="o">.</span><span class="n">lookup_abbreviation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">el</span><span class="p">)</span>
+            <span class="k">except</span> <span class="n">UnidentifiedElement</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Could not identify element: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">el</span><span class="p">))</span>
+                <span class="k">raise</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="k">raise</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">Z</span> <span class="o">=</span> <span class="n">i</span><span class="o">.</span><span class="n">Z</span>
+                <span class="k">assert</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Z</span><span class="p">)</span><span class="o">==</span><span class="nb">int</span><span class="p">)</span>
+                <span class="k">assert</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Z</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">N</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">A</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">Z</span>
+                <span class="k">assert</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">)</span><span class="o">==</span><span class="nb">int</span><span class="p">)</span>
+                <span class="k">assert</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span>
 
-        <span class="c1"># long name</span>
-        <span class="k">if</span> <span class="n">i</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;neutron&#39;</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">spec_name</span> <span class="o">=</span> <span class="n">i</span><span class="o">.</span><span class="n">name</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">spec_name</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">-</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">A</span><span class="p">)</span>
+                <span class="c1"># long name</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">spec_name</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">-</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">A</span><span class="p">)</span>
 
-        <span class="c1"># latex formatted style</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;{{}}^{{</span><span class="si">{}</span><span class="s2">}}\mathrm{{</span><span class="si">{}</span><span class="s2">}}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">A</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">el</span><span class="p">)</span>
+                <span class="c1"># latex formatted style</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;{{}}^{{</span><span class="si">{}</span><span class="s2">}}\mathrm{{</span><span class="si">{}</span><span class="s2">}}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">A</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">el</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw</span>
@@ -317,34 +375,492 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">A</span> <span class="o">&lt;</span> <span class="n">other</span><span class="o">.</span><span class="n">A</span></div>
 
-<div class="viewcode-block" id="Rate"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.Rate">[docs]</a><span class="k">class</span> <span class="nc">Rate</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; a single Reaclib rate, which can be composed of multiple sets &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="Library"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.Library">[docs]</a><span class="k">class</span> <span class="nc">Library</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A Library is a Rate container that reads a single file</span>
+<span class="sd">    containing one or many Reaclib rates, possibly containing multiple</span>
+<span class="sd">    sets per rate.</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rfile</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">rfile_path</span> <span class="o">=</span> <span class="n">rfile</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">rfile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">rfile</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">chapter</span> <span class="o">=</span> <span class="kc">None</span>    <span class="c1"># the Reaclib chapter for this reaction</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">original_source</span> <span class="o">=</span> <span class="kc">None</span>   <span class="c1"># the contents of the original rate file</span>
+<span class="sd">    The Library class also implements searching based on rules</span>
+<span class="sd">    specified by RateFilter objects.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">pynucastro_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)))</span>
+    <span class="n">pynucastro_rates_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">pynucastro_dir</span><span class="p">,</span>
+                                        <span class="s1">&#39;library&#39;</span><span class="p">)</span>
+    <span class="n">pynucastro_tabular_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">pynucastro_rates_dir</span><span class="p">,</span>
+                                          <span class="s1">&#39;tabular&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">libfile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rates</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">read_library</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_library_file</span> <span class="o">=</span> <span class="n">libfile</span>
+        <span class="k">if</span> <span class="n">rates</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rates</span><span class="p">,</span> <span class="n">Rate</span><span class="p">):</span>
+                <span class="n">rates</span> <span class="o">=</span> <span class="p">[</span><span class="n">rates</span><span class="p">]</span>
+            <span class="k">assert</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">rates</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rates</span><span class="p">,</span> <span class="nb">list</span><span class="p">)),</span> <span class="s2">&quot;ERROR: rates in Library constructor must be a Rate object, list of Rate objects, or dictionary of Rate objects keyed by Rate.get_rate_id()&quot;</span>                
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rates</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_rates</span> <span class="o">=</span> <span class="n">rates</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rates</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_add_from_rate_list</span><span class="p">(</span><span class="n">rates</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_rates</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_library_source_lines</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_library_file</span> <span class="ow">and</span> <span class="n">read_library</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_library_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_rate_file</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_library_file</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_read_library_file</span><span class="p">()</span>
+
+<div class="viewcode-block" id="Library.heaviest"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.Library.heaviest">[docs]</a>    <span class="k">def</span> <span class="nf">heaviest</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Return the heaviest nuclide in this library. &quot;&quot;&quot;</span>
+        <span class="n">nuc</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="nb">id</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rates</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">rnuc</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">heaviest</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">nuc</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">rnuc</span><span class="o">.</span><span class="n">A</span> <span class="o">&gt;</span> <span class="n">nuc</span><span class="o">.</span><span class="n">A</span> <span class="ow">or</span> <span class="p">(</span><span class="n">rnuc</span><span class="o">.</span><span class="n">A</span> <span class="o">==</span> <span class="n">nuc</span><span class="o">.</span><span class="n">A</span> <span class="ow">and</span> <span class="n">rnuc</span><span class="o">.</span><span class="n">Z</span> <span class="o">&lt;</span> <span class="n">nuc</span><span class="o">.</span><span class="n">Z</span><span class="p">):</span>
+                    <span class="n">nuc</span> <span class="o">=</span> <span class="n">rnuc</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">nuc</span> <span class="o">=</span> <span class="n">rnuc</span>
+        <span class="k">return</span> <span class="n">nuc</span></div>
+
+<div class="viewcode-block" id="Library.lightest"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.Library.lightest">[docs]</a>    <span class="k">def</span> <span class="nf">lightest</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Return the lightest nuclide in this library. &quot;&quot;&quot;</span>
+        <span class="n">nuc</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="nb">id</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rates</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">rnuc</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">lightest</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">nuc</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">rnuc</span><span class="o">.</span><span class="n">A</span> <span class="o">&lt;</span> <span class="n">nuc</span><span class="o">.</span><span class="n">A</span> <span class="ow">or</span> <span class="p">(</span><span class="n">rnuc</span><span class="o">.</span><span class="n">A</span> <span class="o">==</span> <span class="n">nuc</span><span class="o">.</span><span class="n">A</span> <span class="ow">and</span> <span class="n">rnuc</span><span class="o">.</span><span class="n">Z</span> <span class="o">&gt;</span> <span class="n">nuc</span><span class="o">.</span><span class="n">Z</span><span class="p">):</span>
+                    <span class="n">nuc</span> <span class="o">=</span> <span class="n">rnuc</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">nuc</span> <span class="o">=</span> <span class="n">rnuc</span>
+        <span class="k">return</span> <span class="n">nuc</span></div>
+
+    <span class="k">def</span> <span class="nf">_add_from_rate_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ratelist</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Add to the rate dictionary from the supplied list of Rate objects. &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rates</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_rates</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">ratelist</span><span class="p">:</span>
+            <span class="nb">id</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">get_rate_id</span><span class="p">()</span>
+            <span class="k">assert</span> <span class="p">(</span><span class="ow">not</span> <span class="nb">id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rates</span><span class="p">),</span> <span class="s2">&quot;ERROR: supplied a Rate object already in the Library.&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_rates</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">r</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_find_rate_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ratename</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;locate the Reaclib or tabular rate or library file given its name.  Return</span>
+<span class="sd">        None if the file cannot be located, otherwise return its path.&quot;&quot;&quot;</span>
+
+        <span class="c1"># check to see if the rate file is in the working dir or</span>
+        <span class="c1"># is already the full path</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">ratename</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+        <span class="c1"># check to see if the rate file is in pynucastro/library</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pynucastro_rates_dir</span><span class="p">,</span> <span class="n">ratename</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+        <span class="c1"># check to see if the rate file is in pynucastro/library/tabular</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pynucastro_tabular_dir</span><span class="p">,</span> <span class="n">ratename</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+        <span class="c1"># notify user we can&#39;t find the file</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;File </span><span class="si">{}</span><span class="s1"> not found in the working directory, </span><span class="si">{}</span><span class="s1">, or </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">ratename</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pynucastro_rates_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pynucastro_tabular_dir</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">_read_library_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># loop through library file, read lines</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">flib</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_library_file</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Could not open file </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_library_file</span><span class="p">))</span>
+            <span class="k">raise</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">flib</span><span class="p">:</span>
+            <span class="n">ls</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">ls</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_library_source_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ls</span><span class="p">)</span>
+        <span class="n">flib</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+        <span class="c1"># identify distinct rates from library lines</span>
+        <span class="n">current_chapter</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_library_source_lines</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">break</span>
+
+            <span class="c1"># Check to see if there is a chapter ID, if not then use current_chapter</span>
+            <span class="c1"># (for Reaclib v1 formatted library files)</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_library_source_lines</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="n">chapter</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">if</span> <span class="n">line</span> <span class="o">==</span> <span class="s1">&#39;t&#39;</span> <span class="ow">or</span> <span class="n">line</span> <span class="o">==</span> <span class="s1">&#39;T&#39;</span><span class="p">:</span>
+                <span class="n">chapter</span> <span class="o">=</span> <span class="s1">&#39;t&#39;</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_library_source_lines</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">chapter</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+                <span class="k">except</span><span class="p">:</span>
+                    <span class="c1"># we can&#39;t interpret line as a chapter so use current_chapter</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="k">assert</span><span class="p">(</span><span class="n">current_chapter</span><span class="p">)</span>
+                    <span class="k">except</span><span class="p">:</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ERROR: malformed library file </span><span class="si">{}</span><span class="s1">, cannot identify chapter.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_library_file</span><span class="p">))</span>
+                        <span class="k">raise</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">chapter</span> <span class="o">=</span> <span class="n">current_chapter</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_library_source_lines</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">current_chapter</span> <span class="o">=</span> <span class="n">chapter</span>
+
+            <span class="n">rlines</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">if</span> <span class="n">chapter</span> <span class="o">==</span> <span class="s1">&#39;t&#39;</span><span class="p">:</span>
+                <span class="n">rlines</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_library_source_lines</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">)]</span>
+            <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">chapter</span><span class="p">)</span> <span class="o">==</span> <span class="nb">int</span><span class="p">:</span>
+                <span class="n">rlines</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_library_source_lines</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)]</span>
+            <span class="k">if</span> <span class="n">rlines</span><span class="p">:</span>
+                <span class="n">sio</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">chapter</span><span class="p">)]</span> <span class="o">+</span>
+                                            <span class="n">rlines</span><span class="p">))</span>
+                <span class="c1">#print(sio.getvalue())</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">r</span> <span class="o">=</span> <span class="n">Rate</span><span class="p">(</span><span class="n">sio</span><span class="p">)</span>
+                <span class="k">except</span> <span class="n">UnsupportedNucleus</span><span class="p">:</span>
+                    <span class="k">pass</span>
+                <span class="k">except</span><span class="p">:</span>
+                    <span class="k">raise</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="nb">id</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">get_rate_id</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="nb">id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rates</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_rates</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rates</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span> <span class="o">+</span> <span class="n">r</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_rates</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">r</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Return a string containing the rates IDs in this library. &quot;&quot;&quot;</span>
+        <span class="n">rstrings</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="nb">id</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rates</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">rstrings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">    (</span><span class="si">{}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="nb">id</span><span class="p">))</span>
+        <span class="k">return</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">rstrings</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Add two libraries to get a library containing rates from both. &quot;&quot;&quot;</span>
+        <span class="n">new_rates</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rates</span>
+        <span class="k">for</span> <span class="nb">id</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">other</span><span class="o">.</span><span class="n">_rates</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="ow">not</span> <span class="nb">id</span> <span class="ow">in</span> <span class="n">new_rates</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">r</span> <span class="o">!=</span> <span class="n">new_rates</span><span class="p">[</span><span class="nb">id</span><span class="p">]:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ERROR: rate </span><span class="si">{}</span><span class="s1"> defined differently in libraries </span><span class="si">{}</span><span class="s1"> and </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_library_file</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">_library_file</span><span class="p">))</span>
+                    <span class="k">raise</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">new_rates</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">r</span>
+        <span class="n">new_library</span> <span class="o">=</span> <span class="n">Library</span><span class="p">(</span><span class="n">libfile</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> + </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_library_file</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">_library_file</span><span class="p">),</span>
+                              <span class="n">rates</span><span class="o">=</span><span class="n">new_rates</span><span class="p">,</span>
+                              <span class="n">read_library</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">new_library</span>
+
+<div class="viewcode-block" id="Library.get_rates"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.Library.get_rates">[docs]</a>    <span class="k">def</span> <span class="nf">get_rates</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Return a list of the rates in this library. &quot;&quot;&quot;</span>
+        <span class="n">rlist</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="nb">id</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rates</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
+        <span class="k">return</span> <span class="n">rlist</span></div>
+
+<div class="viewcode-block" id="Library.get_rate"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.Library.get_rate">[docs]</a>    <span class="k">def</span> <span class="nf">get_rate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Return a rate matching the id provided. &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rates</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ERROR: rate identifier does not match a rate in this library.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span></div>
+
+<div class="viewcode-block" id="Library.filter"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.Library.filter">[docs]</a>    <span class="k">def</span> <span class="nf">filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filter_spec</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        filter_specs should be an iterable of RateFilter objects or a</span>
+<span class="sd">        single RateFilter object. Library.filter yields all rates</span>
+<span class="sd">        matching any RateFilter in filter_specs.  If RateFilter.exact,</span>
+<span class="sd">        then return rates with exactly the reactants or products</span>
+<span class="sd">        passed in as arguments.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">filter_spec</span><span class="p">)</span> <span class="o">==</span> <span class="n">RateFilter</span><span class="p">:</span>
+            <span class="n">filter_specifications</span> <span class="o">=</span> <span class="p">[</span><span class="n">filter_spec</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="nb">iter</span><span class="p">(</span><span class="n">filter_spec</span><span class="p">)</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="k">raise</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">filter_specifications</span> <span class="o">=</span> <span class="n">filter_spec</span>
+        <span class="n">matching_rates</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="nb">id</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rates</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">filter_specifications</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">matches</span><span class="p">(</span><span class="n">r</span><span class="p">):</span>
+                    <span class="n">matching_rates</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">r</span>
+                    <span class="k">break</span>
+        <span class="k">if</span> <span class="n">matching_rates</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Library</span><span class="p">(</span><span class="n">libfile</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_library_file</span><span class="p">,</span>
+                           <span class="n">rates</span><span class="o">=</span><span class="n">matching_rates</span><span class="p">,</span>
+                           <span class="n">read_library</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span></div></div>
+
+<div class="viewcode-block" id="RateFilter"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.RateFilter">[docs]</a><span class="k">class</span> <span class="nc">RateFilter</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;RateFilter stores selection rules specifying a rate or group of</span>
+<span class="sd">    rates to assist searching for rates stored in a Library.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reactants</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">products</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">exact</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                 <span class="n">reverse</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">min_reactants</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_reactants</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">min_products</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_products</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">products</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">sets</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">exact</span> <span class="o">=</span> <span class="n">exact</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reverse</span> <span class="o">=</span> <span class="n">reverse</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_reactants</span> <span class="o">=</span> <span class="n">min_reactants</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_products</span> <span class="o">=</span> <span class="n">min_products</span>        
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_reactants</span> <span class="o">=</span> <span class="n">max_reactants</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_products</span> <span class="o">=</span> <span class="n">max_products</span>
 
-        <span class="c1"># Tells if this rate is eligible for screening</span>
-        <span class="c1"># using screenz.f90 provided by StarKiller Microphysics.</span>
-        <span class="c1"># If not eligible for screening, set to None</span>
-        <span class="c1"># If eligible for screening, then</span>
-        <span class="c1"># Rate.ion_screen is a 2-element list of Nucleus objects for screening</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ion_screen</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">reactants</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_cast_nucleus</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">reactants</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">products</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">products</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_cast_nucleus</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">products</span><span class="p">]</span>
 
-        <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rfile</span><span class="o">.</span><span class="n">rfind</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">fname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rfile</span><span class="p">[:</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">)</span>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_cast_nucleus</span><span class="p">(</span><span class="n">r</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Make sure r is of type Nucleus. &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">type</span><span class="p">(</span><span class="n">r</span><span class="p">)</span><span class="o">==</span><span class="n">Nucleus</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">rnuc</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="k">raise</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">rnuc</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">r</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">Q</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_contents_equal</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return True if the contents of a and b exactly match, ignoring ordering.</span>
+<span class="sd">        If either a or b is None, return True only if both a and b are None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">a</span> <span class="ow">and</span> <span class="n">b</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">collections</span><span class="o">.</span><span class="n">Counter</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">==</span> <span class="n">collections</span><span class="o">.</span><span class="n">Counter</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span><span class="ow">not</span> <span class="n">a</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="n">b</span><span class="p">)</span>
 
-        <span class="c1"># read in the file, parse the different sets and store them as</span>
-        <span class="c1"># SingleSet objects in sets[]</span>
-        <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rfile_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_compare_nuclides</span><span class="p">(</span><span class="n">test</span><span class="p">,</span> <span class="n">reference</span><span class="p">,</span> <span class="n">exact</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        test and reference should be iterables of Nucleus objects.</span>
+<span class="sd">        If an exact match is desired, test and reference should exactly match, ignoring ordering.</span>
+<span class="sd">        Otherwise, return True only if every element of test appears at least one time in reference.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">matches</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="n">exact</span><span class="p">:</span>
+            <span class="n">matches</span> <span class="o">=</span> <span class="n">RateFilter</span><span class="o">.</span><span class="n">_contents_equal</span><span class="p">(</span><span class="n">test</span><span class="p">,</span> <span class="n">reference</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="n">test</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">nuc</span> <span class="ow">in</span> <span class="n">reference</span><span class="p">):</span>
+                    <span class="n">matches</span> <span class="o">=</span> <span class="kc">False</span>
+                    <span class="k">break</span>
+        <span class="k">return</span> <span class="n">matches</span>
+
+<div class="viewcode-block" id="RateFilter.matches"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.RateFilter.matches">[docs]</a>    <span class="k">def</span> <span class="nf">matches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">r</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Given a Rate r, see if it matches this RateFilter. &quot;&quot;&quot;</span>
+        <span class="n">matches_reactants</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">matches_products</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">matches_reverse</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">matches_min_reactants</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">matches_min_products</span> <span class="o">=</span> <span class="kc">True</span>        
+        <span class="n">matches_max_reactants</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">matches_max_products</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">:</span>
+            <span class="n">matches_reactants</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compare_nuclides</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">exact</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">products</span><span class="p">:</span>
+            <span class="n">matches_products</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compare_nuclides</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">products</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">products</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">exact</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reverse</span><span class="p">)</span><span class="o">==</span><span class="nb">type</span><span class="p">(</span><span class="kc">True</span><span class="p">):</span>
+            <span class="n">matches_reverse</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reverse</span> <span class="o">==</span> <span class="n">r</span><span class="o">.</span><span class="n">reverse</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">min_reactants</span><span class="p">)</span><span class="o">==</span><span class="nb">int</span><span class="p">:</span>
+            <span class="n">matches_min_reactants</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_reactants</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">min_products</span><span class="p">)</span><span class="o">==</span><span class="nb">int</span><span class="p">:</span>
+            <span class="n">matches_min_products</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">products</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_products</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max_reactants</span><span class="p">)</span><span class="o">==</span><span class="nb">int</span><span class="p">:</span>
+            <span class="n">matches_max_reactants</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_reactants</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max_products</span><span class="p">)</span><span class="o">==</span><span class="nb">int</span><span class="p">:</span>
+            <span class="n">matches_max_products</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">products</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_products</span>            
+        <span class="k">return</span> <span class="p">(</span><span class="n">matches_reactants</span> <span class="ow">and</span> <span class="n">matches_products</span> <span class="ow">and</span> <span class="n">matches_reverse</span> <span class="ow">and</span>
+                <span class="n">matches_min_reactants</span> <span class="ow">and</span> <span class="n">matches_max_reactants</span> <span class="ow">and</span>
+                <span class="n">matches_min_products</span> <span class="ow">and</span> <span class="n">matches_max_products</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="RateFilter.invert"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.RateFilter.invert">[docs]</a>    <span class="k">def</span> <span class="nf">invert</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Return a RateFilter matching the inverse rate. &quot;&quot;&quot;</span>
+        <span class="n">newfilter</span> <span class="o">=</span> <span class="n">RateFilter</span><span class="p">(</span><span class="n">reactants</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">products</span><span class="p">,</span>
+                               <span class="n">products</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">,</span>
+                               <span class="n">exact</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">exact</span><span class="p">,</span>
+                               <span class="n">reverse</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">reverse</span><span class="p">,</span>
+                               <span class="n">min_reactants</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">min_products</span><span class="p">,</span>
+                               <span class="n">max_reactants</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">max_products</span><span class="p">,</span>
+                               <span class="n">min_products</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">min_reactants</span><span class="p">,</span>
+                               <span class="n">max_products</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">max_reactants</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">newfilter</span></div></div>
+
+<div class="viewcode-block" id="Rate"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.Rate">[docs]</a><span class="k">class</span> <span class="nc">Rate</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; a single Reaclib rate, which can be composed of multiple sets &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rfile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">chapter</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">original_source</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">reactants</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">products</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sets</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">labelprops</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">Q</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; rfile can be either a string specifying the path to a rate file or</span>
+<span class="sd">        an io.StringIO object from which to read rate information. &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">rfile_path</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rfile</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">rfile</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rfile_path</span> <span class="o">=</span> <span class="n">Library</span><span class="o">.</span><span class="n">_find_rate_file</span><span class="p">(</span><span class="n">rfile</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rfile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">rfile</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">chapter</span> <span class="o">=</span> <span class="n">chapter</span>    <span class="c1"># the Reaclib chapter for this reaction</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">original_source</span> <span class="o">=</span> <span class="n">original_source</span>   <span class="c1"># the contents of the original rate file</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fname</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="n">reactants</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span> <span class="o">=</span> <span class="n">reactants</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">if</span> <span class="n">products</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">products</span> <span class="o">=</span> <span class="n">products</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">products</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">if</span> <span class="n">sets</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sets</span> <span class="o">=</span> <span class="n">sets</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sets</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span> <span class="o">=</span> <span class="n">labelprops</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">Q</span> <span class="o">=</span> <span class="n">Q</span>
+
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">rfile</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="c1"># read in the file, parse the different sets and store them as</span>
+            <span class="c1"># SingleSet objects in sets[]</span>
+            <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rfile_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">rfile</span><span class="p">)</span> <span class="o">==</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">:</span>
+            <span class="c1"># Set f to the io.StringIO object</span>
+            <span class="n">f</span> <span class="o">=</span> <span class="n">rfile</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">f</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="n">f</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_read_from_file</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_set_label_properties</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_rhs_properties</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_screening</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_print_representation</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">string</span>
+
+    <span class="k">def</span> <span class="nf">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">())</span>
+
+    <span class="k">def</span> <span class="nf">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Determine whether two Rate objects are equal.</span>
+<span class="sd">        They are equal if they contain identical reactants and products and</span>
+<span class="sd">        if they contain the same SingleSet sets and if their chapters are equal.&quot;&quot;&quot;</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">chapter</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">chapter</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">products</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">products</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="ow">and</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sets</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">sets</span><span class="p">))</span>
+
+        <span class="k">for</span> <span class="n">si</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sets</span><span class="p">:</span>
+            <span class="n">scomp</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">for</span> <span class="n">sj</span> <span class="ow">in</span> <span class="n">other</span><span class="o">.</span><span class="n">sets</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">si</span> <span class="o">==</span> <span class="n">sj</span><span class="p">:</span>
+                    <span class="n">scomp</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="k">break</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="ow">and</span> <span class="n">scomp</span>
+
+        <span class="k">return</span> <span class="n">x</span>
+
+    <span class="k">def</span> <span class="nf">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Combine the sets of two Rate objects if they describe the same</span>
+<span class="sd">           reaction. Must be Reaclib rates.&quot;&quot;&quot;</span>
+        <span class="k">assert</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span>
+        <span class="k">assert</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">products</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">products</span><span class="p">)</span>
+        <span class="k">assert</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">chapter</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">chapter</span><span class="p">)</span>
+        <span class="k">assert</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">chapter</span><span class="p">)</span> <span class="o">==</span> <span class="nb">int</span><span class="p">)</span>
+        <span class="k">assert</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">label</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">label</span><span class="p">)</span>
+        <span class="k">assert</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">weak</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">weak</span><span class="p">)</span>
+        <span class="k">assert</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tabular</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">tabular</span><span class="p">)</span>
+        <span class="k">assert</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reverse</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">reverse</span><span class="p">)</span>
+        <span class="n">labelprops</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span><span class="p">[:]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">resonant</span> <span class="o">!=</span> <span class="n">other</span><span class="o">.</span><span class="n">resonant</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_labelprops_combine_resonance</span><span class="p">()</span>
+        <span class="n">new_rate</span> <span class="o">=</span> <span class="n">Rate</span><span class="p">(</span><span class="n">chapter</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">chapter</span><span class="p">,</span>
+                        <span class="n">original_source</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">original_source</span><span class="p">,</span>
+                                                   <span class="n">other</span><span class="o">.</span><span class="n">original_source</span><span class="p">]),</span>
+                        <span class="n">reactants</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">,</span>
+                        <span class="n">products</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">products</span><span class="p">,</span>
+                        <span class="n">sets</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sets</span> <span class="o">+</span> <span class="n">other</span><span class="o">.</span><span class="n">sets</span><span class="p">,</span>
+                        <span class="n">labelprops</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span><span class="p">,</span>
+                        <span class="n">Q</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">Q</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">new_rate</span>
+
+    <span class="k">def</span> <span class="nf">_set_label_properties</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">labelprops</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Calls _update_resonance_combined and then</span>
+<span class="sd">            _update_label_properties. &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">labelprops</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span> <span class="o">=</span> <span class="n">labelprops</span>
+
+        <span class="c1"># Update labelprops based on the Sets in this Rate</span>
+        <span class="c1"># to set the resonance_combined flag properly</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_resonance_combined</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_label_properties</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_update_resonance_combined</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Checks the Sets in this Rate and updates the </span>
+<span class="sd">            resonance_combined flag as well as </span>
+<span class="sd">            self.labelprops[4] &quot;&quot;&quot;</span>
+        <span class="n">sres</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span><span class="o">.</span><span class="n">resonant</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sets</span><span class="p">]</span>
+        <span class="k">if</span> <span class="kc">True</span> <span class="ow">in</span> <span class="n">sres</span> <span class="ow">and</span> <span class="kc">False</span> <span class="ow">in</span> <span class="n">sres</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_labelprops_combine_resonance</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">resonance_combined</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="nf">_labelprops_combine_resonance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Update self.labelprops[4] = &#39;c&#39;. </span>
+<span class="sd">            Also set the resonance_combined flag. &quot;&quot;&quot;</span>
+        <span class="n">llp</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span><span class="p">)</span>
+        <span class="n">llp</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;c&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">llp</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">resonance_combined</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">def</span> <span class="nf">_update_label_properties</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set label and flags indicating Rate is resonant, </span>
+<span class="sd">            weak, or reverse. &quot;&quot;&quot;</span>
+        <span class="k">assert</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span><span class="p">)</span><span class="o">==</span><span class="nb">str</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">assert</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span><span class="p">)</span><span class="o">==</span><span class="mi">6</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">assert</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span><span class="o">==</span><span class="s1">&#39;tabular&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;tabular&#39;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">resonant</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">resonance_combined</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">weak</span> <span class="o">=</span> <span class="kc">False</span> <span class="c1"># The tabular rate might or might not be weak</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">reverse</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tabular</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">resonant</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;r&#39;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">weak</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;w&#39;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">reverse</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;v&#39;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tabular</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="nf">_read_from_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; given a file object, read rate data from the file. &quot;&quot;&quot;</span>
         <span class="n">lines</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">original_source</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
 
@@ -354,7 +870,7 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">chapter</span> <span class="o">!=</span> <span class="s2">&quot;t&quot;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">chapter</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">chapter</span><span class="p">)</span>
 
-        <span class="c1"># remove any black lines</span>
+        <span class="c1"># remove any blank lines</span>
         <span class="n">set_lines</span> <span class="o">=</span> <span class="p">[</span><span class="n">l</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">l</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">]</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">chapter</span> <span class="o">==</span> <span class="s2">&quot;t&quot;</span><span class="p">:</span>
@@ -365,8 +881,12 @@
             <span class="n">s4</span> <span class="o">=</span> <span class="n">set_lines</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
             <span class="n">s5</span> <span class="o">=</span> <span class="n">set_lines</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
             <span class="n">f</span> <span class="o">=</span> <span class="n">s1</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">products</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">products</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Nucleus objects not be identified in </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">original_source</span><span class="p">))</span>
+                <span class="k">raise</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">table_file</span> <span class="o">=</span> <span class="n">s2</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">table_header_lines</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">s3</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
@@ -374,11 +894,33 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">table_temp_lines</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">s5</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">table_num_vars</span> <span class="o">=</span> <span class="mi">6</span> <span class="c1"># Hard-coded number of variables in tables for now.</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">table_index_name</span> <span class="o">=</span> <span class="s1">&#39;j_</span><span class="si">{}</span><span class="s1">_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">products</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span> <span class="o">=</span> <span class="s1">&#39;tabular&#39;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_set_label_properties</span><span class="p">()</span>
 
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># the rest is the sets</span>
             <span class="n">first</span> <span class="o">=</span> <span class="mi">1</span>
             <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">set_lines</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="c1"># check for a new chapter id in case of Reaclib v2 format</span>
+                <span class="n">check_chapter</span> <span class="o">=</span> <span class="n">set_lines</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="c1"># see if there is a chapter number preceding the set</span>
+                    <span class="n">check_chapter</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">check_chapter</span><span class="p">)</span>
+                <span class="k">except</span><span class="p">:</span>
+                    <span class="c1"># there was no chapter number, proceed reading a set</span>
+                    <span class="k">pass</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># there was a chapter number so check that the chapter number</span>
+                    <span class="c1"># is the same as the first set in this rate file</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="k">assert</span><span class="p">(</span><span class="n">check_chapter</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">chapter</span><span class="p">)</span>
+                    <span class="k">except</span><span class="p">:</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ERROR: read chapter </span><span class="si">{}</span><span class="s1">, expected chapter </span><span class="si">{}</span><span class="s1"> for this rate set.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">check_chapter</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">chapter</span><span class="p">))</span>
+                        <span class="k">raise</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="c1"># get rid of chapter number so we can read a rate set</span>
+                        <span class="n">set_lines</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
                 <span class="c1"># sets are 3 lines long</span>
                 <span class="n">s1</span> <span class="o">=</span> <span class="n">set_lines</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
                 <span class="n">s2</span> <span class="o">=</span> <span class="n">set_lines</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
@@ -386,72 +928,102 @@
 
                 <span class="c1"># first line of a set has up to 6 nuclei, then the label,</span>
                 <span class="c1"># and finally the Q value</span>
-                <span class="n">f</span> <span class="o">=</span> <span class="n">s1</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
-                <span class="n">Q</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
-                <span class="n">label</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+
+                <span class="c1"># get rid of first 5 spaces</span>
+                <span class="n">s1</span> <span class="o">=</span> <span class="n">s1</span><span class="p">[</span><span class="mi">5</span><span class="p">:]</span>
+
+                <span class="c1"># next follows 6 fields of 5 characters containing nuclei</span>
+                <span class="c1"># the 6 fields are padded with spaces</span>
+                <span class="n">f</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">):</span>
+                    <span class="n">ni</span> <span class="o">=</span> <span class="n">s1</span><span class="p">[:</span><span class="mi">5</span><span class="p">]</span>
+                    <span class="n">s1</span> <span class="o">=</span> <span class="n">s1</span><span class="p">[</span><span class="mi">5</span><span class="p">:]</span>
+                    <span class="n">ni</span> <span class="o">=</span> <span class="n">ni</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="n">ni</span><span class="p">:</span>
+                        <span class="n">f</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ni</span><span class="p">)</span>
+
+                <span class="c1"># next come 8 spaces, so get rid of them</span>
+                <span class="n">s1</span> <span class="o">=</span> <span class="n">s1</span><span class="p">[</span><span class="mi">8</span><span class="p">:]</span>
+
+                <span class="c1"># next is a 4-character set label and 2 character flags</span>
+                <span class="n">labelprops</span> <span class="o">=</span> <span class="n">s1</span><span class="p">[:</span><span class="mi">6</span><span class="p">]</span>
+                <span class="n">s1</span> <span class="o">=</span> <span class="n">s1</span><span class="p">[</span><span class="mi">6</span><span class="p">:]</span>
+
+                <span class="c1"># next come 3 spaces</span>
+                <span class="n">s1</span> <span class="o">=</span> <span class="n">s1</span><span class="p">[</span><span class="mi">3</span><span class="p">:]</span>
+
+                <span class="c1"># next comes a 12 character Q value followed by 10 spaces</span>
+                <span class="n">Q</span> <span class="o">=</span> <span class="n">s1</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
 
                 <span class="k">if</span> <span class="n">first</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">Q</span> <span class="o">=</span> <span class="n">Q</span>
 
-                    <span class="c1"># what&#39;s left are the nuclei -- their interpretation</span>
-                    <span class="c1"># depends on the chapter</span>
-                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">chapter</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                        <span class="c1"># e1 -&gt; e2</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">products</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="c1"># what&#39;s left are the nuclei -- their interpretation</span>
+                        <span class="c1"># depends on the chapter</span>
+                        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">chapter</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                            <span class="c1"># e1 -&gt; e2</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">products</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
 
-                    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">chapter</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-                        <span class="c1"># e1 -&gt; e2 + e3</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">products</span> <span class="o">+=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">2</span><span class="p">])]</span>
+                        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">chapter</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                            <span class="c1"># e1 -&gt; e2 + e3</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">products</span> <span class="o">+=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">2</span><span class="p">])]</span>
 
-                    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">chapter</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
-                        <span class="c1"># e1 -&gt; e2 + e3 + e4</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">products</span> <span class="o">+=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">3</span><span class="p">])]</span>
+                        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">chapter</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+                            <span class="c1"># e1 -&gt; e2 + e3 + e4</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">products</span> <span class="o">+=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">3</span><span class="p">])]</span>
 
-                    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">chapter</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
-                        <span class="c1"># e1 + e2 -&gt; e3</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span> <span class="o">+=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">1</span><span class="p">])]</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">products</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
+                        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">chapter</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+                            <span class="c1"># e1 + e2 -&gt; e3</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span> <span class="o">+=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">1</span><span class="p">])]</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">products</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
 
-                    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">chapter</span> <span class="o">==</span> <span class="mi">5</span><span class="p">:</span>
-                        <span class="c1"># e1 + e2 -&gt; e3 + e4</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span> <span class="o">+=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">1</span><span class="p">])]</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">products</span> <span class="o">+=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">3</span><span class="p">])]</span>
+                        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">chapter</span> <span class="o">==</span> <span class="mi">5</span><span class="p">:</span>
+                            <span class="c1"># e1 + e2 -&gt; e3 + e4</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span> <span class="o">+=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">1</span><span class="p">])]</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">products</span> <span class="o">+=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">3</span><span class="p">])]</span>
 
-                    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">chapter</span> <span class="o">==</span> <span class="mi">6</span><span class="p">:</span>
-                        <span class="c1"># e1 + e2 -&gt; e3 + e4 + e5</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span> <span class="o">+=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">1</span><span class="p">])]</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">products</span> <span class="o">+=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">3</span><span class="p">]),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">4</span><span class="p">])]</span>
+                        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">chapter</span> <span class="o">==</span> <span class="mi">6</span><span class="p">:</span>
+                            <span class="c1"># e1 + e2 -&gt; e3 + e4 + e5</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span> <span class="o">+=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">1</span><span class="p">])]</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">products</span> <span class="o">+=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">3</span><span class="p">]),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">4</span><span class="p">])]</span>
 
-                    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">chapter</span> <span class="o">==</span> <span class="mi">7</span><span class="p">:</span>
-                        <span class="c1"># e1 + e2 -&gt; e3 + e4 + e5 + e6</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span> <span class="o">+=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">1</span><span class="p">])]</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">products</span> <span class="o">+=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">3</span><span class="p">]),</span>
-                                          <span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">4</span><span class="p">]),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">5</span><span class="p">])]</span>
+                        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">chapter</span> <span class="o">==</span> <span class="mi">7</span><span class="p">:</span>
+                            <span class="c1"># e1 + e2 -&gt; e3 + e4 + e5 + e6</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span> <span class="o">+=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">1</span><span class="p">])]</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">products</span> <span class="o">+=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">3</span><span class="p">]),</span>
+                                              <span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">4</span><span class="p">]),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">5</span><span class="p">])]</span>
 
-                    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">chapter</span> <span class="o">==</span> <span class="mi">8</span><span class="p">:</span>
-                        <span class="c1"># e1 + e2 + e3 -&gt; e4</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span> <span class="o">+=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">2</span><span class="p">])]</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">products</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">3</span><span class="p">]))</span>
+                        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">chapter</span> <span class="o">==</span> <span class="mi">8</span><span class="p">:</span>
+                            <span class="c1"># e1 + e2 + e3 -&gt; e4</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span> <span class="o">+=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">2</span><span class="p">])]</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">products</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">3</span><span class="p">]))</span>
 
-                    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">chapter</span> <span class="o">==</span> <span class="mi">9</span><span class="p">:</span>
-                        <span class="c1"># e1 + e2 + e3 -&gt; e4 + e5</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span> <span class="o">+=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">2</span><span class="p">])]</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">products</span> <span class="o">+=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">3</span><span class="p">]),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">4</span><span class="p">])]</span>
+                        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">chapter</span> <span class="o">==</span> <span class="mi">9</span><span class="p">:</span>
+                            <span class="c1"># e1 + e2 + e3 -&gt; e4 + e5</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span> <span class="o">+=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">2</span><span class="p">])]</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">products</span> <span class="o">+=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">3</span><span class="p">]),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">4</span><span class="p">])]</span>
 
-                    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">chapter</span> <span class="o">==</span> <span class="mi">10</span><span class="p">:</span>
-                        <span class="c1"># e1 + e2 + e3 + e4 -&gt; e5 + e6</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span> <span class="o">+=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
-                                           <span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">3</span><span class="p">])]</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">products</span> <span class="o">+=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">4</span><span class="p">]),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">5</span><span class="p">])]</span>
+                        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">chapter</span> <span class="o">==</span> <span class="mi">10</span><span class="p">:</span>
+                            <span class="c1"># e1 + e2 + e3 + e4 -&gt; e5 + e6</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span> <span class="o">+=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
+                                               <span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">3</span><span class="p">])]</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">products</span> <span class="o">+=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">4</span><span class="p">]),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">5</span><span class="p">])]</span>
 
-                    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">chapter</span> <span class="o">==</span> <span class="mi">11</span><span class="p">:</span>
-                        <span class="c1"># e1 -&gt; e2 + e3 + e4 + e5</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">products</span> <span class="o">+=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span>
-                                          <span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">3</span><span class="p">]),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">4</span><span class="p">])]</span>
+                        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">chapter</span> <span class="o">==</span> <span class="mi">11</span><span class="p">:</span>
+                            <span class="c1"># e1 -&gt; e2 + e3 + e4 + e5</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">products</span> <span class="o">+=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span>
+                                              <span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">3</span><span class="p">]),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">4</span><span class="p">])]</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Chapter could not be identified in </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">original_source</span><span class="p">))</span>
+                            <span class="k">assert</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">chapter</span><span class="p">)</span> <span class="o">==</span> <span class="nb">int</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">chapter</span> <span class="o">&lt;=</span> <span class="mi">11</span><span class="p">)</span>
+                    <span class="k">except</span><span class="p">:</span>
+                        <span class="c1"># print(&#39;Error parsing Rate from {}&#39;.format(self.original_source))</span>
+                        <span class="k">raise</span>
 
                     <span class="n">first</span> <span class="o">=</span> <span class="mi">0</span>
 
@@ -463,9 +1035,11 @@
                 <span class="n">a</span> <span class="o">+=</span> <span class="p">[</span><span class="n">s3</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="n">n</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">s3</span><span class="p">),</span> <span class="n">n</span><span class="p">)]</span>
 
                 <span class="n">a</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">a</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">e</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">]</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">sets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">SingleSet</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">sets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">SingleSet</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">labelprops</span><span class="o">=</span><span class="n">labelprops</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_set_label_properties</span><span class="p">(</span><span class="n">labelprops</span><span class="p">)</span>
 
-        <span class="c1"># compute self.prefactor and self.dens_exp from the reactants</span>
+    <span class="k">def</span> <span class="nf">_set_rhs_properties</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; compute statistical prefactor and density exponent from the reactants. &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">prefactor</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c1"># this is 1/2 for rates like a + a (double counting)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">inv_prefactor</span> <span class="o">=</span> <span class="mi">1</span>
         <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">):</span>
@@ -473,7 +1047,14 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">prefactor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefactor</span><span class="o">/</span><span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">inv_prefactor</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dens_exp</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span>
 
-        <span class="c1"># determine if this rate is eligible for screening</span>
+    <span class="k">def</span> <span class="nf">_set_screening</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; determine if this rate is eligible for screening and the nuclei to use. &quot;&quot;&quot;</span>
+        <span class="c1"># Tells if this rate is eligible for screening</span>
+        <span class="c1"># using screenz.f90 provided by StarKiller Microphysics.</span>
+        <span class="c1"># If not eligible for screening, set to None</span>
+        <span class="c1"># If eligible for screening, then</span>
+        <span class="c1"># Rate.ion_screen is a 2-element list of Nucleus objects for screening</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ion_screen</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">nucz</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">parent</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">parent</span><span class="o">.</span><span class="n">Z</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
@@ -484,6 +1065,8 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">ion_screen</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nucz</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">ion_screen</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nucz</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 
+    <span class="k">def</span> <span class="nf">_set_print_representation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; compose the string representations of this Rate. &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">string</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pretty_string</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;$&quot;</span>
 
@@ -514,8 +1097,52 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">pretty_string</span> <span class="o">+=</span> <span class="sa">r</span><span class="s2">&quot;$&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">string</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="p">:</span>
+            <span class="n">reactants_str</span> <span class="o">=</span> <span class="s1">&#39;_&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">repr</span><span class="p">(</span><span class="n">nuc</span><span class="p">)</span> <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">])</span>
+            <span class="n">products_str</span> <span class="o">=</span> <span class="s1">&#39;_&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">repr</span><span class="p">(</span><span class="n">nuc</span><span class="p">)</span> <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">products</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fname</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">__</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">reactants_str</span><span class="p">,</span> <span class="n">products_str</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Rate.get_rate_id"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.Rate.get_rate_id">[docs]</a>    <span class="k">def</span> <span class="nf">get_rate_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Get an identifying string for this rate.</span>
+<span class="sd">        Don&#39;t include resonance state since we combine resonant and</span>
+<span class="sd">        non-resonant versions of reactions. &quot;&quot;&quot;</span>
+        <span class="n">sweak</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">weak</span><span class="p">:</span>
+            <span class="n">sweak</span> <span class="o">=</span> <span class="s1">&#39;_weak&#39;</span>
+        <span class="n">srev</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">reverse</span><span class="p">:</span>
+            <span class="n">srev</span> <span class="o">=</span> <span class="s1">&#39;_reverse&#39;</span>
+        <span class="n">ssrc</span> <span class="o">=</span> <span class="s1">&#39;reaclib&#39;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabular</span><span class="p">:</span>
+            <span class="n">ssrc</span> <span class="o">=</span> <span class="s1">&#39;tabular&#39;</span>
+        <span class="k">return</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">_</span><span class="si">{}</span><span class="s1">_</span><span class="si">{}{}{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span>
+                                    <span class="n">ssrc</span><span class="p">,</span> <span class="n">sweak</span><span class="p">,</span> <span class="n">srev</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Rate.heaviest"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.Rate.heaviest">[docs]</a>    <span class="k">def</span> <span class="nf">heaviest</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the heaviest nuclide in this Rate.</span>
+
+<span class="sd">        If two nuclei are tied in mass number, return the one with the</span>
+<span class="sd">        lowest atomic number.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">nuc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">products</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">n</span><span class="o">.</span><span class="n">A</span> <span class="o">&gt;</span> <span class="n">nuc</span><span class="o">.</span><span class="n">A</span> <span class="ow">or</span> <span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">A</span> <span class="o">==</span> <span class="n">nuc</span><span class="o">.</span><span class="n">A</span> <span class="ow">and</span> <span class="n">n</span><span class="o">.</span><span class="n">Z</span> <span class="o">&lt;</span> <span class="n">nuc</span><span class="o">.</span><span class="n">Z</span><span class="p">):</span>
+                <span class="n">nuc</span> <span class="o">=</span> <span class="n">n</span>
+        <span class="k">return</span> <span class="n">nuc</span></div>
+
+<div class="viewcode-block" id="Rate.lightest"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.Rate.lightest">[docs]</a>    <span class="k">def</span> <span class="nf">lightest</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the lightest nuclide in this Rate. </span>
+
+<span class="sd">        If two nuclei are tied in mass number, return the one with the</span>
+<span class="sd">        highest atomic number.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">nuc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">products</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">n</span><span class="o">.</span><span class="n">A</span> <span class="o">&lt;</span> <span class="n">nuc</span><span class="o">.</span><span class="n">A</span> <span class="ow">or</span> <span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">A</span> <span class="o">==</span> <span class="n">nuc</span><span class="o">.</span><span class="n">A</span> <span class="ow">and</span> <span class="n">n</span><span class="o">.</span><span class="n">Z</span> <span class="o">&gt;</span> <span class="n">nuc</span><span class="o">.</span><span class="n">Z</span><span class="p">):</span>
+                <span class="n">nuc</span> <span class="o">=</span> <span class="n">n</span>
+        <span class="k">return</span> <span class="n">nuc</span></div>
 
 <div class="viewcode-block" id="Rate.eval"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.Rate.eval">[docs]</a>    <span class="k">def</span> <span class="nf">eval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; evauate the reaction rate for temperature T &quot;&quot;&quot;</span>
