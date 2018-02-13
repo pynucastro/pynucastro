@@ -1,0 +1,15 @@
+language: python
+
+python:
+  - "3.6"
+  - "nightly"
+
+install:
+  - pip install -r requirements.txt
+
+script:
+  - pytest --cov=pynucastro --nbval pynucastro examples -v
+  - travis-sphinx build --source=docs
+
+after_success:
+  - travis-sphinx deploy
