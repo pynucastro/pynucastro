@@ -3,4 +3,7 @@ numpy
 sympy
 matplotlib
 jupyter
+Sphinx
+travis-sphinx
+nbsphinx
 
