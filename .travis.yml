@@ -15,7 +15,7 @@ before_script:
   - export PYTHONPATH=$PYTHONPATH:$(pwd)
 
 script:
-  - pytest --cov=pynucastro -v
+  - pytest --cov=pynucastro --nbval pynucastro examples -v
 #  - travis-sphinx build --source=docs
 
 #after_success:
