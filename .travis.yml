@@ -4,6 +4,9 @@ python:
   - "3.6"
   - "nightly"
 
+before_install:
+  - export PATH=$(echo $PATH | tr ':' "\n" | sed '/\/opt\/python/d' | tr "\n" ":" | sed "s|::|:|g")
+
 install:
   - pip install .
   - pip install -r requirements.txt
