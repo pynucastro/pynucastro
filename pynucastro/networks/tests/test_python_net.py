@@ -11,8 +11,7 @@ class TestPythonNetwork(object):
     @classmethod
     def setup_class(cls):
         """ this is run once for each class before any tests """
-        base_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__))).split("pynucastro")[0]
-        cls.library_path = os.path.join(base_dir, "pynucastro/pynucastro/library/")
+        pass
 
     @classmethod
     def teardown_class(cls):
@@ -30,7 +29,7 @@ class TestPythonNetwork(object):
                  "o14--n14-wc12",
                  "o15--n15-wc12"]
         self.pyn = networks.PythonNetwork(files)
-        self.rate = rates.Rate(os.path.join(self.library_path, "c13-pg-n14-nacr"))
+        self.rate = rates.Rate("c13-pg-n14-nacr")
 
     def teardown_method(self):
         """ this is run after each test """
