@@ -547,7 +547,7 @@ class Rate(object):
         self.rfile = None
 
         if type(rfile) == str:
-            self.rfile_path = rfile
+            self.rfile_path = Library._find_rate_file(rfile)
             self.rfile = os.path.basename(rfile)
 
         self.chapter = chapter    # the Reaclib chapter for this reaction
