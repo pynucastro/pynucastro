@@ -284,6 +284,12 @@ class Library(object):
         """locate the Reaclib or tabular rate or library file given its name.  Return
         None if the file cannot be located, otherwise return its path."""
 
+        print('directories:')
+        print(self.pynucastro_dir)
+        print(self.pynucastro_rates_dir)
+        print(self.pynucastro_tabular_dir)
+        print(os.path.realpath(__file__))
+        
         # check to see if the rate file is in the working dir or
         # is already the full path
         x = ratename
