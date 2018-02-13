@@ -1,5 +1,7 @@
 # pynucastro
 
+[![Build Status](https://travis-ci.org/pynucastro/pynucastro.svg?branch=master)](https://travis-ci.org/pynucastro/pynucastro)
+
 Python interfaces to the nuclear reaction rate databases, including
 the JINA reaclib nuclear reactions database.  This
 project has 2 goals:
