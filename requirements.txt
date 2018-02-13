@@ -6,4 +6,8 @@ jupyter
 Sphinx
 travis-sphinx
 nbsphinx
+pytest
+nbval
+pytest-cov
+
 
