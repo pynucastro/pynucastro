@@ -5,4 +5,3 @@ pynucastro
    :maxdepth: 4
 
    pynucastro
-   setup
