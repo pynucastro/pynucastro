@@ -2,10 +2,13 @@ language: python
 
 python:
   - "3.6"
-#  - "nightly"
 
 before_install:
   - export PATH=$(echo $PATH | tr ':' "\n" | sed '/\/opt\/python/d' | tr "\n" ":" | sed "s|::|:|g")
+
+addons:
+  apt_packages:
+    - pandoc
 
 install:
   - pip install .
@@ -16,15 +19,15 @@ before_script:
 
 script:
   - pytest --cov=pynucastro -v
-#  - travis-sphinx build --source=docs
+  - travis-sphinx build
 
-#after_success:
-#  - travis-sphinx deploy
+after_success:
+  - travis-sphinx deploy
 
-# deploy:
-#   provider: pages
-#   skip-cleanup: true
-#   github-token: $GITHUB_TOKEN
-#   keep-history: true
-#   on:
-#     branch: master
+deploy:
+  provider: pages
+  skip-cleanup: true
+  github-token: $GITHUB_TOKEN
+  keep-history: true
+  on:
+    branch: master
