@@ -3,7 +3,6 @@ numpy>=1.13.3
 sympy>=1.1.1
 matplotlib==2.1.0
 jupyter>=1.0.0
-Sphinx>=1.6.3
 travis-sphinx
 nbsphinx>=0.3.1
 pytest>=3.2.1
