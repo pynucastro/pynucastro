@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/pynucastro/pynucastro.svg?branch=master)](https://travis-ci.org/pynucastro/pynucastro)
 
 Python interfaces to the nuclear reaction rate databases, including
-the JINA reaclib nuclear reactions database.  This
+the JINA Reaclib nuclear reactions database.  This
 project has 2 goals:
 
   * allow for an exploration of rates and collection of rates (networks)
@@ -12,7 +12,7 @@ project has 2 goals:
   * allow for the easy creation of the righthand side routines for
     reaction network integration (the ODEs) 
 
-To do this, pynucastro providea a parser for the reaclib format to
+To do this, pynucastro provides a parser for the Reaclib format to
 produce either a callable python function for a rate or output the
 python code for a function that can be incorporated into a rate
 module.
