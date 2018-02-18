@@ -84,8 +84,6 @@ pynucastro includes a carbon burning network with tabulated $\rm{A=23}$ Urca wea
 reactions currently used for studying white dwarf convection with
 Maestro [@Zingale.astronum.2017].
 
-# Acknowledgments
-
 This work was supported by DOE/Office of Nuclear Physics grant
 DE-FG02-87ER40317.
 
