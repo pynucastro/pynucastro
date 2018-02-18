@@ -78,9 +78,9 @@ networks.
 Secondly, pynucastro can generate a Fortran network consisting of
 right hand side and jacobian modules that evolve species, temperature,
 and energy generation for the StarKiller Microphysics code. Via
-StarKiller Microphysics, astrophysical simulation codes such as Castro
-and Maestro can directly use pynucastro reaction networks. pynucastro
-includes a carbon burning network with tabulated $\rm{A=23}$ Urca weak
+StarKiller Microphysics, astrophysical simulation codes such as Castro [@castro]
+and Maestro [@MAESTRO:Multilevel] can directly use pynucastro reaction networks.
+pynucastro includes a carbon burning network with tabulated $\rm{A=23}$ Urca weak
 reactions currently used for studying white dwarf convection with
 Maestro [@Zingale.astronum.2017].
 
