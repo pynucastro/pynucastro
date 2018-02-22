@@ -1,6 +1,6 @@
 # pynucastro
 
-[![Build Status](https://travis-ci.org/pynucastro/pynucastro.svg?branch=master)](https://travis-ci.org/pynucastro/pynucastro)
+[![Build Status](https://travis-ci.org/pynucastro/pynucastro.svg?branch=master)](https://travis-ci.org/pynucastro/pynucastro) [![JOSS Status](http://joss.theoj.org/papers/f753b6f21f460ae6a301c21c95dfa001/status.svg)](http://joss.theoj.org/papers/f753b6f21f460ae6a301c21c95dfa001)
 
 Python interfaces to the nuclear reaction rate databases, including
 the JINA Reaclib nuclear reactions database.  This
