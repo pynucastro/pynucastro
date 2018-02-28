@@ -8,27 +8,26 @@ mylibrary = pyna.rates.Library(library_file)
 
 subCh = pyna.rates.Library()
 
-all_reactants = [("He4", "He4", "He4"),
-                 ("C12", "He4"),
-                 ("N14", "He4"),
-                 ("F18", "He4"),
-                 ("C12", "p"),
-                 ("N13", "He4"),
-                 ("O16", "Ne20")]
+all_reactants = [(("he4", "he4", "he4"), ("c12")),
+                 (("c12", "he4"), ("o16")),
+                 (("n14", "he4"), ("f18")),
+                 (("f18", "he4"), ("ne21", "p")),
+                 (("c12", "p"), ("n13")),
+                 (("n13", "he4"), ("o16", "p")),
+                 (("o16", "he4"), ("ne20"))]
 
-print(mylibrary)
 
-for r in all_reactants:
-    react = [pyna.rates.Nucleus(q) for q in r]
-    print(react)
-    rfilter = pyna.rates.RateFilter(reactants=react)
-    print(rfilter)
+for r, p in all_reactants:
+    if not isinstance(p, tuple):
+        p = p,
+    rfilter = pyna.rates.RateFilter(reactants=r, products=p)
     _library = mylibrary.filter(rfilter)
-    print(_library)
-    print("Adding")
     subCh += _library
 
-print(subCh)
+
+net = StarKillerNetwork(libraries=[subCh])
+net.write_network()
+
 
 
 
