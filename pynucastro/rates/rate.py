@@ -452,8 +452,12 @@ class RateFilter(object):
         self.max_products = max_products
 
         if reactants:
+            if type(reactants) == Nucleus or type(reactants) == str:
+                reactants = [reactants]
             self.reactants = [self._cast_nucleus(r) for r in reactants]
         if products:
+            if type(products) == Nucleus or type(reactants) == str:
+                products = [products]
             self.products = [self._cast_nucleus(r) for r in products]
 
     @staticmethod
