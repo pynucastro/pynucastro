@@ -135,19 +135,20 @@ class Nucleus(object):
 
     """
     def __init__(self, name):
+        name = name.lower()
         self.raw = name
 
         # element symbol and atomic weight
         if name == "p":
-            self.el = "H"
+            self.el = "h"
             self.A = 1
             self.short_spec_name = "h1"
         elif name == "d":
-            self.el = "H"
+            self.el = "h"
             self.A = 2
             self.short_spec_name = "h2"
         elif name == "t":
-            self.el = "H"
+            self.el = "h"
             self.A = 3
             self.short_spec_name = "h3"
         elif name == "n":
@@ -165,8 +166,8 @@ class Nucleus(object):
             try:
                 self.A = int(e.group(2))
             except:
-                if (name.strip().lower() == 'al-6' or
-                    name.strip().lower() == 'al*6'):
+                if (name.strip() == 'al-6' or
+                    name.strip() == 'al*6'):
                     raise UnsupportedNucleus()
                 else:
                     raise
@@ -203,7 +204,7 @@ class Nucleus(object):
         return hash(self.__repr__())
 
     def __eq__(self, other):
-        return self.el.lower() == other.el.lower() and \
+        return self.el == other.el and \
                self.Z == other.Z and self.A == other.A
 
     def __lt__(self, other):
