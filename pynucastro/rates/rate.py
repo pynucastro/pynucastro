@@ -235,6 +235,7 @@ class Library(object):
     def __init__(self, libfile=None, rates=None, read_library=True):
         self._library_file = libfile
         if rates:
+            self._rates = None
             if isinstance(rates, Rate):
                 rates = [rates]
             assert (isinstance(rates, dict) or isinstance(rates, list)), "ERROR: rates in Library constructor must be a Rate object, list of Rate objects, or dictionary of Rate objects keyed by Rate.get_rate_id()"                
@@ -408,6 +409,64 @@ class Library(object):
         except:
             print("ERROR: rate identifier does not match a rate in this library.")
             raise
+
+    def linking_nuclei(self, nuclist, with_reverse=True):
+        """
+        Return a Library object containing the rates linking the 
+        nuclei provided in the list of Nucleus objects or nucleus abbreviations 'nuclist'.
+
+        If with_reverse is True, then include reverse rates. Otherwise
+        include only forward rates.
+        """
+
+        if type(nuclist) == Nucleus or type(nuclist) == str:
+            nuclist = [nuclist]
+        else:
+            try:
+                nuclist = list(nuclist)
+            except:
+                raise
+
+        nucleus_list = []
+        for nuc in nuclist:
+            if type(nuc) == Nucleus:
+                nucleus_list.append(nuc)
+            else:
+                try:
+                    anuc = Nucleus(nuc)
+                except:
+                    raise
+                else:
+                    nucleus_list.append(anuc)
+
+        # Get the set of rates for which any Nucleus in nucleus_list
+        # appears as either reactant or product.
+        rate_filters = []
+        for nuc in nucleus_list:
+            rate_filters.append(RateFilter(reactants=nuc, exact=False))
+            rate_filters.append(RateFilter(products=nuc, exact=False))
+        triage_library = self.filter(rate_filters)
+
+        # Discard any of this set of rates for which nuclei appear not
+        # in nucleus_list
+        filtered_rates = []
+        for r in triage_library.get_rates():
+            include = True
+            for nuc in r.reactants:
+                if not nuc in nucleus_list:
+                    include = False
+                    break
+            for nuc in r.products:
+                if not nuc in nucleus_list:
+                    include = False
+                    break
+            if not with_reverse and r.reverse:
+                include = False
+            if include:
+                filtered_rates.append(r)
+
+        # Return library containing the filtered rates
+        return Library(rates=filtered_rates)
 
     def filter(self, filter_spec):
         """
