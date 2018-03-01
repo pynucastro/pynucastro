@@ -174,6 +174,9 @@ class Nucleus(object):
             assert(self.A >= 0)
             self.short_spec_name = name
 
+        # use lowercase element abbreviation regardless the case of the input
+        self.el = self.el.lower()
+
         # atomic number comes from periodic table
         if name != "n":
             try:
