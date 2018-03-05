@@ -51,7 +51,7 @@ To set this up, you should include the root pynucastro path in your
 
 # requirements
 
-This package requires Python 3 and the following Python packages:
+This package requires Python 3.6 or later and the following Python packages:
 
 * `numpy`
 
