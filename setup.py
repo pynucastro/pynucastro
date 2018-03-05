@@ -9,5 +9,6 @@ setup(name='pynucastro',
       license='BSD',
       packages=['pynucastro'],
       install_requires=['networkx', 'numpy',
-                        'sympy', 'matplotlib'],
+                        'sympy', 'scipy', 'matplotlib',
+                        'ipywidgets']
       zip_safe=False)
