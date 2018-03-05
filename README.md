@@ -51,30 +51,45 @@ To set this up, you should include the root pynucastro path in your
 
 # requirements
 
-This package requires
+This package requires Python 3 and the following Python packages:
 
 * `numpy`
 
-* `scipy`: only needed for the example integrator
+* `sympy`
 
-* `matplotlib`: needed for plotting the rate
+* `scipy`
 
-* `networkx`: for visualizing the network
+* `matplotlib`
 
+* `networkx`
+
+* `ipywidgets`
+
+To build the documentation or run the unit tests, `sphinx` and
+`pytest` are additionally required along with some supporting
+packages. See the included `requirements.txt` file for a list of these
+packages and versions. To install the packages from the requirements
+file, do:
+```
+pip install -r requirements.txt
+```
 
 # unit tests
 
 We use py.test to do unit tests.  In `pynucastro/`, do:
 ```
-py.test-3 -v .
+py.test -v .
 ```
 
 to see coverage, do:
 ```
-py.test-3 --cov=pynucastro .
+py.test --cov=pynucastro .
 ```
 
 to test the notebooks, do:
 ```
-py.test-3 --nbval examples
+py.test --nbval examples
 ```
+
+If your OS has both Python 2 and Python 3 installed you may need to
+invoke `pytest` as `py.test-3` when running the unit tests.
