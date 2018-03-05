@@ -1,8 +1,10 @@
 networkx>=2.0
+scipy>=1.0.0
 numpy>=1.13.3
 sympy>=1.1.1
 matplotlib==2.1.0
 jupyter>=1.0.0
+ipywidgets>=7.1.2
 travis-sphinx
 sphinx_rtd_theme
 nbsphinx>=0.3.1
