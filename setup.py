@@ -10,5 +10,5 @@ setup(name='pynucastro',
       packages=['pynucastro'],
       install_requires=['networkx', 'numpy',
                         'sympy', 'scipy', 'matplotlib',
-                        'ipywidgets']
+                        'ipywidgets'],
       zip_safe=False)
