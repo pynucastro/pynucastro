@@ -38,9 +38,9 @@ print(r.eval(1.0e9))
 
 Also see the Jupyter notebooks:
 
-  * [pynucastro-examples.ipynb](https://github.com/zingale/pynucastro/blob/master/pynucastro-examples.ipynb)
+  * [pynucastro-examples.ipynb](https://github.com/pynucastro/pynucastro/blob/master/examples/pynucastro-examples.ipynb)
 
-  * [interactive-examples.ipynb](https://github.com/zingale/pynucastro/blob/master/interactive-examples.ipynb)
+  * [interactive-example.ipynb](https://github.com/pynucastro/pynucastro/blob/master/examples/interactive-example.ipynb)
 
 
 # setup
