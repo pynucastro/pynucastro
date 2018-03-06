@@ -36,7 +36,7 @@ The main classes are:
 
 * :func:`PythonNetwork
   <pynucastro.networks.python_network.PythonNetwork>`: This is a
-  collection of rates with functions that known how to write python
+  collection of rates with functions that know how to write python
   code to express the righthand side of the system of ODEs.
 
 Usage
