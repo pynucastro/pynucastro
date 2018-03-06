@@ -88,7 +88,7 @@ py.test --cov=pynucastro .
 
 to test the notebooks, do:
 ```
-py.test --nbval examples/interactive-example.ipynb examples/pynucastro-examples.ipynb examples/pp-CNO-example.ipynb
+py.test --nbval examples
 ```
 
 If your OS has both Python 2 and Python 3 installed you may need to
