@@ -13,14 +13,15 @@ from collections import OrderedDict
 
 from ipywidgets import interact
 
-import matplotlib
+import matplotlib as mpl
 import matplotlib.pyplot as plt
+from mpl_toolkits.axes_grid1 import make_axes_locatable
 import networkx as nx
 
 # Import Rate
 from pynucastro.rates import Rate, Nucleus, Library
 
-matplotlib.rcParams['figure.dpi'] = 100
+mpl.rcParams['figure.dpi'] = 100
 
 class Composition(object):
     """a composition holds the mass fractions of the nuclei in a network
@@ -254,7 +255,11 @@ class RateCollection(object):
         G.position = {}
         G.labels = {}
 
-        plt.plot([0, 0], [8, 8], 'b-')
+        fig, ax = plt.subplots()
+        divider = make_axes_locatable(ax)
+        cax = divider.append_axes('right', size='15%', pad=0.05)
+
+        ax.plot([0, 0], [8, 8], 'b-')
 
         # nodes -- the node nuclei will be all of the heavies, but not
         # p, n, alpha, unless we have p + p, 3-a, etc.
@@ -307,22 +312,25 @@ class RateCollection(object):
 
         nx.draw_networkx_nodes(G, G.position,
                                node_color="#A0CBE2", alpha=1.0,
-                               node_shape="o", node_size=1000, linewidth=2.0, zorder=10)
+                               node_shape="o", node_size=1000, linewidth=2.0, zorder=10, ax=ax)
 
         nx.draw_networkx_labels(G, G.position, G.labels,
-                                font_size=13, font_color="w", zorder=100)
+                                font_size=13, font_color="w", zorder=100, ax=ax)
 
         # get the edges and weights coupled in the same order
         edges, weights = zip(*nx.get_edge_attributes(G, 'weight').items())
 
         edges_lc = nx.draw_networkx_edges(G, G.position, width=3,
                                           edgelist=edges, edge_color=weights,
-                                          edge_cmap=plt.cm.viridis, zorder=1)
+                                          edge_cmap=plt.cm.viridis, zorder=1, ax=ax)
 
         # draw_networkx_edges returns a LineCollection matplotlib type
         # which we can use for the colorbar
         if ydots is not None:
-            plt.colorbar(edges_lc)
+            #plt.colorbar(edges_lc)
+            print(min(weights), max(weights))
+            norm = mpl.colors.Normalize(vmin=min(weights), vmax=max(weights))
+            mpl.colorbar.ColorbarBase(cax, cmap=plt.cm.viridis, norm=norm)
 
         Zs = [n.Z for n in node_nuclei]
 
@@ -330,7 +338,6 @@ class RateCollection(object):
         plt.xlabel(r"$N$", fontsize="large")
         plt.ylabel(r"$Z$", fontsize="large")
 
-        ax = plt.gca()
         ax.spines['right'].set_visible(False)
         ax.spines['top'].set_visible(False)
         ax.spines['right'].set_visible(False)
@@ -340,7 +347,6 @@ class RateCollection(object):
         ax.xaxis.set_ticks_position('bottom')
         ax.yaxis.set_ticks_position('left')
 
-        ax = plt.gca()
         ax.set_aspect("equal", "datalim")
 
         f = plt.gcf()
