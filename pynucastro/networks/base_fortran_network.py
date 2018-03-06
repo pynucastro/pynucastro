@@ -11,6 +11,7 @@ import shutil
 import re
 import glob
 import sympy
+from collections import OrderedDict
 
 from pynucastro.networks import RateCollection
 from pynucastro.nucdata import BindingTable
@@ -39,7 +40,7 @@ class BaseFortranNetwork(RateCollection):
 
         # a dictionary of functions to call to handle specific parts
         # of the Fortran template
-        self.ftags = {}
+        self.ftags = OrderedDict()
         self.ftags['<nrates>'] = self._nrates
         self.ftags['<nrat_reaclib>'] = self._nrat_reaclib
         self.ftags['<nrat_tabular>'] = self._nrat_tabular
@@ -93,7 +94,7 @@ class BaseFortranNetwork(RateCollection):
         self.ydot_out_result  = None
         self.jac_out_scratch  = None
         self.jac_out_result   = None
-        self.symbol_ludict = {} # Symbol lookup dictionary
+        self.symbol_ludict = OrderedDict() # Symbol lookup dictionary
 
         # Define these for the particular network
         self.name_rate_data = 'screened_rates'

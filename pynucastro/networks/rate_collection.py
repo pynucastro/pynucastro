@@ -9,6 +9,7 @@ import glob
 import math
 from operator import mul
 import os
+from collections import OrderedDict
 
 from ipywidgets import interact
 
@@ -152,8 +153,8 @@ class RateCollection(object):
 
         # now make a list of each rate that touches each nucleus
         # we'll store this in a dictionary keyed on the nucleus
-        self.nuclei_consumed = {}
-        self.nuclei_produced = {}
+        self.nuclei_consumed = OrderedDict()
+        self.nuclei_produced = OrderedDict()
 
         for n in self.unique_nuclei:
             self.nuclei_consumed[n] = [r for r in self.rates if n in r.reactants]
@@ -202,7 +203,7 @@ class RateCollection(object):
     def evaluate_rates(self, rho, T, composition):
         """evaluate the rates for a specific density, temperature, and
         composition"""
-        rvals = {}
+        rvals = OrderedDict()
         ys = composition.get_molar()
 
         for r in self.rates:
