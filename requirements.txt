@@ -1,5 +1,5 @@
 networkx>=2.0
-scipy
+scipy>=1.0.0
 numpy>=1.13.3
 sympy>=1.1.1
 matplotlib==2.1.0
