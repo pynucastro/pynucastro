@@ -21,6 +21,7 @@ before_script:
 
 script:
   - pytest --cov=pynucastro -v
+  - pytest --nbval examples -v
 #   - travis-sphinx build
 
 # after_success:
