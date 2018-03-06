@@ -1019,7 +1019,7 @@ class Rate(object):
         ssrc = 'reaclib'
         if self.tabular:
             ssrc = 'tabular'
-        return '{}_{}_{}{}{}'.format(self.__repr__(), self.label.strip(),
+        return '{} <{}_{}{}{}>'.format(self.__repr__(), self.label.strip(),
                                     ssrc, sweak, srev)
 
     def heaviest(self):
