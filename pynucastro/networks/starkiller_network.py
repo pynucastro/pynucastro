@@ -21,3 +21,11 @@ class StarKillerNetwork(BaseFortranNetwork):
         self.template_file_select = os.path.join(self.template_dir,
                                                  '*.template')
         self.template_files = glob.glob(self.template_file_select)
+
+    def _initial_mass_fractions(self, n_indent, of):
+        # Redefine initial mass fractions tag to set the
+        # mass fractions in the burn_cell unit test inputs file.
+        for i, n in enumerate(self.unique_nuclei):
+            of.write("\n# {nuc: <5} initial mass fraction\n".format(nuc=str(n)))
+            of.write("{}massfractions({}) = 0.0d0\n".format(
+                self.indent*n_indent, i))
