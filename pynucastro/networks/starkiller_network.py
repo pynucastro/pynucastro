@@ -26,6 +26,6 @@ class StarKillerNetwork(BaseFortranNetwork):
         # Redefine initial mass fractions tag to set the
         # mass fractions in the burn_cell unit test inputs file.
         for i, n in enumerate(self.unique_nuclei):
-            of.write("\n# {nuc: <5} initial mass fraction\n".format(nuc=str(n)))
+            of.write("\n! {nuc: <5} initial mass fraction\n".format(nuc=str(n)))
             of.write("{}massfractions({}) = 0.0d0\n".format(
                 self.indent*n_indent, i))
