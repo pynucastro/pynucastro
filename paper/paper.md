@@ -39,7 +39,7 @@ parameterizations published by the JINA Reaclib project
 
 Interactive exploration is enabled by a set of classes that provide
 methods to visualize the temperature dependency of a rate, evaluate it
-at a particular temperature, and find the exponent, n, for a simply
+at a particular temperature, and find the exponent, n, for a simple
 $\rm{T^n}$ parameterization.  From a collection of rates, the flow
 between the nuclei can be visualized interactively using Jupyter
 widgets.  These features help both with designing a network for a
@@ -56,7 +56,7 @@ pynucastro can also generate Fortran code implementing reaction
 networks, using SymPy [@SymPy.2017] to determine the system of ODEs
 comprising the network. From the symbolic expressions for the ODE
 right hand side, pynucastro also generates a routine to compute the
-analytic jacobian matrix for implicit integration.
+analytic Jacobian matrix for implicit integration.
 
 Fortran networks incorporate weak, intermediate, and strong reaction
 rate screening for the Reaclib rates [@Screening.Graboske.1973;
@@ -76,7 +76,7 @@ significantly faster than is possible for the generated Python
 networks.
 
 Secondly, pynucastro can generate a Fortran network consisting of
-right hand side and jacobian modules that evolve species, temperature,
+right hand side and Jacobian modules that evolve species, temperature,
 and energy generation for the StarKiller Microphysics code. Via
 StarKiller Microphysics, astrophysical simulation codes such as Castro [@castro]
 and Maestro [@MAESTRO:Multilevel] can directly use pynucastro reaction networks.
