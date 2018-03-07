@@ -361,7 +361,7 @@ class Library(object):
                                             rlines))
                 #print(sio.getvalue())
                 try:
-                    r = Rate(sio)
+                    r = Rate(sio, rfile_path=self._library_file)
                 except UnsupportedNucleus:
                     pass
                 except:
@@ -605,12 +605,12 @@ class RateFilter(object):
 
 class Rate(object):
     """ a single Reaclib rate, which can be composed of multiple sets """
-    def __init__(self, rfile=None, chapter=None, original_source=None,
+    def __init__(self, rfile=None, rfile_path=None, chapter=None, original_source=None,
                  reactants=None, products=None, sets=None, labelprops=None, Q=None):
         """ rfile can be either a string specifying the path to a rate file or
         an io.StringIO object from which to read rate information. """
 
-        self.rfile_path = None
+        self.rfile_path = rfile_path
         self.rfile = None
 
         if type(rfile) == str:
@@ -1019,7 +1019,7 @@ class Rate(object):
         ssrc = 'reaclib'
         if self.tabular:
             ssrc = 'tabular'
-        return '{}_{}_{}{}{}'.format(self.__repr__(), self.label.strip(),
+        return '{} <{}_{}{}{}>'.format(self.__repr__(), self.label.strip(),
                                     ssrc, sweak, srev)
 
     def heaviest(self):
