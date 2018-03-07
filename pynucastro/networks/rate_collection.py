@@ -256,8 +256,8 @@ class RateCollection(object):
         G.labels = {}
 
         fig, ax = plt.subplots()
-        divider = make_axes_locatable(ax)
-        cax = divider.append_axes('right', size='15%', pad=0.05)
+        #divider = make_axes_locatable(ax)
+        #cax = divider.append_axes('right', size='15%', pad=0.05)
 
         ax.plot([0, 0], [8, 8], 'b-')
 
@@ -322,15 +322,20 @@ class RateCollection(object):
 
         edges_lc = nx.draw_networkx_edges(G, G.position, width=3,
                                           edgelist=edges, edge_color=weights,
+                                          node_size=1000,
                                           edge_cmap=plt.cm.viridis, zorder=1, ax=ax)
 
-        # draw_networkx_edges returns a LineCollection matplotlib type
-        # which we can use for the colorbar
+        # for networkx <= 2.0 draw_networkx_edges returns a
+        # LineCollection matplotlib type which we can use for the
+        # colorbar directly.  For networkx >= 2.1, it is a collection
+        # of FancyArrowPatch-s, which we need to run through a
+        # PatchCollection.  See: 
+        # https://stackoverflow.com/questions/18658047/adding-a-matplotlib-colorbar-from-a-patchcollection
+
         if ydots is not None:
-            #plt.colorbar(edges_lc)
-            print(min(weights), max(weights))
-            norm = mpl.colors.Normalize(vmin=min(weights), vmax=max(weights))
-            mpl.colorbar.ColorbarBase(cax, cmap=plt.cm.viridis, norm=norm)
+            pc = mpl.collections.PatchCollection(edges_lc, cmap=plt.cm.viridis)
+            pc.set_array(weights)
+            plt.colorbar(pc)
 
         Zs = [n.Z for n in node_nuclei]
 
@@ -349,8 +354,7 @@ class RateCollection(object):
 
         ax.set_aspect("equal", "datalim")
 
-        f = plt.gcf()
-        f.set_size_inches(size[0]/dpi, size[1]/dpi)
+        fig.set_size_inches(size[0]/dpi, size[1]/dpi)
 
         if outfile is None:
             plt.show()
