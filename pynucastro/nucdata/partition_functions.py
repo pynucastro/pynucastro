@@ -230,3 +230,15 @@ class PartitionFunctionCollection(object):
         elif pfhi:
             pf = pfhi
         nuc.set_partition_function(pf)
+
+    def set_rate_partition_functions(self, rate, high_temperature_partition_functions="rauscher2003_FRDM"):
+        """
+        Set the partition functions for the Nucleus objects in Rate object rate.
+        
+        See the documentation for set_nuc_partition_function for details.
+        """
+        assert(type(rate)==Rate)
+
+        for nuc in (rate.reactants + rate.products):
+            self.set_nuc_partition_function(nuc,
+                                            high_temperature_partition_functions)

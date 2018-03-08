@@ -194,10 +194,14 @@ class RateCollection(object):
                 exit()
 
     def set_nuclei_partition_functions(self, high_temperature_partition_functions):
-        """ Set partition functions for the unique nuclei in this RateCollection. """
+        """
+        Set partition functions for the nuclei and rates in this RateCollection.
+        """
         pfcollection = PartitionFunctionCollection()
         for nuc in self.unique_nuclei:
             pfcollection.set_nuc_partition_function(nuc, high_temperature_partition_functions)
+        for r in self.rates:
+            pfcollection.set_rate_partition_functions(r, high_temperature_partition_functions)
 
     def _read_rate_files(self, rate_files):
         # get the rates
