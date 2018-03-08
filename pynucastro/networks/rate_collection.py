@@ -84,7 +84,8 @@ class RateCollection(object):
 
     pynucastro_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 
-    def __init__(self, rate_files=None, libraries=None, rates=None):
+    def __init__(self, rate_files=None, libraries=None, rates=None,
+                 high_temperature_partition_functions="rauscher2003_FRDM"):
         """
         rate_files are the files that together define the network.  This
         can be any iterable or single string.
@@ -98,6 +99,14 @@ class RateCollection(object):
         Rate objects in the list 'rates'.
 
         Any combination of these options may be combined.
+
+        RateCollection will read the nuclear partition functions included
+        in pynucastro. See pynucastro/nucdata/README.md for details.
+
+        The argument high_temperature_partition_functions may be
+        supplied with one of two options: "rauscher2003_ETFSIQ" or
+        "rauscher2003_FRDM". The latter is the default.
+        See the documentation for PartitionFunctionCollection for details.
         """
 
         self.files = []
@@ -151,6 +160,9 @@ class RateCollection(object):
 
         self.unique_nuclei = sorted(u)
 
+        # set the partition functions for the unique nuclei
+        self.set_nuclei_partition_functions(high_temperature_partition_functions)
+
         # now make a list of each rate that touches each nucleus
         # we'll store this in a dictionary keyed on the nucleus
         self.nuclei_consumed = OrderedDict()
@@ -180,6 +192,12 @@ class RateCollection(object):
                 print('ERROR: Chapter type unknown for rate chapter {}'.format(
                     str(r.chapter)))
                 exit()
+
+    def set_nuclei_partition_functions(self, high_temperature_partition_functions):
+        """ Set partition functions for the unique nuclei in this RateCollection. """
+        pfcollection = PartitionFunctionCollection()
+        for nuc in self.unique_nuclei:
+            pfcollection.set_nuc_partition_function(nuc, high_temperature_partition_functions)
 
     def _read_rate_files(self, rate_files):
         # get the rates
