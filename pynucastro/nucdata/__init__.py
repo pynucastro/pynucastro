@@ -3,7 +3,6 @@ particular, the binding energies)
 
 """
 
-from .binding_nuclide import BindingNuclide
-from .binding_table import BindingTable
+from .binding_energies import BindingNuclide, BindingTable
 from .elements import Element, UnidentifiedElement, PeriodicTable
 from .partition_functions import PartitionFunction, PartitionFunctionCollection
