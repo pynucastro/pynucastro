@@ -22,7 +22,7 @@ class BindingTable(object):
             self.datfile = datfile
         else:
             thisdir = os.path.dirname(os.path.realpath(__file__))
-            fname = os.path.join(thisdir, 'binding_2016.txt')
+            fname = os.path.join(thisdir, 'AtomicMassEvaluation', 'binding_2016.txt')
             if os.path.isfile(fname):
                 self.datfile = fname
 
