@@ -138,6 +138,8 @@ class Nucleus(object):
         name = name.lower()
         self.raw = name
 
+        self._partition_function = None
+
         # element symbol and atomic weight
         if name == "p":
             self.el = "h"
@@ -199,6 +201,13 @@ class Nucleus(object):
 
                 # latex formatted style
                 self.pretty = r"{{}}^{{{}}}\mathrm{{{}}}".format(self.A, self.el)
+
+    def set_partition_function(self, pfun):
+        assert(type(pfun) == PartitionFunction)
+        self._partition_function = pfun
+
+    def get_partition_function(self):
+        return self._partition_function
 
     def __repr__(self):
         return self.raw
