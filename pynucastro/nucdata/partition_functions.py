@@ -15,8 +15,9 @@ default, pynucastro uses the FRDM values from R2003 for consistency
 with RT2000.
 """
 
-from pynucastro.rates import Nucleus
 import os
+import numpy as np
+import pynucastro
 from scipy.interpolate import InterpolatedUnivariateSpline
 
 class PartitionFunction(object):
@@ -28,10 +29,14 @@ class PartitionFunction(object):
     """
     def __init__(self, name=None, temperature=None, partition_function=None):
         self.name = name
-        self.temperature = temp
-        self.partition_function = pfun
+        self.temperature = temperature
+        self.partition_function = partition_function
         self.interpolant = None
         self.interpolant_order = None
+        if (type(self.temperature) == np.ndarray and
+            type(self.partition_function) == np.ndarray and
+            len(self.temperature) == len(self.partition_function)):
+            self.construct_spline_interpolant()
 
     def lower_partition(self):
         return self.partition_function[0]
@@ -71,8 +76,6 @@ class PartitionFunction(object):
         partition_function = np.array(list(lower.partition_function) +
                                       list(upper.partition_function))
         name = '{} + {}'.format(lower.name, upper.name)
-        tmin = lower.minimum_temperature
-        tmax = upper.maximum_temperature
         newpf = PartitionFunction(name=name, temperature=temperature,
                                   partition_function=partition_function)
 
@@ -119,7 +122,17 @@ class PartitionFunctionTable(object):
         and if not then add it.
         """
         assert(not nuc in self._partition_functions)
-        self._partition_functions[nuc] = pfun
+        self._partition_functions[str(nuc)] = pfun
+
+    def get_partition_function(self, nuc):
+        """
+        Given a nucleus object or string, return its partition function or None
+        if it is not in the table.
+        """
+        if str(nuc) in self._partition_functions.keys():
+            return self._partition_functions[str(nuc)]
+        else:
+            return None
 
     def read_table(self, file_name):
         fin = open(file_name, 'r')
@@ -147,7 +160,7 @@ class PartitionFunctionTable(object):
 
         # Get partition functions for each nucleus
         while lines:
-            nuc = Nucleus(lines.pop(0))
+            nuc = pynucastro.rates.Nucleus(lines.pop(0))
             pfun_strings = lines.pop(0).split()
             partitionfun = np.array([float(pf) for pf in pfun_strings])
             pfun = PartitionFunction(name=self.name,
@@ -183,10 +196,10 @@ class PartitionFunctionCollection(object):
                                                   'partition_functions_rauscher2003_etfsiq.txt'))
         self._add_table(pft)
 
-    def set_nuc_partition_function(self, nuc, high_temperature_partition_functions="rauscher2003_FRDM"):
+    def get_nuc_partition_function(self, nuc, high_temperature_partition_functions="rauscher2003_FRDM"):
         """
-        Given a Nucleus object nuc, set its partition function. 
-        If no partition function is located for this nuclide, set it to None.
+        Given a Nucleus object nuc or string representation, return its partition function. 
+        If no partition function is located for this nuclide, return None.
 
         The argument high_temperature_partition_functions may be
         supplied with one of two options: "rauscher2003_ETFSIQ" or
@@ -210,17 +223,13 @@ class PartitionFunctionCollection(object):
         will combine the partition functions from RT 2000 with the partition 
         functions from Table 3 of R 2003.
         """
-        assert(type(nuc) == Nucleus)
+        assert(type(nuc) == pynucastro.rates.Nucleus or type(nuc) == str)
 
         pf_lo_temp = self.partition_function_tables['rathpf']
         pf_hi_temp = self.partition_function_tables[high_temperature_partition_functions]
 
-        pflo = None
-        pfhi = None
-        if nuc in pf_lo_temp:
-            pflo = pf_lo_temp[nuc]
-        if nuc in pf_hi_temp:
-            pfhi = pf_hi_temp[nuc]
+        pflo = pf_lo_temp.get_partition_function(nuc)
+        pfhi = pf_hi_temp.get_partition_function(nuc)
 
         pf = None
         if pflo and pfhi:
@@ -229,16 +238,4 @@ class PartitionFunctionCollection(object):
             pf = pflo
         elif pfhi:
             pf = pfhi
-        nuc.set_partition_function(pf)
-
-    def set_rate_partition_functions(self, rate, high_temperature_partition_functions="rauscher2003_FRDM"):
-        """
-        Set the partition functions for the Nucleus objects in Rate object rate.
-        
-        See the documentation for set_nuc_partition_function for details.
-        """
-        assert(type(rate)==Rate)
-
-        for nuc in (rate.reactants + rate.products):
-            self.set_nuc_partition_function(nuc,
-                                            high_temperature_partition_functions)
+        return pf

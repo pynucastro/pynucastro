@@ -19,6 +19,7 @@ import networkx as nx
 
 # Import Rate
 from pynucastro.rates import Rate, Nucleus, Library
+from pynucastro.nucdata import PartitionFunctionCollection
 
 matplotlib.rcParams['figure.dpi'] = 100
 
@@ -160,7 +161,7 @@ class RateCollection(object):
 
         self.unique_nuclei = sorted(u)
 
-        # set the partition functions for the unique nuclei
+        # set the partition functions for the nuclei in this rate collection
         self.set_nuclei_partition_functions(high_temperature_partition_functions)
 
         # now make a list of each rate that touches each nucleus
@@ -199,9 +200,11 @@ class RateCollection(object):
         """
         pfcollection = PartitionFunctionCollection()
         for nuc in self.unique_nuclei:
-            pfcollection.set_nuc_partition_function(nuc, high_temperature_partition_functions)
+            nuc.set_partition_function(pfcollection,
+                                       high_temperature_partition_functions)
         for r in self.rates:
-            pfcollection.set_rate_partition_functions(r, high_temperature_partition_functions)
+            r.set_partition_functions(pfcollection,
+                                      high_temperature_partition_functions)
 
     def _read_rate_files(self, rate_files):
         # get the rates

@@ -9,7 +9,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import collections
 
-from pynucastro.nucdata import Element, UnidentifiedElement, PeriodicTable
+from pynucastro.nucdata import Element, UnidentifiedElement, PeriodicTable, PartitionFunction, PartitionFunctionCollection
 
 def list_known_rates():
     """ list the rates found in the library """
@@ -202,9 +202,9 @@ class Nucleus(object):
                 # latex formatted style
                 self.pretty = r"{{}}^{{{}}}\mathrm{{{}}}".format(self.A, self.el)
 
-    def set_partition_function(self, pfun):
-        assert(type(pfun) == PartitionFunction)
-        self._partition_function = pfun
+    def set_partition_function(self, pfcollection, high_temperature_partition_functions="rauscher2003_FRDM"):
+        assert(type(pfcollection) == PartitionFunctionCollection)
+        self._partition_function = pfcollection.get_nuc_partition_function(self, high_temperature_partition_functions="rauscher2003_FRDM")
 
     def get_partition_function(self):
         return self._partition_function
@@ -1056,6 +1056,11 @@ class Rate(object):
             if n.A < nuc.A or (n.A == nuc.A and n.Z > nuc.Z):
                 nuc = n
         return nuc
+
+    def set_partition_functions(self, pfcollection, high_temperature_partition_functions="rauscher2003_FRDM"):
+        for nuc in (self.reactants + self.products):
+            nuc.set_partition_function(pfcollection,
+                                       high_temperature_partition_functions)
 
     def eval(self, T):
         """ evauate the reaction rate for temperature T """
