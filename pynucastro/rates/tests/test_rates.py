@@ -1,9 +1,9 @@
 # unit tests for rates
 import math
-import os
 
 import pynucastro.rates as rates
 from pytest import approx
+
 
 class TestTfactors(object):
     @classmethod
@@ -105,7 +105,7 @@ class TestRate(object):
 
         # chapter-3
         self.rate3 = rates.Rate("he6-gnn-he4-cf88")
-        
+
         # chapter-4
         self.rate4 = rates.Rate("c12-ag-o16-nac2")
 
@@ -232,4 +232,3 @@ class TestRate(object):
 
     def test_eval(self):
         assert self.rate8.eval(1.e8) == approx(2.0403192412842946e-24)
-

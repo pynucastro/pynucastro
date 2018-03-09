@@ -5,7 +5,6 @@ rates that together make up a network."""
 from __future__ import print_function
 
 import functools
-import glob
 import math
 from operator import mul
 import os

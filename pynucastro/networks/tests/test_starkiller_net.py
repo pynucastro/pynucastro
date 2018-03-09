@@ -1,10 +1,7 @@
 # unit tests for rates
-import math
-
 import pynucastro.networks as networks
 import pynucastro.rates as rates
 
-from pytest import approx
 import io
 
 class TestStarKillerNetwork(object):
