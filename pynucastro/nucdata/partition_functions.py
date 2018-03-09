@@ -37,6 +37,10 @@ class PartitionFunction(object):
             type(self.partition_function) == np.ndarray and
             len(self.temperature) == len(self.partition_function)):
             self.construct_spline_interpolant()
+        else:
+            # For a null partition function, return 1.0 when evaluated.
+            self.interpolant_order = 0
+            self.interpolant = lambda x: 1.0
 
     def lower_partition(self):
         return self.partition_function[0]
@@ -114,7 +118,10 @@ class PartitionFunction(object):
         except:
             raise
         else:
-            return self.interpolant(T)
+            if self.interpolant_order == 0:
+                return self.interpolant(T)
+            else:
+                return self.interpolant(T, ext='const')
 
 class PartitionFunctionTable(object):
     """ 
@@ -251,4 +258,8 @@ class PartitionFunctionCollection(object):
             pf = pflo
         elif pfhi:
             pf = pfhi
-        return pf
+
+        if pf:
+            return pf
+        else:
+            return PartitionFunction()

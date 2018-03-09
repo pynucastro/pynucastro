@@ -25,6 +25,14 @@ class PythonNetwork(RateCollection):
             tstring += "# {}\n".format(s.labelprops[0:5])
             tstring += "{}\n".format(s.set_string(prefix=prefix, plus_equal=True))
 
+        # If rate is reverse, multiply by the appropriate partition functions
+        if rate.reverse:
+            tstring += '\n'
+            for nuc in rate.products:
+                tstring += "{} = {} * pf_{}(tf.T9*1.0e9)\n".format(prefix, prefix, nuc)
+            for nuc in rate.reactants:
+                tstring += "{} = {} / pf_{}(tf.T9*1.0e9)\n".format(prefix, prefix, nuc)
+
         string = ""
         for t in tstring.split("\n"):
             string += indent*" " + t + "\n"
@@ -148,7 +156,18 @@ class PythonNetwork(RateCollection):
                 raise
 
         of.write("import numpy as np\n")
-        of.write("from pynucastro.rates import Tfactors\n\n")
+        of.write("from pynucastro.rates import Tfactors\n")
+
+        has_reverse_rates = False
+        for r in self.rates:
+            if r.reverse:
+                has_reverse_rates = True
+                break
+
+        if has_reverse_rates:
+            of.write("from pynucastro.nucdata import PartitionFunction, PartitionFunctionCollection\n\n")
+        else:
+            of.write('\n')
 
         # integer keys
         for i, n in enumerate(self.unique_nuclei):
@@ -161,6 +180,26 @@ class PythonNetwork(RateCollection):
             of.write("A[i{}] = {}\n".format(n, n.A))
 
         of.write("\n")
+
+        names_list = []
+        for nuc in self.unique_nuclei:
+            names_list.append('"{}"'.format(nuc))
+        
+        of.write('species_names = [{}]\n'.format(', '.join(names_list)))
+
+        of.write("\n")
+
+        if has_reverse_rates:
+            of.write("partfun_collection = PartitionFunctionCollection()\n\n")
+            # Get partition functions for the nuclei participating in reverse rates
+            partnuc = []
+            for r in self.rates:
+                if r.reverse:
+                    partnuc += r.reactants + r.products
+            partnuc = sorted(set(partnuc))
+            for nuc in partnuc:
+                of.write("pf_{} = partfun_collection.get_partition_function('{}')\n".format(nuc, nuc))
+            of.write('\n')
 
         for r in self.rates:
             of.write(self.function_string(r))
