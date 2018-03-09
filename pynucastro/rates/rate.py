@@ -204,7 +204,7 @@ class Nucleus(object):
 
     def set_partition_function(self, pfcollection, high_temperature_partition_functions="rauscher2003_FRDM"):
         assert(type(pfcollection) == PartitionFunctionCollection)
-        self._partition_function = pfcollection.get_nuc_partition_function(self, high_temperature_partition_functions="rauscher2003_FRDM")
+        self._partition_function = pfcollection.get_partition_function(self, high_temperature_partition_functions="rauscher2003_FRDM")
 
     def get_partition_function(self):
         return self._partition_function

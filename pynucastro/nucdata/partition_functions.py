@@ -103,6 +103,19 @@ class PartitionFunction(object):
                                                         k=order)
         self.interpolant_order = order
 
+    def __call__(self, T):
+        """
+        If the interpolant is already constructed, then evaluate it at
+        temperature T. Otherwise, generate an exception.
+        """
+        assert(self.interpolant)
+        try:
+            T = float(T)
+        except:
+            raise
+        else:
+            return self.interpolant(T)
+
 class PartitionFunctionTable(object):
     """ 
     Class for reading a partition function table file. A
@@ -196,7 +209,7 @@ class PartitionFunctionCollection(object):
                                                   'partition_functions_rauscher2003_etfsiq.txt'))
         self._add_table(pft)
 
-    def get_nuc_partition_function(self, nuc, high_temperature_partition_functions="rauscher2003_FRDM"):
+    def get_partition_function(self, nuc, high_temperature_partition_functions="rauscher2003_FRDM"):
         """
         Given a Nucleus object nuc or string representation, return its partition function. 
         If no partition function is located for this nuclide, return None.
