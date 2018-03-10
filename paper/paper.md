@@ -84,6 +84,17 @@ pynucastro includes a carbon burning network with tabulated $\rm{A=23}$ Urca wea
 reactions currently used for studying white dwarf convection with
 Maestro [@Zingale.astronum.2017].
 
+Future work will focus on implementing nuclear partition functions to
+compute reverse reaction rates in the Reaclib library [@RaTh2000;
+@Rauscher2003]. It is also in some cases necessary to compute reverse
+reaction rates using detailed balance with a consistent nuclear mass
+model instead of using the parameterized reverse reaction rates in
+Reaclib [@SkyNet.2017]. Additionally, work is ongoing to port the
+networks generated for StarKiller Microphysics to CUDA Fortran to
+support parallel reaction network integration on GPU systems
+[@Zingale.astronum.2017]. We intend to implement this port directly
+into the pynucastro-generated networks.
+
 This work was supported by DOE/Office of Nuclear Physics grant
 DE-FG02-87ER40317.
 
