@@ -95,7 +95,16 @@ support parallel reaction network integration on GPU systems
 [@Zingale.astronum.2017]. We intend to implement this port directly
 into the pynucastro-generated networks.
 
-This work was supported by DOE/Office of Nuclear Physics grant
-DE-FG02-87ER40317.
+We wish to thank Abigail Bishop for discussions about code generation
+for the StarKiller Microphysics code as well as for exploratory
+calculations. We are grateful to Max P. Katz for numerous discussions
+that enabled the ongoing port of pynucastro-generated networks to CUDA
+Fortran. We also wish to thank Christopher Malone for discussions
+about various implementation details in pynucastro as well as sample
+code to improve element identification. We especially thank Josiah
+Schwab for helpful discussions about nuclear partition functions and
+reverse rates as well as for testing pynucastro and pointing out
+issues in visualization and documentation. This work was supported by
+DOE/Office of Nuclear Physics grant DE-FG02-87ER40317.
 
 # References
