@@ -1,4 +1,4 @@
-# C-burning with A=23 URCA rate module generator
+# He burning with the links involving N14 from the Shen and Bildsten (2009) paper
 
 import pynucastro as pyna
 from pynucastro.networks import StarKillerNetwork
