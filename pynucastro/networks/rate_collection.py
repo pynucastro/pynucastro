@@ -336,9 +336,9 @@ class RateCollection(object):
             pc.set_array(weights)
             plt.colorbar(pc)
 
-        Zs = [n.Z for n in node_nuclei]
+        Ns = [n.N for n in node_nuclei]
 
-        plt.xlim(min(Zs)-1, max(Zs)+1)
+        plt.xlim(min(Ns)-1, max(Ns)+1)
         plt.xlabel(r"$N$", fontsize="large")
         plt.ylabel(r"$Z$", fontsize="large")
 
