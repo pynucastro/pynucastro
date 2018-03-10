@@ -21,15 +21,15 @@ before_script:
 
 script:
   - pytest -v --cov=. --nbval --ignore=docs
-  - travis-sphinx build
+#   - travis-sphinx build
 
-after_success:
-  - travis-sphinx deploy
+# after_success:
+#   - travis-sphinx deploy
 
-deploy:
-  provider: pages
-  skip-cleanup: true
-  github-token: $GITHUB_TOKEN
-  keep-history: true
-  on:
-    branch: master
+# deploy:
+#   provider: pages
+#   skip-cleanup: true
+#   github-token: $GITHUB_TOKEN
+#   keep-history: true
+#   on:
+#     branch: master
