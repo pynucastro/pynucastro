@@ -202,7 +202,7 @@ class Nucleus(object):
                 self.spec_name = '{}-{}'.format(i.name, self.A)
 
                 # latex formatted style
-                self.pretty = r"{{}}^{{{}}}\mathrm{{{}}}".format(self.A, self.el)
+                self.pretty = r"{{}}^{{{}}}\mathrm{{{}}}".format(self.A, self.el.capitalize())
 
     def __repr__(self):
         return self.raw
