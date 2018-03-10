@@ -90,10 +90,10 @@ class RateCollection(object):
 
         This can include Reaclib library files storing multiple rates.
 
-        If libraries is supplied, initialize a RateCollection using the rates 
+        If libraries is supplied, initialize a RateCollection using the rates
         in the Library object(s) in list 'libraries'.
 
-        If rates is supplied, initialize a RateCollection using the 
+        If rates is supplied, initialize a RateCollection using the
         Rate objects in the list 'rates'.
 
         Any combination of these options may be combined.

@@ -81,7 +81,7 @@ def vector_index_lu(vector, fvar):
              index = ndn
              print index
              return index
-    
+
 def bilinear_lookup(rhoy, temp, ivar):
     fvar = 0.0  # return value
     logrhoy = np.log10(rhoy)
@@ -102,12 +102,12 @@ def bilinear_lookup(rhoy, temp, ivar):
     print itemp_lo
     print 'itemp_hi:'
     print itemp_hi
-    
+
     # Bilinear interpolation within the box (log=log10)
     # T ^   B .      . C
     #   |
     # g |  AB   ABCD   CD
-    # o |     .      . 
+    # o |     .      .
     # l |   A          D
     #   |___________________> log rho*Ye
     temp_lo = d['logtemp'][ itemp_lo ]
@@ -123,7 +123,7 @@ def bilinear_lookup(rhoy, temp, ivar):
     print temp_lo
     print 'temp_hi:'
     print temp_hi
-    
+
     fa = d['data'][ itemp_lo, irhoy_lo, ivar ]
     fb = d['data'][ itemp_hi, irhoy_lo, ivar ]
     fc = d['data'][ itemp_hi, irhoy_hi, ivar ]
@@ -140,4 +140,3 @@ if __name__ == "__main__":
         ivar = int(raw_input('Enter the value index to lookup (rate index is 3):'))
         print 'Bilinear interpolation: '
         print bilinear_lookup(10.0**rhoy, 10.0**temp, ivar)
-        

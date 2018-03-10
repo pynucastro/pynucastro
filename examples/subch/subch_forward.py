@@ -12,8 +12,3 @@ subCh = mylibrary.linking_nuclei(all_nuclei, with_reverse=False)
 
 net = StarKillerNetwork(libraries=subCh)
 net.write_network()
-
-
-
-
-

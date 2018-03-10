@@ -1,5 +1,5 @@
 '''
-Figure out what the rho-T grid looks like for data tables 
+Figure out what the rho-T grid looks like for data tables
 from Toki, et al. 2015.
 
 Donald Willcox
@@ -21,7 +21,7 @@ for n in xrange(0,6):
 
 dens = []
 temp = []
-    
+
 for l in ifile:
     if l.strip() != '':
         ls = l.split()

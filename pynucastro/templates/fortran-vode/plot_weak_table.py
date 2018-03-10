@@ -1,5 +1,5 @@
 """
-This program plots the emission and capture tables produced 
+This program plots the emission and capture tables produced
 by the program output_table.f90 akin to the plots in Toki, et al 2013.
 
 Donald Willcox
@@ -23,7 +23,7 @@ except: raise
 def read_rate_file(infile):
     ## Process header
     d = []
-    
+
     # Get the number of temperature and rho*ye points
     n_temp = int(infile.readline().strip())
     n_rhoy = int(infile.readline().strip())
@@ -46,7 +46,7 @@ def read_rate_file(infile):
         dt['rate'] = np.array(dt['rate'])
         d.append(dt)
     return d
-        
+
 d_emt = read_rate_file(emt_file)
 d_cap = read_rate_file(cap_file)
 emt_file.close()
@@ -65,5 +65,3 @@ ax.set_ylim([-25,0])
 plt.tight_layout()
 plt.title('A=23')
 plt.savefig('output_table_rates.pdf')
-    
-

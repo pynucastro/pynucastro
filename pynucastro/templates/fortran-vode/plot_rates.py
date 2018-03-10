@@ -1,7 +1,7 @@
 """
 This program plots reaction rates.
 
-It expects headers including 'temp' and reaction 
+It expects headers including 'temp' and reaction
 labels such as 'c12(p,g)n13' or 'n13( ,e+)c13'.
 
 Example:
@@ -55,4 +55,3 @@ for hi in h:
         plt.ylabel('Rate ($\\mathrm{'+runit+'}$)')
         plt.title(hi)
         plt.savefig(hi + '.pdf')
-

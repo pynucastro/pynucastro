@@ -12,7 +12,3 @@ files = ["c12-c12a-ne20-cf88",
 
 urca_net = StarKillerNetwork(files)
 urca_net.write_network(use_cse=True)
-
-
-
-
