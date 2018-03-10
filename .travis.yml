@@ -1,16 +1,15 @@
 language: python
-
 python:
-  - "3.6"
-  - "3.5"
-  - "3.4"
+  - '3.6'
+  - '3.5'
+  - '3.4'
 
 before_install:
   - export PATH=$(echo $PATH | tr ':' "\n" | sed '/\/opt\/python/d' | tr "\n" ":" | sed "s|::|:|g")
 
 addons:
   apt_packages:
-    - pandoc
+  - pandoc
 
 install:
   - pip install .
@@ -18,26 +17,14 @@ install:
 
 before_script:
   - export PYTHONPATH=$PYTHONPATH:$(pwd)
-  - if [[ "$TRAVIS_PYTHON_VERSION" == "3.6" ]]; then
-      git config --global user.email "eugene.willcox@gmail.com";
-	  git config --global user.name "Travis-CI";
-    fi
 
 script:
   - pytest -v --cov=. --nbval --ignore=docs
-  - if [[ "$TRAVIS_PYTHON_VERSION" == "3.6" ]]; then
-      travis-sphinx build;
-    fi
+  - if [[ "$TRAVIS_PYTHON_VERSION" == "3.6" ]]; then cd docs; make html; cd ..; fi
 
-# after_success:
-#   - if [[ "$TRAVIS_PYTHON_VERSION" == "3.6" ]]; then
-#       travis-sphinx deploy;
-#     fi
+after_success:
+  - if [[ "$TRAVIS_PYTHON_VERSION" == "3.6" ]]; then travis-sphinx deploy; fi
 
-deploy:
-  provider: pages
-  skip-cleanup: true
-  github-token: $GITHUB_TOKEN
-  keep-history: true
-  on:
-    branch: master
+env:
+  global:
+    secure: Kk+NDSp6qpzoAyPgOTQKPDEthU8LZa9YrN+MUHTYpHPe1lY+jfAFOVuDOF6Ll1BXWB5Sdgmm4EC24NP6Yke0o83L7rdim/ibIp9+7gh0R0dT2l/7/od5kDtN3Ype811r4PnpuJQ5vnZfdAViU/8y4nCVjkL1aVsrEYsdgmZ0E7XbZYbQ27DuYijTsSjHjjU/4SyQcwcozVqrardAzzJHKO7ysbs5TAeIy55gv0WlEoQYm/RYFQOiIGn28teCLeM8uzK6Nsv/MEV68gwf21Hk+WZGsGcWJf9+7DFSOe5+RkLnc6pI90ofWabVTDtP8IZA2ZZ3KOrcRXqTlXvI6lIwf38ToI2IOwqFAyI3AMuDRxwgQpcWjilHlJzspucp0hnOEXAyfQxVqMZdLtLR9X527fzrj8W8+h/lkIDE660UK4aBQ1M5o2qd2m+DIKpqQxb2ralsRmN27wbsc86i1P3T+JisLKSYipaX9cGtySMV+PsfHTLD5otzE9fswrQP2qBSzWnU/0P2y+wdHHnr5Qp2+4CdrIxjxxU2cGeB7DO7eyUIixK0jljf01A4OsMJfq4adzKJ1K1xfD2b0QrTVmt5lYKh+J5vAWhis3sSHze5Kj6UqrWSSUqIi37bI4jU5mzNzurp/IxCSoS07NcteY5bg+0GXh/+rl/aUkhjnWCp/ME=
