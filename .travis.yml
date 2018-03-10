@@ -18,6 +18,10 @@ install:
 
 before_script:
   - export PYTHONPATH=$PYTHONPATH:$(pwd)
+  - if [[ "$TRAVIS_PYTHON_VERSION" == "3.6" ]]; then
+      git config --global user.email "eugene.willcox@gmail.com";
+	  git config --global user.name "Travis-CI";
+    fi
 
 script:
   - pytest -v --cov=. --nbval --ignore=docs
@@ -37,3 +41,4 @@ deploy:
   keep-history: true
   on:
     branch: master
+
