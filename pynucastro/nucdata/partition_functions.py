@@ -29,7 +29,7 @@ class PartitionFunction(object):
     """
     def __init__(self, nucleus=None, name=None, temperature=None, partition_function=None):
         if type(nucleus) == str:
-            nucleus = Nucleus(nucleus)
+            nucleus = pynucastro.rates.Nucleus(nucleus)
         self.nucleus = nucleus
         self.name = name
         self.temperature = temperature
