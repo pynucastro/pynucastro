@@ -1,5 +1,5 @@
-pynucastro\.networks package
-============================
+pynucastro.networks package
+===========================
 
 .. automodule:: pynucastro.networks
     :members:
@@ -9,32 +9,32 @@ pynucastro\.networks package
 Submodules
 ----------
 
-pynucastro\.networks\.base\_fortran\_network module
----------------------------------------------------
+pynucastro.networks.base\_fortran\_network module
+-------------------------------------------------
 
 .. automodule:: pynucastro.networks.base_fortran_network
     :members:
     :undoc-members:
     :show-inheritance:
 
-pynucastro\.networks\.python\_network module
---------------------------------------------
+pynucastro.networks.python\_network module
+------------------------------------------
 
 .. automodule:: pynucastro.networks.python_network
     :members:
     :undoc-members:
     :show-inheritance:
 
-pynucastro\.networks\.rate\_collection module
----------------------------------------------
+pynucastro.networks.rate\_collection module
+-------------------------------------------
 
 .. automodule:: pynucastro.networks.rate_collection
     :members:
     :undoc-members:
     :show-inheritance:
 
-pynucastro\.networks\.starkiller\_network module
-------------------------------------------------
+pynucastro.networks.starkiller\_network module
+----------------------------------------------
 
 .. automodule:: pynucastro.networks.starkiller_network
     :members:
