@@ -1,5 +1,5 @@
-pynucastro
-==========
+out
+===
 
 .. toctree::
    :maxdepth: 4
