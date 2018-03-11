@@ -17,30 +17,35 @@ SSH_REPO=${REPO/https:\/\/github.com\//git@github.com:}
 SHA=`git rev-parse --verify HEAD`
 
 # Add rsa keys to the ssh agent to push to GitHub
-gpg --output ../id_rsa_pynucastro_deploy --batch --passphrase "$DECRYPT_GITHUB_AUTH" --decrypt id_rsa_pynucastro_deploy.enc
+gpg --output ../id_rsa_pynucastro_deploy --batch --passphrase $DECRYPT_GITHUB_AUTH --decrypt id_rsa_pynucastro_deploy.enc
 chmod 600 ../id_rsa_pynucastro_deploy
 eval `ssh-agent -s`
 ssh-add ../id_rsa_pynucastro_deploy
-
-# Regenerate the API documentation
-sphinx-apidoc -f -M -o docs/source/ .
-
-# Add new docs to the repo
-git add docs/source --all
-
-# Commit and push to master
-git commit -m "Regenerate API Documentation: ${SHA}" || true
-git push $SSH_REPO $SOURCE_BRANCH || true
 
 # Clone the existing gh-pages for this repo into out/
 # Create a new empty branch if gh-pages doesn't exist yet (should only happen on first deply)
 git clone $REPO out
 cd out
+
+# Regenerate the API documentation
+git checkout $SOURCE_BRANCH || git checkout --orphan $SOURCE_BRANCH
+sphinx-apidoc -f -M -o docs/source/ .
+
+# Add new docs to the repo
+git add docs/source --all
+
+# Commit and push to SOURCE_BRANCH
+git commit -m "Regenerate API Documentation: ${SHA}" || true
+git push $SSH_REPO $SOURCE_BRANCH || true
+
 git checkout $TARGET_BRANCH || git checkout --orphan $TARGET_BRANCH
 cd ..
 
 # Clean out existing contents
 rm -rf out/**/* || exit 0
+
+# Pull from SOURCE_BRANCH again
+git pull || true
 
 # Build the Sphinx documentation
 cd docs
