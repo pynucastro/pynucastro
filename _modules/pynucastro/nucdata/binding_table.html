@@ -92,7 +92,7 @@
               <p class="caption"><span class="caption-text">Contents</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Overview of pynucastro</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../pynucastro-examples.html"><code class="docutils literal"><span class="pre">pynucastro</span></code> usage examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pynucastro-examples.html"><code class="docutils literal notranslate"><span class="pre">pynucastro</span></code> usage examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../library-filtering-examples.html">Using the Library Interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../networks.html">Creating Networks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../modules.html">API</a></li>
@@ -214,8 +214,8 @@
             <span class="n">n</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">ebind</span> <span class="o">=</span> <span class="n">ls</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
             <span class="n">nuclide</span> <span class="o">=</span> <span class="n">BindingNuclide</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">ebind</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">nuclides</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nuclide</span><span class="p">)</span>
-
-        <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+</div>
+        <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
 <div class="viewcode-block" id="BindingTable.get_nuclide"><a class="viewcode-back" href="../../../pynucastro.nucdata.html#pynucastro.nucdata.binding_table.BindingTable.get_nuclide">[docs]</a>    <span class="k">def</span> <span class="nf">get_nuclide</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">z</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -227,8 +227,8 @@
                     <span class="k">return</span> <span class="n">nuc</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ERROR: invalid (n, z) supplied: (</span><span class="si">{}</span><span class="s1">, </span><span class="si">{}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">z</span><span class="p">))</span>
-            <span class="n">exit</span><span class="p">()</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Nuclide not found for (n, z) = (</span><span class="si">{}</span><span class="s1">, </span><span class="si">{}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">z</span><span class="p">))</span></div></div>
+            <span class="n">exit</span><span class="p">()</span></div></div>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Nuclide not found for (n, z) = (</span><span class="si">{}</span><span class="s1">, </span><span class="si">{}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">z</span><span class="p">))</span>
 </pre></div>
 
            </div>

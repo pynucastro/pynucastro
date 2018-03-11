@@ -96,7 +96,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#usage">Usage</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="pynucastro-examples.html"><code class="docutils literal"><span class="pre">pynucastro</span></code> usage examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pynucastro-examples.html"><code class="docutils literal notranslate"><span class="pre">pynucastro</span></code> usage examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="library-filtering-examples.html">Using the Library Interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="networks.html">Creating Networks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modules.html">API</a></li>
@@ -200,32 +200,32 @@
 </style>
 <div class="section" id="overview-of-pynucastro">
 <h1>Overview of pynucastro<a class="headerlink" href="#overview-of-pynucastro" title="Permalink to this headline">¶</a></h1>
-<p>pynucastro is a set of python interfaces nuclear reaction rates
+<p>pynucastro is a set of python interfaces to nuclear reaction rates
 (currently via the JINA reaclib database).  It is meant for both
 interactive exploration of rates (through Jupyter notebooks) and to
 create reaction networks for use in simulation codes.</p>
 <p>The preferred way of importing pynucastro is as:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pynucastro</span> <span class="kn">as</span> <span class="nn">pyrl</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pynucastro</span> <span class="kn">as</span> <span class="nn">pyrl</span>
 </pre></div>
 </div>
 <p>The main classes are:</p>
 <ul class="simple">
-<li><a class="reference internal" href="pynucastro.rates.html#pynucastro.rates.rate.Nucleus" title="pynucastro.rates.rate.Nucleus"><code class="xref py py-func docutils literal"><span class="pre">Nucleus</span></code></a>: This is a single
+<li><a class="reference internal" href="pynucastro.rates.html#pynucastro.rates.rate.Nucleus" title="pynucastro.rates.rate.Nucleus"><code class="xref py py-func docutils literal notranslate"><span class="pre">Nucleus</span></code></a>: This is a single
 nucleus.  It knows its proton number, Z, neutron number, N, and
 weight, A.</li>
-<li><a class="reference internal" href="pynucastro.rates.html#pynucastro.rates.rate.Rate" title="pynucastro.rates.rate.Rate"><code class="xref py py-func docutils literal"><span class="pre">Rate</span></code></a>: This is a single rate.  It
+<li><a class="reference internal" href="pynucastro.rates.html#pynucastro.rates.rate.Rate" title="pynucastro.rates.rate.Rate"><code class="xref py py-func docutils literal notranslate"><span class="pre">Rate</span></code></a>: This is a single rate.  It
 knows the reactants and products and has methods that allow you to
 evaluate it at a specified temperature and plot its temperature
 dependence.</li>
-<li><a class="reference internal" href="pynucastro.networks.html#pynucastro.networks.rate_collection.Composition" title="pynucastro.networks.rate_collection.Composition"><code class="xref py py-func docutils literal"><span class="pre">Composition</span></code></a>: This is a
-collection of nuclei and their mass fractions.  A <code class="docutils literal"><span class="pre">Composition</span></code> is
+<li><a class="reference internal" href="pynucastro.networks.html#pynucastro.networks.rate_collection.Composition" title="pynucastro.networks.rate_collection.Composition"><code class="xref py py-func docutils literal notranslate"><span class="pre">Composition</span></code></a>: This is a
+collection of nuclei and their mass fractions.  A <code class="docutils literal notranslate"><span class="pre">Composition</span></code> is
 used when evaluating the full rates in a network.</li>
-<li><a class="reference internal" href="pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection" title="pynucastro.networks.rate_collection.RateCollection"><code class="xref py py-func docutils literal"><span class="pre">RateCollection</span></code></a>:
+<li><a class="reference internal" href="pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection" title="pynucastro.networks.rate_collection.RateCollection"><code class="xref py py-func docutils literal notranslate"><span class="pre">RateCollection</span></code></a>:
 This is a group of rates.  This acts as the base class for different
-reaction networks.  A <code class="docutils literal"><span class="pre">RateCollection</span></code> has methods to evaluate the
+reaction networks.  A <code class="docutils literal notranslate"><span class="pre">RateCollection</span></code> has methods to evaluate the
 rates and make a plot of the links between rates.</li>
-<li><a class="reference internal" href="pynucastro.networks.html#pynucastro.networks.python_network.PythonNetwork" title="pynucastro.networks.python_network.PythonNetwork"><code class="xref py py-func docutils literal"><span class="pre">PythonNetwork</span></code></a>: This is a
-collection of rates with functions that known how to write python
+<li><a class="reference internal" href="pynucastro.networks.html#pynucastro.networks.python_network.PythonNetwork" title="pynucastro.networks.python_network.PythonNetwork"><code class="xref py py-func docutils literal notranslate"><span class="pre">PythonNetwork</span></code></a>: This is a
+collection of rates with functions that know how to write python
 code to express the righthand side of the system of ODEs.</li>
 </ul>
 <div class="section" id="usage">
@@ -237,10 +237,10 @@ rate linking them.</p>
 <p>The other usage mode is to use pynucastro to write the righthand
 side routine for the system of ODEs that must be integrated to evolve
 a reaction network.  A reaction network takes the form:</p>
-<div class="math">
+<div class="math notranslate">
 \[\frac{dY_i}{dt} = - \sum_{j,k} Y_i Y_j \lambda_{i(j,k)l} + \sum_{j,k} Y_l Y_k \lambda_{l(j,k)i}\]</div>
-<p>where the <span class="math">\(\lambda\)</span>‘s are the rates of destruction and creation
-of species i, represented by the molar fraction <span class="math">\(Y_i\)</span> (see,
+<p>where the <span class="math notranslate">\(\lambda\)</span>‘s are the rates of destruction and creation
+of species i, represented by the molar fraction <span class="math notranslate">\(Y_i\)</span> (see,
 e.g., <a class="reference external" href="http://adsabs.harvard.edu/abs/1999ApJS..124..241T">Timmes 1999</a>).  pynucastro
 will create the righthand sides of this system of ODEs (as python or
 Fortran code) from the list of rates you provide. One can use this to

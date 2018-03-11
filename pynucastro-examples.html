@@ -93,7 +93,7 @@
               <p class="caption"><span class="caption-text">Contents</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="intro.html">Overview of pynucastro</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#"><code class="docutils literal"><span class="pre">pynucastro</span></code> usage examples</a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="#"><code class="docutils literal notranslate"><span class="pre">pynucastro</span></code> usage examples</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#Loading-a-single-rate">Loading a single rate</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#the-original-reaclib-source">the original reaclib source</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#evaluate-the-rate-at-a-given-temperature-(in-K)">evaluate the rate at a given temperature (in K)</a></li>
@@ -159,7 +159,7 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li><code class="docutils literal"><span class="pre">pynucastro</span></code> usage examples</li>
+      <li><code class="docutils literal notranslate"><span class="pre">pynucastro</span></code> usage examples</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -377,42 +377,42 @@ div.nboutput div.output_area.stderr {
 }
 </style>
 <div class="section" id="pynucastro-usage-examples">
-<h1><code class="docutils literal"><span class="pre">pynucastro</span></code> usage examples<a class="headerlink" href="#pynucastro-usage-examples" title="Permalink to this headline">¶</a></h1>
+<h1><code class="docutils literal notranslate"><span class="pre">pynucastro</span></code> usage examples<a class="headerlink" href="#pynucastro-usage-examples" title="Permalink to this headline">¶</a></h1>
 <p>This notebook illustrates some of the higher-level data structures in
-<code class="docutils literal"><span class="pre">pynucastro</span></code>.</p>
-<p>Note to run properly, you must have <code class="docutils literal"><span class="pre">pynucastro/</span></code> in your
-<code class="docutils literal"><span class="pre">PYTHONPATH</span></code></p>
+<code class="docutils literal notranslate"><span class="pre">pynucastro</span></code>.</p>
+<p>Note to run properly, you must have <code class="docutils literal notranslate"><span class="pre">pynucastro/</span></code> in your
+<code class="docutils literal notranslate"><span class="pre">PYTHONPATH</span></code></p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [1]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="o">%</span><span class="k">matplotlib</span> inline
 </pre></div>
 </div>
 </div>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [2]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">pynucastro</span> <span class="k">as</span> <span class="nn">pyrl</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="Loading-a-single-rate">
 <h2>Loading a single rate<a class="headerlink" href="#Loading-a-single-rate" title="Permalink to this headline">¶</a></h2>
-<p>The <code class="docutils literal"><span class="pre">Rate</span></code> class holds a single reaction rate and takes a reaclib file
-as input. There are a lot of methods in the <code class="docutils literal"><span class="pre">Rate</span></code> class that allow
+<p>The <code class="docutils literal notranslate"><span class="pre">Rate</span></code> class holds a single reaction rate and takes a reaclib file
+as input. There are a lot of methods in the <code class="docutils literal notranslate"><span class="pre">Rate</span></code> class that allow
 you to explore the rate.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [3]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">c13pg</span> <span class="o">=</span> <span class="n">pyrl</span><span class="o">.</span><span class="n">Rate</span><span class="p">(</span><span class="s2">&quot;../pynucastro/library/c13-pg-n14-nacr&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -420,11 +420,11 @@ you to explore the rate.</p>
 <div class="section" id="the-original-reaclib-source">
 <h3>the original reaclib source<a class="headerlink" href="#the-original-reaclib-source" title="Permalink to this headline">¶</a></h3>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [4]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="nb">print</span><span class="p">(</span><span class="n">c13pg</span><span class="o">.</span><span class="n">original_source</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -453,21 +453,21 @@ you to explore the rate.</p>
 <div class="section" id="evaluate-the-rate-at-a-given-temperature-(in-K)">
 <h3>evaluate the rate at a given temperature (in K)<a class="headerlink" href="#evaluate-the-rate-at-a-given-temperature-(in-K)" title="Permalink to this headline">¶</a></h3>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [5]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">c13pg</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="mf">1.e9</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>Out[5]:
 </pre></div>
 </div>
-<div class="output_area highlight-none"><div class="highlight"><pre>
+<div class="output_area highlight-none notranslate"><div class="highlight"><pre>
 <span></span>3883.4778216250666
 </pre></div>
 </div>
@@ -476,11 +476,11 @@ you to explore the rate.</p>
 <div class="section" id="a-human-readable-string-describing-the-rate,-and-the-nuclei-involved">
 <h3>a human readable string describing the rate, and the nuclei involved<a class="headerlink" href="#a-human-readable-string-describing-the-rate,-and-the-nuclei-involved" title="Permalink to this headline">¶</a></h3>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [6]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="nb">print</span><span class="p">(</span><span class="n">c13pg</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -493,14 +493,14 @@ you to explore the rate.</p>
 c13 + p --&gt; n14
 </pre></div></div>
 </div>
-<p>The nuclei involved are all <code class="docutils literal"><span class="pre">Nucleus</span></code> objects. They have members <code class="docutils literal"><span class="pre">Z</span></code>
-and <code class="docutils literal"><span class="pre">N</span></code> that give the proton and neutron number</p>
+<p>The nuclei involved are all <code class="docutils literal notranslate"><span class="pre">Nucleus</span></code> objects. They have members <code class="docutils literal notranslate"><span class="pre">Z</span></code>
+and <code class="docutils literal notranslate"><span class="pre">N</span></code> that give the proton and neutron number</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [7]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="nb">print</span><span class="p">(</span><span class="n">c13pg</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">c13pg</span><span class="o">.</span><span class="n">products</span><span class="p">)</span>
 </pre></div>
@@ -516,41 +516,41 @@ and <code class="docutils literal"><span class="pre">N</span></code> that give t
 </pre></div></div>
 </div>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [8]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">r2</span> <span class="o">=</span> <span class="n">c13pg</span><span class="o">.</span><span class="n">reactants</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [9]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="nb">type</span><span class="p">(</span><span class="n">r2</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>Out[9]:
 </pre></div>
 </div>
-<div class="output_area highlight-none"><div class="highlight"><pre>
+<div class="output_area highlight-none notranslate"><div class="highlight"><pre>
 <span></span>pynucastro.rates.rate.Nucleus
 </pre></div>
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [10]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="nb">print</span><span class="p">(</span><span class="n">r2</span><span class="o">.</span><span class="n">Z</span><span class="p">,</span> <span class="n">r2</span><span class="o">.</span><span class="n">N</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -567,24 +567,24 @@ and <code class="docutils literal"><span class="pre">N</span></code> that give t
 <div class="section" id="get-the-temperature-sensitivity-about-some-reference-T">
 <h3>get the temperature sensitivity about some reference T<a class="headerlink" href="#get-the-temperature-sensitivity-about-some-reference-T" title="Permalink to this headline">¶</a></h3>
 <p>This is the exponent when we write the rate as
-<span class="math">\(r = r_0 \left ( \frac{T}{T_0} \right )^\nu\)</span>. We can estimate this
-given a reference temperature, <span class="math">\(T_0\)</span></p>
+<span class="math notranslate">\(r = r_0 \left ( \frac{T}{T_0} \right )^\nu\)</span>. We can estimate this
+given a reference temperature, <span class="math notranslate">\(T_0\)</span></p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [11]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">c13pg</span><span class="o">.</span><span class="n">get_rate_exponent</span><span class="p">(</span><span class="mf">2.e7</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>Out[11]:
 </pre></div>
 </div>
-<div class="output_area highlight-none"><div class="highlight"><pre>
+<div class="output_area highlight-none notranslate"><div class="highlight"><pre>
 <span></span>16.210896707109679
 </pre></div>
 </div>
@@ -593,15 +593,14 @@ given a reference temperature, <span class="math">\(T_0\)</span></p>
 <div class="section" id="plot-the-rate's-temperature-dependence">
 <h3>plot the rate’s temperature dependence<a class="headerlink" href="#plot-the-rate's-temperature-dependence" title="Permalink to this headline">¶</a></h3>
 <p>A reaction rate has a complex temperature dependence that is defined in
-the reaclib files. The <code class="docutils literal"><span class="pre">plot()</span></code> method will plot this for us</p>
+the reaclib files. The <code class="docutils literal notranslate"><span class="pre">plot()</span></code> method will plot this for us</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [12]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span><span class="c1">#PYTEST_VALIDATE_IGNORE_OUTPUT</span>
-<span class="n">c13pg</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">c13pg</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -617,21 +616,21 @@ reactants in the rate description and is used to construct the terms
 needed to write a reaction network. Note: since we want reaction rates
 per gram, this number is 1 less than the number of nuclei</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [13]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">c13pg</span><span class="o">.</span><span class="n">dens_exp</span>
 </pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>Out[13]:
 </pre></div>
 </div>
-<div class="output_area highlight-none"><div class="highlight"><pre>
+<div class="output_area highlight-none notranslate"><div class="highlight"><pre>
 <span></span>1
 </pre></div>
 </div>
@@ -640,16 +639,16 @@ per gram, this number is 1 less than the number of nuclei</p>
 </div>
 <div class="section" id="Working-with-a-group-of-rates">
 <h2>Working with a group of rates<a class="headerlink" href="#Working-with-a-group-of-rates" title="Permalink to this headline">¶</a></h2>
-<p>A <code class="docutils literal"><span class="pre">RateCollection()</span></code> class allows us to work with a group of rates.
+<p>A <code class="docutils literal notranslate"><span class="pre">RateCollection()</span></code> class allows us to work with a group of rates.
 This is used to explore their relationship. Other classes (introduced
 soon) are built on this and will allow us to output network code
 directly.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [14]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">files</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;c12-pg-n13-ls09&quot;</span><span class="p">,</span>
          <span class="s2">&quot;c13-pg-n14-nacr&quot;</span><span class="p">,</span>
          <span class="s2">&quot;n13--c13-wc12&quot;</span><span class="p">,</span>
@@ -665,11 +664,11 @@ directly.</p>
 <div class="section" id="print-an-overview-of-the-network-described-by-this-rate-collection">
 <h3>print an overview of the network described by this rate collection<a class="headerlink" href="#print-an-overview-of-the-network-described-by-this-rate-collection" title="Permalink to this headline">¶</a></h3>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [15]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="nb">print</span><span class="p">(</span><span class="n">rc</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -691,11 +690,11 @@ o15 --&gt; n15
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [16]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="nb">print</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">network_overview</span><span class="p">())</span>
 </pre></div>
 </div>
@@ -771,13 +770,12 @@ o15
 <h3>show a network diagram<a class="headerlink" href="#show-a-network-diagram" title="Permalink to this headline">¶</a></h3>
 <p>At the moment, we rely on NetworkX to visualize the network</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [17]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span><span class="c1">#PYTEST_VALIDATE_IGNORE_OUTPUT</span>
-<span class="n">rc</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">rc</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -794,26 +792,25 @@ o15
 <h2>Explore the network’s rates<a class="headerlink" href="#Explore-the-network's-rates" title="Permalink to this headline">¶</a></h2>
 <p>To evaluate the rates, we need a composition</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [18]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">comp</span> <span class="o">=</span> <span class="n">pyrl</span><span class="o">.</span><span class="n">Composition</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">get_nuclei</span><span class="p">())</span>
 <span class="n">comp</span><span class="o">.</span><span class="n">set_solar_like</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
-<p>Interactive exploration is enabled through the <code class="docutils literal"><span class="pre">Explorer</span></code> class, which
-takes a <code class="docutils literal"><span class="pre">RateCollection</span></code> and a <code class="docutils literal"><span class="pre">Composition</span></code></p>
+<p>Interactive exploration is enabled through the <code class="docutils literal notranslate"><span class="pre">Explorer</span></code> class, which
+takes a <code class="docutils literal notranslate"><span class="pre">RateCollection</span></code> and a <code class="docutils literal notranslate"><span class="pre">Composition</span></code></p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [19]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span><span class="c1">#PYTEST_VALIDATE_IGNORE_OUTPUT</span>
-<span class="n">re</span> <span class="o">=</span> <span class="n">pyrl</span><span class="o">.</span><span class="n">Explorer</span><span class="p">(</span><span class="n">rc</span><span class="p">,</span> <span class="n">comp</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">re</span> <span class="o">=</span> <span class="n">pyrl</span><span class="o">.</span><span class="n">Explorer</span><span class="p">(</span><span class="n">rc</span><span class="p">,</span> <span class="n">comp</span><span class="p">)</span>
 <span class="n">re</span><span class="o">.</span><span class="n">explore</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -822,33 +819,33 @@ takes a <code class="docutils literal"><span class="pre">RateCollection</span></
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<script type="application/vnd.jupyter.widget-view+json">{"model_id": "a7c85864029045c2835fa98717c3ad21", "version_major": 2, "version_minor": 0}</script></div>
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "bbac441839b440fb94bd76d00b58809f", "version_major": 2, "version_minor": 0}</script></div>
 </div>
 </div>
 <div class="section" id="Integrating-networks">
 <h2>Integrating networks<a class="headerlink" href="#Integrating-networks" title="Permalink to this headline">¶</a></h2>
 <p>If we don’t just want to explore the network interactively in a
 notebook, but want to output code to run integrate it, we need to create
-one of <code class="docutils literal"><span class="pre">PythonNetwork</span></code>, <code class="docutils literal"><span class="pre">StarKillerNetwork</span></code> or <code class="docutils literal"><span class="pre">SundialsNetwork</span></code></p>
+one of <code class="docutils literal notranslate"><span class="pre">PythonNetwork</span></code>, <code class="docutils literal notranslate"><span class="pre">StarKillerNetwork</span></code> or <code class="docutils literal notranslate"><span class="pre">SundialsNetwork</span></code></p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [20]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">pynet</span> <span class="o">=</span> <span class="n">pyrl</span><span class="o">.</span><span class="n">PythonNetwork</span><span class="p">(</span><span class="n">files</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <p>A network knows how to express the terms that make up the function (in
 the right programming language). For instance, you can get the term for
-the <span class="math">\({}^{13}\mathrm{C} (p,\gamma) {}^{14}\mathrm{N}\)</span> rate as:</p>
+the <span class="math notranslate">\({}^{13}\mathrm{C} (p,\gamma) {}^{14}\mathrm{N}\)</span> rate as:</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [21]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="nb">print</span><span class="p">(</span><span class="n">pynet</span><span class="o">.</span><span class="n">ydot_string</span><span class="p">(</span><span class="n">c13pg</span><span class="p">))</span>
 </pre></div>
 </div>
@@ -863,11 +860,11 @@ rho*Y[ip]*Y[ic13]*lambda_p_c13__n14
 </div>
 <p>and the code needed to evaluate that rate (the T-dependent part) as:</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [22]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="nb">print</span><span class="p">(</span><span class="n">pynet</span><span class="o">.</span><span class="n">function_string</span><span class="p">(</span><span class="n">c13pg</span><span class="p">))</span>
 </pre></div>
 </div>
@@ -896,14 +893,14 @@ def p_c13__n14(tf):
 
 </pre></div></div>
 </div>
-<p>The <code class="docutils literal"><span class="pre">write_network()</span></code> method will output the python code needed to
+<p>The <code class="docutils literal notranslate"><span class="pre">write_network()</span></code> method will output the python code needed to
 define the RHS of a network for integration with the SciPy integrators</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [23]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">pynet</span><span class="o">.</span><span class="n">write_network</span><span class="p">()</span>
 </pre></div>
 </div>

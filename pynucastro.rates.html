@@ -37,7 +37,7 @@
         <link rel="search" title="Search" href="search.html"/>
     <link rel="top" title="pynucastro 1.0 documentation" href="index.html"/>
         <link rel="up" title="pynucastro package" href="pynucastro.html"/>
-        <link rel="next" title="Third Party Data" href="sources.html"/>
+        <link rel="next" title="setup module" href="setup.html"/>
         <link rel="prev" title="pynucastro.nucdata package" href="pynucastro.nucdata.html"/> 
 
   
@@ -94,7 +94,7 @@
               <p class="caption"><span class="caption-text">Contents</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="intro.html">Overview of pynucastro</a></li>
-<li class="toctree-l1"><a class="reference internal" href="pynucastro-examples.html"><code class="docutils literal"><span class="pre">pynucastro</span></code> usage examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pynucastro-examples.html"><code class="docutils literal notranslate"><span class="pre">pynucastro</span></code> usage examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="library-filtering-examples.html">Using the Library Interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="networks.html">Creating Networks</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="modules.html">API</a><ul class="current">
@@ -113,6 +113,7 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="setup.html">setup module</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="sources.html">Third Party Data</a></li>
@@ -229,7 +230,7 @@
 <dl class="class">
 <dt id="pynucastro.rates.rate.Library">
 <em class="property">class </em><code class="descclassname">pynucastro.rates.rate.</code><code class="descname">Library</code><span class="sig-paren">(</span><em>libfile=None</em>, <em>rates=None</em>, <em>read_library=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#Library"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.rates.rate.Library" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>A Library is a Rate container that reads a single file
 containing one or many Reaclib rates, possibly containing multiple
 sets per rate.</p>
@@ -269,19 +270,28 @@ passed in as arguments.</p>
 <dd><p>Return the lightest nuclide in this library.</p>
 </dd></dl>
 
+<dl class="method">
+<dt id="pynucastro.rates.rate.Library.linking_nuclei">
+<code class="descname">linking_nuclei</code><span class="sig-paren">(</span><em>nuclist</em>, <em>with_reverse=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#Library.linking_nuclei"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.rates.rate.Library.linking_nuclei" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a Library object containing the rates linking the
+nuclei provided in the list of Nucleus objects or nucleus abbreviations ‘nuclist’.</p>
+<p>If with_reverse is True, then include reverse rates. Otherwise
+include only forward rates.</p>
+</dd></dl>
+
 <dl class="attribute">
 <dt id="pynucastro.rates.rate.Library.pynucastro_dir">
-<code class="descname">pynucastro_dir</code><em class="property"> = '/home/dwillcox/codes/pynucastro/pynucastro'</em><a class="headerlink" href="#pynucastro.rates.rate.Library.pynucastro_dir" title="Permalink to this definition">¶</a></dt>
+<code class="descname">pynucastro_dir</code><em class="property"> = '/home/travis/build/pynucastro/pynucastro/pynucastro'</em><a class="headerlink" href="#pynucastro.rates.rate.Library.pynucastro_dir" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="pynucastro.rates.rate.Library.pynucastro_rates_dir">
-<code class="descname">pynucastro_rates_dir</code><em class="property"> = '/home/dwillcox/codes/pynucastro/pynucastro/library'</em><a class="headerlink" href="#pynucastro.rates.rate.Library.pynucastro_rates_dir" title="Permalink to this definition">¶</a></dt>
+<code class="descname">pynucastro_rates_dir</code><em class="property"> = '/home/travis/build/pynucastro/pynucastro/pynucastro/library'</em><a class="headerlink" href="#pynucastro.rates.rate.Library.pynucastro_rates_dir" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="pynucastro.rates.rate.Library.pynucastro_tabular_dir">
-<code class="descname">pynucastro_tabular_dir</code><em class="property"> = '/home/dwillcox/codes/pynucastro/pynucastro/library/tabular'</em><a class="headerlink" href="#pynucastro.rates.rate.Library.pynucastro_tabular_dir" title="Permalink to this definition">¶</a></dt>
+<code class="descname">pynucastro_tabular_dir</code><em class="property"> = '/home/travis/build/pynucastro/pynucastro/pynucastro/library/tabular'</em><a class="headerlink" href="#pynucastro.rates.rate.Library.pynucastro_tabular_dir" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -289,7 +299,7 @@ passed in as arguments.</p>
 <dl class="class">
 <dt id="pynucastro.rates.rate.Nucleus">
 <em class="property">class </em><code class="descclassname">pynucastro.rates.rate.</code><code class="descname">Nucleus</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#Nucleus"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.rates.rate.Nucleus" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>a nucleus that participates in a reaction – we store it in a
 class to hold its properties, define a sorting, and give it a
 pretty printing string</p>
@@ -297,8 +307,8 @@ pretty printing string</p>
 
 <dl class="class">
 <dt id="pynucastro.rates.rate.Rate">
-<em class="property">class </em><code class="descclassname">pynucastro.rates.rate.</code><code class="descname">Rate</code><span class="sig-paren">(</span><em>rfile=None</em>, <em>chapter=None</em>, <em>original_source=None</em>, <em>reactants=None</em>, <em>products=None</em>, <em>sets=None</em>, <em>labelprops=None</em>, <em>Q=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#Rate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.rates.rate.Rate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<em class="property">class </em><code class="descclassname">pynucastro.rates.rate.</code><code class="descname">Rate</code><span class="sig-paren">(</span><em>rfile=None</em>, <em>rfile_path=None</em>, <em>chapter=None</em>, <em>original_source=None</em>, <em>reactants=None</em>, <em>products=None</em>, <em>sets=None</em>, <em>labelprops=None</em>, <em>Q=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#Rate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.rates.rate.Rate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>a single Reaclib rate, which can be composed of multiple sets</p>
 <dl class="method">
 <dt id="pynucastro.rates.rate.Rate.eval">
@@ -348,7 +358,7 @@ highest atomic number.</p>
 <dl class="class">
 <dt id="pynucastro.rates.rate.RateFilter">
 <em class="property">class </em><code class="descclassname">pynucastro.rates.rate.</code><code class="descname">RateFilter</code><span class="sig-paren">(</span><em>reactants=None</em>, <em>products=None</em>, <em>exact=True</em>, <em>reverse=None</em>, <em>min_reactants=None</em>, <em>max_reactants=None</em>, <em>min_products=None</em>, <em>max_products=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#RateFilter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.rates.rate.RateFilter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>RateFilter stores selection rules specifying a rate or group of
 rates to assist searching for rates stored in a Library.</p>
 <dl class="method">
@@ -368,7 +378,7 @@ rates to assist searching for rates stored in a Library.</p>
 <dl class="class">
 <dt id="pynucastro.rates.rate.SingleSet">
 <em class="property">class </em><code class="descclassname">pynucastro.rates.rate.</code><code class="descname">SingleSet</code><span class="sig-paren">(</span><em>a</em>, <em>labelprops=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#SingleSet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.rates.rate.SingleSet" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>a set in Reaclib is one piece of a rate, in the form</p>
 <p>lambda = exp[ a_0 + sum_{i=1}^5  a_i T_9**(2i-5)/3  + a_6 log T_9]</p>
 <p>A single rate in Reaclib can be composed of multiple sets</p>
@@ -390,14 +400,14 @@ object</p>
 <dl class="class">
 <dt id="pynucastro.rates.rate.Tfactors">
 <em class="property">class </em><code class="descclassname">pynucastro.rates.rate.</code><code class="descname">Tfactors</code><span class="sig-paren">(</span><em>T</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#Tfactors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.rates.rate.Tfactors" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>precompute temperature factors for speed</p>
 </dd></dl>
 
 <dl class="exception">
 <dt id="pynucastro.rates.rate.UnsupportedNucleus">
 <em class="property">exception </em><code class="descclassname">pynucastro.rates.rate.</code><code class="descname">UnsupportedNucleus</code><a class="reference internal" href="_modules/pynucastro/rates/rate.html#UnsupportedNucleus"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.rates.rate.UnsupportedNucleus" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">BaseException</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseException</span></code></p>
 </dd></dl>
 
 <dl class="function">
@@ -419,7 +429,7 @@ object</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="sources.html" class="btn btn-neutral float-right" title="Third Party Data" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="setup.html" class="btn btn-neutral float-right" title="setup module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="pynucastro.nucdata.html" class="btn btn-neutral" title="pynucastro.nucdata package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>

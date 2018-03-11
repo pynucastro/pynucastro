@@ -93,7 +93,7 @@
               <p class="caption"><span class="caption-text">Contents</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="intro.html">Overview of pynucastro</a></li>
-<li class="toctree-l1"><a class="reference internal" href="pynucastro-examples.html"><code class="docutils literal"><span class="pre">pynucastro</span></code> usage examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pynucastro-examples.html"><code class="docutils literal notranslate"><span class="pre">pynucastro</span></code> usage examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="library-filtering-examples.html">Using the Library Interface</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Creating Networks</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#all-networks">All networks</a></li>
@@ -210,7 +210,7 @@ in Python and Fortran.</p>
 <ul class="simple">
 <li>Standalone: Generate right hand side routines and an integration
 driver program using the included VODE integrator in
-<code class="docutils literal"><span class="pre">util/VODE/</span></code>. These networks implement only species and energy
+<code class="docutils literal notranslate"><span class="pre">util/VODE/</span></code>. These networks implement only species and energy
 integration at constant temperature, as pynucastro does not include
 an equation of state.</li>
 <li>Microphysics: Generate network files to copy directly into the
@@ -225,18 +225,18 @@ are as follows. See the following section for details about the
 particular kind of network you are interested in creating.</p>
 <ul>
 <li><p class="first">Create a working directory for your network (this does not have to
-be in the <code class="docutils literal"><span class="pre">pynucastro/</span></code> directory tree).</p>
+be in the <code class="docutils literal notranslate"><span class="pre">pynucastro/</span></code> directory tree).</p>
 </li>
 <li><p class="first">Obtain Reaclib rate files (in Reaclib 1 or 2 format) for your problem and
-either place them in your working directory or <code class="docutils literal"><span class="pre">pynucastro/library</span></code>.</p>
+either place them in your working directory or <code class="docutils literal notranslate"><span class="pre">pynucastro/library</span></code>.</p>
 <p>You can find the rates that are already provided in the library by
 doing:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">pynucastro</span><span class="o">.</span><span class="n">list_known_rates</span><span class="p">()</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pynucastro</span><span class="o">.</span><span class="n">list_known_rates</span><span class="p">()</span>
 </pre></div>
 </div>
 </li>
 <li><p class="first">Write a short python script to generate your network,
-e.g. <code class="docutils literal"><span class="pre">mynet.py</span></code>, based on the following example scripts:</p>
+e.g. <code class="docutils literal notranslate"><span class="pre">mynet.py</span></code>, based on the following example scripts:</p>
 <ul class="simple">
 <li>For Python networks, <a class="reference external" href="https://github.com/pynucastro/pynucastro/blob/master/examples/CNO/cno.py">examples/CNO/cno.py</a></li>
 <li>For standalone Fortran networks, <a class="reference external" href="https://github.com/pynucastro/pynucastro/blob/master/examples/urca-23_f90/urca.py">examples/urca-23_f90/urca.py</a></li>
@@ -244,7 +244,7 @@ e.g. <code class="docutils literal"><span class="pre">mynet.py</span></code>, ba
 </ul>
 </li>
 <li><p class="first">Run your python script (pynucastro must be in your PYTHONPATH).</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>$ python mynet.py
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ python mynet.py
 </pre></div>
 </div>
 </li>
@@ -267,32 +267,32 @@ integration.</p>
 <li><p class="first">In the steps for all networks above, pynucastro will create several
 Fortran 90 files as well as a GNU Makefile set up to compile the
 integrator using gfortran. So next do:</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>$ make
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ make
 </pre></div>
 </div>
 </li>
-<li><p class="first">Edit the generated <code class="docutils literal"><span class="pre">inputs_integration</span></code> file to specify your initial
+<li><p class="first">Edit the generated <code class="docutils literal notranslate"><span class="pre">inputs_integration</span></code> file to specify your initial
 conditions as well as integration tolerances, stop time, and output
 sampling interval.</p>
 </li>
 <li><p class="first">Run the integrator as:</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>$ ./main.Linux.gfortran.exe inputs_integration
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ ./main.Linux.gfortran.exe inputs_integration
 </pre></div>
 </div>
 </li>
 <li><p class="first">The integration results will be stored in a text file named by
-default <code class="docutils literal"><span class="pre">integration_history.dat</span></code></p>
+default <code class="docutils literal notranslate"><span class="pre">integration_history.dat</span></code></p>
 </li>
 </ul>
 <p>Notes on the build system:</p>
 <ul>
 <li><p class="first">If you would like to compile with debugging symbols, do:</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>$ make <span class="nv">NDEBUG</span><span class="o">=</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ make <span class="nv">NDEBUG</span><span class="o">=</span>
 </pre></div>
 </div>
 </li>
 <li><p class="first">To remove the executable and object files produced during compilation, do:</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>$ make realclean
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ make realclean
 </pre></div>
 </div>
 </li>
@@ -301,27 +301,27 @@ default <code class="docutils literal"><span class="pre">integration_history.dat
 <div class="section" id="starkiller-microphysics-network">
 <h2>StarKiller Microphysics network<a class="headerlink" href="#starkiller-microphysics-network" title="Permalink to this headline">¶</a></h2>
 <p>The <a class="reference external" href="https://github.com/pynucastro/pynucastro/tree/master/examples/urca-23_starkiller">examples/urca-23_starkiller</a> example builds the right hand side, Jacobian,
-and helper Fortran modules to copy into the <code class="docutils literal"><span class="pre">networks/</span></code> subdirectory
+and helper Fortran modules to copy into the <code class="docutils literal notranslate"><span class="pre">networks/</span></code> subdirectory
 of the StarKiller Microphysics repository.</p>
 <p>No additional customization is required after running the steps for
 all networks above.</p>
 </div>
 <div class="section" id="tabular-rates">
 <h2>Tabular Rates<a class="headerlink" href="#tabular-rates" title="Permalink to this headline">¶</a></h2>
-<p>Tabular rates for reactions of the form <span class="math">\(\rm{A \rightarrow B}\)</span>
+<p>Tabular rates for reactions of the form <span class="math notranslate">\(\rm{A \rightarrow B}\)</span>
 are supported by the standalone Fortran and StarKiller Microphysics
 network outputs.</p>
 <p>If you would like to include tabular rates, for now they must be in
 the form of, e.g. <a class="reference external" href="https://github.com/pynucastro/pynucastro/blob/master/pynucastro/library/tabular/23Na-23Ne_electroncapture.dat">23Na-23Ne_electroncapture.dat</a> in
-<code class="docutils literal"><span class="pre">pynucastro/library/tabular/</span></code>, indexed by the product of density and
-electron fraction <span class="math">\(\rm{\rho Y_e}\)</span> and temperature
-<span class="math">\(\rm{T}\)</span>, with the same number and order of variables.</p>
+<code class="docutils literal notranslate"><span class="pre">pynucastro/library/tabular/</span></code>, indexed by the product of density and
+electron fraction <span class="math notranslate">\(\rm{\rho Y_e}\)</span> and temperature
+<span class="math notranslate">\(\rm{T}\)</span>, with the same number and order of variables.</p>
 <p>To generate a network with a tabular rate, prepare a rate file to
 describe how to read the table as below and then list it as you would
 a Reaclib rate file in your network generation script. For example,
 <a class="reference external" href="https://github.com/pynucastro/pynucastro/blob/master/pynucastro/library/tabular/na23--ne23-toki">pynucastro/library/tabular/na23–ne23-toki</a> demonstrates the following
 format:</p>
-<div class="highlight-none"><div class="highlight"><pre><span></span>t
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>t
 [parent nuclide]  [daughter nuclide]
 [rate table file name]
 [number of header lines before the first line of data]
