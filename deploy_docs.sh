@@ -17,7 +17,7 @@ SSH_REPO=${REPO/https:\/\/github.com\//git@github.com:}
 SHA=`git rev-parse --verify HEAD`
 
 # Add rsa keys to the ssh agent to push to GitHub
-gpg --output ../id_rsa_pynucastro_deploy --batch --passphrase $DECRYPT_GITHUB_AUTH --decrypt id_rsa_pynucastro_deploy.enc
+gpg --output ../id_rsa_pynucastro_deploy --batch --passphrase "$DECRYPT_GITHUB_AUTH" --decrypt id_rsa_pynucastro_deploy.enc
 chmod 600 ../id_rsa_pynucastro_deploy
 eval `ssh-agent -s`
 ssh-add ../id_rsa_pynucastro_deploy
