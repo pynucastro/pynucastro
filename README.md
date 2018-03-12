@@ -48,11 +48,17 @@ Also see the Jupyter notebooks:
   * [interactive-example.ipynb](https://github.com/pynucastro/pynucastro/blob/master/examples/interactive-example.ipynb)
 
 
-# setup
+# install
 
-To set this up, you should include the root pynucastro path in your
-`PYTHONPATH` environment variable.
-
+To install the package, you can run:
+```
+python setup.py install
+```
+for a systemwide install, or
+```
+python setup.py install --user
+```
+for a single-user install.  This will put the 
 
 # requirements
 
