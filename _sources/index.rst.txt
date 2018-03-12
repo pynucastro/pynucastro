@@ -6,6 +6,8 @@
 pynucastro
 ==============
 
+`http://github.com/pynucastro/pynucastro <http://github.com/pynucastro/pynucastro>`_
+
 .. note::
 
    pynucastro does not yet calculate nuclear partition functions to
