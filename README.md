@@ -58,7 +58,9 @@ for a systemwide install, or
 ```
 python setup.py install --user
 ```
-for a single-user install.  This will put the 
+for a single-user install.  This will put the pynucastro modules and library in
+the default location python searches for packages.
+
 
 # requirements
 
