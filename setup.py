@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(name='pynucastro',
       version='1.0',
@@ -7,7 +7,7 @@ setup(name='pynucastro',
       author='Mike Zingale and Donald Willcox',
       author_email='michael.zingale@stonybrook.edu',
       license='BSD',
-      packages=['pynucastro'],
+      packages=find_packages(),
       install_requires=['networkx', 'numpy',
                         'sympy', 'scipy', 'matplotlib',
                         'ipywidgets'],
