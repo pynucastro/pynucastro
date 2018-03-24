@@ -165,12 +165,12 @@
 <div class="viewcode-block" id="Element"><a class="viewcode-back" href="../../../pynucastro.nucdata.html#pynucastro.nucdata.elements.Element">[docs]</a><span></span><span class="k">class</span> <span class="nc">Element</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">abbreviation</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">Z</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">abbreviation</span> <span class="o">=</span> <span class="n">abbreviation</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span></div>
-        <span class="bp">self</span><span class="o">.</span><span class="n">Z</span> <span class="o">=</span> <span class="n">Z</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Z</span> <span class="o">=</span> <span class="n">Z</span></div>
 
 <div class="viewcode-block" id="UnidentifiedElement"><a class="viewcode-back" href="../../../pynucastro.nucdata.html#pynucastro.nucdata.elements.UnidentifiedElement">[docs]</a><span class="k">class</span> <span class="nc">UnidentifiedElement</span><span class="p">(</span><span class="ne">BaseException</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span></div>
-        <span class="k">return</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span></div>
 
 <div class="viewcode-block" id="PeriodicTable"><a class="viewcode-back" href="../../../pynucastro.nucdata.html#pynucastro.nucdata.elements.PeriodicTable">[docs]</a><span class="k">class</span> <span class="nc">PeriodicTable</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="n">table</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;h&#39;</span><span class="p">:</span>  <span class="n">Element</span><span class="p">(</span><span class="s1">&#39;h&#39;</span><span class="p">,</span>  <span class="s1">&#39;hydrogen&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
@@ -299,8 +299,8 @@
     <span class="k">def</span> <span class="nf">lookup_abbreviation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">abbrev</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="n">abbrev</span><span class="o">.</span><span class="n">lower</span><span class="p">()]</span>
-        <span class="k">except</span><span class="p">:</span></div></div>
-            <span class="k">raise</span> <span class="n">UnidentifiedElement</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">UnidentifiedElement</span></div></div>
 </pre></div>
 
            </div>
