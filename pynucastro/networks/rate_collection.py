@@ -334,7 +334,7 @@ class RateCollection(object):
         if ydots is not None:
             pc = mpl.collections.PatchCollection(edges_lc, cmap=plt.cm.viridis)
             pc.set_array(weights)
-            plt.colorbar(pc)
+            plt.colorbar(pc, label="log10(rate)")
 
         Ns = [n.N for n in node_nuclei]
         Zs = [n.Z for n in node_nuclei]
