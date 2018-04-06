@@ -46,7 +46,7 @@ contains
     enuc = sum(dydt(:) * mion(:)) * enuc_conv2
 
   end subroutine ener_gener_rate
-  
+
   subroutine evaluate_rates(state, rate_eval)
     !$acc routine seq
     type(burn_t)     :: state
