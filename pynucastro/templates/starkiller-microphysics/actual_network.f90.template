@@ -105,19 +105,5 @@ contains
   subroutine actual_network_finalize()
     ! STUB FOR MAESTRO
   end subroutine actual_network_finalize
-  
-  subroutine ener_gener_rate(dydt, enuc)
-    ! Computes the instantaneous energy generation rate
-    !$acc routine seq
-  
-    implicit none
-
-    double precision :: dydt(nspec), enuc
-
-    ! This is basically e = m c**2
-
-    enuc = sum(dydt(:) * mion(:)) * enuc_conv2
-
-  end subroutine ener_gener_rate
 
 end module actual_network

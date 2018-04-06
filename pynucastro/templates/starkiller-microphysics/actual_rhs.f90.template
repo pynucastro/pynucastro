@@ -33,6 +33,20 @@ contains
     return
   end subroutine update_unevolved_species
 
+  subroutine ener_gener_rate(dydt, enuc)
+    ! Computes the instantaneous energy generation rate
+    !$acc routine seq
+
+    implicit none
+
+    double precision :: dydt(nspec), enuc
+
+    ! This is basically e = m c**2
+
+    enuc = sum(dydt(:) * mion(:)) * enuc_conv2
+
+  end subroutine ener_gener_rate
+  
   subroutine evaluate_rates(state, rate_eval)
     !$acc routine seq
     type(burn_t)     :: state
