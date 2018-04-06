@@ -694,8 +694,8 @@ class BaseFortranNetwork(RateCollection):
                     exit()
                 else:
                     reactant = r.reactants[0]
-                    of.write('{}enuc = enuc + N_AVO * {}(j{}) * rate_eval % dqweak(j_{})\n'.format(
-                        self.indent*n_indent, self.name_ydot, reactant, r.fname))
+                    of.write('{}enuc = enuc + N_AVO * {}(j{}) * rate_eval % dqweak({})\n'.format(
+                        self.indent*n_indent, self.name_ydot, reactant, r.table_index_name))
 
     def _enuc_epart(self, n_indent, of):
         # Add particle energy generation rates (gamma heating and neutrino loss from decays)
@@ -707,8 +707,8 @@ class BaseFortranNetwork(RateCollection):
                     exit()
                 else:
                     reactant = r.reactants[0]
-                    of.write('{}enuc = enuc + N_AVO * {}(j{}) * rate_eval % epart(j_{})\n'.format(
-                        self.indent*n_indent, self.name_y, reactant, r.fname))
+                    of.write('{}enuc = enuc + N_AVO * {}(j{}) * rate_eval % epart({})\n'.format(
+                        self.indent*n_indent, self.name_y, reactant, r.table_index_name))
 
     def _jacnuc_declare_scratch(self, n_indent, of):
         # Declare scratch variables
