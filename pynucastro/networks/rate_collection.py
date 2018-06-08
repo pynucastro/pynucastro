@@ -239,6 +239,12 @@ class RateCollection(object):
         """Every Rate in this RateCollection should have a unique Rate.fname,
         as the network writers distinguish the rates on this basis."""
         names = [r.fname for r in self.rates]
+        for n,r in zip(names, self.rates):
+            k = names.count(n)
+            if k > 1:
+                print('Found rate {} named {} with {} entries in the RateCollection.'.format(r, n, k))
+                print('Rate {} has the original source:\n{}'.format(r, r.original_source))
+                print('Rate {} is in chapter {}'.format(r, r.chapter))
         return len(set(names)) == len(self.rates)
 
     def _write_network(self, *args, **kwargs):
