@@ -25,7 +25,6 @@ h = []
 for hi in ht:
         hi = hi.strip().lstrip()
         if hi != '':
-            print hi
             h.append(hi)
             d[hi] = []
 for l in f:

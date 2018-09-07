@@ -57,9 +57,9 @@ d['logrhoy'] = np.array(sorted([float(s) for s in list(set(d['logrhoy']))]))
 d['logtemp'] = np.array(sorted([float(s) for s in list(set(d['logtemp']))]))
 
 def vector_index_lu(vector, fvar):
-    print 'IN VECTOR_INDEX_LU'
-    print fvar
-    print vector
+    print('IN VECTOR_INDEX_LU')
+    print(fvar)
+    print(vector)
     index = 0   # return value
     n = len(vector)-1
     if ( fvar < vector[0] ):
@@ -79,7 +79,7 @@ def vector_index_lu(vector, fvar):
              ndn = j
           if ( ((nup - ndn) == 1) ):
              index = ndn
-             print index
+             print(index)
              return index
 
 def bilinear_lookup(rhoy, temp, ivar):
@@ -94,14 +94,14 @@ def bilinear_lookup(rhoy, temp, ivar):
     irhoy_hi = irhoy_lo + 1
     itemp_hi = itemp_lo + 1
 
-    print 'irhoy_lo:'
-    print irhoy_lo
-    print 'irhoy_hi:'
-    print irhoy_hi
-    print 'itemp_lo:'
-    print itemp_lo
-    print 'itemp_hi:'
-    print itemp_hi
+    print('irhoy_lo:')
+    print(irhoy_lo)
+    print('irhoy_hi:')
+    print(irhoy_hi)
+    print('itemp_lo:')
+    print(itemp_lo)
+    print('itemp_hi:')
+    print(itemp_hi)
 
     # Bilinear interpolation within the box (log=log10)
     # T ^   B .      . C
@@ -115,14 +115,14 @@ def bilinear_lookup(rhoy, temp, ivar):
     rhoy_lo = d['logrhoy'][ irhoy_lo ]
     rhoy_hi = d['logrhoy'][ irhoy_lo+1 ]
 
-    print 'rhoy_lo:'
-    print rhoy_lo
-    print 'rhoy_hi:'
-    print rhoy_hi
-    print 'temp_lo:'
-    print temp_lo
-    print 'temp_hi:'
-    print temp_hi
+    print('rhoy_lo:')
+    print(rhoy_lo)
+    print('rhoy_hi:')
+    print(rhoy_hi)
+    print('temp_lo:')
+    print(temp_lo)
+    print('temp_hi:')
+    print(temp_hi)
 
     fa = d['data'][ itemp_lo, irhoy_lo, ivar ]
     fb = d['data'][ itemp_hi, irhoy_lo, ivar ]
@@ -138,5 +138,5 @@ if __name__ == "__main__":
         rhoy = float(raw_input('Enter a log(rho*ye) value:'))
         temp = float(raw_input('Enter a log(temp) value:'))
         ivar = int(raw_input('Enter the value index to lookup (rate index is 3):'))
-        print 'Bilinear interpolation: '
-        print bilinear_lookup(10.0**rhoy, 10.0**temp, ivar)
+        print('Bilinear interpolation: ')
+        print(bilinear_lookup(10.0**rhoy, 10.0**temp, ivar))
