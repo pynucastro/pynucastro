@@ -24,27 +24,19 @@
 
   
 
-  
-  
-    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  
-
-  
-
-  
-        <link rel="index" title="Index"
-              href="genindex.html"/>
-        <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="pynucastro v1.1.0 documentation" href="index.html"/>
-        <link rel="next" title="Creating Networks" href="networks.html"/>
-        <link rel="prev" title="Specifying Desired Nuclei to Construct a Network" href="library-examples-nuclei.html"/> 
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Creating Networks" href="networks.html" />
+    <link rel="prev" title="Specifying Desired Nuclei to Construct a Network" href="library-examples-nuclei.html" /> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
@@ -119,7 +111,7 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+      <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="index.html">pynucastro</a>
@@ -127,9 +119,10 @@
       </nav>
 
 
-      
       <div class="wy-nav-content">
+        
         <div class="rst-content">
+        
           
 
 
@@ -350,21 +343,6 @@ div.nboutput div.output_area.stderr {
     margin-top: -19px;
 }
 
-/* nice headers on first paragraph of info/warning boxes */
-.admonition .first {
-    margin: -12px;
-    padding: 6px 12px;
-    margin-bottom: 12px;
-    color: #fff;
-    line-height: 1;
-    display: block;
-}
-.admonition.warning .first {
-    background: #f0b37e;
-}
-.admonition.note .first {
-    background: #6ab0de;
-}
 .admonition > p:before {
     margin-right: 4px;  /* make room for the exclamation icon */
 }
@@ -428,7 +406,7 @@ object.</p>
 <h3>Inexact Filtering<a class="headerlink" href="#Inexact-Filtering" title="Permalink to this headline">¶</a></h3>
 <p>Inexact filtering is like using wildcards: in the following example, the
 rate filter we define will match any rates in which
-<span class="math notranslate">\(\mathrm{^{12}C}\)</span> is a reactant.</p>
+<span class="math notranslate nohighlight">\(\mathrm{^{12}C}\)</span> is a reactant.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [4]:
@@ -518,14 +496,14 @@ objects within a <code class="docutils literal notranslate"><span class="pre">Li
 <p>Exact filtering is useful when you have a specific rate in mind or a
 specific combination of reactants or products. In the following example,
 we look for all rates of the form
-<span class="math notranslate">\(\mathrm{^{12}C + ^{12}C \rightarrow \ldots}\)</span></p>
+<span class="math notranslate nohighlight">\(\mathrm{^{12}C + ^{12}C \rightarrow \ldots}\)</span></p>
 <p>To use exact filtering, omit the <code class="docutils literal notranslate"><span class="pre">exact</span></code> keyword to the <code class="docutils literal notranslate"><span class="pre">RateFilter</span></code>
 constructor, as it is turned on by default.</p>
 <p>Exact filtering does not mean all the nuclei involved in the rate must
 be specified, it means that all filtering options passed to the
 <code class="docutils literal notranslate"><span class="pre">RateFilter</span></code> constructor are strictly applied. In this case, the
 filter will return rates with exactly two reactants, both of which are
-<span class="math notranslate">\(\mathrm{^{12}C}\)</span>. However, the filter places no constraint on the
+<span class="math notranslate nohighlight">\(\mathrm{^{12}C}\)</span>. However, the filter places no constraint on the
 products or number of products in the rate.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre>
@@ -555,7 +533,7 @@ c12 + c12 --&gt; he4 + ne20    (c12 + c12 --&gt; he4 + ne20 &lt;cf88_reaclib&gt;
 <h2>Example: Building an Alpha Capture Network<a class="headerlink" href="#Example:-Building-an-Alpha-Capture-Network" title="Permalink to this headline">¶</a></h2>
 <p>In the next example, we use rate filtering to iteratively construct a
 <code class="docutils literal notranslate"><span class="pre">Library</span></code> containing the alpha capture rates linking
-<span class="math notranslate">\(\mathrm{^{12}C}\)</span> to <span class="math notranslate">\(\mathrm{^{56}Ni}\)</span>.</p>
+<span class="math notranslate nohighlight">\(\mathrm{^{12}C}\)</span> to <span class="math notranslate nohighlight">\(\mathrm{^{56}Ni}\)</span>.</p>
 <p>After finding each successive link in the alpha capture chain, we call
 <code class="docutils literal notranslate"><span class="pre">Library.heaviest()</span></code> to find the heaviest nucleus in the filtered
 rates. This corresponds to the nucleus with the largest mass number, and
@@ -843,9 +821,7 @@ ni56
 
 
            </div>
-           <div class="articleComments">
-            
-           </div>
+           
           </div>
           <footer>
   
@@ -867,7 +843,7 @@ ni56
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -886,6 +862,7 @@ ni56
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
             VERSION:'v1.1.0',
+            LANGUAGE:'None',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
@@ -899,19 +876,13 @@ ni56
 
   
 
-  
-  
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-  
+  <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
+          SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-   
+  </script> 
 
 </body>
 </html>
