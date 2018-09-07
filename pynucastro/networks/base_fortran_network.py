@@ -155,20 +155,12 @@ class BaseFortranNetwork(RateCollection):
         # Check if y_i is a reactant or product
         c_reac = rate.reactants.count(y_i)
         c_prod = rate.products.count(y_i)
-        if c_reac > 0 and c_prod > 0:
-            # Something weird happened and y_i seems to be a reactant and product!
-            print('WARNING: {} occurs as both reactant and product in rate {}'.format(
-                y_i, rate))
-            exit()
-        elif c_reac == 0 and c_prod == 0:
+        if c_reac == 0 and c_prod == 0:
             # The rate doesn't contribute to the ydot for this y_i
             ydot_sym = float(sympy.sympify(0.0))
-        elif c_reac > 0:
-            # y_i appears as a reactant
-            ydot_sym = -c_reac * srate
-        elif c_prod > 0:
-            # y_i appears as a product
-            ydot_sym = +c_prod * srate
+        else:
+            # y_i appears as a product or reactant
+            ydot_sym = (c_prod - c_reac) * srate
         return ydot_sym.evalf(n=self.float_explicit_num_digits)
 
     def specific_rate_symbol(self, rate):
