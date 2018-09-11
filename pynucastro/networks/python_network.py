@@ -70,14 +70,20 @@ class PythonNetwork(RateCollection):
         else:
             dens_string = "rho**{}*".format(rate.dens_exp)
 
+        # electron fraction dependence
+        if (rate.weak_type == 'electron_capture' and not rate.tabular):
+            y_e_string = 'ye(Y)*'
+        else:
+            y_e_string = ''
+
         # prefactor
         if not rate.prefactor == 1.0:
             prefactor_string = "{:1.14e}*".format(rate.prefactor)
         else:
             prefactor_string = ""
 
-        return "{}{}{}*lambda_{}".format(prefactor_string, dens_string,
-                                         Y_string, rate.fname)
+        return "{}{}{}{}*lambda_{}".format(prefactor_string, dens_string,
+                                           y_e_string, Y_string, rate.fname)
 
     def jacobian_string(self, rate, ydot_j, y_i):
         """
@@ -122,6 +128,12 @@ class PythonNetwork(RateCollection):
         else:
             dens_string = "rho**{}*".format(rate.dens_exp)
 
+        # electron fraction dependence
+        if (rate.weak_type == 'electron_capture' and not rate.tabular):
+            y_e_string = 'ye(Y)*'
+        else:
+            y_e_string = ''
+
         # prefactor
         if not rate.prefactor == 1.0:
             prefactor_string = "{:1.14e}*".format(rate.prefactor)
@@ -131,8 +143,9 @@ class PythonNetwork(RateCollection):
         if Y_string=="" and dens_string=="" and prefactor_string=="":
             rstring = "{}{}{}lambda_{}"
         else:
-            rstring = "{}{}{}*lambda_{}"
-        return rstring.format(prefactor_string, dens_string, Y_string, rate.fname)
+            rstring = "{}{}{}{}*lambda_{}"
+        return rstring.format(prefactor_string, dens_string,
+                              y_e_string, Y_string, rate.fname)
 
     def _write_network(self, outfile=None):
         """
@@ -162,12 +175,21 @@ class PythonNetwork(RateCollection):
 
         of.write("\n")
 
+        of.write("Z = np.zeros((nnuc), dtype=np.int32)\n\n")
+        for n in self.unique_nuclei:
+            of.write("Z[i{}] = {}\n".format(n, n.Z))
+
+        of.write("\n")
+
+        indent = 4*" "
+
+        of.write("def ye(Y):\n")
+        of.write("{}return np.sum(Z * Y)/np.sum(A * Y)\n\n".format(indent))
+
         for r in self.rates:
             of.write(self.function_string(r))
 
         of.write("def rhs(t, Y, rho, T):\n\n")
-
-        indent = 4*" "
 
         # get the rates
         of.write("{}tf = Tfactors(T)\n\n".format(indent))

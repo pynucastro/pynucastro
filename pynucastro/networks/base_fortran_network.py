@@ -102,7 +102,11 @@ class BaseFortranNetwork(RateCollection):
         self.name_ydot      = 'state % ydot'
         self.name_ydot_nuc  = 'ydot_nuc'
         self.name_jacobian  = 'state % jac'
-        self.name_jacobian_nuc  = 'dfdy_nuc'
+        self.name_jacobian_nuc  = 'state % jac'
+        self.name_density   = 'state % rho'
+        self.name_electron_fraction = 'state % y_e'
+        self.symbol_ludict['__dens__'] = self.name_density
+        self.symbol_ludict['__y_e__'] = self.name_electron_fraction
 
     def ydot_string(self, rate):
         """
@@ -126,9 +130,9 @@ class BaseFortranNetwork(RateCollection):
         if rate.dens_exp == 0:
             dens_string = ""
         elif rate.dens_exp == 1:
-            dens_string = "dens * "
+            dens_string = "{} * ".format(self.name_density)
         else:
-            dens_string = "dens**{} * ".format(rate.dens_exp)
+            dens_string = "{}**{} * ".format(self.name_density, rate.dens_exp)
 
         # prefactor
         if not rate.prefactor == 1.0:
@@ -181,7 +185,13 @@ class BaseFortranNetwork(RateCollection):
             Y_sym = Y_sym * sympy.symbols(sym_temp)**c
 
         # density dependence
-        dens_sym = sympy.symbols('dens')**rate.dens_exp
+        dens_sym = sympy.symbols('__dens__')**rate.dens_exp
+
+        # electron fraction if electron capture reaction
+        if (rate.weak_type == 'electron_capture' and not rate.tabular):
+            y_e_sym = sympy.symbols('__y_e__')
+        else:
+            y_e_sym = sympy.sympify(1)
 
         # prefactor
         prefactor_sym = sympy.sympify(1)/sympy.sympify(rate.inv_prefactor)
@@ -192,7 +202,7 @@ class BaseFortranNetwork(RateCollection):
         self.symbol_ludict[sym_temp] = sym_final
         screened_rate_sym = sympy.symbols(sym_temp)
 
-        srate_sym = prefactor_sym * dens_sym * Y_sym * screened_rate_sym
+        srate_sym = prefactor_sym * dens_sym * y_e_sym * Y_sym * screened_rate_sym
         return srate_sym
 
     def fortranify(self, s):
@@ -246,9 +256,9 @@ class BaseFortranNetwork(RateCollection):
         if rate.dens_exp == 0:
             dens_string = ""
         elif rate.dens_exp == 1:
-            dens_string = "dens * "
+            dens_string = "{} * ".format(self.name_density)
         else:
-            dens_string = "dens**{} * ".format(rate.dens_exp)
+            dens_string = "{}**{} * ".format(self.name_density, rate.dens_exp)
 
         # prefactor
         if not rate.prefactor == 1.0:

@@ -73,6 +73,21 @@ class Composition(object):
         molar_frac = {k: v/k.A for k, v in self.X.items()}
         return molar_frac
 
+    def eval_ye(self):
+        """ return the electron fraction """
+        zvec = []
+        avec = []
+        xvec = []
+        for n in self.X:
+            zvec.append(n.Z)
+            avec.append(n.A)
+            xvec.append(self.X[n])
+        zvec = np.array(zvec)
+        avec = np.array(avec)
+        xvec = np.array(xvec)
+        electron_frac = np.sum(zvec*xvec/avec)/np.sum(xvec)
+        return electron_frac
+
     def __str__(self):
         ostr = ""
         for k in self.X:
@@ -208,6 +223,8 @@ class RateCollection(object):
 
         for r in self.rates:
             val = r.prefactor * rho**r.dens_exp * r.eval(T)
+            if (r.weak_type == 'electron_capture' and not r.tabular):
+                val = val * composition.eval_ye()
             yfac = functools.reduce(mul, [ys[q] for q in r.reactants])
             rvals[r] = yfac * val
 

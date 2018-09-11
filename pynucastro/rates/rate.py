@@ -696,6 +696,7 @@ class Rate(object):
         assert(type(self.chapter) == int)
         assert(self.label == other.label)
         assert(self.weak == other.weak)
+        assert(self.weak_type == other.weak_type)
         assert(self.tabular == other.tabular)
         assert(self.reverse == other.reverse)
         labelprops = self.labelprops[:]
@@ -752,12 +753,20 @@ class Rate(object):
             self.resonant = False
             self.resonance_combined = False
             self.weak = False # The tabular rate might or might not be weak
+            self.weak_type = None
             self.reverse = False
             self.tabular = True
         else:
             self.label = self.labelprops[0:4]
             self.resonant = self.labelprops[4] == 'r'
             self.weak = self.labelprops[4] == 'w'
+            if self.weak:
+                if self.label.strip() == 'ec' or self.label.strip() == 'bec':
+                    self.weak_type = 'electron_capture'
+                else:
+                    self.weak_type = self.label.strip().replace('+','_pos_').replace('-','_neg_')
+            else:
+                self.weak_type = None
             self.reverse = self.labelprops[5] == 'v'
             self.tabular = False
 
@@ -950,6 +959,8 @@ class Rate(object):
             self.inv_prefactor = self.inv_prefactor * np.math.factorial(self.reactants.count(r))
         self.prefactor = self.prefactor/float(self.inv_prefactor)
         self.dens_exp = len(self.reactants)-1
+        if (self.weak_type == 'electron_capture' and not self.tabular):
+            self.dens_exp = self.dens_exp + 1
 
     def _set_screening(self):
         """ determine if this rate is eligible for screening and the nuclei to use. """
@@ -1002,25 +1013,38 @@ class Rate(object):
         self.pretty_string += r"$"
 
         if not self.fname:
+            # This is used to determine which rates to detect as the same reaction
+            # from multiple sources in a Library file, so it should not be unique
+            # to a given source, e.g. wc12, but only unique to the reaction.
             reactants_str = '_'.join([repr(nuc) for nuc in self.reactants])
             products_str = '_'.join([repr(nuc) for nuc in self.products])
             self.fname = '{}__{}'.format(reactants_str, products_str)
+            if self.weak:
+                self.fname = self.fname + '__weak__{}'.format(self.weak_type)
 
-    def get_rate_id(self):
+    def get_rate_id(self, prefix=None):
         """ Get an identifying string for this rate.
         Don't include resonance state since we combine resonant and
         non-resonant versions of reactions. """
-        sweak = ''
-        if self.weak:
-            sweak = '_weak'
+
+        if not prefix:
+            prefix = self.__repr__()
+
         srev = ''
         if self.reverse:
-            srev = '_reverse'
+            srev = 'reverse'
+
+        sweak = ''
+        if self.weak:
+            sweak = 'weak'
+
         ssrc = 'reaclib'
         if self.tabular:
             ssrc = 'tabular'
-        return '{}_{}_{}{}{}'.format(self.__repr__(), self.label.strip(),
-                                    ssrc, sweak, srev)
+
+        slab = self.label.strip()
+
+        return '{}_{}_{}_{}_{}'.format(prefix, slab, ssrc, sweak, srev)
 
     def heaviest(self):
         """

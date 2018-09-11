@@ -73,7 +73,6 @@ contains
     type(rate_eval_t) :: rate_eval
     type(plasma_state) :: pstate
     double precision :: Y(nspec)
-    double precision :: ydot_nuc(nspec)
     double precision :: reactvec(num_rate_groups+2)
     integer :: i, j
     double precision :: dens, temp, rhoy, ye, enuc
@@ -86,11 +85,10 @@ contains
 
     call evaluate_rates(state, rate_eval)
 
-    call rhs_nuc(ydot_nuc, Y, rate_eval % screened_rates, dens)
-    state%ydot(1:nspec) = ydot_nuc
+    call rhs_nuc(state, state % ydot(1:nspec), Y, rate_eval % screened_rates)
 
     ! ion binding energy contributions
-    call ener_gener_rate(ydot_nuc, enuc)
+    call ener_gener_rate(state % ydot(1:nspec), enuc)
     
     ! weak Q-value modification dqweak (density and temperature dependent)
     <enuc_dqweak>(2)
@@ -104,14 +102,14 @@ contains
 
   end subroutine netrhs
 
-  subroutine rhs_nuc(ydot_nuc, Y, screened_rates, dens)
+  subroutine rhs_nuc(state, ydot_nuc, Y, screened_rates)
 
     implicit none
     
+    type(burn_t), intent(inout)   :: state
     double precision, intent(out) :: ydot_nuc(nspec)
     double precision, intent(in)  :: Y(nspec)
     double precision, intent(in)  :: screened_rates(nrates)
-    double precision, intent(in)  :: dens
 
     <ydot_declare_scratch>(2)
 
@@ -133,7 +131,6 @@ contains
     type(plasma_state) :: pstate
     double precision :: reactvec(num_rate_groups+2)
     double precision :: screened_rates_dt(nrates)
-    double precision :: dfdy_nuc(nspec, nspec)
     double precision :: Y(nspec)
     double precision :: dens, temp, ye, rhoy, b1
     double precision :: sneut, dsneutdt, dsneutdd, snuda, snudz
@@ -148,8 +145,7 @@ contains
     call evaluate_rates(state, rate_eval)
     
     ! Species Jacobian elements with respect to other species
-    call jac_nuc(dfdy_nuc, Y, rate_eval % screened_rates, dens)
-    state%jac(1:nspec, 1:nspec) = dfdy_nuc
+    call jac_nuc(state, Y, rate_eval % screened_rates)
 
     ! Species Jacobian elements with respect to energy generation rate
     state%jac(1:nspec, net_ienuc) = 0.0d0
@@ -164,14 +160,13 @@ contains
 
   end subroutine netjac
 
-  subroutine jac_nuc(dfdy_nuc, Y, screened_rates, dens)
+  subroutine jac_nuc(state, Y, screened_rates)
 
     implicit none
     
-    double precision, intent(out) :: dfdy_nuc(nspec, nspec)
+    type(burn_t),   intent(inout) :: state
     double precision, intent(in)  :: Y(nspec)
     double precision, intent(in)  :: screened_rates(nrates)
-    double precision, intent(in)  :: dens
 
     <jacnuc_declare_scratch>(2)
 
