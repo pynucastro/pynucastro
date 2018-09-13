@@ -14,7 +14,7 @@ from ipywidgets import interact
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-from mpl_toolkits.axes_grid1 import make_axes_locatable
+#from mpl_toolkits.axes_grid1 import make_axes_locatable
 import networkx as nx
 
 # Import Rate
@@ -381,6 +381,6 @@ class Explorer(object):
     def _make_plot(self, logrho, logT):
         self.rc.plot(rho=10.0**logrho, T=10.0**logT, comp=self.comp, size=self.size)
 
-    def explore(self):
+    def explore(self, logrho=(2, 6, 0.1), logT=(7, 9, 0.1)):
         """Perform interactive exploration of the network structure."""
-        interact(self._make_plot, logrho=(2, 6, 0.1), logT=(7, 9, 0.1))
+        interact(self._make_plot, logrho=logrho, logT=logT)
