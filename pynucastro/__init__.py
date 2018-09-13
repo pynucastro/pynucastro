@@ -46,8 +46,8 @@ rates, including:
   associated mass fractions.  This is used for evaluating rates
   when doing interactive exploration with pynucastro.
 
-* RateCollection : this is simply a collection of rates.  It will 
-  determine all of the links between the rates and allow you to 
+* RateCollection : this is simply a collection of rates.  It will
+  determine all of the links between the rates and allow you to
   visualize the dependencies.
 
 * Explorer : an explorer takes a rate composition and composition
@@ -74,10 +74,10 @@ rates
 rates provides classes and functions for interpreting individual
 reaction rates, including:
 
-* Nucleus : a single nucleus, with a descriptive name and its 
+* Nucleus : a single nucleus, with a descriptive name and its
   properties.
 
-* Rate : a single Reaclib rate, with methods for plotting and 
+* Rate : a single Reaclib rate, with methods for plotting and
   evaluating it.
 
 * Tfactors : this is a simple container class that holds the various
@@ -113,7 +113,7 @@ generated code specific to a given choice of reaction rates.
 
 """
 
-__version__ = "1.0"
+__version__ = "1.1.0"
 
 from pynucastro.networks import \
     RateCollection, \
@@ -128,4 +128,3 @@ from pynucastro.rates import \
     Nucleus, \
     Rate, \
     list_known_rates
-

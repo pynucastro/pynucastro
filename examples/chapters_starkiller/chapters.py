@@ -17,7 +17,3 @@ files = ["b17-nnn-c14-wc12",
 
 net = StarKillerNetwork(files)
 net.write_network()
-
-
-
-

@@ -1,10 +1,9 @@
 # unit tests for rates
-import math
-
 import pynucastro.networks as networks
 import pynucastro.rates as rates
 
 from pytest import approx
+
 
 class TestComposition(object):
     @classmethod
@@ -119,7 +118,6 @@ class TestRateCollection(object):
         for r in rv:
             assert rv[r] == approx(rates[str(r)])
 
-
     def test_overview(self):
 
         ostr = """
@@ -182,4 +180,3 @@ class TestRateCollection(object):
        n14 + p --> o15
 """
         assert self.rc.network_overview().replace(" ","").strip() == ostr.replace(" ","").strip()
-

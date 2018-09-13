@@ -1,5 +1,5 @@
 '''
-Figure out what the rho-T grid looks like for data tables 
+Figure out what the rho-T grid looks like for data tables
 from Toki, et al. 2015.
 
 Donald Willcox
@@ -21,7 +21,7 @@ for n in xrange(0,6):
 
 dens = []
 temp = []
-    
+
 for l in ifile:
     if l.strip() != '':
         ls = l.split()
@@ -38,12 +38,12 @@ temp_f = [float(s) for s in temp]
 dens = np.array(dens_f)
 temp = np.array(temp_f)
 
-print args.infile
-print ''
-print 'dens, #  : ' + str(len(dens))
-print 'dens, min: ' + str(np.amin(dens))
-print 'dens, max: ' + str(np.amax(dens))
-print ''
-print 'temp, #  : ' + str(len(temp))
-print 'temp, min: ' + str(np.amin(temp))
-print 'temp, max: ' + str(np.amax(temp))
+print(args.infile)
+print('')
+print('dens, #  : ' + str(len(dens)))
+print('dens, min: ' + str(np.amin(dens)))
+print('dens, max: ' + str(np.amax(dens)))
+print('')
+print('temp, #  : ' + str(len(temp)))
+print('temp, min: ' + str(np.amin(temp)))
+print('temp, max: ' + str(np.amax(temp)))

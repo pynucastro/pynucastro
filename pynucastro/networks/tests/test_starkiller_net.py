@@ -1,11 +1,9 @@
 # unit tests for rates
-import math
-
 import pynucastro.networks as networks
 import pynucastro.rates as rates
 
-from pytest import approx
 import io
+
 
 class TestStarKillerNetwork(object):
     @classmethod
@@ -76,148 +74,149 @@ class TestStarKillerNetwork(object):
     def test_nrxn(self):
         """ test the _nrxn function """
 
-        answer = ('  integer, parameter :: k_c12_c12__he4_ne20   = 1\n'+
-                  '  integer, parameter :: k_c12_c12__n_mg23   = 2\n'+
-                  '  integer, parameter :: k_c12_c12__p_na23   = 3\n'+
-                  '  integer, parameter :: k_he4_c12__o16   = 4\n'+
-                  '  integer, parameter :: k_n__p   = 5\n'+
-                  '  integer, parameter :: k_na23__ne23   = 6\n'+
+        answer = ('  integer, parameter :: k_c12_c12__he4_ne20   = 1\n' +
+                  '  integer, parameter :: k_c12_c12__n_mg23   = 2\n' +
+                  '  integer, parameter :: k_c12_c12__p_na23   = 3\n' +
+                  '  integer, parameter :: k_he4_c12__o16   = 4\n' +
+                  '  integer, parameter :: k_n__p   = 5\n' +
+                  '  integer, parameter :: k_na23__ne23   = 6\n' +
                   '  integer, parameter :: k_ne23__na23   = 7\n')
         assert self.cromulent_ftag(self.fn._nrxn, answer, n_indent=1)
 
     def test_jion(self):
         """ test the _jion function """
 
-        answer = ('  integer, parameter :: jn   = 1\n'+
-                  '  integer, parameter :: jp   = 2\n'+
-                  '  integer, parameter :: jhe4   = 3\n'+
-                  '  integer, parameter :: jc12   = 4\n'+
-                  '  integer, parameter :: jo16   = 5\n'+
-                  '  integer, parameter :: jne20   = 6\n'+
-                  '  integer, parameter :: jne23   = 7\n'+
-                  '  integer, parameter :: jna23   = 8\n'+
+        answer = ('  integer, parameter :: jn   = 1\n' +
+                  '  integer, parameter :: jp   = 2\n' +
+                  '  integer, parameter :: jhe4   = 3\n' +
+                  '  integer, parameter :: jc12   = 4\n' +
+                  '  integer, parameter :: jo16   = 5\n' +
+                  '  integer, parameter :: jne20   = 6\n' +
+                  '  integer, parameter :: jne23   = 7\n' +
+                  '  integer, parameter :: jna23   = 8\n' +
                   '  integer, parameter :: jmg23   = 9\n')
         assert self.cromulent_ftag(self.fn._jion, answer, n_indent=1)
 
     def test_spec_names(self):
         """ test the _spec_names function """
 
-        answer = ('    spec_names(jn)   = "neutron"\n'+
-                  '    spec_names(jp)   = "hydrogen-1"\n'+
-                  '    spec_names(jhe4)   = "helium-4"\n'+
-                  '    spec_names(jc12)   = "carbon-12"\n'+
-                  '    spec_names(jo16)   = "oxygen-16"\n'+
-                  '    spec_names(jne20)   = "neon-20"\n'+
-                  '    spec_names(jne23)   = "neon-23"\n'+
-                  '    spec_names(jna23)   = "sodium-23"\n'+
+        answer = ('    spec_names(jn)   = "neutron"\n' +
+                  '    spec_names(jp)   = "hydrogen-1"\n' +
+                  '    spec_names(jhe4)   = "helium-4"\n' +
+                  '    spec_names(jc12)   = "carbon-12"\n' +
+                  '    spec_names(jo16)   = "oxygen-16"\n' +
+                  '    spec_names(jne20)   = "neon-20"\n' +
+                  '    spec_names(jne23)   = "neon-23"\n' +
+                  '    spec_names(jna23)   = "sodium-23"\n' +
                   '    spec_names(jmg23)   = "magnesium-23"\n')
         assert self.cromulent_ftag(self.fn._spec_names, answer, n_indent=2)
 
     def test_short_spec_names(self):
         """ test the _short_spec_names function """
 
-        answer = ('    short_spec_names(jn)   = "n"\n'+
-                  '    short_spec_names(jp)   = "h1"\n'+
-                  '    short_spec_names(jhe4)   = "he4"\n'+
-                  '    short_spec_names(jc12)   = "c12"\n'+
-                  '    short_spec_names(jo16)   = "o16"\n'+
-                  '    short_spec_names(jne20)   = "ne20"\n'+
-                  '    short_spec_names(jne23)   = "ne23"\n'+
-                  '    short_spec_names(jna23)   = "na23"\n'+
+        answer = ('    short_spec_names(jn)   = "n"\n' +
+                  '    short_spec_names(jp)   = "h1"\n' +
+                  '    short_spec_names(jhe4)   = "he4"\n' +
+                  '    short_spec_names(jc12)   = "c12"\n' +
+                  '    short_spec_names(jo16)   = "o16"\n' +
+                  '    short_spec_names(jne20)   = "ne20"\n' +
+                  '    short_spec_names(jne23)   = "ne23"\n' +
+                  '    short_spec_names(jna23)   = "na23"\n' +
                   '    short_spec_names(jmg23)   = "mg23"\n')
         assert self.cromulent_ftag(self.fn._short_spec_names, answer, n_indent=2)
 
     def test_ebind(self):
         """ test the _ebind function """
 
-        answer = ('    ebind_per_nucleon(jn)   = 0.00000000000000d+00\n'+
-                  '    ebind_per_nucleon(jp)   = 0.00000000000000d+00\n'+
-                  '    ebind_per_nucleon(jhe4)   = 7.07391500000000d+00\n'+
-                  '    ebind_per_nucleon(jc12)   = 7.68014400000000d+00\n'+
-                  '    ebind_per_nucleon(jo16)   = 7.97620600000000d+00\n'+
-                  '    ebind_per_nucleon(jne20)   = 8.03224000000000d+00\n'+
-                  '    ebind_per_nucleon(jne23)   = 7.95525600000000d+00\n'+
-                  '    ebind_per_nucleon(jna23)   = 8.11149300000000d+00\n'+
+        answer = ('    ebind_per_nucleon(jn)   = 0.00000000000000d+00\n' +
+                  '    ebind_per_nucleon(jp)   = 0.00000000000000d+00\n' +
+                  '    ebind_per_nucleon(jhe4)   = 7.07391500000000d+00\n' +
+                  '    ebind_per_nucleon(jc12)   = 7.68014400000000d+00\n' +
+                  '    ebind_per_nucleon(jo16)   = 7.97620600000000d+00\n' +
+                  '    ebind_per_nucleon(jne20)   = 8.03224000000000d+00\n' +
+                  '    ebind_per_nucleon(jne23)   = 7.95525600000000d+00\n' +
+                  '    ebind_per_nucleon(jna23)   = 8.11149300000000d+00\n' +
                   '    ebind_per_nucleon(jmg23)   = 7.90111500000000d+00\n')
         assert self.cromulent_ftag(self.fn._ebind, answer, n_indent=2)
 
     def test_aion(self):
         """ test the _aion function """
 
-        answer = ('    aion(jn)   = 1.00000000000000d+00\n'+
-                  '    aion(jp)   = 1.00000000000000d+00\n'+
-                  '    aion(jhe4)   = 4.00000000000000d+00\n'+
-                  '    aion(jc12)   = 1.20000000000000d+01\n'+
-                  '    aion(jo16)   = 1.60000000000000d+01\n'+
-                  '    aion(jne20)   = 2.00000000000000d+01\n'+
-                  '    aion(jne23)   = 2.30000000000000d+01\n'+
-                  '    aion(jna23)   = 2.30000000000000d+01\n'+
+        answer = ('    aion(jn)   = 1.00000000000000d+00\n' +
+                  '    aion(jp)   = 1.00000000000000d+00\n' +
+                  '    aion(jhe4)   = 4.00000000000000d+00\n' +
+                  '    aion(jc12)   = 1.20000000000000d+01\n' +
+                  '    aion(jo16)   = 1.60000000000000d+01\n' +
+                  '    aion(jne20)   = 2.00000000000000d+01\n' +
+                  '    aion(jne23)   = 2.30000000000000d+01\n' +
+                  '    aion(jna23)   = 2.30000000000000d+01\n' +
                   '    aion(jmg23)   = 2.30000000000000d+01\n')
         assert self.cromulent_ftag(self.fn._aion, answer, n_indent=2)
 
     def test_zion(self):
         """ test the zion function """
 
-        answer = ('    zion(jn)   = 0.00000000000000d+00\n'+
-                  '    zion(jp)   = 1.00000000000000d+00\n'+
-                  '    zion(jhe4)   = 2.00000000000000d+00\n'+
-                  '    zion(jc12)   = 6.00000000000000d+00\n'+
-                  '    zion(jo16)   = 8.00000000000000d+00\n'+
-                  '    zion(jne20)   = 1.00000000000000d+01\n'+
-                  '    zion(jne23)   = 1.00000000000000d+01\n'+
-                  '    zion(jna23)   = 1.10000000000000d+01\n'+
+        answer = ('    zion(jn)   = 0.00000000000000d+00\n' +
+                  '    zion(jp)   = 1.00000000000000d+00\n' +
+                  '    zion(jhe4)   = 2.00000000000000d+00\n' +
+                  '    zion(jc12)   = 6.00000000000000d+00\n' +
+                  '    zion(jo16)   = 8.00000000000000d+00\n' +
+                  '    zion(jne20)   = 1.00000000000000d+01\n' +
+                  '    zion(jne23)   = 1.00000000000000d+01\n' +
+                  '    zion(jna23)   = 1.10000000000000d+01\n' +
                   '    zion(jmg23)   = 1.20000000000000d+01\n')
         assert self.cromulent_ftag(self.fn._zion, answer, n_indent=2)
 
     def test_nion(self):
         """ test the _nion function """
 
-        answer = ('    nion(jn)   = 1.00000000000000d+00\n'+
-                  '    nion(jp)   = 0.00000000000000d+00\n'+
-                  '    nion(jhe4)   = 2.00000000000000d+00\n'+
-                  '    nion(jc12)   = 6.00000000000000d+00\n'+
-                  '    nion(jo16)   = 8.00000000000000d+00\n'+
-                  '    nion(jne20)   = 1.00000000000000d+01\n'+
-                  '    nion(jne23)   = 1.30000000000000d+01\n'+
-                  '    nion(jna23)   = 1.20000000000000d+01\n'+
+        answer = ('    nion(jn)   = 1.00000000000000d+00\n' +
+                  '    nion(jp)   = 0.00000000000000d+00\n' +
+                  '    nion(jhe4)   = 2.00000000000000d+00\n' +
+                  '    nion(jc12)   = 6.00000000000000d+00\n' +
+                  '    nion(jo16)   = 8.00000000000000d+00\n' +
+                  '    nion(jne20)   = 1.00000000000000d+01\n' +
+                  '    nion(jne23)   = 1.30000000000000d+01\n' +
+                  '    nion(jna23)   = 1.20000000000000d+01\n' +
                   '    nion(jmg23)   = 1.10000000000000d+01\n')
         assert self.cromulent_ftag(self.fn._nion, answer, n_indent=2)
 
     def test_rate_start_idx(self):
         """ test the _rate_start_idx function """
 
-        answer = ('    allocate( rate_start_idx(nrat_reaclib) )\n'+
-                  '    rate_start_idx(:) = [ &\n'+
-                  '      1, &\n'+
-                  '      2, &\n'+
-                  '      3, &\n'+
-                  '      4, &\n'+
+        answer = ('    allocate( rate_start_idx(nrat_reaclib) )\n' +
+                  '    rate_start_idx(:) = [ &\n' +
+                  '      1, &\n' +
+                  '      2, &\n' +
+                  '      3, &\n' +
+                  '      4, &\n' +
                   '      6 ]\n')
         assert self.cromulent_ftag(self.fn._rate_start_idx, answer, n_indent=2)
 
     def test_rate_extra_mult(self):
         """ test the _rate_extra_mult function """
 
-        answer = ('    allocate( rate_extra_mult(nrat_reaclib) )\n'+
-                  '    rate_extra_mult(:) = [ &\n'+
-                  '      0, &\n'+
-                  '      0, &\n'+
-                  '      0, &\n'+
-                  '      1, &\n'+
+        answer = ('    allocate( rate_extra_mult(nrat_reaclib) )\n' +
+                  '    rate_extra_mult(:) = [ &\n' +
+                  '      0, &\n' +
+                  '      0, &\n' +
+                  '      0, &\n' +
+                  '      1, &\n' +
                   '      0 ]\n')
         assert self.cromulent_ftag(self.fn._rate_extra_mult, answer, n_indent=2)
 
     def test_screen_logical(self):
         """ test the _screen_logical function """
 
-        answer = ('    allocate( do_screening(nrat_reaclib) )\n'+
-                  '    do_screening(:) = [ &\n'+
-                  '      .true., &\n'+
-                  '      .true., &\n'+
-                  '      .true., &\n'+
-                  '      .true., &\n'+
+        answer = ('    allocate( do_screening(nrat_reaclib) )\n' +
+                  '    do_screening(:) = [ &\n' +
+                  '      .true., &\n' +
+                  '      .true., &\n' +
+                  '      .true., &\n' +
+                  '      .true., &\n' +
                   '      .false. ]\n')
         assert self.cromulent_ftag(self.fn._screen_logical, answer, n_indent=2)
+
 
 class TestReaclibChapterNetwork(object):
     @classmethod

@@ -1,9 +1,9 @@
 # unit tests for rates
 import math
-import os
 
 import pynucastro.rates as rates
 from pytest import approx
+
 
 class TestTfactors(object):
     @classmethod
@@ -82,6 +82,7 @@ class TestNucleus(object):
         assert self.ni56 > self.c12
         assert self.he4_also == self.he4
 
+
 class TestRate(object):
 
     @classmethod
@@ -105,7 +106,7 @@ class TestRate(object):
 
         # chapter-3
         self.rate3 = rates.Rate("he6-gnn-he4-cf88")
-        
+
         # chapter-4
         self.rate4 = rates.Rate("c12-ag-o16-nac2")
 
@@ -156,7 +157,6 @@ class TestRate(object):
         self.ni56 = rates.Nucleus("Ni56")
         self.u238 = rates.Nucleus("U238")
         self.he4_also = rates.Nucleus("he4")
-
 
     def teardown_method(self):
         """ this is run after each test """
@@ -232,4 +232,3 @@ class TestRate(object):
 
     def test_eval(self):
         assert self.rate8.eval(1.e8) == approx(2.0403192412842946e-24)
-
