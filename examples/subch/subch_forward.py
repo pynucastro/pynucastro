@@ -11,4 +11,6 @@ all_nuclei = ["he4", "c12", "o16", "n14", "f18", "ne21", "p", "n13", "ne20"]
 subCh = mylibrary.linking_nuclei(all_nuclei, with_reverse=False)
 
 net = StarKillerNetwork(libraries=subCh)
+
+net.plot()
 net.write_network()

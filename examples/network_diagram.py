@@ -1,7 +1,7 @@
 import pynucastro as pyna
 import matplotlib.pyplot as plt
 
-files = ["c12-pg-n13-ls09", 
+files = ["c12-pg-n13-ls09",
          "c13-pg-n14-nacr",
          "n13--c13-wc12",
          "n13-pg-o14-lg06",
@@ -18,5 +18,4 @@ rc = pyna.RateCollection(files)
 comp = pyna.Composition(rc.get_nuclei())
 comp.set_solar_like()
 
-rc.plot(rho=2.e6, T=3.e7, comp=comp)
-
+rc.plot(rho=2.e6, T=3.e7, comp=comp, outfile="cno_flow.png")

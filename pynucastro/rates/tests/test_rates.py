@@ -82,6 +82,7 @@ class TestNucleus(object):
         assert self.ni56 > self.c12
         assert self.he4_also == self.he4
 
+
 class TestRate(object):
 
     @classmethod
@@ -156,7 +157,6 @@ class TestRate(object):
         self.ni56 = rates.Nucleus("Ni56")
         self.u238 = rates.Nucleus("U238")
         self.he4_also = rates.Nucleus("he4")
-
 
     def teardown_method(self):
         """ this is run after each test """
