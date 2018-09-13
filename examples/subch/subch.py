@@ -27,8 +27,3 @@ for r, p in all_reactants:
 
 net = StarKillerNetwork(libraries=[subCh])
 net.write_network()
-
-
-
-
-

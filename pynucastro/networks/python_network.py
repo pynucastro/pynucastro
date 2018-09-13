@@ -7,6 +7,7 @@ import sys
 
 from pynucastro.networks import RateCollection
 
+
 class PythonNetwork(RateCollection):
     """A pure python reaction network."""
 
@@ -30,7 +31,6 @@ class PythonNetwork(RateCollection):
             string += indent*" " + t + "\n"
         return string
 
-
     def function_string(self, rate):
         """
         Return a string containing python function that computes the
@@ -42,7 +42,6 @@ class PythonNetwork(RateCollection):
         string += "{}".format(self.rate_string(rate, indent=4))
         string += "    return rate\n\n"
         return string
-
 
     def ydot_string(self, rate):
         """
@@ -106,14 +105,14 @@ class PythonNetwork(RateCollection):
             if y_i == r:
                 if c == 1:
                     continue
-                if n>0 and n < len(set(rate.reactants))-1:
+                if n > 0 and n < len(set(rate.reactants))-1:
                     Y_string += "*"
                 if c > 2:
                     Y_string += "{}*Y[i{}]**{}".format(c, r, c-1)
-                elif c==2:
+                elif c == 2:
                     Y_string += "2*Y[i{}]".format(r)
             else:
-                if n>0 and n < len(set(rate.reactants))-1:
+                if n > 0 and n < len(set(rate.reactants))-1:
                     Y_string += "*"
                 if c > 1:
                     Y_string += "Y[i{}]**{}".format(r, c)
@@ -140,7 +139,7 @@ class PythonNetwork(RateCollection):
         else:
             prefactor_string = ""
 
-        if Y_string=="" and dens_string=="" and prefactor_string=="":
+        if Y_string == "" and dens_string == "" and prefactor_string == "":
             rstring = "{}{}{}lambda_{}"
         else:
             rstring = "{}{}{}{}*lambda_{}"

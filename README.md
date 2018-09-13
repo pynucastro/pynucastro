@@ -1,6 +1,8 @@
 # pynucastro
 
-[![Build Status](https://travis-ci.org/pynucastro/pynucastro.svg?branch=master)](https://travis-ci.org/pynucastro/pynucastro) [![JOSS Status](http://joss.theoj.org/papers/f753b6f21f460ae6a301c21c95dfa001/status.svg)](http://joss.theoj.org/papers/f753b6f21f460ae6a301c21c95dfa001)
+[![Build Status](https://travis-ci.org/pynucastro/pynucastro.svg?branch=master)](https://travis-ci.org/pynucastro/pynucastro)
+[![DOI](http://joss.theoj.org/papers/10.21105/joss.00588/status.svg)](https://doi.org/10.21105/joss.00588)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1202434.svg)](https://doi.org/10.5281/zenodo.1202434)
 
 Python interfaces to the nuclear reaction rate databases, including
 the JINA Reaclib nuclear reactions database.  This
@@ -17,6 +19,11 @@ produce either a callable python function for a rate or output the
 python code for a function that can be incorporated into a rate
 module.
 
+pynucastro does not yet support nuclear partition functions for
+Reaclib reverse rates, as the implementation is currently under
+development. We recommend you consider what problem you wish to study
+using pynucastro to determine whether reverse rates and partition
+function corrections are significant at the temperatures of interest.
 
 # documentation
 
@@ -43,10 +50,18 @@ Also see the Jupyter notebooks:
   * [interactive-example.ipynb](https://github.com/pynucastro/pynucastro/blob/master/examples/interactive-example.ipynb)
 
 
-# setup
+# install
 
-To set this up, you should include the root pynucastro path in your
-`PYTHONPATH` environment variable.
+To install the package, you can run:
+```
+python setup.py install
+```
+for a systemwide install, or
+```
+python setup.py install --user
+```
+for a single-user install.  This will put the pynucastro modules and library in
+the default location python searches for packages.
 
 
 # requirements
