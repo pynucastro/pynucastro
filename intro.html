@@ -218,7 +218,7 @@ side routine for the system of ODEs that must be integrated to evolve
 a reaction network.  A reaction network takes the form:</p>
 <div class="math notranslate nohighlight">
 \[\frac{dY_i}{dt} = - \sum_{j,k} Y_i Y_j \lambda_{i(j,k)l} + \sum_{j,k} Y_l Y_k \lambda_{l(j,k)i}\]</div>
-<p>where the <span class="math notranslate nohighlight">\(\lambda\)</span>‘s are the rates of destruction and creation
+<p>where the <span class="math notranslate nohighlight">\(\lambda\)</span>’s are the rates of destruction and creation
 of species i, represented by the molar fraction <span class="math notranslate nohighlight">\(Y_i\)</span> (see,
 e.g., <a class="reference external" href="http://adsabs.harvard.edu/abs/1999ApJS..124..241T">Timmes 1999</a>).  pynucastro
 will create the righthand sides of this system of ODEs (as python or
