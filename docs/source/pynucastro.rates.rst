@@ -1,5 +1,5 @@
-pynucastro\.rates package
-=========================
+pynucastro.rates package
+========================
 
 .. automodule:: pynucastro.rates
     :members:
@@ -9,8 +9,8 @@ pynucastro\.rates package
 Submodules
 ----------
 
-pynucastro\.rates\.rate module
-------------------------------
+pynucastro.rates.rate module
+----------------------------
 
 .. automodule:: pynucastro.rates.rate
     :members:

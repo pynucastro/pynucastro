@@ -4,7 +4,7 @@ This program plots the abundances in a file produced by intnet.
 Headers should include 'Time' and nuclides of the form 'Y_{nuc}',
 where {nuc} is, e.g. he4, c12, ...
 
-Example: 
+Example:
 $ python plot_abundances.py net_history.dat
 
 Donald Willcox
@@ -25,7 +25,7 @@ h = f.readline().split()
 d = {}
 for hi in h:
         d[hi] = []
-        
+
 for l in f:
     ls = l.split()
     for hi, lsi in zip(h, ls):

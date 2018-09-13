@@ -1,5 +1,5 @@
 """
-This program eats 7 lines of header and reformats the lines in a 
+This program eats 7 lines of header and reformats the lines in a
 specified input file so numbers can be compared with
 the same formatting between the input file and a reference (not supplied).
 

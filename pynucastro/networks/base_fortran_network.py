@@ -16,6 +16,7 @@ from collections import OrderedDict
 from pynucastro.networks import RateCollection
 from pynucastro.nucdata import BindingTable
 
+
 class BaseFortranNetwork(RateCollection):
     """Interpret the collection of rates and nuclei and produce the
     Fortran code needed to integrate the network.
@@ -671,17 +672,17 @@ class BaseFortranNetwork(RateCollection):
         if self.use_cse:
             for si in self.ydot_out_scratch:
                 siname = si[0]
-                sivalue = self.fortranify(sympy.fcode(si[1], precision = 15,
-                                                      source_format = 'free',
-                                                      standard = 95))
+                sivalue = self.fortranify(sympy.fcode(si[1], precision=15,
+                                                      source_format='free',
+                                                      standard=95))
                 of.write('{}{} = {}\n'.format(self.indent*n_indent, siname, sivalue))
 
     def _ydot(self, n_indent, of):
         # Write YDOT
         for i, n in enumerate(self.unique_nuclei):
-            sol_value = self.fortranify(sympy.fcode(self.ydot_out_result[i], precision = 15,
-                                                    source_format = 'free',
-                                                    standard = 95))
+            sol_value = self.fortranify(sympy.fcode(self.ydot_out_result[i], precision=15,
+                                                    source_format='free',
+                                                    standard=95))
             of.write('{}{}(j{}) = ( &\n'.format(self.indent*n_indent,
                                                 self.name_ydot_nuc, n))
             of.write("{}{} &\n".format(self.indent*(n_indent+1), sol_value))
@@ -724,9 +725,9 @@ class BaseFortranNetwork(RateCollection):
         if self.use_cse:
             for si in self.jac_out_scratch:
                 siname = si[0]
-                sivalue = self.fortranify(sympy.fcode(si[1], precision = 15,
-                                                      source_format = 'free',
-                                                      standard = 95))
+                sivalue = self.fortranify(sympy.fcode(si[1], precision=15,
+                                                      source_format='free',
+                                                      standard=95))
                 of.write('{}{} = {}\n'.format(self.indent*n_indent, siname, sivalue))
 
     def _jacnuc(self, n_indent, of):
@@ -736,9 +737,9 @@ class BaseFortranNetwork(RateCollection):
             for ini, ni in enumerate(self.unique_nuclei):
                 jac_idx = n_unique_nuclei*jnj + ini
                 jvalue = self.fortranify(sympy.fcode(self.jac_out_result[jac_idx],
-                                                     precision = 15,
-                                                     source_format = 'free',
-                                                     standard = 95))
+                                                     precision=15,
+                                                     source_format='free',
+                                                     standard=95))
                 of.write("{}{}(j{},j{}) = ( &\n".format(self.indent*n_indent,
                                                         self.name_jacobian_nuc, nj, ni))
                 of.write("{}{} &\n".format(self.indent*(n_indent+1), jvalue))

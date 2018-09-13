@@ -3,7 +3,6 @@ from __future__ import print_function
 import numpy as np
 from scipy.integrate import ode
 import cno_rhs as cno
-import pynucastro
 import matplotlib.pyplot as plt
 
 def burn(Y0, rho, T, tmax, nsave):
