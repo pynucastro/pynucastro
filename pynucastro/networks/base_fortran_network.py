@@ -66,7 +66,10 @@ class BaseFortranNetwork(RateCollection):
         self.ftags['<table_num>'] = self._table_num
         self.ftags['<public_table_indices>'] = self._public_table_indices
         self.ftags['<table_indices>'] = self._table_indices
+        self.ftags['<declare_tables>'] = self._declare_tables
+        self.ftags['<declare_managed_tables>'] = self._declare_managed_tables
         self.ftags['<table_init_meta>'] = self._table_init_meta
+        self.ftags['<table_term_meta>'] = self._table_term_meta
         self.ftags['<table_rates_indices>'] = self._table_rates_indices
         self.ftags['<compute_tabular_rates_rhs>'] = self._compute_tabular_rates_rhs
         self.ftags['<compute_tabular_rates_jac>'] = self._compute_tabular_rates_jac
@@ -95,6 +98,7 @@ class BaseFortranNetwork(RateCollection):
         self.ydot_out_result  = None
         self.jac_out_scratch  = None
         self.jac_out_result   = None
+        self.jac_null_entries = None        
         self.symbol_ludict = OrderedDict() # Symbol lookup dictionary
 
         # Define these for the particular network
@@ -275,6 +279,7 @@ class BaseFortranNetwork(RateCollection):
                               self.name_rate_data, rate.fname,
                               self.name_rate_data, rate.fname)
 
+
     def jacobian_term_symbol(self, rate, ydot_j, y_i):
         """
         return a sympy expression containing the term in a jacobian matrix
@@ -288,7 +293,11 @@ class BaseFortranNetwork(RateCollection):
         ydot_sym = self.ydot_term_symbol(rate, ydot_j)
         deriv_sym = sympy.symbols('Y__j{}__'.format(y_i))
         jac_sym = sympy.diff(ydot_sym, deriv_sym)
-        return jac_sym.evalf(n=self.float_explicit_num_digits)
+        symbol_is_null = False
+        if jac_sym.equals(0):
+            symbol_is_null = True
+        return (jac_sym.evalf(n=self.float_explicit_num_digits), symbol_is_null)
+
 
     def compose_ydot(self):
         """create the expressions for dYdt for the nuclei, where Y is the
@@ -323,15 +332,22 @@ class BaseFortranNetwork(RateCollection):
 
     def compose_jacobian(self):
         """Create the Jacobian matrix, df/dY"""
+        jac_null = []
         jac_sym = []
         for nj in self.unique_nuclei:
             for ni in self.unique_nuclei:
+                rsym_is_null = True
                 rsym = float(sympy.sympify(0.0))
                 for r in self.nuclei_consumed[nj]:
-                    rsym = rsym + self.jacobian_term_symbol(r, nj, ni)
+                    rsym_add, rsym_add_null = self.jacobian_term_symbol(r, nj, ni)
+                    rsym = rsym + rsym_add
+                    rsym_is_null = rsym_is_null and rsym_add_null
                 for r in self.nuclei_produced[nj]:
-                    rsym = rsym + self.jacobian_term_symbol(r, nj, ni)
+                    rsym_add, rsym_add_null = self.jacobian_term_symbol(r, nj, ni)
+                    rsym = rsym + rsym_add
+                    rsym_is_null = rsym_is_null and rsym_add_null
                 jac_sym.append(rsym)
+                jac_null.append(rsym_is_null)
 
         if self.use_cse:
             scratch_sym = sympy.utilities.numbered_symbols('scratch_')
@@ -348,6 +364,7 @@ class BaseFortranNetwork(RateCollection):
         else:
             self.jac_out_scratch = None
             self.jac_out_result  = jac_sym
+        self.jac_null_entries = jac_null
 
     def io_open(self, infile, outfile):
         """open the input and output files"""
@@ -626,19 +643,51 @@ class BaseFortranNetwork(RateCollection):
             of.write('{}integer, parameter :: {}   = {}\n'.format(
                 self.indent*n_indent, r.table_index_name, n+1))
 
+    def _declare_tables(self, n_indent, of):
+        for n,irate in enumerate(self.tabular_rates):
+            r = self.rates[irate]
+            of.write('{}real(rt), allocatable :: rate_table_{}(:,:,:), rhoy_table_{}(:), temp_table_{}(:)\n'.format(
+                self.indent*n_indent, r.table_index_name, r.table_index_name, r.table_index_name))
+            of.write('{}integer, allocatable  :: num_rhoy_{}, num_temp_{}, num_vars_{}\n'.format(
+                self.indent*n_indent, r.table_index_name, r.table_index_name, r.table_index_name))
+            of.write('{}character(len=50)     :: rate_table_file_{}\n'.format(
+                self.indent*n_indent, r.table_index_name))
+            of.write('{}integer               :: num_header_{}\n'.format(
+                self.indent*n_indent, r.table_index_name))
+            of.write('\n')
+
+    def _declare_managed_tables(self, n_indent, of):
+        for n,irate in enumerate(self.tabular_rates):
+            r = self.rates[irate]
+            of.write('{}attributes(managed) :: rate_table_{}, rhoy_table_{}, temp_table_{}\n'.format(
+                self.indent*n_indent, r.table_index_name, r.table_index_name, r.table_index_name))
+            of.write('{}attributes(managed) :: num_rhoy_{}, num_temp_{}, num_vars_{}\n'.format(
+                self.indent*n_indent, r.table_index_name, r.table_index_name, r.table_index_name))
+            of.write('\n')
+
     def _table_init_meta(self, n_indent, of):
         for irate in self.tabular_rates:
             r = self.rates[irate]
-            of.write('{}table_read_meta({})%rate_table_file = \'{}\'\n'.format(
-                self.indent*n_indent, r.table_index_name, r.table_file))
-            of.write('{}table_read_meta({})%num_header = {}\n'.format(
-                self.indent*n_indent, r.table_index_name, r.table_header_lines))
-            of.write('{}table_meta({})%num_rhoy = {}\n'.format(
-                self.indent*n_indent, r.table_index_name, r.table_rhoy_lines))
-            of.write('{}table_meta({})%num_temp = {}\n'.format(
-                self.indent*n_indent, r.table_index_name, r.table_temp_lines))
-            of.write('{}table_meta({})%num_vars = {}\n'.format(
-                self.indent*n_indent, r.table_index_name, r.table_num_vars))
+            of.write('{}allocate(rate_table_{}(num_temp_{}, num_rhoy_{}, num_vars_{}))\n'.format(
+                self.indent*n_indent, r.table_index_name, r.table_index_name, r.table_index_name, r.table_index_name))
+            of.write('{}allocate(rhoy_table_{}(num_rhoy_{}))\n'.format(
+                self.indent*n_indent, r.table_index_name, r.table_index_name))
+            of.write('{}allocate(temp_table_{}(num_temp_{}))\n'.format(
+                self.indent*n_indent, r.table_index_name, r.table_index_name))
+            of.write('{}call init_tab_info(rate_table_{}, rhoy_table_{}, temp_table_{}, num_rhoy_{}, num_temp_{}, num_vars_{}, rate_table_file_{}, num_header_{})\n'.format(
+                self.indent*n_indent, r.table_index_name, r.table_index_name, r.table_index_name, r.table_index_name,
+                r.table_index_name, r.table_index_name, r.table_index_name, r.table_index_name))
+            of.write('\n')
+
+    def _table_term_meta(self, n_indent, of):
+        for irate in self.tabular_rates:
+            r = self.rates[irate]
+            of.write('{}deallocate(rate_table_{})\n'.format(
+                self.indent*n_indent, r.table_index_name))
+            of.write('{}allocate(rhoy_table_{})\n'.format(
+                self.indent*n_indent, r.table_index_name))
+            of.write('{}allocate(temp_table_{})\n'.format(
+                self.indent*n_indent, r.table_index_name))
             of.write('\n')
 
     def _table_rates_indices(self, n_indent, of):
@@ -651,27 +700,27 @@ class BaseFortranNetwork(RateCollection):
 
     def _compute_tabular_rates_rhs(self, n_indent, of):
         if len(self.tabular_rates) > 0:
-            of.write('{}! Included only if there are tabular rates\n'.format(self.indent*n_indent))
-            of.write('{}do i = 1, nrat_tabular\n'.format(self.indent*n_indent))
-            of.write('{}call tabular_evaluate(table_meta(i), rhoy, temp, reactvec)\n'.format(
-                self.indent*(n_indent+1)))
-            of.write('{}j = i + nrat_reaclib\n'.format(self.indent*(n_indent+1)))
-            of.write('{}rate_eval % unscreened_rates(:,j) = reactvec(1:4)\n'.format(
-                self.indent*(n_indent+1)))
-            of.write('{}rate_eval % dqweak(i) = reactvec(5)\n'.format(self.indent*(n_indent+1)))
-            of.write('{}rate_eval % epart(i)  = reactvec(6)\n'.format(self.indent*(n_indent+1)))
-            of.write('{}end do\n'.format(self.indent*n_indent))
+            of.write('{}! Calculate tabular rates\n'.format(self.indent*n_indent))
+            for n, irate in enumerate(self.tabular_rates):
+                r = self.rates[irate]
+                of.write('{}call tabular_evaluate(rate_table_{}, rhoy_table_{}, temp_table_{}, &\n'.format(self.indent*n_indent, r.table_index_name, r.table_index_name, r.table_index_name))
+                of.write('{}                      num_rhoy_{}, num_temp_{}, num_vars_{}, &\n'.format(self.indent*n_indent, r.table_index_name, r.table_index_name, r.table_index_name))
+                of.write('{}                      rhoy, temp, reactvec)\n'.format(self.indent*n_indent))
+                of.write('{}rate_eval % unscreened_rates(:,{}) = reactvec(1:4)\n'.format(self.indent*n_indent, n+1+len(self.reaclib_rates)))
+                of.write('{}rate_eval % dqweak({}) = reactvec(5)\n'.format(self.indent*n_indent, n+1))
+                of.write('{}rate_eval % epart({})  = reactvec(6)\n'.format(self.indent*n_indent, n+1))
+                of.write('\n')
 
     def _compute_tabular_rates_jac(self, n_indent, of):
         if len(self.tabular_rates) > 0:
-            of.write('{}! Included only if there are tabular rates\n'.format(self.indent*n_indent))
-            of.write('{}do i = 1, nrat_tabular\n'.format(self.indent*n_indent))
-            of.write('{}call tabular_evaluate(table_meta(i), rhoy, temp, reactvec)\n'.format(
-                self.indent*(n_indent+1)))
-            of.write('{}j = i + nrat_reaclib\n'.format(self.indent*(n_indent+1)))
-            of.write('{}rate_eval % unscreened_rates(:,j) = reactvec(1:4)\n'.format(
-                self.indent*(n_indent+1)))
-            of.write('{}end do\n'.format(self.indent*n_indent))
+            of.write('{}! Calculate tabular rates\n'.format(self.indent*n_indent))
+            for n, irate in enumerate(self.tabular_rates):
+                r = self.rates[irate]
+                of.write('{}call tabular_evaluate(rate_table_{}, rhoy_table_{}, temp_table_{}, &\n'.format(self.indent*n_indent, r.table_index_name, r.table_index_name, r.table_index_name))
+                of.write('{}                      num_rhoy_{}, num_temp_{}, num_vars_{}, &\n'.format(self.indent*n_indent, r.table_index_name, r.table_index_name, r.table_index_name))
+                of.write('{}                      rhoy, temp, reactvec)\n'.format(self.indent*n_indent))
+                of.write('{}rate_eval % unscreened_rates(:,{}) = reactvec(1:4)\n'.format(self.indent*n_indent, n+1+len(self.reaclib_rates)))
+                of.write('\n')
 
     def _ydot_declare_scratch(self, n_indent, of):
         # Declare scratch variables
@@ -744,19 +793,21 @@ class BaseFortranNetwork(RateCollection):
                 of.write('{}{} = {}\n'.format(self.indent*n_indent, siname, sivalue))
 
     def _jacnuc(self, n_indent, of):
-        # now make the JACOBIAN
+        # now make the Jacobian
         n_unique_nuclei = len(self.unique_nuclei)
         for jnj, nj in enumerate(self.unique_nuclei):
             for ini, ni in enumerate(self.unique_nuclei):
                 jac_idx = n_unique_nuclei*jnj + ini
-                jvalue = self.fortranify(sympy.fcode(self.jac_out_result[jac_idx],
-                                                     precision=15,
-                                                     source_format='free',
-                                                     standard=95))
-                of.write("{}{}(j{},j{}) = ( &\n".format(self.indent*n_indent,
-                                                        self.name_jacobian_nuc, nj, ni))
-                of.write("{}{} &\n".format(self.indent*(n_indent+1), jvalue))
-                of.write("{}   )\n\n".format(self.indent*n_indent))
+                if not self.jac_null_entries[jac_idx]:
+                    jvalue = self.fortranify(sympy.fcode(self.jac_out_result[jac_idx],
+                                                         precision=15,
+                                                         source_format='free',
+                                                         standard=95))
+                    of.write("{}scratch = (&\n".format(self.indent*(n_indent)))
+                    of.write("{}{} &\n".format(self.indent*(n_indent+1), jvalue))
+                    of.write("{}   )\n".format(self.indent*n_indent))
+                    of.write("{}call set_jac_entry(state, {}, {}, scratch)\n\n".format(
+                        self.indent*n_indent, nj, ni))
 
     def _yinit_nuc(self, n_indent, of):
         for n in self.unique_nuclei:

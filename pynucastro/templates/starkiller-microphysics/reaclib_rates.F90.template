@@ -1,5 +1,9 @@
 module reaclib_rates
-  use screening_module, only: screen5, add_screening_factor, screening_init, plasma_state, fill_plasma_state
+
+  use amrex_fort_module, only: rt => amrex_real
+  use screening_module, only: screen5, add_screening_factor, &
+                              screening_init, screening_finalize, &
+                              plasma_state, fill_plasma_state
   use network
 
   implicit none
@@ -7,13 +11,17 @@ module reaclib_rates
   logical, parameter :: screen_reaclib = .true.
   
   ! Temperature coefficient arrays (numbers correspond to reaction numbers in net_info)
-  double precision, allocatable :: ctemp_rate(:,:)
+  real(rt), allocatable :: ctemp_rate(:,:)
 
   ! Index into ctemp_rate, dimension 2, where each rate's coefficients start
   integer, allocatable :: rate_start_idx(:)
   
   ! Reaction multiplicities-1 (how many rates contribute - 1)
   integer, allocatable :: rate_extra_mult(:)
+
+#ifdef AMREX_USE_CUDA
+  attributes(managed) :: ctemp_rate, rate_start_idx, rate_extra_mult
+#endif
 
   !$acc declare create(ctemp_rate, rate_start_idx, rate_extra_mult)
   !$acc declare copyin(screen_reaclib)
@@ -38,6 +46,7 @@ contains
     deallocate( rate_extra_mult )
   end subroutine term_reaclib
 
+
   subroutine net_screening_init()
     ! Adds screening factors and calls screening_init
 
@@ -46,16 +55,17 @@ contains
     call screening_init()    
   end subroutine net_screening_init
 
+
   subroutine reaclib_evaluate(pstate, temp, iwhich, reactvec)
     !$acc routine seq
 
     implicit none
     
     type(plasma_state), intent(in) :: pstate
-    double precision, intent(in) :: temp
+    real(rt), intent(in) :: temp
     integer, intent(in) :: iwhich
 
-    double precision, intent(inout) :: reactvec(num_rate_groups+2)
+    real(rt), intent(inout) :: reactvec(num_rate_groups+2)
     ! reactvec(1) = rate     , the reaction rate
     ! reactvec(2) = drate_dt , the Temperature derivative of rate
     ! reactvec(3) = scor     , the screening factor
@@ -72,10 +82,10 @@ contains
     !       in weak reactions and/or gamma heating of the plasma
     !       from nuclear transitions in daughter nuclei.
 
-    double precision  :: rate, scor ! Rate and Screening Factor
-    double precision  :: drate_dt, dscor_dt ! Temperature derivatives
-    double precision :: dscor_dd
-    double precision :: ri, T9, T9_exp, lnirate, irate, dirate_dt, dlnirate_dt
+    real(rt) :: rate, scor ! Rate and Screening Factor
+    real(rt) :: drate_dt, dscor_dt ! Temperature derivatives
+    real(rt) :: dscor_dd
+    real(rt) :: ri, T9, T9_exp, lnirate, irate, dirate_dt, dlnirate_dt
     integer :: i, j, m, istart
 
     ri = 0.0d0
@@ -113,7 +123,7 @@ contains
 
     reactvec(i_rate)     = rate
     reactvec(i_drate_dt) = drate_dt
-    reactvec(i_scor)     = 0.0d0
+    reactvec(i_scor)     = 1.0d0
     reactvec(i_dscor_dt) = 0.0d0
     reactvec(i_dqweak)   = 0.0d0
     reactvec(i_epart)    = 0.0d0
