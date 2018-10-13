@@ -15,10 +15,7 @@ module reaclib_rates
   ! Reaction multiplicities-1 (how many rates contribute - 1)
   integer, allocatable :: rate_extra_mult(:)
 
-  ! Should these reactions be screened?
-  logical, allocatable :: do_screening(:)
-  
-  !$acc declare create(ctemp_rate, rate_start_idx, rate_extra_mult, do_screening)
+  !$acc declare create(ctemp_rate, rate_start_idx, rate_extra_mult)
   !$acc declare copyin(screen_reaclib)
 
 contains
@@ -31,9 +28,7 @@ contains
 
     <rate_extra_mult>(2)
 
-    <screen_logical>(2)
-
-    !$acc update device(ctemp_rate, rate_start_idx, rate_extra_mult, do_screening)
+    !$acc update device(ctemp_rate, rate_start_idx, rate_extra_mult)
     
   end subroutine init_reaclib
 
@@ -41,7 +36,6 @@ contains
     deallocate( ctemp_rate )
     deallocate( rate_start_idx )
     deallocate( rate_extra_mult )
-    deallocate( do_screening )
   end subroutine term_reaclib
 
   subroutine net_screening_init()
@@ -91,9 +85,6 @@ contains
     dirate_dt = 0.0d0
     T9 = temp/1.0d9
     T9_exp = 0.0d0
-    scor = 1.0d0
-    dscor_dt = 0.0d0
-    dscor_dd = 0.0d0
 
     ! Use reaction multiplicities to tell whether the rate is Reaclib
     m = rate_extra_mult(iwhich)
@@ -120,14 +111,10 @@ contains
        drate_dt = drate_dt + dirate_dt
     end do
 
-    if ( screen_reaclib .and. do_screening(iwhich) ) then
-       call screen5(pstate, iwhich, scor, dscor_dt, dscor_dd)
-    end if
-
     reactvec(i_rate)     = rate
     reactvec(i_drate_dt) = drate_dt
-    reactvec(i_scor)     = scor
-    reactvec(i_dscor_dt) = dscor_dt
+    reactvec(i_scor)     = 0.0d0
+    reactvec(i_dscor_dt) = 0.0d0
     reactvec(i_dqweak)   = 0.0d0
     reactvec(i_epart)    = 0.0d0
 

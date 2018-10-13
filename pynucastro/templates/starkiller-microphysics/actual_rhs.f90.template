@@ -49,6 +49,9 @@ contains
 
   subroutine evaluate_rates(state, rate_eval)
     !$acc routine seq
+
+    implicit none
+    
     type(burn_t)     :: state
     type(rate_eval_t), intent(out) :: rate_eval
     type(plasma_state) :: pstate
@@ -56,13 +59,13 @@ contains
     double precision :: raw_rates(4, nrates)
     double precision :: reactvec(num_rate_groups+2)
     integer :: i, j
-    double precision :: dens, temp, rhoy
+    double precision :: dens, temp, rhoy, scor, dscor_dt, dscor_dd
 
     Y(:) = state%xn(:) * aion_inv(:)
     dens = state%rho
     temp = state%T
-    rhoy = dens*state%y_e
-    
+    rhoy = dens * state%y_e
+
     ! Calculate Reaclib rates
     call fill_plasma_state(pstate, temp, dens, Y)
     do i = 1, nrat_reaclib
@@ -70,11 +73,16 @@ contains
        rate_eval % unscreened_rates(:,i) = reactvec(1:4)
     end do
 
+    ! Evaluate screening factors
+    if (screen_reaclib) then
+       <compute_screening_factors>(3)
+    end if
+
     <compute_tabular_rates_rhs>(2)
 
     ! Compute screened rates
     rate_eval % screened_rates = rate_eval % unscreened_rates(i_rate, :) * &
-         rate_eval % unscreened_rates(i_scor, :)
+                                 rate_eval % unscreened_rates(i_scor, :)
 
   end subroutine evaluate_rates
 

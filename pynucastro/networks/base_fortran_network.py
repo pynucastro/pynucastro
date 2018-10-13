@@ -57,8 +57,8 @@ class BaseFortranNetwork(RateCollection):
         self.ftags['<nion>'] = self._nion
         self.ftags['<rate_start_idx>'] = self._rate_start_idx
         self.ftags['<rate_extra_mult>'] = self._rate_extra_mult
-        self.ftags['<screen_logical>'] = self._screen_logical
         self.ftags['<screen_add>'] = self._screen_add
+        self.ftags['<compute_screening_factors>'] = self._compute_screening_factors
         self.ftags['<ctemp_ptr_declare>'] = self._ctemp_ptr_declare
         self.ftags['<ctemp_allocate>'] = self._ctemp_allocate
         self.ftags['<ctemp_deallocate>'] = self._ctemp_deallocate
@@ -420,6 +420,35 @@ class BaseFortranNetwork(RateCollection):
             self.indent*n_indent,
             len(self.rates)))
 
+    def get_screening_map(self):
+        screening_map = []        
+        for k, r in enumerate(self.rates):
+            if r.ion_screen:
+                nucs = '{}_{}'.format(r.ion_screen[0], r.ion_screen[1])
+                in_map = False
+                for h, n1, n2, mrates, krates in screening_map:
+                    if h==nucs:
+                        in_map = True
+                        mrates.append(r)
+                        krates.append(k)
+                        break
+                if not in_map:
+                    screening_map.append((nucs, r.ion_screen[0], r.ion_screen[1],
+                                          [r], [k]))
+        return screening_map
+
+    def _compute_screening_factors(self, n_indent, of):
+        screening_map = self.get_screening_map()
+        for i, (h, n1, n2, mrates, krates) in enumerate(screening_map):
+            of.write('\n{}call screen5(pstate, {}, scor, dscor_dt, dscor_dd)\n'.format(
+                self.indent*n_indent, i+1))
+            for r, k in zip(mrates, krates):
+                of.write('{}rate_eval % unscreened_rates(i_scor,{}) = scor\n'.format(
+                    self.indent*n_indent, k))
+                of.write('{}rate_eval % unscreened_rates(i_dscor_dt,{}) = dscor_dt\n'.format(
+                    self.indent*n_indent, k))
+            of.write('\n')
+
     def _nrat_reaclib(self, n_indent, of):
         # Writes the number of Reaclib rates
         of.write('{}integer, parameter :: nrat_reaclib = {}\n'.format(
@@ -518,29 +547,13 @@ class BaseFortranNetwork(RateCollection):
                 else:
                     of.write(', &\n')
 
-    def _screen_logical(self, n_indent, of):
-        of.write('{}allocate( do_screening(nrat_reaclib) )\n'.format(self.indent*n_indent))
-        of.write('{}do_screening(:) = [ &\n'.format(self.indent*n_indent))
-        for i, r in enumerate(self.rates):
-            if i in self.reaclib_rates:
-                if r.ion_screen:
-                    of.write('{}{}'.format(self.indent*(n_indent+1), '.true.'))
-                else:
-                    of.write('{}{}'.format(self.indent*(n_indent+1), '.false.'))
-                if i==len(self.reaclib_rates)-1:
-                    of.write(' ]\n')
-                else:
-                    of.write(', &\n')
-
     def _screen_add(self, n_indent, of):
-        for r in self.rates:
-            if r.ion_screen:
-                of.write('{}call add_screening_factor('.format(self.indent*n_indent))
-                of.write('zion(j{}), aion(j{}), &\n'.format(r.ion_screen[0],
-                                                            r.ion_screen[0]))
-                of.write('{}zion(j{}), aion(j{}))\n\n'.format(self.indent*(n_indent+1),
-                                                              r.ion_screen[1],
-                                                              r.ion_screen[1]))
+        screening_map = self.get_screening_map()
+        for i, (h, n1, n2, mrates, krates) in enumerate(screening_map):
+            of.write('{}call add_screening_factor('.format(self.indent*n_indent))
+            of.write('zion(j{}), aion(j{}), &\n'.format(n1, n1))
+            of.write('{}zion(j{}), aion(j{}))\n\n'.format(self.indent*(n_indent+1),
+                                                          n2, n2))
 
     def _ctemp_ptr_declare(self, n_indent, of):
         of.write('{}type(ctemp_ptr), dimension({}) :: ctemp_point\n'.format(
