@@ -110,7 +110,7 @@ contains
 
     reactvec(i_rate)     = rate
     reactvec(i_drate_dt) = drate_dt
-    reactvec(i_scor)     = 0.0d0
+    reactvec(i_scor)     = 1.0d0
     reactvec(i_dscor_dt) = 0.0d0
     reactvec(i_dqweak)   = 0.0d0
     reactvec(i_epart)    = 0.0d0
