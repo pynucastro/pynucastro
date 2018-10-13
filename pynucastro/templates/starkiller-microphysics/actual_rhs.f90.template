@@ -1,12 +1,12 @@
 module actual_rhs_module
 
-  use bl_types
-  use bl_constants_module
+  use amrex_fort_module, only : rt => amrex_real
+  use amrex_constants_module
   use physical_constants, only: N_AVO
   use network
   use reaclib_rates, only: screen_reaclib, reaclib_evaluate
   use table_rates
-  use screening_module, only: plasma_state, fill_plasma_state
+  use screening_module, only: screen5, plasma_state, fill_plasma_state
   use sneut_module, only: sneut5
   use temperature_integration_module, only: temperature_rhs, temperature_jac
   use burn_type_module

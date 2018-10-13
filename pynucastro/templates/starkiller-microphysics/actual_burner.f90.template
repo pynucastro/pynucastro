@@ -40,13 +40,13 @@ contains
 
     use integrator_module, only: integrator
     use burn_type_module, only: burn_t
-    use bl_types, only: dp_t
+    use amrex_fort_module, only : rt => amrex_real
 
     implicit none
 
     type (burn_t),    intent(in   ) :: state_in
     type (burn_t),    intent(inout) :: state_out
-    real(kind=dp_t),  intent(in   ) :: dt, time
+    real(kind=rt),  intent(in   ) :: dt, time
 
     call integrator(state_in, state_out, dt, time)
   end subroutine actual_burner
