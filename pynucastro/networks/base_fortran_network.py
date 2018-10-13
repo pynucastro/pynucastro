@@ -430,11 +430,11 @@ class BaseFortranNetwork(RateCollection):
                     if h==nucs:
                         in_map = True
                         mrates.append(r)
-                        krates.append(k)
+                        krates.append(k+1)
                         break
                 if not in_map:
                     screening_map.append((nucs, r.ion_screen[0], r.ion_screen[1],
-                                          [r], [k]))
+                                          [r], [k+1]))
         return screening_map
 
     def _compute_screening_factors(self, n_indent, of):
