@@ -806,7 +806,7 @@ class BaseFortranNetwork(RateCollection):
                     of.write("{}scratch = (&\n".format(self.indent*(n_indent)))
                     of.write("{}{} &\n".format(self.indent*(n_indent+1), jvalue))
                     of.write("{}   )\n".format(self.indent*n_indent))
-                    of.write("{}call set_jac_entry(state, {}, {}, scratch)\n\n".format(
+                    of.write("{}call set_jac_entry(state, j{}, j{}, scratch)\n\n".format(
                         self.indent*n_indent, nj, ni))
 
     def _yinit_nuc(self, n_indent, of):
