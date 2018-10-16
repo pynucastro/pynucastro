@@ -62,7 +62,6 @@ class BaseFortranNetwork(RateCollection):
         self.ftags['<ctemp_ptr_declare>'] = self._ctemp_ptr_declare
         self.ftags['<ctemp_allocate>'] = self._ctemp_allocate
         self.ftags['<ctemp_deallocate>'] = self._ctemp_deallocate
-        self.ftags['<ctemp_switch>'] = self._ctemp_switch
         self.ftags['<table_num>'] = self._table_num
         self.ftags['<public_table_indices>'] = self._public_table_indices
         self.ftags['<table_indices>'] = self._table_indices
@@ -609,25 +608,6 @@ class BaseFortranNetwork(RateCollection):
             of.write('{}deallocate( ctemp_rate_{} )\n'.format(
                 self.indent*n_indent, nr+1))
 
-    def _ctemp_switch(self, n_indent, of):
-        for nr,r in enumerate(self.rates):
-            of.write('{}'.format(self.indent*n_indent))
-            if nr!=0:
-                of.write('else ')
-            of.write('if (iwhich == {}) then\n'.format(nr+1))
-            if nr in self.reaclib_rates:
-                of.write('{}ctemp => ctemp_rate_{}\n'.format(
-                    self.indent*(n_indent+1), nr+1))
-            elif nr in self.tabular_rates:
-                of.write(
-                    '{}call table_meta({})%bl_lookup(rhoy, temp, jtab_rate, rate)\n'.format(
-                        self.indent*(n_indent+1), r.table_index_name))
-                of.write('{}return_from_table = .true.\n'.format(self.indent*(n_indent+1)))
-            else:
-                print('ERROR: rate not in self.reaclib_rates or self.tabular_rates!')
-                exit()
-        of.write('{}end if\n'.format(self.indent*n_indent))
-
     def _table_num(self, n_indent, of):
         of.write('{}integer, parameter :: num_tables   = {}\n'.format(
             self.indent*n_indent, len(self.tabular_rates)))
@@ -668,26 +648,68 @@ class BaseFortranNetwork(RateCollection):
     def _table_init_meta(self, n_indent, of):
         for irate in self.tabular_rates:
             r = self.rates[irate]
+
+            of.write('{}allocate(num_temp_{})\n'.format(
+                self.indent*n_indent, r.table_index_name))
+
+            of.write('{}allocate(num_rhoy_{})\n'.format(
+                self.indent*n_indent, r.table_index_name))
+
+            of.write('{}allocate(num_vars_{})\n'.format(
+                self.indent*n_indent, r.table_index_name))
+
+            of.write('{}num_temp_{} = {}\n'.format(
+                self.indent*n_indent, r.table_index_name, r.table_temp_lines))
+
+            of.write('{}num_rhoy_{} = {}\n'.format(
+                self.indent*n_indent, r.table_index_name, r.table_rhoy_lines))
+
+            of.write('{}num_vars_{} = {}\n'.format(
+                self.indent*n_indent, r.table_index_name, r.table_num_vars))
+
+            of.write('{}num_header_{} = {}\n'.format(
+                self.indent*n_indent, r.table_index_name, r.table_header_lines))
+
+            of.write('{}rate_table_file_{} = trim("{}")\n'.format(
+                self.indent*n_indent, r.table_index_name, r.table_file))
+
             of.write('{}allocate(rate_table_{}(num_temp_{}, num_rhoy_{}, num_vars_{}))\n'.format(
                 self.indent*n_indent, r.table_index_name, r.table_index_name, r.table_index_name, r.table_index_name))
+
             of.write('{}allocate(rhoy_table_{}(num_rhoy_{}))\n'.format(
                 self.indent*n_indent, r.table_index_name, r.table_index_name))
+
             of.write('{}allocate(temp_table_{}(num_temp_{}))\n'.format(
                 self.indent*n_indent, r.table_index_name, r.table_index_name))
+
             of.write('{}call init_tab_info(rate_table_{}, rhoy_table_{}, temp_table_{}, num_rhoy_{}, num_temp_{}, num_vars_{}, rate_table_file_{}, num_header_{})\n'.format(
                 self.indent*n_indent, r.table_index_name, r.table_index_name, r.table_index_name, r.table_index_name,
                 r.table_index_name, r.table_index_name, r.table_index_name, r.table_index_name))
+
             of.write('\n')
 
     def _table_term_meta(self, n_indent, of):
         for irate in self.tabular_rates:
             r = self.rates[irate]
+
+            of.write('{}deallocate(num_temp_{})\n'.format(
+                self.indent*n_indent, r.table_index_name))
+
+            of.write('{}deallocate(num_rhoy_{})\n'.format(
+                self.indent*n_indent, r.table_index_name))
+
+            of.write('{}deallocate(num_vars_{})\n'.format(
+                self.indent*n_indent, r.table_index_name))
+
             of.write('{}deallocate(rate_table_{})\n'.format(
                 self.indent*n_indent, r.table_index_name))
-            of.write('{}allocate(rhoy_table_{})\n'.format(
+
+            of.write('{}deallocate(rhoy_table_{})\n'.format(
                 self.indent*n_indent, r.table_index_name))
-            of.write('{}allocate(temp_table_{})\n'.format(
+
+            of.write('{}deallocate(temp_table_{})\n'.format(
                 self.indent*n_indent, r.table_index_name))
+
             of.write('\n')
 
     def _table_rates_indices(self, n_indent, of):
@@ -705,7 +727,7 @@ class BaseFortranNetwork(RateCollection):
                 r = self.rates[irate]
                 of.write('{}call tabular_evaluate(rate_table_{}, rhoy_table_{}, temp_table_{}, &\n'.format(self.indent*n_indent, r.table_index_name, r.table_index_name, r.table_index_name))
                 of.write('{}                      num_rhoy_{}, num_temp_{}, num_vars_{}, &\n'.format(self.indent*n_indent, r.table_index_name, r.table_index_name, r.table_index_name))
-                of.write('{}                      rhoy, temp, reactvec)\n'.format(self.indent*n_indent))
+                of.write('{}                      rhoy, state % T, reactvec)\n'.format(self.indent*n_indent))
                 of.write('{}rate_eval % unscreened_rates(:,{}) = reactvec(1:4)\n'.format(self.indent*n_indent, n+1+len(self.reaclib_rates)))
                 of.write('{}rate_eval % dqweak({}) = reactvec(5)\n'.format(self.indent*n_indent, n+1))
                 of.write('{}rate_eval % epart({})  = reactvec(6)\n'.format(self.indent*n_indent, n+1))
@@ -718,7 +740,7 @@ class BaseFortranNetwork(RateCollection):
                 r = self.rates[irate]
                 of.write('{}call tabular_evaluate(rate_table_{}, rhoy_table_{}, temp_table_{}, &\n'.format(self.indent*n_indent, r.table_index_name, r.table_index_name, r.table_index_name))
                 of.write('{}                      num_rhoy_{}, num_temp_{}, num_vars_{}, &\n'.format(self.indent*n_indent, r.table_index_name, r.table_index_name, r.table_index_name))
-                of.write('{}                      rhoy, temp, reactvec)\n'.format(self.indent*n_indent))
+                of.write('{}                      rhoy, state % T, reactvec)\n'.format(self.indent*n_indent))
                 of.write('{}rate_eval % unscreened_rates(:,{}) = reactvec(1:4)\n'.format(self.indent*n_indent, n+1+len(self.reaclib_rates)))
                 of.write('\n')
 

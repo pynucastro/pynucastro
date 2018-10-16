@@ -2,16 +2,17 @@ module table_rates
   ! Table is expected to be in terms of dens*ye and temp (non-logarithmic, cgs units)
   ! Table energy units are expected in terms of ergs
 
+  use amrex_fort_module, only: rt => amrex_real
+
   implicit none
 
-  public table_meta, tabular_evaluate
+  public tabular_evaluate
   <public_table_indices>(1)
 
   public jtab_mu, jtab_dq, jtab_vs, jtab_rate, jtab_nuloss, jtab_gamma
 
   private num_tables
   private k_drate_dt, add_vars
-  private table_read_meta
 
   <table_num>(1)
   integer, parameter :: jtab_mu      = 1

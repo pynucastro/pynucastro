@@ -4,11 +4,7 @@ module actual_rhs_module
   use amrex_constants_module
   use physical_constants, only: N_AVO
   use network
-  use reaclib_rates, only: screen_reaclib, reaclib_evaluate
   use table_rates
-  use screening_module, only: screen5, plasma_state, fill_plasma_state
-  use sneut_module, only: sneut5
-  use temperature_integration_module, only: temperature_rhs, temperature_jac
   use burn_type_module
 
   implicit none
@@ -57,6 +53,9 @@ contains
   subroutine evaluate_rates(state, rate_eval)
     !$acc routine seq
 
+    use reaclib_rates, only: screen_reaclib, reaclib_evaluate
+    use screening_module, only: screen5, plasma_state, fill_plasma_state
+
     implicit none
     
     type(burn_t)     :: state
@@ -66,22 +65,20 @@ contains
     real(rt) :: raw_rates(4, nrates)
     real(rt) :: reactvec(num_rate_groups+2)
     integer :: i, j
-    real(rt) :: dens, temp, rhoy, scor, dscor_dt, dscor_dd
+    real(rt) :: rhoy, scor, dscor_dt, dscor_dd
 
     !$gpu
 
     Y(:) = state % xn(:) * aion_inv(:)
-    dens = state % rho
-    temp = state % T
-    rhoy = dens * state % y_e
+    rhoy = state % rho * state % y_e
 
     ! Zero out the rates
     call zero_rate_eval(rate_eval)
 
     ! Calculate Reaclib rates
-    call fill_plasma_state(pstate, temp, dens, Y)
+    call fill_plasma_state(pstate, state % T, state % rho, Y)
     do i = 1, nrat_reaclib
-       call reaclib_evaluate(pstate, temp, i, reactvec)
+       call reaclib_evaluate(pstate, state % T, i, reactvec)
        rate_eval % unscreened_rates(:,i) = reactvec(1:4)
     end do
 
@@ -105,16 +102,17 @@ contains
 
     use extern_probin_module, only: do_constant_volume_burn
     use burn_type_module, only: net_itemp, net_ienuc
+    use sneut_module, only: sneut5
+    use temperature_integration_module, only: temperature_rhs
 
     implicit none
 
     type(burn_t) :: state
     type(rate_eval_t) :: rate_eval
-    type(plasma_state) :: pstate
     real(rt) :: Y(nspec), ydot_nuc(nspec)
     real(rt) :: reactvec(num_rate_groups+2)
     integer :: i, j
-    real(rt) :: dens, temp, rhoy, ye, enuc
+    real(rt) :: rhoy, ye, enuc
     real(rt) :: sneut, dsneutdt, dsneutdd, snuda, snudz
 
     !$gpu
@@ -122,12 +120,9 @@ contains
     ! Set molar abundances
     Y(:) = state % xn(:) * aion_inv(:)
 
-    dens = state % rho
-    temp = state % T
-
     call evaluate_rates(state, rate_eval)
 
-    call rhs_nuc(ydot_nuc, Y, rate_eval % screened_rates, dens)
+    call rhs_nuc(state, ydot_nuc, Y, rate_eval % screened_rates)
     state % ydot(1:nspec) = ydot_nuc
 
     ! ion binding energy contributions
@@ -142,7 +137,7 @@ contains
 
 
     ! Get the neutrino losses
-    call sneut5(temp, dens, state % abar, state % zbar, sneut, dsneutdt, dsneutdd, snuda, snudz)
+    call sneut5(state % T, state % rho, state % abar, state % zbar, sneut, dsneutdt, dsneutdd, snuda, snudz)
 
     ! Append the energy equation (this is erg/g/s)
     state % ydot(net_ienuc) = enuc - sneut
@@ -153,14 +148,16 @@ contains
   end subroutine actual_rhs
 
 
-  subroutine rhs_nuc(ydot_nuc, Y, screened_rates, dens)
+  subroutine rhs_nuc(state, ydot_nuc, Y, screened_rates)
 
     !$acc routine seq
 
+    implicit none
+
+    type (burn_t), intent(in) :: state
     real(rt), intent(out) :: ydot_nuc(nspec)
     real(rt), intent(in)  :: Y(nspec)
     real(rt), intent(in)  :: screened_rates(nrates)
-    real(rt), intent(in)  :: dens
 
     !$gpu
 
@@ -178,23 +175,22 @@ contains
     !$acc routine seq
 
     use burn_type_module, only: net_itemp, net_ienuc
-    
+    use sneut_module, only: sneut5
+    use temperature_integration_module, only: temperature_jac
+    use jacobian_sparsity_module, only: get_jac_entry, set_jac_entry, set_jac_zero
+
     implicit none
     
     type(burn_t) :: state
     type(rate_eval_t) :: rate_eval
-    type(plasma_state) :: pstate
     real(rt) :: reactvec(num_rate_groups+2)
     real(rt) :: screened_rates_dt(nrates)
     real(rt) :: Y(nspec), yderivs(nspec)
-    real(rt) :: dens, temp, ye, rhoy, b1, scratch
+    real(rt) :: ye, rhoy, b1, scratch
     real(rt) :: sneut, dsneutdt, dsneutdd, snuda, snudz
-    integer :: i, j
+    integer  :: j, k
 
     !$gpu
-
-    dens = state % rho
-    temp = state % T
 
     ! Set molar abundances
     Y(:) = state % xn(:) * aion_inv(:)
@@ -205,7 +201,7 @@ contains
     call set_jac_zero(state)
 
     ! Species Jacobian elements with respect to other species
-    call jac_nuc(state, Y, rate_eval % screened_rates, dens)
+    call jac_nuc(state, Y, rate_eval % screened_rates)
 
     ! Evaluate the species Jacobian elements with respect to temperature by
     ! calling the RHS using the temperature derivative of the screened rate
@@ -214,7 +210,7 @@ contains
                         rate_eval % unscreened_rates(i_drate_dt, :) * &
                         rate_eval % unscreened_rates(i_scor, :)
 
-    call rhs_nuc(yderivs, Y, screened_rates_dt, dens)
+    call rhs_nuc(state, yderivs, Y, screened_rates_dt)
 
     do k = 1, nspec
        call set_jac_entry(state, k, net_itemp, yderivs(k))
@@ -230,10 +226,10 @@ contains
     enddo
 
     ! Account for the thermal neutrino losses
-    call sneut5(temp, dens, state % abar, state % zbar, sneut, dsneutdt, dsneutdd, snuda, snudz)
+    call sneut5(state % T, state % rho, state % abar, state % zbar, sneut, dsneutdt, dsneutdd, snuda, snudz)
 
     do j = 1, nspec
-       b1 = ((aion(j) - abar) * abar * snuda + (zion(j) - zbar) * abar * snudz)
+       b1 = ((aion(j) - state % abar) * state % abar * snuda + (zion(j) - state % zbar) * state % abar * snudz)
        call get_jac_entry(state, net_ienuc, j, scratch)
        scratch = scratch - b1
        call set_jac_entry(state, net_ienuc, j, scratch)
@@ -253,14 +249,17 @@ contains
   end subroutine actual_jac
 
 
-  subroutine jac_nuc(state, Y, screened_rates, dens)
+  subroutine jac_nuc(state, Y, screened_rates)
 
     !$acc routine seq
+
+    use jacobian_sparsity_module, only: set_jac_entry
+
+    implicit none
 
     type(burn_t), intent(inout) :: state
     real(rt), intent(in)  :: Y(nspec)
     real(rt), intent(in)  :: screened_rates(nrates)
-    real(rt), intent(in)  :: dens
     real(rt) :: scratch
 
     <jacnuc_declare_scratch>(2)
