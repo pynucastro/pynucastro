@@ -119,6 +119,8 @@ class StarKillerNetwork(BaseFortranNetwork):
         of.write('{}{}  ]\n'.format(
             self.indent*(n_indent+1), col_index[-1]))
 
+        of.write('\n')
+
         of.write('{}csr_jac_row_count = [ &\n'.format(
             self.indent*n_indent))
         for ri in row_count[:-1]:
