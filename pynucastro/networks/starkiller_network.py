@@ -34,10 +34,17 @@ class StarKillerNetwork(BaseFortranNetwork):
             self.compose_jacobian()
 
         nspec = len(self.unique_nuclei)
+        number_nonzero = 0
 
         # Count the number of nonzero entries in the species Jacobian
-        number_zero = sum(self.jac_null_entries)
-        number_nonzero = nspec * nspec - number_zero
+        jac_idx = 0
+        # Loop over rows
+        for j, nj in enumerate(self.unique_nuclei):
+            # Loop over columns
+            for i, ni in enumerate(self.unique_nuclei):
+                if (not self.jac_null_entries[jac_idx]) or i==j:
+                    number_nonzero += 1
+                jac_idx += 1
 
         # Add the df/dT contributions
         number_nonzero += nspec + 2
@@ -53,6 +60,7 @@ class StarKillerNetwork(BaseFortranNetwork):
 
     def get_csr_jac_metadata(self):
         # Get row count and column index for the CSR Jacobian
+        # Remember, we need the entire diagonal for the linear solver
 
         # Evaluate the species Jacobian if not already done
         if not self.solved_jacobian:
@@ -72,7 +80,7 @@ class StarKillerNetwork(BaseFortranNetwork):
             num_in_row = row_count[-1]
             # Loop over columns
             for i, ni in enumerate(self.unique_nuclei):
-                if not self.jac_null_entries[jac_idx]:
+                if (not self.jac_null_entries[jac_idx]) or i==j:
                     num_in_row += 1
                     col_index.append(i+1)
                 jac_idx += 1
