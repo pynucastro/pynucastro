@@ -95,9 +95,11 @@ class BaseFortranNetwork(RateCollection):
 
         self.ydot_out_scratch = None
         self.ydot_out_result  = None
+        self.solved_ydot      = False        
         self.jac_out_scratch  = None
         self.jac_out_result   = None
-        self.jac_null_entries = None        
+        self.jac_null_entries = None
+        self.solved_jacobian  = False
         self.symbol_ludict = OrderedDict() # Symbol lookup dictionary
 
         # Define these for the particular network
@@ -328,6 +330,7 @@ class BaseFortranNetwork(RateCollection):
         else:
             self.ydot_out_scratch = None
             self.ydot_out_result  = ydot
+        self.solved_ydot = True
 
     def compose_jacobian(self):
         """Create the Jacobian matrix, df/dY"""
@@ -364,6 +367,7 @@ class BaseFortranNetwork(RateCollection):
             self.jac_out_scratch = None
             self.jac_out_result  = jac_sym
         self.jac_null_entries = jac_null
+        self.solved_jacobian = True
 
     def io_open(self, infile, outfile):
         """open the input and output files"""
@@ -399,8 +403,10 @@ class BaseFortranNetwork(RateCollection):
         self.use_cse = use_cse
 
         # Prepare RHS terms
-        self.compose_ydot()
-        self.compose_jacobian()
+        if not self.solved_ydot:
+            self.compose_ydot()
+        if not self.solved_jacobian:
+            self.compose_jacobian()
 
         # Process template files
         for tfile in self.template_files:
