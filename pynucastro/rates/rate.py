@@ -6,8 +6,11 @@ import os
 import re
 import io
 import numpy as np
+import pandas as pd      # Xinlong Li
 import matplotlib.pyplot as plt
 import collections
+import seaborn as sns
+sns.set()
 
 from pynucastro.nucdata import UnidentifiedElement, PeriodicTable
 
@@ -19,12 +22,15 @@ def list_known_rates():
 
     for _, _, filenames in os.walk(lib_path):
         for f in filenames:
+            # skip over files that are not rate files
+            if f.endswith(".md") or f.endswith(".dat"):
+                continue
             try:
                 lib = Library(f)
             except:
                 continue
             else:
-                print("{:32} : ")
+                print("{:32} : ".format(f))
                 for r in lib.get_rates():
                     print("                                 : {}".format(r))
 
@@ -253,7 +259,7 @@ class Library(object):
     pynucastro_rates_dir = os.path.join(pynucastro_dir,
                                         'library')
     pynucastro_tabular_dir = os.path.join(pynucastro_rates_dir,
-                                          'tabular')
+                                          'tabular')          # Xinlong Li   'tabular'-->'tabular_weak'
 
     def __init__(self, libfile=None, rates=None, read_library=True):
         self._library_file = libfile
@@ -729,6 +735,9 @@ class Rate(object):
         self._set_rhs_properties()
         self._set_screening()
         self._set_print_representation()
+        
+        if self.tabular == True:
+            self.get_tabular_rate()          #Xinlong Li
 
     def __repr__(self):
         return self.string
@@ -766,7 +775,6 @@ class Rate(object):
         assert(type(self.chapter) == int)
         assert(self.label == other.label)
         assert(self.weak == other.weak)
-        assert(self.weak_type == other.weak_type)
         assert(self.tabular == other.tabular)
         assert(self.reverse == other.reverse)
 
@@ -823,20 +831,12 @@ class Rate(object):
             self.resonant = False
             self.resonance_combined = False
             self.weak = False # The tabular rate might or might not be weak
-            self.weak_type = None
             self.reverse = False
             self.tabular = True
         else:
             self.label = self.labelprops[0:4]
             self.resonant = self.labelprops[4] == 'r'
             self.weak = self.labelprops[4] == 'w'
-            if self.weak:
-                if self.label.strip() == 'ec' or self.label.strip() == 'bec':
-                    self.weak_type = 'electron_capture'
-                else:
-                    self.weak_type = self.label.strip().replace('+','_pos_').replace('-','_neg_')
-            else:
-                self.weak_type = None
             self.reverse = self.labelprops[5] == 'v'
             self.tabular = False
 
@@ -1029,8 +1029,6 @@ class Rate(object):
             self.inv_prefactor = self.inv_prefactor * np.math.factorial(self.reactants.count(r))
         self.prefactor = self.prefactor/float(self.inv_prefactor)
         self.dens_exp = len(self.reactants)-1
-        if (self.weak_type == 'electron_capture' and not self.tabular):
-            self.dens_exp = self.dens_exp + 1
 
     def _set_screening(self):
         """ determine if this rate is eligible for screening and the nuclei to use. """
@@ -1083,34 +1081,25 @@ class Rate(object):
         self.pretty_string += r"$"
 
         if not self.fname:
-            # This is used to determine which rates to detect as the same reaction
-            # from multiple sources in a Library file, so it should not be unique
-            # to a given source, e.g. wc12, but only unique to the reaction.
             reactants_str = '_'.join([repr(nuc) for nuc in self.reactants])
             products_str = '_'.join([repr(nuc) for nuc in self.products])
             self.fname = '{}__{}'.format(reactants_str, products_str)
-            if self.weak:
-                self.fname = self.fname + '__weak__{}'.format(self.weak_type)
 
     def get_rate_id(self):
         """ Get an identifying string for this rate.
         Don't include resonance state since we combine resonant and
         non-resonant versions of reactions. """
-
-        srev = ''
-        if self.reverse:
-            srev = 'reverse'
-
         sweak = ''
         if self.weak:
-            sweak = 'weak'
-
+            sweak = '_weak'
+        srev = ''
+        if self.reverse:
+            srev = '_reverse'
         ssrc = 'reaclib'
         if self.tabular:
             ssrc = 'tabular'
-
-        return '{} <{}_{}_{}_{}>'.format(self.__repr__(), self.label.strip(),
-                                         ssrc, sweak, srev)
+        return '{} <{}_{}{}{}>'.format(self.__repr__(), self.label.strip(),
+                                    ssrc, sweak, srev)
 
     def heaviest(self):
         """
@@ -1137,14 +1126,69 @@ class Rate(object):
             if n.A < nuc.A or (n.A == nuc.A and n.Z > nuc.Z):
                 nuc = n
         return nuc
+    
+    def get_tabular_rate(self):    # new fundtion by Xinlong Li
+        """read the rate data from .dat file """
+        
+        # find .dat file and read it
+        self.table_path = Library._find_rate_file(self.table_file)
+        tabular_file = open(self.table_path,"r")
+        t_data = tabular_file.readlines()  # t_data is a list. each element is a line of "23Ne...dat"
+        tabular_file.close()
+        
+        # delete header lines
+        del t_data[0:self.table_header_lines]  
+        
+        # change the list ["1.23 3.45 5.67\n"] into the list ["1.23","3.45","5.67"]
+        t_data2d = []
+        for i in range(len(t_data)):
+            t_data2d.append(re.split(r"[ ]",t_data[i].strip('\n')))
+        
+        # delete all the "" in each element of data1
+        for i in range(len(t_data2d)):
+            while '' in t_data2d[i]:
+                t_data2d[i].remove('')
+            
+        df = pd.DataFrame(t_data2d)
+        df1 = df.dropna()  # drop empty lines
+        df1.columns = ['rhoY[g/cm3]','T[K]','mu[erg]','dQ[erg]','Vs[erg]',
+                                           'e-cap/B-decay_rate[1/s]','nu-energy-loss[erg/s]','gamma-energy[erg/s]']
+        self.tabular_data_table = df1
+        #if self.reactants[0].Z > self.products[0].Z:
+        #    self.tabular_data_table = df1.drop(columns=['A','Z','B-_rate','E+C_rate','nubar_rate','tableID'])
+        #else:
+        #    self.tabular_data_table = df1.drop(columns=['A','Z','B+_rate','EC_rate','nu_rate','tableID'])
+        
+        #for item in self.tabular_data_table.columns:
+        #    if self.tabular_data_table[item][0] == '---':
+        #        df2 = self.tabular_data_table.drop(columns=[item])
+        #        self.tabular_data_table = df2
 
-    def eval(self, T):
+
+
+    def eval(self, T, rhoY = None):     # Xinlong Li
         """ evauate the reaction rate for temperature T """
-        tf = Tfactors(T)
-        r = 0.0
-        for s in self.sets:
-            f = s.f()
-            r += f(tf)
+        if self.tabular == False:
+            tf = Tfactors(T)
+            r = 0.0
+            for s in self.sets:
+                f = s.f()
+                r += f(tf)
+        
+        if self.tabular == True:
+            df = self.tabular_data_table.apply(pd.to_numeric) # convert from str to float
+            # find the nearest value of T and rhoY in the data table
+            T_nearest = (np.array(df["T[K]"]))[np.abs((np.array(df["T[K]"])) - T).argmin()]
+            df1 = df.loc[df["T[K]"]==T_nearest]
+            rhoY_nearest = (np.array(df1["rhoY[g/cm3]"]))[np.abs((np.array(df1["rhoY[g/cm3]"])) - rhoY).argmin()]
+            df2 = df1.loc[df1["rhoY[g/cm3]"]==rhoY_nearest]
+            
+            #if self.reactants[0].Z > self.products[0].Z:
+            #    r = np.power(10,float(df2["EC_rate"]))     #
+            #else:
+            #    r = np.power(10,float(df2["B-_rate"]))
+            
+            r = float(df2["e-cap/B-decay_rate[1/s]"])
 
         return r
 
@@ -1162,26 +1206,50 @@ class Rate(object):
         drdT = (r2 - r1)/dT
         return (T0/r1)*drdT
 
-    def plot(self, Tmin=1.e7, Tmax=1.e10):
+    def plot(self, Tmin=1.e8, Tmax=1.6e9, rhoYmin=3.9e8, rhoYmax=2.e9):   # Xinlong Li
         """plot the rate's temperature sensitivity vs temperature"""
-
-        temps = np.logspace(np.log10(Tmin), np.log10(Tmax), 100)
-        r = np.zeros_like(temps)
-
-        for n, T in enumerate(temps):
-            r[n] = self.eval(T)
-
-        plt.loglog(temps, r)
-
-        plt.xlabel(r"$T$")
-
-        if self.dens_exp == 0:
-            plt.ylabel(r"\tau")
-        elif self.dens_exp == 1:
-            plt.ylabel(r"$N_A <\sigma v>$")
-        elif self.dens_exp == 2:
-            plt.ylabel(r"$N_A^2 <n_a n_b n_c v>$")
-
-        plt.title(r"{}".format(self.pretty_string))
-
-        plt.show()
+        
+        if self.tabular == False:
+            temps = np.logspace(np.log10(Tmin), np.log10(Tmax), 100)
+            r = np.zeros_like(temps)
+            
+            for n, T in enumerate(temps):
+                r[n] = self.eval(T)
+                
+            plt.loglog(temps, r)
+            plt.xlabel(r"$T$")
+            
+            if self.dens_exp == 0:
+                plt.ylabel(r"\tau")
+            elif self.dens_exp == 1:
+                plt.ylabel(r"$N_A <\sigma v>$")
+            elif self.dens_exp == 2:
+                plt.ylabel(r"$N_A^2 <n_a n_b n_c v>$")
+                
+            plt.title(r"{}".format(self.pretty_string))
+            plt.show()
+            
+        if self.tabular == True:
+            df = self.tabular_data_table.apply(pd.to_numeric) # convert from str to float
+            
+            df1 = df.loc[df['T[K]'] <= Tmax]
+            df2 = df1.loc[df1['T[K]'] >= Tmin]
+            df3 = df2.loc[df2['rhoY[g/cm3]'] <= rhoYmax]
+            df4 = df3.loc[df3['rhoY[g/cm3]'] >= rhoYmin]
+            
+            #if self.reactants[0].Z > self.products[0].Z:
+            #    pivotted = df4.pivot('log(rhoY)','T9','EC_rate')
+            #    #pivotted_log = np.log10(pivotted)
+            #    # generate heat map depend on T and rhoY
+            #else:
+            
+            piv = df4.pivot('rhoY[g/cm3]','T[K]','e-cap/B-decay_rate[1/s]')
+            piv_log = np.log10(piv)
+            
+            hmap = sns.heatmap(piv_log,cmap='RdBu')#,xticklabels=4,yticklabels=5)#,vmin=1e-20, vmax=1)
+            hmap.invert_yaxis()  
+            hmap.set_yticklabels(hmap.get_yticklabels(), rotation=0) 
+            plt.xlabel("$T$ [K]")
+            plt.ylabel("$\\rho Y$ [g/cm3]")
+            plt.title(r"{}".format(self.pretty_string)+"\n"+"electron-capture/beta-decay rate in log10(1/s)")
+            plt.show()
