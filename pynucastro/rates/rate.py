@@ -259,7 +259,7 @@ class Library(object):
     pynucastro_rates_dir = os.path.join(pynucastro_dir,
                                         'library')
     pynucastro_tabular_dir = os.path.join(pynucastro_rates_dir,
-                                          'tabular')          # Xinlong Li   'tabular'-->'tabular_weak'
+                                          'tabular')
 
     def __init__(self, libfile=None, rates=None, read_library=True):
         self._library_file = libfile
@@ -1127,13 +1127,13 @@ class Rate(object):
                 nuc = n
         return nuc
     
-    def get_tabular_rate(self):    # new fundtion by Xinlong Li
+    def get_tabular_rate(self):    # new fundtion by Xinlong Li for tabulated rates
         """read the rate data from .dat file """
         
         # find .dat file and read it
         self.table_path = Library._find_rate_file(self.table_file)
         tabular_file = open(self.table_path,"r")
-        t_data = tabular_file.readlines()  # t_data is a list. each element is a line of "23Ne...dat"
+        t_data = tabular_file.readlines()  
         tabular_file.close()
         
         # delete header lines
@@ -1154,19 +1154,10 @@ class Rate(object):
         df1.columns = ['rhoY[g/cm3]','T[K]','mu[erg]','dQ[erg]','Vs[erg]',
                                            'e-cap/B-decay_rate[1/s]','nu-energy-loss[erg/s]','gamma-energy[erg/s]']
         self.tabular_data_table = df1
-        #if self.reactants[0].Z > self.products[0].Z:
-        #    self.tabular_data_table = df1.drop(columns=['A','Z','B-_rate','E+C_rate','nubar_rate','tableID'])
-        #else:
-        #    self.tabular_data_table = df1.drop(columns=['A','Z','B+_rate','EC_rate','nu_rate','tableID'])
-        
-        #for item in self.tabular_data_table.columns:
-        #    if self.tabular_data_table[item][0] == '---':
-        #        df2 = self.tabular_data_table.drop(columns=[item])
-        #        self.tabular_data_table = df2
+       
 
 
-
-    def eval(self, T, rhoY = None):     # Xinlong Li
+    def eval(self, T, rhoY = None):    
         """ evauate the reaction rate for temperature T """
         if self.tabular == False:
             tf = Tfactors(T)
@@ -1175,18 +1166,13 @@ class Rate(object):
                 f = s.f()
                 r += f(tf)
         
-        if self.tabular == True:
+        if self.tabular == True:  # Xinlong Li for tabulated rates
             df = self.tabular_data_table.apply(pd.to_numeric) # convert from str to float
             # find the nearest value of T and rhoY in the data table
             T_nearest = (np.array(df["T[K]"]))[np.abs((np.array(df["T[K]"])) - T).argmin()]
             df1 = df.loc[df["T[K]"]==T_nearest]
             rhoY_nearest = (np.array(df1["rhoY[g/cm3]"]))[np.abs((np.array(df1["rhoY[g/cm3]"])) - rhoY).argmin()]
             df2 = df1.loc[df1["rhoY[g/cm3]"]==rhoY_nearest]
-            
-            #if self.reactants[0].Z > self.products[0].Z:
-            #    r = np.power(10,float(df2["EC_rate"]))     #
-            #else:
-            #    r = np.power(10,float(df2["B-_rate"]))
             
             r = float(df2["e-cap/B-decay_rate[1/s]"])
 
@@ -1229,7 +1215,7 @@ class Rate(object):
             plt.title(r"{}".format(self.pretty_string))
             plt.show()
             
-        if self.tabular == True:
+        if self.tabular == True:   # Xinlong for tabuled rates
             df = self.tabular_data_table.apply(pd.to_numeric) # convert from str to float
             
             df1 = df.loc[df['T[K]'] <= Tmax]
@@ -1237,16 +1223,10 @@ class Rate(object):
             df3 = df2.loc[df2['rhoY[g/cm3]'] <= rhoYmax]
             df4 = df3.loc[df3['rhoY[g/cm3]'] >= rhoYmin]
             
-            #if self.reactants[0].Z > self.products[0].Z:
-            #    pivotted = df4.pivot('log(rhoY)','T9','EC_rate')
-            #    #pivotted_log = np.log10(pivotted)
-            #    # generate heat map depend on T and rhoY
-            #else:
-            
             piv = df4.pivot('rhoY[g/cm3]','T[K]','e-cap/B-decay_rate[1/s]')
             piv_log = np.log10(piv)
             
-            hmap = sns.heatmap(piv_log,cmap='RdBu')#,xticklabels=4,yticklabels=5)#,vmin=1e-20, vmax=1)
+            hmap = sns.heatmap(piv_log,cmap='RdBu')
             hmap.invert_yaxis()  
             hmap.set_yticklabels(hmap.get_yticklabels(), rotation=0) 
             plt.xlabel("$T$ [K]")
