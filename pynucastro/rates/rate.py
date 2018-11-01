@@ -1096,12 +1096,6 @@ class Rate(object):
 
     def eval(self, T, rhoY = None):    
         """ evauate the reaction rate for temperature T """
-        if self.tabular == False:
-            tf = Tfactors(T)
-            r = 0.0
-            for s in self.sets:
-                f = s.f()
-                r += f(tf)
         
         if self.tabular == True:  # Xinlong Li for tabulated rates
             df = self.tabular_data_table.apply(pd.to_numeric) # convert from str to float
@@ -1112,6 +1106,15 @@ class Rate(object):
             df2 = df1.loc[df1["rhoY[g/cm3]"]==rhoY_nearest]
             
             r = float(df2["e-cap/B-decay_rate[1/s]"])
+        
+        else:
+            tf = Tfactors(T)
+            r = 0.0
+            for s in self.sets:
+                f = s.f()
+                r += f(tf)
+        
+        
 
         return r
 
@@ -1132,7 +1135,26 @@ class Rate(object):
     def plot(self, Tmin=1.e8, Tmax=1.6e9, rhoYmin=3.9e8, rhoYmax=2.e9):   # Xinlong Li
         """plot the rate's temperature sensitivity vs temperature"""
         
-        if self.tabular == False:
+        if self.tabular == True:   # Xinlong for tabuled rates
+            df = self.tabular_data_table.apply(pd.to_numeric) # convert from str to float
+            
+            df1 = df.loc[df['T[K]'] <= Tmax]
+            df2 = df1.loc[df1['T[K]'] >= Tmin]
+            df3 = df2.loc[df2['rhoY[g/cm3]'] <= rhoYmax]
+            df4 = df3.loc[df3['rhoY[g/cm3]'] >= rhoYmin]
+            
+            piv = df4.pivot('rhoY[g/cm3]','T[K]','e-cap/B-decay_rate[1/s]')
+            piv_log = np.log10(piv)
+            
+            hmap = sns.heatmap(piv_log,cmap='RdBu')
+            hmap.invert_yaxis()  
+            hmap.set_yticklabels(hmap.get_yticklabels(), rotation=0) 
+            plt.xlabel("$T$ [K]")
+            plt.ylabel("$\\rho Y$ [g/cm3]")
+            plt.title(r"{}".format(self.pretty_string)+"\n"+"electron-capture/beta-decay rate in log10(1/s)")
+            plt.show()
+        
+        else:
             temps = np.logspace(np.log10(Tmin), np.log10(Tmax), 100)
             r = np.zeros_like(temps)
             
@@ -1152,21 +1174,4 @@ class Rate(object):
             plt.title(r"{}".format(self.pretty_string))
             plt.show()
             
-        if self.tabular == True:   # Xinlong for tabuled rates
-            df = self.tabular_data_table.apply(pd.to_numeric) # convert from str to float
-            
-            df1 = df.loc[df['T[K]'] <= Tmax]
-            df2 = df1.loc[df1['T[K]'] >= Tmin]
-            df3 = df2.loc[df2['rhoY[g/cm3]'] <= rhoYmax]
-            df4 = df3.loc[df3['rhoY[g/cm3]'] >= rhoYmin]
-            
-            piv = df4.pivot('rhoY[g/cm3]','T[K]','e-cap/B-decay_rate[1/s]')
-            piv_log = np.log10(piv)
-            
-            hmap = sns.heatmap(piv_log,cmap='RdBu')
-            hmap.invert_yaxis()  
-            hmap.set_yticklabels(hmap.get_yticklabels(), rotation=0) 
-            plt.xlabel("$T$ [K]")
-            plt.ylabel("$\\rho Y$ [g/cm3]")
-            plt.title(r"{}".format(self.pretty_string)+"\n"+"electron-capture/beta-decay rate in log10(1/s)")
-            plt.show()
+        
