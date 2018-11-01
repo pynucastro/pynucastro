@@ -28,7 +28,18 @@ def list_known_rates():
                 for r in lib.get_rates():
                     print("                                 : {}".format(r))
 
+import numba
 
+Tfactor_spec = [
+('T9', numba.float32),
+('T9i', numba.float32),
+('T913', numba.float32),
+('T913i', numba.float32),
+('T953', numba.float32),
+('lnT9', numba.float32)
+]
+
+@numba.jitclass(Tfactor_spec)
 class Tfactors(object):
     """ precompute temperature factors for speed """
 
