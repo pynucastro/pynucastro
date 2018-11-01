@@ -6,7 +6,6 @@ from __future__ import print_function
 
 import functools
 import math
-import numpy as np
 from operator import mul
 import os
 from collections import OrderedDict
@@ -73,21 +72,6 @@ class Composition(object):
         """ return a dictionary of molar fractions"""
         molar_frac = {k: v/k.A for k, v in self.X.items()}
         return molar_frac
-
-    def eval_ye(self):
-        """ return the electron fraction """
-        zvec = []
-        avec = []
-        xvec = []
-        for n in self.X:
-            zvec.append(n.Z)
-            avec.append(n.A)
-            xvec.append(self.X[n])
-        zvec = np.array(zvec)
-        avec = np.array(avec)
-        xvec = np.array(xvec)
-        electron_frac = np.sum(zvec*xvec/avec)/np.sum(xvec)
-        return electron_frac
 
     def __str__(self):
         ostr = ""
@@ -223,9 +207,7 @@ class RateCollection(object):
         ys = composition.get_molar()
 
         for r in self.rates:
-            val = r.prefactor * rho**r.dens_exp * r.eval(T)
-            if (r.weak_type == 'electron_capture' and not r.tabular):
-                val = val * composition.eval_ye()
+            val = r.prefactor * rho**r.dens_exp * r.eval(T,rho)
             yfac = functools.reduce(mul, [ys[q] for q in r.reactants])
             rvals[r] = yfac * val
 
@@ -257,12 +239,6 @@ class RateCollection(object):
         """Every Rate in this RateCollection should have a unique Rate.fname,
         as the network writers distinguish the rates on this basis."""
         names = [r.fname for r in self.rates]
-        for n,r in zip(names, self.rates):
-            k = names.count(n)
-            if k > 1:
-                print('Found rate {} named {} with {} entries in the RateCollection.'.format(r, n, k))
-                print('Rate {} has the original source:\n{}'.format(r, r.original_source))
-                print('Rate {} is in chapter {}'.format(r, r.chapter))
         return len(set(names)) == len(self.rates)
 
     def _write_network(self, *args, **kwargs):
