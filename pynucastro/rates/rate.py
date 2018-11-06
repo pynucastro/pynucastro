@@ -31,12 +31,12 @@ def list_known_rates():
 import numba
 
 Tfactor_spec = [
-('T9', numba.float32),
-('T9i', numba.float32),
-('T913', numba.float32),
-('T913i', numba.float32),
-('T953', numba.float32),
-('lnT9', numba.float32)
+('T9', numba.float64),
+('T9i', numba.float64),
+('T913', numba.float64),
+('T913i', numba.float64),
+('T953', numba.float64),
+('lnT9', numba.float64)
 ]
 
 @numba.jitclass(Tfactor_spec)
