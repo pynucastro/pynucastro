@@ -6,11 +6,8 @@ import os
 import re
 import io
 import numpy as np
-import pandas as pd      # Xinlong Li
 import matplotlib.pyplot as plt
 import collections
-import seaborn as sns
-sns.set()
 
 from pynucastro.nucdata import UnidentifiedElement, PeriodicTable
 
@@ -1086,26 +1083,18 @@ class Rate(object):
             while '' in t_data2d[i]:
                 t_data2d[i].remove('')
             
-        df = pd.DataFrame(t_data2d)
-        df1 = df.dropna()  # drop empty lines
-        df1.columns = ['rhoY[g/cm3]','T[K]','mu[erg]','dQ[erg]','Vs[erg]',
-                                           'e-cap/B-decay_rate[1/s]','nu-energy-loss[erg/s]','gamma-energy[erg/s]']
-        self.tabular_data_table = df1
-       
-
-
+        self.tabular_data_table = np.array(t_data2d)
+        
     def eval(self, T, rhoY = None):    
         """ evauate the reaction rate for temperature T """
         
         if self.tabular == True:  # Xinlong Li for tabulated rates
-            df = self.tabular_data_table.apply(pd.to_numeric) # convert from str to float
+            data = self.tabular_data_table.astype(np.float)
             # find the nearest value of T and rhoY in the data table
-            T_nearest = (np.array(df["T[K]"]))[np.abs((np.array(df["T[K]"])) - T).argmin()]
-            df1 = df.loc[df["T[K]"]==T_nearest]
-            rhoY_nearest = (np.array(df1["rhoY[g/cm3]"]))[np.abs((np.array(df1["rhoY[g/cm3]"])) - rhoY).argmin()]
-            df2 = df1.loc[df1["rhoY[g/cm3]"]==rhoY_nearest]
-            
-            r = float(df2["e-cap/B-decay_rate[1/s]"])
+            T_nearest = (data[:,1])[np.abs((data[:,1]) - T).argmin()]
+            rhoY_nearest = (data[:,0])[np.abs((data[:,0]) - rhoY).argmin()]
+            inde = np.where((data[:,1]==T_nearest)&(data[:,0]==rhoY_nearest))[0][0]
+            r = data[inde][5]
         
         else:
             tf = Tfactors(T)
@@ -1113,8 +1102,6 @@ class Rate(object):
             for s in self.sets:
                 f = s.f()
                 r += f(tf)
-        
-        
 
         return r
 
@@ -1136,22 +1123,36 @@ class Rate(object):
         """plot the rate's temperature sensitivity vs temperature"""
         
         if self.tabular == True:   # Xinlong for tabuled rates
-            df = self.tabular_data_table.apply(pd.to_numeric) # convert from str to float
+            data = self.tabular_data_table.astype(np.float) # convert from str to float
             
-            df1 = df.loc[df['T[K]'] <= Tmax]
-            df2 = df1.loc[df1['T[K]'] >= Tmin]
-            df3 = df2.loc[df2['rhoY[g/cm3]'] <= rhoYmax]
-            df4 = df3.loc[df3['rhoY[g/cm3]'] >= rhoYmin]
+            inde1 = data[:,1]<=Tmax
+            inde2 = data[:,1]>=Tmin
+            inde3 = data[:,0]<=rhoYmax
+            inde4 = data[:,0]>=rhoYmin
+            data_heatmap = data[inde1&inde2&inde3&inde4].copy()
             
-            piv = df4.pivot('rhoY[g/cm3]','T[K]','e-cap/B-decay_rate[1/s]')
-            piv_log = np.log10(piv)
+            rows, row_pos = np.unique(data_heatmap[:, 0], return_inverse=True)
+            cols, col_pos = np.unique(data_heatmap[:, 1], return_inverse=True)
+            pivot_table = np.zeros((len(rows), len(cols)), dtype=data_heatmap.dtype)
+            try:
+                pivot_table[row_pos, col_pos] = np.log10(data_heatmap[:, 5])
+            except ValueError:
+                plot("Divide by zero encountered in log10\nChange the scale of T or rhoY")
             
-            hmap = sns.heatmap(piv_log,cmap='RdBu')
-            hmap.invert_yaxis()  
-            hmap.set_yticklabels(hmap.get_yticklabels(), rotation=0) 
+            fig, ax = plt.subplots(figsize=(10,10))
+            im = ax.imshow(pivot_table, cmap='jet')
+            plt.colorbar(im)
+            
             plt.xlabel("$T$ [K]")
-            plt.ylabel("$\\rho Y$ [g/cm3]")
-            plt.title(r"{}".format(self.pretty_string)+"\n"+"electron-capture/beta-decay rate in log10(1/s)")
+            plt.ylabel("$\\rho Y$ [g/cm$^3$]")
+            ax.set_title(r"{}".format(self.pretty_string)+
+                         "\n"+"electron-capture/beta-decay rate in log10(1/s)")
+            ax.set_yticks(range(len(rows)))
+            ax.set_yticklabels(rows)
+            ax.set_xticks(range(len(cols)))
+            ax.set_xticklabels(cols)
+            plt.setp(ax.get_xticklabels(), rotation=90, ha="right",rotation_mode="anchor")
+            plt.gca().invert_yaxis()
             plt.show()
         
         else:
