@@ -549,10 +549,10 @@ class RateFilter(object):
             Create a filter that finds all proton capture and proton-burning reactions
             in a Library instance my_library::
                 >>> pcap_filter = RateFilter(reactants='p', exact=False)
-                >>> pcap_library = my_libarary.filter(pcap_filter)
+                >>> pcap_library = my_library.filter(pcap_filter)
             or you can use Nucleus::
                 >>> pcap_filter = RateFilter(reactants=Nucleus('p'), exact=False)
-                >>> pcap_library = my_libarary.filter(pcap_filter)
+                >>> pcap_library = my_library.filter(pcap_filter)
 
             Create a filter that finds C12 (a,g) O16 
             Notes:
@@ -561,7 +561,7 @@ class RateFilter(object):
                 + this rate is in the ReacLib library used here as 
                 O16 --> He4 C12 -- you need to know how your library treats rates::
                     >>> cago_filter = RateFilter(reactants='o16', products=['c12', 'a'])
-                    >>> cago_library = my_libarary.filter(cago_filter)
+                    >>> cago_library = my_library.filter(cago_filter)
         """
         self.reactants = []
         self.products = []
