@@ -525,11 +525,11 @@ class RateFilter(object):
 
         Keyword Arguments:
             reactants -- Description of the reactants as one of:
-                1) a list of Nucleus objects
-                2) a list of string descriptions of reactant nuclides
+                1. a list of Nucleus objects
+                2. a list of string descriptions of reactant nuclides
                    these strings must be parsable by Nucleus
-                3) a single reactant Nucleus
-                4) a single string description of the reactant nuclide
+                3. a single reactant Nucleus
+                4. a single string description of the reactant nuclide
             products  -- Description of the products in same form as above
             exact     -- boolean, 
                          if True, products or reactants must match exactly [default]
@@ -547,21 +547,21 @@ class RateFilter(object):
         
         Examples:
             Create a filter that finds all proton capture and proton-burning reactions
-            in a Library instance my_library
-            >>> pcap_filter = RateFilter(reactants='p', exact=False)
-            >>> pcap_library = my_libarary.filter(pcap_filter)
-            or you can use Nucleus:
-            >>> pcap_filter = RateFilter(reactants=Nucleus('p'), exact=False)
-            >>> pcap_library = my_libarary.filter(pcap_filter)
+            in a Library instance my_library::
+                >>> pcap_filter = RateFilter(reactants='p', exact=False)
+                >>> pcap_library = my_libarary.filter(pcap_filter)
+            or you can use Nucleus::
+                >>> pcap_filter = RateFilter(reactants=Nucleus('p'), exact=False)
+                >>> pcap_library = my_libarary.filter(pcap_filter)
 
             Create a filter that finds C12 (a,g) O16 
             Notes:
                 + photons/gammas are not treated as nuclides, so they cannot be
                 a reactant or product
                 + this rate is in the ReacLib library used here as 
-                O16 --> He4 C12 -- you need to know how your library treats rates
-            >>> cago_filter = RateFilter(reactants='o16', products=['c12', 'a')
-            >>> cago_library = my_libarary.filter(cago_filter)
+                O16 --> He4 C12 -- you need to know how your library treats rates::
+                    >>> cago_filter = RateFilter(reactants='o16', products=['c12', 'a')
+                    >>> cago_library = my_libarary.filter(cago_filter)
         """
         self.reactants = []
         self.products = []
