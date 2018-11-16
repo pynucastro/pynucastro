@@ -537,8 +537,8 @@ class RateFilter(object):
                          in a comparison rate, but the comparison may contain
                          additional products or reactants
             reverse   -- boolean,
-                         if True, only match reverse rates
-                         if False, only match forward rates
+                         if True, only match reverse-derived rates
+                         if False, only match directly-derived rates
                          if None, you don't care, match both [default]
             min_reactants -- int, match Rates that have at least this many reactants
             min_products  -- int, match Rates that have at least this many products
