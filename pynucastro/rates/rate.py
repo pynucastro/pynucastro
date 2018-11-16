@@ -560,7 +560,7 @@ class RateFilter(object):
                 a reactant or product
                 + this rate is in the ReacLib library used here as 
                 O16 --> He4 C12 -- you need to know how your library treats rates::
-                    >>> cago_filter = RateFilter(reactants='o16', products=['c12', 'a')
+                    >>> cago_filter = RateFilter(reactants='o16', products=['c12', 'a'])
                     >>> cago_library = my_libarary.filter(cago_filter)
         """
         self.reactants = []
