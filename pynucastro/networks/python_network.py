@@ -38,6 +38,7 @@ class PythonNetwork(RateCollection):
         """
 
         string = ""
+        string += "@numba.njit()\n"
         string += "def {}(tf):\n".format(rate.fname)
         string += "{}".format(self.rate_string(rate, indent=4))
         string += "    return rate\n\n"
@@ -160,7 +161,8 @@ class PythonNetwork(RateCollection):
                 raise
 
         of.write("import numpy as np\n")
-        of.write("from pynucastro.rates import Tfactors\n\n")
+        of.write("from pynucastro.rates import Tfactors\n")
+        of.write("import numba\n\n")
 
         # integer keys
         for i, n in enumerate(self.unique_nuclei):
@@ -182,13 +184,25 @@ class PythonNetwork(RateCollection):
 
         indent = 4*" "
 
+        of.write("@numba.njit()\n")
+
         of.write("def ye(Y):\n")
         of.write("{}return np.sum(Z * Y)/np.sum(A * Y)\n\n".format(indent))
 
         for r in self.rates:
             of.write(self.function_string(r))
 
-        of.write("def rhs(t, Y, rho, T):\n\n")
+        of.write("def rhs(t, Y, rho, T):\n")
+        of.write("{}return rhs_eq(t, Y, rho, T)\n\n".format(indent))
+
+        of.write("@numba.njit()\n")
+        of.write("def rhs_eq(t, Y, rho, T):\n\n")
+        # integer keys
+        for i, n in enumerate(self.unique_nuclei):
+            of.write("{}i{} = {}\n".format(indent, n, i))
+
+        of.write("{}nnuc = {}\n\n".format(indent, len(self.unique_nuclei)))
+
 
         # get the rates
         of.write("{}tf = Tfactors(T)\n\n".format(indent))

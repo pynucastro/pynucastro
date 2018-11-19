@@ -26,15 +26,22 @@ def burn(Y0, rho, T, tmax, nsave):
     O14_out = []
     O15_out = []
 
-    while r.successful() and r.t < tmax:
-        print(r.t, r.y[cno.ip], r.y[cno.io14])
-        r.integrate(r.t+dt)
+    print(t, Y0[cno.ip], Y0[cno.io14])
 
-        t_out.append(r.t)
-        H_out.append(r.y[cno.ip])
-        He_out.append(r.y[cno.ihe4])
-        O14_out.append(r.y[cno.io14])
-        O15_out.append(r.y[cno.io15])
+    istep = 1
+    while r.successful() and istep <= nsave:
+        r.integrate(t+dt*istep)
+
+        if r.successful():
+            print(r.t, r.y[cno.ip], r.y[cno.io14])
+            t_out.append(r.t)
+            H_out.append(r.y[cno.ip])
+            He_out.append(r.y[cno.ihe4])
+            O14_out.append(r.y[cno.io14])
+            O15_out.append(r.y[cno.io15])
+            istep = istep + 1
+        else:
+            print("An integration error occurred at time {}".format(r.t))
 
     return t_out, H_out, He_out, O14_out, O15_out
 
@@ -57,6 +64,7 @@ if __name__ == "__main__":
     Ydot = cno.rhs(0.0, Y0, rho, T)
 
     tmax = 10.0*np.abs(Y0[cno.ip]/Ydot[cno.ip])
+    print("tmax: {}".format(tmax))
 
     nsteps = 100
 
