@@ -2,11 +2,11 @@ Overview of pynucastro
 ==========================
 
 pynucastro is a set of python interfaces to nuclear reaction rates
-(currently via the JINA reaclib database).  It is meant for both
+(currently via the JINA reaclib database). It is meant for both
 interactive exploration of rates (through Jupyter notebooks) and to
 create reaction networks for use in simulation codes.
 
-The preferred way of importing pynucastro is as:
+The preferred way of importing pynucastro is as follows:
 
 .. code-block:: python
 
