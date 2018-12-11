@@ -1,7 +1,7 @@
 language: python
 python:
   - '3.6'
-  - '3.7'
+  - '3.7-dev'
 
 before_install:
   - export PATH=$(echo $PATH | tr ':' "\n" | sed '/\/opt\/python/d' | tr "\n" ":" | sed "s|::|:|g")
@@ -21,4 +21,4 @@ script:
   - pytest -v --cov=. --nbval --ignore=docs
 
 after_success:
-  - if [[ "$TRAVIS_PYTHON_VERSION" == "3.7" ]]; then ./deploy_docs.sh; fi
+  - if [[ "$TRAVIS_PYTHON_VERSION" == "3.6" ]]; then ./deploy_docs.sh; fi
