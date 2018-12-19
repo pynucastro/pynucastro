@@ -30,11 +30,31 @@ contains
 
   subroutine init_reaclib()
 
-    <ctemp_allocate>(2)
+    implicit none
 
-    <rate_start_idx>(2)
+    integer :: unit, ireaclib, icoeff
 
-    <rate_extra_mult>(2)
+    allocate( ctemp_rate(7, number_reaclib_sets) )
+    allocate( rate_start_idx(nrat_reaclib) )
+    allocate( rate_extra_mult(nrat_reaclib) )
+
+    open(newunit=unit, file='reaclib_rate_metadata.dat')
+
+    do ireaclib = 1, number_reaclib_sets
+       do icoeff = 1, 7
+          read(unit, *) ctemp_rate(icoeff, ireaclib)
+       enddo
+    enddo
+
+    do ireaclib = 1, nrat_reaclib
+       read(unit, *) rate_start_idx(ireaclib)
+    enddo
+
+    do ireaclib = 1, nrat_reaclib
+       read(unit, *) rate_extra_mult(ireaclib)
+    enddo
+
+    close(unit)
 
     !$acc update device(ctemp_rate, rate_start_idx, rate_extra_mult)
 

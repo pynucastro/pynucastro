@@ -55,13 +55,9 @@ class BaseFortranNetwork(RateCollection):
         self.ftags['<aion>'] = self._aion
         self.ftags['<zion>'] = self._zion
         self.ftags['<nion>'] = self._nion
-        self.ftags['<rate_start_idx>'] = self._rate_start_idx
-        self.ftags['<rate_extra_mult>'] = self._rate_extra_mult
         self.ftags['<screen_add>'] = self._screen_add
         self.ftags['<compute_screening_factors>'] = self._compute_screening_factors
-        self.ftags['<ctemp_ptr_declare>'] = self._ctemp_ptr_declare
-        self.ftags['<ctemp_allocate>'] = self._ctemp_allocate
-        self.ftags['<ctemp_deallocate>'] = self._ctemp_deallocate
+        self.ftags['<write_reaclib_metadata>'] = self._write_reaclib_metadata
         self.ftags['<table_num>'] = self._table_num
         self.ftags['<public_table_indices>'] = self._public_table_indices
         self.ftags['<table_indices>'] = self._table_indices
@@ -95,7 +91,7 @@ class BaseFortranNetwork(RateCollection):
 
         self.ydot_out_scratch = None
         self.ydot_out_result  = None
-        self.solved_ydot      = False        
+        self.solved_ydot      = False
         self.jac_out_scratch  = None
         self.jac_out_result   = None
         self.jac_null_entries = None
@@ -443,7 +439,7 @@ class BaseFortranNetwork(RateCollection):
             len(self.rates)))
 
     def get_screening_map(self):
-        screening_map = []        
+        screening_map = []
         for k, r in enumerate(self.rates):
             if r.ion_screen:
                 nucs = '{}_{}'.format(r.ion_screen[0], r.ion_screen[1])
@@ -476,6 +472,15 @@ class BaseFortranNetwork(RateCollection):
         of.write('{}integer, parameter :: nrat_reaclib = {}\n'.format(
             self.indent*n_indent,
             len(self.reaclib_rates)))
+
+        nreaclib_sets = 0
+        for nr in self.reaclib_rates:
+            r = self.rates[nr]
+            nreaclib_sets = nreaclib_sets + len(r.sets)
+
+        of.write('{}integer, parameter :: number_reaclib_sets = {}\n'.format(
+            self.indent*n_indent,
+            nreaclib_sets))
 
     def _nrat_tabular(self, n_indent, of):
         # Writes the number of tabular rates
@@ -543,32 +548,6 @@ class BaseFortranNetwork(RateCollection):
                 nuc,
                 self.fmt_to_dp_f90(nuc.N)))
 
-    def _rate_start_idx(self, n_indent, of):
-        of.write('{}allocate( rate_start_idx(nrat_reaclib) )\n'.format(self.indent*n_indent))
-        of.write('{}rate_start_idx(:) = [ &\n'.format(self.indent*n_indent))
-        j = 1
-        for i, r in enumerate(self.rates):
-            if i in self.reaclib_rates:
-                of.write('{}{}'.format(self.indent*(n_indent+1),j))
-                j = j + len(r.sets)
-                if i==len(self.reaclib_rates)-1:
-                    of.write(' ]\n')
-                else:
-                    of.write(', &\n')
-
-    def _rate_extra_mult(self, n_indent, of):
-        of.write('{}allocate( rate_extra_mult(nrat_reaclib) )\n'.format(
-            self.indent*n_indent))
-        of.write('{}rate_extra_mult(:) = [ &\n'.format(self.indent*n_indent))
-        for i, r in enumerate(self.rates):
-            if i in self.reaclib_rates:
-                j = len(r.sets)-1
-                of.write('{}{}'.format(self.indent*(n_indent+1),j))
-                if i==len(self.reaclib_rates)-1:
-                    of.write(' ]\n')
-                else:
-                    of.write(', &\n')
-
     def _screen_add(self, n_indent, of):
         screening_map = self.get_screening_map()
         for i, (h, n1, n2, mrates, krates) in enumerate(screening_map):
@@ -577,42 +556,24 @@ class BaseFortranNetwork(RateCollection):
             of.write('{}zion(j{}), aion(j{}))\n\n'.format(self.indent*(n_indent+1),
                                                           n2, n2))
 
-    def _ctemp_ptr_declare(self, n_indent, of):
-        of.write('{}type(ctemp_ptr), dimension({}) :: ctemp_point\n'.format(
-            self.indent*n_indent,
-            len(self.reaclib_rates)))
-
-    def _ctemp_allocate(self, n_indent, of):
-        nreaclib_sets = 0
-        for nr in self.reaclib_rates:
-            r = self.rates[nr]
-            nreaclib_sets = nreaclib_sets + len(r.sets)
-
-        of.write('{}allocate( ctemp_rate(7, {}) )\n'.format(
-            self.indent*n_indent, nreaclib_sets))
-
+    def _write_reaclib_metadata(self, n_indent, of):
         jset = 0
         for nr in self.reaclib_rates:
             r = self.rates[nr]
-            of.write('{}! {}\n'.format(self.indent*n_indent, r.fname))
             for s in r.sets:
                 jset = jset + 1
-                of.write('{}ctemp_rate(:, {}) = [  &\n'.format(
-                    self.indent*n_indent, jset))
                 for na,an in enumerate(s.a):
-                    of.write('{}{}'.format(self.indent*n_indent*2,
-                                           self.fmt_to_dp_f90(an)))
-                    if na==len(s.a)-1:
-                        of.write(' ]\n')
-                    else:
-                        of.write(', &\n')
-                of.write('\n')
-        of.write('\n')
+                    of.write('{}\n'.format(self.fmt_to_dp_f90(an)))
+        j = 1
+        for i, r in enumerate(self.rates):
+            if i in self.reaclib_rates:
+                of.write('{}\n'.format(j))
+                j = j + len(r.sets)
 
-    def _ctemp_deallocate(self, n_indent, of):
-        for nr in self.reaclib_rates:
-            of.write('{}deallocate( ctemp_rate_{} )\n'.format(
-                self.indent*n_indent, nr+1))
+        for i, r in enumerate(self.rates):
+            if i in self.reaclib_rates:
+                j = len(r.sets)-1
+                of.write('{}\n'.format(j))
 
     def _table_num(self, n_indent, of):
         of.write('{}integer, parameter :: num_tables   = {}\n'.format(

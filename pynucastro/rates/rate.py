@@ -31,7 +31,18 @@ def list_known_rates():
                 for r in lib.get_rates():
                     print("                                 : {}".format(r))
 
+import numba
 
+Tfactor_spec = [
+('T9', numba.float64),
+('T9i', numba.float64),
+('T913', numba.float64),
+('T913i', numba.float64),
+('T953', numba.float64),
+('lnT9', numba.float64)
+]
+
+@numba.jitclass(Tfactor_spec)
 class Tfactors(object):
     """ precompute temperature factors for speed """
 
@@ -158,6 +169,13 @@ class Nucleus(object):
             self.el = "h"
             self.A = 3
             self.short_spec_name = "h3"
+        elif name == "a":
+            #this is a convenience, enabling the use of a commonly-used alias:
+            #    He4 --> \alpha --> "a" , e.g. c12(a,g)o16
+            self.el ="he"
+            self.A = 4
+            self.short_spec_name = "he4"
+            self.raw = "he4"
         elif name == "n":
             self.el = "n"
             self.A = 1
@@ -508,12 +526,57 @@ class Library(object):
 
 
 class RateFilter(object):
-    """RateFilter stores selection rules specifying a rate or group of
-    rates to assist searching for rates stored in a Library."""
+    """RateFilter filters out a specified rate or set of rates
+    
+    A RateFilter stores selection rules specifying a rate or group of
+    rates to assist in searching for rates stored in a Library.
+    """
 
     def __init__(self, reactants=None, products=None, exact=True,
                  reverse=None, min_reactants=None, max_reactants=None,
                  min_products=None, max_products=None):
+        """Create a new RateFilter with the given selection rules
+
+        Keyword Arguments:
+            reactants -- Description of the reactants as one of:
+                1. a list of Nucleus objects
+                2. a list of string descriptions of reactant nuclides
+                   these strings must be parsable by Nucleus
+                3. a single reactant Nucleus
+                4. a single string description of the reactant nuclide
+            products  -- Description of the products in same form as above
+            exact     -- boolean, 
+                         if True, products or reactants must match exactly [default]
+                         if False, then all products or reactants must be found
+                         in a comparison rate, but the comparison may contain
+                         additional products or reactants
+            reverse   -- boolean,
+                         if True, only match reverse-derived rates
+                         if False, only match directly-derived rates
+                         if None, you don't care, match both [default]
+            min_reactants -- int, match Rates that have at least this many reactants
+            min_products  -- int, match Rates that have at least this many products
+            max_reactants -- int, match Rates that have no more than this many reactants
+            max_products  -- int, match Rates that have no more than this many products
+        
+        Examples:
+            Create a filter that finds all proton capture and proton-burning reactions
+            in a Library instance my_library::
+                >>> pcap_filter = RateFilter(reactants='p', exact=False)
+                >>> pcap_library = my_library.filter(pcap_filter)
+            or you can use Nucleus::
+                >>> pcap_filter = RateFilter(reactants=Nucleus('p'), exact=False)
+                >>> pcap_library = my_library.filter(pcap_filter)
+
+            Create a filter that finds C12 (a,g) O16 
+            Notes:
+                + photons/gammas are not treated as nuclides, so they cannot be
+                a reactant or product
+                + this rate is in the ReacLib library used here as 
+                O16 --> He4 C12 -- you need to know how your library treats rates::
+                    >>> cago_filter = RateFilter(reactants='o16', products=['c12', 'a'])
+                    >>> cago_library = my_library.filter(cago_filter)
+        """
         self.reactants = []
         self.products = []
         self.exact = exact
@@ -528,7 +591,7 @@ class RateFilter(object):
                 reactants = [reactants]
             self.reactants = [self._cast_nucleus(r) for r in reactants]
         if products:
-            if type(products) == Nucleus or type(reactants) == str:
+            if type(products) == Nucleus or type(products) == str:
                 products = [products]
             self.products = [self._cast_nucleus(r) for r in products]
 

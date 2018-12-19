@@ -25,6 +25,7 @@ class StarKillerNetwork(BaseFortranNetwork):
         # StarKiller-specific template processing functions
         self.ftags['<sparse_jac_nnz>'] = self._sparse_jac_nnz
         self.ftags['<csr_jac_metadata>'] = self._csr_jac_metadata
+        self.ftags['<species_xin_test>'] = self._species_xin_test
 
     def get_sparse_jac_nnz(self):
         # Get the number of nonzero entries in the sparse Jacobian
@@ -136,3 +137,12 @@ class StarKillerNetwork(BaseFortranNetwork):
                 self.indent*(n_indent+1), ri))
         of.write('{}{}  ]\n'.format(
             self.indent*(n_indent+1), row_count[-1]))
+
+    def _species_xin_test(self, size_test, of):
+        xcomp = 1.0/float(len(self.unique_nuclei))
+        for i, n in enumerate(self.unique_nuclei):
+            if i!=0:
+                of.write('#\n')
+            of.write('# {}\n'.format(n))
+            xin = [self.fmt_to_dp_f90(xcomp) for j in range(size_test)]
+            of.write('{}\n'.format(' '.join(xin)))
