@@ -12,8 +12,8 @@ module actual_rhs_module
   type :: rate_eval_t
      real(rt) :: unscreened_rates(4, nrates)
      real(rt) :: screened_rates(nrates)
-     real(rt) :: dqweak(nrat_tabular)
-     real(rt) :: epart(nrat_tabular)
+     real(rt) :: add_energy(nrat_tabular)
+     real(rt) :: add_energy_rate(nrat_tabular)
   end type rate_eval_t
   
 contains
@@ -47,8 +47,8 @@ contains
     rate_eval % unscreened_rates(i_scor, :) = ONE
     rate_eval % unscreened_rates(i_dscor_dt, :) = ZERO
     rate_eval % screened_rates = ZERO
-    rate_eval % dqweak = ZERO
-    rate_eval % epart = ZERO
+    rate_eval % add_energy = ZERO
+    rate_eval % add_energy_rate = ZERO
 
   end subroutine zero_rate_eval
 
@@ -131,15 +131,16 @@ contains
     ! ion binding energy contributions
     call ener_gener_rate(ydot_nuc, enuc)
 
-    ! weak Q-value modification dqweak (density and temperature dependent)
-    <enuc_dqweak>(2)
-    
-    ! weak particle energy generation rates from gamma heating and neutrino loss
-    ! (does not include plasma neutrino losses)
-    <enuc_epart>(2)
+    ! additional per-reaction energies
+    ! including Q-value modification and electron chemical potential
+    <enuc_add_energy>(2)
+
+    ! additional energy generation rates
+    ! including gamma heating and reaction neutrino losses (non-thermal)
+    <enuc_add_energy_rate>(2)
 
 
-    ! Get the neutrino losses
+    ! Get the thermal neutrino losses
     call sneut5(state % T, state % rho, state % abar, state % zbar, sneut, dsneutdt, dsneutdd, snuda, snudz)
 
     ! Append the energy equation (this is erg/g/s)
