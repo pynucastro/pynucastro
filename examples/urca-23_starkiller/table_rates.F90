@@ -36,11 +36,13 @@ module table_rates
   integer, allocatable  :: num_rhoy_j_na23_ne23, num_temp_j_na23_ne23, num_vars_j_na23_ne23
   character(len=50)     :: rate_table_file_j_na23_ne23
   integer               :: num_header_j_na23_ne23
+  logical, parameter    :: invert_chemical_potential_j_na23_ne23 = .false.
 
   real(rt), allocatable :: rate_table_j_ne23_na23(:,:,:), rhoy_table_j_ne23_na23(:), temp_table_j_ne23_na23(:)
   integer, allocatable  :: num_rhoy_j_ne23_na23, num_temp_j_ne23_na23, num_vars_j_ne23_na23
   character(len=50)     :: rate_table_file_j_ne23_na23
   integer               :: num_header_j_ne23_na23
+  logical, parameter    :: invert_chemical_potential_j_ne23_na23 = .true.
 
 
 #ifdef AMREX_USE_CUDA
@@ -69,7 +71,7 @@ contains
     allocate(rate_table_j_na23_ne23(num_temp_j_na23_ne23, num_rhoy_j_na23_ne23, num_vars_j_na23_ne23))
     allocate(rhoy_table_j_na23_ne23(num_rhoy_j_na23_ne23))
     allocate(temp_table_j_na23_ne23(num_temp_j_na23_ne23))
-    call init_tab_info(rate_table_j_na23_ne23, rhoy_table_j_na23_ne23, temp_table_j_na23_ne23, num_rhoy_j_na23_ne23, num_temp_j_na23_ne23, num_vars_j_na23_ne23, rate_table_file_j_na23_ne23, num_header_j_na23_ne23)
+    call init_tab_info(rate_table_j_na23_ne23, rhoy_table_j_na23_ne23, temp_table_j_na23_ne23, num_rhoy_j_na23_ne23, num_temp_j_na23_ne23, num_vars_j_na23_ne23, rate_table_file_j_na23_ne23, num_header_j_na23_ne23, invert_chemical_potential_j_na23_ne23)
 
     allocate(num_temp_j_ne23_na23)
     allocate(num_rhoy_j_ne23_na23)
@@ -82,7 +84,7 @@ contains
     allocate(rate_table_j_ne23_na23(num_temp_j_ne23_na23, num_rhoy_j_ne23_na23, num_vars_j_ne23_na23))
     allocate(rhoy_table_j_ne23_na23(num_rhoy_j_ne23_na23))
     allocate(temp_table_j_ne23_na23(num_temp_j_ne23_na23))
-    call init_tab_info(rate_table_j_ne23_na23, rhoy_table_j_ne23_na23, temp_table_j_ne23_na23, num_rhoy_j_ne23_na23, num_temp_j_ne23_na23, num_vars_j_ne23_na23, rate_table_file_j_ne23_na23, num_header_j_ne23_na23)
+    call init_tab_info(rate_table_j_ne23_na23, rhoy_table_j_ne23_na23, temp_table_j_ne23_na23, num_rhoy_j_ne23_na23, num_temp_j_ne23_na23, num_vars_j_ne23_na23, rate_table_file_j_ne23_na23, num_header_j_ne23_na23, invert_chemical_potential_j_ne23_na23)
 
 
   end subroutine init_tabular
@@ -110,10 +112,11 @@ contains
 
   subroutine init_tab_info(rate_table, rhoy_table, temp_table, &
                            num_rhoy, num_temp, num_vars, &
-                           rate_table_file, num_header)
+                           rate_table_file, num_header, invert_chemical_potential)
     integer  :: num_rhoy, num_temp, num_vars, num_header
     real(rt) :: rate_table(num_temp, num_rhoy, num_vars), rhoy_table(num_rhoy), temp_table(num_temp)
     character(len=50) :: rate_table_file
+    logical :: invert_chemical_potential
 
     real(rt), allocatable :: rate_table_scratch(:,:,:)
     integer :: i, j, k
@@ -135,6 +138,14 @@ contains
     close(11)
 
     rate_table(:,:,:) = rate_table_scratch(:,:,3:num_vars+2)
+
+    ! Set sign for chemical potential contribution to energy generation for
+    ! electron capture vs beta decays.
+    if (invert_chemical_potential) then
+       rate_table(:,:,jtab_mu) = -rate_table(:,:,jtab_mu)
+       rate_table(:,:,jtab_vs) = -rate_table(:,:,jtab_vs)
+    end if
+
     do i = 1, num_rhoy
        rhoy_table(i) = rate_table_scratch(1, i, 1)
     end do
