@@ -71,8 +71,8 @@ class BaseFortranNetwork(RateCollection):
         self.ftags['<ydot_declare_scratch>'] = self._ydot_declare_scratch
         self.ftags['<ydot_scratch>'] = self._ydot_scratch
         self.ftags['<ydot>'] = self._ydot
-        self.ftags['<enuc_dqweak>'] = self._enuc_dqweak
-        self.ftags['<enuc_epart>'] = self._enuc_epart
+        self.ftags['<enuc_add_energy>'] = self._enuc_add_energy
+        self.ftags['<enuc_add_energy_rate>'] = self._enuc_add_energy_rate
         self.ftags['<jacnuc_declare_scratch>'] = self._jacnuc_declare_scratch
         self.ftags['<jacnuc_scratch>'] = self._jacnuc_scratch
         self.ftags['<jacnuc>'] = self._jacnuc
@@ -601,6 +601,16 @@ class BaseFortranNetwork(RateCollection):
                 self.indent*n_indent, r.table_index_name))
             of.write('{}integer               :: num_header_{}\n'.format(
                 self.indent*n_indent, r.table_index_name))
+
+            # This is used to distinguish electron capture reactions from beta decays
+            # for the purpose of setting the sign of the electron chemical potential
+            # contribution to the energy generation. Not intended for positron capture or decay.
+            if r.products[0].Z < r.reactants[0].Z:
+                invert_echemical_string = '.false.'
+            else:
+                invert_echemical_string = '.true.'            
+            of.write('{}logical, parameter    :: invert_chemical_potential_{} = {}\n'.format(
+                self.indent*n_indent, r.table_index_name, invert_echemical_string))
             of.write('\n')
 
     def _declare_managed_tables(self, n_indent, of):
@@ -649,9 +659,9 @@ class BaseFortranNetwork(RateCollection):
             of.write('{}allocate(temp_table_{}(num_temp_{}))\n'.format(
                 self.indent*n_indent, r.table_index_name, r.table_index_name))
 
-            of.write('{}call init_tab_info(rate_table_{}, rhoy_table_{}, temp_table_{}, num_rhoy_{}, num_temp_{}, num_vars_{}, rate_table_file_{}, num_header_{})\n'.format(
+            of.write('{}call init_tab_info(rate_table_{}, rhoy_table_{}, temp_table_{}, num_rhoy_{}, num_temp_{}, num_vars_{}, rate_table_file_{}, num_header_{}, invert_chemical_potential_{})\n'.format(
                 self.indent*n_indent, r.table_index_name, r.table_index_name, r.table_index_name, r.table_index_name,
-                r.table_index_name, r.table_index_name, r.table_index_name, r.table_index_name))
+                r.table_index_name, r.table_index_name, r.table_index_name, r.table_index_name, r.table_index_name))
 
             of.write('\n')
 
@@ -696,8 +706,8 @@ class BaseFortranNetwork(RateCollection):
                 of.write('{}                      num_rhoy_{}, num_temp_{}, num_vars_{}, &\n'.format(self.indent*n_indent, r.table_index_name, r.table_index_name, r.table_index_name))
                 of.write('{}                      rhoy, state % T, reactvec)\n'.format(self.indent*n_indent))
                 of.write('{}rate_eval % unscreened_rates(:,{}) = reactvec(1:4)\n'.format(self.indent*n_indent, n+1+len(self.reaclib_rates)))
-                of.write('{}rate_eval % dqweak({}) = reactvec(5)\n'.format(self.indent*n_indent, n+1))
-                of.write('{}rate_eval % epart({})  = reactvec(6)\n'.format(self.indent*n_indent, n+1))
+                of.write('{}rate_eval % add_energy({}) = reactvec(5)\n'.format(self.indent*n_indent, n+1))
+                of.write('{}rate_eval % add_energy_rate({})  = reactvec(6)\n'.format(self.indent*n_indent, n+1))
                 of.write('\n')
 
     def _compute_tabular_rates_jac(self, n_indent, of):
@@ -739,29 +749,30 @@ class BaseFortranNetwork(RateCollection):
             of.write("{}{} &\n".format(self.indent*(n_indent+1), sol_value))
             of.write("{}   )\n\n".format(self.indent*n_indent))
 
-    def _enuc_dqweak(self, n_indent, of):
-        # Add tabular dQ corrections to the energy generation rate
+    def _enuc_add_energy(self, n_indent, of):
+        # Add tabular per-reaction energy corrections to the energy generation rate
+        # Includes Coulomb corrections to Q-value and electron fermi energy
         for nr, r in enumerate(self.rates):
             if nr in self.tabular_rates:
                 if len(r.reactants) != 1:
-                    print('ERROR: Unknown tabular dQ corrections for a reaction where the number of reactants is not 1.')
+                    print('ERROR: Unknown tabular energy corrections for a reaction where the number of reactants is not 1.')
                     exit()
                 else:
                     reactant = r.reactants[0]
-                    of.write('{}enuc = enuc + N_AVO * {}(j{}) * rate_eval % dqweak({})\n'.format(
+                    of.write('{}enuc = enuc + N_AVO * {}(j{}) * rate_eval % add_energy({})\n'.format(
                         self.indent*n_indent, self.name_ydot, reactant, r.table_index_name))
 
-    def _enuc_epart(self, n_indent, of):
-        # Add particle energy generation rates (gamma heating and neutrino loss from decays)
-        # to the energy generation rate (doesn't include plasma neutrino losses)
+    def _enuc_add_energy_rate(self, n_indent, of):
+        # Add tabular per-reaction energy generation rates to the energy generation rate
+        # Includes gamma heating and neutrino loss from decays (but not thermal neutrinos)
         for nr, r in enumerate(self.rates):
             if nr in self.tabular_rates:
                 if len(r.reactants) != 1:
-                    print('ERROR: Unknown particle energy corrections for a reaction where the number of reactants is not 1.')
+                    print('ERROR: Unknown energy rate corrections for a reaction where the number of reactants is not 1.')
                     exit()
                 else:
                     reactant = r.reactants[0]
-                    of.write('{}enuc = enuc + N_AVO * {}(j{}) * rate_eval % epart({})\n'.format(
+                    of.write('{}enuc = enuc + N_AVO * {}(j{}) * rate_eval % add_energy_rate({})\n'.format(
                         self.indent*n_indent, self.name_y, reactant, r.table_index_name))
 
     def _jacnuc_declare_scratch(self, n_indent, of):

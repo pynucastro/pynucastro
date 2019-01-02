@@ -7,14 +7,15 @@ module table_rates
   implicit none
 
   public tabular_evaluate
-  <public_table_indices>(1)
+  public j_na23_ne23
+  public j_ne23_na23
 
   public jtab_mu, jtab_dq, jtab_vs, jtab_rate, jtab_nuloss, jtab_gamma
 
   private num_tables
   private k_drate_dt, add_vars
 
-  <table_num>(1)
+  integer, parameter :: num_tables   = 2
   integer, parameter :: jtab_mu      = 1
   integer, parameter :: jtab_dq      = 2
   integer, parameter :: jtab_vs      = 3
@@ -28,13 +29,30 @@ module table_rates
   integer, parameter :: k_drate_dt   = 7
   integer, parameter :: add_vars     = 1 ! 1 Additional Var in entries
 
-  <table_indices>(1)
+  integer, parameter :: j_na23_ne23   = 1
+  integer, parameter :: j_ne23_na23   = 2
 
-  <declare_tables>(1)
+  real(rt), allocatable :: rate_table_j_na23_ne23(:,:,:), rhoy_table_j_na23_ne23(:), temp_table_j_na23_ne23(:)
+  integer, allocatable  :: num_rhoy_j_na23_ne23, num_temp_j_na23_ne23, num_vars_j_na23_ne23
+  character(len=50)     :: rate_table_file_j_na23_ne23
+  integer               :: num_header_j_na23_ne23
+  logical, parameter    :: invert_chemical_potential_j_na23_ne23 = .false.
+
+  real(rt), allocatable :: rate_table_j_ne23_na23(:,:,:), rhoy_table_j_ne23_na23(:), temp_table_j_ne23_na23(:)
+  integer, allocatable  :: num_rhoy_j_ne23_na23, num_temp_j_ne23_na23, num_vars_j_ne23_na23
+  character(len=50)     :: rate_table_file_j_ne23_na23
+  integer               :: num_header_j_ne23_na23
+  logical, parameter    :: invert_chemical_potential_j_ne23_na23 = .true.
+
 
 #ifdef AMREX_USE_CUDA
 
-  <declare_managed_tables>(1)
+  attributes(managed) :: rate_table_j_na23_ne23, rhoy_table_j_na23_ne23, temp_table_j_na23_ne23
+  attributes(managed) :: num_rhoy_j_na23_ne23, num_temp_j_na23_ne23, num_vars_j_na23_ne23
+
+  attributes(managed) :: rate_table_j_ne23_na23, rhoy_table_j_ne23_na23, temp_table_j_ne23_na23
+  attributes(managed) :: num_rhoy_j_ne23_na23, num_temp_j_ne23_na23, num_vars_j_ne23_na23
+
 #endif
 
 contains
@@ -42,14 +60,52 @@ contains
   subroutine init_tabular()
     integer :: n
 
-    <table_init_meta>(2)
+    allocate(num_temp_j_na23_ne23)
+    allocate(num_rhoy_j_na23_ne23)
+    allocate(num_vars_j_na23_ne23)
+    num_temp_j_na23_ne23 = 39
+    num_rhoy_j_na23_ne23 = 152
+    num_vars_j_na23_ne23 = 6
+    num_header_j_na23_ne23 = 7
+    rate_table_file_j_na23_ne23 = trim("23Na-23Ne_electroncapture.dat")
+    allocate(rate_table_j_na23_ne23(num_temp_j_na23_ne23, num_rhoy_j_na23_ne23, num_vars_j_na23_ne23))
+    allocate(rhoy_table_j_na23_ne23(num_rhoy_j_na23_ne23))
+    allocate(temp_table_j_na23_ne23(num_temp_j_na23_ne23))
+    call init_tab_info(rate_table_j_na23_ne23, rhoy_table_j_na23_ne23, temp_table_j_na23_ne23, num_rhoy_j_na23_ne23, num_temp_j_na23_ne23, num_vars_j_na23_ne23, rate_table_file_j_na23_ne23, num_header_j_na23_ne23, invert_chemical_potential_j_na23_ne23)
+
+    allocate(num_temp_j_ne23_na23)
+    allocate(num_rhoy_j_ne23_na23)
+    allocate(num_vars_j_ne23_na23)
+    num_temp_j_ne23_na23 = 39
+    num_rhoy_j_ne23_na23 = 152
+    num_vars_j_ne23_na23 = 6
+    num_header_j_ne23_na23 = 6
+    rate_table_file_j_ne23_na23 = trim("23Ne-23Na_betadecay.dat")
+    allocate(rate_table_j_ne23_na23(num_temp_j_ne23_na23, num_rhoy_j_ne23_na23, num_vars_j_ne23_na23))
+    allocate(rhoy_table_j_ne23_na23(num_rhoy_j_ne23_na23))
+    allocate(temp_table_j_ne23_na23(num_temp_j_ne23_na23))
+    call init_tab_info(rate_table_j_ne23_na23, rhoy_table_j_ne23_na23, temp_table_j_ne23_na23, num_rhoy_j_ne23_na23, num_temp_j_ne23_na23, num_vars_j_ne23_na23, rate_table_file_j_ne23_na23, num_header_j_ne23_na23, invert_chemical_potential_j_ne23_na23)
+
 
   end subroutine init_tabular
 
 
   subroutine term_table_meta()
 
-    <table_term_meta>(2)
+    deallocate(num_temp_j_na23_ne23)
+    deallocate(num_rhoy_j_na23_ne23)
+    deallocate(num_vars_j_na23_ne23)
+    deallocate(rate_table_j_na23_ne23)
+    deallocate(rhoy_table_j_na23_ne23)
+    deallocate(temp_table_j_na23_ne23)
+
+    deallocate(num_temp_j_ne23_na23)
+    deallocate(num_rhoy_j_ne23_na23)
+    deallocate(num_vars_j_ne23_na23)
+    deallocate(rate_table_j_ne23_na23)
+    deallocate(rhoy_table_j_ne23_na23)
+    deallocate(temp_table_j_ne23_na23)
+
 
   end subroutine term_table_meta
 
