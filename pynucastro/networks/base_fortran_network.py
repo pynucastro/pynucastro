@@ -608,7 +608,7 @@ class BaseFortranNetwork(RateCollection):
             if r.products[0].Z < r.reactants[0].Z:
                 invert_echemical_string = '.false.'
             else:
-                invert_echemical_string = '.true.'            
+                invert_echemical_string = '.true.'
             of.write('{}logical, parameter    :: invert_chemical_potential_{} = {}\n'.format(
                 self.indent*n_indent, r.table_index_name, invert_echemical_string))
             of.write('\n')
