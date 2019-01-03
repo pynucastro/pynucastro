@@ -1145,6 +1145,9 @@ class Rate(object):
         for i in range(len(t_data2d)):
             while '' in t_data2d[i]:
                 t_data2d[i].remove('')
+
+        while [] in t_data2d:
+            t_data2d.remove([])
             
         self.tabular_data_table = np.array(t_data2d)
         
