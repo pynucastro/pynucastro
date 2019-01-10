@@ -1,5 +1,7 @@
 # changes since the last release
 
+# 1.2.0
+
   -- Fix tabular rate bug where electron chemical potential contributions were not included
   -- Update documentation and code comments
   -- Add Numba support for Python networks
@@ -12,6 +14,10 @@
   -- Add example code generating a 160-isotope network
   -- Fix table compilation issue for StarKiller networks
   -- Moved energy generation subroutine into RHS module for StarKiller networks
+
+# 1.1.1
+
+  -- pynucastro published on JOSS is archived to Zenodo
 
 # 1.1.0
 
