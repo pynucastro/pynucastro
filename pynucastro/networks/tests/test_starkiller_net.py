@@ -50,7 +50,8 @@ class TestStarKillerNetwork(object):
     def test_nrat_reaclib(self):
         """ test the _nrat_reaclib function """
 
-        answer = '  integer, parameter :: nrat_reaclib = 5\n'
+        answer = ('  integer, parameter :: nrat_reaclib = 5\n' +
+                  '  integer, parameter :: number_reaclib_sets = 6\n')
         assert self.cromulent_ftag(self.fn._nrat_reaclib, answer, n_indent=1)
 
     def test_nrat_tabular(self):
@@ -78,7 +79,7 @@ class TestStarKillerNetwork(object):
                   '  integer, parameter :: k_c12_c12__n_mg23   = 2\n' +
                   '  integer, parameter :: k_c12_c12__p_na23   = 3\n' +
                   '  integer, parameter :: k_he4_c12__o16   = 4\n' +
-                  '  integer, parameter :: k_n__p   = 5\n' +
+                  '  integer, parameter :: k_n__p__weak__wc12   = 5\n' +
                   '  integer, parameter :: k_na23__ne23   = 6\n' +
                   '  integer, parameter :: k_ne23__na23   = 7\n')
         assert self.cromulent_ftag(self.fn._nrxn, answer, n_indent=1)
@@ -180,42 +181,6 @@ class TestStarKillerNetwork(object):
                   '    nion(jna23)   = 1.20000000000000d+01\n' +
                   '    nion(jmg23)   = 1.10000000000000d+01\n')
         assert self.cromulent_ftag(self.fn._nion, answer, n_indent=2)
-
-    def test_rate_start_idx(self):
-        """ test the _rate_start_idx function """
-
-        answer = ('    allocate( rate_start_idx(nrat_reaclib) )\n' +
-                  '    rate_start_idx(:) = [ &\n' +
-                  '      1, &\n' +
-                  '      2, &\n' +
-                  '      3, &\n' +
-                  '      4, &\n' +
-                  '      6 ]\n')
-        assert self.cromulent_ftag(self.fn._rate_start_idx, answer, n_indent=2)
-
-    def test_rate_extra_mult(self):
-        """ test the _rate_extra_mult function """
-
-        answer = ('    allocate( rate_extra_mult(nrat_reaclib) )\n' +
-                  '    rate_extra_mult(:) = [ &\n' +
-                  '      0, &\n' +
-                  '      0, &\n' +
-                  '      0, &\n' +
-                  '      1, &\n' +
-                  '      0 ]\n')
-        assert self.cromulent_ftag(self.fn._rate_extra_mult, answer, n_indent=2)
-
-    def test_screen_logical(self):
-        """ test the _screen_logical function """
-
-        answer = ('    allocate( do_screening(nrat_reaclib) )\n' +
-                  '    do_screening(:) = [ &\n' +
-                  '      .true., &\n' +
-                  '      .true., &\n' +
-                  '      .true., &\n' +
-                  '      .true., &\n' +
-                  '      .false. ]\n')
-        assert self.cromulent_ftag(self.fn._screen_logical, answer, n_indent=2)
 
 
 class TestReaclibChapterNetwork(object):
