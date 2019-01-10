@@ -8,7 +8,7 @@ ipywidgets>=7.1.2
 sphinx_rtd_theme
 Sphinx
 nbsphinx>=0.3.1
-pytest>=3.2.1
+pytest>=3.6
 nbval>=0.9.0
-pytest-cov>=2.5.1
 numba>=0.40
+pytest-cov>=2.6.0

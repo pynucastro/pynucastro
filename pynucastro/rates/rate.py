@@ -19,12 +19,15 @@ def list_known_rates():
 
     for _, _, filenames in os.walk(lib_path):
         for f in filenames:
+            # skip over files that are not rate files
+            if f.endswith(".md") or f.endswith(".dat"):
+                continue
             try:
                 lib = Library(f)
             except:
                 continue
             else:
-                print("{:32} : ")
+                print("{:32} : ".format(f))
                 for r in lib.get_rates():
                     print("                                 : {}".format(r))
 
