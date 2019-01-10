@@ -160,6 +160,7 @@
 
 <span class="kn">import</span> <span class="nn">functools</span>
 <span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">operator</span> <span class="k">import</span> <span class="n">mul</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span>
@@ -226,6 +227,21 @@
         <span class="sd">&quot;&quot;&quot; return a dictionary of molar fractions&quot;&quot;&quot;</span>
         <span class="n">molar_frac</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span><span class="o">/</span><span class="n">k</span><span class="o">.</span><span class="n">A</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
         <span class="k">return</span> <span class="n">molar_frac</span></div>
+
+<div class="viewcode-block" id="Composition.eval_ye"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.Composition.eval_ye">[docs]</a>    <span class="k">def</span> <span class="nf">eval_ye</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; return the electron fraction &quot;&quot;&quot;</span>
+        <span class="n">zvec</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">avec</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">xvec</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">:</span>
+            <span class="n">zvec</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">Z</span><span class="p">)</span>
+            <span class="n">avec</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">A</span><span class="p">)</span>
+            <span class="n">xvec</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">n</span><span class="p">])</span>
+        <span class="n">zvec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">zvec</span><span class="p">)</span>
+        <span class="n">avec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">avec</span><span class="p">)</span>
+        <span class="n">xvec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">xvec</span><span class="p">)</span>
+        <span class="n">electron_frac</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">zvec</span><span class="o">*</span><span class="n">xvec</span><span class="o">/</span><span class="n">avec</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">xvec</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">electron_frac</span></div>
 
     <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">ostr</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
@@ -362,6 +378,8 @@
 
         <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">:</span>
             <span class="n">val</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">prefactor</span> <span class="o">*</span> <span class="n">rho</span><span class="o">**</span><span class="n">r</span><span class="o">.</span><span class="n">dens_exp</span> <span class="o">*</span> <span class="n">r</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">weak_type</span> <span class="o">==</span> <span class="s1">&#39;electron_capture&#39;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">r</span><span class="o">.</span><span class="n">tabular</span><span class="p">):</span>
+                <span class="n">val</span> <span class="o">=</span> <span class="n">val</span> <span class="o">*</span> <span class="n">composition</span><span class="o">.</span><span class="n">eval_ye</span><span class="p">()</span>
             <span class="n">yfac</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span><span class="n">mul</span><span class="p">,</span> <span class="p">[</span><span class="n">ys</span><span class="p">[</span><span class="n">q</span><span class="p">]</span> <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">])</span>
             <span class="n">rvals</span><span class="p">[</span><span class="n">r</span><span class="p">]</span> <span class="o">=</span> <span class="n">yfac</span> <span class="o">*</span> <span class="n">val</span>
 
@@ -393,6 +411,12 @@
         <span class="sd">&quot;&quot;&quot;Every Rate in this RateCollection should have a unique Rate.fname,</span>
 <span class="sd">        as the network writers distinguish the rates on this basis.&quot;&quot;&quot;</span>
         <span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span><span class="o">.</span><span class="n">fname</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">n</span><span class="p">,</span><span class="n">r</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">names</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">):</span>
+            <span class="n">k</span> <span class="o">=</span> <span class="n">names</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">k</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Found rate </span><span class="si">{}</span><span class="s1"> named </span><span class="si">{}</span><span class="s1"> with </span><span class="si">{}</span><span class="s1"> entries in the RateCollection.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">k</span><span class="p">))</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Rate </span><span class="si">{}</span><span class="s1"> has the original source:</span><span class="se">\n</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">original_source</span><span class="p">))</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Rate </span><span class="si">{}</span><span class="s1"> is in chapter </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">chapter</span><span class="p">))</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">names</span><span class="p">))</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_write_network</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>

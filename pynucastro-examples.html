@@ -799,7 +799,8 @@ o15
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<script type="application/vnd.jupyter.widget-view+json">{"model_id": "f767a49ddddd47a7a43feafd35213365", "version_major": 2, "version_minor": 0}</script></div>
+<img alt="_images/pynucastro-examples_34_0.png" src="_images/pynucastro-examples_34_0.png" />
+</div>
 </div>
 </div>
 <div class="section" id="Integrating-networks">
@@ -847,6 +848,7 @@ rho*Y[ip]*Y[ic13]*lambda_p_c13__n14
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
+@numba.njit()
 def p_c13__n14(tf):
     # c13 + p --&gt; n14
     rate = 0.0
@@ -883,6 +885,7 @@ def p_c13__n14(tf):
 <div class="highlight"><pre>
 import numpy as np
 from pynucastro.rates import Tfactors
+import numba
 
 ip = 0
 ihe4 = 1
@@ -907,6 +910,23 @@ A[in15] = 15
 A[io14] = 14
 A[io15] = 15
 
+Z = np.zeros((nnuc), dtype=np.int32)
+
+Z[ip] = 1
+Z[ihe4] = 2
+Z[ic12] = 6
+Z[ic13] = 6
+Z[in13] = 7
+Z[in14] = 7
+Z[in15] = 7
+Z[io14] = 8
+Z[io15] = 8
+
+@numba.njit()
+def ye(Y):
+    return np.sum(Z * Y)/np.sum(A * Y)
+
+@numba.njit()
 def p_c12__n13(tf):
     # c12 + p --&gt; n13
     rate = 0.0
@@ -920,6 +940,7 @@ def p_c12__n13(tf):
 
     return rate
 
+@numba.njit()
 def p_c13__n14(tf):
     # c13 + p --&gt; n14
     rate = 0.0
@@ -936,7 +957,8 @@ def p_c13__n14(tf):
 
     return rate
 
-def n13__c13(tf):
+@numba.njit()
+def n13__c13__weak__wc12(tf):
     # n13 --&gt; c13
     rate = 0.0
 
@@ -945,6 +967,7 @@ def n13__c13(tf):
 
     return rate
 
+@numba.njit()
 def p_n13__o14(tf):
     # n13 + p --&gt; o14
     rate = 0.0
@@ -958,6 +981,7 @@ def p_n13__o14(tf):
 
     return rate
 
+@numba.njit()
 def p_n14__o15(tf):
     # n14 + p --&gt; o15
     rate = 0.0
@@ -977,6 +1001,7 @@ def p_n14__o15(tf):
 
     return rate
 
+@numba.njit()
 def p_n15__he4_c12(tf):
     # n15 + p --&gt; he4 + c12
     rate = 0.0
@@ -996,7 +1021,8 @@ def p_n15__he4_c12(tf):
 
     return rate
 
-def o14__n14(tf):
+@numba.njit()
+def o14__n14__weak__wc12(tf):
     # o14 --&gt; n14
     rate = 0.0
 
@@ -1005,7 +1031,8 @@ def o14__n14(tf):
 
     return rate
 
-def o15__n15(tf):
+@numba.njit()
+def o15__n15__weak__wc12(tf):
     # o15 --&gt; n15
     rate = 0.0
 
@@ -1015,17 +1042,32 @@ def o15__n15(tf):
     return rate
 
 def rhs(t, Y, rho, T):
+    return rhs_eq(t, Y, rho, T)
+
+@numba.njit()
+def rhs_eq(t, Y, rho, T):
+
+    ip = 0
+    ihe4 = 1
+    ic12 = 2
+    ic13 = 3
+    in13 = 4
+    in14 = 5
+    in15 = 6
+    io14 = 7
+    io15 = 8
+    nnuc = 9
 
     tf = Tfactors(T)
 
     lambda_p_c12__n13 = p_c12__n13(tf)
     lambda_p_c13__n14 = p_c13__n14(tf)
-    lambda_n13__c13 = n13__c13(tf)
+    lambda_n13__c13__weak__wc12 = n13__c13__weak__wc12(tf)
     lambda_p_n13__o14 = p_n13__o14(tf)
     lambda_p_n14__o15 = p_n14__o15(tf)
     lambda_p_n15__he4_c12 = p_n15__he4_c12(tf)
-    lambda_o14__n14 = o14__n14(tf)
-    lambda_o15__n15 = o15__n15(tf)
+    lambda_o14__n14__weak__wc12 = o14__n14__weak__wc12(tf)
+    lambda_o15__n15__weak__wc12 = o15__n15__weak__wc12(tf)
 
     dYdt = np.zeros((nnuc), dtype=np.float64)
 
@@ -1048,11 +1090,11 @@ def rhs(t, Y, rho, T):
 
     dYdt[ic13] = (
        -rho*Y[ip]*Y[ic13]*lambda_p_c13__n14
-       +Y[in13]*lambda_n13__c13
+       +Y[in13]*lambda_n13__c13__weak__wc12
        )
 
     dYdt[in13] = (
-       -Y[in13]*lambda_n13__c13
+       -Y[in13]*lambda_n13__c13__weak__wc12
        -rho*Y[ip]*Y[in13]*lambda_p_n13__o14
        +rho*Y[ip]*Y[ic12]*lambda_p_c12__n13
        )
@@ -1060,21 +1102,21 @@ def rhs(t, Y, rho, T):
     dYdt[in14] = (
        -rho*Y[ip]*Y[in14]*lambda_p_n14__o15
        +rho*Y[ip]*Y[ic13]*lambda_p_c13__n14
-       +Y[io14]*lambda_o14__n14
+       +Y[io14]*lambda_o14__n14__weak__wc12
        )
 
     dYdt[in15] = (
        -rho*Y[ip]*Y[in15]*lambda_p_n15__he4_c12
-       +Y[io15]*lambda_o15__n15
+       +Y[io15]*lambda_o15__n15__weak__wc12
        )
 
     dYdt[io14] = (
-       -Y[io14]*lambda_o14__n14
+       -Y[io14]*lambda_o14__n14__weak__wc12
        +rho*Y[ip]*Y[in13]*lambda_p_n13__o14
        )
 
     dYdt[io15] = (
-       -Y[io15]*lambda_o15__n15
+       -Y[io15]*lambda_o15__n15__weak__wc12
        +rho*Y[ip]*Y[in14]*lambda_p_n14__o15
        )
 

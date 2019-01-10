@@ -265,6 +265,11 @@ self.symbol_ludict with their corresponding entries.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="pynucastro.networks.base_fortran_network.BaseFortranNetwork.get_screening_map">
+<code class="descname">get_screening_map</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/base_fortran_network.html#BaseFortranNetwork.get_screening_map"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.networks.base_fortran_network.BaseFortranNetwork.get_screening_map" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
 <dt id="pynucastro.networks.base_fortran_network.BaseFortranNetwork.io_close">
 <code class="descname">io_close</code><span class="sig-paren">(</span><em>infile</em>, <em>outfile</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/base_fortran_network.html#BaseFortranNetwork.io_close"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.networks.base_fortran_network.BaseFortranNetwork.io_close" title="Permalink to this definition">¶</a></dt>
 <dd><p>close the input and output files</p>
@@ -376,6 +381,12 @@ rates that together make up a network.</p>
 <p>a composition holds the mass fractions of the nuclei in a network
 – useful for evaluating the rates</p>
 <dl class="method">
+<dt id="pynucastro.networks.rate_collection.Composition.eval_ye">
+<code class="descname">eval_ye</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/rate_collection.html#Composition.eval_ye"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.networks.rate_collection.Composition.eval_ye" title="Permalink to this definition">¶</a></dt>
+<dd><p>return the electron fraction</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="pynucastro.networks.rate_collection.Composition.get_molar">
 <code class="descname">get_molar</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/rate_collection.html#Composition.get_molar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.networks.rate_collection.Composition.get_molar" title="Permalink to this definition">¶</a></dt>
 <dd><p>return a dictionary of molar fractions</p>
@@ -475,6 +486,16 @@ codes</p>
 <dt id="pynucastro.networks.starkiller_network.StarKillerNetwork">
 <em class="property">class </em><code class="descclassname">pynucastro.networks.starkiller_network.</code><code class="descname">StarKillerNetwork</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/starkiller_network.html#StarKillerNetwork"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.networks.starkiller_network.StarKillerNetwork" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pynucastro.networks.base_fortran_network.BaseFortranNetwork" title="pynucastro.networks.base_fortran_network.BaseFortranNetwork"><code class="xref py py-class docutils literal notranslate"><span class="pre">pynucastro.networks.base_fortran_network.BaseFortranNetwork</span></code></a></p>
+<dl class="method">
+<dt id="pynucastro.networks.starkiller_network.StarKillerNetwork.get_csr_jac_metadata">
+<code class="descname">get_csr_jac_metadata</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/starkiller_network.html#StarKillerNetwork.get_csr_jac_metadata"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.networks.starkiller_network.StarKillerNetwork.get_csr_jac_metadata" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pynucastro.networks.starkiller_network.StarKillerNetwork.get_sparse_jac_nnz">
+<code class="descname">get_sparse_jac_nnz</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/starkiller_network.html#StarKillerNetwork.get_sparse_jac_nnz"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.networks.starkiller_network.StarKillerNetwork.get_sparse_jac_nnz" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 </div>

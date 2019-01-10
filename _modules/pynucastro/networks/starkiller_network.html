@@ -176,13 +176,130 @@
                                                  <span class="s1">&#39;*.template&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">template_files</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">template_file_select</span><span class="p">)</span>
 
+        <span class="c1"># StarKiller-specific template processing functions</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">&#39;&lt;sparse_jac_nnz&gt;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sparse_jac_nnz</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">&#39;&lt;csr_jac_metadata&gt;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_csr_jac_metadata</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">&#39;&lt;species_xin_test&gt;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_species_xin_test</span>
+
+<div class="viewcode-block" id="StarKillerNetwork.get_sparse_jac_nnz"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.starkiller_network.StarKillerNetwork.get_sparse_jac_nnz">[docs]</a>    <span class="k">def</span> <span class="nf">get_sparse_jac_nnz</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Get the number of nonzero entries in the sparse Jacobian</span>
+
+        <span class="c1"># Evaluate the species Jacobian if not already done</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">solved_jacobian</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">compose_jacobian</span><span class="p">()</span>
+
+        <span class="n">nspec</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">)</span>
+        <span class="n">number_nonzero</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="c1"># Count the number of nonzero entries in the species Jacobian</span>
+        <span class="n">jac_idx</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="c1"># Loop over rows</span>
+        <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">nj</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">):</span>
+            <span class="c1"># Loop over columns</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">ni</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">):</span>
+                <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">jac_null_entries</span><span class="p">[</span><span class="n">jac_idx</span><span class="p">])</span> <span class="ow">or</span> <span class="n">i</span><span class="o">==</span><span class="n">j</span><span class="p">:</span>
+                    <span class="n">number_nonzero</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">jac_idx</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="c1"># Add the df/dT contributions</span>
+        <span class="n">number_nonzero</span> <span class="o">+=</span> <span class="n">nspec</span> <span class="o">+</span> <span class="mi">2</span>
+
+        <span class="c1"># Add the dTdot/dX and dedot/dX contributions</span>
+        <span class="n">number_nonzero</span> <span class="o">+=</span> <span class="mi">2</span><span class="o">*</span><span class="n">nspec</span>
+
+        <span class="c1"># Add the dedot/de contribution</span>
+        <span class="c1"># This is zero but we need it because we need the</span>
+        <span class="c1"># entire diagonal of J for the integration</span>
+        <span class="n">number_nonzero</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="n">number_nonzero</span></div>
+
+<div class="viewcode-block" id="StarKillerNetwork.get_csr_jac_metadata"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.starkiller_network.StarKillerNetwork.get_csr_jac_metadata">[docs]</a>    <span class="k">def</span> <span class="nf">get_csr_jac_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Get row count and column index for the CSR Jacobian</span>
+        <span class="c1"># Remember, we need the entire diagonal for the linear solver</span>
+
+        <span class="c1"># Evaluate the species Jacobian if not already done</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">solved_jacobian</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">compose_jacobian</span><span class="p">()</span>
+
+        <span class="n">row_count</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">col_index</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">nspec</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">)</span>
+        
+        <span class="c1"># Start row_count at base 1</span>
+        <span class="n">row_count</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">jac_idx</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="c1"># Loop over rows</span>
+        <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">nj</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">):</span>
+            <span class="n">num_in_row</span> <span class="o">=</span> <span class="n">row_count</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="c1"># Loop over columns</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">ni</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">):</span>
+                <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">jac_null_entries</span><span class="p">[</span><span class="n">jac_idx</span><span class="p">])</span> <span class="ow">or</span> <span class="n">i</span><span class="o">==</span><span class="n">j</span><span class="p">:</span>
+                    <span class="n">num_in_row</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="n">col_index</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+                <span class="n">jac_idx</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="c1"># Done with species in row, do T</span>
+            <span class="n">num_in_row</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">col_index</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nspec</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">row_count</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">num_in_row</span><span class="p">)</span>
+
+        <span class="c1"># Done with species rows, do Tdot</span>
+        <span class="n">num_in_row</span> <span class="o">=</span> <span class="n">nspec</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">row_count</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">row_count</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">num_in_row</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">nspec</span><span class="o">+</span><span class="mi">2</span><span class="p">):</span>
+            <span class="n">col_index</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+        <span class="c1"># Done with Tdot, do edot row</span>
+        <span class="n">num_in_row</span> <span class="o">=</span> <span class="n">nspec</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">row_count</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">row_count</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">num_in_row</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">nspec</span><span class="o">+</span><span class="mi">3</span><span class="p">):</span>
+            <span class="n">col_index</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+        <span class="c1"># Return row count and column index lists</span>
+        <span class="k">return</span> <span class="n">row_count</span><span class="p">,</span> <span class="n">col_index</span></div>
+
     <span class="k">def</span> <span class="nf">_initial_mass_fractions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
         <span class="c1"># Redefine initial mass fractions tag to set the</span>
         <span class="c1"># mass fractions in the burn_cell unit test inputs file.</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">):</span>
             <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">! </span><span class="si">{nuc: &lt;5}</span><span class="s2"> initial mass fraction</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">nuc</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">n</span><span class="p">)))</span>
             <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">massfractions(</span><span class="si">{}</span><span class="s2">) = 0.0d0</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="p">,</span> <span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span></div>
+                <span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="p">,</span> <span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">_sparse_jac_nnz</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+        <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">integer, parameter   :: NETWORK_SPARSE_JAC_NNZ = </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_sparse_jac_nnz</span><span class="p">()))</span>
+
+    <span class="k">def</span> <span class="nf">_csr_jac_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+        <span class="n">row_count</span><span class="p">,</span> <span class="n">col_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_csr_jac_metadata</span><span class="p">()</span>
+
+        <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">csr_jac_col_index = [ &amp;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">ci</span> <span class="ow">in</span> <span class="n">col_index</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}{}</span><span class="s1">, &amp;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="p">(</span><span class="n">n_indent</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span> <span class="n">ci</span><span class="p">))</span>
+        <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}{}</span><span class="s1">  ]</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="p">(</span><span class="n">n_indent</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span> <span class="n">col_index</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+
+        <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">csr_jac_row_count = [ &amp;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">ri</span> <span class="ow">in</span> <span class="n">row_count</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}{}</span><span class="s1">, &amp;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="p">(</span><span class="n">n_indent</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span> <span class="n">ri</span><span class="p">))</span>
+        <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}{}</span><span class="s1">  ]</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="p">(</span><span class="n">n_indent</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span> <span class="n">row_count</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+
+    <span class="k">def</span> <span class="nf">_species_xin_test</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size_test</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+        <span class="n">xcomp</span> <span class="o">=</span> <span class="mf">1.0</span><span class="o">/</span><span class="nb">float</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">i</span><span class="o">!=</span><span class="mi">0</span><span class="p">:</span>
+                <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;#</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;# </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">n</span><span class="p">))</span>
+            <span class="n">xin</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">fmt_to_dp_f90</span><span class="p">(</span><span class="n">xcomp</span><span class="p">)</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">size_test</span><span class="p">)]</span>
+            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">xin</span><span class="p">)))</span></div>
 </pre></div>
 
            </div>
