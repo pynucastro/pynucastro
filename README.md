@@ -3,6 +3,7 @@
 [![Build Status](https://travis-ci.org/pynucastro/pynucastro.svg?branch=master)](https://travis-ci.org/pynucastro/pynucastro)
 [![DOI](http://joss.theoj.org/papers/10.21105/joss.00588/status.svg)](https://doi.org/10.21105/joss.00588)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1202434.svg)](https://doi.org/10.5281/zenodo.1202434)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/pynucastro/pynucastro/master?filepath=examples%2Fpynucastro-examples.ipynb)
 
 Python interfaces to the nuclear reaction rate databases, including
 the JINA Reaclib nuclear reactions database.  This

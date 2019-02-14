@@ -1,0 +1,24 @@
+# changes since the last release
+
+# 1.2.0
+
+  -- Fix tabular rate bug where electron chemical potential contributions were not included
+  -- Update documentation and code comments
+  -- Add Numba support for Python networks
+  -- Enable sparse Jacobian (CSR) for StarKiller networks
+  -- Incorporate CUDA Fortran port for StarKiller networks including tabulated rates
+  -- Optimize rate screening evaluation for StarKiller networks
+  -- Fix bug to include the electron fraction and correct density dependence for Reaclib electron capture rates
+  -- Allow a nuclide to be both reactant and product
+  -- Updates an error message for multiple degenerate rates
+  -- Add example code generating a 160-isotope network
+  -- Fix table compilation issue for StarKiller networks
+  -- Moved energy generation subroutine into RHS module for StarKiller networks
+
+# 1.1.1
+
+  -- pynucastro published on JOSS is archived to Zenodo
+
+# 1.1.0
+
+  -- JOSS reviewer changes merged and pynucastro accepted to JOSS

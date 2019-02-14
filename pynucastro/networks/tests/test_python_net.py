@@ -45,6 +45,7 @@ class TestPythonNetwork(object):
     def test_function_string(self):
 
         ostr = """
+@numba.njit()
 def p_c13__n14(tf):
     # c13 + p --> n14
     rate = 0.0
