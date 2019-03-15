@@ -71,7 +71,6 @@ class BaseFortranNetwork(RateCollection):
         self.ftags['<ydot_declare_scratch>'] = self._ydot_declare_scratch
         self.ftags['<ydot_scratch>'] = self._ydot_scratch
         self.ftags['<ydot>'] = self._ydot
-        self.ftags['<enuc_add_energy>'] = self._enuc_add_energy
         self.ftags['<enuc_add_energy_rate>'] = self._enuc_add_energy_rate
         self.ftags['<jacnuc_declare_scratch>'] = self._jacnuc_declare_scratch
         self.ftags['<jacnuc_scratch>'] = self._jacnuc_scratch
@@ -705,9 +704,8 @@ class BaseFortranNetwork(RateCollection):
                 of.write('{}call tabular_evaluate(rate_table_{}, rhoy_table_{}, temp_table_{}, &\n'.format(self.indent*n_indent, r.table_index_name, r.table_index_name, r.table_index_name))
                 of.write('{}                      num_rhoy_{}, num_temp_{}, num_vars_{}, &\n'.format(self.indent*n_indent, r.table_index_name, r.table_index_name, r.table_index_name))
                 of.write('{}                      rhoy, state % T, reactvec)\n'.format(self.indent*n_indent))
-                of.write('{}rate_eval % unscreened_rates(:,{}) = reactvec(1:4)\n'.format(self.indent*n_indent, n+1+len(self.reaclib_rates)))
-                of.write('{}rate_eval % add_energy({}) = reactvec(5)\n'.format(self.indent*n_indent, n+1))
-                of.write('{}rate_eval % add_energy_rate({})  = reactvec(6)\n'.format(self.indent*n_indent, n+1))
+                of.write('{}rate_eval % unscreened_rates(i_rate:i_scor,{}) = reactvec(i_rate:i_scor)\n'.format(self.indent*n_indent, n+1+len(self.reaclib_rates)))
+                of.write('{}rate_eval % add_energy_rate({})  = reactvec(i_eneut)\n'.format(self.indent*n_indent, n+1))
                 of.write('\n')
 
     def _compute_tabular_rates_jac(self, n_indent, of):
@@ -749,22 +747,9 @@ class BaseFortranNetwork(RateCollection):
             of.write("{}{} &\n".format(self.indent*(n_indent+1), sol_value))
             of.write("{}   )\n\n".format(self.indent*n_indent))
 
-    def _enuc_add_energy(self, n_indent, of):
-        # Add tabular per-reaction energy corrections to the energy generation rate
-        # Includes Coulomb corrections to Q-value and electron fermi energy
-        for nr, r in enumerate(self.rates):
-            if nr in self.tabular_rates:
-                if len(r.reactants) != 1:
-                    print('ERROR: Unknown tabular energy corrections for a reaction where the number of reactants is not 1.')
-                    exit()
-                else:
-                    reactant = r.reactants[0]
-                    of.write('{}enuc = enuc + N_AVO * {}(j{}) * rate_eval % add_energy({})\n'.format(
-                        self.indent*n_indent, self.name_ydot, reactant, r.table_index_name))
-
     def _enuc_add_energy_rate(self, n_indent, of):
-        # Add tabular per-reaction energy generation rates to the energy generation rate
-        # Includes gamma heating and neutrino loss from decays (but not thermal neutrinos)
+        # Add tabular per-reaction neutrino energy generation rates to the energy generation rate
+        # (not thermal neutrinos)
         for nr, r in enumerate(self.rates):
             if nr in self.tabular_rates:
                 if len(r.reactants) != 1:
