@@ -600,16 +600,6 @@ class BaseFortranNetwork(RateCollection):
                 self.indent*n_indent, r.table_index_name))
             of.write('{}integer               :: num_header_{}\n'.format(
                 self.indent*n_indent, r.table_index_name))
-
-            # This is used to distinguish electron capture reactions from beta decays
-            # for the purpose of setting the sign of the electron chemical potential
-            # contribution to the energy generation. Not intended for positron capture or decay.
-            if r.products[0].Z < r.reactants[0].Z:
-                invert_echemical_string = '.false.'
-            else:
-                invert_echemical_string = '.true.'
-            of.write('{}logical, parameter    :: invert_chemical_potential_{} = {}\n'.format(
-                self.indent*n_indent, r.table_index_name, invert_echemical_string))
             of.write('\n')
 
     def _declare_managed_tables(self, n_indent, of):
@@ -658,9 +648,9 @@ class BaseFortranNetwork(RateCollection):
             of.write('{}allocate(temp_table_{}(num_temp_{}))\n'.format(
                 self.indent*n_indent, r.table_index_name, r.table_index_name))
 
-            of.write('{}call init_tab_info(rate_table_{}, rhoy_table_{}, temp_table_{}, num_rhoy_{}, num_temp_{}, num_vars_{}, rate_table_file_{}, num_header_{}, invert_chemical_potential_{})\n'.format(
+            of.write('{}call init_tab_info(rate_table_{}, rhoy_table_{}, temp_table_{}, num_rhoy_{}, num_temp_{}, num_vars_{}, rate_table_file_{}, num_header_{})\n'.format(
                 self.indent*n_indent, r.table_index_name, r.table_index_name, r.table_index_name, r.table_index_name,
-                r.table_index_name, r.table_index_name, r.table_index_name, r.table_index_name, r.table_index_name))
+                r.table_index_name, r.table_index_name, r.table_index_name, r.table_index_name))
 
             of.write('\n')
 

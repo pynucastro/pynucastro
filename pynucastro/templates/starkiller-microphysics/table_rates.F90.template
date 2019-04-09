@@ -56,11 +56,10 @@ contains
 
   subroutine init_tab_info(rate_table, rhoy_table, temp_table, &
                            num_rhoy, num_temp, num_vars, &
-                           rate_table_file, num_header, invert_chemical_potential)
+                           rate_table_file, num_header)
     integer  :: num_rhoy, num_temp, num_vars, num_header
     real(rt) :: rate_table(num_temp, num_rhoy, num_vars), rhoy_table(num_rhoy), temp_table(num_temp)
     character(len=50) :: rate_table_file
-    logical :: invert_chemical_potential
 
     real(rt), allocatable :: rate_table_scratch(:,:,:)
     integer :: i, j, k
@@ -82,13 +81,6 @@ contains
     close(11)
 
     rate_table(:,:,:) = rate_table_scratch(:,:,3:num_vars+2)
-
-    ! Set sign for chemical potential contribution to energy generation for
-    ! electron capture vs beta decays.
-    if (invert_chemical_potential) then
-       rate_table(:,:,jtab_mu) = -rate_table(:,:,jtab_mu)
-       rate_table(:,:,jtab_vs) = -rate_table(:,:,jtab_vs)
-    end if
 
     do i = 1, num_rhoy
        rhoy_table(i) = rate_table_scratch(1, i, 1)
