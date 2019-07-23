@@ -318,7 +318,8 @@ class RateCollection(object):
         print('To create network integration source code, use a class that implements a specific network type.')
         return
 
-    def plot(self, outfile=None, rho=None, T=None, comp=None, size=(800, 600), dpi=100):
+    def plot(self, outfile=None, rho=None, T=None, comp=None, size=(800, 600), dpi=100,
+             filter_function=None, rate_thresh=None):
         """Make a plot of the network structure showing the links between nuclei"""
 
         G = nx.MultiDiGraph()
@@ -343,6 +344,9 @@ class RateCollection(object):
                         node_nuclei.append(n)
                         break
 
+        if filter_function is not None:
+            node_nuclei = list(filter(filter_function, node_nuclei))
+        
         for n in node_nuclei:
             G.add_node(n)
             G.position[n] = (n.N, n.Z)
@@ -352,6 +356,11 @@ class RateCollection(object):
             ydots = self.evaluate_rates(rho, T, comp)
         else:
             ydots = None
+            
+        if rate_thresh is None:
+            rate_thresh = -308
+        else:
+            rate_thresh = math.log10(rate_thresh)
 
         #for rr in ydots:
         #    print("{}: {}".format(rr, ydots[rr]))
@@ -378,7 +387,8 @@ class RateCollection(object):
                                 rate_weight = -308
                             except:
                                 raise
-                            G.add_edges_from([(n, p)], weight=rate_weight)
+                            if rate_weight >= rate_thresh:
+                                G.add_edges_from([(n, p)], weight=rate_weight)
 
         nx.draw_networkx_nodes(G, G.position,
                                node_color="#A0CBE2", alpha=1.0,
@@ -423,6 +433,9 @@ class RateCollection(object):
         ax.spines['top'].set_visible(False)
         ax.xaxis.set_ticks_position('bottom')
         ax.yaxis.set_ticks_position('left')
+        
+        ax.xaxis.set_major_locator(MaxNLocator(integer=True))
+        ax.yaxis.set_major_locator(MaxNLocator(integer=True))
 
         ax.set_aspect("equal", "datalim")
 
@@ -581,17 +594,18 @@ class RateCollection(object):
         # Plot a square for each nucleus
         for nuc, weight in zip(nuclei, weights):
             
-            square = plt.Rectangle((nuc.N, nuc.Z), width=1, height=1,
+            square = plt.Rectangle((nuc.N - 0.5, nuc.Z - 0.5), width=1, height=1,
                     facecolor=cmap(weight), edgecolor=edgecolor)
             ax.add_patch(square)
         
-        # Set limits, plot appearance
+        # Set limits
         maxN, minN = max(Ns), min(Ns)
         maxZ, minZ = max(Zs), min(Zs)
         
-        plt.xlim(minN, maxN + 1.1)
-        plt.ylim(minZ, maxZ + 1.1)
+        plt.xlim(minN - 0.5, maxN + 0.6)
+        plt.ylim(minZ - 0.5, maxZ + 0.6)
         
+        # Set plot appearance
         rat = (maxN - minN) / (maxZ - minZ)
         width = np.sqrt(area * rat)
         height = area / width
@@ -622,11 +636,6 @@ class RateCollection(object):
         if no_axes:
             ax.spines['bottom'].set_visible(False)
             ax.spines['left'].set_visible(False)
-            
-        for item in [ax.xaxis.label, ax.yaxis.label]:
-            item.set_fontsize(20)
-        for item in (ax.get_xticklabels() + ax.get_xticklabels()):
-            item.set_fontsize(16)
         
         # Colorbar stuff
         if not no_cbar and comp is not None:
@@ -646,9 +655,8 @@ class RateCollection(object):
                 else:
                     cbar_label = capfield
                 
-            cbar = fig.colorbar(smap, cax=cax, orientation="vertical", format=cbar_format)
-            cbar.set_label(cbar_label, size=20)
-            cbar.ax.tick_params(labelsize=16)
+            fig.colorbar(smap, cax=cax, orientation="vertical",
+                    label=cbar_label, format=cbar_format)
         
         # Show or save
         if outfile is None:
