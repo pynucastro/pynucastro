@@ -1,7 +1,0 @@
-# Turn off heating due to the relaxation of the
-# electron fermi distribution at high densities
-# caused by electron capture reactions.
-# Turning off heating in this way is unphysical
-# but can be useful for measuring the size of
-# this heating effect.
-disable_fermi_heating          logical   .false.

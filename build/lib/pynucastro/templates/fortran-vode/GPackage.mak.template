@@ -1,7 +1,0 @@
-f90sources += history_module.f90
-f90sources += data_wrangler.f90
-f90sources += reaclib_rates.f90
-f90sources += network.f90
-f90sources += physical_constants.f90
-f90sources += rhs.f90
-f90sources += table_rates.f90
