@@ -1,0 +1,10 @@
+Metadata-Version: 1.0
+Name: pynucastro
+Version: 1.2.0
+Summary: Python Interfaces to the nuclear reaction rate databases
+Home-page: https://github.com/pynucastro/nucastro
+Author: Mike Zingale and Donald Willcox
+Author-email: michael.zingale@stonybrook.edu
+License: BSD
+Description: UNKNOWN
+Platform: UNKNOWN

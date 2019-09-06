@@ -1,0 +1,279 @@
+module actual_rhs_module
+
+  use amrex_fort_module, only: rt => amrex_real
+  use amrex_constants_module
+  use physical_constants, only: N_AVO
+  use network
+  use table_rates
+  use burn_type_module
+
+  implicit none
+
+  type :: rate_eval_t
+     real(rt) :: unscreened_rates(4, nrates)
+     real(rt) :: screened_rates(nrates)
+     real(rt) :: add_energy(nrat_tabular)
+     real(rt) :: add_energy_rate(nrat_tabular)
+  end type rate_eval_t
+  
+contains
+
+  subroutine actual_rhs_init()
+    ! STUB FOR MAESTRO'S TEST_REACT. ALL THE INIT IS DONE BY BURNER_INIT
+    return
+  end subroutine actual_rhs_init
+
+
+  subroutine update_unevolved_species(state)
+    ! STUB FOR INTEGRATOR
+    type(burn_t)     :: state
+
+    !$gpu
+    
+    return
+  end subroutine update_unevolved_species
+
+
+  subroutine zero_rate_eval(rate_eval)
+
+    implicit none
+
+    type(rate_eval_t), intent(inout) :: rate_eval
+
+    !$gpu
+
+    rate_eval % unscreened_rates(i_rate, :) = ZERO
+    rate_eval % unscreened_rates(i_drate_dt, :) = ZERO
+    rate_eval % unscreened_rates(i_scor, :) = ONE
+    rate_eval % unscreened_rates(i_dscor_dt, :) = ZERO
+    rate_eval % screened_rates = ZERO
+    rate_eval % add_energy = ZERO
+    rate_eval % add_energy_rate = ZERO
+
+  end subroutine zero_rate_eval
+
+
+  subroutine evaluate_rates(state, rate_eval)
+    !$acc routine seq
+
+    use reaclib_rates, only: screen_reaclib, reaclib_evaluate
+    use screening_module, only: screen5, plasma_state, fill_plasma_state
+
+    implicit none
+    
+    type(burn_t)     :: state
+    type(rate_eval_t), intent(out) :: rate_eval
+    type(plasma_state) :: pstate
+    real(rt) :: Y(nspec)
+    real(rt) :: raw_rates(4, nrates)
+    real(rt) :: reactvec(num_rate_groups+2)
+    integer :: i, j
+    real(rt) :: rhoy, scor, dscor_dt, dscor_dd
+
+    !$gpu
+
+    Y(:) = state % xn(:) * aion_inv(:)
+    rhoy = state % rho * state % y_e
+
+    ! Zero out the rates
+    call zero_rate_eval(rate_eval)
+
+    ! Calculate Reaclib rates
+    call fill_plasma_state(pstate, state % T, state % rho, Y)
+    do i = 1, nrat_reaclib
+       call reaclib_evaluate(pstate, state % T, i, reactvec)
+       rate_eval % unscreened_rates(:,i) = reactvec(1:4)
+    end do
+
+    ! Evaluate screening factors
+    if (screen_reaclib) then
+       <compute_screening_factors>(3)
+    end if
+
+    <compute_tabular_rates_rhs>(2)
+
+    ! Compute screened rates
+    rate_eval % screened_rates = rate_eval % unscreened_rates(i_rate, :) * &
+                                 rate_eval % unscreened_rates(i_scor, :)
+
+  end subroutine evaluate_rates
+
+
+  subroutine actual_rhs(state)
+    
+    !$acc routine seq
+
+    use extern_probin_module, only: do_constant_volume_burn
+    use burn_type_module, only: net_itemp, net_ienuc
+    use sneut_module, only: sneut5
+    use temperature_integration_module, only: temperature_rhs
+
+    implicit none
+
+    type(burn_t) :: state
+    type(rate_eval_t) :: rate_eval
+    real(rt) :: Y(nspec), ydot_nuc(nspec)
+    real(rt) :: reactvec(num_rate_groups+2)
+    integer :: i, j
+    real(rt) :: rhoy, ye, enuc
+    real(rt) :: sneut, dsneutdt, dsneutdd, snuda, snudz
+
+    !$gpu
+
+    ! Set molar abundances
+    Y(:) = state % xn(:) * aion_inv(:)
+
+    call evaluate_rates(state, rate_eval)
+
+    call rhs_nuc(state, ydot_nuc, Y, rate_eval % screened_rates)
+    state % ydot(1:nspec) = ydot_nuc
+
+    ! ion binding energy contributions
+    call ener_gener_rate(ydot_nuc, enuc)
+
+    ! additional per-reaction energies
+    ! including Q-value modification and electron chemical potential
+    <enuc_add_energy>(2)
+
+    ! additional energy generation rates
+    ! including gamma heating and reaction neutrino losses (non-thermal)
+    <enuc_add_energy_rate>(2)
+
+
+    ! Get the thermal neutrino losses
+    call sneut5(state % T, state % rho, state % abar, state % zbar, sneut, dsneutdt, dsneutdd, snuda, snudz)
+
+    ! Append the energy equation (this is erg/g/s)
+    state % ydot(net_ienuc) = enuc - sneut
+
+    ! Append the temperature equation
+    call temperature_rhs(state)
+
+  end subroutine actual_rhs
+
+
+  subroutine rhs_nuc(state, ydot_nuc, Y, screened_rates)
+
+    !$acc routine seq
+
+    implicit none
+
+    type (burn_t), intent(in) :: state
+    real(rt), intent(out) :: ydot_nuc(nspec)
+    real(rt), intent(in)  :: Y(nspec)
+    real(rt), intent(in)  :: screened_rates(nrates)
+
+    !$gpu
+
+    <ydot_declare_scratch>(2)
+
+    <ydot_scratch>(2)
+
+    <ydot>(2)
+
+  end subroutine rhs_nuc
+
+
+  subroutine actual_jac(state)
+
+    !$acc routine seq
+
+    use burn_type_module, only: net_itemp, net_ienuc
+    use sneut_module, only: sneut5
+    use temperature_integration_module, only: temperature_jac
+    use jacobian_sparsity_module, only: get_jac_entry, set_jac_entry, set_jac_zero
+
+    implicit none
+    
+    type(burn_t) :: state
+    type(rate_eval_t) :: rate_eval
+    real(rt) :: reactvec(num_rate_groups+2)
+    real(rt) :: screened_rates_dt(nrates)
+    real(rt) :: Y(nspec), yderivs(nspec)
+    real(rt) :: ye, rhoy, b1, scratch
+    real(rt) :: sneut, dsneutdt, dsneutdd, snuda, snudz
+    integer  :: j, k
+
+    !$gpu
+
+    ! Set molar abundances
+    Y(:) = state % xn(:) * aion_inv(:)
+    
+    call evaluate_rates(state, rate_eval)
+
+    ! Zero out the Jacobian
+    call set_jac_zero(state)
+
+    ! Species Jacobian elements with respect to other species
+    call jac_nuc(state, Y, rate_eval % screened_rates)
+
+    ! Evaluate the species Jacobian elements with respect to temperature by
+    ! calling the RHS using the temperature derivative of the screened rate
+    screened_rates_dt = rate_eval % unscreened_rates(i_rate, :) * &
+                        rate_eval % unscreened_rates(i_dscor_dt, :) + &
+                        rate_eval % unscreened_rates(i_drate_dt, :) * &
+                        rate_eval % unscreened_rates(i_scor, :)
+
+    call rhs_nuc(state, yderivs, Y, screened_rates_dt)
+
+    do k = 1, nspec
+       call set_jac_entry(state, k, net_itemp, yderivs(k))
+    enddo
+
+    ! Energy generation rate Jacobian elements with respect to species
+    do j = 1, nspec
+       do k = 1, nspec
+          call get_jac_entry(state, k, j, yderivs(k))
+       enddo
+       call ener_gener_rate(yderivs, scratch)
+       call set_jac_entry(state, net_ienuc, j, scratch)
+    enddo
+
+    ! Account for the thermal neutrino losses
+    call sneut5(state % T, state % rho, state % abar, state % zbar, sneut, dsneutdt, dsneutdd, snuda, snudz)
+
+    do j = 1, nspec
+       b1 = ((aion(j) - state % abar) * state % abar * snuda + (zion(j) - state % zbar) * state % abar * snudz)
+       call get_jac_entry(state, net_ienuc, j, scratch)
+       scratch = scratch - b1
+       call set_jac_entry(state, net_ienuc, j, scratch)
+    enddo
+
+    ! Energy generation rate Jacobian element with respect to temperature
+    do k = 1, nspec
+       call get_jac_entry(state, k, net_itemp, yderivs(k))
+    enddo
+    call ener_gener_rate(yderivs, scratch)
+    scratch = scratch - dsneutdt    
+    call set_jac_entry(state, net_ienuc, net_itemp, scratch)
+
+    ! Temperature Jacobian elements
+    call temperature_jac(state)
+
+  end subroutine actual_jac
+
+
+  subroutine jac_nuc(state, Y, screened_rates)
+
+    !$acc routine seq
+
+    use jacobian_sparsity_module, only: set_jac_entry
+
+    implicit none
+
+    type(burn_t), intent(inout) :: state
+    real(rt), intent(in)  :: Y(nspec)
+    real(rt), intent(in)  :: screened_rates(nrates)
+    real(rt) :: scratch
+
+    <jacnuc_declare_scratch>(2)
+
+    !$gpu
+
+    <jacnuc_scratch>(2)
+
+    <jacnuc>(2)
+
+  end subroutine jac_nuc
+
+end module actual_rhs_module
