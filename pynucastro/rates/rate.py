@@ -229,11 +229,17 @@ class Nucleus(object):
         return self.raw
 
     def __hash__(self):
-        return hash(self.__repr__())
+        return hash((self.Z, self.A))
 
     def __eq__(self, other):
-        return self.el == other.el and \
+        
+        if isinstance(other, Nucleus):
+            return self.el == other.el and \
                self.Z == other.Z and self.A == other.A
+        elif isinstance(other, tuple):
+            return (self.Z, self.A) == other
+        else:
+            raise ValueError("Unsupported comparison: Nucleus to {}".format(type(other)))
 
     def __lt__(self, other):
         if not self.Z == other.Z:

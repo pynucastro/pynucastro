@@ -75,8 +75,8 @@ def append_all(q, iterable):
 def product_limiter():
     """
     This helps trim the library a bit by excluding rates with
-    products with more protons than Ni, heavier than Ni56,
-    or with relatively high / low neutron percentages. 
+    products with more protons than the endpoint, heavier than the
+    endpoint, or with relatively high or low neutron percentages. 
     """
     
     # Proton number bounds
