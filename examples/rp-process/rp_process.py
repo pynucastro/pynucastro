@@ -127,7 +127,7 @@ while seeds:
     encountered.update(prod)
     
 encountered = sorted(encountered)
-rp_net = StarKillerNetwork(libraries=[final_lib])
+rp_net = StarKillerNetwork(libraries=[final_lib], precedence=["wc17", "ths8"])
 
 print(encountered)
 rp_net.write_network()

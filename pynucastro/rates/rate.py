@@ -232,7 +232,6 @@ class Nucleus(object):
         return hash((self.Z, self.A))
 
     def __eq__(self, other):
-        
         if isinstance(other, Nucleus):
             return self.el == other.el and \
                self.Z == other.Z and self.A == other.A
