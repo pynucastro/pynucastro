@@ -114,8 +114,15 @@ class RateCollection(object):
 
         If rates is supplied, initialize a RateCollection using the
         Rate objects in the list 'rates'.
+        
+        Precedence should be sequence of rate labels (e.g. wc17) to be used to
+        resolve name conflicts. If a nonempty sequence is provided, the rate
+        collection will automatically be scanned for multiple rates with the
+        same name. If all of their labels were given a ranking, the rate with
+        the label that comes first in the sequence will be retained and the
+        rest discarded.
 
-        Any combination of these options may be combined.
+        Any combination of these options may be supplied.
         """
 
         self.files = []
