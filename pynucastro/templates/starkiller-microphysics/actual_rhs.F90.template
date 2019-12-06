@@ -99,18 +99,20 @@ contains
   end subroutine evaluate_rates
 
 
-  subroutine actual_rhs(state)
+  subroutine actual_rhs(state, ydot)
     
     !$acc routine seq
 
     use extern_probin_module, only: do_constant_volume_burn
-    use burn_type_module, only: net_itemp, net_ienuc
+    use burn_type_module, only: net_itemp, net_ienuc, neqs
     use sneut_module, only: sneut5
     use temperature_integration_module, only: temperature_rhs
 
     implicit none
 
-    type(burn_t) :: state
+    type(burn_t), intent(in) :: state
+    real(rt), intent(inout) :: ydot(neqs)
+
     type(rate_eval_t) :: rate_eval
     real(rt) :: Y(nspec), ydot_nuc(nspec)
     real(rt) :: reactvec(num_rate_groups+2)
@@ -126,7 +128,7 @@ contains
     call evaluate_rates(state, rate_eval)
 
     call rhs_nuc(state, ydot_nuc, Y, rate_eval % screened_rates)
-    state % ydot(1:nspec) = ydot_nuc
+    ydot(1:nspec) = ydot_nuc
 
     ! ion binding energy contributions
     call ener_gener_rate(ydot_nuc, enuc)
@@ -144,10 +146,10 @@ contains
     call sneut5(state % T, state % rho, state % abar, state % zbar, sneut, dsneutdt, dsneutdd, snuda, snudz)
 
     ! Append the energy equation (this is erg/g/s)
-    state % ydot(net_ienuc) = enuc - sneut
+    ydot(net_ienuc) = enuc - sneut
 
     ! Append the temperature equation
-    call temperature_rhs(state)
+    call temperature_rhs(state, ydot)
 
   end subroutine actual_rhs
 
@@ -174,18 +176,20 @@ contains
   end subroutine rhs_nuc
 
 
-  subroutine actual_jac(state)
+  subroutine actual_jac(state, jac)
 
     !$acc routine seq
 
-    use burn_type_module, only: net_itemp, net_ienuc
+    use burn_type_module, only: net_itemp, net_ienuc, neqs
     use sneut_module, only: sneut5
     use temperature_integration_module, only: temperature_jac
     use jacobian_sparsity_module, only: get_jac_entry, set_jac_entry, set_jac_zero
 
     implicit none
     
-    type(burn_t) :: state
+    type(burn_t), intent(in) :: state
+    real(rt) :: jac(neqs, neqs)
+
     type(rate_eval_t) :: rate_eval
     real(rt) :: reactvec(num_rate_groups+2)
     real(rt) :: screened_rates_dt(nrates)
@@ -202,10 +206,10 @@ contains
     call evaluate_rates(state, rate_eval)
 
     ! Zero out the Jacobian
-    call set_jac_zero(state)
+    call set_jac_zero(jac)
 
     ! Species Jacobian elements with respect to other species
-    call jac_nuc(state, Y, rate_eval % screened_rates)
+    call jac_nuc(state, jac, Y, rate_eval % screened_rates)
 
     ! Evaluate the species Jacobian elements with respect to temperature by
     ! calling the RHS using the temperature derivative of the screened rate
@@ -217,16 +221,16 @@ contains
     call rhs_nuc(state, yderivs, Y, screened_rates_dt)
 
     do k = 1, nspec
-       call set_jac_entry(state, k, net_itemp, yderivs(k))
+       call set_jac_entry(jac, k, net_itemp, yderivs(k))
     enddo
 
     ! Energy generation rate Jacobian elements with respect to species
     do j = 1, nspec
        do k = 1, nspec
-          call get_jac_entry(state, k, j, yderivs(k))
+          call get_jac_entry(jac, k, j, yderivs(k))
        enddo
        call ener_gener_rate(yderivs, scratch)
-       call set_jac_entry(state, net_ienuc, j, scratch)
+       call set_jac_entry(jac, net_ienuc, j, scratch)
     enddo
 
     ! Account for the thermal neutrino losses
@@ -234,26 +238,26 @@ contains
 
     do j = 1, nspec
        b1 = ((aion(j) - state % abar) * state % abar * snuda + (zion(j) - state % zbar) * state % abar * snudz)
-       call get_jac_entry(state, net_ienuc, j, scratch)
+       call get_jac_entry(jac, net_ienuc, j, scratch)
        scratch = scratch - b1
-       call set_jac_entry(state, net_ienuc, j, scratch)
+       call set_jac_entry(jac, net_ienuc, j, scratch)
     enddo
 
     ! Energy generation rate Jacobian element with respect to temperature
     do k = 1, nspec
-       call get_jac_entry(state, k, net_itemp, yderivs(k))
+       call get_jac_entry(jac, k, net_itemp, yderivs(k))
     enddo
     call ener_gener_rate(yderivs, scratch)
     scratch = scratch - dsneutdt    
-    call set_jac_entry(state, net_ienuc, net_itemp, scratch)
+    call set_jac_entry(jac, net_ienuc, net_itemp, scratch)
 
     ! Temperature Jacobian elements
-    call temperature_jac(state)
+    call temperature_jac(state, jac)
 
   end subroutine actual_jac
 
 
-  subroutine jac_nuc(state, Y, screened_rates)
+  subroutine jac_nuc(state, jac, Y, screened_rates)
 
     !$acc routine seq
 
@@ -261,7 +265,9 @@ contains
 
     implicit none
 
-    type(burn_t), intent(inout) :: state
+    type(burn_t), intent(in) :: state
+    real(rt), intent(inout) :: jac(neqs, neqs)
+
     real(rt), intent(in)  :: Y(nspec)
     real(rt), intent(in)  :: screened_rates(nrates)
     real(rt) :: scratch

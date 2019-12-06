@@ -101,10 +101,10 @@ class BaseFortranNetwork(RateCollection):
         # Define these for the particular network
         self.name_rate_data = 'screened_rates'
         self.name_y         = 'Y'
-        self.name_ydot      = 'state % ydot'
+        self.name_ydot      = 'ydot'
         self.name_ydot_nuc  = 'ydot_nuc'
-        self.name_jacobian  = 'state % jac'
-        self.name_jacobian_nuc  = 'state % jac'
+        self.name_jacobian  = 'jac'
+        self.name_jacobian_nuc  = 'jac'
         self.name_density   = 'state % rho'
         self.name_electron_fraction = 'state % y_e'
         self.symbol_ludict['__dens__'] = self.name_density
@@ -806,7 +806,7 @@ class BaseFortranNetwork(RateCollection):
                     of.write("{}scratch = (&\n".format(self.indent*(n_indent)))
                     of.write("{}{} &\n".format(self.indent*(n_indent+1), jvalue))
                     of.write("{}   )\n".format(self.indent*n_indent))
-                    of.write("{}call set_jac_entry(state, j{}, j{}, scratch)\n\n".format(
+                    of.write("{}call set_jac_entry(jac, j{}, j{}, scratch)\n\n".format(
                         self.indent*n_indent, nj, ni))
 
     def _yinit_nuc(self, n_indent, of):
