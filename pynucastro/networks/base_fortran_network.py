@@ -47,6 +47,7 @@ class BaseFortranNetwork(RateCollection):
         self.ftags['<nrat_tabular>'] = self._nrat_tabular
         self.ftags['<nspec>'] = self._nspec
         self.ftags['<nspec_evolve>'] = self._nspec_evolve
+        self.ftags['<network_name>'] = self._network_name
         self.ftags['<nrxn>'] = self._nrxn
         self.ftags['<jion>'] = self._jion
         self.ftags['<spec_names>'] = self._spec_names
@@ -498,6 +499,12 @@ class BaseFortranNetwork(RateCollection):
         of.write('{}integer, parameter :: nspec_evolve = {}\n'.format(
             self.indent*n_indent,
             len(self.unique_nuclei)))
+
+    def _network_name(self, n_indent, of):
+        # the name of the network
+        of.write('{}character (len=32), parameter :: network_name = "{}"\n'.format(
+            self.indent*n_indent,
+            "pynucastro"))
 
     def _jion(self, n_indent, of):
         for i,nuc in enumerate(self.unique_nuclei):
