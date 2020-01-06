@@ -17,34 +17,39 @@
   
 
   
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="pynucastro.networks package" href="pynucastro.networks.html" />
     <link rel="prev" title="out" href="modules.html" /> 
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -180,13 +185,13 @@
 /* CSS overrides for sphinx_rtd_theme */
 
 /* 24px margin */
-.nbinput.nblast,
-.nboutput.nblast {
+.nbinput.nblast.container,
+.nboutput.nblast.container {
     margin-bottom: 19px;  /* padding has already 5px */
 }
 
 /* ... except between code cells! */
-.nblast + .nbinput {
+.nblast.container + .nbinput.container {
     margin-top: -19px;
 }
 
@@ -236,25 +241,25 @@ generating binding energy tables for pynucastro are provided in
 <p>networks provides classes and functions for organizing collection of
 rates, including:</p>
 <ul class="simple">
-<li>Composition : this is a container of Nucleus objects along with
+<li><p>Composition : this is a container of Nucleus objects along with
 associated mass fractions.  This is used for evaluating rates
-when doing interactive exploration with pynucastro.</li>
-<li>RateCollection : this is simply a collection of rates.  It will
+when doing interactive exploration with pynucastro.</p></li>
+<li><p>RateCollection : this is simply a collection of rates.  It will
 determine all of the links between the rates and allow you to
-visualize the dependencies.</li>
-<li>Explorer : an explorer takes a rate composition and composition
+visualize the dependencies.</p></li>
+<li><p>Explorer : an explorer takes a rate composition and composition
 and produces an interactive visualization that can be explored
-in Jupyter notebooks.</li>
-<li>PythonNetwork : this extends the RateCollection to enable output
+in Jupyter notebooks.</p></li>
+<li><p>PythonNetwork : this extends the RateCollection to enable output
 of python code that can be used with ODE integrators to solve
-a network.</li>
-<li>BaseFortranNetwork : this extends the RateCollection to enable
+a network.</p></li>
+<li><p>BaseFortranNetwork : this extends the RateCollection to enable
 output of Fortran code that can be used to integrate the network
-with the included VODE package for ODE integration.</li>
-<li>StarKillerNetwork : this extends the RateCollection to enable output
+with the included VODE package for ODE integration.</p></li>
+<li><p>StarKillerNetwork : this extends the RateCollection to enable output
 of Fortran code that can be used to add a network to the
 hydrodynamics codes Castro and Maestro via the StarKiller
-Microphysics repository.</li>
+Microphysics repository.</p></li>
 </ul>
 </div>
 <div class="section" id="rates">
@@ -262,17 +267,17 @@ Microphysics repository.</li>
 <p>rates provides classes and functions for interpreting individual
 reaction rates, including:</p>
 <ul class="simple">
-<li>Nucleus : a single nucleus, with a descriptive name and its
-properties.</li>
-<li>Rate : a single Reaclib rate, with methods for plotting and
-evaluating it.</li>
-<li>Tfactors : this is a simple container class that holds the various
-temperature powers needed to evaluate a rate.</li>
-<li>RateLibrary: a container class for Reaclib rates that provides a
+<li><p>Nucleus : a single nucleus, with a descriptive name and its
+properties.</p></li>
+<li><p>Rate : a single Reaclib rate, with methods for plotting and
+evaluating it.</p></li>
+<li><p>Tfactors : this is a simple container class that holds the various
+temperature powers needed to evaluate a rate.</p></li>
+<li><p>RateLibrary: a container class for Reaclib rates that provides a
 high level interface for reading Reaclib-formatted files containing
-one or more rates.</li>
-<li>RateFilter: a class implementing search constraints to look up a
-desired rate or group of rates from a RateLibrary.</li>
+one or more rates.</p></li>
+<li><p>RateFilter: a class implementing search constraints to look up a
+desired rate or group of rates from a RateLibrary.</p></li>
 </ul>
 </div>
 <div class="section" id="screening">
@@ -333,7 +338,7 @@ generated code specific to a given choice of reaction rates.</p>
         <a href="pynucastro.networks.html" class="btn btn-neutral float-right" title="pynucastro.networks package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="modules.html" class="btn btn-neutral" title="out" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="modules.html" class="btn btn-neutral float-left" title="out" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -359,28 +364,16 @@ generated code specific to a given choice of reaction rates.</p>
   
 
 
-  
-
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-        <script type="text/javascript" src="_static/language_data.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
-    
-
-  
-
-  <script type="text/javascript" src="_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>

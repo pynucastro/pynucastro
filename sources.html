@@ -17,33 +17,38 @@
   
 
   
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="prev" title="setup module" href="setup.html" /> 
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -165,13 +170,13 @@
 /* CSS overrides for sphinx_rtd_theme */
 
 /* 24px margin */
-.nbinput.nblast,
-.nboutput.nblast {
+.nbinput.nblast.container,
+.nboutput.nblast.container {
     margin-bottom: 19px;  /* padding has already 5px */
 }
 
 /* ... except between code cells! */
-.nblast + .nbinput {
+.nblast.container + .nbinput.container {
     margin-top: -19px;
 }
 
@@ -220,13 +225,13 @@ Center.</p>
 <p>The Atomic Mass Evaluation 2016 and 2012 are available <a class="reference external" href="https://www-nds.iaea.org/amdc/">online</a>.</p>
 <p>Atomic Mass Evaluation 2016:</p>
 <ul class="simple">
-<li><a class="reference external" href="http://iopscience.iop.org/article/10.1088/1674-1137/41/3/030002">Huang et al., Chinese Physics C 41, 030002</a></li>
-<li><a class="reference external" href="http://iopscience.iop.org/article/10.1088/1674-1137/41/3/030003">Wang et al., Chinese Physics C 41, 030003</a></li>
+<li><p><a class="reference external" href="http://iopscience.iop.org/article/10.1088/1674-1137/41/3/030002">Huang et al., Chinese Physics C 41, 030002</a></p></li>
+<li><p><a class="reference external" href="http://iopscience.iop.org/article/10.1088/1674-1137/41/3/030003">Wang et al., Chinese Physics C 41, 030003</a></p></li>
 </ul>
 <p>Atomic Mass Evaluation 2012:</p>
 <ul class="simple">
-<li><a class="reference external" href="http://iopscience.iop.org/article/10.1088/1674-1137/36/12/002">Audi et al., Chinese Physics C 36, 1287-1602</a></li>
-<li><a class="reference external" href="http://iopscience.iop.org/article/10.1088/1674-1137/36/12/003">Wang et al., Chinese Physics C 36, 1603-2014</a></li>
+<li><p><a class="reference external" href="http://iopscience.iop.org/article/10.1088/1674-1137/36/12/002">Audi et al., Chinese Physics C 36, 1287-1602</a></p></li>
+<li><p><a class="reference external" href="http://iopscience.iop.org/article/10.1088/1674-1137/36/12/003">Wang et al., Chinese Physics C 36, 1603-2014</a></p></li>
 </ul>
 </div>
 </div>
@@ -240,7 +245,7 @@ Center.</p>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
       
-        <a href="setup.html" class="btn btn-neutral" title="setup module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="setup.html" class="btn btn-neutral float-left" title="setup module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -266,28 +271,16 @@ Center.</p>
   
 
 
-  
-
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-        <script type="text/javascript" src="_static/language_data.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
-    
-
-  
-
-  <script type="text/javascript" src="_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>
