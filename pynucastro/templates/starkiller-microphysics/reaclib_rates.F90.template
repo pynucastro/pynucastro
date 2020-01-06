@@ -98,17 +98,6 @@ contains
     ! reactvec(2) = drate_dt , the Temperature derivative of rate
     ! reactvec(3) = scor     , the screening factor
     ! reactvec(4) = dscor_dt , the Temperature derivative of scor
-    ! reactvec(5) = dqweak   , the weak reaction dq-value (ergs)
-    !                          (This accounts for modification of the reaction Q
-    !                           due to the local density and temperature of the plasma.
-    !                           For Reaclib rates, this is 0.0d0.)
-    ! reactvec(6) = epart    , the particle energy generation rate (ergs/s)
-    ! NOTE: The particle energy generation rate (returned in ergs/s)
-    !       is the contribution to enuc from non-ion particles associated
-    !       with the reaction.
-    !       For example, this accounts for neutrino energy losses
-    !       in weak reactions and/or gamma heating of the plasma
-    !       from nuclear transitions in daughter nuclei.
 
     real(rt) :: rate, scor ! Rate and Screening Factor
     real(rt) :: drate_dt, dscor_dt ! Temperature derivatives
