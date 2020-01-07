@@ -337,7 +337,7 @@ contains
                               num_rhoy, num_temp, num_vars, &
                               rhoy, temp, reactvec)
 
-    use actual_network, only: num_rate_groups
+    use actual_network, only: num_rate_groups, i_rate, i_drate_dt, i_scor, i_eneut
 
     implicit none
 
