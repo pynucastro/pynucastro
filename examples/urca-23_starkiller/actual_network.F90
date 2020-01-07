@@ -7,6 +7,8 @@ module actual_network
 
   public
 
+  character (len=32), parameter :: network_name = "pynucastro"
+
   real(rt), parameter :: avo = 6.0221417930d23
   real(rt), parameter :: c_light = 2.99792458d10
   real(rt), parameter :: enuc_conv2 = -avo*c_light*c_light
