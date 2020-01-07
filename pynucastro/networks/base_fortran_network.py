@@ -67,8 +67,7 @@ class BaseFortranNetwork(RateCollection):
         self.ftags['<table_init_meta>'] = self._table_init_meta
         self.ftags['<table_term_meta>'] = self._table_term_meta
         self.ftags['<table_rates_indices>'] = self._table_rates_indices
-        self.ftags['<compute_tabular_rates_rhs>'] = self._compute_tabular_rates_rhs
-        self.ftags['<compute_tabular_rates_jac>'] = self._compute_tabular_rates_jac
+        self.ftags['<compute_tabular_rates>'] = self._compute_tabular_rates
         self.ftags['<ydot_declare_scratch>'] = self._ydot_declare_scratch
         self.ftags['<ydot_scratch>'] = self._ydot_scratch
         self.ftags['<ydot>'] = self._ydot
@@ -693,27 +692,17 @@ class BaseFortranNetwork(RateCollection):
                 of.write(', &')
             of.write('\n')
 
-    def _compute_tabular_rates_rhs(self, n_indent, of):
+    def _compute_tabular_rates(self, n_indent, of):
         if len(self.tabular_rates) > 0:
             of.write('{}! Calculate tabular rates\n'.format(self.indent*n_indent))
             for n, irate in enumerate(self.tabular_rates):
                 r = self.rates[irate]
                 of.write('{}call tabular_evaluate(rate_table_{}, rhoy_table_{}, temp_table_{}, &\n'.format(self.indent*n_indent, r.table_index_name, r.table_index_name, r.table_index_name))
                 of.write('{}                      num_rhoy_{}, num_temp_{}, num_vars_{}, &\n'.format(self.indent*n_indent, r.table_index_name, r.table_index_name, r.table_index_name))
-                of.write('{}                      rhoy, state % T, reactvec)\n'.format(self.indent*n_indent))
-                of.write('{}rate_eval % unscreened_rates(i_rate:i_scor,{}) = reactvec(i_rate:i_scor)\n'.format(self.indent*n_indent, n+1+len(self.reaclib_rates)))
-                of.write('{}rate_eval % add_energy_rate({})  = reactvec(i_eneut)\n'.format(self.indent*n_indent, n+1))
-                of.write('\n')
-
-    def _compute_tabular_rates_jac(self, n_indent, of):
-        if len(self.tabular_rates) > 0:
-            of.write('{}! Calculate tabular rates\n'.format(self.indent*n_indent))
-            for n, irate in enumerate(self.tabular_rates):
-                r = self.rates[irate]
-                of.write('{}call tabular_evaluate(rate_table_{}, rhoy_table_{}, temp_table_{}, &\n'.format(self.indent*n_indent, r.table_index_name, r.table_index_name, r.table_index_name))
-                of.write('{}                      num_rhoy_{}, num_temp_{}, num_vars_{}, &\n'.format(self.indent*n_indent, r.table_index_name, r.table_index_name, r.table_index_name))
-                of.write('{}                      rhoy, state % T, reactvec)\n'.format(self.indent*n_indent))
-                of.write('{}rate_eval % unscreened_rates(:,{}) = reactvec(1:4)\n'.format(self.indent*n_indent, n+1+len(self.reaclib_rates)))
+                of.write('{}                      rhoy, state % T, rate, drate_dt, edot_nu)\n'.format(self.indent*n_indent))
+                of.write('{}rate_eval % unscreened_rates(i_rate,{}) = rate\n'.format(self.indent*n_indent, n+1+len(self.reaclib_rates)))
+                of.write('{}rate_eval % unscreened_rates(i_drate_dt,{}) = drate_dt\n'.format(self.indent*n_indent, n+1+len(self.reaclib_rates)))
+                of.write('{}rate_eval % add_energy_rate({})  = edot_nu\n'.format(self.indent*n_indent, n+1))
                 of.write('\n')
 
     def _ydot_declare_scratch(self, n_indent, of):

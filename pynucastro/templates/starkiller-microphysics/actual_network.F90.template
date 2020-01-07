@@ -22,7 +22,6 @@ module actual_network
   real(rt), parameter :: mass_electron = 9.10938215450d-28
 
   <nrates>(1)
-  integer, parameter :: num_rate_groups = 4
 
   ! Evolution and auxiliary
   <nspec_evolve>(1)
@@ -50,13 +49,6 @@ module actual_network
 
   ! Reactions
   <nrxn>(1)
-
-  ! reactvec indices
-  integer, parameter :: i_rate        = 1
-  integer, parameter :: i_drate_dt    = 2
-  integer, parameter :: i_scor        = 3
-  integer, parameter :: i_dscor_dt    = 4
-  integer, parameter :: i_eneut       = 4
 
   character (len=16), save :: spec_names(nspec)
   character (len= 5), save :: short_spec_names(nspec)
