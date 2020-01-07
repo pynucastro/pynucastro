@@ -387,7 +387,7 @@ class RateCollection(object):
         if outfile is None:
             plt.show()
         else:
-            #plt.tight_layout()
+            plt.tight_layout()
             plt.savefig(outfile, dpi=dpi)
 
     def __repr__(self):
