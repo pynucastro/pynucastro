@@ -98,22 +98,11 @@ contains
     real(rt), intent(in) :: temp
     integer, intent(in) :: iwhich
 
-    real(rt), intent(inout) :: reactvec(num_rate_groups+2)
+    real(rt), intent(inout) :: reactvec(num_rate_groups)
     ! reactvec(1) = rate     , the reaction rate
     ! reactvec(2) = drate_dt , the Temperature derivative of rate
     ! reactvec(3) = scor     , the screening factor
     ! reactvec(4) = dscor_dt , the Temperature derivative of scor
-    ! reactvec(5) = dqweak   , the weak reaction dq-value (ergs)
-    !                          (This accounts for modification of the reaction Q
-    !                           due to the local density and temperature of the plasma.
-    !                           For Reaclib rates, this is 0.0d0.)
-    ! reactvec(6) = epart    , the particle energy generation rate (ergs/s)
-    ! NOTE: The particle energy generation rate (returned in ergs/s)
-    !       is the contribution to enuc from non-ion particles associated
-    !       with the reaction.
-    !       For example, this accounts for neutrino energy losses
-    !       in weak reactions and/or gamma heating of the plasma
-    !       from nuclear transitions in daughter nuclei.
 
     real(rt) :: rate, scor ! Rate and Screening Factor
     real(rt) :: drate_dt, dscor_dt ! Temperature derivatives
@@ -160,8 +149,6 @@ contains
     reactvec(i_drate_dt) = drate_dt
     reactvec(i_scor)     = 1.0d0
     reactvec(i_dscor_dt) = 0.0d0
-    reactvec(i_dqweak)   = 0.0d0
-    reactvec(i_epart)    = 0.0d0
 
     ! write(*,*) '----------------------------------------'
     ! write(*,*) 'IWHICH: ', iwhich
@@ -169,8 +156,6 @@ contains
     ! write(*,*) 'reactvec(i_drate_dt)', reactvec(i_drate_dt)
     ! write(*,*) 'reactvec(i_scor)', reactvec(i_scor)
     ! write(*,*) 'reactvec(i_dscor_dt)', reactvec(i_dscor_dt)
-    ! write(*,*) 'reactvec(i_dqweak)', reactvec(i_dqweak)
-    ! write(*,*) 'reactvec(i_epart)', reactvec(i_epart)
     ! write(*,*) '----------------------------------------'
 
   end subroutine reaclib_evaluate
