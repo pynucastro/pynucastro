@@ -47,6 +47,7 @@ class BaseFortranNetwork(RateCollection):
         self.ftags['<nrat_tabular>'] = self._nrat_tabular
         self.ftags['<nspec>'] = self._nspec
         self.ftags['<nspec_evolve>'] = self._nspec_evolve
+        self.ftags['<network_name>'] = self._network_name
         self.ftags['<nrxn>'] = self._nrxn
         self.ftags['<jion>'] = self._jion
         self.ftags['<spec_names>'] = self._spec_names
@@ -100,10 +101,10 @@ class BaseFortranNetwork(RateCollection):
         # Define these for the particular network
         self.name_rate_data = 'screened_rates'
         self.name_y         = 'Y'
-        self.name_ydot      = 'state % ydot'
+        self.name_ydot      = 'ydot'
         self.name_ydot_nuc  = 'ydot_nuc'
-        self.name_jacobian  = 'state % jac'
-        self.name_jacobian_nuc  = 'state % jac'
+        self.name_jacobian  = 'jac'
+        self.name_jacobian_nuc  = 'jac'
         self.name_density   = 'state % rho'
         self.name_electron_fraction = 'state % y_e'
         self.symbol_ludict['__dens__'] = self.name_density
@@ -498,6 +499,12 @@ class BaseFortranNetwork(RateCollection):
             self.indent*n_indent,
             len(self.unique_nuclei)))
 
+    def _network_name(self, n_indent, of):
+        # the name of the network
+        of.write('{}character (len=32), parameter :: network_name = "{}"\n'.format(
+            self.indent*n_indent,
+            "pynucastro"))
+
     def _jion(self, n_indent, of):
         for i,nuc in enumerate(self.unique_nuclei):
             of.write('{}integer, parameter :: j{}   = {}\n'.format(
@@ -781,8 +788,8 @@ class BaseFortranNetwork(RateCollection):
                     of.write("{}scratch = (&\n".format(self.indent*(n_indent)))
                     of.write("{}{} &\n".format(self.indent*(n_indent+1), jvalue))
                     of.write("{}   )\n".format(self.indent*n_indent))
-                    of.write("{}call set_jac_entry(state, j{}, j{}, scratch)\n\n".format(
-                        self.indent*n_indent, nj, ni))
+                    of.write("{}call set_jac_entry({}, j{}, j{}, scratch)\n\n".format(
+                        self.indent*n_indent, self.name_jacobian, nj, ni))
 
     def _yinit_nuc(self, n_indent, of):
         for n in self.unique_nuclei:

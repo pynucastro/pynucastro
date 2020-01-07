@@ -271,7 +271,7 @@ class RateCollection(object):
         print('To create network integration source code, use a class that implements a specific network type.')
         return
 
-    def plot(self, outfile=None, rho=None, T=None, comp=None, size=(800, 600), dpi=100):
+    def plot(self, outfile=None, rho=None, T=None, comp=None, size=(800, 600), dpi=100, title=None):
         """Make a plot of the network structure showing the links between nuclei"""
 
         G = nx.MultiDiGraph()
@@ -380,6 +380,9 @@ class RateCollection(object):
         ax.set_aspect("equal", "datalim")
 
         fig.set_size_inches(size[0]/dpi, size[1]/dpi)
+
+        if title is not None:
+            fig.suptitle(title)
 
         if outfile is None:
             plt.show()

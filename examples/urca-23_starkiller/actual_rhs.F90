@@ -121,18 +121,20 @@ contains
   end subroutine evaluate_rates
 
 
-  subroutine actual_rhs(state)
+  subroutine actual_rhs(state, ydot)
     
     !$acc routine seq
 
     use extern_probin_module, only: do_constant_volume_burn, disable_thermal_neutrinos
-    use burn_type_module, only: net_itemp, net_ienuc
+    use burn_type_module, only: net_itemp, net_ienuc, neqs
     use sneut_module, only: sneut5
     use temperature_integration_module, only: temperature_rhs
 
     implicit none
 
-    type(burn_t) :: state
+    type(burn_t), intent(in) :: state
+    real(rt), intent(inout) :: ydot(neqs)
+
     type(rate_eval_t) :: rate_eval
     real(rt) :: Y(nspec), ydot_nuc(nspec)
     real(rt) :: reactvec(num_rate_groups)
@@ -148,7 +150,7 @@ contains
     call evaluate_rates(state, rate_eval)
 
     call rhs_nuc(state, ydot_nuc, Y, rate_eval % screened_rates)
-    state % ydot(1:nspec) = ydot_nuc
+    ydot(1:nspec) = ydot_nuc
 
     ! ion binding energy contributions
     call ener_gener_rate(ydot_nuc, enuc)
@@ -165,10 +167,10 @@ contains
     end if
 
     ! Append the energy equation (this is erg/g/s)
-    state % ydot(net_ienuc) = enuc - sneut
+    ydot(net_ienuc) = enuc - sneut
 
     ! Append the temperature equation
-    call temperature_rhs(state)
+    call temperature_rhs(state, ydot)
 
   end subroutine actual_rhs
 
@@ -235,19 +237,21 @@ contains
   end subroutine rhs_nuc
 
 
-  subroutine actual_jac(state)
+  subroutine actual_jac(state, jac)
 
     !$acc routine seq
 
+    use burn_type_module, only: net_itemp, net_ienuc, neqs, njrows, njcols
     use extern_probin_module, only: disable_thermal_neutrinos
-    use burn_type_module, only: net_itemp, net_ienuc
     use sneut_module, only: sneut5
     use temperature_integration_module, only: temperature_jac
     use jacobian_sparsity_module, only: get_jac_entry, set_jac_entry, set_jac_zero
 
     implicit none
     
-    type(burn_t) :: state
+    type(burn_t), intent(in) :: state
+    real(rt), intent(inout) :: jac(njrows, njcols)
+
     type(rate_eval_t) :: rate_eval
     real(rt) :: screened_rates_dt(nrates)
     real(rt) :: Y(nspec), yderivs(nspec)
@@ -263,10 +267,10 @@ contains
     call evaluate_rates(state, rate_eval)
 
     ! Zero out the Jacobian
-    call set_jac_zero(state)
+    call set_jac_zero(jac)
 
     ! Species Jacobian elements with respect to other species
-    call jac_nuc(state, Y, rate_eval % screened_rates)
+    call jac_nuc(state, jac, Y, rate_eval % screened_rates)
 
     ! Evaluate the species Jacobian elements with respect to temperature by
     ! calling the RHS using the temperature derivative of the screened rate
@@ -278,16 +282,16 @@ contains
     call rhs_nuc(state, yderivs, Y, screened_rates_dt)
 
     do k = 1, nspec
-       call set_jac_entry(state, k, net_itemp, yderivs(k))
+       call set_jac_entry(jac, k, net_itemp, yderivs(k))
     enddo
 
     ! Energy generation rate Jacobian elements with respect to species
     do j = 1, nspec
        do k = 1, nspec
-          call get_jac_entry(state, k, j, yderivs(k))
+          call get_jac_entry(jac, k, j, yderivs(k))
        enddo
        call ener_gener_rate(yderivs, scratch)
-       call set_jac_entry(state, net_ienuc, j, scratch)
+       call set_jac_entry(jac, net_ienuc, j, scratch)
     enddo
 
     ! Account for the thermal neutrino losses
@@ -296,29 +300,29 @@ contains
 
        do j = 1, nspec
           b1 = ((aion(j) - state % abar) * state % abar * snuda + (zion(j) - state % zbar) * state % abar * snudz)
-          call get_jac_entry(state, net_ienuc, j, scratch)
+          call get_jac_entry(jac, net_ienuc, j, scratch)
           scratch = scratch - b1
-          call set_jac_entry(state, net_ienuc, j, scratch)
+          call set_jac_entry(jac, net_ienuc, j, scratch)
        enddo
     endif
 
     ! Energy generation rate Jacobian element with respect to temperature
     do k = 1, nspec
-       call get_jac_entry(state, k, net_itemp, yderivs(k))
+       call get_jac_entry(jac, k, net_itemp, yderivs(k))
     enddo
     call ener_gener_rate(yderivs, scratch)
     if (.not. disable_thermal_neutrinos) then
        scratch = scratch - dsneutdt
     endif
-    call set_jac_entry(state, net_ienuc, net_itemp, scratch)
+    call set_jac_entry(jac, net_ienuc, net_itemp, scratch)
 
     ! Temperature Jacobian elements
-    call temperature_jac(state)
+    call temperature_jac(state, jac)
 
   end subroutine actual_jac
 
 
-  subroutine jac_nuc(state, Y, screened_rates)
+  subroutine jac_nuc(state, jac, Y, screened_rates)
 
     !$acc routine seq
 
@@ -326,7 +330,9 @@ contains
 
     implicit none
 
-    type(burn_t), intent(inout) :: state
+    type(burn_t), intent(in) :: state
+    real(rt), intent(inout) :: jac(njrows, njcols)
+
     real(rt), intent(in)  :: Y(nspec)
     real(rt), intent(in)  :: screened_rates(nrates)
     real(rt) :: scratch
@@ -338,38 +344,38 @@ contains
     scratch = (&
       -screened_rates(k_n__p__weak__wc12) &
        )
-    call set_jac_entry(state, jn, jn, scratch)
+    call set_jac_entry(jac, jn, jn, scratch)
 
     scratch = (&
       1.0d0*screened_rates(k_c12_c12__n_mg23)*Y(jc12)*state % rho &
        )
-    call set_jac_entry(state, jn, jc12, scratch)
+    call set_jac_entry(jac, jn, jc12, scratch)
 
     scratch = (&
       screened_rates(k_n__p__weak__wc12) &
        )
-    call set_jac_entry(state, jp, jn, scratch)
+    call set_jac_entry(jac, jp, jn, scratch)
 
     scratch = (&
       1.0d0*screened_rates(k_c12_c12__p_na23)*Y(jc12)*state % rho &
        )
-    call set_jac_entry(state, jp, jc12, scratch)
+    call set_jac_entry(jac, jp, jc12, scratch)
 
     scratch = (&
       -screened_rates(k_he4_c12__o16)*Y(jc12)*state % rho &
        )
-    call set_jac_entry(state, jhe4, jhe4, scratch)
+    call set_jac_entry(jac, jhe4, jhe4, scratch)
 
     scratch = (&
       1.0d0*screened_rates(k_c12_c12__he4_ne20)*Y(jc12)*state % rho - &
       screened_rates(k_he4_c12__o16)*Y(jhe4)*state % rho &
        )
-    call set_jac_entry(state, jhe4, jc12, scratch)
+    call set_jac_entry(jac, jhe4, jc12, scratch)
 
     scratch = (&
       -screened_rates(k_he4_c12__o16)*Y(jc12)*state % rho &
        )
-    call set_jac_entry(state, jc12, jhe4, scratch)
+    call set_jac_entry(jac, jc12, jhe4, scratch)
 
     scratch = (&
       -2.0d0*screened_rates(k_c12_c12__he4_ne20)*Y(jc12)*state % rho - 2.0d0* &
@@ -377,52 +383,52 @@ contains
       screened_rates(k_c12_c12__p_na23)*Y(jc12)*state % rho - &
       screened_rates(k_he4_c12__o16)*Y(jhe4)*state % rho &
        )
-    call set_jac_entry(state, jc12, jc12, scratch)
+    call set_jac_entry(jac, jc12, jc12, scratch)
 
     scratch = (&
       screened_rates(k_he4_c12__o16)*Y(jc12)*state % rho &
        )
-    call set_jac_entry(state, jo16, jhe4, scratch)
+    call set_jac_entry(jac, jo16, jhe4, scratch)
 
     scratch = (&
       screened_rates(k_he4_c12__o16)*Y(jhe4)*state % rho &
        )
-    call set_jac_entry(state, jo16, jc12, scratch)
+    call set_jac_entry(jac, jo16, jc12, scratch)
 
     scratch = (&
       1.0d0*screened_rates(k_c12_c12__he4_ne20)*Y(jc12)*state % rho &
        )
-    call set_jac_entry(state, jne20, jc12, scratch)
+    call set_jac_entry(jac, jne20, jc12, scratch)
 
     scratch = (&
       -screened_rates(k_ne23__na23) &
        )
-    call set_jac_entry(state, jne23, jne23, scratch)
+    call set_jac_entry(jac, jne23, jne23, scratch)
 
     scratch = (&
       screened_rates(k_na23__ne23) &
        )
-    call set_jac_entry(state, jne23, jna23, scratch)
+    call set_jac_entry(jac, jne23, jna23, scratch)
 
     scratch = (&
       1.0d0*screened_rates(k_c12_c12__p_na23)*Y(jc12)*state % rho &
        )
-    call set_jac_entry(state, jna23, jc12, scratch)
+    call set_jac_entry(jac, jna23, jc12, scratch)
 
     scratch = (&
       screened_rates(k_ne23__na23) &
        )
-    call set_jac_entry(state, jna23, jne23, scratch)
+    call set_jac_entry(jac, jna23, jne23, scratch)
 
     scratch = (&
       -screened_rates(k_na23__ne23) &
        )
-    call set_jac_entry(state, jna23, jna23, scratch)
+    call set_jac_entry(jac, jna23, jna23, scratch)
 
     scratch = (&
       1.0d0*screened_rates(k_c12_c12__n_mg23)*Y(jc12)*state % rho &
        )
-    call set_jac_entry(state, jmg23, jc12, scratch)
+    call set_jac_entry(jac, jmg23, jc12, scratch)
 
 
   end subroutine jac_nuc
