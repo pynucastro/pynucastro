@@ -31,13 +31,8 @@ class BaseFortranNetwork(RateCollection):
 
         super(BaseFortranNetwork, self).__init__(*args, **kwargs)
 
-        # Set up some directories
-        self.fortran_vode_dir = os.path.join(self.pynucastro_dir,
-                                             'templates',
-                                             'fortran-vode')
-        self.template_file_select = os.path.join(self.fortran_vode_dir,
-                                                 '*.template')
-        self.template_files = glob.glob(self.template_file_select)
+        # Get the template files for writing this network code
+        self.template_files = self._get_template_files()
 
         # a dictionary of functions to call to handle specific parts
         # of the Fortran template
@@ -108,6 +103,13 @@ class BaseFortranNetwork(RateCollection):
         self.name_electron_fraction = 'state % y_e'
         self.symbol_ludict['__dens__'] = self.name_density
         self.symbol_ludict['__y_e__'] = self.name_electron_fraction
+
+    @abstractmethod
+    def _get_template_files(self):
+        # This method should be overridden by derived classes
+        # to support specific output templates.
+        # This method returns a list of strings that are file paths to template files.
+        return []
 
     def ydot_string(self, rate):
         """
