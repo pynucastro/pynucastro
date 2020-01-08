@@ -215,7 +215,27 @@ class BaseFortranNetwork(RateCollection):
             v = self.symbol_ludict[k]
             s = s.replace(k,v)
         if s == '0':
-            s = '0.0d0'
+            s = '0.0e0_rt'
+
+        ## Replace all double precision literals with custom real type literals
+        # constant type specifier
+        const_spec = "_rt"
+
+        # we want to replace any "d" scientific notation with the new style
+        # this matches stuff like -1.25d-10, and gives us separate groups for the
+        # prefix and exponent.  The [^\w] makes sure a letter isn't right in front
+        # of the match (like 'k3d-1'). Alternately, we allow for a match at the start of the string.
+        d_re = re.compile(r"([^\w\+\-]|\A)([\+\-0-9.][0-9.]+)[dD]([\+\-]?[0-9]+)", re.IGNORECASE|re.DOTALL)
+
+        # update "d" scientific notation -- allow for multiple constants in a single string
+        for dd in d_re.finditer(s):
+            prefix = dd.group(2)
+            exponent = dd.group(3)
+            new_num = "{}e{}{}".format(prefix, exponent, const_spec)
+            old_num = dd.group(0).strip()
+            print("replacing {} with {} in {}".format(old_num, new_num, s))
+            s = s.replace(old_num, new_num)
+
         return s
 
     def jacobian_string(self, rate, ydot_j, y_i):
@@ -385,6 +405,10 @@ class BaseFortranNetwork(RateCollection):
         """convert a number to Fortran double precision format"""
         return '{:1.14e}'.format(float(i)).replace('e','d')
 
+    def fmt_to_rt_f90(self, i):
+        """convert a number to custom real type format"""
+        return '{:1.14e}_rt'.format(float(i))
+
     def get_indent_amt(self, l, k):
         """determine the amount of spaces to indent a line"""
         rem = re.match(r'\A'+k+r'\(([0-9]*)\)\Z',l)
@@ -528,7 +552,7 @@ class BaseFortranNetwork(RateCollection):
         bintable = BindingTable()
         for nuc in self.unique_nuclei:
             nuc_in_table = bintable.get_nuclide(n=nuc.N, z=nuc.Z)
-            str_nucbind = self.fmt_to_dp_f90(nuc_in_table.nucbind)
+            str_nucbind = self.fmt_to_rt_f90(nuc_in_table.nucbind)
             of.write('{}ebind_per_nucleon(j{})   = {}\n'.format(
                 self.indent*n_indent, nuc, str_nucbind))
 
@@ -537,21 +561,21 @@ class BaseFortranNetwork(RateCollection):
             of.write('{}aion(j{})   = {}\n'.format(
                 self.indent*n_indent,
                 nuc,
-                self.fmt_to_dp_f90(nuc.A)))
+                self.fmt_to_rt_f90(nuc.A)))
 
     def _zion(self, n_indent, of):
         for nuc in self.unique_nuclei:
             of.write('{}zion(j{})   = {}\n'.format(
                 self.indent*n_indent,
                 nuc,
-                self.fmt_to_dp_f90(nuc.Z)))
+                self.fmt_to_rt_f90(nuc.Z)))
 
     def _nion(self, n_indent, of):
         for nuc in self.unique_nuclei:
             of.write('{}nion(j{})   = {}\n'.format(
                 self.indent*n_indent,
                 nuc,
-                self.fmt_to_dp_f90(nuc.N)))
+                self.fmt_to_rt_f90(nuc.N)))
 
     def _screen_add(self, n_indent, of):
         screening_map = self.get_screening_map()
