@@ -281,9 +281,8 @@ contains
 
   subroutine tabular_evaluate(rate_table, rhoy_table, temp_table, &
                               num_rhoy, num_temp, num_vars, &
-                              rhoy, temp, reactvec)
-
-    use actual_network, only: num_rate_groups, i_rate, i_drate_dt, i_scor, i_eneut
+                              rhoy, temp, &
+                              rate, drate_dt, edot_nu)
 
     implicit none
 
@@ -291,7 +290,8 @@ contains
     real(rt) :: rate_table(num_temp, num_rhoy, num_vars), rhoy_table(num_rhoy), temp_table(num_temp)
 
     real(rt), intent(in)    :: rhoy, temp
-    real(rt), intent(inout) :: reactvec(num_rate_groups)
+    real(rt), intent(out)   :: rate, drate_dt, edot_nu
+
     real(rt) :: entries(num_vars+add_vars)
 
     !$gpu
@@ -301,11 +301,11 @@ contains
                      num_rhoy, num_temp, num_vars, &
                      rhoy, temp, entries)
 
-    ! Recast entries into reactvec
-    reactvec(i_rate)     = entries(jtab_rate)
-    reactvec(i_drate_dt) = entries(k_drate_dt)
-    reactvec(i_scor)     = 1.0d0
-    reactvec(i_eneut)    = -entries(jtab_nuloss)
+    ! Fill outputs: rate, d(rate)/d(temperature), and
+    ! (negative) neutrino loss contribution to energy generation
+    rate     = entries(jtab_rate)
+    drate_dt = entries(k_drate_dt)
+    edot_nu  = -entries(jtab_nuloss)
 
   end subroutine tabular_evaluate
 

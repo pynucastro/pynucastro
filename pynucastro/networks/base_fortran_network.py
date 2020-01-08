@@ -12,12 +12,13 @@ import re
 import glob
 import sympy
 from collections import OrderedDict
+from abc import ABC, abstractmethod
 
 from pynucastro.networks import RateCollection
 from pynucastro.nucdata import BindingTable
 
 
-class BaseFortranNetwork(RateCollection):
+class BaseFortranNetwork(ABC, RateCollection):
     """Interpret the collection of rates and nuclei and produce the
     Fortran code needed to integrate the network.
 
@@ -31,13 +32,8 @@ class BaseFortranNetwork(RateCollection):
 
         super(BaseFortranNetwork, self).__init__(*args, **kwargs)
 
-        # Set up some directories
-        self.fortran_vode_dir = os.path.join(self.pynucastro_dir,
-                                             'templates',
-                                             'fortran-vode')
-        self.template_file_select = os.path.join(self.fortran_vode_dir,
-                                                 '*.template')
-        self.template_files = glob.glob(self.template_file_select)
+        # Get the template files for writing this network code
+        self.template_files = self._get_template_files()
 
         # a dictionary of functions to call to handle specific parts
         # of the Fortran template
@@ -67,8 +63,7 @@ class BaseFortranNetwork(RateCollection):
         self.ftags['<table_init_meta>'] = self._table_init_meta
         self.ftags['<table_term_meta>'] = self._table_term_meta
         self.ftags['<table_rates_indices>'] = self._table_rates_indices
-        self.ftags['<compute_tabular_rates_rhs>'] = self._compute_tabular_rates_rhs
-        self.ftags['<compute_tabular_rates_jac>'] = self._compute_tabular_rates_jac
+        self.ftags['<compute_tabular_rates>'] = self._compute_tabular_rates
         self.ftags['<ydot_declare_scratch>'] = self._ydot_declare_scratch
         self.ftags['<ydot_scratch>'] = self._ydot_scratch
         self.ftags['<ydot>'] = self._ydot
@@ -109,6 +104,13 @@ class BaseFortranNetwork(RateCollection):
         self.name_electron_fraction = 'state % y_e'
         self.symbol_ludict['__dens__'] = self.name_density
         self.symbol_ludict['__y_e__'] = self.name_electron_fraction
+
+    @abstractmethod
+    def _get_template_files(self):
+        # This method should be overridden by derived classes
+        # to support specific output templates.
+        # This method returns a list of strings that are file paths to template files.
+        return []
 
     def ydot_string(self, rate):
         """
@@ -216,7 +218,26 @@ class BaseFortranNetwork(RateCollection):
             v = self.symbol_ludict[k]
             s = s.replace(k,v)
         if s == '0':
-            s = '0.0d0'
+            s = '0.0e0_rt'
+
+        ## Replace all double precision literals with custom real type literals
+        # constant type specifier
+        const_spec = "_rt"
+
+        # we want to replace any "d" scientific notation with the new style
+        # this matches stuff like -1.25d-10, and gives us separate groups for the
+        # prefix and exponent.  The [^\w] makes sure a letter isn't right in front
+        # of the match (like 'k3d-1'). Alternately, we allow for a match at the start of the string.
+        d_re = re.compile(r"([^\w\+\-]|\A)([\+\-0-9.][0-9.]+)[dD]([\+\-]?[0-9]+)", re.IGNORECASE|re.DOTALL)
+
+        # update "d" scientific notation -- allow for multiple constants in a single string
+        for dd in d_re.finditer(s):
+            prefix = dd.group(2)
+            exponent = dd.group(3)
+            new_num = "{}e{}{}".format(prefix, exponent, const_spec)
+            old_num = dd.group(0).strip()
+            s = s.replace(old_num, new_num)
+
         return s
 
     def jacobian_string(self, rate, ydot_j, y_i):
@@ -386,6 +407,10 @@ class BaseFortranNetwork(RateCollection):
         """convert a number to Fortran double precision format"""
         return '{:1.14e}'.format(float(i)).replace('e','d')
 
+    def fmt_to_rt_f90(self, i):
+        """convert a number to custom real type format"""
+        return '{:1.14e}_rt'.format(float(i))
+
     def get_indent_amt(self, l, k):
         """determine the amount of spaces to indent a line"""
         rem = re.match(r'\A'+k+r'\(([0-9]*)\)\Z',l)
@@ -529,7 +554,7 @@ class BaseFortranNetwork(RateCollection):
         bintable = BindingTable()
         for nuc in self.unique_nuclei:
             nuc_in_table = bintable.get_nuclide(n=nuc.N, z=nuc.Z)
-            str_nucbind = self.fmt_to_dp_f90(nuc_in_table.nucbind)
+            str_nucbind = self.fmt_to_rt_f90(nuc_in_table.nucbind)
             of.write('{}ebind_per_nucleon(j{})   = {}\n'.format(
                 self.indent*n_indent, nuc, str_nucbind))
 
@@ -538,21 +563,21 @@ class BaseFortranNetwork(RateCollection):
             of.write('{}aion(j{})   = {}\n'.format(
                 self.indent*n_indent,
                 nuc,
-                self.fmt_to_dp_f90(nuc.A)))
+                self.fmt_to_rt_f90(nuc.A)))
 
     def _zion(self, n_indent, of):
         for nuc in self.unique_nuclei:
             of.write('{}zion(j{})   = {}\n'.format(
                 self.indent*n_indent,
                 nuc,
-                self.fmt_to_dp_f90(nuc.Z)))
+                self.fmt_to_rt_f90(nuc.Z)))
 
     def _nion(self, n_indent, of):
         for nuc in self.unique_nuclei:
             of.write('{}nion(j{})   = {}\n'.format(
                 self.indent*n_indent,
                 nuc,
-                self.fmt_to_dp_f90(nuc.N)))
+                self.fmt_to_rt_f90(nuc.N)))
 
     def _screen_add(self, n_indent, of):
         screening_map = self.get_screening_map()
@@ -693,27 +718,17 @@ class BaseFortranNetwork(RateCollection):
                 of.write(', &')
             of.write('\n')
 
-    def _compute_tabular_rates_rhs(self, n_indent, of):
+    def _compute_tabular_rates(self, n_indent, of):
         if len(self.tabular_rates) > 0:
             of.write('{}! Calculate tabular rates\n'.format(self.indent*n_indent))
             for n, irate in enumerate(self.tabular_rates):
                 r = self.rates[irate]
                 of.write('{}call tabular_evaluate(rate_table_{}, rhoy_table_{}, temp_table_{}, &\n'.format(self.indent*n_indent, r.table_index_name, r.table_index_name, r.table_index_name))
                 of.write('{}                      num_rhoy_{}, num_temp_{}, num_vars_{}, &\n'.format(self.indent*n_indent, r.table_index_name, r.table_index_name, r.table_index_name))
-                of.write('{}                      rhoy, state % T, reactvec)\n'.format(self.indent*n_indent))
-                of.write('{}rate_eval % unscreened_rates(i_rate:i_scor,{}) = reactvec(i_rate:i_scor)\n'.format(self.indent*n_indent, n+1+len(self.reaclib_rates)))
-                of.write('{}rate_eval % add_energy_rate({})  = reactvec(i_eneut)\n'.format(self.indent*n_indent, n+1))
-                of.write('\n')
-
-    def _compute_tabular_rates_jac(self, n_indent, of):
-        if len(self.tabular_rates) > 0:
-            of.write('{}! Calculate tabular rates\n'.format(self.indent*n_indent))
-            for n, irate in enumerate(self.tabular_rates):
-                r = self.rates[irate]
-                of.write('{}call tabular_evaluate(rate_table_{}, rhoy_table_{}, temp_table_{}, &\n'.format(self.indent*n_indent, r.table_index_name, r.table_index_name, r.table_index_name))
-                of.write('{}                      num_rhoy_{}, num_temp_{}, num_vars_{}, &\n'.format(self.indent*n_indent, r.table_index_name, r.table_index_name, r.table_index_name))
-                of.write('{}                      rhoy, state % T, reactvec)\n'.format(self.indent*n_indent))
-                of.write('{}rate_eval % unscreened_rates(:,{}) = reactvec(1:4)\n'.format(self.indent*n_indent, n+1+len(self.reaclib_rates)))
+                of.write('{}                      rhoy, state % T, rate, drate_dt, edot_nu)\n'.format(self.indent*n_indent))
+                of.write('{}rate_eval % unscreened_rates(i_rate,{}) = rate\n'.format(self.indent*n_indent, n+1+len(self.reaclib_rates)))
+                of.write('{}rate_eval % unscreened_rates(i_drate_dt,{}) = drate_dt\n'.format(self.indent*n_indent, n+1+len(self.reaclib_rates)))
+                of.write('{}rate_eval % add_energy_rate({})  = edot_nu\n'.format(self.indent*n_indent, n+1))
                 of.write('\n')
 
     def _ydot_declare_scratch(self, n_indent, of):

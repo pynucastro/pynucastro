@@ -9,6 +9,15 @@ module actual_rhs_module
 
   implicit none
 
+  ! For each rate, we need: rate, drate/dT, screening, dscreening/dT
+  integer, parameter :: num_rate_groups = 4
+
+  ! Indices into rate groups in the rate_eval_t type
+  integer, parameter :: i_rate        = 1
+  integer, parameter :: i_drate_dt    = 2
+  integer, parameter :: i_scor        = 3
+  integer, parameter :: i_dscor_dt    = 4
+
   type :: rate_eval_t
      real(rt) :: unscreened_rates(num_rate_groups, nrates)
      real(rt) :: screened_rates(nrates)
@@ -63,9 +72,10 @@ contains
     type(rate_eval_t), intent(out) :: rate_eval
     type(plasma_state) :: pstate
     real(rt) :: Y(nspec)
-    real(rt) :: reactvec(num_rate_groups)
     integer :: i, j
-    real(rt) :: rhoy, scor, dscor_dt, dscor_dd
+    real(rt) :: rhoy
+    real(rt) :: rate, drate_dt, edot_nu
+    real(rt) :: scor, dscor_dt, dscor_dd
 
     !$gpu
 
@@ -78,8 +88,9 @@ contains
     ! Calculate Reaclib rates
     call fill_plasma_state(pstate, state % T, state % rho, Y)
     do i = 1, nrat_reaclib
-       call reaclib_evaluate(pstate, state % T, i, reactvec)
-       rate_eval % unscreened_rates(:,i) = reactvec(:)
+       call reaclib_evaluate(pstate, state % T, i, rate, drate_dt)
+       rate_eval % unscreened_rates(i_rate, i) = rate
+       rate_eval % unscreened_rates(i_drate_dt, i) = drate_dt
     end do
 
     ! Evaluate screening factors
@@ -87,7 +98,7 @@ contains
        <compute_screening_factors>(3)
     end if
 
-    <compute_tabular_rates_rhs>(2)
+    <compute_tabular_rates>(2)
 
     ! Compute screened rates
     rate_eval % screened_rates = rate_eval % unscreened_rates(i_rate, :) * &
@@ -112,7 +123,6 @@ contains
 
     type(rate_eval_t) :: rate_eval
     real(rt) :: Y(nspec), ydot_nuc(nspec)
-    real(rt) :: reactvec(num_rate_groups)
     integer :: i, j
     real(rt) :: rhoy, ye, enuc
     real(rt) :: sneut, dsneutdt, dsneutdd, snuda, snudz
@@ -233,7 +243,7 @@ contains
        call sneut5(state % T, state % rho, state % abar, state % zbar, sneut, dsneutdt, dsneutdd, snuda, snudz)
 
        do j = 1, nspec
-          b1 = ((aion(j) - state % abar) * state % abar * snuda + (zion(j) - state % zbar) * state % abar * snudz)
+          b1 = (-state % abar * state % abar * snuda + (zion(j) - state % zbar) * state % abar * snudz)
           call get_jac_entry(jac, net_ienuc, j, scratch)
           scratch = scratch - b1
           call set_jac_entry(jac, net_ienuc, j, scratch)
