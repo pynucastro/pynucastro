@@ -12,12 +12,13 @@ import re
 import glob
 import sympy
 from collections import OrderedDict
+from abc import ABC, abstractmethod
 
 from pynucastro.networks import RateCollection
 from pynucastro.nucdata import BindingTable
 
 
-class BaseFortranNetwork(RateCollection):
+class BaseFortranNetwork(ABC, RateCollection):
     """Interpret the collection of rates and nuclei and produce the
     Fortran code needed to integrate the network.
 
