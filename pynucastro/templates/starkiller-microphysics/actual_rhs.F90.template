@@ -243,7 +243,7 @@ contains
        call sneut5(state % T, state % rho, state % abar, state % zbar, sneut, dsneutdt, dsneutdd, snuda, snudz)
 
        do j = 1, nspec
-          b1 = ((aion(j) - state % abar) * state % abar * snuda + (zion(j) - state % zbar) * state % abar * snudz)
+          b1 = (-state % abar * state % abar * snuda + (zion(j) - state % zbar) * state % abar * snudz)
           call get_jac_entry(jac, net_ienuc, j, scratch)
           scratch = scratch - b1
           call set_jac_entry(jac, net_ienuc, j, scratch)
