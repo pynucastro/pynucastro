@@ -233,7 +233,6 @@ class BaseFortranNetwork(RateCollection):
             exponent = dd.group(3)
             new_num = "{}e{}{}".format(prefix, exponent, const_spec)
             old_num = dd.group(0).strip()
-            print("replacing {} with {} in {}".format(old_num, new_num, s))
             s = s.replace(old_num, new_num)
 
         return s
