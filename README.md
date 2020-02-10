@@ -109,3 +109,26 @@ py.test --nbval examples
 
 If your OS has both Python 2 and Python 3 installed you may need to
 invoke `pytest` as `py.test-3` when running the unit tests.
+
+
+# Core Developers
+
+People who make a number of substantive contributions (new features,
+bug fixes, etc.) will be named "core developers" of pynucastro.
+
+Core developers will be recognized in the following ways:
+
+  * invited to the group's slack team
+
+  * listed in the User's Guide and website as a core developer
+
+  * listed in the author list on the Zenodo DOI for the project
+    (as given in the .zenodo.json file)
+
+  * invited to co-author general code papers / proceedings describing
+    pynucastro.  (Note: science papers that use pynucastro will always
+    be left to the science paper lead author to determine authorship).
+
+If a core developer is inactive for 3 years, we may reassess their
+status as a core developer.
+
