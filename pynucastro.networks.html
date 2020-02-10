@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pynucastro.networks package &mdash; pynucastro v1.2.0 documentation</title>
+  <title>pynucastro.networks package &mdash; pynucastro v1.3.0 documentation</title>
   
 
   
@@ -21,12 +21,12 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-        <script type="text/javascript" src="_static/language_data.js"></script>
-        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
         <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                v1.2.0
+                v1.3.0
               </div>
             
           
@@ -234,7 +234,7 @@ comprised of the rates that are passed in.</p>
 <dl class="class">
 <dt id="pynucastro.networks.base_fortran_network.BaseFortranNetwork">
 <em class="property">class </em><code class="sig-prename descclassname">pynucastro.networks.base_fortran_network.</code><code class="sig-name descname">BaseFortranNetwork</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/base_fortran_network.html#BaseFortranNetwork"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.networks.base_fortran_network.BaseFortranNetwork" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#pynucastro.networks.rate_collection.RateCollection" title="pynucastro.networks.rate_collection.RateCollection"><code class="xref py py-class docutils literal notranslate"><span class="pre">pynucastro.networks.rate_collection.RateCollection</span></code></a></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code>, <a class="reference internal" href="#pynucastro.networks.rate_collection.RateCollection" title="pynucastro.networks.rate_collection.RateCollection"><code class="xref py py-class docutils literal notranslate"><span class="pre">pynucastro.networks.rate_collection.RateCollection</span></code></a></p>
 <p>Interpret the collection of rates and nuclei and produce the
 Fortran code needed to integrate the network.</p>
 <dl class="method">
@@ -254,6 +254,12 @@ molar fraction.</p>
 <dt id="pynucastro.networks.base_fortran_network.BaseFortranNetwork.fmt_to_dp_f90">
 <code class="sig-name descname">fmt_to_dp_f90</code><span class="sig-paren">(</span><em class="sig-param">i</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/base_fortran_network.html#BaseFortranNetwork.fmt_to_dp_f90"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.networks.base_fortran_network.BaseFortranNetwork.fmt_to_dp_f90" title="Permalink to this definition">¶</a></dt>
 <dd><p>convert a number to Fortran double precision format</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pynucastro.networks.base_fortran_network.BaseFortranNetwork.fmt_to_rt_f90">
+<code class="sig-name descname">fmt_to_rt_f90</code><span class="sig-paren">(</span><em class="sig-param">i</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/base_fortran_network.html#BaseFortranNetwork.fmt_to_rt_f90"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.networks.base_fortran_network.BaseFortranNetwork.fmt_to_rt_f90" title="Permalink to this definition">¶</a></dt>
+<dd><p>convert a number to custom real type format</p>
 </dd></dl>
 
 <dl class="method">
@@ -463,7 +469,7 @@ composition</p>
 
 <dl class="method">
 <dt id="pynucastro.networks.rate_collection.RateCollection.plot">
-<code class="sig-name descname">plot</code><span class="sig-paren">(</span><em class="sig-param">outfile=None</em>, <em class="sig-param">rho=None</em>, <em class="sig-param">T=None</em>, <em class="sig-param">comp=None</em>, <em class="sig-param">size=(800</em>, <em class="sig-param">600)</em>, <em class="sig-param">dpi=100</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/rate_collection.html#RateCollection.plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.networks.rate_collection.RateCollection.plot" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">plot</code><span class="sig-paren">(</span><em class="sig-param">outfile=None</em>, <em class="sig-param">rho=None</em>, <em class="sig-param">T=None</em>, <em class="sig-param">comp=None</em>, <em class="sig-param">size=(800</em>, <em class="sig-param">600)</em>, <em class="sig-param">dpi=100</em>, <em class="sig-param">title=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/rate_collection.html#RateCollection.plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.networks.rate_collection.RateCollection.plot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Make a plot of the network structure showing the links between nuclei</p>
 </dd></dl>
 
