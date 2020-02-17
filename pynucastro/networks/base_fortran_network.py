@@ -50,6 +50,7 @@ class BaseFortranNetwork(ABC, RateCollection):
         self.ftags['<short_spec_names>'] = self._short_spec_names
         self.ftags['<ebind>'] = self._ebind
         self.ftags['<aion>'] = self._aion
+        self.ftags['<aion_inv>'] = self._aion_inv
         self.ftags['<zion>'] = self._zion
         self.ftags['<nion>'] = self._nion
         self.ftags['<screen_add>'] = self._screen_add
@@ -561,6 +562,13 @@ class BaseFortranNetwork(ABC, RateCollection):
     def _aion(self, n_indent, of):
         for nuc in self.unique_nuclei:
             of.write('{}aion(j{})   = {}\n'.format(
+                self.indent*n_indent,
+                nuc,
+                self.fmt_to_rt_f90(nuc.A)))
+
+    def _aion_inv(self, n_indent, of):
+        for nuc in self.unique_nuclei:
+            of.write('{}aion_inv(j{})   = 1.0_rt/{}\n'.format(
                 self.indent*n_indent,
                 nuc,
                 self.fmt_to_rt_f90(nuc.A)))
