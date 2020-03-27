@@ -63,9 +63,6 @@ module actual_network
 #endif
 #endif
 
-  character (len=32), parameter :: network_name = "pynucastro"
-
-
 contains
 
   subroutine actual_network_init()
