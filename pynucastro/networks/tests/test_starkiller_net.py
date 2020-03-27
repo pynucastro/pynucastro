@@ -129,57 +129,57 @@ class TestStarKillerNetwork(object):
     def test_ebind(self):
         """ test the _ebind function """
 
-        answer = ('    ebind_per_nucleon(jn)   = 0.00000000000000d+00\n' +
-                  '    ebind_per_nucleon(jp)   = 0.00000000000000d+00\n' +
-                  '    ebind_per_nucleon(jhe4)   = 7.07391500000000d+00\n' +
-                  '    ebind_per_nucleon(jc12)   = 7.68014400000000d+00\n' +
-                  '    ebind_per_nucleon(jo16)   = 7.97620600000000d+00\n' +
-                  '    ebind_per_nucleon(jne20)   = 8.03224000000000d+00\n' +
-                  '    ebind_per_nucleon(jne23)   = 7.95525600000000d+00\n' +
-                  '    ebind_per_nucleon(jna23)   = 8.11149300000000d+00\n' +
-                  '    ebind_per_nucleon(jmg23)   = 7.90111500000000d+00\n')
+        answer = ('    ebind_per_nucleon(jn)   = 0.00000000000000e+00_rt\n' +
+                  '    ebind_per_nucleon(jp)   = 0.00000000000000e+00_rt\n' +
+                  '    ebind_per_nucleon(jhe4)   = 7.07391500000000e+00_rt\n' +
+                  '    ebind_per_nucleon(jc12)   = 7.68014400000000e+00_rt\n' +
+                  '    ebind_per_nucleon(jo16)   = 7.97620600000000e+00_rt\n' +
+                  '    ebind_per_nucleon(jne20)   = 8.03224000000000e+00_rt\n' +
+                  '    ebind_per_nucleon(jne23)   = 7.95525600000000e+00_rt\n' +
+                  '    ebind_per_nucleon(jna23)   = 8.11149300000000e+00_rt\n' +
+                  '    ebind_per_nucleon(jmg23)   = 7.90111500000000e+00_rt\n')
         assert self.cromulent_ftag(self.fn._ebind, answer, n_indent=2)
 
     def test_aion(self):
         """ test the _aion function """
 
-        answer = ('    aion(jn)   = 1.00000000000000d+00\n' +
-                  '    aion(jp)   = 1.00000000000000d+00\n' +
-                  '    aion(jhe4)   = 4.00000000000000d+00\n' +
-                  '    aion(jc12)   = 1.20000000000000d+01\n' +
-                  '    aion(jo16)   = 1.60000000000000d+01\n' +
-                  '    aion(jne20)   = 2.00000000000000d+01\n' +
-                  '    aion(jne23)   = 2.30000000000000d+01\n' +
-                  '    aion(jna23)   = 2.30000000000000d+01\n' +
-                  '    aion(jmg23)   = 2.30000000000000d+01\n')
+        answer = ('    aion(jn)   = 1.00000000000000e+00_rt\n' +
+                  '    aion(jp)   = 1.00000000000000e+00_rt\n' +
+                  '    aion(jhe4)   = 4.00000000000000e+00_rt\n' +
+                  '    aion(jc12)   = 1.20000000000000e+01_rt\n' +
+                  '    aion(jo16)   = 1.60000000000000e+01_rt\n' +
+                  '    aion(jne20)   = 2.00000000000000e+01_rt\n' +
+                  '    aion(jne23)   = 2.30000000000000e+01_rt\n' +
+                  '    aion(jna23)   = 2.30000000000000e+01_rt\n' +
+                  '    aion(jmg23)   = 2.30000000000000e+01_rt\n')
         assert self.cromulent_ftag(self.fn._aion, answer, n_indent=2)
 
     def test_zion(self):
         """ test the zion function """
 
-        answer = ('    zion(jn)   = 0.00000000000000d+00\n' +
-                  '    zion(jp)   = 1.00000000000000d+00\n' +
-                  '    zion(jhe4)   = 2.00000000000000d+00\n' +
-                  '    zion(jc12)   = 6.00000000000000d+00\n' +
-                  '    zion(jo16)   = 8.00000000000000d+00\n' +
-                  '    zion(jne20)   = 1.00000000000000d+01\n' +
-                  '    zion(jne23)   = 1.00000000000000d+01\n' +
-                  '    zion(jna23)   = 1.10000000000000d+01\n' +
-                  '    zion(jmg23)   = 1.20000000000000d+01\n')
+        answer = ('    zion(jn)   = 0.00000000000000e+00_rt\n' +
+                  '    zion(jp)   = 1.00000000000000e+00_rt\n' +
+                  '    zion(jhe4)   = 2.00000000000000e+00_rt\n' +
+                  '    zion(jc12)   = 6.00000000000000e+00_rt\n' +
+                  '    zion(jo16)   = 8.00000000000000e+00_rt\n' +
+                  '    zion(jne20)   = 1.00000000000000e+01_rt\n' +
+                  '    zion(jne23)   = 1.00000000000000e+01_rt\n' +
+                  '    zion(jna23)   = 1.10000000000000e+01_rt\n' +
+                  '    zion(jmg23)   = 1.20000000000000e+01_rt\n')
         assert self.cromulent_ftag(self.fn._zion, answer, n_indent=2)
 
     def test_nion(self):
         """ test the _nion function """
 
-        answer = ('    nion(jn)   = 1.00000000000000d+00\n' +
-                  '    nion(jp)   = 0.00000000000000d+00\n' +
-                  '    nion(jhe4)   = 2.00000000000000d+00\n' +
-                  '    nion(jc12)   = 6.00000000000000d+00\n' +
-                  '    nion(jo16)   = 8.00000000000000d+00\n' +
-                  '    nion(jne20)   = 1.00000000000000d+01\n' +
-                  '    nion(jne23)   = 1.30000000000000d+01\n' +
-                  '    nion(jna23)   = 1.20000000000000d+01\n' +
-                  '    nion(jmg23)   = 1.10000000000000d+01\n')
+        answer = ('    nion(jn)   = 1.00000000000000e+00_rt\n' +
+                  '    nion(jp)   = 0.00000000000000e+00_rt\n' +
+                  '    nion(jhe4)   = 2.00000000000000e+00_rt\n' +
+                  '    nion(jc12)   = 6.00000000000000e+00_rt\n' +
+                  '    nion(jo16)   = 8.00000000000000e+00_rt\n' +
+                  '    nion(jne20)   = 1.00000000000000e+01_rt\n' +
+                  '    nion(jne23)   = 1.30000000000000e+01_rt\n' +
+                  '    nion(jna23)   = 1.20000000000000e+01_rt\n' +
+                  '    nion(jmg23)   = 1.10000000000000e+01_rt\n')
         assert self.cromulent_ftag(self.fn._nion, answer, n_indent=2)
 
 

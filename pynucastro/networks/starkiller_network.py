@@ -14,18 +14,17 @@ class StarKillerNetwork(BaseFortranNetwork):
         # Initialize BaseFortranNetwork parent class
         super(StarKillerNetwork, self).__init__(*args, **kwargs)
 
-        # Set up some directories
-        self.template_dir = os.path.join(self.pynucastro_dir,
-                                         'templates',
-                                         'starkiller-microphysics')
-        self.template_file_select = os.path.join(self.template_dir,
-                                                 '*.template')
-        self.template_files = glob.glob(self.template_file_select)
-
         # StarKiller-specific template processing functions
         self.ftags['<sparse_jac_nnz>'] = self._sparse_jac_nnz
         self.ftags['<csr_jac_metadata>'] = self._csr_jac_metadata
         self.ftags['<species_xin_test>'] = self._species_xin_test
+
+    def _get_template_files(self):
+        template_pattern = os.path.join(self.pynucastro_dir,
+                                        'templates',
+                                        'starkiller-microphysics',
+                                        '*.template')
+        return glob.glob(template_pattern)
 
     def get_sparse_jac_nnz(self):
         # Get the number of nonzero entries in the sparse Jacobian
