@@ -223,7 +223,7 @@ class RateCollection(object):
         ys = composition.get_molar()
 
         for r in self.rates:
-            val = r.prefactor * rho**r.dens_exp * r.eval(T,rho)       # Xinlong Li
+            val = r.prefactor * rho**r.dens_exp * r.eval(T,rho)
             if (r.weak_type == 'electron_capture' and not r.tabular):
                 val = val * composition.eval_ye()
             yfac = functools.reduce(mul, [ys[q] for q in r.reactants])
@@ -310,7 +310,7 @@ class RateCollection(object):
             
         # Delete the rates if the rates is less than rate_value
         deleted_rate = [];
-        if rate_value is not None:     # Xinlong Li 
+        if rate_value is not None: 
             for r in self.rates:      
                 if ydots[r]<rate_value:
                     deleted_rate.append(r)
@@ -332,7 +332,7 @@ class RateCollection(object):
                         if ydots is None:
                             G.add_edges_from([(n, p)], weight=0.5)
                         else:
-                            if r in deleted_rate:    # Xinlong Li
+                            if r in deleted_rate:
                                 continue
                             else:
                                 try:

@@ -733,8 +733,8 @@ class Rate(object):
         self._set_screening()
         self._set_print_representation()
         
-        if self.tabular == True:
-            self.get_tabular_rate()          #Xinlong Li
+        if self.tabular:
+            self.get_tabular_rate()
 
     def __repr__(self):
         return self.string
@@ -1144,7 +1144,7 @@ class Rate(object):
                 nuc = n
         return nuc
     
-    def get_tabular_rate(self):    # new fundtion by Xinlong Li for tabulated rates
+    def get_tabular_rate(self):   
         """read the rate data from .dat file """
         
         # find .dat file and read it
@@ -1174,7 +1174,7 @@ class Rate(object):
     def eval(self, T, rhoY = None):    
         """ evauate the reaction rate for temperature T """
         
-        if self.tabular == True:  # Xinlong Li for tabulated rates
+        if self.tabular:
             data = self.tabular_data_table.astype(np.float)
             # find the nearest value of T and rhoY in the data table
             T_nearest = (data[:,1])[np.abs((data[:,1]) - T).argmin()]
@@ -1205,10 +1205,10 @@ class Rate(object):
         drdT = (r2 - r1)/dT
         return (T0/r1)*drdT
 
-    def plot(self, Tmin=1.e8, Tmax=1.6e9, rhoYmin=3.9e8, rhoYmax=2.e9):   # Xinlong Li
+    def plot(self, Tmin=1.e8, Tmax=1.6e9, rhoYmin=3.9e8, rhoYmax=2.e9):
         """plot the rate's temperature sensitivity vs temperature"""
         
-        if self.tabular == True:   # Xinlong for tabuled rates
+        if self.tabular:
             data = self.tabular_data_table.astype(np.float) # convert from str to float
             
             inde1 = data[:,1]<=Tmax
