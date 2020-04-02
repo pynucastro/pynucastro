@@ -94,6 +94,8 @@ class BaseFortranNetwork(ABC, RateCollection):
         self.solved_jacobian  = False
         self.symbol_ludict = OrderedDict() # Symbol lookup dictionary
 
+        self.num_screen_calls = None
+
         # Define these for the particular network
         self.name_rate_data = 'screened_rates'
         self.name_y         = 'Y'
@@ -492,6 +494,8 @@ class BaseFortranNetwork(ABC, RateCollection):
                 of.write('{}rate_eval % unscreened_rates(i_dscor_dt,{}) = dscor_dt\n'.format(
                     self.indent*n_indent, k))
             of.write('\n')
+
+        self.num_screen_calls = len(screening_map)
 
     def _nrat_reaclib(self, n_indent, of):
         # Writes the number of Reaclib rates
