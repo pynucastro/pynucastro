@@ -9,9 +9,6 @@ module actual_rhs_module
 
   implicit none
 
-  ! For each rate, we need: rate, drate/dT, screening, dscreening/dT
-  integer, parameter :: num_rate_groups = 4
-
   ! Indices into rate groups in the rate_eval_t type
   integer, parameter :: i_rate        = 1
   integer, parameter :: i_drate_dt    = 2
