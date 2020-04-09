@@ -272,7 +272,7 @@ class RateCollection(object):
         print('To create network integration source code, use a class that implements a specific network type.')
         return
 
-    def plot(self, outfile=None, rho=None, T=None, comp=None, size=(800, 600), dpi=100, title=None):
+    def plot(self, outfile=None, rho=None, T=None, comp=None, size=(800, 600), dpi=100, title=None, ydot_cutoff_value=None):
         """Make a plot of the network structure showing the links between nuclei"""
 
         G = nx.MultiDiGraph()
@@ -309,12 +309,12 @@ class RateCollection(object):
         else:
             ydots = None
             
-        # Delete the rates if the rates is less than rate_value
-        deleted_rate = [];
-        if rate_value is not None: 
+        # Do not show rates on the graph if their corresponding ydot is less than ydot_cutoff_value
+        invisible_rates = [];
+        if ydot_cutoff_value is not None: 
             for r in self.rates:      
-                if ydots[r]<rate_value:
-                    deleted_rate.append(r)
+                if ydots[r] < ydot_cutoff_value:
+                    invisible_rates.append(r)
                     del ydots[r]
 
         #for rr in ydots:
@@ -333,7 +333,7 @@ class RateCollection(object):
                         if ydots is None:
                             G.add_edges_from([(n, p)], weight=0.5)
                         else:
-                            if r in deleted_rate:
+                            if r in invisible_rates:
                                 continue
                             else:
                                 try:
