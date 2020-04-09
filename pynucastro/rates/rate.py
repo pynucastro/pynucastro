@@ -732,6 +732,9 @@ class Rate(object):
         self._set_rhs_properties()
         self._set_screening()
         self._set_print_representation()
+        
+        if self.tabular:
+            self.get_tabular_rate()
 
     def __repr__(self):
         return self.string
@@ -1140,14 +1143,51 @@ class Rate(object):
             if n.A < nuc.A or (n.A == nuc.A and n.Z > nuc.Z):
                 nuc = n
         return nuc
+    
+    def get_tabular_rate(self):   
+        """read the rate data from .dat file """
+        
+        # find .dat file and read it
+        self.table_path = Library._find_rate_file(self.table_file)
+        tabular_file = open(self.table_path,"r")
+        t_data = tabular_file.readlines()  
+        tabular_file.close()
+        
+        # delete header lines
+        del t_data[0:self.table_header_lines]  
+        
+        # change the list ["1.23 3.45 5.67\n"] into the list ["1.23","3.45","5.67"]
+        t_data2d = []
+        for i in range(len(t_data)):
+            t_data2d.append(re.split(r"[ ]",t_data[i].strip('\n')))
+        
+        # delete all the "" in each element of data1
+        for i in range(len(t_data2d)):
+            while '' in t_data2d[i]:
+                t_data2d[i].remove('')
 
-    def eval(self, T):
+        while [] in t_data2d:
+            t_data2d.remove([])
+            
+        self.tabular_data_table = np.array(t_data2d)
+        
+    def eval(self, T, rhoY = None):    
         """ evauate the reaction rate for temperature T """
-        tf = Tfactors(T)
-        r = 0.0
-        for s in self.sets:
-            f = s.f()
-            r += f(tf)
+        
+        if self.tabular:
+            data = self.tabular_data_table.astype(np.float)
+            # find the nearest value of T and rhoY in the data table
+            T_nearest = (data[:,1])[np.abs((data[:,1]) - T).argmin()]
+            rhoY_nearest = (data[:,0])[np.abs((data[:,0]) - rhoY).argmin()]
+            inde = np.where((data[:,1]==T_nearest)&(data[:,0]==rhoY_nearest))[0][0]
+            r = data[inde][5]
+        
+        else:
+            tf = Tfactors(T)
+            r = 0.0
+            for s in self.sets:
+                f = s.f()
+                r += f(tf)
 
         return r
 
@@ -1165,26 +1205,60 @@ class Rate(object):
         drdT = (r2 - r1)/dT
         return (T0/r1)*drdT
 
-    def plot(self, Tmin=1.e7, Tmax=1.e10):
+    def plot(self, Tmin=1.e8, Tmax=1.6e9, rhoYmin=3.9e8, rhoYmax=2.e9):
         """plot the rate's temperature sensitivity vs temperature"""
-
-        temps = np.logspace(np.log10(Tmin), np.log10(Tmax), 100)
-        r = np.zeros_like(temps)
-
-        for n, T in enumerate(temps):
-            r[n] = self.eval(T)
-
-        plt.loglog(temps, r)
-
-        plt.xlabel(r"$T$")
-
-        if self.dens_exp == 0:
-            plt.ylabel(r"\tau")
-        elif self.dens_exp == 1:
-            plt.ylabel(r"$N_A <\sigma v>$")
-        elif self.dens_exp == 2:
-            plt.ylabel(r"$N_A^2 <n_a n_b n_c v>$")
-
-        plt.title(r"{}".format(self.pretty_string))
-
-        plt.show()
+        
+        if self.tabular:
+            data = self.tabular_data_table.astype(np.float) # convert from str to float
+            
+            inde1 = data[:,1]<=Tmax
+            inde2 = data[:,1]>=Tmin
+            inde3 = data[:,0]<=rhoYmax
+            inde4 = data[:,0]>=rhoYmin
+            data_heatmap = data[inde1&inde2&inde3&inde4].copy()
+            
+            rows, row_pos = np.unique(data_heatmap[:, 0], return_inverse=True)
+            cols, col_pos = np.unique(data_heatmap[:, 1], return_inverse=True)
+            pivot_table = np.zeros((len(rows), len(cols)), dtype=data_heatmap.dtype)
+            try:
+                pivot_table[row_pos, col_pos] = np.log10(data_heatmap[:, 5])
+            except ValueError:
+                plot("Divide by zero encountered in log10\nChange the scale of T or rhoY")
+            
+            fig, ax = plt.subplots(figsize=(10,10))
+            im = ax.imshow(pivot_table, cmap='jet')
+            plt.colorbar(im)
+            
+            plt.xlabel("$T$ [K]")
+            plt.ylabel("$\\rho Y$ [g/cm$^3$]")
+            ax.set_title(r"{}".format(self.pretty_string)+
+                         "\n"+"electron-capture/beta-decay rate in log10(1/s)")
+            ax.set_yticks(range(len(rows)))
+            ax.set_yticklabels(rows)
+            ax.set_xticks(range(len(cols)))
+            ax.set_xticklabels(cols)
+            plt.setp(ax.get_xticklabels(), rotation=90, ha="right",rotation_mode="anchor")
+            plt.gca().invert_yaxis()
+            plt.show()
+        
+        else:
+            temps = np.logspace(np.log10(Tmin), np.log10(Tmax), 100)
+            r = np.zeros_like(temps)
+            
+            for n, T in enumerate(temps):
+                r[n] = self.eval(T)
+                
+            plt.loglog(temps, r)
+            plt.xlabel(r"$T$")
+            
+            if self.dens_exp == 0:
+                plt.ylabel(r"\tau")
+            elif self.dens_exp == 1:
+                plt.ylabel(r"$N_A <\sigma v>$")
+            elif self.dens_exp == 2:
+                plt.ylabel(r"$N_A^2 <n_a n_b n_c v>$")
+                
+            plt.title(r"{}".format(self.pretty_string))
+            plt.show()
+            
+        
