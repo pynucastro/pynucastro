@@ -1,0 +1,30 @@
+{
+    "creators": [
+        {
+            "name": "the pynucastro development"
+        },
+        {
+            "affiliation": "The Ohio State University",
+            "name": "Cao, Lyra"
+        },
+        {
+            "affiliation": "Department of Physics and Astronomy, Stony Brook University",
+            "name": "Eiden, Kiran",
+            "orcid": "0000-0001-6191-4285"
+        },
+        {   "affiliation": "Department of Physics and Astronomy, Stony Brook University",
+            "name": "Li, Xinlong",
+            "orcid": "0000-0002-3143-6136"
+        },
+        {
+            "affiliation": "Center for Computational Sciences and Engineering, Lawrence Berkeley National Laboratory",
+            "name": "Willcox, Donald",
+            "orcid": "0000-0003-2300-5165"
+        },
+        {
+            "affiliation": "Department of Physics and Astronomy, Stony Brook University",
+            "name": "Zingale, Michael",
+            "orcid": "0000-0001-8401-030X"
+        }
+    ]
+}
