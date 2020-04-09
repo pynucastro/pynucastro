@@ -221,11 +221,12 @@ class RateCollection(object):
         composition"""
         rvals = OrderedDict()
         ys = composition.get_molar()
+        y_e = composition.eval_ye()
 
         for r in self.rates:
-            val = r.prefactor * rho**r.dens_exp * r.eval(T,rho)
+            val = r.prefactor * rho**r.dens_exp * r.eval(T,rho * y_e)
             if (r.weak_type == 'electron_capture' and not r.tabular):
-                val = val * composition.eval_ye()
+                val = val * y_e
             yfac = functools.reduce(mul, [ys[q] for q in r.reactants])
             rvals[r] = yfac * val
 
