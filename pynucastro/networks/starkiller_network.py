@@ -14,18 +14,17 @@ class StarKillerNetwork(BaseFortranNetwork):
         # Initialize BaseFortranNetwork parent class
         super(StarKillerNetwork, self).__init__(*args, **kwargs)
 
-        # Set up some directories
-        self.template_dir = os.path.join(self.pynucastro_dir,
-                                         'templates',
-                                         'starkiller-microphysics')
-        self.template_file_select = os.path.join(self.template_dir,
-                                                 '*.template')
-        self.template_files = glob.glob(self.template_file_select)
-
         # StarKiller-specific template processing functions
         self.ftags['<sparse_jac_nnz>'] = self._sparse_jac_nnz
         self.ftags['<csr_jac_metadata>'] = self._csr_jac_metadata
         self.ftags['<species_xin_test>'] = self._species_xin_test
+
+    def _get_template_files(self):
+        template_pattern = os.path.join(self.pynucastro_dir,
+                                        'templates',
+                                        'starkiller-microphysics',
+                                        '*.template')
+        return glob.glob(template_pattern)
 
     def get_sparse_jac_nnz(self):
         # Get the number of nonzero entries in the sparse Jacobian
@@ -146,3 +145,23 @@ class StarKillerNetwork(BaseFortranNetwork):
             of.write('# {}\n'.format(n))
             xin = [self.fmt_to_dp_f90(xcomp) for j in range(size_test)]
             of.write('{}\n'.format(' '.join(xin)))
+
+    def _write_network(self, use_cse=False):
+        """
+        This writes the RHS, jacobian and ancillary files for the system of ODEs that
+        this network describes, using the template files.
+        """
+
+        super()._write_network(use_cse=use_cse)
+
+        # create a .net file with the nuclei properties
+        with open("pynucastro.net", "w") as of:
+            for nuc in self.unique_nuclei:
+                of.write("{:25} {:6} {:6.1f} {:6.1f}\n".format(
+                    nuc.spec_name, nuc.short_spec_name, nuc.A, nuc.Z))
+
+        # write out some network properties
+        with open("NETWORK_PROPERTIES", "w") as of:
+            of.write("NSCREEN {}".format(self.num_screen_calls))
+
+

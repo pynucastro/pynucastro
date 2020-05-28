@@ -1,5 +1,20 @@
 # changes since the last release
 
+# 1.4.0
+
+  -- Added general support for tabulated weak rates from Suzuki, et al. 2016
+  -- Added a simple pp network example
+  -- Updated StarKiller Microphysics output to track latest changes in Microphysics network API
+  -- Added a core developers policy in the Readme
+
+# 1.3.0
+
+  -- Replace double precision reals in StarKiller networks with custom real type `_rt`
+  -- Incorporate modifications to thermal neutrino Jacobian contributions from Microphysics (#210) in StarKiller networks
+  -- Simplify rate evaluation code in StarKiller networks
+  -- Deprecated standalone Fortran output with VODE integration.
+  -- BaseFortranNetwork is now an abstract class to require users to either use StarKillerNetwork or provide templates
+
 # 1.2.0
 
   -- Fix tabular rate bug where electron chemical potential contributions were not included

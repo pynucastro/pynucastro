@@ -233,11 +233,12 @@ class RateCollection(object):
         composition"""
         rvals = OrderedDict()
         ys = composition.get_molar()
+        y_e = composition.eval_ye()
 
         for r in self.rates:
-            val = r.prefactor * rho**r.dens_exp * r.eval(T)
+            val = r.prefactor * rho**r.dens_exp * r.eval(T,rho * y_e)
             if (r.weak_type == 'electron_capture' and not r.tabular):
-                val = val * composition.eval_ye()
+                val = val * y_e
             yfac = functools.reduce(mul, [ys[q] for q in r.reactants])
             rvals[r] = yfac * val
 
@@ -357,8 +358,8 @@ class RateCollection(object):
         print('To create network integration source code, use a class that implements a specific network type.')
         return
 
-    def plot(self, outfile=None, rho=None, T=None, comp=None, size=(800, 600), dpi=100,
-             filter_function=None, rate_thresh=None):
+    def plot(self, outfile=None, rho=None, T=None, comp=None, size=(800, 600), dpi=100, title=None,
+             ydot_cutoff_value=None, filter_function=None):
         """Make a plot of the network structure showing the links between nuclei"""
 
         G = nx.MultiDiGraph()
@@ -373,6 +374,7 @@ class RateCollection(object):
 
         # nodes -- the node nuclei will be all of the heavies, but not
         # p, n, alpha, unless we have p + p, 3-a, etc.
+        # add all the nuclei into G.node
         node_nuclei = []
         for n in self.unique_nuclei:
             if n.raw not in ["p", "n", "he4"]:
@@ -390,16 +392,19 @@ class RateCollection(object):
             G.add_node(n)
             G.position[n] = (n.N, n.Z)
             G.labels[n] = r"${}$".format(n.pretty)
-
+            
+        # get the rates for each reaction
         if rho is not None and T is not None and comp is not None:
             ydots = self.evaluate_rates(rho, T, comp)
         else:
             ydots = None
             
-        if rate_thresh is None:
-            rate_thresh = -308
-        else:
-            rate_thresh = math.log10(rate_thresh)
+        # Do not show rates on the graph if their corresponding ydot is less than ydot_cutoff_value
+        invisible_rates = set()
+        if ydot_cutoff_value is not None: 
+            for r in self.rates:      
+                if ydots[r] < ydot_cutoff_value:
+                    invisible_rates.add(r)
 
         #for rr in ydots:
         #    print("{}: {}".format(rr, ydots[rr]))
@@ -417,6 +422,8 @@ class RateCollection(object):
                         if ydots is None:
                             G.add_edges_from([(n, p)], weight=0.5)
                         else:
+                            if r in invisible_rates:
+                                continue
                             try:
                                 rate_weight = math.log10(ydots[r])
                             except ValueError:
@@ -426,20 +433,19 @@ class RateCollection(object):
                                 rate_weight = -308
                             except:
                                 raise
-                            if rate_weight >= rate_thresh:
-                                G.add_edges_from([(n, p)], weight=rate_weight)
+                            G.add_edges_from([(n, p)], weight=rate_weight)
 
-        nx.draw_networkx_nodes(G, G.position,
+        nx.draw_networkx_nodes(G, G.position,      # plot the element at the correct position
                                node_color="#A0CBE2", alpha=1.0,
                                node_shape="o", node_size=1000, linewidth=2.0, zorder=10, ax=ax)
 
-        nx.draw_networkx_labels(G, G.position, G.labels,
+        nx.draw_networkx_labels(G, G.position, G.labels,   # label the name of element at the correct position
                                 font_size=13, font_color="w", zorder=100, ax=ax)
 
         # get the edges and weights coupled in the same order
         edges, weights = zip(*nx.get_edge_attributes(G, 'weight').items())
 
-        edges_lc = nx.draw_networkx_edges(G, G.position, width=3,
+        edges_lc = nx.draw_networkx_edges(G, G.position, width=3,    # plot the arrow of reaction
                                           edgelist=edges, edge_color=weights,
                                           node_size=1000,
                                           edge_cmap=plt.cm.viridis, zorder=1, ax=ax)
@@ -479,6 +485,9 @@ class RateCollection(object):
         ax.set_aspect("equal", "datalim")
 
         fig.set_size_inches(size[0]/dpi, size[1]/dpi)
+
+        if title is not None:
+            fig.suptitle(title)
 
         if outfile is None:
             plt.show()
