@@ -8,6 +8,12 @@ import io
 import numpy as np
 import matplotlib.pyplot as plt
 import collections
+import numba
+
+try:
+    from numba.experimental import jitclass
+except ImportError:
+    from numba import jitclass
 
 from pynucastro.nucdata import UnidentifiedElement, PeriodicTable
 
@@ -31,8 +37,6 @@ def list_known_rates():
                 for r in lib.get_rates():
                     print("                                 : {}".format(r))
 
-import numba
-
 Tfactor_spec = [
 ('T9', numba.float64),
 ('T9i', numba.float64),
@@ -42,7 +46,7 @@ Tfactor_spec = [
 ('lnT9', numba.float64)
 ]
 
-@numba.jitclass(Tfactor_spec)
+@jitclass(Tfactor_spec)
 class Tfactors(object):
     """ precompute temperature factors for speed """
 
