@@ -41,9 +41,9 @@ particular kind of network you are interested in creating.
 * Write a short python script to generate your network,
   e.g. ``mynet.py``, based on the following example scripts:
 
-  - For Python networks, `examples/CNO/cno.py <https://github.com/pynucastro/pynucastro/blob/master/examples/CNO/cno.py>`_
-  - For standalone Fortran networks, `examples/urca-23_f90/urca.py <https://github.com/pynucastro/pynucastro/blob/master/examples/urca-23_f90/urca.py>`_
-  - For StarKiller Microphysics networks, `examples/urca-23_starkiller/urca.py <https://github.com/pynucastro/pynucastro/blob/master/examples/urca-23_starkiller/urca.py>`_
+  - For Python networks, `examples/CNO/cno.py <https://github.com/pynucastro/pynucastro/blob/main/examples/CNO/cno.py>`_
+  - For standalone Fortran networks, `examples/urca-23_f90/urca.py <https://github.com/pynucastro/pynucastro/blob/main/examples/urca-23_f90/urca.py>`_
+  - For StarKiller Microphysics networks, `examples/urca-23_starkiller/urca.py <https://github.com/pynucastro/pynucastro/blob/main/examples/urca-23_starkiller/urca.py>`_
 
 * Run your python script (pynucastro must be in your PYTHONPATH).
 
@@ -56,14 +56,14 @@ Python network
 
 First follow the steps above for all networks. To integrate a Python
 network using the SciPy integration routines, customize
-`examples/CNO/burn.py <https://github.com/pynucastro/pynucastro/blob/master/examples/CNO/burn.py>`_ to initialize and run your network using the
+`examples/CNO/burn.py <https://github.com/pynucastro/pynucastro/blob/main/examples/CNO/burn.py>`_ to initialize and run your network using the
 right hand side module you generated above.
 
 Standalone Fortran network
 --------------------------
 
 The `examples/urca-23_f90
-<https://github.com/pynucastro/pynucastro/tree/master/examples/urca-23_f90>`_
+<https://github.com/pynucastro/pynucastro/tree/main/examples/urca-23_f90>`_
 example builds a Fortran 90 network together with a GNU Makefile and
 integration driver program using the included VODE package for ODE
 integration.
@@ -106,7 +106,7 @@ Notes on the build system:
 StarKiller Microphysics network
 -------------------------------
 
-The `examples/urca-23_starkiller <https://github.com/pynucastro/pynucastro/tree/master/examples/urca-23_starkiller>`_ example builds the right hand side, Jacobian,
+The `examples/urca-23_starkiller <https://github.com/pynucastro/pynucastro/tree/main/examples/urca-23_starkiller>`_ example builds the right hand side, Jacobian,
 and helper Fortran modules to copy into the ``networks/`` subdirectory
 of the StarKiller Microphysics repository.
 
@@ -121,7 +121,7 @@ are supported by the standalone Fortran and StarKiller Microphysics
 network outputs.
 
 If you would like to include tabular rates, for now they must be in
-the form of, e.g. `23Na-23Ne_electroncapture.dat <https://github.com/pynucastro/pynucastro/blob/master/pynucastro/library/tabular/23Na-23Ne_electroncapture.dat>`_ in
+the form of, e.g. `23Na-23Ne_electroncapture.dat <https://github.com/pynucastro/pynucastro/blob/main/pynucastro/library/tabular/23Na-23Ne_electroncapture.dat>`_ in
 ``pynucastro/library/tabular/``, indexed by the product of density and
 electron fraction :math:`\rm{\rho Y_e}` and temperature
 :math:`\rm{T}`, with the same number and order of variables.
@@ -129,7 +129,7 @@ electron fraction :math:`\rm{\rho Y_e}` and temperature
 To generate a network with a tabular rate, prepare a rate file to
 describe how to read the table as below and then list it as you would
 a Reaclib rate file in your network generation script. For example,
-`pynucastro/library/tabular/na23--ne23-toki <https://github.com/pynucastro/pynucastro/blob/master/pynucastro/library/tabular/na23--ne23-toki>`_ demonstrates the following
+`pynucastro/library/tabular/na23--ne23-toki <https://github.com/pynucastro/pynucastro/blob/main/pynucastro/library/tabular/na23--ne23-toki>`_ demonstrates the following
 format:
 
 .. code-block:: none
