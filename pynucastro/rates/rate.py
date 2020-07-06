@@ -42,7 +42,7 @@ Tfactor_spec = [
 ('lnT9', numba.float64)
 ]
 
-@numba.jitclass(Tfactor_spec)
+@numba.experimental.jitclass(Tfactor_spec)
 class Tfactors(object):
     """ precompute temperature factors for speed """
 
