@@ -242,7 +242,7 @@ class Nucleus(object):
         elif isinstance(other, tuple):
             return (self.Z, self.A) == other
         else:
-            raise ValueError("Unsupported comparison: Nucleus to {}".format(type(other)))
+            return NotImplemented
 
     def __lt__(self, other):
         if not self.Z == other.Z:
