@@ -26,7 +26,7 @@ def list_known_rates():
     for _, _, filenames in os.walk(lib_path):
         for f in filenames:
             # skip over files that are not rate files
-            if f.endswith(".md") or f.endswith(".dat"):
+            if f.endswith(".md") or f.endswith(".dat") or f.endswith(".py") or f.endswith(".ipynb"):
                 continue
             try:
                 lib = Library(f)
