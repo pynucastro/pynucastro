@@ -1,8 +1,6 @@
 # unit tests for Binding Energy database taken from AME 2016.
-
-import os
-
 from pynucastro.nucdata import BindingTable
+
 
 class TestAME(object):
     @classmethod

@@ -5,23 +5,24 @@ rates that together make up a network."""
 from __future__ import print_function
 
 import functools
-import glob
 import math
+import numpy as np
 from operator import mul
 import os
 from collections import OrderedDict
 
 from ipywidgets import interact
 
-import matplotlib
+import matplotlib as mpl
 import matplotlib.pyplot as plt
+#from mpl_toolkits.axes_grid1 import make_axes_locatable
 import networkx as nx
 
 # Import Rate
 from pynucastro.rates import Rate, Nucleus, Library
 from pynucastro.nucdata import PartitionFunctionCollection
 
-matplotlib.rcParams['figure.dpi'] = 100
+mpl.rcParams['figure.dpi'] = 100
 
 class Composition(object):
     """a composition holds the mass fractions of the nuclei in a network
@@ -74,6 +75,21 @@ class Composition(object):
         molar_frac = {k: v/k.A for k, v in self.X.items()}
         return molar_frac
 
+    def eval_ye(self):
+        """ return the electron fraction """
+        zvec = []
+        avec = []
+        xvec = []
+        for n in self.X:
+            zvec.append(n.Z)
+            avec.append(n.A)
+            xvec.append(self.X[n])
+        zvec = np.array(zvec)
+        avec = np.array(avec)
+        xvec = np.array(xvec)
+        electron_frac = np.sum(zvec*xvec/avec)/np.sum(xvec)
+        return electron_frac
+
     def __str__(self):
         ostr = ""
         for k in self.X:
@@ -93,10 +109,10 @@ class RateCollection(object):
 
         This can include Reaclib library files storing multiple rates.
 
-        If libraries is supplied, initialize a RateCollection using the rates 
+        If libraries is supplied, initialize a RateCollection using the rates
         in the Library object(s) in list 'libraries'.
 
-        If rates is supplied, initialize a RateCollection using the 
+        If rates is supplied, initialize a RateCollection using the
         Rate objects in the list 'rates'.
 
         Any combination of these options may be combined.
@@ -230,9 +246,12 @@ class RateCollection(object):
         composition"""
         rvals = OrderedDict()
         ys = composition.get_molar()
+        y_e = composition.eval_ye()
 
         for r in self.rates:
-            val = r.prefactor * rho**r.dens_exp * r.eval(T)
+            val = r.prefactor * rho**r.dens_exp * r.eval(T,rho * y_e)
+            if (r.weak_type == 'electron_capture' and not r.tabular):
+                val = val * y_e
             yfac = functools.reduce(mul, [ys[q] for q in r.reactants])
             rvals[r] = yfac * val
 
@@ -264,6 +283,12 @@ class RateCollection(object):
         """Every Rate in this RateCollection should have a unique Rate.fname,
         as the network writers distinguish the rates on this basis."""
         names = [r.fname for r in self.rates]
+        for n,r in zip(names, self.rates):
+            k = names.count(n)
+            if k > 1:
+                print('Found rate {} named {} with {} entries in the RateCollection.'.format(r, n, k))
+                print('Rate {} has the original source:\n{}'.format(r, r.original_source))
+                print('Rate {} is in chapter {}'.format(r, r.chapter))
         return len(set(names)) == len(self.rates)
 
     def _write_network(self, *args, **kwargs):
@@ -272,17 +297,22 @@ class RateCollection(object):
         print('To create network integration source code, use a class that implements a specific network type.')
         return
 
-    def plot(self, outfile=None, rho=None, T=None, comp=None, size=(800, 600), dpi=100):
+    def plot(self, outfile=None, rho=None, T=None, comp=None, size=(800, 600), dpi=100, title=None, ydot_cutoff_value=None):
         """Make a plot of the network structure showing the links between nuclei"""
 
         G = nx.MultiDiGraph()
         G.position = {}
         G.labels = {}
 
-        plt.plot([0, 0], [8, 8], 'b-')
+        fig, ax = plt.subplots()
+        #divider = make_axes_locatable(ax)
+        #cax = divider.append_axes('right', size='15%', pad=0.05)
+
+        ax.plot([0, 0], [8, 8], 'b-')
 
         # nodes -- the node nuclei will be all of the heavies, but not
         # p, n, alpha, unless we have p + p, 3-a, etc.
+        # add all the nuclei into G.node
         node_nuclei = []
         for n in self.unique_nuclei:
             if n.raw not in ["p", "n", "he4"]:
@@ -297,11 +327,20 @@ class RateCollection(object):
             G.add_node(n)
             G.position[n] = (n.N, n.Z)
             G.labels[n] = r"${}$".format(n.pretty)
-
+            
+        # get the rates for each reaction
         if rho is not None and T is not None and comp is not None:
             ydots = self.evaluate_rates(rho, T, comp)
         else:
             ydots = None
+            
+        # Do not show rates on the graph if their corresponding ydot is less than ydot_cutoff_value
+        invisible_rates = [];
+        if ydot_cutoff_value is not None: 
+            for r in self.rates:      
+                if ydots[r] < ydot_cutoff_value:
+                    invisible_rates.append(r)
+                    del ydots[r]
 
         #for rr in ydots:
         #    print("{}: {}".format(rr, ydots[rr]))
@@ -319,43 +358,55 @@ class RateCollection(object):
                         if ydots is None:
                             G.add_edges_from([(n, p)], weight=0.5)
                         else:
-                            try:
-                                rate_weight = math.log10(ydots[r])
-                            except ValueError:
-                                # if ydots[r] is zero, then set the weight
-                                # to roughly the minimum exponent possible
-                                # for python floats
-                                rate_weight = -308
-                            except:
-                                raise
-                            G.add_edges_from([(n, p)], weight=rate_weight)
+                            if r in invisible_rates:
+                                continue
+                            else:
+                                try:
+                                    rate_weight = math.log10(ydots[r])
+                                except ValueError:
+                                    # if ydots[r] is zero, then set the weight
+                                    # to roughly the minimum exponent possible
+                                    # for python floats
+                                    rate_weight = -308
+                                except:
+                                    raise
+                                G.add_edges_from([(n, p)], weight=rate_weight)
 
-        nx.draw_networkx_nodes(G, G.position,
+        nx.draw_networkx_nodes(G, G.position,      # plot the element at the correct position
                                node_color="#A0CBE2", alpha=1.0,
-                               node_shape="o", node_size=1000, linewidth=2.0, zorder=10)
+                               node_shape="o", node_size=1000, linewidth=2.0, zorder=10, ax=ax)
 
-        nx.draw_networkx_labels(G, G.position, G.labels,
-                                font_size=13, font_color="w", zorder=100)
+        nx.draw_networkx_labels(G, G.position, G.labels,   # label the name of element at the correct position
+                                font_size=13, font_color="w", zorder=100, ax=ax)
 
         # get the edges and weights coupled in the same order
         edges, weights = zip(*nx.get_edge_attributes(G, 'weight').items())
 
-        edges_lc = nx.draw_networkx_edges(G, G.position, width=3,
+        edges_lc = nx.draw_networkx_edges(G, G.position, width=3,    # plot the arrow of reaction
                                           edgelist=edges, edge_color=weights,
-                                          edge_cmap=plt.cm.viridis, zorder=1)
+                                          node_size=1000,
+                                          edge_cmap=plt.cm.viridis, zorder=1, ax=ax)
 
-        # draw_networkx_edges returns a LineCollection matplotlib type
-        # which we can use for the colorbar
+        # for networkx <= 2.0 draw_networkx_edges returns a
+        # LineCollection matplotlib type which we can use for the
+        # colorbar directly.  For networkx >= 2.1, it is a collection
+        # of FancyArrowPatch-s, which we need to run through a
+        # PatchCollection.  See: 
+        # https://stackoverflow.com/questions/18658047/adding-a-matplotlib-colorbar-from-a-patchcollection
+
         if ydots is not None:
-            plt.colorbar(edges_lc)
+            pc = mpl.collections.PatchCollection(edges_lc, cmap=plt.cm.viridis)
+            pc.set_array(weights)
+            plt.colorbar(pc, label="log10(rate)")
 
+        Ns = [n.N for n in node_nuclei]
         Zs = [n.Z for n in node_nuclei]
 
-        plt.xlim(min(Zs)-1, max(Zs)+1)
+        plt.xlim(min(Ns)-1, max(Ns)+1)
+        #plt.ylim(min(Zs)-1, max(Zs)+1)
         plt.xlabel(r"$N$", fontsize="large")
         plt.ylabel(r"$Z$", fontsize="large")
 
-        ax = plt.gca()
         ax.spines['right'].set_visible(False)
         ax.spines['top'].set_visible(False)
         ax.spines['right'].set_visible(False)
@@ -365,11 +416,12 @@ class RateCollection(object):
         ax.xaxis.set_ticks_position('bottom')
         ax.yaxis.set_ticks_position('left')
 
-        ax = plt.gca()
         ax.set_aspect("equal", "datalim")
 
-        f = plt.gcf()
-        f.set_size_inches(size[0]/dpi, size[1]/dpi)
+        fig.set_size_inches(size[0]/dpi, size[1]/dpi)
+
+        if title is not None:
+            fig.suptitle(title)
 
         if outfile is None:
             plt.show()
@@ -395,6 +447,6 @@ class Explorer(object):
     def _make_plot(self, logrho, logT):
         self.rc.plot(rho=10.0**logrho, T=10.0**logT, comp=self.comp, size=self.size)
 
-    def explore(self):
+    def explore(self, logrho=(2, 6, 0.1), logT=(7, 9, 0.1)):
         """Perform interactive exploration of the network structure."""
-        interact(self._make_plot, logrho=(2, 6, 0.1), logT=(7, 9, 0.1))
+        interact(self._make_plot, logrho=logrho, logT=logT)

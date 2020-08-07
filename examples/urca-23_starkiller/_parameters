@@ -1,0 +1,2 @@
+# Turn off thermal neutrino losses
+disable_thermal_neutrinos      logical   .false.

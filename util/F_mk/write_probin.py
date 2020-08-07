@@ -122,7 +122,8 @@ def parse_param_file(params_list, param_file, other_list=None):
 
         # don't allow it to be a duplicate in the other_list
         o_names = [p.var for p in other_list]
-        try: idx2 = o_names.index(current_param.var)
+        try:
+            idx2 = o_names.index(current_param.var)
         except:
             pass
         else:

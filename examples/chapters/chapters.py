@@ -17,7 +17,3 @@ files = ["b17-nnn-c14-wc12",
 
 net_py = PythonNetwork(files)
 net_py.write_network("chapters_rhs.py")
-
-
-
-

@@ -1,6 +1,9 @@
 # pynucastro
 
-[![Build Status](https://travis-ci.org/pynucastro/pynucastro.svg?branch=master)](https://travis-ci.org/pynucastro/pynucastro) [![JOSS Status](http://joss.theoj.org/papers/f753b6f21f460ae6a301c21c95dfa001/status.svg)](http://joss.theoj.org/papers/f753b6f21f460ae6a301c21c95dfa001)
+[![Build Status](https://travis-ci.org/pynucastro/pynucastro.svg?branch=master)](https://travis-ci.org/pynucastro/pynucastro)
+[![DOI](http://joss.theoj.org/papers/10.21105/joss.00588/status.svg)](https://doi.org/10.21105/joss.00588)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1202434.svg)](https://doi.org/10.5281/zenodo.1202434)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/pynucastro/pynucastro/master?filepath=examples%2Fpynucastro-examples.ipynb)
 
 Python interfaces to the nuclear reaction rate databases, including
 the JINA Reaclib nuclear reactions database.  This
@@ -17,6 +20,11 @@ produce either a callable python function for a rate or output the
 python code for a function that can be incorporated into a rate
 module.
 
+pynucastro does not yet support nuclear partition functions for
+Reaclib reverse rates, as the implementation is currently under
+development. We recommend you consider what problem you wish to study
+using pynucastro to determine whether reverse rates and partition
+function corrections are significant at the temperatures of interest.
 
 # documentation
 
@@ -43,10 +51,18 @@ Also see the Jupyter notebooks:
   * [interactive-example.ipynb](https://github.com/pynucastro/pynucastro/blob/master/examples/interactive-example.ipynb)
 
 
-# setup
+# install
 
-To set this up, you should include the root pynucastro path in your
-`PYTHONPATH` environment variable.
+To install the package, you can run:
+```
+python setup.py install
+```
+for a systemwide install, or
+```
+python setup.py install --user
+```
+for a single-user install.  This will put the pynucastro modules and library in
+the default location python searches for packages.
 
 
 # requirements
@@ -93,3 +109,26 @@ py.test --nbval examples
 
 If your OS has both Python 2 and Python 3 installed you may need to
 invoke `pytest` as `py.test-3` when running the unit tests.
+
+
+# Core Developers
+
+People who make a number of substantive contributions (new features,
+bug fixes, etc.) will be named "core developers" of pynucastro.
+
+Core developers will be recognized in the following ways:
+
+  * invited to the group's slack team
+
+  * listed in the User's Guide and website as a core developer
+
+  * listed in the author list on the Zenodo DOI for the project
+    (as given in the .zenodo.json file)
+
+  * invited to co-author general code papers / proceedings describing
+    pynucastro.  (Note: science papers that use pynucastro will always
+    be left to the science paper lead author to determine authorship).
+
+If a core developer is inactive for 3 years, we may reassess their
+status as a core developer.
+

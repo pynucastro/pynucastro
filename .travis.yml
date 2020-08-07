@@ -1,16 +1,17 @@
-language: python
+dist: bionic
 
+language: python
 python:
-  - "3.6"
-  - "3.5"
-  - "3.4"
+  - '3.6'
+  - '3.7-dev'
+  - '3.7'
 
 before_install:
   - export PATH=$(echo $PATH | tr ':' "\n" | sed '/\/opt\/python/d' | tr "\n" ":" | sed "s|::|:|g")
 
-# addons:
-#   apt_packages:
-#     - pandoc
+addons:
+  apt_packages:
+  - pandoc
 
 install:
   - pip install .
@@ -20,17 +21,7 @@ before_script:
   - export PYTHONPATH=$PYTHONPATH:$(pwd)
 
 script:
-  - pytest --cov=pynucastro -v
-  - pytest --nbval examples -v
-#   - travis-sphinx build
+  - pytest -v --cov=. --nbval --ignore=docs
 
-# after_success:
-#   - travis-sphinx deploy
-
-# deploy:
-#   provider: pages
-#   skip-cleanup: true
-#   github-token: $GITHUB_TOKEN
-#   keep-history: true
-#   on:
-#     branch: master
+after_success:
+  - if [[ "$TRAVIS_PYTHON_VERSION" == "3.6" ]]; then ./deploy_docs.sh; fi

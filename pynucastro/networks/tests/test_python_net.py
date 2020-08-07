@@ -1,11 +1,7 @@
 # unit tests for rates
-import math
-import os
-
 import pynucastro.networks as networks
 import pynucastro.rates as rates
 
-from pytest import approx
 
 class TestPythonNetwork(object):
     @classmethod
@@ -40,17 +36,16 @@ class TestPythonNetwork(object):
         assert ydot == "rho*Y[ic13]*Y[ip]*lambda_p_c13__n14" or \
                ydot == "rho*Y[ip]*Y[ic13]*lambda_p_c13__n14"
 
-
     def test_jacobian_string(self):
         jac = self.pyn.jacobian_string(self.rate,
                                        self.rate.products[0],
                                        self.rate.reactants[0])
         assert jac == "rho*Y[ic13]*lambda_p_c13__n14"
 
-
     def test_function_string(self):
 
         ostr = """
+@numba.njit()
 def p_c13__n14(tf):
     # c13 + p --> n14
     rate = 0.0

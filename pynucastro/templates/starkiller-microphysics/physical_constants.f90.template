@@ -1,19 +1,21 @@
 module physical_constants
 
+  use amrex_fort_module, only: rt => amrex_real
+
   implicit none
 
-  double precision, parameter :: pi = 3.141592653589793238462643383279502884197d0
-  double precision, parameter :: cm_per_fm = 1.0d-13
+  real(rt), parameter :: pi = 3.141592653589793238462643383279502884197e0_rt
+  real(rt), parameter :: cm_per_fm = 1.0e-13_rt
 
   ! From 2014 CODATA recommended values
-  double precision, parameter :: clight  = 299792458d2  ! cm/s
+  real(rt), parameter :: clight  = 299792458e2_rt  ! cm/s
 
-  double precision, parameter :: N_avo = 6.022140857d23 ! 1/mol
+  real(rt), parameter :: N_avo = 6.022140857e23_rt ! 1/mol
 
-  double precision, parameter :: gram_per_amu = 1660539.040d-30
+  real(rt), parameter :: gram_per_amu = 1660539.040e-30_rt
 
-  double precision, parameter :: erg_per_eV  = 1.6021766208d-12
-  double precision, parameter :: erg_per_MeV = erg_per_eV*1.0d6
-  double precision, parameter :: gram_per_MeV = erg_per_MeV/CLIGHT**2
+  real(rt), parameter :: erg_per_eV  = 1.6021766208e-12_rt
+  real(rt), parameter :: erg_per_MeV = erg_per_eV * 1.0e6_rt
+  real(rt), parameter :: gram_per_MeV = erg_per_MeV / clight**2
 
 end module physical_constants

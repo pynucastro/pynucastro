@@ -1,0 +1,39 @@
+# changes since the last release
+
+# 1.4.0
+
+  -- Added general support for tabulated weak rates from Suzuki, et al. 2016
+  -- Added a simple pp network example
+  -- Updated StarKiller Microphysics output to track latest changes in Microphysics network API
+  -- Added a core developers policy in the Readme
+
+# 1.3.0
+
+  -- Replace double precision reals in StarKiller networks with custom real type `_rt`
+  -- Incorporate modifications to thermal neutrino Jacobian contributions from Microphysics (#210) in StarKiller networks
+  -- Simplify rate evaluation code in StarKiller networks
+  -- Deprecated standalone Fortran output with VODE integration.
+  -- BaseFortranNetwork is now an abstract class to require users to either use StarKillerNetwork or provide templates
+
+# 1.2.0
+
+  -- Fix tabular rate bug where electron chemical potential contributions were not included
+  -- Update documentation and code comments
+  -- Add Numba support for Python networks
+  -- Enable sparse Jacobian (CSR) for StarKiller networks
+  -- Incorporate CUDA Fortran port for StarKiller networks including tabulated rates
+  -- Optimize rate screening evaluation for StarKiller networks
+  -- Fix bug to include the electron fraction and correct density dependence for Reaclib electron capture rates
+  -- Allow a nuclide to be both reactant and product
+  -- Updates an error message for multiple degenerate rates
+  -- Add example code generating a 160-isotope network
+  -- Fix table compilation issue for StarKiller networks
+  -- Moved energy generation subroutine into RHS module for StarKiller networks
+
+# 1.1.1
+
+  -- pynucastro published on JOSS is archived to Zenodo
+
+# 1.1.0
+
+  -- JOSS reviewer changes merged and pynucastro accepted to JOSS
