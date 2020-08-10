@@ -177,10 +177,10 @@ class PythonNetwork(RateCollection):
                 has_reverse_rates = True
                 break
 
+        of.write('import numba\n')
         if has_reverse_rates:
-            of.write("from pynucastro.nucdata import numba, PartitionFunction, PartitionFunctionCollection\n\n")
-        else:
-            of.write('import numba\n')
+            of.write("from pynucastro.nucdata import PartitionFunction, PartitionFunctionCollection\n\n")
+
 
         # integer keys
         for i, n in enumerate(self.unique_nuclei):
