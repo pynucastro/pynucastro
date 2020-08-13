@@ -417,6 +417,23 @@ class BaseFortranNetwork(RateCollection):
             self.indent*n_indent,
             len(self.rates)))
 
+    def _partition_factors(self, n_indent, of):
+        for i, nr in enumerate(self.reaclib_rates):
+            r = self.rates[nr]
+            # if the Reaclib rate is flagged as "reverse" then
+            # modify it by the ratio of partition functions
+            if r.reverse:
+                for n in r.products:
+                    of.write('{}pf = interpolate_partition_functions(j{}, temp)\n'.format(
+                             self.indent*n_indent, n))
+                    of.write('{}rate_eval % unscreened_rates(i_rate, k_{}) = rate_eval % unscreened_rates(i_rate, k_{}) * pf\n'.format(
+                             self.indent*n_indent, r.fname, r.fname))
+                for n in r.reactants:
+                    of.write('{}pf = interpolate_partition_functions(j{}, temp)\n'.format(
+                             self.indent*n_indent, n))
+                    of.write('{}rate_eval % unscreened_rates(i_rate, k_{}) = rate_eval % unscreened_rates(i_rate, k_{}) / pf\n'.format(
+                             self.indent*n_indent, r.fname, r.fname))
+
     def _nrat_reaclib(self, n_indent, of):
         # Writes the number of Reaclib rates
         of.write('{}integer, parameter :: nrat_reaclib = {}\n'.format(
