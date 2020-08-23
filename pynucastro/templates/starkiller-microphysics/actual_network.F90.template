@@ -3,6 +3,7 @@ module actual_network
   use network_properties
   use physical_constants, only: ERG_PER_MeV
   use amrex_fort_module, only: rt => amrex_real
+  use partition_function_table
 
   implicit none
 
@@ -87,6 +88,7 @@ contains
     mion(:) = nion(:) * mass_neutron + zion(:) * (mass_proton + mass_electron) &
          - bion(:)/(c_light**2)
 
+    call read_partition_file()
 
     !$acc update device(bion, mion)
 

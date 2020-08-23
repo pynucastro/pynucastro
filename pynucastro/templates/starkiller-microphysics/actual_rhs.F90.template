@@ -6,6 +6,7 @@ module actual_rhs_module
   use network
   use table_rates
   use burn_type_module
+  use partition_function_table
 
   implicit none
 
@@ -20,7 +21,8 @@ module actual_rhs_module
      real(rt) :: screened_rates(nrates)
      real(rt) :: add_energy_rate(nrat_tabular)
   end type rate_eval_t
-  
+
+
 contains
 
   subroutine actual_rhs_init()
@@ -34,7 +36,7 @@ contains
     type(burn_t)     :: state
 
     !$gpu
-    
+
     return
   end subroutine update_unevolved_species
 
@@ -64,7 +66,7 @@ contains
     use screening_module, only: screen5, plasma_state, fill_plasma_state
 
     implicit none
-    
+
     type(burn_t)     :: state
     type(rate_eval_t), intent(out) :: rate_eval
     type(plasma_state) :: pstate
@@ -73,7 +75,8 @@ contains
     real(rt) :: rhoy
     real(rt) :: rate, drate_dt, edot_nu
     real(rt) :: scor, dscor_dt, dscor_dd
-
+    !Interpolated PF holder pf(1)=PF(temp); pf(2) = PF'(temp); pf(3) = PF''(temp)
+    real, dimension(3) :: pf
     !$gpu
 
     Y(:) = state % xn(:) * aion_inv(:)
@@ -90,6 +93,9 @@ contains
        rate_eval % unscreened_rates(i_drate_dt, i) = drate_dt
     end do
 
+    !Paritition Function
+    <compute_partition_terms>(2)
+
     ! Evaluate screening factors
     if (screen_reaclib) then
        <compute_screening_factors>(3)
@@ -105,7 +111,7 @@ contains
 
 
   subroutine actual_rhs(state, ydot)
-    
+
     !$acc routine seq
 
     use extern_probin_module, only: do_constant_volume_burn, disable_thermal_neutrinos
@@ -189,7 +195,7 @@ contains
     use jacobian_sparsity_module, only: get_jac_entry, set_jac_entry, set_jac_zero
 
     implicit none
-    
+
     type(burn_t), intent(in) :: state
     real(rt), intent(inout) :: jac(njrows, njcols)
 
@@ -204,7 +210,7 @@ contains
 
     ! Set molar abundances
     Y(:) = state % xn(:) * aion_inv(:)
-    
+
     call evaluate_rates(state, rate_eval)
 
     ! Zero out the Jacobian

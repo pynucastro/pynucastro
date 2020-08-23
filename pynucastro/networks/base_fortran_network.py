@@ -13,6 +13,7 @@ import glob
 import sympy
 from collections import OrderedDict
 from abc import ABC, abstractmethod
+import numpy as np
 
 from pynucastro.networks import RateCollection
 from pynucastro.nucdata import BindingTable
@@ -65,6 +66,7 @@ class BaseFortranNetwork(ABC, RateCollection):
         self.ftags['<table_term_meta>'] = self._table_term_meta
         self.ftags['<table_rates_indices>'] = self._table_rates_indices
         self.ftags['<compute_tabular_rates>'] = self._compute_tabular_rates
+        self.ftags['<compute_partition_terms>'] = self._compute_partition_factors
         self.ftags['<ydot_declare_scratch>'] = self._ydot_declare_scratch
         self.ftags['<ydot_scratch>'] = self._ydot_scratch
         self.ftags['<ydot>'] = self._ydot
@@ -389,6 +391,76 @@ class BaseFortranNetwork(ABC, RateCollection):
         self.jac_null_entries = jac_null
         self.solved_jacobian = True
 
+    def output_partition_table(self):
+        partition_functions = []
+        temperatures = []
+        #Collect Partition Functions and Temperature arrays for all Nuclei
+        for nuc in self.unique_nuclei:
+            pf = nuc.get_partition_function()
+            partition_functions.append(pf.partition_function)
+            temperatures.append(pf.temperature)
+
+        #Indices of partition_functions[] without a partition function
+        nopf = []
+        for i, temperature in enumerate(temperatures):
+            if type(temperature) == type(None):
+                nopf.append(i)
+
+        #temporary temperature array to get max/min without NaN
+        temptemp = np.delete(temperatures, nopf)
+        maxT = max([temp_array[-1] for temp_array in temptemp])
+        minT = min([temp_array[0] for temp_array in temptemp])
+
+        #Replace isotopes that don't have PFs to PF=1
+        for i in nopf:
+            imax = np.argmax([len(temp_array) if type(temp_array) != type(None) else 0
+                              for temp_array in temperatures])
+            temperatures[i] = temperatures[imax]
+            partition_functions[i] = np.ones(len(temperatures[imax]))
+
+        #Get array indices that have maxT and minT,
+        #we'll use those to fill in missing data.
+        for temp_array in temperatures:
+            if (temp_array[0] == minT) and (temp_array[-1] == maxT):
+                example_T = temp_array
+                break
+
+        for j, temp_array in enumerate(temperatures):
+            if temp_array[0] != minT:
+                i = example_T.tolist().index(temp_array[0])
+                temperatures[j] = np.append(example_T[0:i], temp_array)
+                partition_functions[j] = np.append(np.ones(i), partition_functions[j])
+            if temp_array[-1] != maxT:
+                i = example_T.tolist().index(temp_array[-1])
+                #print(np.append(temp_array, example_T[i+1:]))
+                temperatures[j] = np.append(temp_array, example_T[i+1:])
+                partition_functions[j] = np.append(partition_functions[j],
+                                    partition_functions[j][-1]*np.ones(len(example_T)-i-1))
+
+        #assert that the length of all temperature arrays and partition
+        #functions are the same. Temperatures should all be identical.
+        for i,temp_array in enumerate(temperatures[1:]):
+            assert(len(temperatures[i]) == len(temperatures[i-1]))
+            assert(len(partition_functions[i]) == len(partition_functions[i-1]))
+            assert(len(partition_functions[i]) == len(temperatures[i-1]))
+            for j in range(len(temp_array)):
+                assert(np.sum(temperatures[i][j]) == np.sum(temperatures[i-1][j]))
+
+        #partition_functions.append(len(temperatures[0]))
+        partition_functions.append(temperatures[0])
+        #move temp to front
+        data = np.roll(partition_functions, 1, axis=0)
+
+        if os.path.exists("partition_function_table.dat"):
+            os.remove("partition_function_table.dat")
+        file = os.getcwd() + "/partition_function_table.dat"
+        with open(file, 'w') as f:
+            np.savetxt(f, [len(temperatures)])
+            np.savetxt(f,[len(temperatures[0])])
+            np.savetxt(f,data)
+
+
+
     def io_open(self, infile, outfile):
         """open the input and output files"""
         try:
@@ -449,6 +521,9 @@ class BaseFortranNetwork(ABC, RateCollection):
                     of.write(l)
             self.io_close(ifile, of)
 
+        #Output Partititon Function Table
+        self.output_partition_table()
+
         # Copy any tables in the network to the current directory
         # if the table file cannot be found, print a warning and continue.
         for i_tab in self.tabular_rates:
@@ -496,6 +571,33 @@ class BaseFortranNetwork(ABC, RateCollection):
             of.write('\n')
 
         self.num_screen_calls = len(screening_map)
+
+    def _compute_partition_factors(self, n_indent, of):
+        for i, nr in enumerate(self.reaclib_rates):
+            r = self.rates[nr]
+            # if the Reaclib rate is flagged as "reverse" then
+            # modify it by the ratio of partition functions
+            if r.reverse:
+                for n in r.products:
+                    of.write('{}pf = interpolate_partition_functions(j{}, state % T)\n'.format(
+                             self.indent*n_indent, n))
+                    #rate = rate*pf
+                    of.write('{}rate_eval % unscreened_rates(i_rate, k_{})'.format(self.indent*n_indent, r.fname)
+                             +' = rate_eval % unscreened_rates(i_rate, k_{}) * pf(1)\n'.format(r.fname))
+                    # dRate(PF)/dT = dRate/dT * pf + rate * dpf/dT
+                    of.write('{}rate_eval % unscreened_rates(i_drate_dt, k_{})'.format(self.indent*n_indent, r.fname)
+                             +' = rate_eval % unscreened_rates(i_drate_dt, k_{}) * pf(1)'.format(r.fname)
+                             +' rate_eval % unscreened_rates(i_rate, k_{}) * pf(2)\n\n'.format(r.fname))
+                for n in r.reactants:
+                    of.write('{}pf = interpolate_partition_functions(j{}, state % T)\n'.format(
+                             self.indent*n_indent, n))
+                    #rate = rate/pf
+                    of.write('{}rate_eval % unscreened_rates(i_rate, k_{})'.format(self.indent*n_indent, r.fname)
+                             +' = rate_eval % unscreened_rates(i_rate, k_{}) / pf(1)\n'.format(r.fname))
+                    #dRate(PF)/dT = dRate/dT* 1/pf - rate * dpf/dT / (pf)**2
+                    of.write('{}rate_eval % unscreened_rates(i_drate_dt, k_{})'.format(self.indent*n_indent, r.fname)
+                             +' = rate_eval % unscreened_rates(i_drate_dt, k_{}) / pf(1)'.format(r.fname)
+                             +' - rate_eval % unscreened_rates(i_rate, k_{}) * pf(2) / pf(1)**2\n\n'.format(r.fname))
 
     def _nrat_reaclib(self, n_indent, of):
         # Writes the number of Reaclib rates
