@@ -587,7 +587,7 @@ class BaseFortranNetwork(ABC, RateCollection):
                     # dRate(PF)/dT = dRate/dT * pf + rate * dpf/dT
                     of.write('{}rate_eval % unscreened_rates(i_drate_dt, k_{})'.format(self.indent*n_indent, r.fname)
                              +' = rate_eval % unscreened_rates(i_drate_dt, k_{}) * pf(1)'.format(r.fname)
-                             +' rate_eval % unscreened_rates(i_rate, k_{}) * pf(2)\n\n'.format(r.fname))
+                             +' + rate_eval % unscreened_rates(i_rate, k_{}) * pf(2)\n\n'.format(r.fname))
                 for n in r.reactants:
                     of.write('{}pf = interpolate_partition_functions(j{}, state % T)\n'.format(
                              self.indent*n_indent, n))
