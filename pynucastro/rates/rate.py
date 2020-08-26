@@ -1151,7 +1151,35 @@ class Rate(object):
             if n.A < nuc.A or (n.A == nuc.A and n.Z > nuc.Z):
                 nuc = n
         return nuc
+    
+    def get_tabular_rate(self):   
+        """read the rate data from .dat file """
+        
+        # find .dat file and read it
+        self.table_path = Library._find_rate_file(self.table_file)
+        tabular_file = open(self.table_path,"r")
+        t_data = tabular_file.readlines()  
+        tabular_file.close()
+        
+        # delete header lines
+        del t_data[0:self.table_header_lines]  
+        
+        # change the list ["1.23 3.45 5.67\n"] into the list ["1.23","3.45","5.67"]
+        t_data2d = []
+        for i in range(len(t_data)):
+            t_data2d.append(re.split(r"[ ]",t_data[i].strip('\n')))
+        
+        # delete all the "" in each element of data1
+        for i in range(len(t_data2d)):
+            while '' in t_data2d[i]:
+                t_data2d[i].remove('')
 
+        while [] in t_data2d:
+            t_data2d.remove([])
+            
+        self.tabular_data_table = np.array(t_data2d)
+
+    
     def set_partition_functions(self, pfcollection, high_temperature_partition_functions="rauscher2003_FRDM"):
         for nuc in (self.reactants + self.products):
             nuc.set_partition_function(pfcollection,
