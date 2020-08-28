@@ -1,4 +1,4 @@
-.. pynucastro documentation master file, created by
+.. pynucastro documentation main file, created by
    sphinx-quickstart on Wed Dec 27 11:54:03 2017.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
