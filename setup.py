@@ -9,7 +9,7 @@ setup(name='pynucastro',
       license='BSD',
       packages=find_packages(),
       package_data={"pynucastro": ["library/*", "library/tabular/*", "templates/*", "templates/fortran-vode/*", "templates/starkiller-microphysics/*", "nucdata/*"]},
-      install_requires=['networkx', 'numpy',
+      install_requires=['networkx', 'numpy', 'numba',
                         'sympy', 'scipy', 'matplotlib',
                         'ipywidgets'],
       zip_safe=False)
