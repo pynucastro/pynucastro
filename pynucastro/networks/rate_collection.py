@@ -1,18 +1,16 @@
 """A collection of classes and methods to deal with collections of
 rates that together make up a network."""
 
-# Common Imports
-from __future__ import print_function
-
 import functools
 import math
-import numpy as np
-from operator import mul
 import os
+
+from operator import mul
 from collections import OrderedDict
 
 from ipywidgets import interact
 
+import numpy as np
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 #from mpl_toolkits.axes_grid1 import make_axes_locatable
@@ -23,7 +21,7 @@ from pynucastro.rates import Rate, Nucleus, Library
 
 mpl.rcParams['figure.dpi'] = 100
 
-class Composition(object):
+class Composition:
     """a composition holds the mass fractions of the nuclei in a network
     -- useful for evaluating the rates
 
@@ -95,7 +93,7 @@ class Composition(object):
             ostr += "  X({}) : {}\n".format(k, self.X[k])
         return ostr
 
-class RateCollection(object):
+class RateCollection:
     """ a collection of rates that together define a network """
 
     pynucastro_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
@@ -130,7 +128,7 @@ class RateCollection(object):
                 rates = [rates]
             try:
                 for r in rates:
-                    assert(isinstance(r, Rate))
+                    assert isinstance(r, Rate)
             except:
                 print('Expected Rate object or list of Rate objects passed as the rates argument.')
                 raise
@@ -146,7 +144,7 @@ class RateCollection(object):
                 libraries = [libraries]
             try:
                 for lib in libraries:
-                    assert(isinstance(lib, Library))
+                    assert isinstance(lib, Library)
             except:
                 print('Expected Library object or list of Library objects passed as the libraries argument.')
                 raise
@@ -224,7 +222,7 @@ class RateCollection(object):
         y_e = composition.eval_ye()
 
         for r in self.rates:
-            val = r.prefactor * rho**r.dens_exp * r.eval(T,rho * y_e)
+            val = r.prefactor * rho**r.dens_exp * r.eval(T, rho * y_e)
             if (r.weak_type == 'electron_capture' and not r.tabular):
                 val = val * y_e
             yfac = functools.reduce(mul, [ys[q] for q in r.reactants])
@@ -258,7 +256,7 @@ class RateCollection(object):
         """Every Rate in this RateCollection should have a unique Rate.fname,
         as the network writers distinguish the rates on this basis."""
         names = [r.fname for r in self.rates]
-        for n,r in zip(names, self.rates):
+        for n, r in zip(names, self.rates):
             k = names.count(n)
             if k > 1:
                 print('Found rate {} named {} with {} entries in the RateCollection.'.format(r, n, k))
@@ -272,7 +270,10 @@ class RateCollection(object):
         print('To create network integration source code, use a class that implements a specific network type.')
         return
 
-    def plot(self, outfile=None, rho=None, T=None, comp=None, size=(800, 600), dpi=100, title=None, ydot_cutoff_value=None):
+    def plot(self, outfile=None, rho=None, T=None,
+             comp=None, size=(800, 600),
+             dpi=100, title=None, ydot_cutoff_value=None,
+             always_show_p=False, always_show_alpha=False):
         """Make a plot of the network structure showing the links between nuclei"""
 
         G = nx.MultiDiGraph()
@@ -285,12 +286,19 @@ class RateCollection(object):
 
         ax.plot([0, 0], [8, 8], 'b-')
 
-        # nodes -- the node nuclei will be all of the heavies, but not
-        # p, n, alpha, unless we have p + p, 3-a, etc.
+        # in general, we do not show p, n, alpha,
+        # unless we have p + p, 3-a, etc.
+        hidden_nuclei = ["n"]
+        if not always_show_p:
+            hidden_nuclei.append("p")
+        if not always_show_alpha:
+            hidden_nuclei.append("he4")
+
+        # nodes -- the node nuclei will be all of the heavies
         # add all the nuclei into G.node
         node_nuclei = []
         for n in self.unique_nuclei:
-            if n.raw not in ["p", "n", "he4"]:
+            if n.raw not in hidden_nuclei:
                 node_nuclei.append(n)
             else:
                 for r in self.rates:
@@ -302,23 +310,20 @@ class RateCollection(object):
             G.add_node(n)
             G.position[n] = (n.N, n.Z)
             G.labels[n] = r"${}$".format(n.pretty)
-            
+
         # get the rates for each reaction
         if rho is not None and T is not None and comp is not None:
             ydots = self.evaluate_rates(rho, T, comp)
         else:
             ydots = None
-            
+
         # Do not show rates on the graph if their corresponding ydot is less than ydot_cutoff_value
         invisible_rates = [];
-        if ydot_cutoff_value is not None: 
-            for r in self.rates:      
+        if ydot_cutoff_value is not None:
+            for r in self.rates:
                 if ydots[r] < ydot_cutoff_value:
                     invisible_rates.append(r)
                     del ydots[r]
-
-        #for rr in ydots:
-        #    print("{}: {}".format(rr, ydots[rr]))
 
         # edges
         for n in node_nuclei:
@@ -347,17 +352,22 @@ class RateCollection(object):
                                     raise
                                 G.add_edges_from([(n, p)], weight=rate_weight)
 
-        nx.draw_networkx_nodes(G, G.position,      # plot the element at the correct position
+        # plot the element at the correct position
+        nx.draw_networkx_nodes(G, G.position,
                                node_color="#A0CBE2", alpha=1.0,
-                               node_shape="o", node_size=1000, linewidth=2.0, zorder=10, ax=ax)
+                               node_shape="o", node_size=1000,
+                               linewidth=2.0, zorder=10, ax=ax)
 
-        nx.draw_networkx_labels(G, G.position, G.labels,   # label the name of element at the correct position
-                                font_size=13, font_color="w", zorder=100, ax=ax)
+        # label the name of element at the correct position
+        nx.draw_networkx_labels(G, G.position, G.labels,
+                                font_size=13, font_color="w",
+                                zorder=100, ax=ax)
 
         # get the edges and weights coupled in the same order
         edges, weights = zip(*nx.get_edge_attributes(G, 'weight').items())
 
-        edges_lc = nx.draw_networkx_edges(G, G.position, width=3,    # plot the arrow of reaction
+        # plot the arrow of reaction
+        edges_lc = nx.draw_networkx_edges(G, G.position, width=3,
                                           edgelist=edges, edge_color=weights,
                                           node_size=1000,
                                           edge_cmap=plt.cm.viridis, zorder=1, ax=ax)
@@ -366,7 +376,7 @@ class RateCollection(object):
         # LineCollection matplotlib type which we can use for the
         # colorbar directly.  For networkx >= 2.1, it is a collection
         # of FancyArrowPatch-s, which we need to run through a
-        # PatchCollection.  See: 
+        # PatchCollection.  See:
         # https://stackoverflow.com/questions/18658047/adding-a-matplotlib-colorbar-from-a-patchcollection
 
         if ydots is not None:
@@ -411,16 +421,25 @@ class RateCollection(object):
         return string
 
 
-class Explorer(object):
+class Explorer:
     """ interactively explore a rate collection """
-    def __init__(self, rc, comp, size=(800, 600)):
+    def __init__(self, rc, comp, size=(800, 600),
+                 ydot_cutoff_value=None,
+                 always_show_p=False, always_show_alpha=False):
         """ take a RateCollection and a composition """
         self.rc = rc
         self.comp = comp
         self.size = size
+        self.ydot_cutoff_value = ydot_cutoff_value
+        self.always_show_p = always_show_p
+        self.always_show_alpha = always_show_alpha
 
     def _make_plot(self, logrho, logT):
-        self.rc.plot(rho=10.0**logrho, T=10.0**logT, comp=self.comp, size=self.size)
+        self.rc.plot(rho=10.0**logrho, T=10.0**logT,
+                     comp=self.comp, size=self.size,
+                     ydot_cutoff_value=self.ydot_cutoff_value,
+                     always_show_p=self.always_show_p,
+                     always_show_alpha=self.always_show_alpha)
 
     def explore(self, logrho=(2, 6, 0.1), logT=(7, 9, 0.1)):
         """Perform interactive exploration of the network structure."""
