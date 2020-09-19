@@ -349,10 +349,10 @@ class RateCollection(object):
 
         nx.draw_networkx_nodes(G, G.position,      # plot the element at the correct position
                                node_color="#A0CBE2", alpha=1.0,
-                               node_shape="o", node_size=1000, linewidth=2.0, zorder=10, ax=ax)
+                               node_shape="o", node_size=1000, linewidths=2.0, ax=ax)
 
         nx.draw_networkx_labels(G, G.position, G.labels,   # label the name of element at the correct position
-                                font_size=13, font_color="w", zorder=100, ax=ax)
+                                font_size=13, font_color="w", ax=ax)
 
         # get the edges and weights coupled in the same order
         edges, weights = zip(*nx.get_edge_attributes(G, 'weight').items())
@@ -360,7 +360,7 @@ class RateCollection(object):
         edges_lc = nx.draw_networkx_edges(G, G.position, width=3,    # plot the arrow of reaction
                                           edgelist=edges, edge_color=weights,
                                           node_size=1000,
-                                          edge_cmap=plt.cm.viridis, zorder=1, ax=ax)
+                                          edge_cmap=plt.cm.viridis, ax=ax)
 
         # for networkx <= 2.0 draw_networkx_edges returns a
         # LineCollection matplotlib type which we can use for the
