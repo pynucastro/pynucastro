@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(name='pynucastro',
-      version='1.4.0',
+      version='1.4.1',
       description='Python Interfaces to the nuclear reaction rate databases',
       url='https://github.com/pynucastro/nucastro',
       author='Mike Zingale and Donald Willcox',
@@ -9,7 +9,7 @@ setup(name='pynucastro',
       license='BSD',
       packages=find_packages(),
       package_data={"pynucastro": ["library/*", "library/tabular/*", "templates/*", "templates/fortran-vode/*", "templates/starkiller-microphysics/*", "nucdata/*"]},
-      install_requires=['networkx', 'numpy',
+      install_requires=['networkx', 'numpy', 'numba',
                         'sympy', 'scipy', 'matplotlib',
                         'ipywidgets'],
       zip_safe=False)

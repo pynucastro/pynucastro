@@ -458,6 +458,10 @@ class BaseFortranNetwork(ABC, RateCollection):
                 tdat_file = os.path.join(tdir, tr.table_file)
                 if os.path.isfile(tdat_file):
                     shutil.copy(tdat_file, os.getcwd())
+                    #Rename *.dat to *.network.dat
+                    copy_tdat = os.path.join(os.getcwd(), os.path.basename(tdat_file))
+                    renamed_tdat = copy_tdat.replace('.dat', '.network.dat')
+                    os.rename(copy_tdat, renamed_tdat)
                 else:
                     print('WARNING: Table data file {} not found.'.format(tr.table_file))
 

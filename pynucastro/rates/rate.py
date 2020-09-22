@@ -20,7 +20,7 @@ def list_known_rates():
     for _, _, filenames in os.walk(lib_path):
         for f in filenames:
             # skip over files that are not rate files
-            if f.endswith(".md") or f.endswith(".dat"):
+            if f.endswith(".md") or f.endswith(".dat") or f.endswith(".py") or f.endswith(".ipynb"):
                 continue
             try:
                 lib = Library(f)
@@ -42,7 +42,7 @@ Tfactor_spec = [
 ('lnT9', numba.float64)
 ]
 
-@numba.jitclass(Tfactor_spec)
+@numba.experimental.jitclass(Tfactor_spec)
 class Tfactors(object):
     """ precompute temperature factors for speed """
 

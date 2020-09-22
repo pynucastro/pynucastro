@@ -1,5 +1,13 @@
 # changes since the last release
 
+# 1.4.1
+
+  -- Improvements for locating rate files in directories also containing python scripts or Jupyter notebooks
+  -- Fixed a warning when using Numba
+  -- Updates to the StarKiller Microphysics format for compile time variables
+  -- Enhancements for the RateCollection Explorer to use NetworkX 2.5
+  -- Updated the requirements
+
 # 1.4.0
 
   -- Added general support for tabulated weak rates from Suzuki, et al. 2016
