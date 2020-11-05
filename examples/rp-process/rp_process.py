@@ -1,21 +1,36 @@
 #!/usr/bin/env python3
 
 import sys
+import argparse
 from collections import deque
 
 from pynucastro.rates import Library, Nucleus, RateFilter
 from pynucastro.nucdata import BindingTable
 from pynucastro.networks import StarKillerNetwork, Composition
 
-if len(sys.argv) == 3:
-    endpoint = tuple(map(int, sys.argv[1:]))
-elif len(sys.argv) == 2:
-    nuc = Nucleus(sys.argv[1])
-    endpoint = nuc.Z, nuc.N
-else:
-    endpoint = 28, 28
+#################################################
+#  Set up argument parser and process arguments #
+#################################################
+description = """Script for generating a reaction network modeling the rp-process with a given
+        nucleus as the endpoint."""
+        
+endpoint_help = """The nucleus at which the nework terminates. Should be provided as the string
+        abbreviation of the nuclide (e.g. Ni56, case insensitive)."""
+library_help = """The library file to draw the rates from. This is supplied directly to the Library
+        constructor."""
 
-full_lib = Library("reaclib-2017-10-20")
+parser = argparse.ArgumentParser(description=description)
+parser.add_argument('endpoint', default="ni56", help=endpoint_help)
+parser.add_argument('-l', '--library', default="reaclib-2017-10-20")
+args = parser.parse_args(sys.argv[1:])
+
+endpoint = Nucleus(args.endpoint)
+
+#####################################
+# Load library and generate network #
+#####################################
+
+full_lib = Library(args.library)
 
 core_nuclei = ["p", "d", "he3", "he4", "li7", "be7", "be8", "b8", "c12",
                "n13", "n14", "n15", "o14", "o15", "o16", "o17", "o18",
@@ -24,7 +39,7 @@ core_nuclei = list(map(Nucleus, core_nuclei))
 core_lib = full_lib.linking_nuclei(core_nuclei)
 
 def is_beta_plus(rate):
-    """ Filter for beta+ decays. """
+    """ Filter for beta+ decays (and electron captures). """
     
     if len(rate.products) != len(rate.reactants):
         return False
@@ -80,9 +95,9 @@ def product_limiter():
     """
     
     # Proton number bounds
-    Zlo, Zhi = 6, endpoint[0]
+    Zlo, Zhi = 6, endpoint.Z
     # Nucleon number bounds
-    Alo, Ahi = 12, sum(endpoint)
+    Alo, Ahi = 12, endpoint.A
     # Bounds on A / Z ratio to drop peripheral nuclei
     Rlo, Rhi = 1.69, 2.2
     

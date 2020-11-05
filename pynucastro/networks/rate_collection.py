@@ -285,7 +285,7 @@ class RateCollection(object):
             # Multiply each rate by the count
             consumed = (c * rvals[r] for c, r in zip(nconsumed, consuming_rates))
             produced = (c * rvals[r] for c, r in zip(nproduced, producing_rates))
-            # Net change is difference between produced and consumed
+            # Net activity is sum of produced and consumed
             act[nuc] = sum(produced) + sum(consumed)
             
         return act
@@ -348,7 +348,7 @@ class RateCollection(object):
                 
                 sorted_ind = sorted(ind, key=sorting_key)
                 r = self.rates[sorted_ind[0]]
-                for i in sorted_ind[1:]: del self.rates[i]
+                for i in sorted(sorted_ind[1:], reverse=True): del self.rates[i]
                 print('Found rate {} named {} with {} entries in the RateCollection.'.format(r, n, k))
                 print('Kept only entry with label {} out of {}.'.format(r.label, labels))
 
@@ -434,21 +434,39 @@ class RateCollection(object):
                             except:
                                 raise
                             G.add_edges_from([(n, p)], weight=rate_weight)
+                            
+        # It seems that networkx broke backwards compatability, and 'zorder' is no longer a valid
+        # keyword argument. The 'linewidth' argument has also changed to 'linewidths'.
 
-        nx.draw_networkx_nodes(G, G.position,      # plot the element at the correct position
-                               node_color="#A0CBE2", alpha=1.0,
-                               node_shape="o", node_size=1000, linewidth=2.0, zorder=10, ax=ax)
+        try:
+            nx.draw_networkx_nodes(G, G.position,      # plot the element at the correct position
+                                   node_color="#A0CBE2", alpha=1.0,
+                                   node_shape="o", node_size=1000, linewidth=2.0, zorder=10, ax=ax)
+        except TypeError:
+            nx.draw_networkx_nodes(G, G.position,      # plot the element at the correct position
+                                   node_color="#A0CBE2", alpha=1.0,
+                                   node_shape="o", node_size=1000, linewidths=2.0, ax=ax)
 
-        nx.draw_networkx_labels(G, G.position, G.labels,   # label the name of element at the correct position
-                                font_size=13, font_color="w", zorder=100, ax=ax)
+        try:
+            nx.draw_networkx_labels(G, G.position, G.labels,   # label the name of element at the correct position
+                                    font_size=13, font_color="w", zorder=100, ax=ax)
+        except TypeError:
+            nx.draw_networkx_labels(G, G.position, G.labels,   # label the name of element at the correct position
+                                    font_size=13, font_color="w", ax=ax)
 
         # get the edges and weights coupled in the same order
         edges, weights = zip(*nx.get_edge_attributes(G, 'weight').items())
 
-        edges_lc = nx.draw_networkx_edges(G, G.position, width=3,    # plot the arrow of reaction
-                                          edgelist=edges, edge_color=weights,
-                                          node_size=1000,
-                                          edge_cmap=plt.cm.viridis, zorder=1, ax=ax)
+        try:
+            edges_lc = nx.draw_networkx_edges(G, G.position, width=3,    # plot the arrow of reaction
+                                              edgelist=edges, edge_color=weights,
+                                              node_size=1000,
+                                              edge_cmap=plt.cm.viridis, zorder=1, ax=ax)
+        except TypeError:
+            edges_lc = nx.draw_networkx_edges(G, G.position, width=3,    # plot the arrow of reaction
+                                              edgelist=edges, edge_color=weights,
+                                              node_size=1000,
+                                              edge_cmap=plt.cm.viridis, ax=ax)
 
         # for networkx <= 2.0 draw_networkx_edges returns a
         # LineCollection matplotlib type which we can use for the
@@ -571,7 +589,7 @@ class RateCollection(object):
         # Process kwargs
         outfile = kwargs.pop("outfile", None)
         scale = kwargs.pop("scale", "linear")
-        cmap = kwargs.pop("cmap", "magma")
+        cmap = kwargs.pop("cmap", "viridis")
         edgecolor = kwargs.pop("edgecolor", "grey")
         small = kwargs.pop("small", 1e-30)
         area = kwargs.pop("area", 64)
