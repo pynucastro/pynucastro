@@ -14,14 +14,14 @@ from pynucastro.networks import StarKillerNetwork, Composition
 description = """Script for generating a reaction network modeling the rp-process with a given
         nucleus as the endpoint."""
         
-endpoint_help = """The nucleus at which the nework terminates. Should be provided as the string
+endpoint_help = """The nucleus at which the network terminates. Should be provided as the string
         abbreviation of the nuclide (e.g. Ni56, case insensitive)."""
 library_help = """The library file to draw the rates from. This is supplied directly to the Library
         constructor."""
 
 parser = argparse.ArgumentParser(description=description)
-parser.add_argument('endpoint', default="ni56", help=endpoint_help)
-parser.add_argument('-l', '--library', default="reaclib-2017-10-20")
+parser.add_argument('endpoint', help=endpoint_help)
+parser.add_argument('-l', '--library', default="reaclib-2017-10-20", help=library_help)
 args = parser.parse_args(sys.argv[1:])
 
 endpoint = Nucleus(args.endpoint)
@@ -30,7 +30,11 @@ endpoint = Nucleus(args.endpoint)
 # Load library and generate network #
 #####################################
 
+print("Loading library...")
+
 full_lib = Library(args.library)
+
+print("Building network...")
 
 core_nuclei = ["p", "d", "he3", "he4", "li7", "be7", "be8", "b8", "c12",
                "n13", "n14", "n15", "o14", "o15", "o16", "o17", "o18",
@@ -144,5 +148,16 @@ while seeds:
 encountered = sorted(encountered)
 rp_net = StarKillerNetwork(libraries=[final_lib], precedence=["wc17", "ths8"])
 
+print("Network constructed.")
+print()
+print(f"Species Encountered:")
 print(encountered)
+print()
+print(f"Number of Species: {len(encountered)}")
+print(f"Number of Rates: {len(rp_net.rates)}")
+print()
+print("Writing network...")
+
 rp_net.write_network()
+
+print("Task completed.")
