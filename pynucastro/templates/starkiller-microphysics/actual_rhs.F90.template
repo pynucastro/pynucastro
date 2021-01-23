@@ -64,7 +64,8 @@ contains
 
     use reaclib_rates, only: screen_reaclib, reaclib_evaluate
     use screening_module, only: screen5, plasma_state, fill_plasma_state
-
+    use extern_probin_module, only: use_partition_factors
+    
     implicit none
 
     type(burn_t)     :: state
@@ -94,8 +95,10 @@ contains
     end do
 
     !Paritition Function
-    <compute_partition_terms>(2)
-
+    if (use_partition_factors) then
+       <compute_partition_terms>(3)
+    end if
+    
     ! Evaluate screening factors
     if (screen_reaclib) then
        <compute_screening_factors>(3)

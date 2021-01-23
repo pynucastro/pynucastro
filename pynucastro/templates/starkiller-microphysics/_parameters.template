@@ -1,2 +1,3 @@
 # Turn off thermal neutrino losses
 disable_thermal_neutrinos      logical   .false.
+use_partition_factors          logical   .true.
