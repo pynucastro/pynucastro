@@ -3,7 +3,7 @@ name: pytest
 on: [pull_request]
 
 jobs:
-  test_3_7:
+  test:
     runs-on: ubuntu-latest
 
     strategy:
