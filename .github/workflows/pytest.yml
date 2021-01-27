@@ -19,7 +19,7 @@ jobs:
           pip install -r requirements.txt
 
       - name: Install pynucastro
-          python setup.py install --user
+        run: python setup.py install --user
 
       - name: Run tests with pytest
         run: pytest -v --cov=. --nbval --ignore=docs --ignore=pynucastro/library/tabular/*.ipynb
