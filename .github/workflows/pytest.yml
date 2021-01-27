@@ -1,9 +1,9 @@
-name: Run Python Tests
+name: pytest
 
 on: [pull_request]
 
 jobs:
-  test:
+  test_3_7:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -22,4 +22,4 @@ jobs:
         run: python setup.py install --user
 
       - name: Run tests with pytest
-        run: pytest -v --cov=. --nbval --ignore=docs --ignore=pynucastro/library/tabular/*.ipynb
+        run: pytest -v --cov=. --nbval --ignore=docs --ignore-glob="pynucastro/library/tabular/*.ipynb"
