@@ -34,7 +34,7 @@ class PartitionFunction(object):
         self.name = name
         self.temperature = temperature
         self.partition_function = partition_function
-        self.interpolant = None
+        self._interpolant = None
         self.interpolant_order = None
         if (type(self.temperature) == np.ndarray and
             type(self.partition_function) == np.ndarray and
@@ -43,7 +43,7 @@ class PartitionFunction(object):
         else:
             # For a null partition function, return log(pf) = 0.0 when evaluated.
             self.interpolant_order = 0
-            self.interpolant = lambda x: 0.0
+            self._interpolant = lambda x: 0.0
 
     def lower_partition(self):
         return self.partition_function[0]
@@ -108,7 +108,7 @@ class PartitionFunction(object):
         Interpolate in log space for the partition function and in GK
         for temperature.
         """
-        self.interpolant = InterpolatedUnivariateSpline(self.temperature/1.0e9,
+        self._interpolant = InterpolatedUnivariateSpline(self.temperature/1.0e9,
                                                         np.log10(self.partition_function),
                                                         k=order)
         self.interpolant_order = order
@@ -120,16 +120,16 @@ class PartitionFunction(object):
 
         Convert T to GK for evaluation. Return un-log-scaled partition function.
         """
-        assert(self.interpolant)
+        assert(self._interpolant)
         try:
-            T = float(T)/1.0e9
+            T = T/1.0e9
         except:
             raise
         else:
             if self.interpolant_order == 0:
-                return 10.0**self.interpolant(T)
+                return np.power(10.0, self._interpolant(T))
             else:
-                return 10.0**self.interpolant(T, ext='const')
+                return np.power(10.0, self._interpolant(T, ext='const'))
 
 class PartitionFunctionTable(object):
     """ 
