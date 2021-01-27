@@ -170,6 +170,7 @@ class PythonNetwork(RateCollection):
 
         of.write("import numpy as np\n")
         of.write("from pynucastro.rates import Tfactors\n")
+        of.write('import numba\n')
 
         has_reverse_rates = False
         for r in self.rates:
@@ -177,7 +178,6 @@ class PythonNetwork(RateCollection):
                 has_reverse_rates = True
                 break
 
-        of.write('import numba\n')
         if has_reverse_rates:
             of.write("from pynucastro.nucdata import PartitionFunction, PartitionFunctionCollection\n\n")
 
