@@ -432,7 +432,6 @@ class BaseFortranNetwork(ABC, RateCollection):
                 partition_functions[j] = np.append(np.ones(i), partition_functions[j])
             if temp_array[-1] != maxT:
                 i = example_T.tolist().index(temp_array[-1])
-                #print(np.append(temp_array, example_T[i+1:]))
                 temperatures[j] = np.append(temp_array, example_T[i+1:])
                 partition_functions[j] = np.append(partition_functions[j],
                                     partition_functions[j][-1]*np.ones(len(example_T)-i-1))
@@ -458,8 +457,6 @@ class BaseFortranNetwork(ABC, RateCollection):
             np.savetxt(f, [len(temperatures)])
             np.savetxt(f,[len(temperatures[0])])
             np.savetxt(f,data)
-
-
 
     def io_open(self, infile, outfile):
         """open the input and output files"""
