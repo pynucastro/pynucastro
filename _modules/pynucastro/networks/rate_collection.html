@@ -1,41 +1,44 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>pynucastro.networks.rate_collection &mdash; pynucastro v1.3.0 documentation</title>
+  <title>pynucastro.networks.rate_collection &mdash; pynucastro v1.4.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
   
 
   
   
-  
+
   
 
   
-  <script type="text/javascript" src="../../../_static/js/modernizr.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
         <script src="../../../_static/jquery.js"></script>
         <script src="../../../_static/underscore.js"></script>
         <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/language_data.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
         <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
     
     <script type="text/javascript" src="../../../_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
 </head>
@@ -61,7 +64,7 @@
             
             
               <div class="version">
-                v1.3.0
+                v1.4.1
               </div>
             
           
@@ -78,6 +81,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -99,6 +103,7 @@
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -133,11 +138,13 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
         
           <li><a href="../../index.html">Module code</a> &raquo;</li>
         
@@ -160,18 +167,16 @@
 <span></span><span class="sd">&quot;&quot;&quot;A collection of classes and methods to deal with collections of</span>
 <span class="sd">rates that together make up a network.&quot;&quot;&quot;</span>
 
-<span class="c1"># Common Imports</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
-
 <span class="kn">import</span> <span class="nn">functools</span>
 <span class="kn">import</span> <span class="nn">math</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">operator</span> <span class="kn">import</span> <span class="n">mul</span>
 <span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">from</span> <span class="nn">operator</span> <span class="kn">import</span> <span class="n">mul</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
 
 <span class="kn">from</span> <span class="nn">ipywidgets</span> <span class="kn">import</span> <span class="n">interact</span>
 
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="c1">#from mpl_toolkits.axes_grid1 import make_axes_locatable</span>
@@ -182,7 +187,7 @@
 
 <span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;figure.dpi&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">100</span>
 
-<div class="viewcode-block" id="Composition"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.Composition">[docs]</a><span class="k">class</span> <span class="nc">Composition</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="Composition"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.Composition">[docs]</a><span class="k">class</span> <span class="nc">Composition</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;a composition holds the mass fractions of the nuclei in a network</span>
 <span class="sd">    -- useful for evaluating the rates</span>
 
@@ -254,7 +259,7 @@
             <span class="n">ostr</span> <span class="o">+=</span> <span class="s2">&quot;  X(</span><span class="si">{}</span><span class="s2">) : </span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">ostr</span></div>
 
-<div class="viewcode-block" id="RateCollection"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection">[docs]</a><span class="k">class</span> <span class="nc">RateCollection</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="RateCollection"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection">[docs]</a><span class="k">class</span> <span class="nc">RateCollection</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot; a collection of rates that together define a network &quot;&quot;&quot;</span>
 
     <span class="n">pynucastro_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)))</span>
@@ -289,7 +294,7 @@
                 <span class="n">rates</span> <span class="o">=</span> <span class="p">[</span><span class="n">rates</span><span class="p">]</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">rates</span><span class="p">:</span>
-                    <span class="k">assert</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">Rate</span><span class="p">))</span>
+                    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">Rate</span><span class="p">)</span>
             <span class="k">except</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Expected Rate object or list of Rate objects passed as the rates argument.&#39;</span><span class="p">)</span>
                 <span class="k">raise</span>
@@ -305,7 +310,7 @@
                 <span class="n">libraries</span> <span class="o">=</span> <span class="p">[</span><span class="n">libraries</span><span class="p">]</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">lib</span> <span class="ow">in</span> <span class="n">libraries</span><span class="p">:</span>
-                    <span class="k">assert</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">lib</span><span class="p">,</span> <span class="n">Library</span><span class="p">))</span>
+                    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lib</span><span class="p">,</span> <span class="n">Library</span><span class="p">)</span>
             <span class="k">except</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Expected Library object or list of Library objects passed as the libraries argument.&#39;</span><span class="p">)</span>
                 <span class="k">raise</span>
@@ -380,11 +385,12 @@
 <span class="sd">        composition&quot;&quot;&quot;</span>
         <span class="n">rvals</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
         <span class="n">ys</span> <span class="o">=</span> <span class="n">composition</span><span class="o">.</span><span class="n">get_molar</span><span class="p">()</span>
+        <span class="n">y_e</span> <span class="o">=</span> <span class="n">composition</span><span class="o">.</span><span class="n">eval_ye</span><span class="p">()</span>
 
         <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">:</span>
-            <span class="n">val</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">prefactor</span> <span class="o">*</span> <span class="n">rho</span><span class="o">**</span><span class="n">r</span><span class="o">.</span><span class="n">dens_exp</span> <span class="o">*</span> <span class="n">r</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">prefactor</span> <span class="o">*</span> <span class="n">rho</span><span class="o">**</span><span class="n">r</span><span class="o">.</span><span class="n">dens_exp</span> <span class="o">*</span> <span class="n">r</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">rho</span> <span class="o">*</span> <span class="n">y_e</span><span class="p">)</span>
             <span class="k">if</span> <span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">weak_type</span> <span class="o">==</span> <span class="s1">&#39;electron_capture&#39;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">r</span><span class="o">.</span><span class="n">tabular</span><span class="p">):</span>
-                <span class="n">val</span> <span class="o">=</span> <span class="n">val</span> <span class="o">*</span> <span class="n">composition</span><span class="o">.</span><span class="n">eval_ye</span><span class="p">()</span>
+                <span class="n">val</span> <span class="o">=</span> <span class="n">val</span> <span class="o">*</span> <span class="n">y_e</span>
             <span class="n">yfac</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span><span class="n">mul</span><span class="p">,</span> <span class="p">[</span><span class="n">ys</span><span class="p">[</span><span class="n">q</span><span class="p">]</span> <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">])</span>
             <span class="n">rvals</span><span class="p">[</span><span class="n">r</span><span class="p">]</span> <span class="o">=</span> <span class="n">yfac</span> <span class="o">*</span> <span class="n">val</span>
 
@@ -416,7 +422,7 @@
         <span class="sd">&quot;&quot;&quot;Every Rate in this RateCollection should have a unique Rate.fname,</span>
 <span class="sd">        as the network writers distinguish the rates on this basis.&quot;&quot;&quot;</span>
         <span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span><span class="o">.</span><span class="n">fname</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">]</span>
-        <span class="k">for</span> <span class="n">n</span><span class="p">,</span><span class="n">r</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">names</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">names</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">):</span>
             <span class="n">k</span> <span class="o">=</span> <span class="n">names</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">k</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Found rate </span><span class="si">{}</span><span class="s1"> named </span><span class="si">{}</span><span class="s1"> with </span><span class="si">{}</span><span class="s1"> entries in the RateCollection.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">k</span><span class="p">))</span>
@@ -430,7 +436,10 @@
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;To create network integration source code, use a class that implements a specific network type.&#39;</span><span class="p">)</span>
         <span class="k">return</span>
 
-<div class="viewcode-block" id="RateCollection.plot"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outfile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">800</span><span class="p">,</span> <span class="mi">600</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="RateCollection.plot"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outfile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+             <span class="n">comp</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">800</span><span class="p">,</span> <span class="mi">600</span><span class="p">),</span>
+             <span class="n">dpi</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ydot_cutoff_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+             <span class="n">always_show_p</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">always_show_alpha</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Make a plot of the network structure showing the links between nuclei&quot;&quot;&quot;</span>
 
         <span class="n">G</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">MultiDiGraph</span><span class="p">()</span>
@@ -443,11 +452,19 @@
 
         <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">],</span> <span class="s1">&#39;b-&#39;</span><span class="p">)</span>
 
-        <span class="c1"># nodes -- the node nuclei will be all of the heavies, but not</span>
-        <span class="c1"># p, n, alpha, unless we have p + p, 3-a, etc.</span>
+        <span class="c1"># in general, we do not show p, n, alpha,</span>
+        <span class="c1"># unless we have p + p, 3-a, etc.</span>
+        <span class="n">hidden_nuclei</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;n&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">always_show_p</span><span class="p">:</span>
+            <span class="n">hidden_nuclei</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">always_show_alpha</span><span class="p">:</span>
+            <span class="n">hidden_nuclei</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">)</span>
+
+        <span class="c1"># nodes -- the node nuclei will be all of the heavies</span>
+        <span class="c1"># add all the nuclei into G.node</span>
         <span class="n">node_nuclei</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">n</span><span class="o">.</span><span class="n">raw</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;p&quot;</span><span class="p">,</span> <span class="s2">&quot;n&quot;</span><span class="p">,</span> <span class="s2">&quot;he4&quot;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">n</span><span class="o">.</span><span class="n">raw</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">hidden_nuclei</span><span class="p">:</span>
                 <span class="n">node_nuclei</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">:</span>
@@ -460,13 +477,19 @@
             <span class="n">G</span><span class="o">.</span><span class="n">position</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">N</span><span class="p">,</span> <span class="n">n</span><span class="o">.</span><span class="n">Z</span><span class="p">)</span>
             <span class="n">G</span><span class="o">.</span><span class="n">labels</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;$</span><span class="si">{}</span><span class="s2">$&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">pretty</span><span class="p">)</span>
 
+        <span class="c1"># get the rates for each reaction</span>
         <span class="k">if</span> <span class="n">rho</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">T</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">comp</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">ydots</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_rates</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">ydots</span> <span class="o">=</span> <span class="kc">None</span>
 
-        <span class="c1">#for rr in ydots:</span>
-        <span class="c1">#    print(&quot;{}: {}&quot;.format(rr, ydots[rr]))</span>
+        <span class="c1"># Do not show rates on the graph if their corresponding ydot is less than ydot_cutoff_value</span>
+        <span class="n">invisible_rates</span> <span class="o">=</span> <span class="p">[];</span>
+        <span class="k">if</span> <span class="n">ydot_cutoff_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">ydots</span><span class="p">[</span><span class="n">r</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">ydot_cutoff_value</span><span class="p">:</span>
+                    <span class="n">invisible_rates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+                    <span class="k">del</span> <span class="n">ydots</span><span class="p">[</span><span class="n">r</span><span class="p">]</span>
 
         <span class="c1"># edges</span>
         <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">node_nuclei</span><span class="p">:</span>
@@ -481,37 +504,43 @@
                         <span class="k">if</span> <span class="n">ydots</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                             <span class="n">G</span><span class="o">.</span><span class="n">add_edges_from</span><span class="p">([(</span><span class="n">n</span><span class="p">,</span> <span class="n">p</span><span class="p">)],</span> <span class="n">weight</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
                         <span class="k">else</span><span class="p">:</span>
-                            <span class="k">try</span><span class="p">:</span>
-                                <span class="n">rate_weight</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">ydots</span><span class="p">[</span><span class="n">r</span><span class="p">])</span>
-                            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-                                <span class="c1"># if ydots[r] is zero, then set the weight</span>
-                                <span class="c1"># to roughly the minimum exponent possible</span>
-                                <span class="c1"># for python floats</span>
-                                <span class="n">rate_weight</span> <span class="o">=</span> <span class="o">-</span><span class="mi">308</span>
-                            <span class="k">except</span><span class="p">:</span>
-                                <span class="k">raise</span>
-                            <span class="n">G</span><span class="o">.</span><span class="n">add_edges_from</span><span class="p">([(</span><span class="n">n</span><span class="p">,</span> <span class="n">p</span><span class="p">)],</span> <span class="n">weight</span><span class="o">=</span><span class="n">rate_weight</span><span class="p">)</span>
+                            <span class="k">if</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">invisible_rates</span><span class="p">:</span>
+                                <span class="k">continue</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="k">try</span><span class="p">:</span>
+                                    <span class="n">rate_weight</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">ydots</span><span class="p">[</span><span class="n">r</span><span class="p">])</span>
+                                <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                                    <span class="c1"># if ydots[r] is zero, then set the weight</span>
+                                    <span class="c1"># to roughly the minimum exponent possible</span>
+                                    <span class="c1"># for python floats</span>
+                                    <span class="n">rate_weight</span> <span class="o">=</span> <span class="o">-</span><span class="mi">308</span>
+                                <span class="k">except</span><span class="p">:</span>
+                                    <span class="k">raise</span>
+                                <span class="n">G</span><span class="o">.</span><span class="n">add_edges_from</span><span class="p">([(</span><span class="n">n</span><span class="p">,</span> <span class="n">p</span><span class="p">)],</span> <span class="n">weight</span><span class="o">=</span><span class="n">rate_weight</span><span class="p">)</span>
 
+        <span class="c1"># plot the element at the correct position</span>
         <span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx_nodes</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">G</span><span class="o">.</span><span class="n">position</span><span class="p">,</span>
                                <span class="n">node_color</span><span class="o">=</span><span class="s2">&quot;#A0CBE2&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
-                               <span class="n">node_shape</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="n">node_size</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+                               <span class="n">node_shape</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="n">node_size</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">linewidths</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
 
+        <span class="c1"># label the name of element at the correct position</span>
         <span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx_labels</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">G</span><span class="o">.</span><span class="n">position</span><span class="p">,</span> <span class="n">G</span><span class="o">.</span><span class="n">labels</span><span class="p">,</span>
-                                <span class="n">font_size</span><span class="o">=</span><span class="mi">13</span><span class="p">,</span> <span class="n">font_color</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+                                <span class="n">font_size</span><span class="o">=</span><span class="mi">13</span><span class="p">,</span> <span class="n">font_color</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
 
         <span class="c1"># get the edges and weights coupled in the same order</span>
         <span class="n">edges</span><span class="p">,</span> <span class="n">weights</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">nx</span><span class="o">.</span><span class="n">get_edge_attributes</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="s1">&#39;weight&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
 
+        <span class="c1"># plot the arrow of reaction</span>
         <span class="n">edges_lc</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx_edges</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">G</span><span class="o">.</span><span class="n">position</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
                                           <span class="n">edgelist</span><span class="o">=</span><span class="n">edges</span><span class="p">,</span> <span class="n">edge_color</span><span class="o">=</span><span class="n">weights</span><span class="p">,</span>
                                           <span class="n">node_size</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
-                                          <span class="n">edge_cmap</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">viridis</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+                                          <span class="n">edge_cmap</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">viridis</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
 
         <span class="c1"># for networkx &lt;= 2.0 draw_networkx_edges returns a</span>
         <span class="c1"># LineCollection matplotlib type which we can use for the</span>
         <span class="c1"># colorbar directly.  For networkx &gt;= 2.1, it is a collection</span>
         <span class="c1"># of FancyArrowPatch-s, which we need to run through a</span>
-        <span class="c1"># PatchCollection.  See: </span>
+        <span class="c1"># PatchCollection.  See:</span>
         <span class="c1"># https://stackoverflow.com/questions/18658047/adding-a-matplotlib-colorbar-from-a-patchcollection</span>
 
         <span class="k">if</span> <span class="n">ydots</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -556,16 +585,25 @@
         <span class="k">return</span> <span class="n">string</span></div>
 
 
-<div class="viewcode-block" id="Explorer"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.Explorer">[docs]</a><span class="k">class</span> <span class="nc">Explorer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="Explorer"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.Explorer">[docs]</a><span class="k">class</span> <span class="nc">Explorer</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot; interactively explore a rate collection &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rc</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">800</span><span class="p">,</span> <span class="mi">600</span><span class="p">)):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rc</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">800</span><span class="p">,</span> <span class="mi">600</span><span class="p">),</span>
+                 <span class="n">ydot_cutoff_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">always_show_p</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">always_show_alpha</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; take a RateCollection and a composition &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rc</span> <span class="o">=</span> <span class="n">rc</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">comp</span> <span class="o">=</span> <span class="n">comp</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">=</span> <span class="n">size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ydot_cutoff_value</span> <span class="o">=</span> <span class="n">ydot_cutoff_value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">always_show_p</span> <span class="o">=</span> <span class="n">always_show_p</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">always_show_alpha</span> <span class="o">=</span> <span class="n">always_show_alpha</span>
 
     <span class="k">def</span> <span class="nf">_make_plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logrho</span><span class="p">,</span> <span class="n">logT</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">rc</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rho</span><span class="o">=</span><span class="mf">10.0</span><span class="o">**</span><span class="n">logrho</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mf">10.0</span><span class="o">**</span><span class="n">logT</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">comp</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rc</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rho</span><span class="o">=</span><span class="mf">10.0</span><span class="o">**</span><span class="n">logrho</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mf">10.0</span><span class="o">**</span><span class="n">logT</span><span class="p">,</span>
+                     <span class="n">comp</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">comp</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">,</span>
+                     <span class="n">ydot_cutoff_value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ydot_cutoff_value</span><span class="p">,</span>
+                     <span class="n">always_show_p</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">always_show_p</span><span class="p">,</span>
+                     <span class="n">always_show_alpha</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">always_show_alpha</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Explorer.explore"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.Explorer.explore">[docs]</a>    <span class="k">def</span> <span class="nf">explore</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logrho</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">),</span> <span class="n">logT</span><span class="o">=</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)):</span>
         <span class="sd">&quot;&quot;&quot;Perform interactive exploration of the network structure.&quot;&quot;&quot;</span>
@@ -576,20 +614,25 @@
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018, Michael Zingale and Donald Willcox
+        &#169; Copyright 2021, Michael Zingale and Donald Willcox.
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 
@@ -597,7 +640,6 @@
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {

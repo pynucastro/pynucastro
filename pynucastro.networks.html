@@ -1,41 +1,44 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>pynucastro.networks package &mdash; pynucastro v1.3.0 documentation</title>
+  <title>pynucastro.networks package &mdash; pynucastro v1.4.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
   
 
   
   
-  
+
   
 
   
-  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
-        <script src="_static/language_data.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
         <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="pynucastro.nucdata package" href="pynucastro.nucdata.html" />
@@ -63,7 +66,7 @@
             
             
               <div class="version">
-                v1.3.0
+                v1.4.1
               </div>
             
           
@@ -80,6 +83,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -119,6 +123,7 @@
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -153,11 +158,13 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="index.html">Docs</a> &raquo;</li>
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
           <li><a href="modules.html">out</a> &raquo;</li>
         
@@ -168,7 +175,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="_sources/pynucastro.networks.rst.txt" rel="nofollow"> View page source</a>
           
         
@@ -231,70 +238,70 @@ hydrodynamics codes.</p>
 <p>Support for a pure Fortran reaction network.  These functions will
 write the Fortran code necessary to integrate a reaction network
 comprised of the rates that are passed in.</p>
-<dl class="class">
+<dl class="py class">
 <dt id="pynucastro.networks.base_fortran_network.BaseFortranNetwork">
-<em class="property">class </em><code class="sig-prename descclassname">pynucastro.networks.base_fortran_network.</code><code class="sig-name descname">BaseFortranNetwork</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/base_fortran_network.html#BaseFortranNetwork"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.networks.base_fortran_network.BaseFortranNetwork" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pynucastro.networks.base_fortran_network.</code><code class="sig-name descname">BaseFortranNetwork</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/base_fortran_network.html#BaseFortranNetwork"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.networks.base_fortran_network.BaseFortranNetwork" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code>, <a class="reference internal" href="#pynucastro.networks.rate_collection.RateCollection" title="pynucastro.networks.rate_collection.RateCollection"><code class="xref py py-class docutils literal notranslate"><span class="pre">pynucastro.networks.rate_collection.RateCollection</span></code></a></p>
 <p>Interpret the collection of rates and nuclei and produce the
 Fortran code needed to integrate the network.</p>
-<dl class="method">
+<dl class="py method">
 <dt id="pynucastro.networks.base_fortran_network.BaseFortranNetwork.compose_jacobian">
 <code class="sig-name descname">compose_jacobian</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/base_fortran_network.html#BaseFortranNetwork.compose_jacobian"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.networks.base_fortran_network.BaseFortranNetwork.compose_jacobian" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create the Jacobian matrix, df/dY</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pynucastro.networks.base_fortran_network.BaseFortranNetwork.compose_ydot">
 <code class="sig-name descname">compose_ydot</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/base_fortran_network.html#BaseFortranNetwork.compose_ydot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.networks.base_fortran_network.BaseFortranNetwork.compose_ydot" title="Permalink to this definition">¶</a></dt>
 <dd><p>create the expressions for dYdt for the nuclei, where Y is the
 molar fraction.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pynucastro.networks.base_fortran_network.BaseFortranNetwork.fmt_to_dp_f90">
-<code class="sig-name descname">fmt_to_dp_f90</code><span class="sig-paren">(</span><em class="sig-param">i</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/base_fortran_network.html#BaseFortranNetwork.fmt_to_dp_f90"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.networks.base_fortran_network.BaseFortranNetwork.fmt_to_dp_f90" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">fmt_to_dp_f90</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">i</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/base_fortran_network.html#BaseFortranNetwork.fmt_to_dp_f90"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.networks.base_fortran_network.BaseFortranNetwork.fmt_to_dp_f90" title="Permalink to this definition">¶</a></dt>
 <dd><p>convert a number to Fortran double precision format</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pynucastro.networks.base_fortran_network.BaseFortranNetwork.fmt_to_rt_f90">
-<code class="sig-name descname">fmt_to_rt_f90</code><span class="sig-paren">(</span><em class="sig-param">i</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/base_fortran_network.html#BaseFortranNetwork.fmt_to_rt_f90"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.networks.base_fortran_network.BaseFortranNetwork.fmt_to_rt_f90" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">fmt_to_rt_f90</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">i</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/base_fortran_network.html#BaseFortranNetwork.fmt_to_rt_f90"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.networks.base_fortran_network.BaseFortranNetwork.fmt_to_rt_f90" title="Permalink to this definition">¶</a></dt>
 <dd><p>convert a number to custom real type format</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pynucastro.networks.base_fortran_network.BaseFortranNetwork.fortranify">
-<code class="sig-name descname">fortranify</code><span class="sig-paren">(</span><em class="sig-param">s</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/base_fortran_network.html#BaseFortranNetwork.fortranify"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.networks.base_fortran_network.BaseFortranNetwork.fortranify" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">fortranify</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">s</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/base_fortran_network.html#BaseFortranNetwork.fortranify"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.networks.base_fortran_network.BaseFortranNetwork.fortranify" title="Permalink to this definition">¶</a></dt>
 <dd><p>Given string s, will replace the symbols appearing as keys in
 self.symbol_ludict with their corresponding entries.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pynucastro.networks.base_fortran_network.BaseFortranNetwork.get_indent_amt">
-<code class="sig-name descname">get_indent_amt</code><span class="sig-paren">(</span><em class="sig-param">l</em>, <em class="sig-param">k</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/base_fortran_network.html#BaseFortranNetwork.get_indent_amt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.networks.base_fortran_network.BaseFortranNetwork.get_indent_amt" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_indent_amt</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">l</span></em>, <em class="sig-param"><span class="n">k</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/base_fortran_network.html#BaseFortranNetwork.get_indent_amt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.networks.base_fortran_network.BaseFortranNetwork.get_indent_amt" title="Permalink to this definition">¶</a></dt>
 <dd><p>determine the amount of spaces to indent a line</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pynucastro.networks.base_fortran_network.BaseFortranNetwork.get_screening_map">
 <code class="sig-name descname">get_screening_map</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/base_fortran_network.html#BaseFortranNetwork.get_screening_map"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.networks.base_fortran_network.BaseFortranNetwork.get_screening_map" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pynucastro.networks.base_fortran_network.BaseFortranNetwork.io_close">
-<code class="sig-name descname">io_close</code><span class="sig-paren">(</span><em class="sig-param">infile</em>, <em class="sig-param">outfile</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/base_fortran_network.html#BaseFortranNetwork.io_close"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.networks.base_fortran_network.BaseFortranNetwork.io_close" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">io_close</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">infile</span></em>, <em class="sig-param"><span class="n">outfile</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/base_fortran_network.html#BaseFortranNetwork.io_close"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.networks.base_fortran_network.BaseFortranNetwork.io_close" title="Permalink to this definition">¶</a></dt>
 <dd><p>close the input and output files</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pynucastro.networks.base_fortran_network.BaseFortranNetwork.io_open">
-<code class="sig-name descname">io_open</code><span class="sig-paren">(</span><em class="sig-param">infile</em>, <em class="sig-param">outfile</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/base_fortran_network.html#BaseFortranNetwork.io_open"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.networks.base_fortran_network.BaseFortranNetwork.io_open" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">io_open</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">infile</span></em>, <em class="sig-param"><span class="n">outfile</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/base_fortran_network.html#BaseFortranNetwork.io_open"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.networks.base_fortran_network.BaseFortranNetwork.io_open" title="Permalink to this definition">¶</a></dt>
 <dd><p>open the input and output files</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pynucastro.networks.base_fortran_network.BaseFortranNetwork.jacobian_string">
-<code class="sig-name descname">jacobian_string</code><span class="sig-paren">(</span><em class="sig-param">rate</em>, <em class="sig-param">ydot_j</em>, <em class="sig-param">y_i</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/base_fortran_network.html#BaseFortranNetwork.jacobian_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.networks.base_fortran_network.BaseFortranNetwork.jacobian_string" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">jacobian_string</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rate</span></em>, <em class="sig-param"><span class="n">ydot_j</span></em>, <em class="sig-param"><span class="n">y_i</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/base_fortran_network.html#BaseFortranNetwork.jacobian_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.networks.base_fortran_network.BaseFortranNetwork.jacobian_string" title="Permalink to this definition">¶</a></dt>
 <dd><p>return a string containing the term in a jacobian matrix
 in a reaction network corresponding to this rate</p>
 <p>Returns the derivative of the j-th YDOT wrt. the i-th Y
@@ -302,9 +309,9 @@ If the derivative is zero, returns the empty string ‘’</p>
 <p>ydot_j and y_i are objects of the class ‘Nucleus’</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pynucastro.networks.base_fortran_network.BaseFortranNetwork.jacobian_term_symbol">
-<code class="sig-name descname">jacobian_term_symbol</code><span class="sig-paren">(</span><em class="sig-param">rate</em>, <em class="sig-param">ydot_j</em>, <em class="sig-param">y_i</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/base_fortran_network.html#BaseFortranNetwork.jacobian_term_symbol"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.networks.base_fortran_network.BaseFortranNetwork.jacobian_term_symbol" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">jacobian_term_symbol</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rate</span></em>, <em class="sig-param"><span class="n">ydot_j</span></em>, <em class="sig-param"><span class="n">y_i</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/base_fortran_network.html#BaseFortranNetwork.jacobian_term_symbol"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.networks.base_fortran_network.BaseFortranNetwork.jacobian_term_symbol" title="Permalink to this definition">¶</a></dt>
 <dd><p>return a sympy expression containing the term in a jacobian matrix
 in a reaction network corresponding to this rate</p>
 <p>Returns the derivative of the j-th YDOT wrt. the i-th Y
@@ -312,24 +319,24 @@ If the derivative is zero, returns 0.</p>
 <p>ydot_j and y_i are objects of the class ‘Nucleus’</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pynucastro.networks.base_fortran_network.BaseFortranNetwork.specific_rate_symbol">
-<code class="sig-name descname">specific_rate_symbol</code><span class="sig-paren">(</span><em class="sig-param">rate</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/base_fortran_network.html#BaseFortranNetwork.specific_rate_symbol"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.networks.base_fortran_network.BaseFortranNetwork.specific_rate_symbol" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">specific_rate_symbol</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rate</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/base_fortran_network.html#BaseFortranNetwork.specific_rate_symbol"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.networks.base_fortran_network.BaseFortranNetwork.specific_rate_symbol" title="Permalink to this definition">¶</a></dt>
 <dd><p>return a sympy expression containing the term in a dY/dt equation
 in a reaction network corresponding to this rate.</p>
 <p>Also enter the symbol and substitution in the lookup table.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pynucastro.networks.base_fortran_network.BaseFortranNetwork.ydot_string">
-<code class="sig-name descname">ydot_string</code><span class="sig-paren">(</span><em class="sig-param">rate</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/base_fortran_network.html#BaseFortranNetwork.ydot_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.networks.base_fortran_network.BaseFortranNetwork.ydot_string" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">ydot_string</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rate</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/base_fortran_network.html#BaseFortranNetwork.ydot_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.networks.base_fortran_network.BaseFortranNetwork.ydot_string" title="Permalink to this definition">¶</a></dt>
 <dd><p>return a string containing the term in a dY/dt equation
 in a reaction network corresponding to this rate for Fortran 90.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pynucastro.networks.base_fortran_network.BaseFortranNetwork.ydot_term_symbol">
-<code class="sig-name descname">ydot_term_symbol</code><span class="sig-paren">(</span><em class="sig-param">rate</em>, <em class="sig-param">y_i</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/base_fortran_network.html#BaseFortranNetwork.ydot_term_symbol"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.networks.base_fortran_network.BaseFortranNetwork.ydot_term_symbol" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">ydot_term_symbol</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rate</span></em>, <em class="sig-param"><span class="n">y_i</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/base_fortran_network.html#BaseFortranNetwork.ydot_term_symbol"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.networks.base_fortran_network.BaseFortranNetwork.ydot_term_symbol" title="Permalink to this definition">¶</a></dt>
 <dd><p>return a sympy expression containing this rate’s contribution to
 the ydot term for nuclide y_i.</p>
 </dd></dl>
@@ -341,21 +348,21 @@ the ydot term for nuclide y_i.</p>
 <span id="pynucastro-networks-python-network-module"></span><h2>pynucastro.networks.python_network module<a class="headerlink" href="#module-pynucastro.networks.python_network" title="Permalink to this headline">¶</a></h2>
 <p>Support modules to write a pure python reaction network ODE
 source</p>
-<dl class="class">
+<dl class="py class">
 <dt id="pynucastro.networks.python_network.PythonNetwork">
-<em class="property">class </em><code class="sig-prename descclassname">pynucastro.networks.python_network.</code><code class="sig-name descname">PythonNetwork</code><span class="sig-paren">(</span><em class="sig-param">rate_files=None</em>, <em class="sig-param">libraries=None</em>, <em class="sig-param">rates=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/python_network.html#PythonNetwork"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.networks.python_network.PythonNetwork" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pynucastro.networks.python_network.</code><code class="sig-name descname">PythonNetwork</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rate_files</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">libraries</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">rates</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/python_network.html#PythonNetwork"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.networks.python_network.PythonNetwork" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pynucastro.networks.rate_collection.RateCollection" title="pynucastro.networks.rate_collection.RateCollection"><code class="xref py py-class docutils literal notranslate"><span class="pre">pynucastro.networks.rate_collection.RateCollection</span></code></a></p>
 <p>A pure python reaction network.</p>
-<dl class="method">
+<dl class="py method">
 <dt id="pynucastro.networks.python_network.PythonNetwork.function_string">
-<code class="sig-name descname">function_string</code><span class="sig-paren">(</span><em class="sig-param">rate</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/python_network.html#PythonNetwork.function_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.networks.python_network.PythonNetwork.function_string" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">function_string</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rate</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/python_network.html#PythonNetwork.function_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.networks.python_network.PythonNetwork.function_string" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a string containing python function that computes the
 rate</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pynucastro.networks.python_network.PythonNetwork.jacobian_string">
-<code class="sig-name descname">jacobian_string</code><span class="sig-paren">(</span><em class="sig-param">rate</em>, <em class="sig-param">ydot_j</em>, <em class="sig-param">y_i</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/python_network.html#PythonNetwork.jacobian_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.networks.python_network.PythonNetwork.jacobian_string" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">jacobian_string</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rate</span></em>, <em class="sig-param"><span class="n">ydot_j</span></em>, <em class="sig-param"><span class="n">y_i</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/python_network.html#PythonNetwork.jacobian_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.networks.python_network.PythonNetwork.jacobian_string" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a string containing the term in a jacobian matrix
 in a reaction network corresponding to this rate.</p>
 <p>Returns the derivative of the j-th YDOT wrt. the i-th Y
@@ -363,17 +370,17 @@ If the derivative is zero, returns the empty string ‘’</p>
 <p>ydot_j and y_i are objects of the class <code class="docutils literal notranslate"><span class="pre">Nucleus</span></code>.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pynucastro.networks.python_network.PythonNetwork.rate_string">
-<code class="sig-name descname">rate_string</code><span class="sig-paren">(</span><em class="sig-param">rate</em>, <em class="sig-param">indent=0</em>, <em class="sig-param">prefix='rate'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/python_network.html#PythonNetwork.rate_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.networks.python_network.PythonNetwork.rate_string" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">rate_string</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rate</span></em>, <em class="sig-param"><span class="n">indent</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">prefix</span><span class="o">=</span><span class="default_value">'rate'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/python_network.html#PythonNetwork.rate_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.networks.python_network.PythonNetwork.rate_string" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the functional form of rate as a function of
 the temperature (as Tfactors)</p>
 <p>rate is an object of class Rate</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pynucastro.networks.python_network.PythonNetwork.ydot_string">
-<code class="sig-name descname">ydot_string</code><span class="sig-paren">(</span><em class="sig-param">rate</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/python_network.html#PythonNetwork.ydot_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.networks.python_network.PythonNetwork.ydot_string" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">ydot_string</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rate</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/python_network.html#PythonNetwork.ydot_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.networks.python_network.PythonNetwork.ydot_string" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a string containing the term in a dY/dt equation
 in a reaction network corresponding to this rate.</p>
 </dd></dl>
@@ -385,102 +392,102 @@ in a reaction network corresponding to this rate.</p>
 <span id="pynucastro-networks-rate-collection-module"></span><h2>pynucastro.networks.rate_collection module<a class="headerlink" href="#module-pynucastro.networks.rate_collection" title="Permalink to this headline">¶</a></h2>
 <p>A collection of classes and methods to deal with collections of
 rates that together make up a network.</p>
-<dl class="class">
+<dl class="py class">
 <dt id="pynucastro.networks.rate_collection.Composition">
-<em class="property">class </em><code class="sig-prename descclassname">pynucastro.networks.rate_collection.</code><code class="sig-name descname">Composition</code><span class="sig-paren">(</span><em class="sig-param">nuclei</em>, <em class="sig-param">small=1e-16</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/rate_collection.html#Composition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.networks.rate_collection.Composition" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pynucastro.networks.rate_collection.</code><code class="sig-name descname">Composition</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">nuclei</span></em>, <em class="sig-param"><span class="n">small</span><span class="o">=</span><span class="default_value">1e-16</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/rate_collection.html#Composition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.networks.rate_collection.Composition" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>a composition holds the mass fractions of the nuclei in a network
 – useful for evaluating the rates</p>
-<dl class="method">
+<dl class="py method">
 <dt id="pynucastro.networks.rate_collection.Composition.eval_ye">
 <code class="sig-name descname">eval_ye</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/rate_collection.html#Composition.eval_ye"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.networks.rate_collection.Composition.eval_ye" title="Permalink to this definition">¶</a></dt>
 <dd><p>return the electron fraction</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pynucastro.networks.rate_collection.Composition.get_molar">
 <code class="sig-name descname">get_molar</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/rate_collection.html#Composition.get_molar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.networks.rate_collection.Composition.get_molar" title="Permalink to this definition">¶</a></dt>
 <dd><p>return a dictionary of molar fractions</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pynucastro.networks.rate_collection.Composition.normalize">
 <code class="sig-name descname">normalize</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/rate_collection.html#Composition.normalize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.networks.rate_collection.Composition.normalize" title="Permalink to this definition">¶</a></dt>
 <dd><p>normalize the mass fractions to sum to 1</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pynucastro.networks.rate_collection.Composition.set_all">
-<code class="sig-name descname">set_all</code><span class="sig-paren">(</span><em class="sig-param">xval</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/rate_collection.html#Composition.set_all"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.networks.rate_collection.Composition.set_all" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">set_all</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">xval</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/rate_collection.html#Composition.set_all"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.networks.rate_collection.Composition.set_all" title="Permalink to this definition">¶</a></dt>
 <dd><p>set all species to a particular value</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pynucastro.networks.rate_collection.Composition.set_nuc">
-<code class="sig-name descname">set_nuc</code><span class="sig-paren">(</span><em class="sig-param">name</em>, <em class="sig-param">xval</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/rate_collection.html#Composition.set_nuc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.networks.rate_collection.Composition.set_nuc" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">set_nuc</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="n">xval</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/rate_collection.html#Composition.set_nuc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.networks.rate_collection.Composition.set_nuc" title="Permalink to this definition">¶</a></dt>
 <dd><p>set nuclei name to the mass fraction xval</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pynucastro.networks.rate_collection.Composition.set_solar_like">
-<code class="sig-name descname">set_solar_like</code><span class="sig-paren">(</span><em class="sig-param">Z=0.02</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/rate_collection.html#Composition.set_solar_like"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.networks.rate_collection.Composition.set_solar_like" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">set_solar_like</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">Z</span><span class="o">=</span><span class="default_value">0.02</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/rate_collection.html#Composition.set_solar_like"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.networks.rate_collection.Composition.set_solar_like" title="Permalink to this definition">¶</a></dt>
 <dd><p>approximate a solar abundance, setting p to 0.7, He4 to 0.3 - Z and
 the remainder evenly distributed with Z</p>
 </dd></dl>
 
 </dd></dl>
 
-<dl class="class">
+<dl class="py class">
 <dt id="pynucastro.networks.rate_collection.Explorer">
-<em class="property">class </em><code class="sig-prename descclassname">pynucastro.networks.rate_collection.</code><code class="sig-name descname">Explorer</code><span class="sig-paren">(</span><em class="sig-param">rc</em>, <em class="sig-param">comp</em>, <em class="sig-param">size=(800</em>, <em class="sig-param">600)</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/rate_collection.html#Explorer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.networks.rate_collection.Explorer" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pynucastro.networks.rate_collection.</code><code class="sig-name descname">Explorer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rc</span></em>, <em class="sig-param"><span class="n">comp</span></em>, <em class="sig-param"><span class="n">size</span><span class="o">=</span><span class="default_value">(800, 600)</span></em>, <em class="sig-param"><span class="n">ydot_cutoff_value</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">always_show_p</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">always_show_alpha</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/rate_collection.html#Explorer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.networks.rate_collection.Explorer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>interactively explore a rate collection</p>
-<dl class="method">
+<dl class="py method">
 <dt id="pynucastro.networks.rate_collection.Explorer.explore">
-<code class="sig-name descname">explore</code><span class="sig-paren">(</span><em class="sig-param">logrho=(2</em>, <em class="sig-param">6</em>, <em class="sig-param">0.1)</em>, <em class="sig-param">logT=(7</em>, <em class="sig-param">9</em>, <em class="sig-param">0.1)</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/rate_collection.html#Explorer.explore"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.networks.rate_collection.Explorer.explore" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">explore</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">logrho</span><span class="o">=</span><span class="default_value">(2, 6, 0.1)</span></em>, <em class="sig-param"><span class="n">logT</span><span class="o">=</span><span class="default_value">(7, 9, 0.1)</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/rate_collection.html#Explorer.explore"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.networks.rate_collection.Explorer.explore" title="Permalink to this definition">¶</a></dt>
 <dd><p>Perform interactive exploration of the network structure.</p>
 </dd></dl>
 
 </dd></dl>
 
-<dl class="class">
+<dl class="py class">
 <dt id="pynucastro.networks.rate_collection.RateCollection">
-<em class="property">class </em><code class="sig-prename descclassname">pynucastro.networks.rate_collection.</code><code class="sig-name descname">RateCollection</code><span class="sig-paren">(</span><em class="sig-param">rate_files=None</em>, <em class="sig-param">libraries=None</em>, <em class="sig-param">rates=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/rate_collection.html#RateCollection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.networks.rate_collection.RateCollection" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pynucastro.networks.rate_collection.</code><code class="sig-name descname">RateCollection</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rate_files</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">libraries</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">rates</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/rate_collection.html#RateCollection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.networks.rate_collection.RateCollection" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>a collection of rates that together define a network</p>
-<dl class="method">
+<dl class="py method">
 <dt id="pynucastro.networks.rate_collection.RateCollection.evaluate_rates">
-<code class="sig-name descname">evaluate_rates</code><span class="sig-paren">(</span><em class="sig-param">rho</em>, <em class="sig-param">T</em>, <em class="sig-param">composition</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/rate_collection.html#RateCollection.evaluate_rates"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.networks.rate_collection.RateCollection.evaluate_rates" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">evaluate_rates</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rho</span></em>, <em class="sig-param"><span class="n">T</span></em>, <em class="sig-param"><span class="n">composition</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/rate_collection.html#RateCollection.evaluate_rates"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.networks.rate_collection.RateCollection.evaluate_rates" title="Permalink to this definition">¶</a></dt>
 <dd><p>evaluate the rates for a specific density, temperature, and
 composition</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pynucastro.networks.rate_collection.RateCollection.get_nuclei">
 <code class="sig-name descname">get_nuclei</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/rate_collection.html#RateCollection.get_nuclei"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.networks.rate_collection.RateCollection.get_nuclei" title="Permalink to this definition">¶</a></dt>
 <dd><p>get all the nuclei that are part of the network</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pynucastro.networks.rate_collection.RateCollection.network_overview">
 <code class="sig-name descname">network_overview</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/rate_collection.html#RateCollection.network_overview"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.networks.rate_collection.RateCollection.network_overview" title="Permalink to this definition">¶</a></dt>
 <dd><p>return a verbose network overview</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pynucastro.networks.rate_collection.RateCollection.plot">
-<code class="sig-name descname">plot</code><span class="sig-paren">(</span><em class="sig-param">outfile=None</em>, <em class="sig-param">rho=None</em>, <em class="sig-param">T=None</em>, <em class="sig-param">comp=None</em>, <em class="sig-param">size=(800</em>, <em class="sig-param">600)</em>, <em class="sig-param">dpi=100</em>, <em class="sig-param">title=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/rate_collection.html#RateCollection.plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.networks.rate_collection.RateCollection.plot" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">plot</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">outfile</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">rho</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">T</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">comp</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">size</span><span class="o">=</span><span class="default_value">(800, 600)</span></em>, <em class="sig-param"><span class="n">dpi</span><span class="o">=</span><span class="default_value">100</span></em>, <em class="sig-param"><span class="n">title</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">ydot_cutoff_value</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">always_show_p</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">always_show_alpha</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/rate_collection.html#RateCollection.plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.networks.rate_collection.RateCollection.plot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Make a plot of the network structure showing the links between nuclei</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="pynucastro.networks.rate_collection.RateCollection.pynucastro_dir">
-<code class="sig-name descname">pynucastro_dir</code><em class="property"> = '/home/travis/build/pynucastro/pynucastro/pynucastro'</em><a class="headerlink" href="#pynucastro.networks.rate_collection.RateCollection.pynucastro_dir" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">pynucastro_dir</code><em class="property"> = '/home/runner/work/pynucastro/pynucastro/pynucastro'</em><a class="headerlink" href="#pynucastro.networks.rate_collection.RateCollection.pynucastro_dir" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pynucastro.networks.rate_collection.RateCollection.write_network">
-<code class="sig-name descname">write_network</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/rate_collection.html#RateCollection.write_network"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.networks.rate_collection.RateCollection.write_network" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">write_network</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/rate_collection.html#RateCollection.write_network"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.networks.rate_collection.RateCollection.write_network" title="Permalink to this definition">¶</a></dt>
 <dd><p>Before writing the network, check to make sure the rates
 are distinguishable by name.</p>
 </dd></dl>
@@ -493,16 +500,16 @@ are distinguishable by name.</p>
 <p>A Fortran reaction network for integration into the StarKiller
 Microphysics set of reaction networks used by astrophysical hydrodynamics
 codes</p>
-<dl class="class">
+<dl class="py class">
 <dt id="pynucastro.networks.starkiller_network.StarKillerNetwork">
-<em class="property">class </em><code class="sig-prename descclassname">pynucastro.networks.starkiller_network.</code><code class="sig-name descname">StarKillerNetwork</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/starkiller_network.html#StarKillerNetwork"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.networks.starkiller_network.StarKillerNetwork" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pynucastro.networks.starkiller_network.</code><code class="sig-name descname">StarKillerNetwork</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/starkiller_network.html#StarKillerNetwork"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.networks.starkiller_network.StarKillerNetwork" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pynucastro.networks.base_fortran_network.BaseFortranNetwork" title="pynucastro.networks.base_fortran_network.BaseFortranNetwork"><code class="xref py py-class docutils literal notranslate"><span class="pre">pynucastro.networks.base_fortran_network.BaseFortranNetwork</span></code></a></p>
-<dl class="method">
+<dl class="py method">
 <dt id="pynucastro.networks.starkiller_network.StarKillerNetwork.get_csr_jac_metadata">
 <code class="sig-name descname">get_csr_jac_metadata</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/starkiller_network.html#StarKillerNetwork.get_csr_jac_metadata"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.networks.starkiller_network.StarKillerNetwork.get_csr_jac_metadata" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pynucastro.networks.starkiller_network.StarKillerNetwork.get_sparse_jac_nnz">
 <code class="sig-name descname">get_sparse_jac_nnz</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/starkiller_network.html#StarKillerNetwork.get_sparse_jac_nnz"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pynucastro.networks.starkiller_network.StarKillerNetwork.get_sparse_jac_nnz" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -517,29 +524,29 @@ codes</p>
            
           </div>
           <footer>
-  
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="pynucastro.nucdata.html" class="btn btn-neutral float-right" title="pynucastro.nucdata package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="pynucastro.html" class="btn btn-neutral float-left" title="pynucastro package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+        <a href="pynucastro.nucdata.html" class="btn btn-neutral float-right" title="pynucastro.nucdata package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="pynucastro.html" class="btn btn-neutral float-left" title="pynucastro package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018, Michael Zingale and Donald Willcox
+        &#169; Copyright 2021, Michael Zingale and Donald Willcox.
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 
@@ -547,7 +554,6 @@ codes</p>
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {

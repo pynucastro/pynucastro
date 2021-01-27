@@ -8,7 +8,7 @@ relevant publications are as follows.
 Nuclear reaction rates from JINA Reaclib
 ----------------------------------------
 
-The reaction rate parameterizations in `pynucastro/library <https://github.com/pynucastro/pynucastro/tree/master/pynucastro/library>`_
+The reaction rate parameterizations in `pynucastro/library <https://github.com/pynucastro/pynucastro/tree/main/pynucastro/library>`_
 were obtained from the `JINA Reaclib database <https://groups.nscl.msu.edu/jina/reaclib/db/>`_.
 
 `Cyburt et al., ApJS 189 (2010) 240 <http://iopscience.iop.org/article/10.1088/0067-0049/189/1/240>`_
@@ -17,9 +17,9 @@ Tabulated weak nuclear reaction rates
 -------------------------------------
 
 The weak reaction rate tables `23Na-23Ne_electroncapture.dat
-<https://github.com/pynucastro/pynucastro/blob/master/pynucastro/library/tabular/23Na-23Ne_electroncapture.dat>`_
+<https://github.com/pynucastro/pynucastro/blob/main/pynucastro/library/tabular/23Na-23Ne_electroncapture.dat>`_
 and `23Ne-23Na_betadecay.dat
-<https://github.com/pynucastro/pynucastro/blob/master/pynucastro/library/tabular/23Ne-23Na_betadecay.dat>`_
+<https://github.com/pynucastro/pynucastro/blob/main/pynucastro/library/tabular/23Ne-23Na_betadecay.dat>`_
 were obtained from:
 
 `<http://www.phys.chs.nihon-u.ac.jp/suzuki/data2/link.html>`_
