@@ -19,7 +19,7 @@ reproduce the bug including your version of python.
 
 *Any contributions that have the potential to change answers should be
 done via pull requests.* A pull request should be generated from your
-fork of pynucastro and target the `master` branch.
+fork of pynucastro and target the `main` branch.
 
 You should run the `py.test` unit tests on your changes, if possible,
 before issuing the PR. To run the unit tests, in the top `pynucastro/`

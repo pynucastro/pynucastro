@@ -1,9 +1,0 @@
-f90sources += vode_integrator.f90
-f90sources += vode_rhs.f90
-f90sources += vode_type.f90
-f90sources += rpar.f90
-f90sources += burn_type.f90
-f90sources += integration_data.f90
-f90sources += bl_types.f90
-f90sources += AMReX_constants_mod.f90
-f90sources += bl_constants.f90

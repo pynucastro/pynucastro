@@ -1,9 +1,11 @@
 # pynucastro
 
-[![Build Status](https://travis-ci.org/pynucastro/pynucastro.svg?branch=master)](https://travis-ci.org/pynucastro/pynucastro)
+[![Docs](https://github.com/pynucastro/pynucastro/workflows/github%20pages/badge.svg)](http://pynucastro.github.io/pynucastro/)
+[![pytest-all](https://github.com/pynucastro/pynucastro/workflows/pytest-all/badge.svg?branch=main)](https://github.com/pynucastro/pynucastro/actions)
+[![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 [![DOI](http://joss.theoj.org/papers/10.21105/joss.00588/status.svg)](https://doi.org/10.21105/joss.00588)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1202434.svg)](https://doi.org/10.5281/zenodo.1202434)
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/pynucastro/pynucastro/master?filepath=examples%2Fpynucastro-examples.ipynb)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/pynucastro/pynucastro/main?filepath=examples%2Fpynucastro-examples.ipynb)
 
 Python interfaces to the nuclear reaction rate databases, including
 the JINA Reaclib nuclear reactions database.  This
@@ -46,9 +48,9 @@ print(r.eval(1.0e9))
 
 Also see the Jupyter notebooks:
 
-  * [pynucastro-examples.ipynb](https://github.com/pynucastro/pynucastro/blob/master/examples/pynucastro-examples.ipynb)
+  * [pynucastro-examples.ipynb](https://github.com/pynucastro/pynucastro/blob/main/examples/pynucastro-examples.ipynb)
 
-  * [interactive-example.ipynb](https://github.com/pynucastro/pynucastro/blob/master/examples/interactive-example.ipynb)
+  * [interactive-example.ipynb](https://github.com/pynucastro/pynucastro/blob/main/examples/interactive-example.ipynb)
 
 
 # install
