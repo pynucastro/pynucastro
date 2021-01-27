@@ -20,12 +20,6 @@ produce either a callable python function for a rate or output the
 python code for a function that can be incorporated into a rate
 module.
 
-pynucastro does not yet support nuclear partition functions for
-Reaclib reverse rates, as the implementation is currently under
-development. We recommend you consider what problem you wish to study
-using pynucastro to determine whether reverse rates and partition
-function corrections are significant at the temperatures of interest.
-
 # documentation
 
 Documentation for pynucastro is available here:
