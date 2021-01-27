@@ -3,7 +3,7 @@ name: Run Python Tests
 on: [pull_request]
 
 jobs:
-  test-3.7:
+  python_3.7_tests:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
