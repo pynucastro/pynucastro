@@ -22,7 +22,6 @@ module actual_rhs_module
      real(rt) :: add_energy_rate(nrat_tabular)
   end type rate_eval_t
 
-
 contains
 
   subroutine actual_rhs_init()
