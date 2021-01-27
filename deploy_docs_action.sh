@@ -8,5 +8,5 @@ cd docs
 make html
 cd ../
 
-mkdir -p out/docs/
-mv docs/build/html/* out/docs
+mkdir -p out/
+mv docs/build/html/* out/
