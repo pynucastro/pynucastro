@@ -1,1 +1,0 @@
-This directory can be used for static CSS content.
