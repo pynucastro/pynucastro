@@ -1,6 +1,5 @@
 # pynucastro
 
-[![Build Status](https://travis-ci.org/pynucastro/pynucastro.svg?branch=main)](https://travis-ci.org/pynucastro/pynucastro)
 [![Docs](https://github.com/pynucastro/pynucastro/workflows/github%20pages/badge.svg)](http://pynucastro.github.io/pynucastro/)
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 [![DOI](http://joss.theoj.org/papers/10.21105/joss.00588/status.svg)](https://doi.org/10.21105/joss.00588)
