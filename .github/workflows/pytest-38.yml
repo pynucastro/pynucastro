@@ -1,4 +1,4 @@
-name: pytest
+name: pytest-3.8
 
 on: [pull_request]
 
