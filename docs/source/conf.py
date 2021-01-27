@@ -53,7 +53,7 @@ main_doc = 'index'
 
 # General information about the project.
 project = 'pynucastro'
-copyright = '2018, Michael Zingale and Donald Willcox'
+copyright = '2021, Michael Zingale and Donald Willcox'
 author = 'Michael Zingale and Donald Willcox'
 
 # The version info for the project you're documenting, acts as replacement for
