@@ -14,12 +14,11 @@ args = parser.parse_args()
 def plot_pf(pf):
     t = pf.temperature
     f = pf.partition_function
-    g = pf.interpolant
 
     xt = np.linspace(t[0], t[-1], num=1000)
 
     plt.loglog(t, f, 'r.', label=pf.nucleus)
-    plt.loglog(xt, np.power(10.0, g(xt/1.0e9)), 'b-', label='spline k = 3')
+    plt.loglog(xt, pf(xt), 'b-', label='spline k = 3')
     plt.xlabel('Log T (K)')
     plt.ylabel('Log F')
     plt.savefig('partition_function_{}.png'.format(pf.nucleus), dpi=600)
