@@ -3,8 +3,8 @@ dist: bionic
 language: python
 python:
   - '3.6'
-  - '3.7-dev'
   - '3.7'
+  - '3.8'
 
 before_install:
   - export PATH=$(echo $PATH | tr ':' "\n" | sed '/\/opt\/python/d' | tr "\n" ":" | sed "s|::|:|g")
@@ -21,4 +21,5 @@ before_script:
   - export PYTHONPATH=$PYTHONPATH:$(pwd)
 
 script:
-  - pytest -v --cov=. --nbval --ignore=docs
+  - pytest -v --cov=. --nbval --ignore=docs --ignore=pynucastro/library/tabular/*.ipynb
+
