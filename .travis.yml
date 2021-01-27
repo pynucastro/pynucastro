@@ -22,6 +22,3 @@ before_script:
 
 script:
   - pytest -v --cov=. --nbval --ignore=docs
-
-after_success:
-  - if [[ "$TRAVIS_PYTHON_VERSION" == "3.6" ]]; then ./deploy_docs.sh; fi
