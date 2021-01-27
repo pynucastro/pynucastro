@@ -1,17 +1,22 @@
-name: pytest-3.7
+name: pytest
 
 on: [pull_request]
 
 jobs:
   test_3_7:
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        python-version: [3.7, 3.8]
+
     steps:
       - uses: actions/checkout@v2
 
-      - name: Install Python 3
+      - name: Install Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
         with:
-          python-version: 3.7
+          python-version: ${{ matrix.python-version }}
 
       - name: Cache pip
         uses: actions/cache@v2
