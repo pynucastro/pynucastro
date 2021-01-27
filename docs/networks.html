@@ -1,0 +1,376 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Creating Networks &mdash; pynucastro v1.4.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="out" href="modules.html" />
+    <link rel="prev" title="Using RateFilter to Search Rates in a Library" href="library-examples-filtering.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> pynucastro
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                v1.4.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Overview of pynucastro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pynucastro-examples.html">pynucastro usage examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="library-examples-nuclei.html">Specifying Desired Nuclei to Construct a Network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="library-examples-filtering.html">Using RateFilter to Search Rates in a Library</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Creating Networks</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#all-networks">All networks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#python-network">Python network</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#standalone-fortran-network">Standalone Fortran network</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#starkiller-microphysics-network">StarKiller Microphysics network</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tabular-rates">Tabular Rates</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sources.html">Third Party Data</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pynucastro</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Creating Networks</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/networks.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="creating-networks">
+<h1>Creating Networks<a class="headerlink" href="#creating-networks" title="Permalink to this headline">¶</a></h1>
+<p>pynucastro can output the righthand side functions for ODE integration
+in Python and Fortran.</p>
+<p>For Fortran code generation, pynucastro offers two options.</p>
+<ul class="simple">
+<li><p>Standalone: Generate right hand side routines and an integration
+driver program using the included VODE integrator in
+<code class="docutils literal notranslate"><span class="pre">util/VODE/</span></code>. These networks implement only species and energy
+integration at constant temperature, as pynucastro does not include
+an equation of state.</p></li>
+<li><p>Microphysics: Generate network files to copy directly into the
+<a class="reference external" href="https://github.com/StarKiller-astro/Microphysics/">StarKiller Microphysics repository</a> for use with astrophysical
+simulation codes. These networks implement species, temperature, and
+energy integration.</p></li>
+</ul>
+<div class="section" id="all-networks">
+<h2>All networks<a class="headerlink" href="#all-networks" title="Permalink to this headline">¶</a></h2>
+<p>The first few steps to setting up any of the available network options
+are as follows. See the following section for details about the
+particular kind of network you are interested in creating.</p>
+<ul>
+<li><p>Create a working directory for your network (this does not have to
+be in the <code class="docutils literal notranslate"><span class="pre">pynucastro/</span></code> directory tree).</p></li>
+<li><p>Obtain Reaclib rate files (in Reaclib 1 or 2 format) for your problem and
+either place them in your working directory or <code class="docutils literal notranslate"><span class="pre">pynucastro/library</span></code>.</p>
+<p>You can find the rates that are already provided in the library by
+doing:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pynucastro</span><span class="o">.</span><span class="n">list_known_rates</span><span class="p">()</span>
+</pre></div>
+</div>
+</li>
+<li><p>Write a short python script to generate your network,
+e.g. <code class="docutils literal notranslate"><span class="pre">mynet.py</span></code>, based on the following example scripts:</p>
+<ul class="simple">
+<li><p>For Python networks, <a class="reference external" href="https://github.com/pynucastro/pynucastro/blob/main/examples/CNO/cno.py">examples/CNO/cno.py</a></p></li>
+<li><p>For standalone Fortran networks, <a class="reference external" href="https://github.com/pynucastro/pynucastro/blob/main/examples/urca-23_f90/urca.py">examples/urca-23_f90/urca.py</a></p></li>
+<li><p>For StarKiller Microphysics networks, <a class="reference external" href="https://github.com/pynucastro/pynucastro/blob/main/examples/urca-23_starkiller/urca.py">examples/urca-23_starkiller/urca.py</a></p></li>
+</ul>
+</li>
+<li><p>Run your python script (pynucastro must be in your PYTHONPATH).</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ python mynet.py
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+<div class="section" id="python-network">
+<h2>Python network<a class="headerlink" href="#python-network" title="Permalink to this headline">¶</a></h2>
+<p>First follow the steps above for all networks. To integrate a Python
+network using the SciPy integration routines, customize
+<a class="reference external" href="https://github.com/pynucastro/pynucastro/blob/main/examples/CNO/burn.py">examples/CNO/burn.py</a> to initialize and run your network using the
+right hand side module you generated above.</p>
+</div>
+<div class="section" id="standalone-fortran-network">
+<h2>Standalone Fortran network<a class="headerlink" href="#standalone-fortran-network" title="Permalink to this headline">¶</a></h2>
+<p>The <a class="reference external" href="https://github.com/pynucastro/pynucastro/tree/main/examples/urca-23_f90">examples/urca-23_f90</a>
+example builds a Fortran 90 network together with a GNU Makefile and
+integration driver program using the included VODE package for ODE
+integration.</p>
+<ul>
+<li><p>In the steps for all networks above, pynucastro will create several
+Fortran 90 files as well as a GNU Makefile set up to compile the
+integrator using gfortran. So next do:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ make
+</pre></div>
+</div>
+</li>
+<li><p>Edit the generated <code class="docutils literal notranslate"><span class="pre">inputs_integration</span></code> file to specify your initial
+conditions as well as integration tolerances, stop time, and output
+sampling interval.</p></li>
+<li><p>Run the integrator as:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ ./main.Linux.gfortran.exe inputs_integration
+</pre></div>
+</div>
+</li>
+<li><p>The integration results will be stored in a text file named by
+default <code class="docutils literal notranslate"><span class="pre">integration_history.dat</span></code></p></li>
+</ul>
+<p>Notes on the build system:</p>
+<ul>
+<li><p>If you would like to compile with debugging symbols, do:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ make <span class="nv">NDEBUG</span><span class="o">=</span>
+</pre></div>
+</div>
+</li>
+<li><p>To remove the executable and object files produced during compilation, do:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ make realclean
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+<div class="section" id="starkiller-microphysics-network">
+<h2>StarKiller Microphysics network<a class="headerlink" href="#starkiller-microphysics-network" title="Permalink to this headline">¶</a></h2>
+<p>The <a class="reference external" href="https://github.com/pynucastro/pynucastro/tree/main/examples/urca-23_starkiller">examples/urca-23_starkiller</a> example builds the right hand side, Jacobian,
+and helper Fortran modules to copy into the <code class="docutils literal notranslate"><span class="pre">networks/</span></code> subdirectory
+of the StarKiller Microphysics repository.</p>
+<p>No additional customization is required after running the steps for
+all networks above.</p>
+</div>
+<div class="section" id="tabular-rates">
+<h2>Tabular Rates<a class="headerlink" href="#tabular-rates" title="Permalink to this headline">¶</a></h2>
+<p>Tabular rates for reactions of the form <span class="math notranslate nohighlight">\(\rm{A \rightarrow B}\)</span>
+are supported by the standalone Fortran and StarKiller Microphysics
+network outputs.</p>
+<p>If you would like to include tabular rates, for now they must be in
+the form of, e.g. <a class="reference external" href="https://github.com/pynucastro/pynucastro/blob/main/pynucastro/library/tabular/23Na-23Ne_electroncapture.dat">23Na-23Ne_electroncapture.dat</a> in
+<code class="docutils literal notranslate"><span class="pre">pynucastro/library/tabular/</span></code>, indexed by the product of density and
+electron fraction <span class="math notranslate nohighlight">\(\rm{\rho Y_e}\)</span> and temperature
+<span class="math notranslate nohighlight">\(\rm{T}\)</span>, with the same number and order of variables.</p>
+<p>To generate a network with a tabular rate, prepare a rate file to
+describe how to read the table as below and then list it as you would
+a Reaclib rate file in your network generation script. For example,
+<a class="reference external" href="https://github.com/pynucastro/pynucastro/blob/main/pynucastro/library/tabular/na23--ne23-toki">pynucastro/library/tabular/na23–ne23-toki</a> demonstrates the following
+format:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>t
+[parent nuclide]  [daughter nuclide]
+[rate table file name]
+[number of header lines before the first line of data]
+[number of density*ye values]
+[number of temperature values]
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="modules.html" class="btn btn-neutral float-right" title="out" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="library-examples-filtering.html" class="btn btn-neutral float-left" title="Using RateFilter to Search Rates in a Library" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Michael Zingale and Donald Willcox.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

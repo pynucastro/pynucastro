@@ -1,0 +1,1255 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>pynucastro usage examples &mdash; pynucastro v1.4.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Specifying Desired Nuclei to Construct a Network" href="library-examples-nuclei.html" />
+    <link rel="prev" title="Overview of pynucastro" href="intro.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> pynucastro
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                v1.4.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Overview of pynucastro</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">pynucastro usage examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#Loading-a-single-rate">Loading a single rate</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#the-original-reaclib-source">the original reaclib source</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#evaluate-the-rate-at-a-given-temperature-(in-K)">evaluate the rate at a given temperature (in K)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#a-human-readable-string-describing-the-rate,-and-the-nuclei-involved">a human readable string describing the rate, and the nuclei involved</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#get-the-temperature-sensitivity-about-some-reference-T">get the temperature sensitivity about some reference T</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#plot-the-rate’s-temperature-dependence">plot the rate’s temperature dependence</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#Working-with-a-group-of-rates">Working with a group of rates</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#print-an-overview-of-the-network-described-by-this-rate-collection">print an overview of the network described by this rate collection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#show-a-network-diagram">show a network diagram</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#Explore-the-network’s-rates">Explore the network’s rates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Integrating-networks">Integrating networks</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="library-examples-nuclei.html">Specifying Desired Nuclei to Construct a Network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="library-examples-filtering.html">Using RateFilter to Search Rates in a Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="networks.html">Creating Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sources.html">Third Party Data</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pynucastro</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>pynucastro usage examples</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/pynucastro-examples.ipynb.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt *,
+div.nbinput.container div.input_area pre,
+div.nboutput.container div.output_area pre,
+div.nbinput.container div.input_area .highlight,
+div.nboutput.container div.output_area .highlight {
+    border: none;
+    padding: 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+div.nbinput.container > div[class*=highlight],
+div.nboutput.container > div[class*=highlight] {
+    margin: 0;
+}
+
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt * {
+    background: none;
+}
+
+div.nboutput.container div.output_area .highlight,
+div.nboutput.container div.output_area pre {
+    background: unset;
+}
+
+div.nboutput.container div.output_area div.highlight {
+    color: unset;  /* override Pygments text color */
+}
+
+/* avoid gaps between output lines */
+div.nboutput.container div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput.container,
+div.nboutput.container {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput.container,
+    div.nboutput.container {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput.container {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast.container {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput.container div.prompt pre {
+    color: #307FC1;
+}
+
+/* output prompt */
+div.nboutput.container div.prompt pre {
+    color: #BF5B3D;
+}
+
+/* all prompts */
+div.nbinput.container div.prompt,
+div.nboutput.container div.prompt {
+    width: 4.5ex;
+    padding-top: 5px;
+    position: relative;
+    user-select: none;
+}
+
+div.nbinput.container div.prompt > div,
+div.nboutput.container div.prompt > div {
+    position: absolute;
+    right: 0;
+    margin-right: 0.3ex;
+}
+
+@media (max-width: 540px) {
+    div.nbinput.container div.prompt,
+    div.nboutput.container div.prompt {
+        width: unset;
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput.container div.prompt.empty {
+        padding: 0;
+    }
+
+    div.nbinput.container div.prompt > div,
+    div.nboutput.container div.prompt > div {
+        position: unset;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput.container div.prompt pre,
+div.nboutput.container div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput.container div.input_area,
+div.nboutput.container div.output_area {
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.input_area,
+    div.nboutput.container div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput.container div.input_area {
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    /*background: #f5f5f5;*/
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput.container div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.imgmath center alignment in output cells */
+div.nboutput.container div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput.container div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+
+
+div.nbinput.container div.input_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight].math,
+div.nboutput.container div.output_area.rendered_html,
+div.nboutput.container div.output_area > div.output_javascript,
+div.nboutput.container div.output_area:not(.rendered_html) > img{
+    padding: 5px;
+    margin: 0;
+}
+
+/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
+div.nbinput.container div.input_area > div[class^='highlight'],
+div.nboutput.container div.output_area > div[class^='highlight']{
+    overflow-y: hidden;
+}
+
+/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
+.prompt a.copybtn {
+    display: none;
+}
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+div.rendered_html th {
+  font-weight: bold;
+}
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="pynucastro-usage-examples">
+<h1>pynucastro usage examples<a class="headerlink" href="#pynucastro-usage-examples" title="Permalink to this headline">¶</a></h1>
+<p>This notebook illustrates some of the higher-level data structures in <code class="docutils literal notranslate"><span class="pre">pynucastro</span></code>.</p>
+<p>Note to run properly, you must have <code class="docutils literal notranslate"><span class="pre">pynucastro/</span></code> in your <code class="docutils literal notranslate"><span class="pre">PYTHONPATH</span></code></p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="o">%</span><span class="k">matplotlib</span> inline
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">pynucastro</span> <span class="k">as</span> <span class="nn">pyrl</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="Loading-a-single-rate">
+<h2>Loading a single rate<a class="headerlink" href="#Loading-a-single-rate" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">Rate</span></code> class holds a single reaction rate and takes a reaclib file as input. There are a lot of methods in the <code class="docutils literal notranslate"><span class="pre">Rate</span></code> class that allow you to explore the rate.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">c13pg</span> <span class="o">=</span> <span class="n">pyrl</span><span class="o">.</span><span class="n">Rate</span><span class="p">(</span><span class="s2">&quot;c13-pg-n14-nacr&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="the-original-reaclib-source">
+<h3>the original reaclib source<a class="headerlink" href="#the-original-reaclib-source" title="Permalink to this headline">¶</a></h3>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="nb">print</span><span class="p">(</span><span class="n">c13pg</span><span class="o">.</span><span class="n">original_source</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+4
+
+
+         p  c13  n14                       nacrn     7.55100e+00
+ 1.851550e+01 0.000000e+00-1.372000e+01-4.500180e-01
+ 3.708230e+00-1.705450e+00-6.666670e-01
+         p  c13  n14                       nacrr     7.55100e+00
+ 1.396370e+01-5.781470e+00 0.000000e+00-1.967030e-01
+ 1.421260e-01-2.389120e-02-1.500000e+00
+         p  c13  n14                       nacrr     7.55100e+00
+ 1.518250e+01-1.355430e+01 0.000000e+00 0.000000e+00
+ 0.000000e+00 0.000000e+00-1.500000e+00
+
+</pre></div></div>
+</div>
+</div>
+<div class="section" id="evaluate-the-rate-at-a-given-temperature-(in-K)">
+<h3>evaluate the rate at a given temperature (in K)<a class="headerlink" href="#evaluate-the-rate-at-a-given-temperature-(in-K)" title="Permalink to this headline">¶</a></h3>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">c13pg</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="mf">1.e9</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+3883.4778216250666
+</pre></div></div>
+</div>
+</div>
+<div class="section" id="a-human-readable-string-describing-the-rate,-and-the-nuclei-involved">
+<h3>a human readable string describing the rate, and the nuclei involved<a class="headerlink" href="#a-human-readable-string-describing-the-rate,-and-the-nuclei-involved" title="Permalink to this headline">¶</a></h3>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="nb">print</span><span class="p">(</span><span class="n">c13pg</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+c13 + p --&gt; n14
+</pre></div></div>
+</div>
+<p>The nuclei involved are all <code class="docutils literal notranslate"><span class="pre">Nucleus</span></code> objects. They have members <code class="docutils literal notranslate"><span class="pre">Z</span></code> and <code class="docutils literal notranslate"><span class="pre">N</span></code> that give the proton and neutron number</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="nb">print</span><span class="p">(</span><span class="n">c13pg</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">c13pg</span><span class="o">.</span><span class="n">products</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[p, c13]
+[n14]
+</pre></div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">r2</span> <span class="o">=</span> <span class="n">c13pg</span><span class="o">.</span><span class="n">reactants</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="nb">type</span><span class="p">(</span><span class="n">r2</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+pynucastro.rates.rate.Nucleus
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="nb">print</span><span class="p">(</span><span class="n">r2</span><span class="o">.</span><span class="n">Z</span><span class="p">,</span> <span class="n">r2</span><span class="o">.</span><span class="n">N</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+6 7
+</pre></div></div>
+</div>
+</div>
+<div class="section" id="get-the-temperature-sensitivity-about-some-reference-T">
+<h3>get the temperature sensitivity about some reference T<a class="headerlink" href="#get-the-temperature-sensitivity-about-some-reference-T" title="Permalink to this headline">¶</a></h3>
+<p>This is the exponent when we write the rate as <span class="math notranslate nohighlight">\(r = r_0 \left ( \frac{T}{T_0} \right )^\nu\)</span>. We can estimate this given a reference temperature, <span class="math notranslate nohighlight">\(T_0\)</span></p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">c13pg</span><span class="o">.</span><span class="n">get_rate_exponent</span><span class="p">(</span><span class="mf">2.e7</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+16.21089670710968
+</pre></div></div>
+</div>
+</div>
+<div class="section" id="plot-the-rate’s-temperature-dependence">
+<h3>plot the rate’s temperature dependence<a class="headerlink" href="#plot-the-rate’s-temperature-dependence" title="Permalink to this headline">¶</a></h3>
+<p>A reaction rate has a complex temperature dependence that is defined in the reaclib files. The <code class="docutils literal notranslate"><span class="pre">plot()</span></code> method will plot this for us</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">c13pg</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/pynucastro-examples_20_0.png" src="_images/pynucastro-examples_20_0.png" />
+</div>
+</div>
+<p>A rate also knows its density dependence – this is inferred from the reactants in the rate description and is used to construct the terms needed to write a reaction network. Note: since we want reaction rates per gram, this number is 1 less than the number of nuclei</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">c13pg</span><span class="o">.</span><span class="n">dens_exp</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+1
+</pre></div></div>
+</div>
+</div>
+</div>
+<div class="section" id="Working-with-a-group-of-rates">
+<h2>Working with a group of rates<a class="headerlink" href="#Working-with-a-group-of-rates" title="Permalink to this headline">¶</a></h2>
+<p>A <code class="docutils literal notranslate"><span class="pre">RateCollection()</span></code> class allows us to work with a group of rates. This is used to explore their relationship. Other classes (introduced soon) are built on this and will allow us to output network code directly.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">files</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;c12-pg-n13-ls09&quot;</span><span class="p">,</span>
+         <span class="s2">&quot;c13-pg-n14-nacr&quot;</span><span class="p">,</span>
+         <span class="s2">&quot;n13--c13-wc12&quot;</span><span class="p">,</span>
+         <span class="s2">&quot;n13-pg-o14-lg06&quot;</span><span class="p">,</span>
+         <span class="s2">&quot;n14-pg-o15-im05&quot;</span><span class="p">,</span>
+         <span class="s2">&quot;n15-pa-c12-nacr&quot;</span><span class="p">,</span>
+         <span class="s2">&quot;o14--n14-wc12&quot;</span><span class="p">,</span>
+         <span class="s2">&quot;o15--n15-wc12&quot;</span><span class="p">]</span>
+<span class="n">rc</span> <span class="o">=</span> <span class="n">pyrl</span><span class="o">.</span><span class="n">RateCollection</span><span class="p">(</span><span class="n">files</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="print-an-overview-of-the-network-described-by-this-rate-collection">
+<h3>print an overview of the network described by this rate collection<a class="headerlink" href="#print-an-overview-of-the-network-described-by-this-rate-collection" title="Permalink to this headline">¶</a></h3>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="nb">print</span><span class="p">(</span><span class="n">rc</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+c12 + p --&gt; n13
+c13 + p --&gt; n14
+n13 --&gt; c13
+n13 + p --&gt; o14
+n14 + p --&gt; o15
+n15 + p --&gt; he4 + c12
+o14 --&gt; n14
+o15 --&gt; n15
+
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="nb">print</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">network_overview</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+p
+  consumed by:
+     c12 + p --&gt; n13
+     c13 + p --&gt; n14
+     n13 + p --&gt; o14
+     n14 + p --&gt; o15
+     n15 + p --&gt; he4 + c12
+  produced by:
+
+he4
+  consumed by:
+  produced by:
+     n15 + p --&gt; he4 + c12
+
+c12
+  consumed by:
+     c12 + p --&gt; n13
+  produced by:
+     n15 + p --&gt; he4 + c12
+
+c13
+  consumed by:
+     c13 + p --&gt; n14
+  produced by:
+     n13 --&gt; c13
+
+n13
+  consumed by:
+     n13 --&gt; c13
+     n13 + p --&gt; o14
+  produced by:
+     c12 + p --&gt; n13
+
+n14
+  consumed by:
+     n14 + p --&gt; o15
+  produced by:
+     c13 + p --&gt; n14
+     o14 --&gt; n14
+
+n15
+  consumed by:
+     n15 + p --&gt; he4 + c12
+  produced by:
+     o15 --&gt; n15
+
+o14
+  consumed by:
+     o14 --&gt; n14
+  produced by:
+     n13 + p --&gt; o14
+
+o15
+  consumed by:
+     o15 --&gt; n15
+  produced by:
+     n14 + p --&gt; o15
+
+
+</pre></div></div>
+</div>
+</div>
+<div class="section" id="show-a-network-diagram">
+<h3>show a network diagram<a class="headerlink" href="#show-a-network-diagram" title="Permalink to this headline">¶</a></h3>
+<p>At the moment, we rely on NetworkX to visualize the network</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">rc</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/pynucastro-examples_29_0.png" src="_images/pynucastro-examples_29_0.png" />
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="Explore-the-network’s-rates">
+<h2>Explore the network’s rates<a class="headerlink" href="#Explore-the-network’s-rates" title="Permalink to this headline">¶</a></h2>
+<p>To evaluate the rates, we need a composition</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">comp</span> <span class="o">=</span> <span class="n">pyrl</span><span class="o">.</span><span class="n">Composition</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">get_nuclei</span><span class="p">())</span>
+<span class="n">comp</span><span class="o">.</span><span class="n">set_solar_like</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<p>Interactive exploration is enabled through the <code class="docutils literal notranslate"><span class="pre">Explorer</span></code> class, which takes a <code class="docutils literal notranslate"><span class="pre">RateCollection</span></code> and a <code class="docutils literal notranslate"><span class="pre">Composition</span></code></p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">re</span> <span class="o">=</span> <span class="n">pyrl</span><span class="o">.</span><span class="n">Explorer</span><span class="p">(</span><span class="n">rc</span><span class="p">,</span> <span class="n">comp</span><span class="p">)</span>
+<span class="n">re</span><span class="o">.</span><span class="n">explore</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/pynucastro-examples_34_0.png" src="_images/pynucastro-examples_34_0.png" />
+</div>
+</div>
+</div>
+<div class="section" id="Integrating-networks">
+<h2>Integrating networks<a class="headerlink" href="#Integrating-networks" title="Permalink to this headline">¶</a></h2>
+<p>If we don’t just want to explore the network interactively in a notebook, but want to output code to run integrate it, we need to create one of <code class="docutils literal notranslate"><span class="pre">PythonNetwork</span></code>, <code class="docutils literal notranslate"><span class="pre">StarKillerNetwork</span></code> or <code class="docutils literal notranslate"><span class="pre">SundialsNetwork</span></code></p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">pynet</span> <span class="o">=</span> <span class="n">pyrl</span><span class="o">.</span><span class="n">PythonNetwork</span><span class="p">(</span><span class="n">files</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>A network knows how to express the terms that make up the function (in the right programming language). For instance, you can get the term for the <span class="math notranslate nohighlight">\({}^{13}\mathrm{C} (p,\gamma) {}^{14}\mathrm{N}\)</span> rate as:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="nb">print</span><span class="p">(</span><span class="n">pynet</span><span class="o">.</span><span class="n">ydot_string</span><span class="p">(</span><span class="n">c13pg</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+rho*Y[ip]*Y[ic13]*lambda_p_c13__n14
+</pre></div></div>
+</div>
+<p>and the code needed to evaluate that rate (the T-dependent part) as:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="nb">print</span><span class="p">(</span><span class="n">pynet</span><span class="o">.</span><span class="n">function_string</span><span class="p">(</span><span class="n">c13pg</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+@numba.njit()
+def p_c13__n14(tf):
+    # c13 + p --&gt; n14
+    rate = 0.0
+
+    # nacrn
+    rate += np.exp(  18.5155 + -13.72*tf.T913i + -0.450018*tf.T913
+                  + 3.70823*tf.T9 + -1.70545*tf.T953 + -0.666667*tf.lnT9)
+    # nacrr
+    rate += np.exp(  13.9637 + -5.78147*tf.T9i + -0.196703*tf.T913
+                  + 0.142126*tf.T9 + -0.0238912*tf.T953 + -1.5*tf.lnT9)
+    # nacrr
+    rate += np.exp(  15.1825 + -13.5543*tf.T9i
+                  + -1.5*tf.lnT9)
+
+    return rate
+
+
+</pre></div></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">write_network()</span></code> method will output the python code needed to define the RHS of a network for integration with the SciPy integrators</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">pynet</span><span class="o">.</span><span class="n">write_network</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+import numpy as np
+from pynucastro.rates import Tfactors
+import numba
+
+ip = 0
+ihe4 = 1
+ic12 = 2
+ic13 = 3
+in13 = 4
+in14 = 5
+in15 = 6
+io14 = 7
+io15 = 8
+nnuc = 9
+
+A = np.zeros((nnuc), dtype=np.int32)
+
+A[ip] = 1
+A[ihe4] = 4
+A[ic12] = 12
+A[ic13] = 13
+A[in13] = 13
+A[in14] = 14
+A[in15] = 15
+A[io14] = 14
+A[io15] = 15
+
+Z = np.zeros((nnuc), dtype=np.int32)
+
+Z[ip] = 1
+Z[ihe4] = 2
+Z[ic12] = 6
+Z[ic13] = 6
+Z[in13] = 7
+Z[in14] = 7
+Z[in15] = 7
+Z[io14] = 8
+Z[io15] = 8
+
+@numba.njit()
+def ye(Y):
+    return np.sum(Z * Y)/np.sum(A * Y)
+
+@numba.njit()
+def p_c12__n13(tf):
+    # c12 + p --&gt; n13
+    rate = 0.0
+
+    # ls09n
+    rate += np.exp(  17.1482 + -13.692*tf.T913i + -0.230881*tf.T913
+                  + 4.44362*tf.T9 + -3.15898*tf.T953 + -0.666667*tf.lnT9)
+    # ls09r
+    rate += np.exp(  17.5428 + -3.77849*tf.T9i + -5.10735*tf.T913i + -2.24111*tf.T913
+                  + 0.148883*tf.T9 + -1.5*tf.lnT9)
+
+    return rate
+
+@numba.njit()
+def p_c13__n14(tf):
+    # c13 + p --&gt; n14
+    rate = 0.0
+
+    # nacrn
+    rate += np.exp(  18.5155 + -13.72*tf.T913i + -0.450018*tf.T913
+                  + 3.70823*tf.T9 + -1.70545*tf.T953 + -0.666667*tf.lnT9)
+    # nacrr
+    rate += np.exp(  13.9637 + -5.78147*tf.T9i + -0.196703*tf.T913
+                  + 0.142126*tf.T9 + -0.0238912*tf.T953 + -1.5*tf.lnT9)
+    # nacrr
+    rate += np.exp(  15.1825 + -13.5543*tf.T9i
+                  + -1.5*tf.lnT9)
+
+    return rate
+
+@numba.njit()
+def n13__c13__weak__wc12(tf):
+    # n13 --&gt; c13
+    rate = 0.0
+
+    # wc12w
+    rate += np.exp(  -6.7601)
+
+    return rate
+
+@numba.njit()
+def p_n13__o14(tf):
+    # n13 + p --&gt; o14
+    rate = 0.0
+
+    # lg06n
+    rate += np.exp(  18.1356 + -15.1676*tf.T913i + 0.0955166*tf.T913
+                  + 3.0659*tf.T9 + -0.507339*tf.T953 + -0.666667*tf.lnT9)
+    # lg06r
+    rate += np.exp(  10.9971 + -6.12602*tf.T9i + 1.57122*tf.T913i
+                  + -1.5*tf.lnT9)
+
+    return rate
+
+@numba.njit()
+def p_n14__o15(tf):
+    # n14 + p --&gt; o15
+    rate = 0.0
+
+    # im05n
+    rate += np.exp(  17.01 + -15.193*tf.T913i + -0.161954*tf.T913
+                  + -7.52123*tf.T9 + -0.987565*tf.T953 + -0.666667*tf.lnT9)
+    # im05r
+    rate += np.exp(  6.73578 + -4.891*tf.T9i
+                  + 0.0682*tf.lnT9)
+    # im05r
+    rate += np.exp(  7.65444 + -2.998*tf.T9i
+                  + -1.5*tf.lnT9)
+    # im05n
+    rate += np.exp(  20.1169 + -15.193*tf.T913i + -4.63975*tf.T913
+                  + 9.73458*tf.T9 + -9.55051*tf.T953 + 0.333333*tf.lnT9)
+
+    return rate
+
+@numba.njit()
+def p_n15__he4_c12(tf):
+    # n15 + p --&gt; he4 + c12
+    rate = 0.0
+
+    # nacrn
+    rate += np.exp(  27.4764 + -15.253*tf.T913i + 1.59318*tf.T913
+                  + 2.4479*tf.T9 + -2.19708*tf.T953 + -0.666667*tf.lnT9)
+    # nacrr
+    rate += np.exp(  -6.57522 + -1.1638*tf.T9i + 22.7105*tf.T913
+                  + -2.90707*tf.T9 + 0.205754*tf.T953 + -1.5*tf.lnT9)
+    # nacrr
+    rate += np.exp(  20.8972 + -7.406*tf.T9i
+                  + -1.5*tf.lnT9)
+    # nacrr
+    rate += np.exp(  -4.87347 + -2.02117*tf.T9i + 30.8497*tf.T913
+                  + -8.50433*tf.T9 + -1.54426*tf.T953 + -1.5*tf.lnT9)
+
+    return rate
+
+@numba.njit()
+def o14__n14__weak__wc12(tf):
+    # o14 --&gt; n14
+    rate = 0.0
+
+    # wc12w
+    rate += np.exp(  -4.62354)
+
+    return rate
+
+@numba.njit()
+def o15__n15__weak__wc12(tf):
+    # o15 --&gt; n15
+    rate = 0.0
+
+    # wc12w
+    rate += np.exp(  -5.17053)
+
+    return rate
+
+def rhs(t, Y, rho, T):
+    return rhs_eq(t, Y, rho, T)
+
+@numba.njit()
+def rhs_eq(t, Y, rho, T):
+
+    ip = 0
+    ihe4 = 1
+    ic12 = 2
+    ic13 = 3
+    in13 = 4
+    in14 = 5
+    in15 = 6
+    io14 = 7
+    io15 = 8
+    nnuc = 9
+
+    tf = Tfactors(T)
+
+    lambda_p_c12__n13 = p_c12__n13(tf)
+    lambda_p_c13__n14 = p_c13__n14(tf)
+    lambda_n13__c13__weak__wc12 = n13__c13__weak__wc12(tf)
+    lambda_p_n13__o14 = p_n13__o14(tf)
+    lambda_p_n14__o15 = p_n14__o15(tf)
+    lambda_p_n15__he4_c12 = p_n15__he4_c12(tf)
+    lambda_o14__n14__weak__wc12 = o14__n14__weak__wc12(tf)
+    lambda_o15__n15__weak__wc12 = o15__n15__weak__wc12(tf)
+
+    dYdt = np.zeros((nnuc), dtype=np.float64)
+
+    dYdt[ip] = (
+       -rho*Y[ip]*Y[ic12]*lambda_p_c12__n13
+       -rho*Y[ip]*Y[ic13]*lambda_p_c13__n14
+       -rho*Y[ip]*Y[in13]*lambda_p_n13__o14
+       -rho*Y[ip]*Y[in14]*lambda_p_n14__o15
+       -rho*Y[ip]*Y[in15]*lambda_p_n15__he4_c12
+       )
+
+    dYdt[ihe4] = (
+       +rho*Y[ip]*Y[in15]*lambda_p_n15__he4_c12
+       )
+
+    dYdt[ic12] = (
+       -rho*Y[ip]*Y[ic12]*lambda_p_c12__n13
+       +rho*Y[ip]*Y[in15]*lambda_p_n15__he4_c12
+       )
+
+    dYdt[ic13] = (
+       -rho*Y[ip]*Y[ic13]*lambda_p_c13__n14
+       +Y[in13]*lambda_n13__c13__weak__wc12
+       )
+
+    dYdt[in13] = (
+       -Y[in13]*lambda_n13__c13__weak__wc12
+       -rho*Y[ip]*Y[in13]*lambda_p_n13__o14
+       +rho*Y[ip]*Y[ic12]*lambda_p_c12__n13
+       )
+
+    dYdt[in14] = (
+       -rho*Y[ip]*Y[in14]*lambda_p_n14__o15
+       +rho*Y[ip]*Y[ic13]*lambda_p_c13__n14
+       +Y[io14]*lambda_o14__n14__weak__wc12
+       )
+
+    dYdt[in15] = (
+       -rho*Y[ip]*Y[in15]*lambda_p_n15__he4_c12
+       +Y[io15]*lambda_o15__n15__weak__wc12
+       )
+
+    dYdt[io14] = (
+       -Y[io14]*lambda_o14__n14__weak__wc12
+       +rho*Y[ip]*Y[in13]*lambda_p_n13__o14
+       )
+
+    dYdt[io15] = (
+       -Y[io15]*lambda_o15__n15__weak__wc12
+       +rho*Y[ip]*Y[in14]*lambda_p_n14__o15
+       )
+
+    return dYdt
+</pre></div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="library-examples-nuclei.html" class="btn btn-neutral float-right" title="Specifying Desired Nuclei to Construct a Network" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="intro.html" class="btn btn-neutral float-left" title="Overview of pynucastro" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Michael Zingale and Donald Willcox.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
