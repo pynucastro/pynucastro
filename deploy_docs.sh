@@ -2,12 +2,12 @@
 set -e # Exit with nonzero exit code if anything fails
 
 # Then we Build and deploy the sphinx documentation
-SOURCE_BRANCH="master"
+SOURCE_BRANCH="main"
 TARGET_BRANCH="gh-pages"
 
 # Pull requests and commits to other branches shouldn't try to deploy
 if [ "$TRAVIS_PULL_REQUEST" != "false" -o "$TRAVIS_BRANCH" != "$SOURCE_BRANCH" ]; then
-    echo "Skipping deploy on $TRAVIS_BRANCH. We only deploy docs automatically from master."
+    echo "Skipping deploy on $TRAVIS_BRANCH. We only deploy docs automatically from main."
     exit 0
 fi
 
