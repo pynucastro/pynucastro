@@ -8,6 +8,12 @@ import io
 import numpy as np
 import matplotlib.pyplot as plt
 import collections
+import numba
+
+try:
+    from numba.experimental import jitclass
+except ImportError:
+    from numba import jitclass
 
 from pynucastro.nucdata import UnidentifiedElement, PeriodicTable
 
@@ -31,8 +37,6 @@ def list_known_rates():
                 for r in lib.get_rates():
                     print("                                 : {}".format(r))
 
-import numba
-
 Tfactor_spec = [
 ('T9', numba.float64),
 ('T9i', numba.float64),
@@ -42,7 +46,7 @@ Tfactor_spec = [
 ('lnT9', numba.float64)
 ]
 
-@numba.experimental.jitclass(Tfactor_spec)
+@jitclass(Tfactor_spec)
 class Tfactors(object):
     """ precompute temperature factors for speed """
 
@@ -229,11 +233,16 @@ class Nucleus(object):
         return self.raw
 
     def __hash__(self):
-        return hash(self.__repr__())
+        return hash((self.Z, self.A))
 
     def __eq__(self, other):
-        return self.el == other.el and \
+        if isinstance(other, Nucleus):
+            return self.el == other.el and \
                self.Z == other.Z and self.A == other.A
+        elif isinstance(other, tuple):
+            return (self.Z, self.A) == other
+        else:
+            return NotImplemented
 
     def __lt__(self, other):
         if not self.Z == other.Z:
@@ -534,7 +543,7 @@ class RateFilter(object):
 
     def __init__(self, reactants=None, products=None, exact=True,
                  reverse=None, min_reactants=None, max_reactants=None,
-                 min_products=None, max_products=None):
+                 min_products=None, max_products=None, filter_function=None):
         """Create a new RateFilter with the given selection rules
 
         Keyword Arguments:
@@ -558,6 +567,10 @@ class RateFilter(object):
             min_products  -- int, match Rates that have at least this many products
             max_reactants -- int, match Rates that have no more than this many reactants
             max_products  -- int, match Rates that have no more than this many products
+            filter_function -- callable (Rate -> bool),
+                               a callable that can take a single rate as an argument
+                               may be used to specify additional criteria, returning
+                               True if the rate meets all of them, False otherwise
         
         Examples:
             Create a filter that finds all proton capture and proton-burning reactions
@@ -585,6 +598,7 @@ class RateFilter(object):
         self.min_products = min_products
         self.max_reactants = max_reactants
         self.max_products = max_products
+        self.filter_function = filter_function
 
         if reactants:
             if type(reactants) == Nucleus or type(reactants) == str:
@@ -645,6 +659,7 @@ class RateFilter(object):
         matches_min_products = True
         matches_max_reactants = True
         matches_max_products = True
+        matches_filter_function = True
         if self.reactants:
             matches_reactants = self._compare_nuclides(self.reactants, r.reactants, self.exact)
         if self.products:
@@ -659,9 +674,12 @@ class RateFilter(object):
             matches_max_reactants = len(r.reactants) <= self.max_reactants
         if type(self.max_products) == int:
             matches_max_products = len(r.products) <= self.max_products
+        if self.filter_function is not None:
+            matches_filter_function = self.filter_function(r)
         return (matches_reactants and matches_products and matches_reverse and
                 matches_min_reactants and matches_max_reactants and
-                matches_min_products and matches_max_products)
+                matches_min_products and matches_max_products and
+                matches_filter_function)
 
     def invert(self):
         """ Return a RateFilter matching the inverse rate. """
