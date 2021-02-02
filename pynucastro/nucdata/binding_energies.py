@@ -52,8 +52,7 @@ class BindingTable(object):
 
         self.nuclides = []
 
-        if self.datfile:
-            self.read()
+        self.read()
 
     def read(self):
         """
