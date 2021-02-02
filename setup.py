@@ -13,5 +13,5 @@ setup(name='pynucastro',
                                    "nucdata/*", "nucdata/PartitionFunctions/*"]},
       install_requires=['networkx', 'numpy', 'numba',
                         'sympy', 'scipy', 'matplotlib',
-                        'ipywidgets'],
+                        'ipywidgets', 'numba'],
       zip_safe=False)
