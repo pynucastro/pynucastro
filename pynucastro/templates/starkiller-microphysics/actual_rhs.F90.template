@@ -5,6 +5,7 @@ module actual_rhs_module
   use physical_constants, only: N_AVO
   use network
   use table_rates
+  use reaclib_rates
   use burn_type_module
 
   implicit none
@@ -24,7 +25,11 @@ module actual_rhs_module
 contains
 
   subroutine actual_rhs_init()
-    ! STUB FOR MAESTRO'S TEST_REACT. ALL THE INIT IS DONE BY BURNER_INIT
+
+    call init_reaclib()
+    call init_tabular()
+    call net_screening_init()
+
     return
   end subroutine actual_rhs_init
 
