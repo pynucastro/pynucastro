@@ -481,7 +481,6 @@ class BaseFortranNetwork(ABC, RateCollection):
                 nucs = "_".join([str(q) for q in r.ion_screen])
                 in_map = False
                 for h, n1, n2, mrates, krates in screening_map:
-                    print(h, mrates, krates)
                     if h == nucs:
                         # if we already have the reactants, then we
                         # will already be doing the screening factors,
