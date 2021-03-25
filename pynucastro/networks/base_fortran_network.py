@@ -631,11 +631,11 @@ class BaseFortranNetwork(ABC, RateCollection):
             if not n1.dummy:
                 of.write(f'zion(j{n1}), aion(j{n1}), &\n')
             else:
-                of.write(f'{n1.Z}, {n1.A}), &\n')
+                of.write(f'{float(n1.Z)}_rt, {float(n1.A)}_rt), &\n')
             if not n2.dummy:
                 of.write(f'{self.indent*(n_indent+1)}zion(j{n2}), aion(j{n2}))\n\n')
             else:
-                of.write(f'{self.indent*(n_indent+1)}{n2.Z}, {n2.A})\n\n')
+                of.write(f'{self.indent*(n_indent+1)}{float(n2.Z)}_rt, {float(n2.A)}_rt)\n\n')
 
     def _write_reaclib_metadata(self, n_indent, of):
         jset = 0
