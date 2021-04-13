@@ -146,7 +146,7 @@ while seeds:
     encountered.update(prod)
     
 encountered = sorted(encountered)
-rp_net = StarKillerNetwork(libraries=[final_lib], precedence=["wc17", "ths8"])
+rp_net = PythonNetwork(libraries=[final_lib], precedence=["wc17", "ths8"])
 
 print("Network constructed.")
 print()
@@ -156,8 +156,11 @@ print()
 print(f"Number of Species: {len(encountered)}")
 print(f"Number of Rates: {len(rp_net.rates)}")
 print()
+
+"""
 print("Writing network...")
 
 rp_net.write_network()
 
 print("Task completed.")
+"""
