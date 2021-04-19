@@ -1,4 +1,5 @@
 import networkx as nx
+import sys
 from load_network import load_network
 from pynucastro.rates import Library, RateFilter, Nucleus
 from pynucastro.networks import PythonNetwork
@@ -27,7 +28,7 @@ def main(endpoint):
     print("Original order %i " % G.order())
 
     target_sources = ["p", "he4", "li7"]
-    G_reduced = first_pass_reduction(G)
+    G_reduced = first_pass_reduction(G, target_sources)
     print("Reduced order %i " % G_reduced.order())
 
 
