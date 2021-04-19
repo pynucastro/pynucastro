@@ -517,6 +517,62 @@ class RateCollection:
         else:
             plt.tight_layout()
             plt.savefig(outfile, dpi=dpi)
+
+    def get_reaction_network_graph(self,  rho=None, T=None, comp=None, filter_function=None):
+        G = nx.MultiDiGraph()
+        G.position = {}
+        G.labels = {}
+
+        # nodes -- the node nuclei will be all of the heavies
+        # add all the nuclei into G.node
+        node_nuclei = []
+        for n in self.unique_nuclei:
+            node_nuclei.append(n)
+
+        if filter_function is not None:
+            node_nuclei = list(filter(filter_function, node_nuclei))
+        
+        for n in node_nuclei:
+            G.add_node(n)
+            G.position[n] = (n.N, n.Z)
+            G.labels[n] = r"{}".format(n.raw)
+
+        # get the rates for each reaction
+        if rho is not None and T is not None and comp is not None:
+            ydots = self.evaluate_rates(rho, T, comp)
+        else:
+            ydots = None
+
+        # edges
+        for n in node_nuclei:
+            for r in self.nuclei_consumed[n]:
+                for p in r.products:
+                    if p in node_nuclei:
+                        # networkx doesn't seem to keep the edges in
+                        # any particular order, so we associate data
+                        # to the edges here directly, in this case,
+                        # the reaction rate, which will be used to
+                        # color it
+                        if ydots is None:
+                            G.add_edges_from([(n, p)], weight=0.5)
+                        else:
+                            if r in invisible_rates:
+                                continue
+                            try:
+                                rate_weight = ydots[r]
+                            except ValueError:
+                                # if ydots[r] is zero, then set the weight
+                                # to roughly the minimum exponent possible
+                                # for python floats
+                                rate_weight = -308
+                            except:
+                                raise
+                            G.add_edges_from([(n, p)], weight=rate_weight)
+                            
+        # It seems that networkx broke backwards compatability, and 'zorder' is no longer a valid
+        # keyword argument. The 'linewidth' argument has also changed to 'linewidths'.
+
+        return G
     
     @staticmethod        
     def _safelog(arr, small):
