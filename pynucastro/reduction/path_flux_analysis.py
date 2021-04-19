@@ -7,7 +7,7 @@ from pynucastro.networks import PythonNetwork
 def first_pass_reduction(G, target_sources):
 
     # at this point, all the weights are 1
-    paths = nx.multi_source_dijkstra_path_length(G, sources=target_sources, cutoff=2)
+    paths = nx.multi_source_dijkstra_path(G, sources=target_sources, cutoff=2)
     u = []
     for p in paths:
         u = set(list(u) + list(paths[p]))
