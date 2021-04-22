@@ -48,21 +48,21 @@ def calc_adj_matrix(net, rvals, tol):
         n = net.unique_nuclei[i]
         for r in net.nuclei_produced[n]:
             for b in r.products:
-                j = np.where(net.unique_nuclei==b)
-                p_AB[i,j] += rvals[r]
+                j = np.where(np.array(net.unique_nuclei)==b)
+                p_AB[i,j[0][0]] += rvals[r]
 
             for b in r.reactants:
-                j = np.where(net.unique_nuclei==b)
-                p_AB[i,j] += rvals[r]
+                j = np.where(np.array(net.unique_nuclei)==b)
+                p_AB[i,j[0][0]] += rvals[r]
 
         for r in net.nuclei_consumed[n]:
             for b in r.products:
-                j = np.where(net.unique_nuclei==b)
-                c_AB[i,j] += rvals[r]
+                j = np.where(np.array(net.unique_nuclei)==b)
+                c_AB[i,j[0][0]] += rvals[r]
 
             for b in r.reactants:
-                j = np.where(net.unique_nuclei==b)
-                c_AB[i,j] += rvals[r]
+                j = np.where(np.array(net.unique_nuclei)==b)
+                c_AB[i,j[0][0]] += rvals[r]
     
     #by this point, should be in same form as pymars arrays
     r_pro_AB1 = p_AB/denom
@@ -83,6 +83,7 @@ def calc_adj_matrix(net, rvals, tol):
         r_pro_AB2 += np.outer(pro1, pro2)
         r_con_AB2 += np.outer(con1, con2)
 
+    
     adjacency_matrix = r_pro_AB1 + r_con_AB1 + r_pro_AB2 + r_con_AB2
     np.fill_diagonal(adjacency_matrix, 0.0)
 
