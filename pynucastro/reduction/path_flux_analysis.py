@@ -23,7 +23,7 @@ def first_pass_reduction(G, target_sources):
 
     return G_reduced
 
-def calc_adj_matrix(network, rvals):
+def calc_adj_matrix(net, rvals, tol):
     N_species = len(net.unique_nuclei)
     p_A = np.zeros(N_species)
     c_A = np.zeros(N_species)
@@ -39,7 +39,7 @@ def calc_adj_matrix(network, rvals):
         for r in net.nuclei_consumed[n]:
             c_A[i] += rvals[r]
 
-    denom = np.maximmum(p_A, c_A)[:,np,newaxis]
+    denom = np.maximum(p_A, c_A)[:,np.newaxis]
 
     # A along rows, B along columns
     p_AB = np.zeros((N_species, N_species))
@@ -87,8 +87,9 @@ def calc_adj_matrix(network, rvals):
     np.fill_diagonal(adjacency_matrix, 0.0)
 
     # remove edges with weak dependence
-    adjacency_matrix *= adjacancey_matrix > tol
-
+    print(np.max(adjacency_matrix))
+    adjacency_matrix *= adjacency_matrix > tol
+    print(np.max(adjacency_matrix))
     return adjacency_matrix
 
 def graph_from_adj_matrix(network, A):
@@ -102,29 +103,30 @@ def get_remove_list(G, targets):
     lengths = nx.multi_source_dijkstra_path_length(G, targets)
     node_set = set(G.nodes)
     reachable = set(lengths.keys())
-
+    print(lengths)
+    print(reachable)
     return node_set.difference(reachable)
 
-def get_reduced_network(network, r_species):
+def get_reduced_network(net, r_species):
     r_rates = []
     for n in r_species:
         r_rates = set(list(r_rates) + list(net.nuclei_consumed[n]) + list(net.nuclei_produced[n]))
     
     return PythonNetwork(rates=list(set(net.rates).difference(r_rates)))
 
-def main(endpoint, targets = [Nucleus("li7")], tol=0.2):
+def main(endpoint, targets = [Nucleus("p")], tol=0.2):
     net = load_network(endpoint)
-
+    print("Network loaded")
     # skipping the first pass reduction because it is mostly ineffectual
     # due to connectivity of p/he4
     T = 1e9
     rho = 1e4
     comp = pync.Composition(net.get_nuclei())
     comp.set_solar_like()
-    rvals = net.evalulate_rates(rho=rho, T=T, composition=comp)
+    rvals = net.evaluate_rates(rho=rho, T=T, composition=comp)
 
     # grab adjacency matrix through PFA calculation on 2-neighbor paths
-    A = calc_adj_matrix(net, rvals)
+    A = calc_adj_matrix(net, rvals, tol)
 
     # create new directed graph and perform DFS on targets to get nodes to remove
     G_pfa = graph_from_adj_matrix(net, A)
@@ -133,9 +135,9 @@ def main(endpoint, targets = [Nucleus("li7")], tol=0.2):
     # construct new network with only reactions involving reachable species
     reduced_net = get_reduced_network(net, r_species)
 
-    print("Number of species in full network: ", len(net.unique_species))
+    print("Number of species in full network: ", len(net.unique_nuclei))
     print("Number of rates in full network: ", len(net.rates))
-    print("Number of species in reduced network: ", len(reduced_net.unique_species))
+    print("Number of species in reduced network: ", len(reduced_net.unique_nuclei))
     print("Number of rates in reduced network: ", len(reduced_net.rates))
 
 if __name__ == "__main__":
