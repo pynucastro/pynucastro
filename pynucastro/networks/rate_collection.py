@@ -517,6 +517,31 @@ class RateCollection:
         else:
             plt.tight_layout()
             plt.savefig(outfile, dpi=dpi)
+
+    def get_reaction_network_graph(self):
+        G = nx.DiGraph()
+        G.position = {}
+        G.labels = {}
+
+        # nodes -- the node nuclei will be all of the heavies
+        # add all the nuclei into G.node
+        node_nuclei = []
+        for n in self.unique_nuclei:
+            node_nuclei.append(n)
+
+        for n in node_nuclei:
+            G.add_node(n)
+            G.position[n] = (n.N, n.Z)
+            G.labels[n] = r"{}".format(n.raw)
+
+        # edges
+        for n in node_nuclei:
+            for r in self.nuclei_consumed[n]:
+                for p in r.products:
+                    if p in node_nuclei:
+                        G.add_edges_from([(n, p)], weight=1)
+
+        return G
     
     @staticmethod        
     def _safelog(arr, small):
