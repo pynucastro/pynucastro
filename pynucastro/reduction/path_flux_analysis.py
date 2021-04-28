@@ -5,6 +5,7 @@ import sys
 from load_network import load_network
 from pynucastro.networks import PythonNetwork
 from pynucastro.rates import Library, RateFilter, Nucleus
+from collections import OrderedDict
 
 def first_pass_reduction(G, target_sources):
 
@@ -41,6 +42,12 @@ def calc_adj_matrix(net, rvals, tol):
 
     denom = np.maximum(p_A, c_A)[:,np.newaxis]
 
+    # create index mapping
+    j_map = OrderedDict()
+    nuclei_array = np.array(net.unique_nuclei)
+    for n in net.unique_nuclei:
+        j_map[n] = np.where(nuclei_array==n)[0][0]
+
     # A along rows, B along columns
     p_AB = np.zeros((N_species, N_species))
     c_AB = np.zeros((N_species, N_species))
@@ -49,20 +56,20 @@ def calc_adj_matrix(net, rvals, tol):
         for r in net.nuclei_produced[n]:
             for b in r.products:
                 j = np.where(np.array(net.unique_nuclei)==b)
-                p_AB[i,j[0][0]] += rvals[r]
+                p_AB[i,j_map[b]] += rvals[r]
 
             for b in r.reactants:
                 j = np.where(np.array(net.unique_nuclei)==b)
-                p_AB[i,j[0][0]] += rvals[r]
+                p_AB[i,j_map[b]] += rvals[r]
 
         for r in net.nuclei_consumed[n]:
             for b in r.products:
                 j = np.where(np.array(net.unique_nuclei)==b)
-                c_AB[i,j[0][0]] += rvals[r]
+                c_AB[i,j_map[b]] += rvals[r]
 
             for b in r.reactants:
                 j = np.where(np.array(net.unique_nuclei)==b)
-                c_AB[i,j[0][0]] += rvals[r]
+                c_AB[i,j_map[b]] += rvals[r]
     
     #by this point, should be in same form as pymars arrays
     r_pro_AB1 = p_AB/denom
@@ -82,15 +89,12 @@ def calc_adj_matrix(net, rvals, tol):
         con2[i] = 0
         r_pro_AB2 += np.outer(pro1, pro2)
         r_con_AB2 += np.outer(con1, con2)
-
     
     adjacency_matrix = r_pro_AB1 + r_con_AB1 + r_pro_AB2 + r_con_AB2
     np.fill_diagonal(adjacency_matrix, 0.0)
 
     # remove edges with weak dependence
-    print(np.max(adjacency_matrix))
     adjacency_matrix *= adjacency_matrix > tol
-    print(np.max(adjacency_matrix))
     return adjacency_matrix
 
 def graph_from_adj_matrix(network, A):
