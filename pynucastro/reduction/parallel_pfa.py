@@ -10,7 +10,7 @@ from mpi4py import MPI
 from path_flux_analysis import calc_adj_matrix, graph_from_adj_matrix, get_remove_list, get_reduced_network
 from generate_data import dataset as get_conditions
 
-def main(endpoint, targets =[Nucleus("p")], n=5, tol=0.2):
+def main(endpoint, targets =[Nucleus("p")], n=5, tol=0.4):
     comm = MPI.COMM_WORLD
     rank = comm.Get_rank()
     N_proc = comm.Get_size()
@@ -36,8 +36,9 @@ def main(endpoint, targets =[Nucleus("p")], n=5, tol=0.2):
                 current = i*n[1]*n[2] + j*n[2] + k 
                 if current % N_proc == rank:
                     rvals = net.evaluate_rates(rho=rho, T=T, composition=comp)
-                    print("Proc %i on condition %i of %i" % (rank, current, n_conds))
-                    sys.stdout.flush()
+                    if(not(current % (n_conds//10))):
+                        print("Proc %i on condition %i of %i" % (rank, current, n_conds))
+                        sys.stdout.flush()
 
                     # grab adjacency matrix through PFA calculation on 2-neighbor paths
                     A = calc_adj_matrix(net, rvals, tol)
@@ -58,6 +59,8 @@ def main(endpoint, targets =[Nucleus("p")], n=5, tol=0.2):
     ## on rank 0 only
     # create new directed graph and perform DFS on targets to get nodes to remove
     if(rank==0):
+        print("Reducing network.")
+        sys.stdout.flush()
         G_pfa = graph_from_adj_matrix(net, A_final)
         r_species = get_remove_list(G_pfa, targets) # when working with many reaction conditions, intersection should be performed over all conditions
 

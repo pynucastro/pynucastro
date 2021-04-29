@@ -104,8 +104,6 @@ def get_remove_list(G, targets):
     lengths = nx.multi_source_dijkstra_path_length(G, targets)
     node_set = set(G.nodes)
     reachable = set(lengths.keys())
-    print(lengths)
-    print(reachable)
     return node_set.difference(reachable)
 
 def get_reduced_network(net, r_species):
