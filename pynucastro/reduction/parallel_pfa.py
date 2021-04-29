@@ -33,12 +33,11 @@ def main(endpoint, targets =[Nucleus("p")], n=5, tol=0.2):
     for i, rho in enumerate(rho_L):
         for j, T in enumerate(T_L):
             for k,comp in enumerate(comp_L):
-                iter = i*n[1]*n[2] + j*n[2] + k 
-                if iter % N_proc == rank:
+                current = i*n[1]*n[2] + j*n[2] + k 
+                if current % N_proc == rank:
                     rvals = net.evaluate_rates(rho=rho, T=T, composition=comp)
-                    if((iter % n_conds//10)):
-                        print("On condition %i of %i" % (iter, n_conds))
-                        sys.stdout.flush()
+                    print("Proc %i on condition %i of %i" % (rank, current, n_conds))
+                    sys.stdout.flush()
 
                     # grab adjacency matrix through PFA calculation on 2-neighbor paths
                     A = calc_adj_matrix(net, rvals, tol)
@@ -48,8 +47,7 @@ def main(endpoint, targets =[Nucleus("p")], n=5, tol=0.2):
                     else:
                         A_red = np.maximum(A, A_red)
 
-    if(rank ==0):
-        A_final = np.zeros(A.shape)
+    A_final = np.zeros(A.shape)
 
     comm.Barrier()
     if(rank == 0):
