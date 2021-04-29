@@ -24,14 +24,17 @@ def first_pass_reduction(G, target_sources):
 
     return G_reduced
 
-def get_stoich_matrix(net):
+def get_r_map(net):
+    r_map = dict()
+    for i, r in enumerate(net.rates):
+        r_map[r] = i
+
+    return r_map
+
+def get_stoich_matrix(net, r_map):
     N_species = len(net.unique_nuclei)
     N_rates = len(net.rates)
     result = np.zeros((N_species, N_rates))
-
-    j_map = dict()
-    for i, r in enumerate(net.rates):
-        j_map[r] = i
 
     for i, n in enumerate(net.unique_nuclei):
         for r in net.nuclei_produced[n]:
@@ -41,17 +44,6 @@ def get_stoich_matrix(net):
             result[i,j_map[r]] = r.reactants.count(n)
 
     return result
-
-def get_maps(net):
-    n_map = dict()
-    for i, n in enumerate(net.unique_nuclei):
-        n_map[n] = i
-
-    r_map = dict()
-    for i, r in enumerate(net.rates):
-        r_map[r] = i
-
-    return n_map, r_map
 
 def get_set_indices(net):
     indices = dict()
