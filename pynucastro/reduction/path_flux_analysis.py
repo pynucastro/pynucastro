@@ -45,10 +45,11 @@ def get_stoich_matrix(net, r_map):
 
     return result
 
-def get_set_indices(net):
+def get_set_indices(net, r_map):
     indices = dict()
     for r in net.rates:
-        indices[r] = list(set(r.products) | set(r.reactants))
+        bs = set(r.products) | set(r.reactants)
+        indices[r] = [r_map[x] for x in bs]
 
     return indices
 

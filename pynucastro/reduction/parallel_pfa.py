@@ -36,7 +36,7 @@ def main(endpoint, targets =[Nucleus("p")], n=5, tol=0.4):
 
     # Precalculate data structures used in common over conditions
     r_map = pfa.get_r_map(net)
-    r_set_indices = pfa.get_set_indices(net)
+    r_set_indices = pfa.get_set_indices(net, r_map)
     stoich = pfa.get_stoich_matrix(net, r_map)
 
     # Iterate through conditions and reduce local matrix
