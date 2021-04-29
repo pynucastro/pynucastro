@@ -24,56 +24,71 @@ def first_pass_reduction(G, target_sources):
 
     return G_reduced
 
-def calc_adj_matrix(net, rvals, tol):
+def get_stoich_matrix(net):
+    N_species = len(net.unique_nuclei)
+    N_rates = len(net.rates)
+    result = np.zeros((N_species, N_rates))
+
+    j_map = dict()
+    for i, r in enumerate(net.rates):
+        j_map[r] = i
+
+    for i, n in enumerate(net.unique_nuclei):
+        for r in net.nuclei_produced[n]:
+            result[i,j_map[r]] = r.products.count(n)
+
+        for r in net.nuclei_consumed[n]:
+            result[i,j_map[r]] = r.reactants.count(n)
+
+    return result
+
+def get_maps(net):
+    n_map = dict()
+    for i, n in enumerate(net.unique_nuclei):
+        n_map[n] = i
+
+    r_map = dict()
+    for i, r in enumerate(net.rates):
+        r_map[r] = i
+
+    return n_map, r_map
+
+def get_set_indices(net):
+    indices = dict()
+    for r in net.rates:
+        indices[r] = list(set(r.products) | set(r.reactants))
+
+    return indices
+
+def calc_adj_matrix(net, r_map, r_indices, stoich, rvals, tol):
     N_species = len(net.unique_nuclei)
     p_A = np.zeros(N_species)
     c_A = np.zeros(N_species)
-
-    # create index mapping
-    j_map = dict()
-    for i, n in enumerate(net.unique_nuclei):
-        j_map[n] = i
 
     # A along rows, B along columns
     p_AB = np.zeros((N_species, N_species))
     c_AB = np.zeros((N_species, N_species))
 
-    for i in range(N_species):
-        n = net.unique_nuclei[i]
+    for i, n in enumerate(net.unique_nuclei):
         for r in net.nuclei_produced[n]:
-            rval = r.products.count(n) * rvals[r]
+            rval = stoich[i,r_map[r]] * rvals[r]
             p_A[i] += rval
-            bs = set(r.products) | set(r.reactants)
-            for b in bs: 
-                p_AB[i,j_map[b]] += rval
+            p_AB[i,r_indices[r]] += rval
 
         for r in net.nuclei_consumed[n]:
-            rval = r.reactants.count(n) * rvals[r]
+            rval = stoich[i,r_map[r]] * rvals[r]
             c_A[i] += rval
-            bs = set(r.products) | set(r.reactants)
-            for b in bs:
-                c_AB[i,j_map[b]] += rval
+            c_AB[i, r_indices[r]] += rval
 
     denom = np.maximum(p_A, c_A)[:,np.newaxis]
 
-    #by this point, should be in same form as pymars arrays
     r_pro_AB1 = p_AB/denom
     r_con_AB1 = c_AB/denom
+    np.fill_diagonal(r_pro_AB1, 0.0)
+    np.fill_diagonal(r_con_AB1, 0.0)
 
-    # direct copy of pymars PFA code with variable names changed
-    r_pro_AB2 = np.zeros((N_species, N_species))
-    r_con_AB2 = np.zeros((N_species, N_species))
-    for i in range(N_species):
-        pro1 = r_pro_AB1[:, i]
-        pro2 = r_pro_AB1[i, :]
-        con1 = r_con_AB1[:, i]
-        con2 = r_con_AB1[i, :]
-        pro1[i] = 0
-        pro2[i] = 0
-        con1[i] = 0
-        con2[i] = 0
-        r_pro_AB2 += np.outer(pro1, pro2)
-        r_con_AB2 += np.outer(con1, con2)
+    r_pro_AB2 = r_pro_AB1 @ r_pro_AB1
+    r_con_AB2 = r_con_AB1 @ r_con_AB1
     
     adjacency_matrix = r_pro_AB1 + r_con_AB1 + r_pro_AB2 + r_con_AB2
     np.fill_diagonal(adjacency_matrix, 0.0)

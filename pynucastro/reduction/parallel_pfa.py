@@ -7,11 +7,13 @@ from collections import OrderedDict
 from generate_data import dataset as get_conditions
 from load_network import load_network
 from mpi4py import MPI
-from path_flux_analysis import calc_adj_matrix, graph_from_adj_matrix, get_remove_list, get_reduced_network
+import path_flux_analysis as pfa
 from pynucastro.networks import PythonNetwork
 from pynucastro.rates import Library, RateFilter, Nucleus
 
 def main(endpoint, targets =[Nucleus("p")], n=5, tol=0.4):
+
+    # Grab MPI settings and load data, conditions
     comm = MPI.COMM_WORLD
     rank = comm.Get_rank()
     N_proc = comm.Get_size()
@@ -31,6 +33,13 @@ def main(endpoint, targets =[Nucleus("p")], n=5, tol=0.4):
     comp_L = conds[2]
     first_A = True
     n_conds = np.prod(n)
+
+    # Precalculate data structures used in common over conditions
+    r_map = pfa.get_r_map(net)
+    r_set_indices = pfa.get_set_indices(net)
+    stoich = pfa.get_stoich_matrix(net, r_map)
+
+    # Iterate through conditions and reduce local matrix
     for i, rho in enumerate(rho_L):
         for j, T in enumerate(T_L):
             for k,comp in enumerate(comp_L):
@@ -42,13 +51,14 @@ def main(endpoint, targets =[Nucleus("p")], n=5, tol=0.4):
                         sys.stdout.flush()
 
                     # grab adjacency matrix through PFA calculation on 2-neighbor paths
-                    A = calc_adj_matrix(net, rvals, tol)
+                    A = pfa.calc_adj_matrix(net, r_map, r_set_indices, stoich, rvals, tol)
                     if first_A:
                         A_red = np.copy(A)
                         first_A = False
                     else:
                         A_red = np.maximum(A, A_red)
 
+    # Reduce adj matrix over processes
     A_final = np.zeros(A.shape)
 
     comm.Barrier()
@@ -62,16 +72,17 @@ def main(endpoint, targets =[Nucleus("p")], n=5, tol=0.4):
     if(rank==0):
         print("Reducing network.")
         sys.stdout.flush()
-        G_pfa = graph_from_adj_matrix(net, A_final)
-        r_species = get_remove_list(G_pfa, targets) # when working with many reaction conditions, intersection should be performed over all conditions
+        G_pfa = pfa.graph_from_adj_matrix(net, A_final)
+        r_species = pfa.get_remove_list(G_pfa, targets) # when working with many reaction conditions, intersection should be performed over all conditions
 
         # construct new network with only reactions involving reachable species
-        reduced_net = get_reduced_network(net, r_species)
+        reduced_net = pfa.get_reduced_network(net, r_species)
 
         print("Number of species in full network: ", len(net.unique_nuclei))
         print("Number of rates in full network: ", len(net.rates))
         print("Number of species in reduced network: ", len(reduced_net.unique_nuclei))
         print("Number of rates in reduced network: ", len(reduced_net.rates))
+        print(reduced_net.unique_nuclei)
 
 if __name__ == "__main__":
     if len(sys.argv) == 2:
