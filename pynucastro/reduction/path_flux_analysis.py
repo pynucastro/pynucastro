@@ -38,10 +38,10 @@ def get_stoich_matrix(net, r_map):
 
     for i, n in enumerate(net.unique_nuclei):
         for r in net.nuclei_produced[n]:
-            result[i,j_map[r]] = r.products.count(n)
+            result[i,r_map[r]] = r.products.count(n)
 
         for r in net.nuclei_consumed[n]:
-            result[i,j_map[r]] = r.reactants.count(n)
+            result[i,r_map[r]] = r.reactants.count(n)
 
     return result
 
