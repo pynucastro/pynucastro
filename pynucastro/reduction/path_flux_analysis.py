@@ -24,12 +24,16 @@ def first_pass_reduction(G, target_sources):
 
     return G_reduced
 
-def get_r_map(net):
+def get_maps(net):
+    n_map = dict()
+    for i, n in enumerate(net.unique_nuclei):
+        n_map[n] = i
+
     r_map = dict()
     for i, r in enumerate(net.rates):
         r_map[r] = i
 
-    return r_map
+    return n_map, r_map
 
 def get_stoich_matrix(net, r_map):
     N_species = len(net.unique_nuclei)
