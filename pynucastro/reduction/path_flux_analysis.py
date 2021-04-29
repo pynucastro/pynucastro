@@ -55,20 +55,16 @@ def calc_adj_matrix(net, rvals, tol):
         n = net.unique_nuclei[i]
         for r in net.nuclei_produced[n]:
             for b in r.products:
-                j = np.where(np.array(net.unique_nuclei)==b)
                 p_AB[i,j_map[b]] += rvals[r]
 
             for b in r.reactants:
-                j = np.where(np.array(net.unique_nuclei)==b)
                 p_AB[i,j_map[b]] += rvals[r]
 
         for r in net.nuclei_consumed[n]:
             for b in r.products:
-                j = np.where(np.array(net.unique_nuclei)==b)
                 c_AB[i,j_map[b]] += rvals[r]
 
             for b in r.reactants:
-                j = np.where(np.array(net.unique_nuclei)==b)
                 c_AB[i,j_map[b]] += rvals[r]
     
     #by this point, should be in same form as pymars arrays
