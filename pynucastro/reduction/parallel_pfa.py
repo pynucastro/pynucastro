@@ -35,7 +35,7 @@ def main(endpoint, targets =[Nucleus("p")], n=5, tol=0.4):
     n_conds = np.prod(n)
 
     # Precalculate data structures used in common over conditions
-    n_map, r_map = pfa.get_r_map(net)
+    n_map, r_map = pfa.get_maps(net)
     r_set_indices = pfa.get_set_indices(net, n_map)
     stoich = pfa.get_stoich_matrix(net, r_map)
 
