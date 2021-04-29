@@ -1,14 +1,15 @@
+import cProfile
 import networkx as nx
 import numpy as np
 import pynucastro as pync
 import sys
-from load_network import load_network
-from pynucastro.networks import PythonNetwork
-from pynucastro.rates import Library, RateFilter, Nucleus
 from collections import OrderedDict
+from generate_data import dataset as get_conditions
+from load_network import load_network
 from mpi4py import MPI
 from path_flux_analysis import calc_adj_matrix, graph_from_adj_matrix, get_remove_list, get_reduced_network
-from generate_data import dataset as get_conditions
+from pynucastro.networks import PythonNetwork
+from pynucastro.rates import Library, RateFilter, Nucleus
 
 def main(endpoint, targets =[Nucleus("p")], n=5, tol=0.4):
     comm = MPI.COMM_WORLD
@@ -79,4 +80,17 @@ if __name__ == "__main__":
         endpoint = Nucleus('te108')
     else:
         print("Usage: ./load_network.py <endpoint>")
+
+    pr = cProfile.Profile()
+    pr.enable()
     main(endpoint)
+    pr.disable()
+    # Dump results:
+    # - for binary dump
+    comm = MPI.COMM_WORLD
+    pr.dump_stats('cpu_%d.prof' % comm.rank)
+    # - for text dump
+    with open( 'cpu_%d.txt' % comm.rank, 'w') as output_file:
+        sys.stdout = output_file
+        pr.print_stats( sort='time' )
+        sys.stdout = sys.__stdout__
