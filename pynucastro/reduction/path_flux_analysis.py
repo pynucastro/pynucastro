@@ -29,44 +29,33 @@ def calc_adj_matrix(net, rvals, tol):
     p_A = np.zeros(N_species)
     c_A = np.zeros(N_species)
 
-    for i in range(N_species):
-        #TODO: account for multiple nuclei being consumed/produced
-        # example: he4 + he4 + he4 -> c12
-        # example: he4 + he4 -> p + li7
-        n = net.unique_nuclei[i]
-        for r in net.nuclei_produced[n]:
-            p_A[i] += rvals[r]
-
-        for r in net.nuclei_consumed[n]:
-            c_A[i] += rvals[r]
-
-    denom = np.maximum(p_A, c_A)[:,np.newaxis]
-
     # create index mapping
-    j_map = OrderedDict()
-    nuclei_array = np.array(net.unique_nuclei)
-    for n in net.unique_nuclei:
-        j_map[n] = np.where(nuclei_array==n)[0][0]
+    j_map = dict()
+    for i, n in enumerate(net.unique_nuclei):
+        j_map[n] = i
 
     # A along rows, B along columns
     p_AB = np.zeros((N_species, N_species))
     c_AB = np.zeros((N_species, N_species))
+
     for i in range(N_species):
         n = net.unique_nuclei[i]
         for r in net.nuclei_produced[n]:
-            for b in r.products:
-                p_AB[i,j_map[b]] += rvals[r]
-
-            for b in r.reactants:
-                p_AB[i,j_map[b]] += rvals[r]
+            rval = r.products.count(n) * rvals[r]
+            p_A[i] += rval
+            bs = set(r.products) | set(r.reactants)
+            for b in bs: 
+                p_AB[i,j_map[b]] += rval
 
         for r in net.nuclei_consumed[n]:
-            for b in r.products:
-                c_AB[i,j_map[b]] += rvals[r]
+            rval = r.reactants.count(n) * rvals[r]
+            c_A[i] += rval
+            bs = set(r.products) | set(r.reactants)
+            for b in bs:
+                c_AB[i,j_map[b]] += rval
 
-            for b in r.reactants:
-                c_AB[i,j_map[b]] += rvals[r]
-    
+    denom = np.maximum(p_A, c_A)[:,np.newaxis]
+
     #by this point, should be in same form as pymars arrays
     r_pro_AB1 = p_AB/denom
     r_con_AB1 = c_AB/denom
