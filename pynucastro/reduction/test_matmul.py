@@ -180,9 +180,9 @@ def main(endpoint, targets = [Nucleus("p")], tol=0.2):
     r_set_indices = get_set_indices(net, n_map)
     s_p, s_c, s_a = get_stoich_matrices(net, r_map)
 
-    rvals_arr = np.array(list(rvals.values()))
+    rvals_arr = np.array(list(rvals.values()))[:, np.newaxis]
 
-    ref = calc_adj_test(net, r_map, r_set_indices, s_p+s_c, rvals, tol)
+    ref = calc_adj_test(net, r_map, r_set_indices, (s_p+s_c).T, rvals, tol)
     test = calc_adj_mat_mul(net, s_p, s_c, s_a, rvals_arr)
 
     print(np.sum(np.abs(ref[0]-test[0])))
