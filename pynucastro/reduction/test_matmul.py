@@ -45,15 +45,15 @@ def get_stoich_matrices(net, r_map):
     """
     N_species = len(net.unique_nuclei)
     N_rates = len(net.rates)
-    s_p = np.zeros((N_rates, N_species))
-    s_c = np.zeros((N_rates, N_species))
+    s_p = np.zeros((N_species, N_rates))
+    s_c = np.zeros((N_species, N_rates))
 
     for i, n in enumerate(net.unique_nuclei):
         for r in net.nuclei_produced[n]:
-            s_p[r_map[r], i] = r.products.count(n)
+            s_p[i, r_map[r]] = r.products.count(n)
 
         for r in net.nuclei_consumed[n]:
-            s_c[r_map[r], i] = r.reactants.count(n)
+            s_c[i, r_map[r]] = r.reactants.count(n)
 
     return s_p, s_c, np.logical_or(s_p, s_c).astype(int).T
 
@@ -111,16 +111,16 @@ def calc_adj_mat_mul(net, s_p, s_c, s_a, rvals_arr):
     s_p_scaled = s_p*rvals_arr
     s_c_scaled = s_c*rvals_arr
 
-    p_A = np.sum(s_p_scaled, axis=0)
-    c_A = np.sum(s_p_scaled, axis=0)
+    p_A = np.sum(s_p_scaled, axis=1)
+    c_A = np.sum(s_c_scaled, axis=1)
     denom = np.maximum(p_A, c_A)[:,np.newaxis]
 
-    p_AB = (s_a @ s_p_scaled).T
-    c_AB = (s_a @ s_c_scaled).T
+    p_AB = s_p_scaled @ s_a
+    c_AB = s_c_scaled @ s_a
     r_pro_AB1 = p_AB/denom
     r_con_AB1 = c_AB/denom
 
-    return p_A, c_A, p_AB, c_AB.T, r_pro_AB1.T, r_con_AB1.T
+    return p_A, c_A, p_AB, c_AB, r_pro_AB1, r_con_AB1
 
 def calc_adj_matrix(net, r_map, r_indices, stoich, rvals, tol):
     N_species = len(net.unique_nuclei)
@@ -195,13 +195,13 @@ def main(endpoint, targets = [Nucleus("p")], tol=0.2):
     s_m = get_stoich_matrix(net, r_map)
     s_p, s_c, s_a = get_stoich_matrices(net, r_map)
 
-    rvals_arr = np.array(list(rvals.values()))[:, np.newaxis]
+    rvals_arr = np.array(list(rvals.values()))
 
     ref = calc_adj_test(net, r_map, r_set_indices, s_m, rvals, tol)
     test = calc_adj_mat_mul(net, s_p, s_c, s_a, rvals_arr)
 
     for i in range(6):
-        print(np.sum(np.abs(ref[i]-test[i])))
+        print(np.allclose(ref[i], test[i]))
 
 
 
