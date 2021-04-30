@@ -35,19 +35,27 @@ def get_maps(net):
 
     return n_map, r_map
 
-def get_stoich_matrix(net, r_map):
+def get_stoich_matrices(net, r_map):
+    """
+    Returns 3 matrices
+    s_p, s_c, s_a
+    s_p - coefs for rxns produced in, N_r x N_s
+    s_c - coefs for rxns consumed in, N_r x N_s
+    s_a - identities for rxns involved in, N-s x N_r
+    """
     N_species = len(net.unique_nuclei)
     N_rates = len(net.rates)
-    result = np.zeros((N_species, N_rates))
+    s_p = np.zeros((N_species, N_rates))
+    s_c = np.zeros((N_species, N_rates))
 
     for i, n in enumerate(net.unique_nuclei):
         for r in net.nuclei_produced[n]:
-            result[i,r_map[r]] = r.products.count(n)
+            s_p[i, r_map[r]] = r.products.count(n)
 
         for r in net.nuclei_consumed[n]:
-            result[i,r_map[r]] = r.reactants.count(n)
+            s_c[i, r_map[r]] = r.reactants.count(n)
 
-    return result
+    return s_p, s_c, np.logical_or(s_p, s_c).astype(int).T
 
 def get_set_indices(net, r_map):
     indices = dict()
@@ -57,30 +65,19 @@ def get_set_indices(net, r_map):
 
     return indices
 
-def calc_adj_matrix(net, r_map, r_indices, stoich, rvals, tol):
-    N_species = len(net.unique_nuclei)
-    p_A = np.zeros(N_species)
-    c_A = np.zeros(N_species)
+def calc_adj_matrix(net, s_p, s_c, s_a, rvals_arr, tol):
+    s_p_scaled = s_p*rvals_arr
+    s_c_scaled = s_c*rvals_arr
 
-    # A along rows, B along columns
-    p_AB = np.zeros((N_species, N_species))
-    c_AB = np.zeros((N_species, N_species))
-
-    for i, n in enumerate(net.unique_nuclei):
-        for r in net.nuclei_produced[n]:
-            rval = stoich[i,r_map[r]] * rvals[r]
-            p_A[i] += rval
-            p_AB[i,r_indices[r]] += rval
-
-        for r in net.nuclei_consumed[n]:
-            rval = stoich[i,r_map[r]] * rvals[r]
-            c_A[i] += rval
-            c_AB[i, r_indices[r]] += rval
-
+    p_A = np.sum(s_p_scaled, axis=1)
+    c_A = np.sum(s_c_scaled, axis=1)
     denom = np.maximum(p_A, c_A)[:,np.newaxis]
 
+    p_AB = s_p_scaled @ s_a
+    c_AB = s_c_scaled @ s_a
     r_pro_AB1 = p_AB/denom
     r_con_AB1 = c_AB/denom
+
     np.fill_diagonal(r_pro_AB1, 0.0)
     np.fill_diagonal(r_con_AB1, 0.0)
 

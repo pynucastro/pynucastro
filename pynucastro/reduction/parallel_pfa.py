@@ -37,7 +37,7 @@ def main(endpoint, targets =[Nucleus("p")], n=5, tol=0.4):
     # Precalculate data structures used in common over conditions
     n_map, r_map = pfa.get_maps(net)
     r_set_indices = pfa.get_set_indices(net, n_map)
-    stoich = pfa.get_stoich_matrix(net, r_map)
+    s_p, s_c, s_a = pfa.get_stoich_matrices(net, r_map)
 
     # Iterate through conditions and reduce local matrix
     for i, rho in enumerate(rho_L):
@@ -45,13 +45,13 @@ def main(endpoint, targets =[Nucleus("p")], n=5, tol=0.4):
             for k,comp in enumerate(comp_L):
                 current = i*n[1]*n[2] + j*n[2] + k 
                 if current % N_proc == rank:
-                    rvals = net.evaluate_rates(rho=rho, T=T, composition=comp)
+                    rvals_arr = np.array(list(net.evaluate_rates(rho=rho, T=T, composition=comp).values()))
                     if(not(current % (n_conds//10))):
                         print("Proc %i on condition %i of %i" % (rank, current, n_conds))
                         sys.stdout.flush()
 
                     # grab adjacency matrix through PFA calculation on 2-neighbor paths
-                    A = pfa.calc_adj_matrix(net, r_map, r_set_indices, stoich, rvals, tol)
+                    A = pfa.calc_adj_matrix(net, s_p, s_c, s_a, rvals_arr)
                     if first_A:
                         A_red = np.copy(A)
                         first_A = False
