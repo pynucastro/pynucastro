@@ -90,7 +90,7 @@ def calc_adj_test(net, r_map, r_indices, stoich, rvals, tol):
     r_pro_AB1 = p_AB/denom
     r_con_AB1 = c_AB/denom
 
-    return r_pro_AB1, r_con_AB1
+    return p_A, c_A, p_AB, c_AB, r_pro_AB1, r_con_AB1
 
 def calc_adj_mat_mul(net, s_p, s_c, s_a, rvals_arr):
 
@@ -106,7 +106,7 @@ def calc_adj_mat_mul(net, s_p, s_c, s_a, rvals_arr):
     r_pro_AB1 = p_AB/denom
     r_con_AB1 = c_AB/denom
 
-    return r_pro_AB1, r_con_AB1
+    return p_A, c_A, p_AB, c_AB, r_pro_AB1, r_con_AB1
 
 def calc_adj_matrix(net, r_map, r_indices, stoich, rvals, tol):
     N_species = len(net.unique_nuclei)
@@ -185,8 +185,8 @@ def main(endpoint, targets = [Nucleus("p")], tol=0.2):
     ref = calc_adj_test(net, r_map, r_set_indices, (s_p+s_c).T, rvals, tol)
     test = calc_adj_mat_mul(net, s_p, s_c, s_a, rvals_arr)
 
-    print(np.sum(np.abs(ref[0]-test[0])))
-    print(np.sum(np.abs(ref[1]-test[1])))
+    for i in range(6):
+        print(np.sum(np.abs(ref[i]-test[i])))
 
 
 
