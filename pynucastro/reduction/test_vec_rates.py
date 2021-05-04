@@ -50,9 +50,9 @@ def main(endpoint, targets = [Nucleus("p")], tol=0.2):
     comp = pync.Composition(net.get_nuclei())
     comp.set_solar_like()
     pf_ref, yf_ref, rv_ref = net.evaluate_rates_ref(rho=rho, T=T, composition=comp)
-    pf_ref = np.array(pf_ref)
-    yf_ref = np.array(yf_ref)
-    rv_ref = np.array(rv_ref)
+    pf_ref = np.array(list(pf_ref.values()))
+    yf_ref = np.array(list(yf_ref.values()))
+    rv_ref = np.array(list(rv_ref.values()))
 
     n_map, r_map = get_maps(net)
     s_p, s_c, s_a = get_stoich_matrices(net, r_map)
