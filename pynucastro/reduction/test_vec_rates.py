@@ -49,7 +49,7 @@ def main(endpoint, targets = [Nucleus("p")], tol=0.2):
     rho = 1e4
     comp = pync.Composition(net.get_nuclei())
     comp.set_solar_like()
-    pf_ref, yf_ref, rv_ref = net.evaluate_rates(rho=rho, T=T, composition=comp)
+    pf_ref, yf_ref, rv_ref = net.evaluate_rates_ref(rho=rho, T=T, composition=comp)
     pf_ref = np.array(pf_ref)
     yf_ref = np.array(yf_ref)
     rv_ref = np.array(rv_ref)
