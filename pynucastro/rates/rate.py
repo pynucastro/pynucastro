@@ -778,13 +778,14 @@ class Rate(object):
         """ Determine whether two Rate objects are equal.
         They are equal if they contain identical reactants and products and
         if they contain the same SingleSet sets and if their chapters are equal."""
-        x = True
 
-        x = x and (self.chapter == other.chapter)
-        x = x and (self.reactants == other.reactants)
-        x = x and (self.products == other.products)
+        x = (self.chapter == other.chapter) and (self.products == other.products) and (self.reactants == other.reactants)
+        if not x:
+            return x
         x = x and (len(self.sets) == len(other.sets))
-
+        if not x:
+            return x
+        
         for si in self.sets:
             scomp = False
             for sj in other.sets:

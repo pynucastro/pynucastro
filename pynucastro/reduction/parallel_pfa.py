@@ -51,7 +51,7 @@ def main(endpoint, targets =[Nucleus("p")], n=5, tol=0.4):
                         sys.stdout.flush()
 
                     # grab adjacency matrix through PFA calculation on 2-neighbor paths
-                    A = pfa.calc_adj_matrix(net, s_p, s_c, s_a, rvals_arr)
+                    A = pfa.calc_adj_matrix(net, s_p, s_c, s_a, rvals_arr, tol)
                     if first_A:
                         A_red = np.copy(A)
                         first_A = False
