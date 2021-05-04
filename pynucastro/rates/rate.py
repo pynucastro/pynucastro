@@ -249,6 +249,9 @@ class Nucleus(object):
             return self.Z < other.Z
         else:
             return self.A < other.A
+            
+    def __le__(self, other):
+        return (self < other) or (self == other)
 
 
 class Library(object):
