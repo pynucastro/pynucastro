@@ -1,6 +1,7 @@
 import numpy as np
 
 from pynucastro import Composition, Nucleus
+from mpi4py import MPI
 
 def calc_adj_matrix(net, rvals):
     
@@ -92,27 +93,55 @@ def drgep_dijkstras(net, r_AB, target):
         imax = np.argmax(dist)
         
     return R_TB
+
+def _wrap_conds(conds):
     
-def drgep(net, rvals, targets, tols):
+    try:
+        conds[0]
+        try:
+            conds[0][0]
+            return conds
+        except TypeError:
+            return [conds]
+    except:
+        raise ValueError('Conditions passed to drgep function must be non-empty subscriptable object')
+    
+def _to_list(x, n=1):
+    
+    try:
+        return list(x)
+    except TypeError:
+        return [x] * n
+    
+def _drgep_kernel(net, R_TB, rvals, targets, tols):
     
     r_AB = calc_adj_matrix(net, rvals)
-    R_TB = np.zeros_like(net.unique_nuclei, dtype=np.float64)
-    
-    try:
-        targets = list(targets)
-    except TypeError:
-        targets = [targets]
-        
-    try:
-        tols = list(tols)
-    except TypeError:
-        tols = [tols] * len(targets)
     
     for target, tol in zip(targets, tols):
+        
         R_TB_i = drgep_dijkstras(net, r_AB, target)
-        R_TB_i *= R_TB_i >= tol
-        R_TB = np.maximum(R_TB, R_TB_i)
+        np.maximum(R_TB, R_TB_i, out=R_TB, where=(R_TB_i >= tol))
+    
+def drgep(net, conds, targets, tols):
+    
+    comm = MPI.COMM_WORLD
+    MPI_N = comm.Get_size()
+    MPI_rank = comm.Get_rank()
+    
+    conds = _wrap_conds(conds)
+    targets = _to_list(targets)
+    tols = _to_list(tols, len(targets))
+    
+    R_TB_loc = np.zeros(len(net.unique_nuclei), dtype=np.float64)
 
+    for i in range(MPI_rank, len(conds), MPI_N):
+        rho, T, comp = conds[i]
+        rvals = net.evaluate_rates(rho=rho, T=T, composition=comp)
+        _drgep_kernel(net, R_TB_loc, rvals, targets, tols)
+        
+    R_TB = np.zeros_like(R_TB_loc)
+    comm.Allreduce([R_TB_loc, MPI.DOUBLE], [R_TB, MPI.DOUBLE], op=MPI.MAX)
+        
     nuclei = [net.unique_nuclei[i] for i in range(len(net.unique_nuclei))
               if R_TB[i] > 0.0]
     return net.linking_nuclei(nuclei)
@@ -120,19 +149,20 @@ def drgep(net, rvals, targets, tols):
 if __name__ == "__main__":
     
     from pynucastro.reduction.load_network import load_network
+    from pynucastro.reduction.generate_data import dataset
+    import time
+    
     net = load_network(Nucleus('ni56'))
+    data = list(dataset(net, n=10))
     
-    T = 1.e9; rho = 1.e6
-    comp = Composition(net.get_nuclei())
-    comp.set_solar_like()
-    rvals = net.evaluate_rates(rho=rho, T=T, composition=comp)
-
     targets = map(Nucleus, ['p', 'ni56'])
-    reduced_net = drgep(net, rvals, targets, [1e-3, 1e-2])
+    t0 = time.time()
+    reduced_net = drgep(net, data, targets, [1e-3, 1e-2])
+    dt = time.time() - t0
     
-    print("Number of species in full network: ", len(net.unique_nuclei))
-    print("Number of rates in full network: ", len(net.rates))
-    print("Number of species in reduced network: ", len(reduced_net.unique_nuclei))
-    print("Number of rates in reduced network: ", len(reduced_net.rates))
-    
-    print(reduced_net.unique_nuclei)
+    if MPI.COMM_WORLD.Get_rank() == 0:
+        print(f"DRGEP reduction took {dt:.3f} s.")
+        print("Number of species in full network: ", len(net.unique_nuclei))
+        print("Number of rates in full network: ", len(net.rates))
+        print("Number of species in reduced network: ", len(reduced_net.unique_nuclei))
+        print("Number of rates in reduced network: ", len(reduced_net.rates))

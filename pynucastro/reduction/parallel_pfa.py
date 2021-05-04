@@ -20,34 +20,29 @@ def main(endpoint, targets =[Nucleus("p")], n=5, tol=0.4):
     print("Network loaded on process %i" % rank)
     sys.stdout.flush()
 
-    conds = get_conditions(net, n)
+    conds = list(get_conditions(net, n))
     if isinstance(n, int):
         n = np.ones(3, dtype=np.int32) * n
     else:
         n = np.array(list(n), dtype=np.int32)
 
-    rho_L = conds[0]
-    T_L = conds[1]
-    comp_L = conds[2]
     first_A = True
     n_conds = np.prod(n)
-    for i, rho in enumerate(rho_L):
-        for j, T in enumerate(T_L):
-            for k,comp in enumerate(comp_L):
-                current = i*n[1]*n[2] + j*n[2] + k 
-                if current % N_proc == rank:
-                    rvals = net.evaluate_rates(rho=rho, T=T, composition=comp)
-                    if(not(current % (n_conds//10))):
-                        print("Proc %i on condition %i of %i" % (rank, current, n_conds))
-                        sys.stdout.flush()
+    for i in range(n_conds):
+        if i % N_proc == rank:
+            rho, T, comp = conds[i]
+            rvals = net.evaluate_rates(rho=rho, T=T, composition=comp)
+            if(not(i % (n_conds//10))):
+                print("Proc %i on condition %i of %i" % (rank, i, n_conds))
+                sys.stdout.flush()
 
-                    # grab adjacency matrix through PFA calculation on 2-neighbor paths
-                    A = calc_adj_matrix(net, rvals, tol)
-                    if first_A:
-                        A_red = np.copy(A)
-                        first_A = False
-                    else:
-                        A_red = np.maximum(A, A_red)
+            # grab adjacency matrix through PFA calculation on 2-neighbor paths
+            A = calc_adj_matrix(net, rvals, tol)
+            if first_A:
+                A_red = np.copy(A)
+                first_A = False
+            else:
+                A_red = np.maximum(A, A_red)
 
     A_final = np.zeros(A.shape)
 

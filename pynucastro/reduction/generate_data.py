@@ -37,7 +37,10 @@ def dataset(network, n=10):
                 
         comp_list.append(comp)
                 
-    return (rho, T, comp_list)
+    for rho_i in rho:
+        for T_i in T:
+            for comp in comp_list:
+                yield (rho_i, T_i, comp)
 
 if __name__ == "__main__":
     
