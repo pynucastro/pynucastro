@@ -275,7 +275,7 @@ class RateCollection:
         for r in self.rates:
             N_sets = np.maximum(N_sets, len(r.sets))
 
-        coef_arr = np.zeros(len(self.rates), N_sets, 7)
+        coef_arr = np.zeros((len(self.rates), N_sets, 7))
         for i, r in enumerate(self.rates):
             for j, s in enumerate(r.sets):
                 coef_arr[i, j, :] = s.a
