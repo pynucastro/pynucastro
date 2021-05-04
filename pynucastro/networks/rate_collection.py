@@ -21,7 +21,7 @@ from matplotlib.ticker import MaxNLocator
 import networkx as nx
 
 # Import Rate
-from pynucastro.rates import Rate, Nucleus, Library
+from pynucastro.rates import Rate, Nucleus, Library, Tfactors
 
 mpl.rcParams['figure.dpi'] = 100
 
@@ -241,6 +241,49 @@ class RateCollection:
                 val = val * y_e
             yfac = functools.reduce(mul, [ys[q] for q in r.reactants])
             rvals[r] = yfac * val
+
+        return rvals
+
+    def evaluate_rates_arr(self, rho, T, composition, s_c):
+        """
+        evaluate the rates for a specific density, temperature, and
+        composition
+        vectorized attempt that returns an array ordered by rates in self.rates
+        not implemented for tabular rates
+        """
+
+
+        # yfac must be evaluated each time composition changes, probably pretty cheap
+        yfac = np.ones(len(self.rates), len(self.unique_nuclei))
+        ys = np.array(list(composition.get_molar().values()))
+
+        reactant_mask = np.logical_not(s_c.T)
+        yfac *= ys
+        yfac[reactant_mask] = 1
+        yfac = np.prod(yfac, axis=1)
+
+        # prefac must be evaluated everytime rho changes, probably pretty cheap
+        y_e = composition.eval_ye()
+        prefac = np.zeros(len(self.rates))
+        for i, r in enumerate(self.rates):
+            prefac[i] = r.prefactor * rho**r.dens_exp
+            if(r.weak_type == 'electron_capture'):
+                prefac[i] *= y_e
+
+        # coef arr can be precomputed if evaluate_rates_arr is called multiple times
+        N_sets = 1
+        for r in self.rates:
+            N_sets = np.maximum(N_sets, len(r.sets))
+
+        coef_arr = np.zeros(len(self.rates), N_sets, 7)
+        for i, r in enumerate(self.rates):
+            for j, s in enumerate(r.sets):
+                coef_arr[i, j, :] = s.a
+
+        # T9 arr must be evaluated each time temperature changes, but it's negligibly cheap
+        T9_arr = Tfactors(T).array[None, None, :]
+
+        rvals = prefac*yfac*np.sum(np.exp(np.sum(coef_arr*T9_arr, axis=2)), axis=1)
 
         return rvals
         
