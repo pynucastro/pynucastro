@@ -3,6 +3,56 @@ import numpy as np
 from pynucastro import Composition, Nucleus
 from mpi4py import MPI
 
+def calc_count_matrices(net):
+    
+    # Rate -> index mapping
+    r_map = dict()
+    for i, r in enumerate(net.rates):
+        r_map[r] = i
+    
+    N_species = len(net.unique_nuclei)
+    N_rates = len(net.rates)
+    
+    # Counts for reactions producing nucleus
+    c_p = np.zeros((N_species, N_rates), dtype=np.int32)
+    # Counts for reactions consuming nucleus
+    c_c = np.zeros((N_species, N_rates), dtype=np.int32)
+
+    for i, n in enumerate(net.unique_nuclei):
+        
+        for r in net.nuclei_produced[n]:
+            c_p[i, r_map[r]] = r.products.count(n)
+
+        for r in net.nuclei_consumed[n]:
+            c_c[i, r_map[r]] = r.reactants.count(n)
+    
+    # Whether the nucleus is involved in the reaction or not
+    c_e = np.logical_or(c_p, c_c).astype(np.int32).T
+            
+    return c_p, c_c, c_e
+
+def calc_adj_matrix_numpy(net, c_p, c_c, c_e, rvals_arr):
+    
+    # Evaluate terms on RHS of ODE system
+    prod_terms = c_p * rvals_arr
+    cons_terms = c_c * rvals_arr
+    
+    # Calculate total production and consumption of each nucleus A
+    p_A = prod_terms.sum(axis=1)
+    c_A = cons_terms.sum(axis=1)
+    
+    # Calculate production / consumption of A in reactions involving B
+    p_AB = prod_terms @ c_e
+    c_AB = cons_terms @ c_e
+    
+    # We will normalize by maximum of production and consumption fluxes
+    denom = np.maximum(p_A, c_A)[:, np.newaxis]
+    
+    # Calculate direct interaction coefficients
+    r_AB = np.abs(p_AB - c_AB) / denom
+    
+    return r_AB
+    
 def calc_adj_matrix(net, rvals):
     
     N_species = len(net.unique_nuclei)
