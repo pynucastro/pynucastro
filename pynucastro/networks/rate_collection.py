@@ -244,6 +244,27 @@ class RateCollection:
 
         return rvals
 
+    def evaluate_rates_ref(self, rho, T, composition):
+        """evaluate the rates for a specific density, temperature, and
+        composition"""
+        rvals = OrderedDict()
+        yfacs = OrderedDict()
+        prefacs = OrderedDict()
+        ys = composition.get_molar()
+        y_e = composition.eval_ye()
+
+        for r in self.rates:
+            val = r.prefactor * rho**r.dens_exp * r.eval(T, rho * y_e)
+            prefacs[r] = r.prefactor * rho**r.dens_exp
+            if (r.weak_type == 'electron_capture' and not r.tabular):
+                val = val * y_e
+                prefacs[r] *= y_e
+            yfac = functools.reduce(mul, [ys[q] for q in r.reactants])
+            yfacs[r] = yfac
+            rvals[r] = yfac * val
+
+        return prefacs, yfacs, rvals
+
     def evaluate_rates_arr(self, rho, T, composition, s_c):
         """
         evaluate the rates for a specific density, temperature, and
@@ -285,7 +306,7 @@ class RateCollection:
 
         rvals = prefac*yfac*np.sum(np.exp(np.sum(coef_arr*T9_arr, axis=2)), axis=1)
 
-        return rvals
+        return prefac, yfac, rvals
         
     def evaluate_ydots(self, rho, T, composition):
         """evaluate net rate of change of molar abundance for each nucleus

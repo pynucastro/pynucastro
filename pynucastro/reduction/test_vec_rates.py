@@ -49,13 +49,18 @@ def main(endpoint, targets = [Nucleus("p")], tol=0.2):
     rho = 1e4
     comp = pync.Composition(net.get_nuclei())
     comp.set_solar_like()
-    rvals = net.evaluate_rates(rho=rho, T=T, composition=comp)
+    pf_ref, yf_ref, rv_ref = net.evaluate_rates(rho=rho, T=T, composition=comp)
+    pf_ref = np.array(pf_ref)
+    yf_ref = np.array(yf_ref)
+    rv_ref = np.array(rv_ref)
 
     n_map, r_map = get_maps(net)
     s_p, s_c, s_a = get_stoich_matrices(net, r_map)
-    rvals_test = net.evaluate_rates_arr(rho=rho, T=T, composition=comp, s_c=s_c)
+    pf_test, yf_test, rv_test = net.evaluate_rates_arr(rho=rho, T=T, composition=comp, s_c=s_c)
 
-    print(np.all_close(rvals, rvals_test))
+    print(np.allclose(rv_ref, rv_test))
+    print(np.allclose(pf_ref, pf_test))
+    print(np.allclose(yf_ref, yf_test))
 
 
 if __name__ == "__main__":
