@@ -254,7 +254,7 @@ class RateCollection:
 
 
         # yfac must be evaluated each time composition changes, probably pretty cheap
-        yfac = np.ones(len(self.rates), len(self.unique_nuclei))
+        yfac = np.ones((len(self.rates), len(self.unique_nuclei)))
         ys = np.array(list(composition.get_molar().values()))
 
         reactant_mask = np.logical_not(s_c.T)
