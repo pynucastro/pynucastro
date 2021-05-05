@@ -278,9 +278,7 @@ class RateCollection:
         yfac = np.ones((len(self.rates), len(self.unique_nuclei)))
         ys = np.array(list(composition.get_molar().values()))
 
-        reactant_mask = np.logical_not(s_c.T)
-        yfac *= ys
-        yfac[reactant_mask] = 1
+        yfac *= ys**s_c.T
         yfac = np.prod(yfac, axis=1)
 
         # prefac must be evaluated everytime rho changes, probably pretty cheap
