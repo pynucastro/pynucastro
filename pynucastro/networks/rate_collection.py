@@ -299,10 +299,11 @@ class RateCollection:
             for j, s in enumerate(r.sets):
                 coef_arr[i, j, :] = s.a
 
+        coef_mask = coef_arr > 0
         # T9 arr must be evaluated each time temperature changes, but it's negligibly cheap
         T9_arr = Tfactors(T).array[None, None, :]
 
-        rvals = prefac*yfac*np.sum(np.exp(np.sum(coef_arr*T9_arr, axis=2)), axis=1)
+        rvals = prefac*yfac*np.sum(np.exp(np.sum(coef_arr*T9_arr, axis=2))*coef_mask[:,:,0], axis=1)
 
         return prefac, yfac, rvals
         
