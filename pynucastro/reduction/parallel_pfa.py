@@ -39,13 +39,19 @@ def main(endpoint, targets =[Nucleus("p")], n=5, tol=0.4):
     r_set_indices = pfa.get_set_indices(net, n_map)
     s_p, s_c, s_a = pfa.get_stoich_matrices(net, r_map)
 
+    net.update_coef_arr()
+
     # Iterate through conditions and reduce local matrix
-    for i, rho in enumerate(rho_L):
-        for j, T in enumerate(T_L):
-            for k,comp in enumerate(comp_L):
+    for k,comp in enumerate(comp_L):
+        net.update_yfac_arr(composition=comp, s_c=s_c)
+
+        for i, rho in enumerate(rho_L):
+            net.update_prefac_arr(rho=rho, composition=comp)
+            
+            for j, T in enumerate(T_L):
                 current = i*n[1]*n[2] + j*n[2] + k 
                 if current % N_proc == rank:
-                    rvals_arr = net.evaluate_rates_arr(rho=rho, T=T, composition=comp, s_c=s_c)
+                    rvals_arr = net.evaluate_rates_arr(T=T)
                     if(not(current % (n_conds//10))):
                         print("Proc %i on condition %i of %i" % (rank, current, n_conds))
                         sys.stdout.flush()

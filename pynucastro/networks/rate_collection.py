@@ -265,23 +265,7 @@ class RateCollection:
 
         return prefacs, yfacs, rvals
 
-    def evaluate_rates_arr(self, rho, T, composition, s_c):
-        """
-        evaluate the rates for a specific density, temperature, and
-        composition
-        vectorized attempt that returns an array ordered by rates in self.rates
-        not implemented for tabular rates
-        """
-
-
-        # yfac must be evaluated each time composition changes, probably pretty cheap
-        yfac = np.ones((len(self.rates), len(self.unique_nuclei)))
-        ys = np.array(list(composition.get_molar().values()))
-
-        yfac *= ys**s_c.T
-        yfac = np.prod(yfac, axis=1)
-
-        # prefac must be evaluated everytime rho changes, probably pretty cheap
+    def update_prefac_arr(self, rho, composition):
         y_e = composition.eval_ye()
         prefac = np.zeros(len(self.rates))
         for i, r in enumerate(self.rates):
@@ -289,6 +273,18 @@ class RateCollection:
             if(r.weak_type == 'electron_capture'):
                 prefac[i] *= y_e
 
+        self.prefac = prefac
+
+    def update_yfac_arr(self, composition, s_c):
+        # yfac must be evaluated each time composition changes, probably pretty cheap
+        yfac = np.ones((len(self.rates), len(self.unique_nuclei)))
+        ys = np.array(list(composition.get_molar().values()))
+
+        yfac *= ys**s_c.T
+        yfac = np.prod(yfac, axis=1)
+        self.yfac = yfac
+
+    def update_coef_arr(self):
         # coef arr can be precomputed if evaluate_rates_arr is called multiple times
         N_sets = 1
         for r in self.rates:
@@ -301,10 +297,22 @@ class RateCollection:
                 coef_arr[i, j, :] = s.a
                 coef_mask[i,j] = 1
 
-        # T9 arr must be evaluated each time temperature changes, but it's negligibly cheap
+        self.coef_arr = coef_arr
+        self.coef_mask = coef_mask
+
+    def evaluate_rates_arr(self, T):
+        """
+        evaluate the rates for a specific density, temperature, and
+        composition
+        vectorized attempt that returns an array ordered by rates in self.rates
+        not implemented for tabular rates
+
+        assumes precomputation
+        """
+        # T9 arr only needs to be evaluated when T changes, but it's negligibly cheap
         T9_arr = Tfactors(T).array[None, None, :]
 
-        rvals = prefac*yfac*np.sum(np.exp(np.sum(coef_arr*T9_arr, axis=2))*coef_mask, axis=1)
+        rvals = self.prefac*self.yfac*np.sum(np.exp(np.sum(self.coef_arr*T9_arr, axis=2))*self.coef_mask, axis=1)
 
         return rvals
         
