@@ -45,7 +45,7 @@ def main(endpoint, targets =[Nucleus("p")], n=5, tol=0.4):
             for k,comp in enumerate(comp_L):
                 current = i*n[1]*n[2] + j*n[2] + k 
                 if current % N_proc == rank:
-                    rvals_arr = np.array(list(net.evaluate_rates(rho=rho, T=T, composition=comp).values()))
+                    rvals_arr = net.evaluate_rates_arr(rho=rho, T=T, composition=comp, s_c=s_c)
                     if(not(current % (n_conds//10))):
                         print("Proc %i on condition %i of %i" % (rank, current, n_conds))
                         sys.stdout.flush()
