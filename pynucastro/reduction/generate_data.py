@@ -35,6 +35,7 @@ def dataset(network, n=10):
             if nuc not in omit:
                 comp.X[nuc] = rem
                 
+        comp.normalize()
         comp_list.append(comp)
                 
     for rho_i in rho:
