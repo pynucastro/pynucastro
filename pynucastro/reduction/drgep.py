@@ -4,6 +4,7 @@ from collections import namedtuple
 from pynucastro import Composition, Nucleus
 from pynucastro.nucdata import BindingTable
 from mpi4py import MPI
+import sys
 
 def calc_count_matrices(net):
     
@@ -187,6 +188,10 @@ def drgep(net, conds, targets, tols):
     R_TB_loc = np.zeros(len(net.unique_nuclei), dtype=np.float64)
 
     for i in range(MPI_rank, len(conds), MPI_N):
+        if(not(i % (len(conds))//10)):
+            print("Proc %i on condition %i of %i" % (MPI_rank, i, len(conds)))
+            sys.stdout.flush()
+
         rho, T, comp = conds[i]
         rvals = net.evaluate_rates(rho=rho, T=T, composition=comp)
         _drgep_kernel(net, R_TB_loc, rvals, targets, tols)
@@ -315,7 +320,7 @@ if __name__ == "__main__":
     import time
     
     net = load_network(Nucleus('ni56'))
-    data = list(dataset(net, n=10))
+    data = list(dataset(net, n=5))
     
     targets = map(Nucleus, ['p', 'ni56'])
     t0 = time.time()

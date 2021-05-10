@@ -22,11 +22,17 @@ def main(endpoint, targets =[Nucleus("p")], n=5, tol=0.4):
     print("Network loaded on process %i" % rank)
     sys.stdout.flush()
 
-    conds = list(get_conditions(net, n))
+    conds = get_conditions(net, n)
     if isinstance(n, int):
         n = np.ones(3, dtype=np.int32) * n
     else:
         n = np.array(list(n), dtype=np.int32)
+
+    rho_L = conds[0]
+    T_L = conds[1]
+    comp_L = conds[2]
+    first_A = True
+    n_conds = np.prod(n)
 
     first_A = True
     n_conds = np.prod(n)
