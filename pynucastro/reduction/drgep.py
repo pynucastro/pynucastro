@@ -203,7 +203,7 @@ def drgep(net, conds, targets, tols):
             sys.stdout.flush()
 
         rho, T, comp = conds[i]
-        rvals = net.evaluate_rates(rho=rho, T=T, composition=comp)
+        rvals = np.array(list(net.evaluate_rates(rho=rho, T=T, composition=comp).values))
         _drgep_kernel_numpy(net, R_TB_loc, c_p, c_c, c_e, rvals, targets, tols)
         
     R_TB = np.zeros_like(R_TB_loc)
