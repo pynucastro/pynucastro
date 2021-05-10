@@ -10,6 +10,8 @@ from mpi4py import MPI
 import path_flux_analysis as pfa
 from pynucastro.networks import PythonNetwork
 from pynucastro.rates import Library, RateFilter, Nucleus
+import time
+
 
 def main(endpoint, targets =[Nucleus("p")], n=5, tol=0.4):
 
@@ -19,7 +21,7 @@ def main(endpoint, targets =[Nucleus("p")], n=5, tol=0.4):
     N_proc = comm.Get_size()
 
     net = load_network(endpoint)
-    print("Network loaded on process %i" % rank)
+    # print("Network loaded on process %i" % rank)
     sys.stdout.flush()
 
     conds = get_conditions(net, n)
@@ -35,6 +37,7 @@ def main(endpoint, targets =[Nucleus("p")], n=5, tol=0.4):
     first_A = True
     n_conds = np.prod(n)
 
+    t_0 = time.time()
     # Precalculate data structures used in common over conditions
     n_map, r_map = pfa.get_maps(net)
     r_set_indices = pfa.get_set_indices(net, n_map)
@@ -42,6 +45,7 @@ def main(endpoint, targets =[Nucleus("p")], n=5, tol=0.4):
 
     net.update_coef_arr()
 
+    t_1 = time.time()
     # Iterate through conditions and reduce local matrix
     for k,comp in enumerate(comp_L):
         net.update_yfac_arr(composition=comp, s_c=s_c)
@@ -53,9 +57,9 @@ def main(endpoint, targets =[Nucleus("p")], n=5, tol=0.4):
                 current = i*n[1]*n[2] + j*n[2] + k 
                 if current % N_proc == rank:
                     rvals_arr = net.evaluate_rates_arr(T=T)
-                    if(not(current % (n_conds//10))):
-                        print("Proc %i on condition %i of %i" % (rank, current, n_conds))
-                        sys.stdout.flush()
+                    # if(not(current % (n_conds//10))):
+                    #     print("Proc %i on condition %i of %i" % (rank, current, n_conds))
+                    #     sys.stdout.flush()
 
                     # grab adjacency matrix through PFA calculation on 2-neighbor paths
                     A = pfa.calc_adj_matrix(net, s_p, s_c, s_a, rvals_arr, tol)
@@ -69,27 +73,36 @@ def main(endpoint, targets =[Nucleus("p")], n=5, tol=0.4):
     A_final = np.zeros(A.shape)
 
     comm.Barrier()
-    if(rank == 0):
-        print("Reducing adjacency matrix across processes")
-        sys.stdout.flush()
+    t_2 = time.time()
+    # if(rank == 0):
+    #     print("Reducing adjacency matrix across processes")
+    #     sys.stdout.flush()
     comm.Reduce([A_red, MPI.DOUBLE], [A_final, MPI.DOUBLE], op=MPI.MAX, root=0)
+    t_3 = time.time()
 
     ## on rank 0 only
     # create new directed graph and perform DFS on targets to get nodes to remove
     if(rank==0):
-        print("Reducing network.")
-        sys.stdout.flush()
+        # print("Reducing network.")
+        # sys.stdout.flush()
         G_pfa = pfa.graph_from_adj_matrix(net, A_final)
         r_species = pfa.get_remove_list(G_pfa, targets) # when working with many reaction conditions, intersection should be performed over all conditions
 
+        t_4 = time.time()
         # construct new network with only reactions involving reachable species
         reduced_net = pfa.get_reduced_network(net, r_species)
-
+        t_5 = time.time()
         print("Number of species in full network: ", len(net.unique_nuclei))
         print("Number of rates in full network: ", len(net.rates))
         print("Number of species in reduced network: ", len(reduced_net.unique_nuclei))
         print("Number of rates in reduced network: ", len(reduced_net.rates))
-        print(reduced_net.unique_nuclei)
+        print(f"PFA took {t_5-t_0:.3f} s overall.")
+        print(f"{t_1-t_0:.3f} s in precalculation.")
+        print(f"{t_2-t_1:.3f} s in local adj matrix calculations.")
+        print(f"{t_3-t_2:.3f} s in parallel reduction.")
+        print(f"{t_4-t_3:.3f} s in graph traversal.")
+        print(f"{t_5-t_4:.3f} s in forming final network.")
+        # print(reduced_net.unique_nuclei)
 
 if __name__ == "__main__":
     if len(sys.argv) == 2:
@@ -99,16 +112,16 @@ if __name__ == "__main__":
     else:
         print("Usage: ./load_network.py <endpoint>")
 
-    pr = cProfile.Profile()
-    pr.enable()
+    # pr = cProfile.Profile()
+    # pr.enable()
     main(endpoint)
-    pr.disable()
+    # pr.disable()
     # Dump results:
     # - for binary dump
-    comm = MPI.COMM_WORLD
-    pr.dump_stats('cpu_%d.prof' % comm.rank)
+    # comm = MPI.COMM_WORLD
+    # pr.dump_stats('cpu_%d.prof' % comm.rank)
     # - for text dump
-    with open( 'cpu_%d.txt' % comm.rank, 'w') as output_file:
-        sys.stdout = output_file
-        pr.print_stats( sort='time' )
-        sys.stdout = sys.__stdout__
+    # with open( 'cpu_%d.txt' % comm.rank, 'w') as output_file:
+        # sys.stdout = output_file
+        # pr.print_stats( sort='time' )
+        # sys.stdout = sys.__stdout__
