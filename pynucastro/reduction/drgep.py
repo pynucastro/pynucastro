@@ -174,6 +174,15 @@ def _drgep_kernel(net, R_TB, rvals, targets, tols):
         
         R_TB_i = drgep_dijkstras(net, r_AB, target)
         np.maximum(R_TB, R_TB_i, out=R_TB, where=(R_TB_i >= tol))
+
+def _drgep_kernel_numpy(net, R_TB, c_p, c_c, c_e, rvals, targets, tols):
+    
+    r_AB = calc_adj_matrix_numpy(net, c_p, c_c, c_e, rvals)
+    
+    for target, tol in zip(targets, tols):
+        
+        R_TB_i = drgep_dijkstras(net, r_AB, target)
+        np.maximum(R_TB, R_TB_i, out=R_TB, where=(R_TB_i >= tol))
     
 def drgep(net, conds, targets, tols):
     
@@ -186,15 +195,16 @@ def drgep(net, conds, targets, tols):
     tols = _to_list(tols, len(targets))
     
     R_TB_loc = np.zeros(len(net.unique_nuclei), dtype=np.float64)
-
+    c_p, c_c, c_e = calc_count_matrices(net)
+    
     for i in range(MPI_rank, len(conds), MPI_N):
-        if(not(i % (len(conds))//10)):
+        if(not(i % (len(conds)//10))):
             print("Proc %i on condition %i of %i" % (MPI_rank, i, len(conds)))
             sys.stdout.flush()
 
         rho, T, comp = conds[i]
         rvals = net.evaluate_rates(rho=rho, T=T, composition=comp)
-        _drgep_kernel(net, R_TB_loc, rvals, targets, tols)
+        _drgep_kernel_numpy(net, R_TB_loc, c_p, c_c, c_e, rvals, targets, tols)
         
     R_TB = np.zeros_like(R_TB_loc)
     comm.Allreduce([R_TB_loc, MPI.DOUBLE], [R_TB, MPI.DOUBLE], op=MPI.MAX)
@@ -320,7 +330,7 @@ if __name__ == "__main__":
     import time
     
     net = load_network(Nucleus('ni56'))
-    data = list(dataset(net, n=5))
+    data = list(dataset(net, n=4))
     
     targets = map(Nucleus, ['p', 'ni56'])
     t0 = time.time()
@@ -334,7 +344,7 @@ if __name__ == "__main__":
         print("Number of species in reduced network: ", len(reduced_net.unique_nuclei))
         print("Number of rates in reduced network: ", len(reduced_net.rates))
         
-        print()
-        print("Evaluating error (max across all sets of conditions)...")
-        err = error_function(reduced_net, net, data)
-        print("enuc_dot: {:.1f}%; ye_dot: {:.1f}%; abar_dot: {:.1f}%".format(*(100*err)))
+        # print()
+        # print("Evaluating error (max across all sets of conditions)...")
+        # err = error_function(reduced_net, net, data)
+        # print("enuc_dot: {:.1f}%; ye_dot: {:.1f}%; abar_dot: {:.1f}%".format(*(100*err)))
