@@ -190,7 +190,7 @@ def drgep(net, conds, targets, tols):
     MPI_N = comm.Get_size()
     MPI_rank = comm.Get_rank()
     
-    conds = _wrap_conds(conds)
+    # conds = _wrap_conds(conds)
     targets = _to_list(targets)
     tols = _to_list(tols, len(targets))
     
@@ -346,7 +346,8 @@ if __name__ == "__main__":
     import time
     
     net = load_network(Nucleus('ni56'))
-    data = list(dataset(net, n=4))
+
+    data = dataset(net, n=4)
     
     targets = map(Nucleus, ['p', 'ni56'])
     t0 = time.time()

@@ -38,10 +38,11 @@ def dataset(network, n=10):
         comp.normalize()
         comp_list.append(comp)
                 
-    for rho_i in rho:
-        for T_i in T:
-            for comp in comp_list:
-                yield (rho_i, T_i, comp)
+    # for rho_i in rho:
+        # for T_i in T:
+            # for comp in comp_list:
+                # yield (rho_i, T_i, comp)
+    return (rho_i, T_i, comp)
 
 if __name__ == "__main__":
     
