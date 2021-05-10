@@ -202,7 +202,7 @@ def drgep(net, conds, targets, tols):
     T_L = conds[1]
     comp_L = conds[2]
 
-    n_conds = len(conds)
+    n_conds = np.prod(n)
     net.update_coef_arr()
 
     for k,comp in enumerate(comp_L):
