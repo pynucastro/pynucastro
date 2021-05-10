@@ -227,6 +227,15 @@ class RateCollection:
     def get_nuclei(self):
         """ get all the nuclei that are part of the network """
         return self.unique_nuclei
+        
+    def linking_nuclei(self, nuclei):
+        """
+        Return a new RateCollection/Network object containing only rates linking the
+        given nuclei (parameter *nuclei*). Nuclei can be provided as an iterable of Nucleus
+        objects or a list of abbreviations.
+        """
+        
+        return self.__class__(libraries=self.library.linking_nuclei(nuclei))      
 
     def evaluate_rates(self, rho, T, composition):
         """evaluate the rates for a specific density, temperature, and

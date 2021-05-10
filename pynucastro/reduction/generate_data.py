@@ -15,8 +15,8 @@ def dataset(network, n=10):
     b_T = (8e6, 1.5e9) # temperature (K)
     b_Z = (0.02, 0.2) # metallicity
     
-    rho = np.linspace(*b_rho, num=n[0])
-    T = np.linspace(*b_T, num=n[1])
+    rho = np.logspace(*map(np.log10, b_rho), num=n[0])
+    T = np.logspace(*map(np.log10, b_T), num=n[1])
     comp_list = []
     
     for Z in np.linspace(*b_Z, num=n[2]):
@@ -35,22 +35,29 @@ def dataset(network, n=10):
             if nuc not in omit:
                 comp.X[nuc] = rem
                 
+        comp.normalize()
         comp_list.append(comp)
                 
-    return (rho, T, comp_list)
+    for rho_i in rho:
+        for T_i in T:
+            for comp in comp_list:
+                yield (rho_i, T_i, comp)
 
 if __name__ == "__main__":
     
     from pynucastro.reduction.load_network import load_network
     network = load_network(Nucleus("ni56"))
-    rho, T, comp = dataset(network)
+    conds_list = list(dataset(network))
+    rho = sorted({conds[0] for conds in conds_list})
+    T = sorted({conds[1] for conds in conds_list})
+    comp = {conds[2] for conds in conds_list}
     
     print("ρ")
     print(rho)
     print()
     
     print("T")
-    print(rho)
+    print(T)
     print()
     
     def comp_converter(comp):
