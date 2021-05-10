@@ -31,8 +31,6 @@ def main(endpoint, targets =[Nucleus("p")], n=5, tol=0.4):
     rho_L = conds[0]
     T_L = conds[1]
     comp_L = conds[2]
-    first_A = True
-    n_conds = np.prod(n)
 
     first_A = True
     n_conds = np.prod(n)

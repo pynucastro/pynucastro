@@ -196,15 +196,31 @@ def drgep(net, conds, targets, tols):
     
     R_TB_loc = np.zeros(len(net.unique_nuclei), dtype=np.float64)
     c_p, c_c, c_e = calc_count_matrices(net)
-    
-    for i in range(MPI_rank, len(conds), MPI_N):
-        if(not(i % (len(conds)//10))):
-            print("Proc %i on condition %i of %i" % (MPI_rank, i, len(conds)))
-            sys.stdout.flush()
 
-        rho, T, comp = conds[i]
-        rvals = np.array(list(net.evaluate_rates(rho=rho, T=T, composition=comp).values()))
-        _drgep_kernel_numpy(net, R_TB_loc, c_p, c_c, c_e, rvals, targets, tols)
+    n = np.array([len(conds[0]), len(conds[1]), len(conds[2])]).astype(int)
+    rho_L = conds[0]
+    T_L = conds[1]
+    comp_L = conds[2]
+
+    n_conds = len(conds)
+    net.update_coef_arr()
+
+    for k,comp in enumerate(comp_L):
+        net.update_yfac_arr(composition=comp, s_c=c_c)
+
+        for i, rho in enumerate(rho_L):
+            net.update_prefac_arr(rho=rho, composition=comp)
+            
+            for j, T in enumerate(T_L):
+                current = i*n[1]*n[2] + j*n[2] + k 
+                if current % MPI_N == MPI_rank:
+                    if(not(current % (n_conds//10))):
+                        print("Proc %i on condition %i of %i" % (MPI_rank, current, n_conds))
+                        sys.stdout.flush()
+
+                    rvals_arr = net.evaluate_rates_arr(T=T)
+                    # rvals = np.array(list(net.evaluate_rates(rho=rho, T=T, composition=comp).values()))
+                    _drgep_kernel_numpy(net, R_TB_loc, c_p, c_c, c_e, rvals_arr, targets, tols)
         
     R_TB = np.zeros_like(R_TB_loc)
     comm.Allreduce([R_TB_loc, MPI.DOUBLE], [R_TB, MPI.DOUBLE], op=MPI.MAX)
