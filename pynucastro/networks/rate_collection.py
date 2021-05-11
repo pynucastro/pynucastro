@@ -321,9 +321,11 @@ class RateCollection:
         # T9 arr only needs to be evaluated when T changes, but it's negligibly cheap
         T9_arr = Tfactors(T).array[None, None, :]
 
-        rvals = self.prefac*self.yfac*np.sum(np.exp(np.sum(self.coef_arr*T9_arr, axis=2))*self.coef_mask, axis=1)
+        # rvals = self.prefac*self.yfac*np.sum(np.exp(np.sum(self.coef_arr*T9_arr, axis=2))*self.coef_mask, axis=1)
+        rvals = np.sum(self.coef_arr*T9_arr, axis=2)
+        rvals = np.sum(np.exp(rvals)*self.coef_mask, axis=1)
 
-        return rvals
+        return self.prefac*self.yfac*rvals
         
     def evaluate_ydots(self, rho, T, composition):
         """evaluate net rate of change of molar abundance for each nucleus
