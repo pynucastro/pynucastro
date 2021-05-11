@@ -37,7 +37,7 @@ def main(endpoint, targets =[Nucleus("p")], n=5, tol=0.4):
     first_A = True
     n_conds = np.prod(n)
 
-    t_0 = time.time()
+    t_0 = MPI.Wtime()
     # Precalculate data structures used in common over conditions
     n_map, r_map = pfa.get_maps(net)
     r_set_indices = pfa.get_set_indices(net, n_map)
@@ -45,7 +45,7 @@ def main(endpoint, targets =[Nucleus("p")], n=5, tol=0.4):
 
     net.update_coef_arr()
 
-    t_1 = time.time()
+    t_1 = MPI.Wtime()
     # Iterate through conditions and reduce local matrix
     count = 0
     for k,comp in enumerate(comp_L):
@@ -75,14 +75,14 @@ def main(endpoint, targets =[Nucleus("p")], n=5, tol=0.4):
     A_final = np.zeros(A.shape)
 
 
-    t_2 = time.time()
+    t_2 = MPI.Wtime()
     comm.Barrier()
-    t_B = time.time()
+    t_B = MPI.Wtime()
     # if(rank == 0):
     #     print("Reducing adjacency matrix across processes")
     #     sys.stdout.flush()
     comm.Reduce([A_red, MPI.DOUBLE], [A_final, MPI.DOUBLE], op=MPI.MAX, root=0)
-    t_3 = time.time()
+    t_3 = MPI.Wtime()
 
     ## on rank 0 only
     # create new directed graph and perform DFS on targets to get nodes to remove
@@ -95,10 +95,10 @@ def main(endpoint, targets =[Nucleus("p")], n=5, tol=0.4):
         G_pfa = pfa.graph_from_adj_matrix(net, A_final)
         r_species = pfa.get_remove_list(G_pfa, targets) # when working with many reaction conditions, intersection should be performed over all conditions
 
-        t_4 = time.time()
+        t_4 = MPI.Wtime()
         # construct new network with only reactions involving reachable species
         reduced_net = pfa.get_reduced_network(net, r_species)
-        t_5 = time.time()
+        t_5 = MPI.Wtime()
         print("Number of species in full network: ", len(net.unique_nuclei))
         print("Number of rates in full network: ", len(net.rates))
         print("Number of species in reduced network: ", len(reduced_net.unique_nuclei))
