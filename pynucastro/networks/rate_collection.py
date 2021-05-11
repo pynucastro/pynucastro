@@ -282,8 +282,7 @@ class RateCollection:
             if(r.weak_type == 'electron_capture'):
                 prefac[i] *= y_e
 
-        # self.prefac = prefac
-        return prefac
+        self.prefac = prefac
 
     def update_yfac_arr(self, composition, s_c):
         # yfac must be evaluated each time composition changes, probably pretty cheap
@@ -292,8 +291,7 @@ class RateCollection:
 
         yfac *= ys**s_c.T
         yfac = np.prod(yfac, axis=1)
-        # self.yfac = yfac
-        return yfac
+        self.yfac = yfac
 
     def update_coef_arr(self):
         # coef arr can be precomputed if evaluate_rates_arr is called multiple times
@@ -308,9 +306,8 @@ class RateCollection:
                 coef_arr[i, j, :] = s.a
                 coef_mask[i,j] = 1
 
-        # self.coef_arr = coef_arr
-        # self.coef_mask = coef_mask
-        return coef_arr, coef_mask
+        self.coef_arr = coef_arr
+        self.coef_mask = coef_mask
 
     def evaluate_rates_arr(self, T):
         """
@@ -324,11 +321,9 @@ class RateCollection:
         # T9 arr only needs to be evaluated when T changes, but it's negligibly cheap
         T9_arr = Tfactors(T).array[None, None, :]
 
-        # rvals = self.prefac*self.yfac*np.sum(np.exp(np.sum(self.coef_arr*T9_arr, axis=2))*self.coef_mask, axis=1)
-        rvals = np.sum(self.coef_arr*T9_arr, axis=2)
-        rvals = np.sum(np.exp(rvals)*self.coef_mask, axis=1)
+        rvals = self.prefac*self.yfac*np.sum(np.exp(np.sum(self.coef_arr*T9_arr, axis=2))*self.coef_mask, axis=1)
 
-        return self.prefac*self.yfac*rvals
+        return rvals
         
     def evaluate_ydots(self, rho, T, composition):
         """evaluate net rate of change of molar abundance for each nucleus
