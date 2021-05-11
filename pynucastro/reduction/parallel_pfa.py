@@ -135,16 +135,16 @@ if __name__ == "__main__":
     else:
         print("Usage: ./load_network.py <endpoint>")
 
-    # pr = cProfile.Profile()
-    # pr.enable()
+    pr = cProfile.Profile()
+    pr.enable()
     main(endpoint)
-    # pr.disable()
+    pr.disable()
     # Dump results:
     # - for binary dump
-    # comm = MPI.COMM_WORLD
-    # pr.dump_stats('cpu_%d.prof' % comm.rank)
+    comm = MPI.COMM_WORLD
+    pr.dump_stats('cpu_%d.prof' % comm.rank)
     # - for text dump
-    # with open( 'cpu_%d.txt' % comm.rank, 'w') as output_file:
-        # sys.stdout = output_file
-        # pr.print_stats( sort='time' )
-        # sys.stdout = sys.__stdout__
+    with open( 'cpu_%d.txt' % comm.rank, 'w') as output_file:
+        sys.stdout = output_file
+        pr.print_stats( sort='time' )
+        sys.stdout = sys.__stdout__
