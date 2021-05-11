@@ -90,11 +90,11 @@ def main(endpoint, targets =[Nucleus("p")], n=5, tol=0.4):
     print("Process %i calculated %i conditions" % (rank, count))
     sys.stdout.flush()
     comm.Barrier()
-    t_0_arr = np.array(comm.Gather(t_0, root=0))
-    t_1_arr = np.array(comm.Gather(t_1, root=0))
-    t_2_arr = np.array(comm.Gather(t_2, root=0))
-    t_B_arr = np.array(comm.Gather(t_B, root=0))
-    t_3_arr = np.array(comm.Gather(t_3, root=0))
+    t_0_arr = np.array(comm.gather(t_0, root=0))
+    t_1_arr = np.array(comm.gather(t_1, root=0))
+    t_2_arr = np.array(comm.gather(t_2, root=0))
+    t_B_arr = np.array(comm.gather(t_B, root=0))
+    t_3_arr = np.array(comm.gather(t_3, root=0))
     if(rank==0):
         G_pfa = pfa.graph_from_adj_matrix(net, A_final)
         r_species = pfa.get_remove_list(G_pfa, targets) # when working with many reaction conditions, intersection should be performed over all conditions
