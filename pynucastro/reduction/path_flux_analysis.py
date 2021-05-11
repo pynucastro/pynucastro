@@ -4,7 +4,7 @@ import pynucastro as pync
 import sys
 from load_network import load_network
 from pynucastro.networks import PythonNetwork
-from pynucastro.rates import Library, RateFilter, Nucleus
+from pynucastro.rates import Library, RateFilter, Nucleus, Tfactors
 from collections import OrderedDict
 
 def first_pass_reduction(G, target_sources):
@@ -110,6 +110,16 @@ def get_reduced_network(net, r_species):
         r_rates = set(list(r_rates) + list(net.nuclei_consumed[n]) + list(net.nuclei_produced[n]))
     
     return PythonNetwork(rates=list(set(net.rates).difference(r_rates)))
+
+def evaluate_rates_arr(prefac, yfac, coef_arr, T, coef_mask):
+    T9_arr = Tfactors(T).array[None, None, :]
+
+    # rvals = self.prefac*self.yfac*np.sum(np.exp(np.sum(self.coef_arr*T9_arr, axis=2))*self.coef_mask, axis=1)
+    rvals = np.sum(coef_arr*T9_arr, axis=2)
+    rvals = np.sum(np.exp(rvals)*coef_mask, axis=1)
+
+    return prefac*yfac*rvals
+
 
 def main(endpoint, targets = [Nucleus("p")], tol=0.2):
     net = load_network(endpoint)

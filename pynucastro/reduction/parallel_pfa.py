@@ -13,7 +13,7 @@ from pynucastro.rates import Library, RateFilter, Nucleus
 import time
 
 
-def main(endpoint, targets =[Nucleus("p")], n=5, tol=0.4):
+def main(endpoint, targets =[Nucleus("p")], n=10, tol=0.4):
 
     # Grab MPI settings and load data, conditions
     comm = MPI.COMM_WORLD
@@ -44,7 +44,7 @@ def main(endpoint, targets =[Nucleus("p")], n=5, tol=0.4):
     r_set_indices = pfa.get_set_indices(net, n_map)
     s_p, s_c, s_a = pfa.get_stoich_matrices(net, r_map)
 
-    net.update_coef_arr()
+    coef_arr, coef_mask = net.update_coef_arr()
 
     t_1 = MPI.Wtime()
     # Iterate through conditions and reduce local matrix
@@ -58,14 +58,16 @@ def main(endpoint, targets =[Nucleus("p")], n=5, tol=0.4):
                 if current % N_proc == rank:
                     count += 1
                     if update_yfac:
-                        net.update_yfac_arr(composition=comp, s_c=s_c)
+                        yfac = net.update_yfac_arr(composition=comp, s_c=s_c)
                         update_yfac = False
 
                     if update_prefac:
-                        net.update_prefac_arr(rho=rho, composition=comp)
+                        prefac = net.update_prefac_arr(rho=rho, composition=comp)
                         update_prefac = False
 
-                    rvals_arr = net.evaluate_rates_arr(T=T)
+                    # rvals_arr = net.evaluate_rates_arr(T=T)
+                    rvals_arr = pfa.evaluate_rates_arr(prefac, yfac, coef_arr, coef_mask, T)
+                    
                     # if(not(current % (n_conds//10))):
                     #     print("Proc %i on condition %i of %i" % (rank, current, n_conds))
                     #     sys.stdout.flush()
@@ -142,7 +144,7 @@ if __name__ == "__main__":
     # Dump results:
     # - for binary dump
     comm = MPI.COMM_WORLD
-    pr.dump_stats('cpu_%d.prof' % comm.rank)
+    # pr.dump_stats('cpu_%d.prof' % comm.rank)
     # - for text dump
     with open( 'cpu_%d.txt' % comm.rank, 'w') as output_file:
         sys.stdout = output_file

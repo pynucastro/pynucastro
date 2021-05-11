@@ -291,7 +291,8 @@ class RateCollection:
 
         yfac *= ys**s_c.T
         yfac = np.prod(yfac, axis=1)
-        self.yfac = yfac
+        # self.yfac = yfac
+        return yfac
 
     def update_coef_arr(self):
         # coef arr can be precomputed if evaluate_rates_arr is called multiple times
@@ -306,8 +307,9 @@ class RateCollection:
                 coef_arr[i, j, :] = s.a
                 coef_mask[i,j] = 1
 
-        self.coef_arr = coef_arr
-        self.coef_mask = coef_mask
+        # self.coef_arr = coef_arr
+        # self.coef_mask = coef_mask
+        return coef_arr, coef_mask
 
     def evaluate_rates_arr(self, T):
         """
