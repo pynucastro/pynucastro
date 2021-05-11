@@ -111,7 +111,7 @@ def get_reduced_network(net, r_species):
     
     return PythonNetwork(rates=list(set(net.rates).difference(r_rates)))
 
-def evaluate_rates_arr(prefac, yfac, coef_arr, T, coef_mask):
+def evaluate_rates_arr(prefac, yfac, coef_arr, coef_mask, T):
     T9_arr = Tfactors(T).array[None, None, :]
 
     # rvals = self.prefac*self.yfac*np.sum(np.exp(np.sum(self.coef_arr*T9_arr, axis=2))*self.coef_mask, axis=1)
