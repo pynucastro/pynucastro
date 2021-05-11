@@ -282,7 +282,8 @@ class RateCollection:
             if(r.weak_type == 'electron_capture'):
                 prefac[i] *= y_e
 
-        self.prefac = prefac
+        # self.prefac = prefac
+        return prefac
 
     def update_yfac_arr(self, composition, s_c):
         # yfac must be evaluated each time composition changes, probably pretty cheap
