@@ -47,6 +47,7 @@ def main(endpoint, targets =[Nucleus("p")], n=5, tol=0.4):
 
     t_1 = time.time()
     # Iterate through conditions and reduce local matrix
+    count = 0
     for k,comp in enumerate(comp_L):
         net.update_yfac_arr(composition=comp, s_c=s_c)
 
@@ -56,6 +57,7 @@ def main(endpoint, targets =[Nucleus("p")], n=5, tol=0.4):
             for j, T in enumerate(T_L):
                 current = i*n[1]*n[2] + j*n[2] + k 
                 if current % N_proc == rank:
+                    count += 1
                     rvals_arr = net.evaluate_rates_arr(T=T)
                     # if(not(current % (n_conds//10))):
                     #     print("Proc %i on condition %i of %i" % (rank, current, n_conds))
@@ -72,8 +74,10 @@ def main(endpoint, targets =[Nucleus("p")], n=5, tol=0.4):
     # Reduce adj matrix over processes
     A_final = np.zeros(A.shape)
 
-    comm.Barrier()
+
     t_2 = time.time()
+    comm.Barrier()
+    t_B = time.time()
     # if(rank == 0):
     #     print("Reducing adjacency matrix across processes")
     #     sys.stdout.flush()
@@ -82,6 +86,9 @@ def main(endpoint, targets =[Nucleus("p")], n=5, tol=0.4):
 
     ## on rank 0 only
     # create new directed graph and perform DFS on targets to get nodes to remove
+    print("Process %i calculated %i conditions" % (rank, count))
+    sys.stdout.flush()
+    comm.Barrier()
     if(rank==0):
         # print("Reducing network.")
         # sys.stdout.flush()
@@ -99,7 +106,8 @@ def main(endpoint, targets =[Nucleus("p")], n=5, tol=0.4):
         print(f"PFA took {t_5-t_0:.3f} s overall.")
         print(f"{t_1-t_0:.3f} s in precalculation.")
         print(f"{t_2-t_1:.3f} s in local adj matrix calculations.")
-        print(f"{t_3-t_2:.3f} s in parallel reduction.")
+        print(f"{t_B-t_2:.3f} s waiting for barrier.")
+        print(f"{t_3-t_B:.3f} s in parallel reduction.")
         print(f"{t_4-t_3:.3f} s in graph traversal.")
         print(f"{t_5-t_4:.3f} s in forming final network.")
         # print(reduced_net.unique_nuclei)
