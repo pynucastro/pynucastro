@@ -37,6 +37,7 @@ def main(endpoint, targets =[Nucleus("p")], n=5, tol=0.4):
     first_A = True
     n_conds = np.prod(n)
 
+    comm.Barrier() #synchronize timing
     t_0 = MPI.Wtime()
     # Precalculate data structures used in common over conditions
     n_map, r_map = pfa.get_maps(net)
@@ -89,9 +90,12 @@ def main(endpoint, targets =[Nucleus("p")], n=5, tol=0.4):
     print("Process %i calculated %i conditions" % (rank, count))
     sys.stdout.flush()
     comm.Barrier()
+    t_0_arr = np.array(comm.Gather(t_0, root=0))
+    t_1_arr = np.array(comm.Gather(t_1, root=0))
+    t_2_arr = np.array(comm.Gather(t_2, root=0))
+    t_B_arr = np.array(comm.Gather(t_B, root=0))
+    t_3_arr = np.array(comm.Gather(t_3, root=0))
     if(rank==0):
-        # print("Reducing network.")
-        # sys.stdout.flush()
         G_pfa = pfa.graph_from_adj_matrix(net, A_final)
         r_species = pfa.get_remove_list(G_pfa, targets) # when working with many reaction conditions, intersection should be performed over all conditions
 
@@ -104,10 +108,15 @@ def main(endpoint, targets =[Nucleus("p")], n=5, tol=0.4):
         print("Number of species in reduced network: ", len(reduced_net.unique_nuclei))
         print("Number of rates in reduced network: ", len(reduced_net.rates))
         print(f"PFA took {t_5-t_0:.3f} s overall.")
-        print(f"{t_1-t_0:.3f} s in precalculation.")
-        print(f"{t_2-t_1:.3f} s in local adj matrix calculations.")
-        print(f"{t_B-t_2:.3f} s waiting for barrier.")
-        print(f"{t_3-t_B:.3f} s in parallel reduction.")
+
+        dt1 = t_1_arr-t_0_arr
+        dt2 = t_2_arr-t_1_arr
+        dt3 = t_B_arr-t_2_arr
+        dt4 = t_3_arr-t_B_arr
+        print(f"Precalculation mean: {np.mean(dt1):.3f} s std. dev:  {np.std(dt1):.3f}.")
+        print(f"Local adj matrix mean: {np.mean(dt2):.3f} s std. dev:  {np.std(dt2):.3f}.")
+        print(f"Barrier waiting mean: {np.mean(dt3):.3f} s std. dev:  {np.std(dt3):.3f}.")
+        print(f"Parallel reduction mean: {np.mean(dt4):.3f} s std. dev:  {np.std(dt4):.3f}.")
         print(f"{t_4-t_3:.3f} s in graph traversal.")
         print(f"{t_5-t_4:.3f} s in forming final network.")
         # print(reduced_net.unique_nuclei)
