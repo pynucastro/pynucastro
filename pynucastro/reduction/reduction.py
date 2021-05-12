@@ -135,8 +135,6 @@ def error_function(net_new, net_old, conds):
 
     for rho, T, comp in conds:
 
-        # comp_red = map_comp4(comp, net_new, dummy)
-
         net_info1 = get_net_info(net_new, rho, T, comp)
         net_info2 = get_net_info(net_old, rho, T, comp)
 
@@ -153,6 +151,30 @@ def error_function(net_new, net_old, conds):
         err[2] = max(err[2], rel_err(abar_dot1, abar_dot2))
 
     return err
+    
+def get_errfunc_enuc(net_old, conds):
+    
+    conds = _wrap_conds(conds)
+    enucdot_list = []
+    
+    for rho, T, comp in conds:
+
+        net_info_old = get_net_info(net_old, rho, T, comp)
+        enucdot_list.append(enuc_dot(net_info_old))
+    
+    def erf(net_new):
+        
+        err = 0.0
+        
+        for cond, enucdot_old in zip(conds, enucdot_list):
+
+            net_info_new = get_net_info(net_new, *cond)
+            enucdot_new = enuc_dot(net_info_new)
+            err = max(err, rel_err(enucdot_new, enucdot_old))
+            
+        return err
+        
+    return erf
     
 def add_dummy_nucleus(red_net, conds):
     
@@ -178,27 +200,34 @@ if __name__ == "__main__":
     
     from pynucastro.reduction.load_network import load_network
     from pynucastro.reduction.generate_data import dataset
-    from pynucastro.reduction import drgep
+    from pynucastro.reduction import drgep, n_ary_search
     import time
     
     net = load_network(Nucleus('ni56'))
-    data = list(dataset(net, n=10))
+    data = list(dataset(net, n=6))
     
+    # Perform DRGEP
     targets = map(Nucleus, ['p', 'ni56'])
     t0 = time.time()
-    reduced_net = drgep(net, data, targets, [1e-3, 1e-2])
+    nuclei = drgep(net, data, targets, [1e-3, 1e-2], returnobj='nuclei')
     dt = time.time() - t0
     
-    # dummy = add_dummy_nucleus(reduced_net, data[-1])
-    
     if MPI.COMM_WORLD.Get_rank() == 0:
-        print(f"DRGEP reduction took {dt:.3f} s.")
-        print("Number of species in full network: ", len(net.unique_nuclei))
-        print("Number of rates in full network: ", len(net.rates))
-        print("Number of species in reduced network: ", len(reduced_net.unique_nuclei))
-        print("Number of rates in reduced network: ", len(reduced_net.rates))
         
         print()
-        print("Evaluating error (max across all sets of conditions)...")
-        err = error_function(reduced_net, net, data[-1])
-        print("enuc_dot: {:.2f}%; ye_dot: {:.2f}%; abar_dot: {:.2f}%".format(*(100*err)))
+        print(f"DRGEP reduction took {dt:.3f} s.")
+        print("Number of species in full network: ", len(net.unique_nuclei))
+        print("Number of species in DRGEP reduced network: ", len(nuclei))
+        print()
+        
+    # Perform sensitivity analysis
+    red_net = net.linking_nuclei(nuclei)
+    errfunc = get_errfunc_enuc(net, data)
+    t0 = time.time()
+    red_net = n_ary_search(red_net, nuclei, errfunc)
+    dt = time.time() - t0
+    
+    if MPI.COMM_WORLD.Get_rank() == 0:
+        
+        print(f"SA reduction took {dt:.3f} s.")
+        print("Number of species in DRGEP + SA reduced network: ", len(red_net.unique_nuclei))

@@ -174,7 +174,7 @@ def _drgep_kernel(net, R_TB, rvals, targets, tols):
         R_TB_i = drgep_dijkstras(net, r_AB, target)
         np.maximum(R_TB, R_TB_i, out=R_TB, where=(R_TB_i >= tol))
     
-def drgep(net, conds, targets, tols):
+def drgep(net, conds, targets, tols, returnobj='net'):
     
     comm = MPI.COMM_WORLD
     MPI_N = comm.Get_size()
@@ -193,7 +193,13 @@ def drgep(net, conds, targets, tols):
         
     R_TB = np.zeros_like(R_TB_loc)
     comm.Allreduce([R_TB_loc, MPI.DOUBLE], [R_TB, MPI.DOUBLE], op=MPI.MAX)
-        
-    nuclei = [net.unique_nuclei[i] for i in range(len(net.unique_nuclei))
-              if R_TB[i] > 0.0]
-    return net.linking_nuclei(nuclei)
+              
+    if returnobj == 'net':
+        nuclei = [net.unique_nuclei[i] for i in range(len(net.unique_nuclei))
+                  if R_TB[i] > 0.0]   
+        return net.linking_nuclei(nuclei)
+    elif returnobj == 'nuclei':
+        idx = sorted(range(len(R_TB)), key=lambda i: R_TB[i], reverse=True)
+        return [net.unique_nuclei[i] for i in idx if R_TB[i] > 0.0]
+    else:
+        raise ValueError("Invalid 'returnobj' argument: '{}'.".format(returnobj))
