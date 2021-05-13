@@ -30,7 +30,7 @@ def main(endpoint, targets =[Nucleus("p")], n=16, tol=0.4):
     else:
         n = np.array(list(n), dtype=np.int32)
 
-    #only designing this to work for 2^n processes, 2^m conditions for m >= 4
+    #only designing this to work for 2^n processes, 2^m conditions for m >= 3
     if(n[2] >= N_proc):
         comp_i = (n[2]//N_proc)*rank
         comp_f = (n[2]//N_proc)*(rank+1)

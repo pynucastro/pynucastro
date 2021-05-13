@@ -341,6 +341,15 @@ class RateCollection:
         rvals = self.prefac*self.yfac*np.sum(np.exp(np.sum(self.coef_arr*T9_arr, axis=2))*self.coef_mask, axis=1)
 
         return rvals
+
+    def evaluate_ydots_arr(self, rho, T, comp, s_p, s_c):
+        rvals_arr = self.evaluate_rates_arr(T)
+
+        p_A = np.sum(s_p*rvals_arr, axis=1)
+        c_A = np.sum(s_c*rvals_arr, axis=1)
+
+        return p_A - c_A
+
         
     def evaluate_ydots(self, rho, T, composition):
         """evaluate net rate of change of molar abundance for each nucleus

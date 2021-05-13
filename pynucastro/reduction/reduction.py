@@ -6,6 +6,7 @@ from collections import namedtuple
 from pynucastro import Composition, Nucleus
 from pynucastro.rates import DummyNucleus
 from pynucastro.nucdata import BindingTable
+import path_flux_analysis as pfa
 from mpi4py import MPI
 
 def _wrap_conds(conds):
@@ -45,6 +46,38 @@ def get_net_info(net, rho, T, comp):
 
         y[i] = y_dict[n]
         ydot[i] = ydots_dict[n]
+        z[i] = n.Z
+        a[i] = n.A
+        try:
+            ebind[i] = bintable[n.N, n.Z].nucbind
+        except KeyError:
+            ebind[i] = 0.0
+        m[i] = mass_proton * n.Z + mass_neutron * n.N - ebind[i] / c_light**2
+
+    return NetInfo(y, ydot, z, a, ebind, m)
+
+def get_net_info_arr(net, rho, T, comp, s_p, s_c):
+
+    y_dict = comp.get_molar()
+    ydots_dict = net.evaluate_ydots_arr(rho, T, comp, s_p, s_c)
+
+    bintable = BindingTable()
+    bintable = {(nuc.n, nuc.z): nuc for nuc in bintable.nuclides}
+
+    y = np.zeros(len(net.unique_nuclei), dtype=np.float64)
+    ydot = np.zeros(len(net.unique_nuclei), dtype=np.float64)
+    z = np.zeros(len(net.unique_nuclei), dtype=np.float64)
+    a = np.zeros(len(net.unique_nuclei), dtype=np.float64)
+    ebind = np.zeros(len(net.unique_nuclei), dtype=np.float64)
+    m = np.zeros(len(net.unique_nuclei), dtype=np.float64)
+
+    mass_neutron = 1.67492721184e-24
+    mass_proton = 1.67262163783e-24
+    c_light = 2.99792458e10
+
+    for i, n in enumerate(net.unique_nuclei):
+
+        y[i] = y_dict[n]
         z[i] = n.Z
         a[i] = n.A
         try:
@@ -153,20 +186,50 @@ def error_function(net_new, net_old, conds):
     return err
     
 def get_errfunc_enuc(net_old, conds):
-    
-    conds = _wrap_conds(conds)
-    enucdot_list = []
-    
-    for rho, T, comp in conds:
+    comm = MPI.COMM_WORLD
+    rank = comm.Get_rank()
+    N_proc = comm.Get_size()
 
-        net_info_old = get_net_info(net_old, rho, T, comp)
-        enucdot_list.append(enuc_dot(net_info_old))
+    #only designing this to work for 2^n processes, 2^m conditions for m >= 3
+    n = np.array(len(conds[0]), len(conds[1]), len(conds[2]))
+    if(n[2] >= N_proc):
+        comp_i = (n[2]//N_proc)*(rank)
+        comp_f = (n[2]//N_proc)*(rank+1)
+        rho_i = 0
+        rho_f = n[0]
+    else:
+        comp_split = (N_proc // n[2])
+        comp_i = rank // (comp_split)
+        comp_f = comp_i + 1
+        rho_i = (n[0]//comp_split) * (rank % comp_split)
+        rho_f = (n[0]//comp_split) * ((rank+1) % comp_split)
+        if rank % comp_split == comp_split-1:
+            rho_f = n[0]
+
+    rho_L = conds[0][rho_i:rho_f]
+    T_L = conds[1]
+    comp_L = conds[2][comp_i:comp_f]
+
+    n_map, r_map = pfa.get_maps(net_old)
+    s_p, s_c, s_a = pfa.get_stoich_matrices(net_old, r_map)
+
+    enucdot_list = []
+    for comp in comp_L:
+        net_old.update_yfac_arr(composition=comp, s_c=s_c)
+        for rho in rho_L:
+            net_old.update_prefac_arr(rho=rho, composition=comp)
+            for T in T_L:
+                net_info_old = get_net_info_arr(net_old, rho, T, comp, s_p, s_c)
+                enucdot_list.append(enuc_dot(net_info_old))
     
+    enucdot_list_g = np.zeros(N_proc*len(enucdot_list))
+    comm.Allgather([np.array(enucdot_list), MPI.DOUBLE], [enucdot_list_g, MPI.DOUBLE])
+
     def erf(net_new):
         
         err = 0.0
         
-        for cond, enucdot_old in zip(conds, enucdot_list):
+        for cond, enucdot_old in zip(conds, enucdot_list_g):
 
             net_info_new = get_net_info(net_new, *cond)
             enucdot_new = enuc_dot(net_info_new)
@@ -223,6 +286,7 @@ if __name__ == "__main__":
     # Perform sensitivity analysis
     red_net = net.linking_nuclei(nuclei)
     errfunc = get_errfunc_enuc(net, data)
+    MPI.COMM_WORLD.Barrier()
     t0 = time.time()
     red_net = n_ary_search(red_net, nuclei, errfunc)
     dt = time.time() - t0
