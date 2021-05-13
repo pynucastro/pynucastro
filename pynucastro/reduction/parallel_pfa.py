@@ -151,7 +151,7 @@ if __name__ == "__main__":
 
     # pr = cProfile.Profile()
     # pr.enable()
-    main(endpoint, n)
+    main(endpoint, n=n)
     # pr.disable()
     # Dump results:
     # - for binary dump
