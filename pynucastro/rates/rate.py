@@ -258,6 +258,22 @@ class Nucleus(object):
     def __le__(self, other):
         return (self < other) or (self == other)
 
+class DummyNucleus(Nucleus):
+    
+    def __init__(self, Z=None, A=None, name=None):
+        
+        if Z is None or A is None:
+            return ValueError("Must specify Z, A when creating dummy nucleus.")
+        
+        self.Z = Z
+        self.A = A
+        self.N = (A - Z)
+        
+        self.raw = str(name).lower()
+        self.short_spec_name = self.raw
+        self.spec_name = '{}-{}'.format(self.raw, self.A)
+        self.el = self.raw
+        self.pretty = r"{{}}^{{{}}}\mathrm{{{}}}".format(self.A, self.el.capitalize())
 
 class Library(object):
     """
