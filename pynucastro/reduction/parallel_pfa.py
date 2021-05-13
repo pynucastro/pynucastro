@@ -13,7 +13,7 @@ from pynucastro.rates import Library, RateFilter, Nucleus
 import time
 
 
-def main(endpoint, targets =[Nucleus("p")], n=10, tol=0.4):
+def main(endpoint, targets =[Nucleus("p")], n=16, tol=0.4):
 
     # Grab MPI settings and load data, conditions
     comm = MPI.COMM_WORLD
@@ -30,9 +30,23 @@ def main(endpoint, targets =[Nucleus("p")], n=10, tol=0.4):
     else:
         n = np.array(list(n), dtype=np.int32)
 
-    rho_L = conds[0]
+    #only designing this to work for 2^n processes, 2^m conditions for m >= 4
+    if(n[2] >= N_proc):
+        comp_i = (n[2]//N_proc)*rank
+        comp_f = (n[2]//N_proc)*(rank+1)
+        rho_i = 0
+        rho_f = -1
+    else: 
+        comp_i = rank % n[2] 
+        comp_f = comp_i + 1
+        comp_split = N_proc / n[2]
+        rho_i = (n[0]//(N_proc / n[2])) * (rank// n[2])
+        rho_f = (n[0]//(N_proc / n[2])) * (rank// n[2] + 1)
+
+
+    rho_L = conds[0][rho_i:rho_f]
     T_L = conds[1]
-    comp_L = conds[2]
+    comp_L = conds[2][comp_i:comp_f]
 
     first_A = True
     n_conds = np.prod(n)
@@ -50,33 +64,27 @@ def main(endpoint, targets =[Nucleus("p")], n=10, tol=0.4):
     # Iterate through conditions and reduce local matrix
     count = 0
     for k,comp in enumerate(comp_L):
-        update_yfac = True
+        net.update_yfac_arr(composition=comp, s_c=s_c)
         for i, rho in enumerate(rho_L):
-            update_prefac = True
+            net.update_prefac_arr(rho=rho, composition=comp)
             for j, T in enumerate(T_L):
-                current = i*n[1]*n[2] + j*n[2] + k 
-                if current % N_proc == rank:
-                    count += 1
-                    if update_yfac:
-                        net.update_yfac_arr(composition=comp, s_c=s_c)
-                        update_yfac = False
+                rvals_arr = net.evaluate_rates_arr(T=T)
+                # if(not(current % (n_conds//10))):
+                #     print("Proc %i on condition %i of %i" % (rank, current, n_conds))
+                #     sys.stdout.flush()
 
-                    if update_prefac:
-                        net.update_prefac_arr(rho=rho, composition=comp)
-                        update_prefac = False
+                # grab adjacency matrix through PFA calculation on 2-neighbor paths
+                A = pfa.calc_adj_matrix(net, s_p, s_c, s_a, rvals_arr)
+                if first_A:
+                    A_red = np.copy(A)
+                    first_A = False
+                else:
+                    A_red = np.maximum(A, A_red)
 
-                    rvals_arr = net.evaluate_rates_arr(T=T)
-                    # if(not(current % (n_conds//10))):
-                    #     print("Proc %i on condition %i of %i" % (rank, current, n_conds))
-                    #     sys.stdout.flush()
+    np.fill_diagonal(A_red, 0.0)
 
-                    # grab adjacency matrix through PFA calculation on 2-neighbor paths
-                    A = pfa.calc_adj_matrix(net, s_p, s_c, s_a, rvals_arr, tol)
-                    if first_A:
-                        A_red = np.copy(A)
-                        first_A = False
-                    else:
-                        A_red = np.maximum(A, A_red)
+    # remove edges with weak dependence
+    A_red *= A_red > tol
 
     # Reduce adj matrix over processes
     A_final = np.zeros(A.shape)

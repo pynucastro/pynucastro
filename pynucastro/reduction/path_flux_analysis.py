@@ -65,7 +65,7 @@ def get_set_indices(net, r_map):
 
     return indices
 
-def calc_adj_matrix(net, s_p, s_c, s_a, rvals_arr, tol):
+def calc_adj_matrix(net, s_p, s_c, s_a, rvals_arr):
     s_p_scaled = s_p*rvals_arr
     s_c_scaled = s_c*rvals_arr
 
@@ -85,10 +85,7 @@ def calc_adj_matrix(net, s_p, s_c, s_a, rvals_arr, tol):
     r_con_AB2 = r_con_AB1 @ r_con_AB1
     
     adjacency_matrix = r_pro_AB1 + r_con_AB1 + r_pro_AB2 + r_con_AB2
-    np.fill_diagonal(adjacency_matrix, 0.0)
 
-    # remove edges with weak dependence
-    adjacency_matrix *= adjacency_matrix > tol
     return adjacency_matrix
 
 def graph_from_adj_matrix(network, A):
