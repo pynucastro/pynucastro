@@ -35,7 +35,7 @@ def main(endpoint, targets =[Nucleus("p")], n=16, tol=0.4):
         comp_i = (n[2]//N_proc)*rank
         comp_f = (n[2]//N_proc)*(rank+1)
         rho_i = 0
-        rho_f = -1
+        rho_f = n[0]
     else: 
         comp_i = rank % n[2] 
         comp_f = comp_i + 1
