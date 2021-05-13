@@ -136,16 +136,22 @@ def main(endpoint, targets =[Nucleus("p")], n=16, tol=0.4):
         # print(reduced_net.unique_nuclei)
 
 if __name__ == "__main__":
-    if len(sys.argv) == 2:
+
+    if len(sys.argv) == 5:
         endpoint = Nucleus(sys.argv[1])
+        n = (sys.argv[2], sys.argv[3], sys.argv[4])
+    elif len(sys.argv) == 2:
+        endpoint = Nucleus(sys.argv[1])
+        n = 16
     elif len(sys.argv) == 1:
         endpoint = Nucleus('te108')
+        n = 16
     else:
         print("Usage: ./load_network.py <endpoint>")
 
     # pr = cProfile.Profile()
     # pr.enable()
-    main(endpoint)
+    main(endpoint, n)
     # pr.disable()
     # Dump results:
     # - for binary dump
