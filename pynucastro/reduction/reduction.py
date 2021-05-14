@@ -265,9 +265,22 @@ if __name__ == "__main__":
     from pynucastro.reduction.generate_data import dataset
     from pynucastro.reduction import drgep, n_ary_search
     import time
+    import sys
+
+    if len(sys.argv) == 5:
+        endpoint = Nucleus(sys.argv[1])
+        n = (sys.argv[2], sys.argv[3], sys.argv[4])
+    elif len(sys.argv) == 2:
+        endpoint = Nucleus(sys.argv[1])
+        n = 16
+    elif len(sys.argv) == 1:
+        endpoint = Nucleus('te108')
+        n = 16
+    else:
+        print("Usage: ./load_network.py <endpoint>")
     
-    net = load_network(Nucleus('ni56'))
-    data = list(dataset(net, n=6))
+    net = load_network(endpoint)
+    data = list(dataset(net, n=n))
     
     # Perform DRGEP
     targets = map(Nucleus, ['p', 'ni56'])
@@ -278,7 +291,7 @@ if __name__ == "__main__":
     if MPI.COMM_WORLD.Get_rank() == 0:
         
         print()
-        print(f"DRGEP reduction took {dt:.3f} s.")
+        print(f"DRGEP reduction took {dt:.3f} s for {MPI.COMM_WORLD.Get_size()} processes.")
         print("Number of species in full network: ", len(net.unique_nuclei))
         print("Number of species in DRGEP reduced network: ", len(nuclei))
         print()
