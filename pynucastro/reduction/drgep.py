@@ -99,8 +99,23 @@ def calc_adj_matrix(net, rvals):
     r_AB = np.abs(p_AB - c_AB) / denom
 
     return r_AB
-    
-def drgep_dijkstras(net, r_AB, target):
+
+def get_set_map(net):
+
+    set_map = dict()
+
+    for n in net.unique_nuclei:
+        bs = set()
+        for r in net.nuclei_produced[n]:
+            bs |= set(r.products) | set(r.reactants)
+        for r in net.nuclei_consumed[n]:
+            bs |= set(r.products) | set(r.reactants)
+
+        set_map[n] = bs
+
+    return set_map
+
+def drgep_dijkstras(net, r_AB, target, set_map):
     
     # Number of species
     nspec = len(net.unique_nuclei)
@@ -129,12 +144,7 @@ def drgep_dijkstras(net, r_AB, target):
         r_TA = dist[imax]
         R_TB[imax] = r_TA
         n = net.unique_nuclei[imax]
-        bs = set()
-        
-        for r in net.nuclei_produced[n]:
-            bs |= set(r.products) | set(r.reactants)
-        for r in net.nuclei_consumed[n]:
-            bs |= set(r.products) | set(r.reactants)
+        bs = set_map[n]
             
         for b in bs:
             jb = j_map[b]
@@ -175,13 +185,13 @@ def _drgep_kernel(net, R_TB, rvals, targets, tols):
         R_TB_i = drgep_dijkstras(net, r_AB, target)
         np.maximum(R_TB, R_TB_i, out=R_TB, where=(R_TB_i >= tol))
 
-def _drgep_kernel_numpy(net, R_TB, c_p, c_c, c_e, rvals, targets, tols):
+def _drgep_kernel_numpy(net, R_TB, c_p, c_c, c_e, rvals, targets, set_map, tols):
     
     r_AB = calc_adj_matrix_numpy(net, c_p, c_c, c_e, rvals)
     
     for target, tol in zip(targets, tols):
         
-        R_TB_i = drgep_dijkstras(net, r_AB, target)
+        R_TB_i = drgep_dijkstras(net, r_AB, target, set_map)
         np.maximum(R_TB, R_TB_i, out=R_TB, where=(R_TB_i >= tol))
     
 def drgep(net, conds, targets, tols, returnobj='net'):
@@ -216,6 +226,7 @@ def drgep(net, conds, targets, tols, returnobj='net'):
 
     n_conds = np.prod(n)
     net.update_coef_arr()
+    set_map = get_set_map(net)
 
     for k,comp in enumerate(comp_L):
         net.update_yfac_arr(composition=comp, s_c=c_c)
@@ -224,7 +235,7 @@ def drgep(net, conds, targets, tols, returnobj='net'):
             for j, T in enumerate(T_L):
                 rvals_arr = net.evaluate_rates_arr(T=T)
                 # rvals = np.array(list(net.evaluate_rates(rho=rho, T=T, composition=comp).values()))
-                _drgep_kernel_numpy(net, R_TB_loc, c_p, c_c, c_e, rvals_arr, targets, tols)
+                _drgep_kernel_numpy(net, R_TB_loc, c_p, c_c, c_e, rvals_arr, targets, set_map, tols)
         
     R_TB = np.zeros_like(R_TB_loc)
     comm.Allreduce([R_TB_loc, MPI.DOUBLE], [R_TB, MPI.DOUBLE], op=MPI.MAX)
