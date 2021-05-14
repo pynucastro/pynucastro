@@ -13,22 +13,24 @@ from pynucastro.rates import Library, RateFilter, Nucleus
 import time
 
 
-def main(endpoint, targets =[Nucleus("p")], n=16, tol=0.4):
+def ppfa(net, conds, tol=0.4, targets=[Nucleus("p")], SA=False):
 
     # Grab MPI settings and load data, conditions
     comm = MPI.COMM_WORLD
     rank = comm.Get_rank()
     N_proc = comm.Get_size()
 
-    net = load_network(endpoint)
-    # print("Network loaded on process %i" % rank)
-    # sys.stdout.flush()
+    # net = load_network(endpoint)
+    # # print("Network loaded on process %i" % rank)
+    # # sys.stdout.flush()
 
-    conds = get_conditions(net, n)
-    if isinstance(n, int):
-        n = np.ones(3, dtype=np.int32) * n
-    else:
-        n = np.array(list(n), dtype=np.int32)
+    # conds = get_conditions(net, n)
+    # if isinstance(n, int):
+    #     n = np.ones(3, dtype=np.int32) * n
+    # else:
+    #     n = np.array(list(n), dtype=np.int32)
+
+    n = np.array([len(conds[0]), len(conds[1]), len(conds[2])]).astype(int)
 
     #only designing this to work for 2^n processes, 2^m conditions for m >= 3
     if(n[2] >= N_proc):
@@ -94,7 +96,11 @@ def main(endpoint, targets =[Nucleus("p")], n=16, tol=0.4):
     # if(rank == 0):
     #     print("Reducing adjacency matrix across processes")
     #     sys.stdout.flush()
-    comm.Reduce([A_red, MPI.DOUBLE], [A_final, MPI.DOUBLE], op=MPI.MAX, root=0)
+    if SA:
+        comm.Allreduce([A_red, MPI.DOUBLE], [A_final, MPI.DOUBLE], op=MPI.MAX, root=0)
+    else:
+        comm.Reduce([A_red, MPI.DOUBLE], [A_final, MPI.DOUBLE], op=MPI.MAX, root=0)
+
     t_3 = MPI.Wtime()
 
     ## on rank 0 only
@@ -107,31 +113,36 @@ def main(endpoint, targets =[Nucleus("p")], n=16, tol=0.4):
     t_2_arr = np.array(comm.gather(t_2, root=0))
     # t_B_arr = np.array(comm.gather(t_B, root=0))
     t_3_arr = np.array(comm.gather(t_3, root=0))
-    if(rank==0):
-        G_pfa = pfa.graph_from_adj_matrix(net, A_final)
-        r_species = pfa.get_remove_list(G_pfa, targets) # when working with many reaction conditions, intersection should be performed over all conditions
+    if SA:
+        R_TB = np.sum(A_final, axis=0)
+        idx = sorted(range(len(R_TB)), key=lambda i: R_TB[i], reverse=True)
+        return [net.unique_nuclei[i] for i in idx if R_TB[i] > 0.0]
+    else:
+        if(rank==0):
+            G_pfa = pfa.graph_from_adj_matrix(net, A_final)
+            r_species = pfa.get_remove_list(G_pfa, targets) # when working with many reaction conditions, intersection should be performed over all conditions
 
-        t_4 = MPI.Wtime()
-        # construct new network with only reactions involving reachable species
-        reduced_net = pfa.get_reduced_network(net, r_species)
-        t_5 = MPI.Wtime()
-        print("Number of species in full network: ", len(net.unique_nuclei))
-        print("Number of rates in full network: ", len(net.rates))
-        print("Number of species in reduced network: ", len(reduced_net.unique_nuclei))
-        print("Number of rates in reduced network: ", len(reduced_net.rates))
-        print(f"PFA took {t_5-t_0:.3f} s overall with {N_proc} processes.")
+            t_4 = MPI.Wtime()
+            # construct new network with only reactions involving reachable species
+            reduced_net = pfa.get_reduced_network(net, r_species)
+            t_5 = MPI.Wtime()
+            print("Number of species in full network: ", len(net.unique_nuclei))
+            print("Number of rates in full network: ", len(net.rates))
+            print("Number of species in reduced network: ", len(reduced_net.unique_nuclei))
+            print("Number of rates in reduced network: ", len(reduced_net.rates))
+            print(f"PFA took {t_5-t_0:.3f} s overall with {N_proc} processes.")
 
-        dt1 = t_1_arr-t_0_arr
-        dt2 = t_2_arr-t_1_arr
-        # dt3 = t_B_arr-t_2_arr
-        dt4 = t_3_arr-t_2_arr
-        print(f"Precalculation mean: {np.mean(dt1):.3f} s std. dev:  {np.std(dt1):.3f}.")
-        print(f"Local adj matrix mean: {np.mean(dt2):.3f} s std. dev:  {np.std(dt2):.3f}.")
-        # print(f"Barrier waiting mean: {np.mean(dt3):.3f} s std. dev:  {np.std(dt3):.3f}.")
-        print(f"Parallel reduction mean: {np.mean(dt4):.3f} s std. dev:  {np.std(dt4):.3f}.")
-        print(f"{t_4-t_3:.3f} s in graph traversal.")
-        print(f"{t_5-t_4:.3f} s in forming final network.")
-        # print(reduced_net.unique_nuclei)
+            dt1 = t_1_arr-t_0_arr
+            dt2 = t_2_arr-t_1_arr
+            # dt3 = t_B_arr-t_2_arr
+            dt4 = t_3_arr-t_2_arr
+            print(f"Precalculation mean: {np.mean(dt1):.3f} s std. dev:  {np.std(dt1):.3f}.")
+            print(f"Local adj matrix mean: {np.mean(dt2):.3f} s std. dev:  {np.std(dt2):.3f}.")
+            # print(f"Barrier waiting mean: {np.mean(dt3):.3f} s std. dev:  {np.std(dt3):.3f}.")
+            print(f"Parallel reduction mean: {np.mean(dt4):.3f} s std. dev:  {np.std(dt4):.3f}.")
+            print(f"{t_4-t_3:.3f} s in graph traversal.")
+            print(f"{t_5-t_4:.3f} s in forming final network.")
+            # print(reduced_net.unique_nuclei)
 
 if __name__ == "__main__":
 
@@ -149,7 +160,7 @@ if __name__ == "__main__":
 
     # pr = cProfile.Profile()
     # pr.enable()
-    main(endpoint, n=n)
+    pfa(endpoint, n=n)
     # pr.disable()
     # Dump results:
     # - for binary dump

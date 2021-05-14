@@ -7,6 +7,7 @@ from pynucastro import Composition, Nucleus
 from pynucastro.rates import DummyNucleus
 from pynucastro.nucdata import BindingTable
 import path_flux_analysis as pfa
+from parallel_pfa import ppfa
 from mpi4py import MPI
 
 def _wrap_conds(conds):
@@ -330,10 +331,14 @@ if __name__ == "__main__":
     net = load_network(endpoint)
     data = list(dataset(net, n=n))
     
-    # Perform DRGEP
+    # Perform DRGEP / PFA
     targets = map(Nucleus, ['p', 'ni56'])
     t0 = time.time()
-    nuclei = drgep(net, data, targets, [1e-3, 1e-2], returnobj='nuclei')
+    DRGEP = True
+    if DRGEP:
+        nuclei = drgep(net, data, targets, [1e-3, 1e-2], returnobj='nuclei')
+    else:
+        nuclei = ppfa(net, data, 0.4, SA=True)
     dt = time.time() - t0
     
     if MPI.COMM_WORLD.Get_rank() == 0:
