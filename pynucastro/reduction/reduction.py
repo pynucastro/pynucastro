@@ -281,10 +281,11 @@ def get_errfunc_enuc_mpi(net_old, conds):
                     enucdot_new = enuc_dot(net_info_new)
                     err = max(err, rel_err(enucdot_new, enucdot_old))
         
-        err_arr = np.array([err])
-        comm.Allreduce([err_arr, MPI.DOUBLE], [err_arr, MPI.DOUBLE], op=MPI.MAX)
+        err_arr_loc = np.array([err])
+        err_arr = np.zeros_like(err_arr_loc)
+        comm.Allreduce([err_arr_loc, MPI.DOUBLE], [err_arr, MPI.DOUBLE], op=MPI.MAX)
             
-        return err
+        return err_arr[0]
         
     return erf
     
