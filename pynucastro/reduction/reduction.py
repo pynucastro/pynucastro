@@ -59,13 +59,12 @@ def get_net_info(net, rho, T, comp):
 def get_net_info_arr(net, rho, T, comp, s_p, s_c):
 
     y_dict = comp.get_molar()
-    ydots_dict = net.evaluate_ydots_arr(rho, T, comp, s_p, s_c)
+    ydot = net.evaluate_ydots_arr(rho, T, comp, s_p, s_c)
 
     bintable = BindingTable()
     bintable = {(nuc.n, nuc.z): nuc for nuc in bintable.nuclides}
 
     y = np.zeros(len(net.unique_nuclei), dtype=np.float64)
-    ydot = np.zeros(len(net.unique_nuclei), dtype=np.float64)
     z = np.zeros(len(net.unique_nuclei), dtype=np.float64)
     a = np.zeros(len(net.unique_nuclei), dtype=np.float64)
     ebind = np.zeros(len(net.unique_nuclei), dtype=np.float64)
@@ -186,12 +185,42 @@ def error_function(net_new, net_old, conds):
     return err
     
 def get_errfunc_enuc(net_old, conds):
+    
+    conds_list = []
+    
+    for rho in conds[0]:
+        for T in conds[1]:
+            for comp in conds[2]:
+                conds_list.append((rho, T, comp))
+                
+    enucdot_list = []
+    
+    for rho, T, comp in conds_list:
+        net_info_old = get_net_info(net_old, rho, T, comp)
+        enucdot_list.append(enuc_dot(net_info_old))
+    
+    def erf(net_new):
+        
+        err = 0.0
+        
+        for cond, enucdot_old in zip(conds_list, enucdot_list):
+
+            net_info_new = get_net_info(net_new, *cond)
+            enucdot_new = enuc_dot(net_info_new)
+            err = max(err, rel_err(enucdot_new, enucdot_old))
+            
+        return err
+        
+    return erf
+    
+def get_errfunc_enuc_mpi(net_old, conds):
+    
     comm = MPI.COMM_WORLD
     rank = comm.Get_rank()
     N_proc = comm.Get_size()
 
     #only designing this to work for 2^n processes, 2^m conditions for m >= 3
-    n = np.array(len(conds[0]), len(conds[1]), len(conds[2]))
+    n = np.array([len(conds[0]), len(conds[1]), len(conds[2])])
     if(n[2] >= N_proc):
         comp_i = (n[2]//N_proc)*(rank)
         comp_f = (n[2]//N_proc)*(rank+1)
@@ -209,6 +238,8 @@ def get_errfunc_enuc(net_old, conds):
     rho_L = conds[0][rho_i:rho_f]
     T_L = conds[1]
     comp_L = conds[2][comp_i:comp_f]
+    
+    n_loc = np.array([len(comp_L), len(rho_L), len(T_L)])
 
     n_map, r_map = pfa.get_maps(net_old)
     s_p, s_c, s_a = pfa.get_stoich_matrices(net_old, r_map)
@@ -222,18 +253,35 @@ def get_errfunc_enuc(net_old, conds):
                 net_info_old = get_net_info_arr(net_old, rho, T, comp, s_p, s_c)
                 enucdot_list.append(enuc_dot(net_info_old))
     
-    enucdot_list_g = np.zeros(N_proc*len(enucdot_list))
-    comm.Allgather([np.array(enucdot_list), MPI.DOUBLE], [enucdot_list_g, MPI.DOUBLE])
+    # enucdot_list_g = np.zeros(N_proc*len(enucdot_list))
+    # comm.Allgather([np.array(enucdot_list), MPI.DOUBLE], [enucdot_list_g, MPI.DOUBLE])
 
     def erf(net_new):
         
-        err = 0.0
+        comm = MPI.COMM_WORLD
+        rank = comm.Get_rank()
+        N_proc = comm.Get_size()
         
-        for cond, enucdot_old in zip(conds, enucdot_list_g):
+        err = 0.0
 
-            net_info_new = get_net_info(net_new, *cond)
-            enucdot_new = enuc_dot(net_info_new)
-            err = max(err, rel_err(enucdot_new, enucdot_old))
+        n_map, r_map = pfa.get_maps(net_new)
+        s_p, s_c, s_a = pfa.get_stoich_matrices(net_new, r_map)
+        net_new.update_coef_arr()
+
+        for i, comp in enumerate(comp_L):
+            comp = map_comp3(comp, net_new)
+            net_new.update_yfac_arr(composition=comp, s_c=s_c)
+            for j, rho in enumerate(rho_L):
+                net_new.update_prefac_arr(rho=rho, composition=comp)
+                for k, T in enumerate(T_L):
+                    idx = k + j*n_loc[2] + i*n_loc[1]*n_loc[2]
+                    enucdot_old = enucdot_list[idx]
+                    net_info_new = get_net_info_arr(net_new, rho, T, comp, s_p, s_c)
+                    enucdot_new = enuc_dot(net_info_new)
+                    err = max(err, rel_err(enucdot_new, enucdot_old))
+        
+        err_arr = np.array([err])
+        comm.Allreduce([err_arr, MPI.DOUBLE], [err_arr, MPI.DOUBLE], op=MPI.MAX)
             
         return err
         
@@ -263,7 +311,7 @@ if __name__ == "__main__":
     
     from pynucastro.reduction.load_network import load_network
     from pynucastro.reduction.generate_data import dataset
-    from pynucastro.reduction import drgep, n_ary_search
+    from pynucastro.reduction import drgep, binary_search, n_ary_search
     import time
     import sys
 
@@ -295,13 +343,13 @@ if __name__ == "__main__":
         print("Number of species in full network: ", len(net.unique_nuclei))
         print("Number of species in DRGEP reduced network: ", len(nuclei))
         print()
-        
+    
     # Perform sensitivity analysis
     red_net = net.linking_nuclei(nuclei)
-    errfunc = get_errfunc_enuc(net, data)
+    errfunc = get_errfunc_enuc_mpi(net, data)
     MPI.COMM_WORLD.Barrier()
     t0 = time.time()
-    red_net = n_ary_search(red_net, nuclei, errfunc)
+    red_net = binary_search(red_net, nuclei, errfunc)
     dt = time.time() - t0
     
     if MPI.COMM_WORLD.Get_rank() == 0:

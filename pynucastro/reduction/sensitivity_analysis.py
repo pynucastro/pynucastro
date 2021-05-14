@@ -1,6 +1,28 @@
 import numpy as np
 from mpi4py import MPI
 
+def binary_search(network, nuclei, errfunc, thresh=0.05):
+    
+    start_idx = 0
+    seg_size = len(nuclei) / 2
+    
+    while seg_size >= 0.5:
+            
+        # Divide up into segments
+        end_idx = start_idx + round(seg_size)
+        red_net = network.linking_nuclei(nuclei[:end_idx])
+                
+        # Evaluate error
+        err = errfunc(red_net)
+        
+        if err <= thresh:
+            seg_size /= 2
+        else:
+            start_idx += round(seg_size)
+            seg_size /= 2
+    
+    return network.linking_nuclei(nuclei[:start_idx+1])
+
 def n_ary_search(network, nuclei, errfunc, thresh=0.05):
     
     comm = MPI.COMM_WORLD
