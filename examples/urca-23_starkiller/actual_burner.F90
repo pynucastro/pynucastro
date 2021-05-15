@@ -37,8 +37,6 @@ contains
 
   subroutine actual_burner(state_in, state_out, dt, time)
 
-    !$acc routine seq
-
     use amrex_fort_module, only: rt => amrex_real
     use integrator_module, only: integrator
     use burn_type_module, only: burn_t
@@ -48,8 +46,6 @@ contains
     type (burn_t),    intent(in   ) :: state_in
     type (burn_t),    intent(inout) :: state_out
     real(kind=rt),    intent(in   ) :: dt, time
-
-    !$gpu
 
     call integrator(state_in, state_out, dt, time)
   end subroutine actual_burner
