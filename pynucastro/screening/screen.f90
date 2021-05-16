@@ -99,12 +99,6 @@ module screening_module
 
   end type plasma_state
 
-  !$acc declare &
-  !$acc create(nscreen_max, nscreen) &
-  !$acc create(fact, co2, gamefx, gamefs, blend_frac) &
-  !$acc create(z1scr, z2scr, a1scr, a2scr) &
-  !$acc create(zs13, zs13inv, zhat, zhat2, lzav, aznut)
-
 contains
 
   subroutine screening_init()
@@ -124,8 +118,6 @@ contains
        
     enddo
 
-    !$acc update device(zs13, zs13inv, zhat, zhat2, lzav, aznut)
-
   end subroutine screening_init
 
 
@@ -142,14 +134,10 @@ contains
     z2scr(nscreen) = z2
     a2scr(nscreen) = a2
 
-    !$acc update device(nscreen, z1scr, a1scr, z2scr, a2scr)
-
   end subroutine add_screening_factor
 
 
   subroutine fill_plasma_state(state, temp, dens, y)
-
-    !$acc routine seq
 
     use network, only: nspec, zion
 
@@ -200,8 +188,6 @@ contains
 
 
   subroutine screen5(state,jscreen,scor,scordt,scordd)
-
-    !$acc routine seq
 
     implicit none
 
@@ -431,8 +417,6 @@ contains
   end subroutine screen5
 
   subroutine screenz (t,d,z1,z2,a1,a2,ymass,scfac,dscfacdt)
-
-    !$acc routine seq
 
     use network, only: aion, zion, nspec
 
