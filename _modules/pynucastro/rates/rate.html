@@ -324,9 +324,13 @@
 <span class="sd">    pretty printing string</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">dummy</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="n">name</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">raw</span> <span class="o">=</span> <span class="n">name</span>
+
+        <span class="c1"># a dummy nucleus is one that we can use where a nucleus is needed</span>
+        <span class="c1"># but it is not considered to be part of the network</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dummy</span> <span class="o">=</span> <span class="n">dummy</span>
 
         <span class="c1"># element symbol and atomic weight</span>
         <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;p&quot;</span><span class="p">:</span>
@@ -1230,17 +1234,16 @@
         <span class="c1"># using screenz.f90 provided by StarKiller Microphysics.</span>
         <span class="c1"># If not eligible for screening, set to None</span>
         <span class="c1"># If eligible for screening, then</span>
-        <span class="c1"># Rate.ion_screen is a 2-element list of Nucleus objects for screening</span>
+        <span class="c1"># Rate.ion_screen is a 2-element (3 for 3-alpha) list of Nucleus objects for screening</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ion_screen</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">nucz</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">parent</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">parent</span><span class="o">.</span><span class="n">Z</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="n">nucz</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+        <span class="n">nucz</span> <span class="o">=</span> <span class="p">[</span><span class="n">q</span> <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span> <span class="k">if</span> <span class="n">q</span><span class="o">.</span><span class="n">Z</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">]</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">nucz</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">nucz</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">Z</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">ion_screen</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">ion_screen</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nucz</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">ion_screen</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nucz</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">nucz</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">ion_screen</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nucz</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
 
     <span class="k">def</span> <span class="nf">_set_print_representation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; compose the string representations of this Rate. &quot;&quot;&quot;</span>
