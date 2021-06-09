@@ -78,6 +78,7 @@ contains
     real(rt) :: rhoy
     real(rt) :: rate, drate_dt, edot_nu
     real(rt) :: scor, dscor_dt, dscor_dd
+    real(rt) :: scor2, dscor2_dt, dscor2_dd
 
     !$gpu
 
