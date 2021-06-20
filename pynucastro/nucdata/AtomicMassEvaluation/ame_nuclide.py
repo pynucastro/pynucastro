@@ -1,7 +1,6 @@
 # Common Imports
-from __future__ import print_function
 
-class AMENuclide(object):
+class AMENuclide:
     """Hold the information for a single nucleus from the AME
     database."""
     def __init__(self, n=None, z=None, a=None, element=None, origin=None,
@@ -57,20 +56,20 @@ class AMENuclide(object):
         """
         Print Contents
         """
-        print('n = {}'.format(self.n))
-        print('z = {}'.format(self.z))
-        print('a = {}'.format(self.a))
-        print('element = {}'.format(self.element))
-        print('origin = {}'.format(self.origin))
-        print('mexcess = {}'.format(self.mexcess))
-        print('d_mexcess = {}'.format(self.d_mexcess))
-        print('nucbind = {}'.format(self.nucbind))
-        print('d_nucbind = {}'.format(self.d_nucbind))
-        print('decay_type = {}'.format(self.decay_type))
-        print('ebeta = {}'.format(self.ebeta))
-        print('d_ebeta = {}'.format(self.d_ebeta))
-        print('mass = {}'.format(self.mass))
-        print('d_mass = {}'.format(self.d_mass))
+        print(f'n = {self.n}')
+        print(f'z = {self.z}')
+        print(f'a = {self.a}')
+        print(f'element = {self.element}')
+        print(f'origin = {self.origin}')
+        print(f'mexcess = {self.mexcess}')
+        print(f'd_mexcess = {self.d_mexcess}')
+        print(f'nucbind = {self.nucbind}')
+        print(f'd_nucbind = {self.d_nucbind}')
+        print(f'decay_type = {self.decay_type}')
+        print(f'ebeta = {self.ebeta}')
+        print(f'd_ebeta = {self.d_ebeta}')
+        print(f'mass = {self.mass}')
+        print(f'd_mass = {self.d_mass}')
 
     def convert_MeV(self):
         """
@@ -99,4 +98,4 @@ class AMENuclide(object):
             self.d_mass = self.d_mass/1.0e6
 
     def __str__(self):
-        return "{}-{}".format(self.element, self.a)
+        return f"{self.element}-{self.a}"

@@ -1,4 +1,4 @@
-class Element(object):
+class Element:
     def __init__(self, abbreviation=None, name=None, Z=None):
         self.abbreviation = abbreviation
         self.name = name
@@ -8,7 +8,7 @@ class UnidentifiedElement(BaseException):
     def __init__(self):
         return
 
-class PeriodicTable(object):
+class PeriodicTable:
     table = {'h':  Element('h',  'hydrogen', 1),
              'he': Element('he', 'helium', 2),
              'li': Element('li', 'lithium', 3),

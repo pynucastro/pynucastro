@@ -2,7 +2,6 @@
 Microphysics set of reaction networks used by astrophysical hydrodynamics
 codes"""
 
-from __future__ import print_function
 
 import glob
 import os
@@ -12,7 +11,7 @@ from pynucastro.networks import BaseFortranNetwork
 class StarKillerNetwork(BaseFortranNetwork):
     def __init__(self, *args, **kwargs):
         # Initialize BaseFortranNetwork parent class
-        super(StarKillerNetwork, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         # StarKiller-specific template processing functions
         self.ftags['<sparse_jac_nnz>'] = self._sparse_jac_nnz
@@ -108,7 +107,7 @@ class StarKillerNetwork(BaseFortranNetwork):
         # Redefine initial mass fractions tag to set the
         # mass fractions in the burn_cell unit test inputs file.
         for i, n in enumerate(self.unique_nuclei):
-            of.write("\n! {nuc: <5} initial mass fraction\n".format(nuc=str(n)))
+            of.write(f"\n! {str(n): <5} initial mass fraction\n")
             of.write("{}massfractions({}) = 0.0d0\n".format(
                 self.indent*n_indent, i+1))
 
@@ -142,7 +141,7 @@ class StarKillerNetwork(BaseFortranNetwork):
         for i, n in enumerate(self.unique_nuclei):
             if i!=0:
                 of.write('#\n')
-            of.write('# {}\n'.format(n))
+            of.write(f'# {n}\n')
             xin = [self.fmt_to_dp_f90(xcomp) for j in range(size_test)]
             of.write('{}\n'.format(' '.join(xin)))
 
@@ -162,7 +161,7 @@ class StarKillerNetwork(BaseFortranNetwork):
 
         # write out some network properties
         with open("NETWORK_PROPERTIES", "w") as of:
-            of.write("NSCREEN := {}\n".format(self.num_screen_calls))
+            of.write(f"NSCREEN := {self.num_screen_calls}\n")
 
         with open("NAUX_NETWORK", "w") as of:
             of.write("NAUX := 0\n")

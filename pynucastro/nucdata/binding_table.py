@@ -3,12 +3,11 @@ Reads tabular binding energy/nucleon data file and supplies table data.
 """
 
 # Common Imports
-from __future__ import print_function
 import os
 
 from pynucastro.nucdata import BindingNuclide
 
-class BindingTable(object):
+class BindingTable:
     """A simple class to manage reading and parsing the table of binding energy/nucleon."""
 
     header_length = 2
@@ -36,7 +35,7 @@ class BindingTable(object):
         Read the binding energy table
         """
         try:
-            f = open(self.datfile, 'r')
+            f = open(self.datfile)
         except:
             print('ERROR: data file not found!')
             exit()
@@ -63,6 +62,6 @@ class BindingTable(object):
                 if nuc.n == n and nuc.z == z:
                     return nuc
         else:
-            print('ERROR: invalid (n, z) supplied: ({}, {})'.format(n, z))
+            print(f'ERROR: invalid (n, z) supplied: ({n}, {z})')
             exit()
-        print('Nuclide not found for (n, z) = ({}, {})'.format(n, z))
+        print(f'Nuclide not found for (n, z) = ({n}, {z})')

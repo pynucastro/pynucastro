@@ -4,7 +4,6 @@ comprised of the rates that are passed in.
 
 """
 
-from __future__ import print_function
 
 import os
 import shutil
@@ -30,7 +29,7 @@ class BaseFortranNetwork(ABC, RateCollection):
 
         """
 
-        super(BaseFortranNetwork, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         # Get the template files for writing this network code
         self.template_files = self._get_template_files()
@@ -126,9 +125,9 @@ class BaseFortranNetwork(ABC, RateCollection):
         for n, r in enumerate(sorted(set(rate.reactants))):
             c = rate.reactants.count(r)
             if c > 1:
-                Y_string += self.name_y + "(j{})**{}".format(r, c)
+                Y_string += self.name_y + f"(j{r})**{c}"
             else:
-                Y_string += self.name_y + "(j{})".format(r)
+                Y_string += self.name_y + f"(j{r})"
 
             if n < len(set(rate.reactants))-1:
                 Y_string += " * "
@@ -137,13 +136,13 @@ class BaseFortranNetwork(ABC, RateCollection):
         if rate.dens_exp == 0:
             dens_string = ""
         elif rate.dens_exp == 1:
-            dens_string = "{} * ".format(self.name_density)
+            dens_string = f"{self.name_density} * "
         else:
-            dens_string = "{}**{} * ".format(self.name_density, rate.dens_exp)
+            dens_string = f"{self.name_density}**{rate.dens_exp} * "
 
         # prefactor
         if not rate.prefactor == 1.0:
-            prefactor_string = "{:1.14e} * ".format(rate.prefactor).replace('e','d')
+            prefactor_string = f"{rate.prefactor:1.14e} * ".replace('e','d')
         else:
             prefactor_string = ""
 
@@ -186,8 +185,8 @@ class BaseFortranNetwork(ABC, RateCollection):
         Y_sym = 1
         for r in sorted(set(rate.reactants)):
             c = rate.reactants.count(r)
-            sym_final = self.name_y + '(j{})'.format(r)
-            sym_temp  = 'Y__j{}__'.format(r)
+            sym_final = self.name_y + f'(j{r})'
+            sym_temp  = f'Y__j{r}__'
             self.symbol_ludict[sym_temp] = sym_final
             Y_sym = Y_sym * sympy.symbols(sym_temp)**c
 
@@ -204,8 +203,8 @@ class BaseFortranNetwork(ABC, RateCollection):
         prefactor_sym = sympy.sympify(1)/sympy.sympify(rate.inv_prefactor)
 
         # screened rate
-        sym_final = self.name_rate_data + '(k_{})'.format(rate.fname)
-        sym_temp  = 'NRD__k_{}__'.format(rate.fname)
+        sym_final = self.name_rate_data + f'(k_{rate.fname})'
+        sym_temp  = f'NRD__k_{rate.fname}__'
         self.symbol_ludict[sym_temp] = sym_final
         screened_rate_sym = sympy.symbols(sym_temp)
 
@@ -237,7 +236,7 @@ class BaseFortranNetwork(ABC, RateCollection):
         for dd in d_re.finditer(s):
             prefix = dd.group(2)
             exponent = dd.group(3)
-            new_num = "{}e{}{}".format(prefix, exponent, const_spec)
+            new_num = f"{prefix}e{exponent}{const_spec}"
             old_num = dd.group(0).strip()
             s = s.replace(old_num, new_num)
 
@@ -267,28 +266,28 @@ class BaseFortranNetwork(ABC, RateCollection):
                 if n>0 and n < len(set(rate.reactants))-1:
                     Y_string += "*"
                 if c > 2:
-                    Y_string += "{}*{}(j{})**{}".format(c, self.name_y, r, c-1)
+                    Y_string += f"{c}*{self.name_y}(j{r})**{c-1}"
                 elif c==2:
-                    Y_string += "2*{}(j{})".format(self.name_y, r)
+                    Y_string += f"2*{self.name_y}(j{r})"
             else:
                 if n>0 and n < len(set(rate.reactants))-1:
                     Y_string += "*"
                 if c > 1:
-                    Y_string += "{}(j{})**{}".format(self.name_y, r, c)
+                    Y_string += f"{self.name_y}(j{r})**{c}"
                 else:
-                    Y_string += "{}(j{})".format(self.name_y, r)
+                    Y_string += f"{self.name_y}(j{r})"
 
         # density dependence
         if rate.dens_exp == 0:
             dens_string = ""
         elif rate.dens_exp == 1:
-            dens_string = "{} * ".format(self.name_density)
+            dens_string = f"{self.name_density} * "
         else:
-            dens_string = "{}**{} * ".format(self.name_density, rate.dens_exp)
+            dens_string = f"{self.name_density}**{rate.dens_exp} * "
 
         # prefactor
         if not rate.prefactor == 1.0:
-            prefactor_string = "{:1.14e} * ".format(rate.prefactor).replace('e','d')
+            prefactor_string = f"{rate.prefactor:1.14e} * ".replace('e','d')
         else:
             prefactor_string = ""
 
@@ -312,7 +311,7 @@ class BaseFortranNetwork(ABC, RateCollection):
         ydot_j and y_i are objects of the class 'Nucleus'
         """
         ydot_sym = self.ydot_term_symbol(rate, ydot_j)
-        deriv_sym = sympy.symbols('Y__j{}__'.format(y_i))
+        deriv_sym = sympy.symbols(f'Y__j{y_i}__')
         jac_sym = sympy.diff(ydot_sym, deriv_sym)
         symbol_is_null = False
         if jac_sym.equals(0):
@@ -396,7 +395,7 @@ class BaseFortranNetwork(ABC, RateCollection):
         except:
             raise
         try:
-            ifile = open(infile, 'r')
+            ifile = open(infile)
         except:
             raise
         return ifile, of
@@ -408,11 +407,11 @@ class BaseFortranNetwork(ABC, RateCollection):
 
     def fmt_to_dp_f90(self, i):
         """convert a number to Fortran double precision format"""
-        return '{:1.14e}'.format(float(i)).replace('e','d')
+        return f'{float(i):1.14e}'.replace('e','d')
 
     def fmt_to_rt_f90(self, i):
         """convert a number to custom real type format"""
-        return '{:1.14e}_rt'.format(float(i))
+        return f'{float(i):1.14e}_rt'
 
     def get_indent_amt(self, l, k):
         """determine the amount of spaces to indent a line"""
@@ -463,7 +462,7 @@ class BaseFortranNetwork(ABC, RateCollection):
                     renamed_tdat = copy_tdat.replace('.dat', '.network.dat')
                     os.rename(copy_tdat, renamed_tdat)
                 else:
-                    print('WARNING: Table data file {} not found.'.format(tr.table_file))
+                    print(f'WARNING: Table data file {tr.table_file} not found.')
 
     def _nrates(self, n_indent, of):
         of.write('{}integer, parameter :: nrates = {}\n'.format(
@@ -627,7 +626,7 @@ class BaseFortranNetwork(ABC, RateCollection):
     def _screen_add(self, n_indent, of):
         screening_map = self.get_screening_map()
         for i, (h, n1, n2, mrates, krates) in enumerate(screening_map):
-            of.write('{}call add_screening_factor('.format(self.indent*n_indent))
+            of.write(f'{self.indent*n_indent}call add_screening_factor(')
             if not n1.dummy:
                 of.write(f'zion(j{n1}), aion(j{n1}), &\n')
             else:
@@ -644,17 +643,17 @@ class BaseFortranNetwork(ABC, RateCollection):
             for s in r.sets:
                 jset = jset + 1
                 for na,an in enumerate(s.a):
-                    of.write('{}\n'.format(self.fmt_to_dp_f90(an)))
+                    of.write(f'{self.fmt_to_dp_f90(an)}\n')
         j = 1
         for i, r in enumerate(self.rates):
             if i in self.reaclib_rates:
-                of.write('{}\n'.format(j))
+                of.write(f'{j}\n')
                 j = j + len(r.sets)
 
         for i, r in enumerate(self.rates):
             if i in self.reaclib_rates:
                 j = len(r.sets)-1
-                of.write('{}\n'.format(j))
+                of.write(f'{j}\n')
 
     def _table_num(self, n_indent, of):
         of.write('{}integer, parameter :: num_tables   = {}\n'.format(
@@ -663,7 +662,7 @@ class BaseFortranNetwork(ABC, RateCollection):
     def _public_table_indices(self, n_indent, of):
         for irate in self.tabular_rates:
             r = self.rates[irate]
-            of.write('{}public {}\n'.format(self.indent*n_indent, r.table_index_name))
+            of.write(f'{self.indent*n_indent}public {r.table_index_name}\n')
 
     def _table_indices(self, n_indent, of):
         for n,irate in enumerate(self.tabular_rates):
@@ -763,22 +762,22 @@ class BaseFortranNetwork(ABC, RateCollection):
     def _table_rates_indices(self, n_indent, of):
         for n,irate in enumerate(self.tabular_rates):
             r = self.rates[irate]
-            of.write('{}{}'.format(self.indent*n_indent, r.table_index_name))
+            of.write(f'{self.indent*n_indent}{r.table_index_name}')
             if n != len(self.tabular_rates)-1:
                 of.write(', &')
             of.write('\n')
 
     def _compute_tabular_rates(self, n_indent, of):
         if len(self.tabular_rates) > 0:
-            of.write('{}! Calculate tabular rates\n'.format(self.indent*n_indent))
+            of.write(f'{self.indent*n_indent}! Calculate tabular rates\n')
             for n, irate in enumerate(self.tabular_rates):
                 r = self.rates[irate]
-                of.write('{}call tabular_evaluate(rate_table_{}, rhoy_table_{}, temp_table_{}, &\n'.format(self.indent*n_indent, r.table_index_name, r.table_index_name, r.table_index_name))
-                of.write('{}                      num_rhoy_{}, num_temp_{}, num_vars_{}, &\n'.format(self.indent*n_indent, r.table_index_name, r.table_index_name, r.table_index_name))
-                of.write('{}                      rhoy, state % T, rate, drate_dt, edot_nu)\n'.format(self.indent*n_indent))
-                of.write('{}rate_eval % unscreened_rates(i_rate,{}) = rate\n'.format(self.indent*n_indent, n+1+len(self.reaclib_rates)))
-                of.write('{}rate_eval % unscreened_rates(i_drate_dt,{}) = drate_dt\n'.format(self.indent*n_indent, n+1+len(self.reaclib_rates)))
-                of.write('{}rate_eval % add_energy_rate({})  = edot_nu\n'.format(self.indent*n_indent, n+1))
+                of.write(f'{self.indent*n_indent}call tabular_evaluate(rate_table_{r.table_index_name}, rhoy_table_{r.table_index_name}, temp_table_{r.table_index_name}, &\n')
+                of.write(f'{self.indent*n_indent}                      num_rhoy_{r.table_index_name}, num_temp_{r.table_index_name}, num_vars_{r.table_index_name}, &\n')
+                of.write(f'{self.indent*n_indent}                      rhoy, state % T, rate, drate_dt, edot_nu)\n')
+                of.write(f'{self.indent*n_indent}rate_eval % unscreened_rates(i_rate,{n+1+len(self.reaclib_rates)}) = rate\n')
+                of.write(f'{self.indent*n_indent}rate_eval % unscreened_rates(i_drate_dt,{n+1+len(self.reaclib_rates)}) = drate_dt\n')
+                of.write(f'{self.indent*n_indent}rate_eval % add_energy_rate({n+1})  = edot_nu\n')
                 of.write('\n')
 
     def _ydot_declare_scratch(self, n_indent, of):
@@ -786,7 +785,7 @@ class BaseFortranNetwork(ABC, RateCollection):
         if self.use_cse:
             for si in self.ydot_out_scratch:
                 siname = si[0]
-                of.write('{}double precision :: {}\n'.format(self.indent*n_indent, siname))
+                of.write(f'{self.indent*n_indent}double precision :: {siname}\n')
 
     def _ydot_scratch(self, n_indent, of):
         # Assign scratch variables
@@ -796,7 +795,7 @@ class BaseFortranNetwork(ABC, RateCollection):
                 sivalue = self.fortranify(sympy.fcode(si[1], precision=15,
                                                       source_format='free',
                                                       standard=95))
-                of.write('{}{} = {}\n'.format(self.indent*n_indent, siname, sivalue))
+                of.write(f'{self.indent*n_indent}{siname} = {sivalue}\n')
 
     def _ydot(self, n_indent, of):
         # Write YDOT
@@ -806,8 +805,8 @@ class BaseFortranNetwork(ABC, RateCollection):
                                                     standard=95))
             of.write('{}{}(j{}) = ( &\n'.format(self.indent*n_indent,
                                                 self.name_ydot_nuc, n))
-            of.write("{}{} &\n".format(self.indent*(n_indent+1), sol_value))
-            of.write("{}   )\n\n".format(self.indent*n_indent))
+            of.write(f"{self.indent*(n_indent+1)}{sol_value} &\n")
+            of.write(f"{self.indent*n_indent}   )\n\n")
 
     def _enuc_add_energy_rate(self, n_indent, of):
         # Add tabular per-reaction neutrino energy generation rates to the energy generation rate
@@ -827,7 +826,7 @@ class BaseFortranNetwork(ABC, RateCollection):
         if self.use_cse:
             for si in self.jac_out_scratch:
                 siname = si[0]
-                of.write('{}double precision :: {}\n'.format(self.indent*n_indent, siname))
+                of.write(f'{self.indent*n_indent}double precision :: {siname}\n')
 
     def _jacnuc_scratch(self, n_indent, of):
         # Assign scratch variables
@@ -837,7 +836,7 @@ class BaseFortranNetwork(ABC, RateCollection):
                 sivalue = self.fortranify(sympy.fcode(si[1], precision=15,
                                                       source_format='free',
                                                       standard=95))
-                of.write('{}{} = {}\n'.format(self.indent*n_indent, siname, sivalue))
+                of.write(f'{self.indent*n_indent}{siname} = {sivalue}\n')
 
     def _jacnuc(self, n_indent, of):
         # now make the Jacobian
@@ -850,9 +849,9 @@ class BaseFortranNetwork(ABC, RateCollection):
                                                          precision=15,
                                                          source_format='free',
                                                          standard=95))
-                    of.write("{}scratch = (&\n".format(self.indent*(n_indent)))
-                    of.write("{}{} &\n".format(self.indent*(n_indent+1), jvalue))
-                    of.write("{}   )\n".format(self.indent*n_indent))
+                    of.write(f"{self.indent*(n_indent)}scratch = (&\n")
+                    of.write(f"{self.indent*(n_indent+1)}{jvalue} &\n")
+                    of.write(f"{self.indent*n_indent}   )\n")
                     of.write("{}call set_jac_entry({}, j{}, j{}, scratch)\n\n".format(
                         self.indent*n_indent, self.name_jacobian, nj, ni))
 
@@ -881,13 +880,13 @@ class BaseFortranNetwork(ABC, RateCollection):
 
     def _final_net_print(self, n_indent, of):
         for n in self.unique_nuclei:
-            of.write("{}write(*,'(A,ES25.14)') '{}: ', history % X(j{}, end_index)\n".format(self.indent*n_indent, n, n))
+            of.write(f"{self.indent*n_indent}write(*,'(A,ES25.14)') '{n}: ', history % X(j{n}, end_index)\n")
 
     def _headerline(self, n_indent, of):
-        of.write('{}write(2, fmt=hfmt) '.format(self.indent*n_indent))
+        of.write(f'{self.indent*n_indent}write(2, fmt=hfmt) ')
         of.write("'Time', ")
         for nuc in self.unique_nuclei:
-            of.write("'Y_{}', ".format(nuc))
+            of.write(f"'Y_{nuc}', ")
         of.write("'E_nuc'\n")
 
     def _pynucastro_home(self, n_indent, of):

@@ -5,7 +5,7 @@ import pynucastro.rates as rates
 import io
 
 
-class TestStarKillerNetwork(object):
+class TestStarKillerNetwork:
     @classmethod
     def setup_class(cls):
         """ this is run once for each class before any tests """
@@ -183,7 +183,7 @@ class TestStarKillerNetwork(object):
         assert self.cromulent_ftag(self.fn._nion, answer, n_indent=2)
 
 
-class TestReaclibChapterNetwork(object):
+class TestReaclibChapterNetwork:
     @classmethod
     def setup_class(cls):
         """ this is run once for each class before any tests """

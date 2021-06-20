@@ -3,7 +3,6 @@ Reads AME tabular mass data file and supplies table data.
 """
 
 # Common Imports
-from __future__ import print_function
 import os
 
 from ame_nuclide import AMENuclide
@@ -32,7 +31,7 @@ def cleanup(s):
     s = s.replace(' ', '')
     return s
 
-class AMETable(object):
+class AMETable:
     """A simple class to manage reading and parsing the AME Table data
     files (2012, 2016)."""
 
@@ -61,7 +60,7 @@ class AMETable(object):
         Read the AME data file 'datfile'
         """
         try:
-            f = open(self.datfile, 'r')
+            f = open(self.datfile)
         except:
             print('ERROR: data file not found!')
             exit()
@@ -130,7 +129,7 @@ class AMETable(object):
         for nuc in self.nuclides:
             if nuc.a == a and nuc.element.lower() == abb:
                 return nuc
-        print('ERROR: Could not find a nuclide by the specification {}'.format(isostring))
+        print(f'ERROR: Could not find a nuclide by the specification {isostring}')
 
     def get_nuclide(self, n=-1, z=-1, a=-1):
         """
@@ -154,4 +153,4 @@ class AMETable(object):
             if nuc.n == n and nuc.z == z:
                 return nuc
 
-        print('Nuclide not found for (N, Z, A) = ({}, {}, {})!'.format(n, z, a))
+        print(f'Nuclide not found for (N, Z, A) = ({n}, {z}, {a})!')

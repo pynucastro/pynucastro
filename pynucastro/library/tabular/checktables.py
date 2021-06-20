@@ -23,7 +23,7 @@ def nuc_A_first(nuc_A_last):
 try:
     # get the nuclei from the name of the rate metadata file
     nucs_file = args.infile[:-5].split("--")
-    f = open(args.infile, "r")
+    f = open(args.infile)
     chapter = f.readline().strip()
     # assert the chapter is "t" for a tabulated rate
     assert(chapter == "t")
@@ -53,7 +53,7 @@ try:
 
     # checks to make sure valid data begins after the
     # number of header lines the rate metadata file says
-    f = open(table_file, "r")
+    f = open(table_file)
     for i, line in enumerate(f):
         if i > header_lines:
             break
@@ -67,7 +67,7 @@ try:
             assert(rhoy == "1.000000e+07")
             assert(temp == "1.000000e+07")
         if args.p:
-            print("{}: {}".format(i, line.strip()))
+            print(f"{i}: {line.strip()}")
     f.close()
 except:
     print("FAILED")
