@@ -6,7 +6,7 @@ from collections import deque
 
 from pynucastro.rates import Library, Nucleus, RateFilter
 from pynucastro.nucdata import BindingTable
-from pynucastro.networks import StarKillerNetwork, Composition
+from pynucastro.networks import PythonNetwork, Composition
 
 #################################################
 #  Set up argument parser and process arguments #
