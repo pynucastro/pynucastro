@@ -14,10 +14,12 @@
 
   -- Fixed a write_network crash if the RateCollection contains
      multiple rates with the same name.
-     
+
   -- Deleted unused BLAS and VODE files previously used for the standalone
      Fortran outputs. These have been deprecated in favor of the StarKiller
      Microphysics network output as of v1.3.0.
+
+  -- fixed screening for the 3-alpha rate
 
 # 1.4.1
 
