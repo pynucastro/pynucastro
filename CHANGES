@@ -1,5 +1,26 @@
 # changes since the last release
 
+# 1.5.0
+
+  -- Added gridplot function for plotting nuclides on a grid and
+     coloring the cells by X, Y, Xdot, Ydot or activity
+
+  -- Created a notebook and a script for generating rp-process
+     networks. The script allows an arbitrary endpoint to be specified.
+
+  -- Added a filter_function option to RateFilter and to the plotting
+     functions that allows for filtering rates or nuclei using a
+     user-defined Boolean map.
+
+  -- Fixed a write_network crash if the RateCollection contains
+     multiple rates with the same name.
+
+  -- Deleted unused BLAS and VODE files previously used for the standalone
+     Fortran outputs. These have been deprecated in favor of the StarKiller
+     Microphysics network output as of v1.3.0.
+
+  -- fixed screening for the 3-alpha rate
+
 # 1.4.1
 
   -- Improvements for locating rate files in directories also containing python scripts or Jupyter notebooks

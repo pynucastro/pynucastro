@@ -1,7 +1,6 @@
 """Support modules to write a pure python reaction network ODE
 source"""
 
-from __future__ import print_function
 
 import sys
 
@@ -19,12 +18,12 @@ class PythonNetwork(RateCollection):
         rate is an object of class Rate
         """
 
-        tstring = "# {}\n".format(rate.string)
-        tstring += "{} = 0.0\n\n".format(prefix)
+        tstring = f"# {rate.string}\n"
+        tstring += f"{prefix} = 0.0\n\n"
 
         for s in rate.sets:
-            tstring += "# {}\n".format(s.labelprops[0:5])
-            tstring += "{}\n".format(s.set_string(prefix=prefix, plus_equal=True))
+            tstring += f"# {s.labelprops[0:5]}\n"
+            tstring += f"{s.set_string(prefix=prefix, plus_equal=True)}\n"
 
         string = ""
         for t in tstring.split("\n"):
@@ -39,8 +38,8 @@ class PythonNetwork(RateCollection):
 
         string = ""
         string += "@numba.njit()\n"
-        string += "def {}(tf):\n".format(rate.fname)
-        string += "{}".format(self.rate_string(rate, indent=4))
+        string += f"def {rate.fname}(tf):\n"
+        string += f"{self.rate_string(rate, indent=4)}"
         string += "    return rate\n\n"
         return string
 
@@ -55,9 +54,9 @@ class PythonNetwork(RateCollection):
         for n, r in enumerate(sorted(set(rate.reactants))):
             c = rate.reactants.count(r)
             if c > 1:
-                Y_string += "Y[i{}]**{}".format(r, c)
+                Y_string += f"Y[i{r}]**{c}"
             else:
-                Y_string += "Y[i{}]".format(r)
+                Y_string += f"Y[i{r}]"
 
             if n < len(set(rate.reactants))-1:
                 Y_string += "*"
@@ -68,7 +67,7 @@ class PythonNetwork(RateCollection):
         elif rate.dens_exp == 1:
             dens_string = "rho*"
         else:
-            dens_string = "rho**{}*".format(rate.dens_exp)
+            dens_string = f"rho**{rate.dens_exp}*"
 
         # electron fraction dependence
         if (rate.weak_type == 'electron_capture' and not rate.tabular):
@@ -78,7 +77,7 @@ class PythonNetwork(RateCollection):
 
         # prefactor
         if not rate.prefactor == 1.0:
-            prefactor_string = "{:1.14e}*".format(rate.prefactor)
+            prefactor_string = f"{rate.prefactor:1.14e}*"
         else:
             prefactor_string = ""
 
@@ -109,16 +108,16 @@ class PythonNetwork(RateCollection):
                 if n > 0 and n < len(set(rate.reactants))-1:
                     Y_string += "*"
                 if c > 2:
-                    Y_string += "{}*Y[i{}]**{}".format(c, r, c-1)
+                    Y_string += f"{c}*Y[i{r}]**{c-1}"
                 elif c == 2:
-                    Y_string += "2*Y[i{}]".format(r)
+                    Y_string += f"2*Y[i{r}]"
             else:
                 if n > 0 and n < len(set(rate.reactants))-1:
                     Y_string += "*"
                 if c > 1:
-                    Y_string += "Y[i{}]**{}".format(r, c)
+                    Y_string += f"Y[i{r}]**{c}"
                 else:
-                    Y_string += "Y[i{}]".format(r)
+                    Y_string += f"Y[i{r}]"
 
         # density dependence
         if rate.dens_exp == 0:
@@ -126,7 +125,7 @@ class PythonNetwork(RateCollection):
         elif rate.dens_exp == 1:
             dens_string = "rho*"
         else:
-            dens_string = "rho**{}*".format(rate.dens_exp)
+            dens_string = f"rho**{rate.dens_exp}*"
 
         # electron fraction dependence
         if (rate.weak_type == 'electron_capture' and not rate.tabular):
@@ -136,7 +135,7 @@ class PythonNetwork(RateCollection):
 
         # prefactor
         if not rate.prefactor == 1.0:
-            prefactor_string = "{:1.14e}*".format(rate.prefactor)
+            prefactor_string = f"{rate.prefactor:1.14e}*"
         else:
             prefactor_string = ""
 
@@ -166,19 +165,25 @@ class PythonNetwork(RateCollection):
 
         # integer keys
         for i, n in enumerate(self.unique_nuclei):
-            of.write("i{} = {}\n".format(n, i))
+            of.write(f"i{n} = {i}\n")
 
-        of.write("nnuc = {}\n\n".format(len(self.unique_nuclei)))
+        of.write(f"nnuc = {len(self.unique_nuclei)}\n\n")
 
         of.write("A = np.zeros((nnuc), dtype=np.int32)\n\n")
         for n in self.unique_nuclei:
-            of.write("A[i{}] = {}\n".format(n, n.A))
+            of.write(f"A[i{n}] = {n.A}\n")
 
         of.write("\n")
 
         of.write("Z = np.zeros((nnuc), dtype=np.int32)\n\n")
         for n in self.unique_nuclei:
-            of.write("Z[i{}] = {}\n".format(n, n.Z))
+            of.write(f"Z[i{n}] = {n.Z}\n")
+
+        of.write("\n")
+
+        of.write("names = []\n")
+        for n in self.unique_nuclei:
+            of.write(f"names.append(\"{n.short_spec_name}\")\n")
 
         of.write("\n")
 
@@ -187,47 +192,47 @@ class PythonNetwork(RateCollection):
         of.write("@numba.njit()\n")
 
         of.write("def ye(Y):\n")
-        of.write("{}return np.sum(Z * Y)/np.sum(A * Y)\n\n".format(indent))
+        of.write(f"{indent}return np.sum(Z * Y)/np.sum(A * Y)\n\n")
 
         for r in self.rates:
             of.write(self.function_string(r))
 
         of.write("def rhs(t, Y, rho, T):\n")
-        of.write("{}return rhs_eq(t, Y, rho, T)\n\n".format(indent))
+        of.write(f"{indent}return rhs_eq(t, Y, rho, T)\n\n")
 
         of.write("@numba.njit()\n")
         of.write("def rhs_eq(t, Y, rho, T):\n\n")
         # integer keys
         for i, n in enumerate(self.unique_nuclei):
-            of.write("{}i{} = {}\n".format(indent, n, i))
+            of.write(f"{indent}i{n} = {i}\n")
 
-        of.write("{}nnuc = {}\n\n".format(indent, len(self.unique_nuclei)))
+        of.write(f"{indent}nnuc = {len(self.unique_nuclei)}\n\n")
 
 
         # get the rates
-        of.write("{}tf = Tfactors(T)\n\n".format(indent))
+        of.write(f"{indent}tf = Tfactors(T)\n\n")
         for r in self.rates:
-            of.write("{}lambda_{} = {}(tf)\n".format(indent, r.fname, r.fname))
+            of.write(f"{indent}lambda_{r.fname} = {r.fname}(tf)\n")
 
         of.write("\n")
 
-        of.write("{}dYdt = np.zeros((nnuc), dtype=np.float64)\n\n".format(indent))
+        of.write(f"{indent}dYdt = np.zeros((nnuc), dtype=np.float64)\n\n")
 
         # now make the RHSs
         for n in self.unique_nuclei:
-            of.write("{}dYdt[i{}] = (\n".format(indent, n))
+            of.write(f"{indent}dYdt[i{n}] = (\n")
             for r in self.nuclei_consumed[n]:
                 c = r.reactants.count(n)
                 if c == 1:
-                    of.write("{}   -{}\n".format(indent, self.ydot_string(r)))
+                    of.write(f"{indent}   -{self.ydot_string(r)}\n")
                 else:
-                    of.write("{}   -{}*{}\n".format(indent, c, self.ydot_string(r)))
+                    of.write(f"{indent}   -{c}*{self.ydot_string(r)}\n")
             for r in self.nuclei_produced[n]:
                 c = r.products.count(n)
                 if c == 1:
-                    of.write("{}   +{}\n".format(indent, self.ydot_string(r)))
+                    of.write(f"{indent}   +{self.ydot_string(r)}\n")
                 else:
-                    of.write("{}   +{}*{}\n".format(indent, c, self.ydot_string(r)))
-            of.write("{}   )\n\n".format(indent))
+                    of.write(f"{indent}   +{c}*{self.ydot_string(r)}\n")
+            of.write(f"{indent}   )\n\n")
 
-        of.write("{}return dYdt\n".format(indent))
+        of.write(f"{indent}return dYdt\n")

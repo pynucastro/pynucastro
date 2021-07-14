@@ -13,7 +13,7 @@ import glob
 import sympy
 from collections import OrderedDict
 from abc import ABC, abstractmethod
-
+from pynucastro.rates import Nucleus
 from pynucastro.networks import RateCollection
 from pynucastro.nucdata import BindingTable
 
@@ -471,32 +471,61 @@ class BaseFortranNetwork(ABC, RateCollection):
             len(self.rates)))
 
     def get_screening_map(self):
+        """a screening map is just a list of tuples containing the information
+        about nuclei pairs for screening:
+        (descriptive name of nuclei, nucleus 1, nucleus 2, rate, 1-based index of rate)
+        """
         screening_map = []
         for k, r in enumerate(self.rates):
             if r.ion_screen:
-                nucs = '{}_{}'.format(r.ion_screen[0], r.ion_screen[1])
+                nucs = "_".join([str(q) for q in r.ion_screen])
                 in_map = False
                 for h, n1, n2, mrates, krates in screening_map:
-                    if h==nucs:
+                    if h == nucs:
+                        # if we already have the reactants, then we
+                        # will already be doing the screening factors,
+                        # so just append this new rate to the list we
+                        # are keeping of the rates where this
+                        # screening is needed
                         in_map = True
                         mrates.append(r)
                         krates.append(k+1)
                         break
                 if not in_map:
-                    screening_map.append((nucs, r.ion_screen[0], r.ion_screen[1],
-                                          [r], [k+1]))
+                    # we handle 3-alpha specially -- we actually need 2 screening factors for it
+                    if nucs == "he4_he4_he4":
+                        # he4 + he4
+                        screening_map.append((nucs, r.ion_screen[0], r.ion_screen[1],
+                                              [r], [k+1]))
+                        # he4 + be8
+                        be8 = Nucleus("Be8", dummy=True)
+                        screening_map.append((nucs+"_dummy", r.ion_screen[2], be8,
+                                              [r], [k+1]))
+
+                    else:
+                        screening_map.append((nucs, r.ion_screen[0], r.ion_screen[1],
+                                              [r], [k+1]))
         return screening_map
 
     def _compute_screening_factors(self, n_indent, of):
         screening_map = self.get_screening_map()
         for i, (h, n1, n2, mrates, krates) in enumerate(screening_map):
-            of.write('\n{}call screen5(pstate, {}, scor, dscor_dt, dscor_dd)\n'.format(
-                self.indent*n_indent, i+1))
-            for r, k in zip(mrates, krates):
-                of.write('{}rate_eval % unscreened_rates(i_scor,{}) = scor\n'.format(
-                    self.indent*n_indent, k))
-                of.write('{}rate_eval % unscreened_rates(i_dscor_dt,{}) = dscor_dt\n'.format(
-                    self.indent*n_indent, k))
+            if h == "he4_he4_he4":
+                # handle both parts of the 3-alpha screening here
+                of.write(f'\n{self.indent*n_indent}call screen5(pstate, {i+1}, scor, dscor_dt, dscor_dd)\n')
+                of.write(f'\n{self.indent*n_indent}call screen5(pstate, {i+2}, scor2, dscor2_dt, dscor2_dd)\n')
+                of.write(f'{self.indent*n_indent}rate_eval % unscreened_rates(i_scor,{krates[0]}) = scor * scor2\n')
+                of.write(f'{self.indent*n_indent}rate_eval % unscreened_rates(i_dscor_dt,{krates[0]}) = scor * dscor2_dt + dscor_dt * scor2\n')
+
+            elif h == "he4_he4_he4_dummy":
+                continue
+
+            else:
+                of.write(f'\n{self.indent*n_indent}call screen5(pstate, {i+1}, scor, dscor_dt, dscor_dd)\n')
+                for r, k in zip(mrates, krates):
+                    of.write(f'{self.indent*n_indent}rate_eval % unscreened_rates(i_scor,{k}) = scor\n')
+                    of.write(f'{self.indent*n_indent}rate_eval % unscreened_rates(i_dscor_dt,{k}) = dscor_dt\n')
+
             of.write('\n')
 
         self.num_screen_calls = len(screening_map)
@@ -599,9 +628,14 @@ class BaseFortranNetwork(ABC, RateCollection):
         screening_map = self.get_screening_map()
         for i, (h, n1, n2, mrates, krates) in enumerate(screening_map):
             of.write('{}call add_screening_factor('.format(self.indent*n_indent))
-            of.write('zion(j{}), aion(j{}), &\n'.format(n1, n1))
-            of.write('{}zion(j{}), aion(j{}))\n\n'.format(self.indent*(n_indent+1),
-                                                          n2, n2))
+            if not n1.dummy:
+                of.write(f'zion(j{n1}), aion(j{n1}), &\n')
+            else:
+                of.write(f'{float(n1.Z)}_rt, {float(n1.A)}_rt), &\n')
+            if not n2.dummy:
+                of.write(f'{self.indent*(n_indent+1)}zion(j{n2}), aion(j{n2}))\n\n')
+            else:
+                of.write(f'{self.indent*(n_indent+1)}{float(n2.Z)}_rt, {float(n2.A)}_rt)\n\n')
 
     def _write_reaclib_metadata(self, n_indent, of):
         jset = 0

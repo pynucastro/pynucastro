@@ -156,9 +156,13 @@ class Nucleus(object):
     pretty printing string
 
     """
-    def __init__(self, name):
+    def __init__(self, name, dummy=False):
         name = name.lower()
         self.raw = name
+
+        # a dummy nucleus is one that we can use where a nucleus is needed
+        # but it is not considered to be part of the network
+        self.dummy = dummy
 
         # element symbol and atomic weight
         if name == "p":
@@ -1062,17 +1066,16 @@ class Rate(object):
         # using screenz.f90 provided by StarKiller Microphysics.
         # If not eligible for screening, set to None
         # If eligible for screening, then
-        # Rate.ion_screen is a 2-element list of Nucleus objects for screening
+        # Rate.ion_screen is a 2-element (3 for 3-alpha) list of Nucleus objects for screening
         self.ion_screen = []
-        nucz = []
-        for parent in self.reactants:
-            if parent.Z != 0:
-                nucz.append(parent)
+        nucz = [q for q in self.reactants if q.Z != 0]
         if len(nucz) > 1:
             nucz.sort(key=lambda x: x.Z)
             self.ion_screen = []
             self.ion_screen.append(nucz[0])
             self.ion_screen.append(nucz[1])
+            if len(nucz) == 3:
+                self.ion_screen.append(nucz[2])
 
     def _set_print_representation(self):
         """ compose the string representations of this Rate. """
