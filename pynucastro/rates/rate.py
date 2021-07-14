@@ -1064,7 +1064,7 @@ class Rate(object):
                 self._set_label_properties(labelprops)
                 
     def write_to_file(self, f):
-        """ given a file object, write rate data to the file. """
+        """ given an open file object, write rate data to the file. """
 
         if self.original_source is None:
             raise NotImplementedError("Original source is not stored for this rate ({}).".format(self)
