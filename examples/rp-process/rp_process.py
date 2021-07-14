@@ -18,10 +18,13 @@ endpoint_help = """The nucleus at which the network terminates. Should be provid
         abbreviation of the nuclide (e.g. Ni56, case insensitive)."""
 library_help = """The library file to draw the rates from. This is supplied directly to the Library
         constructor."""
+write_network_help = """The name of the Python file to write the network to. No network will be
+written out if this is not supplied."""
 
 parser = argparse.ArgumentParser(description=description)
 parser.add_argument('endpoint', help=endpoint_help)
 parser.add_argument('-l', '--library', default="reaclib-2017-10-20", help=library_help)
+parser.add_argument('-w', '--write_network', default='', help=write_network_help)
 args = parser.parse_args(sys.argv[1:])
 
 endpoint = Nucleus(args.endpoint)
@@ -157,10 +160,8 @@ print(f"Number of Species: {len(encountered)}")
 print(f"Number of Rates: {len(rp_net.rates)}")
 print()
 
-"""
-print("Writing network...")
-
-rp_net.write_network()
+if args.write_network:
+    print("Writing network...")
+    rp_net.write_network(args.write_network)
 
 print("Task completed.")
-"""
