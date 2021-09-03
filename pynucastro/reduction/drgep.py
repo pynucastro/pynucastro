@@ -6,56 +6,6 @@ from pynucastro.nucdata import BindingTable
 from mpi4py import MPI
 import sys
 
-def calc_count_matrices(net):
-    
-    # Rate -> index mapping
-    r_map = dict()
-    for i, r in enumerate(net.rates):
-        r_map[r] = i
-    
-    N_species = len(net.unique_nuclei)
-    N_rates = len(net.rates)
-    
-    # Counts for reactions producing nucleus
-    c_p = np.zeros((N_species, N_rates), dtype=np.int32)
-    # Counts for reactions consuming nucleus
-    c_c = np.zeros((N_species, N_rates), dtype=np.int32)
-
-    for i, n in enumerate(net.unique_nuclei):
-        
-        for r in net.nuclei_produced[n]:
-            c_p[i, r_map[r]] = r.products.count(n)
-
-        for r in net.nuclei_consumed[n]:
-            c_c[i, r_map[r]] = r.reactants.count(n)
-    
-    # Whether the nucleus is involved in the reaction or not
-    c_e = np.logical_or(c_p, c_c).astype(np.int32).T
-            
-    return c_p, c_c, c_e
-
-def calc_adj_matrix_numpy(net, c_p, c_c, c_e, rvals_arr):
-    
-    # Evaluate terms on RHS of ODE system
-    prod_terms = c_p * rvals_arr
-    cons_terms = c_c * rvals_arr
-    
-    # Calculate total production and consumption of each nucleus A
-    p_A = prod_terms.sum(axis=1)
-    c_A = cons_terms.sum(axis=1)
-    
-    # Calculate production / consumption of A in reactions involving B
-    p_AB = prod_terms @ c_e
-    c_AB = cons_terms @ c_e
-    
-    # We will normalize by maximum of production and consumption fluxes
-    denom = np.maximum(p_A, c_A)[:, np.newaxis]
-    
-    # Calculate direct interaction coefficients
-    r_AB = np.abs(p_AB - c_AB) / denom
-    
-    return r_AB
-    
 def calc_adj_matrix(net, rvals):
     
     N_species = len(net.unique_nuclei)
@@ -100,22 +50,46 @@ def calc_adj_matrix(net, rvals):
 
     return r_AB
 
-def get_set_map(net):
+def calc_adj_matrix_numpy(net, rvals_arr):
+    
+    # Evaluate terms on RHS of ODE system
+    prod_terms = net.nuc_prod_count * rvals_arr
+    cons_terms = net.nuc_cons_count * rvals_arr
+    
+    # Calculate total production and consumption of each nucleus A
+    p_A = prod_terms.sum(axis=1)
+    c_A = cons_terms.sum(axis=1)
+    
+    # Calculate production / consumption of A in reactions involving B
+    p_AB = prod_terms @ net.nuc_used
+    c_AB = cons_terms @ net.nuc_used
+    
+    # We will normalize by maximum of production and consumption fluxes
+    denom = np.maximum(p_A, c_A)[:, np.newaxis]
+    
+    # Calculate direct interaction coefficients
+    r_AB = np.abs(p_AB - c_AB) / denom
+    
+    return r_AB
 
-    set_map = dict()
+def get_adj_nuc(net):
+
+    adj_nuc = dict()
 
     for n in net.unique_nuclei:
+        
         bs = set()
+        
         for r in net.nuclei_produced[n]:
             bs |= set(r.products) | set(r.reactants)
         for r in net.nuclei_consumed[n]:
             bs |= set(r.products) | set(r.reactants)
 
-        set_map[n] = bs
+        adj_nuc[n] = bs
 
-    return set_map
-
-def drgep_dijkstras(net, r_AB, target, set_map):
+    return adj_nuc
+    
+def drgep_dijkstras(net, r_AB, target, adj_nuc):
     
     # Number of species
     nspec = len(net.unique_nuclei)
@@ -144,7 +118,7 @@ def drgep_dijkstras(net, r_AB, target, set_map):
         r_TA = dist[imax]
         R_TB[imax] = r_TA
         n = net.unique_nuclei[imax]
-        bs = set_map[n]
+        bs = adj_nuc[n]
             
         for b in bs:
             jb = j_map[b]
@@ -156,18 +130,6 @@ def drgep_dijkstras(net, r_AB, target, set_map):
         imax = np.argmax(dist)
         
     return R_TB
-
-def _wrap_conds(conds):
-    
-    try:
-        conds[0]
-        try:
-            conds[0][0]
-            return conds
-        except:
-            return [conds]
-    except:
-        raise ValueError('Conditions must be non-empty subscriptable object')
     
 def _to_list(x, n=1):
     
@@ -176,70 +138,265 @@ def _to_list(x, n=1):
     except TypeError:
         return [x] * n
     
-def _drgep_kernel(net, R_TB, rvals, targets, tols):
+def _drgep_kernel(net, R_TB, rvals, targets, tols, adj_nuc):
     
     r_AB = calc_adj_matrix(net, rvals)
     
     for target, tol in zip(targets, tols):
         
-        R_TB_i = drgep_dijkstras(net, r_AB, target)
+        R_TB_i = drgep_dijkstras(net, r_AB, target, adj_nuc)
         np.maximum(R_TB, R_TB_i, out=R_TB, where=(R_TB_i >= tol))
 
-def _drgep_kernel_numpy(net, R_TB, c_p, c_c, c_e, rvals, targets, set_map, tols):
+def _drgep_kernel_numpy(net, R_TB, rvals, targets, tols, adj_nuc):
     
-    r_AB = calc_adj_matrix_numpy(net, c_p, c_c, c_e, rvals)
+    r_AB = calc_adj_matrix_numpy(net, rvals)
     
     for target, tol in zip(targets, tols):
         
-        R_TB_i = drgep_dijkstras(net, r_AB, target, set_map)
+        R_TB_i = drgep_dijkstras(net, r_AB, target, adj_nuc)
         np.maximum(R_TB, R_TB_i, out=R_TB, where=(R_TB_i >= tol))
+        
+def _drgep(net, conds, targets, tols):
     
-def drgep(net, conds, targets, tols, returnobj='net'):
+    #-----------------------------------
+    # Calculate interaction coefficients
+    #-----------------------------------
+    
+    R_TB = np.zeros(len(net.unique_nuclei), dtype=np.float64)
+    adj_nuc = get_adj_nuc(net)
+
+    for i in range(len(conds)):
+        comp, rho, T = conds[i]
+        rvals = net.evaluate_rates(rho=rho, T=T, composition=comp)
+        _drgep_kernel(net, R_TB, rvals, targets, tols, adj_nuc)
+
+    return R_TB
+    
+def _drgep_mpi(net, conds, targets, tols):
+    
+    #----------
+    # Init. MPI
+    #----------
     
     comm = MPI.COMM_WORLD
     MPI_N = comm.Get_size()
     MPI_rank = comm.Get_rank()
     
-    # conds = _wrap_conds(conds)
-    targets = _to_list(targets)
-    tols = _to_list(tols, len(targets))
+    #-----------------------------------------------
+    # Calculate interaction coefficients in parallel
+    #-----------------------------------------------
     
     R_TB_loc = np.zeros(len(net.unique_nuclei), dtype=np.float64)
-    c_p, c_c, c_e = calc_count_matrices(net)
+    adj_nuc = get_adj_nuc(net)
 
-    n = np.array([len(conds[0]), len(conds[1]), len(conds[2])]).astype(int)
-
-    if(n[2] >= MPI_N):
-        comp_i = (n[2]//MPI_N)*MPI_rank
-        comp_f = (n[2]//MPI_N)*(MPI_rank+1)
-        rho_i = 0
-        rho_f = n[0]
-    else: 
-        comp_i = MPI_rank % n[2] 
-        comp_f = comp_i + 1
-        rho_i = (n[0]//(MPI_N // n[2])) * (MPI_rank// n[2])
-        rho_f = (n[0]//(MPI_N // n[2])) * (MPI_rank// n[2] + 1)
-
-    rho_L = conds[0][rho_i:rho_f]
-    T_L = conds[1]
-    comp_L = conds[2][comp_i:comp_f]
-
-    n_conds = np.prod(n)
-    net.update_coef_arr()
-    set_map = get_set_map(net)
-
-    for k,comp in enumerate(comp_L):
-        net.update_yfac_arr(composition=comp, s_c=c_c)
-        for i, rho in enumerate(rho_L):
-            net.update_prefac_arr(rho=rho, composition=comp)
-            for j, T in enumerate(T_L):
-                rvals_arr = net.evaluate_rates_arr(T=T)
-                # rvals = np.array(list(net.evaluate_rates(rho=rho, T=T, composition=comp).values()))
-                _drgep_kernel_numpy(net, R_TB_loc, c_p, c_c, c_e, rvals_arr, targets, set_map, tols)
+    for i in range(MPI_rank, len(conds), MPI_N):
+        comp, rho, T = conds[i]
+        rvals = net.evaluate_rates(rho=rho, T=T, composition=comp)
+        _drgep_kernel(net, R_TB_loc, rvals, targets, tols, adj_nuc)
         
     R_TB = np.zeros_like(R_TB_loc)
     comm.Allreduce([R_TB_loc, MPI.DOUBLE], [R_TB, MPI.DOUBLE], op=MPI.MAX)
-              
+    
+    return R_TB
+    
+def _drgep_numpy(net, conds, targets, tols):
+    
+    #----------------------------------------
+    # Unpack conditions; make precalculations
+    #----------------------------------------
+    
+    comp_L, rho_L, T_L = conds
+    
+    net.calc_count_matrices()
+    net.update_rate_coef_arr()
+    adj_nuc = get_adj_nuc(net)
+    
+    #------------------------------------------------
+    # Calculate interaction coefficients (vectorized)
+    #------------------------------------------------
+    
+    R_TB = np.zeros(len(net.unique_nuclei), dtype=np.float64)
+
+    for comp in comp_L:
+        net.update_yfac_arr(comp)
+        for rho in rho_L:
+            net.update_prefac_arr(rho, comp)
+            for T in T_L:
+                rvals_arr = net.evaluate_rates_arr(T)
+                _drgep_kernel_numpy(net, R_TB, rvals_arr, targets, tols, adj_nuc)
+    
+    net.clear_arrays()
+    return R_TB
+    
+def _drgep_mpi_numpy_decomp(MPI_N, MPI_rank, n):
+
+    if MPI_N <= n[0]:
+        
+        comp_idx = MPI_rank
+        comp_step = MPI_N
+        rho_idx = T_idx = 0
+        rho_step = T_step = 1
+        
+    elif MPI_N <= n[0]*n[1]:
+        
+        m = MPI_N // n[0]
+        
+        if MPI_rank <= n[0]*m:
+            comp_idx = MPI_rank % n[0]
+            comp_step = n[0]
+            rho_idx = MPI_rank // n[0]
+            rho_step = m
+        else:
+            comp_idx = n[0]
+            comp_step = 1
+            rho_idx = n[1]
+            rho_step = 1
+        
+        T_idx = 0
+        T_step = 1
+        
+    elif MPI_N <= n[0]*n[1]*n[2]:
+        
+        m = MPI_N // (n[0] * n[1])
+        
+        if MPI_rank <= n[0]*n[1]*m:
+            comp_idx = MPI_rank % n[0]
+            comp_step = n[0]
+            rho_idx = (MPI_rank // n[0]) % n[1]
+            rho_step = n[1]
+            T_idx = MPI_rank // (n[0] * n[1])
+            T_step = m
+        else:
+            comp_idx = n[0]
+            comp_step = 1
+            rho_idx = n[1]
+            rho_step = 1
+            T_idx = n[2]
+            T_step = 1
+            
+    else:
+        
+        m = MPI_N // (n[0] * n[1])
+        
+        if MPI_rank <= n[0]*n[1]*n[2]:
+            comp_idx = MPI_rank % n[0]
+            comp_step = n[0]
+            rho_idx = (MPI_rank // n[0]) % n[1]
+            rho_step = n[1]
+            T_idx = MPI_rank // (n[0] * n[1])
+            T_step = n[2]
+        else:
+            comp_idx = n[0]
+            comp_step = 1
+            rho_idx = n[1]
+            rho_step = 1
+            T_idx = n[2]
+            T_step = 1
+            
+    return comp_idx, comp_step, rho_idx, rho_step, T_idx, T_step
+
+def _drgep_mpi_numpy(net, conds, targets, tols):
+    
+    #----------------------------------------
+    # Unpack conditions; make precalculations
+    #----------------------------------------
+    
+    n = tuple(map(len, conds))
+    comp_L, rho_L, T_L = conds
+    
+    net.calc_count_matrices()
+    net.update_rate_coef_arr()
+    adj_nuc = get_adj_nuc(net)
+    
+    #-----------------------------------
+    # Init. MPI and divide up conditions
+    #-----------------------------------
+    
+    comm = MPI.COMM_WORLD
+    MPI_N = comm.Get_size()
+    MPI_rank = comm.Get_rank()
+    
+    comp_idx, comp_step, rho_idx, rho_step, T_idx, T_step =\
+            _drgep_mpi_numpy_decomp(MPI_N, MPI_rank, n)
+    
+    #--------------------------------------------------------------
+    # Calculate interaction coefficients (vectorized and using MPI)
+    #--------------------------------------------------------------
+    
+    R_TB_loc = np.zeros(len(net.unique_nuclei), dtype=np.float64)
+
+    for i in range(comp_idx, n[0], comp_step):
+        comp = comp_L[i]
+        net.update_yfac_arr(comp)
+        for j in range(rho_idx, n[1], rho_step):
+            rho = rho_L[j]
+            net.update_prefac_arr(rho, comp)
+            for k in range(T_idx, n[2], T_step):
+                T = T_L[k]
+                rvals_arr = net.evaluate_rates_arr(T)
+                _drgep_kernel_numpy(net, R_TB_loc, rvals_arr, targets, tols, adj_nuc)
+        
+    R_TB = np.zeros_like(R_TB_loc)
+    comm.Allreduce([R_TB_loc, MPI.DOUBLE], [R_TB, MPI.DOUBLE], op=MPI.MAX)
+    
+    net.clear_arrays()
+    return R_TB
+        
+def drgep(net, conds, targets, tols, returnobj='net', use_mpi=False, use_numpy=False):
+    """
+    Implementation of Directed Relation Graph with Error Propagation (DRGEP) reduction
+    method described in Pepiot-Desjardins and Pitch 2008 (doi:10.1016/j.combustflame.2007.10.020)
+    and Niemeyer and Sung 2011 (doi:10.1016/j.combustflame.2010.12.010).
+    
+    :param net: The network (RateCollection) to reduce.
+    :param conds: A set of conditions to reduce over. Should either be a sequence of (composition,
+        density, temperature) sequences/tuples if running in standard mode, or a sequence of 3
+        sequences ((composition, density, temperature) ordering) if running in NumPy mode. In the
+        latter case, the sequences will be permuted to create the dataset. The compositions should
+        be pynucastro Composition objects.
+    :param targets: A collection of target nuclei (or a single target nucleus) to run the
+        graph search algorithm from. Should be supplied as pynucastro Nucleus objects.
+    :param tols: Tolerance(s) or cutoff threshold(s) to use for paths from each of the target nuclei.
+        Nuclei whose interaction coefficients do not meet the specified tolerance will have their
+        interaction coefficients set to 0.0. Can be a single number (will be the same for all targets)
+        or a separate value for each target nucleus.
+    :param returnobj: The type of object to return. Options are 'net' (a reduced network, the default
+        setting), 'nuclei' (unique nuclei ordered by descending interaction coefficient, where the
+        coefficient is nonzero), and 'coeff' (the interaction coefficients as a NumPy array, with
+        entries corresponding to nuclei in *net.unique_nuclei*).
+    :param use_mpi: Whether to divide up the set of conditions across MPI processes or not. Default
+        setting is *False*.
+    :param use_numpy: Whether to use NumPy to vectorize the interaction coefficient calculations or
+        not. This is more memory intensive and may actually hinder performance for some setups.
+        Conditions should be supplied as 3 lists that will be permuted to form the dataset (see
+        *conds* parameter). Default setting is *False*.
+    """
+    
+    #------------------
+    # Process arguments
+    #------------------
+    
+    targets = _to_list(targets)
+    tols = _to_list(tols, len(targets))
+    
+    #-------------------------------------------------------
+    # Determine operation mode and launch appropriate helper
+    #-------------------------------------------------------
+    
+    if use_mpi:
+        if use_numpy:
+            R_TB = _drgep_mpi_numpy(net, conds, targets, tols)
+        else:
+            R_TB = _drgep_mpi(net, conds, targets, tols)    
+    elif use_numpy:
+        R_TB = _drgep_numpy(net, conds, targets, tols)
+    else:
+        R_TB = _drgep(net, conds, targets, tols)
+        
+    #------------------------
+    # Return requested object
+    #------------------------
+    
     if returnobj == 'net':
         nuclei = [net.unique_nuclei[i] for i in range(len(net.unique_nuclei))
                   if R_TB[i] > 0.0]   
@@ -247,5 +404,7 @@ def drgep(net, conds, targets, tols, returnobj='net'):
     elif returnobj == 'nuclei':
         idx = sorted(range(len(R_TB)), key=lambda i: R_TB[i], reverse=True)
         return [net.unique_nuclei[i] for i in idx if R_TB[i] > 0.0]
+    elif returnobj == 'coeff':
+        return R_TB
     else:
         raise ValueError("Invalid 'returnobj' argument: '{}'.".format(returnobj))

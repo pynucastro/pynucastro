@@ -24,7 +24,7 @@ def _wrap_conds(conds):
 
 NetInfo = namedtuple("NetInfo", "y ydot z a ebind m")
 
-def get_net_info(net, rho, T, comp):
+def get_net_info(net, comp, rho, T):
 
     y_dict = comp.get_molar()
     ydots_dict = net.evaluate_ydots(rho, T, comp)
@@ -186,25 +186,18 @@ def error_function(net_new, net_old, conds):
     return err
     
 def get_errfunc_enuc(net_old, conds):
-    
-    conds_list = []
-    
-    for rho in conds[0]:
-        for T in conds[1]:
-            for comp in conds[2]:
-                conds_list.append((rho, T, comp))
-                
+        
     enucdot_list = []
     
-    for rho, T, comp in conds_list:
-        net_info_old = get_net_info(net_old, rho, T, comp)
+    for comp, rho, T in conds:
+        net_info_old = get_net_info(net_old, comp, rho, T)
         enucdot_list.append(enuc_dot(net_info_old))
     
     def erf(net_new):
         
         err = 0.0
         
-        for cond, enucdot_old in zip(conds_list, enucdot_list):
+        for cond, enucdot_old in zip(conds, enucdot_list):
 
             net_info_new = get_net_info(net_new, *cond)
             enucdot_new = enuc_dot(net_info_new)
@@ -313,7 +306,7 @@ if __name__ == "__main__":
     
     from pynucastro.reduction.load_network import load_network
     from pynucastro.reduction.generate_data import dataset
-    from pynucastro.reduction import drgep, binary_search, n_ary_search
+    from pynucastro.reduction import drgep, binary_search_trim, sens_analysis
     import time
     import sys
 
@@ -335,11 +328,7 @@ if __name__ == "__main__":
     # Perform DRGEP / PFA
     targets = map(Nucleus, ['p', 'ni56'])
     t0 = time.time()
-    DRGEP = True
-    if DRGEP:
-        nuclei = drgep(net, data, targets, [1e-3, 1e-2], returnobj='nuclei')
-    else:
-        nuclei = ppfa(net, data, 0.4, SA=True)
+    nuclei = drgep(net, data, targets, [1e-3, 1e-2], returnobj='nuclei', use_mpi=True)
     dt = time.time() - t0
     
     if MPI.COMM_WORLD.Get_rank() == 0:
@@ -352,13 +341,15 @@ if __name__ == "__main__":
     
     # Perform sensitivity analysis
     red_net = net.linking_nuclei(nuclei)
-    errfunc = get_errfunc_enuc_mpi(net, data)
+    errfunc = get_errfunc_enuc(net, data)
     MPI.COMM_WORLD.Barrier()
     t0 = time.time()
-    red_net = binary_search(red_net, nuclei, errfunc)
+    # red_net = binary_search_trim(red_net, nuclei, errfunc)
+    red_net = sens_analysis(red_net, errfunc, 0.05, True)
     dt = time.time() - t0
     
     if MPI.COMM_WORLD.Get_rank() == 0:
-        
+    
         print(f"SA reduction took {dt:.3f} s.")
         print("Number of species in DRGEP + SA reduced network: ", len(red_net.unique_nuclei))
+        print("Error: ", errfunc(red_net))

@@ -3,7 +3,7 @@
 from pynucastro import Composition, Nucleus
 import numpy as np
 
-def dataset(network, n=10):
+def dataset(network, n=10, permute=True):
     
     if isinstance(n, int):
         n = np.ones(3, dtype=np.int32) * n
@@ -15,11 +15,11 @@ def dataset(network, n=10):
     b_T = (8e6, 1.5e9) # temperature (K)
     b_Z = (0.02, 0.2) # metallicity
     
-    rho = np.logspace(*map(np.log10, b_rho), num=n[0])
-    T = np.logspace(*map(np.log10, b_T), num=n[1])
+    rho = np.logspace(*map(np.log10, b_rho), num=n[1])
+    T = np.logspace(*map(np.log10, b_T), num=n[2])
     comp_list = []
     
-    for Z in np.linspace(*b_Z, num=n[2]):
+    for Z in np.linspace(*b_Z, num=n[0]):
         
         comp = Composition(network.get_nuclei())
         # 75/25 H1/He4 ratio
@@ -37,21 +37,26 @@ def dataset(network, n=10):
                 
         comp.normalize()
         comp_list.append(comp)
+        
+    if not permute:
+        yield comp_list
+        yield rho
+        yield T
+        return
                 
-    # for rho_i in rho:
-        # for T_i in T:
-            # for comp in comp_list:
-                # yield (rho_i, T_i, comp)
-    return (rho, T, comp_list)
+    for rho_i in rho:
+        for T_i in T:
+            for comp in comp_list:
+                yield (comp, rho_i, T_i)
 
 if __name__ == "__main__":
     
     from pynucastro.reduction.load_network import load_network
     network = load_network(Nucleus("ni56"))
     conds_list = list(dataset(network))
-    rho = sorted({conds[0] for conds in conds_list})
-    T = sorted({conds[1] for conds in conds_list})
-    comp = {conds[2] for conds in conds_list}
+    rho = sorted({conds[1] for conds in conds_list})
+    T = sorted({conds[2] for conds in conds_list})
+    comp = {conds[0] for conds in conds_list}
     
     print("ρ")
     print(rho)
