@@ -107,7 +107,6 @@ contains
     use extern_probin_module, only: do_constant_volume_burn, disable_thermal_neutrinos
     use burn_type_module, only: net_itemp, net_ienuc, neqs
     use sneut_module, only: sneut5
-    use temperature_integration_module, only: temperature_rhs
 
     implicit none
 
@@ -144,9 +143,6 @@ contains
     ! Append the energy equation (this is erg/g/s)
     ydot(net_ienuc) = enuc - sneut
 
-    ! Append the temperature equation
-    call temperature_rhs(state, ydot)
-
   end subroutine actual_rhs
 
 
@@ -173,7 +169,6 @@ contains
     use burn_type_module, only: net_itemp, net_ienuc, neqs, njrows, njcols
     use extern_probin_module, only: disable_thermal_neutrinos
     use sneut_module, only: sneut5
-    use temperature_integration_module, only: temperature_jac
     use jacobian_sparsity_module, only: get_jac_entry, set_jac_entry, set_jac_zero
 
     implicit none
@@ -242,9 +237,6 @@ contains
        scratch = scratch - dsneutdt
     endif
     call set_jac_entry(jac, net_ienuc, net_itemp, scratch)
-
-    ! Temperature Jacobian elements
-    call temperature_jac(state, jac)
 
   end subroutine actual_jac
 
