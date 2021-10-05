@@ -115,47 +115,6 @@ class BaseFortranNetwork(ABC, RateCollection):
         # This method returns a list of strings that are file paths to template files.
         return []
 
-    def ydot_string(self, rate):
-        """
-        return a string containing the term in a dY/dt equation
-        in a reaction network corresponding to this rate for Fortran 90.
-        """
-
-        # composition dependence
-        Y_string = ""
-        for n, r in enumerate(sorted(set(rate.reactants))):
-            c = rate.reactants.count(r)
-            if c > 1:
-                Y_string += self.name_y + f"(j{r})**{c}"
-            else:
-                Y_string += self.name_y + f"(j{r})"
-
-            if n < len(set(rate.reactants))-1:
-                Y_string += " * "
-
-        # density dependence
-        if rate.dens_exp == 0:
-            dens_string = ""
-        elif rate.dens_exp == 1:
-            dens_string = f"{self.name_density} * "
-        else:
-            dens_string = f"{self.name_density}**{rate.dens_exp} * "
-
-        # prefactor
-        if not rate.prefactor == 1.0:
-            prefactor_string = f"{rate.prefactor:1.14e} * ".replace('e','d')
-        else:
-            prefactor_string = ""
-
-        return "{}{}{} * {}(i_scor, k_{}) * {}(i_rate, k_{})".format(
-            prefactor_string,
-            dens_string,
-            Y_string,
-            self.name_rate_data,
-            rate.fname,
-            self.name_rate_data,
-            rate.fname)
-
     def ydot_term_symbol(self, rate, y_i):
         """
         return a sympy expression containing this rate's contribution to
@@ -406,6 +365,10 @@ class BaseFortranNetwork(ABC, RateCollection):
         infile.close()
         outfile.close()
 
+    def fmt_to_dp_f90(self, i):
+        """convert a number to Fortran double precision format"""
+        return '{:1.14e}'.format(float(i)).replace('e','d')
+
     def fmt_to_rt_f90(self, i):
         """convert a number to custom real type format"""
         return f'{float(i):1.14e}_rt'
@@ -637,9 +600,9 @@ class BaseFortranNetwork(ABC, RateCollection):
         jset = 0
         for nr in self.reaclib_rates:
             r = self.rates[nr]
-            for _ in r.sets:
+            for s in r.sets:
                 jset = jset + 1
-                for an in a:
+                for an in s.a:
                     of.write(f'{self.fmt_to_dp_f90(an)}\n')
         j = 1
         for i, r in enumerate(self.rates):
