@@ -211,16 +211,6 @@ about nuclei pairs for screening:
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="pynucastro.networks.base_fortran_network.BaseFortranNetwork.jacobian_string">
-<span class="sig-name descname"><span class="pre">jacobian_string</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ydot_j</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_i</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/base_fortran_network.html#BaseFortranNetwork.jacobian_string"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.base_fortran_network.BaseFortranNetwork.jacobian_string" title="Permalink to this definition">¶</a></dt>
-<dd><p>return a string containing the term in a jacobian matrix
-in a reaction network corresponding to this rate</p>
-<p>Returns the derivative of the j-th YDOT wrt. the i-th Y
-If the derivative is zero, returns the empty string ‘’</p>
-<p>ydot_j and y_i are objects of the class ‘Nucleus’</p>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.networks.base_fortran_network.BaseFortranNetwork.jacobian_term_symbol">
 <span class="sig-name descname"><span class="pre">jacobian_term_symbol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ydot_j</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_i</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/base_fortran_network.html#BaseFortranNetwork.jacobian_term_symbol"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.base_fortran_network.BaseFortranNetwork.jacobian_term_symbol" title="Permalink to this definition">¶</a></dt>
 <dd><p>return a sympy expression containing the term in a jacobian matrix
