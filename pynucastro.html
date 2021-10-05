@@ -1,79 +1,39 @@
-
-
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
-  
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
   <title>pynucastro package &mdash; pynucastro v1.5.0 documentation</title>
-  
-
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-
-  
-  
-
-  
-  
-
-  
-
-  
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
         <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.0/dist/embed-amd.js"></script>
-    
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-
-    
+    <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="pynucastro.networks package" href="pynucastro.networks.html" />
     <link rel="prev" title="out" href="modules.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
-
-          
             <a href="index.html" class="icon icon-home"> pynucastro
-          
-
-          
           </a>
-
-          
-            
-            
               <div class="version">
                 v1.5.0
               </div>
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -81,18 +41,7 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="intro.html">Overview of pynucastro</a></li>
@@ -122,73 +71,31 @@
 <li class="toctree-l1"><a class="reference internal" href="sources.html">Third Party Data</a></li>
 </ul>
 
-            
-          
         </div>
-        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="index.html">pynucastro</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-        
           <li><a href="modules.html">out</a> &raquo;</li>
-        
       <li>pynucastro package</li>
-    
-    
       <li class="wy-breadcrumbs-aside">
-        
-          
             <a href="_sources/pynucastro.rst.txt" rel="nofollow"> View page source</a>
-          
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
+             
   
 <style>
 /* CSS overrides for sphinx_rtd_theme */
@@ -213,7 +120,7 @@
     text-align: unset;
 }
 </style>
-<div class="section" id="module-pynucastro">
+<section id="module-pynucastro">
 <span id="pynucastro-package"></span><h1>pynucastro package<a class="headerlink" href="#module-pynucastro" title="Permalink to this headline">¶</a></h1>
 <p>pynucastro is a python module that interprets the nuclear reaction rates,
 including those cataloged by the JINA ReacLib project:</p>
@@ -224,7 +131,7 @@ reaction networks, including the the righthand side and Jacobian
 routines.</p>
 <p>Several different packages provide the data structures needed to
 interpret rates and build networks.</p>
-<div class="section" id="library">
+<section id="library">
 <h2>library<a class="headerlink" href="#library" title="Permalink to this headline">¶</a></h2>
 <p>library stores Reaclib rate files in Reaclib 1 or 2 formats as well as the
 directory <cite>library/tabular</cite> containing tabulated rates. pynucastro
@@ -233,8 +140,8 @@ working directory.</p>
 <p>Adding Reaclib rate files simply requires downloading them from the
 JINA ReacLib project and placing them in the library folder. They must
 be in the Reaclib 1 format.</p>
-</div>
-<div class="section" id="nucdata">
+</section>
+<section id="nucdata">
 <h2>nucdata<a class="headerlink" href="#nucdata" title="Permalink to this headline">¶</a></h2>
 <p>nucdata provides tables of binding energy per nucleon in MeV for
 nuclides specified by their number of neutrons N and atomic
@@ -244,8 +151,8 @@ number Z.</p>
 2016. Scripts for reading the Atomic Mass Evaluation tables and
 generating binding energy tables for pynucastro are provided in
 <cite>pynucastro/nucdata/AtomicMassEvaluation</cite>.</p>
-</div>
-<div class="section" id="networks">
+</section>
+<section id="networks">
 <h2>networks<a class="headerlink" href="#networks" title="Permalink to this headline">¶</a></h2>
 <p>networks provides classes and functions for organizing collection of
 rates, including:</p>
@@ -270,8 +177,8 @@ of Fortran code that can be used to add a network to the
 hydrodynamics codes Castro and Maestro via the StarKiller
 Microphysics repository.</p></li>
 </ul>
-</div>
-<div class="section" id="rates">
+</section>
+<section id="rates">
 <h2>rates<a class="headerlink" href="#rates" title="Permalink to this headline">¶</a></h2>
 <p>rates provides classes and functions for interpreting individual
 reaction rates, including:</p>
@@ -288,8 +195,8 @@ one or more rates.</p></li>
 <li><p>RateFilter: a class implementing search constraints to look up a
 desired rate or group of rates from a RateLibrary.</p></li>
 </ul>
-</div>
-<div class="section" id="screening">
+</section>
+<section id="screening">
 <h2>screening<a class="headerlink" href="#screening" title="Permalink to this headline">¶</a></h2>
 <p>screening provides routines used by the BaseFortranNetwork to screen
 Reaclib reaction rates in the weak, intermediate, and strong
@@ -298,16 +205,16 @@ regimes. Tabulated rates are not screened.</p>
 standalone Fortran network. StarKiller Microphysics networks also use
 rate screening, but they use the screening module in the StarKiller
 Microphysics repository.</p>
-</div>
-<div class="section" id="templates">
+</section>
+<section id="templates">
 <h2>templates<a class="headerlink" href="#templates" title="Permalink to this headline">¶</a></h2>
 <p>templates contains subdirectories for generating BaseFortranNetwork
 and StarKillerNetwork Fortran modules implementing the ODE right hand
 side, jacobian, and integration driver routines. pynucastro processes
 these template files by replacing tags of the form <cite>&lt;tag&gt;</cite> with
 generated code specific to a given choice of reaction rates.</p>
-</div>
-<div class="section" id="subpackages">
+</section>
+<section id="subpackages">
 <h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
@@ -333,55 +240,38 @@ generated code specific to a given choice of reaction rates.</p>
 </li>
 </ul>
 </div>
-</div>
-</div>
+</section>
+</section>
 
 
            </div>
-           
           </div>
-          <footer>
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="pynucastro.networks.html" class="btn btn-neutral float-right" title="pynucastro.networks package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="modules.html" class="btn btn-neutral float-left" title="out" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="pynucastro.networks.html" class="btn btn-neutral float-right" title="pynucastro.networks package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &#169; Copyright 2021, Michael Zingale and Donald Willcox.
-
-    </p>
+    <p>&#169; Copyright 2021, Michael Zingale and Donald Willcox.</p>
   </div>
-    
-    
-    
-    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>
