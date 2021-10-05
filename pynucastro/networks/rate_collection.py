@@ -2,7 +2,6 @@
 rates that together make up a network."""
 
 # Common Imports
-from __future__ import print_function
 import warnings
 import functools
 import math
@@ -66,7 +65,7 @@ class Composition:
 
     def normalize(self):
         """ normalize the mass fractions to sum to 1 """
-        X_sum = sum([self.X[k] for k in self.X])
+        X_sum = sum(self.X[k] for k in self.X)
 
         for k in self.X:
             self.X[k] /= X_sum
@@ -94,7 +93,7 @@ class Composition:
     def __str__(self):
         ostr = ""
         for k in self.X:
-            ostr += "  X({}) : {}\n".format(k, self.X[k])
+            ostr += f"  X({k}) : {self.X[k]}\n"
         return ostr
 
 class RateCollection:
@@ -216,7 +215,7 @@ class RateCollection:
             try:
                 rflib = Library(rf)
             except:
-                print("Error reading library from file: {}".format(rf))
+                print(f"Error reading library from file: {rf}")
                 raise
             else:
                 if not self.library:
@@ -294,14 +293,14 @@ class RateCollection:
         """ return a verbose network overview """
         ostr = ""
         for n in self.unique_nuclei:
-            ostr += "{}\n".format(n)
+            ostr += f"{n}\n"
             ostr += "  consumed by:\n"
             for r in self.nuclei_consumed[n]:
-                ostr += "     {}\n".format(r.string)
+                ostr += f"     {r.string}\n"
 
             ostr += "  produced by:\n"
             for r in self.nuclei_produced[n]:
-                ostr += "     {}\n".format(r.string)
+                ostr += f"     {r.string}\n"
 
             ostr += "\n"
         return ostr
@@ -319,9 +318,9 @@ class RateCollection:
         for n, r in zip(names, self.rates):
             k = names.count(n)
             if k > 1:
-                print('Found rate {} named {} with {} entries in the RateCollection.'.format(r, n, k))
-                print('Rate {} has the original source:\n{}'.format(r, r.original_source))
-                print('Rate {} is in chapter {}'.format(r, r.chapter))
+                print(f'Found rate {r} named {n} with {k} entries in the RateCollection.')
+                print(f'Rate {r} has the original source:\n{r.original_source}')
+                print(f'Rate {r} is in chapter {r.chapter}')
         return len(set(names)) == len(self.rates)
         
     def _make_distinguishable(self, precedence):
@@ -329,7 +328,7 @@ class RateCollection:
         labels' positions in the precedence list. Only do this if all of the labels have
         rankings in the list."""
         
-        nameset = set([r.fname for r in self.rates])
+        nameset = {r.fname for r in self.rates}
         precedence = {lab: i for i, lab in enumerate(precedence)}
         def sorting_key(i): return precedence[self.rates[i].label]
         
@@ -344,13 +343,13 @@ class RateCollection:
             # rates
             labels = [self.rates[i].label for i in ind]
             
-            if all((lab in precedence for lab in labels)):
+            if all(lab in precedence for lab in labels):
                 
                 sorted_ind = sorted(ind, key=sorting_key)
                 r = self.rates[sorted_ind[0]]
                 for i in sorted(sorted_ind[1:], reverse=True): del self.rates[i]
-                print('Found rate {} named {} with {} entries in the RateCollection.'.format(r, n, k))
-                print('Kept only entry with label {} out of {}.'.format(r.label, labels))
+                print(f'Found rate {r} named {n} with {k} entries in the RateCollection.')
+                print(f'Kept only entry with label {r.label} out of {labels}.')
 
     def _write_network(self, *args, **kwargs):
         """A stub for function to output the network -- this is implementation
@@ -398,7 +397,7 @@ class RateCollection:
         for n in node_nuclei:
             G.add_node(n)
             G.position[n] = (n.N, n.Z)
-            G.labels[n] = r"${}$".format(n.pretty)
+            G.labels[n] = fr"${n.pretty}$"
 
         # get the rates for each reaction
         if rho is not None and T is not None and comp is not None:
@@ -608,7 +607,7 @@ class RateCollection:
         dpi = kwargs.pop("dpi", 100)
         linthresh = kwargs.pop("linthresh", 1.0)
         
-        if kwargs: warnings.warn("Unrecognized keyword arguments: {}".format(kwargs.keys()))
+        if kwargs: warnings.warn(f"Unrecognized keyword arguments: {kwargs.keys()}")
         
         # Get figure, colormap
         fig, ax = plt.subplots()
@@ -625,7 +624,7 @@ class RateCollection:
         # Compute weights
         color_field = color_field.lower()
         if color_field not in {"x", "y", "ydot", "xdot", "activity"}:
-            raise ValueError("Invalid color field: '{}'".format(color_field))
+            raise ValueError(f"Invalid color field: '{color_field}'")
         
         if comp is None:
             
@@ -720,9 +719,9 @@ class RateCollection:
                 
                 capfield = color_field.capitalize()
                 if scale == "log":
-                    cbar_label = "log[{}]".format(capfield)
+                    cbar_label = f"log[{capfield}]"
                 elif scale == "symlog":
-                    cbar_label = "symlog[{}]".format(capfield)
+                    cbar_label = f"symlog[{capfield}]"
                 else:
                     cbar_label = capfield
                 
@@ -739,11 +738,11 @@ class RateCollection:
     def __repr__(self):
         string = ""
         for r in self.rates:
-            string += "{}\n".format(r.string)
+            string += f"{r.string}\n"
         return string
 
 
-class Explorer(object):
+class Explorer:
     """ interactively explore a rate collection """
     def __init__(self, rc, comp, size=(800, 600),
                  ydot_cutoff_value=None,
