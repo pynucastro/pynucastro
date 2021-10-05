@@ -192,47 +192,6 @@
         <span class="c1"># This method returns a list of strings that are file paths to template files.</span>
         <span class="k">return</span> <span class="p">[]</span>
 
-<div class="viewcode-block" id="BaseFortranNetwork.ydot_string"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.base_fortran_network.BaseFortranNetwork.ydot_string">[docs]</a>    <span class="k">def</span> <span class="nf">ydot_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rate</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        return a string containing the term in a dY/dt equation</span>
-<span class="sd">        in a reaction network corresponding to this rate for Fortran 90.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="c1"># composition dependence</span>
-        <span class="n">Y_string</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-        <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">rate</span><span class="o">.</span><span class="n">reactants</span><span class="p">))):</span>
-            <span class="n">c</span> <span class="o">=</span> <span class="n">rate</span><span class="o">.</span><span class="n">reactants</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">c</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="n">Y_string</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name_y</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;(j</span><span class="si">{</span><span class="n">r</span><span class="si">}</span><span class="s2">)**</span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">Y_string</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name_y</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;(j</span><span class="si">{</span><span class="n">r</span><span class="si">}</span><span class="s2">)&quot;</span>
-
-            <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">rate</span><span class="o">.</span><span class="n">reactants</span><span class="p">))</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
-                <span class="n">Y_string</span> <span class="o">+=</span> <span class="s2">&quot; * &quot;</span>
-
-        <span class="c1"># density dependence</span>
-        <span class="k">if</span> <span class="n">rate</span><span class="o">.</span><span class="n">dens_exp</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">dens_string</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-        <span class="k">elif</span> <span class="n">rate</span><span class="o">.</span><span class="n">dens_exp</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">dens_string</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name_density</span><span class="si">}</span><span class="s2"> * &quot;</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">dens_string</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name_density</span><span class="si">}</span><span class="s2">**</span><span class="si">{</span><span class="n">rate</span><span class="o">.</span><span class="n">dens_exp</span><span class="si">}</span><span class="s2"> * &quot;</span>
-
-        <span class="c1"># prefactor</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">rate</span><span class="o">.</span><span class="n">prefactor</span> <span class="o">==</span> <span class="mf">1.0</span><span class="p">:</span>
-            <span class="n">prefactor_string</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">rate</span><span class="o">.</span><span class="n">prefactor</span><span class="si">:</span><span class="s2">1.14e</span><span class="si">}</span><span class="s2"> * &quot;</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;e&#39;</span><span class="p">,</span><span class="s1">&#39;d&#39;</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">prefactor_string</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-
-        <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{}{}{}</span><span class="s2"> * </span><span class="si">{}</span><span class="s2">(i_scor, k_</span><span class="si">{}</span><span class="s2">) * </span><span class="si">{}</span><span class="s2">(i_rate, k_</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-            <span class="n">prefactor_string</span><span class="p">,</span>
-            <span class="n">dens_string</span><span class="p">,</span>
-            <span class="n">Y_string</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">name_rate_data</span><span class="p">,</span>
-            <span class="n">rate</span><span class="o">.</span><span class="n">fname</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">name_rate_data</span><span class="p">,</span>
-            <span class="n">rate</span><span class="o">.</span><span class="n">fname</span><span class="p">)</span></div>
-
 <div class="viewcode-block" id="BaseFortranNetwork.ydot_term_symbol"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.base_fortran_network.BaseFortranNetwork.ydot_term_symbol">[docs]</a>    <span class="k">def</span> <span class="nf">ydot_term_symbol</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rate</span><span class="p">,</span> <span class="n">y_i</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        return a sympy expression containing this rate&#39;s contribution to</span>
@@ -483,6 +442,10 @@
         <span class="n">infile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="n">outfile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
+<div class="viewcode-block" id="BaseFortranNetwork.fmt_to_dp_f90"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.base_fortran_network.BaseFortranNetwork.fmt_to_dp_f90">[docs]</a>    <span class="k">def</span> <span class="nf">fmt_to_dp_f90</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;convert a number to Fortran double precision format&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s1">&#39;</span><span class="si">{:1.14e}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">i</span><span class="p">))</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;e&#39;</span><span class="p">,</span><span class="s1">&#39;d&#39;</span><span class="p">)</span></div>
+
 <div class="viewcode-block" id="BaseFortranNetwork.fmt_to_rt_f90"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.base_fortran_network.BaseFortranNetwork.fmt_to_rt_f90">[docs]</a>    <span class="k">def</span> <span class="nf">fmt_to_rt_f90</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;convert a number to custom real type format&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="nb">float</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="si">:</span><span class="s1">1.14e</span><span class="si">}</span><span class="s1">_rt&#39;</span></div>
@@ -714,9 +677,9 @@
         <span class="n">jset</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">for</span> <span class="n">nr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reaclib_rates</span><span class="p">:</span>
             <span class="n">r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="n">nr</span><span class="p">]</span>
-            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">r</span><span class="o">.</span><span class="n">sets</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">r</span><span class="o">.</span><span class="n">sets</span><span class="p">:</span>
                 <span class="n">jset</span> <span class="o">=</span> <span class="n">jset</span> <span class="o">+</span> <span class="mi">1</span>
-                <span class="k">for</span> <span class="n">an</span> <span class="ow">in</span> <span class="n">a</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">an</span> <span class="ow">in</span> <span class="n">s</span><span class="o">.</span><span class="n">a</span><span class="p">:</span>
                     <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fmt_to_dp_f90</span><span class="p">(</span><span class="n">an</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
         <span class="n">j</span> <span class="o">=</span> <span class="mi">1</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">):</span>
