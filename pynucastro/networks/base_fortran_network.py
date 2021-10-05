@@ -42,7 +42,6 @@ class BaseFortranNetwork(ABC, RateCollection):
         self.ftags['<nrat_reaclib>'] = self._nrat_reaclib
         self.ftags['<nrat_tabular>'] = self._nrat_tabular
         self.ftags['<nspec>'] = self._nspec
-        self.ftags['<nspec_evolve>'] = self._nspec_evolve
         self.ftags['<network_name>'] = self._network_name
         self.ftags['<nrxn>'] = self._nrxn
         self.ftags['<jion>'] = self._jion
@@ -60,7 +59,6 @@ class BaseFortranNetwork(ABC, RateCollection):
         self.ftags['<public_table_indices>'] = self._public_table_indices
         self.ftags['<table_indices>'] = self._table_indices
         self.ftags['<declare_tables>'] = self._declare_tables
-        self.ftags['<declare_managed_tables>'] = self._declare_managed_tables
         self.ftags['<table_init_meta>'] = self._table_init_meta
         self.ftags['<table_term_meta>'] = self._table_term_meta
         self.ftags['<table_rates_indices>'] = self._table_rates_indices
@@ -74,8 +72,6 @@ class BaseFortranNetwork(ABC, RateCollection):
         self.ftags['<jacnuc>'] = self._jacnuc
         self.ftags['<yinit_nuc>'] = self._yinit_nuc
         self.ftags['<initial_mass_fractions>'] = self._initial_mass_fractions
-        self.ftags['<probin_mass_fractions>'] = self._probin_mass_fractions
-        self.ftags['<parameters_mass_fractions>'] = self._parameters_mass_fractions
         self.ftags['<final_net_print>'] = self._final_net_print
         self.ftags['<headerline>'] = self._headerline
         self.ftags['<pynucastro_home>'] = self._pynucastro_home
@@ -585,15 +581,6 @@ class BaseFortranNetwork(ABC, RateCollection):
                 self.indent*n_indent, r.table_index_name))
             of.write('\n')
 
-    def _declare_managed_tables(self, n_indent, of):
-        for irate in self.tabular_rates:
-            r = self.rates[irate]
-            of.write('{}attributes(managed) :: rate_table_{}, rhoy_table_{}, temp_table_{}\n'.format(
-                self.indent*n_indent, r.table_index_name, r.table_index_name, r.table_index_name))
-            of.write('{}attributes(managed) :: num_rhoy_{}, num_temp_{}, num_vars_{}\n'.format(
-                self.indent*n_indent, r.table_index_name, r.table_index_name, r.table_index_name))
-            of.write('\n')
-
     def _table_init_meta(self, n_indent, of):
         for irate in self.tabular_rates:
             r = self.rates[irate]
@@ -764,18 +751,6 @@ class BaseFortranNetwork(ABC, RateCollection):
     def _initial_mass_fractions(self, n_indent, of):
         for n in self.unique_nuclei:
             of.write(f"{self.indent*n_indent}initial_mass_fraction_{n} = 0.0d0\n")
-
-    def _probin_mass_fractions(self, n_indent, of):
-        num_unique_nuclei = len(self.unique_nuclei)
-        for j, n in enumerate(self.unique_nuclei):
-            of.write("{self.indent*n_indent}initial_mass_fraction_{n}")
-            if j < num_unique_nuclei - 1:
-                of.write(", &\n")
-
-    def _parameters_mass_fractions(self, n_indent, of):
-        for n in self.unique_nuclei:
-            of.write("{}initial_mass_fraction_{}          real          0.0d0\n".format(
-                self.indent*n_indent, n))
 
     def _final_net_print(self, n_indent, of):
         for n in self.unique_nuclei:
