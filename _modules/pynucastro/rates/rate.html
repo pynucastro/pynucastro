@@ -617,7 +617,7 @@
 
 <div class="viewcode-block" id="RateFilter"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.RateFilter">[docs]</a><span class="k">class</span> <span class="nc">RateFilter</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;RateFilter filters out a specified rate or set of rates</span>
-<span class="sd">    </span>
+
 <span class="sd">    A RateFilter stores selection rules specifying a rate or group of</span>
 <span class="sd">    rates to assist in searching for rates stored in a Library.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -635,7 +635,7 @@
 <span class="sd">                3. a single reactant Nucleus</span>
 <span class="sd">                4. a single string description of the reactant nuclide</span>
 <span class="sd">            products  -- Description of the products in same form as above</span>
-<span class="sd">            exact     -- boolean, </span>
+<span class="sd">            exact     -- boolean,</span>
 <span class="sd">                         if True, products or reactants must match exactly [default]</span>
 <span class="sd">                         if False, then all products or reactants must be found</span>
 <span class="sd">                         in a comparison rate, but the comparison may contain</span>
@@ -652,7 +652,7 @@
 <span class="sd">                               a callable that can take a single rate as an argument</span>
 <span class="sd">                               may be used to specify additional criteria, returning</span>
 <span class="sd">                               True if the rate meets all of them, False otherwise</span>
-<span class="sd">        </span>
+
 <span class="sd">        Examples:</span>
 <span class="sd">            Create a filter that finds all proton capture and proton-burning reactions</span>
 <span class="sd">            in a Library instance my_library::</span>
@@ -662,11 +662,11 @@
 <span class="sd">                &gt;&gt;&gt; pcap_filter = RateFilter(reactants=Nucleus(&#39;p&#39;), exact=False)</span>
 <span class="sd">                &gt;&gt;&gt; pcap_library = my_library.filter(pcap_filter)</span>
 
-<span class="sd">            Create a filter that finds C12 (a,g) O16 </span>
+<span class="sd">            Create a filter that finds C12 (a,g) O16</span>
 <span class="sd">            Notes:</span>
 <span class="sd">                + photons/gammas are not treated as nuclides, so they cannot be</span>
 <span class="sd">                a reactant or product</span>
-<span class="sd">                + this rate is in the ReacLib library used here as </span>
+<span class="sd">                + this rate is in the ReacLib library used here as</span>
 <span class="sd">                O16 --&gt; He4 C12 -- you need to know how your library treats rates::</span>
 <span class="sd">                    &gt;&gt;&gt; cago_filter = RateFilter(reactants=&#39;o16&#39;, products=[&#39;c12&#39;, &#39;a&#39;])</span>
 <span class="sd">                    &gt;&gt;&gt; cago_library = my_library.filter(cago_filter)</span>
@@ -831,7 +831,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_set_rhs_properties</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_set_screening</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_set_print_representation</span><span class="p">()</span>
-        
+
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabular</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">get_tabular_rate</span><span class="p">()</span>
 
@@ -1241,24 +1241,24 @@
             <span class="k">if</span> <span class="n">n</span><span class="o">.</span><span class="n">A</span> <span class="o">&lt;</span> <span class="n">nuc</span><span class="o">.</span><span class="n">A</span> <span class="ow">or</span> <span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">A</span> <span class="o">==</span> <span class="n">nuc</span><span class="o">.</span><span class="n">A</span> <span class="ow">and</span> <span class="n">n</span><span class="o">.</span><span class="n">Z</span> <span class="o">&gt;</span> <span class="n">nuc</span><span class="o">.</span><span class="n">Z</span><span class="p">):</span>
                 <span class="n">nuc</span> <span class="o">=</span> <span class="n">n</span>
         <span class="k">return</span> <span class="n">nuc</span></div>
-    
-<div class="viewcode-block" id="Rate.get_tabular_rate"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.Rate.get_tabular_rate">[docs]</a>    <span class="k">def</span> <span class="nf">get_tabular_rate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>   
+
+<div class="viewcode-block" id="Rate.get_tabular_rate"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.Rate.get_tabular_rate">[docs]</a>    <span class="k">def</span> <span class="nf">get_tabular_rate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;read the rate data from .dat file &quot;&quot;&quot;</span>
-        
+
         <span class="c1"># find .dat file and read it</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">table_path</span> <span class="o">=</span> <span class="n">Library</span><span class="o">.</span><span class="n">_find_rate_file</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table_file</span><span class="p">)</span>
         <span class="n">tabular_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table_path</span><span class="p">)</span>
-        <span class="n">t_data</span> <span class="o">=</span> <span class="n">tabular_file</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>  
+        <span class="n">t_data</span> <span class="o">=</span> <span class="n">tabular_file</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
         <span class="n">tabular_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-        
+
         <span class="c1"># delete header lines</span>
-        <span class="k">del</span> <span class="n">t_data</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">table_header_lines</span><span class="p">]</span>  
-        
+        <span class="k">del</span> <span class="n">t_data</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">table_header_lines</span><span class="p">]</span>
+
         <span class="c1"># change the list [&quot;1.23 3.45 5.67\n&quot;] into the list [&quot;1.23&quot;,&quot;3.45&quot;,&quot;5.67&quot;]</span>
         <span class="n">t_data2d</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">t_data</span><span class="p">)):</span>
             <span class="n">t_data2d</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;[ ]&quot;</span><span class="p">,</span><span class="n">t_data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)))</span>
-        
+
         <span class="c1"># delete all the &quot;&quot; in each element of data1</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">t_data2d</span><span class="p">)):</span>
             <span class="k">while</span> <span class="s1">&#39;&#39;</span> <span class="ow">in</span> <span class="n">t_data2d</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
@@ -1266,12 +1266,12 @@
 
         <span class="k">while</span> <span class="p">[]</span> <span class="ow">in</span> <span class="n">t_data2d</span><span class="p">:</span>
             <span class="n">t_data2d</span><span class="o">.</span><span class="n">remove</span><span class="p">([])</span>
-            
+
         <span class="bp">self</span><span class="o">.</span><span class="n">tabular_data_table</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">t_data2d</span><span class="p">)</span></div>
-        
-<div class="viewcode-block" id="Rate.eval"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.Rate.eval">[docs]</a>    <span class="k">def</span> <span class="nf">eval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">rhoY</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>    
+
+<div class="viewcode-block" id="Rate.eval"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.Rate.eval">[docs]</a>    <span class="k">def</span> <span class="nf">eval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">rhoY</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; evauate the reaction rate for temperature T &quot;&quot;&quot;</span>
-        
+
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabular</span><span class="p">:</span>
             <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabular_data_table</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
             <span class="c1"># find the nearest value of T and rhoY in the data table</span>
@@ -1279,7 +1279,7 @@
             <span class="n">rhoY_nearest</span> <span class="o">=</span> <span class="p">(</span><span class="n">data</span><span class="p">[:,</span><span class="mi">0</span><span class="p">])[</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">((</span><span class="n">data</span><span class="p">[:,</span><span class="mi">0</span><span class="p">])</span> <span class="o">-</span> <span class="n">rhoY</span><span class="p">)</span><span class="o">.</span><span class="n">argmin</span><span class="p">()]</span>
             <span class="n">inde</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">data</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span><span class="o">==</span><span class="n">T_nearest</span><span class="p">)</span><span class="o">&amp;</span><span class="p">(</span><span class="n">data</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="o">==</span><span class="n">rhoY_nearest</span><span class="p">))[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
             <span class="n">r</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">inde</span><span class="p">][</span><span class="mi">5</span><span class="p">]</span>
-        
+
         <span class="k">else</span><span class="p">:</span>
             <span class="n">tf</span> <span class="o">=</span> <span class="n">Tfactors</span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
             <span class="n">r</span> <span class="o">=</span> <span class="mf">0.0</span>
@@ -1305,16 +1305,16 @@
 
 <div class="viewcode-block" id="Rate.plot"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.Rate.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Tmin</span><span class="o">=</span><span class="mf">1.e8</span><span class="p">,</span> <span class="n">Tmax</span><span class="o">=</span><span class="mf">1.6e9</span><span class="p">,</span> <span class="n">rhoYmin</span><span class="o">=</span><span class="mf">3.9e8</span><span class="p">,</span> <span class="n">rhoYmax</span><span class="o">=</span><span class="mf">2.e9</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;plot the rate&#39;s temperature sensitivity vs temperature&quot;&quot;&quot;</span>
-        
+
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabular</span><span class="p">:</span>
             <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabular_data_table</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span> <span class="c1"># convert from str to float</span>
-            
+
             <span class="n">inde1</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span><span class="o">&lt;=</span><span class="n">Tmax</span>
             <span class="n">inde2</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span><span class="o">&gt;=</span><span class="n">Tmin</span>
             <span class="n">inde3</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="o">&lt;=</span><span class="n">rhoYmax</span>
             <span class="n">inde4</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="o">&gt;=</span><span class="n">rhoYmin</span>
             <span class="n">data_heatmap</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">inde1</span><span class="o">&amp;</span><span class="n">inde2</span><span class="o">&amp;</span><span class="n">inde3</span><span class="o">&amp;</span><span class="n">inde4</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-            
+
             <span class="n">rows</span><span class="p">,</span> <span class="n">row_pos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">data_heatmap</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">return_inverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
             <span class="n">cols</span><span class="p">,</span> <span class="n">col_pos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">data_heatmap</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">return_inverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
             <span class="n">pivot_table</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">rows</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">cols</span><span class="p">)),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">data_heatmap</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
@@ -1322,11 +1322,11 @@
                 <span class="n">pivot_table</span><span class="p">[</span><span class="n">row_pos</span><span class="p">,</span> <span class="n">col_pos</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">data_heatmap</span><span class="p">[:,</span> <span class="mi">5</span><span class="p">])</span>
             <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
                 <span class="n">plot</span><span class="p">(</span><span class="s2">&quot;Divide by zero encountered in log10</span><span class="se">\n</span><span class="s2">Change the scale of T or rhoY&quot;</span><span class="p">)</span>
-            
+
             <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">))</span>
             <span class="n">im</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">pivot_table</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;jet&#39;</span><span class="p">)</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">im</span><span class="p">)</span>
-            
+
             <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;$T$ [K]&quot;</span><span class="p">)</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;$</span><span class="se">\\</span><span class="s2">rho Y$ [g/cm$^3$]&quot;</span><span class="p">)</span>
             <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">fr</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">pretty_string</span><span class="si">}</span><span class="s2">&quot;</span><span class="o">+</span>
@@ -1338,28 +1338,27 @@
             <span class="n">plt</span><span class="o">.</span><span class="n">setp</span><span class="p">(</span><span class="n">ax</span><span class="o">.</span><span class="n">get_xticklabels</span><span class="p">(),</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">90</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s2">&quot;right&quot;</span><span class="p">,</span><span class="n">rotation_mode</span><span class="o">=</span><span class="s2">&quot;anchor&quot;</span><span class="p">)</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">invert_yaxis</span><span class="p">()</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-        
+
         <span class="k">else</span><span class="p">:</span>
             <span class="n">temps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">Tmin</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">Tmax</span><span class="p">),</span> <span class="mi">100</span><span class="p">)</span>
             <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">temps</span><span class="p">)</span>
-            
+
             <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">T</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">temps</span><span class="p">):</span>
                 <span class="n">r</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
-                
+
             <span class="n">plt</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">temps</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$T$&quot;</span><span class="p">)</span>
-            
+
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dens_exp</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\tau&quot;</span><span class="p">)</span>
             <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">dens_exp</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
                 <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$N_A &lt;\sigma v&gt;$&quot;</span><span class="p">)</span>
             <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">dens_exp</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
                 <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$N_A^2 &lt;n_a n_b n_c v&gt;$&quot;</span><span class="p">)</span>
-                
+
             <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">fr</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">pretty_string</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div></div>
-            
-        
+
 </pre></div>
 
            </div>
