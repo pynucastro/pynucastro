@@ -202,64 +202,6 @@ class BaseFortranNetwork(ABC, RateCollection):
 
         return s
 
-    def jacobian_string(self, rate, ydot_j, y_i):
-        """
-        return a string containing the term in a jacobian matrix
-        in a reaction network corresponding to this rate
-
-        Returns the derivative of the j-th YDOT wrt. the i-th Y
-        If the derivative is zero, returns the empty string ''
-
-        ydot_j and y_i are objects of the class 'Nucleus'
-        """
-        if (ydot_j not in rate.reactants and ydot_j not in rate.products) or \
-            y_i not in rate.reactants:
-            return ''
-
-        # composition dependence
-        Y_string = ""
-        for n, r in enumerate(sorted(set(rate.reactants))):
-            c = rate.reactants.count(r)
-            if y_i == r:
-                if c == 1:
-                    continue
-                if n>0 and n < len(set(rate.reactants))-1:
-                    Y_string += "*"
-                if c > 2:
-                    Y_string += f"{c}*{self.name_y}(j{r})**{c-1}"
-                elif c==2:
-                    Y_string += f"2*{self.name_y}(j{r})"
-            else:
-                if n>0 and n < len(set(rate.reactants))-1:
-                    Y_string += "*"
-                if c > 1:
-                    Y_string += f"{self.name_y}(j{r})**{c}"
-                else:
-                    Y_string += f"{self.name_y}(j{r})"
-
-        # density dependence
-        if rate.dens_exp == 0:
-            dens_string = ""
-        elif rate.dens_exp == 1:
-            dens_string = f"{self.name_density} * "
-        else:
-            dens_string = f"{self.name_density}**{rate.dens_exp} * "
-
-        # prefactor
-        if not rate.prefactor == 1.0:
-            prefactor_string = f"{rate.prefactor:1.14e} * ".replace('e','d')
-        else:
-            prefactor_string = ""
-
-        if Y_string=="" and dens_string=="" and prefactor_string=="":
-            rstring = "{}{}{}   {}(i_scor, k_{}) * {}(i_rate, k_{})"
-        else:
-            rstring = "{}{}{} * {}(i_scor, k_{}) * {}(i_rate, k_{})"
-        return rstring.format(prefactor_string, dens_string, Y_string,
-                              self.name_rate_data, rate.fname,
-                              self.name_rate_data, rate.fname)
-
-
     def jacobian_term_symbol(self, rate, ydot_j, y_i):
         """
         return a sympy expression containing the term in a jacobian matrix
