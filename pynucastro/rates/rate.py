@@ -540,7 +540,7 @@ class Library:
 
 class RateFilter:
     """RateFilter filters out a specified rate or set of rates
-    
+
     A RateFilter stores selection rules specifying a rate or group of
     rates to assist in searching for rates stored in a Library.
     """
@@ -558,7 +558,7 @@ class RateFilter:
                 3. a single reactant Nucleus
                 4. a single string description of the reactant nuclide
             products  -- Description of the products in same form as above
-            exact     -- boolean, 
+            exact     -- boolean,
                          if True, products or reactants must match exactly [default]
                          if False, then all products or reactants must be found
                          in a comparison rate, but the comparison may contain
@@ -575,7 +575,7 @@ class RateFilter:
                                a callable that can take a single rate as an argument
                                may be used to specify additional criteria, returning
                                True if the rate meets all of them, False otherwise
-        
+
         Examples:
             Create a filter that finds all proton capture and proton-burning reactions
             in a Library instance my_library::
@@ -585,11 +585,11 @@ class RateFilter:
                 >>> pcap_filter = RateFilter(reactants=Nucleus('p'), exact=False)
                 >>> pcap_library = my_library.filter(pcap_filter)
 
-            Create a filter that finds C12 (a,g) O16 
+            Create a filter that finds C12 (a,g) O16
             Notes:
                 + photons/gammas are not treated as nuclides, so they cannot be
                 a reactant or product
-                + this rate is in the ReacLib library used here as 
+                + this rate is in the ReacLib library used here as
                 O16 --> He4 C12 -- you need to know how your library treats rates::
                     >>> cago_filter = RateFilter(reactants='o16', products=['c12', 'a'])
                     >>> cago_library = my_library.filter(cago_filter)
@@ -754,7 +754,7 @@ class Rate:
         self._set_rhs_properties()
         self._set_screening()
         self._set_print_representation()
-        
+
         if self.tabular:
             self.get_tabular_rate()
 
@@ -1164,24 +1164,24 @@ class Rate:
             if n.A < nuc.A or (n.A == nuc.A and n.Z > nuc.Z):
                 nuc = n
         return nuc
-    
-    def get_tabular_rate(self):   
+
+    def get_tabular_rate(self):
         """read the rate data from .dat file """
-        
+
         # find .dat file and read it
         self.table_path = Library._find_rate_file(self.table_file)
         tabular_file = open(self.table_path)
-        t_data = tabular_file.readlines()  
+        t_data = tabular_file.readlines()
         tabular_file.close()
-        
+
         # delete header lines
-        del t_data[0:self.table_header_lines]  
-        
+        del t_data[0:self.table_header_lines]
+
         # change the list ["1.23 3.45 5.67\n"] into the list ["1.23","3.45","5.67"]
         t_data2d = []
         for i in range(len(t_data)):
             t_data2d.append(re.split(r"[ ]",t_data[i].strip('\n')))
-        
+
         # delete all the "" in each element of data1
         for i in range(len(t_data2d)):
             while '' in t_data2d[i]:
@@ -1189,12 +1189,12 @@ class Rate:
 
         while [] in t_data2d:
             t_data2d.remove([])
-            
+
         self.tabular_data_table = np.array(t_data2d)
-        
-    def eval(self, T, rhoY = None):    
+
+    def eval(self, T, rhoY = None):
         """ evauate the reaction rate for temperature T """
-        
+
         if self.tabular:
             data = self.tabular_data_table.astype(np.float)
             # find the nearest value of T and rhoY in the data table
@@ -1202,7 +1202,7 @@ class Rate:
             rhoY_nearest = (data[:,0])[np.abs((data[:,0]) - rhoY).argmin()]
             inde = np.where((data[:,1]==T_nearest)&(data[:,0]==rhoY_nearest))[0][0]
             r = data[inde][5]
-        
+
         else:
             tf = Tfactors(T)
             r = 0.0
@@ -1228,16 +1228,16 @@ class Rate:
 
     def plot(self, Tmin=1.e8, Tmax=1.6e9, rhoYmin=3.9e8, rhoYmax=2.e9):
         """plot the rate's temperature sensitivity vs temperature"""
-        
+
         if self.tabular:
             data = self.tabular_data_table.astype(np.float) # convert from str to float
-            
+
             inde1 = data[:,1]<=Tmax
             inde2 = data[:,1]>=Tmin
             inde3 = data[:,0]<=rhoYmax
             inde4 = data[:,0]>=rhoYmin
             data_heatmap = data[inde1&inde2&inde3&inde4].copy()
-            
+
             rows, row_pos = np.unique(data_heatmap[:, 0], return_inverse=True)
             cols, col_pos = np.unique(data_heatmap[:, 1], return_inverse=True)
             pivot_table = np.zeros((len(rows), len(cols)), dtype=data_heatmap.dtype)
@@ -1245,11 +1245,11 @@ class Rate:
                 pivot_table[row_pos, col_pos] = np.log10(data_heatmap[:, 5])
             except ValueError:
                 plot("Divide by zero encountered in log10\nChange the scale of T or rhoY")
-            
+
             fig, ax = plt.subplots(figsize=(10,10))
             im = ax.imshow(pivot_table, cmap='jet')
             plt.colorbar(im)
-            
+
             plt.xlabel("$T$ [K]")
             plt.ylabel("$\\rho Y$ [g/cm$^3$]")
             ax.set_title(fr"{self.pretty_string}"+
@@ -1261,25 +1261,24 @@ class Rate:
             plt.setp(ax.get_xticklabels(), rotation=90, ha="right",rotation_mode="anchor")
             plt.gca().invert_yaxis()
             plt.show()
-        
+
         else:
             temps = np.logspace(np.log10(Tmin), np.log10(Tmax), 100)
             r = np.zeros_like(temps)
-            
+
             for n, T in enumerate(temps):
                 r[n] = self.eval(T)
-                
+
             plt.loglog(temps, r)
             plt.xlabel(r"$T$")
-            
+
             if self.dens_exp == 0:
                 plt.ylabel(r"\tau")
             elif self.dens_exp == 1:
                 plt.ylabel(r"$N_A <\sigma v>$")
             elif self.dens_exp == 2:
                 plt.ylabel(r"$N_A^2 <n_a n_b n_c v>$")
-                
+
             plt.title(fr"{self.pretty_string}")
             plt.show()
-            
-        
+
