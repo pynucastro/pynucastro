@@ -202,7 +202,9 @@ class TestStarKillerNetwork(object):
                  "table_rates.F90"]
         errors = []
         for test_file in files:
-            if not filecmp.cmp(os.path.normpath(f"{base_path}/{test_path}/{test_file}"),
+            # note, _test is written under whatever directory pytest is run from,
+            # so it is not necessarily at the same place as _starkiller_reference
+            if not filecmp.cmp(os.path.normpath(f"{test_path}/{test_file}"),
                                os.path.normpath(f"{base_path}/{reference_path}/{test_file}"),
                                shallow=False):
                 errors.append(test_file)
