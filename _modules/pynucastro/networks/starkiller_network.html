@@ -212,13 +212,13 @@
         <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}{}</span><span class="s1">  ]</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="p">(</span><span class="n">n_indent</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span> <span class="n">row_count</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
 
-    <span class="k">def</span> <span class="nf">_write_network</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">use_cse</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_write_network</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">use_cse</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">odir</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This writes the RHS, jacobian and ancillary files for the system of ODEs that</span>
 <span class="sd">        this network describes, using the template files.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_write_network</span><span class="p">(</span><span class="n">use_cse</span><span class="o">=</span><span class="n">use_cse</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_write_network</span><span class="p">(</span><span class="n">use_cse</span><span class="o">=</span><span class="n">use_cse</span><span class="p">,</span> <span class="n">odir</span><span class="o">=</span><span class="n">odir</span><span class="p">)</span>
 
         <span class="c1"># create a .net file with the nuclei properties</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;pynucastro.net&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">of</span><span class="p">:</span>

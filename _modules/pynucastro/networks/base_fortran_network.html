@@ -377,7 +377,7 @@
         <span class="n">rem</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\A&#39;</span><span class="o">+</span><span class="n">k</span><span class="o">+</span><span class="sa">r</span><span class="s1">&#39;\(([0-9]*)\)\Z&#39;</span><span class="p">,</span><span class="n">l</span><span class="p">)</span>
         <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">rem</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span></div>
 
-    <span class="k">def</span> <span class="nf">_write_network</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">use_cse</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_write_network</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">use_cse</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">odir</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This writes the RHS, jacobian and ancillary files for the system of ODEs that</span>
 <span class="sd">        this network describes, using the template files.</span>
@@ -394,6 +394,14 @@
         <span class="k">for</span> <span class="n">tfile</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">template_files</span><span class="p">:</span>
             <span class="n">tfile_basename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">tfile</span><span class="p">)</span>
             <span class="n">outfile</span>    <span class="o">=</span> <span class="n">tfile_basename</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.template&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">odir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">odir</span><span class="p">):</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">odir</span><span class="p">)</span>
+                    <span class="k">except</span><span class="p">:</span>
+                        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;unable to create directory </span><span class="si">{</span><span class="n">odir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">outfile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">odir</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">outfile</span><span class="p">)</span>
+
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">tfile</span><span class="p">)</span> <span class="k">as</span> <span class="n">ifile</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="n">outfile</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">of</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">ifile</span><span class="p">:</span>
                     <span class="n">ls</span> <span class="o">=</span> <span class="n">l</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
