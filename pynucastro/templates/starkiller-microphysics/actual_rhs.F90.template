@@ -159,6 +159,8 @@ contains
     real(rt), intent(in)  :: Y(nspec)
     real(rt), intent(in)  :: screened_rates(nrates)
 
+
+
     <ydot>(2)
 
   end subroutine rhs_nuc
@@ -257,6 +259,8 @@ contains
     real(rt), intent(in)  :: Y(nspec)
     real(rt), intent(in)  :: screened_rates(nrates)
     real(rt) :: scratch
+
+
 
     <jacnuc>(2)
 
