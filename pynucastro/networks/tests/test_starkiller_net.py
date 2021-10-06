@@ -1,6 +1,8 @@
 # unit tests for rates
 import pynucastro.networks as networks
 import pynucastro.rates as rates
+import os
+import filecmp
 
 import io
 
@@ -182,6 +184,29 @@ class TestStarKillerNetwork(object):
                   '    nion(jmg23)   = 1.10000000000000e+01_rt\n')
         assert self.cromulent_ftag(self.fn._nion, answer, n_indent=2)
 
+    def test_write_network(self):
+        """ test the write_network function"""
+        test_path = "_test/"
+        reference_path = "_starkiller_reference/"
+
+        self.fn.write_network(odir=test_path)
+        files = ["actual_network.F90",
+                 "actual_rhs.F90",
+                 "inputs.burn_cell.VODE",
+                 "Make.package",
+                 "_parameters",
+                 "physical_constants.f90",
+                 "reaclib_rate_metadata.dat",
+                 "reaclib_rates.F90",
+                 "table_rates.F90"]
+        errors = []
+        for test_file in files:
+            if not filecmp.cmp(os.path.normpath(test_path + test_file),
+                               os.path.normpath(reference_path + test_file),
+                               shallow=False):
+                errors.append(test_file)
+
+        assert not errors, f"errors: {' '.join(errors)}"
 
 class TestReaclibChapterNetwork(object):
     @classmethod

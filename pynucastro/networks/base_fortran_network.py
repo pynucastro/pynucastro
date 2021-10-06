@@ -316,7 +316,7 @@ class BaseFortranNetwork(ABC, RateCollection):
         rem = re.match(r'\A'+k+r'\(([0-9]*)\)\Z',l)
         return int(rem.group(1))
 
-    def _write_network(self, use_cse=False):
+    def _write_network(self, use_cse=False, odir=None):
         """
         This writes the RHS, jacobian and ancillary files for the system of ODEs that
         this network describes, using the template files.
@@ -333,18 +333,25 @@ class BaseFortranNetwork(ABC, RateCollection):
         for tfile in self.template_files:
             tfile_basename = os.path.basename(tfile)
             outfile    = tfile_basename.replace('.template', '')
-            ifile, of = self.io_open(tfile, outfile)
-            for l in ifile:
-                ls = l.strip()
-                foundkey = False
-                for k in self.ftags:
-                    if k in ls:
-                        foundkey = True
-                        n_indent = self.get_indent_amt(ls, k)
-                        self.ftags[k](n_indent, of)
-                if not foundkey:
-                    of.write(l)
-            self.io_close(ifile, of)
+            if odir is not None:
+                if not os.path.isdir(odir):
+                    try:
+                        os.mkdir(odir)
+                    except:
+                        sys.exit(f"unable to create directory {odir}")
+                outfile = os.path.normpath(odir + "/" + outfile)
+
+            with open(tfile) as ifile, open(outfile, "w") as of:
+                for l in ifile:
+                    ls = l.strip()
+                    foundkey = False
+                    for k in self.ftags:
+                        if k in ls:
+                            foundkey = True
+                            n_indent = self.get_indent_amt(ls, k)
+                            self.ftags[k](n_indent, of)
+                    if not foundkey:
+                        of.write(l)
 
         # Copy any tables in the network to the current directory
         # if the table file cannot be found, print a warning and continue.

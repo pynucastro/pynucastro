@@ -135,13 +135,13 @@ class StarKillerNetwork(BaseFortranNetwork):
         of.write('{}{}  ]\n'.format(
             self.indent*(n_indent+1), row_count[-1]))
 
-    def _write_network(self, use_cse=False):
+    def _write_network(self, use_cse=False, odir=None):
         """
         This writes the RHS, jacobian and ancillary files for the system of ODEs that
         this network describes, using the template files.
         """
 
-        super()._write_network(use_cse=use_cse)
+        super()._write_network(use_cse=use_cse, odir=odir)
 
         # create a .net file with the nuclei properties
         with open("pynucastro.net", "w") as of:
