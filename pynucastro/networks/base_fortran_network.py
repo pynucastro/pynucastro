@@ -7,6 +7,7 @@ comprised of the rates that are passed in.
 
 import os
 import shutil
+import sys
 import re
 from collections import OrderedDict
 from abc import ABC, abstractmethod
@@ -285,23 +286,6 @@ class BaseFortranNetwork(ABC, RateCollection):
             self.jac_out_result  = jac_sym
         self.jac_null_entries = jac_null
         self.solved_jacobian = True
-
-    def io_open(self, infile, outfile):
-        """open the input and output files"""
-        try:
-            of = open(outfile, "w")
-        except:
-            raise
-        try:
-            ifile = open(infile)
-        except:
-            raise
-        return ifile, of
-
-    def io_close(self, infile, outfile):
-        """close the input and output files"""
-        infile.close()
-        outfile.close()
 
     def fmt_to_dp_f90(self, i):
         """convert a number to Fortran double precision format"""
@@ -710,8 +694,7 @@ class BaseFortranNetwork(ABC, RateCollection):
         for nr, r in enumerate(self.rates):
             if nr in self.tabular_rates:
                 if len(r.reactants) != 1:
-                    print('ERROR: Unknown energy rate corrections for a reaction where the number of reactants is not 1.')
-                    exit()
+                    sys.exit('ERROR: Unknown energy rate corrections for a reaction where the number of reactants is not 1.')
                 else:
                     reactant = r.reactants[0]
                     of.write('{}enuc = enuc + N_AVO * {}(j{}) * rate_eval % add_energy_rate({})\n'.format(
