@@ -188,6 +188,7 @@ class TestStarKillerNetwork(object):
         """ test the write_network function"""
         test_path = "_test/"
         reference_path = "_starkiller_reference/"
+        base_path = os.path.dirname(__file__)
 
         self.fn.write_network(odir=test_path)
         files = ["actual_network.F90",
@@ -201,8 +202,8 @@ class TestStarKillerNetwork(object):
                  "table_rates.F90"]
         errors = []
         for test_file in files:
-            if not filecmp.cmp(os.path.normpath(test_path + test_file),
-                               os.path.normpath(reference_path + test_file),
+            if not filecmp.cmp(os.path.normpath(f"{base_path}/{test_path}/{test_file}"),
+                               os.path.normpath(f"{base_path}/{reference_path}/{test_file}"),
                                shallow=False):
                 errors.append(test_file)
 
