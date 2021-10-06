@@ -7,6 +7,7 @@ comprised of the rates that are passed in.
 
 import os
 import shutil
+import sys
 import re
 from collections import OrderedDict
 from abc import ABC, abstractmethod
@@ -286,23 +287,6 @@ class BaseFortranNetwork(ABC, RateCollection):
         self.jac_null_entries = jac_null
         self.solved_jacobian = True
 
-    def io_open(self, infile, outfile):
-        """open the input and output files"""
-        try:
-            of = open(outfile, "w")
-        except:
-            raise
-        try:
-            ifile = open(infile)
-        except:
-            raise
-        return ifile, of
-
-    def io_close(self, infile, outfile):
-        """close the input and output files"""
-        infile.close()
-        outfile.close()
-
     def fmt_to_dp_f90(self, i):
         """convert a number to Fortran double precision format"""
         return '{:1.14e}'.format(float(i)).replace('e','d')
@@ -333,18 +317,17 @@ class BaseFortranNetwork(ABC, RateCollection):
         for tfile in self.template_files:
             tfile_basename = os.path.basename(tfile)
             outfile    = tfile_basename.replace('.template', '')
-            ifile, of = self.io_open(tfile, outfile)
-            for l in ifile:
-                ls = l.strip()
-                foundkey = False
-                for k in self.ftags:
-                    if k in ls:
-                        foundkey = True
-                        n_indent = self.get_indent_amt(ls, k)
-                        self.ftags[k](n_indent, of)
-                if not foundkey:
-                    of.write(l)
-            self.io_close(ifile, of)
+            with open(tfile) as ifile, open(outfile, "w") as of:
+                for l in ifile:
+                    ls = l.strip()
+                    foundkey = False
+                    for k in self.ftags:
+                        if k in ls:
+                            foundkey = True
+                            n_indent = self.get_indent_amt(ls, k)
+                            self.ftags[k](n_indent, of)
+                    if not foundkey:
+                        of.write(l)
 
         # Copy any tables in the network to the current directory
         # if the table file cannot be found, print a warning and continue.
@@ -703,8 +686,7 @@ class BaseFortranNetwork(ABC, RateCollection):
         for nr, r in enumerate(self.rates):
             if nr in self.tabular_rates:
                 if len(r.reactants) != 1:
-                    print('ERROR: Unknown energy rate corrections for a reaction where the number of reactants is not 1.')
-                    exit()
+                    sys.exit('ERROR: Unknown energy rate corrections for a reaction where the number of reactants is not 1.')
                 else:
                     reactant = r.reactants[0]
                     of.write('{}enuc = enuc + N_AVO * {}(j{}) * rate_eval % add_energy_rate({})\n'.format(
