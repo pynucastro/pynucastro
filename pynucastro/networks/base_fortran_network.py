@@ -64,12 +64,8 @@ class BaseFortranNetwork(ABC, RateCollection):
         self.ftags['<table_term_meta>'] = self._table_term_meta
         self.ftags['<table_rates_indices>'] = self._table_rates_indices
         self.ftags['<compute_tabular_rates>'] = self._compute_tabular_rates
-        self.ftags['<ydot_declare_scratch>'] = self._ydot_declare_scratch
-        self.ftags['<ydot_scratch>'] = self._ydot_scratch
         self.ftags['<ydot>'] = self._ydot
         self.ftags['<enuc_add_energy_rate>'] = self._enuc_add_energy_rate
-        self.ftags['<jacnuc_declare_scratch>'] = self._jacnuc_declare_scratch
-        self.ftags['<jacnuc_scratch>'] = self._jacnuc_scratch
         self.ftags['<jacnuc>'] = self._jacnuc
         self.ftags['<yinit_nuc>'] = self._yinit_nuc
         self.ftags['<initial_mass_fractions>'] = self._initial_mass_fractions
@@ -78,14 +74,10 @@ class BaseFortranNetwork(ABC, RateCollection):
         self.ftags['<pynucastro_home>'] = self._pynucastro_home
         self.indent = '  '
 
-        self.use_cse = False
-
         self.float_explicit_num_digits = 17
 
-        self.ydot_out_scratch = None
         self.ydot_out_result  = None
         self.solved_ydot      = False
-        self.jac_out_scratch  = None
         self.jac_out_result   = None
         self.jac_null_entries = None
         self.solved_jacobian  = False
@@ -233,21 +225,7 @@ class BaseFortranNetwork(ABC, RateCollection):
                 ydot_sym = ydot_sym + self.ydot_term_symbol(r, n)
             ydot.append(ydot_sym)
 
-        if self.use_cse:
-            scratch_sym = sympy.utilities.numbered_symbols('scratch_')
-            scratch, result = sympy.cse(ydot, symbols=scratch_sym, order='none')
-
-            result_out = []
-            for r in result:
-                result_out.append(r.evalf(n=self.float_explicit_num_digits))
-            scratch_out = []
-            for s in scratch:
-                scratch_out.append([s[0], s[1].evalf(n=self.float_explicit_num_digits)])
-            self.ydot_out_scratch = scratch_out
-            self.ydot_out_result  = result_out
-        else:
-            self.ydot_out_scratch = None
-            self.ydot_out_result  = ydot
+        self.ydot_out_result  = ydot
         self.solved_ydot = True
 
     def compose_jacobian(self):
@@ -269,21 +247,7 @@ class BaseFortranNetwork(ABC, RateCollection):
                 jac_sym.append(rsym)
                 jac_null.append(rsym_is_null)
 
-        if self.use_cse:
-            scratch_sym = sympy.utilities.numbered_symbols('scratch_')
-            scratch, result = sympy.cse(jac_sym, symbols=scratch_sym, order='none')
-
-            result_out = []
-            for r in result:
-                result_out.append(r.evalf(n=self.float_explicit_num_digits))
-            scratch_out = []
-            for s in scratch:
-                scratch_out.append([s[0], s[1].evalf(n=self.float_explicit_num_digits)])
-            self.jac_out_scratch = scratch_out
-            self.jac_out_result  = result_out
-        else:
-            self.jac_out_scratch = None
-            self.jac_out_result  = jac_sym
+        self.jac_out_result  = jac_sym
         self.jac_null_entries = jac_null
         self.solved_jacobian = True
 
@@ -300,12 +264,11 @@ class BaseFortranNetwork(ABC, RateCollection):
         rem = re.match(r'\A'+k+r'\(([0-9]*)\)\Z',l)
         return int(rem.group(1))
 
-    def _write_network(self, use_cse=False, odir=None):
+    def _write_network(self, odir=None):
         """
         This writes the RHS, jacobian and ancillary files for the system of ODEs that
         this network describes, using the template files.
         """
-        self.use_cse = use_cse
 
         # Prepare RHS terms
         if not self.solved_ydot:
@@ -660,23 +623,6 @@ class BaseFortranNetwork(ABC, RateCollection):
                 of.write(f'{self.indent*n_indent}rate_eval % add_energy_rate({n+1})  = edot_nu\n')
                 of.write('\n')
 
-    def _ydot_declare_scratch(self, n_indent, of):
-        # Declare scratch variables
-        if self.use_cse:
-            for si in self.ydot_out_scratch:
-                siname = si[0]
-                of.write(f'{self.indent*n_indent}double precision :: {siname}\n')
-
-    def _ydot_scratch(self, n_indent, of):
-        # Assign scratch variables
-        if self.use_cse:
-            for si in self.ydot_out_scratch:
-                siname = si[0]
-                sivalue = self.fortranify(sympy.fcode(si[1], precision=15,
-                                                      source_format='free',
-                                                      standard=95))
-                of.write(f'{self.indent*n_indent}{siname} = {sivalue}\n')
-
     def _ydot(self, n_indent, of):
         # Write YDOT
         for i, n in enumerate(self.unique_nuclei):
@@ -699,23 +645,6 @@ class BaseFortranNetwork(ABC, RateCollection):
                     reactant = r.reactants[0]
                     of.write('{}enuc = enuc + N_AVO * {}(j{}) * rate_eval % add_energy_rate({})\n'.format(
                         self.indent*n_indent, self.name_y, reactant, r.table_index_name))
-
-    def _jacnuc_declare_scratch(self, n_indent, of):
-        # Declare scratch variables
-        if self.use_cse:
-            for si in self.jac_out_scratch:
-                siname = si[0]
-                of.write(f'{self.indent*n_indent}double precision :: {siname}\n')
-
-    def _jacnuc_scratch(self, n_indent, of):
-        # Assign scratch variables
-        if self.use_cse:
-            for si in self.jac_out_scratch:
-                siname = si[0]
-                sivalue = self.fortranify(sympy.fcode(si[1], precision=15,
-                                                      source_format='free',
-                                                      standard=95))
-                of.write(f'{self.indent*n_indent}{siname} = {sivalue}\n')
 
     def _jacnuc(self, n_indent, of):
         # now make the Jacobian

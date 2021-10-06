@@ -159,9 +159,7 @@ contains
     real(rt), intent(in)  :: Y(nspec)
     real(rt), intent(in)  :: screened_rates(nrates)
 
-    <ydot_declare_scratch>(2)
 
-    <ydot_scratch>(2)
 
     <ydot>(2)
 
@@ -262,9 +260,7 @@ contains
     real(rt), intent(in)  :: screened_rates(nrates)
     real(rt) :: scratch
 
-    <jacnuc_declare_scratch>(2)
 
-    <jacnuc_scratch>(2)
 
     <jacnuc>(2)
 
