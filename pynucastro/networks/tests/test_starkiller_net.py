@@ -188,7 +188,7 @@ class TestStarKillerNetwork(object):
         """ test the write_network function"""
         test_path = "_test/"
         reference_path = "_starkiller_reference/"
-        base_path = os.path.dirname(__file__)
+        base_path = os.path.relpath(os.path.dirname(__file__))
 
         self.fn.write_network(odir=test_path)
         files = ["actual_network.F90",
