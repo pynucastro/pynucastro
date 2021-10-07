@@ -121,7 +121,8 @@ from pynucastro.networks import \
     Explorer, \
     PythonNetwork, \
     BaseFortranNetwork, \
-    StarKillerNetwork
+    StarKillerNetwork, \
+    SympyRates
 
 from pynucastro.rates import \
     Tfactors, \
