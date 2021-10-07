@@ -203,43 +203,6 @@ class BaseFortranNetwork(ABC, RateCollection):
         self.jac_null_entries = jac_null
         self.solved_jacobian = True
 
-    def get_screening_map(self):
-        """a screening map is just a list of tuples containing the information
-        about nuclei pairs for screening:
-        (descriptive name of nuclei, nucleus 1, nucleus 2, rate, 1-based index of rate)
-        """
-        screening_map = []
-        for k, r in enumerate(self.rates):
-            if r.ion_screen:
-                nucs = "_".join([str(q) for q in r.ion_screen])
-                in_map = False
-                for h, _, _, mrates, krates in screening_map:
-                    if h == nucs:
-                        # if we already have the reactants, then we
-                        # will already be doing the screening factors,
-                        # so just append this new rate to the list we
-                        # are keeping of the rates where this
-                        # screening is needed
-                        in_map = True
-                        mrates.append(r)
-                        krates.append(k+1)
-                        break
-                if not in_map:
-                    # we handle 3-alpha specially -- we actually need 2 screening factors for it
-                    if nucs == "he4_he4_he4":
-                        # he4 + he4
-                        screening_map.append((nucs, r.ion_screen[0], r.ion_screen[1],
-                                              [r], [k+1]))
-                        # he4 + be8
-                        be8 = Nucleus("Be8", dummy=True)
-                        screening_map.append((nucs+"_dummy", r.ion_screen[2], be8,
-                                              [r], [k+1]))
-
-                    else:
-                        screening_map.append((nucs, r.ion_screen[0], r.ion_screen[1],
-                                              [r], [k+1]))
-        return screening_map
-
     def _compute_screening_factors(self, n_indent, of):
         screening_map = self.get_screening_map()
         for i, (h, _, _, mrates, krates) in enumerate(screening_map):
