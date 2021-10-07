@@ -20,7 +20,10 @@ hydrodynamics codes.
 
 """
 
+#__all__ = ["base_fortran_network", "python_network", "rate_collection", "starkiller_network", "sympy_network_support"]
+
 from .rate_collection import RateCollection, Composition, Explorer
 from .python_network import PythonNetwork
+from .sympy_network_support import SympyRates
 from .base_fortran_network import BaseFortranNetwork
 from .starkiller_network import StarKillerNetwork

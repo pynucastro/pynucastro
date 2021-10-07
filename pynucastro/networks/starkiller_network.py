@@ -68,7 +68,7 @@ class StarKillerNetwork(BaseFortranNetwork):
         col_index = []
 
         nspec = len(self.unique_nuclei)
-        
+
         # Start row_count at base 1
         row_count.append(1)
 
@@ -155,5 +155,3 @@ class StarKillerNetwork(BaseFortranNetwork):
 
         with open("NAUX_NETWORK", "w") as of:
             of.write("NAUX := 0\n")
-
-
