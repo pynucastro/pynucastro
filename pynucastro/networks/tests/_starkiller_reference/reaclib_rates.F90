@@ -1,6 +1,7 @@
 module reaclib_rates
 
   use amrex_fort_module, only: rt => amrex_real
+  use amrex_error_module
   use screening_module, only: add_screening_factor, &
                               screening_init, screening_finalize, &
                               plasma_state, fill_plasma_state
@@ -27,11 +28,22 @@ contains
 
     integer :: unit, ireaclib, icoeff
 
+    character (len=32) :: secret_code_reference
+    character (len=32) :: secret_code_file
+
     allocate( ctemp_rate(7, number_reaclib_sets) )
     allocate( rate_start_idx(nrat_reaclib) )
     allocate( rate_extra_mult(nrat_reaclib) )
 
     open(newunit=unit, file='reaclib_rate_metadata.dat')
+
+    secret_code_reference = "testing"
+
+    read(unit, *) secret_code_file
+
+    if (trim(secret_code_file) /= trim(secret_code_reference)) then
+       call amrex_error("invalid reaclib_rate_metadata.dat")
+    endif
 
     do ireaclib = 1, number_reaclib_sets
        do icoeff = 1, 7

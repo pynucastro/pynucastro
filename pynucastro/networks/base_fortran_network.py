@@ -11,9 +11,10 @@ import sys
 import re
 from collections import OrderedDict
 from abc import ABC, abstractmethod
+import random
+import string
 
 import sympy
-
 from pynucastro.rates import Nucleus
 from pynucastro.networks import RateCollection
 from pynucastro.nucdata import BindingTable
@@ -43,6 +44,8 @@ class BaseFortranNetwork(ABC, RateCollection):
         self.jac_out_result   = None
         self.jac_null_entries = None
         self.solved_jacobian  = False
+
+        self.secret_code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=32))
 
         # a dictionary of functions to call to handle specific parts
         # of the Fortran template
@@ -80,6 +83,8 @@ class BaseFortranNetwork(ABC, RateCollection):
         self.ftags['<final_net_print>'] = self._final_net_print
         self.ftags['<headerline>'] = self._headerline
         self.ftags['<pynucastro_home>'] = self._pynucastro_home
+        self.ftags['<secret_code>'] = self._secret_code_write
+        self.ftags['<secret_code_set>'] = self._secret_code_write_reference
         self.indent = '  '
 
         self.num_screen_calls = None
@@ -530,3 +535,9 @@ class BaseFortranNetwork(ABC, RateCollection):
     def _pynucastro_home(self, n_indent, of):
         of.write('{}PYNUCASTRO_HOME := {}\n'.format(self.indent*n_indent,
                                                     os.path.dirname(self.pynucastro_dir)))
+
+    def _secret_code_write(self, n_indent, of):
+        of.write(f"{self.indent*n_indent}{self.secret_code}\n")
+
+    def _secret_code_write_reference(self, n_indent, of):
+        of.write(f"{self.indent*n_indent}secret_code_reference = \"{self.secret_code}\"\n")
