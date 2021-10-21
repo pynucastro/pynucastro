@@ -29,6 +29,7 @@ class TestStarKillerNetwork(object):
                  "n--p-wc12"]
 
         self.fn = networks.StarKillerNetwork(files)
+        self.fn.secret_code = "testing"
 
     def teardown_method(self):
         """ this is run after each test """

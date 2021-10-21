@@ -37,7 +37,7 @@ contains
 
     open(newunit=unit, file='reaclib_rate_metadata.dat')
 
-    secret_code_reference = "VZFEMUTLVQ0BFHRKPJKJKG19CZPKUDYI"
+    secret_code_reference = "testing"
 
     read(unit, *) secret_code_file
 
