@@ -278,9 +278,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         bintable = BindingTable()
         for nuc in self.unique_nuclei:
             nuc_in_table = bintable.get_nuclide(n=nuc.N, z=nuc.Z)
-            str_nucbind = self.fmt_to_rt_f90(nuc_in_table.nucbind)
-            of.write('{}ebind_per_nucleon(j{})   = {}\n'.format(
-                self.indent*n_indent, nuc, str_nucbind))
+            of.write(f'{self.indent*n_indent}ebind_per_nucleon({nuc.c()}) = {nuc_in_table.nucbind}_rt\n')
 
     def _aion(self, n_indent, of):
         for nuc in self.unique_nuclei:
