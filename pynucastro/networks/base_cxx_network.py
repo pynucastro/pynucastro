@@ -224,24 +224,18 @@ class BaseCxxNetwork(ABC, RateCollection):
 
     def _nrat_reaclib(self, n_indent, of):
         # Writes the number of Reaclib rates
-        of.write('{}integer, parameter :: nrat_reaclib = {}\n'.format(
-            self.indent*n_indent,
-            len(self.reaclib_rates)))
+        of.write(f'{self.indent*n_indent}const int NrateReaclib = {len(self.reaclib_rates)};\n')
 
         nreaclib_sets = 0
         for nr in self.reaclib_rates:
             r = self.rates[nr]
             nreaclib_sets = nreaclib_sets + len(r.sets)
 
-        of.write('{}integer, parameter :: number_reaclib_sets = {}\n'.format(
-            self.indent*n_indent,
-            nreaclib_sets))
+        of.write(f'{self.indent*n_indent}const int NumReaclibSets = {nreaclib_sets};\n')
 
     def _nrat_tabular(self, n_indent, of):
         # Writes the number of tabular rates
-        of.write('{}integer, parameter :: nrat_tabular = {}\n'.format(
-            self.indent*n_indent,
-            len(self.tabular_rates)))
+        of.write(f'{self.indent*n_indent}const int NratTabular = {len(self.tabular_rates)};\n')
 
     def _nspec(self, n_indent, of):
         of.write('{}integer, parameter :: nspec = {}\n'.format(
@@ -277,8 +271,8 @@ class BaseCxxNetwork(ABC, RateCollection):
 
     def _nrxn(self, n_indent, of):
         for i,r in enumerate(self.rates):
-            of.write('{}integer, parameter :: k_{}   = {}\n'.format(
-                self.indent*n_indent, r.fname, i+1))
+            of.write(f'{self.indent*n_indent}k_{r.fname} = {i+1},\n')
+        of.write(f'{self.indent*n_indent}NumRates = k_{self.rates[-1].fname}\n')
 
     def _ebind(self, n_indent, of):
         bintable = BindingTable()
