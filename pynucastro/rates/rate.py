@@ -169,14 +169,17 @@ class Nucleus:
             self.el = "h"
             self.A = 1
             self.short_spec_name = "h1"
+            self.caps_name = "H1"
         elif name == "d":
             self.el = "h"
             self.A = 2
             self.short_spec_name = "h2"
+            self.caps_name = "H2"
         elif name == "t":
             self.el = "h"
             self.A = 3
             self.short_spec_name = "h3"
+            self.caps_name = "H3"
         elif name == "a":
             #this is a convenience, enabling the use of a commonly-used alias:
             #    He4 --> \alpha --> "a" , e.g. c12(a,g)o16
@@ -184,6 +187,7 @@ class Nucleus:
             self.A = 4
             self.short_spec_name = "he4"
             self.raw = "he4"
+            self.caps_name = "He4"
         elif name == "n":
             self.el = "n"
             self.A = 1
@@ -192,6 +196,7 @@ class Nucleus:
             self.short_spec_name = "n"
             self.spec_name = "neutron"
             self.pretty = fr"\mathrm{{{self.el}}}"
+            self.caps_name = "n"
         else:
             e = re.match(r"([a-zA-Z]*)(\d*)", name)
             self.el = e.group(1).title()  # chemical symbol
@@ -206,6 +211,7 @@ class Nucleus:
                     raise
             assert(self.A >= 0)
             self.short_spec_name = name
+            self.caps_name = name.capitalize()
 
         # use lowercase element abbreviation regardless the case of the input
         self.el = self.el.lower()
@@ -238,6 +244,9 @@ class Nucleus:
 
     def __hash__(self):
         return hash((self.Z, self.A))
+
+    def c(self):
+        return self.caps_name
 
     def __eq__(self, other):
         if isinstance(other, Nucleus):

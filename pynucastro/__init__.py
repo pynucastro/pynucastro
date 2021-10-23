@@ -122,6 +122,8 @@ from pynucastro.networks import \
     PythonNetwork, \
     BaseFortranNetwork, \
     StarKillerNetwork, \
+    BaseCxxNetwork, \
+    StarKillerCxxNetwork, \
     SympyRates
 
 from pynucastro.rates import \

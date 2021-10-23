@@ -1,5 +1,5 @@
-"""Support for a pure Fortran reaction network.  These functions will
-write the Fortran code necessary to integrate a reaction network
+"""Support for a pure C++ reaction network.  These functions will
+write the C++ code necessary to integrate a reaction network
 comprised of the rates that are passed in.
 
 """
@@ -20,14 +20,14 @@ from pynucastro.networks import RateCollection
 from pynucastro.nucdata import BindingTable
 from pynucastro.networks import SympyRates
 
-class BaseFortranNetwork(ABC, RateCollection):
+class BaseCxxNetwork(ABC, RateCollection):
     """Interpret the collection of rates and nuclei and produce the
-    Fortran code needed to integrate the network.
+    C++ code needed to integrate the network.
 
     """
 
     def __init__(self, *args, **kwargs):
-        """Initialize the Fortran network.  We take a single argument: a list
+        """Initialize the C++ network.  We take a single argument: a list
         of rate files that will make up the network
 
         """
@@ -85,7 +85,7 @@ class BaseFortranNetwork(ABC, RateCollection):
         self.ftags['<pynucastro_home>'] = self._pynucastro_home
         self.ftags['<secret_code>'] = self._secret_code_write
         self.ftags['<secret_code_set>'] = self._secret_code_write_reference
-        self.indent = '  '
+        self.indent = '    '
 
         self.num_screen_calls = None
 
@@ -319,15 +319,15 @@ class BaseFortranNetwork(ABC, RateCollection):
     def _screen_add(self, n_indent, of):
         screening_map = self.get_screening_map()
         for _, n1, n2, _, _ in screening_map:
-            of.write(f'{self.indent*n_indent}call add_screening_factor(')
+            of.write(f'{self.indent*n_indent}add_screening_factor(jscr++, ')
             if not n1.dummy:
-                of.write(f'zion(j{n1}), aion(j{n1}), &\n')
+                of.write(f'zion[{n1.c()}-1], aion[{n1.c()}-1], ')
             else:
-                of.write(f'{float(n1.Z)}_rt, {float(n1.A)}_rt), &\n')
+                of.write(f'{float(n1.Z)}_rt, {float(n1.A)}_rt, ')
             if not n2.dummy:
-                of.write(f'{self.indent*(n_indent+1)}zion(j{n2}), aion(j{n2}))\n\n')
+                of.write(f'zion[{n2.c()}-1], aion[{n2.c()}-1]);\n\n')
             else:
-                of.write(f'{self.indent*(n_indent+1)}{float(n2.Z)}_rt, {float(n2.A)}_rt)\n\n')
+                of.write(f'{float(n2.Z)}_rt, {float(n2.A)}_rt);\n\n')
 
     def _write_reaclib_metadata(self, n_indent, of):
         jset = 0
@@ -336,7 +336,7 @@ class BaseFortranNetwork(ABC, RateCollection):
             for s in r.sets:
                 jset = jset + 1
                 for an in s.a:
-                    of.write(f'{self.fmt_to_dp_f90(an)}\n')
+                    of.write(f'{an}\n')
         j = 1
         for i, r in enumerate(self.rates):
             if i in self.reaclib_rates:
@@ -531,4 +531,4 @@ class BaseFortranNetwork(ABC, RateCollection):
         of.write(f"{self.indent*n_indent}{self.secret_code}\n")
 
     def _secret_code_write_reference(self, n_indent, of):
-        of.write(f"{self.indent*n_indent}secret_code_reference = \"{self.secret_code}\"\n")
+        of.write(f"{self.indent*n_indent}const std::string secret_code_reference = \"{self.secret_code}\";\n")
