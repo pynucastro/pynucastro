@@ -212,7 +212,7 @@ class BaseCxxNetwork(ABC, RateCollection):
                 of.write(f'{self.indent*n_indent}rate_eval.unscreened_rates(i_dscor_dt,{krates[0]}) = scor * dscor2_dt + dscor_dt * scor2;\n')
 
             else:
-                of.write(f'\n{self.indent*n_indent}screen5(pstate, {i}, scor, dscor_dt, dscor_dd);\n\n')
+                of.write(f'\n{self.indent*n_indent}screen5(pstate, {i}, {nuc1_info}, {nuc2_info}, scor, dscor_dt, dscor_dd);\n\n')
 
                 # there might be several rates that have the same
                 # reactants and therefore the same screening applies
@@ -250,7 +250,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         bintable = BindingTable()
         for nuc in self.unique_nuclei:
             nuc_in_table = bintable.get_nuclide(n=nuc.N, z=nuc.Z)
-            of.write(f'{self.indent*n_indent}ebind_per_nucleon({nuc.c()}) = {nuc_in_table.nucbind}_rt\n')
+            of.write(f'{self.indent*n_indent}ebind_per_nucleon({nuc.c()}) = {nuc_in_table.nucbind}_rt;\n')
 
     def _screen_add(self, n_indent, of):
         screening_map = self.get_screening_map()
