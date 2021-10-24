@@ -37,7 +37,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         # Get the template files for writing this network code
         self.template_files = self._get_template_files()
 
-        self.symbol_rates = SympyRates()
+        self.symbol_rates = SympyRates(ctype="C++")
 
         self.ydot_out_result  = None
         self.solved_ydot      = False
@@ -403,13 +403,9 @@ class BaseCxxNetwork(ABC, RateCollection):
     def _ydot(self, n_indent, of):
         # Write YDOT
         for i, n in enumerate(self.unique_nuclei):
-            sol_value = self.symbol_rates.fortranify(sympy.fcode(self.ydot_out_result[i], precision=15,
-                                                                 source_format='free',
-                                                                 standard=95))
-            of.write('{}{}(j{}) = ( &\n'.format(self.indent*n_indent,
-                                                self.symbol_rates.name_ydot_nuc, n))
-            of.write(f"{self.indent*(n_indent+1)}{sol_value} &\n")
-            of.write(f"{self.indent*n_indent}   )\n\n")
+            sol_value = self.symbol_rates.cxxify(sympy.cxxcode(self.ydot_out_result[i], precision=15,
+                                                               standard="c++11"))
+            of.write(f"{self.indent*n_indent}{self.symbol_rates.name_ydot_nuc}({n.c()}) = {sol_value};\n\n")
 
     def _enuc_add_energy_rate(self, n_indent, of):
         # Add tabular per-reaction neutrino energy generation rates to the energy generation rate
@@ -430,15 +426,10 @@ class BaseCxxNetwork(ABC, RateCollection):
             for ini, ni in enumerate(self.unique_nuclei):
                 jac_idx = n_unique_nuclei*jnj + ini
                 if not self.jac_null_entries[jac_idx]:
-                    jvalue = self.symbol_rates.fortranify(sympy.fcode(self.jac_out_result[jac_idx],
-                                                                      precision=15,
-                                                                      source_format='free',
-                                                                      standard=95))
-                    of.write(f"{self.indent*(n_indent)}scratch = (&\n")
-                    of.write(f"{self.indent*(n_indent+1)}{jvalue} &\n")
-                    of.write(f"{self.indent*n_indent}   )\n")
-                    of.write("{}call set_jac_entry({}, j{}, j{}, scratch)\n\n".format(
-                        self.indent*n_indent, self.symbol_rates.name_jacobian, nj, ni))
+                    jvalue = self.symbol_rates.cxxify(sympy.cxxcode(self.jac_out_result[jac_idx], precision=15,
+                                                                     standard="c++11"))
+                    of.write(f"{self.indent*(n_indent)}scratch = {jvalue};\n")
+                    of.write(f"{self.indent*n_indent}jac.set({nj.c()}, {ni.c()}, scratch);\n\n")
 
     def _yinit_nuc(self, n_indent, of):
         for n in self.unique_nuclei:

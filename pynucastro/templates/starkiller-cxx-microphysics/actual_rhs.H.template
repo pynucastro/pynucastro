@@ -98,18 +98,7 @@ void rhs_nuc(const burn_t& state,
 
     using namespace Rates;
 
-    ydot_nuc(He4) = 
-        -screened_rates(k_he4_c12__o16) * Y(C12) * Y(He4) * state.rho 
-        - 0.5e0_rt * screened_rates(k_he4_he4_he4__c12) * std::pow(Y(He4), 3) * std::pow(state.rho, 2);
-
-    ydot_nuc(C12) =
-        -screened_rates(k_he4_c12__o16) * Y(C12) * Y(He4) * state.rho +
-        0.16666666666666667e0_rt * screened_rates(k_he4_he4_he4__c12) * std::pow(Y(He4), 3) *
-        std::pow(state.rho, 2);
-
-    ydot_nuc(O16) =
-      screened_rates(k_he4_c12__o16) * Y(C12) * Y(He4) * state.rho;
-
+    <ydot>(1)
 }
 
 
@@ -165,37 +154,7 @@ void jac_nuc(const burn_t& state,
 
     Real scratch;
 
-    scratch =
-        -screened_rates(k_he4_c12__o16) * Y(C12) * state.rho
-        - 1.5e0_rt * screened_rates(k_he4_he4_he4__c12) * std::pow(Y(He4), 2) * std::pow(state.rho, 2);
-
-    jac.set(He4, He4, scratch);
-
-    scratch =
-        -screened_rates(k_he4_c12__o16) * Y(He4) * state.rho;
-
-    jac.set(He4, C12, scratch);
-
-    scratch =
-      -screened_rates(k_he4_c12__o16) * Y(C12) * state.rho +
-      0.5e0_rt * screened_rates(k_he4_he4_he4__c12) * std::pow(Y(He4), 2) * std::pow(state.rho, 2);
-
-    jac.set(C12, He4, scratch);
-
-    scratch =
-      -screened_rates(k_he4_c12__o16) * Y(He4) * state.rho;
-
-    jac.set(C12, C12, scratch);
-
-    scratch =
-      screened_rates(k_he4_c12__o16) * Y(C12) * state.rho;
-
-    jac.set(O16, He4, scratch);
-
-    scratch =
-      screened_rates(k_he4_c12__o16) * Y(He4) * state.rho;
-
-    jac.set(O16, C12, scratch);
+    <jacnuc>(1)
 
 }
 
