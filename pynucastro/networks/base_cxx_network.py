@@ -53,17 +53,8 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.ftags['<nrates>'] = self._nrates
         self.ftags['<nrat_reaclib>'] = self._nrat_reaclib
         self.ftags['<nrat_tabular>'] = self._nrat_tabular
-        self.ftags['<nspec>'] = self._nspec
-        self.ftags['<network_name>'] = self._network_name
         self.ftags['<nrxn>'] = self._nrxn
-        self.ftags['<jion>'] = self._jion
-        self.ftags['<spec_names>'] = self._spec_names
-        self.ftags['<short_spec_names>'] = self._short_spec_names
         self.ftags['<ebind>'] = self._ebind
-        self.ftags['<aion>'] = self._aion
-        self.ftags['<aion_inv>'] = self._aion_inv
-        self.ftags['<zion>'] = self._zion
-        self.ftags['<nion>'] = self._nion
         self.ftags['<screen_add>'] = self._screen_add
         self.ftags['<compute_screening_factors>'] = self._compute_screening_factors
         self.ftags['<write_reaclib_metadata>'] = self._write_reaclib_metadata
@@ -80,8 +71,6 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.ftags['<jacnuc>'] = self._jacnuc
         self.ftags['<yinit_nuc>'] = self._yinit_nuc
         self.ftags['<initial_mass_fractions>'] = self._initial_mass_fractions
-        self.ftags['<final_net_print>'] = self._final_net_print
-        self.ftags['<headerline>'] = self._headerline
         self.ftags['<pynucastro_home>'] = self._pynucastro_home
         self.ftags['<secret_code>'] = self._secret_code_write
         self.ftags['<secret_code_set>'] = self._secret_code_write_reference
@@ -242,33 +231,6 @@ class BaseCxxNetwork(ABC, RateCollection):
             self.indent*n_indent,
             len(self.unique_nuclei)))
 
-    def _nspec_evolve(self, n_indent, of):
-        # Evolve all the nuclei at the moment
-        of.write('{}integer, parameter :: nspec_evolve = {}\n'.format(
-            self.indent*n_indent,
-            len(self.unique_nuclei)))
-
-    def _network_name(self, n_indent, of):
-        # the name of the network
-        of.write('{}character (len=32), parameter :: network_name = "{}"\n'.format(
-            self.indent*n_indent,
-            "pynucastro"))
-
-    def _jion(self, n_indent, of):
-        for i,nuc in enumerate(self.unique_nuclei):
-            of.write('{}integer, parameter :: j{}   = {}\n'.format(
-                self.indent*n_indent, nuc, i+1))
-
-    def _spec_names(self, n_indent, of):
-        for nuc in self.unique_nuclei:
-            of.write('{}spec_names(j{})   = "{}"\n'.format(
-                self.indent*n_indent, nuc, nuc.spec_name))
-
-    def _short_spec_names(self, n_indent, of):
-        for nuc in self.unique_nuclei:
-            of.write('{}short_spec_names(j{})   = "{}"\n'.format(
-                self.indent*n_indent, nuc, nuc.short_spec_name))
-
     def _nrxn(self, n_indent, of):
         for i,r in enumerate(self.rates):
             of.write(f'{self.indent*n_indent}k_{r.fname} = {i+1},\n')
@@ -279,34 +241,6 @@ class BaseCxxNetwork(ABC, RateCollection):
         for nuc in self.unique_nuclei:
             nuc_in_table = bintable.get_nuclide(n=nuc.N, z=nuc.Z)
             of.write(f'{self.indent*n_indent}ebind_per_nucleon({nuc.c()}) = {nuc_in_table.nucbind}_rt\n')
-
-    def _aion(self, n_indent, of):
-        for nuc in self.unique_nuclei:
-            of.write('{}aion(j{})   = {}\n'.format(
-                self.indent*n_indent,
-                nuc,
-                self.fmt_to_rt_f90(nuc.A)))
-
-    def _aion_inv(self, n_indent, of):
-        for nuc in self.unique_nuclei:
-            of.write('{}aion_inv(j{})   = 1.0_rt/{}\n'.format(
-                self.indent*n_indent,
-                nuc,
-                self.fmt_to_rt_f90(nuc.A)))
-
-    def _zion(self, n_indent, of):
-        for nuc in self.unique_nuclei:
-            of.write('{}zion(j{})   = {}\n'.format(
-                self.indent*n_indent,
-                nuc,
-                self.fmt_to_rt_f90(nuc.Z)))
-
-    def _nion(self, n_indent, of):
-        for nuc in self.unique_nuclei:
-            of.write('{}nion(j{})   = {}\n'.format(
-                self.indent*n_indent,
-                nuc,
-                self.fmt_to_rt_f90(nuc.N)))
 
     def _screen_add(self, n_indent, of):
         screening_map = self.get_screening_map()
@@ -503,17 +437,6 @@ class BaseCxxNetwork(ABC, RateCollection):
     def _initial_mass_fractions(self, n_indent, of):
         for n in self.unique_nuclei:
             of.write(f"{self.indent*n_indent}initial_mass_fraction_{n} = 0.0d0\n")
-
-    def _final_net_print(self, n_indent, of):
-        for n in self.unique_nuclei:
-            of.write(f"{self.indent*n_indent}write(*,'(A,ES25.14)') '{n}: ', history % X(j{n}, end_index)\n")
-
-    def _headerline(self, n_indent, of):
-        of.write(f'{self.indent*n_indent}write(2, fmt=hfmt) ')
-        of.write("'Time', ")
-        for nuc in self.unique_nuclei:
-            of.write(f"'Y_{nuc}', ")
-        of.write("'E_nuc'\n")
 
     def _pynucastro_home(self, n_indent, of):
         of.write('{}PYNUCASTRO_HOME := {}\n'.format(self.indent*n_indent,
