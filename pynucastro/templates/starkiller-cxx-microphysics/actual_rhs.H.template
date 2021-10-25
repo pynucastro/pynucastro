@@ -67,10 +67,12 @@ void evaluate_rates(const burn_t& state, rate_eval_t& rate_eval) {
     plasma_state_t pstate;
     fill_plasma_state(pstate, state.T, state.rho, Y);
 
+    tf_t tfactors = evaluate_tfactors(state.T);
+
     for (int i = 1; i <= NrateReaclib; ++i) {
         Real rate;
         Real drate_dt;
-        reaclib_evaluate(pstate, state.T, i, rate, drate_dt);
+        reaclib_evaluate(pstate, tfactors, i, rate, drate_dt);
         rate_eval.unscreened_rates(i_rate, i) = rate;
         rate_eval.unscreened_rates(i_drate_dt, i) = drate_dt;
     }
