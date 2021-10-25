@@ -1,0 +1,117 @@
+#ifndef REACLIB_RATES_H
+#define REACLIB_RATES_H
+
+#include <AMReX.H>
+#include <AMReX_Print.H>
+
+#include <actual_network.H>
+
+using namespace reaclib_rates;
+using namespace Rates;
+
+AMREX_INLINE
+void init_reaclib() {
+
+    <secret_code_set>(1)
+
+    amrex::Print() << "reading in reaclib rates..." << std::endl;
+
+    std::ifstream table;
+    table.open("reaclib_rate_metadata.dat");
+
+    std::string secret_code_file;
+    std::getline(table, secret_code_file);
+
+    if (secret_code_file != secret_code_reference) {
+        amrex::Error("invalid reaclib_rate_metadata.dat");
+    }
+
+    std::string line;
+
+    // read in all of the reaclib rate sets
+
+    for (int ireaclib = 1; ireaclib <= NumReaclibSets; ++ireaclib) {
+        for (int icoeff = 1; icoeff <= 7; ++icoeff) {
+            std::getline(table, line);
+            std::istringstream data(line);
+            data >> ctemp_rate(icoeff, ireaclib);
+        }
+    }
+
+    for (int ireaclib = 1; ireaclib <= NrateReaclib; ++ireaclib) {
+        std::getline(table, line);
+        std::istringstream data(line);
+        data >> rate_start_idx(ireaclib);
+    }
+
+    for (int ireaclib = 1; ireaclib <= NrateReaclib; ++ireaclib) {
+        std::getline(table, line);
+        std::istringstream data(line);
+        data >> rate_extra_mult(ireaclib);
+    }
+
+    table.close();
+
+}
+
+AMREX_INLINE
+void net_screening_init() {
+
+    using namespace Species;
+
+    // note: we need to set these up in the same order that we evaluate the
+    // rates in actual_rhs.H (yes, it's ugly)
+
+    int jscr = 0;
+
+    <screen_add>(1)
+
+}
+
+AMREX_GPU_HOST_DEVICE AMREX_INLINE
+void reaclib_evaluate(plasma_state_t& pstate, const Real temp, const int iwhich,
+                      Real& rate, Real& drate_dt) {
+
+    // iwhich is the rate to evaluate
+    // we then return the rate and its temperature derivative
+
+    Real ri = 0.0e0_rt;
+    Real irate = 0.0e0_rt;
+    Real dirate_dt = 0.0e0_rt;
+
+    Real T9 = temp/1.0e9_rt;
+
+    rate = 0.0e0_rt;
+    drate_dt = 0.0e0_rt;
+
+    // Get the number of additional Reaclib sets for this rate
+    // Total number of Reaclib sets for this rate is m + 1
+    int m = reaclib_rates::rate_extra_mult(iwhich);
+
+    int istart = reaclib_rates::rate_start_idx(iwhich);
+
+    for (int i = 0; i <= m; ++i) {
+        Real lnirate = reaclib_rates::ctemp_rate(1, istart+i) +
+                       reaclib_rates::ctemp_rate(7, istart+i) * std::log(T9);
+        Real dlnirate_dt = reaclib_rates::ctemp_rate(7, istart+i) / T9;
+
+        for (int j = 2; j <= 6; ++j) {
+            Real T9_exp = (2.0e0_rt * static_cast<Real>(j-1) - 5.0e0_rt) / 3.0e0_rt;
+            lnirate += reaclib_rates::ctemp_rate(j, istart+i) * std::pow(T9, T9_exp);
+            dlnirate_dt += T9_exp * reaclib_rates::ctemp_rate(j, istart+i) * std::pow(T9, T9_exp-1.0e0_rt);
+        }
+
+        // If the rate will be in the approx. interval [0.0, 1.0E-100], replace by 0.0
+        // This avoids issues with passing very large negative values to EXP
+        // and getting results between 0.0 and 1.0E-308, the limit for IEEE 754.
+        // And avoids SIGFPE in CVODE due to tiny rates.
+
+        lnirate = amrex::max(lnirate, -230.0e0_rt);
+        irate = std::exp(lnirate);
+        rate += irate;
+        dirate_dt = irate * dlnirate_dt / 1.0e9_rt;
+        drate_dt += dirate_dt;
+    }
+}
+
+#endif

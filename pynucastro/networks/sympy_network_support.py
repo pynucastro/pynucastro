@@ -8,9 +8,18 @@ import sympy
 
 class SympyRates:
 
-    def __init__(self):
+    def __init__(self, ctype="Fortran"):
+
+        self.ctype = ctype
 
         self.symbol_ludict = OrderedDict() # Symbol lookup dictionary
+
+        if self.ctype == "Fortran":
+            self.name_density   = 'state % rho'
+            self.name_electron_fraction = 'state % y_e'
+        else:
+            self.name_density   = 'state.rho'
+            self.name_electron_fraction = 'state.y_e'
 
         # Define these for the particular network
         self.name_rate_data = 'screened_rates'
@@ -19,10 +28,9 @@ class SympyRates:
         self.name_ydot_nuc  = 'ydot_nuc'
         self.name_jacobian  = 'jac'
         self.name_jacobian_nuc  = 'jac'
-        self.name_density   = 'state % rho'
-        self.name_electron_fraction = 'state % y_e'
         self.symbol_ludict['__dens__'] = self.name_density
         self.symbol_ludict['__y_e__'] = self.name_electron_fraction
+
 
         self.float_explicit_num_digits = 17
 
@@ -56,7 +64,10 @@ class SympyRates:
         Y_sym = 1
         for r in sorted(set(rate.reactants)):
             c = rate.reactants.count(r)
-            sym_final = self.name_y + f'(j{r})'
+            if self.ctype == "Fortran":
+                sym_final = f'{self.name_y}(j{r})'
+            else:
+                sym_final = f'{self.name_y}({r.c()})'
             sym_temp  = f'Y__j{r}__'
             self.symbol_ludict[sym_temp] = sym_final
             Y_sym = Y_sym * sympy.symbols(sym_temp)**c
@@ -132,5 +143,37 @@ class SympyRates:
             new_num = f"{prefix}e{exponent}{const_spec}"
             old_num = dd.group(0).strip()
             s = s.replace(old_num, new_num)
+
+        return s
+
+    def cxxify(self, s):
+        """
+        Given string s, will replace the symbols appearing as keys in
+        self.symbol_ludict with their corresponding entries.
+        """
+        for k in self.symbol_ludict:
+            v = self.symbol_ludict[k]
+            s = s.replace(k,v)
+        if s == '0':
+            s = '0.0e0_rt'
+
+        ## Replace all double precision literals with custom real type
+        ## literals
+        # constant type specifier
+        const_spec = "_rt"
+
+        # we want append any "e" scientific notation with "_rt".  This
+        # matches stuff like -1.25d-10, and gives us separate groups
+        # for the prefix and exponent.  The [^\w] makes sure a letter
+        # isn't right in front of the match (like
+        # 'k3d-1'). Alternately, we allow for a match at the start of
+        # the string.
+        e_re = re.compile(r"([^\w\+\-]|\A)([\+\-0-9.][0-9.]+)[eE]([\+\-]?[0-9]+)", re.IGNORECASE|re.DOTALL)
+
+        # update "d" scientific notation -- allow for multiple
+        # constants in a single string
+        for ee in e_re.finditer(s):
+            old_num = dd.group(0).strip()
+            s = s.replace(old_num, f"{old_num}{const_spec}")
 
         return s
