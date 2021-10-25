@@ -9,6 +9,18 @@
 using namespace reaclib_rates;
 using namespace Rates;
 
+struct tf_t {
+    Real T9;
+    Real T9i;
+    Real T943i;
+    Real T923i;
+    Real T913i;
+    Real T913;
+    Real T923;
+    Real T953;
+    Real lnT9;
+};
+
 AMREX_INLINE
 void init_reaclib() {
 
@@ -69,17 +81,32 @@ void net_screening_init() {
 }
 
 AMREX_GPU_HOST_DEVICE AMREX_INLINE
-void reaclib_evaluate(plasma_state_t& pstate, const Real temp, const int iwhich,
+tf_t evaluate_tfactors(const Real T)
+{
+
+    tf_t tf;
+    tf.T9 = T / 1.e9_rt;
+    tf.T9i = 1.0_rt / tf.T9;
+    tf.T913i = std::pow(tf.T9i, 1.0_rt/3.0_rt);
+    tf.T923i = tf.T913i * tf.T913i;
+    tf.T943i = tf.T9i * tf.T913i;
+    tf.T913 = std::pow(tf.T9, 1.0_rt/3.0_rt);
+    tf.T923 = tf.T913 * tf.T913;
+    tf.T953 = tf.T9 * tf.T923;
+    tf.lnT9 = std::log(tf.T9);
+
+    return tf;
+}
+
+AMREX_GPU_HOST_DEVICE AMREX_INLINE
+void reaclib_evaluate(plasma_state_t& pstate, const tf_t& tfactors, const int iwhich,
                       Real& rate, Real& drate_dt) {
 
     // iwhich is the rate to evaluate
     // we then return the rate and its temperature derivative
 
-    Real ri = 0.0e0_rt;
     Real irate = 0.0e0_rt;
     Real dirate_dt = 0.0e0_rt;
-
-    Real T9 = temp/1.0e9_rt;
 
     rate = 0.0e0_rt;
     drate_dt = 0.0e0_rt;
@@ -91,15 +118,28 @@ void reaclib_evaluate(plasma_state_t& pstate, const Real temp, const int iwhich,
     int istart = reaclib_rates::rate_start_idx(iwhich);
 
     for (int i = 0; i <= m; ++i) {
-        Real lnirate = reaclib_rates::ctemp_rate(1, istart+i) +
-                       reaclib_rates::ctemp_rate(7, istart+i) * std::log(T9);
-        Real dlnirate_dt = reaclib_rates::ctemp_rate(7, istart+i) / T9;
 
-        for (int j = 2; j <= 6; ++j) {
-            Real T9_exp = (2.0e0_rt * static_cast<Real>(j-1) - 5.0e0_rt) / 3.0e0_rt;
-            lnirate += reaclib_rates::ctemp_rate(j, istart+i) * std::pow(T9, T9_exp);
-            dlnirate_dt += T9_exp * reaclib_rates::ctemp_rate(j, istart+i) * std::pow(T9, T9_exp-1.0e0_rt);
-        }
+        // compute the log of the i component of the rate, in Reaclib form
+
+        Real lnirate =
+            reaclib_rates::ctemp_rate(1, istart+i) +
+            reaclib_rates::ctemp_rate(2, istart+i) * tfactors.T9i +
+            reaclib_rates::ctemp_rate(3, istart+i) * tfactors.T913i +
+            reaclib_rates::ctemp_rate(4, istart+i) * tfactors.T913 +
+            reaclib_rates::ctemp_rate(5, istart+i) * tfactors.T9 +
+            reaclib_rates::ctemp_rate(6, istart+i) * tfactors.T953 +
+            reaclib_rates::ctemp_rate(7, istart+i) * tfactors.lnT9;
+
+        // compute the derivative of the log of the rate
+
+        Real dlnirate_dT9 =
+            -reaclib_rates::ctemp_rate(2, istart+i) * tfactors.T9i * tfactors.T9i +
+            -(1.0_rt/3.0_rt) * reaclib_rates::ctemp_rate(3, istart+i) * tfactors.T943i +
+            (1.0_rt/3.0_rt) * reaclib_rates::ctemp_rate(4, istart+i) * tfactors.T923i +
+            reaclib_rates::ctemp_rate(5, istart+i) +
+            (5.0_rt/3.0_rt) * reaclib_rates::ctemp_rate(6, istart+i) * tfactors.T923 +
+            reaclib_rates::ctemp_rate(7, istart+i) * tfactors.T9i;
+
 
         // If the rate will be in the approx. interval [0.0, 1.0E-100], replace by 0.0
         // This avoids issues with passing very large negative values to EXP
@@ -109,7 +149,7 @@ void reaclib_evaluate(plasma_state_t& pstate, const Real temp, const int iwhich,
         lnirate = amrex::max(lnirate, -230.0e0_rt);
         irate = std::exp(lnirate);
         rate += irate;
-        dirate_dt = irate * dlnirate_dt / 1.0e9_rt;
+        dirate_dt = irate * dlnirate_dT9 / 1.0e9_rt;
         drate_dt += dirate_dt;
     }
 }
