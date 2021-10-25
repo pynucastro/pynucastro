@@ -246,14 +246,17 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">el</span> <span class="o">=</span> <span class="s2">&quot;h&quot;</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">A</span> <span class="o">=</span> <span class="mi">1</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">short_spec_name</span> <span class="o">=</span> <span class="s2">&quot;h1&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">caps_name</span> <span class="o">=</span> <span class="s2">&quot;H1&quot;</span>
         <span class="k">elif</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;d&quot;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">el</span> <span class="o">=</span> <span class="s2">&quot;h&quot;</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">A</span> <span class="o">=</span> <span class="mi">2</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">short_spec_name</span> <span class="o">=</span> <span class="s2">&quot;h2&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">caps_name</span> <span class="o">=</span> <span class="s2">&quot;H2&quot;</span>
         <span class="k">elif</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;t&quot;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">el</span> <span class="o">=</span> <span class="s2">&quot;h&quot;</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">A</span> <span class="o">=</span> <span class="mi">3</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">short_spec_name</span> <span class="o">=</span> <span class="s2">&quot;h3&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">caps_name</span> <span class="o">=</span> <span class="s2">&quot;H3&quot;</span>
         <span class="k">elif</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;a&quot;</span><span class="p">:</span>
             <span class="c1">#this is a convenience, enabling the use of a commonly-used alias:</span>
             <span class="c1">#    He4 --&gt; \alpha --&gt; &quot;a&quot; , e.g. c12(a,g)o16</span>
@@ -261,6 +264,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">A</span> <span class="o">=</span> <span class="mi">4</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">short_spec_name</span> <span class="o">=</span> <span class="s2">&quot;he4&quot;</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">raw</span> <span class="o">=</span> <span class="s2">&quot;he4&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">caps_name</span> <span class="o">=</span> <span class="s2">&quot;He4&quot;</span>
         <span class="k">elif</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;n&quot;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">el</span> <span class="o">=</span> <span class="s2">&quot;n&quot;</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">A</span> <span class="o">=</span> <span class="mi">1</span>
@@ -269,6 +273,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">short_spec_name</span> <span class="o">=</span> <span class="s2">&quot;n&quot;</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">spec_name</span> <span class="o">=</span> <span class="s2">&quot;neutron&quot;</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="sa">fr</span><span class="s2">&quot;\mathrm</span><span class="se">{{</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">el</span><span class="si">}</span><span class="se">}}</span><span class="s2">&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">caps_name</span> <span class="o">=</span> <span class="s2">&quot;n&quot;</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">e</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;([a-zA-Z]*)(\d*)&quot;</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">el</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">title</span><span class="p">()</span>  <span class="c1"># chemical symbol</span>
@@ -283,6 +288,7 @@
                     <span class="k">raise</span>
             <span class="k">assert</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">A</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">short_spec_name</span> <span class="o">=</span> <span class="n">name</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">caps_name</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span>
 
         <span class="c1"># use lowercase element abbreviation regardless the case of the input</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">el</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">el</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
@@ -315,6 +321,9 @@
 
     <span class="k">def</span> <span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">hash</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">Z</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">A</span><span class="p">))</span>
+
+<div class="viewcode-block" id="Nucleus.c"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.Nucleus.c">[docs]</a>    <span class="k">def</span> <span class="nf">c</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">caps_name</span></div>
 
     <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Nucleus</span><span class="p">):</span>
