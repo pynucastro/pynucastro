@@ -1,0 +1,17 @@
+#include <table_rates.H>
+
+
+namespace rate_tables
+{
+
+    <table_declare_meta>(1)
+
+}
+
+
+void actual_table_init()
+{
+
+    <table_init_meta>(1)
+
+}

@@ -62,6 +62,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.ftags['<public_table_indices>'] = self._public_table_indices
         self.ftags['<table_indices>'] = self._table_indices
         self.ftags['<declare_tables>'] = self._declare_tables
+        self.ftags['<table_declare_meta>'] = self._table_declare_meta
         self.ftags['<table_init_meta>'] = self._table_init_meta
         self.ftags['<table_term_meta>'] = self._table_term_meta
         self.ftags['<table_rates_indices>'] = self._table_rates_indices
@@ -312,46 +313,30 @@ class BaseCxxNetwork(ABC, RateCollection):
                 self.indent*n_indent, r.table_index_name))
             of.write('\n')
 
+    def _table_declare_meta(self, n_indent, of):
+        for irate in self.tabular_rates:
+            r = self.rates[irate]
+            idnt = self.indent*n_indent
+
+            of.write(f"{idnt}AMREX_GPU_MANAGED tf_t {r.table_index_name}_meta;\n")
+
+            of.write(f'{idnt}AMREX_GPU_MANAGED Array3D<Real, 1, {r.table_temp_lines}, 1, {r.table_rhoy_lines}, 1, {r.table_num_vars}> {r.table_index_name}_data;\n')
+
+            of.write(f'{idnt}AMREX_GPU_MANAGED Array1D<Real, 1, {r.table_rhoy_lines}> {r.table_index_name}_rhoy;\n');
+            of.write(f'{idnt}AMREX_GPU_MANAGED Array1D<Real, 1, {r.table_temp_lines}> {r.table_index_name}_temp;\n\n');
+
     def _table_init_meta(self, n_indent, of):
         for irate in self.tabular_rates:
             r = self.rates[irate]
+            idnt = self.indent*n_indent
+            of.write(f'{idnt}{r.table_index_name}_meta.ntemp = {r.table_temp_lines};\n')
+            of.write(f'{idnt}{r.table_index_name}_meta.nrhoy = {r.table_rhoy_lines};\n')
+            of.write(f'{idnt}{r.table_index_name}_meta.nvars = {r.table_num_vars};\n')
+            of.write(f'{idnt}{r.table_index_name}_meta.nheader = {r.table_header_lines};\n')
+            of.write(f'{idnt}{r.table_index_name}_meta.file = "{r.table_file}";\n\n')
 
-            of.write('{}allocate(num_temp_{})\n'.format(
-                self.indent*n_indent, r.table_index_name))
 
-            of.write('{}allocate(num_rhoy_{})\n'.format(
-                self.indent*n_indent, r.table_index_name))
-
-            of.write('{}allocate(num_vars_{})\n'.format(
-                self.indent*n_indent, r.table_index_name))
-
-            of.write('{}num_temp_{} = {}\n'.format(
-                self.indent*n_indent, r.table_index_name, r.table_temp_lines))
-
-            of.write('{}num_rhoy_{} = {}\n'.format(
-                self.indent*n_indent, r.table_index_name, r.table_rhoy_lines))
-
-            of.write('{}num_vars_{} = {}\n'.format(
-                self.indent*n_indent, r.table_index_name, r.table_num_vars))
-
-            of.write('{}num_header_{} = {}\n'.format(
-                self.indent*n_indent, r.table_index_name, r.table_header_lines))
-
-            of.write('{}rate_table_file_{} = trim("{}")\n'.format(
-                self.indent*n_indent, r.table_index_name, r.table_file))
-
-            of.write('{}allocate(rate_table_{}(num_temp_{}, num_rhoy_{}, num_vars_{}))\n'.format(
-                self.indent*n_indent, r.table_index_name, r.table_index_name, r.table_index_name, r.table_index_name))
-
-            of.write('{}allocate(rhoy_table_{}(num_rhoy_{}))\n'.format(
-                self.indent*n_indent, r.table_index_name, r.table_index_name))
-
-            of.write('{}allocate(temp_table_{}(num_temp_{}))\n'.format(
-                self.indent*n_indent, r.table_index_name, r.table_index_name))
-
-            of.write('{}call init_tab_info(rate_table_{}, rhoy_table_{}, temp_table_{}, num_rhoy_{}, num_temp_{}, num_vars_{}, rate_table_file_{}, num_header_{})\n'.format(
-                self.indent*n_indent, r.table_index_name, r.table_index_name, r.table_index_name, r.table_index_name,
-                r.table_index_name, r.table_index_name, r.table_index_name, r.table_index_name))
+            of.write(f'{idnt}init_tab_info({r.table_index_name}_meta, {r.table_index_name}_rhoy, {r.table_index_name}_temp, {r.table_index_name}_data);\n\n'xsx)
 
             of.write('\n')
 
