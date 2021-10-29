@@ -286,8 +286,7 @@ class BaseCxxNetwork(ABC, RateCollection):
                 of.write(f'{j}\n')
 
     def _table_num(self, n_indent, of):
-        of.write('{}integer, parameter :: num_tables   = {}\n'.format(
-            self.indent*n_indent, len(self.tabular_rates)))
+        of.write('{self.indent*n_indent}const int num_tables = {self.tabular_rates};\n')
 
     def _public_table_indices(self, n_indent, of):
         for irate in self.tabular_rates:
@@ -303,14 +302,12 @@ class BaseCxxNetwork(ABC, RateCollection):
     def _declare_tables(self, n_indent, of):
         for irate in self.tabular_rates:
             r = self.rates[irate]
-            of.write('{}real(rt), allocatable :: rate_table_{}(:,:,:), rhoy_table_{}(:), temp_table_{}(:)\n'.format(
-                self.indent*n_indent, r.table_index_name, r.table_index_name, r.table_index_name))
-            of.write('{}integer, allocatable  :: num_rhoy_{}, num_temp_{}, num_vars_{}\n'.format(
-                self.indent*n_indent, r.table_index_name, r.table_index_name, r.table_index_name))
-            of.write('{}character(len=50)     :: rate_table_file_{}\n'.format(
-                self.indent*n_indent, r.table_index_name))
-            of.write('{}integer               :: num_header_{}\n'.format(
-                self.indent*n_indent, r.table_index_name))
+            idnt = self.indent*n_indent
+
+            of.write(f'{idnt}extern AMREX_GPU_MANAGED tf_t {r.table_index_name}_meta;\n')
+            of.write(f'{idnt}extern AMREX_GPU_MANAGED Array3D<Real, 1, {r.table_temp_lines}, 1, {r.table_rhoy_lines}, 1, {r.table_num_vars}> {r.table_index_name}_data;\n')
+            of.write(f'{idnt}extern AMREX_GPU_MANAGED Array1D<Real, 1, {r.table_rhoy_lines}> {r.table_index_name}_rhoy;\n')
+            of.write(f'{idnt}extern AMREX_GPU_MANAGED Array1D<Real, 1, {r.table_temp_lines}> {r.table_index_name}_temp;\n')
             of.write('\n')
 
     def _table_declare_meta(self, n_indent, of):
@@ -336,7 +333,7 @@ class BaseCxxNetwork(ABC, RateCollection):
             of.write(f'{idnt}{r.table_index_name}_meta.file = "{r.table_file}";\n\n')
 
 
-            of.write(f'{idnt}init_tab_info({r.table_index_name}_meta, {r.table_index_name}_rhoy, {r.table_index_name}_temp, {r.table_index_name}_data);\n\n'xsx)
+            of.write(f'{idnt}init_tab_info({r.table_index_name}_meta, {r.table_index_name}_rhoy, {r.table_index_name}_temp, {r.table_index_name}_data);\n\n')
 
             of.write('\n')
 

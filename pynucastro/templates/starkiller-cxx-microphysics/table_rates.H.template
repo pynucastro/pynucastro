@@ -9,7 +9,7 @@
 //                  (MeV)   (MeV)  (MeV)       (1/s)          (MeV/s)        (MeV/s)
 //
 
-<table_num>(1)
+<table_num>(0)
 
 enum TableVars
 {
@@ -22,6 +22,16 @@ enum TableVars
     num_vars = jtab_gamma
 }
 
+
+struct tf_t
+{
+    int ntemp;
+    int nrhoy;
+    int nvars;
+    int nheader;
+    std::string file;
+};
+
 // we add a 7th quantity dr/dT
 // k_drate_dt is used only for calculating the derivative
 // of rate with temperature from the table, it isn't an index
@@ -31,8 +41,10 @@ const int k_drate_dt   = 7;
 const int add_vars     = 1;  // 1 Additional Var in entries
 
 
-<table_header_declare>(0)
-
+namespace rate_tables
+{
+<declare_tables>(1)
+}
 
 template <typename R, typename T, typename D>
 void init_tab_info(const tf_t tf, R& rhoy, T& temp, D& data) {
@@ -119,171 +131,187 @@ int vector_index_lu(const V& vector, const Real fvar)
 }
 
 
-  subroutine bl_clamp(xlo, xhi, flo, fhi, x, f)
+AMREX_INLINE AMREX_GPU_HOST_DEVICE
+Real
+bl_clamp(const Real xlo, const Real xhi, const Real flo, const Real fhi, const Real x)
+{
 
-    ! Perform bilinear interpolation within the interval [xlo, xhi]
-    ! where the function values at the endpoints are defined by:
-    ! flo = f(xlo)
-    ! fhi = f(xhi)
-    ! Returns f(x), the values flo and fhi interpolated at x
-    ! f(x) = flo if x <= xlo
-    ! f(x) = fhi if x >= xhi
-    real(rt), intent(in)  :: xlo, xhi, flo, fhi, x
-    real(rt), intent(out) :: f
+    // Perform bilinear interpolation within the interval [xlo, xhi]
+    // where the function values at the endpoints are defined by:
+    // flo = f(xlo)
+    // fhi = f(xhi)
+    // Returns f(x), the values flo and fhi interpolated at x
+    // f(x) = flo if x <= xlo
+    // f(x) = fhi if x >= xhi
 
-    if ( x .le. xlo ) then
-       f = flo
-    else if ( x .ge. xhi ) then
-       f = fhi
-    else
-       f = ( flo * ( xhi - x ) + fhi * ( x - xlo ) ) / ( xhi - xlo )
-    end if
-  end subroutine bl_clamp
+    Real f;
+    if (x <= xlo) {
+        f = flo;
+    } else if (x >= xhi ) {
+        f = fhi;
+    } else {
+        f = (flo * (xhi - x) + fhi * (x - xlo) ) / (xhi - xlo);
+    }
 
+    return f;
+}
 
-  subroutine bl_extrap(xlo, xhi, flo, fhi, x, f)
+AMREX_INLINE AMREX_GPU_HOST_DEVICE
+Real
+bl_extrap(const Real xlo, const Real xhi, const Real flo, const Real fhi, const Real x)
+{
 
-    ! Perform bilinear interpolation within the interval [xlo, xhi]
-    ! where the function values at the endpoints are defined by:
-    ! flo = f(xlo)
-    ! fhi = f(xhi)
-    ! Returns f(x), the values flo and fhi interpolated at x
-    ! If x <= xlo or x >= xhi, f(x) is extrapolated at x
-    real(rt), intent(in)  :: xlo, xhi, flo, fhi, x
-    real(rt), intent(out) :: f
+    // Perform bilinear interpolation within the interval [xlo, xhi]
+    // where the function values at the endpoints are defined by:
+    // flo = f(xlo)
+    // fhi = f(xhi)
+    // Returns f(x), the values flo and fhi interpolated at x
+    // If x <= xlo or x >= xhi, f(x) is extrapolated at x
 
-    f = ( flo * ( xhi - x ) + fhi * ( x - xlo ) ) / ( xhi - xlo )
-  end subroutine bl_extrap
+    Real f = (flo * (xhi - x) + fhi * (x - xlo) ) / (xhi - xlo);
 
-
-  subroutine get_entries(rate_table, rhoy_table, temp_table, &
-                         num_rhoy, num_temp, num_vars, &
-                         rhoy, temp, entries)
-
-    integer  :: num_rhoy, num_temp, num_vars
-    real(rt) :: rate_table(num_temp, num_rhoy, num_vars), rhoy_table(num_rhoy), temp_table(num_temp)
-    real(rt), intent(in) :: rhoy, temp
-    real(rt), dimension(num_vars+1), intent(out) :: entries
-
-    ! The last element of entries is the derivative of rate with temperature
-    ! drate_dt, evaluated by central differencing at the box corners
-    ! and then performing a bilinear interpolation on those central differences.
-
-    real(rt) :: f_im1, f_i, f_ip1, f_ip2
-    real(rt) :: t_im1, t_i, t_ip1, t_ip2
-    real(rt) :: drdt_i, drdt_ip1
-    real(rt) :: temp_lo, temp_hi, rhoy_lo, rhoy_hi
-    integer :: irhoy_lo, irhoy_hi, itemp_lo, itemp_hi
-    integer :: ivar
-
-    ! Get box-corner points for interpolation
-    ! This deals with out-of-range inputs via linear extrapolation
-    call vector_index_lu(rhoy_table, rhoy, irhoy_lo)
-    call vector_index_lu(temp_table, temp, itemp_lo)
-
-    irhoy_hi = irhoy_lo + 1
-    itemp_hi = itemp_lo + 1
-
-    ! Bilinear interpolation within the box
-    ! The desired point is denoted by ABCD, within the box.
-    ! The value of ivar at ABCD is denoted by fvar.
-    ! T ^   B .      . C
-    !   |
-    !   |  AB   ABCD   CD
-    !   |     .      .
-    !   |   A          D
-    !   |___________________> rho*Ye
-    temp_lo = temp_table( itemp_lo )
-    temp_hi = temp_table( itemp_hi )
-    rhoy_lo = rhoy_table( irhoy_lo )
-    rhoy_hi = rhoy_table( irhoy_hi )
-
-    ! Interpolate for each table entry
-    do ivar = 1, num_vars
-       call bl_extrap(temp_lo, temp_hi, &
-            rate_table( itemp_lo, irhoy_lo, ivar ), &
-            rate_table( itemp_hi, irhoy_lo, ivar ), &
-            temp, f_i)
-       call bl_extrap(temp_lo, temp_hi, &
-            rate_table( itemp_lo, irhoy_hi, ivar ), &
-            rate_table( itemp_hi, irhoy_hi, ivar ), &
-            temp, f_ip1)
-       call bl_extrap(rhoy_lo, rhoy_hi, f_i, f_ip1, rhoy, entries(ivar))
-    end do
-
-    ! Calculate the derivative of rate with temperature, d(rate)/d(t)
-    ! (Clamp interpolations in rhoy to avoid unphysical temperature derivatives)
-    if (( itemp_lo .eq. 1 ) .or. ( itemp_lo .eq. num_temp-1 )) then
-       ! We're at the first or last table cell (in temperature)
-       ! First do bilinear interpolation in rhoy for the table at tlo and thi
-       call bl_clamp(rhoy_lo, rhoy_hi, &
-            rate_table( itemp_lo, irhoy_lo, jtab_rate ), &
-            rate_table( itemp_lo, irhoy_hi, jtab_rate ), &
-            rhoy, f_i)
-       call bl_clamp(rhoy_lo, rhoy_hi, &
-            rate_table( itemp_hi, irhoy_lo, jtab_rate ), &
-            rate_table( itemp_hi, irhoy_hi, jtab_rate ), &
-            rhoy, f_ip1)
-       ! Approximate d(rate)/d(t) via forward differencing
-       entries(k_drate_dt) = (f_ip1 - f_i) / (temp_hi - temp_lo)
-    else
-       ! Approximate d(rate)/d(t) via bilinear interpolation on central differences
-       t_im1 = temp_table( itemp_lo-1 )
-       t_i   = temp_table( itemp_lo )
-       t_ip1 = temp_table( itemp_hi )
-       t_ip2 = temp_table( itemp_lo+2 )
-       call bl_clamp(rhoy_lo, rhoy_hi, &
-            rate_table( itemp_lo-1, irhoy_lo, jtab_rate ), &
-            rate_table( itemp_lo-1, irhoy_hi, jtab_rate ), &
-            rhoy, f_im1)
-       call bl_clamp(rhoy_lo, rhoy_hi, &
-            rate_table( itemp_lo, irhoy_lo, jtab_rate ), &
-            rate_table( itemp_lo, irhoy_hi, jtab_rate ), &
-            rhoy, f_i)
-       call bl_clamp(rhoy_lo, rhoy_hi, &
-            rate_table( itemp_hi, irhoy_lo, jtab_rate ), &
-            rate_table( itemp_hi, irhoy_hi, jtab_rate ), &
-            rhoy, f_ip1)
-       call bl_clamp(rhoy_lo, rhoy_hi, &
-            rate_table( itemp_lo+2, irhoy_lo, jtab_rate ), &
-            rate_table( itemp_lo+2, irhoy_hi, jtab_rate ), &
-            rhoy, f_ip2)
-       ! Get central difference derivatives at the box corners
-       drdt_i   = (f_ip1 - f_im1) / (t_ip1 - t_im1)
-       drdt_ip1 = (f_ip2 - f_i)   / (t_ip2 - t_i)
-       ! Interpolate in temperature
-       ! (Since we're inside the table in temp, use bl_extrap, it's faster)
-       call bl_extrap(t_i, t_ip1, drdt_i, drdt_ip1, temp, entries(k_drate_dt))
-    end if
-  end subroutine get_entries
+    return f;
+}
 
 
-  subroutine tabular_evaluate(rate_table, rhoy_table, temp_table, &
-                              num_rhoy, num_temp, num_vars, &
-                              rhoy, temp, &
-                              rate, drate_dt, edot_nu)
+template <typename R, typename T, typename D>
+AMREX_INLINE AMREX_GPU_HOST_DEVICE
+void
+get_entries(const R& rhoy_table, const T& temp_table, const D& data,
+            const Real rhoy, const Real temp, Array1D<Real, 1, num_vars+1> entries)
+{
 
-    implicit none
 
-    integer  :: num_rhoy, num_temp, num_vars, num_header
-    real(rt) :: rate_table(num_temp, num_rhoy, num_vars), rhoy_table(num_rhoy), temp_table(num_temp)
+    // The last element of entries is the derivative of rate with temperature
+    // drate_dt, evaluated by central differencing at the box corners
+    // and then performing a bilinear interpolation on those central differences.
 
-    real(rt), intent(in)    :: rhoy, temp
-    real(rt), intent(out)   :: rate, drate_dt, edot_nu
 
-    real(rt) :: entries(num_vars+add_vars)
+    // Get box-corner points for interpolation
+    // This deals with out-of-range inputs via linear extrapolation
 
-    ! Get the table entries at this rhoy, temp
+    int irhoy_lo = vector_index_lu(rhoy_table, rhoy);
+    int itemp_lo = vector_index_lu(temp_table, temp);
+
+    int irhoy_hi = irhoy_lo + 1;
+    int itemp_hi = itemp_lo + 1;
+
+    // Bilinear interpolation within the box
+    // The desired point is denoted by ABCD, within the box.
+    // The value of ivar at ABCD is denoted by fvar.
+    // T ^   B .      . C
+    //   |
+    //   |  AB   ABCD   CD
+    //   |     .      .
+    //   |   A          D
+    //   |___________________> rho*Ye
+
+    Real temp_lo = temp_table(itemp_lo);
+    Real temp_hi = temp_table(itemp_hi);
+    Real rhoy_lo = rhoy_table(irhoy_lo);
+    Real rhoy_hi = rhoy_table(irhoy_hi);
+
+    // Interpolate for each table entry
+
+    for (int ivar = 1; ivar <= num_vars; ivar++) {
+        Real f_i = bl_extrap(temp_lo, temp_hi,
+                             data(itemp_lo, irhoy_lo, ivar),
+                             data(itemp_hi, irhoy_lo, ivar),
+                             temp);
+
+        Real f_ip1 = bl_extrap(temp_lo, temp_hi,
+                               data(itemp_lo, irhoy_hi, ivar),
+                               data(itemp_hi, irhoy_hi, ivar),
+                               temp);
+
+        entries(ivar) = bl_extrap(rhoy_lo, rhoy_hi, f_i, f_ip1, rhoy);
+    }
+
+    // Calculate the derivative of rate with temperature, d(rate)/d(t)
+    // (Clamp interpolations in rhoy to avoid unphysical temperature derivatives)
+
+    if ((itemp_lo == 1) || (itemp_lo == num_temp-1)) {
+        // We're at the first or last table cell (in temperature)
+        // First do bilinear interpolation in rhoy for the table at tlo and thi
+
+        f_i = bl_clamp(rhoy_lo, rhoy_hi,
+                       data(itemp_lo, irhoy_lo, jtab_rate),
+                       data(itemp_lo, irhoy_hi, jtab_rate),
+                       rhoy);
+
+        f_ip1 = bl_clamp(rhoy_lo, rhoy_hi,
+                         data(itemp_hi, irhoy_lo, jtab_rate),
+                         data(itemp_hi, irhoy_hi, jtab_rate),
+                         rhoy);
+
+        // Approximate d(rate)/d(t) via forward differencing
+
+        entries(k_drate_dt) = (f_ip1 - f_i) / (temp_hi - temp_lo);
+
+    } else {
+        // Approximate d(rate)/d(t) via bilinear interpolation on central differences
+
+        int t_im1 = temp_table(itemp_lo-1);
+        int t_i   = temp_table(itemp_lo);
+        int t_ip1 = temp_table(itemp_hi);
+        int t_ip2 = temp_table(itemp_lo+2);
+
+        Real f_im1 = bl_clamp(rhoy_lo, rhoy_hi,
+                              data(itemp_lo-1, irhoy_lo, jtab_rate),
+                              data(itemp_lo-1, irhoy_hi, jtab_rate),
+                              rhoy);
+
+        Real f_i = bl_clamp(rhoy_lo, rhoy_hi,
+                            data(itemp_lo, irhoy_lo, jtab_rate),
+                            data(itemp_lo, irhoy_hi, jtab_rate ),
+                            rhoy);
+
+        Real f_ip1 = bl_clamp(rhoy_lo, rhoy_hi,
+                              data(itemp_hi, irhoy_lo, jtab_rate),
+                              data(itemp_hi, irhoy_hi, jtab_rate ),
+                              rhoy);
+
+        Real f_ip2 = bl_clamp(rhoy_lo, rhoy_hi,
+                              data(itemp_lo+2, irhoy_lo, jtab_rate ),
+                              data(itemp_lo+2, irhoy_hi, jtab_rate ),
+                              rhoy);
+
+        // Get central difference derivatives at the box corners
+
+        Real drdt_i   = (f_ip1 - f_im1) / (t_ip1 - t_im1);
+        Real drdt_ip1 = (f_ip2 - f_i)   / (t_ip2 - t_i);
+
+        // Interpolate in temperature
+        // (Since we're inside the table in temp, use bl_extrap, it's faster)
+
+        entries(k_drate_dt) = bl_extrap(t_i, t_ip1, drdt_i, drdt_ip1, temp);
+
+    }
+}
+
+
+template <typename R, typename T, typename D>
+AMREX_INLINE AMREX_GPU_HOST_DEVICE
+void
+tabular_evaluate(const R& rhoy_table, const T& temp_table, const D& data,
+                 const Real rhoy, const Real temp,
+                 Real& rate, Real& drate_dt, Real& edot_nu)
+{
+
+
+    Array1D<Real, 1, num_vars+1> entries;
+
+    // Get the table entries at this rhoy, temp
+
     call get_entries(rate_table, rhoy_table, temp_table, &
-                     num_rhoy, num_temp, num_vars, &
-                     rhoy, temp, entries)
+                     rhoy, temp, entries);
 
-    ! Fill outputs: rate, d(rate)/d(temperature), and
-    ! (negative) neutrino loss contribution to energy generation
-    rate     = entries(jtab_rate)
-    drate_dt = entries(k_drate_dt)
-    edot_nu  = -entries(jtab_nuloss)
+    // Fill outputs: rate, d(rate)/d(temperature), and
+    // (negative) neutrino loss contribution to energy generation
 
-  end subroutine tabular_evaluate
+    rate     = entries(jtab_rate);
+    drate_dt = entries(k_drate_dt);
+    edot_nu  = -entries(jtab_nuloss);
+}
 
-end module table_rates
+#endif
