@@ -1,5 +1,8 @@
+#include <AMReX_Array.H>
+#include <string>
 #include <table_rates.H>
 
+using namespace amrex;
 
 namespace rate_tables
 {
@@ -11,6 +14,8 @@ namespace rate_tables
 
 void init_tabular()
 {
+
+    using namespace rate_tables;
 
     <table_init_meta>(1)
 

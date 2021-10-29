@@ -240,7 +240,7 @@ class BaseCxxNetwork(ABC, RateCollection):
 
     def _nrat_tabular(self, n_indent, of):
         # Writes the number of tabular rates
-        of.write(f'{self.indent*n_indent}const int NratTabular = {len(self.tabular_rates)};\n')
+        of.write(f'{self.indent*n_indent}const int NrateTabular = {len(self.tabular_rates)};\n')
 
     def _nrxn(self, n_indent, of):
         for i,r in enumerate(self.rates):
@@ -286,7 +286,7 @@ class BaseCxxNetwork(ABC, RateCollection):
                 of.write(f'{j}\n')
 
     def _table_num(self, n_indent, of):
-        of.write('{self.indent*n_indent}const int num_tables = {self.tabular_rates};\n')
+        of.write(f'{self.indent*n_indent}const int num_tables = {len(self.tabular_rates)};\n')
 
     def _public_table_indices(self, n_indent, of):
         for irate in self.tabular_rates:
@@ -304,7 +304,7 @@ class BaseCxxNetwork(ABC, RateCollection):
             r = self.rates[irate]
             idnt = self.indent*n_indent
 
-            of.write(f'{idnt}extern AMREX_GPU_MANAGED tf_t {r.table_index_name}_meta;\n')
+            of.write(f'{idnt}extern AMREX_GPU_MANAGED table_t {r.table_index_name}_meta;\n')
             of.write(f'{idnt}extern AMREX_GPU_MANAGED Array3D<Real, 1, {r.table_temp_lines}, 1, {r.table_rhoy_lines}, 1, {r.table_num_vars}> {r.table_index_name}_data;\n')
             of.write(f'{idnt}extern AMREX_GPU_MANAGED Array1D<Real, 1, {r.table_rhoy_lines}> {r.table_index_name}_rhoy;\n')
             of.write(f'{idnt}extern AMREX_GPU_MANAGED Array1D<Real, 1, {r.table_temp_lines}> {r.table_index_name}_temp;\n')
@@ -315,7 +315,7 @@ class BaseCxxNetwork(ABC, RateCollection):
             r = self.rates[irate]
             idnt = self.indent*n_indent
 
-            of.write(f"{idnt}AMREX_GPU_MANAGED tf_t {r.table_index_name}_meta;\n")
+            of.write(f"{idnt}AMREX_GPU_MANAGED table_t {r.table_index_name}_meta;\n")
 
             of.write(f'{idnt}AMREX_GPU_MANAGED Array3D<Real, 1, {r.table_temp_lines}, 1, {r.table_rhoy_lines}, 1, {r.table_num_vars}> {r.table_index_name}_data;\n')
 
@@ -374,14 +374,15 @@ class BaseCxxNetwork(ABC, RateCollection):
 
             idnt = self.indent*n_indent
 
-            for n, irate in enumerate(self.tabular_rates):
+            for irate in self.tabular_rates:
                 r = self.rates[irate]
-                of.write(f'{idnt}tabular_evaluate({r.table_index_name}_rhoy, {r.table_index_name}_temp, {r.table_index_name}_data,\n')
+
+                of.write(f'{idnt}tabular_evaluate({r.table_index_name}_meta, {r.table_index_name}_rhoy, {r.table_index_name}_temp, {r.table_index_name}_data,\n')
                 of.write(f'{idnt}                 rhoy, state.T, rate, drate_dt, edot_nu);\n')
 
                 of.write(f'{idnt}rate_eval.unscreened_rates(i_rate, k_{r.fname}) = rate;\n')
                 of.write(f'{idnt}rate_eval.unscreened_rates(i_drate_dt, k_{r.fname}) = drate_dt;\n')
-                of.write(f'{idnt}rate_eval.add_energy_rate({n+1}) = edot_nu;\n')
+                of.write(f'{idnt}rate_eval.add_energy_rate(k_{r.fname}) = edot_nu;\n')
                 of.write('\n')
 
     def _ydot(self, n_indent, of):

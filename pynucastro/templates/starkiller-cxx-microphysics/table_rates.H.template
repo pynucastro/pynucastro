@@ -1,6 +1,17 @@
 #ifndef TABLE_RATES_H
 #define TABLE_RATES_H
 
+#include <iostream>
+#include <sstream>
+#include <fstream>
+#include <string>
+
+#include <AMReX_Array.H>
+
+using namespace amrex;
+
+void init_tabular();
+
 // Table is expected to be in terms of dens*ye and temp (non-logarithmic, cgs units)
 // Table energy units are expected in terms of ergs
 
@@ -20,10 +31,10 @@ enum TableVars
     jtab_nuloss  = 5,
     jtab_gamma   = 6,
     num_vars = jtab_gamma
-}
+};
 
 
-struct tf_t
+struct table_t
 {
     int ntemp;
     int nrhoy;
@@ -47,7 +58,7 @@ namespace rate_tables
 }
 
 template <typename R, typename T, typename D>
-void init_tab_info(const tf_t tf, R& rhoy, T& temp, D& data) {
+void init_tab_info(const table_t tf, R& rhoy, T& temp, D& data) {
 
     std::ifstream table;
     table.open(tf.file);
@@ -63,10 +74,14 @@ void init_tab_info(const tf_t tf, R& rhoy, T& temp, D& data) {
     // now the data -- there are 2 extra columns, for temp and rhoy
 
     Real ldata[tf.nvars+2];
-    for (int j = 1; j <= tf.nrho; ++j) {
+    for (int j = 1; j <= tf.nrhoy; ++j) {
         for (int i = 1; i <= tf.ntemp; ++i) {
             std::getline(table, line);
-            std::istringstream ldata(line);
+            std::istringstream sdata(line);
+
+            for (int m = 0; m < tf.nvars+2; ++m) {
+                sdata >> ldata[m];
+            }
 
             if (j == 1) {
                 temp(i) = ldata[0];
@@ -91,7 +106,7 @@ void init_tab_info(const tf_t tf, R& rhoy, T& temp, D& data) {
 
 template <typename V>
 AMREX_GPU_HOST_DEVICE AMREX_INLINE
-int vector_index_lu(const V& vector, const Real fvar)
+int vector_index_lu(const int vlen, const V& vector, const Real fvar)
 {
 
     // Returns the greatest index of vector for which vector(index) < fvar.
@@ -99,21 +114,16 @@ int vector_index_lu(const V& vector, const Real fvar)
     // Return size(vector)-1 if fvar > vector(size(vector))
     // The interval [index, index+1] brackets fvar for fvar within the range of vector.
 
-
-    integer :: n, i, j, nup, ndn
-
-    int n = len(vector);
-
     int index;
 
     if (fvar < vector(1)) {
         index = 1;
-    } else if (fvar > vector(n)) {
-        index = n - 1;
+    } else if (fvar > vector(vlen)) {
+        index = vlen - 1;
     } else {
-        int nup = n;
+        int nup = vlen;
         int ndn = 1;
-        for (int i = 1; i <= n; ++i) {
+        for (int i = 1; i <= vlen; ++i) {
             int j = ndn + (nup - ndn)/2;
             if (fvar < vector(j)) {
                 nup = j;
@@ -177,7 +187,8 @@ bl_extrap(const Real xlo, const Real xhi, const Real flo, const Real fhi, const 
 template <typename R, typename T, typename D>
 AMREX_INLINE AMREX_GPU_HOST_DEVICE
 void
-get_entries(const R& rhoy_table, const T& temp_table, const D& data,
+get_entries(const table_t& table_meta,
+            const R& rhoy_table, const T& temp_table, const D& data,
             const Real rhoy, const Real temp, Array1D<Real, 1, num_vars+1> entries)
 {
 
@@ -190,8 +201,8 @@ get_entries(const R& rhoy_table, const T& temp_table, const D& data,
     // Get box-corner points for interpolation
     // This deals with out-of-range inputs via linear extrapolation
 
-    int irhoy_lo = vector_index_lu(rhoy_table, rhoy);
-    int itemp_lo = vector_index_lu(temp_table, temp);
+    int irhoy_lo = vector_index_lu(table_meta.nrhoy, rhoy_table, rhoy);
+    int itemp_lo = vector_index_lu(table_meta.ntemp, temp_table, temp);
 
     int irhoy_hi = irhoy_lo + 1;
     int itemp_hi = itemp_lo + 1;
@@ -230,19 +241,19 @@ get_entries(const R& rhoy_table, const T& temp_table, const D& data,
     // Calculate the derivative of rate with temperature, d(rate)/d(t)
     // (Clamp interpolations in rhoy to avoid unphysical temperature derivatives)
 
-    if ((itemp_lo == 1) || (itemp_lo == num_temp-1)) {
+    if ((itemp_lo == 1) || (itemp_lo == table_meta.ntemp-1)) {
         // We're at the first or last table cell (in temperature)
         // First do bilinear interpolation in rhoy for the table at tlo and thi
 
-        f_i = bl_clamp(rhoy_lo, rhoy_hi,
-                       data(itemp_lo, irhoy_lo, jtab_rate),
-                       data(itemp_lo, irhoy_hi, jtab_rate),
-                       rhoy);
+        Real f_i = bl_clamp(rhoy_lo, rhoy_hi,
+                            data(itemp_lo, irhoy_lo, jtab_rate),
+                            data(itemp_lo, irhoy_hi, jtab_rate),
+                            rhoy);
 
-        f_ip1 = bl_clamp(rhoy_lo, rhoy_hi,
-                         data(itemp_hi, irhoy_lo, jtab_rate),
-                         data(itemp_hi, irhoy_hi, jtab_rate),
-                         rhoy);
+        Real f_ip1 = bl_clamp(rhoy_lo, rhoy_hi,
+                              data(itemp_hi, irhoy_lo, jtab_rate),
+                              data(itemp_hi, irhoy_hi, jtab_rate),
+                              rhoy);
 
         // Approximate d(rate)/d(t) via forward differencing
 
@@ -293,7 +304,8 @@ get_entries(const R& rhoy_table, const T& temp_table, const D& data,
 template <typename R, typename T, typename D>
 AMREX_INLINE AMREX_GPU_HOST_DEVICE
 void
-tabular_evaluate(const R& rhoy_table, const T& temp_table, const D& data,
+tabular_evaluate(const table_t& table_meta,
+                 const R& rhoy_table, const T& temp_table, const D& data,
                  const Real rhoy, const Real temp,
                  Real& rate, Real& drate_dt, Real& edot_nu)
 {
@@ -303,8 +315,8 @@ tabular_evaluate(const R& rhoy_table, const T& temp_table, const D& data,
 
     // Get the table entries at this rhoy, temp
 
-    call get_entries(rate_table, rhoy_table, temp_table, &
-                     rhoy, temp, entries);
+    get_entries(table_meta, rhoy_table, temp_table, data,
+                rhoy, temp, entries);
 
     // Fill outputs: rate, d(rate)/d(temperature), and
     // (negative) neutrino loss contribution to energy generation
