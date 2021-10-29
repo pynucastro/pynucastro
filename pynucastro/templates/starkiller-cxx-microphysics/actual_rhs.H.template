@@ -61,6 +61,15 @@ void evaluate_rates(const burn_t& state, rate_eval_t& rate_eval) {
         Y(n) = state.xn[n-1] * aion_inv[n-1];
     }
 
+    Real rhoy = state.rho * state.y_e;
+
+    // initialize the screening factors to 1 -- this way if a rate is
+    // unscreened, when we multiply by the screening factor later, we
+    // don't zero the rate
+
+    for (int i = 1; i <= NumRates; ++i) {
+        rate_eval.unscreen_Rates(i_scor, i) = 1.0_rt;
+    }
 
     // Calculate Reaclib rates
 
@@ -84,9 +93,15 @@ void evaluate_rates(const burn_t& state, rate_eval_t& rate_eval) {
 
     <compute_screening_factors>(1)
 
+    // Calculate tabular rates
+
+    Real rate, drate_dt, edot_nu;
+
+    <compute_tabular_rates>(1)
+
     // Compute screened rates
 
-    for (int i = 1; i <= NrateReaclib; ++i) {
+    for (int i = 1; i <= NumRates; ++i) {
         rate_eval.screened_rates(i) = rate_eval.unscreened_rates(i_rate, i) *
                                       rate_eval. unscreened_rates(i_scor, i);
     }
@@ -237,6 +252,8 @@ AMREX_INLINE
 void actual_rhs_init () {
 
     init_reaclib();
+
+    init_tabular();
 
     screening_init();
 

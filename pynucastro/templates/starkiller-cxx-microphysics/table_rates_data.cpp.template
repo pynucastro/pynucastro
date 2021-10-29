@@ -9,7 +9,7 @@ namespace rate_tables
 }
 
 
-void actual_table_init()
+void init_tabular()
 {
 
     <table_init_meta>(1)

@@ -371,15 +371,17 @@ class BaseCxxNetwork(ABC, RateCollection):
 
     def _compute_tabular_rates(self, n_indent, of):
         if len(self.tabular_rates) > 0:
-            of.write(f'{self.indent*n_indent}! Calculate tabular rates\n')
+
+            idnt = self.indent*n_indent
+
             for n, irate in enumerate(self.tabular_rates):
                 r = self.rates[irate]
-                of.write(f'{self.indent*n_indent}call tabular_evaluate(rate_table_{r.table_index_name}, rhoy_table_{r.table_index_name}, temp_table_{r.table_index_name}, &\n')
-                of.write(f'{self.indent*n_indent}                      num_rhoy_{r.table_index_name}, num_temp_{r.table_index_name}, num_vars_{r.table_index_name}, &\n')
-                of.write(f'{self.indent*n_indent}                      rhoy, state % T, rate, drate_dt, edot_nu)\n')
-                of.write(f'{self.indent*n_indent}rate_eval % unscreened_rates(i_rate,{n+1+len(self.reaclib_rates)}) = rate\n')
-                of.write(f'{self.indent*n_indent}rate_eval % unscreened_rates(i_drate_dt,{n+1+len(self.reaclib_rates)}) = drate_dt\n')
-                of.write(f'{self.indent*n_indent}rate_eval % add_energy_rate({n+1})  = edot_nu\n')
+                of.write(f'{idnt}tabular_evaluate({r.table_index_name}_rhoy, {r.table_index_name}_temp, {r.table_index_name}_data,\n')
+                of.write(f'{idnt}                 rhoy, state.T, rate, drate_dt, edot_nu);\n')
+
+                of.write(f'{idnt}rate_eval.unscreened_rates(i_rate, k_{r.fname}) = rate;\n')
+                of.write(f'{idnt}rate_eval.unscreened_rates(i_drate_dt, k_{r.fname}) = drate_dt;\n')
+                of.write(f'{idnt}rate_eval.add_energy_rate({n+1}) = edot_nu;\n')
                 of.write('\n')
 
     def _ydot(self, n_indent, of):
