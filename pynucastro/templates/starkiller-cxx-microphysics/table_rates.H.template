@@ -84,10 +84,10 @@ void init_tab_info(const table_t tf, R& rhoy, T& temp, D& data) {
             }
 
             if (j == 1) {
-                temp(i) = ldata[0];
+                temp(i) = ldata[1];
             }
             if (i == 1) {
-                rhoy(j) = ldata[1];
+                rhoy(j) = ldata[0];
             }
 
             for (int n = 0; n < tf.nvars; ++n) {
