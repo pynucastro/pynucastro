@@ -69,6 +69,7 @@ void evaluate_rates(const burn_t& state, rate_eval_t& rate_eval) {
 
     for (int i = 1; i <= NumRates; ++i) {
         rate_eval.unscreen_Rates(i_scor, i) = 1.0_rt;
+        rate_eval.unscreen_Rates(i_dscor_dt, i) = 0.0_rt;
     }
 
     // Calculate Reaclib rates
