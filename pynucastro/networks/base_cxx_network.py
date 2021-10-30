@@ -391,14 +391,16 @@ class BaseCxxNetwork(ABC, RateCollection):
     def _enuc_add_energy_rate(self, n_indent, of):
         # Add tabular per-reaction neutrino energy generation rates to the energy generation rate
         # (not thermal neutrinos)
+
+        idnt = self.indent * n_indent
+
         for nr, r in enumerate(self.rates):
             if nr in self.tabular_rates:
                 if len(r.reactants) != 1:
                     sys.exit('ERROR: Unknown energy rate corrections for a reaction where the number of reactants is not 1.')
                 else:
                     reactant = r.reactants[0]
-                    of.write('{}enuc = enuc + N_AVO * {}(j{}) * rate_eval % add_energy_rate({})\n'.format(
-                        self.indent*n_indent, self.symbol_rates.name_y, reactant, r.table_index_name))
+                    of.write(f'{idnt}enuc += C::n_A * {self.symbol_rates.name_y}({reactant.c()}) * rate_eval.add_energy_rate(k_{r.fname});\n')
 
     def _jacnuc(self, n_indent, of):
         # now make the Jacobian
