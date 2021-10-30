@@ -11,6 +11,7 @@
 #include <screen.H>
 #include <sneut5.H>
 #include <reaclib_rates.H>
+#include <table_rates.H>
 
 using namespace amrex;
 using namespace ArrayUtil;
@@ -18,9 +19,12 @@ using namespace ArrayUtil;
 using namespace Species;
 using namespace Rates;
 
+using namespace rate_tables;
+
 struct rate_eval_t {
     Array2D<Real, 1, NumGroups, 1, NumRates> unscreened_rates;
     Array1D<Real, 1, NumRates>  screened_rates;
+    Array1D<Real, NrateReaclib+1, NrateReaclib+NrateTabular> add_energy_rate;
 };
 
 
@@ -68,8 +72,8 @@ void evaluate_rates(const burn_t& state, rate_eval_t& rate_eval) {
     // don't zero the rate
 
     for (int i = 1; i <= NumRates; ++i) {
-        rate_eval.unscreen_Rates(i_scor, i) = 1.0_rt;
-        rate_eval.unscreen_Rates(i_dscor_dt, i) = 0.0_rt;
+        rate_eval.unscreened_rates(i_scor, i) = 1.0_rt;
+        rate_eval.unscreened_rates(i_dscor_dt, i) = 0.0_rt;
     }
 
     // Calculate Reaclib rates
@@ -148,6 +152,7 @@ void actual_rhs (burn_t& state, Array1D<Real, 1, neqs>& ydot)
     ener_gener_rate(ydot, enuc);
 
     // include reaction neutrino losses (non-thermal)
+    <enuc_add_energy_rate>(1)
 
     // Get the thermal neutrino losses
 
