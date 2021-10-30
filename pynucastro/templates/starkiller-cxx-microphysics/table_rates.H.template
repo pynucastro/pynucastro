@@ -262,10 +262,10 @@ get_entries(const table_t& table_meta,
     } else {
         // Approximate d(rate)/d(t) via bilinear interpolation on central differences
 
-        int t_im1 = temp_table(itemp_lo-1);
-        int t_i   = temp_table(itemp_lo);
-        int t_ip1 = temp_table(itemp_hi);
-        int t_ip2 = temp_table(itemp_lo+2);
+        Real t_im1 = temp_table(itemp_lo-1);
+        Real t_i   = temp_table(itemp_lo);
+        Real t_ip1 = temp_table(itemp_hi);
+        Real t_ip2 = temp_table(itemp_lo+2);
 
         Real f_im1 = bl_clamp(rhoy_lo, rhoy_hi,
                               data(itemp_lo-1, irhoy_lo, jtab_rate),

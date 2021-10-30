@@ -196,7 +196,7 @@ class Nucleus:
             self.short_spec_name = "n"
             self.spec_name = "neutron"
             self.pretty = fr"\mathrm{{{self.el}}}"
-            self.caps_name = "n"
+            self.caps_name = "N"
         else:
             e = re.match(r"([a-zA-Z]*)(\d*)", name)
             self.el = e.group(1).title()  # chemical symbol
