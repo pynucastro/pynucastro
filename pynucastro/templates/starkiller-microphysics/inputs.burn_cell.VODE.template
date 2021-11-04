@@ -24,4 +24,4 @@ unit_test.nsteps = 1000
 unit_test.density       = 1.0e7
 unit_test.temperature   = 1.0e8
 
-<yinit_nuc>(0)
+<initial_mass_fractions>(0)
