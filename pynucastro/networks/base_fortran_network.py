@@ -514,8 +514,11 @@ class BaseFortranNetwork(ABC, RateCollection):
             of.write(f"{self.indent*n_indent}state_in % xn(j{n}) = initial_mass_fraction_{n}\n")
 
     def _initial_mass_fractions(self, n_indent, of):
-        for n in self.unique_nuclei:
-            of.write(f"{self.indent*n_indent}initial_mass_fraction_{n} = 0.0d0\n")
+        for i, n in enumerate(self.unique_nuclei):
+            if i == 0:
+                of.write(f"{self.indent*n_indent}unit_test.X{i+1} = 1.0\n")
+            else:
+                of.write(f"{self.indent*n_indent}unit_test.X{i+1} = 0.0\n")
 
     def _final_net_print(self, n_indent, of):
         for n in self.unique_nuclei:
