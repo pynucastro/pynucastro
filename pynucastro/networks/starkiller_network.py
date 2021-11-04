@@ -102,14 +102,6 @@ class StarKillerNetwork(BaseFortranNetwork):
         # Return row count and column index lists
         return row_count, col_index
 
-    def _initial_mass_fractions(self, n_indent, of):
-        # Redefine initial mass fractions tag to set the
-        # mass fractions in the burn_cell unit test inputs file.
-        for i, n in enumerate(self.unique_nuclei):
-            of.write(f"\n! {str(n): <5} initial mass fraction\n")
-            of.write("{}massfractions({}) = 0.0d0\n".format(
-                self.indent*n_indent, i+1))
-
     def _sparse_jac_nnz(self, n_indent, of):
         of.write('{}integer, parameter   :: NETWORK_SPARSE_JAC_NNZ = {}\n'.format(
             self.indent*n_indent, self.get_sparse_jac_nnz()))
