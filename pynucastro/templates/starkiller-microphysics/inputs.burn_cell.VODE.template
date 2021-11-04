@@ -1,34 +1,27 @@
-&PROBIN
+unit_test.run_prefix = "react_pynucastro_"
 
-  run_prefix = "react_pynucastro_"
-  
-  small_temp = 1d5
-  small_dens = 1d5
-  
-  burner_verbose = .false.
+unit_test.small_temp = 1e5
+unit_test.small_dens = 1e5
 
-  ! Set which jacobian to use
-  ! 1 = analytic jacobian
-  ! 2 = numerical jacobian
-  jacobian   = 1
+integrator.burner_verbose = 0
 
-  renormalize_abundances = .true.
+# Set which jacobian to use
+# 1 = analytic jacobian
+# 2 = numerical jacobian
+integrator.jacobian = 1
 
-  rtol_spec = 1.0d-9
-  rtol_enuc = 1.0d-6
-  atol_spec = 1.0d-9
-  atol_enuc = 1.0d-6
+integrator.renormalize_abundances = 0
 
-/
+integrator.rtol_spec = 1.0e-6
+integrator.rtol_enuc = 1.0e-6
+integrator.atol_spec = 1.0e-6
+integrator.atol_enuc = 1.0e-6
 
-&cellparams
 
-  tmax     = 1.0d0
-  numsteps = 1000
+unit_test.tmax  = 1.0
+unit_test.nsteps = 1000
 
-  density       = 1.0d7
-  temperature   = 1.0d8
+unit_test.density       = 1.0e7
+unit_test.temperature   = 1.0e8
 
-  <initial_mass_fractions>(1)
-
-/
+<yinit_nuc>(0)

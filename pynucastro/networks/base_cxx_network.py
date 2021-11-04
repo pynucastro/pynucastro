@@ -50,7 +50,6 @@ class BaseCxxNetwork(ABC, RateCollection):
         # a dictionary of functions to call to handle specific parts
         # of the C++ template
         self.ftags = OrderedDict()
-        self.ftags['<nrates>'] = self._nrates
         self.ftags['<nrat_reaclib>'] = self._nrat_reaclib
         self.ftags['<nrat_tabular>'] = self._nrat_tabular
         self.ftags['<nrxn>'] = self._nrxn
@@ -59,8 +58,6 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.ftags['<compute_screening_factors>'] = self._compute_screening_factors
         self.ftags['<write_reaclib_metadata>'] = self._write_reaclib_metadata
         self.ftags['<table_num>'] = self._table_num
-        self.ftags['<public_table_indices>'] = self._public_table_indices
-        self.ftags['<table_indices>'] = self._table_indices
         self.ftags['<declare_tables>'] = self._declare_tables
         self.ftags['<table_declare_meta>'] = self._table_declare_meta
         self.ftags['<table_init_meta>'] = self._table_init_meta
@@ -70,7 +67,6 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.ftags['<ydot>'] = self._ydot
         self.ftags['<enuc_add_energy_rate>'] = self._enuc_add_energy_rate
         self.ftags['<jacnuc>'] = self._jacnuc
-        self.ftags['<yinit_nuc>'] = self._yinit_nuc
         self.ftags['<initial_mass_fractions>'] = self._initial_mass_fractions
         self.ftags['<pynucastro_home>'] = self._pynucastro_home
         self.ftags['<secret_code>'] = self._secret_code_write
@@ -138,11 +134,6 @@ class BaseCxxNetwork(ABC, RateCollection):
                     shutil.copy(tdat_file, os.getcwd())
                 else:
                     print(f'WARNING: Table data file {tr.table_file} not found.')
-
-    def _nrates(self, n_indent, of):
-        of.write('{}integer, parameter :: nrates = {}\n'.format(
-            self.indent*n_indent,
-            len(self.rates)))
 
     def compose_ydot(self):
         """create the expressions for dYdt for the nuclei, where Y is the
@@ -284,17 +275,6 @@ class BaseCxxNetwork(ABC, RateCollection):
     def _table_num(self, n_indent, of):
         of.write(f'{self.indent*n_indent}const int num_tables = {len(self.tabular_rates)};\n')
 
-    def _public_table_indices(self, n_indent, of):
-        for irate in self.tabular_rates:
-            r = self.rates[irate]
-            of.write(f'{self.indent*n_indent}public {r.table_index_name}\n')
-
-    def _table_indices(self, n_indent, of):
-        for n,irate in enumerate(self.tabular_rates):
-            r = self.rates[irate]
-            of.write('{}integer, parameter :: {}   = {}\n'.format(
-                self.indent*n_indent, r.table_index_name, n+1))
-
     def _declare_tables(self, n_indent, of):
         for irate in self.tabular_rates:
             r = self.rates[irate]
@@ -414,13 +394,12 @@ class BaseCxxNetwork(ABC, RateCollection):
                     of.write(f"{self.indent*(n_indent)}scratch = {jvalue};\n")
                     of.write(f"{self.indent*n_indent}jac.set({nj.c()}, {ni.c()}, scratch);\n\n")
 
-    def _yinit_nuc(self, n_indent, of):
-        for n in self.unique_nuclei:
-            of.write(f"{self.indent*n_indent}state_in % xn(j{n}) = initial_mass_fraction_{n}\n")
-
     def _initial_mass_fractions(self, n_indent, of):
-        for n in self.unique_nuclei:
-            of.write(f"{self.indent*n_indent}initial_mass_fraction_{n} = 0.0d0\n")
+        for i, n in enumerate(self.unique_nuclei):
+            if i == 0:
+                of.write(f"{self.indent*n_indent}unit_test.X{i+1} = 1.0\n")
+            else:
+                of.write(f"{self.indent*n_indent}unit_test.X{i+1} = 0.0\n")
 
     def _pynucastro_home(self, n_indent, of):
         of.write('{}PYNUCASTRO_HOME := {}\n'.format(self.indent*n_indent,
