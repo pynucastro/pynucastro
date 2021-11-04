@@ -62,6 +62,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.ftags['<public_table_indices>'] = self._public_table_indices
         self.ftags['<table_indices>'] = self._table_indices
         self.ftags['<declare_tables>'] = self._declare_tables
+        self.ftags['<table_declare_meta>'] = self._table_declare_meta
         self.ftags['<table_init_meta>'] = self._table_init_meta
         self.ftags['<table_term_meta>'] = self._table_term_meta
         self.ftags['<table_rates_indices>'] = self._table_rates_indices
@@ -135,10 +136,6 @@ class BaseCxxNetwork(ABC, RateCollection):
                 tdat_file = os.path.join(tdir, tr.table_file)
                 if os.path.isfile(tdat_file):
                     shutil.copy(tdat_file, os.getcwd())
-                    #Rename *.dat to *.network.dat
-                    copy_tdat = os.path.join(os.getcwd(), os.path.basename(tdat_file))
-                    renamed_tdat = copy_tdat.replace('.dat', '.network.dat')
-                    os.rename(copy_tdat, renamed_tdat)
                 else:
                     print(f'WARNING: Table data file {tr.table_file} not found.')
 
@@ -239,7 +236,7 @@ class BaseCxxNetwork(ABC, RateCollection):
 
     def _nrat_tabular(self, n_indent, of):
         # Writes the number of tabular rates
-        of.write(f'{self.indent*n_indent}const int NratTabular = {len(self.tabular_rates)};\n')
+        of.write(f'{self.indent*n_indent}const int NrateTabular = {len(self.tabular_rates)};\n')
 
     def _nrxn(self, n_indent, of):
         for i,r in enumerate(self.rates):
@@ -285,8 +282,7 @@ class BaseCxxNetwork(ABC, RateCollection):
                 of.write(f'{j}\n')
 
     def _table_num(self, n_indent, of):
-        of.write('{}integer, parameter :: num_tables   = {}\n'.format(
-            self.indent*n_indent, len(self.tabular_rates)))
+        of.write(f'{self.indent*n_indent}const int num_tables = {len(self.tabular_rates)};\n')
 
     def _public_table_indices(self, n_indent, of):
         for irate in self.tabular_rates:
@@ -302,56 +298,38 @@ class BaseCxxNetwork(ABC, RateCollection):
     def _declare_tables(self, n_indent, of):
         for irate in self.tabular_rates:
             r = self.rates[irate]
-            of.write('{}real(rt), allocatable :: rate_table_{}(:,:,:), rhoy_table_{}(:), temp_table_{}(:)\n'.format(
-                self.indent*n_indent, r.table_index_name, r.table_index_name, r.table_index_name))
-            of.write('{}integer, allocatable  :: num_rhoy_{}, num_temp_{}, num_vars_{}\n'.format(
-                self.indent*n_indent, r.table_index_name, r.table_index_name, r.table_index_name))
-            of.write('{}character(len=50)     :: rate_table_file_{}\n'.format(
-                self.indent*n_indent, r.table_index_name))
-            of.write('{}integer               :: num_header_{}\n'.format(
-                self.indent*n_indent, r.table_index_name))
+            idnt = self.indent*n_indent
+
+            of.write(f'{idnt}extern AMREX_GPU_MANAGED table_t {r.table_index_name}_meta;\n')
+            of.write(f'{idnt}extern AMREX_GPU_MANAGED Array3D<Real, 1, {r.table_temp_lines}, 1, {r.table_rhoy_lines}, 1, {r.table_num_vars}> {r.table_index_name}_data;\n')
+            of.write(f'{idnt}extern AMREX_GPU_MANAGED Array1D<Real, 1, {r.table_rhoy_lines}> {r.table_index_name}_rhoy;\n')
+            of.write(f'{idnt}extern AMREX_GPU_MANAGED Array1D<Real, 1, {r.table_temp_lines}> {r.table_index_name}_temp;\n')
             of.write('\n')
+
+    def _table_declare_meta(self, n_indent, of):
+        for irate in self.tabular_rates:
+            r = self.rates[irate]
+            idnt = self.indent*n_indent
+
+            of.write(f"{idnt}AMREX_GPU_MANAGED table_t {r.table_index_name}_meta;\n")
+
+            of.write(f'{idnt}AMREX_GPU_MANAGED Array3D<Real, 1, {r.table_temp_lines}, 1, {r.table_rhoy_lines}, 1, {r.table_num_vars}> {r.table_index_name}_data;\n')
+
+            of.write(f'{idnt}AMREX_GPU_MANAGED Array1D<Real, 1, {r.table_rhoy_lines}> {r.table_index_name}_rhoy;\n');
+            of.write(f'{idnt}AMREX_GPU_MANAGED Array1D<Real, 1, {r.table_temp_lines}> {r.table_index_name}_temp;\n\n');
 
     def _table_init_meta(self, n_indent, of):
         for irate in self.tabular_rates:
             r = self.rates[irate]
+            idnt = self.indent*n_indent
+            of.write(f'{idnt}{r.table_index_name}_meta.ntemp = {r.table_temp_lines};\n')
+            of.write(f'{idnt}{r.table_index_name}_meta.nrhoy = {r.table_rhoy_lines};\n')
+            of.write(f'{idnt}{r.table_index_name}_meta.nvars = {r.table_num_vars};\n')
+            of.write(f'{idnt}{r.table_index_name}_meta.nheader = {r.table_header_lines};\n')
+            of.write(f'{idnt}{r.table_index_name}_meta.file = "{r.table_file}";\n\n')
 
-            of.write('{}allocate(num_temp_{})\n'.format(
-                self.indent*n_indent, r.table_index_name))
 
-            of.write('{}allocate(num_rhoy_{})\n'.format(
-                self.indent*n_indent, r.table_index_name))
-
-            of.write('{}allocate(num_vars_{})\n'.format(
-                self.indent*n_indent, r.table_index_name))
-
-            of.write('{}num_temp_{} = {}\n'.format(
-                self.indent*n_indent, r.table_index_name, r.table_temp_lines))
-
-            of.write('{}num_rhoy_{} = {}\n'.format(
-                self.indent*n_indent, r.table_index_name, r.table_rhoy_lines))
-
-            of.write('{}num_vars_{} = {}\n'.format(
-                self.indent*n_indent, r.table_index_name, r.table_num_vars))
-
-            of.write('{}num_header_{} = {}\n'.format(
-                self.indent*n_indent, r.table_index_name, r.table_header_lines))
-
-            of.write('{}rate_table_file_{} = trim("{}")\n'.format(
-                self.indent*n_indent, r.table_index_name, r.table_file))
-
-            of.write('{}allocate(rate_table_{}(num_temp_{}, num_rhoy_{}, num_vars_{}))\n'.format(
-                self.indent*n_indent, r.table_index_name, r.table_index_name, r.table_index_name, r.table_index_name))
-
-            of.write('{}allocate(rhoy_table_{}(num_rhoy_{}))\n'.format(
-                self.indent*n_indent, r.table_index_name, r.table_index_name))
-
-            of.write('{}allocate(temp_table_{}(num_temp_{}))\n'.format(
-                self.indent*n_indent, r.table_index_name, r.table_index_name))
-
-            of.write('{}call init_tab_info(rate_table_{}, rhoy_table_{}, temp_table_{}, num_rhoy_{}, num_temp_{}, num_vars_{}, rate_table_file_{}, num_header_{})\n'.format(
-                self.indent*n_indent, r.table_index_name, r.table_index_name, r.table_index_name, r.table_index_name,
-                r.table_index_name, r.table_index_name, r.table_index_name, r.table_index_name))
+            of.write(f'{idnt}init_tab_info({r.table_index_name}_meta, {r.table_index_name}_rhoy, {r.table_index_name}_temp, {r.table_index_name}_data);\n\n')
 
             of.write('\n')
 
@@ -389,15 +367,18 @@ class BaseCxxNetwork(ABC, RateCollection):
 
     def _compute_tabular_rates(self, n_indent, of):
         if len(self.tabular_rates) > 0:
-            of.write(f'{self.indent*n_indent}! Calculate tabular rates\n')
-            for n, irate in enumerate(self.tabular_rates):
+
+            idnt = self.indent*n_indent
+
+            for irate in self.tabular_rates:
                 r = self.rates[irate]
-                of.write(f'{self.indent*n_indent}call tabular_evaluate(rate_table_{r.table_index_name}, rhoy_table_{r.table_index_name}, temp_table_{r.table_index_name}, &\n')
-                of.write(f'{self.indent*n_indent}                      num_rhoy_{r.table_index_name}, num_temp_{r.table_index_name}, num_vars_{r.table_index_name}, &\n')
-                of.write(f'{self.indent*n_indent}                      rhoy, state % T, rate, drate_dt, edot_nu)\n')
-                of.write(f'{self.indent*n_indent}rate_eval % unscreened_rates(i_rate,{n+1+len(self.reaclib_rates)}) = rate\n')
-                of.write(f'{self.indent*n_indent}rate_eval % unscreened_rates(i_drate_dt,{n+1+len(self.reaclib_rates)}) = drate_dt\n')
-                of.write(f'{self.indent*n_indent}rate_eval % add_energy_rate({n+1})  = edot_nu\n')
+
+                of.write(f'{idnt}tabular_evaluate({r.table_index_name}_meta, {r.table_index_name}_rhoy, {r.table_index_name}_temp, {r.table_index_name}_data,\n')
+                of.write(f'{idnt}                 rhoy, state.T, rate, drate_dt, edot_nu);\n')
+
+                of.write(f'{idnt}rate_eval.unscreened_rates(i_rate, k_{r.fname}) = rate;\n')
+                of.write(f'{idnt}rate_eval.unscreened_rates(i_drate_dt, k_{r.fname}) = drate_dt;\n')
+                of.write(f'{idnt}rate_eval.add_energy_rate(k_{r.fname}) = edot_nu;\n')
                 of.write('\n')
 
     def _ydot(self, n_indent, of):
@@ -410,14 +391,16 @@ class BaseCxxNetwork(ABC, RateCollection):
     def _enuc_add_energy_rate(self, n_indent, of):
         # Add tabular per-reaction neutrino energy generation rates to the energy generation rate
         # (not thermal neutrinos)
+
+        idnt = self.indent * n_indent
+
         for nr, r in enumerate(self.rates):
             if nr in self.tabular_rates:
                 if len(r.reactants) != 1:
                     sys.exit('ERROR: Unknown energy rate corrections for a reaction where the number of reactants is not 1.')
                 else:
                     reactant = r.reactants[0]
-                    of.write('{}enuc = enuc + N_AVO * {}(j{}) * rate_eval % add_energy_rate({})\n'.format(
-                        self.indent*n_indent, self.symbol_rates.name_y, reactant, r.table_index_name))
+                    of.write(f'{idnt}enuc += C::n_A * {self.symbol_rates.name_y}({reactant.c()}) * rate_eval.add_energy_rate(k_{r.fname});\n')
 
     def _jacnuc(self, n_indent, of):
         # now make the Jacobian
