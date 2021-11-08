@@ -12,3 +12,4 @@ pytest>=3.6
 nbval>=0.9.0
 numba>=0.40
 pytest-cov>=2.6.0
+setuptools_scm>=6.2

@@ -12,4 +12,6 @@ setup(name='pynucastro',
       install_requires=['networkx', 'numpy', 'numba',
                         'sympy', 'scipy', 'matplotlib',
                         'ipywidgets', 'numba'],
+      use_scm_version={"version_scheme": "post-release",
+                       "write_to": "pynucastro/_version.py"},
       zip_safe=False)
