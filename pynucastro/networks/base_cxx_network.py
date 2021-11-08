@@ -380,7 +380,7 @@ class BaseCxxNetwork(ABC, RateCollection):
                     sys.exit('ERROR: Unknown energy rate corrections for a reaction where the number of reactants is not 1.')
                 else:
                     reactant = r.reactants[0]
-                    of.write(f'{idnt}enuc += C::n_A * {self.symbol_rates.name_y}({reactant.c()}) * rate_eval.add_energy_rate(k_{r.fname});\n')
+                    of.write(f'{idnt}enuc += C::Legacy::n_A * {self.symbol_rates.name_y}({reactant.c()}) * rate_eval.add_energy_rate(k_{r.fname});\n')
 
     def _jacnuc(self, n_indent, of):
         # now make the Jacobian
