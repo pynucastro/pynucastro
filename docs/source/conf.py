@@ -20,7 +20,7 @@
 import os
 import sys
 import sphinx_rtd_theme
-from importlib.metadata import version
+from importlib.metadata import version as importlib_version
 sys.path.insert(0, os.path.abspath('..'))
 
 
@@ -62,7 +62,7 @@ author = 'Michael Zingale and Donald Willcox'
 # built documents.
 #
 # The full version, including alpha/beta/rc tags.
-release = version("pynucastro")
+release = importlib_version("pynucastro")
 
 # The short X.Y version.
 version = '.'.join(release.split('.')[:2])
