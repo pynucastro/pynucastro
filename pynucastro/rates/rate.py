@@ -322,20 +322,6 @@ class Library:
             else:
                 nuc = rnuc
         return nuc
-        
-    def write_to_file(self, filename, prepend_rates_dir=False):
-        """
-        Write the library out to a file of the given name in Reaclib format. The path to
-        the pynucastro/libary directory will be prepended to the supplied file name if
-        True is passed as the second argument.
-        """
-        
-        if prepend_rates_dir:
-            filename = os.path.join(self.pynucastro_rates_dir, filename)
-            
-        with open(filename, 'w') as f:
-            for rate in self.get_rates():
-                rate.write_to_file(f)
 
     def _add_from_rate_list(self, ratelist):
         """ Add to the rate dictionary from the supplied list of Rate objects. """
@@ -1071,16 +1057,6 @@ class Rate:
                 a = [float(e) for e in a if not e.strip() == ""]
                 self.sets.append(SingleSet(a, labelprops=labelprops))
                 self._set_label_properties(labelprops)
-                
-    def write_to_file(self, f):
-        """ given an open file object, write rate data to the file. """
-
-        if self.original_source is None:
-            raise NotImplementedError("Original source is not stored for this rate ({}).".format(self)
-                    + " At present, we cannot reconstruct the rate representation without"
-                    + " storing the original source.")
-
-        print(self.original_source, file=f)
 
     def _set_rhs_properties(self):
         """ compute statistical prefactor and density exponent from the reactants. """
