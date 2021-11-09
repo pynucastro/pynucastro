@@ -46,11 +46,21 @@ print(r.eval(1.0e9))
 
 ```
 
-Also see the Jupyter notebooks:
+An extensive demonstration of the capabilities of pynucastro is shown in this notebook:
 
-  * [pynucastro-examples.ipynb](https://github.com/pynucastro/pynucastro/blob/main/examples/pynucastro-examples.ipynb)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/pynucastro/pynucastro/main?filepath=examples%2Fpynucastro-examples.ipynb)
 
-  * [interactive-example.ipynb](https://github.com/pynucastro/pynucastro/blob/main/examples/interactive-example.ipynb)
+[pynucastro-examples.ipynb](https://github.com/pynucastro/pynucastro/blob/main/examples/pynucastro-examples.ipynb)
+
+
+We can also interactively explore a reaction network.  Here's an example of hot-CNO with breakout reactions:
+
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/pynucastro/pynucastro/HEAD?labpath=examples%2Fhot-CNO-breakout-example.ipynb)
+
+by increasing the temperature, you can see the transition from CNO to
+hot-CNO (proton captures on C13 become faster than the beta decay) and
+then the breakout of hot-CNO when the alpha capture on O14 becomes
+faster than its decay.
 
 
 # install
@@ -69,7 +79,7 @@ the default location python searches for packages.
 
 # requirements
 
-This package requires Python 3 (release 3.4 or later) and the following Python packages:
+This package requires Python 3 (release 3.6 or later) and the following Python packages:
 
 * `numpy`
 
@@ -82,6 +92,10 @@ This package requires Python 3 (release 3.4 or later) and the following Python p
 * `networkx`
 
 * `ipywidgets`
+
+* `numba`
+
+* `setuptools_scm`
 
 To build the documentation or run the unit tests, `sphinx` and
 `pytest` are additionally required along with some supporting
@@ -96,21 +110,18 @@ pip install -r requirements.txt
 
 We use py.test to do unit tests.  In `pynucastro/`, do:
 ```
-py.test -v .
+pytest -v .
 ```
 
 to see coverage, do:
 ```
-py.test --cov=pynucastro .
+pytest --cov=pynucastro .
 ```
 
 to test the notebooks, do:
 ```
 py.test --nbval examples
 ```
-
-If your OS has both Python 2 and Python 3 installed you may need to
-invoke `pytest` as `py.test-3` when running the unit tests.
 
 
 # Core Developers
