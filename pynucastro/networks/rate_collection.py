@@ -569,8 +569,6 @@ class RateCollection:
             plt.tight_layout()
             plt.savefig(outfile, dpi=dpi)
 
-        return fig
-
     @staticmethod
     def _safelog(arr, small):
 
