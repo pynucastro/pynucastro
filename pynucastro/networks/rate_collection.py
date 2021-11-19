@@ -395,8 +395,12 @@ class RateCollection:
         print('To create network integration source code, use a class that implements a specific network type.')
         return
 
-    def plot(self, outfile=None, rho=None, T=None, comp=None, size=(800, 600), dpi=100, title=None,
-             ydot_cutoff_value=None, always_show_p=False, always_show_alpha=False, filter_function=None):
+    def plot(self, outfile=None, rho=None, T=None, comp=None,
+             size=(800, 600), dpi=100, title=None,
+             ydot_cutoff_value=None,
+             node_size=1000, node_font_size=13, node_color="#A0CBE2", node_shape="o",
+             N_range=None, Z_range=None,
+             always_show_p=False, always_show_alpha=False, filter_function=None):
         """Make a plot of the network structure showing the links between nuclei"""
 
         G = nx.MultiDiGraph()
@@ -481,33 +485,38 @@ class RateCollection:
 
         try:
             nx.draw_networkx_nodes(G, G.position,      # plot the element at the correct position
-                                   node_color="#A0CBE2", alpha=1.0,
-                                   node_shape="o", node_size=1000, linewidth=2.0, zorder=10, ax=ax)
+                                   node_color=node_color, alpha=1.0,
+                                   node_shape=node_shape, node_size=node_size, linewidth=2.0, zorder=10, ax=ax)
         except TypeError:
             nx.draw_networkx_nodes(G, G.position,      # plot the element at the correct position
-                                   node_color="#A0CBE2", alpha=1.0,
-                                   node_shape="o", node_size=1000, linewidths=2.0, ax=ax)
+                                   node_color=node_color, alpha=1.0,
+                                   node_shape=node_shape, node_size=node_size, linewidths=2.0, ax=ax)
 
         try:
             nx.draw_networkx_labels(G, G.position, G.labels,   # label the name of element at the correct position
-                                    font_size=13, font_color="w", zorder=100, ax=ax)
+                                    font_size=node_font_size, font_color="w", zorder=100, ax=ax)
         except TypeError:
             nx.draw_networkx_labels(G, G.position, G.labels,   # label the name of element at the correct position
-                                    font_size=13, font_color="w", ax=ax)
+                                    font_size=node_font_size, font_color="w", ax=ax)
 
         # get the edges and weights coupled in the same order
         edges, weights = zip(*nx.get_edge_attributes(G, 'weight').items())
 
         # plot the arrow of reaction
+        if ydots is not None:
+            edge_color=weights
+        else:
+            edge_color="0.5"
+
         try:
             edges_lc = nx.draw_networkx_edges(G, G.position, width=3,    # plot the arrow of reaction
-                                              edgelist=edges, edge_color=weights,
-                                              node_size=1000,
+                                              edgelist=edges, edge_color=edge_color,
+                                              node_size=node_size,
                                               edge_cmap=plt.cm.viridis, zorder=1, ax=ax)
         except TypeError:
             edges_lc = nx.draw_networkx_edges(G, G.position, width=3,    # plot the arrow of reaction
-                                              edgelist=edges, edge_color=weights,
-                                              node_size=1000,
+                                              edgelist=edges, edge_color=edge_color,
+                                              node_size=node_size,
                                               edge_cmap=plt.cm.viridis, ax=ax)
 
         # for networkx <= 2.0 draw_networkx_edges returns a
@@ -542,7 +551,12 @@ class RateCollection:
         ax.xaxis.set_major_locator(MaxNLocator(integer=True))
         ax.yaxis.set_major_locator(MaxNLocator(integer=True))
 
+        if Z_range is not None and N_range is not None:
+            ax.set_xlim(N_range[0], N_range[1])
+            ax.set_ylim(Z_range[0], Z_range[1])
+
         ax.set_aspect("equal", "datalim")
+
 
         fig.set_size_inches(size[0]/dpi, size[1]/dpi)
 
@@ -554,6 +568,8 @@ class RateCollection:
         else:
             plt.tight_layout()
             plt.savefig(outfile, dpi=dpi)
+
+        return fig
 
     @staticmethod
     def _safelog(arr, small):
