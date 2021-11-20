@@ -399,8 +399,8 @@ class RateCollection:
              size=(800, 600), dpi=100, title=None,
              ydot_cutoff_value=None,
              node_size=1000, node_font_size=13, node_color="#A0CBE2", node_shape="o",
-             N_range=None, Z_range=None,
-             always_show_p=False, always_show_alpha=False, filter_function=None):
+             N_range=None, Z_range=None, rotated=False,
+             always_show_p=False, always_show_alpha=False, hide_xalpha=False, filter_function=None):
         """Make a plot of the network structure showing the links between nuclei"""
 
         G = nx.MultiDiGraph()
@@ -411,7 +411,7 @@ class RateCollection:
         #divider = make_axes_locatable(ax)
         #cax = divider.append_axes('right', size='15%', pad=0.05)
 
-        ax.plot([0, 0], [8, 8], 'b-')
+        #ax.plot([0, 0], [8, 8], 'b-')
 
         # in general, we do not show p, n, alpha,
         # unless we have p + p, 3-a, etc.
@@ -438,7 +438,10 @@ class RateCollection:
 
         for n in node_nuclei:
             G.add_node(n)
-            G.position[n] = (n.N, n.Z)
+            if rotated:
+                G.position[n] = (n.Z, n.A - 2*n.Z)
+            else:
+                G.position[n] = (n.N, n.Z)
             G.labels[n] = fr"${n.pretty}$"
 
         # get the rates for each reaction
@@ -459,6 +462,24 @@ class RateCollection:
             for r in self.nuclei_consumed[n]:
                 for p in r.products:
                     if p in node_nuclei:
+
+                        if hide_xalpha:
+                            # for rates that are A (x, alpha) B, where A and B are heavy nuclei,
+                            # don't show the connection of the nucleus to alpha, only show it to B
+                            if p.Z == 2 and p.A == 4:
+                                continue
+
+                            # likewise, hide A (alpha, x) B, unless A itself is an alpha
+                            c = r.reactants
+                            n_alpha = 0
+                            for nuc in c:
+                                if nuc.Z == 2 and nuc.A == 4:
+                                    n_alpha += 1
+                            # if there is only 1 alpha and we are working on the alpha node,
+                            # then skip
+                            if n_alpha == 1 and n.Z == 2 and n.A == 4:
+                                continue
+
                         # networkx doesn't seem to keep the edges in
                         # any particular order, so we associate data
                         # to the edges here directly, in this case,
@@ -483,41 +504,30 @@ class RateCollection:
         # It seems that networkx broke backwards compatability, and 'zorder' is no longer a valid
         # keyword argument. The 'linewidth' argument has also changed to 'linewidths'.
 
-        try:
-            nx.draw_networkx_nodes(G, G.position,      # plot the element at the correct position
-                                   node_color=node_color, alpha=1.0,
-                                   node_shape=node_shape, node_size=node_size, linewidth=2.0, zorder=10, ax=ax)
-        except TypeError:
-            nx.draw_networkx_nodes(G, G.position,      # plot the element at the correct position
-                                   node_color=node_color, alpha=1.0,
-                                   node_shape=node_shape, node_size=node_size, linewidths=2.0, ax=ax)
+        nx.draw_networkx_nodes(G, G.position,      # plot the element at the correct position
+                               node_color=node_color, alpha=1.0,
+                               node_shape=node_shape, node_size=node_size, linewidths=2.0, ax=ax)
 
-        try:
-            nx.draw_networkx_labels(G, G.position, G.labels,   # label the name of element at the correct position
-                                    font_size=node_font_size, font_color="w", zorder=100, ax=ax)
-        except TypeError:
-            nx.draw_networkx_labels(G, G.position, G.labels,   # label the name of element at the correct position
-                                    font_size=node_font_size, font_color="w", ax=ax)
+        nx.draw_networkx_labels(G, G.position, G.labels,   # label the name of element at the correct position
+                                font_size=node_font_size, font_color="w", ax=ax)
 
         # get the edges and weights coupled in the same order
         edges, weights = zip(*nx.get_edge_attributes(G, 'weight').items())
 
-        # plot the arrow of reaction
-        if ydots is not None:
-            edge_color=weights
-        else:
-            edge_color="0.5"
+        edge_color=weights
+        ww = np.array(weights)
+        min_weight = ww.min()
+        max_weight = ww.max()
+        dw = (max_weight - min_weight)/4
+        widths = np.ones_like(ww)
+        widths[ww > min_weight + dw] = 1.5
+        widths[ww > min_weight + 2*dw] = 2.5
+        widths[ww > min_weight + 3*dw] = 4
 
-        try:
-            edges_lc = nx.draw_networkx_edges(G, G.position, width=3,    # plot the arrow of reaction
-                                              edgelist=edges, edge_color=edge_color,
-                                              node_size=node_size,
-                                              edge_cmap=plt.cm.viridis, zorder=1, ax=ax)
-        except TypeError:
-            edges_lc = nx.draw_networkx_edges(G, G.position, width=3,    # plot the arrow of reaction
-                                              edgelist=edges, edge_color=edge_color,
-                                              node_size=node_size,
-                                              edge_cmap=plt.cm.viridis, ax=ax)
+        edges_lc = nx.draw_networkx_edges(G, G.position, width=list(widths),    # plot the arrow of reaction
+                                          edgelist=edges, edge_color=edge_color,
+                                          node_size=node_size,
+                                          edge_cmap=plt.cm.viridis, ax=ax)
 
         # for networkx <= 2.0 draw_networkx_edges returns a
         # LineCollection matplotlib type which we can use for the
@@ -529,15 +539,27 @@ class RateCollection:
         if ydots is not None:
             pc = mpl.collections.PatchCollection(edges_lc, cmap=plt.cm.viridis)
             pc.set_array(weights)
-            plt.colorbar(pc, label="log10(rate)")
+            if not rotated:
+                plt.colorbar(pc, ax=ax, label="log10(rate)")
+            else:
+                plt.colorbar(pc, ax=ax, label="log10(rate)", orientation="horizontal", fraction=0.05)
 
         Ns = [n.N for n in node_nuclei]
         Zs = [n.Z for n in node_nuclei]
 
-        plt.xlim(min(Ns)-1, max(Ns)+1)
+        if not rotated:
+            ax.set_xlim(min(Ns)-1, max(Ns)+1)
+        else:
+            ax.set_xlim(min(Zs)-1, max(Zs)+1)
+
         #plt.ylim(min(Zs)-1, max(Zs)+1)
-        plt.xlabel(r"$N$", fontsize="large")
-        plt.ylabel(r"$Z$", fontsize="large")
+
+        if not rotated:
+            plt.xlabel(r"$N$", fontsize="large")
+            plt.ylabel(r"$Z$", fontsize="large")
+        else:
+            plt.xlabel(r"$Z$", fontsize="large")
+            plt.ylabel(r"$A - 2Z$", fontsize="large")
 
         ax.spines['right'].set_visible(False)
         ax.spines['top'].set_visible(False)
@@ -552,11 +574,14 @@ class RateCollection:
         ax.yaxis.set_major_locator(MaxNLocator(integer=True))
 
         if Z_range is not None and N_range is not None:
-            ax.set_xlim(N_range[0], N_range[1])
-            ax.set_ylim(Z_range[0], Z_range[1])
+            if not rotated:
+                ax.set_xlim(N_range[0], N_range[1])
+                ax.set_ylim(Z_range[0], Z_range[1])
+            else:
+                ax.set_xlim(Z_range[0], Z_range[1])
 
-        ax.set_aspect("equal", "datalim")
-
+        if not rotated:
+            ax.set_aspect("equal", "datalim")
 
         fig.set_size_inches(size[0]/dpi, size[1]/dpi)
 
