@@ -2,7 +2,6 @@
 rates that together make up a network."""
 
 # Common Imports
-from __future__ import print_function
 import warnings
 import functools
 import math
@@ -66,7 +65,7 @@ class Composition:
 
     def normalize(self):
         """ normalize the mass fractions to sum to 1 """
-        X_sum = sum([self.X[k] for k in self.X])
+        X_sum = sum(self.X[k] for k in self.X)
 
         for k in self.X:
             self.X[k] /= X_sum
@@ -94,7 +93,7 @@ class Composition:
     def __str__(self):
         ostr = ""
         for k in self.X:
-            ostr += "  X({}) : {}\n".format(k, self.X[k])
+            ostr += f"  X({k}) : {self.X[k]}\n"
         return ostr
 
 class RateCollection:
@@ -114,7 +113,7 @@ class RateCollection:
 
         If rates is supplied, initialize a RateCollection using the
         Rate objects in the list 'rates'.
-        
+
         Precedence should be sequence of rate labels (e.g. wc17) to be used to
         resolve name conflicts. If a nonempty sequence is provided, the rate
         collection will automatically be scanned for multiple rates with the
@@ -167,7 +166,7 @@ class RateCollection:
 
         if self.library:
             self.rates = self.rates + self.library.get_rates()
-            
+
         if precedence:
             self._make_distinguishable(precedence)
 
@@ -216,7 +215,7 @@ class RateCollection:
             try:
                 rflib = Library(rf)
             except:
-                print("Error reading library from file: {}".format(rf))
+                print(f"Error reading library from file: {rf}")
                 raise
             else:
                 if not self.library:
@@ -243,16 +242,16 @@ class RateCollection:
             rvals[r] = yfac * val
 
         return rvals
-        
+
     def evaluate_ydots(self, rho, T, composition):
         """evaluate net rate of change of molar abundance for each nucleus
         for a specific density, temperature, and composition"""
-        
+
         rvals = self.evaluate_rates(rho, T, composition)
         ydots = dict()
-        
+
         for nuc in self.unique_nuclei:
-            
+
             # Rates that consume / produce nuc
             consuming_rates = self.nuclei_consumed[nuc]
             producing_rates = self.nuclei_produced[nuc]
@@ -264,18 +263,18 @@ class RateCollection:
             produced = (c * rvals[r] for c, r in zip(nproduced, producing_rates))
             # Net change is difference between produced and consumed
             ydots[nuc] = sum(produced) - sum(consumed)
-            
+
         return ydots
-        
+
     def evaluate_activity(self, rho, T, composition):
         """sum over all of the terms contributing to ydot,
         neglecting sign"""
-        
+
         rvals = self.evaluate_rates(rho, T, composition)
         act = dict()
-        
+
         for nuc in self.unique_nuclei:
-            
+
             # Rates that consume / produce nuc
             consuming_rates = self.nuclei_consumed[nuc]
             producing_rates = self.nuclei_produced[nuc]
@@ -287,24 +286,62 @@ class RateCollection:
             produced = (c * rvals[r] for c, r in zip(nproduced, producing_rates))
             # Net activity is sum of produced and consumed
             act[nuc] = sum(produced) + sum(consumed)
-            
+
         return act
 
     def network_overview(self):
         """ return a verbose network overview """
         ostr = ""
         for n in self.unique_nuclei:
-            ostr += "{}\n".format(n)
+            ostr += f"{n}\n"
             ostr += "  consumed by:\n"
             for r in self.nuclei_consumed[n]:
-                ostr += "     {}\n".format(r.string)
+                ostr += f"     {r.string}\n"
 
             ostr += "  produced by:\n"
             for r in self.nuclei_produced[n]:
-                ostr += "     {}\n".format(r.string)
+                ostr += f"     {r.string}\n"
 
             ostr += "\n"
         return ostr
+
+    def get_screening_map(self):
+        """a screening map is just a list of tuples containing the information
+        about nuclei pairs for screening: (descriptive name of nuclei,
+        nucleus 1, nucleus 2, rate, 1-based index of rate)
+
+        """
+        screening_map = []
+        for k, r in enumerate(self.rates):
+            if r.ion_screen:
+                nucs = "_".join([str(q) for q in r.ion_screen])
+                in_map = False
+                for h, _, _, mrates, krates in screening_map:
+                    if h == nucs:
+                        # if we already have the reactants, then we
+                        # will already be doing the screening factors,
+                        # so just append this new rate to the list we
+                        # are keeping of the rates where this
+                        # screening is needed
+                        in_map = True
+                        mrates.append(r)
+                        krates.append(k+1)
+                        break
+                if not in_map:
+                    # we handle 3-alpha specially -- we actually need 2 screening factors for it
+                    if nucs == "he4_he4_he4":
+                        # he4 + he4
+                        screening_map.append((nucs, r.ion_screen[0], r.ion_screen[1],
+                                              [r], [k+1]))
+                        # he4 + be8
+                        be8 = Nucleus("Be8", dummy=True)
+                        screening_map.append((nucs+"_dummy", r.ion_screen[2], be8,
+                                              [r], [k+1]))
+
+                    else:
+                        screening_map.append((nucs, r.ion_screen[0], r.ion_screen[1],
+                                              [r], [k+1]))
+        return screening_map
 
     def write_network(self, *args, **kwargs):
         """Before writing the network, check to make sure the rates
@@ -319,38 +356,38 @@ class RateCollection:
         for n, r in zip(names, self.rates):
             k = names.count(n)
             if k > 1:
-                print('Found rate {} named {} with {} entries in the RateCollection.'.format(r, n, k))
-                print('Rate {} has the original source:\n{}'.format(r, r.original_source))
-                print('Rate {} is in chapter {}'.format(r, r.chapter))
+                print(f'Found rate {r} named {n} with {k} entries in the RateCollection.')
+                print(f'Rate {r} has the original source:\n{r.original_source}')
+                print(f'Rate {r} is in chapter {r.chapter}')
         return len(set(names)) == len(self.rates)
-        
+
     def _make_distinguishable(self, precedence):
         """If multiple rates have the same name, eliminate the extraneous ones according to their
         labels' positions in the precedence list. Only do this if all of the labels have
         rankings in the list."""
-        
-        nameset = set([r.fname for r in self.rates])
+
+        nameset = {r.fname for r in self.rates}
         precedence = {lab: i for i, lab in enumerate(precedence)}
         def sorting_key(i): return precedence[self.rates[i].label]
-        
+
         for n in nameset:
-            
+
             # Count instances of name, and cycle if there is only one
             ind = [i for i, r in enumerate(self.rates) if r.fname == n]
             k = len(ind)
             if k <= 1: continue
-            
+
             # If there were multiple instances, use the precedence settings to delete extraneous
             # rates
             labels = [self.rates[i].label for i in ind]
-            
-            if all((lab in precedence for lab in labels)):
-                
+
+            if all(lab in precedence for lab in labels):
+
                 sorted_ind = sorted(ind, key=sorting_key)
                 r = self.rates[sorted_ind[0]]
                 for i in sorted(sorted_ind[1:], reverse=True): del self.rates[i]
-                print('Found rate {} named {} with {} entries in the RateCollection.'.format(r, n, k))
-                print('Kept only entry with label {} out of {}.'.format(r.label, labels))
+                print(f'Found rate {r} named {n} with {k} entries in the RateCollection.')
+                print(f'Kept only entry with label {r.label} out of {labels}.')
 
     def _write_network(self, *args, **kwargs):
         """A stub for function to output the network -- this is implementation
@@ -427,7 +464,7 @@ class RateCollection:
         #divider = make_axes_locatable(ax)
         #cax = divider.append_axes('right', size='15%', pad=0.05)
 
-        ax.plot([0, 0], [8, 8], 'b-')
+        #ax.plot([0, 0], [8, 8], 'b-')
 
         # in general, we do not show p, n, alpha,
         # unless we have p + p, 3-a, etc.
@@ -451,11 +488,14 @@ class RateCollection:
 
         if filter_function is not None:
             node_nuclei = list(filter(filter_function, node_nuclei))
-        
+
         for n in node_nuclei:
             G.add_node(n)
-            G.position[n] = (n.N, n.Z)
-            G.labels[n] = r"${}$".format(n.pretty)
+            if rotated:
+                G.position[n] = (n.Z, n.A - 2*n.Z)
+            else:
+                G.position[n] = (n.N, n.Z)
+            G.labels[n] = fr"${n.pretty}$"
 
         # get the rates for each reaction
         if rho is not None and T is not None and comp is not None:
@@ -465,7 +505,7 @@ class RateCollection:
 
         # Do not show rates on the graph if their corresponding ydot is less than ydot_cutoff_value
         invisible_rates = set()
-        if ydot_cutoff_value is not None: 
+        if ydot_cutoff_value is not None:
             for r in self.rates:
                 if ydots[r] < ydot_cutoff_value:
                     invisible_rates.add(r)
@@ -519,40 +559,34 @@ class RateCollection:
                             except:
                                 raise
                             G.add_edges_from([(n, p)], weight=rate_weight)
-                            
+
         # It seems that networkx broke backwards compatability, and 'zorder' is no longer a valid
         # keyword argument. The 'linewidth' argument has also changed to 'linewidths'.
 
-        try:
-            nx.draw_networkx_nodes(G, G.position,      # plot the element at the correct position
-                                   node_color="#A0CBE2", alpha=1.0,
-                                   node_shape="o", node_size=1000, linewidth=2.0, zorder=10, ax=ax)
-        except TypeError:
-            nx.draw_networkx_nodes(G, G.position,      # plot the element at the correct position
-                                   node_color="#A0CBE2", alpha=1.0,
-                                   node_shape="o", node_size=1000, linewidths=2.0, ax=ax)
+        nx.draw_networkx_nodes(G, G.position,      # plot the element at the correct position
+                               node_color=node_color, alpha=1.0,
+                               node_shape=node_shape, node_size=node_size, linewidths=2.0, ax=ax)
 
-        try:
-            nx.draw_networkx_labels(G, G.position, G.labels,   # label the name of element at the correct position
-                                    font_size=13, font_color="w", zorder=100, ax=ax)
-        except TypeError:
-            nx.draw_networkx_labels(G, G.position, G.labels,   # label the name of element at the correct position
-                                    font_size=13, font_color="w", ax=ax)
+        nx.draw_networkx_labels(G, G.position, G.labels,   # label the name of element at the correct position
+                                font_size=node_font_size, font_color="w", ax=ax)
 
         # get the edges and weights coupled in the same order
         edges, weights = zip(*nx.get_edge_attributes(G, 'weight').items())
 
-        # plot the arrow of reaction
-        try:
-            edges_lc = nx.draw_networkx_edges(G, G.position, width=3,    # plot the arrow of reaction
-                                              edgelist=edges, edge_color=weights,
-                                              node_size=1000,
-                                              edge_cmap=plt.cm.viridis, zorder=1, ax=ax)
-        except TypeError:
-            edges_lc = nx.draw_networkx_edges(G, G.position, width=3,    # plot the arrow of reaction
-                                              edgelist=edges, edge_color=weights,
-                                              node_size=1000,
-                                              edge_cmap=plt.cm.viridis, ax=ax)
+        edge_color=weights
+        ww = np.array(weights)
+        min_weight = ww.min()
+        max_weight = ww.max()
+        dw = (max_weight - min_weight)/4
+        widths = np.ones_like(ww)
+        widths[ww > min_weight + dw] = 1.5
+        widths[ww > min_weight + 2*dw] = 2.5
+        widths[ww > min_weight + 3*dw] = 4
+
+        edges_lc = nx.draw_networkx_edges(G, G.position, width=list(widths),    # plot the arrow of reaction
+                                          edgelist=edges, edge_color=edge_color,
+                                          node_size=node_size,
+                                          edge_cmap=plt.cm.viridis, ax=ax)
 
         # for networkx <= 2.0 draw_networkx_edges returns a
         # LineCollection matplotlib type which we can use for the
@@ -564,15 +598,27 @@ class RateCollection:
         if ydots is not None:
             pc = mpl.collections.PatchCollection(edges_lc, cmap=plt.cm.viridis)
             pc.set_array(weights)
-            plt.colorbar(pc, label="log10(rate)")
+            if not rotated:
+                plt.colorbar(pc, ax=ax, label="log10(rate)")
+            else:
+                plt.colorbar(pc, ax=ax, label="log10(rate)", orientation="horizontal", fraction=0.05)
 
         Ns = [n.N for n in node_nuclei]
         Zs = [n.Z for n in node_nuclei]
 
-        plt.xlim(min(Ns)-1, max(Ns)+1)
+        if not rotated:
+            ax.set_xlim(min(Ns)-1, max(Ns)+1)
+        else:
+            ax.set_xlim(min(Zs)-1, max(Zs)+1)
+
         #plt.ylim(min(Zs)-1, max(Zs)+1)
-        plt.xlabel(r"$N$", fontsize="large")
-        plt.ylabel(r"$Z$", fontsize="large")
+
+        if not rotated:
+            plt.xlabel(r"$N$", fontsize="large")
+            plt.ylabel(r"$Z$", fontsize="large")
+        else:
+            plt.xlabel(r"$Z$", fontsize="large")
+            plt.ylabel(r"$A - 2Z$", fontsize="large")
 
         ax.spines['right'].set_visible(False)
         ax.spines['top'].set_visible(False)
@@ -582,11 +628,19 @@ class RateCollection:
         ax.spines['top'].set_visible(False)
         ax.xaxis.set_ticks_position('bottom')
         ax.yaxis.set_ticks_position('left')
-        
+
         ax.xaxis.set_major_locator(MaxNLocator(integer=True))
         ax.yaxis.set_major_locator(MaxNLocator(integer=True))
 
-        ax.set_aspect("equal", "datalim")
+        if Z_range is not None and N_range is not None:
+            if not rotated:
+                ax.set_xlim(N_range[0], N_range[1])
+                ax.set_ylim(Z_range[0], Z_range[1])
+            else:
+                ax.set_xlim(Z_range[0], Z_range[1])
+
+        if not rotated:
+            ax.set_aspect("equal", "datalim")
 
         fig.set_size_inches(size[0]/dpi, size[1]/dpi)
 
@@ -598,32 +652,32 @@ class RateCollection:
         else:
             plt.tight_layout()
             plt.savefig(outfile, dpi=dpi)
-    
-    @staticmethod        
+
+    @staticmethod
     def _safelog(arr, small):
-        
+
         arr = np.copy(arr)
         if np.any(arr < 0.0):
             raise ValueError("Negative values not allowed for logscale - try symlog instead.")
         zeros = arr == 0.0
         arr[zeros] = min(small, arr[~zeros].min() / 10)
         return np.log10(arr)
-        
+
     @staticmethod
     def _symlog(arr, linthresh=1.0):
-        
+
         assert linthresh >= 1.0
         neg = arr < 0.0
         arr = np.abs(arr)
         needslog = arr > linthresh
-        
+
         arr[needslog] = np.log10(arr[needslog]) + linthresh
         arr[neg] *= -1
         return arr
-    
-    @staticmethod    
+
+    @staticmethod
     def _scale(arr, minval=None, maxval=None):
-        
+
         if minval is None: minval = arr.min()
         if maxval is None: maxval = arr.max()
         if minval != maxval:
@@ -633,12 +687,12 @@ class RateCollection:
         scaled[scaled < 0.0] = 0.0
         scaled[scaled > 1.0] = 1.0
         return scaled
-            
+
     def gridplot(self, comp=None, color_field="X", rho=None, T=None, **kwargs):
         """
         Plot nuclides as cells on a grid of Z vs. N, colored by *color_field*. If called
         without a composition, the function will just plot the grid with no color field.
-        
+
         :param comp: Composition of the environment.
         :param color_field: Field to color by. Must be one of 'X' (mass fraction),
             'Y' (molar abundance), 'Xdot' (time derivative of X), 'Ydot' (time
@@ -648,9 +702,9 @@ class RateCollection:
             derivatives.
         :param T: Temperature to evaluate rates at. Needed for fields involving time
             derivatives.
-        
+
         :Keyword Arguments:
-        
+
             - *scale* -- One of 'linear', 'log', and 'symlog'. Linear by default.
             - *small* -- If using logarithmic scaling, zeros will be replaced with
               this value. 1e-30 by default.
@@ -671,7 +725,7 @@ class RateCollection:
             - *cbar_bounds* -- Explicit colorbar bounds.
             - *cbar_format* -- Format string or Formatter object for the colorbar ticks.
         """
-            
+
         # Process kwargs
         outfile = kwargs.pop("outfile", None)
         scale = kwargs.pop("scale", "linear")
@@ -688,13 +742,13 @@ class RateCollection:
         filter_function = kwargs.pop("filter_function", None)
         dpi = kwargs.pop("dpi", 100)
         linthresh = kwargs.pop("linthresh", 1.0)
-        
-        if kwargs: warnings.warn("Unrecognized keyword arguments: {}".format(kwargs.keys()))
-        
+
+        if kwargs: warnings.warn(f"Unrecognized keyword arguments: {kwargs.keys()}")
+
         # Get figure, colormap
         fig, ax = plt.subplots()
         cmap = mpl.cm.get_cmap(cmap)
-        
+
         # Get nuclei and all 3 numbers
         nuclei = self.unique_nuclei
         if filter_function is not None:
@@ -702,114 +756,114 @@ class RateCollection:
         Ns = np.array([n.N for n in nuclei])
         Zs = np.array([n.Z for n in nuclei])
         As = Ns + Zs
-        
+
         # Compute weights
         color_field = color_field.lower()
         if color_field not in {"x", "y", "ydot", "xdot", "activity"}:
-            raise ValueError("Invalid color field: '{}'".format(color_field))
-        
+            raise ValueError(f"Invalid color field: '{color_field}'")
+
         if comp is None:
-            
+
             values = np.zeros(len(nuclei))
-            
+
         elif color_field == "x":
-            
+
             values = np.array([comp.X[nuc] for nuc in nuclei])
-            
+
         elif color_field == "y":
-            
+
             ys = comp.get_molar()
             values = np.array([ys[nuc] for nuc in nuclei])
-            
+
         elif color_field in {"ydot", "xdot"}:
-            
+
             if rho is None or T is None:
                 raise ValueError("Need both rho and T to evaluate rates!")
             ydots = self.evaluate_ydots(rho, T, comp)
             values = np.array([ydots[nuc] for nuc in nuclei])
             if color_field == "xdot": values *= As
-            
+
         elif color_field == "activity":
-            
+
             if rho is None or T is None:
                 raise ValueError("Need both rho and T to evaluate rates!")
             act = self.evaluate_activity(rho, T, comp)
             values = np.array([act[nuc] for nuc in nuclei])
-            
+
         if scale == "log": values = self._safelog(values, small)
         elif scale == "symlog": values = self._symlog(values, linthresh)
-        
+
         if cbar_bounds is None:
             cbar_bounds = values.min(), values.max()
         weights = self._scale(values, *cbar_bounds)
-        
+
         # Plot a square for each nucleus
         for nuc, weight in zip(nuclei, weights):
-            
+
             square = plt.Rectangle((nuc.N - 0.5, nuc.Z - 0.5), width=1, height=1,
                     facecolor=cmap(weight), edgecolor=edgecolor)
             ax.add_patch(square)
-        
+
         # Set limits
         maxN, minN = max(Ns), min(Ns)
         maxZ, minZ = max(Zs), min(Zs)
-        
+
         plt.xlim(minN - 0.5, maxN + 0.6)
         plt.ylim(minZ - 0.5, maxZ + 0.6)
-        
+
         # Set plot appearance
         rat = (maxN - minN) / (maxZ - minZ)
         width = np.sqrt(area * rat)
         height = area / width
         fig.set_size_inches(width, height)
-         
+
         plt.xlabel(r"N $\rightarrow$")
         plt.ylabel(r"Z $\rightarrow$")
-        
+
         if no_axes or no_ticks:
-            
+
             plt.tick_params \
             (
-                axis = 'both',  
-                which = 'both',      
-                bottom = False,      
+                axis = 'both',
+                which = 'both',
+                bottom = False,
                 left = False,
                 labelbottom = False,
                 labelleft = False
             )
-            
+
         else:
-            
+
             ax.xaxis.set_major_locator(MaxNLocator(integer=True))
             ax.yaxis.set_major_locator(MaxNLocator(integer=True))
-        
+
         ax.spines['right'].set_visible(False)
         ax.spines['top'].set_visible(False)
         if no_axes:
             ax.spines['bottom'].set_visible(False)
             ax.spines['left'].set_visible(False)
-        
+
         # Colorbar stuff
         if not no_cbar and comp is not None:
-            
+
             divider = make_axes_locatable(ax)
             cax = divider.append_axes('right', size='3.5%', pad=0.1)
             cbar_norm = mpl.colors.Normalize(*cbar_bounds)
             smap = mpl.cm.ScalarMappable(norm=cbar_norm, cmap=cmap)
-            
+
             if not cbar_label:
-                
+
                 capfield = color_field.capitalize()
                 if scale == "log":
-                    cbar_label = "log[{}]".format(capfield)
+                    cbar_label = f"log[{capfield}]"
                 elif scale == "symlog":
-                    cbar_label = "symlog[{}]".format(capfield)
+                    cbar_label = f"symlog[{capfield}]"
                 else:
                     cbar_label = capfield
-                
+
             fig.colorbar(smap, cax=cax, orientation="vertical",
                     label=cbar_label, format=cbar_format)
-        
+
         # Show or save
         if outfile is None:
             plt.show()
@@ -820,11 +874,11 @@ class RateCollection:
     def __repr__(self):
         string = ""
         for r in self.rates:
-            string += "{}\n".format(r.string)
+            string += f"{r.string}\n"
         return string
 
 
-class Explorer(object):
+class Explorer:
     """ interactively explore a rate collection """
     def __init__(self, rc, comp, size=(800, 600),
                  ydot_cutoff_value=None,

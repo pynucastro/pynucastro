@@ -37,7 +37,7 @@ contains
 
     open(newunit=unit, file='reaclib_rate_metadata.dat')
 
-    <secret_code_set>(2)
+    secret_code_reference = "testing"
 
     read(unit, *) secret_code_file
 
@@ -73,7 +73,12 @@ contains
   subroutine net_screening_init()
     ! Adds screening factors and calls screening_init
 
-    <screen_add>(2)
+    call add_screening_factor(zion(jc12), aion(jc12), &
+      zion(jc12), aion(jc12))
+
+    call add_screening_factor(zion(jhe4), aion(jhe4), &
+      zion(jc12), aion(jc12))
+
 
     call screening_init()
   end subroutine net_screening_init

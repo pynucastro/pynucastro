@@ -2,7 +2,6 @@
 Microphysics set of reaction networks used by astrophysical hydrodynamics
 codes"""
 
-from __future__ import print_function
 
 import glob
 import os
@@ -12,12 +11,11 @@ from pynucastro.networks import BaseFortranNetwork
 class StarKillerNetwork(BaseFortranNetwork):
     def __init__(self, *args, **kwargs):
         # Initialize BaseFortranNetwork parent class
-        super(StarKillerNetwork, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         # StarKiller-specific template processing functions
         self.ftags['<sparse_jac_nnz>'] = self._sparse_jac_nnz
         self.ftags['<csr_jac_metadata>'] = self._csr_jac_metadata
-        self.ftags['<species_xin_test>'] = self._species_xin_test
 
     def _get_template_files(self):
         template_pattern = os.path.join(self.pynucastro_dir,
@@ -70,7 +68,7 @@ class StarKillerNetwork(BaseFortranNetwork):
         col_index = []
 
         nspec = len(self.unique_nuclei)
-        
+
         # Start row_count at base 1
         row_count.append(1)
 
@@ -104,14 +102,6 @@ class StarKillerNetwork(BaseFortranNetwork):
         # Return row count and column index lists
         return row_count, col_index
 
-    def _initial_mass_fractions(self, n_indent, of):
-        # Redefine initial mass fractions tag to set the
-        # mass fractions in the burn_cell unit test inputs file.
-        for i, n in enumerate(self.unique_nuclei):
-            of.write("\n! {nuc: <5} initial mass fraction\n".format(nuc=str(n)))
-            of.write("{}massfractions({}) = 0.0d0\n".format(
-                self.indent*n_indent, i+1))
-
     def _sparse_jac_nnz(self, n_indent, of):
         of.write('{}integer, parameter   :: NETWORK_SPARSE_JAC_NNZ = {}\n'.format(
             self.indent*n_indent, self.get_sparse_jac_nnz()))
@@ -137,22 +127,13 @@ class StarKillerNetwork(BaseFortranNetwork):
         of.write('{}{}  ]\n'.format(
             self.indent*(n_indent+1), row_count[-1]))
 
-    def _species_xin_test(self, size_test, of):
-        xcomp = 1.0/float(len(self.unique_nuclei))
-        for i, n in enumerate(self.unique_nuclei):
-            if i!=0:
-                of.write('#\n')
-            of.write('# {}\n'.format(n))
-            xin = [self.fmt_to_dp_f90(xcomp) for j in range(size_test)]
-            of.write('{}\n'.format(' '.join(xin)))
-
-    def _write_network(self, use_cse=False):
+    def _write_network(self, odir=None):
         """
         This writes the RHS, jacobian and ancillary files for the system of ODEs that
         this network describes, using the template files.
         """
 
-        super()._write_network(use_cse=use_cse)
+        super()._write_network(odir=odir)
 
         # create a .net file with the nuclei properties
         with open("pynucastro.net", "w") as of:
@@ -162,9 +143,7 @@ class StarKillerNetwork(BaseFortranNetwork):
 
         # write out some network properties
         with open("NETWORK_PROPERTIES", "w") as of:
-            of.write("NSCREEN := {}\n".format(self.num_screen_calls))
+            of.write(f"NSCREEN := {self.num_screen_calls}\n")
 
         with open("NAUX_NETWORK", "w") as of:
             of.write("NAUX := 0\n")
-
-

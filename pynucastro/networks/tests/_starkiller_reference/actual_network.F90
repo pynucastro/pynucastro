@@ -8,7 +8,7 @@ module actual_network
 
   public
 
-  <network_name>(1)
+  character (len=32), parameter :: network_name = "pynucastro"
 
   real(rt), parameter :: avo = 6.0221417930e23_rt
   real(rt), parameter :: c_light = 2.99792458e10_rt
@@ -22,17 +22,18 @@ module actual_network
   real(rt), parameter :: mass_proton   = 1.67262163783e-24_rt
   real(rt), parameter :: mass_electron = 9.10938215450e-28_rt
 
-  <nrates>(1)
+  integer, parameter :: nrates = 7
 
 
   ! For each rate, we need: rate, drate/dT, screening, dscreening/dT
   integer, parameter :: num_rate_groups = 4
 
   ! Number of reaclib rates
-  <nrat_reaclib>(1)
+  integer, parameter :: nrat_reaclib = 5
+  integer, parameter :: number_reaclib_sets = 6
 
   ! Number of tabular rates
-  <nrat_tabular>(1)
+  integer, parameter :: nrat_tabular = 2
 
   ! Binding Energies Per Nucleon (MeV)
   real(rt) :: ebind_per_nucleon(nspec)
@@ -40,16 +41,30 @@ module actual_network
   ! bion: Binding Energies (ergs)
 
   ! Nuclides
-  <jion>(1)
+  integer, parameter :: jn   = 1
+  integer, parameter :: jp   = 2
+  integer, parameter :: jhe4   = 3
+  integer, parameter :: jc12   = 4
+  integer, parameter :: jo16   = 5
+  integer, parameter :: jne20   = 6
+  integer, parameter :: jne23   = 7
+  integer, parameter :: jna23   = 8
+  integer, parameter :: jmg23   = 9
 
   ! Reactions
-  <nrxn>(1)
+  integer, parameter :: k_c12_c12__he4_ne20   = 1
+  integer, parameter :: k_c12_c12__n_mg23   = 2
+  integer, parameter :: k_c12_c12__p_na23   = 3
+  integer, parameter :: k_he4_c12__o16   = 4
+  integer, parameter :: k_n__p__weak__wc12   = 5
+  integer, parameter :: k_na23__ne23   = 6
+  integer, parameter :: k_ne23__na23   = 7
 
   real(rt), allocatable, save :: bion(:), mion(:)
 
 #ifdef REACT_SPARSE_JACOBIAN
   ! Shape of Jacobian in Compressed Sparse Row format
-  <sparse_jac_nnz>(1)
+  integer, parameter   :: NETWORK_SPARSE_JAC_NNZ = 51
   integer, allocatable :: csr_jac_col_index(:), csr_jac_row_count(:)
 #endif
 
@@ -67,7 +82,15 @@ contains
     allocate(bion(nspec))
     allocate(mion(nspec))
 
-    <ebind>(2)
+    ebind_per_nucleon(jn)   = 0.00000000000000e+00_rt
+    ebind_per_nucleon(jp)   = 0.00000000000000e+00_rt
+    ebind_per_nucleon(jhe4)   = 7.07391500000000e+00_rt
+    ebind_per_nucleon(jc12)   = 7.68014400000000e+00_rt
+    ebind_per_nucleon(jo16)   = 7.97620600000000e+00_rt
+    ebind_per_nucleon(jne20)   = 8.03224000000000e+00_rt
+    ebind_per_nucleon(jne23)   = 7.95525600000000e+00_rt
+    ebind_per_nucleon(jna23)   = 8.11149300000000e+00_rt
+    ebind_per_nucleon(jmg23)   = 7.90111500000000e+00_rt
 
     do i = 1, nspec
        bion(i) = ebind_per_nucleon(i) * aion(i) * ERG_PER_MeV
@@ -83,7 +106,72 @@ contains
     allocate(csr_jac_col_index(NETWORK_SPARSE_JAC_NNZ))
     allocate(csr_jac_row_count(nspec + 3)) ! neq + 1
 
-    <csr_jac_metadata>(2)
+    csr_jac_col_index = [ &
+      1, &
+      4, &
+      10, &
+      1, &
+      2, &
+      4, &
+      10, &
+      3, &
+      4, &
+      10, &
+      3, &
+      4, &
+      10, &
+      3, &
+      4, &
+      5, &
+      10, &
+      4, &
+      6, &
+      10, &
+      7, &
+      8, &
+      10, &
+      4, &
+      7, &
+      8, &
+      10, &
+      4, &
+      9, &
+      10, &
+      1, &
+      2, &
+      3, &
+      4, &
+      5, &
+      6, &
+      7, &
+      8, &
+      9, &
+      10, &
+      1, &
+      2, &
+      3, &
+      4, &
+      5, &
+      6, &
+      7, &
+      8, &
+      9, &
+      10, &
+      11  ]
+
+    csr_jac_row_count = [ &
+      1, &
+      4, &
+      8, &
+      11, &
+      14, &
+      18, &
+      21, &
+      24, &
+      28, &
+      31, &
+      41, &
+      52  ]
 #endif
 
   end subroutine actual_network_init

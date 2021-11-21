@@ -11,5 +11,7 @@ setup(name='pynucastro',
       package_data={"pynucastro": ["library/*", "library/tabular/*", "templates/*", "templates/fortran-vode/*", "templates/starkiller-microphysics/*", "nucdata/*"]},
       install_requires=['networkx', 'numpy', 'numba',
                         'sympy', 'scipy', 'matplotlib',
-                        'ipywidgets'],
+                        'ipywidgets', 'numba'],
+      use_scm_version={"version_scheme": "post-release",
+                       "write_to": "pynucastro/_version.py"},
       zip_safe=False)

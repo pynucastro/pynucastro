@@ -113,7 +113,7 @@ generated code specific to a given choice of reaction rates.
 
 """
 
-__version__ = "1.1.0"
+from ._version import version as __version__
 
 from pynucastro.networks import \
     RateCollection, \
@@ -121,7 +121,10 @@ from pynucastro.networks import \
     Explorer, \
     PythonNetwork, \
     BaseFortranNetwork, \
-    StarKillerNetwork
+    StarKillerNetwork, \
+    BaseCxxNetwork, \
+    StarKillerCxxNetwork, \
+    SympyRates
 
 from pynucastro.rates import \
     Tfactors, \

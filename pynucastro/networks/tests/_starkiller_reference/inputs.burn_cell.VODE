@@ -24,4 +24,12 @@ unit_test.nsteps = 1000
 unit_test.density       = 1.0e7
 unit_test.temperature   = 1.0e8
 
-<initial_mass_fractions>(0)
+unit_test.X1 = 1.0
+unit_test.X2 = 0.0
+unit_test.X3 = 0.0
+unit_test.X4 = 0.0
+unit_test.X5 = 0.0
+unit_test.X6 = 0.0
+unit_test.X7 = 0.0
+unit_test.X8 = 0.0
+unit_test.X9 = 0.0

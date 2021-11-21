@@ -21,7 +21,7 @@ from pynucastro.nucdata import UnidentifiedElement, PeriodicTable
 def list_known_rates():
     """ list the rates found in the library """
 
-    lib_path = "{}/../library/".format(os.path.dirname(__file__))
+    lib_path = f"{os.path.dirname(__file__)}/../library/"
 
     for _, _, filenames in os.walk(lib_path):
         for f in filenames:
@@ -33,9 +33,9 @@ def list_known_rates():
             except:
                 continue
             else:
-                print("{:32} : ".format(f))
+                print(f"{f:32} : ")
                 for r in lib.get_rates():
-                    print("                                 : {}".format(r))
+                    print(f"                                 : {r}")
 
 Tfactor_spec = [
 ('T9', numba.float64),
@@ -47,7 +47,7 @@ Tfactor_spec = [
 ]
 
 @jitclass(Tfactor_spec)
-class Tfactors(object):
+class Tfactors:
     """ precompute temperature factors for speed """
 
     def __init__(self, T):
@@ -60,7 +60,7 @@ class Tfactors(object):
         self.lnT9 = np.log(self.T9)
 
 
-class SingleSet(object):
+class SingleSet:
     """ a set in Reaclib is one piece of a rate, in the form
 
         lambda = exp[ a_0 + sum_{i=1}^5  a_i T_9**(2i-5)/3  + a_6 log T_9]
@@ -122,24 +122,24 @@ class SingleSet(object):
         return a string containing the python code for this set
         """
         if plus_equal:
-            string = "{} += np.exp( ".format(prefix)
+            string = f"{prefix} += np.exp( "
         else:
-            string = "{} = np.exp( ".format(prefix)
-        string += " {}".format(self.a[0])
+            string = f"{prefix} = np.exp( "
+        string += f" {self.a[0]}"
         if not self.a[1] == 0.0:
-            string += " + {}*tf.T9i".format(self.a[1])
+            string += f" + {self.a[1]}*tf.T9i"
         if not self.a[2] == 0.0:
-            string += " + {}*tf.T913i".format(self.a[2])
+            string += f" + {self.a[2]}*tf.T913i"
         if not self.a[3] == 0.0:
-            string += " + {}*tf.T913".format(self.a[3])
+            string += f" + {self.a[3]}*tf.T913"
         if not (self.a[4] == 0.0 and self.a[5] == 0.0 and self.a[6] == 0.0):
             string += "\n{}         ".format(len(prefix)*" ")
         if not self.a[4] == 0.0:
-            string += " + {}*tf.T9".format(self.a[4])
+            string += f" + {self.a[4]}*tf.T9"
         if not self.a[5] == 0.0:
-            string += " + {}*tf.T953".format(self.a[5])
+            string += f" + {self.a[5]}*tf.T953"
         if not self.a[6] == 0.0:
-            string += " + {}*tf.lnT9".format(self.a[6])
+            string += f" + {self.a[6]}*tf.lnT9"
         string += ")"
         return string
 
@@ -149,7 +149,7 @@ class UnsupportedNucleus(BaseException):
         return
 
 
-class Nucleus(object):
+class Nucleus:
     """
     a nucleus that participates in a reaction -- we store it in a
     class to hold its properties, define a sorting, and give it a
@@ -169,14 +169,17 @@ class Nucleus(object):
             self.el = "h"
             self.A = 1
             self.short_spec_name = "h1"
+            self.caps_name = "H1"
         elif name == "d":
             self.el = "h"
             self.A = 2
             self.short_spec_name = "h2"
+            self.caps_name = "H2"
         elif name == "t":
             self.el = "h"
             self.A = 3
             self.short_spec_name = "h3"
+            self.caps_name = "H3"
         elif name == "a":
             #this is a convenience, enabling the use of a commonly-used alias:
             #    He4 --> \alpha --> "a" , e.g. c12(a,g)o16
@@ -184,6 +187,7 @@ class Nucleus(object):
             self.A = 4
             self.short_spec_name = "he4"
             self.raw = "he4"
+            self.caps_name = "He4"
         elif name == "n":
             self.el = "n"
             self.A = 1
@@ -191,7 +195,8 @@ class Nucleus(object):
             self.N = 1
             self.short_spec_name = "n"
             self.spec_name = "neutron"
-            self.pretty = r"\mathrm{{{}}}".format(self.el)
+            self.pretty = fr"\mathrm{{{self.el}}}"
+            self.caps_name = "N"
         else:
             e = re.match(r"([a-zA-Z]*)(\d*)", name)
             self.el = e.group(1).title()  # chemical symbol
@@ -206,6 +211,7 @@ class Nucleus(object):
                     raise
             assert(self.A >= 0)
             self.short_spec_name = name
+            self.caps_name = name.capitalize()
 
         # use lowercase element abbreviation regardless the case of the input
         self.el = self.el.lower()
@@ -215,7 +221,7 @@ class Nucleus(object):
             try:
                 i = PeriodicTable.lookup_abbreviation(self.el)
             except UnidentifiedElement:
-                print('Could not identify element: {}'.format(self.el))
+                print(f'Could not identify element: {self.el}')
                 raise
             except:
                 raise
@@ -228,16 +234,19 @@ class Nucleus(object):
                 assert(self.N >= 0)
 
                 # long name
-                self.spec_name = '{}-{}'.format(i.name, self.A)
+                self.spec_name = f'{i.name}-{self.A}'
 
                 # latex formatted style
-                self.pretty = r"{{}}^{{{}}}\mathrm{{{}}}".format(self.A, self.el.capitalize())
+                self.pretty = fr"{{}}^{{{self.A}}}\mathrm{{{self.el.capitalize()}}}"
 
     def __repr__(self):
         return self.raw
 
     def __hash__(self):
         return hash((self.Z, self.A))
+
+    def c(self):
+        return self.caps_name
 
     def __eq__(self, other):
         if isinstance(other, Nucleus):
@@ -255,7 +264,7 @@ class Nucleus(object):
             return self.A < other.A
 
 
-class Library(object):
+class Library:
     """
     A Library is a Rate container that reads a single file
     containing one or many Reaclib rates, possibly containing multiple
@@ -313,20 +322,6 @@ class Library(object):
             else:
                 nuc = rnuc
         return nuc
-        
-    def write_to_file(self, filename, prepend_rates_dir=False):
-        """
-        Write the library out to a file of the given name in Reaclib format. The path to
-        the pynucastro/libary directory will be prepended to the supplied file name if
-        True is passed as the second argument.
-        """
-        
-        if prepend_rates_dir:
-            filename = os.path.join(self.pynucastro_rates_dir, filename)
-            
-        with open(filename, 'w') as f:
-            for rate in self.get_rates():
-                rate.write_to_file(f)
 
     def _add_from_rate_list(self, ratelist):
         """ Add to the rate dictionary from the supplied list of Rate objects. """
@@ -365,9 +360,9 @@ class Library(object):
     def _read_library_file(self):
         # loop through library file, read lines
         try:
-            flib = open(self._library_file, 'r')
+            flib = open(self._library_file)
         except:
-            print('Could not open file {}'.format(self._library_file))
+            print(f'Could not open file {self._library_file}')
             raise
         for line in flib:
             ls = line.rstrip('\n')
@@ -396,7 +391,7 @@ class Library(object):
                     try:
                         assert(current_chapter)
                     except:
-                        print('ERROR: malformed library file {}, cannot identify chapter.'.format(self._library_file))
+                        print(f'ERROR: malformed library file {self._library_file}, cannot identify chapter.')
                         raise
                     else:
                         chapter = current_chapter
@@ -410,7 +405,7 @@ class Library(object):
             elif type(chapter) == int:
                 rlines = [self._library_source_lines.pop(0) for i in range(3)]
             if rlines:
-                sio = io.StringIO('\n'.join(['{}'.format(chapter)] +
+                sio = io.StringIO('\n'.join([f'{chapter}'] +
                                             rlines))
                 #print(sio.getvalue())
                 try:
@@ -430,7 +425,7 @@ class Library(object):
         """ Return a string containing the rates IDs in this library. """
         rstrings = []
         for id, r in self._rates.items():
-            rstrings.append('{}    ({})'.format(r, id))
+            rstrings.append(f'{r}    ({id})')
         return '\n'.join(rstrings)
 
     def __add__(self, other):
@@ -441,11 +436,11 @@ class Library(object):
                 assert id not in new_rates
             except:
                 if r != new_rates[id]:
-                    print('ERROR: rate {} defined differently in libraries {} and {}\n'.format(r, self._library_file, other._library_file))
+                    print(f'ERROR: rate {r} defined differently in libraries {self._library_file} and {other._library_file}\n')
                     raise
             else:
                 new_rates[id] = r
-        new_library = Library(libfile='{} + {}'.format(self._library_file, other._library_file),
+        new_library = Library(libfile=f'{self._library_file} + {other._library_file}',
                               rates=new_rates,
                               read_library=False)
         return new_library
@@ -552,9 +547,9 @@ class Library(object):
             return None
 
 
-class RateFilter(object):
+class RateFilter:
     """RateFilter filters out a specified rate or set of rates
-    
+
     A RateFilter stores selection rules specifying a rate or group of
     rates to assist in searching for rates stored in a Library.
     """
@@ -572,7 +567,7 @@ class RateFilter(object):
                 3. a single reactant Nucleus
                 4. a single string description of the reactant nuclide
             products  -- Description of the products in same form as above
-            exact     -- boolean, 
+            exact     -- boolean,
                          if True, products or reactants must match exactly [default]
                          if False, then all products or reactants must be found
                          in a comparison rate, but the comparison may contain
@@ -589,7 +584,7 @@ class RateFilter(object):
                                a callable that can take a single rate as an argument
                                may be used to specify additional criteria, returning
                                True if the rate meets all of them, False otherwise
-        
+
         Examples:
             Create a filter that finds all proton capture and proton-burning reactions
             in a Library instance my_library::
@@ -599,11 +594,11 @@ class RateFilter(object):
                 >>> pcap_filter = RateFilter(reactants=Nucleus('p'), exact=False)
                 >>> pcap_library = my_library.filter(pcap_filter)
 
-            Create a filter that finds C12 (a,g) O16 
+            Create a filter that finds C12 (a,g) O16
             Notes:
                 + photons/gammas are not treated as nuclides, so they cannot be
                 a reactant or product
-                + this rate is in the ReacLib library used here as 
+                + this rate is in the ReacLib library used here as
                 O16 --> He4 C12 -- you need to know how your library treats rates::
                     >>> cago_filter = RateFilter(reactants='o16', products=['c12', 'a'])
                     >>> cago_library = my_library.filter(cago_filter)
@@ -712,7 +707,7 @@ class RateFilter(object):
         return newfilter
 
 
-class Rate(object):
+class Rate:
     """ a single Reaclib rate, which can be composed of multiple sets """
     def __init__(self, rfile=None, rfile_path=None, chapter=None, original_source=None,
                  reactants=None, products=None, sets=None, labelprops=None, Q=None):
@@ -752,7 +747,7 @@ class Rate(object):
         if type(rfile) == str:
             # read in the file, parse the different sets and store them as
             # SingleSet objects in sets[]
-            f = open(self.rfile_path, "r")
+            f = open(self.rfile_path)
         elif type(rfile) == io.StringIO:
             # Set f to the io.StringIO object
             f = rfile
@@ -768,7 +763,7 @@ class Rate(object):
         self._set_rhs_properties()
         self._set_screening()
         self._set_print_representation()
-        
+
         if self.tabular:
             self.get_tabular_rate()
 
@@ -910,7 +905,7 @@ class Rate(object):
                 self.reactants.append(Nucleus(f[0]))
                 self.products.append(Nucleus(f[1]))
             except:
-                print('Nucleus objects not be identified in {}'.format(self.original_source))
+                print(f'Nucleus objects not be identified in {self.original_source}')
                 raise
 
             self.table_file = s2.strip()
@@ -918,7 +913,7 @@ class Rate(object):
             self.table_rhoy_lines = int(s4.strip())
             self.table_temp_lines = int(s5.strip())
             self.table_num_vars = 6 # Hard-coded number of variables in tables for now.
-            self.table_index_name = 'j_{}_{}'.format(self.reactants[0], self.products[0])
+            self.table_index_name = f'j_{self.reactants[0]}_{self.products[0]}'
             self.labelprops = 'tabular'
             self._set_label_properties()
 
@@ -940,7 +935,7 @@ class Rate(object):
                     try:
                         assert(check_chapter == self.chapter)
                     except:
-                        print('ERROR: read chapter {}, expected chapter {} for this rate set.'.format(check_chapter, self.chapter))
+                        print(f'ERROR: read chapter {check_chapter}, expected chapter {self.chapter} for this rate set.')
                         raise
                     else:
                         # get rid of chapter number so we can read a rate set
@@ -1044,7 +1039,7 @@ class Rate(object):
                             self.products += [Nucleus(f[1]), Nucleus(f[2]),
                                               Nucleus(f[3]), Nucleus(f[4])]
                         else:
-                            print('Chapter could not be identified in {}'.format(self.original_source))
+                            print(f'Chapter could not be identified in {self.original_source}')
                             assert(type(self.chapter) == int and self.chapter <= 11)
                     except:
                         # print('Error parsing Rate from {}'.format(self.original_source))
@@ -1062,16 +1057,6 @@ class Rate(object):
                 a = [float(e) for e in a if not e.strip() == ""]
                 self.sets.append(SingleSet(a, labelprops=labelprops))
                 self._set_label_properties(labelprops)
-                
-    def write_to_file(self, f):
-        """ given an open file object, write rate data to the file. """
-
-        if self.original_source is None:
-            raise NotImplementedError("Original source is not stored for this rate ({}).".format(self)
-                    + " At present, we cannot reconstruct the rate representation without"
-                    + " storing the original source.")
-
-        print(self.original_source, file=f)
 
     def _set_rhs_properties(self):
         """ compute statistical prefactor and density exponent from the reactants. """
@@ -1115,8 +1100,8 @@ class Rate(object):
                 treactants.append(n)
 
         for n, r in enumerate(treactants):
-            self.string += "{}".format(r)
-            self.pretty_string += r"{}".format(r.pretty)
+            self.string += f"{r}"
+            self.pretty_string += fr"{r.pretty}"
             if not n == len(self.reactants)-1:
                 self.string += " + "
                 self.pretty_string += r" + "
@@ -1125,8 +1110,8 @@ class Rate(object):
         self.pretty_string += r" \rightarrow "
 
         for n, p in enumerate(self.products):
-            self.string += "{}".format(p)
-            self.pretty_string += r"{}".format(p.pretty)
+            self.string += f"{p}"
+            self.pretty_string += fr"{p.pretty}"
             if not n == len(self.products)-1:
                 self.string += " + "
                 self.pretty_string += r" + "
@@ -1139,9 +1124,9 @@ class Rate(object):
             # to a given source, e.g. wc12, but only unique to the reaction.
             reactants_str = '_'.join([repr(nuc) for nuc in self.reactants])
             products_str = '_'.join([repr(nuc) for nuc in self.products])
-            self.fname = '{}__{}'.format(reactants_str, products_str)
+            self.fname = f'{reactants_str}__{products_str}'
             if self.weak:
-                self.fname = self.fname + '__weak__{}'.format(self.weak_type)
+                self.fname = self.fname + f'__weak__{self.weak_type}'
 
     def get_rate_id(self):
         """ Get an identifying string for this rate.
@@ -1188,24 +1173,24 @@ class Rate(object):
             if n.A < nuc.A or (n.A == nuc.A and n.Z > nuc.Z):
                 nuc = n
         return nuc
-    
-    def get_tabular_rate(self):   
+
+    def get_tabular_rate(self):
         """read the rate data from .dat file """
-        
+
         # find .dat file and read it
         self.table_path = Library._find_rate_file(self.table_file)
-        tabular_file = open(self.table_path,"r")
-        t_data = tabular_file.readlines()  
+        tabular_file = open(self.table_path)
+        t_data = tabular_file.readlines()
         tabular_file.close()
-        
+
         # delete header lines
-        del t_data[0:self.table_header_lines]  
-        
+        del t_data[0:self.table_header_lines]
+
         # change the list ["1.23 3.45 5.67\n"] into the list ["1.23","3.45","5.67"]
         t_data2d = []
         for i in range(len(t_data)):
             t_data2d.append(re.split(r"[ ]",t_data[i].strip('\n')))
-        
+
         # delete all the "" in each element of data1
         for i in range(len(t_data2d)):
             while '' in t_data2d[i]:
@@ -1213,12 +1198,12 @@ class Rate(object):
 
         while [] in t_data2d:
             t_data2d.remove([])
-            
+
         self.tabular_data_table = np.array(t_data2d)
-        
-    def eval(self, T, rhoY = None):    
+
+    def eval(self, T, rhoY = None):
         """ evauate the reaction rate for temperature T """
-        
+
         if self.tabular:
             data = self.tabular_data_table.astype(np.float)
             # find the nearest value of T and rhoY in the data table
@@ -1226,7 +1211,7 @@ class Rate(object):
             rhoY_nearest = (data[:,0])[np.abs((data[:,0]) - rhoY).argmin()]
             inde = np.where((data[:,1]==T_nearest)&(data[:,0]==rhoY_nearest))[0][0]
             r = data[inde][5]
-        
+
         else:
             tf = Tfactors(T)
             r = 0.0
@@ -1252,16 +1237,16 @@ class Rate(object):
 
     def plot(self, Tmin=1.e8, Tmax=1.6e9, rhoYmin=3.9e8, rhoYmax=2.e9):
         """plot the rate's temperature sensitivity vs temperature"""
-        
+
         if self.tabular:
             data = self.tabular_data_table.astype(np.float) # convert from str to float
-            
+
             inde1 = data[:,1]<=Tmax
             inde2 = data[:,1]>=Tmin
             inde3 = data[:,0]<=rhoYmax
             inde4 = data[:,0]>=rhoYmin
             data_heatmap = data[inde1&inde2&inde3&inde4].copy()
-            
+
             rows, row_pos = np.unique(data_heatmap[:, 0], return_inverse=True)
             cols, col_pos = np.unique(data_heatmap[:, 1], return_inverse=True)
             pivot_table = np.zeros((len(rows), len(cols)), dtype=data_heatmap.dtype)
@@ -1269,14 +1254,14 @@ class Rate(object):
                 pivot_table[row_pos, col_pos] = np.log10(data_heatmap[:, 5])
             except ValueError:
                 plot("Divide by zero encountered in log10\nChange the scale of T or rhoY")
-            
+
             fig, ax = plt.subplots(figsize=(10,10))
             im = ax.imshow(pivot_table, cmap='jet')
             plt.colorbar(im)
-            
+
             plt.xlabel("$T$ [K]")
             plt.ylabel("$\\rho Y$ [g/cm$^3$]")
-            ax.set_title(r"{}".format(self.pretty_string)+
+            ax.set_title(fr"{self.pretty_string}"+
                          "\n"+"electron-capture/beta-decay rate in log10(1/s)")
             ax.set_yticks(range(len(rows)))
             ax.set_yticklabels(rows)
@@ -1285,25 +1270,24 @@ class Rate(object):
             plt.setp(ax.get_xticklabels(), rotation=90, ha="right",rotation_mode="anchor")
             plt.gca().invert_yaxis()
             plt.show()
-        
+
         else:
             temps = np.logspace(np.log10(Tmin), np.log10(Tmax), 100)
             r = np.zeros_like(temps)
-            
+
             for n, T in enumerate(temps):
                 r[n] = self.eval(T)
-                
+
             plt.loglog(temps, r)
             plt.xlabel(r"$T$")
-            
+
             if self.dens_exp == 0:
                 plt.ylabel(r"\tau")
             elif self.dens_exp == 1:
                 plt.ylabel(r"$N_A <\sigma v>$")
             elif self.dens_exp == 2:
                 plt.ylabel(r"$N_A^2 <n_a n_b n_c v>$")
-                
-            plt.title(r"{}".format(self.pretty_string))
+
+            plt.title(fr"{self.pretty_string}")
             plt.show()
-            
-        
+
