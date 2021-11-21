@@ -358,9 +358,66 @@ class RateCollection:
         print('To create network integration source code, use a class that implements a specific network type.')
         return
 
-    def plot(self, outfile=None, rho=None, T=None, comp=None, size=(800, 600), dpi=100, title=None,
-             ydot_cutoff_value=None, always_show_p=False, always_show_alpha=False, filter_function=None):
-        """Make a plot of the network structure showing the links between nuclei"""
+    def plot(self, outfile=None, rho=None, T=None, comp=None,
+             size=(800, 600), dpi=100, title=None,
+             ydot_cutoff_value=None,
+             node_size=1000, node_font_size=13, node_color="#A0CBE2", node_shape="o",
+             N_range=None, Z_range=None, rotated=False,
+             always_show_p=False, always_show_alpha=False, hide_xalpha=False, filter_function=None):
+        """Make a plot of the network structure showing the links between
+        nuclei.  If a full set of thermodymamic conditions are
+        provided (rho, T, comp), then the links are colored by rate
+        strength.
+
+
+        parameters
+        ----------
+
+        outfile: output name of the plot -- extension determines the type
+
+        rho: density to evaluate rates with
+
+        T: temperature to evaluate rates with
+
+        comp: composition to evaluate rates with
+
+        size: tuple giving width x height of the plot in inches
+
+        dpi: pixels per inch used by matplotlib in rendering bitmap
+
+        title: title to display on the plot
+
+        ydot_cutoff_value: rate threshold below which we do not show a
+        line corresponding to a rate
+
+        node_size: size of a node
+
+        node_font_size: size of the font used to write the isotope in the node
+
+        node_color: color to make the nodes
+
+        node_shape: shape of the node (using matplotlib marker names)
+
+        N_range: range of neutron number to zoom in on
+
+        Z_range: range of proton number to zoom in on
+
+        rotate: if True, we plot A - 2Z vs. Z instead of the default Z vs. N
+
+        always_show_p: include p as a node on the plot even if we
+        don't have p+p reactions
+
+        always_show_alpha: include He4 as a node on the plot even if we don't have 3-alpha
+
+        hide_xalpha=False: dont connect the links to alpha for heavy
+        nuclei reactions of the form A(alpha,X)B or A(X,alpha)B, except if alpha
+        is the heaviest product.
+
+        filter_function: name of a custom function that takes the list
+        of nuclei and returns a new list with the nuclei to be shown
+        as nodes.
+
+        """
 
         G = nx.MultiDiGraph()
         G.position = {}
@@ -417,7 +474,31 @@ class RateCollection:
         for n in node_nuclei:
             for r in self.nuclei_consumed[n]:
                 for p in r.products:
+
                     if p in node_nuclei:
+
+                        if hide_xalpha:
+
+                            # first check is alpha is the heaviest nucleus on the RHS
+                            rhs_heavy = sorted(r.products)[-1]
+                            if not (rhs_heavy.Z == 2 and rhs_heavy.A == 4):
+
+                                # for rates that are A (x, alpha) B, where A and B are heavy nuclei,
+                                # don't show the connection of the nucleus to alpha, only show it to B
+                                if p.Z == 2 and p.A == 4:
+                                    continue
+
+                                # likewise, hide A (alpha, x) B, unless A itself is an alpha
+                                c = r.reactants
+                                n_alpha = 0
+                                for nuc in c:
+                                    if nuc.Z == 2 and nuc.A == 4:
+                                        n_alpha += 1
+                                # if there is only 1 alpha and we are working on the alpha node,
+                                # then skip
+                                if n_alpha == 1 and n.Z == 2 and n.A == 4:
+                                    continue
+
                         # networkx doesn't seem to keep the edges in
                         # any particular order, so we associate data
                         # to the edges here directly, in this case,
