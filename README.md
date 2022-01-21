@@ -104,7 +104,11 @@ packages and versions. To install the packages from the requirements
 file, do:
 ```
 pip install -r requirements.txt
+
 ```
+Is important to stress out that all the dependencies should be 
+installed before `pynucastro`, otherwise the installation should be 
+repeated.
 
 # unit tests
 
