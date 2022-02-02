@@ -4,7 +4,7 @@
    contain the root `toctree` directive.
 
 pynucastro
-==============
+==========
 
 `http://github.com/pynucastro/pynucastro <http://github.com/pynucastro/pynucastro>`_
 
