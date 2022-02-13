@@ -1,5 +1,4 @@
 # Common Imports
-from __future__ import print_function
 
 class BindingNuclide(object):
     """Hold the information for a single nucleus from the binding energy/nucleon table."""

@@ -3,7 +3,6 @@ Reads AME tabular mass data file and supplies table data.
 """
 
 # Common Imports
-from __future__ import print_function
 import os
 
 from ame_nuclide import AMENuclide
