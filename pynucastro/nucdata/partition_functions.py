@@ -1,47 +1,56 @@
-"""
-Classes for reading a partition function table and storing
-partition functions in PartitionFunction objects.
-
-Supported tables at present are the following:
-
-(RT2000) Thomas Rauscher and Friedrich-Karl Thielemann, Atomic Data and Nuclear
-Data Tables, 75:1–351, 2000
-
-(R2003) Thomas Rauscher, Astrophysical Journal Supplement Series, 147:403-408,
-2003
-
-For R2003, both Table 2 (FRDM) and Table 3 (ETFSI-Q) are supported. By
-default, pynucastro uses the FRDM values from R2003 for consistency
-with RT2000.
-"""
-
+from fcntl import LOCK_WRITE
 import os
 import numpy as np
 import pynucastro
 from scipy.interpolate import InterpolatedUnivariateSpline
 
+
 class PartitionFunction(object):
+    """  
+    The necessary class public variables of PartitionFunction(nucleus, name, temperature, partition_function)
+    are characterized as follows:
+
+    nucleus            : a string variable composed by an element and the atomic number, e.g ni56.
+    name               : the name of the table on which the nucleus is read.
+    temperature        : a list with all the temperatures involved in the table named in the previous variable.
+    partition_function : a list with all the partition values given in the same order of the previos list.  
+    interpolant        : stores the interpolant function.
+    interpolant_order  : stores the interpolation spline order.
+
+    The public methods of this class are:
+
+    lower_partition()   : returns the lowest temperature value of the partition_function list.
+    upper_partition()   : returns the highest temperature value of the partition_function list.
+    lower_temperature() : returns the lowest value temperature value of the temperature list.
+    upper_temperature() : returns the lowest value temperature value of the temperature list. 
+    construct_spline_interpolant(order) : interpolates temperature vs log(partition_function), using the
+                                      spline interpolation of order=3 by default, returning the function of T.
+
+    The dunder methods of this class are
+    __add__ : if two partition functions do not overlap their temperatures, we define the addition at the incorporation
+          of all the temperatures and their partition function values, respectively.
+    __call__: This object allow us to treat the class object as function of T, returning the appropiate value of 
+          the partition function.
+
+    The purpose of this oject is encompass all the nucleus partition function values into a single object, on which +
+    is defined. 
     """
-    Holds information for a single partition function table
-    corresponding to a single nucleus.
-    
-    Units of temperature are Kelvins.
-    """
+
     def __init__(self, nucleus=None, name=None, temperature=None, partition_function=None):
-        if type(nucleus) == str:
+        if type(nucleus=str):
             nucleus = pynucastro.rates.Nucleus(nucleus)
-        self.nucleus = nucleus
+
         self.name = name
         self.temperature = temperature
         self.partition_function = partition_function
         self.interpolant = None
         self.interpolant_order = None
-        if (type(self.temperature) == np.ndarray and
-            type(self.partition_function) == np.ndarray and
-            len(self.temperature) == len(self.partition_function)):
-            self.construct_spline_interpolant()
+
+        if(type(temperature) == np.ndarray and
+           type(partition_function) == np.ndarray and
+           len(temperature)==len(partition_function)):
+           self.construct_spline_interpolant()
         else:
-            # For a null partition function, return log(pf) = 0.0 when evaluated.
             self.interpolant_order = 0
             self.interpolant = lambda x: 0.0
 
@@ -58,44 +67,50 @@ class PartitionFunction(object):
         return self.temperature[-1]
 
     def __add__(self, other):
-        """
-        Adding two PartitionFunction objects is implemented by simply
-        appending the temperature and partition function values of the
-        higher-temperature partition function to those of the lower-temperature
-        partition function. If the temperature ranges overlap,
-        however, an exception is generated.
 
-        If either the PartitionFunction objects added have already had
-        a spline interpolant constructed, then construct a spline
-        interpolant for the returned PartitionFunction of order equal
-        to the maximum order of the added PartitionFunction objects.
-        """
+        # Adding two PartitionFunction objects is implemented by simply
+        # appending the temperature and partition function values of the
+        # higher-temperature partition function to those of the lower-temperature
+        # partition function. If the temperature ranges overlap,
+        # however, an exception is generated.
+
+        # If either the PartitionFunction objects added have already had
+        # a spline interpolant constructed, then construct a spline
+        # interpolant for the returned PartitionFunction of order equal
+        # to the maximum order of the added PartitionFunction objects.
+
         assert(self.nucleus == other.nucleus)
         assert(self.upper_temperature() < other.lower_temperature() or
                self.lower_temperature() > other.upper_temperature())
+
         if self.upper_temperature() < other.lower_temperature():
             lower = self
             upper = other
         else:
             lower = other
             upper = self
-        temperature = np.array(list(lower.temperature) +
+
+        temperature = np.array(list(lower.temperature) + 
                                list(upper.temperature))
-        partition_function = np.array(list(lower.partition_function) +
-                                      list(upper.partition_function))
-        name = '{} + {}'.format(lower.name, upper.name)
-        newpf = PartitionFunction(nucleus=self.nucleus, name=name, temperature=temperature,
-                                  partition_function=partition_function)
+
+        partition_function = np.array(list(lower.temperature) + 
+                             list(upper.temperature))
+
+        name = '{}+{}'.format(lower.name, upper.name)
+
+        newpf = PartitionFunction(nucleus=self.nucleus, name=name, temperature=temperature, partition_function=partition_function)
+
         if self.interpolant_order and other.interpolant_order:
             order = max(self.interpolant_order, other.interpolant_order)
         elif self.interpolant_order:
-            order = self.interpolant_order
+            order =  self.interpolant_order
         elif other.interpolant_order:
             order = other.interpolant_order
         else:
             order = None
-        if order:
-            newpf.construct_spline_interpolant(order=order)
+
+        newpf.interpolant_order = order
+        newpf.interpolant = newpf.construct_spline_interpolant(order = order)
 
         return newpf
 
@@ -108,18 +123,15 @@ class PartitionFunction(object):
         Interpolate in log space for the partition function and in GK
         for temperature.
         """
-        self.interpolant = InterpolatedUnivariateSpline(self.temperature/1.0e9,
-                                                        np.log10(self.partition_function),
+
+        self.interpolant = InterpolatedUnivariateSpline(self.temperature/1.0e9, 
+                                                        np.log10(self.partition_function), 
                                                         k=order)
+
         self.interpolant_order = order
 
     def __call__(self, T):
-        """
-        If the interpolant is already constructed, then evaluate it at
-        temperature T. Otherwise, generate an exception.
 
-        Convert T to GK for evaluation. Return un-log-scaled partition function.
-        """
         assert(self.interpolant)
         try:
             T = float(T)/1.0e9
@@ -127,192 +139,167 @@ class PartitionFunction(object):
             raise
         else:
             if self.interpolant_order == 0:
-                return 10.0**self.interpolant(T)
+                return 10**self.interpolant(T)
             else:
-                return 10.0**self.interpolant(T, ext='const')
+                return 10**self.interpolant(T, ext='const') #don't know the meaning of this operation
+
+
 
 class PartitionFunctionTable(object):
     """ 
     Class for reading a partition function table file. A
     PartitionFunction object is constructed for each nucleus and
     stored in a dictionary keyed by the lowercase nucleus name in the
-    form, e.g. "ni56". 
+    form, e.g. "ni56". The table files are stored in the PartitionFunction
+    sub directory. 
+
+    The class PartitionFunctionTable(file_name) is characterized by the public variables:
+
+    self.name : stores the name of the table.
+    self
+
     """
+
     def __init__(self, file_name):
-        self._partition_functions = {}
+        self._partition_function = {} 
         self.name = None
         self.read_table(file_name)
 
-    def _add_nuclide_pfun(self, nuc, pfun):
-        """
-        Given a Nucleus object nuc and partition function pfun,
-        check to make sure nuc does not already have a partition function
-        and if not then add it.
-        """
-        assert(not nuc in self._partition_functions)
-        self._partition_functions[str(nuc)] = pfun
+    def _add_nuclide_pfun(self, nuc, pfun): 
+        assert(not nuc in self._partition_function)
+        self._partition_function[str(nuc)] = pfun
 
     def get_nuclei(self):
-        """
-        Return list of Nucleus objects assigned partition functions in this table.
-        """
-        nuclei = []
-        for kt in self._partition_functions.keys():
-            nuclei.append(pynucastro.rates.Nucleus(kt))
-        return list(sorted(nuclei))
 
-    def get_partition_function(self, nuc):
-        """
-        Given a nucleus object or string, return its partition function or None
-        if it is not in the table.
-        """
-        if str(nuc) in self._partition_functions.keys():
-            return self._partition_functions[str(nuc)]
-        else:
-            return None
+        nuclei = []
+        for nc in self._partition_function:
+            nuclei.append(pynucastro.rates.Nucleus(nc))
+
+        return list(sorted(nuclei))
 
     def read_table(self, file_name):
         fin = open(file_name, 'r')
 
-        # Get name from header
+        #get headers name
         fhead = fin.readline()
-        hsplit = fhead.strip().split('name: ')
+        hsplit = fhead.split('name: ')
         self.name = hsplit[-1]
 
-        # Throw away 6 lines
+        #throw away the six subsequent lines
         for _ in range(6):
             fin.readline()
 
-        # Get the temperatures
+        #Now, we want to read the lines of the file where
+        #the temperatures are located
         temp_strings = fin.readline().strip().split()
         temperatures = np.array([float(t) for t in temp_strings])
 
-        # Read the rest of the lines
+        #Now, we append on the array lines = [] all the remaining file, the structure
+        #1. The nucleus
+        #2. The partition value relative to the nucleus defined in 1.
+
         lines = []
         for line in fin:
             ls = line.strip()
-            if ls:
-                lines.append(ls)
+        if ls:
+            lines.append(ls)
+
         fin.close()
 
-        # Get partition functions for each nucleus
+        #Using .pop(0) twice we construct each nucleus partition function.
+
         while lines:
             nuc = pynucastro.rates.Nucleus(lines.pop(0))
             pfun_strings = lines.pop(0).split()
             partitionfun = np.array([float(pf) for pf in pfun_strings])
-            pfun = PartitionFunction(nucleus=nuc,
-                                     name=self.name,
-                                     temperature=temperatures,
-                                     partition_function=partitionfun)
+            pfun = PartitionFunction(nuc, self.name, temperatures, partitionfun)
             self._add_nuclide_pfun(nuc, pfun)
 
+
 class PartitionFunctionCollection(object):
-    """ The PartitionFunctionCollection holds a set of partition function tables. """
+
+    """ The PartitionFunctionCollection holds a collection of PartitionFunctionTable objects in a dictionary keyed 
+    by the name of the tables
+    
+    In our discussion we have two different tables"""
+
     def __init__(self):
         self.partition_function_tables = {}
         self._read_collection()
-        self.use_high_temp_functions = False
+        self.use_high_temperatures = False
+        self._set_data = None
 
-    def _add_table(self, table):
-        """ Checks to ensure table isn't already in the collection and adds it. """
-        assert(not table.name in self.partition_function_tables)
-        self.partition_function_tables[table.name] = table
+        def _add_table(self, table):
+            """ 
+            This private function appends a PartitionFunctionTable object to each key characterized by a file_name.
+            """
+            assert(not table.name in self.partition_function_tables)
+            self.partition_function_tables[table.name] = table
 
-    def _read_collection(self):
-        """ Read the partition function tables included in pynucastro. """
-        nucdata_dir = os.path.dirname(os.path.realpath(__file__))
-        partition_function_dir = os.path.join(nucdata_dir, 'PartitionFunctions')
+        def _read_collection(self):
 
-        pft = PartitionFunctionTable(os.path.join(partition_function_dir,
-                                                  'partition_functions_rathpf.txt'))
-        self._add_table(pft)
+            """ 
+            This private function construct the whole collection of tables
+            """
+            
+            nucdata_dir = os.path.dirname(os.path.realpath(__file__))
+            partition_function_dir = os.path.join(nucdata_dir, 'PartitionFunction')
 
-        pft = PartitionFunctionTable(os.path.join(partition_function_dir,
-                                                  'partition_functions_rauscher2003_frdm.txt'))
-        self._add_table(pft)
+            pft = PartitionFunctionTable(file_name=os.join.path(partition_function_dir, 'part_etfsq.asc.txt'))
+            self._add_table(pft)
 
-        pft = PartitionFunctionTable(os.path.join(partition_function_dir,
-                                                  'partition_functions_rauscher2003_etfsiq.txt'))
-        self._add_table(pft)
+            pft = PartitionFunctionTable(file_name=os.join.path(partition_function_dir, 'part_frdm.asc.txt'))
+            self._add_table(pft)
 
-    def get_nuclei(self):
-        """
-        Return list of Nucleus objects assigned partition functions in this collection.
-        """
-        nuclei = []
-        for kt in self.partition_function_tables.keys():
-            nuclei += self.partition_function_tables[kt].get_nuclei()
-        return list(sorted(set(nuclei)))
+            pft = PartitionFunctionTable(file_name=os.join.path(partition_function_dir, 'datafile3.txt'))
+            self._add_table(pft)
 
-    def use_high_temperature_functions(self, high_temp_fun="rauscher2003_FRDM"):
-        """
-        Use this function to set the behavior of self.get_partition_function when called
-        within an iteration over a PartitionFunctionCollection object as in self.__next__.
+            pft = PartitionFunctionTable(file_name=os.join.path(partition_function_dir, 'datafile2.txt'))
+            self._add_table(pft)
 
-        Pass False to this function to turn off high temperature partition functions in the
-        iterator. Does not affect the behavior of self.get_partition_function if the user
-        wishes to call that independently.
-        """
-        self.use_high_temp_functions = high_temp_fun
+        def get_nuclei(self):
+
+            nuclei = []
+            for jk in self.partition_function_tables.keys():
+                nuclei += self.partition_function_tables[jk].get_nuclei()
+            
+            return list(sorted(set(nuclei)))
+
+        def set_data_selector(self, set_jk = 'frdm'):
+
+            """  
+            This method selects the chosen type of data 
+            """
+
+            self.set_data = set_jk
+
+        def use_high_temperatures(self, high_temp_jk = False):
+            self.use_high_temperatures = high_temp_jk 
+
+        def __iter__(self):
+            for nuc in self.get_nuclei():
+                yield self.get_partition_function(nuc)
+
+        def get_partition_function(self, nuc):
+
+            """This function access to the partition function from the class object"""
+
+            if self._ == 'frdm':
+                pf_hi_table = self.partition_function_tables['frdm']
+
+
         
-    def __iter__(self):
-        """
-        Iterate through the nuclei assigned partition functions, returning the partition function
-        object corresponding to each nucleus.
-        """
-        for nuc in self.get_nuclei():
-            yield self.get_partition_function(nuc, self.use_high_temp_functions)
 
-    def get_partition_function(self, nuc, high_temperature_partition_functions="rauscher2003_FRDM"):
-        """
-        Given a Nucleus object nuc or string representation, return its partition function. 
-        If no partition function is located for this nuclide, return None.
 
-        The argument high_temperature_partition_functions may be
-        supplied with one of two options: "rauscher2003_ETFSIQ" or
-        "rauscher2003_FRDM". The latter is the default.
 
-        If high_temperature_partition_functions = False, then return only
-        low temperature partition functions.
 
-        These correspond to partition functions from:
 
-        Thomas Rauscher and Friedrich-Karl Thielemann, Atomic Data and Nuclear
-        Data Tables, 75:1–351, 2000 (RT 2000)
 
-        together with the high temperature partition functions from:
 
-        Thomas Rauscher, Astrophysical Journal Supplement Series, 147:403-408,
-        2003. (R 2003)
 
-        The option high_temperature_partition_functions="rauscher2003_FRDM" 
-        will combine the partition functions from RT 2000 with the partition 
-        functions from Table 2 of R 2003.
+            
 
-        The option high_temperature_partition_functions="rauscher2003_ETFSIQ" 
-        will combine the partition functions from RT 2000 with the partition 
-        functions from Table 3 of R 2003.
-        """
-        assert(type(nuc) == pynucastro.rates.Nucleus or type(nuc) == str)
 
-        pf_lo_temp = self.partition_function_tables['rathpf']
-        pflo = pf_lo_temp.get_partition_function(nuc)
 
-        if high_temperature_partition_functions:
-            pf_hi_temp = self.partition_function_tables[high_temperature_partition_functions]
-            pfhi = pf_hi_temp.get_partition_function(nuc)
-        else:
-            pfhi = None
 
-        pf = None
-        if pflo and pfhi:
-            pf = pflo + pfhi
-        elif pflo:
-            pf = pflo
-        elif pfhi:
-            pf = pfhi
 
-        if pf:
-            return pf
-        else:
-            return PartitionFunction(nucleus=nuc)
