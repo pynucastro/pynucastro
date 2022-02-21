@@ -424,8 +424,9 @@ class Library:
     def __repr__(self):
         """ Return a string containing the rates IDs in this library. """
         rstrings = []
-        for id, r in self._rates.items():
-            rstrings.append(f'{r}    ({id})')
+        tmp_rates = [v for k, v in self._rates.items()]
+        for r in sorted(tmp_rates):
+            rstrings.append(f'{r}    ({r.get_rate_id()}')
         return '\n'.join(rstrings)
 
     def __add__(self, other):
@@ -793,6 +794,20 @@ class Rate:
             x = x and scomp
 
         return x
+
+    def __lt__(self, other):
+        """sort such that lightest reactants come first"""
+
+        self_sorted = sorted(self.reactants, key=lambda x: x.A)
+        other_sorted = sorted(other.reactants, key=lambda x: x.A)
+        print(f"self = {self_sorted}")
+        print(f"other = {other_sorted}")
+        if self_sorted[-1].A == other_sorted[-1].A:
+            try:
+                return self_sorted[-2].A < other_sorted[-2].A
+            except IndexError:
+                return True
+        return self_sorted[-1].A < other_sorted[-1].A
 
     def __add__(self, other):
         """Combine the sets of two Rate objects if they describe the same
