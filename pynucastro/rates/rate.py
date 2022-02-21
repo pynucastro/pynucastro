@@ -800,8 +800,6 @@ class Rate:
 
         self_sorted = sorted(self.reactants, key=lambda x: x.A)
         other_sorted = sorted(other.reactants, key=lambda x: x.A)
-        print(f"self = {self_sorted}")
-        print(f"other = {other_sorted}")
         if self_sorted[-1].A == other_sorted[-1].A:
             try:
                 return self_sorted[-2].A < other_sorted[-2].A
