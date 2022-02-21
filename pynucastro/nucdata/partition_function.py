@@ -32,7 +32,7 @@ class PartitionFunction(object):
     __call__: This object allow us to treat the class object as function of T, returning the appropiate value of 
           the partition function.
 
-    The purpose of this oject is encompass all the nucleus partition function values into a single object, on which +
+    The purpose of this oject is to encompass all the nucleus partition function values into a single object, on which +
     is defined. 
     """
 
@@ -67,17 +67,18 @@ class PartitionFunction(object):
         return self.temperature[-1]
 
     def __add__(self, other):
+        """
+        Adding two PartitionFunction objects is implemented by simply
+        appending the temperature and partition function values of the
+        higher-temperature partition function to those of the lower-temperature
+        partition function. If the temperature ranges overlap,
+        however, an exception is generated.
 
-        # Adding two PartitionFunction objects is implemented by simply
-        # appending the temperature and partition function values of the
-        # higher-temperature partition function to those of the lower-temperature
-        # partition function. If the temperature ranges overlap,
-        # however, an exception is generated.
-
-        # If either the PartitionFunction objects added have already had
-        # a spline interpolant constructed, then construct a spline
-        # interpolant for the returned PartitionFunction of order equal
-        # to the maximum order of the added PartitionFunction objects.
+        If either the PartitionFunction objects added have already had
+        a spline interpolant constructed, then construct a spline
+        interpolant for the returned PartitionFunction of order equal
+        to the maximum order of the added PartitionFunction objects.
+        """
 
         assert(self.nucleus == other.nucleus)
         assert(self.upper_temperature() < other.lower_temperature() or
@@ -153,10 +154,9 @@ class PartitionFunctionTable(object):
     form, e.g. "ni56". The table files are stored in the PartitionFunction
     sub directory. 
 
-    The class PartitionFunctionTable(file_name) is characterized by the public variables:
-
-    self.name : stores the name of the table.
-    self
+    The class PartitionFunctionTable(file_name) is characterized by the public variable self.name,
+    which stores the name of the table. The private variable self._partition_function collects all
+    the tables we have previously converted bu using their scripts. 
 
     """
 
@@ -245,16 +245,16 @@ class PartitionFunctionCollection(object):
             nucdata_dir = os.path.dirname(os.path.realpath(__file__))
             partition_function_dir = os.path.join(nucdata_dir, 'PartitionFunction')
 
-            pft = PartitionFunctionTable(file_name=os.join.path(partition_function_dir, 'part_etfsq.asc.txt'))
+            pft = PartitionFunctionTable(file_name=os.join.path(partition_function_dir, 'etfsiq_low.txt'))
             self._add_table(pft)
 
-            pft = PartitionFunctionTable(file_name=os.join.path(partition_function_dir, 'part_frdm.asc.txt'))
+            pft = PartitionFunctionTable(file_name=os.join.path(partition_function_dir, 'frdm_low.txt'))
             self._add_table(pft)
 
-            pft = PartitionFunctionTable(file_name=os.join.path(partition_function_dir, 'datafile3.txt'))
+            pft = PartitionFunctionTable(file_name=os.join.path(partition_function_dir, 'etsiq_high.txt'))
             self._add_table(pft)
 
-            pft = PartitionFunctionTable(file_name=os.join.path(partition_function_dir, 'datafile2.txt'))
+            pft = PartitionFunctionTable(file_name=os.join.path(partition_function_dir, 'frdm_high.txt'))
             self._add_table(pft)
 
         def get_nuclei(self):
@@ -268,7 +268,7 @@ class PartitionFunctionCollection(object):
         def set_data_selector(self, set_jk = 'frdm'):
 
             """  
-            This method selects the chosen type of data 
+            This method selects the chosen type of data. By default we use the FRDM model sets 
             """
 
             self.set_data = set_jk
@@ -282,22 +282,25 @@ class PartitionFunctionCollection(object):
 
         def get_partition_function(self, nuc):
 
-            """This function access to the partition function from the class object"""
+            """This function access to the partition function for a given nucleus"""
 
-            if self._ == 'frdm':
-                pf_hi_table = self.partition_function_tables['frdm']
+            if self._set_data == 'frdm':
+                pf_lo_table = self.partition_function_tables['frdm_low']
+                pf_hi_table = self.partition_function_tables['frdm_high']
+            elif self.set_data == 'etfsiq':
+                pf_lo_table = self.partition_function_tables['etfsiq_low']
+                pf_hi_table = self.partition_function_tables['etfsiq_high']
+            else:
+                pf_lo_table = 'frdm'
+                pf_hi_table = None
 
+            pf = None
+            if self.use_high_temperatures:
+                pf = pf_lo_table + pf_hi_table
+            else:
+                pf = pf_lo_table
 
-        
-
-
-
-
-
-
-
-
-            
+            return pf
 
 
 
