@@ -1,7 +1,6 @@
 from setuptools import setup, find_packages
 
 setup(name='pynucastro',
-      version='1.5.0',
       description='Python Interfaces to the nuclear reaction rate databases',
       url='https://github.com/pynucastro/nucastro',
       author='pynucastro development group',
@@ -14,4 +13,5 @@ setup(name='pynucastro',
                         'ipywidgets', 'numba'],
       use_scm_version={"version_scheme": "post-release",
                        "write_to": "pynucastro/_version.py"},
+      setup_requires=["setuptools_scm"],
       zip_safe=False)
