@@ -55,12 +55,12 @@ for line in finput:
         element = PeriodicTable.lookup_Z(Z)
         abbrev = '{}{}'.format(element.abbreviation, A)
 
-    part1 = finput.readline().strip().split()
-    part2 = finput.readline().strip().split()
-    part3 = finput.readline().strip().split()
+    part1 = finput.readline().strip().strip('\n')
+    part2 = finput.readline().strip().strip('\n')
+    part3 = finput.readline().strip().strip('\n')
 
     fout.write('{}\n'.format(abbrev))
-    fout.write(' '.join(part1) + ' '.join(part2) + ' '.join(part3) + '\n\n')
+    fout.write('{}\n\n'.format(part1+' '+part2+' '+part3))
 
     finput.readline()
 

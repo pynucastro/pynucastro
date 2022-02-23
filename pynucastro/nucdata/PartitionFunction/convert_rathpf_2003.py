@@ -16,8 +16,8 @@ from pynucastro.nucdata import PeriodicTable, Element
 
 #Create a parser variable that demands for a table and creates an option to add a name to the formatted table
 parser = argparse.ArgumentParser()
-parser.add_argument('table', type=str, help='Name of the input table. "E.g. partition_functions_rauscher2000_etfsiq"')
-parser.add_argument('-o', '--output', type=str, default='partition_function_pynucastro', help='Name of the formatted table E.g. ')
+parser.add_argument('table', type=str, help='Name of the input table. "E.g. datafile2.txt"')
+parser.add_argument('-o', '--output', type=str, default='frdm_high', help='Name of the formatted table e.g fdrm_high.txt')
 
 args = parser.parse_args()
 
@@ -32,8 +32,8 @@ temp = ['12.0' , '14.0' , '16.0' , '18.0' , '20.0' , '22.0' , '24.0' , '26.0' ,
 
 temperatures = ['{}E+9'.format(t) for t in temp]
 
-fout = open(args.output, 'w')
-fout.write('# Partition function evaluation name: rathpf\n')
+fout = open(args.output+'.txt' , 'w')
+fout.write('# Partition function evaluation name: {}\n'.format(args.output))
 fout.write('# Each entry is of the form:\n')
 fout.write('#\n')
 fout.write('# [nucleus name, e.g. ni56]\n')

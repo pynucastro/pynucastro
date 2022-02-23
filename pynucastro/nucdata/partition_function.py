@@ -37,9 +37,10 @@ class PartitionFunction(object):
     """
 
     def __init__(self, nucleus=None, name=None, temperature=None, partition_function=None):
-        if type(nucleus=str):
+        if type(nucleus) == str:
             nucleus = pynucastro.rates.Nucleus(nucleus)
 
+        self.nucleus= nucleus
         self.name = name
         self.temperature = temperature
         self.partition_function = partition_function
@@ -142,7 +143,7 @@ class PartitionFunction(object):
             if self.interpolant_order == 0:
                 return 10**self.interpolant(T)
             else:
-                return 10**self.interpolant(T, ext='const') #don't know the meaning of this operation
+                return 10**self.interpolant(T, ext='const') #extrapolates keeping the boundaries fixed.
 
 
 
@@ -172,10 +173,17 @@ class PartitionFunctionTable(object):
     def get_nuclei(self):
 
         nuclei = []
-        for nc in self._partition_function:
+        for nc in self._partition_function.keys():
             nuclei.append(pynucastro.rates.Nucleus(nc))
 
         return list(sorted(nuclei))
+
+    def get_partition_function(self, nuc):
+
+        if str(nuc) in self._partition_function.keys():
+            return self._partition_function[str(nuc)]
+        else:
+            return None
 
     def read_table(self, file_name):
         fin = open(file_name, 'r')
@@ -183,7 +191,7 @@ class PartitionFunctionTable(object):
         #get headers name
         fhead = fin.readline()
         hsplit = fhead.split('name: ')
-        self.name = hsplit[-1]
+        self.name = hsplit[-1].strip('\n')
 
         #throw away the six subsequent lines
         for _ in range(6):
@@ -201,13 +209,12 @@ class PartitionFunctionTable(object):
         lines = []
         for line in fin:
             ls = line.strip()
-        if ls:
-            lines.append(ls)
-
+            if ls:
+                lines.append(ls)
         fin.close()
 
-        #Using .pop(0) twice we construct each nucleus partition function.
 
+        #Using .pop(0) twice we construct each nucleus partition function.
         while lines:
             nuc = pynucastro.rates.Nucleus(lines.pop(0))
             pfun_strings = lines.pop(0).split()
@@ -226,81 +233,82 @@ class PartitionFunctionCollection(object):
     def __init__(self):
         self.partition_function_tables = {}
         self._read_collection()
-        self.use_high_temperatures = False
+        self._use_high_temperatures = False
         self._set_data = None
 
-        def _add_table(self, table):
-            """ 
-            This private function appends a PartitionFunctionTable object to each key characterized by a file_name.
-            """
-            assert(not table.name in self.partition_function_tables)
-            self.partition_function_tables[table.name] = table
+    def _add_table(self, table):
+        """ 
+        This private function appends a PartitionFunctionTable object to each key characterized by a file_name.
+        """
+        assert(not table.name in self.partition_function_tables)
+        self.partition_function_tables[table.name] = table
 
-        def _read_collection(self):
+    def _read_collection(self):
 
-            """ 
-            This private function construct the whole collection of tables
-            """
+        """ 
+        This private function construct the whole collection of tables
+        """
             
-            nucdata_dir = os.path.dirname(os.path.realpath(__file__))
-            partition_function_dir = os.path.join(nucdata_dir, 'PartitionFunction')
+        nucdata_dir = os.path.dirname(os.path.realpath(__file__))
+        partition_function_dir = os.path.join(nucdata_dir, 'PartitionFunction')
 
-            pft = PartitionFunctionTable(file_name=os.join.path(partition_function_dir, 'etfsiq_low.txt'))
-            self._add_table(pft)
+        pft = PartitionFunctionTable(file_name=os.path.join(partition_function_dir, 'etfsiq_low.txt'))
+        self._add_table(pft)
 
-            pft = PartitionFunctionTable(file_name=os.join.path(partition_function_dir, 'frdm_low.txt'))
-            self._add_table(pft)
+        pft = PartitionFunctionTable(file_name=os.path.join(partition_function_dir, 'frdm_low.txt'))
+        self._add_table(pft)
 
-            pft = PartitionFunctionTable(file_name=os.join.path(partition_function_dir, 'etsiq_high.txt'))
-            self._add_table(pft)
+        pft = PartitionFunctionTable(file_name=os.path.join(partition_function_dir, 'etfsiq_high.txt'))
+        self._add_table(pft)
 
-            pft = PartitionFunctionTable(file_name=os.join.path(partition_function_dir, 'frdm_high.txt'))
-            self._add_table(pft)
+        pft = PartitionFunctionTable(file_name=os.path.join(partition_function_dir, 'frdm_high.txt'))
+        self._add_table(pft)
 
-        def get_nuclei(self):
+    def get_nuclei(self):
 
-            nuclei = []
-            for jk in self.partition_function_tables.keys():
-                nuclei += self.partition_function_tables[jk].get_nuclei()
-            
+        nuclei = []
+        for jk in self.partition_function_tables.keys():
+            nuclei += self.partition_function_tables[jk].get_nuclei()
             return list(sorted(set(nuclei)))
 
-        def set_data_selector(self, set_jk = 'frdm'):
+    def set_data_selector(self, set_jk = 'frdm'):
+        """  
+        This method selects the chosen type of data. By default we use the FRDM model sets 
+        """
 
-            """  
-            This method selects the chosen type of data. By default we use the FRDM model sets 
-            """
+        self._set_data = set_jk
 
-            self.set_data = set_jk
+    def use_high_temperatures(self, high_temp_jk = False):
+        self._use_high_temperatures = high_temp_jk 
 
-        def use_high_temperatures(self, high_temp_jk = False):
-            self.use_high_temperatures = high_temp_jk 
+    def __iter__(self):
+        for nuc in self.get_nuclei():
+            yield self.get_partition_function(nuc)
 
-        def __iter__(self):
-            for nuc in self.get_nuclei():
-                yield self.get_partition_function(nuc)
+    def get_partition_function(self, nuc):
 
-        def get_partition_function(self, nuc):
+        """This function access to the partition function for a given nucleus"""
 
-            """This function access to the partition function for a given nucleus"""
+        if self._set_data == 'frdm':
+            pf_lo_table = self.partition_function_tables['frdm_low']
+            pf_lo = pf_lo_table.get_partition_function(str(nuc))
 
-            if self._set_data == 'frdm':
-                pf_lo_table = self.partition_function_tables['frdm_low']
-                pf_hi_table = self.partition_function_tables['frdm_high']
-            elif self.set_data == 'etfsiq':
-                pf_lo_table = self.partition_function_tables['etfsiq_low']
-                pf_hi_table = self.partition_function_tables['etfsiq_high']
-            else:
-                pf_lo_table = 'frdm'
-                pf_hi_table = None
+            pf_hi_table = self.partition_function_tables['frdm_high']
+            pf_hi = pf_hi_table.get_partition_function(str(nuc))
 
-            pf = None
-            if self.use_high_temperatures:
-                pf = pf_lo_table + pf_hi_table
-            else:
-                pf = pf_lo_table
+        elif self.set_data == 'etfsiq':
+            pf_lo_table = self.partition_function_tables['etfsiq_low']
+            pf_lo = pf_lo_table.get_partition_function(str(nuc))
 
-            return pf
+            pf_hi_table = self.partition_function_tables['etfsiq_high']
+            pf_hi = pf_hi_table.get_partition_function(str(nuc)) 
+
+        if self._use_high_temperatures:
+            pf = pf_lo + pf_hi
+        else:
+            pf = pf_lo
+
+        return pf
 
 
 
