@@ -144,6 +144,3 @@ class StarKillerNetwork(BaseFortranNetwork):
         # write out some network properties
         with open("NETWORK_PROPERTIES", "w") as of:
             of.write(f"NSCREEN := {self.num_screen_calls}\n")
-
-        with open("NAUX_NETWORK", "w") as of:
-            of.write("NAUX := 0\n")
