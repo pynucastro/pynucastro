@@ -34,7 +34,7 @@ class StarKillerCxxNetwork(BaseCxxNetwork):
             opath = odir
 
         # create a .net file with the nuclei properties
-        with open(f"{opath}/pynucastro.net", "w") as of:
+        with open(os.path.normpath(f"{opath}/pynucastro.net"), "w") as of:
             for nuc in self.unique_nuclei:
                 of.write("{:25} {:6} {:6.1f} {:6.1f}\n".format(
                     nuc.spec_name, nuc.short_spec_name, nuc.A, nuc.Z))
