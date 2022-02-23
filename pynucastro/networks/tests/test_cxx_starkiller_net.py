@@ -73,15 +73,15 @@ class TestStarKillerCxxNetwork(object):
     def test_ebind(self):
         """ test the _ebind function """
 
-        answer = ('    ebind_per_nucleon(N) = 0.0_rt;\n' +
-                  '    ebind_per_nucleon(H1) = 0.0_rt;\n' +
-                  '    ebind_per_nucleon(He4) = 7.073915_rt;\n' +
-                  '    ebind_per_nucleon(C12) = 7.680144_rt;\n' +
-                  '    ebind_per_nucleon(O16) = 7.976206_rt;\n' +
-                  '    ebind_per_nucleon(Ne20) = 8.03224_rt;\n' +
-                  '    ebind_per_nucleon(Ne23) = 7.955256_rt;\n' +
-                  '    ebind_per_nucleon(Na23) = 8.111493000000001_rt;\n' +
-                  '    ebind_per_nucleon(Mg23) = 7.901115_rt;\n')
+        answer = ('        ebind_per_nucleon(N) = 0.0_rt;\n' +
+                  '        ebind_per_nucleon(H1) = 0.0_rt;\n' +
+                  '        ebind_per_nucleon(He4) = 7.073915_rt;\n' +
+                  '        ebind_per_nucleon(C12) = 7.680144_rt;\n' +
+                  '        ebind_per_nucleon(O16) = 7.976206_rt;\n' +
+                  '        ebind_per_nucleon(Ne20) = 8.03224_rt;\n' +
+                  '        ebind_per_nucleon(Ne23) = 7.955256_rt;\n' +
+                  '        ebind_per_nucleon(Na23) = 8.111493000000001_rt;\n' +
+                  '        ebind_per_nucleon(Mg23) = 7.901115_rt;\n')
         assert self.cromulent_ftag(self.fn._ebind, answer, n_indent=2)
 
     def test_write_network(self):
