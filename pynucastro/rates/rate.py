@@ -560,7 +560,7 @@ class Library:
 
         """
 
-        current_rates = self.get_rates()
+        current_rates = sorted(self.get_rates())
 
         # check the forward rates to see if any of the products are
         # not consumed by other forward rates
