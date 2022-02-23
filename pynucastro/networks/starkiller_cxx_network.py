@@ -33,6 +33,9 @@ class StarKillerCxxNetwork(BaseCxxNetwork):
         else:
             opath = odir
 
+        print(os.getcwd())
+        print(os.path.isdir(opath))
+
         # create a .net file with the nuclei properties
         with open(os.path.normpath(f"{opath}/pynucastro.net"), "w") as of:
             for nuc in self.unique_nuclei:
