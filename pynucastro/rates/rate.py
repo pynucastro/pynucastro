@@ -216,6 +216,9 @@ class Nucleus:
         # use lowercase element abbreviation regardless the case of the input
         self.el = self.el.lower()
 
+        # set a partition function object to every nucleus
+        self._partition_function = None
+
         # atomic number comes from periodic table
         if name != "n":
             try:
@@ -238,6 +241,16 @@ class Nucleus:
 
                 # latex formatted style
                 self.pretty = fr"{{}}^{{{self.A}}}\mathrm{{{self.el.capitalize()}}}"
+
+    def set_partition_function(self, pcollection, set_data='frdm', use_high_temperature=True):
+        """
+        This function associates to every nucleus a PartitionFunction object.
+        """
+        assert(type(pcollection) == PartitionFunctionCollection)
+
+        pcollection.set_data_selector(set_data)
+        pcollection.use_high_temperature(use_high_temperature)
+        self._partition_function = pcollection.get_partition_function(self)
 
     def __repr__(self):
         return self.raw
