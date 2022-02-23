@@ -594,7 +594,7 @@ class Library:
             rf = RateFilter(reactants=rate.reactants)
             all_rates_library = other_library.filter(rf)
 
-            for other_rate in all_rates_library.get_rates():
+            for other_rate in sorted(all_rates_library.get_rates()):
                 # check to see if other_rate is already in current_rates
                 found = False
                 for crate in current_rates:
