@@ -3,6 +3,7 @@ import pynucastro.networks as networks
 import pynucastro.rates as rates
 import os
 import filecmp
+import glob
 
 import io
 
@@ -89,6 +90,10 @@ class TestStarKillerCxxNetwork(object):
         test_path = "_test_cxx/"
         reference_path = "_starkiller_cxx_reference/"
         base_path = os.path.relpath(os.path.dirname(__file__))
+
+        print(os.getcwd())
+        print(os.path.isdir(test_path))
+        print(glob.glob(test_path + "/*"))
 
         self.fn.write_network(odir=test_path)
         files = ["actual_network_data.cpp",
