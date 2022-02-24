@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.rates.rate &mdash; pynucastro 1.6.0.post19+gdc23c9d documentation</title>
+  <title>pynucastro.rates.rate &mdash; pynucastro 1.6.0.post20+g79ad1d3 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -626,8 +626,62 @@
                            <span class="n">rates</span><span class="o">=</span><span class="n">matching_rates</span><span class="p">,</span>
                            <span class="n">read_library</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">None</span></div></div>
+            <span class="k">return</span> <span class="kc">None</span></div>
 
+<div class="viewcode-block" id="Library.validate"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.Library.validate">[docs]</a>    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other_library</span><span class="p">,</span> <span class="n">forward_only</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;perform various checks on the library, comparing to other_library,</span>
+<span class="sd">        to ensure that we are not missing important rates.  The idea</span>
+<span class="sd">        is that self should be a reduced library where we filtered out</span>
+<span class="sd">        a few rates and then we want to compare to the larger</span>
+<span class="sd">        other_library to see if we missed something important.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">current_rates</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_rates</span><span class="p">())</span>
+
+        <span class="c1"># check the forward rates to see if any of the products are</span>
+        <span class="c1"># not consumed by other forward rates</span>
+
+        <span class="n">passed_validation</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">for</span> <span class="n">rate</span> <span class="ow">in</span> <span class="n">current_rates</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">rate</span><span class="o">.</span><span class="n">reverse</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">rate</span><span class="o">.</span><span class="n">products</span><span class="p">:</span>
+                <span class="n">found</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="k">for</span> <span class="n">orate</span> <span class="ow">in</span> <span class="n">current_rates</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">orate</span> <span class="o">==</span> <span class="n">rate</span><span class="p">:</span>
+                        <span class="k">continue</span>
+                    <span class="k">if</span> <span class="n">orate</span><span class="o">.</span><span class="n">reverse</span><span class="p">:</span>
+                        <span class="k">continue</span>
+                    <span class="k">if</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">orate</span><span class="o">.</span><span class="n">reactants</span><span class="p">:</span>
+                        <span class="n">found</span> <span class="o">=</span> <span class="kc">True</span>
+                        <span class="k">break</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">found</span><span class="p">:</span>
+                    <span class="n">passed_validation</span> <span class="o">=</span> <span class="kc">False</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;validation: </span><span class="si">{</span><span class="n">p</span><span class="si">}</span><span class="s2"> produced in </span><span class="si">{</span><span class="n">rate</span><span class="si">}</span><span class="s2"> never consumed.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># now check if we are missing any rates from other_library with the exact same reactants</span>
+
+        <span class="k">for</span> <span class="n">rate</span> <span class="ow">in</span> <span class="n">current_rates</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">forward_only</span> <span class="ow">and</span> <span class="n">rate</span><span class="o">.</span><span class="n">reverse</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># create a rate filter with these exact reactants</span>
+            <span class="n">rf</span> <span class="o">=</span> <span class="n">RateFilter</span><span class="p">(</span><span class="n">reactants</span><span class="o">=</span><span class="n">rate</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span>
+            <span class="n">all_rates_library</span> <span class="o">=</span> <span class="n">other_library</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">rf</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">other_rate</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">all_rates_library</span><span class="o">.</span><span class="n">get_rates</span><span class="p">()):</span>
+                <span class="c1"># check to see if other_rate is already in current_rates</span>
+                <span class="n">found</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">if</span> <span class="n">other_rate</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">current_rates</span><span class="p">:</span>
+                    <span class="n">found</span> <span class="o">=</span> <span class="kc">False</span>
+
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">found</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;validation: missing </span><span class="si">{</span><span class="n">other_rate</span><span class="si">}</span><span class="s2"> as alternative to </span><span class="si">{</span><span class="n">rate</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+
+        <span class="k">return</span> <span class="n">passed_validation</span></div></div>
 
 <div class="viewcode-block" id="RateFilter"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.RateFilter">[docs]</a><span class="k">class</span> <span class="nc">RateFilter</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;RateFilter filters out a specified rate or set of rates</span>
