@@ -551,6 +551,60 @@ class Library:
         else:
             return None
 
+    def validate(self, other_library, forward_only=True):
+        """perform various checks on the library, comparing to other_library,
+        to ensure that we are not missing important rates.  The idea
+        is that self should be a reduced library where we filtered out
+        a few rates and then we want to compare to the larger
+        other_library to see if we missed something important.
+
+        """
+
+        current_rates = sorted(self.get_rates())
+
+        # check the forward rates to see if any of the products are
+        # not consumed by other forward rates
+
+        passed_validation = True
+
+        for rate in current_rates:
+            if rate.reverse:
+                continue
+            for p in rate.products:
+                found = False
+                for orate in current_rates:
+                    if orate == rate:
+                        continue
+                    if orate.reverse:
+                        continue
+                    if p in orate.reactants:
+                        found = True
+                        break
+                if not found:
+                    passed_validation = False
+                    print(f"validation: {p} produced in {rate} never consumed.")
+
+        # now check if we are missing any rates from other_library with the exact same reactants
+
+        for rate in current_rates:
+            if forward_only and rate.reverse:
+                continue
+
+            # create a rate filter with these exact reactants
+            rf = RateFilter(reactants=rate.reactants)
+            all_rates_library = other_library.filter(rf)
+
+            for other_rate in sorted(all_rates_library.get_rates()):
+                # check to see if other_rate is already in current_rates
+                found = True
+                if other_rate not in current_rates:
+                    found = False
+
+                if not found:
+                    print(f"validation: missing {other_rate} as alternative to {rate}.")
+
+
+        return passed_validation
 
 class RateFilter:
     """RateFilter filters out a specified rate or set of rates
