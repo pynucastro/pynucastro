@@ -91,14 +91,7 @@ class TestStarKillerCxxNetwork(object):
         reference_path = "_starkiller_cxx_reference/"
         base_path = os.path.relpath(os.path.dirname(__file__))
 
-
         self.fn.write_network(odir=test_path)
-
-        print(os.getcwd())
-        print(glob.glob("./*"))
-        print(os.path.isdir(test_path))
-        print(glob.glob(test_path + "/*"))
-
 
         files = ["actual_network_data.cpp",
                  "actual_network.H",
@@ -110,6 +103,7 @@ class TestStarKillerCxxNetwork(object):
                  "reaclib_rates.H",
                  "table_rates_data.cpp",
                  "table_rates.H"]
+
         errors = []
         for test_file in files:
             # note, _test is written under whatever directory pytest is run from,
