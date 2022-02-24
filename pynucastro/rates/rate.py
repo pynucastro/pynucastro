@@ -1162,6 +1162,7 @@ class Rate:
         # reactants of the forward rate that was used in the detailed
         # balance.  Rate.symmetric_screen is what should be used in
         # the screening in this case
+        self.symmetric_screen = []
         if self.reverse:
             nucz = [q for q in self.products if q.Z != 0]
             if len(nucz) > 1:
