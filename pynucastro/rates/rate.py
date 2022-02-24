@@ -596,11 +596,10 @@ class Library:
 
             for other_rate in sorted(all_rates_library.get_rates()):
                 # check to see if other_rate is already in current_rates
-                found = False
-                for crate in current_rates:
-                    if other_rate == crate:
-                        found = True
-                        break
+                found = True
+                if other_rate not in current_rates:
+                    found = False
+
                 if not found:
                     print(f"validation: missing {other_rate} as alternative to {rate}.")
 
