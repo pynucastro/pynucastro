@@ -92,6 +92,7 @@ class TestStarKillerCxxNetwork(object):
         base_path = os.path.relpath(os.path.dirname(__file__))
 
         print(os.getcwd())
+        print(glob.glob("./*"))
         print(os.path.isdir(test_path))
         print(glob.glob(test_path + "/*"))
 
