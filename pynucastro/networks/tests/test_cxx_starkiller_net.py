@@ -100,8 +100,7 @@ class TestStarKillerCxxNetwork(object):
                  "reaclib_rate_metadata.dat",
                  "reaclib_rates.H",
                  "table_rates_data.cpp",
-                 "table_rates.H",
-                 "table_type.H"]
+                 "table_rates.H"]
         errors = []
         for test_file in files:
             # note, _test is written under whatever directory pytest is run from,
