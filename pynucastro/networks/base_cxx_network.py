@@ -99,6 +99,9 @@ class BaseCxxNetwork(ABC, RateCollection):
         if not self.solved_jacobian:
             self.compose_jacobian()
 
+        print("here!!!!!")
+        print(self.template_files)
+
         # Process template files
         for tfile in self.template_files:
             tfile_basename = os.path.basename(tfile)
