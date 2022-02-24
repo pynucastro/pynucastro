@@ -111,6 +111,7 @@ class BaseCxxNetwork(ABC, RateCollection):
                         sys.exit(f"unable to create directory {odir}")
                 outfile = os.path.normpath(odir + "/" + outfile)
 
+            print(f"writing {os.path.abspath(outfile)}")
             with open(tfile) as ifile, open(outfile, "w") as of:
                 for l in ifile:
                     ls = l.strip()
