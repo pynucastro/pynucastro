@@ -551,12 +551,16 @@ class Library:
         else:
             return None
 
-    def validate(self, other_library, forward_only=True):
+    def validate(self, other_library, forward_only=True, ostream=None):
         """perform various checks on the library, comparing to other_library,
         to ensure that we are not missing important rates.  The idea
         is that self should be a reduced library where we filtered out
         a few rates and then we want to compare to the larger
         other_library to see if we missed something important.
+
+        ostream is the I/O stream to send output to (for instance, a
+        file object or StringIO object).  If it is None, then output
+        is to stdout.
 
         """
 
@@ -582,7 +586,11 @@ class Library:
                         break
                 if not found:
                     passed_validation = False
-                    print(f"validation: {p} produced in {rate} never consumed.")
+                    msg = f"validation: {p} produced in {rate} never consumed."
+                    if ostream is None:
+                        print(msg)
+                    else:
+                        ostream.write(msg + "\n")
 
         # now check if we are missing any rates from other_library with the exact same reactants
 
@@ -601,8 +609,11 @@ class Library:
                     found = False
 
                 if not found:
-                    print(f"validation: missing {other_rate} as alternative to {rate}.")
-
+                    msg = f"validation: missing {other_rate} as alternative to {rate}."
+                    if ostream is None:
+                        print(msg)
+                    else:
+                        ostream.write(msg + "\n")
 
         return passed_validation
 
