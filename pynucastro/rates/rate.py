@@ -446,6 +446,10 @@ class Library:
                               read_library=False)
         return new_library
 
+    def get_num_rates(self):
+        """Return the number of rates known to the library"""
+        return len(self._rates)
+
     def get_rates(self):
         """ Return a list of the rates in this library. """
         rlist = [r for id, r in self._rates.items()]
