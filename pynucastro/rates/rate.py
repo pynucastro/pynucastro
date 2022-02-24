@@ -560,7 +560,7 @@ class Library:
 
         """
 
-        current_rates = self.get_rates()
+        current_rates = sorted(self.get_rates())
 
         # check the forward rates to see if any of the products are
         # not consumed by other forward rates
@@ -594,13 +594,12 @@ class Library:
             rf = RateFilter(reactants=rate.reactants)
             all_rates_library = other_library.filter(rf)
 
-            for other_rate in all_rates_library.get_rates():
+            for other_rate in sorted(all_rates_library.get_rates()):
                 # check to see if other_rate is already in current_rates
-                found = False
-                for crate in current_rates:
-                    if other_rate == crate:
-                        found = True
-                        break
+                found = True
+                if other_rate not in current_rates:
+                    found = False
+
                 if not found:
                     print(f"validation: missing {other_rate} as alternative to {rate}.")
 
