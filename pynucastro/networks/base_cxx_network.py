@@ -99,9 +99,6 @@ class BaseCxxNetwork(ABC, RateCollection):
         if not self.solved_jacobian:
             self.compose_jacobian()
 
-        print("here!!!!!")
-        print(self.template_files)
-
         # Process template files
         for tfile in self.template_files:
             tfile_basename = os.path.basename(tfile)
@@ -114,7 +111,6 @@ class BaseCxxNetwork(ABC, RateCollection):
                         sys.exit(f"unable to create directory {odir}")
                 outfile = os.path.normpath(odir + "/" + outfile)
 
-            print(f"writing {os.path.abspath(outfile)}")
             with open(tfile) as ifile, open(outfile, "w") as of:
                 for l in ifile:
                     ls = l.strip()

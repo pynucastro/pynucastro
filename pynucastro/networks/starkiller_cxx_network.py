@@ -15,13 +15,10 @@ class StarKillerCxxNetwork(BaseCxxNetwork):
 
     def _get_template_files(self):
 
-        print("in _get_template_files")
-        print(self.pynucastro_dir)
         template_pattern = os.path.join(self.pynucastro_dir,
                                         'templates',
                                         'starkiller-cxx-microphysics',
                                         '*.template')
-        print(template_pattern)
 
         return glob.glob(template_pattern)
 
