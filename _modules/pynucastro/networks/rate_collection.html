@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.networks.rate_collection &mdash; pynucastro 1.6.0.post21+g20b08a5 documentation</title>
+  <title>pynucastro.networks.rate_collection &mdash; pynucastro 1.6.0.post22+gb20f1b3 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -478,7 +478,60 @@
              <span class="n">node_size</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">node_font_size</span><span class="o">=</span><span class="mi">13</span><span class="p">,</span> <span class="n">node_color</span><span class="o">=</span><span class="s2">&quot;#A0CBE2&quot;</span><span class="p">,</span> <span class="n">node_shape</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">,</span>
              <span class="n">N_range</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">Z_range</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rotated</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
              <span class="n">always_show_p</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">always_show_alpha</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">hide_xalpha</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">filter_function</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Make a plot of the network structure showing the links between nuclei&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Make a plot of the network structure showing the links between</span>
+<span class="sd">        nuclei.  If a full set of thermodymamic conditions are</span>
+<span class="sd">        provided (rho, T, comp), then the links are colored by rate</span>
+<span class="sd">        strength.</span>
+
+
+<span class="sd">        parameters</span>
+<span class="sd">        ----------</span>
+
+<span class="sd">        outfile: output name of the plot -- extension determines the type</span>
+
+<span class="sd">        rho: density to evaluate rates with</span>
+
+<span class="sd">        T: temperature to evaluate rates with</span>
+
+<span class="sd">        comp: composition to evaluate rates with</span>
+
+<span class="sd">        size: tuple giving width x height of the plot in inches</span>
+
+<span class="sd">        dpi: pixels per inch used by matplotlib in rendering bitmap</span>
+
+<span class="sd">        title: title to display on the plot</span>
+
+<span class="sd">        ydot_cutoff_value: rate threshold below which we do not show a</span>
+<span class="sd">        line corresponding to a rate</span>
+
+<span class="sd">        node_size: size of a node</span>
+
+<span class="sd">        node_font_size: size of the font used to write the isotope in the node</span>
+
+<span class="sd">        node_color: color to make the nodes</span>
+
+<span class="sd">        node_shape: shape of the node (using matplotlib marker names)</span>
+
+<span class="sd">        N_range: range of neutron number to zoom in on</span>
+
+<span class="sd">        Z_range: range of proton number to zoom in on</span>
+
+<span class="sd">        rotate: if True, we plot A - 2Z vs. Z instead of the default Z vs. N</span>
+
+<span class="sd">        always_show_p: include p as a node on the plot even if we</span>
+<span class="sd">        don&#39;t have p+p reactions</span>
+
+<span class="sd">        always_show_alpha: include He4 as a node on the plot even if we don&#39;t have 3-alpha</span>
+
+<span class="sd">        hide_xalpha=False: dont connect the links to alpha for heavy</span>
+<span class="sd">        nuclei reactions of the form A(alpha,X)B or A(X,alpha)B, except if alpha</span>
+<span class="sd">        is the heaviest product.</span>
+
+<span class="sd">        filter_function: name of a custom function that takes the list</span>
+<span class="sd">        of nuclei and returns a new list with the nuclei to be shown</span>
+<span class="sd">        as nodes.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">G</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">MultiDiGraph</span><span class="p">()</span>
         <span class="n">G</span><span class="o">.</span><span class="n">position</span> <span class="o">=</span> <span class="p">{}</span>
@@ -538,24 +591,30 @@
         <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">node_nuclei</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nuclei_consumed</span><span class="p">[</span><span class="n">n</span><span class="p">]:</span>
                 <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">r</span><span class="o">.</span><span class="n">products</span><span class="p">:</span>
+
                     <span class="k">if</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">node_nuclei</span><span class="p">:</span>
 
                         <span class="k">if</span> <span class="n">hide_xalpha</span><span class="p">:</span>
-                            <span class="c1"># for rates that are A (x, alpha) B, where A and B are heavy nuclei,</span>
-                            <span class="c1"># don&#39;t show the connection of the nucleus to alpha, only show it to B</span>
-                            <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">Z</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">p</span><span class="o">.</span><span class="n">A</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
-                                <span class="k">continue</span>
 
-                            <span class="c1"># likewise, hide A (alpha, x) B, unless A itself is an alpha</span>
-                            <span class="n">c</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">reactants</span>
-                            <span class="n">n_alpha</span> <span class="o">=</span> <span class="mi">0</span>
-                            <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="n">c</span><span class="p">:</span>
-                                <span class="k">if</span> <span class="n">nuc</span><span class="o">.</span><span class="n">Z</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">nuc</span><span class="o">.</span><span class="n">A</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
-                                    <span class="n">n_alpha</span> <span class="o">+=</span> <span class="mi">1</span>
-                            <span class="c1"># if there is only 1 alpha and we are working on the alpha node,</span>
-                            <span class="c1"># then skip</span>
-                            <span class="k">if</span> <span class="n">n_alpha</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">n</span><span class="o">.</span><span class="n">Z</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">n</span><span class="o">.</span><span class="n">A</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
-                                <span class="k">continue</span>
+                            <span class="c1"># first check is alpha is the heaviest nucleus on the RHS</span>
+                            <span class="n">rhs_heavy</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">products</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">rhs_heavy</span><span class="o">.</span><span class="n">Z</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">rhs_heavy</span><span class="o">.</span><span class="n">A</span> <span class="o">==</span> <span class="mi">4</span><span class="p">):</span>
+
+                                <span class="c1"># for rates that are A (x, alpha) B, where A and B are heavy nuclei,</span>
+                                <span class="c1"># don&#39;t show the connection of the nucleus to alpha, only show it to B</span>
+                                <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">Z</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">p</span><span class="o">.</span><span class="n">A</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+                                    <span class="k">continue</span>
+
+                                <span class="c1"># likewise, hide A (alpha, x) B, unless A itself is an alpha</span>
+                                <span class="n">c</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">reactants</span>
+                                <span class="n">n_alpha</span> <span class="o">=</span> <span class="mi">0</span>
+                                <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="n">c</span><span class="p">:</span>
+                                    <span class="k">if</span> <span class="n">nuc</span><span class="o">.</span><span class="n">Z</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">nuc</span><span class="o">.</span><span class="n">A</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+                                        <span class="n">n_alpha</span> <span class="o">+=</span> <span class="mi">1</span>
+                                <span class="c1"># if there is only 1 alpha and we are working on the alpha node,</span>
+                                <span class="c1"># then skip</span>
+                                <span class="k">if</span> <span class="n">n_alpha</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">n</span><span class="o">.</span><span class="n">Z</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">n</span><span class="o">.</span><span class="n">A</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+                                    <span class="k">continue</span>
 
                         <span class="c1"># networkx doesn&#39;t seem to keep the edges in</span>
                         <span class="c1"># any particular order, so we associate data</span>
