@@ -38,7 +38,8 @@ extensions = ['sphinx.ext.autodoc',
     'sphinx.ext.ifconfig',
     'sphinx.ext.viewcode',
     'nbsphinx',
-    'sphinx.ext.githubpages']
+    'sphinx.ext.githubpages',
+    'IPython.sphinxext.ipython_console_highlighting']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -54,8 +55,8 @@ main_doc = 'index'
 
 # General information about the project.
 project = 'pynucastro'
-copyright = '2021, Michael Zingale and Donald Willcox'
-author = 'Michael Zingale and Donald Willcox'
+copyright = '2022, Michael Zingale and Donald Willcox'
+author = 'pynucastro development team'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -106,6 +107,14 @@ html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
 
+html_context = {
+    'css_files': [
+        '_static/theme_overrides.css',
+        '_static/css/theme.css',
+        '_static/pygments.css'
+    ],
+}
+
 # Custom sidebar templates, must be a dictionary that maps document names
 # to template names.
 #
@@ -150,7 +159,7 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
     (main_doc, 'pynucastro.tex', 'pynucastro Documentation',
-     'Michael Zingale and Donald Willcox', 'manual'),
+     'pynucastro development team', 'manual'),
 ]
 
 

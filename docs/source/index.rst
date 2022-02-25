@@ -30,8 +30,9 @@ codes.
 
    intro
    pynucastro-examples.ipynb
-   library-examples-nuclei.ipynb
-   library-examples-filtering.ipynb
+   pynucastro-integration.ipynb
+   library-examples.ipynb
+   validate-example.ipynb
    networks
    API <modules>
    sources
