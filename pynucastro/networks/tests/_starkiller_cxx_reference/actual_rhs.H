@@ -99,18 +99,18 @@ void evaluate_rates(const burn_t& state, rate_eval_t& rate_eval) {
 
     screen5(pstate, 0, zion[C12-1], aion[C12-1], zion[C12-1], aion[C12-1], scor, dscor_dt, dscor_dd);
 
-    rate_eval.unscreened_rates(i_scor,1) = scor;
-    rate_eval.unscreened_rates(i_dscor_dt,1) = dscor_dt;
-    rate_eval.unscreened_rates(i_scor,2) = scor;
-    rate_eval.unscreened_rates(i_dscor_dt,2) = dscor_dt;
-    rate_eval.unscreened_rates(i_scor,3) = scor;
-    rate_eval.unscreened_rates(i_dscor_dt,3) = dscor_dt;
+    rate_eval.unscreened_rates(i_scor,k_c12_c12__he4_ne20) = scor;
+    rate_eval.unscreened_rates(i_dscor_dt,k_c12_c12__he4_ne20) = dscor_dt;
+    rate_eval.unscreened_rates(i_scor,k_c12_c12__n_mg23) = scor;
+    rate_eval.unscreened_rates(i_dscor_dt,k_c12_c12__n_mg23) = dscor_dt;
+    rate_eval.unscreened_rates(i_scor,k_c12_c12__p_na23) = scor;
+    rate_eval.unscreened_rates(i_dscor_dt,k_c12_c12__p_na23) = dscor_dt;
 
 
     screen5(pstate, 1, zion[He4-1], aion[He4-1], zion[C12-1], aion[C12-1], scor, dscor_dt, dscor_dd);
 
-    rate_eval.unscreened_rates(i_scor,4) = scor;
-    rate_eval.unscreened_rates(i_dscor_dt,4) = dscor_dt;
+    rate_eval.unscreened_rates(i_scor,k_he4_c12__o16) = scor;
+    rate_eval.unscreened_rates(i_dscor_dt,k_he4_c12__o16) = dscor_dt;
 
 
     // Calculate tabular rates
