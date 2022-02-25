@@ -101,9 +101,9 @@ class RateCollection:
 
     pynucastro_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 
-    def __init__(self, rate_files=None, libraries=None, rates=None, precedence=()):
-        """
-        rate_files are the files that together define the network.  This
+    def __init__(self, rate_files=None, libraries=None, rates=None, precedence=(),
+                 symmetric_screening=False):
+        """rate_files are the files that together define the network.  This
         can be any iterable or single string.
 
         This can include Reaclib library files storing multiple rates.
@@ -121,12 +121,19 @@ class RateCollection:
         the label that comes first in the sequence will be retained and the
         rest discarded.
 
+        symmetric_screening means that we screen the reverse rates
+        using the same factor as the forward rates, for rates computed
+        via detailed balance.
+
         Any combination of these options may be supplied.
+
         """
 
         self.files = []
         self.rates = []
         self.library = None
+
+        self.symmetric_screening = symmetric_screening
 
         if rate_files:
             if isinstance(rate_files, str):
@@ -308,13 +315,19 @@ class RateCollection:
     def get_screening_map(self):
         """a screening map is just a list of tuples containing the information
         about nuclei pairs for screening: (descriptive name of nuclei,
-        nucleus 1, nucleus 2, rate, 1-based index of rate)
+        nucleus 1, nucleus 2, rate, 1-based index of rate).  If symmetric_screening=True,
+        then for reverse rates, we screen using the forward rate nuclei (assuming that we
+        got here via detailed balance).
 
         """
         screening_map = []
         for k, r in enumerate(self.rates):
-            if r.ion_screen:
-                nucs = "_".join([str(q) for q in r.ion_screen])
+            screen_nuclei = r.ion_screen
+            if self.symmetric_screening:
+                screen_nuclei = r.symmetric_screen
+
+            if screen_nuclei:
+                nucs = "_".join([str(q) for q in screen_nuclei])
                 in_map = False
                 for h, _, _, mrates, krates in screening_map:
                     if h == nucs:
@@ -331,15 +344,15 @@ class RateCollection:
                     # we handle 3-alpha specially -- we actually need 2 screening factors for it
                     if nucs == "he4_he4_he4":
                         # he4 + he4
-                        screening_map.append((nucs, r.ion_screen[0], r.ion_screen[1],
+                        screening_map.append((nucs, screen_nuclei[0], screen_nuclei[1],
                                               [r], [k+1]))
                         # he4 + be8
                         be8 = Nucleus("Be8", dummy=True)
-                        screening_map.append((nucs+"_dummy", r.ion_screen[2], be8,
+                        screening_map.append((nucs+"_dummy", screen_nuclei[2], be8,
                                               [r], [k+1]))
 
                     else:
-                        screening_map.append((nucs, r.ion_screen[0], r.ion_screen[1],
+                        screening_map.append((nucs, screen_nuclei[0], screen_nuclei[1],
                                               [r], [k+1]))
         return screening_map
 
