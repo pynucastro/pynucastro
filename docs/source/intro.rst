@@ -10,7 +10,7 @@ The preferred way of importing pynucastro is as follows:
 
 .. code-block:: python
 
-   import pynucastro as pyrl
+   import pynucastro as pyna
 
 
 The main classes are:
