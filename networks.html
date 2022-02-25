@@ -4,9 +4,10 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Creating Networks &mdash; pynucastro 1.6.0.post24+gc338d41 documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <title>Creating Networks &mdash; pynucastro 1.6.0.post25+g25896ad documentation</title>
+      <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -23,7 +24,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="out" href="modules.html" />
-    <link rel="prev" title="Using RateFilter to Search Rates in a Library" href="library-examples-filtering.html" /> 
+    <link rel="prev" title="Checking your network" href="validate-example.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -48,13 +49,13 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="intro.html">Overview of pynucastro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pynucastro-examples.html">pynucastro usage examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="library-examples-nuclei.html">Specifying Desired Nuclei to Construct a Network</a></li>
-<li class="toctree-l1"><a class="reference internal" href="library-examples-filtering.html">Using RateFilter to Search Rates in a Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pynucastro-integration.html">Example of integrating a network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="library-examples.html">Selecting Rates from a Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="validate-example.html">Checking your network</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Creating Networks</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#all-networks">All networks</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#python-network">Python network</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#standalone-fortran-network">Standalone Fortran network</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#starkiller-microphysics-network">StarKiller Microphysics network</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#amrex-astro-microphysics-network">AMReX-Astro Microphysics network</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#tabular-rates">Tabular Rates</a></li>
 </ul>
 </li>
@@ -113,19 +114,7 @@
 <section id="creating-networks">
 <h1>Creating Networks<a class="headerlink" href="#creating-networks" title="Permalink to this headline">¶</a></h1>
 <p>pynucastro can output the righthand side functions for ODE integration
-in Python and Fortran.</p>
-<p>For Fortran code generation, pynucastro offers two options.</p>
-<ul class="simple">
-<li><p>Standalone: Generate right hand side routines and an integration
-driver program using the included VODE integrator in
-<code class="docutils literal notranslate"><span class="pre">util/VODE/</span></code>. These networks implement only species and energy
-integration at constant temperature, as pynucastro does not include
-an equation of state.</p></li>
-<li><p>Microphysics: Generate network files to copy directly into the
-<a class="reference external" href="https://github.com/StarKiller-astro/Microphysics/">StarKiller Microphysics repository</a> for use with astrophysical
-simulation codes. These networks implement species, temperature, and
-energy integration.</p></li>
-</ul>
+in Python or in a form for the AMReX-Astrophysics Microphysics package in C++</p>
 <section id="all-networks">
 <h2>All networks<a class="headerlink" href="#all-networks" title="Permalink to this headline">¶</a></h2>
 <p>The first few steps to setting up any of the available network options
@@ -146,11 +135,10 @@ doing:</p>
 e.g. <code class="docutils literal notranslate"><span class="pre">mynet.py</span></code>, based on the following example scripts:</p>
 <ul class="simple">
 <li><p>For Python networks, <a class="reference external" href="https://github.com/pynucastro/pynucastro/blob/main/examples/CNO/cno.py">examples/CNO/cno.py</a></p></li>
-<li><p>For standalone Fortran networks, <a class="reference external" href="https://github.com/pynucastro/pynucastro/blob/main/examples/urca-23_f90/urca.py">examples/urca-23_f90/urca.py</a></p></li>
 <li><p>For StarKiller Microphysics networks, <a class="reference external" href="https://github.com/pynucastro/pynucastro/blob/main/examples/urca-23_starkiller/urca.py">examples/urca-23_starkiller/urca.py</a></p></li>
 </ul>
 </li>
-<li><p>Run your python script (pynucastro must be in your PYTHONPATH).</p>
+<li><p>Run your python script</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ python mynet.py
 </pre></div>
 </div>
@@ -164,47 +152,8 @@ network using the SciPy integration routines, customize
 <a class="reference external" href="https://github.com/pynucastro/pynucastro/blob/main/examples/CNO/burn.py">examples/CNO/burn.py</a> to initialize and run your network using the
 right hand side module you generated above.</p>
 </section>
-<section id="standalone-fortran-network">
-<h2>Standalone Fortran network<a class="headerlink" href="#standalone-fortran-network" title="Permalink to this headline">¶</a></h2>
-<p>The <a class="reference external" href="https://github.com/pynucastro/pynucastro/tree/main/examples/urca-23_f90">examples/urca-23_f90</a>
-example builds a Fortran 90 network together with a GNU Makefile and
-integration driver program using the included VODE package for ODE
-integration.</p>
-<ul>
-<li><p>In the steps for all networks above, pynucastro will create several
-Fortran 90 files as well as a GNU Makefile set up to compile the
-integrator using gfortran. So next do:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ make
-</pre></div>
-</div>
-</li>
-<li><p>Edit the generated <code class="docutils literal notranslate"><span class="pre">inputs_integration</span></code> file to specify your initial
-conditions as well as integration tolerances, stop time, and output
-sampling interval.</p></li>
-<li><p>Run the integrator as:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ ./main.Linux.gfortran.exe inputs_integration
-</pre></div>
-</div>
-</li>
-<li><p>The integration results will be stored in a text file named by
-default <code class="docutils literal notranslate"><span class="pre">integration_history.dat</span></code></p></li>
-</ul>
-<p>Notes on the build system:</p>
-<ul>
-<li><p>If you would like to compile with debugging symbols, do:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ make <span class="nv">NDEBUG</span><span class="o">=</span>
-</pre></div>
-</div>
-</li>
-<li><p>To remove the executable and object files produced during compilation, do:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ make realclean
-</pre></div>
-</div>
-</li>
-</ul>
-</section>
-<section id="starkiller-microphysics-network">
-<h2>StarKiller Microphysics network<a class="headerlink" href="#starkiller-microphysics-network" title="Permalink to this headline">¶</a></h2>
+<section id="amrex-astro-microphysics-network">
+<h2>AMReX-Astro Microphysics network<a class="headerlink" href="#amrex-astro-microphysics-network" title="Permalink to this headline">¶</a></h2>
 <p>The <a class="reference external" href="https://github.com/pynucastro/pynucastro/tree/main/examples/urca-23_starkiller">examples/urca-23_starkiller</a> example builds the right hand side, Jacobian,
 and helper Fortran modules to copy into the <code class="docutils literal notranslate"><span class="pre">networks/</span></code> subdirectory
 of the StarKiller Microphysics repository.</p>
@@ -241,14 +190,14 @@ format:</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="library-examples-filtering.html" class="btn btn-neutral float-left" title="Using RateFilter to Search Rates in a Library" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="validate-example.html" class="btn btn-neutral float-left" title="Checking your network" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="modules.html" class="btn btn-neutral float-right" title="out" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2021, Michael Zingale and Donald Willcox.</p>
+    <p>&#169; Copyright 2022, Michael Zingale and Donald Willcox.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

@@ -2,20 +2,8 @@ Creating Networks
 =================
 
 pynucastro can output the righthand side functions for ODE integration
-in Python and Fortran.
+in Python or in a form for the AMReX-Astrophysics Microphysics package in C++
 
-For Fortran code generation, pynucastro offers two options.
-
-- Standalone: Generate right hand side routines and an integration
-  driver program using the included VODE integrator in
-  ``util/VODE/``. These networks implement only species and energy
-  integration at constant temperature, as pynucastro does not include
-  an equation of state.
-
-- Microphysics: Generate network files to copy directly into the
-  `StarKiller Microphysics repository <https://github.com/StarKiller-astro/Microphysics/>`_ for use with astrophysical
-  simulation codes. These networks implement species, temperature, and
-  energy integration.
 
 All networks
 ------------
@@ -42,10 +30,9 @@ particular kind of network you are interested in creating.
   e.g. ``mynet.py``, based on the following example scripts:
 
   - For Python networks, `examples/CNO/cno.py <https://github.com/pynucastro/pynucastro/blob/main/examples/CNO/cno.py>`_
-  - For standalone Fortran networks, `examples/urca-23_f90/urca.py <https://github.com/pynucastro/pynucastro/blob/main/examples/urca-23_f90/urca.py>`_
   - For StarKiller Microphysics networks, `examples/urca-23_starkiller/urca.py <https://github.com/pynucastro/pynucastro/blob/main/examples/urca-23_starkiller/urca.py>`_
 
-* Run your python script (pynucastro must be in your PYTHONPATH).
+* Run your python script
 
   .. code-block:: bash
 
@@ -59,52 +46,9 @@ network using the SciPy integration routines, customize
 `examples/CNO/burn.py <https://github.com/pynucastro/pynucastro/blob/main/examples/CNO/burn.py>`_ to initialize and run your network using the
 right hand side module you generated above.
 
-Standalone Fortran network
---------------------------
 
-The `examples/urca-23_f90
-<https://github.com/pynucastro/pynucastro/tree/main/examples/urca-23_f90>`_
-example builds a Fortran 90 network together with a GNU Makefile and
-integration driver program using the included VODE package for ODE
-integration.
-
-* In the steps for all networks above, pynucastro will create several
-  Fortran 90 files as well as a GNU Makefile set up to compile the
-  integrator using gfortran. So next do:
-
-  .. code-block:: bash
-
-     $ make
-
-* Edit the generated ``inputs_integration`` file to specify your initial
-  conditions as well as integration tolerances, stop time, and output
-  sampling interval.
-
-* Run the integrator as:
-
-  .. code-block:: bash
-
-     $ ./main.Linux.gfortran.exe inputs_integration
-
-* The integration results will be stored in a text file named by
-  default ``integration_history.dat``
-
-Notes on the build system:
-
-* If you would like to compile with debugging symbols, do:
-
-  .. code-block:: bash
-
-	 $ make NDEBUG=
-
-* To remove the executable and object files produced during compilation, do:
-
-  .. code-block:: bash
-
-     $ make realclean
-
-StarKiller Microphysics network
--------------------------------
+AMReX-Astro Microphysics network
+--------------------------------
 
 The `examples/urca-23_starkiller <https://github.com/pynucastro/pynucastro/tree/main/examples/urca-23_starkiller>`_ example builds the right hand side, Jacobian,
 and helper Fortran modules to copy into the ``networks/`` subdirectory

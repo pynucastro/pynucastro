@@ -4,9 +4,10 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Overview of pynucastro &mdash; pynucastro 1.6.0.post24+gc338d41 documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <title>Overview of pynucastro &mdash; pynucastro 1.6.0.post25+g25896ad documentation</title>
+      <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -48,11 +49,13 @@
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Overview of pynucastro</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#usage">Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#data-sources">Data sources</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="pynucastro-examples.html">pynucastro usage examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="library-examples-nuclei.html">Specifying Desired Nuclei to Construct a Network</a></li>
-<li class="toctree-l1"><a class="reference internal" href="library-examples-filtering.html">Using RateFilter to Search Rates in a Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pynucastro-integration.html">Example of integrating a network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="library-examples.html">Selecting Rates from a Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="validate-example.html">Checking your network</a></li>
 <li class="toctree-l1"><a class="reference internal" href="networks.html">Creating Networks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modules.html">API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sources.html">Third Party Data</a></li>
@@ -108,12 +111,12 @@
 </style>
 <section id="overview-of-pynucastro">
 <h1>Overview of pynucastro<a class="headerlink" href="#overview-of-pynucastro" title="Permalink to this headline">¶</a></h1>
-<p>pynucastro is a set of python interfaces to nuclear reaction rates
-(currently via the JINA reaclib database). It is meant for both
-interactive exploration of rates (through Jupyter notebooks) and to
-create reaction networks for use in simulation codes.</p>
+<p>pynucastro is a set of python interfaces to nuclear reaction rates. It
+is meant for both interactive exploration of rates (through Jupyter
+notebooks) and to create reaction networks for use in simulation
+codes.</p>
 <p>The preferred way of importing pynucastro is as follows:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pynucastro</span> <span class="k">as</span> <span class="nn">pyrl</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pynucastro</span> <span class="k">as</span> <span class="nn">pyna</span>
 </pre></div>
 </div>
 <p>The main classes are:</p>
@@ -125,11 +128,16 @@ weight, A.</p></li>
 knows the reactants and products and has methods that allow you to
 evaluate it at a specified temperature and plot its temperature
 dependence.</p></li>
+<li><p><a class="reference internal" href="pynucastro.rates.html#pynucastro.rates.rate.Library" title="pynucastro.rates.rate.Library"><code class="xref py py-func docutils literal notranslate"><span class="pre">Library</span></code></a>: This is a collection of
+rates (for example, the entire ReacLib library).  It provides methods
+for filtering out rates based on different sets of rules.</p></li>
 <li><p><a class="reference internal" href="pynucastro.networks.html#pynucastro.networks.rate_collection.Composition" title="pynucastro.networks.rate_collection.Composition"><code class="xref py py-func docutils literal notranslate"><span class="pre">Composition</span></code></a>: This is a
 collection of nuclei and their mass fractions.  A <code class="docutils literal notranslate"><span class="pre">Composition</span></code> is
 used when evaluating the full rates in a network.</p></li>
-<li><p><a class="reference internal" href="pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection" title="pynucastro.networks.rate_collection.RateCollection"><code class="xref py py-func docutils literal notranslate"><span class="pre">RateCollection</span></code></a>:
-This is a group of rates.  This acts as the base class for different
+<li><p><a class="reference internal" href="pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection" title="pynucastro.networks.rate_collection.RateCollection"><code class="xref py py-func docutils literal notranslate"><span class="pre">RateCollection</span></code></a>: This is the
+most basic form of a network.  It is a collection of rates and
+nuclei, that knows about the connectivity of the nuclei through
+different reactions.  This acts as the base class for different
 reaction networks.  A <code class="docutils literal notranslate"><span class="pre">RateCollection</span></code> has methods to evaluate the
 rates and make a plot of the links between rates.</p></li>
 <li><p><a class="reference internal" href="pynucastro.networks.html#pynucastro.networks.python_network.PythonNetwork" title="pynucastro.networks.python_network.PythonNetwork"><code class="xref py py-func docutils literal notranslate"><span class="pre">PythonNetwork</span></code></a>: This is a
@@ -138,13 +146,14 @@ code to express the righthand side of the system of ODEs.</p></li>
 </ul>
 <section id="usage">
 <h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
-<p>There are two modes of usage for pynucastro.  Within a Jupyter
-notebook, one can evaluate the rates and interactively visualize a
-network and see the flow between nuclei as connections colored by the
-rate linking them.</p>
-<p>The other usage mode is to use pynucastro to write the righthand
-side routine for the system of ODEs that must be integrated to evolve
-a reaction network.  A reaction network takes the form:</p>
+<p>There are two modes of usage for pynucastro.</p>
+<ul>
+<li><p>Within a Jupyter notebook, one can evaluate the rates and
+interactively visualize a network and see the flow between nuclei as
+connections colored by the rate linking them.</p></li>
+<li><p>You can use pynucastro to write the righthand side routine for the
+system of ODEs that must be integrated to evolve a reaction network.
+A reaction network takes the form:</p>
 <div class="math notranslate nohighlight">
 \[\frac{dY_i}{dt} = - \sum_{j,k} Y_i Y_j \lambda_{i(j,k)l} + \sum_{j,k} Y_l Y_k \lambda_{l(j,k)i}\]</div>
 <p>where the <span class="math notranslate nohighlight">\(\lambda\)</span>’s are the rates of destruction and creation
@@ -153,7 +162,17 @@ e.g., <a class="reference external" href="http://adsabs.harvard.edu/abs/1999ApJS
 will create the righthand sides of this system of ODEs (as python or
 Fortran code) from the list of rates you provide. One can use this to
 add reaction networks to existing simulation codes, for example, the
-<a class="reference external" href="https://amrex-astro.github.io/MAESTRO/">Maestro</a> and <a class="reference external" href="https://amrex-astro.github.io/Castro/">Castro</a> codes.</p>
+<a class="reference external" href="https://amrex-astro.github.io/MAESTROeX/">MAESTROeX</a> and <a class="reference external" href="https://amrex-astro.github.io/Castro/">Castro</a> codes.</p>
+</li>
+</ul>
+</section>
+<section id="data-sources">
+<h2>Data sources<a class="headerlink" href="#data-sources" title="Permalink to this headline">¶</a></h2>
+<p>pynucastro can currently read rates from:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://reaclib.jinaweb.org/">JINA Reaclib</a></p></li>
+<li><p>Electron-capture / <span class="math notranslate nohighlight">\(\beta\)</span>-decay rates from Suzuki et al. 2016</p></li>
+</ul>
 </section>
 </section>
 
@@ -168,7 +187,7 @@ add reaction networks to existing simulation codes, for example, the
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2021, Michael Zingale and Donald Willcox.</p>
+    <p>&#169; Copyright 2022, Michael Zingale and Donald Willcox.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

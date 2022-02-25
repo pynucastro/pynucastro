@@ -4,9 +4,10 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro &mdash; pynucastro 1.6.0.post24+gc338d41 documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <title>pynucastro &mdash; pynucastro 1.6.0.post25+g25896ad documentation</title>
+      <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -45,8 +46,9 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="intro.html">Overview of pynucastro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pynucastro-examples.html">pynucastro usage examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="library-examples-nuclei.html">Specifying Desired Nuclei to Construct a Network</a></li>
-<li class="toctree-l1"><a class="reference internal" href="library-examples-filtering.html">Using RateFilter to Search Rates in a Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pynucastro-integration.html">Example of integrating a network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="library-examples.html">Selecting Rates from a Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="validate-example.html">Checking your network</a></li>
 <li class="toctree-l1"><a class="reference internal" href="networks.html">Creating Networks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modules.html">API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sources.html">Third Party Data</a></li>
@@ -122,6 +124,7 @@ codes.</p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="intro.html">Overview of pynucastro</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="intro.html#usage">Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="intro.html#data-sources">Data sources</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="pynucastro-examples.html">pynucastro usage examples</a><ul>
@@ -129,25 +132,24 @@ codes.</p>
 <li class="toctree-l2"><a class="reference internal" href="pynucastro-examples.html#Working-with-a-group-of-rates">Working with a group of rates</a></li>
 <li class="toctree-l2"><a class="reference internal" href="pynucastro-examples.html#Explore-the-network’s-rates">Explore the network’s rates</a></li>
 <li class="toctree-l2"><a class="reference internal" href="pynucastro-examples.html#Plot-nuclides-on-a-grid">Plot nuclides on a grid</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pynucastro-examples.html#Integrating-networks">Integrating networks</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="library-examples-nuclei.html">Specifying Desired Nuclei to Construct a Network</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="library-examples-nuclei.html#Reading-a-rate-snapshot">Reading a rate snapshot</a></li>
-<li class="toctree-l2"><a class="reference internal" href="library-examples-nuclei.html#Specifying-Desired-Nuclei">Specifying Desired Nuclei</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pynucastro-integration.html">Example of integrating a network</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pynucastro-integration.html#Integrating-the-network">Integrating the network</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="library-examples-filtering.html">Using RateFilter to Search Rates in a Library</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="library-examples-filtering.html#Reading-a-rate-snapshot">Reading a rate snapshot</a></li>
-<li class="toctree-l2"><a class="reference internal" href="library-examples-filtering.html#Filtering-the-Library">Filtering the Library</a></li>
-<li class="toctree-l2"><a class="reference internal" href="library-examples-filtering.html#Example:-Building-an-Alpha-Capture-Network">Example: Building an Alpha Capture Network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="library-examples.html">Selecting Rates from a Library</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="library-examples.html#Reading-a-rate-snapshot">Reading a rate snapshot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="library-examples.html#Specifying-Desired-Nuclei">Specifying Desired Nuclei</a></li>
+<li class="toctree-l2"><a class="reference internal" href="library-examples.html#Filtering-the-Library">Filtering the Library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="library-examples.html#Example:-Building-an-Alpha-Capture-Network">Example: Building an Alpha Capture Network</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="validate-example.html">Checking your network</a></li>
 <li class="toctree-l1"><a class="reference internal" href="networks.html">Creating Networks</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="networks.html#all-networks">All networks</a></li>
 <li class="toctree-l2"><a class="reference internal" href="networks.html#python-network">Python network</a></li>
-<li class="toctree-l2"><a class="reference internal" href="networks.html#standalone-fortran-network">Standalone Fortran network</a></li>
-<li class="toctree-l2"><a class="reference internal" href="networks.html#starkiller-microphysics-network">StarKiller Microphysics network</a></li>
+<li class="toctree-l2"><a class="reference internal" href="networks.html#amrex-astro-microphysics-network">AMReX-Astro Microphysics network</a></li>
 <li class="toctree-l2"><a class="reference internal" href="networks.html#tabular-rates">Tabular Rates</a></li>
 </ul>
 </li>
@@ -185,7 +187,7 @@ codes.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2021, Michael Zingale and Donald Willcox.</p>
+    <p>&#169; Copyright 2022, Michael Zingale and Donald Willcox.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
