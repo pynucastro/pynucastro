@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.networks.rate_collection &mdash; pynucastro 1.6.0.post25+g25896ad documentation</title>
+  <title>pynucastro.networks.rate_collection &mdash; pynucastro 1.6.0.post26+g5a1ac75 documentation</title>
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -180,9 +180,9 @@
 
     <span class="n">pynucastro_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)))</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rate_files</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">libraries</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rates</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">precedence</span><span class="o">=</span><span class="p">()):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        rate_files are the files that together define the network.  This</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rate_files</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">libraries</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rates</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">precedence</span><span class="o">=</span><span class="p">(),</span>
+                 <span class="n">symmetric_screening</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;rate_files are the files that together define the network.  This</span>
 <span class="sd">        can be any iterable or single string.</span>
 
 <span class="sd">        This can include Reaclib library files storing multiple rates.</span>
@@ -200,12 +200,19 @@
 <span class="sd">        the label that comes first in the sequence will be retained and the</span>
 <span class="sd">        rest discarded.</span>
 
+<span class="sd">        symmetric_screening means that we screen the reverse rates</span>
+<span class="sd">        using the same factor as the forward rates, for rates computed</span>
+<span class="sd">        via detailed balance.</span>
+
 <span class="sd">        Any combination of these options may be supplied.</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">files</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rates</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">library</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">symmetric_screening</span> <span class="o">=</span> <span class="n">symmetric_screening</span>
 
         <span class="k">if</span> <span class="n">rate_files</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rate_files</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
@@ -387,13 +394,19 @@
 <div class="viewcode-block" id="RateCollection.get_screening_map"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.get_screening_map">[docs]</a>    <span class="k">def</span> <span class="nf">get_screening_map</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;a screening map is just a list of tuples containing the information</span>
 <span class="sd">        about nuclei pairs for screening: (descriptive name of nuclei,</span>
-<span class="sd">        nucleus 1, nucleus 2, rate, 1-based index of rate)</span>
+<span class="sd">        nucleus 1, nucleus 2, rate, 1-based index of rate).  If symmetric_screening=True,</span>
+<span class="sd">        then for reverse rates, we screen using the forward rate nuclei (assuming that we</span>
+<span class="sd">        got here via detailed balance).</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">screening_map</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">ion_screen</span><span class="p">:</span>
-                <span class="n">nucs</span> <span class="o">=</span> <span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">q</span><span class="p">)</span> <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="n">r</span><span class="o">.</span><span class="n">ion_screen</span><span class="p">])</span>
+            <span class="n">screen_nuclei</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">ion_screen</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">symmetric_screening</span><span class="p">:</span>
+                <span class="n">screen_nuclei</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">symmetric_screen</span>
+
+            <span class="k">if</span> <span class="n">screen_nuclei</span><span class="p">:</span>
+                <span class="n">nucs</span> <span class="o">=</span> <span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">q</span><span class="p">)</span> <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="n">screen_nuclei</span><span class="p">])</span>
                 <span class="n">in_map</span> <span class="o">=</span> <span class="kc">False</span>
                 <span class="k">for</span> <span class="n">h</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">mrates</span><span class="p">,</span> <span class="n">krates</span> <span class="ow">in</span> <span class="n">screening_map</span><span class="p">:</span>
                     <span class="k">if</span> <span class="n">h</span> <span class="o">==</span> <span class="n">nucs</span><span class="p">:</span>
@@ -410,15 +423,15 @@
                     <span class="c1"># we handle 3-alpha specially -- we actually need 2 screening factors for it</span>
                     <span class="k">if</span> <span class="n">nucs</span> <span class="o">==</span> <span class="s2">&quot;he4_he4_he4&quot;</span><span class="p">:</span>
                         <span class="c1"># he4 + he4</span>
-                        <span class="n">screening_map</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">nucs</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">ion_screen</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">r</span><span class="o">.</span><span class="n">ion_screen</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                        <span class="n">screening_map</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">nucs</span><span class="p">,</span> <span class="n">screen_nuclei</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">screen_nuclei</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
                                               <span class="p">[</span><span class="n">r</span><span class="p">],</span> <span class="p">[</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">]))</span>
                         <span class="c1"># he4 + be8</span>
                         <span class="n">be8</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;Be8&quot;</span><span class="p">,</span> <span class="n">dummy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-                        <span class="n">screening_map</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">nucs</span><span class="o">+</span><span class="s2">&quot;_dummy&quot;</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">ion_screen</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">be8</span><span class="p">,</span>
+                        <span class="n">screening_map</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">nucs</span><span class="o">+</span><span class="s2">&quot;_dummy&quot;</span><span class="p">,</span> <span class="n">screen_nuclei</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">be8</span><span class="p">,</span>
                                               <span class="p">[</span><span class="n">r</span><span class="p">],</span> <span class="p">[</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">]))</span>
 
                     <span class="k">else</span><span class="p">:</span>
-                        <span class="n">screening_map</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">nucs</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">ion_screen</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">r</span><span class="o">.</span><span class="n">ion_screen</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                        <span class="n">screening_map</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">nucs</span><span class="p">,</span> <span class="n">screen_nuclei</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">screen_nuclei</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
                                               <span class="p">[</span><span class="n">r</span><span class="p">],</span> <span class="p">[</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">]))</span>
         <span class="k">return</span> <span class="n">screening_map</span></div>
 
