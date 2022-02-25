@@ -1168,6 +1168,24 @@ class Rate:
             if len(nucz) == 3:
                 self.ion_screen.append(nucz[2])
 
+        # if the rate is a reverse rate, via detailed balance, then we
+        # might actually want to compute the screening based on the
+        # reactants of the forward rate that was used in the detailed
+        # balance.  Rate.symmetric_screen is what should be used in
+        # the screening in this case
+        self.symmetric_screen = []
+        if self.reverse:
+            nucz = [q for q in self.products if q.Z != 0]
+            if len(nucz) > 1:
+                nucz.sort(key=lambda x: x.Z)
+                self.symmetric_screen = []
+                self.symmetric_screen.append(nucz[0])
+                self.symmetric_screen.append(nucz[1])
+                if len(nucz) == 3:
+                    self.symmetric_screen.append(nucz[2])
+        else:
+            self.symmetric_screen = self.ion_screen
+
     def _set_print_representation(self):
         """ compose the string representations of this Rate. """
         self.string = ""

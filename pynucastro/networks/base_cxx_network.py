@@ -178,7 +178,7 @@ class BaseCxxNetwork(ABC, RateCollection):
 
     def _compute_screening_factors(self, n_indent, of):
         screening_map = self.get_screening_map()
-        for i, (h, n1, n2, _, krates) in enumerate(screening_map):
+        for i, (h, n1, n2, r, _) in enumerate(screening_map):
 
             if not n1.dummy:
                 nuc1_info = f'zion[{n1.c()}-1], aion[{n1.c()}-1]'
@@ -196,8 +196,8 @@ class BaseCxxNetwork(ABC, RateCollection):
             elif h == "he4_he4_he4_dummy":
                 # now the second part of 3-alpha
                 of.write(f'{self.indent*n_indent}screen5(pstate, {i}, {nuc1_info}, {nuc2_info}, scor2, dscor2_dt, dscor2_dd);\n\n')
-                of.write(f'{self.indent*n_indent}rate_eval.unscreened_rates(i_scor,{krates[0]}) = scor * scor2;\n')
-                of.write(f'{self.indent*n_indent}rate_eval.unscreened_rates(i_dscor_dt,{krates[0]}) = scor * dscor2_dt + dscor_dt * scor2;\n')
+                of.write(f'{self.indent*n_indent}rate_eval.unscreened_rates(i_scor,k_{r[0].fname}) = scor * scor2;\n')
+                of.write(f'{self.indent*n_indent}rate_eval.unscreened_rates(i_dscor_dt,k_{r[0].fname}) = scor * dscor2_dt + dscor_dt * scor2;\n')
 
             else:
                 of.write(f'\n{self.indent*n_indent}screen5(pstate, {i}, {nuc1_info}, {nuc2_info}, scor, dscor_dt, dscor_dd);\n\n')
@@ -206,9 +206,9 @@ class BaseCxxNetwork(ABC, RateCollection):
                 # reactants and therefore the same screening applies
                 # -- handle them all now
 
-                for k in krates:
-                    of.write(f'{self.indent*n_indent}rate_eval.unscreened_rates(i_scor,{k}) = scor;\n')
-                    of.write(f'{self.indent*n_indent}rate_eval.unscreened_rates(i_dscor_dt,{k}) = dscor_dt;\n')
+                for rr in r:
+                    of.write(f'{self.indent*n_indent}rate_eval.unscreened_rates(i_scor,k_{rr.fname}) = scor;\n')
+                    of.write(f'{self.indent*n_indent}rate_eval.unscreened_rates(i_dscor_dt,k_{rr.fname}) = dscor_dt;\n')
 
             of.write('\n')
 
