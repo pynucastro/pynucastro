@@ -32,6 +32,7 @@ codes.
    pynucastro-examples.ipynb
    pynucastro-integration.ipynb
    library-examples.ipynb
+   validate-example.ipynb
    networks
    API <modules>
    sources
