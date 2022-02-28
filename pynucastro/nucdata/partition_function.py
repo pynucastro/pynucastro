@@ -95,8 +95,8 @@ class PartitionFunction(object):
         temperature = np.array(list(lower.temperature) + 
                                list(upper.temperature))
 
-        partition_function = np.array(list(lower.temperature) + 
-                             list(upper.temperature))
+        partition_function = np.array(list(lower.partition_function) + 
+                             list(upper.partition_function))
 
         name = '{}+{}'.format(lower.name, upper.name)
 
@@ -111,8 +111,8 @@ class PartitionFunction(object):
         else:
             order = None
 
-        newpf.interpolant_order = order
-        newpf.interpolant = newpf.construct_spline_interpolant(order = order)
+        if order:
+            newpf.construct_spline_interpolant(order = order)
 
         return newpf
 
@@ -133,6 +133,8 @@ class PartitionFunction(object):
         self.interpolant_order = order
 
     def __call__(self, T):
+
+        #self.construct_spline_interpolant()
 
         assert(self.interpolant)
         try:
@@ -164,6 +166,7 @@ class PartitionFunctionTable(object):
     def __init__(self, file_name):
         self._partition_function = {} 
         self.name = None
+        self.temperatures = None
         self.read_table(file_name)
 
     def _add_nuclide_pfun(self, nuc, pfun): 
@@ -182,8 +185,6 @@ class PartitionFunctionTable(object):
 
         if str(nuc) in self._partition_function.keys():
             return self._partition_function[str(nuc)]
-        else:
-            return None
 
     def read_table(self, file_name):
         fin = open(file_name, 'r')
@@ -200,7 +201,7 @@ class PartitionFunctionTable(object):
         #Now, we want to read the lines of the file where
         #the temperatures are located
         temp_strings = fin.readline().strip().split()
-        temperatures = np.array([float(t) for t in temp_strings])
+        self.temperatures = np.array([float(t) for t in temp_strings])
 
         #Now, we append on the array lines = [] all the remaining file, the structure
         #1. The nucleus
@@ -219,7 +220,7 @@ class PartitionFunctionTable(object):
             nuc = pynucastro.rates.Nucleus(lines.pop(0))
             pfun_strings = lines.pop(0).split()
             partitionfun = np.array([float(pf) for pf in pfun_strings])
-            pfun = PartitionFunction(nuc, self.name, temperatures, partitionfun)
+            pfun = PartitionFunction(nuc, self.name, self.temperatures, partitionfun)
             self._add_nuclide_pfun(nuc, pfun)
 
 
@@ -233,7 +234,7 @@ class PartitionFunctionCollection(object):
     def __init__(self):
         self.partition_function_tables = {}
         self._read_collection()
-        self._use_high_temperatures = False
+        self._use_high_temperatures = True
         self._set_data = None
 
     def _add_table(self, table):
@@ -269,7 +270,7 @@ class PartitionFunctionCollection(object):
         nuclei = []
         for jk in self.partition_function_tables.keys():
             nuclei += self.partition_function_tables[jk].get_nuclei()
-            return list(sorted(set(nuclei)))
+        return list(sorted(set(nuclei)))
 
     def set_data_selector(self, set_jk = 'frdm'):
         """  
@@ -278,7 +279,7 @@ class PartitionFunctionCollection(object):
 
         self._set_data = set_jk
 
-    def use_high_temperatures(self, high_temp_jk = False):
+    def use_high_temperatures(self, high_temp_jk = True):
         self._use_high_temperatures = high_temp_jk 
 
     def __iter__(self):
@@ -288,6 +289,7 @@ class PartitionFunctionCollection(object):
     def get_partition_function(self, nuc):
 
         """This function access to the partition function for a given nucleus"""
+        assert(type(nuc) == pynucastro.rates.Nucleus or type(nuc) == str)
 
         if self._set_data == 'frdm':
             pf_lo_table = self.partition_function_tables['frdm_low']
@@ -296,17 +298,34 @@ class PartitionFunctionCollection(object):
             pf_hi_table = self.partition_function_tables['frdm_high']
             pf_hi = pf_hi_table.get_partition_function(str(nuc))
 
-        elif self.set_data == 'etfsiq':
+        elif self._set_data == 'etfsiq':
             pf_lo_table = self.partition_function_tables['etfsiq_low']
             pf_lo = pf_lo_table.get_partition_function(str(nuc))
 
             pf_hi_table = self.partition_function_tables['etfsiq_high']
-            pf_hi = pf_hi_table.get_partition_function(str(nuc)) 
+            pf_hi = pf_hi_table.get_partition_function(str(nuc))
+        else:
+            raise
 
         if self._use_high_temperatures:
-            pf = pf_lo + pf_hi
+            if pf_lo and pf_hi: 
+                pf = pf_lo + pf_hi
+            elif pf_lo:
+                pf = pf_lo
+            elif pf_hi:
+                pf = pf_hi
+            else:
+                name = 'default'
+                pf_default = PartitionFunction(nuc, name, pf_lo_table.temperatures, np.ones_like(pf_lo_table.temperatures))
+                pf = pf_default
+
         else:
-            pf = pf_lo
+            if pf_lo:
+                pf = pf_lo
+            else:
+                name = 'default'
+                pf_default = PartitionFunction(nuc, name, pf_lo_table.temperatures, np.ones_like(pf_lo_table.temperatures))
+                pf = pf_default
 
         return pf
 

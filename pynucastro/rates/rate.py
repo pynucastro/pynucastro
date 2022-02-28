@@ -250,8 +250,11 @@ class Nucleus:
         assert(type(pcollection) == PartitionFunctionCollection)
 
         pcollection.set_data_selector(set_data)
-        pcollection.use_high_temperature(use_high_temperature)
+        pcollection.use_high_temperatures(use_high_temperature)
         self._partition_function = pcollection.get_partition_function(self)
+
+    def get_partition_function(self):
+        return self._partition_function
 
     def __repr__(self):
         return self.raw
@@ -1215,7 +1218,7 @@ class Rate:
 
         self.tabular_data_table = np.array(t_data2d)
 
-    def set_partition_functions(self, pCollection, set_data='frdm', use_high_temperatures=True):
+    def set_partition_function(self, pCollection, set_data='frdm', use_high_temperatures=True):
         """The class Nucleus.set_partition_functions(pCollection, set_data, use_high_temperature)
            defines the partition function for the reactants and products"""
 
@@ -1223,7 +1226,7 @@ class Rate:
         pCollection.use_high_temperatures(True)
 
         for nuc in (self.reactants + self.products):
-            nuc.set_partition_function(pCollection, set_data, use_high_temperature)
+            nuc.set_partition_function(pCollection, set_data, use_high_temperatures)
 
     def eval(self, T, rhoY = None):
         """ evauate the reaction rate for temperature T """
