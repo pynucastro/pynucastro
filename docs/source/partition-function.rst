@@ -1,12 +1,18 @@
 Reverse Rates
 =============
 
-In this section we will discuss our implementation of the partition functions discussed in  
+In this section we will implement the partition functions discussed in:
+
+- [1] T.Rauscher and F.-K.Thielemann, ADNDT 75, 1-2 (2000) 
+
+- [2] T.Rauscher, ApJS 147, 403 (2003)
+
+with the purpose to compute inverse rates at extreme temperatures and heavy nuclide conditions.
 
 The Semi-Relativistic Ideal Gas Model
 -------------------------------------
 
-In order to illustrate our code implementation used to compute the inverse rates by using the forward rates, we will start by computing the number density of reaction specie, in terms of its chemical potential. Let us start our discussion by introducing the 1-particle *canonical partition function*
+In order to illustrate our implementation, we will start first by computing the number density of reaction specie in terms of its chemical potential. Let us start our discussion by introducing the 1-particle *canonical partition function* by
 
 .. math:: Z_{1-p} = \dfrac{g}{(2\pi \hbar)^3} \int \, d^3q \,d^3p \, \exp(-E/(kT))
 
@@ -17,7 +23,13 @@ for each particle as:
 
 where:
 
-.. math:: Z_{1-p}  = e^{-mc^2/(kT)}\times\dfrac{g}{(2\pi \hbar)^3} \int \, d^3q \,d^3p \, \exp(-p^2/(2mkT)) = e^{-mc^2/(kT)}\times gV\left(\dfrac{kT}{2\pi\hbar^2} \right)^{3/2}
+.. math:: 
+   :nowrap:
+   
+   \begin{eqnarray}
+   Z_{1-p} &=& e^{-mc^2/(kT)}\times\dfrac{g}{(2\pi \hbar)^3} \int \, d^3q \,d^3p \, \exp(-p^2/(2mkT)) \\
+           &=& e^{-mc^2/(kT)}\times gV\left(\dfrac{kT}{2\pi\hbar^2} \right)^{3/2}
+   \end{eqnarray}
 
 From this point, we may compute the N-particle *canonical partition function* by
 
@@ -66,7 +78,7 @@ on the reverse reaction, we have:
 
 .. math:: \dfrac{dn_C}{dt} = -\lambda_C n_C
 
-Now, taking in consideration that in queilibrium, two equations are satisfied. First, the conservation of nucleons and second, the chemical potential balance:
+Now, taking in consideration that in equilibrium, two equations are satisfied. First, the conservation of nucleons and second, the chemical potential balance:
 
 .. math::
 
@@ -121,7 +133,7 @@ Until now, we have not discussed the role of :math:`g`, which encompasses the nu
 
 Using this notation, capture reactions rates of the type :math:`(p,\gamma)`, :math:`(n,\gamma)`, :math:`(\alpha,\gamma)`, and their reverse photodisintegration decay rates, are then related by:
 
-.. math:: \lambda_{\gamma} = \left(\dfrac{A_iA_j}{A_m} \right)^{3/2}\dfrac{g_ig_j}{g_m} T^{3/2}F \times e^{-Q/(kT)}
+.. math:: \dfrac{\lambda_{\gamma}}{N_a\langle \sigma v \rangle_i} = \left(\dfrac{A_iA_j}{A_m} \right)^{3/2}\dfrac{g_ig_j}{g_m} T^{3/2}F \times e^{-Q/(kT)}
 
 otherwise, the forward and reaction rates are related by:
 
@@ -148,8 +160,24 @@ The quantities :math:`G_i` and :math:`G_j` are the target and residual partition
    \dfrac{N_a\langle \sigma v \rangle_m}{N_a\langle \sigma v \rangle_i} &=& \left(\dfrac{A_iA_j}{A_oA_m} \right)^{3/2}\dfrac{(2J_i+1)(2J_j+1)}{(2J_o+1)(2J_m+1)} \dfrac{G_i}{G_m}  \times e^{-Q/(kT)}
    \end{eqnarray}
    
-Implementing the Partition Function
------------------------------------
+or equivalently, after absorbing all the quantites in the forward rate with the exception of :math:`G_i`:
+
+.. math::
+   :nowrap:
+   
+   \begin{eqnarray}
+   \lambda_{\gamma} &=& \lambda_{\gamma}'\dfrac{G_i}{G_m}\\
+   N_a\langle \sigma v \rangle_m &=& N_a\langle \sigma v \rangle_m' \dfrac{G_i}{G_m}
+   \end{eqnarray}
+   
+where the quantites :math:`\lambda_{\gamma}'` and :math:`N_a\langle \sigma v \rangle_m'` are provided by REACLIB, under the ``-v`` flag.
+   
+Implementing Partition Functions
+--------------------------------
+
+
+
+
 
 
  
