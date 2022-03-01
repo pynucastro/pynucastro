@@ -32,6 +32,7 @@ codes.
    pynucastro-examples.ipynb
    library-examples-nuclei.ipynb
    library-examples-filtering.ipynb
+   partition-function
    networks
    API <modules>
    sources
