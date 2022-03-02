@@ -5,7 +5,7 @@ import pynucastro.rates as rates
 from pytest import approx
 
 
-class TestTfactors(object):
+class TestTfactors:
     @classmethod
     def setup_class(cls):
         """ this is run once for each class before any tests """
@@ -33,7 +33,7 @@ class TestTfactors(object):
         assert self.tf.lnT9 == approx(math.log(2.0))
 
 
-class TestNucleus(object):
+class TestNucleus:
     @classmethod
     def setup_class(cls):
         """ this is run once for each class before any tests """
@@ -83,7 +83,7 @@ class TestNucleus(object):
         assert self.he4_also == self.he4
 
 
-class TestRate(object):
+class TestRate:
 
     @classmethod
     def setup_class(cls):
