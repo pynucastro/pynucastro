@@ -5,9 +5,10 @@ Classes and methods to interface with files storing rate data.
 import os
 import re
 import io
+import collections
+
 import numpy as np
 import matplotlib.pyplot as plt
-import collections
 import numba
 
 try:
@@ -76,13 +77,17 @@ class SingleSet:
         self.a = a
         self.labelprops = labelprops
         self._update_label_properties()
+        self.label = None
+        self.resonant = None
+        self.weak = None
+        self.reverse = None
 
     def _update_label_properties(self):
         """ Set label and flags indicating Set is resonant,
             weak, or reverse. """
-        assert(type(self.labelprops) == str)
+        assert isinstance(self.labelprops, str)
         try:
-            assert(len(self.labelprops) == 6)
+            assert len(self.labelprops) == 6
         except:
             raise
         else:
@@ -200,7 +205,7 @@ class Nucleus:
         else:
             e = re.match(r"([a-zA-Z]*)(\d*)", name)
             self.el = e.group(1).title()  # chemical symbol
-            assert(self.el)
+            assert self.el
             try:
                 self.A = int(e.group(2))
             except:
@@ -209,7 +214,7 @@ class Nucleus:
                     raise UnsupportedNucleus()
                 else:
                     raise
-            assert(self.A >= 0)
+            assert self.A >= 0
             self.short_spec_name = name
             self.caps_name = name.capitalize()
 
@@ -227,11 +232,11 @@ class Nucleus:
                 raise
             else:
                 self.Z = i.Z
-                assert(type(self.Z) == int)
-                assert(self.Z >= 0)
+                assert isinstance(self.Z, int)
+                assert self.Z >= 0
                 self.N = self.A - self.Z
-                assert(type(self.N) == int)
-                assert(self.N >= 0)
+                assert isinstance(self.N, int)
+                assert self.N >= 0
 
                 # long name
                 self.spec_name = f'{i.name}-{self.A}'
@@ -286,7 +291,7 @@ class Library:
             self._rates = None
             if isinstance(rates, Rate):
                 rates = [rates]
-            assert (isinstance(rates, dict) or isinstance(rates, list)), "ERROR: rates in Library constructor must be a Rate object, list of Rate objects, or dictionary of Rate objects keyed by Rate.get_rate_id()"
+            assert isinstance(rates, dict) or isinstance(rates, list), "ERROR: rates in Library constructor must be a Rate object, list of Rate objects, or dictionary of Rate objects keyed by Rate.get_rate_id()"
             if isinstance(rates, dict):
                 self._rates = rates
             elif isinstance(rates, list):
@@ -329,7 +334,7 @@ class Library:
             self._rates = collections.OrderedDict()
         for r in ratelist:
             id = r.get_rate_id()
-            assert (not id in self._rates), "ERROR: supplied a Rate object already in the Library."
+            assert not id in self._rates, "ERROR: supplied a Rate object already in the Library."
             self._rates[id] = r
 
     @classmethod
@@ -389,7 +394,7 @@ class Library:
                 except:
                     # we can't interpret line as a chapter so use current_chapter
                     try:
-                        assert(current_chapter)
+                        assert current_chapter
                     except:
                         print(f'ERROR: malformed library file {self._library_file}, cannot identify chapter.')
                         raise
@@ -684,18 +689,18 @@ class RateFilter:
         self.filter_function = filter_function
 
         if reactants:
-            if type(reactants) == Nucleus or type(reactants) == str:
+            if isinstance(reactants, Nucleus) or isinstance(reactants, str):
                 reactants = [reactants]
             self.reactants = [self._cast_nucleus(r) for r in reactants]
         if products:
-            if type(products) == Nucleus or type(products) == str:
+            if isinstance(products, Nucleus) or isinstance(products, str):
                 products = [products]
             self.products = [self._cast_nucleus(r) for r in products]
 
     @staticmethod
     def _cast_nucleus(r):
         """ Make sure r is of type Nucleus. """
-        if not type(r) == Nucleus:
+        if not isinstance(r, Nucleus):
             try:
                 rnuc = Nucleus(r)
             except:
@@ -728,7 +733,7 @@ class RateFilter:
             matches = RateFilter._contents_equal(test, reference)
         else:
             for nuc in test:
-                if not (nuc in reference):
+                if not nuc in reference:
                     matches = False
                     break
         return matches
@@ -747,15 +752,15 @@ class RateFilter:
             matches_reactants = self._compare_nuclides(self.reactants, r.reactants, self.exact)
         if self.products:
             matches_products = self._compare_nuclides(self.products, r.products, self.exact)
-        if type(self.reverse) == type(True):
+        if isinstance(self.reverse, bool):
             matches_reverse = self.reverse == r.reverse
-        if type(self.min_reactants) == int:
+        if isinstance(self.min_reactants, int):
             matches_min_reactants = len(r.reactants) >= self.min_reactants
-        if type(self.min_products) == int:
+        if isinstance(self.min_products, int):
             matches_min_products = len(r.products) >= self.min_products
-        if type(self.max_reactants) == int:
+        if isinstance(self.max_reactants, int):
             matches_max_reactants = len(r.reactants) <= self.max_reactants
-        if type(self.max_products) == int:
+        if isinstance(self.max_products, int):
             matches_max_products = len(r.products) <= self.max_products
         if self.filter_function is not None:
             matches_filter_function = self.filter_function(r)
@@ -787,7 +792,7 @@ class Rate:
         self.rfile_path = rfile_path
         self.rfile = None
 
-        if type(rfile) == str:
+        if isinstance(rfile, str):
             self.rfile_path = Library._find_rate_file(rfile)
             self.rfile = os.path.basename(rfile)
 
@@ -812,9 +817,17 @@ class Rate:
 
         self.labelprops = labelprops
 
+        self.label = None
+        self.weak = None
+        self.weak_type = None
+        self.tabular = None
+        self.reverse = None
+        self.resonant = None
+        self.resonance_combined = None
+
         self.Q = Q
 
-        if type(rfile) == str:
+        if isinstance(rfile, str):
             # read in the file, parse the different sets and store them as
             # SingleSet objects in sets[]
             f = open(self.rfile_path)
@@ -879,15 +892,15 @@ class Rate:
     def __add__(self, other):
         """Combine the sets of two Rate objects if they describe the same
            reaction. Must be Reaclib rates."""
-        assert(self.reactants == other.reactants)
-        assert(self.products == other.products)
-        assert(self.chapter == other.chapter)
-        assert(type(self.chapter) == int)
-        assert(self.label == other.label)
-        assert(self.weak == other.weak)
-        assert(self.weak_type == other.weak_type)
-        assert(self.tabular == other.tabular)
-        assert(self.reverse == other.reverse)
+        assert self.reactants == other.reactants
+        assert self.products == other.products
+        assert self.chapter == other.chapter
+        assert isinstance(self.chapter, int)
+        assert self.label == other.label
+        assert self.weak == other.weak
+        assert self.weak_type == other.weak_type
+        assert self.tabular == other.tabular
+        assert self.reverse == other.reverse
 
         if self.resonant != other.resonant:
             self._labelprops_combine_resonance()
@@ -933,11 +946,11 @@ class Rate:
     def _update_label_properties(self):
         """ Set label and flags indicating Rate is resonant,
             weak, or reverse. """
-        assert(type(self.labelprops) == str)
+        assert isinstance(self.labelprops, str)
         try:
-            assert(len(self.labelprops) == 6)
+            assert len(self.labelprops) == 6
         except:
-            assert(self.labelprops == 'tabular')
+            assert self.labelprops == 'tabular'
             self.label = 'tabular'
             self.resonant = False
             self.resonance_combined = False
@@ -1015,7 +1028,7 @@ class Rate:
                     # there was a chapter number so check that the chapter number
                     # is the same as the first set in this rate file
                     try:
-                        assert(check_chapter == self.chapter)
+                        assert check_chapter == self.chapter
                     except:
                         print(f'ERROR: read chapter {check_chapter}, expected chapter {self.chapter} for this rate set.')
                         raise
@@ -1122,7 +1135,7 @@ class Rate:
                                               Nucleus(f[3]), Nucleus(f[4])]
                         else:
                             print(f'Chapter could not be identified in {self.original_source}')
-                            assert(type(self.chapter) == int and self.chapter <= 11)
+                            assert isinstance(self.chapter, int) and self.chapter <= 11
                     except:
                         # print('Error parsing Rate from {}'.format(self.original_source))
                         raise
@@ -1353,9 +1366,9 @@ class Rate:
             try:
                 pivot_table[row_pos, col_pos] = np.log10(data_heatmap[:, 5])
             except ValueError:
-                plot("Divide by zero encountered in log10\nChange the scale of T or rhoY")
+                print("Divide by zero encountered in log10\nChange the scale of T or rhoY")
 
-            fig, ax = plt.subplots(figsize=(10,10))
+            _, ax = plt.subplots(figsize=(10,10))
             im = ax.imshow(pivot_table, cmap='jet')
             plt.colorbar(im)
 
@@ -1390,4 +1403,3 @@ class Rate:
 
             plt.title(fr"{self.pretty_string}")
             plt.show()
-
