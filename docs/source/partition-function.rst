@@ -192,12 +192,35 @@ Inside the ``Nucleus`` class, we have defined :func:`.set_partition_function()` 
    co46 = pynucastro.rates.Nucleus('co46')
    pCollection = pynucastro.nucdata.PartitionFunctionCollection()
 
-   co46.set_partition_function(pcollection=pCollection, set_data='etfsiq', use_high_temperature=True)
+   co46.set_partition_function(pCollection=pCollection, set_data='etfsiq', use_high_temperatures=True)
    pf_co46 = co46.get_partition_function()
 
+Now, from this point we define a method inside a :func:`Rate <pynucastro.rates.Rate>` named :func:`.set_partition_function()` which reads a partition function collection
+and setup all the nucleus inside the reaction rate. Let us illustrate now, how it works:
+
+.. code-block:: python
+
+   import pynucastro
+
+   pCollection = pynucastro.nucdata.PartitionFunctionCollection()
+
+   o18_pg_f19 = pynucastro.rates.Rate('../library/o18-pg-f19-il10')
+   o18_pg_f19.set_partition_function(pCollection=pCollection, set_data='frdm', use_high_temperatures=True)
+
+   p = o18_pg_f19.reactants[0]
+   o18 = o18_pg_f19.reactants[1]
+   f19 = o18_pg_f19.products[0]
+
+   pf_p = p.get_partition_function()
+   pf_o18 = o18.get_partition_function()
+   pf_f19 = f19.get_partition_function()
+
+The next step is to apply 
 
 
 
+   
 
+   
 
  

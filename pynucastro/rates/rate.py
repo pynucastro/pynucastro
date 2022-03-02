@@ -243,15 +243,15 @@ class Nucleus:
                 # latex formatted style
                 self.pretty = fr"{{}}^{{{self.A}}}\mathrm{{{self.el.capitalize()}}}"
 
-    def set_partition_function(self, pcollection, set_data='frdm', use_high_temperature=True):
+    def set_partition_function(self, pCollection, set_data='frdm', use_high_temperatures=True):
         """
         This function associates to every nucleus a PartitionFunction object.
         """
-        assert(type(pcollection) == PartitionFunctionCollection)
+        assert(type(pCollection) == PartitionFunctionCollection)
 
-        pcollection.set_data_selector(set_data)
-        pcollection.use_high_temperatures(use_high_temperature)
-        self._partition_function = pcollection.get_partition_function(self)
+        pCollection.set_data_selector(set_data)
+        pCollection.use_high_temperatures(use_high_temperatures)
+        self._partition_function = pCollection.get_partition_function(self)
 
     def get_partition_function(self):
         return self._partition_function
@@ -1221,9 +1221,6 @@ class Rate:
     def set_partition_function(self, pCollection, set_data='frdm', use_high_temperatures=True):
         """The class Nucleus.set_partition_functions(pCollection, set_data, use_high_temperature)
            defines the partition function for the reactants and products"""
-
-        pCollection.set_data_selector(set_data)
-        pCollection.use_high_temperatures(True)
 
         for nuc in (self.reactants + self.products):
             nuc.set_partition_function(pCollection, set_data, use_high_temperatures)
