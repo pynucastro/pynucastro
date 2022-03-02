@@ -17,7 +17,3 @@ reduced_library = reaclib_library.linking_nuclei(all_reactants)
 reduced_library.validate(reaclib_library)
 
 print(reduced_library)
-
-
-
-

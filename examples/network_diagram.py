@@ -1,5 +1,4 @@
 import pynucastro as pyna
-import matplotlib.pyplot as plt
 
 files = ["c12-pg-n13-ls09",
          "c13-pg-n14-nacr",
