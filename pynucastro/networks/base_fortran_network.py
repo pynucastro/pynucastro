@@ -15,7 +15,6 @@ import random
 import string
 
 import sympy
-from pynucastro.rates import Nucleus
 from pynucastro.networks import RateCollection
 from pynucastro.nucdata import BindingTable
 from pynucastro.networks import SympyRates

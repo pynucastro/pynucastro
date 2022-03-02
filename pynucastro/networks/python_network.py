@@ -105,14 +105,14 @@ class PythonNetwork(RateCollection):
             if y_i == r:
                 if c == 1:
                     continue
-                if n > 0 and n < len(set(rate.reactants))-1:
+                if 0 < n < len(set(rate.reactants))-1:
                     Y_string += "*"
                 if c > 2:
                     Y_string += f"{c}*Y[i{r}]**{c-1}"
                 elif c == 2:
                     Y_string += f"2*Y[i{r}]"
             else:
-                if n > 0 and n < len(set(rate.reactants))-1:
+                if 0 < n < len(set(rate.reactants))-1:
                     Y_string += "*"
                 if c > 1:
                     Y_string += f"Y[i{r}]**{c}"
