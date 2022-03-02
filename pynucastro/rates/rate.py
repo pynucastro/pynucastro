@@ -286,10 +286,10 @@ class Library:
             self._rates = None
             if isinstance(rates, Rate):
                 rates = [rates]
-            assert (isinstance(rates, dict) or isinstance(rates, list)), "ERROR: rates in Library constructor must be a Rate object, list of Rate objects, or dictionary of Rate objects keyed by Rate.get_rate_id()"
+            assert isinstance(rates, dict) or isinstance(rates, list) or isinstance(rates, set), "ERROR: rates in Library constructor must be a Rate object, list of Rate objects, or dictionary of Rate objects keyed by Rate.get_rate_id()"
             if isinstance(rates, dict):
                 self._rates = rates
-            elif isinstance(rates, list):
+            elif isinstance(rates, list) or isinstance(rates, set):
                 self._add_from_rate_list(rates)
         else:
             self._rates = collections.OrderedDict()
@@ -446,13 +446,16 @@ class Library:
                               read_library=False)
         return new_library
 
+    def __sub__(self, other):
+        return self.diff(other)
+
     def get_num_rates(self):
         """Return the number of rates known to the library"""
         return len(self._rates)
 
     def get_rates(self):
         """ Return a list of the rates in this library. """
-        rlist = [r for id, r in self._rates.items()]
+        rlist = [r for _, r in self._rates.items()]
         return rlist
 
     def get_rate(self, id):
@@ -462,6 +465,14 @@ class Library:
         except:
             print("ERROR: rate identifier does not match a rate in this library.")
             raise
+
+    def diff(self, other_library):
+        """Return a Library containing the rates in this library that are not
+        contained in other_library"""
+
+        diff_rates = set(self.get_rates()) - set(other_library.get_rates())
+        new_library = Library(rates=diff_rates)
+        return new_library
 
     def linking_nuclei(self, nuclist, with_reverse=True):
         """
