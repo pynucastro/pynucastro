@@ -8,7 +8,7 @@ import glob
 import io
 
 
-class TestStarKillerCxxNetwork(object):
+class TestStarKillerCxxNetwork:
     @classmethod
     def setup_class(cls):
         """ this is run once for each class before any tests """
