@@ -73,7 +73,8 @@ void evaluate_rates(const burn_t& state, rate_eval_t& rate_eval) {
         for (int i = 1; i <= NrateReaclib; ++i) {
             Real rate;
             Real drate_dt;
-            reaclib_evaluate<1>(pstate, tfactors, i, rate, drate_dt);
+            constexpr int do_T_derivatives = 1;
+            reaclib_evaluate<do_T_derivatives>(pstate, tfactors, i, rate, drate_dt);
             rate_eval.screened_rates(i) = rate;
             rate_eval.dscreened_rates_dT(i) = drate_dt;
         }
@@ -82,7 +83,8 @@ void evaluate_rates(const burn_t& state, rate_eval_t& rate_eval) {
             Real rate;
             Real drate_dt;
             // drate_dt is not used in this case
-            reaclib_evaluate<0>(pstate, tfactors, i, rate, drate_dt);
+            constexpr int do_T_derivatives = 0;
+            reaclib_evaluate<do_T_derivatives>(pstate, tfactors, i, rate, drate_dt);
             rate_eval.screened_rates(i) = rate;
             rate_eval.dscreened_rates_dT(i) = drate_dt;
         }
