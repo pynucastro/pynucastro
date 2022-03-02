@@ -1,5 +1,24 @@
 # changes since the last release
 
+  -- added a validate() method for a library to find potentially
+     important missing rates
+
+  -- added a method to get the number of rates in a library
+
+  -- libraries are now sorted when printed
+
+  -- a "rotated" plot type for the network structure was added
+
+  -- versioning is now managed by setuptools_scm
+
+# 1.6.0
+
+  -- added support for C++ StarKiller / AMReX Microphysics networks
+
+  -- removed common subexpression support from network generation
+
+  -- added an example on integrating a python network
+
 # 1.5.0
 
   -- Added gridplot function for plotting nuclides on a grid and
