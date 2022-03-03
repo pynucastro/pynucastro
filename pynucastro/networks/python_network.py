@@ -157,6 +157,7 @@ class PythonNetwork(RateCollection):
             try:
                 of = open(outfile, "w")
             except:
+                print(f"unable to open {outfile}")
                 raise
 
         of.write("import numpy as np\n")

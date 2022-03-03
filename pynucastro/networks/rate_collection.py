@@ -399,7 +399,8 @@ class RateCollection:
 
                 sorted_ind = sorted(ind, key=sorting_key)
                 r = self.rates[sorted_ind[0]]
-                for i in sorted(sorted_ind[1:], reverse=True): del self.rates[i]
+                for i in sorted(sorted_ind[1:], reverse=True):
+                    del self.rates[i]
                 print(f'Found rate {r} named {n} with {k} entries in the RateCollection.')
                 print(f'Kept only entry with label {r.label} out of {labels}.')
 
