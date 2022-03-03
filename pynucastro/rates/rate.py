@@ -467,8 +467,10 @@ class Library:
         """Manually remove a rate from the library by supplying the id"""
 
         if isinstance(rate, Rate):
-            id = rate,get_rate_id()
-        self._rates.pop(id)
+            id = rate.get_rate_id()
+            self._rates.pop(id)
+        else:
+            self._rates.pop(rate)
 
     def linking_nuclei(self, nuclist, with_reverse=True):
         """
