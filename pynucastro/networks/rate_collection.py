@@ -699,7 +699,6 @@ class RateCollection:
                 assert data[irow, icol] == 0.0
                 data[irow, icol] = ydot
 
-        print(data)
         fig, ax = plt.subplots()
 
         ax.set_xticks(np.arange(len(self.unique_nuclei)), labels=[f"{n}" for n in self.unique_nuclei])
@@ -709,9 +708,21 @@ class RateCollection:
         valid_min = np.abs(data[data != 0]).min()
         norm = SymLogNorm(valid_min, vmin=-valid_max, vmax=valid_max)
 
-        ax.imshow(norm(data))
+        im = ax.imshow(data, norm=norm, cmap=plt.cm.bwr)
+        cbar = fig.colorbar(im, ax=ax)
+
+        ax.set_aspect("equal", "datalim")
+
+        # Turn spines off and create white grid.
+        ax.spines[:].set_visible(False)
+
+        ax.set_xticks(np.arange(data.shape[1]+1)-.5, minor=True)
+        ax.set_yticks(np.arange(data.shape[0]+1)-.5, minor=True)
+        ax.grid(which="minor", color="w", linestyle='-', linewidth=3)
+        ax.tick_params(which="minor", bottom=False, left=False)
 
         if outfile is not None:
+            fig.tight_layout()
             fig.savefig(outfile)
 
 
