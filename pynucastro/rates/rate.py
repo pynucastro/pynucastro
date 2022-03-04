@@ -463,6 +463,15 @@ class Library:
             print("ERROR: rate identifier does not match a rate in this library.")
             raise
 
+    def remove_rate(self, rate):
+        """Manually remove a rate from the library by supplying the id"""
+
+        if isinstance(rate, Rate):
+            id = rate.get_rate_id()
+            self._rates.pop(id)
+        else:
+            self._rates.pop(rate)
+
     def linking_nuclei(self, nuclist, with_reverse=True):
         """
         Return a Library object containing the rates linking the
