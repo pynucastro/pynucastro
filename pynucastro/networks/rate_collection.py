@@ -17,6 +17,7 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from matplotlib.ticker import MaxNLocator
+from matplotlib.colors import SymLogNorm
 import networkx as nx
 
 # Import Rate
@@ -295,6 +296,23 @@ class RateCollection:
             act[nuc] = sum(produced) + sum(consumed)
 
         return act
+
+    def _get_network_chart(self, rho, T, composition):
+        """a network chart is a dict, keyed by rate that holds a list of tuples (Nucleus, ydot)"""
+
+        rvals = self.evaluate_rates(rho, T, composition)
+
+        nc = {}
+
+        for rate in rvals:
+            nucs = []
+            for n in set(rate.reactants):
+                nucs.append((n, -rate.reactants.count(n) * rvals[rate]))
+            for n in set(rate.products):
+                nucs.append((n, rate.products.count(n) * rvals[rate]))
+            nc[rate] = nucs
+
+        return nc
 
     def network_overview(self):
         """ return a verbose network overview """
@@ -665,6 +683,37 @@ class RateCollection:
         else:
             plt.tight_layout()
             plt.savefig(outfile, dpi=dpi)
+
+
+    def plot_network_chart(self, outfile=None, rho=None, T=None, comp=None):
+
+        nc = self._get_network_chart(rho, T, comp)
+
+        data = np.zeros((len(self.rates), len(self.unique_nuclei)), dtype=np.float64)
+
+        # loop over rates -- each rate is a line in a grid of nuclei vs rate
+
+        for irow, r in enumerate(self.rates):
+            for n, ydot in nc[r]:
+                icol = self.unique_nuclei.index(n)
+                assert data[irow, icol] == 0.0
+                data[irow, icol] = ydot
+
+        print(data)
+        fig, ax = plt.subplots()
+
+        ax.set_xticks(np.arange(len(self.unique_nuclei)), labels=[f"{n}" for n in self.unique_nuclei])
+        ax.set_yticks(np.arange(len(self.rates)), labels=[f"{r}" for r in self.rates])
+
+        valid_max = np.abs(data[data != 0]).max()
+        valid_min = np.abs(data[data != 0]).min()
+        norm = SymLogNorm(valid_min, vmin=-valid_max, vmax=valid_max)
+
+        ax.imshow(norm(data))
+
+        if outfile is not None:
+            fig.savefig(outfile)
+
 
     @staticmethod
     def _safelog(arr, small):
