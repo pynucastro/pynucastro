@@ -426,7 +426,12 @@ class Library:
         rstrings = []
         tmp_rates = [v for k, v in self._rates.items()]
         for r in sorted(tmp_rates):
-            rstrings.append(f'{r}    ({r.get_rate_id()}')
+            if not r.reverse:
+                rstrings.append(f'{r.__repr__():30} [Q = {float(r.Q):6.2f} MeV] ({r.get_rate_id()})')
+        for r in sorted(tmp_rates):
+            if r.reverse:
+                rstrings.append(f'{r.__repr__():30} [Q = {float(r.Q):6.2f} MeV] ({r.get_rate_id()})')
+
         return '\n'.join(rstrings)
 
     def __add__(self, other):
@@ -473,6 +478,15 @@ class Library:
         diff_rates = set(self.get_rates()) - set(other_library.get_rates())
         new_library = Library(rates=diff_rates)
         return new_library
+
+    def remove_rate(self, rate):
+        """Manually remove a rate from the library by supplying the id"""
+
+        if isinstance(rate, Rate):
+            id = rate.get_rate_id()
+            self._rates.pop(id)
+        else:
+            self._rates.pop(rate)
 
     def linking_nuclei(self, nuclist, with_reverse=True):
         """

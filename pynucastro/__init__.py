@@ -130,4 +130,6 @@ from pynucastro.rates import \
     Tfactors, \
     Nucleus, \
     Rate, \
+    RateFilter, \
+    Library, \
     list_known_rates
