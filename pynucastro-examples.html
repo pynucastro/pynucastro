@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro usage examples &mdash; pynucastro 1.6.0.post29+ge328035 documentation</title>
+  <title>pynucastro usage examples &mdash; pynucastro 1.6.0.post30+g582b38b documentation</title>
       <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -603,7 +603,7 @@ pynucastro.rates.rate.Nucleus
 <p>A <code class="docutils literal notranslate"><span class="pre">RateCollection()</span></code> class allows us to work with a group of rates. This is used to explore their relationship. Other classes (introduced soon) are built on this and will allow us to output network code directly.</p>
 <p>We distribute a number of popular rate files (from JINA ReacLib) in the <code class="docutils literal notranslate"><span class="pre">Library/</span></code> directory, as well as a snapshot of the entire ReacLib database. Here we create a list with some of the individual rate files in that library:</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">files</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;c12-pg-n13-ls09&quot;</span><span class="p">,</span>
@@ -620,7 +620,7 @@ pynucastro.rates.rate.Nucleus
 </div>
 <p>Printing a rate collection shows all the rates</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">rc</span><span class="p">)</span>
@@ -645,7 +645,7 @@ o15 --&gt; n15
 </div>
 <p>More detailed information is provided by <code class="docutils literal notranslate"><span class="pre">network_overview()</span></code></p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">network_overview</span><span class="p">())</span>
@@ -753,7 +753,7 @@ o15
 </div>
 <p>Interactive exploration is enabled through the <code class="docutils literal notranslate"><span class="pre">Explorer</span></code> class, which takes a <code class="docutils literal notranslate"><span class="pre">RateCollection</span></code> and a <code class="docutils literal notranslate"><span class="pre">Composition</span></code></p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">re</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Explorer</span><span class="p">(</span><span class="n">rc</span><span class="p">,</span> <span class="n">comp</span><span class="p">)</span>
@@ -765,14 +765,14 @@ o15
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<script type="application/vnd.jupyter.widget-view+json">{"model_id": "bdf79e89a0334ff99fd6a1fffe2077e5", "version_major": 2, "version_minor": 0}</script></div>
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "79e5f2f2f68d425db37d3531bded5436", "version_major": 2, "version_minor": 0}</script></div>
 </div>
 </section>
 <section id="Plot-nuclides-on-a-grid">
 <h2>Plot nuclides on a grid<a class="headerlink" href="#Plot-nuclides-on-a-grid" title="Permalink to this headline">¶</a></h2>
 <p>Nuclides in a network may also be visualized as cells on a grid of Z vs. N, colored by some quantity. This can be more interpretable for large networks. Calling <code class="docutils literal notranslate"><span class="pre">gridplot</span></code> without any arguments will just plot the grid - to see anything interesting we need to supply some conditions. Here is a plot of nuclide mass fraction on a log scale, with a 36 square inch figure:</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rc</span><span class="o">.</span><span class="n">gridplot</span><span class="p">(</span><span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">,</span> <span class="n">color_field</span><span class="o">=</span><span class="s2">&quot;X&quot;</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">,</span> <span class="n">area</span><span class="o">=</span><span class="mi">36</span><span class="p">)</span>
@@ -788,7 +788,7 @@ o15
 </div>
 <p>The plot is configurable through a large number of keyword arguments. Here we want to look at the rates at which nuclides are being created or destroyed, so we color by <span class="math notranslate nohighlight">\(\dot{Y}\)</span>, the rate of change of molar abundance. Density and temperature need to be supplied to evaluate the rates. A full list of valid keyword arguments can be found in the API documentation.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rc</span><span class="o">.</span><span class="n">gridplot</span><span class="p">(</span><span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="mf">1e4</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mf">1e8</span><span class="p">,</span> <span class="n">color_field</span><span class="o">=</span><span class="s2">&quot;ydot&quot;</span><span class="p">,</span> <span class="n">area</span><span class="o">=</span><span class="mi">36</span><span class="p">,</span>
@@ -819,14 +819,6 @@ o15
 </div>
 <div class="output_area docutils container">
 <img alt="_images/pynucastro-examples_44_0.png" src="_images/pynucastro-examples_44_0.png" />
-</div>
-</div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>
-</pre></div>
 </div>
 </div>
 <script type="application/vnd.jupyter.widget-state+json">
