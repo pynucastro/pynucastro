@@ -441,8 +441,14 @@ class Library:
     def __repr__(self):
         """ Return a string containing the rates IDs in this library. """
         rstrings = []
-        for id, r in self._rates.items():
-            rstrings.append(f'{r}    ({id})')
+        tmp_rates = [v for k, v in self._rates.items()]
+        for r in sorted(tmp_rates):
+            if not r.reverse:
+                rstrings.append(f'{r.__repr__():30} [Q = {float(r.Q):6.2f} MeV] ({r.get_rate_id()})')
+        for r in sorted(tmp_rates):
+            if r.reverse:
+                rstrings.append(f'{r.__repr__():30} [Q = {float(r.Q):6.2f} MeV] ({r.get_rate_id()})')
+
         return '\n'.join(rstrings)
 
     def __add__(self, other):
@@ -462,6 +468,10 @@ class Library:
                               read_library=False)
         return new_library
 
+    def get_num_rates(self):
+        """Return the number of rates known to the library"""
+        return len(self._rates)
+
     def get_rates(self):
         """ Return a list of the rates in this library. """
         rlist = [r for id, r in self._rates.items()]
@@ -474,6 +484,15 @@ class Library:
         except:
             print("ERROR: rate identifier does not match a rate in this library.")
             raise
+
+    def remove_rate(self, rate):
+        """Manually remove a rate from the library by supplying the id"""
+
+        if isinstance(rate, Rate):
+            id = rate.get_rate_id()
+            self._rates.pop(id)
+        else:
+            self._rates.pop(rate)
 
     def linking_nuclei(self, nuclist, with_reverse=True):
         """
@@ -563,6 +582,71 @@ class Library:
         else:
             return None
 
+    def validate(self, other_library, forward_only=True, ostream=None):
+        """perform various checks on the library, comparing to other_library,
+        to ensure that we are not missing important rates.  The idea
+        is that self should be a reduced library where we filtered out
+        a few rates and then we want to compare to the larger
+        other_library to see if we missed something important.
+
+        ostream is the I/O stream to send output to (for instance, a
+        file object or StringIO object).  If it is None, then output
+        is to stdout.
+
+        """
+
+        current_rates = sorted(self.get_rates())
+
+        # check the forward rates to see if any of the products are
+        # not consumed by other forward rates
+
+        passed_validation = True
+
+        for rate in current_rates:
+            if rate.reverse:
+                continue
+            for p in rate.products:
+                found = False
+                for orate in current_rates:
+                    if orate == rate:
+                        continue
+                    if orate.reverse:
+                        continue
+                    if p in orate.reactants:
+                        found = True
+                        break
+                if not found:
+                    passed_validation = False
+                    msg = f"validation: {p} produced in {rate} never consumed."
+                    if ostream is None:
+                        print(msg)
+                    else:
+                        ostream.write(msg + "\n")
+
+        # now check if we are missing any rates from other_library with the exact same reactants
+
+        for rate in current_rates:
+            if forward_only and rate.reverse:
+                continue
+
+            # create a rate filter with these exact reactants
+            rf = RateFilter(reactants=rate.reactants)
+            all_rates_library = other_library.filter(rf)
+
+            for other_rate in sorted(all_rates_library.get_rates()):
+                # check to see if other_rate is already in current_rates
+                found = True
+                if other_rate not in current_rates:
+                    found = False
+
+                if not found:
+                    msg = f"validation: missing {other_rate} as alternative to {rate}."
+                    if ostream is None:
+                        print(msg)
+                    else:
+                        ostream.write(msg + "\n")
+
+        return passed_validation
 
 class RateFilter:
     """RateFilter filters out a specified rate or set of rates
@@ -723,6 +807,11 @@ class RateFilter:
                                max_products=self.max_reactants)
         return newfilter
 
+class ReacLibLibrary(Library):
+
+    def __init__(self, libfile='20180319default2', rates=None, read_library=True):
+        assert libfile == '20180319default2'  and rates == None and read_library == True, "Only the 20180319default2 default ReacLib snapshot is accepted"
+        Library.__init__(self, libfile=libfile, rates=rates, read_library=read_library)
 
 class Rate:
     """ a single Reaclib rate, which can be composed of multiple sets """
@@ -810,6 +899,18 @@ class Rate:
             x = x and scomp
 
         return x
+
+    def __lt__(self, other):
+        """sort such that lightest reactants come first"""
+
+        self_sorted = sorted(self.reactants, key=lambda x: x.A)
+        other_sorted = sorted(other.reactants, key=lambda x: x.A)
+        if self_sorted[-1].A == other_sorted[-1].A:
+            try:
+                return self_sorted[-2].A < other_sorted[-2].A
+            except IndexError:
+                return True
+        return self_sorted[-1].A < other_sorted[-1].A
 
     def __add__(self, other):
         """Combine the sets of two Rate objects if they describe the same
@@ -1102,6 +1203,24 @@ class Rate:
             self.ion_screen.append(nucz[1])
             if len(nucz) == 3:
                 self.ion_screen.append(nucz[2])
+
+        # if the rate is a reverse rate, via detailed balance, then we
+        # might actually want to compute the screening based on the
+        # reactants of the forward rate that was used in the detailed
+        # balance.  Rate.symmetric_screen is what should be used in
+        # the screening in this case
+        self.symmetric_screen = []
+        if self.reverse:
+            nucz = [q for q in self.products if q.Z != 0]
+            if len(nucz) > 1:
+                nucz.sort(key=lambda x: x.Z)
+                self.symmetric_screen = []
+                self.symmetric_screen.append(nucz[0])
+                self.symmetric_screen.append(nucz[1])
+                if len(nucz) == 3:
+                    self.symmetric_screen.append(nucz[2])
+        else:
+            self.symmetric_screen = self.ion_screen
 
     def _set_print_representation(self):
         """ compose the string representations of this Rate. """

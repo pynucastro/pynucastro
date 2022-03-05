@@ -14,10 +14,12 @@ class StarKillerCxxNetwork(BaseCxxNetwork):
         super().__init__(*args, **kwargs)
 
     def _get_template_files(self):
+
         template_pattern = os.path.join(self.pynucastro_dir,
                                         'templates',
                                         'starkiller-cxx-microphysics',
                                         '*.template')
+
         return glob.glob(template_pattern)
 
     def _write_network(self, odir=None):
@@ -37,6 +39,3 @@ class StarKillerCxxNetwork(BaseCxxNetwork):
         # write out some network properties
         with open("NETWORK_PROPERTIES", "w") as of:
             of.write(f"NSCREEN := {self.num_screen_calls}\n")
-
-        with open("NAUX_NETWORK", "w") as of:
-            of.write("NAUX := 0\n")

@@ -3,7 +3,6 @@ Reads tabular binding energy/nucleon data file and supplies table data.
 """
 
 # Common Imports
-from __future__ import print_function
 import os
 
 from pynucastro.nucdata import BindingNuclide

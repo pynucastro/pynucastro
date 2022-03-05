@@ -101,9 +101,9 @@ class RateCollection:
 
     pynucastro_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 
-    def __init__(self, rate_files=None, libraries=None, rates=None, precedence=()):
-        """
-        rate_files are the files that together define the network.  This
+    def __init__(self, rate_files=None, libraries=None, rates=None, precedence=(),
+                 symmetric_screening=False):
+        """rate_files are the files that together define the network.  This
         can be any iterable or single string.
 
         This can include Reaclib library files storing multiple rates.
@@ -121,12 +121,19 @@ class RateCollection:
         the label that comes first in the sequence will be retained and the
         rest discarded.
 
+        symmetric_screening means that we screen the reverse rates
+        using the same factor as the forward rates, for rates computed
+        via detailed balance.
+
         Any combination of these options may be supplied.
+
         """
 
         self.files = []
         self.rates = []
         self.library = None
+
+        self.symmetric_screening = symmetric_screening
 
         if rate_files:
             if isinstance(rate_files, str):
@@ -308,13 +315,19 @@ class RateCollection:
     def get_screening_map(self):
         """a screening map is just a list of tuples containing the information
         about nuclei pairs for screening: (descriptive name of nuclei,
-        nucleus 1, nucleus 2, rate, 1-based index of rate)
+        nucleus 1, nucleus 2, rate, 1-based index of rate).  If symmetric_screening=True,
+        then for reverse rates, we screen using the forward rate nuclei (assuming that we
+        got here via detailed balance).
 
         """
         screening_map = []
         for k, r in enumerate(self.rates):
-            if r.ion_screen:
-                nucs = "_".join([str(q) for q in r.ion_screen])
+            screen_nuclei = r.ion_screen
+            if self.symmetric_screening:
+                screen_nuclei = r.symmetric_screen
+
+            if screen_nuclei:
+                nucs = "_".join([str(q) for q in screen_nuclei])
                 in_map = False
                 for h, _, _, mrates, krates in screening_map:
                     if h == nucs:
@@ -331,15 +344,15 @@ class RateCollection:
                     # we handle 3-alpha specially -- we actually need 2 screening factors for it
                     if nucs == "he4_he4_he4":
                         # he4 + he4
-                        screening_map.append((nucs, r.ion_screen[0], r.ion_screen[1],
+                        screening_map.append((nucs, screen_nuclei[0], screen_nuclei[1],
                                               [r], [k+1]))
                         # he4 + be8
                         be8 = Nucleus("Be8", dummy=True)
-                        screening_map.append((nucs+"_dummy", r.ion_screen[2], be8,
+                        screening_map.append((nucs+"_dummy", screen_nuclei[2], be8,
                                               [r], [k+1]))
 
                     else:
-                        screening_map.append((nucs, r.ion_screen[0], r.ion_screen[1],
+                        screening_map.append((nucs, screen_nuclei[0], screen_nuclei[1],
                                               [r], [k+1]))
         return screening_map
 
@@ -401,7 +414,60 @@ class RateCollection:
              node_size=1000, node_font_size=13, node_color="#A0CBE2", node_shape="o",
              N_range=None, Z_range=None, rotated=False,
              always_show_p=False, always_show_alpha=False, hide_xalpha=False, filter_function=None):
-        """Make a plot of the network structure showing the links between nuclei"""
+        """Make a plot of the network structure showing the links between
+        nuclei.  If a full set of thermodymamic conditions are
+        provided (rho, T, comp), then the links are colored by rate
+        strength.
+
+
+        parameters
+        ----------
+
+        outfile: output name of the plot -- extension determines the type
+
+        rho: density to evaluate rates with
+
+        T: temperature to evaluate rates with
+
+        comp: composition to evaluate rates with
+
+        size: tuple giving width x height of the plot in inches
+
+        dpi: pixels per inch used by matplotlib in rendering bitmap
+
+        title: title to display on the plot
+
+        ydot_cutoff_value: rate threshold below which we do not show a
+        line corresponding to a rate
+
+        node_size: size of a node
+
+        node_font_size: size of the font used to write the isotope in the node
+
+        node_color: color to make the nodes
+
+        node_shape: shape of the node (using matplotlib marker names)
+
+        N_range: range of neutron number to zoom in on
+
+        Z_range: range of proton number to zoom in on
+
+        rotate: if True, we plot A - 2Z vs. Z instead of the default Z vs. N
+
+        always_show_p: include p as a node on the plot even if we
+        don't have p+p reactions
+
+        always_show_alpha: include He4 as a node on the plot even if we don't have 3-alpha
+
+        hide_xalpha=False: dont connect the links to alpha for heavy
+        nuclei reactions of the form A(alpha,X)B or A(X,alpha)B, except if alpha
+        is the heaviest product.
+
+        filter_function: name of a custom function that takes the list
+        of nuclei and returns a new list with the nuclei to be shown
+        as nodes.
+
+        """
 
         G = nx.MultiDiGraph()
         G.position = {}
@@ -461,24 +527,30 @@ class RateCollection:
         for n in node_nuclei:
             for r in self.nuclei_consumed[n]:
                 for p in r.products:
+
                     if p in node_nuclei:
 
                         if hide_xalpha:
-                            # for rates that are A (x, alpha) B, where A and B are heavy nuclei,
-                            # don't show the connection of the nucleus to alpha, only show it to B
-                            if p.Z == 2 and p.A == 4:
-                                continue
 
-                            # likewise, hide A (alpha, x) B, unless A itself is an alpha
-                            c = r.reactants
-                            n_alpha = 0
-                            for nuc in c:
-                                if nuc.Z == 2 and nuc.A == 4:
-                                    n_alpha += 1
-                            # if there is only 1 alpha and we are working on the alpha node,
-                            # then skip
-                            if n_alpha == 1 and n.Z == 2 and n.A == 4:
-                                continue
+                            # first check is alpha is the heaviest nucleus on the RHS
+                            rhs_heavy = sorted(r.products)[-1]
+                            if not (rhs_heavy.Z == 2 and rhs_heavy.A == 4):
+
+                                # for rates that are A (x, alpha) B, where A and B are heavy nuclei,
+                                # don't show the connection of the nucleus to alpha, only show it to B
+                                if p.Z == 2 and p.A == 4:
+                                    continue
+
+                                # likewise, hide A (alpha, x) B, unless A itself is an alpha
+                                c = r.reactants
+                                n_alpha = 0
+                                for nuc in c:
+                                    if nuc.Z == 2 and nuc.A == 4:
+                                        n_alpha += 1
+                                # if there is only 1 alpha and we are working on the alpha node,
+                                # then skip
+                                if n_alpha == 1 and n.Z == 2 and n.A == 4:
+                                    continue
 
                         # networkx doesn't seem to keep the edges in
                         # any particular order, so we associate data
