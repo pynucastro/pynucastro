@@ -132,4 +132,5 @@ from pynucastro.rates import \
     Rate, \
     RateFilter, \
     Library, \
+    ReacLibLibrary, \
     list_known_rates
