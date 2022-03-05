@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.rates.rate &mdash; pynucastro 1.6.0.post32+gda862d1 documentation</title>
+  <title>pynucastro.rates.rate &mdash; pynucastro 1.6.0.post33+g2d122e9 documentation</title>
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -869,6 +869,11 @@
                                <span class="n">max_products</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">max_reactants</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">newfilter</span></div></div>
 
+<div class="viewcode-block" id="ReacLibLibrary"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.ReacLibLibrary">[docs]</a><span class="k">class</span> <span class="nc">ReacLibLibrary</span><span class="p">(</span><span class="n">Library</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">libfile</span><span class="o">=</span><span class="s1">&#39;20180319default2&#39;</span><span class="p">,</span> <span class="n">rates</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">read_library</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">libfile</span> <span class="o">==</span> <span class="s1">&#39;20180319default2&#39;</span>  <span class="ow">and</span> <span class="n">rates</span> <span class="o">==</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">read_library</span> <span class="o">==</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;Only the 20180319default2 default ReacLib snapshot is accepted&quot;</span>
+        <span class="n">Library</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">libfile</span><span class="o">=</span><span class="n">libfile</span><span class="p">,</span> <span class="n">rates</span><span class="o">=</span><span class="n">rates</span><span class="p">,</span> <span class="n">read_library</span><span class="o">=</span><span class="n">read_library</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Rate"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.Rate">[docs]</a><span class="k">class</span> <span class="nc">Rate</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot; a single Reaclib rate, which can be composed of multiple sets &quot;&quot;&quot;</span>
