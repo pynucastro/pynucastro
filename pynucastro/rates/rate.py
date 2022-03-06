@@ -631,6 +631,25 @@ class Library:
 
         return passed_validation
 
+    def forward(self):
+        """
+        Select only the forward rates, discarding the inverse rates obtained
+        by detailed balance.
+        """
+
+        only_fwd_filter = RateFilter(filter_function = lambda r: not r.reverse)
+        only_fwd = self.filter(only_fwd_filter)
+        return only_fwd
+
+    def backward(self):
+        """
+        Select only the reverse rates, obtained by detailed balance.
+        """
+
+        only_bwd_filter = RateFilter(filter_function = lambda r: r.reverse)
+        only_bwd = self.filter(only_bwd_filter)
+        return only_bwd
+        
 class RateFilter:
     """RateFilter filters out a specified rate or set of rates
 
