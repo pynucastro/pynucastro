@@ -173,7 +173,7 @@ class SympyRates:
         # update "d" scientific notation -- allow for multiple
         # constants in a single string
         for ee in e_re.finditer(s):
-            old_num = dd.group(0).strip()
+            old_num = ee.group(0).strip()
             s = s.replace(old_num, f"{old_num}{const_spec}")
 
         return s
