@@ -642,6 +642,25 @@ class Library:
 
         return passed_validation
 
+    def forward(self):
+        """
+        Select only the forward rates, discarding the inverse rates obtained
+        by detailed balance.
+        """
+
+        only_fwd_filter = RateFilter(filter_function = lambda r: not r.reverse)
+        only_fwd = self.filter(only_fwd_filter)
+        return only_fwd
+
+    def backward(self):
+        """
+        Select only the reverse rates, obtained by detailed balance.
+        """
+
+        only_bwd_filter = RateFilter(filter_function = lambda r: r.reverse)
+        only_bwd = self.filter(only_bwd_filter)
+        return only_bwd
+        
 class RateFilter:
     """RateFilter filters out a specified rate or set of rates
 
@@ -801,6 +820,11 @@ class RateFilter:
                                max_products=self.max_reactants)
         return newfilter
 
+class ReacLibLibrary(Library):
+
+    def __init__(self, libfile='20180319default2', rates=None, read_library=True):
+        assert libfile == '20180319default2'  and rates == None and read_library == True, "Only the 20180319default2 default ReacLib snapshot is accepted"
+        Library.__init__(self, libfile=libfile, rates=rates, read_library=read_library)
 
 class Rate:
     """ a single Reaclib rate, which can be composed of multiple sets """
@@ -1080,7 +1104,7 @@ class Rate:
                 s1 = s1[3:]
 
                 # next comes a 12 character Q value followed by 10 spaces
-                Q = s1.strip()
+                Q = float(s1.strip())
 
                 if first:
                     self.Q = Q
