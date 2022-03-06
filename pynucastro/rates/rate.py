@@ -1074,7 +1074,7 @@ class Rate:
                 s1 = s1[3:]
 
                 # next comes a 12 character Q value followed by 10 spaces
-                Q = s1.strip()
+                Q = float(s1.strip())
 
                 if first:
                     self.Q = Q
