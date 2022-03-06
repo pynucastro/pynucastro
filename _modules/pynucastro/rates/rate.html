@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.rates.rate &mdash; pynucastro 1.6.0.post34+gdc53ceb documentation</title>
+  <title>pynucastro.rates.rate &mdash; pynucastro 1.6.0.post35+gdd995db documentation</title>
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -1153,7 +1153,7 @@
                 <span class="n">s1</span> <span class="o">=</span> <span class="n">s1</span><span class="p">[</span><span class="mi">3</span><span class="p">:]</span>
 
                 <span class="c1"># next comes a 12 character Q value followed by 10 spaces</span>
-                <span class="n">Q</span> <span class="o">=</span> <span class="n">s1</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="n">Q</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">s1</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
 
                 <span class="k">if</span> <span class="n">first</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">Q</span> <span class="o">=</span> <span class="n">Q</span>
