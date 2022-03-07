@@ -18,6 +18,7 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from matplotlib.ticker import MaxNLocator
 from matplotlib.colors import SymLogNorm
+from mpl_toolkits.axes_grid1 import ImageGrid
 import networkx as nx
 
 # Import Rate
@@ -690,38 +691,80 @@ class RateCollection:
 
         nc = self._get_network_chart(rho, T, comp)
 
+        # find the limits
+        _tmp = [nc[r] for r in self.rates]
+        print(_tmp[0])
+
+        _ydot = []
+        for r in self.rates:
+            for _, y in nc[r]:
+                _ydot.append(y)
+
+        _ydot = np.asarray(_ydot)
+        valid_max = np.abs(_ydot[_ydot != 0]).max()
+        valid_min = np.abs(_ydot[_ydot != 0]).min()
+        norm = SymLogNorm(valid_min, vmin=-valid_max, vmax=valid_max)
+
+        print(valid_min, valid_max)
+
+        # if there are a lot of rates, we split the network chart into
+        # two side-by-side panes, with the first half of the rates on
+        # the left and the second half of the rates on the right
+
         # how many panes?
+
         if len(self.rates) > 3 * len(self.unique_nuclei):
             npanes = 2
         else:
             npanes = 1
 
+        npanes = 1
 
-        data = np.zeros((len(self.rates), len(self.unique_nuclei)), dtype=np.float64)
-
-        # loop over rates -- each rate is a line in a grid of nuclei vs rate
-
-        for irow, r in enumerate(self.rates):
-            for n, ydot in nc[r]:
-                icol = self.unique_nuclei.index(n)
-                assert data[irow, icol] == 0.0
-                data[irow, icol] = ydot
-
-        fig, ax = plt.subplots()
-
+        fig = plt.figure()
         fig.set_size_inches(size[0]/dpi, size[1]/dpi)
 
-        ax.set_xticks(np.arange(len(self.unique_nuclei)), labels=[f"{n}" for n in self.unique_nuclei])
-        ax.set_yticks(np.arange(len(self.rates)), labels=[f"{r}" for r in self.rates])
+        grid = ImageGrid(fig, 111,
+                         nrows_ncols=(1, npanes),
+                         share_all=False,
+                         label_mode="all",
+                         cbar_mode="single")
 
-        valid_max = np.abs(data[data != 0]).max()
-        valid_min = np.abs(data[data != 0]).min()
-        norm = SymLogNorm(valid_min, vmin=-valid_max, vmax=valid_max)
+        if npanes == 1:
+            drate = len(self.rates)
+        else:
+            drate = len(self.rates) // 2 + 1
 
-        im = ax.imshow(data, norm=norm, cmap=plt.cm.bwr)
-        cbar = fig.colorbar(im, ax=ax)
+        for ipane in range(npanes):
+            istart = ipane * drate
+            iend = min((ipane + 1) * drate - 1, len(self.rates)-1)
 
-        ax.set_aspect("equal", "datalim")
+            nrates = iend - istart + 1
+
+            data = np.zeros((nrates, len(self.unique_nuclei)), dtype=np.float64)
+
+            # loop over rates -- each rate is a line in a grid of nuclei vs rate
+
+            ax = grid[ipane]
+
+            for irate, r in enumerate(self.rates):
+                if istart <= irate <= iend:
+                    irow = irate - istart
+                    for n, ydot in nc[r]:
+                        icol = self.unique_nuclei.index(n)
+                        assert data[irow, icol] == 0.0
+                        data[irow, icol] = ydot
+
+            # each pane has all the nuclei
+            ax.set_xticks(np.arange(len(self.unique_nuclei)), labels=[f"{n}" for n in self.unique_nuclei])
+
+            # each pane only has its subset of rates
+            ax.set_yticks(np.arange(nrates), labels=[f"{r}" for irate, r in enumerate(self.rates) if istart <= irate <= iend])
+
+            im = ax.imshow(data, norm=norm, cmap=plt.cm.bwr)
+
+        grid.cbar_axes[0].colorbar(im)
+
+        ax.set_aspect("equal") #, "datalim")
 
         # Turn spines off and create white grid.
         ax.spines[:].set_visible(False)
