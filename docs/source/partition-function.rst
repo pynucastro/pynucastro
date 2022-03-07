@@ -214,8 +214,7 @@ and setup all the nucleus inside the reaction rate. Let us illustrate now, how i
    pf_p = p.get_partition_function()
    pf_o18 = o18.get_partition_function()
    pf_f19 = f19.get_partition_function()
-
-The next step is to apply 
+ 
 
 
 
