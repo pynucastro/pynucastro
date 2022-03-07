@@ -16,6 +16,7 @@ except ImportError:
     from numba import jitclass
 
 from pynucastro.nucdata import UnidentifiedElement, PeriodicTable
+from pynucastro.nucdata import PartitionFunction, PartitionFunctionCollection
 
 
 def list_known_rates():
@@ -216,6 +217,9 @@ class Nucleus:
         # use lowercase element abbreviation regardless the case of the input
         self.el = self.el.lower()
 
+        # set a partition function object to every nucleus
+        self._partition_function = None
+
         # atomic number comes from periodic table
         if name != "n":
             try:
@@ -238,6 +242,19 @@ class Nucleus:
 
                 # latex formatted style
                 self.pretty = fr"{{}}^{{{self.A}}}\mathrm{{{self.el.capitalize()}}}"
+
+    def set_partition_function(self, p_collection, set_data='frdm', use_high_temperatures=True):
+        """
+        This function associates to every nucleus a PartitionFunction object.
+        """
+        assert type(p_collection) == PartitionFunctionCollection
+
+        p_collection.set_data_selector(set_data)
+        p_collection.use_high_temperatures(use_high_temperatures)
+        self._partition_function = p_collection.get_partition_function(self)
+
+    def get_partition_function(self):
+        return self._partition_function
 
     def __repr__(self):
         return self.raw
@@ -1338,6 +1355,13 @@ class Rate:
             t_data2d.remove([])
 
         self.tabular_data_table = np.array(t_data2d)
+
+    def set_partition_function(self, p_collection, set_data='frdm', use_high_temperatures=True):
+        """The class Nucleus.set_partition_functions(pCollection, set_data, use_high_temperature)
+           defines the partition function for the reactants and products"""
+
+        for nuc in (self.reactants + self.products):
+            nuc.set_partition_function(p_collection, set_data, use_high_temperatures)
 
     def eval(self, T, rhoY = None):
         """ evauate the reaction rate for temperature T """

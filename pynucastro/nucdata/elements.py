@@ -137,3 +137,10 @@ class PeriodicTable(object):
             return self.table[abbrev.lower()]
         except:
             raise UnidentifiedElement
+
+    @classmethod
+    def lookup_Z(self, Z):
+        for k in self.table.keys():
+            if self.table[k].Z == Z:
+                return self.table[k]
+        return None
