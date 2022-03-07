@@ -293,7 +293,7 @@ class Library:
                 self._add_from_rate_list(rates)
         else:
             self._rates = collections.OrderedDict()
-        self._library_source_lines = []
+        self._library_source_lines = collections.deque()
 
         if self._library_file and read_library:
             self._library_file = self._find_rate_file(self._library_file)
@@ -382,7 +382,7 @@ class Library:
             chapter = None
             if line == 't' or line == 'T':
                 chapter = 't'
-                self._library_source_lines.pop(0)
+                self._library_source_lines.popleft()
             else:
                 try:
                     chapter = int(line)
@@ -396,14 +396,14 @@ class Library:
                     else:
                         chapter = current_chapter
                 else:
-                    self._library_source_lines.pop(0)
+                    self._library_source_lines.popleft()
             current_chapter = chapter
 
             rlines = None
             if chapter == 't':
-                rlines = [self._library_source_lines.pop(0) for i in range(5)]
+                rlines = [self._library_source_lines.popleft() for i in range(5)]
             elif type(chapter) == int:
-                rlines = [self._library_source_lines.pop(0) for i in range(3)]
+                rlines = [self._library_source_lines.popleft() for i in range(3)]
             if rlines:
                 sio = io.StringIO('\n'.join([f'{chapter}'] +
                                             rlines))
