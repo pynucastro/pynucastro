@@ -202,10 +202,10 @@ and setup all the nucleus inside the reaction rate. Let us illustrate now, how i
 
    import pynucastro
 
-   pCollection = pynucastro.nucdata.PartitionFunctionCollection()
+   p_collection = pynucastro.nucdata.PartitionFunctionCollection()
 
    o18_pg_f19 = pynucastro.rates.Rate('../library/o18-pg-f19-il10')
-   o18_pg_f19.set_partition_function(pCollection=pCollection, set_data='frdm', use_high_temperatures=True)
+   o18_pg_f19.set_partition_function(p_collection=p_collection, set_data='frdm', use_high_temperatures=True)
 
    p = o18_pg_f19.reactants[0]
    o18 = o18_pg_f19.reactants[1]
