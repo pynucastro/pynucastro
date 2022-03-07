@@ -703,7 +703,8 @@ class RateCollection:
         _ydot = np.asarray(_ydot)
         valid_max = np.abs(_ydot[_ydot != 0]).max()
         valid_min = np.abs(_ydot[_ydot != 0]).min()
-        norm = SymLogNorm(valid_min, vmin=-valid_max, vmax=valid_max)
+
+        norm = SymLogNorm(valid_max/1.e10, vmin=-valid_max, vmax=valid_max)
 
         print(valid_min, valid_max)
 
@@ -718,33 +719,41 @@ class RateCollection:
         else:
             npanes = 1
 
-        npanes = 1
 
-        fig = plt.figure()
+        fig, _ax = plt.subplots(1, npanes)
+
         fig.set_size_inches(size[0]/dpi, size[1]/dpi)
 
-        grid = ImageGrid(fig, 111,
-                         nrows_ncols=(1, npanes),
-                         share_all=False,
-                         label_mode="all",
-                         cbar_mode="single")
+        # grid = ImageGrid(fig, 111,
+        #                  nrows_ncols=(1, npanes),
+        #                  share_all=False,
+        #                  label_mode="all",
+        #                  cbar_mode="single")
 
         if npanes == 1:
             drate = len(self.rates)
         else:
-            drate = len(self.rates) // 2 + 1
+            drate = (len(self.rates) + 1) // 2
 
         for ipane in range(npanes):
+
+            if npanes == 2:
+                ax = _ax[ipane]
+            else:
+                ax = _ax
+
             istart = ipane * drate
             iend = min((ipane + 1) * drate - 1, len(self.rates)-1)
 
             nrates = iend - istart + 1
 
+            print(istart, iend, nrates)
+
             data = np.zeros((nrates, len(self.unique_nuclei)), dtype=np.float64)
 
             # loop over rates -- each rate is a line in a grid of nuclei vs rate
 
-            ax = grid[ipane]
+            #ax = grid[ipane]
 
             for irate, r in enumerate(self.rates):
                 if istart <= irate <= iend:
@@ -754,6 +763,9 @@ class RateCollection:
                         assert data[irow, icol] == 0.0
                         data[irow, icol] = ydot
 
+            print("data : ", data.min(), data.max())
+            print(data[0,:])
+
             # each pane has all the nuclei
             ax.set_xticks(np.arange(len(self.unique_nuclei)), labels=[f"{n}" for n in self.unique_nuclei])
 
@@ -762,20 +774,22 @@ class RateCollection:
 
             im = ax.imshow(data, norm=norm, cmap=plt.cm.bwr)
 
-        grid.cbar_axes[0].colorbar(im)
+            fig.colorbar(im, ax=ax, orientation="horizontal")
 
-        ax.set_aspect("equal") #, "datalim")
+            ax.set_aspect("equal") #, "datalim")
 
-        # Turn spines off and create white grid.
-        ax.spines[:].set_visible(False)
+            # Turn spines off and create white grid.
+            ax.spines[:].set_visible(False)
 
-        ax.set_xticks(np.arange(data.shape[1]+1)-.5, minor=True)
-        ax.set_yticks(np.arange(data.shape[0]+1)-.5, minor=True)
-        ax.grid(which="minor", color="w", linestyle='-', linewidth=3)
-        ax.tick_params(which="minor", bottom=False, left=False)
+            ax.set_xticks(np.arange(data.shape[1]+1)-.5, minor=True)
+            ax.set_yticks(np.arange(data.shape[0]+1)-.5, minor=True)
+            ax.grid(which="minor", color="w", linestyle='-', linewidth=3)
+            ax.tick_params(which="minor", bottom=False, left=False)
+
+
+        fig.tight_layout()
 
         if outfile is not None:
-            fig.tight_layout()
             fig.savefig(outfile)
 
 
