@@ -685,9 +685,17 @@ class RateCollection:
             plt.savefig(outfile, dpi=dpi)
 
 
-    def plot_network_chart(self, outfile=None, rho=None, T=None, comp=None):
+    def plot_network_chart(self, outfile=None, rho=None, T=None, comp=None,
+                           size=(800, 800), dpi=100):
 
         nc = self._get_network_chart(rho, T, comp)
+
+        # how many panes?
+        if len(self.rates) > 3 * len(self.unique_nuclei):
+            npanes = 2
+        else:
+            npanes = 1
+
 
         data = np.zeros((len(self.rates), len(self.unique_nuclei)), dtype=np.float64)
 
@@ -700,6 +708,8 @@ class RateCollection:
                 data[irow, icol] = ydot
 
         fig, ax = plt.subplots()
+
+        fig.set_size_inches(size[0]/dpi, size[1]/dpi)
 
         ax.set_xticks(np.arange(len(self.unique_nuclei)), labels=[f"{n}" for n in self.unique_nuclei])
         ax.set_yticks(np.arange(len(self.rates)), labels=[f"{r}" for r in self.rates])
