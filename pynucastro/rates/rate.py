@@ -623,7 +623,7 @@ class Library:
                     found = False
 
                 if not found:
-                    msg = f"validation: missing {other_rate} as alternative to {rate}."
+                    msg = f"validation: missing {other_rate} as alternative to {rate} (Q = {other_rate.Q} MeV)."
                     if ostream is None:
                         print(msg)
                     else:
