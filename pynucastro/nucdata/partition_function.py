@@ -5,7 +5,7 @@ import pynucastro
 from scipy.interpolate import InterpolatedUnivariateSpline
 
 
-class PartitionFunction(object):
+class PartitionFunction:
     """  
     The necessary class public variables of PartitionFunction(nucleus, name, temperature, partition_function)
     are characterized as follows:
@@ -136,7 +136,7 @@ class PartitionFunction(object):
 
         #self.construct_spline_interpolant()
 
-        assert(self.interpolant)
+        assert self.interpolant
         try:
             T = float(T)/1.0e9
         except:
@@ -149,7 +149,7 @@ class PartitionFunction(object):
 
 
 
-class PartitionFunctionTable(object):
+class PartitionFunctionTable:
     """ 
     Class for reading a partition function table file. A
     PartitionFunction object is constructed for each nucleus and
@@ -170,7 +170,7 @@ class PartitionFunctionTable(object):
         self.read_table(file_name)
 
     def _add_nuclide_pfun(self, nuc, pfun): 
-        assert(not nuc in self._partition_function)
+        assert not nuc in self._partition_function
         self._partition_function[str(nuc)] = pfun
 
     def get_nuclei(self):
@@ -224,7 +224,7 @@ class PartitionFunctionTable(object):
             self._add_nuclide_pfun(nuc, pfun)
 
 
-class PartitionFunctionCollection(object):
+class PartitionFunctionCollection:
 
     """ The PartitionFunctionCollection holds a collection of PartitionFunctionTable objects in a dictionary keyed 
     by the name of the tables
@@ -241,7 +241,7 @@ class PartitionFunctionCollection(object):
         """ 
         This private function appends a PartitionFunctionTable object to each key characterized by a file_name.
         """
-        assert(not table.name in self.partition_function_tables)
+        assert not table.name in self.partition_function_tables
         self.partition_function_tables[table.name] = table
 
     def _read_collection(self):
@@ -289,7 +289,7 @@ class PartitionFunctionCollection(object):
     def get_partition_function(self, nuc):
 
         """This function access to the partition function for a given nucleus"""
-        assert(type(nuc) == pynucastro.rates.Nucleus or type(nuc) == str)
+        assert type(nuc) == pynucastro.rates.Nucleus or type(nuc) == str
 
         if self._set_data == 'frdm':
             pf_lo_table = self.partition_function_tables['frdm_low']
