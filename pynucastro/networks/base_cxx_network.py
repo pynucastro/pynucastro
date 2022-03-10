@@ -143,12 +143,12 @@ class BaseCxxNetwork(ABC, RateCollection):
 
         ydot = []
         for n in self.unique_nuclei:
-            ydot_sym = float(sympy.sympify(0.0))
+            ydot_sym_terms = []
             for r in self.nuclei_consumed[n]:
-                ydot_sym = ydot_sym + self.symbol_rates.ydot_term_symbol(r, n)
+                ydot_sym_terms.append(self.symbol_rates.ydot_term_symbol(r, n))
             for r in self.nuclei_produced[n]:
-                ydot_sym = ydot_sym + self.symbol_rates.ydot_term_symbol(r, n)
-            ydot.append(ydot_sym)
+                ydot_sym_terms.append(self.symbol_rates.ydot_term_symbol(r, n))
+            ydot.append(ydot_sym_terms)
 
         self.ydot_out_result  = ydot
         self.solved_ydot = True
@@ -371,9 +371,14 @@ class BaseCxxNetwork(ABC, RateCollection):
     def _ydot(self, n_indent, of):
         # Write YDOT
         for i, n in enumerate(self.unique_nuclei):
-            sol_value = self.symbol_rates.cxxify(sympy.cxxcode(self.ydot_out_result[i], precision=15,
-                                                               standard="c++11"))
-            of.write(f"{self.indent*n_indent}{self.symbol_rates.name_ydot_nuc}({n.c()}) = {sol_value};\n\n")
+            of.write(f"{self.indent*n_indent}{self.symbol_rates.name_ydot_nuc}({n.c()}) =\n")
+            for j, term in enumerate(self.ydot_out_result[i]):
+                sol_value = self.symbol_rates.cxxify(sympy.cxxcode(term, precision=15,
+                                                                   standard="c++11"))
+                if j == len(self.ydot_out_result[i])-1:
+                    of.write(f"{2*self.indent*n_indent}{sol_value};\n\n")
+                else:
+                    of.write(f"{2*self.indent*n_indent}{sol_value} +\n")
 
     def _enuc_add_energy_rate(self, n_indent, of):
         # Add tabular per-reaction neutrino energy generation rates to the energy generation rate
