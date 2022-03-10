@@ -17,6 +17,7 @@ except ImportError:
     from numba import jitclass
 
 from pynucastro.nucdata import UnidentifiedElement, PeriodicTable
+from pynucastro.nucdata import PartitionFunction, PartitionFunctionCollection
 
 
 def list_known_rates():
@@ -221,6 +222,9 @@ class Nucleus:
         # use lowercase element abbreviation regardless the case of the input
         self.el = self.el.lower()
 
+        # set a partition function object to every nucleus
+        self._partition_function = None
+
         # atomic number comes from periodic table
         if name != "n":
             try:
@@ -243,6 +247,19 @@ class Nucleus:
 
                 # latex formatted style
                 self.pretty = fr"{{}}^{{{self.A}}}\mathrm{{{self.el.capitalize()}}}"
+
+    def set_partition_function(self, p_collection, set_data='frdm', use_high_temperatures=True):
+        """
+        This function associates to every nucleus a PartitionFunction object.
+        """
+        assert type(p_collection) == PartitionFunctionCollection
+
+        p_collection.set_data_selector(set_data)
+        p_collection.use_high_temperatures(use_high_temperatures)
+        self._partition_function = p_collection.get_partition_function(self)
+
+    def get_partition_function(self):
+        return self._partition_function
 
     def __repr__(self):
         return self.raw
@@ -291,14 +308,14 @@ class Library:
             self._rates = None
             if isinstance(rates, Rate):
                 rates = [rates]
-            assert isinstance(rates, dict) or isinstance(rates, list), "ERROR: rates in Library constructor must be a Rate object, list of Rate objects, or dictionary of Rate objects keyed by Rate.get_rate_id()"
+            assert isinstance(rates, dict) or isinstance(rates, list) or isinstance(rates, set), "ERROR: rates in Library constructor must be a Rate object, list of Rate objects, or dictionary of Rate objects keyed by Rate.get_rate_id()"
             if isinstance(rates, dict):
                 self._rates = rates
-            elif isinstance(rates, list):
+            elif isinstance(rates, list) or isinstance(rates, set):
                 self._add_from_rate_list(rates)
         else:
             self._rates = collections.OrderedDict()
-        self._library_source_lines = []
+        self._library_source_lines = collections.deque()
 
         if self._library_file and read_library:
             self._library_file = self._find_rate_file(self._library_file)
@@ -387,7 +404,7 @@ class Library:
             chapter = None
             if line == 't' or line == 'T':
                 chapter = 't'
-                self._library_source_lines.pop(0)
+                self._library_source_lines.popleft()
             else:
                 try:
                     chapter = int(line)
@@ -401,14 +418,14 @@ class Library:
                     else:
                         chapter = current_chapter
                 else:
-                    self._library_source_lines.pop(0)
+                    self._library_source_lines.popleft()
             current_chapter = chapter
 
             rlines = None
             if chapter == 't':
-                rlines = [self._library_source_lines.pop(0) for i in range(5)]
+                rlines = [self._library_source_lines.popleft() for i in range(5)]
             elif type(chapter) == int:
-                rlines = [self._library_source_lines.pop(0) for i in range(3)]
+                rlines = [self._library_source_lines.popleft() for i in range(3)]
             if rlines:
                 sio = io.StringIO('\n'.join([f'{chapter}'] +
                                             rlines))
@@ -431,7 +448,12 @@ class Library:
         rstrings = []
         tmp_rates = [v for k, v in self._rates.items()]
         for r in sorted(tmp_rates):
-            rstrings.append(f'{r}    ({r.get_rate_id()}')
+            if not r.reverse:
+                rstrings.append(f'{r.__repr__():30} [Q = {float(r.Q):6.2f} MeV] ({r.get_rate_id()})')
+        for r in sorted(tmp_rates):
+            if r.reverse:
+                rstrings.append(f'{r.__repr__():30} [Q = {float(r.Q):6.2f} MeV] ({r.get_rate_id()})')
+
         return '\n'.join(rstrings)
 
     def __add__(self, other):
@@ -451,13 +473,16 @@ class Library:
                               read_library=False)
         return new_library
 
+    def __sub__(self, other):
+        return self.diff(other)
+
     def get_num_rates(self):
         """Return the number of rates known to the library"""
         return len(self._rates)
 
     def get_rates(self):
         """ Return a list of the rates in this library. """
-        rlist = [r for id, r in self._rates.items()]
+        rlist = [r for _, r in self._rates.items()]
         return rlist
 
     def get_rate(self, id):
@@ -467,6 +492,23 @@ class Library:
         except:
             print("ERROR: rate identifier does not match a rate in this library.")
             raise
+
+    def diff(self, other_library):
+        """Return a Library containing the rates in this library that are not
+        contained in other_library"""
+
+        diff_rates = set(self.get_rates()) - set(other_library.get_rates())
+        new_library = Library(rates=diff_rates)
+        return new_library
+
+    def remove_rate(self, rate):
+        """Manually remove a rate from the library by supplying the id"""
+
+        if isinstance(rate, Rate):
+            id = rate.get_rate_id()
+            self._rates.pop(id)
+        else:
+            self._rates.pop(rate)
 
     def linking_nuclei(self, nuclist, with_reverse=True):
         """
@@ -614,7 +656,7 @@ class Library:
                     found = False
 
                 if not found:
-                    msg = f"validation: missing {other_rate} as alternative to {rate}."
+                    msg = f"validation: missing {other_rate} as alternative to {rate} (Q = {other_rate.Q} MeV)."
                     if ostream is None:
                         print(msg)
                     else:
@@ -622,6 +664,25 @@ class Library:
 
         return passed_validation
 
+    def forward(self):
+        """
+        Select only the forward rates, discarding the inverse rates obtained
+        by detailed balance.
+        """
+
+        only_fwd_filter = RateFilter(filter_function = lambda r: not r.reverse)
+        only_fwd = self.filter(only_fwd_filter)
+        return only_fwd
+
+    def backward(self):
+        """
+        Select only the reverse rates, obtained by detailed balance.
+        """
+
+        only_bwd_filter = RateFilter(filter_function = lambda r: r.reverse)
+        only_bwd = self.filter(only_bwd_filter)
+        return only_bwd
+        
 class RateFilter:
     """RateFilter filters out a specified rate or set of rates
 
@@ -781,6 +842,11 @@ class RateFilter:
                                max_products=self.max_reactants)
         return newfilter
 
+class ReacLibLibrary(Library):
+
+    def __init__(self, libfile='20180319default2', rates=None, read_library=True):
+        assert libfile == '20180319default2'  and rates == None and read_library == True, "Only the 20180319default2 default ReacLib snapshot is accepted"
+        Library.__init__(self, libfile=libfile, rates=rates, read_library=read_library)
 
 class Rate:
     """ a single Reaclib rate, which can be composed of multiple sets """
@@ -1068,7 +1134,7 @@ class Rate:
                 s1 = s1[3:]
 
                 # next comes a 12 character Q value followed by 10 spaces
-                Q = s1.strip()
+                Q = float(s1.strip())
 
                 if first:
                     self.Q = Q
@@ -1313,6 +1379,13 @@ class Rate:
             t_data2d.remove([])
 
         self.tabular_data_table = np.array(t_data2d)
+
+    def set_partition_function(self, p_collection, set_data='frdm', use_high_temperatures=True):
+        """The class Nucleus.set_partition_functions(pCollection, set_data, use_high_temperature)
+           defines the partition function for the reactants and products"""
+
+        for nuc in (self.reactants + self.products):
+            nuc.set_partition_function(p_collection, set_data, use_high_temperatures)
 
     def eval(self, T, rhoY = None):
         """ evauate the reaction rate for temperature T """

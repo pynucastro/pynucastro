@@ -1,6 +1,6 @@
 import pynucastro as pyna
 
-library_file = "sn160/20180319default2"
+library_file = "20180319default2"
 
 reaclib_library = pyna.rates.Library(library_file)
 
