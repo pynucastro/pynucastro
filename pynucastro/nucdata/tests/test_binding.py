@@ -2,7 +2,7 @@
 from pynucastro.nucdata import BindingTable
 
 
-class TestAME(object):
+class TestAME:
     @classmethod
     def setup_class(cls):
         """ this is run once for each class before any tests """

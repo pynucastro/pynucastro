@@ -33,6 +33,7 @@ codes.
    pynucastro-integration.ipynb
    library-examples.ipynb
    validate-example.ipynb
+   partition-function
    networks
    API <modules>
    sources

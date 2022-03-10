@@ -7,7 +7,7 @@ import filecmp
 import io
 
 
-class TestStarKillerNetwork(object):
+class TestStarKillerNetwork:
     @classmethod
     def setup_class(cls):
         """ this is run once for each class before any tests """
@@ -212,7 +212,7 @@ class TestStarKillerNetwork(object):
 
         assert not errors, f"errors: {' '.join(errors)}"
 
-class TestReaclibChapterNetwork(object):
+class TestReaclibChapterNetwork:
     @classmethod
     def setup_class(cls):
         """ this is run once for each class before any tests """
