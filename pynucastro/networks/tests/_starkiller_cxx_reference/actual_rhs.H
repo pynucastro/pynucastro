@@ -12,6 +12,7 @@
 #include <sneut5.H>
 #include <reaclib_rates.H>
 #include <table_rates.H>
+#include <extern_parameters.H>
 
 using namespace amrex;
 using namespace ArrayUtil;
@@ -22,17 +23,11 @@ using namespace Rates;
 using namespace rate_tables;
 
 struct rate_eval_t {
-    Array2D<Real, 1, NumGroups, 1, NumRates> unscreened_rates;
     Array1D<Real, 1, NumRates>  screened_rates;
+    Array1D<Real, 1, NumRates>  dscreened_rates_dT;
     Array1D<Real, NrateReaclib+1, NrateReaclib+NrateTabular> add_energy_rate;
 };
 
-
-// Indices into rate groups in the rate_eval_t type
-const int i_rate        = 1;
-const int i_drate_dt    = 2;
-const int i_scor        = 3;
-const int i_dscor_dt    = 4;
 
 
 template<class T>
@@ -67,15 +62,6 @@ void evaluate_rates(const burn_t& state, rate_eval_t& rate_eval) {
 
     Real rhoy = state.rho * state.y_e;
 
-    // initialize the screening factors to 1 -- this way if a rate is
-    // unscreened, when we multiply by the screening factor later, we
-    // don't zero the rate
-
-    for (int i = 1; i <= NumRates; ++i) {
-        rate_eval.unscreened_rates(i_scor, i) = 1.0_rt;
-        rate_eval.unscreened_rates(i_dscor_dt, i) = 0.0_rt;
-    }
-
     // Calculate Reaclib rates
 
     plasma_state_t pstate;
@@ -83,34 +69,60 @@ void evaluate_rates(const burn_t& state, rate_eval_t& rate_eval) {
 
     tf_t tfactors = evaluate_tfactors(state.T);
 
-    for (int i = 1; i <= NrateReaclib; ++i) {
-        Real rate;
-        Real drate_dt;
-        reaclib_evaluate(pstate, tfactors, i, rate, drate_dt);
-        rate_eval.unscreened_rates(i_rate, i) = rate;
-        rate_eval.unscreened_rates(i_drate_dt, i) = drate_dt;
+    if (jacobian == 1) {
+        for (int i = 1; i <= NrateReaclib; ++i) {
+            Real rate;
+            Real drate_dt;
+            constexpr int do_T_derivatives = 1;
+            reaclib_evaluate<do_T_derivatives>(pstate, tfactors, i, rate, drate_dt);
+            rate_eval.screened_rates(i) = rate;
+            rate_eval.dscreened_rates_dT(i) = drate_dt;
+        }
+    } else {
+        for (int i = 1; i <= NrateReaclib; ++i) {
+            Real rate;
+            Real drate_dt;
+            // drate_dt is not used in this case
+            constexpr int do_T_derivatives = 0;
+            reaclib_evaluate<do_T_derivatives>(pstate, tfactors, i, rate, drate_dt);
+            rate_eval.screened_rates(i) = rate;
+            rate_eval.dscreened_rates_dT(i) = drate_dt;
+        }
     }
 
     // Evaluate screening factors
 
+    Real ratraw, dratraw_dT;
     Real scor, dscor_dt, dscor_dd;
     Real scor2, dscor2_dt, dscor2_dd;
 
 
     screen5(pstate, 0, zion[C12-1], aion[C12-1], zion[C12-1], aion[C12-1], scor, dscor_dt, dscor_dd);
 
-    rate_eval.unscreened_rates(i_scor,k_c12_c12__he4_ne20) = scor;
-    rate_eval.unscreened_rates(i_dscor_dt,k_c12_c12__he4_ne20) = dscor_dt;
-    rate_eval.unscreened_rates(i_scor,k_c12_c12__n_mg23) = scor;
-    rate_eval.unscreened_rates(i_dscor_dt,k_c12_c12__n_mg23) = dscor_dt;
-    rate_eval.unscreened_rates(i_scor,k_c12_c12__p_na23) = scor;
-    rate_eval.unscreened_rates(i_dscor_dt,k_c12_c12__p_na23) = dscor_dt;
+
+    ratraw = rate_eval.screened_rates(k_c12_c12__he4_ne20);
+    dratraw_dT = rate_eval.dscreened_rates_dT(k_c12_c12__he4_ne20);
+    rate_eval.screened_rates(k_c12_c12__he4_ne20) *= scor;
+    rate_eval.dscreened_rates_dT(k_c12_c12__he4_ne20) = ratraw * dscor_dt + dratraw_dT * scor;
+
+    ratraw = rate_eval.screened_rates(k_c12_c12__n_mg23);
+    dratraw_dT = rate_eval.dscreened_rates_dT(k_c12_c12__n_mg23);
+    rate_eval.screened_rates(k_c12_c12__n_mg23) *= scor;
+    rate_eval.dscreened_rates_dT(k_c12_c12__n_mg23) = ratraw * dscor_dt + dratraw_dT * scor;
+
+    ratraw = rate_eval.screened_rates(k_c12_c12__p_na23);
+    dratraw_dT = rate_eval.dscreened_rates_dT(k_c12_c12__p_na23);
+    rate_eval.screened_rates(k_c12_c12__p_na23) *= scor;
+    rate_eval.dscreened_rates_dT(k_c12_c12__p_na23) = ratraw * dscor_dt + dratraw_dT * scor;
 
 
     screen5(pstate, 1, zion[He4-1], aion[He4-1], zion[C12-1], aion[C12-1], scor, dscor_dt, dscor_dd);
 
-    rate_eval.unscreened_rates(i_scor,k_he4_c12__o16) = scor;
-    rate_eval.unscreened_rates(i_dscor_dt,k_he4_c12__o16) = dscor_dt;
+
+    ratraw = rate_eval.screened_rates(k_he4_c12__o16);
+    dratraw_dT = rate_eval.dscreened_rates_dT(k_he4_c12__o16);
+    rate_eval.screened_rates(k_he4_c12__o16) *= scor;
+    rate_eval.dscreened_rates_dT(k_he4_c12__o16) = ratraw * dscor_dt + dratraw_dT * scor;
 
 
     // Calculate tabular rates
@@ -119,23 +131,17 @@ void evaluate_rates(const burn_t& state, rate_eval_t& rate_eval) {
 
     tabular_evaluate(j_na23_ne23_meta, j_na23_ne23_rhoy, j_na23_ne23_temp, j_na23_ne23_data,
                      rhoy, state.T, rate, drate_dt, edot_nu);
-    rate_eval.unscreened_rates(i_rate, k_na23__ne23) = rate;
-    rate_eval.unscreened_rates(i_drate_dt, k_na23__ne23) = drate_dt;
+    rate_eval.screened_rates(k_na23__ne23) = rate;
+    rate_eval.dscreened_rates_dT(k_na23__ne23) = drate_dt;
     rate_eval.add_energy_rate(k_na23__ne23) = edot_nu;
 
     tabular_evaluate(j_ne23_na23_meta, j_ne23_na23_rhoy, j_ne23_na23_temp, j_ne23_na23_data,
                      rhoy, state.T, rate, drate_dt, edot_nu);
-    rate_eval.unscreened_rates(i_rate, k_ne23__na23) = rate;
-    rate_eval.unscreened_rates(i_drate_dt, k_ne23__na23) = drate_dt;
+    rate_eval.screened_rates(k_ne23__na23) = rate;
+    rate_eval.dscreened_rates_dT(k_ne23__na23) = drate_dt;
     rate_eval.add_energy_rate(k_ne23__na23) = edot_nu;
 
 
-    // Compute screened rates
-
-    for (int i = 1; i <= NumRates; ++i) {
-        rate_eval.screened_rates(i) = rate_eval.unscreened_rates(i_rate, i) *
-                                      rate_eval. unscreened_rates(i_scor, i);
-    }
 }
 
 AMREX_GPU_HOST_DEVICE AMREX_INLINE
@@ -339,17 +345,9 @@ void actual_jac(const burn_t& state, MatrixType& jac)
     // calling the RHS using d(rate) / dT and then transform them
     // to our energy integration variable.
 
-    Array1D<Real, 1, NumRates>  dscreened_rates_dT;
     Array1D<Real, 1, neqs>  yderivs;
 
-    for (int i = 1; i <= NumRates; ++i) {
-        dscreened_rates_dT(i) = rate_eval.unscreened_rates(i_rate, i) *
-                                rate_eval.unscreened_rates(i_dscor_dt, i) +
-                                rate_eval.unscreened_rates(i_drate_dt, i) *
-                                rate_eval.unscreened_rates(i_scor, i);
-    }
-
-    rhs_nuc(state, yderivs, Y, dscreened_rates_dT);
+    rhs_nuc(state, yderivs, Y, rate_eval.dscreened_rates_dT);
 
     for (int k = 1; k <= NumSpec; k++) {
         jac.set(k, net_ienuc, temperature_to_energy_jacobian(state, yderivs(k)));
