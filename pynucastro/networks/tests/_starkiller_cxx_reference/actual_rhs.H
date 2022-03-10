@@ -146,23 +146,41 @@ void rhs_nuc(const burn_t& state,
 
     using namespace Rates;
 
-    ydot_nuc(N) = 0.5*screened_rates(k_c12_c12__n_mg23)*std::pow(Y(C12), 2)*state.rho - screened_rates(k_n__p__weak__wc12)*Y(N);
+    ydot_nuc(N) =
+        -screened_rates(k_n__p__weak__wc12)*Y(N) +
+        0.5*screened_rates(k_c12_c12__n_mg23)*std::pow(Y(C12), 2)*state.rho;
 
-    ydot_nuc(H1) = 0.5*screened_rates(k_c12_c12__p_na23)*std::pow(Y(C12), 2)*state.rho + screened_rates(k_n__p__weak__wc12)*Y(N);
+    ydot_nuc(H1) =
+        0.5*screened_rates(k_c12_c12__p_na23)*std::pow(Y(C12), 2)*state.rho +
+        screened_rates(k_n__p__weak__wc12)*Y(N);
 
-    ydot_nuc(He4) = 0.5*screened_rates(k_c12_c12__he4_ne20)*std::pow(Y(C12), 2)*state.rho - screened_rates(k_he4_c12__o16)*Y(C12)*Y(He4)*state.rho;
+    ydot_nuc(He4) =
+        -screened_rates(k_he4_c12__o16)*Y(C12)*Y(He4)*state.rho +
+        0.5*screened_rates(k_c12_c12__he4_ne20)*std::pow(Y(C12), 2)*state.rho;
 
-    ydot_nuc(C12) = -screened_rates(k_c12_c12__he4_ne20)*std::pow(Y(C12), 2)*state.rho - screened_rates(k_c12_c12__n_mg23)*std::pow(Y(C12), 2)*state.rho - screened_rates(k_c12_c12__p_na23)*std::pow(Y(C12), 2)*state.rho - screened_rates(k_he4_c12__o16)*Y(C12)*Y(He4)*state.rho;
+    ydot_nuc(C12) =
+        -screened_rates(k_c12_c12__he4_ne20)*std::pow(Y(C12), 2)*state.rho +
+        -screened_rates(k_c12_c12__n_mg23)*std::pow(Y(C12), 2)*state.rho +
+        -screened_rates(k_c12_c12__p_na23)*std::pow(Y(C12), 2)*state.rho +
+        -screened_rates(k_he4_c12__o16)*Y(C12)*Y(He4)*state.rho;
 
-    ydot_nuc(O16) = screened_rates(k_he4_c12__o16)*Y(C12)*Y(He4)*state.rho;
+    ydot_nuc(O16) =
+        screened_rates(k_he4_c12__o16)*Y(C12)*Y(He4)*state.rho;
 
-    ydot_nuc(Ne20) = 0.5*screened_rates(k_c12_c12__he4_ne20)*std::pow(Y(C12), 2)*state.rho;
+    ydot_nuc(Ne20) =
+        0.5*screened_rates(k_c12_c12__he4_ne20)*std::pow(Y(C12), 2)*state.rho;
 
-    ydot_nuc(Ne23) = screened_rates(k_na23__ne23)*Y(Na23) - screened_rates(k_ne23__na23)*Y(Ne23);
+    ydot_nuc(Ne23) =
+        -screened_rates(k_ne23__na23)*Y(Ne23) +
+        screened_rates(k_na23__ne23)*Y(Na23);
 
-    ydot_nuc(Na23) = 0.5*screened_rates(k_c12_c12__p_na23)*std::pow(Y(C12), 2)*state.rho - screened_rates(k_na23__ne23)*Y(Na23) + screened_rates(k_ne23__na23)*Y(Ne23);
+    ydot_nuc(Na23) =
+        -screened_rates(k_na23__ne23)*Y(Na23) +
+        0.5*screened_rates(k_c12_c12__p_na23)*std::pow(Y(C12), 2)*state.rho +
+        screened_rates(k_ne23__na23)*Y(Ne23);
 
-    ydot_nuc(Mg23) = 0.5*screened_rates(k_c12_c12__n_mg23)*std::pow(Y(C12), 2)*state.rho;
+    ydot_nuc(Mg23) =
+        0.5*screened_rates(k_c12_c12__n_mg23)*std::pow(Y(C12), 2)*state.rho;
 
 }
 
