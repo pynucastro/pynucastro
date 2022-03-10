@@ -80,7 +80,7 @@ class SingleSet:
 
     def _update_label_properties(self):
         """ Set label and flags indicating Set is resonant,
-            weak, or reverse. """
+            weak, or derived via detailed balance (what ReacLib called reverse). """
         assert(type(self.labelprops) == str)
         try:
             assert(len(self.labelprops) == 6)
@@ -90,7 +90,7 @@ class SingleSet:
             self.label = self.labelprops[0:4]
             self.resonant = self.labelprops[4] == 'r'
             self.weak = self.labelprops[4] == 'w'
-            self.reverse = self.labelprops[5] == 'v'
+            self.derived = self.labelprops[5] == 'v'
 
     def __eq__(self, other):
         """ Determine whether two SingleSet objects are equal to each other. """
@@ -102,7 +102,7 @@ class SingleSet:
         x = x and (self.label == other.label)
         x = x and (self.resonant == other.resonant)
         x = x and (self.weak == other.weak)
-        x = x and (self.reverse == other.reverse)
+        x = x and (self.derived == other.derived)
         return x
 
     def f(self):
@@ -443,10 +443,10 @@ class Library:
         rstrings = []
         tmp_rates = [v for k, v in self._rates.items()]
         for r in sorted(tmp_rates):
-            if not r.reverse:
+            if not r.derived:
                 rstrings.append(f'{r.__repr__():30} [Q = {float(r.Q):6.2f} MeV] ({r.get_rate_id()})')
         for r in sorted(tmp_rates):
-            if r.reverse:
+            if r.derived:
                 rstrings.append(f'{r.__repr__():30} [Q = {float(r.Q):6.2f} MeV] ({r.get_rate_id()})')
 
         return '\n'.join(rstrings)
@@ -506,12 +506,14 @@ class Library:
             self._rates.pop(rate)
 
     def linking_nuclei(self, nuclist, with_reverse=True):
-        """
-        Return a Library object containing the rates linking the
-        nuclei provided in the list of Nucleus objects or nucleus abbreviations 'nuclist'.
+        """Return a Library object containing the rates linking the nuclei
+        provided in the list of Nucleus objects or nucleus
+        abbreviations 'nuclist'.
 
-        If with_reverse is True, then include reverse rates. Otherwise
-        include only forward rates.
+        If with_reverse is True, then include reverse rates
+        (currently, this means derived via detailed
+        balance). Otherwise include only forward rates.
+
         """
 
         if type(nuclist) == Nucleus or type(nuclist) == str:
@@ -555,7 +557,7 @@ class Library:
                 if nuc not in nucleus_list:
                     include = False
                     break
-            if not with_reverse and r.reverse:
+            if not with_reverse and r.derived:
                 include = False
             if include:
                 filtered_rates.append(r)
@@ -614,14 +616,14 @@ class Library:
         passed_validation = True
 
         for rate in current_rates:
-            if rate.reverse:
+            if rate.derived:
                 continue
             for p in rate.products:
                 found = False
                 for orate in current_rates:
                     if orate == rate:
                         continue
-                    if orate.reverse:
+                    if orate.derived:
                         continue
                     if p in orate.reactants:
                         found = True
@@ -637,7 +639,7 @@ class Library:
         # now check if we are missing any rates from other_library with the exact same reactants
 
         for rate in current_rates:
-            if forward_only and rate.reverse:
+            if forward_only and rate.derived:
                 continue
 
             # create a rate filter with these exact reactants
@@ -665,7 +667,7 @@ class Library:
         by detailed balance.
         """
 
-        only_fwd_filter = RateFilter(filter_function = lambda r: not r.reverse)
+        only_fwd_filter = RateFilter(filter_function = lambda r: not r.derived)
         only_fwd = self.filter(only_fwd_filter)
         return only_fwd
 
@@ -674,7 +676,7 @@ class Library:
         Select only the reverse rates, obtained by detailed balance.
         """
 
-        only_bwd_filter = RateFilter(filter_function = lambda r: r.reverse)
+        only_bwd_filter = RateFilter(filter_function = lambda r: r.derived)
         only_bwd = self.filter(only_bwd_filter)
         return only_bwd
         
@@ -737,7 +739,7 @@ class RateFilter:
         self.reactants = []
         self.products = []
         self.exact = exact
-        self.reverse = reverse
+        self.derived = reverse
         self.min_reactants = min_reactants
         self.min_products = min_products
         self.max_reactants = max_reactants
@@ -798,7 +800,7 @@ class RateFilter:
         """ Given a Rate r, see if it matches this RateFilter. """
         matches_reactants = True
         matches_products = True
-        matches_reverse = True
+        matches_derived = True
         matches_min_reactants = True
         matches_min_products = True
         matches_max_reactants = True
@@ -808,8 +810,8 @@ class RateFilter:
             matches_reactants = self._compare_nuclides(self.reactants, r.reactants, self.exact)
         if self.products:
             matches_products = self._compare_nuclides(self.products, r.products, self.exact)
-        if type(self.reverse) == type(True):
-            matches_reverse = self.reverse == r.reverse
+        if type(self.derived) == type(True):
+            matches_derived = self.derived == r.derived
         if type(self.min_reactants) == int:
             matches_min_reactants = len(r.reactants) >= self.min_reactants
         if type(self.min_products) == int:
@@ -820,7 +822,7 @@ class RateFilter:
             matches_max_products = len(r.products) <= self.max_products
         if self.filter_function is not None:
             matches_filter_function = self.filter_function(r)
-        return (matches_reactants and matches_products and matches_reverse and
+        return (matches_reactants and matches_products and matches_derived and
                 matches_min_reactants and matches_max_reactants and
                 matches_min_products and matches_max_products and
                 matches_filter_function)
@@ -830,7 +832,7 @@ class RateFilter:
         newfilter = RateFilter(reactants=self.products,
                                products=self.reactants,
                                exact=self.exact,
-                               reverse=self.reverse,
+                               reverse=self.derived,
                                min_reactants=self.min_products,
                                max_reactants=self.max_products,
                                min_products=self.min_reactants,
@@ -953,7 +955,7 @@ class Rate:
         assert(self.weak == other.weak)
         assert(self.weak_type == other.weak_type)
         assert(self.tabular == other.tabular)
-        assert(self.reverse == other.reverse)
+        assert(self.derived == other.derived)
 
         if self.resonant != other.resonant:
             self._labelprops_combine_resonance()
@@ -998,7 +1000,7 @@ class Rate:
 
     def _update_label_properties(self):
         """ Set label and flags indicating Rate is resonant,
-            weak, or reverse. """
+            weak, or derived via detailed balance. """
         assert(type(self.labelprops) == str)
         try:
             assert(len(self.labelprops) == 6)
@@ -1009,7 +1011,7 @@ class Rate:
             self.resonance_combined = False
             self.weak = False # The tabular rate might or might not be weak
             self.weak_type = None
-            self.reverse = False
+            self.derived = False
             self.tabular = True
         else:
             self.label = self.labelprops[0:4]
@@ -1022,7 +1024,7 @@ class Rate:
                     self.weak_type = self.label.strip().replace('+','_pos_').replace('-','_neg_')
             else:
                 self.weak_type = None
-            self.reverse = self.labelprops[5] == 'v'
+            self.derived = self.labelprops[5] == 'v'
             self.tabular = False
 
     def _read_from_file(self, f):
@@ -1240,7 +1242,7 @@ class Rate:
         # balance.  Rate.symmetric_screen is what should be used in
         # the screening in this case
         self.symmetric_screen = []
-        if self.reverse:
+        if self.derived:
             nucz = [q for q in self.products if q.Z != 0]
             if len(nucz) > 1:
                 nucz.sort(key=lambda x: x.Z)
@@ -1300,8 +1302,8 @@ class Rate:
         non-resonant versions of reactions. """
 
         srev = ''
-        if self.reverse:
-            srev = 'reverse'
+        if self.derived:
+            srev = 'derived-reverse'
 
         sweak = ''
         if self.weak:
