@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.rates.rate &mdash; pynucastro 1.6.0.post43+g0f2bf05 documentation</title>
+  <title>pynucastro.rates.rate &mdash; pynucastro 1.6.0.post44+g0185e44 documentation</title>
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -383,10 +383,10 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_rates</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rates</span><span class="p">,</span> <span class="n">Rate</span><span class="p">):</span>
                 <span class="n">rates</span> <span class="o">=</span> <span class="p">[</span><span class="n">rates</span><span class="p">]</span>
-            <span class="k">assert</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">rates</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rates</span><span class="p">,</span> <span class="nb">list</span><span class="p">)),</span> <span class="s2">&quot;ERROR: rates in Library constructor must be a Rate object, list of Rate objects, or dictionary of Rate objects keyed by Rate.get_rate_id()&quot;</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rates</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rates</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rates</span><span class="p">,</span> <span class="nb">set</span><span class="p">),</span> <span class="s2">&quot;ERROR: rates in Library constructor must be a Rate object, list of Rate objects, or dictionary of Rate objects keyed by Rate.get_rate_id()&quot;</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rates</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_rates</span> <span class="o">=</span> <span class="n">rates</span>
-            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rates</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rates</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rates</span><span class="p">,</span> <span class="nb">set</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_add_from_rate_list</span><span class="p">(</span><span class="n">rates</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_rates</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">()</span>
@@ -548,13 +548,16 @@
                               <span class="n">read_library</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">new_library</span>
 
+    <span class="k">def</span> <span class="fm">__sub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+
 <div class="viewcode-block" id="Library.get_num_rates"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.Library.get_num_rates">[docs]</a>    <span class="k">def</span> <span class="nf">get_num_rates</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return the number of rates known to the library&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_rates</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Library.get_rates"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.Library.get_rates">[docs]</a>    <span class="k">def</span> <span class="nf">get_rates</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Return a list of the rates in this library. &quot;&quot;&quot;</span>
-        <span class="n">rlist</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="nb">id</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rates</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
+        <span class="n">rlist</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rates</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
         <span class="k">return</span> <span class="n">rlist</span></div>
 
 <div class="viewcode-block" id="Library.get_rate"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.Library.get_rate">[docs]</a>    <span class="k">def</span> <span class="nf">get_rate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
@@ -564,6 +567,14 @@
         <span class="k">except</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ERROR: rate identifier does not match a rate in this library.&quot;</span><span class="p">)</span>
             <span class="k">raise</span></div>
+
+<div class="viewcode-block" id="Library.diff"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.Library.diff">[docs]</a>    <span class="k">def</span> <span class="nf">diff</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other_library</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a Library containing the rates in this library that are not</span>
+<span class="sd">        contained in other_library&quot;&quot;&quot;</span>
+
+        <span class="n">diff_rates</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_rates</span><span class="p">())</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">other_library</span><span class="o">.</span><span class="n">get_rates</span><span class="p">())</span>
+        <span class="n">new_library</span> <span class="o">=</span> <span class="n">Library</span><span class="p">(</span><span class="n">rates</span><span class="o">=</span><span class="n">diff_rates</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">new_library</span></div>
 
 <div class="viewcode-block" id="Library.remove_rate"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.Library.remove_rate">[docs]</a>    <span class="k">def</span> <span class="nf">remove_rate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rate</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Manually remove a rate from the library by supplying the id&quot;&quot;&quot;</span>
