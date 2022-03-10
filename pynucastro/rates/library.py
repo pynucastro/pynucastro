@@ -2,6 +2,27 @@ import os
 import io
 import collections
 
+from rate import Rate, UnsupportedNucleus, _find_rate_file
+
+
+def list_known_rates():
+    """ list the rates found in the library """
+
+    lib_path = f"{os.path.dirname(__file__)}/../library/"
+
+    for _, _, filenames in os.walk(lib_path):
+        for f in filenames:
+            # skip over files that are not rate files
+            if f.endswith(".md") or f.endswith(".dat") or f.endswith(".py") or f.endswith(".ipynb"):
+                continue
+            try:
+                lib = Library(f)
+            except:
+                continue
+            else:
+                print(f"{f:32} : ")
+                for r in lib.get_rates():
+                    print(f"                                 : {r}")
 
 class Library:
     """
@@ -12,12 +33,6 @@ class Library:
     The Library class also implements searching based on rules
     specified by RateFilter objects.
     """
-
-    pynucastro_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-    pynucastro_rates_dir = os.path.join(pynucastro_dir,
-                                        'library')
-    pynucastro_tabular_dir = os.path.join(pynucastro_rates_dir,
-                                          'tabular')
 
     def __init__(self, libfile=None, rates=None, read_library=True):
         self._library_file = libfile
@@ -35,7 +50,7 @@ class Library:
         self._library_source_lines = collections.deque()
 
         if self._library_file and read_library:
-            self._library_file = self._find_rate_file(self._library_file)
+            self._library_file = _find_rate_file(self._library_file)
             self._read_library_file()
 
     def heaviest(self):
@@ -70,31 +85,6 @@ class Library:
             id = r.get_rate_id()
             assert (not id in self._rates), "ERROR: supplied a Rate object already in the Library."
             self._rates[id] = r
-
-    @classmethod
-    def _find_rate_file(self, ratename):
-        """locate the Reaclib or tabular rate or library file given its name.  Return
-        None if the file cannot be located, otherwise return its path."""
-
-        # check to see if the rate file is in the working dir or
-        # is already the full path
-        x = ratename
-        if os.path.isfile(x):
-            return os.path.realpath(x)
-
-        # check to see if the rate file is in pynucastro/library
-        x = os.path.join(self.pynucastro_rates_dir, ratename)
-        if os.path.isfile(x):
-            return os.path.realpath(x)
-
-        # check to see if the rate file is in pynucastro/library/tabular
-        x = os.path.join(self.pynucastro_tabular_dir, ratename)
-        if os.path.isfile(x):
-            return os.path.realpath(x)
-
-        # notify user we can't find the file
-        raise Exception('File {} not found in the working directory, {}, or {}'.format(
-            ratename, self.pynucastro_rates_dir, self.pynucastro_tabular_dir))
 
     def _read_library_file(self):
         # loop through library file, read lines

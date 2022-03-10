@@ -2,5 +2,5 @@
 
 __all__ = ["rate", "library"]
 
-from .rate import Tfactors, Rate, UnsupportedNucleus, Nucleus, list_known_rates
-from .library import Library, ReacLibLibrary, RateFilter
+from .rate import Tfactors, Rate, UnsupportedNucleus, Nucleus
+from .library import Library, ReacLibLibrary, RateFilter, list_known_rates

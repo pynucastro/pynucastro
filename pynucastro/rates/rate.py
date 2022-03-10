@@ -16,25 +16,35 @@ except ImportError:
 
 from pynucastro.nucdata import UnidentifiedElement, PeriodicTable
 
+_pynucastro_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+_pynucastro_rates_dir = os.path.join(_pynucastro_dir, 'library')
+_pynucastro_tabular_dir = os.path.join(_pynucastro_rates_dir, 'tabular')
 
-def list_known_rates():
-    """ list the rates found in the library """
 
-    lib_path = f"{os.path.dirname(__file__)}/../library/"
+def _find_rate_file(ratename):
+    """locate the Reaclib or tabular rate or library file given its name.  Return
+    None if the file cannot be located, otherwise return its path."""
 
-    for _, _, filenames in os.walk(lib_path):
-        for f in filenames:
-            # skip over files that are not rate files
-            if f.endswith(".md") or f.endswith(".dat") or f.endswith(".py") or f.endswith(".ipynb"):
-                continue
-            try:
-                lib = Library(f)
-            except:
-                continue
-            else:
-                print(f"{f:32} : ")
-                for r in lib.get_rates():
-                    print(f"                                 : {r}")
+    # check to see if the rate file is in the working dir or
+    # is already the full path
+    x = ratename
+    if os.path.isfile(x):
+        return os.path.realpath(x)
+
+    # check to see if the rate file is in pynucastro/library
+    x = os.path.join(_pynucastro_rates_dir, ratename)
+    if os.path.isfile(x):
+        return os.path.realpath(x)
+
+    # check to see if the rate file is in pynucastro/library/tabular
+    x = os.path.join(_pynucastro_tabular_dir, ratename)
+    if os.path.isfile(x):
+        return os.path.realpath(x)
+
+    # notify user we can't find the file
+    raise Exception(f'File {ratename} not found in the working directory, {_pynucastro_rates_dir}, or {_pynucastro_tabular_dir}')
+
+
 
 Tfactor_spec = [
 ('T9', numba.float64),
@@ -289,7 +299,7 @@ class Rate:
         self.rfile = None
 
         if type(rfile) == str:
-            self.rfile_path = Library._find_rate_file(rfile)
+            self.rfile_path = _find_rate_file(rfile)
             self.rfile = os.path.basename(rfile)
 
         self.chapter = chapter    # the Reaclib chapter for this reaction
@@ -779,7 +789,7 @@ class Rate:
         """read the rate data from .dat file """
 
         # find .dat file and read it
-        self.table_path = Library._find_rate_file(self.table_file)
+        self.table_path = _find_rate_file(self.table_file)
         tabular_file = open(self.table_path)
         t_data = tabular_file.readlines()
         tabular_file.close()
