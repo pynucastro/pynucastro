@@ -155,7 +155,7 @@ class SympyRates:
             v = self.symbol_ludict[k]
             s = s.replace(k,v)
         if s == '0':
-            s = '0.0e0_rt'
+            s = '0.0e0'
 
         ## Replace all double precision literals with custom real type
         ## literals
