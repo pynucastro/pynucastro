@@ -245,7 +245,8 @@ class RateCollection:
             rp = RatePair(forward=fr)
             matched = False
             for rr in reverse_rates:
-                if sorted(fr.reactants, key=lambda x: x.A) == sorted(rr.products, key=lambda x: x.A):
+                if sorted(fr.reactants, key=lambda x: x.A) == sorted(rr.products, key=lambda x: x.A) and \
+                   sorted(fr.products, key=lambda x: x.A) == sorted(rr.reactants, key=lambda x: x.A):
                     matched = True
                     rp.reverse = rr
                     break
