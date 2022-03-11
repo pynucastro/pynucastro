@@ -20,7 +20,7 @@ from matplotlib.ticker import MaxNLocator
 import networkx as nx
 
 # Import Rate
-from pynucastro.rates import Rate, Nucleus, Library
+from pynucastro.rates import Rate, RatePair, Nucleus, Library
 
 mpl.rcParams['figure.dpi'] = 100
 
@@ -229,6 +229,41 @@ class RateCollection:
                     self.library = rflib
                 else:
                     self.library = self.library + rflib
+
+    def get_rate_pairs(self):
+        """ return a list of RatePair objects, grouping the rates together
+            by forward and reverse"""
+
+        forward_rates = [r for r in self.rates if r.Q >= 0.0]
+        reverse_rates = [r for r in self.rates if r.Q < 0.0]
+
+        rate_pairs = []
+
+        # loop over all the forward rates and find the matching reverse rate
+        # if it exists
+        for fr in forward_rates:
+            rp = RatePair(forward=fr)
+            matched = False
+            for rr in reverse_rates:
+                if sorted(fr.reactants, key=lambda x: x.A) == sorted(rr.products, key=lambda x: x.A):
+                    matched = True
+                    rp.reverse = rr
+                    break
+            # since we found a match, remove the reverse rate we paired
+            # from out list so no other forward rate can match with it
+            if matched:
+                reverse_rates.remove(rp.reverse)
+
+            rate_pairs.append(rp)
+
+        # we might have some reverse rates remaining for which there
+        # were no forward rates -- add those now
+        if reverse_rates:
+            for rr in reverse_rates:
+                rp = RatePair(reverse=rr)
+                rate_pairs.append(rp)
+
+        return rate_pairs
 
     def get_nuclei(self):
         """ get all the nuclei that are part of the network """

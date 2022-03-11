@@ -908,3 +908,24 @@ class Rate:
 
             plt.title(fr"{self.pretty_string}")
             plt.show()
+
+
+class RatePair:
+    """the forward and reverse rates for a single reaction sequence"""
+
+    def __init__(self, forward=None, reverse=None):
+        self.forward = forward
+        self.reverse = reverse
+
+    def __repr__(self):
+        return f"forward: {self.forward} ; reverse: {self.reverse}"
+
+    def __lt__(self, other):
+        if self.forward is not None and other.forward is not None:
+            return self.forward < other.forward
+        elif self.forward is None:
+            return False
+        return True
+
+    def __eq__(self, other):
+        return self.forward == other.forward and self.reverse == other.reverse
