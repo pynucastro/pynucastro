@@ -767,7 +767,7 @@ class Rate:
         if self.tabular:
             ssrc = 'tabular'
 
-        return '{self.__repr__()} <{self.label.strip()}_{ssrc}_{sweak}_{srev}>'
+        return f'{self.__repr__()} <{self.label.strip()}_{ssrc}_{sweak}_{srev}>'
 
     def heaviest(self):
         """
