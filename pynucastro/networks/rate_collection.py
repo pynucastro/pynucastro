@@ -194,12 +194,12 @@ class RateCollection:
             self.nuclei_produced[n] = [r for r in self.rates if n in r.products]
 
         self.nuclei_rate_pairs = {}
-        _rp = self.get_rate_pairs():
+        _rp = self.get_rate_pairs()
 
-        for n in self.unique_nuclei:
-            self.nuclei_rate_pairs[n] = \
-                [rp for rp in _rp if rp.forward is not None and n in rp.forward or
-                                     rp.reverse is not None and n in rp.reverse]
+        #for n in self.unique_nuclei:
+        #    self.nuclei_rate_pairs[n] = \
+        #        [rp for rp in _rp if rp.forward is not None and n in rp.forward or
+        #                             rp.reverse is not None and n in rp.reverse]
 
         # Re-order self.rates so Reaclib rates come first,
         # followed by Tabular rates. This is needed if
