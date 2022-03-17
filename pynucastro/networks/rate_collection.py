@@ -194,12 +194,12 @@ class RateCollection:
             self.nuclei_produced[n] = [r for r in self.rates if n in r.products]
 
         self.nuclei_rate_pairs = {}
-        _rp = self.get_rate_pairs():
+        _rp = self.get_rate_pairs()
 
         for n in self.unique_nuclei:
             self.nuclei_rate_pairs[n] = \
-                [rp for rp in _rp if rp.forward is not None and n in rp.forward or
-                                     rp.reverse is not None and n in rp.reverse]
+                [rp for rp in _rp if rp.forward is not None and n in rp.forward.reactants + rp.forward.products or
+                                     rp.reverse is not None and n in rp.reverse.reactants + rp.reverse.products]
 
         # Re-order self.rates so Reaclib rates come first,
         # followed by Tabular rates. This is needed if
@@ -353,6 +353,15 @@ class RateCollection:
                 ostr += f"     {r.string}\n"
 
             ostr += "\n"
+        return ostr
+
+    def rate_pair_overview(self):
+        """ return a verbose network overview in terms of forward-reverse pairs"""
+        ostr = ""
+        for n in self.unique_nuclei:
+            ostr += f"{n}\n"
+            for rp in self.nuclei_rate_pairs[n]:
+                ostr += f"     {rp}\n"
         return ostr
 
     def get_screening_map(self):
