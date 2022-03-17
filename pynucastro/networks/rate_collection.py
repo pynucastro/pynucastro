@@ -8,7 +8,6 @@ import math
 import os
 
 from operator import mul
-from collections import OrderedDict
 
 from ipywidgets import interact
 
@@ -187,12 +186,20 @@ class RateCollection:
 
         # now make a list of each rate that touches each nucleus
         # we'll store this in a dictionary keyed on the nucleus
-        self.nuclei_consumed = OrderedDict()
-        self.nuclei_produced = OrderedDict()
+        self.nuclei_consumed = {}
+        self.nuclei_produced = {}
 
         for n in self.unique_nuclei:
             self.nuclei_consumed[n] = [r for r in self.rates if n in r.reactants]
             self.nuclei_produced[n] = [r for r in self.rates if n in r.products]
+
+        self.nuclei_rate_pairs = {}
+        _rp = self.get_rate_pairs():
+
+        for n in self.unique_nuclei:
+            self.nuclei_rate_pairs[n] = \
+                [rp for rp in _rp if rp.forward is not None and n in rp.forward or
+                                     rp.reverse is not None and n in rp.reverse]
 
         # Re-order self.rates so Reaclib rates come first,
         # followed by Tabular rates. This is needed if
@@ -273,7 +280,7 @@ class RateCollection:
     def evaluate_rates(self, rho, T, composition):
         """evaluate the rates for a specific density, temperature, and
         composition"""
-        rvals = OrderedDict()
+        rvals = {}
         ys = composition.get_molar()
         y_e = composition.eval_ye()
 
