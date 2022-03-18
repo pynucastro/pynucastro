@@ -389,8 +389,7 @@ class BaseCxxNetwork(ABC, RateCollection):
                 elif pair.count(None) == 1:
                     num = 1
                 else:
-                    print("should not get to the situation that a rate pair is double None")
-                    raise
+                    raise NotImplementedError("a rate pair must contain atleast one rate")
 
                 if num == 2:
                     of.write(f"{2*self.indent*n_indent}(")
