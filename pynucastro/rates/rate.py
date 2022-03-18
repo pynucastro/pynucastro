@@ -165,7 +165,16 @@ class Nucleus:
     """
     a nucleus that participates in a reaction -- we store it in a
     class to hold its properties, define a sorting, and give it a
-    pretty printing string
+    pretty printing string.
+
+    :var Z:               atomic number
+    :var N:               neutron number
+    :var A:               atomic mass
+    :var nucbind:         nuclear binding energy (MeV / nucleon)
+    :var short_spec_name: nucleus abbrevation (e.g. "he4")
+    :var caps_name:       capitalized short species name (e.g. "He4")
+    :var el:              element name (e.g. "he")
+    :var pretty:          LaTeX formatted version of the nucleus name
 
     """
     def __init__(self, name, dummy=False):
@@ -267,6 +276,7 @@ class Nucleus:
         self._partition_function = p_collection.get_partition_function(self)
 
     def get_partition_function(self):
+        """return the partition function for the Nucleus"""
         return self._partition_function
 
     def __repr__(self):
@@ -276,6 +286,7 @@ class Nucleus:
         return hash((self.Z, self.A))
 
     def c(self):
+        """return the name capitalized"""
         return self.caps_name
 
     def __eq__(self, other):
