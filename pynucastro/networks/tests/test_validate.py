@@ -97,8 +97,7 @@ class TestValidate:
     def setup_method(self):
         """ this is run before each test """
 
-        library_file = "20180319default2"
-        self.reaclib_library = rates.Library(library_file)
+        self.reaclib_library = rates.ReacLibLibrary()
 
         all_reactants = ["n", "p",
                          "he4", "c12", "o16", "ne20", "mg24", "si28", "s32",
