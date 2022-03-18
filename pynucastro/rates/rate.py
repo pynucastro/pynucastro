@@ -14,7 +14,7 @@ try:
 except ImportError:
     from numba import jitclass
 
-from pynucastro.nucdata import UnidentifiedElement, PeriodicTable
+from pynucastro.nucdata import UnidentifiedElement, PeriodicTable, PartitionFunctionCollection
 
 _pynucastro_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 _pynucastro_rates_dir = os.path.join(_pynucastro_dir, 'library')
@@ -886,7 +886,7 @@ class Rate:
             try:
                 pivot_table[row_pos, col_pos] = np.log10(data_heatmap[:, 5])
             except ValueError:
-                plot("Divide by zero encountered in log10\nChange the scale of T or rhoY")
+                print("Divide by zero encountered in log10\nChange the scale of T or rhoY")
 
             fig, ax = plt.subplots(figsize=(10,10))
             im = ax.imshow(pivot_table, cmap='jet')
