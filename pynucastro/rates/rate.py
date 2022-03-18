@@ -14,12 +14,15 @@ try:
 except ImportError:
     from numba import jitclass
 
-from pynucastro.nucdata import UnidentifiedElement, PeriodicTable, PartitionFunctionCollection
+from pynucastro.nucdata import UnidentifiedElement, PeriodicTable, PartitionFunctionCollection, BindingTable
 
 _pynucastro_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 _pynucastro_rates_dir = os.path.join(_pynucastro_dir, 'library')
 _pynucastro_tabular_dir = os.path.join(_pynucastro_rates_dir, 'tabular')
 
+# read the binding energy table once and store it at the module-level
+
+_binding_table = BindingTable()
 
 def _find_rate_file(ratename):
     """locate the Reaclib or tabular rate or library file given its name.  Return
@@ -250,6 +253,8 @@ class Nucleus:
 
                 # latex formatted style
                 self.pretty = fr"{{}}^{{{self.A}}}\mathrm{{{self.el.capitalize()}}}"
+
+        self.nucbind = _binding_table.get_nuclide(n=self.N, z=self.Z).nucbind
 
     def set_partition_function(self, p_collection, set_data='frdm', use_high_temperatures=True):
         """
