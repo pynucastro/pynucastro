@@ -22,11 +22,23 @@ jobs:
         with:
           python-version: '3.9'
 
-      - name: Install pylint
+      - name: Cache pip
+        uses: actions/cache@v2
+        with:
+          # this path is specific to Ubuntu
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Install dependencies + pylint
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install pylint
+
+      - name: Install pynucastro
+        run: python setup.py install --user
 
       - name: Validate
         run: pylint --errors-only pynucastro
