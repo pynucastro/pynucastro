@@ -200,7 +200,7 @@ class BaseCxxNetwork(ABC, RateCollection):
                 of.write(f'{self.indent*n_indent}dratraw_dT = rate_eval.dscreened_rates_dT(k_{r[0].fname});\n')
 
                 of.write(f'{self.indent*n_indent}rate_eval.screened_rates(k_{r[0].fname}) *= scor * scor2;\n')
-                of.write(f'{self.indent*n_indent}rate_eval.dscreened_rates_dT(k_{r[0].fname}) = ratraw * (scor * dscor2_dt + dscor_dt * scor2) + dratraw_dT * scor;\n')
+                of.write(f'{self.indent*n_indent}rate_eval.dscreened_rates_dT(k_{r[0].fname}) = ratraw * (scor * dscor2_dt + dscor_dt * scor2) + dratraw_dT * scor * scor2;\n')
 
             else:
                 of.write(f'\n{self.indent*n_indent}screen5(pstate, {i}, {nuc1_info}, {nuc2_info}, scor, dscor_dt, dscor_dd);\n\n')

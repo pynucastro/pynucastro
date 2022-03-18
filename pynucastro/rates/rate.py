@@ -881,7 +881,7 @@ class Rate:
             try:
                 pivot_table[row_pos, col_pos] = np.log10(data_heatmap[:, 5])
             except ValueError:
-                plot("Divide by zero encountered in log10\nChange the scale of T or rhoY")
+                print("Divide by zero encountered in log10\nChange the scale of T or rhoY")
 
             _, ax = plt.subplots(figsize=(10,10))
             im = ax.imshow(pivot_table, cmap='jet')
