@@ -143,12 +143,12 @@ class BaseCxxNetwork(ABC, RateCollection):
 
         ydot = []
         for n in self.unique_nuclei:
-            ydot_sym = float(sympy.sympify(0.0))
+            ydot_sym_terms = []
             for r in self.nuclei_consumed[n]:
-                ydot_sym = ydot_sym + self.symbol_rates.ydot_term_symbol(r, n)
+                ydot_sym_terms.append(self.symbol_rates.ydot_term_symbol(r, n))
             for r in self.nuclei_produced[n]:
-                ydot_sym = ydot_sym + self.symbol_rates.ydot_term_symbol(r, n)
-            ydot.append(ydot_sym)
+                ydot_sym_terms.append(self.symbol_rates.ydot_term_symbol(r, n))
+            ydot.append(ydot_sym_terms)
 
         self.ydot_out_result  = ydot
         self.solved_ydot = True
@@ -196,8 +196,12 @@ class BaseCxxNetwork(ABC, RateCollection):
             elif h == "he4_he4_he4_dummy":
                 # now the second part of 3-alpha
                 of.write(f'{self.indent*n_indent}screen5(pstate, {i}, {nuc1_info}, {nuc2_info}, scor2, dscor2_dt, dscor2_dd);\n\n')
-                of.write(f'{self.indent*n_indent}rate_eval.unscreened_rates(i_scor,k_{r[0].fname}) = scor * scor2;\n')
-                of.write(f'{self.indent*n_indent}rate_eval.unscreened_rates(i_dscor_dt,k_{r[0].fname}) = scor * dscor2_dt + dscor_dt * scor2;\n')
+
+                of.write(f'{self.indent*n_indent}ratraw = rate_eval.screened_rates(k_{r[0].fname});\n')
+                of.write(f'{self.indent*n_indent}dratraw_dT = rate_eval.dscreened_rates_dT(k_{r[0].fname});\n')
+
+                of.write(f'{self.indent*n_indent}rate_eval.screened_rates(k_{r[0].fname}) *= scor * scor2;\n')
+                of.write(f'{self.indent*n_indent}rate_eval.dscreened_rates_dT(k_{r[0].fname}) = ratraw * (scor * dscor2_dt + dscor_dt * scor2) + dratraw_dT * scor * scor2;\n')
 
             else:
                 of.write(f'\n{self.indent*n_indent}screen5(pstate, {i}, {nuc1_info}, {nuc2_info}, scor, dscor_dt, dscor_dd);\n\n')
@@ -207,8 +211,11 @@ class BaseCxxNetwork(ABC, RateCollection):
                 # -- handle them all now
 
                 for rr in r:
-                    of.write(f'{self.indent*n_indent}rate_eval.unscreened_rates(i_scor,k_{rr.fname}) = scor;\n')
-                    of.write(f'{self.indent*n_indent}rate_eval.unscreened_rates(i_dscor_dt,k_{rr.fname}) = dscor_dt;\n')
+                    of.write(f'\n')
+                    of.write(f'{self.indent*n_indent}ratraw = rate_eval.screened_rates(k_{rr.fname});\n')
+                    of.write(f'{self.indent*n_indent}dratraw_dT = rate_eval.dscreened_rates_dT(k_{rr.fname});\n')
+                    of.write(f'{self.indent*n_indent}rate_eval.screened_rates(k_{rr.fname}) *= scor;\n')
+                    of.write(f'{self.indent*n_indent}rate_eval.dscreened_rates_dT(k_{rr.fname}) = ratraw * dscor_dt + dratraw_dT * scor;\n')
 
             of.write('\n')
 
@@ -356,17 +363,22 @@ class BaseCxxNetwork(ABC, RateCollection):
                 of.write(f'{idnt}tabular_evaluate({r.table_index_name}_meta, {r.table_index_name}_rhoy, {r.table_index_name}_temp, {r.table_index_name}_data,\n')
                 of.write(f'{idnt}                 rhoy, state.T, rate, drate_dt, edot_nu);\n')
 
-                of.write(f'{idnt}rate_eval.unscreened_rates(i_rate, k_{r.fname}) = rate;\n')
-                of.write(f'{idnt}rate_eval.unscreened_rates(i_drate_dt, k_{r.fname}) = drate_dt;\n')
+                of.write(f'{idnt}rate_eval.screened_rates(k_{r.fname}) = rate;\n')
+                of.write(f'{idnt}rate_eval.dscreened_rates_dT(k_{r.fname}) = drate_dt;\n')
                 of.write(f'{idnt}rate_eval.add_energy_rate(k_{r.fname}) = edot_nu;\n')
                 of.write('\n')
 
     def _ydot(self, n_indent, of):
         # Write YDOT
         for i, n in enumerate(self.unique_nuclei):
-            sol_value = self.symbol_rates.cxxify(sympy.cxxcode(self.ydot_out_result[i], precision=15,
-                                                               standard="c++11"))
-            of.write(f"{self.indent*n_indent}{self.symbol_rates.name_ydot_nuc}({n.c()}) = {sol_value};\n\n")
+            of.write(f"{self.indent*n_indent}{self.symbol_rates.name_ydot_nuc}({n.c()}) =\n")
+            for j, term in enumerate(self.ydot_out_result[i]):
+                sol_value = self.symbol_rates.cxxify(sympy.cxxcode(term, precision=15,
+                                                                   standard="c++11"))
+                if j == len(self.ydot_out_result[i])-1:
+                    of.write(f"{2*self.indent*n_indent}{sol_value};\n\n")
+                else:
+                    of.write(f"{2*self.indent*n_indent}{sol_value} +\n")
 
     def _enuc_add_energy_rate(self, n_indent, of):
         # Add tabular per-reaction neutrino energy generation rates to the energy generation rate

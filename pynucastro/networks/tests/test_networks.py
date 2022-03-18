@@ -5,7 +5,7 @@ import pynucastro.rates as rates
 from pytest import approx
 
 
-class TestComposition(object):
+class TestComposition:
     @classmethod
     def setup_class(cls):
         """ this is run once for each class before any tests """
@@ -58,7 +58,7 @@ class TestComposition(object):
         assert molar[rates.Nucleus("he4")] == approx((0.3-0.02)/4.0)
 
 
-class TestRateCollection(object):
+class TestRateCollection:
     @classmethod
     def setup_class(cls):
         """ this is run once for each class before any tests """
