@@ -33,6 +33,8 @@ codes.
    pynucastro-integration.ipynb
    library-examples.ipynb
    validate-example.ipynb
+   electron-captures.ipynb
+   partition-function
    networks
    API <modules>
    sources

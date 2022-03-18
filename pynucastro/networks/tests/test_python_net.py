@@ -3,7 +3,7 @@ import pynucastro.networks as networks
 import pynucastro.rates as rates
 
 
-class TestPythonNetwork(object):
+class TestPythonNetwork:
     @classmethod
     def setup_class(cls):
         """ this is run once for each class before any tests """
