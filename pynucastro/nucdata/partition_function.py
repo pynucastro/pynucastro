@@ -305,7 +305,7 @@ class PartitionFunctionCollection:
             pf_hi_table = self.partition_function_tables['etfsiq_high']
             pf_hi = pf_hi_table.get_partition_function(str(nuc))
         else:
-            raise
+            raise Exception("invalid partition function type")
 
         if self._use_high_temperatures:
             if pf_lo and pf_hi: 
