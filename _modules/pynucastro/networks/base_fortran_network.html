@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.networks.base_fortran_network &mdash; pynucastro 1.6.0.post50+ge6f381f documentation</title>
+  <title>pynucastro.networks.base_fortran_network &mdash; pynucastro 1.6.0.post51+gdb9aad2 documentation</title>
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -98,7 +98,6 @@
 <span class="kn">import</span> <span class="nn">sympy</span>
 <span class="kn">from</span> <span class="nn">pynucastro.rates</span> <span class="kn">import</span> <span class="n">Nucleus</span>
 <span class="kn">from</span> <span class="nn">pynucastro.networks</span> <span class="kn">import</span> <span class="n">RateCollection</span>
-<span class="kn">from</span> <span class="nn">pynucastro.nucdata</span> <span class="kn">import</span> <span class="n">BindingTable</span>
 <span class="kn">from</span> <span class="nn">pynucastro.networks</span> <span class="kn">import</span> <span class="n">SympyRates</span>
 
 <div class="viewcode-block" id="BaseFortranNetwork"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.base_fortran_network.BaseFortranNetwork">[docs]</a><span class="k">class</span> <span class="nc">BaseFortranNetwork</span><span class="p">(</span><span class="n">ABC</span><span class="p">,</span> <span class="n">RateCollection</span><span class="p">):</span>
@@ -367,10 +366,8 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">fname</span><span class="p">,</span> <span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
 
     <span class="k">def</span> <span class="nf">_ebind</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
-        <span class="n">bintable</span> <span class="o">=</span> <span class="n">BindingTable</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">:</span>
-            <span class="n">nuc_in_table</span> <span class="o">=</span> <span class="n">bintable</span><span class="o">.</span><span class="n">get_nuclide</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">nuc</span><span class="o">.</span><span class="n">N</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="n">nuc</span><span class="o">.</span><span class="n">Z</span><span class="p">)</span>
-            <span class="n">str_nucbind</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fmt_to_rt_f90</span><span class="p">(</span><span class="n">nuc_in_table</span><span class="o">.</span><span class="n">nucbind</span><span class="p">)</span>
+            <span class="n">str_nucbind</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fmt_to_rt_f90</span><span class="p">(</span><span class="n">nuc</span><span class="o">.</span><span class="n">nucbind</span><span class="p">)</span>
             <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">ebind_per_nucleon(j</span><span class="si">{}</span><span class="s1">)   = </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="p">,</span> <span class="n">nuc</span><span class="p">,</span> <span class="n">str_nucbind</span><span class="p">))</span>
 

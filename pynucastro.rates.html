@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.rates package &mdash; pynucastro 1.6.0.post50+ge6f381f documentation</title>
+  <title>pynucastro.rates package &mdash; pynucastro 1.6.0.post51+gdb9aad2 documentation</title>
       <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -140,16 +140,32 @@
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>a nucleus that participates in a reaction – we store it in a
 class to hold its properties, define a sorting, and give it a
-pretty printing string</p>
+pretty printing string.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Z</strong> – atomic number</p></li>
+<li><p><strong>N</strong> – neutron number</p></li>
+<li><p><strong>A</strong> – atomic mass</p></li>
+<li><p><strong>nucbind</strong> – nuclear binding energy (MeV / nucleon)</p></li>
+<li><p><strong>short_spec_name</strong> – nucleus abbrevation (e.g. “he4”)</p></li>
+<li><p><strong>caps_name</strong> – capitalized short species name (e.g. “He4”)</p></li>
+<li><p><strong>el</strong> – element name (e.g. “he”)</p></li>
+<li><p><strong>pretty</strong> – LaTeX formatted version of the nucleus name</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.Nucleus.c">
 <span class="sig-name descname"><span class="pre">c</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#Nucleus.c"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.Nucleus.c" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>return the name capitalized</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.Nucleus.get_partition_function">
 <span class="sig-name descname"><span class="pre">get_partition_function</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#Nucleus.get_partition_function"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.Nucleus.get_partition_function" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>return the partition function for the Nucleus</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.Nucleus.set_partition_function">

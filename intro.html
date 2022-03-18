@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Overview of pynucastro &mdash; pynucastro 1.6.0.post50+ge6f381f documentation</title>
+  <title>Overview of pynucastro &mdash; pynucastro 1.6.0.post51+gdb9aad2 documentation</title>
       <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -122,10 +122,16 @@ codes.</p>
 </pre></div>
 </div>
 <p>The main classes are:</p>
-<ul class="simple">
+<ul>
 <li><p><a class="reference internal" href="pynucastro.rates.html#pynucastro.rates.rate.Nucleus" title="pynucastro.rates.rate.Nucleus"><code class="xref py py-func docutils literal notranslate"><span class="pre">Nucleus</span></code></a>: This is a single
-nucleus.  It knows its proton number, Z, neutron number, N, and
-weight, A.</p></li>
+nucleus.  It knows its proton number, <code class="docutils literal notranslate"><span class="pre">Z</span></code>, neutron number, <code class="docutils literal notranslate"><span class="pre">N</span></code>,
+weight, <code class="docutils literal notranslate"><span class="pre">A</span></code>, and binding energy, <code class="docutils literal notranslate"><span class="pre">nucbind</span></code>.</p>
+<p>Example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">he4</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The atomic number is then <code class="docutils literal notranslate"><span class="pre">he4.Z</span></code>.</p>
+</li>
 <li><p><a class="reference internal" href="pynucastro.rates.html#pynucastro.rates.rate.Rate" title="pynucastro.rates.rate.Rate"><code class="xref py py-func docutils literal notranslate"><span class="pre">Rate</span></code></a>: This is a single rate.  It
 knows the reactants and products and has methods that allow you to
 evaluate it at a specified temperature and plot its temperature
