@@ -276,7 +276,11 @@ class Nucleus:
                 # latex formatted style
                 self.pretty = fr"{{}}^{{{self.A}}}\mathrm{{{self.el.capitalize()}}}"
 
-        self.nucbind = _binding_table.get_nuclide(n=self.N, z=self.Z).nucbind
+        try:
+            self.nucbind = _binding_table.get_nuclide(n=self.N, z=self.Z).nucbind
+        except NotImplementedError:
+            # the binding energy table doesn't know about this nucleus
+            self.nucbind = None
 
     def set_partition_function(self, p_collection, set_data='frdm', use_high_temperatures=True):
         """
