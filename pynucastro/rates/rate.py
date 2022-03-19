@@ -14,12 +14,15 @@ try:
 except ImportError:
     from numba import jitclass
 
-from pynucastro.nucdata import UnidentifiedElement, PeriodicTable
+from pynucastro.nucdata import UnidentifiedElement, PeriodicTable, PartitionFunctionCollection, BindingTable
 
 _pynucastro_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 _pynucastro_rates_dir = os.path.join(_pynucastro_dir, 'library')
 _pynucastro_tabular_dir = os.path.join(_pynucastro_rates_dir, 'tabular')
 
+# read the binding energy table once and store it at the module-level
+
+_binding_table = BindingTable()
 
 def _find_rate_file(ratename):
     """locate the Reaclib or tabular rate or library file given its name.  Return
@@ -162,7 +165,16 @@ class Nucleus:
     """
     a nucleus that participates in a reaction -- we store it in a
     class to hold its properties, define a sorting, and give it a
-    pretty printing string
+    pretty printing string.
+
+    :var Z:               atomic number
+    :var N:               neutron number
+    :var A:               atomic mass
+    :var nucbind:         nuclear binding energy (MeV / nucleon)
+    :var short_spec_name: nucleus abbrevation (e.g. "he4")
+    :var caps_name:       capitalized short species name (e.g. "He4")
+    :var el:              element name (e.g. "he")
+    :var pretty:          LaTeX formatted version of the nucleus name
 
     """
     def __init__(self, name, dummy=False):
@@ -251,6 +263,8 @@ class Nucleus:
                 # latex formatted style
                 self.pretty = fr"{{}}^{{{self.A}}}\mathrm{{{self.el.capitalize()}}}"
 
+        self.nucbind = _binding_table.get_nuclide(n=self.N, z=self.Z).nucbind
+
     def set_partition_function(self, p_collection, set_data='frdm', use_high_temperatures=True):
         """
         This function associates to every nucleus a PartitionFunction object.
@@ -262,6 +276,7 @@ class Nucleus:
         self._partition_function = p_collection.get_partition_function(self)
 
     def get_partition_function(self):
+        """return the partition function for the Nucleus"""
         return self._partition_function
 
     def __repr__(self):
@@ -271,6 +286,7 @@ class Nucleus:
         return hash((self.Z, self.A))
 
     def c(self):
+        """return the name capitalized"""
         return self.caps_name
 
     def __eq__(self, other):
@@ -871,7 +887,7 @@ class Rate:
             try:
                 pivot_table[row_pos, col_pos] = np.log10(data_heatmap[:, 5])
             except ValueError:
-                plot("Divide by zero encountered in log10\nChange the scale of T or rhoY")
+                print("Divide by zero encountered in log10\nChange the scale of T or rhoY")
 
             fig, ax = plt.subplots(figsize=(10,10))
             im = ax.imshow(pivot_table, cmap='jet')
