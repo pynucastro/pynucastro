@@ -24,6 +24,7 @@ _pynucastro_tabular_dir = os.path.join(_pynucastro_rates_dir, 'tabular')
 
 _binding_table = BindingTable()
 
+
 def _find_rate_file(ratename):
     """locate the Reaclib or tabular rate or library file given its name.  Return
     None if the file cannot be located, otherwise return its path."""
@@ -48,15 +49,15 @@ def _find_rate_file(ratename):
     raise Exception(f'File {ratename} not found in the working directory, {_pynucastro_rates_dir}, or {_pynucastro_tabular_dir}')
 
 
-
 Tfactor_spec = [
-('T9', numba.float64),
-('T9i', numba.float64),
-('T913', numba.float64),
-('T913i', numba.float64),
-('T953', numba.float64),
-('lnT9', numba.float64)
+    ('T9', numba.float64),
+    ('T9i', numba.float64),
+    ('T913', numba.float64),
+    ('T913i', numba.float64),
+    ('T953', numba.float64),
+    ('lnT9', numba.float64)
 ]
+
 
 @jitclass(Tfactor_spec)
 class Tfactors:
@@ -204,7 +205,7 @@ class Nucleus:
         elif name == "a":
             #this is a convenience, enabling the use of a commonly-used alias:
             #    He4 --> \alpha --> "a" , e.g. c12(a,g)o16
-            self.el ="he"
+            self.el = "he"
             self.A = 4
             self.short_spec_name = "he4"
             self.raw = "he4"
@@ -292,7 +293,7 @@ class Nucleus:
     def __eq__(self, other):
         if isinstance(other, Nucleus):
             return self.el == other.el and \
-               self.Z == other.Z and self.A == other.A
+                self.Z == other.Z and self.A == other.A
         elif isinstance(other, tuple):
             return (self.Z, self.A) == other
         else:
@@ -303,6 +304,7 @@ class Nucleus:
             return self.Z < other.Z
         else:
             return self.A < other.A
+
 
 class Rate:
     """ a single Reaclib rate, which can be composed of multiple sets """
@@ -463,12 +465,12 @@ class Rate:
         assert(type(self.labelprops) == str)
         try:
             assert(len(self.labelprops) == 6)
-        except:
+        except AssertionError:
             assert(self.labelprops == 'tabular')
             self.label = 'tabular'
             self.resonant = False
             self.resonance_combined = False
-            self.weak = False # The tabular rate might or might not be weak
+            self.weak = False  # The tabular rate might or might not be weak
             self.weak_type = None
             self.reverse = False
             self.tabular = True
@@ -480,7 +482,7 @@ class Rate:
                 if self.label.strip() == 'ec' or self.label.strip() == 'bec':
                     self.weak_type = 'electron_capture'
                 else:
-                    self.weak_type = self.label.strip().replace('+','_pos_').replace('-','_neg_')
+                    self.weak_type = self.label.strip().replace('+', '_pos_').replace('-', '_neg_')
             else:
                 self.weak_type = None
             self.reverse = self.labelprops[5] == 'v'
@@ -521,7 +523,7 @@ class Rate:
             self.table_header_lines = int(s3.strip())
             self.table_rhoy_lines = int(s4.strip())
             self.table_temp_lines = int(s5.strip())
-            self.table_num_vars = 6 # Hard-coded number of variables in tables for now.
+            self.table_num_vars = 6  # Hard-coded number of variables in tables for now.
             self.table_index_name = f'j_{self.reactants[0]}_{self.products[0]}'
             self.labelprops = 'tabular'
             self._set_label_properties()
@@ -816,7 +818,7 @@ class Rate:
         # change the list ["1.23 3.45 5.67\n"] into the list ["1.23","3.45","5.67"]
         t_data2d = []
         for i in range(len(t_data)):
-            t_data2d.append(re.split(r"[ ]",t_data[i].strip('\n')))
+            t_data2d.append(re.split(r"[ ]", t_data[i].strip('\n')))
 
         # delete all the "" in each element of data1
         for i in range(len(t_data2d)):
@@ -835,15 +837,15 @@ class Rate:
         for nuc in (self.reactants + self.products):
             nuc.set_partition_function(p_collection, set_data, use_high_temperatures)
 
-    def eval(self, T, rhoY = None):
+    def eval(self, T, rhoY=None):
         """ evauate the reaction rate for temperature T """
 
         if self.tabular:
             data = self.tabular_data_table.astype(np.float)
             # find the nearest value of T and rhoY in the data table
-            T_nearest = (data[:,1])[np.abs((data[:,1]) - T).argmin()]
-            rhoY_nearest = (data[:,0])[np.abs((data[:,0]) - rhoY).argmin()]
-            inde = np.where((data[:,1]==T_nearest)&(data[:,0]==rhoY_nearest))[0][0]
+            T_nearest = (data[:, 1])[np.abs((data[:, 1]) - T).argmin()]
+            rhoY_nearest = (data[:, 0])[np.abs((data[:, 0]) - rhoY).argmin()]
+            inde = np.where((data[:, 1] == T_nearest) & (data[:, 0] == rhoY_nearest))[0][0]
             r = data[inde][5]
 
         else:
@@ -873,13 +875,13 @@ class Rate:
         """plot the rate's temperature sensitivity vs temperature"""
 
         if self.tabular:
-            data = self.tabular_data_table.astype(np.float) # convert from str to float
+            data = self.tabular_data_table.astype(np.float)  # convert from str to float
 
-            inde1 = data[:,1]<=Tmax
-            inde2 = data[:,1]>=Tmin
-            inde3 = data[:,0]<=rhoYmax
-            inde4 = data[:,0]>=rhoYmin
-            data_heatmap = data[inde1&inde2&inde3&inde4].copy()
+            inde1 = data[:, 1] <= Tmax
+            inde2 = data[:, 1] >= Tmin
+            inde3 = data[:, 0] <= rhoYmax
+            inde4 = data[:, 0] >= rhoYmin
+            data_heatmap = data[inde1 & inde2 & inde3 & inde4].copy()
 
             rows, row_pos = np.unique(data_heatmap[:, 0], return_inverse=True)
             cols, col_pos = np.unique(data_heatmap[:, 1], return_inverse=True)
@@ -889,19 +891,19 @@ class Rate:
             except ValueError:
                 print("Divide by zero encountered in log10\nChange the scale of T or rhoY")
 
-            fig, ax = plt.subplots(figsize=(10,10))
+            fig, ax = plt.subplots(figsize=(10, 10))
             im = ax.imshow(pivot_table, cmap='jet')
             plt.colorbar(im)
 
             plt.xlabel("$T$ [K]")
             plt.ylabel("$\\rho Y$ [g/cm$^3$]")
-            ax.set_title(fr"{self.pretty_string}"+
+            ax.set_title(fr"{self.pretty_string}" +
                          "\n"+"electron-capture/beta-decay rate in log10(1/s)")
             ax.set_yticks(range(len(rows)))
             ax.set_yticklabels(rows)
             ax.set_xticks(range(len(cols)))
             ax.set_xticklabels(cols)
-            plt.setp(ax.get_xticklabels(), rotation=90, ha="right",rotation_mode="anchor")
+            plt.setp(ax.get_xticklabels(), rotation=90, ha="right", rotation_mode="anchor")
             plt.gca().invert_yaxis()
             plt.show()
 

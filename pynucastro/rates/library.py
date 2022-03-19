@@ -24,6 +24,7 @@ def list_known_rates():
                 for r in lib.get_rates():
                     print(f"                                 : {r}")
 
+
 class Library:
     """
     A Library is a Rate container that reads a single file
@@ -377,7 +378,7 @@ class Library:
         by detailed balance.
         """
 
-        only_fwd_filter = RateFilter(filter_function = lambda r: not r.reverse)
+        only_fwd_filter = RateFilter(filter_function=lambda r: not r.reverse)
         only_fwd = self.filter(only_fwd_filter)
         return only_fwd
 
@@ -386,10 +387,11 @@ class Library:
         Select only the reverse rates, obtained by detailed balance.
         """
 
-        only_bwd_filter = RateFilter(filter_function = lambda r: r.reverse)
+        only_bwd_filter = RateFilter(filter_function=lambda r: r.reverse)
         only_bwd = self.filter(only_bwd_filter)
         return only_bwd
-        
+
+
 class RateFilter:
     """RateFilter filters out a specified rate or set of rates
 

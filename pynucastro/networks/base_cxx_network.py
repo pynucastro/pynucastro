@@ -15,9 +15,9 @@ import random
 import string
 
 import sympy
-from pynucastro.rates import Nucleus
 from pynucastro.networks import RateCollection
 from pynucastro.networks import SympyRates
+
 
 class BaseCxxNetwork(ABC, RateCollection):
     """Interpret the collection of rates and nuclei and produce the
@@ -38,11 +38,11 @@ class BaseCxxNetwork(ABC, RateCollection):
 
         self.symbol_rates = SympyRates(ctype="C++")
 
-        self.ydot_out_result  = None
-        self.solved_ydot      = False
-        self.jac_out_result   = None
+        self.ydot_out_result = None
+        self.solved_ydot = False
+        self.jac_out_result = None
         self.jac_null_entries = None
-        self.solved_jacobian  = False
+        self.solved_jacobian = False
 
         self.secret_code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=32))
 
@@ -101,7 +101,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         # Process template files
         for tfile in self.template_files:
             tfile_basename = os.path.basename(tfile)
-            outfile    = tfile_basename.replace('.template', '')
+            outfile = tfile_basename.replace('.template', '')
             if odir is not None:
                 if not os.path.isdir(odir):
                     try:
@@ -149,7 +149,7 @@ class BaseCxxNetwork(ABC, RateCollection):
                 ydot_sym_terms.append(self.symbol_rates.ydot_term_symbol(r, n))
             ydot.append(ydot_sym_terms)
 
-        self.ydot_out_result  = ydot
+        self.ydot_out_result = ydot
         self.solved_ydot = True
 
     def compose_jacobian(self):
@@ -171,7 +171,7 @@ class BaseCxxNetwork(ABC, RateCollection):
                 jac_sym.append(rsym)
                 jac_null.append(rsym_is_null)
 
-        self.jac_out_result  = jac_sym
+        self.jac_out_result = jac_sym
         self.jac_null_entries = jac_null
         self.solved_jacobian = True
 
@@ -210,7 +210,7 @@ class BaseCxxNetwork(ABC, RateCollection):
                 # -- handle them all now
 
                 for rr in r:
-                    of.write(f'\n')
+                    of.write('\n')
                     of.write(f'{self.indent*n_indent}ratraw = rate_eval.screened_rates(k_{rr.fname});\n')
                     of.write(f'{self.indent*n_indent}dratraw_dT = rate_eval.dscreened_rates_dT(k_{rr.fname});\n')
                     of.write(f'{self.indent*n_indent}rate_eval.screened_rates(k_{rr.fname}) *= scor;\n')
@@ -236,7 +236,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         of.write(f'{self.indent*n_indent}const int NrateTabular = {len(self.tabular_rates)};\n')
 
     def _nrxn(self, n_indent, of):
-        for i,r in enumerate(self.rates):
+        for i, r in enumerate(self.rates):
             of.write(f'{self.indent*n_indent}k_{r.fname} = {i+1},\n')
         of.write(f'{self.indent*n_indent}NumRates = k_{self.rates[-1].fname}\n')
 
@@ -299,8 +299,8 @@ class BaseCxxNetwork(ABC, RateCollection):
 
             of.write(f'{idnt}AMREX_GPU_MANAGED Array3D<Real, 1, {r.table_temp_lines}, 1, {r.table_rhoy_lines}, 1, {r.table_num_vars}> {r.table_index_name}_data;\n')
 
-            of.write(f'{idnt}AMREX_GPU_MANAGED Array1D<Real, 1, {r.table_rhoy_lines}> {r.table_index_name}_rhoy;\n');
-            of.write(f'{idnt}AMREX_GPU_MANAGED Array1D<Real, 1, {r.table_temp_lines}> {r.table_index_name}_temp;\n\n');
+            of.write(f'{idnt}AMREX_GPU_MANAGED Array1D<Real, 1, {r.table_rhoy_lines}> {r.table_index_name}_rhoy;\n')
+            of.write(f'{idnt}AMREX_GPU_MANAGED Array1D<Real, 1, {r.table_temp_lines}> {r.table_index_name}_temp;\n\n')
 
     def _table_init_meta(self, n_indent, of):
         for irate in self.tabular_rates:
@@ -311,7 +311,6 @@ class BaseCxxNetwork(ABC, RateCollection):
             of.write(f'{idnt}{r.table_index_name}_meta.nvars = {r.table_num_vars};\n')
             of.write(f'{idnt}{r.table_index_name}_meta.nheader = {r.table_header_lines};\n')
             of.write(f'{idnt}{r.table_index_name}_meta.file = "{r.table_file}";\n\n')
-
 
             of.write(f'{idnt}init_tab_info({r.table_index_name}_meta, {r.table_index_name}_rhoy, {r.table_index_name}_temp, {r.table_index_name}_data);\n\n')
 
@@ -342,7 +341,7 @@ class BaseCxxNetwork(ABC, RateCollection):
             of.write('\n')
 
     def _table_rates_indices(self, n_indent, of):
-        for n,irate in enumerate(self.tabular_rates):
+        for n, irate in enumerate(self.tabular_rates):
             r = self.rates[irate]
             of.write(f'{self.indent*n_indent}{r.table_index_name}')
             if n != len(self.tabular_rates)-1:

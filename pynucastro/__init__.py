@@ -113,7 +113,9 @@ generated code specific to a given choice of reaction rates.
 
 """
 
-from ._version import version as __version__
+from ._version import version
+
+__version__ = version
 
 from pynucastro.networks import \
     RateCollection, \
@@ -134,3 +136,6 @@ from pynucastro.rates import \
     Library, \
     ReacLibLibrary, \
     list_known_rates
+
+
+__all__ = 

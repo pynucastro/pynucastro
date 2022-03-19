@@ -1,5 +1,4 @@
 # unit tests for rates
-import math
 
 import pynucastro as pyna
 
