@@ -391,8 +391,9 @@ class BaseCxxNetwork(ABC, RateCollection):
                 else:
                     raise NotImplementedError("a rate pair must contain atleast one rate")
 
+                of.write(f"{2*self.indent*n_indent}")
                 if num == 2:
-                    of.write(f"{2*self.indent*n_indent}(")
+                    of.write("(")
 
                 if pair[0] is not None:
                     sol_value = self.symbol_rates.cxxify(sympy.cxxcode(pair[0], precision=15,
