@@ -182,7 +182,7 @@ class BaseCxxNetwork(ABC, RateCollection):
             if not scr.n1.dummy:
                 nuc1_info = f'zion[{scr.n1.c()}-1], aion[{scr.n1.c()}-1]'
             else:
-                nuc1_info = f'{float(scr.n1.Z)}_rt, {float(scr,n1.A)}_rt'
+                nuc1_info = f'{float(scr.n1.Z)}_rt, {float(scr.n1.A)}_rt'
             if not scr.n2.dummy:
                 nuc2_info = f'zion[{scr.n2.c()}-1], aion[{scr.n2.c()}-1]'
             else:
