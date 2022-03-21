@@ -897,7 +897,7 @@ class Rate:
                 print("Divide by zero encountered in log10\nChange the scale of T or rhoY")
 
             im = ax.imshow(pivot_table, cmap='magma')
-            ax.colorbar(im)
+            fig.colorbar(im, ax=ax)
 
             ax.set_xlabel("$T$ [K]")
             ax.set_ylabel("$\\rho Y$ [g/cm$^3$]")
@@ -906,8 +906,7 @@ class Rate:
             ax.set_yticks(range(len(rows)))
             ax.set_yticklabels(rows)
             ax.set_xticks(range(len(cols)))
-            ax.set_xticklabels(cols)
-            ax.set_xticklabels(rotation=90, ha="right", rotation_mode="anchor")
+            ax.set_xticklabels(cols, rotation=90, ha="right", rotation_mode="anchor")
             ax.invert_yaxis()
 
         else:
