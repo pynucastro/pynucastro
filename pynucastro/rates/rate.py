@@ -875,7 +875,18 @@ class Rate:
 
     def plot(self, Tmin=1.e8, Tmax=1.6e9, rhoYmin=3.9e8, rhoYmax=2.e9,
              figsize=(10, 10)):
-        """plot the rate's temperature sensitivity vs temperature"""
+        """plot the rate's temperature sensitivity vs temperature
+
+        :param float Tmin:    minimum temperature for plot
+        :param float Tmax:    maximum temperature for plot
+        :param float rhoYmin: minimum electron density to plot (e-capture rates only)
+        :param float rhoYmax: maximum electron density to plot (e-capture rates only)
+        :param tuple figsize: figure size specification for matplotlib
+
+        :return: a matplotlib figure object
+        :rtype: matplotlib.figure.Figure
+
+        """
 
         fig, ax = plt.subplots(figsize=figsize)
 
