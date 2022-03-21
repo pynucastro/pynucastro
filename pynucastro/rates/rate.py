@@ -14,12 +14,15 @@ try:
 except ImportError:
     from numba import jitclass
 
-from pynucastro.nucdata import UnidentifiedElement, PeriodicTable, PartitionFunctionCollection
+from pynucastro.nucdata import UnidentifiedElement, PeriodicTable, PartitionFunctionCollection, BindingTable
 
 _pynucastro_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 _pynucastro_rates_dir = os.path.join(_pynucastro_dir, 'library')
 _pynucastro_tabular_dir = os.path.join(_pynucastro_rates_dir, 'tabular')
 
+# read the binding energy table once and store it at the module-level
+
+_binding_table = BindingTable()
 
 def _find_rate_file(ratename):
     """locate the Reaclib or tabular rate or library file given its name.  Return
@@ -162,7 +165,16 @@ class Nucleus:
     """
     a nucleus that participates in a reaction -- we store it in a
     class to hold its properties, define a sorting, and give it a
-    pretty printing string
+    pretty printing string.
+
+    :var Z:               atomic number
+    :var N:               neutron number
+    :var A:               atomic mass
+    :var nucbind:         nuclear binding energy (MeV / nucleon)
+    :var short_spec_name: nucleus abbrevation (e.g. "he4")
+    :var caps_name:       capitalized short species name (e.g. "He4")
+    :var el:              element name (e.g. "he")
+    :var pretty:          LaTeX formatted version of the nucleus name
 
     """
     def __init__(self, name, dummy=False):
@@ -251,6 +263,12 @@ class Nucleus:
                 # latex formatted style
                 self.pretty = fr"{{}}^{{{self.A}}}\mathrm{{{self.el.capitalize()}}}"
 
+        try:
+            self.nucbind = _binding_table.get_nuclide(n=self.N, z=self.Z).nucbind
+        except NotImplementedError:
+            # the binding energy table doesn't know about this nucleus
+            self.nucbind = None
+
     def set_partition_function(self, p_collection, set_data='frdm', use_high_temperatures=True):
         """
         This function associates to every nucleus a PartitionFunction object.
@@ -262,6 +280,7 @@ class Nucleus:
         self._partition_function = p_collection.get_partition_function(self)
 
     def get_partition_function(self):
+        """return the partition function for the Nucleus"""
         return self._partition_function
 
     def __repr__(self):
@@ -271,6 +290,7 @@ class Nucleus:
         return hash((self.Z, self.A))
 
     def c(self):
+        """return the name capitalized"""
         return self.caps_name
 
     def __eq__(self, other):
@@ -376,16 +396,31 @@ class Rate:
         return x
 
     def __lt__(self, other):
-        """sort such that lightest reactants come first"""
+        """sort such that lightest reactants come first, and then look at products"""
 
-        self_sorted = sorted(self.reactants, key=lambda x: x.A)
-        other_sorted = sorted(other.reactants, key=lambda x: x.A)
-        if self_sorted[-1].A == other_sorted[-1].A:
-            try:
-                return self_sorted[-2].A < other_sorted[-2].A
-            except IndexError:
-                return True
-        return self_sorted[-1].A < other_sorted[-1].A
+        # this sort will make two nuclei with the same A be in order of Z
+        # (assuming there are no nuclei with A > 999
+        # we want to compare based on the heaviest first, so we reverse
+
+        self_react_sorted = sorted(self.reactants, key=lambda x: 1000*x.A + x.Z, reverse=True)
+        other_react_sorted = sorted(other.reactants, key=lambda x: 1000*x.A + x.Z, reverse=True)
+
+        if self_react_sorted != other_react_sorted:
+            # reactants are different, so now we can check them
+            for srn, orn in zip(self_react_sorted, other_react_sorted):
+                if not srn == orn:
+                    return srn < orn
+        else:
+            # reactants are the same, so consider products
+            self_prod_sorted = sorted(self.products, key=lambda x: 1000*x.A + x.Z, reverse=True)
+            other_prod_sorted = sorted(other.products, key=lambda x: 1000*x.A + x.Z, reverse=True)
+
+            for spn, opn in zip(self_prod_sorted, other_prod_sorted):
+                if not spn == opn:
+                    return spn < opn
+
+        # if we made it here, then the rates are the same
+        return True
 
     def __add__(self, other):
         """Combine the sets of two Rate objects if they describe the same

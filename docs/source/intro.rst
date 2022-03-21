@@ -16,8 +16,16 @@ The preferred way of importing pynucastro is as follows:
 The main classes are:
 
 * :func:`Nucleus <pynucastro.rates.rate.Nucleus>`: This is a single
-  nucleus.  It knows its proton number, Z, neutron number, N, and
-  weight, A.
+  nucleus.  It knows its proton number, ``Z``, neutron number, ``N``,
+  weight, ``A``, and binding energy, ``nucbind``.
+
+  Example:
+
+  .. code:: python
+
+     he4 = Nucleus("he4")
+
+  The atomic number is then ``he4.Z``.
 
 * :func:`Rate <pynucastro.rates.rate.Rate>`: This is a single rate.  It
   knows the reactants and products and has methods that allow you to
