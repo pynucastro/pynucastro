@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.rates.rate &mdash; pynucastro 1.6.0.post52+gacc8396 documentation</title>
+  <title>pynucastro.rates.rate &mdash; pynucastro 1.6.0.post53+gec913ec documentation</title>
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -344,7 +344,11 @@
                 <span class="c1"># latex formatted style</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="sa">fr</span><span class="s2">&quot;</span><span class="se">{{}}</span><span class="s2">^</span><span class="se">{{</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">A</span><span class="si">}</span><span class="se">}}</span><span class="s2">\mathrm</span><span class="se">{{</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">el</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span><span class="si">}</span><span class="se">}}</span><span class="s2">&quot;</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">nucbind</span> <span class="o">=</span> <span class="n">_binding_table</span><span class="o">.</span><span class="n">get_nuclide</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">Z</span><span class="p">)</span><span class="o">.</span><span class="n">nucbind</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nucbind</span> <span class="o">=</span> <span class="n">_binding_table</span><span class="o">.</span><span class="n">get_nuclide</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">Z</span><span class="p">)</span><span class="o">.</span><span class="n">nucbind</span>
+        <span class="k">except</span> <span class="ne">NotImplementedError</span><span class="p">:</span>
+            <span class="c1"># the binding energy table doesn&#39;t know about this nucleus</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nucbind</span> <span class="o">=</span> <span class="kc">None</span>
 
 <div class="viewcode-block" id="Nucleus.set_partition_function"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.Nucleus.set_partition_function">[docs]</a>    <span class="k">def</span> <span class="nf">set_partition_function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_collection</span><span class="p">,</span> <span class="n">set_data</span><span class="o">=</span><span class="s1">&#39;frdm&#39;</span><span class="p">,</span> <span class="n">use_high_temperatures</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
