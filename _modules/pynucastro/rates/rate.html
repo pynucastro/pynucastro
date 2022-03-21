@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.rates.rate &mdash; pynucastro 1.6.0.post53+gec913ec documentation</title>
+  <title>pynucastro.rates.rate &mdash; pynucastro 1.6.0.post54+g9c4fdb4 documentation</title>
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -477,16 +477,31 @@
         <span class="k">return</span> <span class="n">x</span>
 
     <span class="k">def</span> <span class="fm">__lt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;sort such that lightest reactants come first&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;sort such that lightest reactants come first, and then look at products&quot;&quot;&quot;</span>
 
-        <span class="n">self_sorted</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">A</span><span class="p">)</span>
-        <span class="n">other_sorted</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">reactants</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">A</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">self_sorted</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">A</span> <span class="o">==</span> <span class="n">other_sorted</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">A</span><span class="p">:</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">self_sorted</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">A</span> <span class="o">&lt;</span> <span class="n">other_sorted</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">A</span>
-            <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
-                <span class="k">return</span> <span class="kc">True</span>
-        <span class="k">return</span> <span class="n">self_sorted</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">A</span> <span class="o">&lt;</span> <span class="n">other_sorted</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">A</span>
+        <span class="c1"># this sort will make two nuclei with the same A be in order of Z</span>
+        <span class="c1"># (assuming there are no nuclei with A &gt; 999</span>
+        <span class="c1"># we want to compare based on the heaviest first, so we reverse</span>
+
+        <span class="n">self_react_sorted</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mi">1000</span><span class="o">*</span><span class="n">x</span><span class="o">.</span><span class="n">A</span> <span class="o">+</span> <span class="n">x</span><span class="o">.</span><span class="n">Z</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">other_react_sorted</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">reactants</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mi">1000</span><span class="o">*</span><span class="n">x</span><span class="o">.</span><span class="n">A</span> <span class="o">+</span> <span class="n">x</span><span class="o">.</span><span class="n">Z</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">self_react_sorted</span> <span class="o">!=</span> <span class="n">other_react_sorted</span><span class="p">:</span>
+            <span class="c1"># reactants are different, so now we can check them</span>
+            <span class="k">for</span> <span class="n">srn</span><span class="p">,</span> <span class="n">orn</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">self_react_sorted</span><span class="p">,</span> <span class="n">other_react_sorted</span><span class="p">):</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">srn</span> <span class="o">==</span> <span class="n">orn</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">srn</span> <span class="o">&lt;</span> <span class="n">orn</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># reactants are the same, so consider products</span>
+            <span class="n">self_prod_sorted</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">products</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mi">1000</span><span class="o">*</span><span class="n">x</span><span class="o">.</span><span class="n">A</span> <span class="o">+</span> <span class="n">x</span><span class="o">.</span><span class="n">Z</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">other_prod_sorted</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">products</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mi">1000</span><span class="o">*</span><span class="n">x</span><span class="o">.</span><span class="n">A</span> <span class="o">+</span> <span class="n">x</span><span class="o">.</span><span class="n">Z</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">spn</span><span class="p">,</span> <span class="n">opn</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">self_prod_sorted</span><span class="p">,</span> <span class="n">other_prod_sorted</span><span class="p">):</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">spn</span> <span class="o">==</span> <span class="n">opn</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">spn</span> <span class="o">&lt;</span> <span class="n">opn</span>
+
+        <span class="c1"># if we made it here, then the rates are the same</span>
+        <span class="k">return</span> <span class="kc">True</span>
 
     <span class="k">def</span> <span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Combine the sets of two Rate objects if they describe the same</span>
