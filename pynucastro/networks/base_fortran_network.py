@@ -211,7 +211,7 @@ class BaseFortranNetwork(ABC, RateCollection):
                 of.write(f'\n{self.indent*n_indent}call screen5(pstate, {i+1}, scor, dscor_dt, dscor_dd)\n')
                 of.write(f'\n{self.indent*n_indent}call screen5(pstate, {i+2}, scor2, dscor2_dt, dscor2_dd)\n')
                 of.write(f'{self.indent*n_indent}rate_eval % unscreened_rates(i_scor,k_{scr.rates[0].fname}) = scor * scor2\n')
-                of.write(f'{self.indent*n_indent}rate_eval % unscreened_rates(i_dscor_dt,k_{scrrates[0].fname}) = scor * dscor2_dt + dscor_dt * scor2\n')
+                of.write(f'{self.indent*n_indent}rate_eval % unscreened_rates(i_dscor_dt,k_{scr.rates[0].fname}) = scor * dscor2_dt + dscor_dt * scor2\n')
 
             elif scr.name == "he4_he4_he4_dummy":
                 continue
