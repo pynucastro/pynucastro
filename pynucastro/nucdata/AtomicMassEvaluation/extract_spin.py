@@ -4,7 +4,7 @@ from pynucastro.nucdata import PeriodicTable, Element
 
 def num_states(spin_str_element):
 
-    if len(spin_str_element) == 1:
+    if len(spin_str_element) == 1 or len(spin_str_element) == 2:
         states = 2*int(spin_str_element) + 1
         return states
 
@@ -38,7 +38,7 @@ fout = open(args.output+'.txt', 'w')
 fout.write('# Ground state spin evaluation table: {}\n'.format(args.output))
 fout.write('# if the ==Spin== column contain more than two values, the gs state is uncertain.\n')
 fout.write('#\n')
-fout.write('#==Nuclide=='+' '*17+'==Spin=='+' '*18+'==Number=of=States\n')
+fout.write('#==A=='+' '*22+'==Z=='+' '*18+'==Spin=='+' '*18+'==Number=of=States==\n')
 
 for line in finput:
     A_string = line[0:3] 
@@ -62,18 +62,14 @@ for line in finput:
 
     spin_str = spin_str.strip().split()
 
-    if Z == 0:
-        assert(A==1)
-        abbrev = 'n'
-    else:
-        element = PeriodicTable.lookup_Z(Z)
-        abbrev = '{}{}'.format(element.abbreviation, A)
-
     if i == 0:
-        output_str = '{0:5}'.format(abbrev)
+        output_str = '{0:5}'.format(A)
+
+        output_str += ' '*21
+        output_str += '{0:5}'.format(Z)
 
         if spin_str:
-            output_str += ' '*27
+            output_str += ' '*23
             spin_str_1 = spin_str.pop(0)
             output_str += '{0:<4}'.format(spin_str_1) 
             state1 = str(num_states(spin_str_1))

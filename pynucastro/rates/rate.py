@@ -14,12 +14,13 @@ try:
 except ImportError:
     from numba import jitclass
 
-from pynucastro.nucdata import UnidentifiedElement, PeriodicTable
+from pynucastro.nucdata import UnidentifiedElement, PeriodicTable, PartitionFunctionCollection, SpinTable
 
 _pynucastro_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 _pynucastro_rates_dir = os.path.join(_pynucastro_dir, 'library')
 _pynucastro_tabular_dir = os.path.join(_pynucastro_rates_dir, 'tabular')
 
+_spin_table = SpinTable(set_double_gs=False)
 
 def _find_rate_file(ratename):
     """locate the Reaclib or tabular rate or library file given its name.  Return
@@ -221,6 +222,12 @@ class Nucleus:
             assert(self.A >= 0)
             self.short_spec_name = name
             self.caps_name = name.capitalize()
+
+        # set the number of spin states
+        try:
+            self.spin_states = _spin_table.get_spin_nuclide(self.short_spec_name).spin_states
+        except NotImplementedError:
+            self.spin_states = None
 
         # use lowercase element abbreviation regardless the case of the input
         self.el = self.el.lower()
