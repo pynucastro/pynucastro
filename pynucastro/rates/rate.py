@@ -899,14 +899,16 @@ class Rate:
             im = ax.imshow(pivot_table, cmap='magma')
             fig.colorbar(im, ax=ax)
 
-            ax.set_xlabel("$T$ [K]")
-            ax.set_ylabel("$\\rho Y$ [g/cm$^3$]")
+            ax.set_xlabel("$\log(T)$ [K]")
+            ax.set_ylabel("$\log(\\rho Y_e)$ [g/cm$^3$]")
             ax.set_title(fr"{self.pretty_string}"+
                          "\n"+"electron-capture/beta-decay rate in log10(1/s)")
             ax.set_yticks(range(len(rows)))
-            ax.set_yticklabels(rows)
+            ylabels = [f"{np.log10(q):4.2f}" for q in rows]
+            ax.set_yticklabels(ylabels)
             ax.set_xticks(range(len(cols)))
-            ax.set_xticklabels(cols, rotation=90, ha="right", rotation_mode="anchor")
+            xlabels = [f"{np.log10(q):4.2f}" for q in cols]
+            ax.set_xticklabels(xlabels, rotation=90, ha="right", rotation_mode="anchor")
             ax.invert_yaxis()
 
         else:
