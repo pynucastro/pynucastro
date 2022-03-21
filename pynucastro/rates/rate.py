@@ -869,8 +869,11 @@ class Rate:
         drdT = (r2 - r1)/dT
         return (T0/r1)*drdT
 
-    def plot(self, Tmin=1.e8, Tmax=1.6e9, rhoYmin=3.9e8, rhoYmax=2.e9):
+    def plot(self, Tmin=1.e8, Tmax=1.6e9, rhoYmin=3.9e8, rhoYmax=2.e9,
+             figsize=(10, 10)):
         """plot the rate's temperature sensitivity vs temperature"""
+
+        fig, ax = plt.subplots(figsize=figsize)
 
         if self.tabular:
             data = self.tabular_data_table.astype(np.float) # convert from str to float
@@ -889,21 +892,19 @@ class Rate:
             except ValueError:
                 print("Divide by zero encountered in log10\nChange the scale of T or rhoY")
 
-            fig, ax = plt.subplots(figsize=(10,10))
-            im = ax.imshow(pivot_table, cmap='jet')
-            plt.colorbar(im)
+            im = ax.imshow(pivot_table, cmap='magma')
+            ax.colorbar(im)
 
-            plt.xlabel("$T$ [K]")
-            plt.ylabel("$\\rho Y$ [g/cm$^3$]")
+            ax.set_xlabel("$T$ [K]")
+            ax.set_ylabel("$\\rho Y$ [g/cm$^3$]")
             ax.set_title(fr"{self.pretty_string}"+
                          "\n"+"electron-capture/beta-decay rate in log10(1/s)")
             ax.set_yticks(range(len(rows)))
             ax.set_yticklabels(rows)
             ax.set_xticks(range(len(cols)))
             ax.set_xticklabels(cols)
-            plt.setp(ax.get_xticklabels(), rotation=90, ha="right",rotation_mode="anchor")
-            plt.gca().invert_yaxis()
-            plt.show()
+            ax.set_xticklabels(rotation=90, ha="right", rotation_mode="anchor")
+            ax.invert_yaxis()
 
         else:
             temps = np.logspace(np.log10(Tmin), np.log10(Tmax), 100)
@@ -912,15 +913,16 @@ class Rate:
             for n, T in enumerate(temps):
                 r[n] = self.eval(T)
 
-            plt.loglog(temps, r)
-            plt.xlabel(r"$T$")
+            ax.loglog(temps, r)
+            ax.set_xlabel(r"$T$")
 
             if self.dens_exp == 0:
-                plt.ylabel(r"\tau")
+                ax.set_ylabel(r"\tau")
             elif self.dens_exp == 1:
-                plt.ylabel(r"$N_A <\sigma v>$")
+                ax.set_ylabel(r"$N_A <\sigma v>$")
             elif self.dens_exp == 2:
-                plt.ylabel(r"$N_A^2 <n_a n_b n_c v>$")
+                ax.set_ylabel(r"$N_A^2 <n_a n_b n_c v>$")
 
-            plt.title(fr"{self.pretty_string}")
-            plt.show()
+            ax.set_title(fr"{self.pretty_string}")
+
+        return fig
