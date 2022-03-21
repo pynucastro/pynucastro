@@ -61,7 +61,5 @@ class BindingTable(object):
             for nuc in self.nuclides:
                 if nuc.n == n and nuc.z == z:
                     return nuc
-        else:
-            print('ERROR: invalid (n, z) supplied: ({}, {})'.format(n, z))
-            exit()
-        print('Nuclide not found for (n, z) = ({}, {})'.format(n, z))
+
+        raise NotImplementedError(f"nuclear data for Z={z} and N={n} not available")
