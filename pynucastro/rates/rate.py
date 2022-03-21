@@ -396,16 +396,31 @@ class Rate:
         return x
 
     def __lt__(self, other):
-        """sort such that lightest reactants come first"""
+        """sort such that lightest reactants come first, and then look at products"""
 
-        self_sorted = sorted(self.reactants, key=lambda x: x.A)
-        other_sorted = sorted(other.reactants, key=lambda x: x.A)
-        if self_sorted[-1].A == other_sorted[-1].A:
-            try:
-                return self_sorted[-2].A < other_sorted[-2].A
-            except IndexError:
-                return True
-        return self_sorted[-1].A < other_sorted[-1].A
+        # this sort will make two nuclei with the same A be in order of Z
+        # (assuming there are no nuclei with A > 999
+        # we want to compare based on the heaviest first, so we reverse
+
+        self_react_sorted = sorted(self.reactants, key=lambda x: 1000*x.A + x.Z, reverse=True)
+        other_react_sorted = sorted(other.reactants, key=lambda x: 1000*x.A + x.Z, reverse=True)
+
+        if self_react_sorted != other_react_sorted:
+            # reactants are different, so now we can check them
+            for srn, orn in zip(self_react_sorted, other_react_sorted):
+                if not srn == orn:
+                    return srn < orn
+        else:
+            # reactants are the same, so consider products
+            self_prod_sorted = sorted(self.products, key=lambda x: 1000*x.A + x.Z, reverse=True)
+            other_prod_sorted = sorted(other.products, key=lambda x: 1000*x.A + x.Z, reverse=True)
+
+            for spn, opn in zip(self_prod_sorted, other_prod_sorted):
+                if not spn == opn:
+                    return spn < opn
+
+        # if we made it here, then the rates are the same
+        return True
 
     def __add__(self, other):
         """Combine the sets of two Rate objects if they describe the same
