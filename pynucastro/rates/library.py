@@ -307,40 +307,40 @@ class Library:
 
     def consumes(self, nuc):
         """return a Library object containing the rates that consume a given nucleus"""
-￼
-￼       if type(nuc) == Nucleus:
-￼           pass
-￼       else:
-￼           try:
-￼               nuc = Nucleus(nuc)
-￼           except:
-￼               raise
-￼
-￼       new_rates = []
-￼       for _, rate in self._rates.items():
-￼           if nuc in rate.reactants:
-￼               new_rates.append(rate)
-￼
-￼       return Library(rates=new_rates)
-￼
-￼   def produces(self, nuc):
-￼       """return a Library object containing the rates that create a given
-￼       nucleus"""
-￼
-￼       if type(nuc) == Nucleus:
-￼           pass
-￼       else:
-￼           try:
-￼               nuc = Nucleus(nuc)
-￼           except:
-￼               raise
-￼
-￼       new_rates = []
-￼       for _, rate in self._rates.items():
-￼           if nuc in rate.products:
-￼               new_rates.append(rate)
-￼
-￼       return Library(rates=new_rates)
+
+        if type(nuc) == Nucleus:
+            pass
+        else:
+            try:
+                nuc = Nucleus(nuc)
+            except:
+                raise
+
+        new_rates = []
+        for _, rate in self._rates.items():
+            if nuc in rate.reactants:
+                new_rates.append(rate)
+
+        return Library(rates=new_rates)
+
+    def produces(self, nuc):
+        """return a Library object containing the rates that create a given
+        nucleus"""
+
+        if type(nuc) == Nucleus:
+            pass
+        else:
+            try:
+                nuc = Nucleus(nuc)
+            except:
+                raise
+
+        new_rates = []
+        for _, rate in self._rates.items():
+            if nuc in rate.products:
+                new_rates.append(rate)
+
+        return Library(rates=new_rates)
 
     def validate(self, other_library, forward_only=True, ostream=None):
         """perform various checks on the library, comparing to other_library,
@@ -426,7 +426,7 @@ class Library:
         only_bwd_filter = RateFilter(filter_function = lambda r: r.reverse)
         only_bwd = self.filter(only_bwd_filter)
         return only_bwd
-        
+
 class RateFilter:
     """RateFilter filters out a specified rate or set of rates
 
