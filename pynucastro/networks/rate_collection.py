@@ -375,7 +375,7 @@ class RateCollection:
 
                         # he4 + be8
                         be8 = Nucleus("Be8", dummy=True)
-                        scr2 = ScreeningPair(nucs, screen_nuclei[2], be8, r)
+                        scr2 = ScreeningPair(nucs + "_dummy", screen_nuclei[2], be8, r)
 
                         screening_map.append(scr1)
                         screening_map.append(scr2)
