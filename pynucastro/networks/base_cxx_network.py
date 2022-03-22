@@ -17,7 +17,6 @@ import string
 import sympy
 from pynucastro.rates import Nucleus
 from pynucastro.networks import RateCollection
-from pynucastro.nucdata import BindingTable
 from pynucastro.networks import SympyRates
 
 class BaseCxxNetwork(ABC, RateCollection):
@@ -242,10 +241,8 @@ class BaseCxxNetwork(ABC, RateCollection):
         of.write(f'{self.indent*n_indent}NumRates = k_{self.rates[-1].fname}\n')
 
     def _ebind(self, n_indent, of):
-        bintable = BindingTable()
         for nuc in self.unique_nuclei:
-            nuc_in_table = bintable.get_nuclide(n=nuc.N, z=nuc.Z)
-            of.write(f'{self.indent*n_indent}ebind_per_nucleon({nuc.c()}) = {nuc_in_table.nucbind}_rt;\n')
+            of.write(f'{self.indent*n_indent}ebind_per_nucleon({nuc.c()}) = {nuc.nucbind}_rt;\n')
 
     def _screen_add(self, n_indent, of):
         screening_map = self.get_screening_map()
