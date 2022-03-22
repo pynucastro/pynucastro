@@ -355,6 +355,8 @@ class RateCollection:
 
                 scr = [q for q in screening_map if q.name == nucs]
 
+                assert len(scr) <= 1
+
                 if scr:
                     # we already have the reactants in our map, so we
                     # will already be doing the screening factors.
@@ -363,6 +365,15 @@ class RateCollection:
                     # needed
 
                     scr[0].add_rate(r)
+
+                    # if we got here because nuc == "he4_he4_he4",
+                    # then we also have to add to "he4_he4_he4_dummy"
+
+                    if nucs == "he4_he4_he4":
+                        scr2 = [q for q in screening_map if q.name == nucs + "_dummy"]
+                        assert len(scr2) == 1
+
+                        scr2[0].add_rate(r)
 
                 else:
 
