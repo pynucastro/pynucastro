@@ -1,9 +1,7 @@
 # unit tests for rates
 import pynucastro.networks as networks
-import pynucastro.rates as rates
 import os
 import filecmp
-import glob
 
 import io
 
@@ -29,7 +27,7 @@ class TestStarKillerCxxNetwork:
                  "ne23--na23-toki",
                  "n--p-wc12"]
 
-        self.fn = networks.StarKillerCxxNetwork(files)
+        self.fn = networks.StarKillerCxxNetwork(files, rate_cutoff_temp=5.e6)
         self.fn.secret_code = "testing"
 
     def teardown_method(self):

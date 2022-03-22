@@ -9,7 +9,6 @@ import os
 import shutil
 import sys
 import re
-from collections import OrderedDict
 from abc import ABC, abstractmethod
 import random
 import string
@@ -48,7 +47,7 @@ class BaseCxxNetwork(ABC, RateCollection):
 
         # a dictionary of functions to call to handle specific parts
         # of the C++ template
-        self.ftags = OrderedDict()
+        self.ftags = {}
         self.ftags['<nrat_reaclib>'] = self._nrat_reaclib
         self.ftags['<nrat_tabular>'] = self._nrat_tabular
         self.ftags['<nrxn>'] = self._nrxn
@@ -60,14 +59,11 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.ftags['<declare_tables>'] = self._declare_tables
         self.ftags['<table_declare_meta>'] = self._table_declare_meta
         self.ftags['<table_init_meta>'] = self._table_init_meta
-        self.ftags['<table_term_meta>'] = self._table_term_meta
-        self.ftags['<table_rates_indices>'] = self._table_rates_indices
         self.ftags['<compute_tabular_rates>'] = self._compute_tabular_rates
         self.ftags['<ydot>'] = self._ydot
         self.ftags['<enuc_add_energy_rate>'] = self._enuc_add_energy_rate
         self.ftags['<jacnuc>'] = self._jacnuc
         self.ftags['<initial_mass_fractions>'] = self._initial_mass_fractions
-        self.ftags['<pynucastro_home>'] = self._pynucastro_home
         self.ftags['<secret_code>'] = self._secret_code_write
         self.ftags['<secret_code_set>'] = self._secret_code_write_reference
         self.indent = '    '
@@ -317,38 +313,6 @@ class BaseCxxNetwork(ABC, RateCollection):
 
             of.write('\n')
 
-    def _table_term_meta(self, n_indent, of):
-        for irate in self.tabular_rates:
-            r = self.rates[irate]
-
-            of.write('{}deallocate(num_temp_{})\n'.format(
-                self.indent*n_indent, r.table_index_name))
-
-            of.write('{}deallocate(num_rhoy_{})\n'.format(
-                self.indent*n_indent, r.table_index_name))
-
-            of.write('{}deallocate(num_vars_{})\n'.format(
-                self.indent*n_indent, r.table_index_name))
-
-            of.write('{}deallocate(rate_table_{})\n'.format(
-                self.indent*n_indent, r.table_index_name))
-
-            of.write('{}deallocate(rhoy_table_{})\n'.format(
-                self.indent*n_indent, r.table_index_name))
-
-            of.write('{}deallocate(temp_table_{})\n'.format(
-                self.indent*n_indent, r.table_index_name))
-
-            of.write('\n')
-
-    def _table_rates_indices(self, n_indent, of):
-        for n,irate in enumerate(self.tabular_rates):
-            r = self.rates[irate]
-            of.write(f'{self.indent*n_indent}{r.table_index_name}')
-            if n != len(self.tabular_rates)-1:
-                of.write(', &')
-            of.write('\n')
-
     def _compute_tabular_rates(self, n_indent, of):
         if len(self.tabular_rates) > 0:
 
@@ -409,10 +373,6 @@ class BaseCxxNetwork(ABC, RateCollection):
                 of.write(f"{self.indent*n_indent}unit_test.X{i+1} = 1.0\n")
             else:
                 of.write(f"{self.indent*n_indent}unit_test.X{i+1} = 0.0\n")
-
-    def _pynucastro_home(self, n_indent, of):
-        of.write('{}PYNUCASTRO_HOME := {}\n'.format(self.indent*n_indent,
-                                                    os.path.dirname(self.pynucastro_dir)))
 
     def _secret_code_write(self, n_indent, of):
         of.write(f"{self.indent*n_indent}{self.secret_code}\n")

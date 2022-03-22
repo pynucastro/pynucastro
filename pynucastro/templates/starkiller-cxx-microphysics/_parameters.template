@@ -1,1 +1,8 @@
 @namespace: network
+
+
+@namespace: integrator
+
+# reaclib rates are not well behaved at low T
+<rate_cutoff_temp>(0)
+

@@ -102,7 +102,7 @@ class RateCollection:
     pynucastro_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 
     def __init__(self, rate_files=None, libraries=None, rates=None, precedence=(),
-                 symmetric_screening=False):
+                 symmetric_screening=False, rate_cutoff_temp=-1.0):
         """rate_files are the files that together define the network.  This
         can be any iterable or single string.
 
@@ -134,6 +134,8 @@ class RateCollection:
         self.library = None
 
         self.symmetric_screening = symmetric_screening
+
+        self.rate_cutoff_temp = rate_cutoff_temp
 
         if rate_files:
             if isinstance(rate_files, str):

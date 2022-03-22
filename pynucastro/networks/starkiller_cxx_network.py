@@ -8,10 +8,13 @@ import os
 
 from pynucastro.networks import BaseCxxNetwork
 
+
 class StarKillerCxxNetwork(BaseCxxNetwork):
     def __init__(self, *args, **kwargs):
         # Initialize BaseFortranNetwork parent class
         super().__init__(*args, **kwargs)
+
+        self.ftags['<rate_cutoff_temp>'] = self._rate_cutoff_temp
 
     def _get_template_files(self):
 
@@ -21,6 +24,10 @@ class StarKillerCxxNetwork(BaseCxxNetwork):
                                         '*.template')
 
         return glob.glob(template_pattern)
+
+    def _rate_cutoff_temp(self, n_indent, of):
+
+        of.write(f"{self.indent*n_indent}rate_cutoff_temp     real   {self.rate_cutoff_temp}  100\n")
 
     def _write_network(self, odir=None):
         """
