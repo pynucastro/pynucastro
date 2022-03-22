@@ -53,7 +53,7 @@ for line in finput:
     if spin_str_list:
         spin_str = spin_str_list.pop(0)
     else:
-        spin_str = ' '
+        continue
 
     special_chars = "+-*()#,"
 
