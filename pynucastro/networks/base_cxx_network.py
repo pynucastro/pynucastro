@@ -196,11 +196,15 @@ class BaseCxxNetwork(ABC, RateCollection):
                 # now the second part of 3-alpha
                 of.write(f'{self.indent*n_indent}screen5(pstate, {i}, {nuc1_info}, {nuc2_info}, scor2, dscor2_dt, dscor2_dd);\n\n')
 
-                of.write(f'{self.indent*n_indent}ratraw = rate_eval.screened_rates(k_{scr.rates[0].fname});\n')
-                of.write(f'{self.indent*n_indent}dratraw_dT = rate_eval.dscreened_rates_dT(k_{scr.rates[0].fname});\n')
+                # there might be both the forward and reverse 3-alpha
+                # if we are doing symmetric screening
 
-                of.write(f'{self.indent*n_indent}rate_eval.screened_rates(k_{scr.rates[0].fname}) *= scor * scor2;\n')
-                of.write(f'{self.indent*n_indent}rate_eval.dscreened_rates_dT(k_{scr.rates[0].fname}) = ratraw * (scor * dscor2_dt + dscor_dt * scor2) + dratraw_dT * scor * scor2;\n')
+                for rr in scr.rates:
+                    of.write(f'\n')
+                    of.write(f'{self.indent*n_indent}ratraw = rate_eval.screened_rates(k_{rr.fname});\n')
+                    of.write(f'{self.indent*n_indent}dratraw_dT = rate_eval.dscreened_rates_dT(k_{rr.fname});\n')
+                    of.write(f'{self.indent*n_indent}rate_eval.screened_rates(k_{rr.fname}) *= scor * scor2;\n')
+                    of.write(f'{self.indent*n_indent}rate_eval.dscreened_rates_dT(k_{rr.fname}) = ratraw * (scor * dscor2_dt + dscor_dt * scor2) + dratraw_dT * scor * scor2;\n')
 
             else:
                 of.write(f'\n{self.indent*n_indent}screen5(pstate, {i}, {nuc1_info}, {nuc2_info}, scor, dscor_dt, dscor_dd);\n\n')
