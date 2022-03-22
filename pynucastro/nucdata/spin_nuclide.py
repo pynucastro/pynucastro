@@ -47,7 +47,7 @@ class SpinTable:
         if os.path.isfile(datafile_dir):
             self.datafile = datafile_dir
         else:
-            raise
+            raise Exception('ERROR: The spin tabulated file was not found')
 
         self._read_table()
 
