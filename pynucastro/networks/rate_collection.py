@@ -244,8 +244,11 @@ class RateCollection:
         y_e = composition.eval_ye()
 
         for r in self.rates:
-            val = r.prefactor * rho**r.dens_exp * r.eval(T, rho * y_e)
-            if (r.weak_type == 'electron_capture' and not r.tabular):
+            if T < self.rate_cutoff_temp:
+                val = 0.0
+            else:
+                val = r.prefactor * rho**r.dens_exp * r.eval(T, rho * y_e)
+            if r.weak_type == 'electron_capture' and not r.tabular:
                 val = val * y_e
             yfac = functools.reduce(mul, [ys[q] for q in r.reactants])
             rvals[r] = yfac * val
