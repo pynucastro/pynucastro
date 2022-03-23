@@ -15,7 +15,6 @@ import random
 import string
 
 import sympy
-from pynucastro.rates import Nucleus
 from pynucastro.networks import RateCollection
 from pynucastro.networks import SympyRates
 
@@ -299,8 +298,8 @@ class BaseCxxNetwork(ABC, RateCollection):
 
             of.write(f'{idnt}AMREX_GPU_MANAGED Array3D<Real, 1, {r.table_temp_lines}, 1, {r.table_rhoy_lines}, 1, {r.table_num_vars}> {r.table_index_name}_data;\n')
 
-            of.write(f'{idnt}AMREX_GPU_MANAGED Array1D<Real, 1, {r.table_rhoy_lines}> {r.table_index_name}_rhoy;\n');
-            of.write(f'{idnt}AMREX_GPU_MANAGED Array1D<Real, 1, {r.table_temp_lines}> {r.table_index_name}_temp;\n\n');
+            of.write(f'{idnt}AMREX_GPU_MANAGED Array1D<Real, 1, {r.table_rhoy_lines}> {r.table_index_name}_rhoy;\n')
+            of.write(f'{idnt}AMREX_GPU_MANAGED Array1D<Real, 1, {r.table_temp_lines}> {r.table_index_name}_temp;\n\n')
 
     def _table_init_meta(self, n_indent, of):
         for irate in self.tabular_rates:
@@ -404,7 +403,7 @@ class BaseCxxNetwork(ABC, RateCollection):
                     of.write(f"{self.indent*n_indent}jac.set({nj.c()}, {ni.c()}, scratch);\n\n")
 
     def _initial_mass_fractions(self, n_indent, of):
-        for i, n in enumerate(self.unique_nuclei):
+        for i, _ in enumerate(self.unique_nuclei):
             if i == 0:
                 of.write(f"{self.indent*n_indent}unit_test.X{i+1} = 1.0\n")
             else:
