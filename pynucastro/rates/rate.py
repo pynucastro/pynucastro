@@ -88,15 +88,20 @@ class SingleSet:
         """
         self.a = a
         self.labelprops = labelprops
+        self.label = None
+        self.resonant = None
+        self.weak = None
+        self.reverse = None
+
         self._update_label_properties()
 
     def _update_label_properties(self):
         """ Set label and flags indicating Set is resonant,
             weak, or reverse. """
-        assert(type(self.labelprops) == str)
+        assert isinstance(self.labelprops, str)
         try:
-            assert(len(self.labelprops) == 6)
-        except:
+            assert len(self.labelprops) == 6
+        except AssertionError:
             raise
         else:
             self.label = self.labelprops[0:4]
@@ -222,16 +227,16 @@ class Nucleus:
         else:
             e = re.match(r"([a-zA-Z]*)(\d*)", name)
             self.el = e.group(1).title()  # chemical symbol
-            assert(self.el)
+            assert self.el
             try:
                 self.A = int(e.group(2))
-            except:
+            except (TypeError, ValueError):
                 if (name.strip() == 'al-6' or
                     name.strip() == 'al*6'):
                     raise UnsupportedNucleus()
                 else:
                     raise
-            assert(self.A >= 0)
+            assert self.A >= 0
             self.short_spec_name = name
             self.caps_name = name.capitalize()
 
@@ -252,11 +257,11 @@ class Nucleus:
                 raise
             else:
                 self.Z = i.Z
-                assert(type(self.Z) == int)
-                assert(self.Z >= 0)
+                assert isinstance(self.Z, int)
+                assert self.Z >= 0
                 self.N = self.A - self.Z
-                assert(type(self.N) == int)
-                assert(self.N >= 0)
+                assert isinstance(self.N, int)
+                assert self.N >= 0
 
                 # long name
                 self.spec_name = f'{i.name}-{self.A}'
@@ -274,7 +279,7 @@ class Nucleus:
         """
         This function associates to every nucleus a PartitionFunction object.
         """
-        assert type(p_collection) == PartitionFunctionCollection
+        assert isinstance(p_collection, PartitionFunctionCollection)
 
         p_collection.set_data_selector(set_data)
         p_collection.use_high_temperatures(use_high_temperatures)
@@ -298,16 +303,14 @@ class Nucleus:
         if isinstance(other, Nucleus):
             return self.el == other.el and \
                 self.Z == other.Z and self.A == other.A
-        elif isinstance(other, tuple):
+        if isinstance(other, tuple):
             return (self.Z, self.A) == other
-        else:
-            return NotImplemented
+        return NotImplemented
 
     def __lt__(self, other):
         if not self.Z == other.Z:
             return self.Z < other.Z
-        else:
-            return self.A < other.A
+        return self.A < other.A
 
 
 class Rate:
@@ -344,6 +347,14 @@ class Rate:
             self.sets = []
 
         self.labelprops = labelprops
+
+        self.label = None
+        self.resonant = None
+        self.resonance_combined = None
+        self.weak = None
+        self.weak_type = None
+        self.reverse = None
+        self.tabular = None
 
         self.Q = Q
 
@@ -427,15 +438,15 @@ class Rate:
     def __add__(self, other):
         """Combine the sets of two Rate objects if they describe the same
            reaction. Must be Reaclib rates."""
-        assert(self.reactants == other.reactants)
-        assert(self.products == other.products)
-        assert(self.chapter == other.chapter)
-        assert(type(self.chapter) == int)
-        assert(self.label == other.label)
-        assert(self.weak == other.weak)
-        assert(self.weak_type == other.weak_type)
-        assert(self.tabular == other.tabular)
-        assert(self.reverse == other.reverse)
+        assert self.reactants == other.reactants
+        assert self.products == other.products
+        assert self.chapter == other.chapter
+        assert isinstance(self.chapter, int)
+        assert self.label == other.label
+        assert self.weak == other.weak
+        assert self.weak_type == other.weak_type
+        assert self.tabular == other.tabular
+        assert self.reverse == other.reverse
 
         if self.resonant != other.resonant:
             self._labelprops_combine_resonance()
@@ -481,11 +492,12 @@ class Rate:
     def _update_label_properties(self):
         """ Set label and flags indicating Rate is resonant,
             weak, or reverse. """
-        assert(type(self.labelprops) == str)
+        assert isinstance(self.labelprops, str)
         try:
-            assert(len(self.labelprops) == 6)
+            assert len(self.labelprops) == 6
         except AssertionError:
-            assert(self.labelprops == 'tabular')
+            assert self.labelprops == 'tabular'
+
             self.label = 'tabular'
             self.resonant = False
             self.resonance_combined = False
@@ -556,15 +568,15 @@ class Rate:
                 try:
                     # see if there is a chapter number preceding the set
                     check_chapter = int(check_chapter)
-                except:
+                except (TypeError, ValueError):
                     # there was no chapter number, proceed reading a set
                     pass
                 else:
                     # there was a chapter number so check that the chapter number
                     # is the same as the first set in this rate file
                     try:
-                        assert(check_chapter == self.chapter)
-                    except:
+                        assert check_chapter == self.chapter
+                    except AssertionError:
                         print(f'ERROR: read chapter {check_chapter}, expected chapter {self.chapter} for this rate set.')
                         raise
                     else:
@@ -670,7 +682,7 @@ class Rate:
                                               Nucleus(f[3]), Nucleus(f[4])]
                         else:
                             print(f'Chapter could not be identified in {self.original_source}')
-                            assert(type(self.chapter) == int and self.chapter <= 11)
+                            assert isinstance(self.chapter, int) and self.chapter <= 11
                     except:
                         # print('Error parsing Rate from {}'.format(self.original_source))
                         raise
@@ -793,8 +805,7 @@ class Rate:
         if self.tabular:
             ssrc = 'tabular'
 
-        return '{} <{}_{}_{}_{}>'.format(self.__repr__(), self.label.strip(),
-                                         ssrc, sweak, srev)
+        return f'{self.__repr__()} <{self.label.strip()}_{ssrc}_{sweak}_{srev}>'
 
     def heaviest(self):
         """
@@ -836,13 +847,13 @@ class Rate:
 
         # change the list ["1.23 3.45 5.67\n"] into the list ["1.23","3.45","5.67"]
         t_data2d = []
-        for i in range(len(t_data)):
-            t_data2d.append(re.split(r"[ ]", t_data[i].strip('\n')))
+        for tt in t_data:
+            t_data2d.append(re.split(r"[ ]", tt.strip('\n')))
 
         # delete all the "" in each element of data1
-        for i in range(len(t_data2d)):
-            while '' in t_data2d[i]:
-                t_data2d[i].remove('')
+        for tt2d in t_data2d:
+            while '' in tt2d:
+                tt2d.remove('')
 
         while [] in t_data2d:
             t_data2d.remove([])
@@ -853,7 +864,7 @@ class Rate:
         """The class Nucleus.set_partition_functions(pCollection, set_data, use_high_temperature)
            defines the partition function for the reactants and products"""
 
-        for nuc in (self.reactants + self.products):
+        for nuc in self.reactants + self.products:
             nuc.set_partition_function(p_collection, set_data, use_high_temperatures)
 
     def eval(self, T, rhoY=None):
@@ -910,7 +921,8 @@ class Rate:
             except ValueError:
                 print("Divide by zero encountered in log10\nChange the scale of T or rhoY")
 
-            fig, ax = plt.subplots(figsize=(10, 10))
+            _, ax = plt.subplots(figsize=(10, 10))
+
             im = ax.imshow(pivot_table, cmap='jet')
             plt.colorbar(im)
 

@@ -179,4 +179,4 @@ class TestRateCollection:
     produced by:
        n14 + p --> o15
 """
-        assert self.rc.network_overview().replace(" ","").strip() == ostr.replace(" ","").strip()
+        assert self.rc.network_overview().replace(" ", "").strip() == ostr.replace(" ", "").strip()

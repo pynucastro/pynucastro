@@ -15,9 +15,9 @@ import random
 import string
 
 import sympy
-from pynucastro.rates import Nucleus
 from pynucastro.networks import RateCollection
 from pynucastro.networks import SympyRates
+
 
 class BaseFortranNetwork(ABC, RateCollection):
     """Interpret the collection of rates and nuclei and produce the
@@ -38,11 +38,11 @@ class BaseFortranNetwork(ABC, RateCollection):
 
         self.symbol_rates = SympyRates()
 
-        self.ydot_out_result  = None
-        self.solved_ydot      = False
-        self.jac_out_result   = None
+        self.ydot_out_result = None
+        self.solved_ydot = False
+        self.jac_out_result = None
         self.jac_null_entries = None
-        self.solved_jacobian  = False
+        self.solved_jacobian = False
 
         self.secret_code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=32))
 
@@ -95,10 +95,9 @@ class BaseFortranNetwork(ABC, RateCollection):
         # This method returns a list of strings that are file paths to template files.
         return []
 
-
     def fmt_to_dp_f90(self, i):
         """convert a number to Fortran double precision format"""
-        return '{:1.14e}'.format(float(i)).replace('e','d')
+        return '{:1.14e}'.format(float(i)).replace('e', 'd')
 
     def fmt_to_rt_f90(self, i):
         """convert a number to custom real type format"""
@@ -106,7 +105,7 @@ class BaseFortranNetwork(ABC, RateCollection):
 
     def get_indent_amt(self, l, k):
         """determine the amount of spaces to indent a line"""
-        rem = re.match(r'\A'+k+r'\(([0-9]*)\)\Z',l)
+        rem = re.match(r'\A'+k+r'\(([0-9]*)\)\Z', l)
         return int(rem.group(1))
 
     def _write_network(self, odir=None):
@@ -124,12 +123,12 @@ class BaseFortranNetwork(ABC, RateCollection):
         # Process template files
         for tfile in self.template_files:
             tfile_basename = os.path.basename(tfile)
-            outfile    = tfile_basename.replace('.template', '')
+            outfile = tfile_basename.replace('.template', '')
             if odir is not None:
                 if not os.path.isdir(odir):
                     try:
                         os.mkdir(odir)
-                    except:
+                    except OSError:
                         sys.exit(f"unable to create directory {odir}")
                 outfile = os.path.normpath(odir + "/" + outfile)
 
@@ -177,7 +176,7 @@ class BaseFortranNetwork(ABC, RateCollection):
                 ydot_sym = ydot_sym + self.symbol_rates.ydot_term_symbol(r, n)
             ydot.append(ydot_sym)
 
-        self.ydot_out_result  = ydot
+        self.ydot_out_result = ydot
         self.solved_ydot = True
 
     def compose_jacobian(self):
@@ -199,7 +198,7 @@ class BaseFortranNetwork(ABC, RateCollection):
                 jac_sym.append(rsym)
                 jac_null.append(rsym_is_null)
 
-        self.jac_out_result  = jac_sym
+        self.jac_out_result = jac_sym
         self.jac_null_entries = jac_null
         self.solved_jacobian = True
 
@@ -265,7 +264,7 @@ class BaseFortranNetwork(ABC, RateCollection):
             "pynucastro"))
 
     def _jion(self, n_indent, of):
-        for i,nuc in enumerate(self.unique_nuclei):
+        for i, nuc in enumerate(self.unique_nuclei):
             of.write('{}integer, parameter :: j{}   = {}\n'.format(
                 self.indent*n_indent, nuc, i+1))
 
@@ -280,7 +279,7 @@ class BaseFortranNetwork(ABC, RateCollection):
                 self.indent*n_indent, nuc, nuc.short_spec_name))
 
     def _nrxn(self, n_indent, of):
-        for i,r in enumerate(self.rates):
+        for i, r in enumerate(self.rates):
             of.write('{}integer, parameter :: k_{}   = {}\n'.format(
                 self.indent*n_indent, r.fname, i+1))
 
@@ -360,7 +359,7 @@ class BaseFortranNetwork(ABC, RateCollection):
             of.write(f'{self.indent*n_indent}public {r.table_index_name}\n')
 
     def _table_indices(self, n_indent, of):
-        for n,irate in enumerate(self.tabular_rates):
+        for n, irate in enumerate(self.tabular_rates):
             r = self.rates[irate]
             of.write('{}integer, parameter :: {}   = {}\n'.format(
                 self.indent*n_indent, r.table_index_name, n+1))
@@ -446,7 +445,7 @@ class BaseFortranNetwork(ABC, RateCollection):
             of.write('\n')
 
     def _table_rates_indices(self, n_indent, of):
-        for n,irate in enumerate(self.tabular_rates):
+        for n, irate in enumerate(self.tabular_rates):
             r = self.rates[irate]
             of.write(f'{self.indent*n_indent}{r.table_index_name}')
             if n != len(self.tabular_rates)-1:

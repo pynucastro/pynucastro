@@ -41,10 +41,10 @@ class Library:
             self._rates = None
             if isinstance(rates, Rate):
                 rates = [rates]
-            assert isinstance(rates, dict) or isinstance(rates, list) or isinstance(rates, set), "ERROR: rates in Library constructor must be a Rate object, list of Rate objects, or dictionary of Rate objects keyed by Rate.get_rate_id()"
+            assert isinstance(rates, (dict, list, set)), "ERROR: rates in Library constructor must be a Rate object, list of Rate objects, or dictionary of Rate objects keyed by Rate.get_rate_id()"
             if isinstance(rates, dict):
                 self._rates = rates
-            elif isinstance(rates, list) or isinstance(rates, set):
+            elif isinstance(rates, (list, set)):
                 self._add_from_rate_list(rates)
         else:
             self._rates = collections.OrderedDict()
@@ -57,7 +57,7 @@ class Library:
     def heaviest(self):
         """ Return the heaviest nuclide in this library. """
         nuc = None
-        for id, r in self._rates.items():
+        for _, r in self._rates.items():
             rnuc = r.heaviest()
             if nuc:
                 if rnuc.A > nuc.A or (rnuc.A == nuc.A and rnuc.Z < nuc.Z):
@@ -69,7 +69,7 @@ class Library:
     def lightest(self):
         """ Return the lightest nuclide in this library. """
         nuc = None
-        for id, r in self._rates.items():
+        for _, r in self._rates.items():
             rnuc = r.lightest()
             if nuc:
                 if rnuc.A < nuc.A or (rnuc.A == nuc.A and rnuc.Z > nuc.Z):
@@ -83,15 +83,15 @@ class Library:
         if not self._rates:
             self._rates = collections.OrderedDict()
         for r in ratelist:
-            id = r.get_rate_id()
-            assert (not id in self._rates), "ERROR: supplied a Rate object already in the Library."
-            self._rates[id] = r
+            rid = r.get_rate_id()
+            assert rid not in self._rates, "ERROR: supplied a Rate object already in the Library."
+            self._rates[rid] = r
 
     def _read_library_file(self):
         # loop through library file, read lines
         try:
             flib = open(self._library_file)
-        except:
+        except IOError:
             print(f'Could not open file {self._library_file}')
             raise
         for line in flib:
@@ -110,17 +110,17 @@ class Library:
             # (for Reaclib v1 formatted library files)
             line = self._library_source_lines[0].strip()
             chapter = None
-            if line == 't' or line == 'T':
+            if line in ('t', 'T'):
                 chapter = 't'
                 self._library_source_lines.popleft()
             else:
                 try:
                     chapter = int(line)
-                except:
+                except (TypeError, ValueError):
                     # we can't interpret line as a chapter so use current_chapter
                     try:
-                        assert(current_chapter)
-                    except:
+                        assert current_chapter
+                    except AssertionError:
                         print(f'ERROR: malformed library file {self._library_file}, cannot identify chapter.')
                         raise
                     else:
@@ -132,7 +132,7 @@ class Library:
             rlines = None
             if chapter == 't':
                 rlines = [self._library_source_lines.popleft() for i in range(5)]
-            elif type(chapter) == int:
+            elif isinstance(chapter, int):
                 rlines = [self._library_source_lines.popleft() for i in range(3)]
             if rlines:
                 sio = io.StringIO('\n'.join([f'{chapter}'] +
@@ -145,11 +145,11 @@ class Library:
                 except:
                     raise
                 else:
-                    id = r.get_rate_id()
-                    if id in self._rates:
-                        self._rates[id] = self._rates[id] + r
+                    rid = r.get_rate_id()
+                    if rid in self._rates:
+                        self._rates[rid] = self._rates[rid] + r
                     else:
-                        self._rates[id] = r
+                        self._rates[rid] = r
 
     def __repr__(self):
         """ Return a string containing the rates IDs in this library. """
@@ -167,15 +167,15 @@ class Library:
     def __add__(self, other):
         """ Add two libraries to get a library containing rates from both. """
         new_rates = self._rates
-        for id, r in other._rates.items():
+        for rid, r in other._rates.items():
             try:
-                assert id not in new_rates
-            except:
-                if r != new_rates[id]:
+                assert rid not in new_rates
+            except AssertionError:
+                if r != new_rates[rid]:
                     print(f'ERROR: rate {r} defined differently in libraries {self._library_file} and {other._library_file}\n')
                     raise
             else:
-                new_rates[id] = r
+                new_rates[rid] = r
         new_library = Library(libfile=f'{self._library_file} + {other._library_file}',
                               rates=new_rates,
                               read_library=False)
@@ -193,10 +193,10 @@ class Library:
         rlist = [r for _, r in self._rates.items()]
         return rlist
 
-    def get_rate(self, id):
+    def get_rate(self, rid):
         """ Return a rate matching the id provided. """
         try:
-            return self._rates[id]
+            return self._rates[rid]
         except:
             print("ERROR: rate identifier does not match a rate in this library.")
             raise
@@ -213,8 +213,8 @@ class Library:
         """Manually remove a rate from the library by supplying the id"""
 
         if isinstance(rate, Rate):
-            id = rate.get_rate_id()
-            self._rates.pop(id)
+            rid = rate.get_rate_id()
+            self._rates.pop(rid)
         else:
             self._rates.pop(rate)
 
@@ -227,7 +227,7 @@ class Library:
         include only forward rates.
         """
 
-        if type(nuclist) == Nucleus or type(nuclist) == str:
+        if isinstance(nuclist, (Nucleus, str)):
             nuclist = [nuclist]
         else:
             try:
@@ -237,7 +237,7 @@ class Library:
 
         nucleus_list = []
         for nuc in nuclist:
-            if type(nuc) == Nucleus:
+            if isinstance(nuc, Nucleus):
                 nucleus_list.append(nuc)
             else:
                 try:
@@ -284,7 +284,7 @@ class Library:
         then return rates with exactly the reactants or products
         passed in as arguments.
         """
-        if type(filter_spec) == RateFilter:
+        if isinstance(filter_spec, RateFilter):
             filter_specifications = [filter_spec]
         else:
             try:
@@ -294,17 +294,16 @@ class Library:
             else:
                 filter_specifications = filter_spec
         matching_rates = collections.OrderedDict()
-        for id, r in self._rates.items():
+        for rid, r in self._rates.items():
             for f in filter_specifications:
                 if f.matches(r):
-                    matching_rates[id] = r
+                    matching_rates[rid] = r
                     break
         if matching_rates:
             return Library(libfile=self._library_file,
                            rates=matching_rates,
                            read_library=False)
-        else:
-            return None
+        return None
 
     def validate(self, other_library, forward_only=True, ostream=None):
         """perform various checks on the library, comparing to other_library,
@@ -459,18 +458,18 @@ class RateFilter:
         self.filter_function = filter_function
 
         if reactants:
-            if type(reactants) == Nucleus or type(reactants) == str:
+            if isinstance(reactants, (Nucleus, str)):
                 reactants = [reactants]
             self.reactants = [self._cast_nucleus(r) for r in reactants]
         if products:
-            if type(products) == Nucleus or type(products) == str:
+            if isinstance(products, (Nucleus, str)):
                 products = [products]
             self.products = [self._cast_nucleus(r) for r in products]
 
     @staticmethod
     def _cast_nucleus(r):
         """ Make sure r is of type Nucleus. """
-        if not type(r) == Nucleus:
+        if not isinstance(r, Nucleus):
             try:
                 rnuc = Nucleus(r)
             except:
@@ -488,8 +487,7 @@ class RateFilter:
         """
         if a and b:
             return collections.Counter(a) == collections.Counter(b)
-        else:
-            return (not a) and (not b)
+        return (not a) and (not b)
 
     @staticmethod
     def _compare_nuclides(test, reference, exact=True):
@@ -503,7 +501,7 @@ class RateFilter:
             matches = RateFilter._contents_equal(test, reference)
         else:
             for nuc in test:
-                if not (nuc in reference):
+                if nuc not in reference:
                     matches = False
                     break
         return matches
@@ -522,15 +520,15 @@ class RateFilter:
             matches_reactants = self._compare_nuclides(self.reactants, r.reactants, self.exact)
         if self.products:
             matches_products = self._compare_nuclides(self.products, r.products, self.exact)
-        if type(self.reverse) == type(True):
+        if isinstance(self.reverse, bool):
             matches_reverse = self.reverse == r.reverse
-        if type(self.min_reactants) == int:
+        if isinstance(self.min_reactants, int):
             matches_min_reactants = len(r.reactants) >= self.min_reactants
-        if type(self.min_products) == int:
+        if isinstance(self.min_products, int):
             matches_min_products = len(r.products) >= self.min_products
-        if type(self.max_reactants) == int:
+        if isinstance(self.max_reactants, int):
             matches_max_reactants = len(r.reactants) <= self.max_reactants
-        if type(self.max_products) == int:
+        if isinstance(self.max_products, int):
             matches_max_products = len(r.products) <= self.max_products
         if self.filter_function is not None:
             matches_filter_function = self.filter_function(r)
@@ -551,8 +549,9 @@ class RateFilter:
                                max_products=self.max_reactants)
         return newfilter
 
+
 class ReacLibLibrary(Library):
 
     def __init__(self, libfile='20180319default2', rates=None, read_library=True):
-        assert libfile == '20180319default2'  and rates is None and read_library, "Only the 20180319default2 default ReacLib snapshot is accepted"
+        assert libfile == '20180319default2' and rates is None and read_library, "Only the 20180319default2 default ReacLib snapshot is accepted"
         Library.__init__(self, libfile=libfile, rates=rates, read_library=read_library)

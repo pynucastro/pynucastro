@@ -24,6 +24,7 @@ from pynucastro.rates import Rate, Nucleus, Library
 
 mpl.rcParams['figure.dpi'] = 100
 
+
 class Composition:
     """a composition holds the mass fractions of the nuclei in a network
     -- useful for evaluating the rates
@@ -33,8 +34,7 @@ class Composition:
         """nuclei is an iterable of the nuclei (Nucleus objects) in the network"""
         if not isinstance(nuclei[0], Nucleus):
             raise ValueError("must supply an iterable of Nucleus objects")
-        else:
-            self.X = {k: small for k in nuclei}
+        self.X = {k: small for k in nuclei}
 
     def set_solar_like(self, Z=0.02):
         """ approximate a solar abundance, setting p to 0.7, He4 to 0.3 - Z and
@@ -96,6 +96,7 @@ class Composition:
             ostr += f"  X({k}) : {self.X[k]}\n"
         return ostr
 
+
 class RateCollection:
     """ a collection of rates that together define a network """
 
@@ -146,7 +147,7 @@ class RateCollection:
             try:
                 for r in rates:
                     assert isinstance(r, Rate)
-            except:
+            except AssertionError:
                 print('Expected Rate object or list of Rate objects passed as the rates argument.')
                 raise
             else:
@@ -162,7 +163,7 @@ class RateCollection:
             try:
                 for lib in libraries:
                     assert isinstance(lib, Library)
-            except:
+            except AssertionError:
                 print('Expected Library object or list of Library objects passed as the libraries argument.')
                 raise
             else:
@@ -381,14 +382,17 @@ class RateCollection:
 
         nameset = {r.fname for r in self.rates}
         precedence = {lab: i for i, lab in enumerate(precedence)}
-        def sorting_key(i): return precedence[self.rates[i].label]
+
+        def sorting_key(i):
+            return precedence[self.rates[i].label]
 
         for n in nameset:
 
             # Count instances of name, and cycle if there is only one
             ind = [i for i, r in enumerate(self.rates) if r.fname == n]
             k = len(ind)
-            if k <= 1: continue
+            if k <= 1:
+                continue
 
             # If there were multiple instances, use the precedence settings to delete extraneous
             # rates
@@ -398,7 +402,8 @@ class RateCollection:
 
                 sorted_ind = sorted(ind, key=sorting_key)
                 r = self.rates[sorted_ind[0]]
-                for i in sorted(sorted_ind[1:], reverse=True): del self.rates[i]
+                for i in sorted(sorted_ind[1:], reverse=True):
+                    del self.rates[i]
                 print(f'Found rate {r} named {n} with {k} entries in the RateCollection.')
                 print(f'Kept only entry with label {r.label} out of {labels}.')
 
@@ -406,7 +411,6 @@ class RateCollection:
         """A stub for function to output the network -- this is implementation
         dependent."""
         print('To create network integration source code, use a class that implements a specific network type.')
-        return
 
     def plot(self, outfile=None, rho=None, T=None, comp=None,
              size=(800, 600), dpi=100, title=None,
@@ -586,7 +590,7 @@ class RateCollection:
         # get the edges and weights coupled in the same order
         edges, weights = zip(*nx.get_edge_attributes(G, 'weight').items())
 
-        edge_color=weights
+        edge_color = weights
         ww = np.array(weights)
         min_weight = ww.min()
         max_weight = ww.max()
@@ -691,8 +695,10 @@ class RateCollection:
     @staticmethod
     def _scale(arr, minval=None, maxval=None):
 
-        if minval is None: minval = arr.min()
-        if maxval is None: maxval = arr.max()
+        if minval is None:
+            minval = arr.min()
+        if maxval is None:
+            maxval = arr.max()
         if minval != maxval:
             scaled = (arr - minval) / (maxval - minval)
         else:
@@ -756,7 +762,8 @@ class RateCollection:
         dpi = kwargs.pop("dpi", 100)
         linthresh = kwargs.pop("linthresh", 1.0)
 
-        if kwargs: warnings.warn(f"Unrecognized keyword arguments: {kwargs.keys()}")
+        if kwargs:
+            warnings.warn(f"Unrecognized keyword arguments: {kwargs.keys()}")
 
         # Get figure, colormap
         fig, ax = plt.subplots()
@@ -794,7 +801,8 @@ class RateCollection:
                 raise ValueError("Need both rho and T to evaluate rates!")
             ydots = self.evaluate_ydots(rho, T, comp)
             values = np.array([ydots[nuc] for nuc in nuclei])
-            if color_field == "xdot": values *= As
+            if color_field == "xdot":
+                values *= As
 
         elif color_field == "activity":
 
@@ -803,8 +811,10 @@ class RateCollection:
             act = self.evaluate_activity(rho, T, comp)
             values = np.array([act[nuc] for nuc in nuclei])
 
-        if scale == "log": values = self._safelog(values, small)
-        elif scale == "symlog": values = self._symlog(values, linthresh)
+        if scale == "log":
+            values = self._safelog(values, small)
+        elif scale == "symlog":
+            values = self._symlog(values, linthresh)
 
         if cbar_bounds is None:
             cbar_bounds = values.min(), values.max()
@@ -835,14 +845,13 @@ class RateCollection:
 
         if no_axes or no_ticks:
 
-            plt.tick_params \
-            (
-                axis = 'both',
-                which = 'both',
-                bottom = False,
-                left = False,
-                labelbottom = False,
-                labelleft = False
+            plt.tick_params(
+                axis='both',
+                which='both',
+                bottom=False,
+                left=False,
+                labelbottom=False,
+                labelleft=False
             )
 
         else:

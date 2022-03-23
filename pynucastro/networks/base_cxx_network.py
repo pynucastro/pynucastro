@@ -83,7 +83,7 @@ class BaseCxxNetwork(ABC, RateCollection):
 
     def get_indent_amt(self, l, k):
         """determine the amount of spaces to indent a line"""
-        rem = re.match(r'\A'+k+r'\(([0-9]*)\)\Z',l)
+        rem = re.match(r'\A'+k+r'\(([0-9]*)\)\Z', l)
         return int(rem.group(1))
 
     def _write_network(self, odir=None):
@@ -106,7 +106,7 @@ class BaseCxxNetwork(ABC, RateCollection):
                 if not os.path.isdir(odir):
                     try:
                         os.mkdir(odir)
-                    except:
+                    except OSError:
                         sys.exit(f"unable to create directory {odir}")
                 outfile = os.path.normpath(odir + "/" + outfile)
 
@@ -403,7 +403,7 @@ class BaseCxxNetwork(ABC, RateCollection):
                     of.write(f"{self.indent*n_indent}jac.set({nj.c()}, {ni.c()}, scratch);\n\n")
 
     def _initial_mass_fractions(self, n_indent, of):
-        for i, n in enumerate(self.unique_nuclei):
+        for i, _ in enumerate(self.unique_nuclei):
             if i == 0:
                 of.write(f"{self.indent*n_indent}unit_test.X{i+1} = 1.0\n")
             else:

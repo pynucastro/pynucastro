@@ -133,7 +133,7 @@ class SympyRates:
         # makes sure a letter isn't right in front of the match (like
         # 'k3d-1'). Alternately, we allow for a match at the start of
         # the string.
-        d_re = re.compile(r"([^\w\+\-]|\A)([\+\-0-9.][0-9.]+)[dD]([\+\-]?[0-9]+)", re.IGNORECASE|re.DOTALL)
+        d_re = re.compile(r"([^\w\+\-]|\A)([\+\-0-9.][0-9.]+)[dD]([\+\-]?[0-9]+)", re.IGNORECASE | re.DOTALL)
 
         # update "d" scientific notation -- allow for multiple
         # constants in a single string
@@ -168,7 +168,7 @@ class SympyRates:
         # isn't right in front of the match (like
         # 'k3d-1'). Alternately, we allow for a match at the start of
         # the string.
-        e_re = re.compile(r"([^\w\+\-]|\A)([\+\-0-9.][0-9.]+)[eE]([\+\-]?[0-9]+)", re.IGNORECASE|re.DOTALL)
+        e_re = re.compile(r"([^\w\+\-]|\A)([\+\-0-9.][0-9.]+)[eE]([\+\-]?[0-9]+)", re.IGNORECASE | re.DOTALL)
 
         # update "d" scientific notation -- allow for multiple
         # constants in a single string
