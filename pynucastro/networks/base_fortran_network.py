@@ -16,7 +16,6 @@ import string
 
 import sympy
 from pynucastro.networks import RateCollection
-from pynucastro.nucdata import BindingTable
 from pynucastro.networks import SympyRates
 
 class BaseFortranNetwork(ABC, RateCollection):
@@ -285,10 +284,8 @@ class BaseFortranNetwork(ABC, RateCollection):
                 self.indent*n_indent, r.fname, i+1))
 
     def _ebind(self, n_indent, of):
-        bintable = BindingTable()
         for nuc in self.unique_nuclei:
-            nuc_in_table = bintable.get_nuclide(n=nuc.N, z=nuc.Z)
-            str_nucbind = self.fmt_to_rt_f90(nuc_in_table.nucbind)
+            str_nucbind = self.fmt_to_rt_f90(nuc.nucbind)
             of.write('{}ebind_per_nucleon(j{})   = {}\n'.format(
                 self.indent*n_indent, nuc, str_nucbind))
 
