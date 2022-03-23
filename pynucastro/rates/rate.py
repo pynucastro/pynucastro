@@ -101,7 +101,7 @@ class SingleSet:
         assert isinstance(self.labelprops, str)
         try:
             assert len(self.labelprops) == 6
-        except:
+        except AssertionError:
             raise
         else:
             self.label = self.labelprops[0:4]
@@ -230,7 +230,7 @@ class Nucleus:
             assert self.el
             try:
                 self.A = int(e.group(2))
-            except:
+            except (TypeError, ValueError):
                 if (name.strip() == 'al-6' or
                     name.strip() == 'al*6'):
                     raise UnsupportedNucleus()
@@ -302,7 +302,7 @@ class Nucleus:
     def __eq__(self, other):
         if isinstance(other, Nucleus):
             return self.el == other.el and \
-               self.Z == other.Z and self.A == other.A
+                self.Z == other.Z and self.A == other.A
         if isinstance(other, tuple):
             return (self.Z, self.A) == other
         return NotImplemented
@@ -568,7 +568,7 @@ class Rate:
                 try:
                     # see if there is a chapter number preceding the set
                     check_chapter = int(check_chapter)
-                except:
+                except (TypeError, ValueError):
                     # there was no chapter number, proceed reading a set
                     pass
                 else:
@@ -576,7 +576,7 @@ class Rate:
                     # is the same as the first set in this rate file
                     try:
                         assert check_chapter == self.chapter
-                    except:
+                    except AssertionError:
                         print(f'ERROR: read chapter {check_chapter}, expected chapter {self.chapter} for this rate set.')
                         raise
                     else:
@@ -921,7 +921,7 @@ class Rate:
             except ValueError:
                 print("Divide by zero encountered in log10\nChange the scale of T or rhoY")
 
-            _, ax = plt.subplots(figsize=(10,10))
+            _, ax = plt.subplots(figsize=(10, 10))
 
             im = ax.imshow(pivot_table, cmap='jet')
             plt.colorbar(im)

@@ -84,14 +84,14 @@ class Library:
             self._rates = collections.OrderedDict()
         for r in ratelist:
             rid = r.get_rate_id()
-            assert not rid in self._rates, "ERROR: supplied a Rate object already in the Library."
+            assert rid not in self._rates, "ERROR: supplied a Rate object already in the Library."
             self._rates[rid] = r
 
     def _read_library_file(self):
         # loop through library file, read lines
         try:
             flib = open(self._library_file)
-        except:
+        except IOError:
             print(f'Could not open file {self._library_file}')
             raise
         for line in flib:
@@ -116,11 +116,11 @@ class Library:
             else:
                 try:
                     chapter = int(line)
-                except:
+                except (TypeError, ValueError):
                     # we can't interpret line as a chapter so use current_chapter
                     try:
                         assert current_chapter
-                    except:
+                    except AssertionError:
                         print(f'ERROR: malformed library file {self._library_file}, cannot identify chapter.')
                         raise
                     else:
@@ -170,7 +170,7 @@ class Library:
         for rid, r in other._rates.items():
             try:
                 assert rid not in new_rates
-            except:
+            except AssertionError:
                 if r != new_rates[rid]:
                     print(f'ERROR: rate {r} defined differently in libraries {self._library_file} and {other._library_file}\n')
                     raise
@@ -501,7 +501,7 @@ class RateFilter:
             matches = RateFilter._contents_equal(test, reference)
         else:
             for nuc in test:
-                if not nuc in reference:
+                if nuc not in reference:
                     matches = False
                     break
         return matches
@@ -549,8 +549,9 @@ class RateFilter:
                                max_products=self.max_reactants)
         return newfilter
 
+
 class ReacLibLibrary(Library):
 
     def __init__(self, libfile='20180319default2', rates=None, read_library=True):
-        assert libfile == '20180319default2'  and rates is None and read_library, "Only the 20180319default2 default ReacLib snapshot is accepted"
+        assert libfile == '20180319default2' and rates is None and read_library, "Only the 20180319default2 default ReacLib snapshot is accepted"
         Library.__init__(self, libfile=libfile, rates=rates, read_library=read_library)
