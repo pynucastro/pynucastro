@@ -24,6 +24,7 @@ from pynucastro.rates import Rate, Nucleus, Library
 
 mpl.rcParams['figure.dpi'] = 100
 
+
 class Composition:
     """a composition holds the mass fractions of the nuclei in a network
     -- useful for evaluating the rates
@@ -95,6 +96,7 @@ class Composition:
             ostr += f"  X({k}) : {self.X[k]}\n"
         return ostr
 
+
 class RateCollection:
     """ a collection of rates that together define a network """
 
@@ -145,7 +147,7 @@ class RateCollection:
             try:
                 for r in rates:
                     assert isinstance(r, Rate)
-            except:
+            except AssertionError:
                 print('Expected Rate object or list of Rate objects passed as the rates argument.')
                 raise
             else:
@@ -161,7 +163,7 @@ class RateCollection:
             try:
                 for lib in libraries:
                     assert isinstance(lib, Library)
-            except:
+            except AssertionError:
                 print('Expected Library object or list of Library objects passed as the libraries argument.')
                 raise
             else:
@@ -380,6 +382,7 @@ class RateCollection:
 
         nameset = {r.fname for r in self.rates}
         precedence = {lab: i for i, lab in enumerate(precedence)}
+
         def sorting_key(i):
             return precedence[self.rates[i].label]
 
@@ -587,7 +590,7 @@ class RateCollection:
         # get the edges and weights coupled in the same order
         edges, weights = zip(*nx.get_edge_attributes(G, 'weight').items())
 
-        edge_color=weights
+        edge_color = weights
         ww = np.array(weights)
         min_weight = ww.min()
         max_weight = ww.max()
@@ -842,14 +845,13 @@ class RateCollection:
 
         if no_axes or no_ticks:
 
-            plt.tick_params \
-            (
-                axis = 'both',
-                which = 'both',
-                bottom = False,
-                left = False,
-                labelbottom = False,
-                labelleft = False
+            plt.tick_params(
+                axis='both',
+                which='both',
+                bottom=False,
+                left=False,
+                labelbottom=False,
+                labelleft=False
             )
 
         else:

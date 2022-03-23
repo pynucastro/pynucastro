@@ -1,7 +1,6 @@
 """Support modules to write a pure python reaction network ODE
 source"""
 
-
 import sys
 
 from pynucastro.networks import RateCollection
@@ -156,7 +155,7 @@ class PythonNetwork(RateCollection):
         else:
             try:
                 of = open(outfile, "w")
-            except:
+            except IOError:
                 print(f"unable to open {outfile}")
                 raise
 
@@ -208,7 +207,6 @@ class PythonNetwork(RateCollection):
             of.write(f"{indent}i{n} = {i}\n")
 
         of.write(f"{indent}nnuc = {len(self.unique_nuclei)}\n\n")
-
 
         # get the rates
         of.write(f"{indent}tf = Tfactors(T)\n\n")

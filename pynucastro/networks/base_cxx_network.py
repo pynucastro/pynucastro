@@ -83,7 +83,7 @@ class BaseCxxNetwork(ABC, RateCollection):
 
     def get_indent_amt(self, l, k):
         """determine the amount of spaces to indent a line"""
-        rem = re.match(r'\A'+k+r'\(([0-9]*)\)\Z',l)
+        rem = re.match(r'\A'+k+r'\(([0-9]*)\)\Z', l)
         return int(rem.group(1))
 
     def _write_network(self, odir=None):
@@ -106,7 +106,7 @@ class BaseCxxNetwork(ABC, RateCollection):
                 if not os.path.isdir(odir):
                     try:
                         os.mkdir(odir)
-                    except:
+                    except OSError:
                         sys.exit(f"unable to create directory {odir}")
                 outfile = os.path.normpath(odir + "/" + outfile)
 
