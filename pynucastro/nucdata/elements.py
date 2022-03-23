@@ -4,9 +4,11 @@ class Element(object):
         self.name = name
         self.Z = Z
 
+
 class UnidentifiedElement(BaseException):
     def __init__(self):
         return
+
 
 class PeriodicTable(object):
     table = {'h':  Element('h',  'hydrogen', 1),

@@ -7,6 +7,7 @@ import os
 
 from ame_nuclide import AMENuclide
 
+
 def str_head_pop(s, n):
     """
     Pop n characters from string s from the beginning.
@@ -17,6 +18,7 @@ def str_head_pop(s, n):
         return ('', s)
     s = list(s)
     return (''.join(s[n:]), ''.join(s[:n]))
+
 
 def cleanup(s):
     """
@@ -30,6 +32,7 @@ def cleanup(s):
     s = s.replace('*', '')
     s = s.replace(' ', '')
     return s
+
 
 class AMETable(object):
     """A simple class to manage reading and parsing the AME Table data
@@ -61,7 +64,7 @@ class AMETable(object):
         """
         try:
             f = open(self.datfile, 'r')
-        except:
+        except IOError:
             print('ERROR: data file not found!')
             exit()
 
