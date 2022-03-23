@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.networks.rate_collection &mdash; pynucastro 1.6.0.post58+gab550c0 documentation</title>
+  <title>pynucastro.networks.rate_collection &mdash; pynucastro 1.6.0.post59+gfdb17b2 documentation</title>
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -175,6 +175,29 @@
         <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">:</span>
             <span class="n">ostr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;  X(</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">) : </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="k">return</span> <span class="n">ostr</span></div>
+
+<div class="viewcode-block" id="ScreeningPair"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.ScreeningPair">[docs]</a><span class="k">class</span> <span class="nc">ScreeningPair</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;a pair of nuclei that will have rate screening applied.  We store a</span>
+<span class="sd">    list of all rates that match this pair of nuclei&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">nuc1</span><span class="p">,</span> <span class="n">nuc2</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n1</span> <span class="o">=</span> <span class="n">nuc1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n2</span> <span class="o">=</span> <span class="n">nuc2</span>
+
+        <span class="k">if</span> <span class="n">rate</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rates</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rates</span> <span class="o">=</span> <span class="p">[</span><span class="n">rate</span><span class="p">]</span>
+
+<div class="viewcode-block" id="ScreeningPair.add_rate"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.ScreeningPair.add_rate">[docs]</a>    <span class="k">def</span> <span class="nf">add_rate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rate</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rate</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;all we care about is whether the names are the same -- that conveys</span>
+<span class="sd">        what the reaction is&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">name</span></div>
 
 <div class="viewcode-block" id="RateCollection"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection">[docs]</a><span class="k">class</span> <span class="nc">RateCollection</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot; a collection of rates that together define a network &quot;&quot;&quot;</span>
@@ -401,7 +424,7 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">screening_map</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">:</span>
             <span class="n">screen_nuclei</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">ion_screen</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">symmetric_screening</span><span class="p">:</span>
                 <span class="n">screen_nuclei</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">symmetric_screen</span>
@@ -409,31 +432,49 @@
             <span class="k">if</span> <span class="n">screen_nuclei</span><span class="p">:</span>
                 <span class="n">nucs</span> <span class="o">=</span> <span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">q</span><span class="p">)</span> <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="n">screen_nuclei</span><span class="p">])</span>
                 <span class="n">in_map</span> <span class="o">=</span> <span class="kc">False</span>
-                <span class="k">for</span> <span class="n">h</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">mrates</span><span class="p">,</span> <span class="n">krates</span> <span class="ow">in</span> <span class="n">screening_map</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="n">h</span> <span class="o">==</span> <span class="n">nucs</span><span class="p">:</span>
-                        <span class="c1"># if we already have the reactants, then we</span>
-                        <span class="c1"># will already be doing the screening factors,</span>
-                        <span class="c1"># so just append this new rate to the list we</span>
-                        <span class="c1"># are keeping of the rates where this</span>
-                        <span class="c1"># screening is needed</span>
-                        <span class="n">in_map</span> <span class="o">=</span> <span class="kc">True</span>
-                        <span class="n">mrates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
-                        <span class="n">krates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
-                        <span class="k">break</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="n">in_map</span><span class="p">:</span>
-                    <span class="c1"># we handle 3-alpha specially -- we actually need 2 screening factors for it</span>
+
+                <span class="n">scr</span> <span class="o">=</span> <span class="p">[</span><span class="n">q</span> <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="n">screening_map</span> <span class="k">if</span> <span class="n">q</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">nucs</span><span class="p">]</span>
+
+                <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">scr</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">1</span>
+
+                <span class="k">if</span> <span class="n">scr</span><span class="p">:</span>
+                    <span class="c1"># we already have the reactants in our map, so we</span>
+                    <span class="c1"># will already be doing the screening factors.</span>
+                    <span class="c1"># Just append this new rate to the list we are</span>
+                    <span class="c1"># keeping of the rates where this screening is</span>
+                    <span class="c1"># needed</span>
+
+                    <span class="n">scr</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">add_rate</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+
+                    <span class="c1"># if we got here because nuc == &quot;he4_he4_he4&quot;,</span>
+                    <span class="c1"># then we also have to add to &quot;he4_he4_he4_dummy&quot;</span>
+
+                    <span class="k">if</span> <span class="n">nucs</span> <span class="o">==</span> <span class="s2">&quot;he4_he4_he4&quot;</span><span class="p">:</span>
+                        <span class="n">scr2</span> <span class="o">=</span> <span class="p">[</span><span class="n">q</span> <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="n">screening_map</span> <span class="k">if</span> <span class="n">q</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">nucs</span> <span class="o">+</span> <span class="s2">&quot;_dummy&quot;</span><span class="p">]</span>
+                        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">scr2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+
+                        <span class="n">scr2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">add_rate</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+
+                <span class="k">else</span><span class="p">:</span>
+
+                    <span class="c1"># we handle 3-alpha specially -- we actually need</span>
+                    <span class="c1"># 2 screening factors for it</span>
+
                     <span class="k">if</span> <span class="n">nucs</span> <span class="o">==</span> <span class="s2">&quot;he4_he4_he4&quot;</span><span class="p">:</span>
                         <span class="c1"># he4 + he4</span>
-                        <span class="n">screening_map</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">nucs</span><span class="p">,</span> <span class="n">screen_nuclei</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">screen_nuclei</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
-                                              <span class="p">[</span><span class="n">r</span><span class="p">],</span> <span class="p">[</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">]))</span>
+                        <span class="n">scr1</span> <span class="o">=</span> <span class="n">ScreeningPair</span><span class="p">(</span><span class="n">nucs</span><span class="p">,</span> <span class="n">screen_nuclei</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">screen_nuclei</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">r</span><span class="p">)</span>
+
                         <span class="c1"># he4 + be8</span>
                         <span class="n">be8</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;Be8&quot;</span><span class="p">,</span> <span class="n">dummy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-                        <span class="n">screening_map</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">nucs</span><span class="o">+</span><span class="s2">&quot;_dummy&quot;</span><span class="p">,</span> <span class="n">screen_nuclei</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">be8</span><span class="p">,</span>
-                                              <span class="p">[</span><span class="n">r</span><span class="p">],</span> <span class="p">[</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">]))</span>
+                        <span class="n">scr2</span> <span class="o">=</span> <span class="n">ScreeningPair</span><span class="p">(</span><span class="n">nucs</span> <span class="o">+</span> <span class="s2">&quot;_dummy&quot;</span><span class="p">,</span> <span class="n">screen_nuclei</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">be8</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span>
+
+                        <span class="n">screening_map</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">scr1</span><span class="p">)</span>
+                        <span class="n">screening_map</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">scr2</span><span class="p">)</span>
 
                     <span class="k">else</span><span class="p">:</span>
-                        <span class="n">screening_map</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">nucs</span><span class="p">,</span> <span class="n">screen_nuclei</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">screen_nuclei</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
-                                              <span class="p">[</span><span class="n">r</span><span class="p">],</span> <span class="p">[</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">]))</span>
+                        <span class="n">scr1</span> <span class="o">=</span> <span class="n">ScreeningPair</span><span class="p">(</span><span class="n">nucs</span><span class="p">,</span> <span class="n">screen_nuclei</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">screen_nuclei</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">r</span><span class="p">)</span>
+                        <span class="n">screening_map</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">scr1</span><span class="p">)</span>
+
         <span class="k">return</span> <span class="n">screening_map</span></div>
 
 <div class="viewcode-block" id="RateCollection.write_network"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.write_network">[docs]</a>    <span class="k">def</span> <span class="nf">write_network</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
