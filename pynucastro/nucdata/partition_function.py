@@ -230,7 +230,7 @@ class PartitionFunctionCollection:
     """ The PartitionFunctionCollection holds a collection of PartitionFunctionTable objects in a dictionary keyed 
     by the name of the tables
     
-    In our discussion we have two different tables"""
+    In our discussion we have two different set of tables"""
 
     def __init__(self, use_high_temperatures = True, use_set = 'frdm'):
         self._partition_function_tables = {}
