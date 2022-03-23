@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(name='pynucastro',
-      description='Python Interfaces to the nuclear reaction rate databases',
+      description='Python Interfaces to nuclear reaction rate databases',
       url='https://github.com/pynucastro/nucastro',
       author='pynucastro development group',
       author_email='michael.zingale@stonybrook.edu',
