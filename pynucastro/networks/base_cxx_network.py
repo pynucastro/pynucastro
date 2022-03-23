@@ -403,7 +403,7 @@ class BaseCxxNetwork(ABC, RateCollection):
                     of.write(f"{self.indent*n_indent}jac.set({nj.c()}, {ni.c()}, scratch);\n\n")
 
     def _initial_mass_fractions(self, n_indent, of):
-        for i, n in enumerate(self.unique_nuclei):
+        for i, _ in enumerate(self.unique_nuclei):
             if i == 0:
                 of.write(f"{self.indent*n_indent}unit_test.X{i+1} = 1.0\n")
             else:
