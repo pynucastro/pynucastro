@@ -187,30 +187,34 @@ class BaseCxxNetwork(ABC, RateCollection):
 
     def _compute_screening_factors(self, n_indent, of):
         screening_map = self.get_screening_map()
-        for i, (h, n1, n2, r, _) in enumerate(screening_map):
+        for i, scr in enumerate(screening_map):
 
-            if not n1.dummy:
-                nuc1_info = f'zion[{n1.c()}-1], aion[{n1.c()}-1]'
+            if not scr.n1.dummy:
+                nuc1_info = f'zion[{scr.n1.c()}-1], aion[{scr.n1.c()}-1]'
             else:
-                nuc1_info = f'{float(n1.Z)}_rt, {float(n1.A)}_rt'
-            if not n2.dummy:
-                nuc2_info = f'zion[{n2.c()}-1], aion[{n2.c()}-1]'
+                nuc1_info = f'{float(scr.n1.Z)}_rt, {float(scr.n1.A)}_rt'
+            if not scr.n2.dummy:
+                nuc2_info = f'zion[{scr.n2.c()}-1], aion[{scr.n2.c()}-1]'
             else:
-                nuc2_info = f'{float(n2.Z)}_rt, {float(n2.A)}_rt'
+                nuc2_info = f'{float(scr.n2.Z)}_rt, {float(scr.n2.A)}_rt'
 
-            if h == "he4_he4_he4":
+            if scr.name == "he4_he4_he4":
                 # we'll hahandle the first part of the 3-alpha screening here
                 of.write(f'{self.indent*n_indent}screen5(pstate, {i}, {nuc1_info}, {nuc2_info}, scor, dscor_dt, dscor_dd);\n')
 
-            elif h == "he4_he4_he4_dummy":
+            elif scr.name == "he4_he4_he4_dummy":
                 # now the second part of 3-alpha
                 of.write(f'{self.indent*n_indent}screen5(pstate, {i}, {nuc1_info}, {nuc2_info}, scor2, dscor2_dt, dscor2_dd);\n\n')
 
-                of.write(f'{self.indent*n_indent}ratraw = rate_eval.screened_rates(k_{r[0].fname});\n')
-                of.write(f'{self.indent*n_indent}dratraw_dT = rate_eval.dscreened_rates_dT(k_{r[0].fname});\n')
+                # there might be both the forward and reverse 3-alpha
+                # if we are doing symmetric screening
 
-                of.write(f'{self.indent*n_indent}rate_eval.screened_rates(k_{r[0].fname}) *= scor * scor2;\n')
-                of.write(f'{self.indent*n_indent}rate_eval.dscreened_rates_dT(k_{r[0].fname}) = ratraw * (scor * dscor2_dt + dscor_dt * scor2) + dratraw_dT * scor * scor2;\n')
+                for rr in scr.rates:
+                    of.write(f'\n')
+                    of.write(f'{self.indent*n_indent}ratraw = rate_eval.screened_rates(k_{rr.fname});\n')
+                    of.write(f'{self.indent*n_indent}dratraw_dT = rate_eval.dscreened_rates_dT(k_{rr.fname});\n')
+                    of.write(f'{self.indent*n_indent}rate_eval.screened_rates(k_{rr.fname}) *= scor * scor2;\n')
+                    of.write(f'{self.indent*n_indent}rate_eval.dscreened_rates_dT(k_{rr.fname}) = ratraw * (scor * dscor2_dt + dscor_dt * scor2) + dratraw_dT * scor * scor2;\n')
 
             else:
                 of.write(f'\n{self.indent*n_indent}screen5(pstate, {i}, {nuc1_info}, {nuc2_info}, scor, dscor_dt, dscor_dd);\n\n')
@@ -219,7 +223,7 @@ class BaseCxxNetwork(ABC, RateCollection):
                 # reactants and therefore the same screening applies
                 # -- handle them all now
 
-                for rr in r:
+                for rr in scr.rates:
                     of.write(f'\n')
                     of.write(f'{self.indent*n_indent}ratraw = rate_eval.screened_rates(k_{rr.fname});\n')
                     of.write(f'{self.indent*n_indent}dratraw_dT = rate_eval.dscreened_rates_dT(k_{rr.fname});\n')
@@ -256,16 +260,16 @@ class BaseCxxNetwork(ABC, RateCollection):
 
     def _screen_add(self, n_indent, of):
         screening_map = self.get_screening_map()
-        for _, n1, n2, _, _ in screening_map:
+        for scr in screening_map:
             of.write(f'{self.indent*n_indent}add_screening_factor(jscr++, ')
-            if not n1.dummy:
-                of.write(f'zion[{n1.c()}-1], aion[{n1.c()}-1], ')
+            if not scr.n1.dummy:
+                of.write(f'zion[{scr.n1.c()}-1], aion[{scr.n1.c()}-1], ')
             else:
-                of.write(f'{float(n1.Z)}_rt, {float(n1.A)}_rt, ')
-            if not n2.dummy:
-                of.write(f'zion[{n2.c()}-1], aion[{n2.c()}-1]);\n\n')
+                of.write(f'{float(scr.n1.Z)}_rt, {float(scr.n1.A)}_rt, ')
+            if not scr.n2.dummy:
+                of.write(f'zion[{scr.n2.c()}-1], aion[{scr.n2.c()}-1]);\n\n')
             else:
-                of.write(f'{float(n2.Z)}_rt, {float(n2.A)}_rt);\n\n')
+                of.write(f'{float(scr.n2.Z)}_rt, {float(scr.n2.A)}_rt);\n\n')
 
     def _write_reaclib_metadata(self, n_indent, of):
         jset = 0
