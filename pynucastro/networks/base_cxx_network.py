@@ -221,7 +221,12 @@ class BaseCxxNetwork(ABC, RateCollection):
 
             of.write('\n')
 
-        self.num_screen_calls = len(screening_map)
+        # the C++ screen.H code requires that there be at least 1 screening
+        # factor because it statically allocates some arrays, so if we turned
+        # off screening, just set num_screen_calls = 1 here.
+
+        self.num_screen_calls = max(1, len(screening_map))
+
 
     def _nrat_reaclib(self, n_indent, of):
         # Writes the number of Reaclib rates
