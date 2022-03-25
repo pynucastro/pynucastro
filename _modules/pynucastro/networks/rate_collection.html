@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.networks.rate_collection &mdash; pynucastro 1.6.0.post59+gfdb17b2 documentation</title>
+  <title>pynucastro.networks.rate_collection &mdash; pynucastro 1.6.0.post62+g5efaabb documentation</title>
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -205,7 +205,7 @@
     <span class="n">pynucastro_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)))</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rate_files</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">libraries</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rates</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">precedence</span><span class="o">=</span><span class="p">(),</span>
-                 <span class="n">symmetric_screening</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+                 <span class="n">symmetric_screening</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">do_screening</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;rate_files are the files that together define the network.  This</span>
 <span class="sd">        can be any iterable or single string.</span>
 
@@ -237,6 +237,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">library</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">symmetric_screening</span> <span class="o">=</span> <span class="n">symmetric_screening</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">do_screening</span> <span class="o">=</span> <span class="n">do_screening</span>
 
         <span class="k">if</span> <span class="n">rate_files</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rate_files</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
@@ -424,6 +425,9 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">screening_map</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_screening</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">screening_map</span>
+
         <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">:</span>
             <span class="n">screen_nuclei</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">ion_screen</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">symmetric_screening</span><span class="p">:</span>

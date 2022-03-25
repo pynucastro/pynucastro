@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro package &mdash; pynucastro 1.6.0.post59+gfdb17b2 documentation</title>
+  <title>pynucastro package &mdash; pynucastro 1.6.0.post62+g5efaabb documentation</title>
       <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -176,9 +176,10 @@ a network.</p></li>
 <li><p>BaseFortranNetwork : this extends the RateCollection to enable
 output of Fortran code that can be used to integrate the network
 with the included VODE package for ODE integration.</p></li>
-<li><p>StarKillerNetwork : this extends the RateCollection to enable output
-of Fortran code that can be used to add a network to the
-hydrodynamics codes Castro and Maestro via the StarKiller
+<li><p>StarKillerNetwork : this is deprecated.</p></li>
+<li><p>StarKillerCxxNetwork : this extends the RateCollection to enable
+output of C++ code that can be used to add a network to the
+hydrodynamics codes Castro and MAESTROeX via the StarKiller
 Microphysics repository.</p></li>
 </ul>
 </section>
@@ -202,9 +203,9 @@ desired rate or group of rates from a RateLibrary.</p></li>
 </section>
 <section id="screening">
 <h2>screening<a class="headerlink" href="#screening" title="Permalink to this headline">¶</a></h2>
-<p>screening provides routines used by the BaseFortranNetwork to screen
-Reaclib reaction rates in the weak, intermediate, and strong
-regimes. Tabulated rates are not screened.</p>
+<p>screening provides routines used by the BaseFortranNetwork and
+BaseCxxNetwork to screen Reaclib reaction rates in the weak,
+intermediate, and strong regimes. Tabulated rates are not screened.</p>
 <p>The Fortran module in <cite>pynucastro/screening</cite> is only used for the
 standalone Fortran network. StarKiller Microphysics networks also use
 rate screening, but they use the screening module in the StarKiller
@@ -212,11 +213,12 @@ Microphysics repository.</p>
 </section>
 <section id="templates">
 <h2>templates<a class="headerlink" href="#templates" title="Permalink to this headline">¶</a></h2>
-<p>templates contains subdirectories for generating BaseFortranNetwork
-and StarKillerNetwork Fortran modules implementing the ODE right hand
-side, jacobian, and integration driver routines. pynucastro processes
-these template files by replacing tags of the form <cite>&lt;tag&gt;</cite> with
-generated code specific to a given choice of reaction rates.</p>
+<p>templates contains subdirectories for generating BaseFortranNetwork,
+StarKillerNetwork Fortran modules, and StarKillerCxxNetwork C++ files
+implementing the ODE right hand side, jacobian, and integration driver
+routines. pynucastro processes these template files by replacing tags
+of the form <cite>&lt;tag&gt;</cite> with generated code specific to a given choice of
+reaction rates.</p>
 </section>
 <section id="subpackages">
 <h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
