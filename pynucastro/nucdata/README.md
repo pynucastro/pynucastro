@@ -3,10 +3,8 @@
 Included in `AtomicMassEvaluation` lies a tabulated spin table for
 each nuclei, updated up to 2020, and published here:
 
-Kondev, F. G., Wang, M., Huang, W. J., Naimi, S., & Audi, G. (2021). 
-
-The NUBASE2020 evaluation of nuclear physics properties. Chinese Physics C, 45(3), 030001.
-doi:10.1088/1674-1137/abddae 
+Kondev, F. G., Wang, M., Huang, W. J., Naimi, S., & Audi, G. 
+Chinese Physics C, 45(3), 030001. (2021) doi:10.1088/1674-1137/abddae 
 
 # Binding Energy Tables
 
@@ -22,8 +20,8 @@ citations, and links for the tables are provided in the
 # Partition Functions
 
 The script `convert_rathpf_2000.py` converts the files `part_etfsiq.asc.txt` 
-and `part_frdm.asc.txt` to a convinient format to an standard pynucastro format. 
-The table `part_frdm.asc.txt` is depicted in:
+and `part_frdm.asc.txt` to a convinient format to an standard pynucastro 
+format. The table `part_frdm.asc.txt` is depicted in:
 
 T. Rauscher and F.-K.Thielemann, ADNDT 75 (2000) 1.
 
@@ -41,9 +39,11 @@ J. M. Pearson, R. C. Nayak, and S. Goriely, Phys. Lett. B 387, 455 (1996).
 
 The script `convert_rathpf_2003.py` converts the `datafile2.txt` and `datafile3.txt` 
 partition function table files into a pynucastro standard. The files datafile2.txt 
-and datafile3.txt are the computed partition values from the FRDM and ETFSI-Q models 
-for higher temperatures, respectively. The details of these calculations are exposed here:
+and datafile3.txt are the computed partition values from the FRDM and ETFSI-Q 
+models for higher temperatures, respectively. The details of these 
+calculations are exposed here:
 
 T. Rauscher, Ap. J. Suppl. 147 (2003) 403
 
-All the previous scripts and data files are located in the `PartitionFunction` directory.
+All the previous scripts and data files are located in the `PartitionFunction` 
+directory.
