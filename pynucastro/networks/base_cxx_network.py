@@ -178,22 +178,38 @@ class BaseCxxNetwork(ABC, RateCollection):
         screening_map = self.get_screening_map()
         for i, scr in enumerate(screening_map):
 
-            if not scr.n1.dummy:
-                nuc1_info = f'zion[{scr.n1.c()}-1], aion[{scr.n1.c()}-1]'
-            else:
-                nuc1_info = f'{float(scr.n1.Z)}_rt, {float(scr.n1.A)}_rt'
-            if not scr.n2.dummy:
-                nuc2_info = f'zion[{scr.n2.c()}-1], aion[{scr.n2.c()}-1]'
-            else:
-                nuc2_info = f'{float(scr.n2.Z)}_rt, {float(scr.n2.A)}_rt'
+            nuc1_info = f'{float(scr.n1.Z)}_rt, {float(scr.n1.A)}_rt'
+            nuc2_info = f'{float(scr.n2.Z)}_rt, {float(scr.n2.A)}_rt'
+
+            if not (scr.n1.dummy or scr.n2.dummy):
+                # Scope the screening calculation to avoid multiple definitions of scn_fac.
+                of.write(f'\n{self.indent*n_indent}' + '{');
+
+                of.write(f'\n{self.indent*(n_indent+1)}constexpr auto scn_fac = scrn::calculate_screen_factor({nuc1_info}, {nuc2_info});\n\n')
+
+                # Insert a static assert (which will always pass) to require the
+                # compiler to evaluate the screen factor at compile time.
+                of.write(f'\n{self.indent*(n_indent+1)}static_assert(scn_fac.z1 == {float(scr.n1.Z)}_rt);\n\n');
+
+                of.write(f'\n{self.indent*(n_indent+1)}actual_screen5(pstate, scn_fac, scor, dscor_dt);\n');
+
+                of.write(f'{self.indent*n_indent}' + '}\n\n');
 
             if scr.name == "he4_he4_he4":
-                # we'll hahandle the first part of the 3-alpha screening here
-                of.write(f'{self.indent*n_indent}screen5(pstate, {i}, {nuc1_info}, {nuc2_info}, scor, dscor_dt, dscor_dd);\n')
+                # we don't need to do anything here, but we want to avoid immediately applying the screening
+                pass
 
             elif scr.name == "he4_he4_he4_dummy":
-                # now the second part of 3-alpha
-                of.write(f'{self.indent*n_indent}screen5(pstate, {i}, {nuc1_info}, {nuc2_info}, scor2, dscor2_dt, dscor2_dd);\n\n')
+                # handle the second part of the screening for 3-alpha
+                of.write(f'\n{self.indent*n_indent}' + '{');
+
+                of.write(f'\n{self.indent*(n_indent+1)}constexpr auto scn_fac2 = scrn::calculate_screen_factor({nuc1_info}, {nuc2_info});\n\n')
+
+                of.write(f'\n{self.indent*(n_indent+1)}static_assert(scn_fac2.z1 == {float(scr.n1.Z)}_rt);\n\n');
+
+                of.write(f'\n{self.indent*(n_indent+1)}actual_screen5(pstate, scn_fac2, scor2, dscor2_dt);\n');
+
+                of.write(f'\n{self.indent*n_indent}' + '}\n\n');
 
                 # there might be both the forward and reverse 3-alpha
                 # if we are doing symmetric screening
@@ -206,8 +222,6 @@ class BaseCxxNetwork(ABC, RateCollection):
                     of.write(f'{self.indent*n_indent}rate_eval.dscreened_rates_dT(k_{rr.fname}) = ratraw * (scor * dscor2_dt + dscor_dt * scor2) + dratraw_dT * scor * scor2;\n')
 
             else:
-                of.write(f'\n{self.indent*n_indent}screen5(pstate, {i}, {nuc1_info}, {nuc2_info}, scor, dscor_dt, dscor_dd);\n\n')
-
                 # there might be several rates that have the same
                 # reactants and therefore the same screening applies
                 # -- handle them all now
