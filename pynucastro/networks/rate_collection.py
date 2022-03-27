@@ -391,8 +391,35 @@ class RateCollection:
         ostr = ""
         for n in self.unique_nuclei:
             ostr += f"{n}\n"
-            for rp in self.nuclei_rate_pairs[n]:
+            for rp in sorted(self.nuclei_rate_pairs[n]):
                 ostr += f"     {rp}\n"
+        return ostr
+
+    def get_nuclei_latex_string(self):
+        """return a string listing the nuclei in latex format"""
+
+        ostr = ""
+        for i, n in enumerate(self.unique_nuclei):
+            ostr += f"${n.pretty}$"
+            if i != len(self.unique_nuclei)-1:
+                ostr += ", "
+        return ostr
+
+    def get_rates_latex_table_string(self):
+        ostr = ""
+        for rp in sorted(self.get_rate_pairs()):
+            if rp.forward:
+                ostr += f"{rp.forward.pretty_string:38} & \n"
+            else:
+                ostr += f"{' ':38} \n &"
+
+            if rp.reverse:
+                ostr += rf"  {rp.reverse.pretty_string:38} \\"
+            else:
+                ostr += rf"  {' ':38} \\"
+
+            ostr += "\n"
+
         return ostr
 
     def get_screening_map(self):
