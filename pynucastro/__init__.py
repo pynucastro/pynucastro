@@ -62,9 +62,11 @@ rates, including:
   output of Fortran code that can be used to integrate the network
   with the included VODE package for ODE integration.
 
-* StarKillerNetwork : this extends the RateCollection to enable output
-  of Fortran code that can be used to add a network to the
-  hydrodynamics codes Castro and Maestro via the StarKiller
+* StarKillerNetwork : this is deprecated.
+
+* StarKillerCxxNetwork : this extends the RateCollection to enable
+  output of C++ code that can be used to add a network to the
+  hydrodynamics codes Castro and MAESTROeX via the StarKiller
   Microphysics repository.
 
 
@@ -93,9 +95,9 @@ reaction rates, including:
 screening
 ---------
 
-screening provides routines used by the BaseFortranNetwork to screen
-Reaclib reaction rates in the weak, intermediate, and strong
-regimes. Tabulated rates are not screened.
+screening provides routines used by the BaseFortranNetwork and
+BaseCxxNetwork to screen Reaclib reaction rates in the weak,
+intermediate, and strong regimes. Tabulated rates are not screened.
 
 The Fortran module in `pynucastro/screening` is only used for the
 standalone Fortran network. StarKiller Microphysics networks also use
@@ -105,11 +107,12 @@ Microphysics repository.
 templates
 ---------
 
-templates contains subdirectories for generating BaseFortranNetwork
-and StarKillerNetwork Fortran modules implementing the ODE right hand
-side, jacobian, and integration driver routines. pynucastro processes
-these template files by replacing tags of the form `<tag>` with
-generated code specific to a given choice of reaction rates.
+templates contains subdirectories for generating BaseFortranNetwork,
+StarKillerNetwork Fortran modules, and StarKillerCxxNetwork C++ files
+implementing the ODE right hand side, jacobian, and integration driver
+routines. pynucastro processes these template files by replacing tags
+of the form `<tag>` with generated code specific to a given choice of
+reaction rates.
 
 """
 
