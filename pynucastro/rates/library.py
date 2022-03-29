@@ -549,6 +549,6 @@ class RateFilter:
 
 class ReacLibLibrary(Library):
 
-    def __init__(self, libfile='20180319default2', rates=None, read_library=True):
-        assert libfile == '20180319default2'  and rates is None and read_library, "Only the 20180319default2 default ReacLib snapshot is accepted"
+    def __init__(self, libfile='reaclib_default2_20220329', rates=None, read_library=True):
+        assert libfile == 'reaclib_default2_20220329'  and rates is None and read_library, "Only the reaclib_default2_20220329 default ReacLib snapshot is accepted"
         Library.__init__(self, libfile=libfile, rates=rates, read_library=read_library)
