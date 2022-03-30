@@ -82,7 +82,7 @@ class PartitionFunction:
         """
 
         assert self.nucleus == other.nucleus
-        assert self.upper_temperature() < other.lower_temperature() or
+        assert self.upper_temperature() < other.lower_temperature() or \
                self.lower_temperature() > other.upper_temperature()
 
         if self.upper_temperature() < other.lower_temperature():
@@ -95,7 +95,7 @@ class PartitionFunction:
         temperature = np.array(list(lower.temperature) + 
                                list(upper.temperature))
 
-        partition_function = np.array(list(lower.partition_function) + 
+        partition_function = np.array(list(lower.partition_function) +  
                              list(upper.partition_function))
 
         name = '{}+{}'.format(lower.name, upper.name)
