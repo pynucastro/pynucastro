@@ -38,7 +38,7 @@ class PartitionFunction:
 
     def __init__(self, nucleus=None, name=None, temperature=None, partition_function=None):
 
-        assert type(nucleus == str)
+        assert isinstance(nucleus, str)
 
         self.nucleus= str(nucleus)
         self.name = name
@@ -81,9 +81,9 @@ class PartitionFunction:
         to the maximum order of the added PartitionFunction objects.
         """
 
-        assert(self.nucleus == other.nucleus)
-        assert(self.upper_temperature() < other.lower_temperature() or
-               self.lower_temperature() > other.upper_temperature())
+        assert self.nucleus == other.nucleus
+        assert self.upper_temperature() < other.lower_temperature() or
+               self.lower_temperature() > other.upper_temperature()
 
         if self.upper_temperature() < other.lower_temperature():
             lower = self
@@ -134,8 +134,6 @@ class PartitionFunction:
 
     def __call__(self, T):
 
-        #self.construct_spline_interpolant()
-
         assert self.interpolant
         try:
             T = float(T)/1.0e9
@@ -170,7 +168,7 @@ class PartitionFunctionTable:
         self.read_table(file_name)
 
     def _add_nuclide_pfun(self, nuc, pfun): 
-        assert type(nuc) == str
+        assert isinstance(nuc, str)
         assert not nuc in self._partition_function
         self._partition_function[nuc] = pfun
 
@@ -183,7 +181,7 @@ class PartitionFunctionTable:
         return nuclei
 
     def get_partition_function(self, nuc):
-        assert type(nuc) == str
+        assert isinstance(nuc,str)
         if str(nuc) in self._partition_function.keys():
             return self._partition_function[nuc]
 
@@ -242,7 +240,7 @@ class PartitionFunctionCollection:
         """ 
         This private function appends a PartitionFunctionTable object to each key characterized by a file_name.
         """
-        assert not table.name in self._partition_function_tables
+        assert table.name not in self._partition_function_tables
         self._partition_function_tables[table.name] = table
 
     def _read_collection(self):
@@ -271,7 +269,7 @@ class PartitionFunctionCollection:
         nuclei = []
         for jk in self._partition_function_tables.keys():
             nuclei += self._partition_function_tables[jk].get_nuclei()
-        return list(set(nuclei))
+        return set(nuclei)
 
     def __iter__(self):
         for nuc in self.get_nuclei():
@@ -280,7 +278,7 @@ class PartitionFunctionCollection:
     def get_partition_function(self, nuc):
 
         """This function access to the partition function for a given nucleus"""
-        assert type(nuc) == str
+        assert isinstance(nuc, str)
 
         if self.use_set == 'frdm':
             pf_lo_table = self._partition_function_tables['frdm_low']
