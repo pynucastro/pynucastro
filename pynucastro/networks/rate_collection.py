@@ -733,7 +733,7 @@ class RateCollection:
 
 
     def plot_network_chart(self, outfile=None, rho=None, T=None, comp=None,
-                           size=(800, 800), dpi=100):
+                           size=(800, 800), dpi=100, force_one_column=False):
 
         nc = self._get_network_chart(rho, T, comp)
 
@@ -750,7 +750,7 @@ class RateCollection:
         valid_max = np.abs(_ydot[_ydot != 0]).max()
         valid_min = np.abs(_ydot[_ydot != 0]).min()
 
-        norm = SymLogNorm(valid_max/1.e10, vmin=-valid_max, vmax=valid_max)
+        norm = SymLogNorm(valid_max/1.e15, vmin=-valid_max, vmax=valid_max)
 
         print(valid_min, valid_max)
 
@@ -765,6 +765,8 @@ class RateCollection:
         else:
             npanes = 1
 
+        if force_one_column:
+            npanes = 1
 
         fig, _ax = plt.subplots(1, npanes)
 
@@ -780,6 +782,8 @@ class RateCollection:
             drate = len(self.rates)
         else:
             drate = (len(self.rates) + 1) // 2
+
+        _rates = sorted(self.rates)
 
         for ipane in range(npanes):
 
@@ -801,7 +805,7 @@ class RateCollection:
 
             #ax = grid[ipane]
 
-            for irate, r in enumerate(self.rates):
+            for irate, r in enumerate(_rates):
                 if istart <= irate <= iend:
                     irow = irate - istart
                     for n, ydot in nc[r]:
@@ -809,14 +813,11 @@ class RateCollection:
                         assert data[irow, icol] == 0.0
                         data[irow, icol] = ydot
 
-            print("data : ", data.min(), data.max())
-            print(data[0,:])
-
             # each pane has all the nuclei
-            ax.set_xticks(np.arange(len(self.unique_nuclei)), labels=[f"{n}" for n in self.unique_nuclei])
+            ax.set_xticks(np.arange(len(self.unique_nuclei)), labels=[f"{n}" for n in self.unique_nuclei], rotation=90)
 
             # each pane only has its subset of rates
-            ax.set_yticks(np.arange(nrates), labels=[f"{r}" for irate, r in enumerate(self.rates) if istart <= irate <= iend])
+            ax.set_yticks(np.arange(nrates), labels=[f"{r}" for irate, r in enumerate(_rates) if istart <= irate <= iend])
 
             im = ax.imshow(data, norm=norm, cmap=plt.cm.bwr)
 
