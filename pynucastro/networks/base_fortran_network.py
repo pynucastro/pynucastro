@@ -15,9 +15,7 @@ import random
 import string
 
 import sympy
-from pynucastro.rates import Nucleus
 from pynucastro.networks import RateCollection
-from pynucastro.nucdata import BindingTable
 from pynucastro.networks import SympyRates
 
 class BaseFortranNetwork(ABC, RateCollection):
@@ -206,22 +204,22 @@ class BaseFortranNetwork(ABC, RateCollection):
 
     def _compute_screening_factors(self, n_indent, of):
         screening_map = self.get_screening_map()
-        for i, (h, _, _, mrates, krates) in enumerate(screening_map):
-            if h == "he4_he4_he4":
+        for i, scr in enumerate(screening_map):
+            if scr.name == "he4_he4_he4":
                 # handle both parts of the 3-alpha screening here
                 of.write(f'\n{self.indent*n_indent}call screen5(pstate, {i+1}, scor, dscor_dt, dscor_dd)\n')
                 of.write(f'\n{self.indent*n_indent}call screen5(pstate, {i+2}, scor2, dscor2_dt, dscor2_dd)\n')
-                of.write(f'{self.indent*n_indent}rate_eval % unscreened_rates(i_scor,{krates[0]}) = scor * scor2\n')
-                of.write(f'{self.indent*n_indent}rate_eval % unscreened_rates(i_dscor_dt,{krates[0]}) = scor * dscor2_dt + dscor_dt * scor2\n')
+                of.write(f'{self.indent*n_indent}rate_eval % unscreened_rates(i_scor,k_{scr.rates[0].fname}) = scor * scor2\n')
+                of.write(f'{self.indent*n_indent}rate_eval % unscreened_rates(i_dscor_dt,k_{scr.rates[0].fname}) = scor * dscor2_dt + dscor_dt * scor2\n')
 
-            elif h == "he4_he4_he4_dummy":
+            elif scr.name == "he4_he4_he4_dummy":
                 continue
 
             else:
                 of.write(f'\n{self.indent*n_indent}call screen5(pstate, {i+1}, scor, dscor_dt, dscor_dd)\n')
-                for _, k in zip(mrates, krates):
-                    of.write(f'{self.indent*n_indent}rate_eval % unscreened_rates(i_scor,{k}) = scor\n')
-                    of.write(f'{self.indent*n_indent}rate_eval % unscreened_rates(i_dscor_dt,{k}) = dscor_dt\n')
+                for rr in scr.rates:
+                    of.write(f'{self.indent*n_indent}rate_eval % unscreened_rates(i_scor,k_{rr.fname}) = scor\n')
+                    of.write(f'{self.indent*n_indent}rate_eval % unscreened_rates(i_dscor_dt,k_{rr.fname}) = dscor_dt\n')
 
             of.write('\n')
 
@@ -286,10 +284,8 @@ class BaseFortranNetwork(ABC, RateCollection):
                 self.indent*n_indent, r.fname, i+1))
 
     def _ebind(self, n_indent, of):
-        bintable = BindingTable()
         for nuc in self.unique_nuclei:
-            nuc_in_table = bintable.get_nuclide(n=nuc.N, z=nuc.Z)
-            str_nucbind = self.fmt_to_rt_f90(nuc_in_table.nucbind)
+            str_nucbind = self.fmt_to_rt_f90(nuc.nucbind)
             of.write('{}ebind_per_nucleon(j{})   = {}\n'.format(
                 self.indent*n_indent, nuc, str_nucbind))
 
@@ -323,16 +319,16 @@ class BaseFortranNetwork(ABC, RateCollection):
 
     def _screen_add(self, n_indent, of):
         screening_map = self.get_screening_map()
-        for _, n1, n2, _, _ in screening_map:
+        for scr in screening_map:
             of.write(f'{self.indent*n_indent}call add_screening_factor(')
-            if not n1.dummy:
-                of.write(f'zion(j{n1}), aion(j{n1}), &\n')
+            if not scr.n1.dummy:
+                of.write(f'zion(j{scr.n1}), aion(j{scr.n1}), &\n')
             else:
-                of.write(f'{float(n1.Z)}_rt, {float(n1.A)}_rt), &\n')
-            if not n2.dummy:
-                of.write(f'{self.indent*(n_indent+1)}zion(j{n2}), aion(j{n2}))\n\n')
+                of.write(f'{float(scr.n1.Z)}_rt, {float(scr.n1.A)}_rt), &\n')
+            if not scr.n2.dummy:
+                of.write(f'{self.indent*(n_indent+1)}zion(j{scr.n2}), aion(j{scr.n2}))\n\n')
             else:
-                of.write(f'{self.indent*(n_indent+1)}{float(n2.Z)}_rt, {float(n2.A)}_rt)\n\n')
+                of.write(f'{self.indent*(n_indent+1)}{float(scr.n2.Z)}_rt, {float(scr.n2.A)}_rt)\n\n')
 
     def _write_reaclib_metadata(self, n_indent, of):
         jset = 0
