@@ -9,8 +9,11 @@ setup(name='pynucastro',
       packages=find_packages(),
       package_data={"pynucastro": ["library/*", "library/tabular/*", "templates/*",
                                    "templates/starkiller-microphysics/*",
-                                   "templates/starkiller-cxx-microphysics/*", "nucdata/*",
-                                   "nucdata/PartitionFunction/*"]},
+
+                                   "templates/starkiller-cxx-microphysics/*", "nucdata/*", 
+                                   
+                                   "nucdata/AtomicMassEvaluation/*", "nucdata/PartitionFunction/*"]},
+
       install_requires=['networkx', 'numpy', 'numba',
                         'sympy', 'scipy', 'matplotlib',
                         'ipywidgets', 'numba'],
