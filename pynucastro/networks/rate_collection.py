@@ -970,7 +970,7 @@ class Explorer:
                      always_show_alpha=self.always_show_alpha,
                      rotated=self.rotated,
                      hide_xalpha=self.hide_xalpha,
-                     node_size=node_size, node_font_size=node_font_size)
+                     node_size=self.node_size, node_font_size=self.node_font_size)
 
     def explore(self, logrho=(2, 6, 0.1), logT=(7, 9, 0.1)):
         """Perform interactive exploration of the network structure."""
