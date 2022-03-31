@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.rates.rate &mdash; pynucastro 1.6.0.post66+g72e5386 documentation</title>
+  <title>pynucastro.rates.rate &mdash; pynucastro 1.6.0.post67+gf5b3de1 documentation</title>
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -95,14 +95,17 @@
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">numba</span> <span class="kn">import</span> <span class="n">jitclass</span>
 
-<span class="kn">from</span> <span class="nn">pynucastro.nucdata</span> <span class="kn">import</span> <span class="n">UnidentifiedElement</span><span class="p">,</span> <span class="n">PeriodicTable</span><span class="p">,</span> <span class="n">PartitionFunctionCollection</span><span class="p">,</span> <span class="n">BindingTable</span>
+<span class="kn">from</span> <span class="nn">pynucastro.nucdata</span> <span class="kn">import</span> <span class="n">UnidentifiedElement</span><span class="p">,</span> <span class="n">PeriodicTable</span><span class="p">,</span> <span class="n">PartitionFunctionCollection</span><span class="p">,</span> <span class="n">BindingTable</span><span class="p">,</span> <span class="n">SpinTable</span>
 
 <span class="n">_pynucastro_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)))</span>
 <span class="n">_pynucastro_rates_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_pynucastro_dir</span><span class="p">,</span> <span class="s1">&#39;library&#39;</span><span class="p">)</span>
 <span class="n">_pynucastro_tabular_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_pynucastro_rates_dir</span><span class="p">,</span> <span class="s1">&#39;tabular&#39;</span><span class="p">)</span>
 
-<span class="c1"># read the binding energy table once and store it at the module-level</span>
 
+<span class="c1">#read the spin table once and store it at the module-level</span>
+<span class="n">_spin_table</span> <span class="o">=</span> <span class="n">SpinTable</span><span class="p">(</span><span class="n">set_double_gs</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1"># read the binding energy table once and store it at the module-level</span>
 <span class="n">_binding_table</span> <span class="o">=</span> <span class="n">BindingTable</span><span class="p">()</span>
 
 
@@ -322,6 +325,12 @@
             <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">A</span> <span class="o">&gt;=</span> <span class="mi">0</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">short_spec_name</span> <span class="o">=</span> <span class="n">name</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">caps_name</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span>
+
+        <span class="c1"># set the number of spin states</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">spin_states</span> <span class="o">=</span> <span class="n">_spin_table</span><span class="o">.</span><span class="n">get_spin_nuclide</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">short_spec_name</span><span class="p">)</span><span class="o">.</span><span class="n">spin_states</span>
+        <span class="k">except</span> <span class="ne">NotImplementedError</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">spin_states</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="c1"># use lowercase element abbreviation regardless the case of the input</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">el</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">el</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
