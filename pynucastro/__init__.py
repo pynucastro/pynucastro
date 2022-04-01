@@ -26,13 +26,13 @@ be in the Reaclib 1 format.
 nucdata
 -------
 
-nucdata provides tables of binding energy per nucleon in MeV, 
-partition function and the number of spin states for nuclides specified 
+nucdata provides tables of binding energy per nucleon in MeV,
+partition function and the number of spin states for nuclides specified
 by their number of neutrons N and atomic number Z.
 
 The data for these tables is derived from the Atomic Mass Evaluations
 2012, 2016 and 2020. By default, pynucastro uses Atomic Mass Evaluation
-2016, and Nucleus Spin Evaluation 2020. Scripts for reading the Atomic 
+2016, and Nucleus Spin Evaluation 2020. Scripts for reading the Atomic
 Mass Evaluation tables and generating binding energy tables for pynucastro
 are provided in `pynucastro/nucdata/AtomicMassEvaluation`.
 

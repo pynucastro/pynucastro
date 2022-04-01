@@ -96,6 +96,7 @@ class Composition:
             ostr += f"  X({k}) : {self.X[k]}\n"
         return ostr
 
+
 class ScreeningPair:
     """a pair of nuclei that will have rate screening applied.  We store a
     list of all rates that match this pair of nuclei"""
@@ -356,7 +357,6 @@ class RateCollection:
 
             if screen_nuclei:
                 nucs = "_".join([str(q) for q in screen_nuclei])
-                in_map = False
 
                 scr = [q for q in screening_map if q.name == nucs]
 

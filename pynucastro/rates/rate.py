@@ -28,7 +28,8 @@ _spin_table = SpinTable(set_double_gs=False)
 _binding_table = BindingTable()
 
 
-_pcollection = PartitionFunctionCollection(use_high_temperatures = True, use_set='frdm')
+_pcollection = PartitionFunctionCollection(use_high_temperatures=True, use_set='frdm')
+
 
 def _find_rate_file(ratename):
     """locate the Reaclib or tabular rate or library file given its name.  Return
@@ -76,6 +77,7 @@ class Tfactors:
         self.T913 = self.T9**(1./3.)
         self.T953 = self.T9**(5./3.)
         self.lnT9 = np.log(self.T9)
+
 
 class SingleSet:
     """ a set in Reaclib is one piece of a rate, in the form
@@ -850,7 +852,7 @@ class Rate:
 
         self.tabular_data_table = np.array(t_data2d)
 
-    def eval(self, T, rhoY = None):
+    def eval(self, T, rhoY=None):
         """ evauate the reaction rate for temperature T """
 
         if self.tabular:

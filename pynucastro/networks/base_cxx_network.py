@@ -184,17 +184,17 @@ class BaseCxxNetwork(ABC, RateCollection):
 
             if not (scr.n1.dummy or scr.n2.dummy):
                 # Scope the screening calculation to avoid multiple definitions of scn_fac.
-                of.write(f'\n{self.indent*n_indent}' + '{');
+                of.write(f'\n{self.indent*n_indent}' + '{')
 
                 of.write(f'\n{self.indent*(n_indent+1)}constexpr auto scn_fac = scrn::calculate_screen_factor({nuc1_info}, {nuc2_info});\n\n')
 
                 # Insert a static assert (which will always pass) to require the
                 # compiler to evaluate the screen factor at compile time.
-                of.write(f'\n{self.indent*(n_indent+1)}static_assert(scn_fac.z1 == {float(scr.n1.Z)}_rt);\n\n');
+                of.write(f'\n{self.indent*(n_indent+1)}static_assert(scn_fac.z1 == {float(scr.n1.Z)}_rt);\n\n')
 
-                of.write(f'\n{self.indent*(n_indent+1)}actual_screen5(pstate, scn_fac, scor, dscor_dt);\n');
+                of.write(f'\n{self.indent*(n_indent+1)}actual_screen5(pstate, scn_fac, scor, dscor_dt);\n')
 
-                of.write(f'{self.indent*n_indent}' + '}\n\n');
+                of.write(f'{self.indent*n_indent}' + '}\n\n')
 
             if scr.name == "he4_he4_he4":
                 # we don't need to do anything here, but we want to avoid immediately applying the screening
@@ -202,21 +202,21 @@ class BaseCxxNetwork(ABC, RateCollection):
 
             elif scr.name == "he4_he4_he4_dummy":
                 # handle the second part of the screening for 3-alpha
-                of.write(f'\n{self.indent*n_indent}' + '{');
+                of.write(f'\n{self.indent*n_indent}' + '{')
 
                 of.write(f'\n{self.indent*(n_indent+1)}constexpr auto scn_fac2 = scrn::calculate_screen_factor({nuc1_info}, {nuc2_info});\n\n')
 
-                of.write(f'\n{self.indent*(n_indent+1)}static_assert(scn_fac2.z1 == {float(scr.n1.Z)}_rt);\n\n');
+                of.write(f'\n{self.indent*(n_indent+1)}static_assert(scn_fac2.z1 == {float(scr.n1.Z)}_rt);\n\n')
 
-                of.write(f'\n{self.indent*(n_indent+1)}actual_screen5(pstate, scn_fac2, scor2, dscor2_dt);\n');
+                of.write(f'\n{self.indent*(n_indent+1)}actual_screen5(pstate, scn_fac2, scor2, dscor2_dt);\n')
 
-                of.write(f'\n{self.indent*n_indent}' + '}\n\n');
+                of.write(f'\n{self.indent*n_indent}' + '}\n\n')
 
                 # there might be both the forward and reverse 3-alpha
                 # if we are doing symmetric screening
 
                 for rr in scr.rates:
-                    of.write(f'\n')
+                    of.write('\n')
                     of.write(f'{self.indent*n_indent}ratraw = rate_eval.screened_rates(k_{rr.fname});\n')
                     of.write(f'{self.indent*n_indent}dratraw_dT = rate_eval.dscreened_rates_dT(k_{rr.fname});\n')
                     of.write(f'{self.indent*n_indent}rate_eval.screened_rates(k_{rr.fname}) *= scor * scor2;\n')
@@ -228,7 +228,7 @@ class BaseCxxNetwork(ABC, RateCollection):
                 # -- handle them all now
 
                 for rr in scr.rates:
-                    of.write(f'\n')
+                    of.write('\n')
                     of.write(f'{self.indent*n_indent}ratraw = rate_eval.screened_rates(k_{rr.fname});\n')
                     of.write(f'{self.indent*n_indent}dratraw_dT = rate_eval.dscreened_rates_dT(k_{rr.fname});\n')
                     of.write(f'{self.indent*n_indent}rate_eval.screened_rates(k_{rr.fname}) *= scor;\n')
@@ -241,7 +241,6 @@ class BaseCxxNetwork(ABC, RateCollection):
         # off screening, just set num_screen_calls = 1 here.
 
         self.num_screen_calls = max(1, len(screening_map))
-
 
     def _nrat_reaclib(self, n_indent, of):
         # Writes the number of Reaclib rates

@@ -1,6 +1,5 @@
 import os
 import numpy as np
-import pynucastro
 from scipy.interpolate import InterpolatedUnivariateSpline
 
 
@@ -39,7 +38,7 @@ class PartitionFunction:
 
         assert isinstance(nucleus, str)
 
-        self.nucleus= str(nucleus)
+        self.nucleus = str(nucleus)
         self.name = name
         self.temperature = temperature
         self.partition_function = partition_function
@@ -94,7 +93,7 @@ class PartitionFunction:
         temperature = np.array(list(lower.temperature) +
                                list(upper.temperature))
 
-        partition_function = np.array(list(lower.partition_function) +  
+        partition_function = np.array(list(lower.partition_function) +
                              list(upper.partition_function))
 
         name = '{}+{}'.format(lower.name, upper.name)
@@ -166,9 +165,9 @@ class PartitionFunctionTable:
         self.temperatures = None
         self.read_table(file_name)
 
-    def _add_nuclide_pfun(self, nuc, pfun): 
+    def _add_nuclide_pfun(self, nuc, pfun):
         assert isinstance(nuc, str)
-        assert not nuc in self._partition_function
+        assert nuc not in self._partition_function
         self._partition_function[nuc] = pfun
 
     def get_nuclei(self):
@@ -180,7 +179,7 @@ class PartitionFunctionTable:
         return nuclei
 
     def get_partition_function(self, nuc):
-        assert isinstance(nuc,str)
+        assert isinstance(nuc, str)
         if str(nuc) in self._partition_function.keys():
             return self._partition_function[nuc]
 
@@ -227,12 +226,12 @@ class PartitionFunctionCollection:
 
     In our discussion we have two different set of tables"""
 
-    def __init__(self, use_high_temperatures = True, use_set = 'frdm'):
+    def __init__(self, use_high_temperatures=True, use_set='frdm'):
         self._partition_function_tables = {}
         self.use_high_temperatures = use_high_temperatures
         self.use_set = 'frdm'
         self._read_collection()
-        
+
     def _add_table(self, table):
         """
         This private function appends a PartitionFunctionTable object to each key characterized by a file_name.
@@ -294,7 +293,7 @@ class PartitionFunctionCollection:
             raise Exception("invalid partition function type")
 
         if self.use_high_temperatures:
-            if pf_lo and pf_hi: 
+            if pf_lo and pf_hi:
                 pf = pf_lo + pf_hi
             elif pf_lo:
                 pf = pf_lo
