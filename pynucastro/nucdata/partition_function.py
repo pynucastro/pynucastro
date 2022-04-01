@@ -36,10 +36,10 @@ class PartitionFunction:
     """
 
     def __init__(self, nucleus=None, name=None, temperature=None, partition_function=None):
-        if isinstance(nucleus, str):
-            nucleus = pynucastro.rates.Nucleus(nucleus)
 
-        self.nucleus = nucleus
+        assert isinstance(nucleus, str)
+
+        self.nucleus= str(nucleus)
         self.name = name
         self.temperature = temperature
         self.partition_function = partition_function
@@ -81,8 +81,8 @@ class PartitionFunction:
         """
 
         assert self.nucleus == other.nucleus
-        assert (self.upper_temperature() < other.lower_temperature() or
-                self.lower_temperature() > other.upper_temperature())
+        assert self.upper_temperature() < other.lower_temperature() or \
+               self.lower_temperature() > other.upper_temperature()
 
         if self.upper_temperature() < other.lower_temperature():
             lower = self
@@ -94,7 +94,7 @@ class PartitionFunction:
         temperature = np.array(list(lower.temperature) +
                                list(upper.temperature))
 
-        partition_function = np.array(list(lower.partition_function) +
+        partition_function = np.array(list(lower.partition_function) +  
                              list(upper.partition_function))
 
         name = '{}+{}'.format(lower.name, upper.name)
@@ -134,8 +134,6 @@ class PartitionFunction:
 
     def __call__(self, T):
 
-        #self.construct_spline_interpolant()
-
         assert self.interpolant
         try:
             T = float(T)/1.0e9
@@ -168,22 +166,23 @@ class PartitionFunctionTable:
         self.temperatures = None
         self.read_table(file_name)
 
-    def _add_nuclide_pfun(self, nuc, pfun):
-        assert nuc not in self._partition_function
-        self._partition_function[str(nuc)] = pfun
+    def _add_nuclide_pfun(self, nuc, pfun): 
+        assert isinstance(nuc, str)
+        assert not nuc in self._partition_function
+        self._partition_function[nuc] = pfun
 
     def get_nuclei(self):
 
         nuclei = []
-        for nc in self._partition_function:
-            nuclei.append(pynucastro.rates.Nucleus(nc))
+        for nc in self._partition_function.keys():
+            nuclei.append(nc)
 
-        return list(sorted(nuclei))
+        return nuclei
 
     def get_partition_function(self, nuc):
-
+        assert isinstance(nuc,str)
         if str(nuc) in self._partition_function.keys():
-            return self._partition_function[str(nuc)]
+            return self._partition_function[nuc]
 
     def read_table(self, file_name):
         with open(file_name, 'r') as fin:
@@ -214,7 +213,7 @@ class PartitionFunctionTable:
 
         # Using .pop(0) twice we construct each nucleus partition function.
         while lines:
-            nuc = pynucastro.rates.Nucleus(lines.pop(0))
+            nuc = lines.pop(0)
             pfun_strings = lines.pop(0).split()
             partitionfun = np.array([float(pf) for pf in pfun_strings])
             pfun = PartitionFunction(nuc, self.name, self.temperatures, partitionfun)
@@ -226,20 +225,20 @@ class PartitionFunctionCollection:
     """ The PartitionFunctionCollection holds a collection of PartitionFunctionTable objects in a dictionary keyed
     by the name of the tables
 
-    In our discussion we have two different tables"""
+    In our discussion we have two different set of tables"""
 
-    def __init__(self):
-        self.partition_function_tables = {}
+    def __init__(self, use_high_temperatures = True, use_set = 'frdm'):
+        self._partition_function_tables = {}
+        self.use_high_temperatures = use_high_temperatures
+        self.use_set = 'frdm'
         self._read_collection()
-        self._use_high_temperatures = True
-        self._set_data = None
-
+        
     def _add_table(self, table):
         """
         This private function appends a PartitionFunctionTable object to each key characterized by a file_name.
         """
-        assert table.name not in self.partition_function_tables
-        self.partition_function_tables[table.name] = table
+        assert table.name not in self._partition_function_tables
+        self._partition_function_tables[table.name] = table
 
     def _read_collection(self):
 
@@ -265,19 +264,9 @@ class PartitionFunctionCollection:
     def get_nuclei(self):
 
         nuclei = []
-        for jk in self.partition_function_tables.keys():
-            nuclei += self.partition_function_tables[jk].get_nuclei()
-        return list(sorted(set(nuclei)))
-
-    def set_data_selector(self, set_jk='frdm'):
-        """
-        This method selects the chosen type of data. By default we use the FRDM model sets
-        """
-
-        self._set_data = set_jk
-
-    def use_high_temperatures(self, high_temp_jk=True):
-        self._use_high_temperatures = high_temp_jk
+        for jk in self._partition_function_tables.keys():
+            nuclei += self._partition_function_tables[jk].get_nuclei()
+        return set(nuclei)
 
     def __iter__(self):
         for nuc in self.get_nuclei():
@@ -286,26 +275,26 @@ class PartitionFunctionCollection:
     def get_partition_function(self, nuc):
 
         """This function access to the partition function for a given nucleus"""
-        assert isinstance(nuc, (pynucastro.rates.Nucleus, str))
+        assert isinstance(nuc, str)
 
-        if self._set_data == 'frdm':
-            pf_lo_table = self.partition_function_tables['frdm_low']
-            pf_lo = pf_lo_table.get_partition_function(str(nuc))
+        if self.use_set == 'frdm':
+            pf_lo_table = self._partition_function_tables['frdm_low']
+            pf_lo = pf_lo_table.get_partition_function(nuc)
 
-            pf_hi_table = self.partition_function_tables['frdm_high']
-            pf_hi = pf_hi_table.get_partition_function(str(nuc))
+            pf_hi_table = self._partition_function_tables['frdm_high']
+            pf_hi = pf_hi_table.get_partition_function(nuc)
 
-        elif self._set_data == 'etfsiq':
-            pf_lo_table = self.partition_function_tables['etfsiq_low']
-            pf_lo = pf_lo_table.get_partition_function(str(nuc))
+        elif self.use_set == 'etfsiq':
+            pf_lo_table = self._partition_function_tables['etfsiq_low']
+            pf_lo = pf_lo_table.get_partition_function(nuc)
 
-            pf_hi_table = self.partition_function_tables['etfsiq_high']
-            pf_hi = pf_hi_table.get_partition_function(str(nuc))
+            pf_hi_table = self._partition_function_tables['etfsiq_high']
+            pf_hi = pf_hi_table.get_partition_function(nuc)
         else:
             raise Exception("invalid partition function type")
 
-        if self._use_high_temperatures:
-            if pf_lo and pf_hi:
+        if self.use_high_temperatures:
+            if pf_lo and pf_hi: 
                 pf = pf_lo + pf_hi
             elif pf_lo:
                 pf = pf_lo
