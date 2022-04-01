@@ -136,4 +136,3 @@ from pynucastro.rates import \
     Library, \
     ReacLibLibrary, \
     list_known_rates
-

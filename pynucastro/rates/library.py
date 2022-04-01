@@ -17,7 +17,7 @@ def list_known_rates():
                 continue
             try:
                 lib = Library(f)
-            except:
+            except:  # noqa
                 continue
             else:
                 print(f"{f:32} : ")
@@ -142,8 +142,6 @@ class Library:
                     r = Rate(sio, rfile_path=self._library_file)
                 except UnsupportedNucleus:
                     pass
-                except:
-                    raise
                 else:
                     rid = r.get_rate_id()
                     if rid in self._rates:
@@ -197,7 +195,7 @@ class Library:
         """ Return a rate matching the id provided. """
         try:
             return self._rates[rid]
-        except:
+        except IndexError:
             print("ERROR: rate identifier does not match a rate in this library.")
             raise
 
@@ -229,11 +227,6 @@ class Library:
 
         if isinstance(nuclist, (Nucleus, str)):
             nuclist = [nuclist]
-        else:
-            try:
-                nuclist = list(nuclist)
-            except:
-                raise
 
         nucleus_list = []
         for nuc in nuclist:
@@ -242,7 +235,7 @@ class Library:
             else:
                 try:
                     anuc = Nucleus(nuc)
-                except:
+                except:  # noqa
                     raise
                 else:
                     nucleus_list.append(anuc)
@@ -289,7 +282,7 @@ class Library:
         else:
             try:
                 iter(filter_spec)
-            except:
+            except TypeError:
                 raise
             else:
                 filter_specifications = filter_spec
@@ -472,7 +465,7 @@ class RateFilter:
         if not isinstance(r, Nucleus):
             try:
                 rnuc = Nucleus(r)
-            except:
+            except:  # noqa
                 raise
             else:
                 return rnuc

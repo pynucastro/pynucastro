@@ -222,7 +222,7 @@ class RateCollection:
         for rf in self.files:
             try:
                 rflib = Library(rf)
-            except:
+            except:  # noqa
                 print(f"Error reading library from file: {rf}")
                 raise
             else:
@@ -573,8 +573,7 @@ class RateCollection:
                                 # to roughly the minimum exponent possible
                                 # for python floats
                                 rate_weight = -308
-                            except:
-                                raise
+
                             G.add_edges_from([(n, p)], weight=rate_weight)
 
         # It seems that networkx broke backwards compatability, and 'zorder' is no longer a valid

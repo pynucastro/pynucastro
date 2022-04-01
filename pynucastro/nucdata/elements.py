@@ -137,7 +137,7 @@ class PeriodicTable(object):
     def lookup_abbreviation(self, abbrev):
         try:
             return self.table[abbrev.lower()]
-        except:
+        except IndexError:
             raise UnidentifiedElement
 
     @classmethod

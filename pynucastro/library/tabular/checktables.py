@@ -71,7 +71,7 @@ try:
         if args.p:
             print("{}: {}".format(i, line.strip()))
     f.close()
-except:
+except:  # noqa
     print("FAILED")
 else:
     print("OK")

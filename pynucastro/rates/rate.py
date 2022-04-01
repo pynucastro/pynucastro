@@ -253,8 +253,6 @@ class Nucleus:
             except UnidentifiedElement:
                 print(f'Could not identify element: {self.el}')
                 raise
-            except:
-                raise
             else:
                 self.Z = i.Z
                 assert isinstance(self.Z, int)
@@ -546,7 +544,7 @@ class Rate:
             try:
                 self.reactants.append(Nucleus(f[0]))
                 self.products.append(Nucleus(f[1]))
-            except:
+            except ValueError:
                 print(f'Nucleus objects not be identified in {self.original_source}')
                 raise
 
@@ -620,72 +618,68 @@ class Rate:
                 if first:
                     self.Q = Q
 
-                    try:
-                        # what's left are the nuclei -- their interpretation
-                        # depends on the chapter
-                        if self.chapter == 1:
-                            # e1 -> e2
-                            self.reactants.append(Nucleus(f[0]))
-                            self.products.append(Nucleus(f[1]))
+                    # what's left are the nuclei -- their interpretation
+                    # depends on the chapter
+                    if self.chapter == 1:
+                        # e1 -> e2
+                        self.reactants.append(Nucleus(f[0]))
+                        self.products.append(Nucleus(f[1]))
 
-                        elif self.chapter == 2:
-                            # e1 -> e2 + e3
-                            self.reactants.append(Nucleus(f[0]))
-                            self.products += [Nucleus(f[1]), Nucleus(f[2])]
+                    elif self.chapter == 2:
+                        # e1 -> e2 + e3
+                        self.reactants.append(Nucleus(f[0]))
+                        self.products += [Nucleus(f[1]), Nucleus(f[2])]
 
-                        elif self.chapter == 3:
-                            # e1 -> e2 + e3 + e4
-                            self.reactants.append(Nucleus(f[0]))
-                            self.products += [Nucleus(f[1]), Nucleus(f[2]), Nucleus(f[3])]
+                    elif self.chapter == 3:
+                        # e1 -> e2 + e3 + e4
+                        self.reactants.append(Nucleus(f[0]))
+                        self.products += [Nucleus(f[1]), Nucleus(f[2]), Nucleus(f[3])]
 
-                        elif self.chapter == 4:
-                            # e1 + e2 -> e3
-                            self.reactants += [Nucleus(f[0]), Nucleus(f[1])]
-                            self.products.append(Nucleus(f[2]))
+                    elif self.chapter == 4:
+                        # e1 + e2 -> e3
+                        self.reactants += [Nucleus(f[0]), Nucleus(f[1])]
+                        self.products.append(Nucleus(f[2]))
 
-                        elif self.chapter == 5:
-                            # e1 + e2 -> e3 + e4
-                            self.reactants += [Nucleus(f[0]), Nucleus(f[1])]
-                            self.products += [Nucleus(f[2]), Nucleus(f[3])]
+                    elif self.chapter == 5:
+                        # e1 + e2 -> e3 + e4
+                        self.reactants += [Nucleus(f[0]), Nucleus(f[1])]
+                        self.products += [Nucleus(f[2]), Nucleus(f[3])]
 
-                        elif self.chapter == 6:
-                            # e1 + e2 -> e3 + e4 + e5
-                            self.reactants += [Nucleus(f[0]), Nucleus(f[1])]
-                            self.products += [Nucleus(f[2]), Nucleus(f[3]), Nucleus(f[4])]
+                    elif self.chapter == 6:
+                        # e1 + e2 -> e3 + e4 + e5
+                        self.reactants += [Nucleus(f[0]), Nucleus(f[1])]
+                        self.products += [Nucleus(f[2]), Nucleus(f[3]), Nucleus(f[4])]
 
-                        elif self.chapter == 7:
-                            # e1 + e2 -> e3 + e4 + e5 + e6
-                            self.reactants += [Nucleus(f[0]), Nucleus(f[1])]
-                            self.products += [Nucleus(f[2]), Nucleus(f[3]),
-                                              Nucleus(f[4]), Nucleus(f[5])]
+                    elif self.chapter == 7:
+                        # e1 + e2 -> e3 + e4 + e5 + e6
+                        self.reactants += [Nucleus(f[0]), Nucleus(f[1])]
+                        self.products += [Nucleus(f[2]), Nucleus(f[3]),
+                                          Nucleus(f[4]), Nucleus(f[5])]
 
-                        elif self.chapter == 8:
-                            # e1 + e2 + e3 -> e4
-                            self.reactants += [Nucleus(f[0]), Nucleus(f[1]), Nucleus(f[2])]
-                            self.products.append(Nucleus(f[3]))
+                    elif self.chapter == 8:
+                        # e1 + e2 + e3 -> e4
+                        self.reactants += [Nucleus(f[0]), Nucleus(f[1]), Nucleus(f[2])]
+                        self.products.append(Nucleus(f[3]))
 
-                        elif self.chapter == 9:
-                            # e1 + e2 + e3 -> e4 + e5
-                            self.reactants += [Nucleus(f[0]), Nucleus(f[1]), Nucleus(f[2])]
-                            self.products += [Nucleus(f[3]), Nucleus(f[4])]
+                    elif self.chapter == 9:
+                        # e1 + e2 + e3 -> e4 + e5
+                        self.reactants += [Nucleus(f[0]), Nucleus(f[1]), Nucleus(f[2])]
+                        self.products += [Nucleus(f[3]), Nucleus(f[4])]
 
-                        elif self.chapter == 10:
-                            # e1 + e2 + e3 + e4 -> e5 + e6
-                            self.reactants += [Nucleus(f[0]), Nucleus(f[1]),
-                                               Nucleus(f[2]), Nucleus(f[3])]
-                            self.products += [Nucleus(f[4]), Nucleus(f[5])]
+                    elif self.chapter == 10:
+                        # e1 + e2 + e3 + e4 -> e5 + e6
+                        self.reactants += [Nucleus(f[0]), Nucleus(f[1]),
+                                           Nucleus(f[2]), Nucleus(f[3])]
+                        self.products += [Nucleus(f[4]), Nucleus(f[5])]
 
-                        elif self.chapter == 11:
-                            # e1 -> e2 + e3 + e4 + e5
-                            self.reactants.append(Nucleus(f[0]))
-                            self.products += [Nucleus(f[1]), Nucleus(f[2]),
-                                              Nucleus(f[3]), Nucleus(f[4])]
-                        else:
-                            print(f'Chapter could not be identified in {self.original_source}')
-                            assert isinstance(self.chapter, int) and self.chapter <= 11
-                    except:
-                        # print('Error parsing Rate from {}'.format(self.original_source))
-                        raise
+                    elif self.chapter == 11:
+                        # e1 -> e2 + e3 + e4 + e5
+                        self.reactants.append(Nucleus(f[0]))
+                        self.products += [Nucleus(f[1]), Nucleus(f[2]),
+                                          Nucleus(f[3]), Nucleus(f[4])]
+                    else:
+                        print(f'Chapter could not be identified in {self.original_source}')
+                        assert isinstance(self.chapter, int) and self.chapter <= 11
 
                     first = 0
 

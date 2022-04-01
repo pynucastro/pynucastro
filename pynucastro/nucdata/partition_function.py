@@ -1,4 +1,3 @@
-from fcntl import LOCK_WRITE
 import os
 import numpy as np
 import pynucastro
@@ -37,7 +36,7 @@ class PartitionFunction:
     """
 
     def __init__(self, nucleus=None, name=None, temperature=None, partition_function=None):
-        if type(nucleus) == str:
+        if isinstance(nucleus, str):
             nucleus = pynucastro.rates.Nucleus(nucleus)
 
         self.nucleus = nucleus
@@ -47,10 +46,10 @@ class PartitionFunction:
         self.interpolant = None
         self.interpolant_order = None
 
-        if(type(temperature) == np.ndarray and
-           type(partition_function) == np.ndarray and
-           len(temperature) == len(partition_function)):
-           self.construct_spline_interpolant()
+        if (isinstance(temperature, np.ndarray) and
+            isinstance(partition_function, np.ndarray) and
+            len(temperature) == len(partition_function)):
+            self.construct_spline_interpolant()
         else:
             self.interpolant_order = 0
             self.interpolant = lambda x: 0.0
@@ -81,9 +80,9 @@ class PartitionFunction:
         to the maximum order of the added PartitionFunction objects.
         """
 
-        assert(self.nucleus == other.nucleus)
-        assert(self.upper_temperature() < other.lower_temperature() or
-               self.lower_temperature() > other.upper_temperature())
+        assert self.nucleus == other.nucleus
+        assert (self.upper_temperature() < other.lower_temperature() or
+                self.lower_temperature() > other.upper_temperature())
 
         if self.upper_temperature() < other.lower_temperature():
             lower = self
@@ -106,7 +105,7 @@ class PartitionFunction:
         if self.interpolant_order and other.interpolant_order:
             order = max(self.interpolant_order, other.interpolant_order)
         elif self.interpolant_order:
-            order =  self.interpolant_order
+            order = self.interpolant_order
         elif other.interpolant_order:
             order = other.interpolant_order
         else:
@@ -140,14 +139,13 @@ class PartitionFunction:
         assert self.interpolant
         try:
             T = float(T)/1.0e9
-        except:
+        except ValueError:
+            print("invalid temperature")
             raise
         else:
             if self.interpolant_order == 0:
                 return 10**self.interpolant(T)
-            else:
-                return 10**self.interpolant(T, ext='const') #extrapolates keeping the boundaries fixed.
-
+            return 10**self.interpolant(T, ext='const')  # extrapolates keeping the boundaries fixed.
 
 
 class PartitionFunctionTable:
@@ -171,13 +169,13 @@ class PartitionFunctionTable:
         self.read_table(file_name)
 
     def _add_nuclide_pfun(self, nuc, pfun):
-        assert not nuc in self._partition_function
+        assert nuc not in self._partition_function
         self._partition_function[str(nuc)] = pfun
 
     def get_nuclei(self):
 
         nuclei = []
-        for nc in self._partition_function.keys():
+        for nc in self._partition_function:
             nuclei.append(pynucastro.rates.Nucleus(nc))
 
         return list(sorted(nuclei))
@@ -188,35 +186,33 @@ class PartitionFunctionTable:
             return self._partition_function[str(nuc)]
 
     def read_table(self, file_name):
-        fin = open(file_name, 'r')
+        with open(file_name, 'r') as fin:
 
-        #get headers name
-        fhead = fin.readline()
-        hsplit = fhead.split('name: ')
-        self.name = hsplit[-1].strip('\n')
+            # get headers name
+            fhead = fin.readline()
+            hsplit = fhead.split('name: ')
+            self.name = hsplit[-1].strip('\n')
 
-        #throw away the six subsequent lines
-        for _ in range(6):
-            fin.readline()
+            # throw away the six subsequent lines
+            for _ in range(6):
+                fin.readline()
 
-        #Now, we want to read the lines of the file where
-        #the temperatures are located
-        temp_strings = fin.readline().strip().split()
-        self.temperatures = np.array([float(t) for t in temp_strings])
+            # Now, we want to read the lines of the file where
+            # the temperatures are located
+            temp_strings = fin.readline().strip().split()
+            self.temperatures = np.array([float(t) for t in temp_strings])
 
-        #Now, we append on the array lines = [] all the remaining file, the structure
-        #1. The nucleus
-        #2. The partition value relative to the nucleus defined in 1.
+            # Now, we append on the array lines = [] all the remaining file, the structure
+            # 1. The nucleus
+            # 2. The partition value relative to the nucleus defined in 1.
 
-        lines = []
-        for line in fin:
-            ls = line.strip()
-            if ls:
-                lines.append(ls)
-        fin.close()
+            lines = []
+            for line in fin:
+                ls = line.strip()
+                if ls:
+                    lines.append(ls)
 
-
-        #Using .pop(0) twice we construct each nucleus partition function.
+        # Using .pop(0) twice we construct each nucleus partition function.
         while lines:
             nuc = pynucastro.rates.Nucleus(lines.pop(0))
             pfun_strings = lines.pop(0).split()
@@ -242,7 +238,7 @@ class PartitionFunctionCollection:
         """
         This private function appends a PartitionFunctionTable object to each key characterized by a file_name.
         """
-        assert not table.name in self.partition_function_tables
+        assert table.name not in self.partition_function_tables
         self.partition_function_tables[table.name] = table
 
     def _read_collection(self):
@@ -273,14 +269,14 @@ class PartitionFunctionCollection:
             nuclei += self.partition_function_tables[jk].get_nuclei()
         return list(sorted(set(nuclei)))
 
-    def set_data_selector(self, set_jk = 'frdm'):
+    def set_data_selector(self, set_jk='frdm'):
         """
         This method selects the chosen type of data. By default we use the FRDM model sets
         """
 
         self._set_data = set_jk
 
-    def use_high_temperatures(self, high_temp_jk = True):
+    def use_high_temperatures(self, high_temp_jk=True):
         self._use_high_temperatures = high_temp_jk
 
     def __iter__(self):
@@ -290,7 +286,7 @@ class PartitionFunctionCollection:
     def get_partition_function(self, nuc):
 
         """This function access to the partition function for a given nucleus"""
-        assert type(nuc) == pynucastro.rates.Nucleus or type(nuc) == str
+        assert isinstance(nuc, (pynucastro.rates.Nucleus, str))
 
         if self._set_data == 'frdm':
             pf_lo_table = self.partition_function_tables['frdm_low']

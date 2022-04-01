@@ -124,7 +124,7 @@ class AMETable(object):
         """
         try:
             a, abb = tuple(isostring.split('-'))
-        except:
+        except ValueError:
             print('ERROR: Supply an isotope string in the form "4-He"')
             raise
         a = int(a)
