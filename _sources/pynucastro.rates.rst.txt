@@ -9,6 +9,14 @@ pynucastro.rates package
 Submodules
 ----------
 
+pynucastro.rates.library module
+-------------------------------
+
+.. automodule:: pynucastro.rates.library
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 pynucastro.rates.rate module
 ----------------------------
 
@@ -16,4 +24,3 @@ pynucastro.rates.rate module
    :members:
    :undoc-members:
    :show-inheritance:
-

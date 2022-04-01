@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pynucastro.nucdata.partition_function &mdash; pynucastro 1.6.0.post68+ged7a1c9 documentation</title>
+      <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> pynucastro
+          </a>
+              <div class="version">
+                1.6
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Overview of pynucastro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pynucastro-examples.html">pynucastro usage examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pynucastro-integration.html">Example of integrating a network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../library-examples.html">Selecting Rates from a Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../validate-example.html">Checking your network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../electron-captures.html">Combining ReacLib Rates with Electron Capture Tables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../partition-function.html">Reverse Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../networks.html">Creating Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../sources.html">Third Party Data</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">pynucastro</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      <li>pynucastro.nucdata.partition_function</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pynucastro.nucdata.partition_function</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">fcntl</span> <span class="kn">import</span> <span class="n">LOCK_WRITE</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pynucastro</span>
+<span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="kn">import</span> <span class="n">InterpolatedUnivariateSpline</span>
+
+
+<div class="viewcode-block" id="PartitionFunction"><a class="viewcode-back" href="../../../pynucastro.nucdata.html#pynucastro.nucdata.partition_function.PartitionFunction">[docs]</a><span class="k">class</span> <span class="nc">PartitionFunction</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;  </span>
+<span class="sd">    The necessary class public variables of PartitionFunction(nucleus, name, temperature, partition_function)</span>
+<span class="sd">    are characterized as follows:</span>
+
+<span class="sd">    nucleus            : a string variable composed by an element and the atomic number, e.g ni56.</span>
+<span class="sd">    name               : the name of the table on which the nucleus is read.</span>
+<span class="sd">    temperature        : a list with all the temperatures involved in the table named in the previous variable.</span>
+<span class="sd">    partition_function : a list with all the partition values given in the same order of the previos list.  </span>
+<span class="sd">    interpolant        : stores the interpolant function.</span>
+<span class="sd">    interpolant_order  : stores the interpolation spline order.</span>
+
+<span class="sd">    The public methods of this class are:</span>
+
+<span class="sd">    lower_partition()   : returns the lowest temperature value of the partition_function list.</span>
+<span class="sd">    upper_partition()   : returns the highest temperature value of the partition_function list.</span>
+<span class="sd">    lower_temperature() : returns the lowest value temperature value of the temperature list.</span>
+<span class="sd">    upper_temperature() : returns the lowest value temperature value of the temperature list. </span>
+<span class="sd">    construct_spline_interpolant(order) : interpolates temperature vs log(partition_function), using the</span>
+<span class="sd">                                      spline interpolation of order=3 by default, returning the function of T.</span>
+
+<span class="sd">    The dunder methods of this class are</span>
+<span class="sd">    __add__ : if two partition functions do not overlap their temperatures, we define the addition at the incorporation</span>
+<span class="sd">          of all the temperatures and their partition function values, respectively.</span>
+<span class="sd">    __call__: This object allow us to treat the class object as function of T, returning the appropiate value of </span>
+<span class="sd">          the partition function.</span>
+
+<span class="sd">    The purpose of this oject is to encompass all the nucleus partition function values into a single object, on which +</span>
+<span class="sd">    is defined. </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nucleus</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">partition_function</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">nucleus</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">nucleus</span><span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">nucleus</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">temperature</span> <span class="o">=</span> <span class="n">temperature</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">partition_function</span> <span class="o">=</span> <span class="n">partition_function</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">interpolant</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">interpolant_order</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="ow">and</span>
+           <span class="nb">type</span><span class="p">(</span><span class="n">partition_function</span><span class="p">)</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="ow">and</span>
+           <span class="nb">len</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span><span class="o">==</span><span class="nb">len</span><span class="p">(</span><span class="n">partition_function</span><span class="p">)):</span>
+           <span class="bp">self</span><span class="o">.</span><span class="n">construct_spline_interpolant</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">interpolant_order</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">interpolant</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mf">0.0</span>
+
+<div class="viewcode-block" id="PartitionFunction.lower_partition"><a class="viewcode-back" href="../../../pynucastro.nucdata.html#pynucastro.nucdata.partition_function.PartitionFunction.lower_partition">[docs]</a>    <span class="k">def</span> <span class="nf">lower_partition</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">partition_function</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="PartitionFunction.upper_partition"><a class="viewcode-back" href="../../../pynucastro.nucdata.html#pynucastro.nucdata.partition_function.PartitionFunction.upper_partition">[docs]</a>    <span class="k">def</span> <span class="nf">upper_partition</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">partition_function</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="PartitionFunction.lower_temperature"><a class="viewcode-back" href="../../../pynucastro.nucdata.html#pynucastro.nucdata.partition_function.PartitionFunction.lower_temperature">[docs]</a>    <span class="k">def</span> <span class="nf">lower_temperature</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">temperature</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="PartitionFunction.upper_temperature"><a class="viewcode-back" href="../../../pynucastro.nucdata.html#pynucastro.nucdata.partition_function.PartitionFunction.upper_temperature">[docs]</a>    <span class="k">def</span> <span class="nf">upper_temperature</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">temperature</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span></div>
+
+    <span class="k">def</span> <span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Adding two PartitionFunction objects is implemented by simply</span>
+<span class="sd">        appending the temperature and partition function values of the</span>
+<span class="sd">        higher-temperature partition function to those of the lower-temperature</span>
+<span class="sd">        partition function. If the temperature ranges overlap,</span>
+<span class="sd">        however, an exception is generated.</span>
+
+<span class="sd">        If either the PartitionFunction objects added have already had</span>
+<span class="sd">        a spline interpolant constructed, then construct a spline</span>
+<span class="sd">        interpolant for the returned PartitionFunction of order equal</span>
+<span class="sd">        to the maximum order of the added PartitionFunction objects.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">nucleus</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">nucleus</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">upper_temperature</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">other</span><span class="o">.</span><span class="n">lower_temperature</span><span class="p">()</span> <span class="ow">or</span> \
+               <span class="bp">self</span><span class="o">.</span><span class="n">lower_temperature</span><span class="p">()</span> <span class="o">&gt;</span> <span class="n">other</span><span class="o">.</span><span class="n">upper_temperature</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">upper_temperature</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">other</span><span class="o">.</span><span class="n">lower_temperature</span><span class="p">():</span>
+            <span class="n">lower</span> <span class="o">=</span> <span class="bp">self</span>
+            <span class="n">upper</span> <span class="o">=</span> <span class="n">other</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">lower</span> <span class="o">=</span> <span class="n">other</span>
+            <span class="n">upper</span> <span class="o">=</span> <span class="bp">self</span>
+
+        <span class="n">temperature</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">lower</span><span class="o">.</span><span class="n">temperature</span><span class="p">)</span> <span class="o">+</span> 
+                               <span class="nb">list</span><span class="p">(</span><span class="n">upper</span><span class="o">.</span><span class="n">temperature</span><span class="p">))</span>
+
+        <span class="n">partition_function</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">lower</span><span class="o">.</span><span class="n">partition_function</span><span class="p">)</span> <span class="o">+</span>  
+                             <span class="nb">list</span><span class="p">(</span><span class="n">upper</span><span class="o">.</span><span class="n">partition_function</span><span class="p">))</span>
+
+        <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">+</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lower</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">upper</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+        <span class="n">newpf</span> <span class="o">=</span> <span class="n">PartitionFunction</span><span class="p">(</span><span class="n">nucleus</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nucleus</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="n">temperature</span><span class="p">,</span> <span class="n">partition_function</span><span class="o">=</span><span class="n">partition_function</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">interpolant_order</span> <span class="ow">and</span> <span class="n">other</span><span class="o">.</span><span class="n">interpolant_order</span><span class="p">:</span>
+            <span class="n">order</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">interpolant_order</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">interpolant_order</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">interpolant_order</span><span class="p">:</span>
+            <span class="n">order</span> <span class="o">=</span>  <span class="bp">self</span><span class="o">.</span><span class="n">interpolant_order</span>
+        <span class="k">elif</span> <span class="n">other</span><span class="o">.</span><span class="n">interpolant_order</span><span class="p">:</span>
+            <span class="n">order</span> <span class="o">=</span> <span class="n">other</span><span class="o">.</span><span class="n">interpolant_order</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">order</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="n">order</span><span class="p">:</span>
+            <span class="n">newpf</span><span class="o">.</span><span class="n">construct_spline_interpolant</span><span class="p">(</span><span class="n">order</span> <span class="o">=</span> <span class="n">order</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">newpf</span>
+
+<div class="viewcode-block" id="PartitionFunction.construct_spline_interpolant"><a class="viewcode-back" href="../../../pynucastro.nucdata.html#pynucastro.nucdata.partition_function.PartitionFunction.construct_spline_interpolant">[docs]</a>    <span class="k">def</span> <span class="nf">construct_spline_interpolant</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Construct an interpolating univariate spline of order &gt;= 1 and</span>
+<span class="sd">        order &lt;= 5 using the scipy InterpolatedUnivariateSpline</span>
+<span class="sd">        implementation. </span>
+
+<span class="sd">        Interpolate in log space for the partition function and in GK</span>
+<span class="sd">        for temperature.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">interpolant</span> <span class="o">=</span> <span class="n">InterpolatedUnivariateSpline</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">temperature</span><span class="o">/</span><span class="mf">1.0e9</span><span class="p">,</span> 
+                                                        <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">partition_function</span><span class="p">),</span> 
+                                                        <span class="n">k</span><span class="o">=</span><span class="n">order</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">interpolant_order</span> <span class="o">=</span> <span class="n">order</span></div>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">):</span>
+
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">interpolant</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">T</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">T</span><span class="p">)</span><span class="o">/</span><span class="mf">1.0e9</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">raise</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">interpolant_order</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="mi">10</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">interpolant</span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="mi">10</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">interpolant</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">ext</span><span class="o">=</span><span class="s1">&#39;const&#39;</span><span class="p">)</span> <span class="c1">#extrapolates keeping the boundaries fixed.</span></div>
+
+
+
+<div class="viewcode-block" id="PartitionFunctionTable"><a class="viewcode-back" href="../../../pynucastro.nucdata.html#pynucastro.nucdata.partition_function.PartitionFunctionTable">[docs]</a><span class="k">class</span> <span class="nc">PartitionFunctionTable</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    Class for reading a partition function table file. A</span>
+<span class="sd">    PartitionFunction object is constructed for each nucleus and</span>
+<span class="sd">    stored in a dictionary keyed by the lowercase nucleus name in the</span>
+<span class="sd">    form, e.g. &quot;ni56&quot;. The table files are stored in the PartitionFunction</span>
+<span class="sd">    sub directory. </span>
+
+<span class="sd">    The class PartitionFunctionTable(file_name) is characterized by the public variable self.name,</span>
+<span class="sd">    which stores the name of the table. The private variable self._partition_function collects all</span>
+<span class="sd">    the tables we have previously converted bu using their scripts. </span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_partition_function</span> <span class="o">=</span> <span class="p">{}</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">temperatures</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">read_table</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_add_nuclide_pfun</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nuc</span><span class="p">,</span> <span class="n">pfun</span><span class="p">):</span> 
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">nuc</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_partition_function</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_partition_function</span><span class="p">[</span><span class="n">nuc</span><span class="p">]</span> <span class="o">=</span> <span class="n">pfun</span>
+
+<div class="viewcode-block" id="PartitionFunctionTable.get_nuclei"><a class="viewcode-back" href="../../../pynucastro.nucdata.html#pynucastro.nucdata.partition_function.PartitionFunctionTable.get_nuclei">[docs]</a>    <span class="k">def</span> <span class="nf">get_nuclei</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="n">nuclei</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">nc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_partition_function</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">nuclei</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nc</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">nuclei</span></div>
+
+<div class="viewcode-block" id="PartitionFunctionTable.get_partition_function"><a class="viewcode-back" href="../../../pynucastro.nucdata.html#pynucastro.nucdata.partition_function.PartitionFunctionTable.get_partition_function">[docs]</a>    <span class="k">def</span> <span class="nf">get_partition_function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nuc</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">nuc</span><span class="p">,</span><span class="nb">str</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">nuc</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_partition_function</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_partition_function</span><span class="p">[</span><span class="n">nuc</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="PartitionFunctionTable.read_table"><a class="viewcode-back" href="../../../pynucastro.nucdata.html#pynucastro.nucdata.partition_function.PartitionFunctionTable.read_table">[docs]</a>    <span class="k">def</span> <span class="nf">read_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">):</span>
+        <span class="n">fin</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
+
+        <span class="c1">#get headers name</span>
+        <span class="n">fhead</span> <span class="o">=</span> <span class="n">fin</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+        <span class="n">hsplit</span> <span class="o">=</span> <span class="n">fhead</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;name: &#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">hsplit</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="c1">#throw away the six subsequent lines</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">):</span>
+            <span class="n">fin</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+
+        <span class="c1">#Now, we want to read the lines of the file where</span>
+        <span class="c1">#the temperatures are located</span>
+        <span class="n">temp_strings</span> <span class="o">=</span> <span class="n">fin</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">temperatures</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">temp_strings</span><span class="p">])</span>
+
+        <span class="c1">#Now, we append on the array lines = [] all the remaining file, the structure</span>
+        <span class="c1">#1. The nucleus</span>
+        <span class="c1">#2. The partition value relative to the nucleus defined in 1.</span>
+
+        <span class="n">lines</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">fin</span><span class="p">:</span>
+            <span class="n">ls</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">ls</span><span class="p">:</span>
+                <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ls</span><span class="p">)</span>
+        <span class="n">fin</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+
+        <span class="c1">#Using .pop(0) twice we construct each nucleus partition function.</span>
+        <span class="k">while</span> <span class="n">lines</span><span class="p">:</span>
+            <span class="n">nuc</span> <span class="o">=</span> <span class="n">lines</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">pfun_strings</span> <span class="o">=</span> <span class="n">lines</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+            <span class="n">partitionfun</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">pf</span><span class="p">)</span> <span class="k">for</span> <span class="n">pf</span> <span class="ow">in</span> <span class="n">pfun_strings</span><span class="p">])</span>
+            <span class="n">pfun</span> <span class="o">=</span> <span class="n">PartitionFunction</span><span class="p">(</span><span class="n">nuc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">temperatures</span><span class="p">,</span> <span class="n">partitionfun</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_add_nuclide_pfun</span><span class="p">(</span><span class="n">nuc</span><span class="p">,</span> <span class="n">pfun</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="PartitionFunctionCollection"><a class="viewcode-back" href="../../../pynucastro.nucdata.html#pynucastro.nucdata.partition_function.PartitionFunctionCollection">[docs]</a><span class="k">class</span> <span class="nc">PartitionFunctionCollection</span><span class="p">:</span>
+
+    <span class="sd">&quot;&quot;&quot; The PartitionFunctionCollection holds a collection of PartitionFunctionTable objects in a dictionary keyed </span>
+<span class="sd">    by the name of the tables</span>
+<span class="sd">    </span>
+<span class="sd">    In our discussion we have two different set of tables&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">use_high_temperatures</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">use_set</span> <span class="o">=</span> <span class="s1">&#39;frdm&#39;</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_partition_function_tables</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">use_high_temperatures</span> <span class="o">=</span> <span class="n">use_high_temperatures</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">use_set</span> <span class="o">=</span> <span class="s1">&#39;frdm&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_read_collection</span><span class="p">()</span>
+        
+    <span class="k">def</span> <span class="nf">_add_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">        This private function appends a PartitionFunctionTable object to each key characterized by a file_name.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="n">table</span><span class="o">.</span><span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_partition_function_tables</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_partition_function_tables</span><span class="p">[</span><span class="n">table</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">table</span>
+
+    <span class="k">def</span> <span class="nf">_read_collection</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">        This private function construct the whole collection of tables</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+            
+        <span class="n">nucdata_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
+        <span class="n">partition_function_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">nucdata_dir</span><span class="p">,</span> <span class="s1">&#39;PartitionFunction&#39;</span><span class="p">)</span>
+
+        <span class="n">pft</span> <span class="o">=</span> <span class="n">PartitionFunctionTable</span><span class="p">(</span><span class="n">file_name</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">partition_function_dir</span><span class="p">,</span> <span class="s1">&#39;etfsiq_low.txt&#39;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_table</span><span class="p">(</span><span class="n">pft</span><span class="p">)</span>
+
+        <span class="n">pft</span> <span class="o">=</span> <span class="n">PartitionFunctionTable</span><span class="p">(</span><span class="n">file_name</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">partition_function_dir</span><span class="p">,</span> <span class="s1">&#39;frdm_low.txt&#39;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_table</span><span class="p">(</span><span class="n">pft</span><span class="p">)</span>
+
+        <span class="n">pft</span> <span class="o">=</span> <span class="n">PartitionFunctionTable</span><span class="p">(</span><span class="n">file_name</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">partition_function_dir</span><span class="p">,</span> <span class="s1">&#39;etfsiq_high.txt&#39;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_table</span><span class="p">(</span><span class="n">pft</span><span class="p">)</span>
+
+        <span class="n">pft</span> <span class="o">=</span> <span class="n">PartitionFunctionTable</span><span class="p">(</span><span class="n">file_name</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">partition_function_dir</span><span class="p">,</span> <span class="s1">&#39;frdm_high.txt&#39;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_table</span><span class="p">(</span><span class="n">pft</span><span class="p">)</span>
+
+<div class="viewcode-block" id="PartitionFunctionCollection.get_nuclei"><a class="viewcode-back" href="../../../pynucastro.nucdata.html#pynucastro.nucdata.partition_function.PartitionFunctionCollection.get_nuclei">[docs]</a>    <span class="k">def</span> <span class="nf">get_nuclei</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="n">nuclei</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">jk</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_partition_function_tables</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">nuclei</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_partition_function_tables</span><span class="p">[</span><span class="n">jk</span><span class="p">]</span><span class="o">.</span><span class="n">get_nuclei</span><span class="p">()</span>
+        <span class="k">return</span> <span class="nb">set</span><span class="p">(</span><span class="n">nuclei</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_nuclei</span><span class="p">():</span>
+            <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_partition_function</span><span class="p">(</span><span class="n">nuc</span><span class="p">)</span>
+
+<div class="viewcode-block" id="PartitionFunctionCollection.get_partition_function"><a class="viewcode-back" href="../../../pynucastro.nucdata.html#pynucastro.nucdata.partition_function.PartitionFunctionCollection.get_partition_function">[docs]</a>    <span class="k">def</span> <span class="nf">get_partition_function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nuc</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot;This function access to the partition function for a given nucleus&quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">nuc</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_set</span> <span class="o">==</span> <span class="s1">&#39;frdm&#39;</span><span class="p">:</span>
+            <span class="n">pf_lo_table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_partition_function_tables</span><span class="p">[</span><span class="s1">&#39;frdm_low&#39;</span><span class="p">]</span>
+            <span class="n">pf_lo</span> <span class="o">=</span> <span class="n">pf_lo_table</span><span class="o">.</span><span class="n">get_partition_function</span><span class="p">(</span><span class="n">nuc</span><span class="p">)</span>
+
+            <span class="n">pf_hi_table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_partition_function_tables</span><span class="p">[</span><span class="s1">&#39;frdm_high&#39;</span><span class="p">]</span>
+            <span class="n">pf_hi</span> <span class="o">=</span> <span class="n">pf_hi_table</span><span class="o">.</span><span class="n">get_partition_function</span><span class="p">(</span><span class="n">nuc</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_set</span> <span class="o">==</span> <span class="s1">&#39;etfsiq&#39;</span><span class="p">:</span>
+            <span class="n">pf_lo_table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_partition_function_tables</span><span class="p">[</span><span class="s1">&#39;etfsiq_low&#39;</span><span class="p">]</span>
+            <span class="n">pf_lo</span> <span class="o">=</span> <span class="n">pf_lo_table</span><span class="o">.</span><span class="n">get_partition_function</span><span class="p">(</span><span class="n">nuc</span><span class="p">)</span>
+
+            <span class="n">pf_hi_table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_partition_function_tables</span><span class="p">[</span><span class="s1">&#39;etfsiq_high&#39;</span><span class="p">]</span>
+            <span class="n">pf_hi</span> <span class="o">=</span> <span class="n">pf_hi_table</span><span class="o">.</span><span class="n">get_partition_function</span><span class="p">(</span><span class="n">nuc</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;invalid partition function type&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_high_temperatures</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">pf_lo</span> <span class="ow">and</span> <span class="n">pf_hi</span><span class="p">:</span> 
+                <span class="n">pf</span> <span class="o">=</span> <span class="n">pf_lo</span> <span class="o">+</span> <span class="n">pf_hi</span>
+            <span class="k">elif</span> <span class="n">pf_lo</span><span class="p">:</span>
+                <span class="n">pf</span> <span class="o">=</span> <span class="n">pf_lo</span>
+            <span class="k">elif</span> <span class="n">pf_hi</span><span class="p">:</span>
+                <span class="n">pf</span> <span class="o">=</span> <span class="n">pf_hi</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;default&#39;</span>
+                <span class="n">pf_default</span> <span class="o">=</span> <span class="n">PartitionFunction</span><span class="p">(</span><span class="n">nuc</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">pf_lo_table</span><span class="o">.</span><span class="n">temperatures</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">pf_lo_table</span><span class="o">.</span><span class="n">temperatures</span><span class="p">))</span>
+                <span class="n">pf</span> <span class="o">=</span> <span class="n">pf_default</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">pf_lo</span><span class="p">:</span>
+                <span class="n">pf</span> <span class="o">=</span> <span class="n">pf_lo</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;default&#39;</span>
+                <span class="n">pf_default</span> <span class="o">=</span> <span class="n">PartitionFunction</span><span class="p">(</span><span class="n">nuc</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">pf_lo_table</span><span class="o">.</span><span class="n">temperatures</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">pf_lo_table</span><span class="o">.</span><span class="n">temperatures</span><span class="p">))</span>
+                <span class="n">pf</span> <span class="o">=</span> <span class="n">pf_default</span>
+
+        <span class="k">return</span> <span class="n">pf</span></div></div>
+
+
+
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Michael Zingale and Donald Willcox.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.nucdata package &mdash; pynucastro 1.6.0.post67+gf5b3de1 documentation</title>
+  <title>pynucastro.nucdata package &mdash; pynucastro 1.6.0.post68+ged7a1c9 documentation</title>
       <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -69,7 +69,6 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="setup.html">setup module</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="sources.html">Third Party Data</a></li>
@@ -89,7 +88,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="modules.html">out</a> &raquo;</li>
+          <li><a href="modules.html">pynucastro</a> &raquo;</li>
           <li><a href="pynucastro.html">pynucastro package</a> &raquo;</li>
       <li>pynucastro.nucdata package</li>
       <li class="wy-breadcrumbs-aside">
@@ -209,6 +208,148 @@ particular, the binding energies)</p>
 <dt class="sig sig-object py" id="pynucastro.nucdata.elements.UnidentifiedElement">
 <em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.nucdata.elements.</span></span><span class="sig-name descname"><span class="pre">UnidentifiedElement</span></span><a class="reference internal" href="_modules/pynucastro/nucdata/elements.html#UnidentifiedElement"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.elements.UnidentifiedElement" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseException</span></code></p>
+</dd></dl>
+
+</section>
+<section id="module-pynucastro.nucdata.partition_function">
+<span id="pynucastro-nucdata-partition-function-module"></span><h2>pynucastro.nucdata.partition_function module<a class="headerlink" href="#module-pynucastro.nucdata.partition_function" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pynucastro.nucdata.partition_function.PartitionFunction">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.nucdata.partition_function.</span></span><span class="sig-name descname"><span class="pre">PartitionFunction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nucleus</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temperature</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">partition_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/partition_function.html#PartitionFunction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.partition_function.PartitionFunction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The necessary class public variables of PartitionFunction(nucleus, name, temperature, partition_function)
+are characterized as follows:</p>
+<p>nucleus            : a string variable composed by an element and the atomic number, e.g ni56.
+name               : the name of the table on which the nucleus is read.
+temperature        : a list with all the temperatures involved in the table named in the previous variable.
+partition_function : a list with all the partition values given in the same order of the previos list.  
+interpolant        : stores the interpolant function.
+interpolant_order  : stores the interpolation spline order.</p>
+<p>The public methods of this class are:</p>
+<p>lower_partition()   : returns the lowest temperature value of the partition_function list.
+upper_partition()   : returns the highest temperature value of the partition_function list.
+lower_temperature() : returns the lowest value temperature value of the temperature list.
+upper_temperature() : returns the lowest value temperature value of the temperature list. 
+construct_spline_interpolant(order) : interpolates temperature vs log(partition_function), using the</p>
+<blockquote>
+<div><p>spline interpolation of order=3 by default, returning the function of T.</p>
+</div></blockquote>
+<p>The dunder methods of this class are
+__add__ : if two partition functions do not overlap their temperatures, we define the addition at the incorporation</p>
+<blockquote>
+<div><p>of all the temperatures and their partition function values, respectively.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>__call__: This object allow us to treat the class object as function of T, returning the appropiate value of </dt><dd><p>the partition function.</p>
+</dd>
+</dl>
+<p>The purpose of this oject is to encompass all the nucleus partition function values into a single object, on which +
+is defined.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pynucastro.nucdata.partition_function.PartitionFunction.construct_spline_interpolant">
+<span class="sig-name descname"><span class="pre">construct_spline_interpolant</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/partition_function.html#PartitionFunction.construct_spline_interpolant"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.partition_function.PartitionFunction.construct_spline_interpolant" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construct an interpolating univariate spline of order &gt;= 1 and
+order &lt;= 5 using the scipy InterpolatedUnivariateSpline
+implementation.</p>
+<p>Interpolate in log space for the partition function and in GK
+for temperature.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pynucastro.nucdata.partition_function.PartitionFunction.lower_partition">
+<span class="sig-name descname"><span class="pre">lower_partition</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/partition_function.html#PartitionFunction.lower_partition"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.partition_function.PartitionFunction.lower_partition" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pynucastro.nucdata.partition_function.PartitionFunction.lower_temperature">
+<span class="sig-name descname"><span class="pre">lower_temperature</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/partition_function.html#PartitionFunction.lower_temperature"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.partition_function.PartitionFunction.lower_temperature" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pynucastro.nucdata.partition_function.PartitionFunction.upper_partition">
+<span class="sig-name descname"><span class="pre">upper_partition</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/partition_function.html#PartitionFunction.upper_partition"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.partition_function.PartitionFunction.upper_partition" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pynucastro.nucdata.partition_function.PartitionFunction.upper_temperature">
+<span class="sig-name descname"><span class="pre">upper_temperature</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/partition_function.html#PartitionFunction.upper_temperature"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.partition_function.PartitionFunction.upper_temperature" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pynucastro.nucdata.partition_function.PartitionFunctionCollection">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.nucdata.partition_function.</span></span><span class="sig-name descname"><span class="pre">PartitionFunctionCollection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">use_high_temperatures</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_set</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'frdm'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/partition_function.html#PartitionFunctionCollection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.partition_function.PartitionFunctionCollection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The PartitionFunctionCollection holds a collection of PartitionFunctionTable objects in a dictionary keyed 
+by the name of the tables</p>
+<p>In our discussion we have two different set of tables</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pynucastro.nucdata.partition_function.PartitionFunctionCollection.get_nuclei">
+<span class="sig-name descname"><span class="pre">get_nuclei</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/partition_function.html#PartitionFunctionCollection.get_nuclei"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.partition_function.PartitionFunctionCollection.get_nuclei" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pynucastro.nucdata.partition_function.PartitionFunctionCollection.get_partition_function">
+<span class="sig-name descname"><span class="pre">get_partition_function</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nuc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/partition_function.html#PartitionFunctionCollection.get_partition_function"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.partition_function.PartitionFunctionCollection.get_partition_function" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function access to the partition function for a given nucleus</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pynucastro.nucdata.partition_function.PartitionFunctionTable">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.nucdata.partition_function.</span></span><span class="sig-name descname"><span class="pre">PartitionFunctionTable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/partition_function.html#PartitionFunctionTable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.partition_function.PartitionFunctionTable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class for reading a partition function table file. A
+PartitionFunction object is constructed for each nucleus and
+stored in a dictionary keyed by the lowercase nucleus name in the
+form, e.g. “ni56”. The table files are stored in the PartitionFunction
+sub directory.</p>
+<p>The class PartitionFunctionTable(file_name) is characterized by the public variable self.name,
+which stores the name of the table. The private variable self._partition_function collects all
+the tables we have previously converted bu using their scripts.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pynucastro.nucdata.partition_function.PartitionFunctionTable.get_nuclei">
+<span class="sig-name descname"><span class="pre">get_nuclei</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/partition_function.html#PartitionFunctionTable.get_nuclei"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.partition_function.PartitionFunctionTable.get_nuclei" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pynucastro.nucdata.partition_function.PartitionFunctionTable.get_partition_function">
+<span class="sig-name descname"><span class="pre">get_partition_function</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nuc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/partition_function.html#PartitionFunctionTable.get_partition_function"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.partition_function.PartitionFunctionTable.get_partition_function" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pynucastro.nucdata.partition_function.PartitionFunctionTable.read_table">
+<span class="sig-name descname"><span class="pre">read_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/partition_function.html#PartitionFunctionTable.read_table"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.partition_function.PartitionFunctionTable.read_table" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-pynucastro.nucdata.spin_nuclide">
+<span id="pynucastro-nucdata-spin-nuclide-module"></span><h2>pynucastro.nucdata.spin_nuclide module<a class="headerlink" href="#module-pynucastro.nucdata.spin_nuclide" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pynucastro.nucdata.spin_nuclide.SpinNuclide">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.nucdata.spin_nuclide.</span></span><span class="sig-name descname"><span class="pre">SpinNuclide</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spin_states</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/spin_nuclide.html#SpinNuclide"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.spin_nuclide.SpinNuclide" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>This class contains the spin information for each nuclei specified in the nubase20.txt table.
+The purpose to create this class lies on the</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pynucastro.nucdata.spin_nuclide.SpinTable">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.nucdata.spin_nuclide.</span></span><span class="sig-name descname"><span class="pre">SpinTable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datafile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">set_double_gs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/spin_nuclide.html#SpinTable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.spin_nuclide.SpinTable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>This class stores the nubase2020.txt table information in a dictionary data structure
+that maps a pynucastro.rates.Nucleus object to a pynucastro.nucdata.SpinNuclide object.
+Therefore, after setting an SpinTable class in rates.py, we should retrieve the SpinNuclide
+data structure from a designated Nucleus class.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pynucastro.nucdata.spin_nuclide.SpinTable.get_spin_nuclide">
+<span class="sig-name descname"><span class="pre">get_spin_nuclide</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nuc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/spin_nuclide.html#SpinTable.get_spin_nuclide"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.spin_nuclide.SpinTable.get_spin_nuclide" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 </section>

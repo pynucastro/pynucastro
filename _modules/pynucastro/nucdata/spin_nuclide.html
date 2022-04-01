@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pynucastro.nucdata.spin_nuclide &mdash; pynucastro 1.6.0.post68+ged7a1c9 documentation</title>
+      <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> pynucastro
+          </a>
+              <div class="version">
+                1.6
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Overview of pynucastro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pynucastro-examples.html">pynucastro usage examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pynucastro-integration.html">Example of integrating a network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../library-examples.html">Selecting Rates from a Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../validate-example.html">Checking your network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../electron-captures.html">Combining ReacLib Rates with Electron Capture Tables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../partition-function.html">Reverse Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../networks.html">Creating Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../sources.html">Third Party Data</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">pynucastro</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      <li>pynucastro.nucdata.spin_nuclide</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pynucastro.nucdata.spin_nuclide</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">pynucastro.nucdata</span> <span class="kn">import</span> <span class="n">PeriodicTable</span>
+
+<div class="viewcode-block" id="SpinNuclide"><a class="viewcode-back" href="../../../pynucastro.nucdata.html#pynucastro.nucdata.spin_nuclide.SpinNuclide">[docs]</a><span class="k">class</span> <span class="nc">SpinNuclide</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This class contains the spin information for each nuclei specified in the nubase20.txt table.</span>
+<span class="sd">    The purpose to create this class lies on the </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">spin_states</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">spin_states</span> <span class="o">=</span> <span class="n">spin_states</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">z</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">rep</span> <span class="o">=</span> <span class="s1">&#39;n&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">element</span> <span class="o">=</span> <span class="n">PeriodicTable</span><span class="o">.</span><span class="n">lookup_Z</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">)</span>
+            <span class="n">rep</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">element</span><span class="o">.</span><span class="n">abbreviation</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">rep</span></div>
+
+<div class="viewcode-block" id="SpinTable"><a class="viewcode-back" href="../../../pynucastro.nucdata.html#pynucastro.nucdata.spin_nuclide.SpinTable">[docs]</a><span class="k">class</span> <span class="nc">SpinTable</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This class stores the nubase2020.txt table information in a dictionary data structure</span>
+<span class="sd">    that maps a pynucastro.rates.Nucleus object to a pynucastro.nucdata.SpinNuclide object.</span>
+<span class="sd">    Therefore, after setting an SpinTable class in rates.py, we should retrieve the SpinNuclide</span>
+<span class="sd">    data structure from a designated Nucleus class.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datafile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">set_double_gs</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_double_gs</span> <span class="o">=</span> <span class="n">set_double_gs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_spin_nuclide</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">if</span> <span class="n">datafile</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">datafile</span> <span class="o">=</span> <span class="n">datafile</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">datafile_name</span> <span class="o">=</span> <span class="s1">&#39;nubase2020.txt&#39;</span>
+            <span class="n">nucdata_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
+            <span class="n">datafile_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">nucdata_dir</span><span class="p">,</span> <span class="s1">&#39;AtomicMassEvaluation&#39;</span><span class="p">),</span> <span class="n">datafile_name</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">datafile_dir</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">datafile</span> <span class="o">=</span> <span class="n">datafile_dir</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;ERROR: The spin tabulated file was not found&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_read_table</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_add_spin_nuclide</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spin_nuc</span><span class="p">):</span>
+
+        <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">spin_nuc</span><span class="p">)</span> <span class="o">==</span> <span class="n">SpinNuclide</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">(</span><span class="n">spin_nuc</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spin_nuclide</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_spin_nuclide</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">spin_nuc</span><span class="p">)]</span> <span class="o">=</span> <span class="n">spin_nuc</span> 
+
+    <span class="k">def</span> <span class="nf">_read_table</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="n">finput</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">datafile</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span>
+            <span class="n">finput</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">finput</span><span class="p">:</span>
+
+            <span class="n">ls</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+            <span class="n">state_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ls</span><span class="p">)</span> <span class="o">==</span> <span class="mi">6</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">set_double_gs</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="n">A</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">ls</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+                <span class="n">Z</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">ls</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+                <span class="n">ls</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>           <span class="c1">#Spin 1</span>
+                <span class="n">ls</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>           <span class="c1">#Spin 2</span>
+                <span class="n">states1</span> <span class="o">=</span> <span class="n">ls</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+                <span class="n">states2</span> <span class="o">=</span> <span class="n">ls</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+                <span class="n">state_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">states1</span><span class="p">)</span>
+                <span class="n">state_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">states2</span><span class="p">)</span>
+                <span class="n">double_spin_states</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">state_list</span><span class="p">])</span>
+                <span class="n">spin_nuc</span> <span class="o">=</span> <span class="n">SpinNuclide</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="n">A</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="n">Z</span><span class="p">,</span> <span class="n">spin_states</span><span class="o">=</span> <span class="n">spin_states</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_add_spin_nuclide</span><span class="p">(</span><span class="n">spin_nuc</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">A</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">ls</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+                <span class="n">Z</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">ls</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+                <span class="n">ls</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>           <span class="c1">#Spin</span>
+                <span class="n">spin_states</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">ls</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+                <span class="n">spin_nuc</span> <span class="o">=</span> <span class="n">SpinNuclide</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="n">A</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="n">Z</span><span class="p">,</span> <span class="n">spin_states</span><span class="o">=</span><span class="n">spin_states</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_add_spin_nuclide</span><span class="p">(</span><span class="n">spin_nuc</span><span class="p">)</span>
+
+        <span class="n">finput</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+<div class="viewcode-block" id="SpinTable.get_spin_nuclide"><a class="viewcode-back" href="../../../pynucastro.nucdata.html#pynucastro.nucdata.spin_nuclide.SpinTable.get_spin_nuclide">[docs]</a>    <span class="k">def</span> <span class="nf">get_spin_nuclide</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nuc</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">nuc</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spin_nuclide</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spin_nuclide</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">nuc</span><span class="p">)]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;nuclear spin data is not available for the selected nucleus&quot;</span><span class="p">)</span></div></div>
+        
+            
+    
+
+
+    
+
+        
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Michael Zingale and Donald Willcox.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
