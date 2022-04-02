@@ -739,7 +739,6 @@ class RateCollection:
 
         # find the limits
         _tmp = [nc[r] for r in self.rates]
-        print(_tmp[0])
 
         _ydot = []
         for r in self.rates:
@@ -751,8 +750,6 @@ class RateCollection:
         valid_min = np.abs(_ydot[_ydot != 0]).min()
 
         norm = SymLogNorm(valid_max/1.e15, vmin=-valid_max, vmax=valid_max)
-
-        print(valid_min, valid_max)
 
         # if there are a lot of rates, we split the network chart into
         # two side-by-side panes, with the first half of the rates on
@@ -768,15 +765,10 @@ class RateCollection:
         if force_one_column:
             npanes = 1
 
-        fig, _ax = plt.subplots(1, npanes)
+        fig, _ax = plt.subplots(1, npanes, constrained_layout=True)
 
         fig.set_size_inches(size[0]/dpi, size[1]/dpi)
 
-        # grid = ImageGrid(fig, 111,
-        #                  nrows_ncols=(1, npanes),
-        #                  share_all=False,
-        #                  label_mode="all",
-        #                  cbar_mode="single")
 
         if npanes == 1:
             drate = len(self.rates)
@@ -796,8 +788,6 @@ class RateCollection:
             iend = min((ipane + 1) * drate - 1, len(self.rates)-1)
 
             nrates = iend - istart + 1
-
-            print(istart, iend, nrates)
 
             data = np.zeros((nrates, len(self.unique_nuclei)), dtype=np.float64)
 
@@ -821,8 +811,6 @@ class RateCollection:
 
             im = ax.imshow(data, norm=norm, cmap=plt.cm.bwr)
 
-            fig.colorbar(im, ax=ax, orientation="horizontal")
-
             ax.set_aspect("equal") #, "datalim")
 
             # Turn spines off and create white grid.
@@ -833,11 +821,13 @@ class RateCollection:
             ax.grid(which="minor", color="w", linestyle='-', linewidth=3)
             ax.tick_params(which="minor", bottom=False, left=False)
 
-
-        fig.tight_layout()
+        if npanes == 1:
+            fig.colorbar(im, ax=ax, orientation="horizontal", shrink=0.5)
+        else:
+            fig.colorbar(im, ax=ax, orientation="vertical", shrink=0.25)
 
         if outfile is not None:
-            fig.savefig(outfile)
+            fig.savefig(outfile, bbox_inches="tight")
 
 
     @staticmethod
