@@ -14,15 +14,21 @@ try:
 except ImportError:
     from numba import jitclass
 
-from pynucastro.nucdata import UnidentifiedElement, PeriodicTable, PartitionFunctionCollection, BindingTable
+from pynucastro.nucdata import UnidentifiedElement, PeriodicTable, PartitionFunctionCollection, BindingTable, SpinTable
 
 _pynucastro_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 _pynucastro_rates_dir = os.path.join(_pynucastro_dir, 'library')
 _pynucastro_tabular_dir = os.path.join(_pynucastro_rates_dir, 'tabular')
 
-# read the binding energy table once and store it at the module-level
 
+#read the spin table once and store it at the module-level
+_spin_table = SpinTable(set_double_gs=False)
+
+# read the binding energy table once and store it at the module-level
 _binding_table = BindingTable()
+
+
+_pcollection = PartitionFunctionCollection(use_high_temperatures = True, use_set='frdm')
 
 def _find_rate_file(ratename):
     """locate the Reaclib or tabular rate or library file given its name.  Return
@@ -70,7 +76,6 @@ class Tfactors:
         self.T913 = self.T9**(1./3.)
         self.T953 = self.T9**(5./3.)
         self.lnT9 = np.log(self.T9)
-
 
 class SingleSet:
     """ a set in Reaclib is one piece of a rate, in the form
@@ -239,11 +244,17 @@ class Nucleus:
             self.short_spec_name = name
             self.caps_name = name.capitalize()
 
+        # set the number of spin states
+        try:
+            self.spin_states = _spin_table.get_spin_nuclide(self.short_spec_name).spin_states
+        except NotImplementedError:
+            self.spin_states = None
+
         # use lowercase element abbreviation regardless the case of the input
         self.el = self.el.lower()
 
         # set a partition function object to every nucleus
-        self._partition_function = None
+        self.partition_function = _pcollection.get_partition_function(self.short_spec_name)
 
         # atomic number comes from periodic table
         if name != "n":
@@ -273,20 +284,6 @@ class Nucleus:
         except NotImplementedError:
             # the binding energy table doesn't know about this nucleus
             self.nucbind = None
-
-    def set_partition_function(self, p_collection, set_data='frdm', use_high_temperatures=True):
-        """
-        This function associates to every nucleus a PartitionFunction object.
-        """
-        assert isinstance(p_collection, PartitionFunctionCollection)
-
-        p_collection.set_data_selector(set_data)
-        p_collection.use_high_temperatures(use_high_temperatures)
-        self._partition_function = p_collection.get_partition_function(self)
-
-    def get_partition_function(self):
-        """return the partition function for the Nucleus"""
-        return self._partition_function
 
     def __repr__(self):
         return self.raw
@@ -856,13 +853,6 @@ class Rate:
             t_data2d.remove([])
 
         self.tabular_data_table = np.array(t_data2d)
-
-    def set_partition_function(self, p_collection, set_data='frdm', use_high_temperatures=True):
-        """The class Nucleus.set_partition_functions(pCollection, set_data, use_high_temperature)
-           defines the partition function for the reactants and products"""
-
-        for nuc in self.reactants + self.products:
-            nuc.set_partition_function(p_collection, set_data, use_high_temperatures)
 
     def eval(self, T, rhoY = None):
         """ evauate the reaction rate for temperature T """
