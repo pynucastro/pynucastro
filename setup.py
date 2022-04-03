@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(name='pynucastro',
-      description='Python Interfaces to the nuclear reaction rate databases',
+      description='Python Interfaces to nuclear reaction rate databases',
       url='https://github.com/pynucastro/nucastro',
       author='pynucastro development group',
       author_email='michael.zingale@stonybrook.edu',
@@ -9,7 +9,8 @@ setup(name='pynucastro',
       packages=find_packages(),
       package_data={"pynucastro": ["library/*", "library/tabular/*", "templates/*",
                                    "templates/starkiller-microphysics/*",
-                                   "templates/starkiller-cxx-microphysics/*", "nucdata/*"]},
+                                   "templates/starkiller-cxx-microphysics/*", "nucdata/*",
+                                   "nucdata/PartitionFunction/*"]},
       install_requires=['networkx', 'numpy', 'numba',
                         'sympy', 'scipy', 'matplotlib',
                         'ipywidgets', 'numba'],
