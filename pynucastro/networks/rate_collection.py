@@ -1,6 +1,9 @@
 """A collection of classes and methods to deal with collections of
 rates that together make up a network."""
 
+# disable a complaint about SymLogNorm
+#pylint: disable=redundant-keyword-arg
+
 # Common Imports
 import warnings
 import functools
