@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.networks.rate_collection &mdash; pynucastro 1.6.0.post73+gf3b0887 documentation</title>
+  <title>pynucastro.networks.rate_collection &mdash; pynucastro 1.6.0.post74+gb673533 documentation</title>
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -628,6 +628,7 @@
              <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">800</span><span class="p">,</span> <span class="mi">600</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
              <span class="n">ydot_cutoff_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
              <span class="n">node_size</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">node_font_size</span><span class="o">=</span><span class="mi">13</span><span class="p">,</span> <span class="n">node_color</span><span class="o">=</span><span class="s2">&quot;#A0CBE2&quot;</span><span class="p">,</span> <span class="n">node_shape</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">,</span>
+             <span class="n">curved_edges</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
              <span class="n">N_range</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">Z_range</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rotated</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
              <span class="n">always_show_p</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">always_show_alpha</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">hide_xalpha</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">filter_function</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Make a plot of the network structure showing the links between</span>
@@ -663,6 +664,8 @@
 <span class="sd">        node_color: color to make the nodes</span>
 
 <span class="sd">        node_shape: shape of the node (using matplotlib marker names)</span>
+
+<span class="sd">        curved_edges: do we use arcs to connect the nodes?</span>
 
 <span class="sd">        N_range: range of neutron number to zoom in on</span>
 
@@ -811,8 +814,15 @@
         <span class="n">widths</span><span class="p">[</span><span class="n">ww</span> <span class="o">&gt;</span> <span class="n">min_weight</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">dw</span><span class="p">]</span> <span class="o">=</span> <span class="mf">2.5</span>
         <span class="n">widths</span><span class="p">[</span><span class="n">ww</span> <span class="o">&gt;</span> <span class="n">min_weight</span> <span class="o">+</span> <span class="mi">3</span><span class="o">*</span><span class="n">dw</span><span class="p">]</span> <span class="o">=</span> <span class="mi">4</span>
 
-        <span class="n">edges_lc</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx_edges</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">G</span><span class="o">.</span><span class="n">position</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">widths</span><span class="p">),</span>    <span class="c1"># plot the arrow of reaction</span>
+        <span class="k">if</span> <span class="n">curved_edges</span><span class="p">:</span>
+            <span class="n">connectionstyle</span> <span class="o">=</span> <span class="s2">&quot;arc3, rad = 0.2&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">connectionstyle</span> <span class="o">=</span> <span class="s2">&quot;arc3&quot;</span>
+
+        <span class="c1"># plot the arrow of reaction</span>
+        <span class="n">edges_lc</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx_edges</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">G</span><span class="o">.</span><span class="n">position</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">widths</span><span class="p">),</span>
                                           <span class="n">edgelist</span><span class="o">=</span><span class="n">edges</span><span class="p">,</span> <span class="n">edge_color</span><span class="o">=</span><span class="n">edge_color</span><span class="p">,</span>
+                                          <span class="n">connectionstyle</span><span class="o">=</span><span class="n">connectionstyle</span><span class="p">,</span>
                                           <span class="n">node_size</span><span class="o">=</span><span class="n">node_size</span><span class="p">,</span>
                                           <span class="n">edge_cmap</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">viridis</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
 
