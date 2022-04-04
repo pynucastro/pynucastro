@@ -277,7 +277,6 @@ class RateCollection:
         forward_rates += [r for r in self.rates if r.Q is None and r.reactants[0].nucbind <= r.products[0].nucbind]
         reverse_rates += [r for r in self.rates if r.Q is None and r.reactants[0].nucbind > r.products[0].nucbind]
 
-
         rate_pairs = []
 
         # loop over all the forward rates and find the matching reverse rate

@@ -58,7 +58,7 @@ class TestLibrary:
         assert sorted(diff_lib.get_rates()) == sorted(self.removed_rates)
 
     def test_linking_nuclei(self):
-        new_lib = self.library.linking_nuclei(["p","c12", "n13", "c13"])
+        new_lib = self.library.linking_nuclei(["p", "c12", "n13", "c13"])
 
         assert sorted(new_lib.get_rates()) == sorted([pyna.Rate("c12-pg-n13-ls09"),
                                                       pyna.Rate("n13--c13-wc12")])

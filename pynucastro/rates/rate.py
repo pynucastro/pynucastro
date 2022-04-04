@@ -953,6 +953,7 @@ class Rate:
             plt.title(fr"{self.pretty_string}")
             plt.show()
 
+
 class RatePair:
     """the forward and reverse rates for a single reaction sequence.
     Forward rates are those with Q >= 0.
