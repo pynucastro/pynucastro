@@ -1,8 +1,8 @@
 # unit tests for rates
-import math
 
 import pynucastro.rates as rates
 from pytest import approx
+
 
 class TestNucleus:
     @classmethod
@@ -59,4 +59,3 @@ class TestNucleus:
 
     def test_binding(self):
         assert self.ni56.nucbind == approx(8.642779)
-

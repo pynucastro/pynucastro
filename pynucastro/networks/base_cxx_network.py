@@ -18,6 +18,7 @@ import sympy
 from pynucastro.networks import RateCollection
 from pynucastro.networks import SympyRates
 
+
 class BaseCxxNetwork(ABC, RateCollection):
     """Interpret the collection of rates and nuclei and produce the
     C++ code needed to integrate the network.
@@ -37,11 +38,11 @@ class BaseCxxNetwork(ABC, RateCollection):
 
         self.symbol_rates = SympyRates(ctype="C++")
 
-        self.ydot_out_result  = None
-        self.solved_ydot      = False
-        self.jac_out_result   = None
+        self.ydot_out_result = None
+        self.solved_ydot = False
+        self.jac_out_result = None
         self.jac_null_entries = None
-        self.solved_jacobian  = False
+        self.solved_jacobian = False
 
         self.secret_code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=32))
 
@@ -82,7 +83,7 @@ class BaseCxxNetwork(ABC, RateCollection):
 
     def get_indent_amt(self, l, k):
         """determine the amount of spaces to indent a line"""
-        rem = re.match(r'\A'+k+r'\(([0-9]*)\)\Z',l)
+        rem = re.match(r'\A'+k+r'\(([0-9]*)\)\Z', l)
         return int(rem.group(1))
 
     def _write_network(self, odir=None):
@@ -100,12 +101,12 @@ class BaseCxxNetwork(ABC, RateCollection):
         # Process template files
         for tfile in self.template_files:
             tfile_basename = os.path.basename(tfile)
-            outfile    = tfile_basename.replace('.template', '')
+            outfile = tfile_basename.replace('.template', '')
             if odir is not None:
                 if not os.path.isdir(odir):
                     try:
                         os.mkdir(odir)
-                    except:
+                    except OSError:
                         sys.exit(f"unable to create directory {odir}")
                 outfile = os.path.normpath(odir + "/" + outfile)
 
@@ -159,7 +160,7 @@ class BaseCxxNetwork(ABC, RateCollection):
                 ydot_sym_terms.append((fwd, rvs))
             ydot[n] = ydot_sym_terms
 
-        self.ydot_out_result  = ydot
+        self.ydot_out_result = ydot
         self.solved_ydot = True
 
     def compose_jacobian(self):
@@ -181,7 +182,7 @@ class BaseCxxNetwork(ABC, RateCollection):
                 jac_sym.append(rsym)
                 jac_null.append(rsym_is_null)
 
-        self.jac_out_result  = jac_sym
+        self.jac_out_result = jac_sym
         self.jac_null_entries = jac_null
         self.solved_jacobian = True
 
@@ -194,17 +195,17 @@ class BaseCxxNetwork(ABC, RateCollection):
 
             if not (scr.n1.dummy or scr.n2.dummy):
                 # Scope the screening calculation to avoid multiple definitions of scn_fac.
-                of.write(f'\n{self.indent*n_indent}' + '{');
+                of.write(f'\n{self.indent*n_indent}' + '{')
 
                 of.write(f'\n{self.indent*(n_indent+1)}constexpr auto scn_fac = scrn::calculate_screen_factor({nuc1_info}, {nuc2_info});\n\n')
 
                 # Insert a static assert (which will always pass) to require the
                 # compiler to evaluate the screen factor at compile time.
-                of.write(f'\n{self.indent*(n_indent+1)}static_assert(scn_fac.z1 == {float(scr.n1.Z)}_rt);\n\n');
+                of.write(f'\n{self.indent*(n_indent+1)}static_assert(scn_fac.z1 == {float(scr.n1.Z)}_rt);\n\n')
 
-                of.write(f'\n{self.indent*(n_indent+1)}actual_screen5(pstate, scn_fac, scor, dscor_dt);\n');
+                of.write(f'\n{self.indent*(n_indent+1)}actual_screen5(pstate, scn_fac, scor, dscor_dt);\n')
 
-                of.write(f'{self.indent*n_indent}' + '}\n\n');
+                of.write(f'{self.indent*n_indent}' + '}\n\n')
 
             if scr.name == "he4_he4_he4":
                 # we don't need to do anything here, but we want to avoid immediately applying the screening
@@ -212,21 +213,21 @@ class BaseCxxNetwork(ABC, RateCollection):
 
             elif scr.name == "he4_he4_he4_dummy":
                 # handle the second part of the screening for 3-alpha
-                of.write(f'\n{self.indent*n_indent}' + '{');
+                of.write(f'\n{self.indent*n_indent}' + '{')
 
                 of.write(f'\n{self.indent*(n_indent+1)}constexpr auto scn_fac2 = scrn::calculate_screen_factor({nuc1_info}, {nuc2_info});\n\n')
 
-                of.write(f'\n{self.indent*(n_indent+1)}static_assert(scn_fac2.z1 == {float(scr.n1.Z)}_rt);\n\n');
+                of.write(f'\n{self.indent*(n_indent+1)}static_assert(scn_fac2.z1 == {float(scr.n1.Z)}_rt);\n\n')
 
-                of.write(f'\n{self.indent*(n_indent+1)}actual_screen5(pstate, scn_fac2, scor2, dscor2_dt);\n');
+                of.write(f'\n{self.indent*(n_indent+1)}actual_screen5(pstate, scn_fac2, scor2, dscor2_dt);\n')
 
-                of.write(f'\n{self.indent*n_indent}' + '}\n\n');
+                of.write(f'\n{self.indent*n_indent}' + '}\n\n')
 
                 # there might be both the forward and reverse 3-alpha
                 # if we are doing symmetric screening
 
                 for rr in scr.rates:
-                    of.write(f'\n')
+                    of.write('\n')
                     of.write(f'{self.indent*n_indent}ratraw = rate_eval.screened_rates(k_{rr.fname});\n')
                     of.write(f'{self.indent*n_indent}dratraw_dT = rate_eval.dscreened_rates_dT(k_{rr.fname});\n')
                     of.write(f'{self.indent*n_indent}rate_eval.screened_rates(k_{rr.fname}) *= scor * scor2;\n')
@@ -238,7 +239,7 @@ class BaseCxxNetwork(ABC, RateCollection):
                 # -- handle them all now
 
                 for rr in scr.rates:
-                    of.write(f'\n')
+                    of.write('\n')
                     of.write(f'{self.indent*n_indent}ratraw = rate_eval.screened_rates(k_{rr.fname});\n')
                     of.write(f'{self.indent*n_indent}dratraw_dT = rate_eval.dscreened_rates_dT(k_{rr.fname});\n')
                     of.write(f'{self.indent*n_indent}rate_eval.screened_rates(k_{rr.fname}) *= scor;\n')
@@ -251,7 +252,6 @@ class BaseCxxNetwork(ABC, RateCollection):
         # off screening, just set num_screen_calls = 1 here.
 
         self.num_screen_calls = max(1, len(screening_map))
-
 
     def _nrat_reaclib(self, n_indent, of):
         # Writes the number of Reaclib rates
@@ -269,7 +269,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         of.write(f'{self.indent*n_indent}const int NrateTabular = {len(self.tabular_rates)};\n')
 
     def _nrxn(self, n_indent, of):
-        for i,r in enumerate(self.rates):
+        for i, r in enumerate(self.rates):
             of.write(f'{self.indent*n_indent}k_{r.fname} = {i+1},\n')
         of.write(f'{self.indent*n_indent}NumRates = k_{self.rates[-1].fname}\n')
 
@@ -345,7 +345,6 @@ class BaseCxxNetwork(ABC, RateCollection):
             of.write(f'{idnt}{r.table_index_name}_meta.nheader = {r.table_header_lines};\n')
             of.write(f'{idnt}{r.table_index_name}_meta.file = "{r.table_file}";\n\n')
 
-
             of.write(f'{idnt}init_tab_info({r.table_index_name}_meta, {r.table_index_name}_rhoy, {r.table_index_name}_temp, {r.table_index_name}_data);\n\n')
 
             of.write('\n')
@@ -375,7 +374,7 @@ class BaseCxxNetwork(ABC, RateCollection):
             of.write('\n')
 
     def _table_rates_indices(self, n_indent, of):
-        for n,irate in enumerate(self.tabular_rates):
+        for n, irate in enumerate(self.tabular_rates):
             r = self.rates[irate]
             of.write(f'{self.indent*n_indent}{r.table_index_name}')
             if n != len(self.tabular_rates)-1:

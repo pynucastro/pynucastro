@@ -17,12 +17,13 @@ def list_known_rates():
                 continue
             try:
                 lib = Library(f)
-            except:
+            except:  # noqa
                 continue
             else:
                 print(f"{f:32} : ")
                 for r in lib.get_rates():
                     print(f"                                 : {r}")
+
 
 class Library:
     """
@@ -83,14 +84,14 @@ class Library:
             self._rates = collections.OrderedDict()
         for r in ratelist:
             rid = r.get_rate_id()
-            assert not rid in self._rates, "ERROR: supplied a Rate object already in the Library."
+            assert rid not in self._rates, "ERROR: supplied a Rate object already in the Library."
             self._rates[rid] = r
 
     def _read_library_file(self):
         # loop through library file, read lines
         try:
             flib = open(self._library_file)
-        except:
+        except IOError:
             print(f'Could not open file {self._library_file}')
             raise
         for line in flib:
@@ -115,11 +116,11 @@ class Library:
             else:
                 try:
                     chapter = int(line)
-                except:
+                except (TypeError, ValueError):
                     # we can't interpret line as a chapter so use current_chapter
                     try:
                         assert current_chapter
-                    except:
+                    except AssertionError:
                         print(f'ERROR: malformed library file {self._library_file}, cannot identify chapter.')
                         raise
                     else:
@@ -141,8 +142,6 @@ class Library:
                     r = Rate(sio, rfile_path=self._library_file)
                 except UnsupportedNucleus:
                     pass
-                except:
-                    raise
                 else:
                     rid = r.get_rate_id()
                     if rid in self._rates:
@@ -169,7 +168,7 @@ class Library:
         for rid, r in other._rates.items():
             try:
                 assert rid not in new_rates
-            except:
+            except AssertionError:
                 if r != new_rates[rid]:
                     print(f'ERROR: rate {r} defined differently in libraries {self._library_file} and {other._library_file}\n')
                     raise
@@ -196,7 +195,7 @@ class Library:
         """ Return a rate matching the id provided. """
         try:
             return self._rates[rid]
-        except:
+        except IndexError:
             print("ERROR: rate identifier does not match a rate in this library.")
             raise
 
@@ -228,11 +227,6 @@ class Library:
 
         if isinstance(nuclist, (Nucleus, str)):
             nuclist = [nuclist]
-        else:
-            try:
-                nuclist = list(nuclist)
-            except:
-                raise
 
         nucleus_list = []
         for nuc in nuclist:
@@ -241,7 +235,7 @@ class Library:
             else:
                 try:
                     anuc = Nucleus(nuc)
-                except:
+                except:  # noqa
                     raise
                 else:
                     nucleus_list.append(anuc)
@@ -288,7 +282,7 @@ class Library:
         else:
             try:
                 iter(filter_spec)
-            except:
+            except TypeError:
                 raise
             else:
                 filter_specifications = filter_spec
@@ -376,7 +370,7 @@ class Library:
         by detailed balance.
         """
 
-        only_fwd_filter = RateFilter(filter_function = lambda r: not r.reverse)
+        only_fwd_filter = RateFilter(filter_function=lambda r: not r.reverse)
         only_fwd = self.filter(only_fwd_filter)
         return only_fwd
 
@@ -385,9 +379,10 @@ class Library:
         Select only the reverse rates, obtained by detailed balance.
         """
 
-        only_bwd_filter = RateFilter(filter_function = lambda r: r.reverse)
+        only_bwd_filter = RateFilter(filter_function=lambda r: r.reverse)
         only_bwd = self.filter(only_bwd_filter)
         return only_bwd
+
 
 class RateFilter:
     """RateFilter filters out a specified rate or set of rates
@@ -468,14 +463,9 @@ class RateFilter:
     def _cast_nucleus(r):
         """ Make sure r is of type Nucleus. """
         if not isinstance(r, Nucleus):
-            try:
-                rnuc = Nucleus(r)
-            except:
-                raise
-            else:
-                return rnuc
-        else:
-            return r
+            rnuc = Nucleus(r)
+            return rnuc
+        return r
 
     @staticmethod
     def _contents_equal(a, b):
@@ -499,7 +489,7 @@ class RateFilter:
             matches = RateFilter._contents_equal(test, reference)
         else:
             for nuc in test:
-                if not nuc in reference:
+                if nuc not in reference:
                     matches = False
                     break
         return matches
@@ -547,8 +537,9 @@ class RateFilter:
                                max_products=self.max_reactants)
         return newfilter
 
+
 class ReacLibLibrary(Library):
 
     def __init__(self, libfile='reaclib_default2_20220329', rates=None, read_library=True):
-        assert libfile == 'reaclib_default2_20220329'  and rates is None and read_library, "Only the reaclib_default2_20220329 default ReacLib snapshot is accepted"
+        assert libfile == 'reaclib_default2_20220329' and rates is None and read_library, "Only the reaclib_default2_20220329 default ReacLib snapshot is accepted"
         Library.__init__(self, libfile=libfile, rates=rates, read_library=read_library)

@@ -1,11 +1,13 @@
 import os
 import numpy as np
+
 from pynucastro.nucdata import PeriodicTable
+
 
 class SpinNuclide:
     """
     This class contains the spin information for each nuclei specified in the nubase20.txt table.
-    The purpose to create this class lies on the 
+    The purpose to create this class lies on the
     """
 
     def __init__(self, a=None, z=None, spin_states=None):
@@ -15,7 +17,7 @@ class SpinNuclide:
         self.spin_states = spin_states
 
     def __repr__(self):
-        
+
         if self.a == 1 and self.z == 0:
             rep = 'n'
         else:
@@ -23,6 +25,7 @@ class SpinNuclide:
             rep = '{}{}'.format(element.abbreviation, self.a)
 
         return rep
+
 
 class SpinTable:
     """
@@ -56,7 +59,7 @@ class SpinTable:
         assert type(spin_nuc) == SpinNuclide
         assert not str(spin_nuc) in self._spin_nuclide.keys()
 
-        self._spin_nuclide[str(spin_nuc)] = spin_nuc 
+        self._spin_nuclide[str(spin_nuc)] = spin_nuc
 
     def _read_table(self):
 
@@ -75,20 +78,20 @@ class SpinTable:
                     continue
                 A = int(ls.pop(0))
                 Z = int(ls.pop(0))
-                ls.pop(0)           #Spin 1
-                ls.pop(0)           #Spin 2
+                ls.pop(0)           # Spin 1
+                ls.pop(0)           # Spin 2
                 states1 = ls.pop(0)
                 states2 = ls.pop(0)
 
                 state_list.append(states1)
                 state_list.append(states2)
                 double_spin_states = np.array([float(s) for s in state_list])
-                spin_nuc = SpinNuclide(a=A, z=Z, spin_states= spin_states)
+                spin_nuc = SpinNuclide(a=A, z=Z, spin_states=double_spin_states)
                 self._add_spin_nuclide(spin_nuc)
             else:
                 A = int(ls.pop(0))
                 Z = int(ls.pop(0))
-                ls.pop(0)           #Spin
+                ls.pop(0)           # Spin
                 spin_states = float(ls.pop(0))
                 spin_nuc = SpinNuclide(a=A, z=Z, spin_states=spin_states)
                 self._add_spin_nuclide(spin_nuc)
@@ -99,12 +102,4 @@ class SpinTable:
         if str(nuc) in self._spin_nuclide.keys():
             return self._spin_nuclide[str(nuc)]
         else:
-            raise NotImplementedError(f"nuclear spin data is not available for the selected nucleus")
-        
-            
-    
-
-
-    
-
-        
+            raise NotImplementedError("nuclear spin data is not available for the selected nucleus")

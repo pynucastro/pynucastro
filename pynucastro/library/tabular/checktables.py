@@ -10,6 +10,7 @@ args = parser.parse_args()
 table_file = None
 header_lines = None
 
+
 def nuc_A_first(nuc_A_last):
     snuc = ""
     for c in nuc_A_last:
@@ -19,6 +20,7 @@ def nuc_A_first(nuc_A_last):
         if not c.isdigit():
             snuc += c
     return snuc
+
 
 try:
     # get the nuclei from the name of the rate metadata file
@@ -69,7 +71,7 @@ try:
         if args.p:
             print("{}: {}".format(i, line.strip()))
     f.close()
-except:
+except:  # noqa
     print("FAILED")
 else:
     print("OK")
