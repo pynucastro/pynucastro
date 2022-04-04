@@ -8,6 +8,7 @@ import os
 
 from pynucastro.networks import BaseCxxNetwork
 
+
 class StarKillerCxxNetwork(BaseCxxNetwork):
     def __init__(self, *args, **kwargs):
         # Initialize BaseFortranNetwork parent class

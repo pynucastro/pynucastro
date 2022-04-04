@@ -212,6 +212,7 @@ class TestStarKillerNetwork:
 
         assert not errors, f"errors: {' '.join(errors)}"
 
+
 class TestReaclibChapterNetwork:
     @classmethod
     def setup_class(cls):

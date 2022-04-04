@@ -28,7 +28,8 @@ _spin_table = SpinTable(set_double_gs=False)
 _binding_table = BindingTable()
 
 
-_pcollection = PartitionFunctionCollection(use_high_temperatures = True, use_set='frdm')
+_pcollection = PartitionFunctionCollection(use_high_temperatures=True, use_set='frdm')
+
 
 def _find_rate_file(ratename):
     """locate the Reaclib or tabular rate or library file given its name.  Return
@@ -54,19 +55,28 @@ def _find_rate_file(ratename):
     raise Exception(f'File {ratename} not found in the working directory, {_pynucastro_rates_dir}, or {_pynucastro_tabular_dir}')
 
 
-
 Tfactor_spec = [
-('T9', numba.float64),
-('T9i', numba.float64),
-('T913', numba.float64),
-('T913i', numba.float64),
-('T953', numba.float64),
-('lnT9', numba.float64)
+    ('T9', numba.float64),
+    ('T9i', numba.float64),
+    ('T913', numba.float64),
+    ('T913i', numba.float64),
+    ('T953', numba.float64),
+    ('lnT9', numba.float64)
 ]
+
 
 @jitclass(Tfactor_spec)
 class Tfactors:
-    """ precompute temperature factors for speed """
+    """ precompute temperature factors for speed
+
+    :param float T: input temperature (Kelvin)
+    :var T9:    T / 1.e9 K
+    :var T9i:   1.0 / T9
+    :var T913i  1.0 / T9 ** (1/3)
+    :var T913   T9 ** (1/3)
+    :var T953   T9 ** (5/3)
+    :var lnT9   log(T9)
+    """
 
     def __init__(self, T):
         """ return the Tfactors object.  Here, T is temperature in Kelvin """
@@ -77,12 +87,17 @@ class Tfactors:
         self.T953 = self.T9**(5./3.)
         self.lnT9 = np.log(self.T9)
 
+
 class SingleSet:
     """ a set in Reaclib is one piece of a rate, in the form
 
         lambda = exp[ a_0 + sum_{i=1}^5  a_i T_9**(2i-5)/3  + a_6 log T_9]
 
-        A single rate in Reaclib can be composed of multiple sets
+    A single rate in Reaclib can be composed of multiple sets
+
+    :param a: the coefficients of the exponential fit
+    :param labelprops: a collection of flags that classify a ReacLib rate
+
     """
 
     def __init__(self, a, labelprops=None):
@@ -103,15 +118,12 @@ class SingleSet:
         """ Set label and flags indicating Set is resonant,
             weak, or reverse. """
         assert isinstance(self.labelprops, str)
-        try:
-            assert len(self.labelprops) == 6
-        except:
-            raise
-        else:
-            self.label = self.labelprops[0:4]
-            self.resonant = self.labelprops[4] == 'r'
-            self.weak = self.labelprops[4] == 'w'
-            self.reverse = self.labelprops[5] == 'v'
+        assert len(self.labelprops) == 6
+
+        self.label = self.labelprops[0:4]
+        self.resonant = self.labelprops[4] == 'r'
+        self.weak = self.labelprops[4] == 'w'
+        self.reverse = self.labelprops[5] == 'v'
 
     def __eq__(self, other):
         """ Determine whether two SingleSet objects are equal to each other. """
@@ -214,7 +226,7 @@ class Nucleus:
         elif name == "a":
             #this is a convenience, enabling the use of a commonly-used alias:
             #    He4 --> \alpha --> "a" , e.g. c12(a,g)o16
-            self.el ="he"
+            self.el = "he"
             self.A = 4
             self.short_spec_name = "he4"
             self.raw = "he4"
@@ -234,7 +246,7 @@ class Nucleus:
             assert self.el
             try:
                 self.A = int(e.group(2))
-            except:
+            except (TypeError, ValueError):
                 if (name.strip() == 'al-6' or
                     name.strip() == 'al*6'):
                     raise UnsupportedNucleus()
@@ -262,8 +274,6 @@ class Nucleus:
                 i = PeriodicTable.lookup_abbreviation(self.el)
             except UnidentifiedElement:
                 print(f'Could not identify element: {self.el}')
-                raise
-            except:
                 raise
             else:
                 self.Z = i.Z
@@ -298,7 +308,7 @@ class Nucleus:
     def __eq__(self, other):
         if isinstance(other, Nucleus):
             return self.el == other.el and \
-               self.Z == other.Z and self.A == other.A
+                self.Z == other.Z and self.A == other.A
         if isinstance(other, tuple):
             return (self.Z, self.A) == other
         return NotImplemented
@@ -308,8 +318,11 @@ class Nucleus:
             return self.Z < other.Z
         return self.A < other.A
 
+
 class Rate:
-    """ a single Reaclib rate, which can be composed of multiple sets """
+    """A single reaction rate.  Currently, this can be a
+    Reaclib rate, which can be composed of multiple sets, or a tabulated
+    electron capture rate."""
     def __init__(self, rfile=None, rfile_path=None, chapter=None, original_source=None,
                  reactants=None, products=None, sets=None, labelprops=None, Q=None):
         """ rfile can be either a string specifying the path to a rate file or
@@ -488,14 +501,13 @@ class Rate:
         """ Set label and flags indicating Rate is resonant,
             weak, or reverse. """
         assert isinstance(self.labelprops, str)
-        try:
-            assert len(self.labelprops) == 6
-        except:
+        if len(self.labelprops) != 6:
             assert self.labelprops == 'tabular'
+
             self.label = 'tabular'
             self.resonant = False
             self.resonance_combined = False
-            self.weak = False # The tabular rate might or might not be weak
+            self.weak = False  # The tabular rate might or might not be weak
             self.weak_type = None
             self.reverse = False
             self.tabular = True
@@ -507,7 +519,7 @@ class Rate:
                 if self.label.strip() == 'ec' or self.label.strip() == 'bec':
                     self.weak_type = 'electron_capture'
                 else:
-                    self.weak_type = self.label.strip().replace('+','_pos_').replace('-','_neg_')
+                    self.weak_type = self.label.strip().replace('+', '_pos_').replace('-', '_neg_')
             else:
                 self.weak_type = None
             self.reverse = self.labelprops[5] == 'v'
@@ -540,7 +552,7 @@ class Rate:
             try:
                 self.reactants.append(Nucleus(f[0]))
                 self.products.append(Nucleus(f[1]))
-            except:
+            except ValueError:
                 print(f'Nucleus objects not be identified in {self.original_source}')
                 raise
 
@@ -548,7 +560,7 @@ class Rate:
             self.table_header_lines = int(s3.strip())
             self.table_rhoy_lines = int(s4.strip())
             self.table_temp_lines = int(s5.strip())
-            self.table_num_vars = 6 # Hard-coded number of variables in tables for now.
+            self.table_num_vars = 6  # Hard-coded number of variables in tables for now.
             self.table_index_name = f'j_{self.reactants[0]}_{self.products[0]}'
             self.labelprops = 'tabular'
             self._set_label_properties()
@@ -562,7 +574,7 @@ class Rate:
                 try:
                     # see if there is a chapter number preceding the set
                     check_chapter = int(check_chapter)
-                except:
+                except (TypeError, ValueError):
                     # there was no chapter number, proceed reading a set
                     pass
                 else:
@@ -570,7 +582,7 @@ class Rate:
                     # is the same as the first set in this rate file
                     try:
                         assert check_chapter == self.chapter
-                    except:
+                    except AssertionError:
                         print(f'ERROR: read chapter {check_chapter}, expected chapter {self.chapter} for this rate set.')
                         raise
                     else:
@@ -614,72 +626,68 @@ class Rate:
                 if first:
                     self.Q = Q
 
-                    try:
-                        # what's left are the nuclei -- their interpretation
-                        # depends on the chapter
-                        if self.chapter == 1:
-                            # e1 -> e2
-                            self.reactants.append(Nucleus(f[0]))
-                            self.products.append(Nucleus(f[1]))
+                    # what's left are the nuclei -- their interpretation
+                    # depends on the chapter
+                    if self.chapter == 1:
+                        # e1 -> e2
+                        self.reactants.append(Nucleus(f[0]))
+                        self.products.append(Nucleus(f[1]))
 
-                        elif self.chapter == 2:
-                            # e1 -> e2 + e3
-                            self.reactants.append(Nucleus(f[0]))
-                            self.products += [Nucleus(f[1]), Nucleus(f[2])]
+                    elif self.chapter == 2:
+                        # e1 -> e2 + e3
+                        self.reactants.append(Nucleus(f[0]))
+                        self.products += [Nucleus(f[1]), Nucleus(f[2])]
 
-                        elif self.chapter == 3:
-                            # e1 -> e2 + e3 + e4
-                            self.reactants.append(Nucleus(f[0]))
-                            self.products += [Nucleus(f[1]), Nucleus(f[2]), Nucleus(f[3])]
+                    elif self.chapter == 3:
+                        # e1 -> e2 + e3 + e4
+                        self.reactants.append(Nucleus(f[0]))
+                        self.products += [Nucleus(f[1]), Nucleus(f[2]), Nucleus(f[3])]
 
-                        elif self.chapter == 4:
-                            # e1 + e2 -> e3
-                            self.reactants += [Nucleus(f[0]), Nucleus(f[1])]
-                            self.products.append(Nucleus(f[2]))
+                    elif self.chapter == 4:
+                        # e1 + e2 -> e3
+                        self.reactants += [Nucleus(f[0]), Nucleus(f[1])]
+                        self.products.append(Nucleus(f[2]))
 
-                        elif self.chapter == 5:
-                            # e1 + e2 -> e3 + e4
-                            self.reactants += [Nucleus(f[0]), Nucleus(f[1])]
-                            self.products += [Nucleus(f[2]), Nucleus(f[3])]
+                    elif self.chapter == 5:
+                        # e1 + e2 -> e3 + e4
+                        self.reactants += [Nucleus(f[0]), Nucleus(f[1])]
+                        self.products += [Nucleus(f[2]), Nucleus(f[3])]
 
-                        elif self.chapter == 6:
-                            # e1 + e2 -> e3 + e4 + e5
-                            self.reactants += [Nucleus(f[0]), Nucleus(f[1])]
-                            self.products += [Nucleus(f[2]), Nucleus(f[3]), Nucleus(f[4])]
+                    elif self.chapter == 6:
+                        # e1 + e2 -> e3 + e4 + e5
+                        self.reactants += [Nucleus(f[0]), Nucleus(f[1])]
+                        self.products += [Nucleus(f[2]), Nucleus(f[3]), Nucleus(f[4])]
 
-                        elif self.chapter == 7:
-                            # e1 + e2 -> e3 + e4 + e5 + e6
-                            self.reactants += [Nucleus(f[0]), Nucleus(f[1])]
-                            self.products += [Nucleus(f[2]), Nucleus(f[3]),
-                                              Nucleus(f[4]), Nucleus(f[5])]
+                    elif self.chapter == 7:
+                        # e1 + e2 -> e3 + e4 + e5 + e6
+                        self.reactants += [Nucleus(f[0]), Nucleus(f[1])]
+                        self.products += [Nucleus(f[2]), Nucleus(f[3]),
+                                          Nucleus(f[4]), Nucleus(f[5])]
 
-                        elif self.chapter == 8:
-                            # e1 + e2 + e3 -> e4
-                            self.reactants += [Nucleus(f[0]), Nucleus(f[1]), Nucleus(f[2])]
-                            self.products.append(Nucleus(f[3]))
+                    elif self.chapter == 8:
+                        # e1 + e2 + e3 -> e4
+                        self.reactants += [Nucleus(f[0]), Nucleus(f[1]), Nucleus(f[2])]
+                        self.products.append(Nucleus(f[3]))
 
-                        elif self.chapter == 9:
-                            # e1 + e2 + e3 -> e4 + e5
-                            self.reactants += [Nucleus(f[0]), Nucleus(f[1]), Nucleus(f[2])]
-                            self.products += [Nucleus(f[3]), Nucleus(f[4])]
+                    elif self.chapter == 9:
+                        # e1 + e2 + e3 -> e4 + e5
+                        self.reactants += [Nucleus(f[0]), Nucleus(f[1]), Nucleus(f[2])]
+                        self.products += [Nucleus(f[3]), Nucleus(f[4])]
 
-                        elif self.chapter == 10:
-                            # e1 + e2 + e3 + e4 -> e5 + e6
-                            self.reactants += [Nucleus(f[0]), Nucleus(f[1]),
-                                               Nucleus(f[2]), Nucleus(f[3])]
-                            self.products += [Nucleus(f[4]), Nucleus(f[5])]
+                    elif self.chapter == 10:
+                        # e1 + e2 + e3 + e4 -> e5 + e6
+                        self.reactants += [Nucleus(f[0]), Nucleus(f[1]),
+                                           Nucleus(f[2]), Nucleus(f[3])]
+                        self.products += [Nucleus(f[4]), Nucleus(f[5])]
 
-                        elif self.chapter == 11:
-                            # e1 -> e2 + e3 + e4 + e5
-                            self.reactants.append(Nucleus(f[0]))
-                            self.products += [Nucleus(f[1]), Nucleus(f[2]),
-                                              Nucleus(f[3]), Nucleus(f[4])]
-                        else:
-                            print(f'Chapter could not be identified in {self.original_source}')
-                            assert isinstance(self.chapter, int) and self.chapter <= 11
-                    except:
-                        # print('Error parsing Rate from {}'.format(self.original_source))
-                        raise
+                    elif self.chapter == 11:
+                        # e1 -> e2 + e3 + e4 + e5
+                        self.reactants.append(Nucleus(f[0]))
+                        self.products += [Nucleus(f[1]), Nucleus(f[2]),
+                                          Nucleus(f[3]), Nucleus(f[4])]
+                    else:
+                        print(f'Chapter could not be identified in {self.original_source}')
+                        assert isinstance(self.chapter, int) and self.chapter <= 11
 
                     first = 0
 
@@ -854,15 +862,15 @@ class Rate:
 
         self.tabular_data_table = np.array(t_data2d)
 
-    def eval(self, T, rhoY = None):
+    def eval(self, T, rhoY=None):
         """ evauate the reaction rate for temperature T """
 
         if self.tabular:
             data = self.tabular_data_table.astype(np.float)
             # find the nearest value of T and rhoY in the data table
-            T_nearest = (data[:,1])[np.abs((data[:,1]) - T).argmin()]
-            rhoY_nearest = (data[:,0])[np.abs((data[:,0]) - rhoY).argmin()]
-            inde = np.where((data[:,1]==T_nearest)&(data[:,0]==rhoY_nearest))[0][0]
+            T_nearest = (data[:, 1])[np.abs((data[:, 1]) - T).argmin()]
+            rhoY_nearest = (data[:, 0])[np.abs((data[:, 0]) - rhoY).argmin()]
+            inde = np.where((data[:, 1] == T_nearest) & (data[:, 0] == rhoY_nearest))[0][0]
             r = data[inde][5]
 
         else:
@@ -892,13 +900,13 @@ class Rate:
         """plot the rate's temperature sensitivity vs temperature"""
 
         if self.tabular:
-            data = self.tabular_data_table.astype(np.float) # convert from str to float
+            data = self.tabular_data_table.astype(np.float)  # convert from str to float
 
-            inde1 = data[:,1]<=Tmax
-            inde2 = data[:,1]>=Tmin
-            inde3 = data[:,0]<=rhoYmax
-            inde4 = data[:,0]>=rhoYmin
-            data_heatmap = data[inde1&inde2&inde3&inde4].copy()
+            inde1 = data[:, 1] <= Tmax
+            inde2 = data[:, 1] >= Tmin
+            inde3 = data[:, 0] <= rhoYmax
+            inde4 = data[:, 0] >= rhoYmin
+            data_heatmap = data[inde1 & inde2 & inde3 & inde4].copy()
 
             rows, row_pos = np.unique(data_heatmap[:, 0], return_inverse=True)
             cols, col_pos = np.unique(data_heatmap[:, 1], return_inverse=True)
@@ -908,19 +916,20 @@ class Rate:
             except ValueError:
                 print("Divide by zero encountered in log10\nChange the scale of T or rhoY")
 
-            _, ax = plt.subplots(figsize=(10,10))
+            _, ax = plt.subplots(figsize=(10, 10))
+
             im = ax.imshow(pivot_table, cmap='jet')
             plt.colorbar(im)
 
             plt.xlabel("$T$ [K]")
             plt.ylabel("$\\rho Y$ [g/cm$^3$]")
-            ax.set_title(fr"{self.pretty_string}"+
+            ax.set_title(fr"{self.pretty_string}" +
                          "\n"+"electron-capture/beta-decay rate in log10(1/s)")
             ax.set_yticks(range(len(rows)))
             ax.set_yticklabels(rows)
             ax.set_xticks(range(len(cols)))
             ax.set_xticklabels(cols)
-            plt.setp(ax.get_xticklabels(), rotation=90, ha="right",rotation_mode="anchor")
+            plt.setp(ax.get_xticklabels(), rotation=90, ha="right", rotation_mode="anchor")
             plt.gca().invert_yaxis()
             plt.show()
 
@@ -943,3 +952,30 @@ class Rate:
 
             plt.title(fr"{self.pretty_string}")
             plt.show()
+
+
+class RatePair:
+    """the forward and reverse rates for a single reaction sequence.
+    Forward rates are those with Q >= 0.
+
+    :var forward: the forward reaction Rate object
+    :var reverse: the reverse reaction Rate object
+
+    """
+
+    def __init__(self, forward=None, reverse=None):
+        self.forward = forward
+        self.reverse = reverse
+
+    def __repr__(self):
+        return f"forward: {self.forward} ; reverse: {self.reverse}"
+
+    def __lt__(self, other):
+        if self.forward is not None and other.forward is not None:
+            return self.forward < other.forward
+        elif self.forward is None:
+            return False
+        return True
+
+    def __eq__(self, other):
+        return self.forward == other.forward and self.reverse == other.reverse

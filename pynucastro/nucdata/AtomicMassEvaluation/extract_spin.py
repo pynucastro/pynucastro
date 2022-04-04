@@ -1,28 +1,28 @@
 """
 
-This script extract the spin data for each ground state (gs) nuclei, 
+This script extract the spin data for each ground state (gs) nuclei,
 characterized by the pair  (A, Z), from nubase_3.mas20.txt, published in:
 
-Kondev, F. G., Wang, M., Huang, W. J., Naimi, S., & Audi, G.        
+Kondev, F. G., Wang, M., Huang, W. J., Naimi, S., & Audi, G.
 Chinese Physics C, 45(3), 030001. (2021) doi:10.1088/1674-1137/abddae
 
 located in Table I.
 
 """
-from pynucastro.nucdata import PeriodicTable, Element
+
 import argparse
-import os
+
 
 def num_states(spin_str_element):
 
     """
-    This function evaluates de spin number string, formatted as s=a/b and 
+    This function evaluates de spin number string, formatted as s=a/b and
     returns the number of states 2*s + 1.
 
     In the table we have three type of strings:
     1. spin numbers integers formatted with 1 or 2 characters, e.g s=1, and s=10.
     2. spin numbers formatted with 3 characters. e.g. s=3/2.
-    3. spin numbers formatted with 4 characters. e.g. s=11/2 
+    3. spin numbers formatted with 4 characters. e.g. s=11/2
 
     Parameters
     ----------
@@ -33,7 +33,7 @@ def num_states(spin_str_element):
     Returns:
     --------
     states: this integer variable contains the number of states associated
-            to the `spin_str_element` string 
+            to the `spin_str_element` string
 
     """
 
@@ -56,9 +56,10 @@ def num_states(spin_str_element):
     else:
         return None
 
+
 parser = argparse.ArgumentParser()
 parser.add_argument('table', type=str, help='Name of the input spin stable')
-parser.add_argument('-o', '--output', type=str, default = 'nubase2020', help='Pynucastro Formatted Table')
+parser.add_argument('-o', '--output', type=str, default='nubase2020', help='Pynucastro Formatted Table')
 
 args = parser.parse_args()
 
@@ -84,7 +85,7 @@ for line in finput:
     i_str = line[7]                                    # The string that defines gs
     spin_str_list = line[88:102].strip().split()       # A list of strings ["spin+parity", "Isospin"]
 
-    # We convert the first three string variables to integers 
+    # We convert the first three string variables to integers
     A = int(A_string)
     Z = int(Z_string)
     i = int(i_str)
@@ -95,22 +96,22 @@ for line in finput:
     else:
         continue
 
-    # We remove the characters from the string "+-,*()#". 
+    # We remove the characters from the string "+-,*()#".
     # The meaning of each (set of) character(s) is(are) the following:
     #
-    # "*"   : The spin/parity measurement is provided by 
+    # "*"   : The spin/parity measurement is provided by
     #         strong experimental arguments.
     # "+-"  : The parity associated to each nucleus.
     # "()"  : The spin/parity measurement is provided by
     #         weak experimental arguments.
     # "#"   : The spin/parity measurement is provided by
-    #         theoretical arguments.   
+    #         theoretical arguments.
 
     special_chars = "+-*()#,"
 
     for c in special_chars:
-        spin_str  = spin_str.replace(c, ' ')
-    
+        spin_str = spin_str.replace(c, ' ')
+
     #From spin_str we remove the parity
     #and source information; however:
 
@@ -120,7 +121,7 @@ for line in finput:
     # 2. Some nucleus information may have been
     #    extrapolated without taking experimental
     #    measurements.
-     
+
     spin_str = spin_str.strip().split()
 
     if i == 0:
@@ -132,9 +133,9 @@ for line in finput:
         if spin_str:
             output_str += ' '*23
             spin_str_1 = spin_str.pop(0)
-            output_str += '{0:<4}'.format(spin_str_1) 
+            output_str += '{0:<4}'.format(spin_str_1)
             state1 = str(num_states(spin_str_1))
-            
+
             if spin_str:
                 output_str += ' '
                 spin_str_2 = spin_str.pop(0)
@@ -147,13 +148,13 @@ for line in finput:
 
         if state2:
             output_str += ' '*21
-        else: 
-            output_str +=' '*27
+        else:
+            output_str += ' '*27
 
         output_str += '{0:<3}'.format(state1)
 
         if state2:
-            output_str += ' ' 
+            output_str += ' '
             output_str += '{0:<3}'.format(state2)
 
         output_str += '\n'
@@ -162,6 +163,4 @@ for line in finput:
         continue
 
 fout.close()
-finput.close() 
-
-
+finput.close()

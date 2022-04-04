@@ -1,9 +1,7 @@
 # unit tests for rates
 import pynucastro.networks as networks
-import pynucastro.rates as rates
 import os
 import filecmp
-import glob
 
 import io
 

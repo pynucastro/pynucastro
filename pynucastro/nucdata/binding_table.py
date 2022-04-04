@@ -7,7 +7,8 @@ import os
 
 from pynucastro.nucdata import BindingNuclide
 
-class BindingTable(object):
+
+class BindingTable:
     """A simple class to manage reading and parsing the table of binding energy/nucleon."""
 
     header_length = 2
@@ -36,7 +37,7 @@ class BindingTable(object):
         """
         try:
             f = open(self.datfile, 'r')
-        except:
+        except IOError:
             print('ERROR: data file not found!')
             exit()
 

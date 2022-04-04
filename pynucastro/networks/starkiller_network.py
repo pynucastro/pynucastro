@@ -8,6 +8,7 @@ import os
 
 from pynucastro.networks import BaseFortranNetwork
 
+
 class StarKillerNetwork(BaseFortranNetwork):
     def __init__(self, *args, **kwargs):
         # Initialize BaseFortranNetwork parent class
@@ -40,7 +41,7 @@ class StarKillerNetwork(BaseFortranNetwork):
         for j, nj in enumerate(self.unique_nuclei):
             # Loop over columns
             for i, ni in enumerate(self.unique_nuclei):
-                if (not self.jac_null_entries[jac_idx]) or i==j:
+                if (not self.jac_null_entries[jac_idx]) or i == j:
                     number_nonzero += 1
                 jac_idx += 1
 
@@ -78,7 +79,7 @@ class StarKillerNetwork(BaseFortranNetwork):
             num_in_row = row_count[-1]
             # Loop over columns
             for i, ni in enumerate(self.unique_nuclei):
-                if (not self.jac_null_entries[jac_idx]) or i==j:
+                if (not self.jac_null_entries[jac_idx]) or i == j:
                     num_in_row += 1
                     col_index.append(i+1)
                 jac_idx += 1
