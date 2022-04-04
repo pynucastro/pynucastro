@@ -463,14 +463,9 @@ class RateFilter:
     def _cast_nucleus(r):
         """ Make sure r is of type Nucleus. """
         if not isinstance(r, Nucleus):
-            try:
-                rnuc = Nucleus(r)
-            except:  # noqa
-                raise
-            else:
-                return rnuc
-        else:
-            return r
+            rnuc = Nucleus(r)
+            return rnuc
+        return r
 
     @staticmethod
     def _contents_equal(a, b):
