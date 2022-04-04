@@ -105,15 +105,12 @@ class SingleSet:
         """ Set label and flags indicating Set is resonant,
             weak, or reverse. """
         assert isinstance(self.labelprops, str)
-        try:
-            assert len(self.labelprops) == 6
-        except AssertionError:
-            raise
-        else:
-            self.label = self.labelprops[0:4]
-            self.resonant = self.labelprops[4] == 'r'
-            self.weak = self.labelprops[4] == 'w'
-            self.reverse = self.labelprops[5] == 'v'
+        assert len(self.labelprops) == 6
+
+        self.label = self.labelprops[0:4]
+        self.resonant = self.labelprops[4] == 'r'
+        self.weak = self.labelprops[4] == 'w'
+        self.reverse = self.labelprops[5] == 'v'
 
     def __eq__(self, other):
         """ Determine whether two SingleSet objects are equal to each other. """
