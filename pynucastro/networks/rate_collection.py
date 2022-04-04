@@ -547,6 +547,7 @@ class RateCollection:
              size=(800, 600), dpi=100, title=None,
              ydot_cutoff_value=None,
              node_size=1000, node_font_size=13, node_color="#A0CBE2", node_shape="o",
+             curved_edges=False,
              N_range=None, Z_range=None, rotated=False,
              always_show_p=False, always_show_alpha=False, hide_xalpha=False, filter_function=None):
         """Make a plot of the network structure showing the links between
@@ -582,6 +583,8 @@ class RateCollection:
         node_color: color to make the nodes
 
         node_shape: shape of the node (using matplotlib marker names)
+
+        curved_edges: do we use arcs to connect the nodes?
 
         N_range: range of neutron number to zoom in on
 
@@ -730,8 +733,15 @@ class RateCollection:
         widths[ww > min_weight + 2*dw] = 2.5
         widths[ww > min_weight + 3*dw] = 4
 
-        edges_lc = nx.draw_networkx_edges(G, G.position, width=list(widths),    # plot the arrow of reaction
+        if curved_edges:
+            connectionstyle = "arc3, rad = 0.2"
+        else:
+            connectionstyle = "arc3"
+
+        # plot the arrow of reaction
+        edges_lc = nx.draw_networkx_edges(G, G.position, width=list(widths),
                                           edgelist=edges, edge_color=edge_color,
+                                          connectionstyle=connectionstyle,
                                           node_size=node_size,
                                           edge_cmap=plt.cm.viridis, ax=ax)
 
