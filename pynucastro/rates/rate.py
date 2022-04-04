@@ -489,9 +489,7 @@ class Rate:
         """ Set label and flags indicating Rate is resonant,
             weak, or reverse. """
         assert isinstance(self.labelprops, str)
-        try:
-            assert len(self.labelprops) == 6
-        except AssertionError:
+        if len(self.labelprops) != 6:
             assert self.labelprops == 'tabular'
 
             self.label = 'tabular'
