@@ -202,3 +202,33 @@ class TestRate:
         assert self.rate4.lightest() == rates.Nucleus("he4")
         assert self.rate2.lightest() == rates.Nucleus("n")
         assert self.rate2.heaviest() == rates.Nucleus("t")
+
+
+class TestModify:
+
+    @classmethod
+    def setup_class(cls):
+        """ this is run once for each class before any tests """
+        pass
+
+    @classmethod
+    def teardown_class(cls):
+        """ this is run once for each class after all tests """
+        pass
+
+    def setup_method(self):
+        """ this is run before each test """
+
+        self.rate = rates.Rate("c12-c12n-mg23-cf88")
+
+    def teardown_method(self):
+        """ this is run after each test """
+        pass
+
+    def test_modify(self):
+
+        self.rate.modify_products("mg24")
+
+        assert self.rate.Q == approx(13.93356)
+        assert self.rate.products == [rates.Nucleus("mg24")]
+        assert self.rate.modified
