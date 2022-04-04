@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.nucdata.elements &mdash; pynucastro 1.6.0.post71+g51c8f4b documentation</title>
+  <title>pynucastro.nucdata.elements &mdash; pynucastro 1.6.0.post72+gb37bdc6 documentation</title>
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -85,9 +85,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">Z</span> <span class="o">=</span> <span class="n">Z</span></div>
 
+
 <div class="viewcode-block" id="UnidentifiedElement"><a class="viewcode-back" href="../../../pynucastro.nucdata.html#pynucastro.nucdata.elements.UnidentifiedElement">[docs]</a><span class="k">class</span> <span class="nc">UnidentifiedElement</span><span class="p">(</span><span class="ne">BaseException</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span></div>
+
 
 <div class="viewcode-block" id="PeriodicTable"><a class="viewcode-back" href="../../../pynucastro.nucdata.html#pynucastro.nucdata.elements.PeriodicTable">[docs]</a><span class="k">class</span> <span class="nc">PeriodicTable</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="n">table</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;h&#39;</span><span class="p">:</span>  <span class="n">Element</span><span class="p">(</span><span class="s1">&#39;h&#39;</span><span class="p">,</span>  <span class="s1">&#39;hydrogen&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
@@ -216,7 +218,7 @@
     <span class="k">def</span> <span class="nf">lookup_abbreviation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">abbrev</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="n">abbrev</span><span class="o">.</span><span class="n">lower</span><span class="p">()]</span>
-        <span class="k">except</span><span class="p">:</span>
+        <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">UnidentifiedElement</span></div>
 
 <div class="viewcode-block" id="PeriodicTable.lookup_Z"><a class="viewcode-back" href="../../../pynucastro.nucdata.html#pynucastro.nucdata.elements.PeriodicTable.lookup_Z">[docs]</a>    <span class="nd">@classmethod</span>

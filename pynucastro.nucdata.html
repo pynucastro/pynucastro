@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.nucdata package &mdash; pynucastro 1.6.0.post71+g51c8f4b documentation</title>
+  <title>pynucastro.nucdata package &mdash; pynucastro 1.6.0.post72+gb37bdc6 documentation</title>
       <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -222,14 +222,14 @@ are characterized as follows:</p>
 <p>nucleus            : a string variable composed by an element and the atomic number, e.g ni56.
 name               : the name of the table on which the nucleus is read.
 temperature        : a list with all the temperatures involved in the table named in the previous variable.
-partition_function : a list with all the partition values given in the same order of the previos list.  
+partition_function : a list with all the partition values given in the same order of the previos list.
 interpolant        : stores the interpolant function.
 interpolant_order  : stores the interpolation spline order.</p>
 <p>The public methods of this class are:</p>
 <p>lower_partition()   : returns the lowest temperature value of the partition_function list.
 upper_partition()   : returns the highest temperature value of the partition_function list.
 lower_temperature() : returns the lowest value temperature value of the temperature list.
-upper_temperature() : returns the lowest value temperature value of the temperature list. 
+upper_temperature() : returns the lowest value temperature value of the temperature list.
 construct_spline_interpolant(order) : interpolates temperature vs log(partition_function), using the</p>
 <blockquote>
 <div><p>spline interpolation of order=3 by default, returning the function of T.</p>
@@ -240,7 +240,7 @@ __add__ : if two partition functions do not overlap their temperatures, we defin
 <div><p>of all the temperatures and their partition function values, respectively.</p>
 </div></blockquote>
 <dl class="simple">
-<dt>__call__: This object allow us to treat the class object as function of T, returning the appropiate value of </dt><dd><p>the partition function.</p>
+<dt>__call__: This object allow us to treat the class object as function of T, returning the appropiate value of</dt><dd><p>the partition function.</p>
 </dd>
 </dl>
 <p>The purpose of this oject is to encompass all the nucleus partition function values into a single object, on which +
@@ -281,7 +281,7 @@ for temperature.</p>
 <dt class="sig sig-object py" id="pynucastro.nucdata.partition_function.PartitionFunctionCollection">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.nucdata.partition_function.</span></span><span class="sig-name descname"><span class="pre">PartitionFunctionCollection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">use_high_temperatures</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_set</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'frdm'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/partition_function.html#PartitionFunctionCollection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.partition_function.PartitionFunctionCollection" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>The PartitionFunctionCollection holds a collection of PartitionFunctionTable objects in a dictionary keyed 
+<p>The PartitionFunctionCollection holds a collection of PartitionFunctionTable objects in a dictionary keyed
 by the name of the tables</p>
 <p>In our discussion we have two different set of tables</p>
 <dl class="py method">

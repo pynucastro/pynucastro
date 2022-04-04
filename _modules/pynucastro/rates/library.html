@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.rates.library &mdash; pynucastro 1.6.0.post71+g51c8f4b documentation</title>
+  <title>pynucastro.rates.library &mdash; pynucastro 1.6.0.post72+gb37bdc6 documentation</title>
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -98,12 +98,13 @@
                 <span class="k">continue</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">lib</span> <span class="o">=</span> <span class="n">Library</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-            <span class="k">except</span><span class="p">:</span>
+            <span class="k">except</span><span class="p">:</span>  <span class="c1"># noqa</span>
                 <span class="k">continue</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">f</span><span class="si">:</span><span class="s2">32</span><span class="si">}</span><span class="s2"> : &quot;</span><span class="p">)</span>
                 <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">lib</span><span class="o">.</span><span class="n">get_rates</span><span class="p">():</span>
                     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;                                 : </span><span class="si">{</span><span class="n">r</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
 
 <div class="viewcode-block" id="Library"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.library.Library">[docs]</a><span class="k">class</span> <span class="nc">Library</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -164,14 +165,14 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_rates</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">ratelist</span><span class="p">:</span>
             <span class="n">rid</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">get_rate_id</span><span class="p">()</span>
-            <span class="k">assert</span> <span class="ow">not</span> <span class="n">rid</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rates</span><span class="p">,</span> <span class="s2">&quot;ERROR: supplied a Rate object already in the Library.&quot;</span>
+            <span class="k">assert</span> <span class="n">rid</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rates</span><span class="p">,</span> <span class="s2">&quot;ERROR: supplied a Rate object already in the Library.&quot;</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_rates</span><span class="p">[</span><span class="n">rid</span><span class="p">]</span> <span class="o">=</span> <span class="n">r</span>
 
     <span class="k">def</span> <span class="nf">_read_library_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># loop through library file, read lines</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">flib</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_library_file</span><span class="p">)</span>
-        <span class="k">except</span><span class="p">:</span>
+        <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Could not open file </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_library_file</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
             <span class="k">raise</span>
         <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">flib</span><span class="p">:</span>
@@ -196,11 +197,11 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">try</span><span class="p">:</span>
                     <span class="n">chapter</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
-                <span class="k">except</span><span class="p">:</span>
+                <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
                     <span class="c1"># we can&#39;t interpret line as a chapter so use current_chapter</span>
                     <span class="k">try</span><span class="p">:</span>
                         <span class="k">assert</span> <span class="n">current_chapter</span>
-                    <span class="k">except</span><span class="p">:</span>
+                    <span class="k">except</span> <span class="ne">AssertionError</span><span class="p">:</span>
                         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;ERROR: malformed library file </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_library_file</span><span class="si">}</span><span class="s1">, cannot identify chapter.&#39;</span><span class="p">)</span>
                         <span class="k">raise</span>
                     <span class="k">else</span><span class="p">:</span>
@@ -222,8 +223,6 @@
                     <span class="n">r</span> <span class="o">=</span> <span class="n">Rate</span><span class="p">(</span><span class="n">sio</span><span class="p">,</span> <span class="n">rfile_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_library_file</span><span class="p">)</span>
                 <span class="k">except</span> <span class="n">UnsupportedNucleus</span><span class="p">:</span>
                     <span class="k">pass</span>
-                <span class="k">except</span><span class="p">:</span>
-                    <span class="k">raise</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">rid</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">get_rate_id</span><span class="p">()</span>
                     <span class="k">if</span> <span class="n">rid</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rates</span><span class="p">:</span>
@@ -250,7 +249,7 @@
         <span class="k">for</span> <span class="n">rid</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">other</span><span class="o">.</span><span class="n">_rates</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="k">assert</span> <span class="n">rid</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">new_rates</span>
-            <span class="k">except</span><span class="p">:</span>
+            <span class="k">except</span> <span class="ne">AssertionError</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">r</span> <span class="o">!=</span> <span class="n">new_rates</span><span class="p">[</span><span class="n">rid</span><span class="p">]:</span>
                     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;ERROR: rate </span><span class="si">{</span><span class="n">r</span><span class="si">}</span><span class="s1"> defined differently in libraries </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_library_file</span><span class="si">}</span><span class="s1"> and </span><span class="si">{</span><span class="n">other</span><span class="o">.</span><span class="n">_library_file</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
                     <span class="k">raise</span>
@@ -277,7 +276,7 @@
         <span class="sd">&quot;&quot;&quot; Return a rate matching the id provided. &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rates</span><span class="p">[</span><span class="n">rid</span><span class="p">]</span>
-        <span class="k">except</span><span class="p">:</span>
+        <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ERROR: rate identifier does not match a rate in this library.&quot;</span><span class="p">)</span>
             <span class="k">raise</span></div>
 
@@ -309,11 +308,6 @@
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">nuclist</span><span class="p">,</span> <span class="p">(</span><span class="n">Nucleus</span><span class="p">,</span> <span class="nb">str</span><span class="p">)):</span>
             <span class="n">nuclist</span> <span class="o">=</span> <span class="p">[</span><span class="n">nuclist</span><span class="p">]</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">nuclist</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">nuclist</span><span class="p">)</span>
-            <span class="k">except</span><span class="p">:</span>
-                <span class="k">raise</span>
 
         <span class="n">nucleus_list</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="n">nuclist</span><span class="p">:</span>
@@ -322,7 +316,7 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">try</span><span class="p">:</span>
                     <span class="n">anuc</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="p">(</span><span class="n">nuc</span><span class="p">)</span>
-                <span class="k">except</span><span class="p">:</span>
+                <span class="k">except</span><span class="p">:</span>  <span class="c1"># noqa</span>
                     <span class="k">raise</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">nucleus_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">anuc</span><span class="p">)</span>
@@ -369,7 +363,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="nb">iter</span><span class="p">(</span><span class="n">filter_spec</span><span class="p">)</span>
-            <span class="k">except</span><span class="p">:</span>
+            <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
                 <span class="k">raise</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">filter_specifications</span> <span class="o">=</span> <span class="n">filter_spec</span>
@@ -457,7 +451,7 @@
 <span class="sd">        by detailed balance.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">only_fwd_filter</span> <span class="o">=</span> <span class="n">RateFilter</span><span class="p">(</span><span class="n">filter_function</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">r</span><span class="p">:</span> <span class="ow">not</span> <span class="n">r</span><span class="o">.</span><span class="n">reverse</span><span class="p">)</span>
+        <span class="n">only_fwd_filter</span> <span class="o">=</span> <span class="n">RateFilter</span><span class="p">(</span><span class="n">filter_function</span><span class="o">=</span><span class="k">lambda</span> <span class="n">r</span><span class="p">:</span> <span class="ow">not</span> <span class="n">r</span><span class="o">.</span><span class="n">reverse</span><span class="p">)</span>
         <span class="n">only_fwd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">only_fwd_filter</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">only_fwd</span></div>
 
@@ -466,9 +460,10 @@
 <span class="sd">        Select only the reverse rates, obtained by detailed balance.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">only_bwd_filter</span> <span class="o">=</span> <span class="n">RateFilter</span><span class="p">(</span><span class="n">filter_function</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">r</span><span class="p">:</span> <span class="n">r</span><span class="o">.</span><span class="n">reverse</span><span class="p">)</span>
+        <span class="n">only_bwd_filter</span> <span class="o">=</span> <span class="n">RateFilter</span><span class="p">(</span><span class="n">filter_function</span><span class="o">=</span><span class="k">lambda</span> <span class="n">r</span><span class="p">:</span> <span class="n">r</span><span class="o">.</span><span class="n">reverse</span><span class="p">)</span>
         <span class="n">only_bwd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">only_bwd_filter</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">only_bwd</span></div></div>
+
 
 <div class="viewcode-block" id="RateFilter"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.library.RateFilter">[docs]</a><span class="k">class</span> <span class="nc">RateFilter</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;RateFilter filters out a specified rate or set of rates</span>
@@ -549,14 +544,9 @@
     <span class="k">def</span> <span class="nf">_cast_nucleus</span><span class="p">(</span><span class="n">r</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Make sure r is of type Nucleus. &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">Nucleus</span><span class="p">):</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">rnuc</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
-            <span class="k">except</span><span class="p">:</span>
-                <span class="k">raise</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">rnuc</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">r</span>
+            <span class="n">rnuc</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">rnuc</span>
+        <span class="k">return</span> <span class="n">r</span>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_contents_equal</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
@@ -580,7 +570,7 @@
             <span class="n">matches</span> <span class="o">=</span> <span class="n">RateFilter</span><span class="o">.</span><span class="n">_contents_equal</span><span class="p">(</span><span class="n">test</span><span class="p">,</span> <span class="n">reference</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="n">test</span><span class="p">:</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="n">reference</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">nuc</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">reference</span><span class="p">:</span>
                     <span class="n">matches</span> <span class="o">=</span> <span class="kc">False</span>
                     <span class="k">break</span>
         <span class="k">return</span> <span class="n">matches</span>
@@ -628,10 +618,11 @@
                                <span class="n">max_products</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">max_reactants</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">newfilter</span></div></div>
 
+
 <div class="viewcode-block" id="ReacLibLibrary"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.library.ReacLibLibrary">[docs]</a><span class="k">class</span> <span class="nc">ReacLibLibrary</span><span class="p">(</span><span class="n">Library</span><span class="p">):</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">libfile</span><span class="o">=</span><span class="s1">&#39;reaclib_default2_20220329&#39;</span><span class="p">,</span> <span class="n">rates</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">read_library</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-        <span class="k">assert</span> <span class="n">libfile</span> <span class="o">==</span> <span class="s1">&#39;reaclib_default2_20220329&#39;</span>  <span class="ow">and</span> <span class="n">rates</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">read_library</span><span class="p">,</span> <span class="s2">&quot;Only the reaclib_default2_20220329 default ReacLib snapshot is accepted&quot;</span>
+        <span class="k">assert</span> <span class="n">libfile</span> <span class="o">==</span> <span class="s1">&#39;reaclib_default2_20220329&#39;</span> <span class="ow">and</span> <span class="n">rates</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">read_library</span><span class="p">,</span> <span class="s2">&quot;Only the reaclib_default2_20220329 default ReacLib snapshot is accepted&quot;</span>
         <span class="n">Library</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">libfile</span><span class="o">=</span><span class="n">libfile</span><span class="p">,</span> <span class="n">rates</span><span class="o">=</span><span class="n">rates</span><span class="p">,</span> <span class="n">read_library</span><span class="o">=</span><span class="n">read_library</span><span class="p">)</span></div>
 </pre></div>
 
