@@ -27,10 +27,6 @@ namespace Rates
         <nrxn>(2)
     };
 
-    // For each rate, we need: rate, drate/dT, screening, dscreening/dT
-
-    const int NumGroups = 4;
-
     // number of reaclib rates
 
     <nrat_reaclib>(1)

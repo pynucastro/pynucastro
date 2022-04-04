@@ -82,6 +82,9 @@ reaction rates, including:
 * Rate : a single Reaclib rate, with methods for plotting and
   evaluating it.
 
+* RatePair : a pair of rates representing the corresponding forward
+  and reverse rates
+
 * Tfactors : this is a simple container class that holds the various
   temperature powers needed to evaluate a rate.
 
