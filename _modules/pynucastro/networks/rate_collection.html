@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.networks.rate_collection &mdash; pynucastro 1.6.0.post70+ga062d03 documentation</title>
+  <title>pynucastro.networks.rate_collection &mdash; pynucastro 1.6.0.post71+g51c8f4b documentation</title>
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -89,7 +89,6 @@
 <span class="kn">import</span> <span class="nn">os</span>
 
 <span class="kn">from</span> <span class="nn">operator</span> <span class="kn">import</span> <span class="n">mul</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
 
 <span class="kn">from</span> <span class="nn">ipywidgets</span> <span class="kn">import</span> <span class="n">interact</span>
 
@@ -101,7 +100,7 @@
 <span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
 
 <span class="c1"># Import Rate</span>
-<span class="kn">from</span> <span class="nn">pynucastro.rates</span> <span class="kn">import</span> <span class="n">Rate</span><span class="p">,</span> <span class="n">Nucleus</span><span class="p">,</span> <span class="n">Library</span>
+<span class="kn">from</span> <span class="nn">pynucastro.rates</span> <span class="kn">import</span> <span class="n">Rate</span><span class="p">,</span> <span class="n">RatePair</span><span class="p">,</span> <span class="n">Nucleus</span><span class="p">,</span> <span class="n">Library</span>
 
 <span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;figure.dpi&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">100</span>
 
@@ -291,12 +290,20 @@
 
         <span class="c1"># now make a list of each rate that touches each nucleus</span>
         <span class="c1"># we&#39;ll store this in a dictionary keyed on the nucleus</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">nuclei_consumed</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">nuclei_produced</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nuclei_consumed</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nuclei_produced</span> <span class="o">=</span> <span class="p">{}</span>
 
         <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">nuclei_consumed</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span> <span class="k">if</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">]</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">nuclei_produced</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span> <span class="k">if</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">r</span><span class="o">.</span><span class="n">products</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">nuclei_rate_pairs</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">_rp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_rate_pairs</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nuclei_rate_pairs</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> \
+                <span class="p">[</span><span class="n">rp</span> <span class="k">for</span> <span class="n">rp</span> <span class="ow">in</span> <span class="n">_rp</span> <span class="k">if</span> <span class="n">rp</span><span class="o">.</span><span class="n">forward</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">rp</span><span class="o">.</span><span class="n">forward</span><span class="o">.</span><span class="n">reactants</span> <span class="o">+</span> <span class="n">rp</span><span class="o">.</span><span class="n">forward</span><span class="o">.</span><span class="n">products</span> <span class="ow">or</span>
+                                     <span class="n">rp</span><span class="o">.</span><span class="n">reverse</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">rp</span><span class="o">.</span><span class="n">reverse</span><span class="o">.</span><span class="n">reactants</span> <span class="o">+</span> <span class="n">rp</span><span class="o">.</span><span class="n">reverse</span><span class="o">.</span><span class="n">products</span><span class="p">]</span>
 
         <span class="c1"># Re-order self.rates so Reaclib rates come first,</span>
         <span class="c1"># followed by Tabular rates. This is needed if</span>
@@ -334,6 +341,50 @@
                 <span class="k">else</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">library</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">library</span> <span class="o">+</span> <span class="n">rflib</span>
 
+<div class="viewcode-block" id="RateCollection.get_rate_pairs"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.get_rate_pairs">[docs]</a>    <span class="k">def</span> <span class="nf">get_rate_pairs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; return a list of RatePair objects, grouping the rates together</span>
+<span class="sd">            by forward and reverse&quot;&quot;&quot;</span>
+
+        <span class="c1"># first handle the ones that have Q defined</span>
+
+        <span class="n">forward_rates</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span> <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">Q</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">r</span><span class="o">.</span><span class="n">Q</span> <span class="o">&gt;=</span> <span class="mf">0.0</span><span class="p">]</span>
+        <span class="n">reverse_rates</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span> <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">Q</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">r</span><span class="o">.</span><span class="n">Q</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">]</span>
+
+        <span class="c1"># e-capture tabular rates don&#39;t have a Q defined, so just go off of the binding energy</span>
+
+        <span class="n">forward_rates</span> <span class="o">+=</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span> <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">Q</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">nucbind</span> <span class="o">&lt;=</span> <span class="n">r</span><span class="o">.</span><span class="n">products</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">nucbind</span><span class="p">]</span>
+        <span class="n">reverse_rates</span> <span class="o">+=</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span> <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">Q</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">nucbind</span> <span class="o">&gt;</span> <span class="n">r</span><span class="o">.</span><span class="n">products</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">nucbind</span><span class="p">]</span>
+
+
+        <span class="n">rate_pairs</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># loop over all the forward rates and find the matching reverse rate</span>
+        <span class="c1"># if it exists</span>
+        <span class="k">for</span> <span class="n">fr</span> <span class="ow">in</span> <span class="n">forward_rates</span><span class="p">:</span>
+            <span class="n">rp</span> <span class="o">=</span> <span class="n">RatePair</span><span class="p">(</span><span class="n">forward</span><span class="o">=</span><span class="n">fr</span><span class="p">)</span>
+            <span class="n">matched</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">for</span> <span class="n">rr</span> <span class="ow">in</span> <span class="n">reverse_rates</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">fr</span><span class="o">.</span><span class="n">reactants</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">A</span><span class="p">)</span> <span class="o">==</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">rr</span><span class="o">.</span><span class="n">products</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">A</span><span class="p">)</span> <span class="ow">and</span> \
+                   <span class="nb">sorted</span><span class="p">(</span><span class="n">fr</span><span class="o">.</span><span class="n">products</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">A</span><span class="p">)</span> <span class="o">==</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">rr</span><span class="o">.</span><span class="n">reactants</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">A</span><span class="p">):</span>
+                    <span class="n">matched</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="n">rp</span><span class="o">.</span><span class="n">reverse</span> <span class="o">=</span> <span class="n">rr</span>
+                    <span class="k">break</span>
+            <span class="c1"># since we found a match, remove the reverse rate we paired</span>
+            <span class="c1"># from out list so no other forward rate can match with it</span>
+            <span class="k">if</span> <span class="n">matched</span><span class="p">:</span>
+                <span class="n">reverse_rates</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">rp</span><span class="o">.</span><span class="n">reverse</span><span class="p">)</span>
+
+            <span class="n">rate_pairs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rp</span><span class="p">)</span>
+
+        <span class="c1"># we might have some reverse rates remaining for which there</span>
+        <span class="c1"># were no forward rates -- add those now</span>
+        <span class="k">if</span> <span class="n">reverse_rates</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">rr</span> <span class="ow">in</span> <span class="n">reverse_rates</span><span class="p">:</span>
+                <span class="n">rp</span> <span class="o">=</span> <span class="n">RatePair</span><span class="p">(</span><span class="n">reverse</span><span class="o">=</span><span class="n">rr</span><span class="p">)</span>
+                <span class="n">rate_pairs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rp</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">rate_pairs</span></div>
+
 <div class="viewcode-block" id="RateCollection.get_nuclei"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.get_nuclei">[docs]</a>    <span class="k">def</span> <span class="nf">get_nuclei</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; get all the nuclei that are part of the network &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span></div>
@@ -341,7 +392,7 @@
 <div class="viewcode-block" id="RateCollection.evaluate_rates"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.evaluate_rates">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate_rates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">composition</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;evaluate the rates for a specific density, temperature, and</span>
 <span class="sd">        composition&quot;&quot;&quot;</span>
-        <span class="n">rvals</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+        <span class="n">rvals</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">ys</span> <span class="o">=</span> <span class="n">composition</span><span class="o">.</span><span class="n">get_molar</span><span class="p">()</span>
         <span class="n">y_e</span> <span class="o">=</span> <span class="n">composition</span><span class="o">.</span><span class="n">eval_ye</span><span class="p">()</span>
 
@@ -414,6 +465,42 @@
                 <span class="n">ostr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;     </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">string</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
 
             <span class="n">ostr</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="k">return</span> <span class="n">ostr</span></div>
+
+<div class="viewcode-block" id="RateCollection.rate_pair_overview"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.rate_pair_overview">[docs]</a>    <span class="k">def</span> <span class="nf">rate_pair_overview</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; return a verbose network overview in terms of forward-reverse pairs&quot;&quot;&quot;</span>
+        <span class="n">ostr</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">:</span>
+            <span class="n">ostr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="k">for</span> <span class="n">rp</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nuclei_rate_pairs</span><span class="p">[</span><span class="n">n</span><span class="p">]):</span>
+                <span class="n">ostr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;     </span><span class="si">{</span><span class="n">rp</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="k">return</span> <span class="n">ostr</span></div>
+
+<div class="viewcode-block" id="RateCollection.get_nuclei_latex_string"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.get_nuclei_latex_string">[docs]</a>    <span class="k">def</span> <span class="nf">get_nuclei_latex_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;return a string listing the nuclei in latex format&quot;&quot;&quot;</span>
+
+        <span class="n">ostr</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">):</span>
+            <span class="n">ostr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;$</span><span class="si">{</span><span class="n">n</span><span class="o">.</span><span class="n">pretty</span><span class="si">}</span><span class="s2">$&quot;</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                <span class="n">ostr</span> <span class="o">+=</span> <span class="s2">&quot;, &quot;</span>
+        <span class="k">return</span> <span class="n">ostr</span></div>
+
+<div class="viewcode-block" id="RateCollection.get_rates_latex_table_string"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.get_rates_latex_table_string">[docs]</a>    <span class="k">def</span> <span class="nf">get_rates_latex_table_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">ostr</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">rp</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_rate_pairs</span><span class="p">()):</span>
+            <span class="k">if</span> <span class="n">rp</span><span class="o">.</span><span class="n">forward</span><span class="p">:</span>
+                <span class="n">ostr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">rp</span><span class="o">.</span><span class="n">forward</span><span class="o">.</span><span class="n">pretty_string</span><span class="si">:</span><span class="s2">38</span><span class="si">}</span><span class="s2"> &amp; </span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">ostr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39; &#39;</span><span class="si">:</span><span class="s2">38</span><span class="si">}</span><span class="s2"> </span><span class="se">\n</span><span class="s2"> &amp;&quot;</span>
+
+            <span class="k">if</span> <span class="n">rp</span><span class="o">.</span><span class="n">reverse</span><span class="p">:</span>
+                <span class="n">ostr</span> <span class="o">+=</span> <span class="sa">rf</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">rp</span><span class="o">.</span><span class="n">reverse</span><span class="o">.</span><span class="n">pretty_string</span><span class="si">:</span><span class="s2">38</span><span class="si">}</span><span class="s2"> </span><span class="se">\\</span><span class="s2">&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">ostr</span> <span class="o">+=</span> <span class="sa">rf</span><span class="s2">&quot;  </span><span class="si">{</span><span class="s1">&#39; &#39;</span><span class="si">:</span><span class="s2">38</span><span class="si">}</span><span class="s2"> </span><span class="se">\\</span><span class="s2">&quot;</span>
+
+            <span class="n">ostr</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+
         <span class="k">return</span> <span class="n">ostr</span></div>
 
 <div class="viewcode-block" id="RateCollection.get_screening_map"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.get_screening_map">[docs]</a>    <span class="k">def</span> <span class="nf">get_screening_map</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
