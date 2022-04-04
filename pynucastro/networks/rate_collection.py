@@ -734,9 +734,9 @@ class RateCollection:
         widths[ww > min_weight + 3*dw] = 4
 
         if curved_edges:
-            connectionstyle="arc3, rad = 0.2"
+            connectionstyle = "arc3, rad = 0.2"
         else:
-            connectionstyle="arc3"
+            connectionstyle = "arc3"
 
         # plot the arrow of reaction
         edges_lc = nx.draw_networkx_edges(G, G.position, width=list(widths),
