@@ -66,7 +66,16 @@ Tfactor_spec = [
 
 @jitclass(Tfactor_spec)
 class Tfactors:
-    """ precompute temperature factors for speed """
+    """ precompute temperature factors for speed
+
+    :param float T: input temperature (Kelvin)
+    :var T9:    T / 1.e9 K
+    :var T9i:   1.0 / T9
+    :var T913i  1.0 / T9 ** (1/3)
+    :var T913   T9 ** (1/3)
+    :var T953   T9 ** (5/3)
+    :var lnT9   log(T9)
+    """
 
     def __init__(self, T):
         """ return the Tfactors object.  Here, T is temperature in Kelvin """
@@ -82,7 +91,11 @@ class SingleSet:
 
         lambda = exp[ a_0 + sum_{i=1}^5  a_i T_9**(2i-5)/3  + a_6 log T_9]
 
-        A single rate in Reaclib can be composed of multiple sets
+    A single rate in Reaclib can be composed of multiple sets
+
+    :param a: the coefficients of the exponential fit
+    :param labelprops: a collection of flags that classify a ReacLib rate
+
     """
 
     def __init__(self, a, labelprops=None):
@@ -309,7 +322,9 @@ class Nucleus:
         return self.A < other.A
 
 class Rate:
-    """ a single Reaclib rate, which can be composed of multiple sets """
+    """A single reaction rate.  Currently, this can be a
+    Reaclib rate, which can be composed of multiple sets, or a tabulated
+    electron capture rate."""
     def __init__(self, rfile=None, rfile_path=None, chapter=None, original_source=None,
                  reactants=None, products=None, sets=None, labelprops=None, Q=None):
         """ rfile can be either a string specifying the path to a rate file or
@@ -943,3 +958,29 @@ class Rate:
 
             plt.title(fr"{self.pretty_string}")
             plt.show()
+
+class RatePair:
+    """the forward and reverse rates for a single reaction sequence.
+    Forward rates are those with Q >= 0.
+
+    :var forward: the forward reaction Rate object
+    :var reverse: the reverse reaction Rate object
+
+    """
+
+    def __init__(self, forward=None, reverse=None):
+        self.forward = forward
+        self.reverse = reverse
+
+    def __repr__(self):
+        return f"forward: {self.forward} ; reverse: {self.reverse}"
+
+    def __lt__(self, other):
+        if self.forward is not None and other.forward is not None:
+            return self.forward < other.forward
+        elif self.forward is None:
+            return False
+        return True
+
+    def __eq__(self, other):
+        return self.forward == other.forward and self.reverse == other.reverse

@@ -32,6 +32,9 @@ The main classes are:
   evaluate it at a specified temperature and plot its temperature
   dependence.
 
+* :func:`RatePair <pynucastro.rates.rate.RatePair>`: For a single nuclear process,
+  this holds the corresponding forward and reverse rates.
+
 * :func:`Library <pynucastro.rates.rate.Library>`: This is a collection of
   rates (for example, the entire ReacLib library).  It provides methods
   for filtering out rates based on different sets of rules.

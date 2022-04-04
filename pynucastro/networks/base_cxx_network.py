@@ -137,16 +137,27 @@ class BaseCxxNetwork(ABC, RateCollection):
         """create the expressions for dYdt for the nuclei, where Y is the
         molar fraction.
 
+
+        This will take the form of a dict, where the key is a nucleus, and the
+        value is a list of tuples, with the forward-reverse pairs of a rate
         """
 
-        ydot = []
+        ydot = {}
         for n in self.unique_nuclei:
             ydot_sym_terms = []
-            for r in self.nuclei_consumed[n]:
-                ydot_sym_terms.append(self.symbol_rates.ydot_term_symbol(r, n))
-            for r in self.nuclei_produced[n]:
-                ydot_sym_terms.append(self.symbol_rates.ydot_term_symbol(r, n))
-            ydot.append(ydot_sym_terms)
+            for rp in self.nuclei_rate_pairs[n]:
+                if rp.forward is not None:
+                    fwd = self.symbol_rates.ydot_term_symbol(rp.forward, n)
+                else:
+                    fwd = None
+
+                if rp.reverse is not None:
+                    rvs = self.symbol_rates.ydot_term_symbol(rp.reverse, n)
+                else:
+                    rvs = None
+
+                ydot_sym_terms.append((fwd, rvs))
+            ydot[n] = ydot_sym_terms
 
         self.ydot_out_result  = ydot
         self.solved_ydot = True
@@ -389,15 +400,45 @@ class BaseCxxNetwork(ABC, RateCollection):
 
     def _ydot(self, n_indent, of):
         # Write YDOT
-        for i, n in enumerate(self.unique_nuclei):
+        for n in self.unique_nuclei:
             of.write(f"{self.indent*n_indent}{self.symbol_rates.name_ydot_nuc}({n.c()}) =\n")
-            for j, term in enumerate(self.ydot_out_result[i]):
-                sol_value = self.symbol_rates.cxxify(sympy.cxxcode(term, precision=15,
-                                                                   standard="c++11"))
-                if j == len(self.ydot_out_result[i])-1:
-                    of.write(f"{2*self.indent*n_indent}{sol_value};\n\n")
+            for j, pair in enumerate(self.ydot_out_result[n]):
+                # pair here is the forward, reverse pair for a single rate as it affects
+                # nucleus n
+
+                if pair.count(None) == 0:
+                    num = 2
+                elif pair.count(None) == 1:
+                    num = 1
                 else:
-                    of.write(f"{2*self.indent*n_indent}{sol_value} +\n")
+                    raise NotImplementedError("a rate pair must contain atleast one rate")
+
+                of.write(f"{2*self.indent*n_indent}")
+                if num == 2:
+                    of.write("(")
+
+                if pair[0] is not None:
+                    sol_value = self.symbol_rates.cxxify(sympy.cxxcode(pair[0], precision=15,
+                                                                       standard="c++11"))
+
+                    of.write(f"{sol_value}")
+
+                if num == 2:
+                    of.write(" + ")
+
+                if pair[1] is not None:
+                    sol_value = self.symbol_rates.cxxify(sympy.cxxcode(pair[1], precision=15,
+                                                                       standard="c++11"))
+
+                    of.write(f"{sol_value}")
+
+                if num == 2:
+                    of.write(")")
+
+                if j == len(self.ydot_out_result[n])-1:
+                    of.write(";\n\n")
+                else:
+                    of.write(" +\n")
 
     def _enuc_add_energy_rate(self, n_indent, of):
         # Add tabular per-reaction neutrino energy generation rates to the energy generation rate

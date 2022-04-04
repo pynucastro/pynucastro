@@ -8,7 +8,6 @@ import math
 import os
 
 from operator import mul
-from collections import OrderedDict
 
 from ipywidgets import interact
 
@@ -20,7 +19,7 @@ from matplotlib.ticker import MaxNLocator
 import networkx as nx
 
 # Import Rate
-from pynucastro.rates import Rate, Nucleus, Library
+from pynucastro.rates import Rate, RatePair, Nucleus, Library
 
 mpl.rcParams['figure.dpi'] = 100
 
@@ -210,12 +209,20 @@ class RateCollection:
 
         # now make a list of each rate that touches each nucleus
         # we'll store this in a dictionary keyed on the nucleus
-        self.nuclei_consumed = OrderedDict()
-        self.nuclei_produced = OrderedDict()
+        self.nuclei_consumed = {}
+        self.nuclei_produced = {}
 
         for n in self.unique_nuclei:
             self.nuclei_consumed[n] = [r for r in self.rates if n in r.reactants]
             self.nuclei_produced[n] = [r for r in self.rates if n in r.products]
+
+        self.nuclei_rate_pairs = {}
+        _rp = self.get_rate_pairs()
+
+        for n in self.unique_nuclei:
+            self.nuclei_rate_pairs[n] = \
+                [rp for rp in _rp if rp.forward is not None and n in rp.forward.reactants + rp.forward.products or
+                                     rp.reverse is not None and n in rp.reverse.reactants + rp.reverse.products]
 
         # Re-order self.rates so Reaclib rates come first,
         # followed by Tabular rates. This is needed if
@@ -253,6 +260,50 @@ class RateCollection:
                 else:
                     self.library = self.library + rflib
 
+    def get_rate_pairs(self):
+        """ return a list of RatePair objects, grouping the rates together
+            by forward and reverse"""
+
+        # first handle the ones that have Q defined
+
+        forward_rates = [r for r in self.rates if r.Q is not None and r.Q >= 0.0]
+        reverse_rates = [r for r in self.rates if r.Q is not None and r.Q < 0.0]
+
+        # e-capture tabular rates don't have a Q defined, so just go off of the binding energy
+
+        forward_rates += [r for r in self.rates if r.Q is None and r.reactants[0].nucbind <= r.products[0].nucbind]
+        reverse_rates += [r for r in self.rates if r.Q is None and r.reactants[0].nucbind > r.products[0].nucbind]
+
+
+        rate_pairs = []
+
+        # loop over all the forward rates and find the matching reverse rate
+        # if it exists
+        for fr in forward_rates:
+            rp = RatePair(forward=fr)
+            matched = False
+            for rr in reverse_rates:
+                if sorted(fr.reactants, key=lambda x: x.A) == sorted(rr.products, key=lambda x: x.A) and \
+                   sorted(fr.products, key=lambda x: x.A) == sorted(rr.reactants, key=lambda x: x.A):
+                    matched = True
+                    rp.reverse = rr
+                    break
+            # since we found a match, remove the reverse rate we paired
+            # from out list so no other forward rate can match with it
+            if matched:
+                reverse_rates.remove(rp.reverse)
+
+            rate_pairs.append(rp)
+
+        # we might have some reverse rates remaining for which there
+        # were no forward rates -- add those now
+        if reverse_rates:
+            for rr in reverse_rates:
+                rp = RatePair(reverse=rr)
+                rate_pairs.append(rp)
+
+        return rate_pairs
+
     def get_nuclei(self):
         """ get all the nuclei that are part of the network """
         return self.unique_nuclei
@@ -260,7 +311,7 @@ class RateCollection:
     def evaluate_rates(self, rho, T, composition):
         """evaluate the rates for a specific density, temperature, and
         composition"""
-        rvals = OrderedDict()
+        rvals = {}
         ys = composition.get_molar()
         y_e = composition.eval_ye()
 
@@ -333,6 +384,42 @@ class RateCollection:
                 ostr += f"     {r.string}\n"
 
             ostr += "\n"
+        return ostr
+
+    def rate_pair_overview(self):
+        """ return a verbose network overview in terms of forward-reverse pairs"""
+        ostr = ""
+        for n in self.unique_nuclei:
+            ostr += f"{n}\n"
+            for rp in sorted(self.nuclei_rate_pairs[n]):
+                ostr += f"     {rp}\n"
+        return ostr
+
+    def get_nuclei_latex_string(self):
+        """return a string listing the nuclei in latex format"""
+
+        ostr = ""
+        for i, n in enumerate(self.unique_nuclei):
+            ostr += f"${n.pretty}$"
+            if i != len(self.unique_nuclei)-1:
+                ostr += ", "
+        return ostr
+
+    def get_rates_latex_table_string(self):
+        ostr = ""
+        for rp in sorted(self.get_rate_pairs()):
+            if rp.forward:
+                ostr += f"{rp.forward.pretty_string:38} & \n"
+            else:
+                ostr += f"{' ':38} \n &"
+
+            if rp.reverse:
+                ostr += rf"  {rp.reverse.pretty_string:38} \\"
+            else:
+                ostr += rf"  {' ':38} \\"
+
+            ostr += "\n"
+
         return ostr
 
     def get_screening_map(self):
