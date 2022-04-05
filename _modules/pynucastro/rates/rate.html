@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.rates.rate &mdash; pynucastro 1.6.0.post75+g6845770 documentation</title>
+  <title>pynucastro.rates.rate &mdash; pynucastro 1.6.0.post76+g97c6ede documentation</title>
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -435,6 +435,11 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">sets</span> <span class="o">=</span> <span class="p">[]</span>
 
+        <span class="c1"># a modified rate is one where we manually changed some of its</span>
+        <span class="c1"># properties</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">modified</span> <span class="o">=</span> <span class="kc">False</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span> <span class="o">=</span> <span class="n">labelprops</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="kc">None</span>
@@ -469,6 +474,26 @@
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabular</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">get_tabular_rate</span><span class="p">()</span>
+
+<div class="viewcode-block" id="Rate.modify_products"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.Rate.modify_products">[docs]</a>    <span class="k">def</span> <span class="nf">modify_products</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_products</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">new_products</span><span class="p">,</span> <span class="p">(</span><span class="nb">set</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+            <span class="n">new_products</span> <span class="o">=</span> <span class="p">[</span><span class="n">new_products</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">products</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">new_products</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">Nucleus</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">products</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">products</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Nucleus</span><span class="p">(</span><span class="n">p</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">modified</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="c1"># we need to update the Q value and the print string for the rate</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_q</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_screening</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fname</span> <span class="o">=</span> <span class="kc">None</span>    <span class="c1"># reset so it will be updated</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_print_representation</span><span class="p">()</span></div>
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">string</span>
@@ -783,6 +808,19 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">sets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">SingleSet</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">labelprops</span><span class="o">=</span><span class="n">labelprops</span><span class="p">))</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_set_label_properties</span><span class="p">(</span><span class="n">labelprops</span><span class="p">)</span>
 
+    <span class="k">def</span> <span class="nf">_set_q</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;set the Q value of the reaction (in MeV)&quot;&quot;&quot;</span>
+
+        <span class="c1"># from the binding energy of the nuclei, Q = -B_reactants + B_products</span>
+        <span class="c1"># but note that nucbind is the binding energy *per* nucleon, so we need</span>
+        <span class="c1"># to multiply by the number of nucleons</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">Q</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">Q</span> <span class="o">+=</span> <span class="o">-</span><span class="n">n</span><span class="o">.</span><span class="n">A</span> <span class="o">*</span> <span class="n">n</span><span class="o">.</span><span class="n">nucbind</span>
+        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">products</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">Q</span> <span class="o">+=</span> <span class="n">n</span><span class="o">.</span><span class="n">A</span> <span class="o">*</span> <span class="n">n</span><span class="o">.</span><span class="n">nucbind</span>
+
     <span class="k">def</span> <span class="nf">_set_rhs_properties</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; compute statistical prefactor and density exponent from the reactants. &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">prefactor</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c1"># this is 1/2 for rates like a + a (double counting)</span>
@@ -869,7 +907,9 @@
             <span class="n">products_str</span> <span class="o">=</span> <span class="s1">&#39;_&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">repr</span><span class="p">(</span><span class="n">nuc</span><span class="p">)</span> <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">products</span><span class="p">])</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">fname</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">reactants_str</span><span class="si">}</span><span class="s1">__</span><span class="si">{</span><span class="n">products_str</span><span class="si">}</span><span class="s1">&#39;</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">weak</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">fname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fname</span> <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39;__weak__</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">weak_type</span><span class="si">}</span><span class="s1">&#39;</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">fname</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;__weak__</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">weak_type</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">modified</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">fname</span> <span class="o">+=</span> <span class="s2">&quot;__modified&quot;</span>
 
 <div class="viewcode-block" id="Rate.get_rate_id"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.Rate.get_rate_id">[docs]</a>    <span class="k">def</span> <span class="nf">get_rate_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Get an identifying string for this rate.</span>
