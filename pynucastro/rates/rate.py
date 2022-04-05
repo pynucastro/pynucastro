@@ -354,6 +354,11 @@ class Rate:
         else:
             self.sets = []
 
+        # a modified rate is one where we manually changed some of its
+        # properties
+
+        self.modified = False
+
         self.labelprops = labelprops
 
         self.label = None
@@ -388,6 +393,26 @@ class Rate:
 
         if self.tabular:
             self.get_tabular_rate()
+
+    def modify_products(self, new_products):
+        if not isinstance(new_products, (set, list, tuple)):
+            new_products = [new_products]
+
+        self.products = []
+        for p in new_products:
+            if isinstance(p, Nucleus):
+                self.products.append(p)
+            else:
+                self.products.append(Nucleus(p))
+
+        self.modified = True
+
+        # we need to update the Q value and the print string for the rate
+
+        self._set_q()
+        self._set_screening()
+        self.fname = None    # reset so it will be updated
+        self._set_print_representation()
 
     def __repr__(self):
         return self.string
@@ -702,6 +727,19 @@ class Rate:
                 self.sets.append(SingleSet(a, labelprops=labelprops))
                 self._set_label_properties(labelprops)
 
+    def _set_q(self):
+        """set the Q value of the reaction (in MeV)"""
+
+        # from the binding energy of the nuclei, Q = -B_reactants + B_products
+        # but note that nucbind is the binding energy *per* nucleon, so we need
+        # to multiply by the number of nucleons
+
+        self.Q = 0
+        for n in self.reactants:
+            self.Q += -n.A * n.nucbind
+        for n in self.products:
+            self.Q += n.A * n.nucbind
+
     def _set_rhs_properties(self):
         """ compute statistical prefactor and density exponent from the reactants. """
         self.prefactor = 1.0  # this is 1/2 for rates like a + a (double counting)
@@ -788,7 +826,9 @@ class Rate:
             products_str = '_'.join([repr(nuc) for nuc in self.products])
             self.fname = f'{reactants_str}__{products_str}'
             if self.weak:
-                self.fname = self.fname + f'__weak__{self.weak_type}'
+                self.fname += f'__weak__{self.weak_type}'
+            if self.modified:
+                self.fname += "__modified"
 
     def get_rate_id(self):
         """ Get an identifying string for this rate.
