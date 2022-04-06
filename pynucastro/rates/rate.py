@@ -854,7 +854,7 @@ class Rate:
         if self.rhs_other:
             for o in self.rhs_other:
                 if o == "gamma":
-                    self.string += " + γ"
+                    self.string += " + 𝛾"
                     self.pretty_string += "+ \gamma"
 
         self.pretty_string += r"$"
