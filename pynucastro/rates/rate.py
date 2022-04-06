@@ -371,6 +371,13 @@ class Rate:
 
         self.Q = Q
 
+        # some rates will have no nuclei particles (e.g. gamma) on the left or
+        # right -- we'll try to infer those here
+
+        self.lhs_other = []
+        self.rhs_other = []
+
+
         if type(rfile) == str:
             # read in the file, parse the different sets and store them as
             # SingleSet objects in sets[]
@@ -799,6 +806,34 @@ class Rate:
             else:
                 treactants.append(n)
 
+        # figure out if there are any non-nuclei present
+        # for the moment, we just handle strong rates
+
+        if not self.weak:
+            # there should be the same number of protons on each side and
+            # the same number of neutrons on each side
+            assert np.sum([n.Z for n in self.reactants]) == np.sum([n.Z for n in self.products])
+            assert np.sum([n.A for n in self.reactants]) == np.sum([n.A for n in self.products])
+
+            if len(self.products) == 1:
+                self.rhs_other.append("gamma")
+
+        else:
+
+            if self.weak_type == "electron_capture":
+
+                # we expect an electron on the left -- let's make sure
+
+            else if "_pos_" in self.weak_type:
+
+                # we expect a positron on the right -- let's make sure
+
+            else:
+
+                # we expect an electron on the right -- let's make sure
+
+
+
         for n, r in enumerate(treactants):
             self.string += f"{r}"
             self.pretty_string += fr"{r.pretty}"
@@ -815,6 +850,12 @@ class Rate:
             if not n == len(self.products)-1:
                 self.string += " + "
                 self.pretty_string += r" + "
+
+        if self.rhs_other:
+            for o in self.rhs_other:
+                if o == "gamma":
+                    self.string += " + γ"
+                    self.pretty_string += "+ \gamma"
 
         self.pretty_string += r"$"
 
