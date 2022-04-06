@@ -32,6 +32,7 @@ codes.
    pynucastro-examples.ipynb
    pynucastro-integration.ipynb
    library-examples.ipynb
+   modify-example.ipynb
    validate-example.ipynb
    electron-captures.ipynb
    partition-function
