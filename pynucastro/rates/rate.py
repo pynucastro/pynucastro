@@ -381,7 +381,6 @@ class Rate:
         self.lhs_other = []
         self.rhs_other = []
 
-
         if type(rfile) == str:
             # read in the file, parse the different sets and store them as
             # SingleSet objects in sets[]
@@ -856,7 +855,8 @@ class Rate:
             elif "_pos_" in self.weak_type:
 
                 # we expect a positron on the right -- let's make sure
-                try: assert np.sum([n.Z for n in self.reactants]) == np.sum([n.Z for n in self.products]) + 1
+                try:
+                    assert np.sum([n.Z for n in self.reactants]) == np.sum([n.Z for n in self.products]) + 1
                 except AssertionError:
                     print(self.reactants)
                     print(self.products)
@@ -884,7 +884,7 @@ class Rate:
                     self.rhs_other.append("e+")
                     self.rhs_other.append("nu")
 
-                elif np.sum([n.Z for n in self.reactants]) +1 == np.sum([n.Z for n in self.products]):
+                elif np.sum([n.Z for n in self.reactants]) + 1 == np.sum([n.Z for n in self.products]):
 
                     self.rhs_other.append("e-")
                     self.rhs_other.append("nubar")
