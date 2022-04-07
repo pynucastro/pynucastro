@@ -892,13 +892,13 @@ class Rate:
             for o in self.rhs_other:
                 if o == "gamma":
                     self.string += " + 𝛾"
-                    self.pretty_string += "+ \gamma"
+                    self.pretty_string += r"+ \gamma"
                 elif o == "nu":
                     self.string += " + 𝜈"
-                    self.pretty_string += "+ \nu_e"
+                    self.pretty_string += r"+ \nu_e"
                 elif o == "nubar":
                     self.string += " + 𝜈"
-                    self.pretty_string += "+ \bar{\nu}_e"
+                    self.pretty_string += r"+ \bar{\nu}_e"
                 if o == "e-":
                     self.string += " + e⁻"
                     self.pretty_string += r" + \mathrm{e}^-"
