@@ -217,12 +217,12 @@ class Nucleus:
             self.el = "h"
             self.A = 2
             self.short_spec_name = "h2"
-            self.caps_name = "d"
+            self.caps_name = "H2"
         elif name == "t":
             self.el = "h"
             self.A = 3
             self.short_spec_name = "h3"
-            self.caps_name = "t"
+            self.caps_name = "H3"
         elif name == "a":
             #this is a convenience, enabling the use of a commonly-used alias:
             #    He4 --> \alpha --> "a" , e.g. c12(a,g)o16
@@ -302,8 +302,12 @@ class Nucleus:
         return hash((self.Z, self.A))
 
     def c(self):
-        """return the name capitalized"""
+        """return the capitalized-style name"""
         return self.caps_name
+
+    def cindex(self):
+        """return the name for C++ indexing"""
+        return self.short_spec_name.capitalize()
 
     def __eq__(self, other):
         if isinstance(other, Nucleus):
@@ -795,7 +799,12 @@ class Rate:
 
     def _set_print_representation(self):
         """ compose the string representations of this Rate. """
+
+        # string is output to the terminal, rid is used as a dict key,
+        # and pretty_string is latex
+
         self.string = ""
+        self.rid = ""
         self.pretty_string = r"$"
 
         # put p, n, and alpha second
@@ -820,7 +829,20 @@ class Rate:
 
         else:
 
-            if self.tabular or self.weak_type == "electron_capture":
+            if self.tabular:
+
+                # these are either electron capture or beta- decay
+
+                if np.sum([n.Z for n in self.reactants]) == np.sum([n.Z for n in self.products]) + 1:
+                    # electron capture
+                    self.lhs_other.append("e-")
+                    self.rhs_other.append("nu")
+                else:
+                    # beta- decay
+                    self.rhs_other.append("e-")
+                    self.rhs_other.append("nubar")
+
+            elif self.weak_type == "electron_capture":
 
                 # we assume that all the tabular rates are electron capture for now
 
@@ -869,9 +891,11 @@ class Rate:
 
         for n, r in enumerate(treactants):
             self.string += f"{r.c()}"
+            self.rid += f"{r}"
             self.pretty_string += fr"{r.pretty}"
             if not n == len(self.reactants)-1:
                 self.string += " + "
+                self.rid += " + "
                 self.pretty_string += r" + "
 
         if self.lhs_other:
@@ -881,13 +905,16 @@ class Rate:
                     self.pretty_string += r" + \mathrm{e}^-"
 
         self.string += " ⟶ "
+        self.rid += " --> "
         self.pretty_string += r" \rightarrow "
 
         for n, p in enumerate(self.products):
             self.string += f"{p.c()}"
+            self.rid += f"{p}"
             self.pretty_string += fr"{p.pretty}"
             if not n == len(self.products)-1:
                 self.string += " + "
+                self.rid += " + "
                 self.pretty_string += r" + "
 
         if self.rhs_other:
@@ -939,7 +966,7 @@ class Rate:
         if self.tabular:
             ssrc = 'tabular'
 
-        return f'{self.__repr__()} <{self.label.strip()}_{ssrc}_{sweak}_{srev}>'
+        return f'{self.rid} <{self.label.strip()}_{ssrc}_{sweak}_{srev}>'
 
     def heaviest(self):
         """
