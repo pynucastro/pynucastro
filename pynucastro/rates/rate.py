@@ -212,17 +212,17 @@ class Nucleus:
             self.el = "h"
             self.A = 1
             self.short_spec_name = "h1"
-            self.caps_name = "H1"
+            self.caps_name = "p"
         elif name == "d":
             self.el = "h"
             self.A = 2
             self.short_spec_name = "h2"
-            self.caps_name = "H2"
+            self.caps_name = "d"
         elif name == "t":
             self.el = "h"
             self.A = 3
             self.short_spec_name = "h3"
-            self.caps_name = "H3"
+            self.caps_name = "t"
         elif name == "a":
             #this is a convenience, enabling the use of a commonly-used alias:
             #    He4 --> \alpha --> "a" , e.g. c12(a,g)o16
@@ -239,7 +239,7 @@ class Nucleus:
             self.short_spec_name = "n"
             self.spec_name = "neutron"
             self.pretty = fr"\mathrm{{{self.el}}}"
-            self.caps_name = "N"
+            self.caps_name = "n"
         else:
             e = re.match(r"([a-zA-Z]*)(\d*)", name)
             self.el = e.group(1).title()  # chemical symbol
@@ -809,7 +809,7 @@ class Rate:
         # figure out if there are any non-nuclei present
         # for the moment, we just handle strong rates
 
-        if not self.weak:
+        if not self.weak and not self.tabular:
             # there should be the same number of protons on each side and
             # the same number of neutrons on each side
             assert np.sum([n.Z for n in self.reactants]) == np.sum([n.Z for n in self.products])
@@ -820,7 +820,9 @@ class Rate:
 
         else:
 
-            if self.weak_type == "electron_capture":
+            if self.tabular or self.weak_type == "electron_capture":
+
+                # we assume that all the tabular rates are electron capture for now
 
                 # we expect an electron on the left -- let's make sure
                 # the charge on the left should be +1 the charge on the right
@@ -866,7 +868,7 @@ class Rate:
                     self.rhs_other.append("nubar")
 
         for n, r in enumerate(treactants):
-            self.string += f"{r}"
+            self.string += f"{r.c()}"
             self.pretty_string += fr"{r.pretty}"
             if not n == len(self.reactants)-1:
                 self.string += " + "
@@ -878,11 +880,11 @@ class Rate:
                     self.string += " + e⁻"
                     self.pretty_string += r" + \mathrm{e}^-"
 
-        self.string += " --> "
+        self.string += " ⟶ "
         self.pretty_string += r" \rightarrow "
 
         for n, p in enumerate(self.products):
-            self.string += f"{p}"
+            self.string += f"{p.c()}"
             self.pretty_string += fr"{p.pretty}"
             if not n == len(self.products)-1:
                 self.string += " + "
