@@ -26,7 +26,7 @@ class BindingTable:
             if os.path.isfile(fname):
                 self.datfile = fname
 
-        self.nuclides = []
+        self.nuclides = {}
 
         if self.datfile:
             self.read()
@@ -50,7 +50,7 @@ class BindingTable:
             ls = line.strip()
             n, z, ebind = ls.split()
             nuclide = BindingNuclide(n, z, ebind)
-            self.nuclides.append(nuclide)
+            self.nuclides[f"{n}_{z}"] = nuclide
 
         f.close()
 
@@ -58,9 +58,7 @@ class BindingTable:
         """
         Returns the nuclide object given n and z.
         """
-        if n >= 0 and z >= 0:
-            for nuc in self.nuclides:
-                if nuc.n == n and nuc.z == z:
-                    return nuc
-
-        raise NotImplementedError(f"nuclear data for Z={z} and N={n} not available")
+        try:
+            return self.nuclides[f"{n}_{z}"]
+        except KeyError:
+            raise NotImplementedError(f"nuclear data for Z={z} and N={n} not available")
