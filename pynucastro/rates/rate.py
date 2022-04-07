@@ -903,7 +903,7 @@ class Rate:
                     self.string += " + e⁻"
                     self.pretty_string += r" + \mathrm{e}^-"
                 if o == "e+":
-                    self.string += " + e+"
+                    self.string += " + e⁺"
                     self.pretty_string += r" + \mathrm{e}^+"
 
         self.pretty_string += r"$"
