@@ -823,16 +823,47 @@ class Rate:
             if self.weak_type == "electron_capture":
 
                 # we expect an electron on the left -- let's make sure
+                # the charge on the left should be +1 the charge on the right
+                assert np.sum([n.Z for n in self.reactants]) == np.sum([n.Z for n in self.products]) + 1
 
-            else if "_pos_" in self.weak_type:
+                self.lhs_other.append("e-")
+                self.rhs_other.append("nu")
+
+            elif "_pos_" in self.weak_type:
 
                 # we expect a positron on the right -- let's make sure
+                try: assert np.sum([n.Z for n in self.reactants]) == np.sum([n.Z for n in self.products]) + 1
+                except AssertionError:
+                    print(self.reactants)
+                    print(self.products)
+                    print(self.label)
+                    print(self.weak_type)
+                    raise
+
+                self.rhs_other.append("e+")
+                self.rhs_other.append("nu")
+
+            elif "_neg_" in self.weak_type:
+
+                # we expect an electron on the right -- let's make sure
+                assert np.sum([n.Z for n in self.reactants]) + 1 == np.sum([n.Z for n in self.products])
+
+                self.rhs_other.append("e-")
+                self.rhs_other.append("nubar")
 
             else:
 
-                # we expect an electron on the right -- let's make sure
+                # we need to figure out what the rate is.  We'll assume that it is
+                # not an electron capture
 
+                if np.sum([n.Z for n in self.reactants]) == np.sum([n.Z for n in self.products]) + 1:
+                    self.rhs_other.append("e+")
+                    self.rhs_other.append("nu")
 
+                elif np.sum([n.Z for n in self.reactants]) +1 == np.sum([n.Z for n in self.products]):
+
+                    self.rhs_other.append("e-")
+                    self.rhs_other.append("nubar")
 
         for n, r in enumerate(treactants):
             self.string += f"{r}"
@@ -840,6 +871,12 @@ class Rate:
             if not n == len(self.reactants)-1:
                 self.string += " + "
                 self.pretty_string += r" + "
+
+        if self.lhs_other:
+            for o in self.lhs_other:
+                if o == "e-":
+                    self.string += " + e⁻"
+                    self.pretty_string += r" + \mathrm{e}^-"
 
         self.string += " --> "
         self.pretty_string += r" \rightarrow "
@@ -856,6 +893,18 @@ class Rate:
                 if o == "gamma":
                     self.string += " + 𝛾"
                     self.pretty_string += "+ \gamma"
+                elif o == "nu":
+                    self.string += " + 𝜈"
+                    self.pretty_string += "+ \nu_e"
+                elif o == "nubar":
+                    self.string += " + 𝜈"
+                    self.pretty_string += "+ \bar{\nu}_e"
+                if o == "e-":
+                    self.string += " + e⁻"
+                    self.pretty_string += r" + \mathrm{e}^-"
+                if o == "e+":
+                    self.string += " + e+"
+                    self.pretty_string += r" + \mathrm{e}^+"
 
         self.pretty_string += r"$"
 
