@@ -228,37 +228,28 @@ class Library:
         if isinstance(nuclist, (Nucleus, str)):
             nuclist = [nuclist]
 
-        nucleus_list = []
+        nucleus_set = set()
         for nuc in nuclist:
             if isinstance(nuc, Nucleus):
-                nucleus_list.append(nuc)
+                nucleus_set.add(nuc)
             else:
                 try:
                     anuc = Nucleus(nuc)
                 except:  # noqa
                     raise
                 else:
-                    nucleus_list.append(anuc)
+                    nucleus_set.add(anuc)
 
-        # Get the set of rates for which any Nucleus in nucleus_list
-        # appears as either reactant or product.
-        rate_filters = []
-        for nuc in nucleus_list:
-            rate_filters.append(RateFilter(reactants=nuc, exact=False))
-            rate_filters.append(RateFilter(products=nuc, exact=False))
-        triage_library = self.filter(rate_filters)
-
-        # Discard any of this set of rates for which nuclei appear not
-        # in nucleus_list
+        # Discard rates with nuclei that are not in nucleus_set
         filtered_rates = []
-        for r in triage_library.get_rates():
+        for r in self.get_rates():
             include = True
             for nuc in r.reactants:
-                if nuc not in nucleus_list:
+                if nuc not in nucleus_set:
                     include = False
                     break
             for nuc in r.products:
-                if nuc not in nucleus_list:
+                if nuc not in nucleus_set:
                     include = False
                     break
             if not with_reverse and r.reverse:
@@ -341,15 +332,16 @@ class Library:
 
         # now check if we are missing any rates from other_library with the exact same reactants
 
+        other_by_reactants = collections.defaultdict(list)
+        for rate in sorted(other_library.get_rates()):
+            other_by_reactants[tuple(sorted(rate.reactants))].append(rate)
+
         for rate in current_rates:
             if forward_only and rate.reverse:
                 continue
 
-            # create a rate filter with these exact reactants
-            rf = RateFilter(reactants=rate.reactants)
-            all_rates_library = other_library.filter(rf)
-
-            for other_rate in sorted(all_rates_library.get_rates()):
+            key = tuple(sorted(rate.reactants))
+            for other_rate in other_by_reactants[key]:
                 # check to see if other_rate is already in current_rates
                 found = True
                 if other_rate not in current_rates:
