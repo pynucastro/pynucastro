@@ -214,7 +214,7 @@ class Nucleus:
             self.el = "h"
             self.A = 1
             self.short_spec_name = "h1"
-            self.caps_name = "H1"
+            self.caps_name = "p"
         elif name == "d":
             self.el = "h"
             self.A = 2
@@ -241,7 +241,7 @@ class Nucleus:
             self.short_spec_name = "n"
             self.spec_name = "neutron"
             self.pretty = fr"\mathrm{{{self.el}}}"
-            self.caps_name = "N"
+            self.caps_name = "n"
         else:
             e = re.match(r"([a-zA-Z]*)(\d*)", name)
             self.el = e.group(1).title()  # chemical symbol
@@ -311,8 +311,12 @@ class Nucleus:
         return hash((self.Z, self.A))
 
     def c(self):
-        """return the name capitalized"""
+        """return the capitalized-style name"""
         return self.caps_name
+
+    def cindex(self):
+        """return the name for C++ indexing"""
+        return self.short_spec_name.capitalize()
 
     def __eq__(self, other):
         if isinstance(other, Nucleus):
@@ -385,7 +389,6 @@ class Rate:
 
         self.lhs_other = []
         self.rhs_other = []
-
 
         if type(rfile) == str:
             # read in the file, parse the different sets and store them as
@@ -808,7 +811,12 @@ class Rate:
 
     def _set_print_representation(self):
         """ compose the string representations of this Rate. """
+
+        # string is output to the terminal, rid is used as a dict key,
+        # and pretty_string is latex
+
         self.string = ""
+        self.rid = ""
         self.pretty_string = r"$"
 
         # put p, n, and alpha second
@@ -822,7 +830,7 @@ class Rate:
         # figure out if there are any non-nuclei present
         # for the moment, we just handle strong rates
 
-        if not self.weak:
+        if not self.weak and not self.tabular:
             # there should be the same number of protons on each side and
             # the same number of neutrons on each side
             assert np.sum([n.Z for n in self.reactants]) == np.sum([n.Z for n in self.products])
@@ -833,7 +841,22 @@ class Rate:
 
         else:
 
-            if self.weak_type == "electron_capture":
+            if self.tabular:
+
+                # these are either electron capture or beta- decay
+
+                if np.sum([n.Z for n in self.reactants]) == np.sum([n.Z for n in self.products]) + 1:
+                    # electron capture
+                    self.lhs_other.append("e-")
+                    self.rhs_other.append("nu")
+                else:
+                    # beta- decay
+                    self.rhs_other.append("e-")
+                    self.rhs_other.append("nubar")
+
+            elif self.weak_type == "electron_capture":
+
+                # we assume that all the tabular rates are electron capture for now
 
                 # we expect an electron on the left -- let's make sure
                 # the charge on the left should be +1 the charge on the right
@@ -845,7 +868,8 @@ class Rate:
             elif "_pos_" in self.weak_type:
 
                 # we expect a positron on the right -- let's make sure
-                try: assert np.sum([n.Z for n in self.reactants]) == np.sum([n.Z for n in self.products]) + 1
+                try:
+                    assert np.sum([n.Z for n in self.reactants]) == np.sum([n.Z for n in self.products]) + 1
                 except AssertionError:
                     print(self.reactants)
                     print(self.products)
@@ -873,16 +897,18 @@ class Rate:
                     self.rhs_other.append("e+")
                     self.rhs_other.append("nu")
 
-                elif np.sum([n.Z for n in self.reactants]) +1 == np.sum([n.Z for n in self.products]):
+                elif np.sum([n.Z for n in self.reactants]) + 1 == np.sum([n.Z for n in self.products]):
 
                     self.rhs_other.append("e-")
                     self.rhs_other.append("nubar")
 
         for n, r in enumerate(treactants):
-            self.string += f"{r}"
+            self.string += f"{r.c()}"
+            self.rid += f"{r}"
             self.pretty_string += fr"{r.pretty}"
             if not n == len(self.reactants)-1:
                 self.string += " + "
+                self.rid += " + "
                 self.pretty_string += r" + "
 
         if self.lhs_other:
@@ -891,14 +917,17 @@ class Rate:
                     self.string += " + e⁻"
                     self.pretty_string += r" + \mathrm{e}^-"
 
-        self.string += " --> "
+        self.string += " ⟶ "
+        self.rid += " --> "
         self.pretty_string += r" \rightarrow "
 
         for n, p in enumerate(self.products):
-            self.string += f"{p}"
+            self.string += f"{p.c()}"
+            self.rid += f"{p}"
             self.pretty_string += fr"{p.pretty}"
             if not n == len(self.products)-1:
                 self.string += " + "
+                self.rid += " + "
                 self.pretty_string += r" + "
 
         if self.rhs_other:
@@ -950,7 +979,7 @@ class Rate:
         if self.tabular:
             ssrc = 'tabular'
 
-        return f'{self.__repr__()} <{self.label.strip()}_{ssrc}_{sweak}_{srev}>'
+        return f'{self.rid} <{self.label.strip()}_{ssrc}_{sweak}_{srev}>'
 
     def heaviest(self):
         """
