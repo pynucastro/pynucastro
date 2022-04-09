@@ -57,7 +57,7 @@ class TestRateFilter:
 
         # filter out all the rates with fluorine
 
-        filter = pyna.RateFilter(filter_function=lambda r : len([q for q in r.reactants + r.products if q.Z == 9]))
+        filter = pyna.RateFilter(filter_function=lambda r: len([q for q in r.reactants + r.products if q.Z == 9]))
         newlib = self.library.filter(filter)
 
         assert len(newlib.get_rates()) == 8
@@ -72,4 +72,3 @@ class TestRateFilter:
         assert len(rates) == 2
         assert str(rates[0]) == "n15 + p --> he4 + c12"
         assert str(rates[1]) == "n15 + p --> o16"
-
