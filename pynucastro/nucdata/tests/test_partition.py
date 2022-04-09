@@ -91,7 +91,6 @@ class TestPartition:
 
         assert all(self.pf_collection_frdm.get_partition_function('p').partition_function == DEFAULT)
         assert all(self.pf_collection_etfsiq.get_partition_function('n').partition_function == DEFAULT)
-        
 
     def test_pf_table(self):
 
