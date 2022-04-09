@@ -49,6 +49,7 @@ TEMPERATURES_HIGH = array([12.0E+9, 14.0E+9, 16.0E+9, 18.0E+9, 20.0E+9, 22.0E+9,
 
 DEFAULT = ones_like(TEMPERATURES_LOW)
 
+
 class TestPartition:
 
     @classmethod
