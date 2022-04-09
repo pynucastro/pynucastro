@@ -19,7 +19,7 @@ fout.write('# AME Table file name: {}\n'.format(args.table))
 fout.write('N                   Z                   Ebind(MeV)/Nucleon\n')
 
 for nuc in ame.nuclides:
-    ostr =  '{:<20}'.format(nuc.n)
+    ostr = '{:<20}'.format(nuc.n)
     ostr += '{:<20}'.format(nuc.z)
     ostr += '{:0.17e}\n'.format(nuc.nucbind)
     fout.write(ostr)

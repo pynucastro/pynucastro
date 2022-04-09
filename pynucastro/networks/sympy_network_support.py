@@ -6,31 +6,31 @@ from collections import OrderedDict
 
 import sympy
 
+
 class SympyRates:
 
     def __init__(self, ctype="Fortran"):
 
         self.ctype = ctype
 
-        self.symbol_ludict = OrderedDict() # Symbol lookup dictionary
+        self.symbol_ludict = OrderedDict()  # Symbol lookup dictionary
 
         if self.ctype == "Fortran":
-            self.name_density   = 'state % rho'
+            self.name_density = 'state % rho'
             self.name_electron_fraction = 'state % y_e'
         else:
-            self.name_density   = 'state.rho'
+            self.name_density = 'state.rho'
             self.name_electron_fraction = 'state.y_e'
 
         # Define these for the particular network
         self.name_rate_data = 'screened_rates'
-        self.name_y         = 'Y'
-        self.name_ydot      = 'ydot'
-        self.name_ydot_nuc  = 'ydot_nuc'
-        self.name_jacobian  = 'jac'
-        self.name_jacobian_nuc  = 'jac'
+        self.name_y = 'Y'
+        self.name_ydot = 'ydot'
+        self.name_ydot_nuc = 'ydot_nuc'
+        self.name_jacobian = 'jac'
+        self.name_jacobian_nuc = 'jac'
         self.symbol_ludict['__dens__'] = self.name_density
         self.symbol_ludict['__y_e__'] = self.name_electron_fraction
-
 
         self.float_explicit_num_digits = 17
 
@@ -68,7 +68,7 @@ class SympyRates:
                 sym_final = f'{self.name_y}(j{r})'
             else:
                 sym_final = f'{self.name_y}({r.c()})'
-            sym_temp  = f'Y__j{r}__'
+            sym_temp = f'Y__j{r}__'
             self.symbol_ludict[sym_temp] = sym_final
             Y_sym = Y_sym * sympy.symbols(sym_temp)**c
 
@@ -86,7 +86,7 @@ class SympyRates:
 
         # screened rate
         sym_final = self.name_rate_data + f'(k_{rate.fname})'
-        sym_temp  = f'NRD__k_{rate.fname}__'
+        sym_temp = f'NRD__k_{rate.fname}__'
         self.symbol_ludict[sym_temp] = sym_final
         screened_rate_sym = sympy.symbols(sym_temp)
 
@@ -118,12 +118,12 @@ class SympyRates:
         """
         for k in self.symbol_ludict:
             v = self.symbol_ludict[k]
-            s = s.replace(k,v)
+            s = s.replace(k, v)
         if s == '0':
             s = '0.0e0_rt'
 
-        ## Replace all double precision literals with custom real type
-        ## literals
+        # Replace all double precision literals with custom real type
+        # literals
         # constant type specifier
         const_spec = "_rt"
 
@@ -133,7 +133,7 @@ class SympyRates:
         # makes sure a letter isn't right in front of the match (like
         # 'k3d-1'). Alternately, we allow for a match at the start of
         # the string.
-        d_re = re.compile(r"([^\w\+\-]|\A)([\+\-0-9.][0-9.]+)[dD]([\+\-]?[0-9]+)", re.IGNORECASE|re.DOTALL)
+        d_re = re.compile(r"([^\w\+\-]|\A)([\+\-0-9.][0-9.]+)[dD]([\+\-]?[0-9]+)", re.IGNORECASE | re.DOTALL)
 
         # update "d" scientific notation -- allow for multiple
         # constants in a single string
@@ -153,12 +153,12 @@ class SympyRates:
         """
         for k in self.symbol_ludict:
             v = self.symbol_ludict[k]
-            s = s.replace(k,v)
+            s = s.replace(k, v)
         if s == '0':
             s = '0.0e0'
 
-        ## Replace all double precision literals with custom real type
-        ## literals
+        # Replace all double precision literals with custom real type
+        # literals
         # constant type specifier
         const_spec = "_rt"
 
@@ -168,7 +168,7 @@ class SympyRates:
         # isn't right in front of the match (like
         # 'k3d-1'). Alternately, we allow for a match at the start of
         # the string.
-        e_re = re.compile(r"([^\w\+\-]|\A)([\+\-0-9.][0-9.]+)[eE]([\+\-]?[0-9]+)", re.IGNORECASE|re.DOTALL)
+        e_re = re.compile(r"([^\w\+\-]|\A)([\+\-0-9.][0-9.]+)[eE]([\+\-]?[0-9]+)", re.IGNORECASE | re.DOTALL)
 
         # update "d" scientific notation -- allow for multiple
         # constants in a single string

@@ -63,4 +63,4 @@ def p_c13__n14(tf):
 
     return rate
 """
-        assert self.pyn.function_string(self.rate).replace(" ","").strip() == ostr.replace(" ","").strip()
+        assert self.pyn.function_string(self.rate).replace(" ", "").strip() == ostr.replace(" ", "").strip()

@@ -10,7 +10,7 @@ Data Tables, 75:1–351, 2000
 """
 
 import argparse
-from pynucastro.nucdata import PeriodicTable, Element
+from pynucastro.nucdata import PeriodicTable
 
 #Create a parser variable that demands for a table and creates an option to add a name to the formatted table
 parser = argparse.ArgumentParser()
@@ -21,9 +21,9 @@ args = parser.parse_args()
 
 finput = open(args.table, 'r')
 
-temp = ['0.01', '0.15', '0.2', '0.3', '0.4', '0.5', '0.6', '0.7', 
-                '0.8' , '0.9' , '1.0', '1.5', '2.0', '2.5', '3.0', '3.5',
-                '4.0' , '4.5' , '5.0', '6.0', '7.0', '8.0', '9.0', '10.0' ]
+temp = ['0.01', '0.15', '0.2', '0.3', '0.4', '0.5', '0.6', '0.7',
+                '0.8', '0.9', '1.0', '1.5', '2.0', '2.5', '3.0', '3.5',
+                '4.0', '4.5', '5.0', '6.0', '7.0', '8.0', '9.0', '10.0']
 
 temperatures = ['{}E+9'.format(t) for t in temp]
 
@@ -48,8 +48,8 @@ for line in finput:
     A = int(nucleus_stats.pop(0))
     J = float(nucleus_stats.pop(0))
 
-    if Z==0:
-        assert(A==1)
+    if Z == 0:
+        assert A == 1
         abbrev = 'n'
     else:
         element = PeriodicTable.lookup_Z(Z)
@@ -66,4 +66,3 @@ for line in finput:
 
 fout.close()
 finput.close()
-
