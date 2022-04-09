@@ -1044,7 +1044,7 @@ class Explorer:
     """ interactively explore a rate collection """
     def __init__(self, rc, comp, size=(800, 600),
                  ydot_cutoff_value=None, rotated=False,
-                 hide_xalpha = False,
+                 hide_xalpha=False,
                  always_show_p=False, always_show_alpha=False,
                  node_size=1000, node_font_size=11):
         """ take a RateCollection and a composition """
