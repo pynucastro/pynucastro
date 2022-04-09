@@ -1,11 +1,11 @@
 from numpy import array, all, ones_like
-from pynucastro.nucdata import PartitionFunction, PartitionFunctionTable, PartitionFunctionCollection
+from pynucastro.nucdata import PartitionFunctionTable, PartitionFunctionCollection
 import os
 
 nucdata_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 pf_dir = os.path.join(nucdata_dir, 'PartitionFunction')
 
-dir_etfsiq_low = os.path.join(pf_dir, 'etfsiq_low.txt') 
+dir_etfsiq_low = os.path.join(pf_dir, 'etfsiq_low.txt')
 dir_frdm_low = os.path.join(pf_dir, 'frdm_low.txt')
 dir_etfsiq_high = os.path.join(pf_dir, 'etfsiq_high.txt')
 dir_frdm_high = os.path.join(pf_dir, 'frdm_high.txt')
@@ -19,7 +19,7 @@ ANSWER_FRDM_LOW = array([1.000157, 1.001534, 1.005265, 1.020486, 1.044185, 1.073
                          2.952505, 3.300375, 3.670713, 4.487378, 5.423159, 6.505528, 7.771334, 9.270601])
 
 ANSWER_ETFSIQ_HIGH =  array([5.79E+000, 1.07E+001, 2.13E+001, 4.38E+001, 9.23E+001, 1.97E+002, 4.23E+002,
-                             9.12E+002, 1.97E+003, 4.25E+003, 2.92E+004, 2.00E+005, 1.36E+006, 9.31E+006, 
+                             9.12E+002, 1.97E+003, 4.25E+003, 2.92E+004, 2.00E+005, 1.36E+006, 9.31E+006,
                              6.34E+007, 4.31E+008, 2.92E+009, 1.97E+010, 1.33E+011, 8.93E+011, 5.98E+012,
                              3.99E+013, 2.65E+014, 1.76E+015, 1.16E+016, 7.66E+016, 5.03E+017, 3.30E+018,
                              2.16E+019, 1.41E+020, 9.21E+020, 6.00E+021, 3.91E+022, 2.54E+023, 1.65E+024,
@@ -39,18 +39,18 @@ TEMPERATURES_LOW = array([0.01E+9, 0.15E+9, 0.2E+9, 0.3E+9, 0.4E+9, 0.5E+9, 0.6E
                           3.0E+9, 3.5E+9, 4.0E+9, 4.5E+9, 5.0E+9, 6.0E+9, 7.0E+9,
                           8.0E+9, 9.0E+9, 10.0E+9])
 
-TEMPERATURES_HIGH = array([12.0E+9, 14.0E+9, 16.0E+9, 18.0E+9, 20.0E+9, 22.0E+9, 24.0E+9, \
-                           26.0E+9, 28.0E+9, 30.0E+9, 35.0E+9, 40.0E+9, 45.0E+9, 50.0E+9, \
-                           55.0E+9, 60.0E+9, 65.0E+9, 70.0E+9, 75.0E+9, 80.0E+9, 85.0E+9, \
-                           90.0E+9, 95.0E+9, 100.0E+9, 105.0E+9, 110.0E+9, 115.0E+9, 120.0E+9, \
-                           125.0E+9, 130.0E+9, 135.0E+9, 140.0E+9, 145.0E+9, 150.0E+9, 155.0E+9, \
-                           160.0E+9, 165.0E+9, 170.0E+9, 175.0E+9, 180.0E+9, 190.0E+9, 200.0E+9, \
-                           210.0E+9, 220.0E+9, 230.0E+9, 240.0E+9, 250.0E+9, 275.0E+9]) \
+TEMPERATURES_HIGH = array([12.0E+9, 14.0E+9, 16.0E+9, 18.0E+9, 20.0E+9, 22.0E+9, 24.0E+9,
+                           26.0E+9, 28.0E+9, 30.0E+9, 35.0E+9, 40.0E+9, 45.0E+9, 50.0E+9,
+                           55.0E+9, 60.0E+9, 65.0E+9, 70.0E+9, 75.0E+9, 80.0E+9, 85.0E+9,
+                           90.0E+9, 95.0E+9, 100.0E+9, 105.0E+9, 110.0E+9, 115.0E+9, 120.0E+9,
+                           125.0E+9, 130.0E+9, 135.0E+9, 140.0E+9, 145.0E+9, 150.0E+9, 155.0E+9,
+                           160.0E+9, 165.0E+9, 170.0E+9, 175.0E+9, 180.0E+9, 190.0E+9, 200.0E+9,
+                           210.0E+9, 220.0E+9, 230.0E+9, 240.0E+9, 250.0E+9, 275.0E+9])
 
 DEFAULT = ones_like(TEMPERATURES_LOW)
 
 class TestPartition:
-    
+
     @classmethod
     def setup_class(cls):
         """ this is run once for each class before any tests """
@@ -62,7 +62,7 @@ class TestPartition:
         pass
 
     def setup_method(self):
-        """ this is run once for each class before any tests """ 
+        """ this is run once for each class before any tests """
 
         self.pf_table_etfsiq_low = PartitionFunctionTable(dir_etfsiq_low)
         self.pf_table_frdm_low = PartitionFunctionTable(dir_frdm_low)
@@ -78,7 +78,7 @@ class TestPartition:
         self.ne19_pf_frdm_high = self.pf_table_frdm_high.get_partition_function('ne19')
 
         self.co60_pf_etfsiq_low = self.pf_table_etfsiq_low.get_partition_function('co60')
-        self.co60_pf_etfsiq_high = self.pf_table_etfsiq_high.get_partition_function('co60')        
+        self.co60_pf_etfsiq_high = self.pf_table_etfsiq_high.get_partition_function('co60')
 
         self.pf_collection_frdm = PartitionFunctionCollection(use_set='frdm')
         self.pf_collection_etfsiq = PartitionFunctionCollection(use_set='etfsiq')
@@ -111,8 +111,3 @@ class TestPartition:
 
         assert self.pf_collection_etfsiq.get_partition_function('co60') == self.co60_pf_etfsiq_low + self.co60_pf_etfsiq_high
         assert self.pf_collection_frdm.get_partition_function('ne19') == self.ne19_pf_frdm_high + self.ne19_pf_frdm_low
-        
-
-    
-
-        
