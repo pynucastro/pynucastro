@@ -1,5 +1,4 @@
 # unit tests for rates
-import pynucastro.networks as networks
 import pynucastro.rates as rates
 
 import io
@@ -83,7 +82,9 @@ validation: missing fe52 + he4 --> n + ni55 as alternative to fe52 + he4 --> ni5
 validation: missing co55 + p --> n + ni55 as alternative to co55 + p --> ni56 (Q = -9.47432 MeV).
 """
 
+
 class TestValidate:
+
     @classmethod
     def setup_class(cls):
         """ this is run once for each class before any tests """

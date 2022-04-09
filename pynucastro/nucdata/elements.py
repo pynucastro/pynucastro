@@ -4,9 +4,11 @@ class Element(object):
         self.name = name
         self.Z = Z
 
+
 class UnidentifiedElement(BaseException):
     def __init__(self):
         return
+
 
 class PeriodicTable(object):
     table = {'h':  Element('h',  'hydrogen', 1),
@@ -135,7 +137,7 @@ class PeriodicTable(object):
     def lookup_abbreviation(self, abbrev):
         try:
             return self.table[abbrev.lower()]
-        except:
+        except IndexError:
             raise UnidentifiedElement
 
     @classmethod

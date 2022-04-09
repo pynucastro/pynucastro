@@ -42,5 +42,3 @@ jobs:
 
       - name: Validate
         run: pylint --errors-only pynucastro
-
-
