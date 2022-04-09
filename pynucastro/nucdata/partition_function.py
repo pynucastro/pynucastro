@@ -117,7 +117,7 @@ class PartitionFunction:
 
     def __eq__(self, other):
 
-        return (np.all(self.partition_function == other.partition_function) and 
+        return (np.all(self.partition_function == other.partition_function) and
                 np.all(self.temperature == other.temperature))
 
     def construct_spline_interpolant(self, order=3):
