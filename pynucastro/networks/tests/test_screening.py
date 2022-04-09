@@ -1,7 +1,4 @@
 import pynucastro.networks as networks
-import pynucastro.rates as rates
-
-from pytest import approx
 
 
 class TestScreening:
