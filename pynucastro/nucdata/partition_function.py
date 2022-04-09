@@ -115,6 +115,11 @@ class PartitionFunction:
 
         return newpf
 
+    def __eq__(self, other):
+
+        return (np.all(self.partition_function == other.partition_function) and 
+                np.all(self.temperature == other.temperature))
+
     def construct_spline_interpolant(self, order=3):
         """
         Construct an interpolating univariate spline of order >= 1 and
@@ -163,7 +168,7 @@ class PartitionFunctionTable:
         self._partition_function = {}
         self.name = None
         self.temperatures = None
-        self.read_table(file_name)
+        self._read_table(file_name)
 
     def _add_nuclide_pfun(self, nuc, pfun):
         assert isinstance(nuc, str)
@@ -183,7 +188,7 @@ class PartitionFunctionTable:
         if str(nuc) in self._partition_function.keys():
             return self._partition_function[nuc]
 
-    def read_table(self, file_name):
+    def _read_table(self, file_name):
         with open(file_name, 'r') as fin:
 
             # get headers name
@@ -229,7 +234,7 @@ class PartitionFunctionCollection:
     def __init__(self, use_high_temperatures=True, use_set='frdm'):
         self._partition_function_tables = {}
         self.use_high_temperatures = use_high_temperatures
-        self.use_set = 'frdm'
+        self.use_set = use_set
         self._read_collection()
 
     def _add_table(self, table):

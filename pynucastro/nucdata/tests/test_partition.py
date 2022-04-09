@@ -1,4 +1,4 @@
-from numpy import array, array_equal, ones_like
+from numpy import array, all, ones_like
 from pynucastro.nucdata import PartitionFunction, PartitionFunctionTable, PartitionFunctionCollection
 import os
 
@@ -85,10 +85,11 @@ class TestPartition:
         self.ne19_pf_frdm_low = self.pf_table_frdm_low.get_partition_function('ne19')
         self.ne19_pf_frdm_high = self.pf_table_frdm_high.get_partition_function('ne19')
 
-        self.co60_pf_etfsiq_low = self.pf_table_frdm_low.get_partition_function('co60')
-        self.co60_pf_etfsiq_high = self.pf_table_frdm_high.get_partition_function('co60')        
+        self.co60_pf_etfsiq_low = self.pf_table_etfsiq_low.get_partition_function('co60')
+        self.co60_pf_etfsiq_high = self.pf_table_etfsiq_high.get_partition_function('co60')        
 
-        self.pf_collection = PartitionFunctionCollection()
+        self.pf_collection_frdm = PartitionFunctionCollection(use_set='frdm')
+        self.pf_collection_etfsiq = PartitionFunctionCollection(use_set='etfsiq')
 
     def teardown_method(self):
         """ this is run once for each class before any tests """
@@ -96,28 +97,28 @@ class TestPartition:
 
     def test_pf(self):
 
-        assert self.pf_collection.get_partition_function('p') == DEFAULT
-        assert self.pf_collection.get_partition_function('n') == DEFAULT
+        assert all(self.pf_collection_frdm.get_partition_function('p').partition_function == DEFAULT)
+        assert all(self.pf_collection_etfsiq.get_partition_function('n').partition_function == DEFAULT)
         
 
     def test_pf_table(self):
 
-        assert array_equal(self.co46_pf_etfsiq_low.partition_function, ANSWER_ETFSIQ_LOW)
-        assert array_equal(self.co46_pf_etfsiq_low.temperatures, TEMPERATURES_LOW)
+        assert all(self.co46_pf_etfsiq_low.partition_function == ANSWER_ETFSIQ_LOW)
+        assert all(self.co46_pf_etfsiq_low.temperature == TEMPERATURES_LOW)
 
-        assert array_equal(self.ne37_pf_frdm_low.partition_function, ANSWER_FRDM_LOW)
-        assert array_equal(self.ne37_pf_frdm_low.temperatures, TEMPERATURES_LOW)
+        assert all(self.ne37_pf_frdm_low.partition_function == ANSWER_FRDM_LOW)
+        assert all(self.ne37_pf_frdm_low.temperature == TEMPERATURES_LOW)
 
-        assert array_equal(self.fe47_pf_etfsiq_high.partition_function, ANSWER_ETFSIQ_HIGH)
-        assert array_equal(self.fe47_pf_etfsiq_high.temperatures, TEMPERATURES_HIGH)
+        assert all(self.fe47_pf_etfsiq_high.partition_function == ANSWER_ETFSIQ_HIGH)
+        assert all(self.fe47_pf_etfsiq_high.temperature == TEMPERATURES_HIGH)
 
-        assert array_equal(self.po188_pf_frdm_high.partition_function, ANSWER_FRDM_HIGH)
-        assert array_equal(self.po188_pf_frdm_high.temperatures, TEMPERATURES_HIGH)
+        assert all(self.po188_pf_frdm_high.partition_function == ANSWER_FRDM_HIGH)
+        assert all(self.po188_pf_frdm_high.temperature == TEMPERATURES_HIGH)
 
     def test_pfsum(self):
 
-        assert self.pf_collection.get_partition_function('co60') == self.co60_pf_etfsiq_low + self.co60_pf_etfsiq_high
-        assert self.pf_collection.get_partition_function('ne19') == self.ne19_pf_frdm_high + self.ne19_pf_frdm_low
+        assert self.pf_collection_etfsiq.get_partition_function('co60') == self.co60_pf_etfsiq_low + self.co60_pf_etfsiq_high
+        assert self.pf_collection_frdm.get_partition_function('ne19') == self.ne19_pf_frdm_high + self.ne19_pf_frdm_low
         
 
     
