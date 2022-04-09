@@ -7,7 +7,8 @@ import os
 
 from pynucastro.nucdata import BindingNuclide
 
-class BindingTable(object):
+
+class BindingTable:
     """A simple class to manage reading and parsing the table of binding energy/nucleon."""
 
     header_length = 2
@@ -25,7 +26,7 @@ class BindingTable(object):
             if os.path.isfile(fname):
                 self.datfile = fname
 
-        self.nuclides = []
+        self.nuclides = {}
 
         if self.datfile:
             self.read()
@@ -36,7 +37,7 @@ class BindingTable(object):
         """
         try:
             f = open(self.datfile, 'r')
-        except:
+        except IOError:
             print('ERROR: data file not found!')
             exit()
 
@@ -49,7 +50,7 @@ class BindingTable(object):
             ls = line.strip()
             n, z, ebind = ls.split()
             nuclide = BindingNuclide(n, z, ebind)
-            self.nuclides.append(nuclide)
+            self.nuclides[f"{n}_{z}"] = nuclide
 
         f.close()
 
@@ -57,9 +58,7 @@ class BindingTable(object):
         """
         Returns the nuclide object given n and z.
         """
-        if n >= 0 and z >= 0:
-            for nuc in self.nuclides:
-                if nuc.n == n and nuc.z == z:
-                    return nuc
-
-        raise NotImplementedError(f"nuclear data for Z={z} and N={n} not available")
+        try:
+            return self.nuclides[f"{n}_{z}"]
+        except KeyError:
+            raise NotImplementedError(f"nuclear data for Z={z} and N={n} not available")

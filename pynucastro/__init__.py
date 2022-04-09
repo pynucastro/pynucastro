@@ -26,15 +26,15 @@ be in the Reaclib 1 format.
 nucdata
 -------
 
-nucdata provides tables of binding energy per nucleon in MeV for
-nuclides specified by their number of neutrons N and atomic
-number Z.
+nucdata provides tables of binding energy per nucleon in MeV,
+partition function and the number of spin states for nuclides specified
+by their number of neutrons N and atomic number Z.
 
 The data for these tables is derived from the Atomic Mass Evaluations
-2012 and 2016. By default, pynucastro uses Atomic Mass Evaluation
-2016. Scripts for reading the Atomic Mass Evaluation tables and
-generating binding energy tables for pynucastro are provided in
-`pynucastro/nucdata/AtomicMassEvaluation`.
+2012, 2016 and 2020. By default, pynucastro uses Atomic Mass Evaluation
+2016, and Nucleus Spin Evaluation 2020. Scripts for reading the Atomic
+Mass Evaluation tables and generating binding energy tables for pynucastro
+are provided in `pynucastro/nucdata/AtomicMassEvaluation`.
 
 networks
 --------
@@ -82,6 +82,9 @@ reaction rates, including:
 * Rate : a single Reaclib rate, with methods for plotting and
   evaluating it.
 
+* RatePair : a pair of rates representing the corresponding forward
+  and reverse rates
+
 * Tfactors : this is a simple container class that holds the various
   temperature powers needed to evaluate a rate.
 
@@ -116,7 +119,9 @@ reaction rates.
 
 """
 
-from ._version import version as __version__
+from ._version import version
+
+__version__ = version
 
 from pynucastro.networks import \
     RateCollection, \
