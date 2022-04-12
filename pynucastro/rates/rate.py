@@ -9,7 +9,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import numba
 
-from pynucastro.rates import Nucleus
+from pynucastro.nucleus import Nucleus
 
 try:
     from numba.experimental import jitclass
