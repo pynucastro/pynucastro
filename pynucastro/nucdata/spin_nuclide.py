@@ -26,6 +26,10 @@ class SpinNuclide:
 
         return rep
 
+    def __eq__(self, other):
+
+        return self.a == other.a and self.z == other.z
+
 
 class SpinTable:
     """
