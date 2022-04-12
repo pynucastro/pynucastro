@@ -48,7 +48,7 @@ class Library:
             elif isinstance(rates, (list, set)):
                 self._add_from_rate_list(rates)
         else:
-            self._rates = collections.OrderedDict()
+            self._rates = {}
         self._library_source_lines = collections.deque()
 
         if self._library_file and read_library:
@@ -82,7 +82,7 @@ class Library:
     def _add_from_rate_list(self, ratelist):
         """ Add to the rate dictionary from the supplied list of Rate objects. """
         if not self._rates:
-            self._rates = collections.OrderedDict()
+            self._rates = {}
         for r in ratelist:
             rid = r.get_rate_id()
             assert rid not in self._rates, "ERROR: supplied a Rate object already in the Library."
@@ -278,7 +278,7 @@ class Library:
                 raise
             else:
                 filter_specifications = filter_spec
-        matching_rates = collections.OrderedDict()
+        matching_rates = {}
         for rid, r in self._rates.items():
             for f in filter_specifications:
                 if f.matches(r):
