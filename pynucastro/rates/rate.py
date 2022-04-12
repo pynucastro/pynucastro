@@ -1,7 +1,7 @@
 """
 Classes and methods to interface with files storing rate data.
 """
-
+from astropy import constants as const
 import os
 import re
 import io
@@ -16,6 +16,12 @@ try:
 except ImportError:
     from numba import jitclass
 
+hbar = const.hbar.value
+amu = const.u.value
+k_B = const.k_B.value
+N_A = const.N_A.value
+
+from pynucastro.nucdata import UnidentifiedElement, PeriodicTable, PartitionFunctionCollection, BindingTable, SpinTable
 
 _pynucastro_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 _pynucastro_rates_dir = os.path.join(_pynucastro_dir, 'library')
@@ -846,6 +852,64 @@ class Rate:
 
             plt.title(fr"{self.pretty_string}")
             plt.show()
+
+class DerivedRate(Rate):
+
+    def __init__(self, rate):
+
+        assert isinstance(rate, Rate)
+
+        for nuc in rate.reactants:
+            try:
+                assert nuc.spin_states
+            except:
+                raise Exception('One of the reactants spin ground state, is not defined')
+
+        for nuc in rate.products:
+            try:
+                assert nuc.spin_states
+            except:
+                raise Exception('One of the products spin ground state, is not defined')
+
+        try:
+            rate.reverse == False
+        except:
+            raise Exception("ERROR: Computing derived rates from reverse rates")
+
+        derived_sets = []
+        for ssets in rate.sets:
+            a = ssets.a
+            prefactor = 0.0
+
+            if len(rate.products) == 1:
+                prefactor = -np.log(N_A)
+
+            for nucr in rate.reactants:
+                prefactor += np.log(nucr.spin_states) + 3.0*np.log(nucr.A)/2.0
+            for nucp in rate.products:
+                prefactor += -np.log(nucp.spin_states) - 3.0*np.log(nucp.A)/2.0
+
+            F = (amu * k_B *1.0e5  / (2.0*np.pi*hbar**2))**(1.5*(len(rate.reactants) - len(rate.products)))
+
+            #print(F)
+
+            prefactor += np.log(F)
+
+            a_rev = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+            a_rev[0] = prefactor + a[0]
+            a_rev[1] = a[1] - 11.6045*rate.Q
+            a_rev[2] = a[2]
+            a_rev[3] = a[3]
+            a_rev[4] = a[4]
+            a_rev[5] = a[5]
+            a_rev[6] = a[6] + 1.5*(len(rate.reactants) - len(rate.products))
+            #print(a_rev)
+            sset_d = SingleSet(a=a_rev, labelprops=rate.labelprops)
+            derived_sets.append(sset_d)
+
+
+        super().__init__(rfile=rate.rfile, rfile_path=rate.rfile_path, chapter=rate.chapter, original_source=rate.original_source,
+                 reactants=rate.products, products=rate.reactants, sets=derived_sets, labelprops=rate.labelprops, Q=-rate.Q)
 
 
 class RatePair:
