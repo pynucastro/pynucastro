@@ -1,10 +1,20 @@
 # changes since the last release
 
+  -- added the ability to modify rate products (#252)
+
+  -- allow for the edges between nodes to be curved (#257)
+
+  -- add a RatePair object that groups forward and reverse rates (#212)
+
+  -- updated the ReacLib rate library (#248)
+
+  -- added nuclear spin tables (#238)
+
   -- added partition function tables (#241, #204)
 
   -- a Nucleus no knows its binding energy (#220)
 
-  -- many improvements to C++ output (#214, #185, #183)
+  -- many improvements to C++ output (#246, #214, #185, #183)
 
   -- added a diff method to a Library (#194)
 
