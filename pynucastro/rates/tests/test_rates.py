@@ -1,6 +1,7 @@
 # unit tests for rates
 import math
 
+from pynucastro.nucleus import Nucleus
 import pynucastro.rates as rates
 from pytest import approx
 
@@ -81,32 +82,32 @@ class TestRate:
         # chapter-11
         self.rate11 = rates.Rate("b17-nnn-c14-wc12")
 
-        self.n = rates.Nucleus("n")
+        self.n = Nucleus("n")
 
-        self.p = rates.Nucleus("p")
-        self.h1 = rates.Nucleus("H1")
-        self.d = rates.Nucleus("d")
-        self.h3 = rates.Nucleus("H3")
+        self.p = Nucleus("p")
+        self.h1 = Nucleus("H1")
+        self.d = Nucleus("d")
+        self.h3 = Nucleus("H3")
 
-        self.he3 = rates.Nucleus("He3")
-        self.he4 = rates.Nucleus("He4")
-        self.he6 = rates.Nucleus("He6")
+        self.he3 = Nucleus("He3")
+        self.he4 = Nucleus("He4")
+        self.he6 = Nucleus("He6")
 
-        self.li7 = rates.Nucleus("Li7")
+        self.li7 = Nucleus("Li7")
 
-        self.b17 = rates.Nucleus("B17")
+        self.b17 = Nucleus("B17")
 
-        self.c12 = rates.Nucleus("C12")
-        self.c14 = rates.Nucleus("C14")
+        self.c12 = Nucleus("C12")
+        self.c14 = Nucleus("C14")
 
-        self.n15 = rates.Nucleus("N15")
+        self.n15 = Nucleus("N15")
 
-        self.o15 = rates.Nucleus("O15")
-        self.o16 = rates.Nucleus("O16")
+        self.o15 = Nucleus("O15")
+        self.o16 = Nucleus("O16")
 
-        self.ni56 = rates.Nucleus("Ni56")
-        self.u238 = rates.Nucleus("U238")
-        self.he4_also = rates.Nucleus("he4")
+        self.ni56 = Nucleus("Ni56")
+        self.u238 = Nucleus("U238")
+        self.he4_also = Nucleus("he4")
 
     def teardown_method(self):
         """ this is run after each test """
@@ -194,14 +195,14 @@ class TestRate:
 
     def test_screen(self):
         assert not self.rate1.ion_screen
-        assert self.rate4.ion_screen == [rates.Nucleus("he4"), rates.Nucleus("c12")]
-        assert self.rate8.ion_screen == 3*[rates.Nucleus("he4")]
+        assert self.rate4.ion_screen == [Nucleus("he4"), Nucleus("c12")]
+        assert self.rate8.ion_screen == 3*[Nucleus("he4")]
 
     def test_heaviest_lightest(self):
-        assert self.rate4.heaviest() == rates.Nucleus("o16")
-        assert self.rate4.lightest() == rates.Nucleus("he4")
-        assert self.rate2.lightest() == rates.Nucleus("n")
-        assert self.rate2.heaviest() == rates.Nucleus("t")
+        assert self.rate4.heaviest() == Nucleus("o16")
+        assert self.rate4.lightest() == Nucleus("he4")
+        assert self.rate2.lightest() == Nucleus("n")
+        assert self.rate2.heaviest() == Nucleus("t")
 
 
 class TestModify:
@@ -230,5 +231,5 @@ class TestModify:
         self.rate.modify_products("mg24")
 
         assert self.rate.Q == approx(13.93356)
-        assert self.rate.products == [rates.Nucleus("mg24")]
+        assert self.rate.products == [Nucleus("mg24")]
         assert self.rate.modified

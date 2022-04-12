@@ -1,6 +1,6 @@
 # unit tests for rates
 
-import pynucastro.rates as rates
+from pynucastro.nucleus import Nucleus
 from pytest import approx
 
 
@@ -18,15 +18,15 @@ class TestNucleus:
     def setup_method(self):
         """ this is run before each test """
 
-        self.p = rates.Nucleus("p")
-        self.h1 = rates.Nucleus("H1")
-        self.d = rates.Nucleus("d")
-        self.he4 = rates.Nucleus("He4")
-        self.c12 = rates.Nucleus("C12")
-        self.o16 = rates.Nucleus("O16")
-        self.ni56 = rates.Nucleus("Ni56")
-        self.u238 = rates.Nucleus("U238")
-        self.he4_also = rates.Nucleus("he4")
+        self.p = Nucleus("p")
+        self.h1 = Nucleus("H1")
+        self.d = Nucleus("d")
+        self.he4 = Nucleus("He4")
+        self.c12 = Nucleus("C12")
+        self.o16 = Nucleus("O16")
+        self.ni56 = Nucleus("Ni56")
+        self.u238 = Nucleus("U238")
+        self.he4_also = Nucleus("he4")
 
     def teardown_method(self):
         """ this is run after each test """
