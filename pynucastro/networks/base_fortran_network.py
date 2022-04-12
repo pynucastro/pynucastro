@@ -9,7 +9,6 @@ import os
 import shutil
 import sys
 import re
-from collections import OrderedDict
 from abc import ABC, abstractmethod
 import random
 import string
@@ -48,7 +47,7 @@ class BaseFortranNetwork(ABC, RateCollection):
 
         # a dictionary of functions to call to handle specific parts
         # of the Fortran template
-        self.ftags = OrderedDict()
+        self.ftags = {}
         self.ftags['<nrates>'] = self._nrates
         self.ftags['<nrat_reaclib>'] = self._nrat_reaclib
         self.ftags['<nrat_tabular>'] = self._nrat_tabular

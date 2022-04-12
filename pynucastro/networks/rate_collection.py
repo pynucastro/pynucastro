@@ -19,7 +19,8 @@ from matplotlib.ticker import MaxNLocator
 import networkx as nx
 
 # Import Rate
-from pynucastro.rates import Rate, RatePair, Nucleus, Library
+from pynucastro.nucleus import Nucleus
+from pynucastro.rates import Rate, RatePair, Library
 
 mpl.rcParams['figure.dpi'] = 100
 
