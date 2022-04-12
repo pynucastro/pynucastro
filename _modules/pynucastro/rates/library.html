@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.rates.library &mdash; pynucastro 1.6.0.post81+ga09fb18 documentation</title>
+  <title>pynucastro.rates.library &mdash; pynucastro 1.6.0.post82+g151e887 documentation</title>
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -129,7 +129,7 @@
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rates</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">set</span><span class="p">)):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_add_from_rate_list</span><span class="p">(</span><span class="n">rates</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_rates</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_rates</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_library_source_lines</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">deque</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_library_file</span> <span class="ow">and</span> <span class="n">read_library</span><span class="p">:</span>
@@ -163,7 +163,7 @@
     <span class="k">def</span> <span class="nf">_add_from_rate_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ratelist</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Add to the rate dictionary from the supplied list of Rate objects. &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rates</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_rates</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_rates</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">ratelist</span><span class="p">:</span>
             <span class="n">rid</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">get_rate_id</span><span class="p">()</span>
             <span class="k">assert</span> <span class="n">rid</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rates</span><span class="p">,</span> <span class="s2">&quot;ERROR: supplied a Rate object already in the Library.&quot;</span>
@@ -359,7 +359,7 @@
                 <span class="k">raise</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">filter_specifications</span> <span class="o">=</span> <span class="n">filter_spec</span>
-        <span class="n">matching_rates</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">()</span>
+        <span class="n">matching_rates</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">rid</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rates</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">filter_specifications</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">matches</span><span class="p">(</span><span class="n">r</span><span class="p">):</span>

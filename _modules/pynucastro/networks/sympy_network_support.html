@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.networks.sympy_network_support &mdash; pynucastro 1.6.0.post81+ga09fb18 documentation</title>
+  <title>pynucastro.networks.sympy_network_support &mdash; pynucastro 1.6.0.post82+g151e887 documentation</title>
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -83,7 +83,6 @@
 <span class="sd">through sympy&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">re</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
 
 <span class="kn">import</span> <span class="nn">sympy</span>
 
@@ -94,7 +93,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">ctype</span> <span class="o">=</span> <span class="n">ctype</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">symbol_ludict</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>  <span class="c1"># Symbol lookup dictionary</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">symbol_ludict</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># Symbol lookup dictionary</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ctype</span> <span class="o">==</span> <span class="s2">&quot;Fortran&quot;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">name_density</span> <span class="o">=</span> <span class="s1">&#39;state </span><span class="si">% r</span><span class="s1">ho&#39;</span>
