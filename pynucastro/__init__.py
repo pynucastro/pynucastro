@@ -26,6 +26,11 @@ be in the Reaclib 1 format.
 nucdata
 -------
 
+nucdata provides:
+
+* Nucleus : a single nucleus, with a descriptive name and its
+  properties.
+
 nucdata provides tables of binding energy per nucleon in MeV,
 partition function and the number of spin states for nuclides specified
 by their number of neutrons N and atomic number Z.
@@ -76,9 +81,6 @@ rates
 rates provides classes and functions for interpreting individual
 reaction rates, including:
 
-* Nucleus : a single nucleus, with a descriptive name and its
-  properties.
-
 * Rate : a single Reaclib rate, with methods for plotting and
   evaluating it.
 
@@ -123,6 +125,9 @@ from ._version import version
 
 __version__ = version
 
+from pynucastro.nucleus import \
+    Nucleus
+
 from pynucastro.networks import \
     RateCollection, \
     Composition, \
@@ -136,7 +141,6 @@ from pynucastro.networks import \
 
 from pynucastro.rates import \
     Tfactors, \
-    Nucleus, \
     Rate, \
     RateFilter, \
     Library, \
