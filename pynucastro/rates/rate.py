@@ -2,6 +2,7 @@
 Classes and methods to interface with files storing rate data.
 """
 from astropy import constants as const
+from astropy.units import cds
 import os
 import re
 import io
@@ -18,6 +19,7 @@ except ImportError:
 
 hbar = const.hbar.value
 amu = const.u.value
+k_B_mev_k = const.k_B.to(cds.eV / cds.K).value / (10**6)
 k_B = const.k_B.value
 N_A = const.N_A.value
 
@@ -891,13 +893,13 @@ class DerivedRate(Rate):
 
             F = (amu * k_B *1.0e5  / (2.0*np.pi*hbar**2))**(1.5*(len(rate.reactants) - len(rate.products)))
 
-            #print(F)
+            print(k_B)
 
             prefactor += np.log(F)
 
             a_rev = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
             a_rev[0] = prefactor + a[0]
-            a_rev[1] = a[1] - 11.6045*rate.Q
+            a_rev[1] = a[1] - rate.Q / (1.0e9 * k_B_mev_k)
             a_rev[2] = a[2]
             a_rev[3] = a[3]
             a_rev[4] = a[4]

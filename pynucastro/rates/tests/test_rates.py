@@ -204,6 +204,65 @@ class TestRate:
         assert self.rate2.lightest() == Nucleus("n")
         assert self.rate2.heaviest() == Nucleus("t")
 
+class TestDerivedRate:
+
+    @classmethod
+    def setup_class(cls):
+        """ this is run once for each class before any tests """
+        pass
+
+    @classmethod
+    def teardown_class(cls):
+        """ this is run once for each class before any tests """
+        pass
+
+    def setup_method(self):
+        """ this is run once for each class before any tests """
+        self.reaclib_data = rates.Library('20180319default2')
+
+    def teardown_method(self):
+        """ this is run once for each class before any tests """
+        pass
+
+    def test_ar37_na_s34(self):
+        """
+        Here we test the inverse rate, computed by the use of detailed balance
+        of a:
+
+        A + B -> C + D
+
+        reaction type.
+        """
+
+        specs = rates.RateFilter(reactants=['ar37', 'n'], products=['s34', 'a'])
+        specs_inv =  rates.RateFilter(reactants=['s34', 'a'], products=['ar37', 'n'])
+
+        ar37_na_s34 = self.reaclib_data.filter(filter_spec=specs).get_rates()[0]
+        s34_an_ar37_reaclib = self.reaclib_data.filter(filter_spec=specs_inv).get_rates()[0]
+
+        s34_an_ar37_derived = rates.DerivedRate(rate=ar37_na_s34)
+
+        assert s34_an_ar37_reaclib.eval(T=2.0e9)  == approx(s34_an_ar37_derived.eval(T=2.0e9), rel=2.4e-5)
+
+    def test_ar35_pg_k36(self):
+        """
+        Here we test the inverse rate, computed by the use of detailed balance
+        of a:
+
+        A + B -> C
+
+        reaction type.
+        """
+
+        specs = rates.RateFilter(reactants=['p', 'ar35'], products=['k36'])
+        specs_inv = rates.RateFilter(reactants=['k36'], products=['p', 'ar35'])
+
+        ar35_pg_k36 = self.reaclib_data.filter(filter_spec=specs).get_rates()[0]
+        k36_gp_ar35_reaclib = self.reaclib_data.filter(filter_spec=specs_inv).get_rates()[0]
+
+        k36_gp_ar35_derived = rates.DerivedRate(rate=ar35_pg_k36)
+
+        assert k36_gp_ar35_reaclib.eval(T=2.0e9)  == approx(k36_gp_ar35_derived.eval(T=2.0e9), rel=1.7e-5)
 
 class TestModify:
 
