@@ -873,3 +873,37 @@ class RatePair:
 
     def __eq__(self, other):
         return self.forward == other.forward and self.reverse == other.reverse
+
+
+class ApproximateRate:
+
+    def __init__(self, primary_rate, secondary_rates, approx_type="ap_pg"):
+        """the primary rate has the same reactants and products and the final
+        approximate rate would have.  The secondary rates are ordered such that
+        together they would give the same sequence"""
+
+        self.primary_rate = primary_rate
+        self.secondary_rates = secondary_rates
+
+        self.approx_type = approx_type
+
+        if approx_type == "ap_pg":
+
+            assert len(secondary_rates) == 2
+
+            assert pyna.Nucleus("he4") in primary_rate.reactants and len(primary_rate.products) == 1
+
+            self.primary_reactant = sorted(primary_rate.reactants)[-1]
+            self.primary_product = sorted(primary_rate.products)[-1]
+
+            assert primary_reactant in secondary_rates[0].reactants and
+                   pyna.Nucleus("he4") in secondary_rates[0].reactants and
+                   pyna.Nucleus("p") in secondary_rates[0].products
+
+            self.intermediate_nucleus = sorted(secondary_rates[0].products)[-1]
+            self.intermediate_nucleus.dummy = True
+
+            assert self.intermediate_nucleus in secondary_rates[1].reactants and
+                   pyna.Nucleus("p") in secondary_rates[1].reactants and
+                   self.primary_product in secondary_rates[1].products
+
