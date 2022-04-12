@@ -6,4 +6,3 @@ particular, the binding energies)
 __all__ = ["nucleus"]
 
 from .nucleus import Nucleus, UnsupportedNucleus
-
