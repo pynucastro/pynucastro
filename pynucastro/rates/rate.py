@@ -877,7 +877,8 @@ class RatePair:
 
 class ApproximateRate:
 
-    def __init__(self, primary_rate, secondary_rates, approx_type="ap_pg"):
+    def __init__(self, primary_rate, secondary_rates,
+                 primary_inverse, secondary_inverse, is_inverse=False, approx_type="ap_pg"):
         """the primary rate has the same reactants and products and the final
         approximate rate would have.  The secondary rates are ordered such that
         together they would give the same sequence"""
@@ -885,25 +886,54 @@ class ApproximateRate:
         self.primary_rate = primary_rate
         self.secondary_rates = secondary_rates
 
+        self.primary_inverse = primary_inverse
+        self.secondary_inverse = secondary_inverse
+
+        self.is_inverse = is_inverse
+
         self.approx_type = approx_type
 
         if approx_type == "ap_pg":
 
             assert len(secondary_rates) == 2
 
-            assert pyna.Nucleus("he4") in primary_rate.reactants and len(primary_rate.products) == 1
+            assert Nucleus("he4") in self.primary_rate.reactants and len(self.primary_rate.products) == 1
 
-            self.primary_reactant = sorted(primary_rate.reactants)[-1]
-            self.primary_product = sorted(primary_rate.products)[-1]
+            # first make sure that the forward rate makes sense
 
-            assert primary_reactant in secondary_rates[0].reactants and
-                   pyna.Nucleus("he4") in secondary_rates[0].reactants and
-                   pyna.Nucleus("p") in secondary_rates[0].products
+            # this should be A(a,g)B
 
-            self.intermediate_nucleus = sorted(secondary_rates[0].products)[-1]
+            self.primary_reactant = sorted(self.primary_rate.reactants)[-1]
+            self.primary_product = sorted(self.primary_rate.products)[-1]
+
+            # the first secondary rate should be A(a,p)X, where X is the
+            # intermediate nucleus
+
+            assert self.primary_reactant in self.secondary_rates[0].reactants and
+                   Nucleus("he4") in self.secondary_rates[0].reactants and
+                   Nucleus("p") in self.secondary_rates[0].products
+
+            # the intermediate nucleus is not in our network, so make it
+            # dummy
+
+            self.intermediate_nucleus = sorted(self.secondary_rates[0].products)[-1]
             self.intermediate_nucleus.dummy = True
 
-            assert self.intermediate_nucleus in secondary_rates[1].reactants and
-                   pyna.Nucleus("p") in secondary_rates[1].reactants and
+            # now the second secondary rate show be X(p,g)B
+
+            assert self.intermediate_nucleus in self.secondary_rates[1].reactants and
+                   Nucleus("p") in self.secondary_rates[1].reactants and
                    self.primary_product in secondary_rates[1].products
 
+            # now ensure that the reverse rate makes sense
+
+        # now initialize the super class with these reactants and products
+
+        if not is_inverse:
+            self.__super__(reactants=[self.primary_reactant, Nucleus("he4")],
+                           products=[self.primary_product])
+
+
+    def __set_screening(self):
+        # the individual rates are screened -- we don't screen the combination of them
+        pass
