@@ -10,13 +10,13 @@ setup(name='pynucastro',
       package_data={"pynucastro": ["library/*", "library/tabular/*", "templates/*",
                                    "templates/starkiller-microphysics/*",
 
-                                   "templates/starkiller-cxx-microphysics/*", "nucdata/*", 
-                                   
+                                   "templates/starkiller-cxx-microphysics/*", "nucdata/*",
+
                                    "nucdata/AtomicMassEvaluation/*", "nucdata/PartitionFunction/*"]},
 
       install_requires=['networkx', 'numpy', 'numba',
                         'sympy', 'scipy', 'matplotlib',
-                        'ipywidgets', 'numba'],
+                        'ipywidgets', 'numba', 'astropy'],
       use_scm_version={"version_scheme": "post-release",
                        "write_to": "pynucastro/_version.py"},
       setup_requires=["setuptools_scm"],
