@@ -204,6 +204,7 @@ class TestRate:
         assert self.rate2.lightest() == Nucleus("n")
         assert self.rate2.heaviest() == Nucleus("t")
 
+
 class TestDerivedRate:
 
     @classmethod
@@ -235,14 +236,14 @@ class TestDerivedRate:
         """
 
         specs = rates.RateFilter(reactants=['ar37', 'n'], products=['s34', 'a'])
-        specs_inv =  rates.RateFilter(reactants=['s34', 'a'], products=['ar37', 'n'])
+        specs_inv = rates.RateFilter(reactants=['s34', 'a'], products=['ar37', 'n'])
 
         ar37_na_s34 = self.reaclib_data.filter(filter_spec=specs).get_rates()[0]
         s34_an_ar37_reaclib = self.reaclib_data.filter(filter_spec=specs_inv).get_rates()[0]
 
         s34_an_ar37_derived = rates.DerivedRate(rate=ar37_na_s34)
 
-        assert s34_an_ar37_reaclib.eval(T=2.0e9)  == approx(s34_an_ar37_derived.eval(T=2.0e9), rel=2.4e-5)
+        assert s34_an_ar37_reaclib.eval(T=2.0e9) == approx(s34_an_ar37_derived.eval(T=2.0e9), rel=2.4e-5)
 
     def test_ar35_pg_k36(self):
         """
@@ -262,7 +263,8 @@ class TestDerivedRate:
 
         k36_gp_ar35_derived = rates.DerivedRate(rate=ar35_pg_k36)
 
-        assert k36_gp_ar35_reaclib.eval(T=2.0e9)  == approx(k36_gp_ar35_derived.eval(T=2.0e9), rel=1.7e-5)
+        assert k36_gp_ar35_reaclib.eval(T=2.0e9) == approx(k36_gp_ar35_derived.eval(T=2.0e9), rel=1.7e-5)
+
 
 class TestModify:
 
