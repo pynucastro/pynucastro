@@ -550,7 +550,8 @@ class RateCollection:
              node_size=1000, node_font_size=13, node_color="#A0CBE2", node_shape="o",
              curved_edges=False,
              N_range=None, Z_range=None, rotated=False,
-             always_show_p=False, always_show_alpha=False, hide_xalpha=False, filter_function=None):
+             always_show_p=False, always_show_alpha=False, hide_xalpha=False,\
+             nucleus_filter_function=None, rate_filter_function=None):
         """Make a plot of the network structure showing the links between
         nuclei.  If a full set of thermodymamic conditions are
         provided (rho, T, comp), then the links are colored by rate
@@ -596,15 +597,19 @@ class RateCollection:
         always_show_p: include p as a node on the plot even if we
         don't have p+p reactions
 
-        always_show_alpha: include He4 as a node on the plot even if we don't have 3-alpha
+        always_show_alpha: include He4 as a node on the plot even if
+        we don't have 3-alpha
 
         hide_xalpha=False: dont connect the links to alpha for heavy
-        nuclei reactions of the form A(alpha,X)B or A(X,alpha)B, except if alpha
-        is the heaviest product.
+        nuclei reactions of the form A(alpha,X)B or A(X,alpha)B,
+        except if alpha is the heaviest product.
 
-        filter_function: name of a custom function that takes the list
-        of nuclei and returns a new list with the nuclei to be shown
-        as nodes.
+        nucleus_filter_funcion: name of a custom function that takes a
+        Nucleus object and returns true or false if it is to be shown
+        as a node.
+
+        rate_filter_funcion: name of a custom function that takes a Rate
+        object and returns true or false if it is to be shown as an edge.
 
         """
 
@@ -638,8 +643,8 @@ class RateCollection:
                         node_nuclei.append(n)
                         break
 
-        if filter_function is not None:
-            node_nuclei = list(filter(filter_function, node_nuclei))
+        if nucleus_filter_function is not None:
+            node_nuclei = list(filter(nucleus_filter_function, node_nuclei))
 
         for n in node_nuclei:
             G.add_node(n)
@@ -665,8 +670,11 @@ class RateCollection:
         # edges
         for n in node_nuclei:
             for r in self.nuclei_consumed[n]:
-                for p in r.products:
+                if rate_filter_function is not None:
+                    if not rate_filter_function(r):
+                        continue
 
+                for p in r.products:
                     if p in node_nuclei:
 
                         if hide_xalpha:
@@ -696,6 +704,7 @@ class RateCollection:
                         # to the edges here directly, in this case,
                         # the reaction rate, which will be used to
                         # color it
+
                         if ydots is None:
                             G.add_edges_from([(n, p)], weight=0.5)
                         else:
