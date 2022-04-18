@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.networks.rate_collection &mdash; pynucastro 1.6.0.post88+g567a996 documentation</title>
+  <title>pynucastro.networks.rate_collection &mdash; pynucastro 1.6.0.post89+gc74a53e documentation</title>
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -632,7 +632,8 @@
              <span class="n">node_size</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">node_font_size</span><span class="o">=</span><span class="mi">13</span><span class="p">,</span> <span class="n">node_color</span><span class="o">=</span><span class="s2">&quot;#A0CBE2&quot;</span><span class="p">,</span> <span class="n">node_shape</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">,</span>
              <span class="n">curved_edges</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
              <span class="n">N_range</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">Z_range</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rotated</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-             <span class="n">always_show_p</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">always_show_alpha</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">hide_xalpha</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">filter_function</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+             <span class="n">always_show_p</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">always_show_alpha</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">hide_xalpha</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>\
+             <span class="n">nucleus_filter_function</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rate_filter_function</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Make a plot of the network structure showing the links between</span>
 <span class="sd">        nuclei.  If a full set of thermodymamic conditions are</span>
 <span class="sd">        provided (rho, T, comp), then the links are colored by rate</span>
@@ -678,15 +679,19 @@
 <span class="sd">        always_show_p: include p as a node on the plot even if we</span>
 <span class="sd">        don&#39;t have p+p reactions</span>
 
-<span class="sd">        always_show_alpha: include He4 as a node on the plot even if we don&#39;t have 3-alpha</span>
+<span class="sd">        always_show_alpha: include He4 as a node on the plot even if</span>
+<span class="sd">        we don&#39;t have 3-alpha</span>
 
 <span class="sd">        hide_xalpha=False: dont connect the links to alpha for heavy</span>
-<span class="sd">        nuclei reactions of the form A(alpha,X)B or A(X,alpha)B, except if alpha</span>
-<span class="sd">        is the heaviest product.</span>
+<span class="sd">        nuclei reactions of the form A(alpha,X)B or A(X,alpha)B,</span>
+<span class="sd">        except if alpha is the heaviest product.</span>
 
-<span class="sd">        filter_function: name of a custom function that takes the list</span>
-<span class="sd">        of nuclei and returns a new list with the nuclei to be shown</span>
-<span class="sd">        as nodes.</span>
+<span class="sd">        nucleus_filter_funcion: name of a custom function that takes a</span>
+<span class="sd">        Nucleus object and returns true or false if it is to be shown</span>
+<span class="sd">        as a node.</span>
+
+<span class="sd">        rate_filter_funcion: name of a custom function that takes a Rate</span>
+<span class="sd">        object and returns true or false if it is to be shown as an edge.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -720,8 +725,8 @@
                         <span class="n">node_nuclei</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
                         <span class="k">break</span>
 
-        <span class="k">if</span> <span class="n">filter_function</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">node_nuclei</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="n">filter_function</span><span class="p">,</span> <span class="n">node_nuclei</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">nucleus_filter_function</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">node_nuclei</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="n">nucleus_filter_function</span><span class="p">,</span> <span class="n">node_nuclei</span><span class="p">))</span>
 
         <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">node_nuclei</span><span class="p">:</span>
             <span class="n">G</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
@@ -747,8 +752,11 @@
         <span class="c1"># edges</span>
         <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">node_nuclei</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nuclei_consumed</span><span class="p">[</span><span class="n">n</span><span class="p">]:</span>
-                <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">r</span><span class="o">.</span><span class="n">products</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">rate_filter_function</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">rate_filter_function</span><span class="p">(</span><span class="n">r</span><span class="p">):</span>
+                        <span class="k">continue</span>
 
+                <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">r</span><span class="o">.</span><span class="n">products</span><span class="p">:</span>
                     <span class="k">if</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">node_nuclei</span><span class="p">:</span>
 
                         <span class="k">if</span> <span class="n">hide_xalpha</span><span class="p">:</span>
@@ -778,6 +786,7 @@
                         <span class="c1"># to the edges here directly, in this case,</span>
                         <span class="c1"># the reaction rate, which will be used to</span>
                         <span class="c1"># color it</span>
+
                         <span class="k">if</span> <span class="n">ydots</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                             <span class="n">G</span><span class="o">.</span><span class="n">add_edges_from</span><span class="p">([(</span><span class="n">n</span><span class="p">,</span> <span class="n">p</span><span class="p">)],</span> <span class="n">weight</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
                         <span class="k">else</span><span class="p">:</span>
