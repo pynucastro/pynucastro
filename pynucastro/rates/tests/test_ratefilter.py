@@ -51,7 +51,7 @@ class TestRateFilter:
         rates = newlib.get_rates()
 
         assert len(rates) == 1
-        assert str(rates[0]) == "c12 + p --> n13"
+        assert str(rates[0]) == "C12 + p ⟶ N13 + 𝛾"
 
     def test_custom(self):
 
@@ -70,5 +70,5 @@ class TestRateFilter:
         rates = newlib.get_rates()
 
         assert len(rates) == 2
-        assert str(rates[0]) == "n15 + p --> he4 + c12"
-        assert str(rates[1]) == "n15 + p --> o16"
+        assert str(rates[0]) == "N15 + p ⟶ He4 + C12"
+        assert str(rates[1]) == "N15 + p ⟶ O16 + 𝛾"
