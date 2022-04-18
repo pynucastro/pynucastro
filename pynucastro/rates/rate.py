@@ -828,7 +828,7 @@ class Rate:
             fig.colorbar(im, ax=ax)
 
             ax.set_xlabel(r"$\log(T)$ [K]")
-            ax.set_ylabel(r"$\log(\\rho Y_e)$ [g/cm$^3$]")
+            ax.set_ylabel(r"$\log(\rho Y_e)$ [g/cm$^3$]")
             ax.set_title(fr"{self.pretty_string}" +
                          "\n"+"electron-capture/beta-decay rate in log10(1/s)")
             ax.set_yticks(range(len(rows)))
