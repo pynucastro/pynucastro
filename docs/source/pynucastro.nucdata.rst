@@ -33,3 +33,18 @@ pynucastro.nucdata.elements module
    :undoc-members:
    :show-inheritance:
 
+pynucastro.nucdata.partition\_function module
+---------------------------------------------
+
+.. automodule:: pynucastro.nucdata.partition_function
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+pynucastro.nucdata.spin\_nuclide module
+---------------------------------------
+
+.. automodule:: pynucastro.nucdata.spin_nuclide
+   :members:
+   :undoc-members:
+   :show-inheritance:

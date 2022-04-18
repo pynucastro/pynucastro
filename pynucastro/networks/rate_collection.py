@@ -8,7 +8,6 @@ import math
 import os
 
 from operator import mul
-from collections import OrderedDict
 
 from ipywidgets import interact
 
@@ -20,9 +19,11 @@ from matplotlib.ticker import MaxNLocator
 import networkx as nx
 
 # Import Rate
-from pynucastro.rates import Rate, Nucleus, Library
+from pynucastro.nucleus import Nucleus
+from pynucastro.rates import Rate, RatePair, Library
 
 mpl.rcParams['figure.dpi'] = 100
+
 
 class Composition:
     """a composition holds the mass fractions of the nuclei in a network
@@ -33,8 +34,7 @@ class Composition:
         """nuclei is an iterable of the nuclei (Nucleus objects) in the network"""
         if not isinstance(nuclei[0], Nucleus):
             raise ValueError("must supply an iterable of Nucleus objects")
-        else:
-            self.X = {k: small for k in nuclei}
+        self.X = {k: small for k in nuclei}
 
     def set_solar_like(self, Z=0.02):
         """ approximate a solar abundance, setting p to 0.7, He4 to 0.3 - Z and
@@ -96,13 +96,38 @@ class Composition:
             ostr += f"  X({k}) : {self.X[k]}\n"
         return ostr
 
+
+class ScreeningPair:
+    """a pair of nuclei that will have rate screening applied.  We store a
+    list of all rates that match this pair of nuclei"""
+
+    def __init__(self, name, nuc1, nuc2, rate=None):
+        self.name = name
+        self.n1 = nuc1
+        self.n2 = nuc2
+
+        if rate is None:
+            self.rates = []
+        else:
+            self.rates = [rate]
+
+    def add_rate(self, rate):
+        self.rates.append(rate)
+
+    def __eq__(self, other):
+        """all we care about is whether the names are the same -- that conveys
+        what the reaction is"""
+
+        return self.name == other.name
+
+
 class RateCollection:
     """ a collection of rates that together define a network """
 
     pynucastro_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 
     def __init__(self, rate_files=None, libraries=None, rates=None, precedence=(),
-                 symmetric_screening=False):
+                 symmetric_screening=False, do_screening=True):
         """rate_files are the files that together define the network.  This
         can be any iterable or single string.
 
@@ -134,6 +159,7 @@ class RateCollection:
         self.library = None
 
         self.symmetric_screening = symmetric_screening
+        self.do_screening = do_screening
 
         if rate_files:
             if isinstance(rate_files, str):
@@ -146,7 +172,7 @@ class RateCollection:
             try:
                 for r in rates:
                     assert isinstance(r, Rate)
-            except:
+            except AssertionError:
                 print('Expected Rate object or list of Rate objects passed as the rates argument.')
                 raise
             else:
@@ -162,7 +188,7 @@ class RateCollection:
             try:
                 for lib in libraries:
                     assert isinstance(lib, Library)
-            except:
+            except AssertionError:
                 print('Expected Library object or list of Library objects passed as the libraries argument.')
                 raise
             else:
@@ -187,12 +213,20 @@ class RateCollection:
 
         # now make a list of each rate that touches each nucleus
         # we'll store this in a dictionary keyed on the nucleus
-        self.nuclei_consumed = OrderedDict()
-        self.nuclei_produced = OrderedDict()
+        self.nuclei_consumed = {}
+        self.nuclei_produced = {}
 
         for n in self.unique_nuclei:
             self.nuclei_consumed[n] = [r for r in self.rates if n in r.reactants]
             self.nuclei_produced[n] = [r for r in self.rates if n in r.products]
+
+        self.nuclei_rate_pairs = {}
+        _rp = self.get_rate_pairs()
+
+        for n in self.unique_nuclei:
+            self.nuclei_rate_pairs[n] = \
+                [rp for rp in _rp if rp.forward is not None and n in rp.forward.reactants + rp.forward.products or
+                                     rp.reverse is not None and n in rp.reverse.reactants + rp.reverse.products]
 
         # Re-order self.rates so Reaclib rates come first,
         # followed by Tabular rates. This is needed if
@@ -221,7 +255,7 @@ class RateCollection:
         for rf in self.files:
             try:
                 rflib = Library(rf)
-            except:
+            except:  # noqa
                 print(f"Error reading library from file: {rf}")
                 raise
             else:
@@ -230,6 +264,49 @@ class RateCollection:
                 else:
                     self.library = self.library + rflib
 
+    def get_rate_pairs(self):
+        """ return a list of RatePair objects, grouping the rates together
+            by forward and reverse"""
+
+        # first handle the ones that have Q defined
+
+        forward_rates = [r for r in self.rates if r.Q is not None and r.Q >= 0.0]
+        reverse_rates = [r for r in self.rates if r.Q is not None and r.Q < 0.0]
+
+        # e-capture tabular rates don't have a Q defined, so just go off of the binding energy
+
+        forward_rates += [r for r in self.rates if r.Q is None and r.reactants[0].nucbind <= r.products[0].nucbind]
+        reverse_rates += [r for r in self.rates if r.Q is None and r.reactants[0].nucbind > r.products[0].nucbind]
+
+        rate_pairs = []
+
+        # loop over all the forward rates and find the matching reverse rate
+        # if it exists
+        for fr in forward_rates:
+            rp = RatePair(forward=fr)
+            matched = False
+            for rr in reverse_rates:
+                if sorted(fr.reactants, key=lambda x: x.A) == sorted(rr.products, key=lambda x: x.A) and \
+                   sorted(fr.products, key=lambda x: x.A) == sorted(rr.reactants, key=lambda x: x.A):
+                    matched = True
+                    rp.reverse = rr
+                    break
+            # since we found a match, remove the reverse rate we paired
+            # from out list so no other forward rate can match with it
+            if matched:
+                reverse_rates.remove(rp.reverse)
+
+            rate_pairs.append(rp)
+
+        # we might have some reverse rates remaining for which there
+        # were no forward rates -- add those now
+        if reverse_rates:
+            for rr in reverse_rates:
+                rp = RatePair(reverse=rr)
+                rate_pairs.append(rp)
+
+        return rate_pairs
+
     def get_nuclei(self):
         """ get all the nuclei that are part of the network """
         return self.unique_nuclei
@@ -237,7 +314,7 @@ class RateCollection:
     def evaluate_rates(self, rho, T, composition):
         """evaluate the rates for a specific density, temperature, and
         composition"""
-        rvals = OrderedDict()
+        rvals = {}
         ys = composition.get_molar()
         y_e = composition.eval_ye()
 
@@ -312,6 +389,42 @@ class RateCollection:
             ostr += "\n"
         return ostr
 
+    def rate_pair_overview(self):
+        """ return a verbose network overview in terms of forward-reverse pairs"""
+        ostr = ""
+        for n in self.unique_nuclei:
+            ostr += f"{n}\n"
+            for rp in sorted(self.nuclei_rate_pairs[n]):
+                ostr += f"     {rp}\n"
+        return ostr
+
+    def get_nuclei_latex_string(self):
+        """return a string listing the nuclei in latex format"""
+
+        ostr = ""
+        for i, n in enumerate(self.unique_nuclei):
+            ostr += f"${n.pretty}$"
+            if i != len(self.unique_nuclei)-1:
+                ostr += ", "
+        return ostr
+
+    def get_rates_latex_table_string(self):
+        ostr = ""
+        for rp in sorted(self.get_rate_pairs()):
+            if rp.forward:
+                ostr += f"{rp.forward.pretty_string:38} & \n"
+            else:
+                ostr += f"{' ':38} \n &"
+
+            if rp.reverse:
+                ostr += rf"  {rp.reverse.pretty_string:38} \\"
+            else:
+                ostr += rf"  {' ':38} \\"
+
+            ostr += "\n"
+
+        return ostr
+
     def get_screening_map(self):
         """a screening map is just a list of tuples containing the information
         about nuclei pairs for screening: (descriptive name of nuclei,
@@ -321,39 +434,59 @@ class RateCollection:
 
         """
         screening_map = []
-        for k, r in enumerate(self.rates):
+        if not self.do_screening:
+            return screening_map
+
+        for r in self.rates:
             screen_nuclei = r.ion_screen
             if self.symmetric_screening:
                 screen_nuclei = r.symmetric_screen
 
             if screen_nuclei:
                 nucs = "_".join([str(q) for q in screen_nuclei])
-                in_map = False
-                for h, _, _, mrates, krates in screening_map:
-                    if h == nucs:
-                        # if we already have the reactants, then we
-                        # will already be doing the screening factors,
-                        # so just append this new rate to the list we
-                        # are keeping of the rates where this
-                        # screening is needed
-                        in_map = True
-                        mrates.append(r)
-                        krates.append(k+1)
-                        break
-                if not in_map:
-                    # we handle 3-alpha specially -- we actually need 2 screening factors for it
+
+                scr = [q for q in screening_map if q.name == nucs]
+
+                assert len(scr) <= 1
+
+                if scr:
+                    # we already have the reactants in our map, so we
+                    # will already be doing the screening factors.
+                    # Just append this new rate to the list we are
+                    # keeping of the rates where this screening is
+                    # needed
+
+                    scr[0].add_rate(r)
+
+                    # if we got here because nuc == "he4_he4_he4",
+                    # then we also have to add to "he4_he4_he4_dummy"
+
+                    if nucs == "he4_he4_he4":
+                        scr2 = [q for q in screening_map if q.name == nucs + "_dummy"]
+                        assert len(scr2) == 1
+
+                        scr2[0].add_rate(r)
+
+                else:
+
+                    # we handle 3-alpha specially -- we actually need
+                    # 2 screening factors for it
+
                     if nucs == "he4_he4_he4":
                         # he4 + he4
-                        screening_map.append((nucs, screen_nuclei[0], screen_nuclei[1],
-                                              [r], [k+1]))
+                        scr1 = ScreeningPair(nucs, screen_nuclei[0], screen_nuclei[1], r)
+
                         # he4 + be8
                         be8 = Nucleus("Be8", dummy=True)
-                        screening_map.append((nucs+"_dummy", screen_nuclei[2], be8,
-                                              [r], [k+1]))
+                        scr2 = ScreeningPair(nucs + "_dummy", screen_nuclei[2], be8, r)
+
+                        screening_map.append(scr1)
+                        screening_map.append(scr2)
 
                     else:
-                        screening_map.append((nucs, screen_nuclei[0], screen_nuclei[1],
-                                              [r], [k+1]))
+                        scr1 = ScreeningPair(nucs, screen_nuclei[0], screen_nuclei[1], r)
+                        screening_map.append(scr1)
+
         return screening_map
 
     def write_network(self, *args, **kwargs):
@@ -381,14 +514,17 @@ class RateCollection:
 
         nameset = {r.fname for r in self.rates}
         precedence = {lab: i for i, lab in enumerate(precedence)}
-        def sorting_key(i): return precedence[self.rates[i].label]
+
+        def sorting_key(i):
+            return precedence[self.rates[i].label]
 
         for n in nameset:
 
             # Count instances of name, and cycle if there is only one
             ind = [i for i, r in enumerate(self.rates) if r.fname == n]
             k = len(ind)
-            if k <= 1: continue
+            if k <= 1:
+                continue
 
             # If there were multiple instances, use the precedence settings to delete extraneous
             # rates
@@ -398,7 +534,8 @@ class RateCollection:
 
                 sorted_ind = sorted(ind, key=sorting_key)
                 r = self.rates[sorted_ind[0]]
-                for i in sorted(sorted_ind[1:], reverse=True): del self.rates[i]
+                for i in sorted(sorted_ind[1:], reverse=True):
+                    del self.rates[i]
                 print(f'Found rate {r} named {n} with {k} entries in the RateCollection.')
                 print(f'Kept only entry with label {r.label} out of {labels}.')
 
@@ -406,12 +543,12 @@ class RateCollection:
         """A stub for function to output the network -- this is implementation
         dependent."""
         print('To create network integration source code, use a class that implements a specific network type.')
-        return
 
     def plot(self, outfile=None, rho=None, T=None, comp=None,
              size=(800, 600), dpi=100, title=None,
              ydot_cutoff_value=None,
              node_size=1000, node_font_size=13, node_color="#A0CBE2", node_shape="o",
+             curved_edges=False,
              N_range=None, Z_range=None, rotated=False,
              always_show_p=False, always_show_alpha=False, hide_xalpha=False, filter_function=None):
         """Make a plot of the network structure showing the links between
@@ -447,6 +584,8 @@ class RateCollection:
         node_color: color to make the nodes
 
         node_shape: shape of the node (using matplotlib marker names)
+
+        curved_edges: do we use arcs to connect the nodes?
 
         N_range: range of neutron number to zoom in on
 
@@ -569,8 +708,7 @@ class RateCollection:
                                 # to roughly the minimum exponent possible
                                 # for python floats
                                 rate_weight = -308
-                            except:
-                                raise
+
                             G.add_edges_from([(n, p)], weight=rate_weight)
 
         # It seems that networkx broke backwards compatability, and 'zorder' is no longer a valid
@@ -586,7 +724,7 @@ class RateCollection:
         # get the edges and weights coupled in the same order
         edges, weights = zip(*nx.get_edge_attributes(G, 'weight').items())
 
-        edge_color=weights
+        edge_color = weights
         ww = np.array(weights)
         min_weight = ww.min()
         max_weight = ww.max()
@@ -596,8 +734,15 @@ class RateCollection:
         widths[ww > min_weight + 2*dw] = 2.5
         widths[ww > min_weight + 3*dw] = 4
 
-        edges_lc = nx.draw_networkx_edges(G, G.position, width=list(widths),    # plot the arrow of reaction
+        if curved_edges:
+            connectionstyle = "arc3, rad = 0.2"
+        else:
+            connectionstyle = "arc3"
+
+        # plot the arrow of reaction
+        edges_lc = nx.draw_networkx_edges(G, G.position, width=list(widths),
                                           edgelist=edges, edge_color=edge_color,
+                                          connectionstyle=connectionstyle,
                                           node_size=node_size,
                                           edge_cmap=plt.cm.viridis, ax=ax)
 
@@ -691,8 +836,10 @@ class RateCollection:
     @staticmethod
     def _scale(arr, minval=None, maxval=None):
 
-        if minval is None: minval = arr.min()
-        if maxval is None: maxval = arr.max()
+        if minval is None:
+            minval = arr.min()
+        if maxval is None:
+            maxval = arr.max()
         if minval != maxval:
             scaled = (arr - minval) / (maxval - minval)
         else:
@@ -756,7 +903,8 @@ class RateCollection:
         dpi = kwargs.pop("dpi", 100)
         linthresh = kwargs.pop("linthresh", 1.0)
 
-        if kwargs: warnings.warn(f"Unrecognized keyword arguments: {kwargs.keys()}")
+        if kwargs:
+            warnings.warn(f"Unrecognized keyword arguments: {kwargs.keys()}")
 
         # Get figure, colormap
         fig, ax = plt.subplots()
@@ -794,7 +942,8 @@ class RateCollection:
                 raise ValueError("Need both rho and T to evaluate rates!")
             ydots = self.evaluate_ydots(rho, T, comp)
             values = np.array([ydots[nuc] for nuc in nuclei])
-            if color_field == "xdot": values *= As
+            if color_field == "xdot":
+                values *= As
 
         elif color_field == "activity":
 
@@ -803,8 +952,10 @@ class RateCollection:
             act = self.evaluate_activity(rho, T, comp)
             values = np.array([act[nuc] for nuc in nuclei])
 
-        if scale == "log": values = self._safelog(values, small)
-        elif scale == "symlog": values = self._symlog(values, linthresh)
+        if scale == "log":
+            values = self._safelog(values, small)
+        elif scale == "symlog":
+            values = self._symlog(values, linthresh)
 
         if cbar_bounds is None:
             cbar_bounds = values.min(), values.max()
@@ -835,14 +986,13 @@ class RateCollection:
 
         if no_axes or no_ticks:
 
-            plt.tick_params \
-            (
-                axis = 'both',
-                which = 'both',
-                bottom = False,
-                left = False,
-                labelbottom = False,
-                labelleft = False
+            plt.tick_params(
+                axis='both',
+                which='both',
+                bottom=False,
+                left=False,
+                labelbottom=False,
+                labelleft=False
             )
 
         else:

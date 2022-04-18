@@ -9,15 +9,14 @@ import os
 import shutil
 import sys
 import re
-from collections import OrderedDict
 from abc import ABC, abstractmethod
 import random
 import string
 
 import sympy
-from pynucastro.rates import Nucleus
 from pynucastro.networks import RateCollection
 from pynucastro.networks import SympyRates
+
 
 class BaseCxxNetwork(ABC, RateCollection):
     """Interpret the collection of rates and nuclei and produce the
@@ -38,17 +37,17 @@ class BaseCxxNetwork(ABC, RateCollection):
 
         self.symbol_rates = SympyRates(ctype="C++")
 
-        self.ydot_out_result  = None
-        self.solved_ydot      = False
-        self.jac_out_result   = None
+        self.ydot_out_result = None
+        self.solved_ydot = False
+        self.jac_out_result = None
         self.jac_null_entries = None
-        self.solved_jacobian  = False
+        self.solved_jacobian = False
 
         self.secret_code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=32))
 
         # a dictionary of functions to call to handle specific parts
         # of the C++ template
-        self.ftags = OrderedDict()
+        self.ftags = {}
         self.ftags['<nrat_reaclib>'] = self._nrat_reaclib
         self.ftags['<nrat_tabular>'] = self._nrat_tabular
         self.ftags['<nrxn>'] = self._nrxn
@@ -83,7 +82,7 @@ class BaseCxxNetwork(ABC, RateCollection):
 
     def get_indent_amt(self, l, k):
         """determine the amount of spaces to indent a line"""
-        rem = re.match(r'\A'+k+r'\(([0-9]*)\)\Z',l)
+        rem = re.match(r'\A'+k+r'\(([0-9]*)\)\Z', l)
         return int(rem.group(1))
 
     def _write_network(self, odir=None):
@@ -101,12 +100,12 @@ class BaseCxxNetwork(ABC, RateCollection):
         # Process template files
         for tfile in self.template_files:
             tfile_basename = os.path.basename(tfile)
-            outfile    = tfile_basename.replace('.template', '')
+            outfile = tfile_basename.replace('.template', '')
             if odir is not None:
                 if not os.path.isdir(odir):
                     try:
                         os.mkdir(odir)
-                    except:
+                    except OSError:
                         sys.exit(f"unable to create directory {odir}")
                 outfile = os.path.normpath(odir + "/" + outfile)
 
@@ -138,18 +137,29 @@ class BaseCxxNetwork(ABC, RateCollection):
         """create the expressions for dYdt for the nuclei, where Y is the
         molar fraction.
 
+
+        This will take the form of a dict, where the key is a nucleus, and the
+        value is a list of tuples, with the forward-reverse pairs of a rate
         """
 
-        ydot = []
+        ydot = {}
         for n in self.unique_nuclei:
             ydot_sym_terms = []
-            for r in self.nuclei_consumed[n]:
-                ydot_sym_terms.append(self.symbol_rates.ydot_term_symbol(r, n))
-            for r in self.nuclei_produced[n]:
-                ydot_sym_terms.append(self.symbol_rates.ydot_term_symbol(r, n))
-            ydot.append(ydot_sym_terms)
+            for rp in self.nuclei_rate_pairs[n]:
+                if rp.forward is not None:
+                    fwd = self.symbol_rates.ydot_term_symbol(rp.forward, n)
+                else:
+                    fwd = None
 
-        self.ydot_out_result  = ydot
+                if rp.reverse is not None:
+                    rvs = self.symbol_rates.ydot_term_symbol(rp.reverse, n)
+                else:
+                    rvs = None
+
+                ydot_sym_terms.append((fwd, rvs))
+            ydot[n] = ydot_sym_terms
+
+        self.ydot_out_result = ydot
         self.solved_ydot = True
 
     def compose_jacobian(self):
@@ -171,46 +181,64 @@ class BaseCxxNetwork(ABC, RateCollection):
                 jac_sym.append(rsym)
                 jac_null.append(rsym_is_null)
 
-        self.jac_out_result  = jac_sym
+        self.jac_out_result = jac_sym
         self.jac_null_entries = jac_null
         self.solved_jacobian = True
 
     def _compute_screening_factors(self, n_indent, of):
         screening_map = self.get_screening_map()
-        for i, (h, n1, n2, r, _) in enumerate(screening_map):
+        for i, scr in enumerate(screening_map):
 
-            if not n1.dummy:
-                nuc1_info = f'zion[{n1.c()}-1], aion[{n1.c()}-1]'
+            nuc1_info = f'{float(scr.n1.Z)}_rt, {float(scr.n1.A)}_rt'
+            nuc2_info = f'{float(scr.n2.Z)}_rt, {float(scr.n2.A)}_rt'
+
+            if not (scr.n1.dummy or scr.n2.dummy):
+                # Scope the screening calculation to avoid multiple definitions of scn_fac.
+                of.write(f'\n{self.indent*n_indent}' + '{')
+
+                of.write(f'\n{self.indent*(n_indent+1)}constexpr auto scn_fac = scrn::calculate_screen_factor({nuc1_info}, {nuc2_info});\n\n')
+
+                # Insert a static assert (which will always pass) to require the
+                # compiler to evaluate the screen factor at compile time.
+                of.write(f'\n{self.indent*(n_indent+1)}static_assert(scn_fac.z1 == {float(scr.n1.Z)}_rt);\n\n')
+
+                of.write(f'\n{self.indent*(n_indent+1)}actual_screen5(pstate, scn_fac, scor, dscor_dt);\n')
+
+                of.write(f'{self.indent*n_indent}' + '}\n\n')
+
+            if scr.name == "he4_he4_he4":
+                # we don't need to do anything here, but we want to avoid immediately applying the screening
+                pass
+
+            elif scr.name == "he4_he4_he4_dummy":
+                # handle the second part of the screening for 3-alpha
+                of.write(f'\n{self.indent*n_indent}' + '{')
+
+                of.write(f'\n{self.indent*(n_indent+1)}constexpr auto scn_fac2 = scrn::calculate_screen_factor({nuc1_info}, {nuc2_info});\n\n')
+
+                of.write(f'\n{self.indent*(n_indent+1)}static_assert(scn_fac2.z1 == {float(scr.n1.Z)}_rt);\n\n')
+
+                of.write(f'\n{self.indent*(n_indent+1)}actual_screen5(pstate, scn_fac2, scor2, dscor2_dt);\n')
+
+                of.write(f'\n{self.indent*n_indent}' + '}\n\n')
+
+                # there might be both the forward and reverse 3-alpha
+                # if we are doing symmetric screening
+
+                for rr in scr.rates:
+                    of.write('\n')
+                    of.write(f'{self.indent*n_indent}ratraw = rate_eval.screened_rates(k_{rr.fname});\n')
+                    of.write(f'{self.indent*n_indent}dratraw_dT = rate_eval.dscreened_rates_dT(k_{rr.fname});\n')
+                    of.write(f'{self.indent*n_indent}rate_eval.screened_rates(k_{rr.fname}) *= scor * scor2;\n')
+                    of.write(f'{self.indent*n_indent}rate_eval.dscreened_rates_dT(k_{rr.fname}) = ratraw * (scor * dscor2_dt + dscor_dt * scor2) + dratraw_dT * scor * scor2;\n')
+
             else:
-                nuc1_info = f'{float(n1.Z)}_rt, {float(n1.A)}_rt'
-            if not n2.dummy:
-                nuc2_info = f'zion[{n2.c()}-1], aion[{n2.c()}-1]'
-            else:
-                nuc2_info = f'{float(n2.Z)}_rt, {float(n2.A)}_rt'
-
-            if h == "he4_he4_he4":
-                # we'll hahandle the first part of the 3-alpha screening here
-                of.write(f'{self.indent*n_indent}screen5(pstate, {i}, {nuc1_info}, {nuc2_info}, scor, dscor_dt, dscor_dd);\n')
-
-            elif h == "he4_he4_he4_dummy":
-                # now the second part of 3-alpha
-                of.write(f'{self.indent*n_indent}screen5(pstate, {i}, {nuc1_info}, {nuc2_info}, scor2, dscor2_dt, dscor2_dd);\n\n')
-
-                of.write(f'{self.indent*n_indent}ratraw = rate_eval.screened_rates(k_{r[0].fname});\n')
-                of.write(f'{self.indent*n_indent}dratraw_dT = rate_eval.dscreened_rates_dT(k_{r[0].fname});\n')
-
-                of.write(f'{self.indent*n_indent}rate_eval.screened_rates(k_{r[0].fname}) *= scor * scor2;\n')
-                of.write(f'{self.indent*n_indent}rate_eval.dscreened_rates_dT(k_{r[0].fname}) = ratraw * (scor * dscor2_dt + dscor_dt * scor2) + dratraw_dT * scor * scor2;\n')
-
-            else:
-                of.write(f'\n{self.indent*n_indent}screen5(pstate, {i}, {nuc1_info}, {nuc2_info}, scor, dscor_dt, dscor_dd);\n\n')
-
                 # there might be several rates that have the same
                 # reactants and therefore the same screening applies
                 # -- handle them all now
 
-                for rr in r:
-                    of.write(f'\n')
+                for rr in scr.rates:
+                    of.write('\n')
                     of.write(f'{self.indent*n_indent}ratraw = rate_eval.screened_rates(k_{rr.fname});\n')
                     of.write(f'{self.indent*n_indent}dratraw_dT = rate_eval.dscreened_rates_dT(k_{rr.fname});\n')
                     of.write(f'{self.indent*n_indent}rate_eval.screened_rates(k_{rr.fname}) *= scor;\n')
@@ -218,7 +246,11 @@ class BaseCxxNetwork(ABC, RateCollection):
 
             of.write('\n')
 
-        self.num_screen_calls = len(screening_map)
+        # the C++ screen.H code requires that there be at least 1 screening
+        # factor because it statically allocates some arrays, so if we turned
+        # off screening, just set num_screen_calls = 1 here.
+
+        self.num_screen_calls = max(1, len(screening_map))
 
     def _nrat_reaclib(self, n_indent, of):
         # Writes the number of Reaclib rates
@@ -236,7 +268,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         of.write(f'{self.indent*n_indent}const int NrateTabular = {len(self.tabular_rates)};\n')
 
     def _nrxn(self, n_indent, of):
-        for i,r in enumerate(self.rates):
+        for i, r in enumerate(self.rates):
             of.write(f'{self.indent*n_indent}k_{r.fname} = {i+1},\n')
         of.write(f'{self.indent*n_indent}NumRates = k_{self.rates[-1].fname}\n')
 
@@ -246,16 +278,16 @@ class BaseCxxNetwork(ABC, RateCollection):
 
     def _screen_add(self, n_indent, of):
         screening_map = self.get_screening_map()
-        for _, n1, n2, _, _ in screening_map:
+        for scr in screening_map:
             of.write(f'{self.indent*n_indent}add_screening_factor(jscr++, ')
-            if not n1.dummy:
-                of.write(f'zion[{n1.c()}-1], aion[{n1.c()}-1], ')
+            if not scr.n1.dummy:
+                of.write(f'zion[{scr.n1.c()}-1], aion[{scr.n1.c()}-1], ')
             else:
-                of.write(f'{float(n1.Z)}_rt, {float(n1.A)}_rt, ')
-            if not n2.dummy:
-                of.write(f'zion[{n2.c()}-1], aion[{n2.c()}-1]);\n\n')
+                of.write(f'{float(scr.n1.Z)}_rt, {float(scr.n1.A)}_rt, ')
+            if not scr.n2.dummy:
+                of.write(f'zion[{scr.n2.c()}-1], aion[{scr.n2.c()}-1]);\n\n')
             else:
-                of.write(f'{float(n2.Z)}_rt, {float(n2.A)}_rt);\n\n')
+                of.write(f'{float(scr.n2.Z)}_rt, {float(scr.n2.A)}_rt);\n\n')
 
     def _write_reaclib_metadata(self, n_indent, of):
         jset = 0
@@ -299,8 +331,8 @@ class BaseCxxNetwork(ABC, RateCollection):
 
             of.write(f'{idnt}AMREX_GPU_MANAGED Array3D<Real, 1, {r.table_temp_lines}, 1, {r.table_rhoy_lines}, 1, {r.table_num_vars}> {r.table_index_name}_data;\n')
 
-            of.write(f'{idnt}AMREX_GPU_MANAGED Array1D<Real, 1, {r.table_rhoy_lines}> {r.table_index_name}_rhoy;\n');
-            of.write(f'{idnt}AMREX_GPU_MANAGED Array1D<Real, 1, {r.table_temp_lines}> {r.table_index_name}_temp;\n\n');
+            of.write(f'{idnt}AMREX_GPU_MANAGED Array1D<Real, 1, {r.table_rhoy_lines}> {r.table_index_name}_rhoy;\n')
+            of.write(f'{idnt}AMREX_GPU_MANAGED Array1D<Real, 1, {r.table_temp_lines}> {r.table_index_name}_temp;\n\n')
 
     def _table_init_meta(self, n_indent, of):
         for irate in self.tabular_rates:
@@ -311,7 +343,6 @@ class BaseCxxNetwork(ABC, RateCollection):
             of.write(f'{idnt}{r.table_index_name}_meta.nvars = {r.table_num_vars};\n')
             of.write(f'{idnt}{r.table_index_name}_meta.nheader = {r.table_header_lines};\n')
             of.write(f'{idnt}{r.table_index_name}_meta.file = "{r.table_file}";\n\n')
-
 
             of.write(f'{idnt}init_tab_info({r.table_index_name}_meta, {r.table_index_name}_rhoy, {r.table_index_name}_temp, {r.table_index_name}_data);\n\n')
 
@@ -342,7 +373,7 @@ class BaseCxxNetwork(ABC, RateCollection):
             of.write('\n')
 
     def _table_rates_indices(self, n_indent, of):
-        for n,irate in enumerate(self.tabular_rates):
+        for n, irate in enumerate(self.tabular_rates):
             r = self.rates[irate]
             of.write(f'{self.indent*n_indent}{r.table_index_name}')
             if n != len(self.tabular_rates)-1:
@@ -367,15 +398,45 @@ class BaseCxxNetwork(ABC, RateCollection):
 
     def _ydot(self, n_indent, of):
         # Write YDOT
-        for i, n in enumerate(self.unique_nuclei):
+        for n in self.unique_nuclei:
             of.write(f"{self.indent*n_indent}{self.symbol_rates.name_ydot_nuc}({n.c()}) =\n")
-            for j, term in enumerate(self.ydot_out_result[i]):
-                sol_value = self.symbol_rates.cxxify(sympy.cxxcode(term, precision=15,
-                                                                   standard="c++11"))
-                if j == len(self.ydot_out_result[i])-1:
-                    of.write(f"{2*self.indent*n_indent}{sol_value};\n\n")
+            for j, pair in enumerate(self.ydot_out_result[n]):
+                # pair here is the forward, reverse pair for a single rate as it affects
+                # nucleus n
+
+                if pair.count(None) == 0:
+                    num = 2
+                elif pair.count(None) == 1:
+                    num = 1
                 else:
-                    of.write(f"{2*self.indent*n_indent}{sol_value} +\n")
+                    raise NotImplementedError("a rate pair must contain atleast one rate")
+
+                of.write(f"{2*self.indent*n_indent}")
+                if num == 2:
+                    of.write("(")
+
+                if pair[0] is not None:
+                    sol_value = self.symbol_rates.cxxify(sympy.cxxcode(pair[0], precision=15,
+                                                                       standard="c++11"))
+
+                    of.write(f"{sol_value}")
+
+                if num == 2:
+                    of.write(" + ")
+
+                if pair[1] is not None:
+                    sol_value = self.symbol_rates.cxxify(sympy.cxxcode(pair[1], precision=15,
+                                                                       standard="c++11"))
+
+                    of.write(f"{sol_value}")
+
+                if num == 2:
+                    of.write(")")
+
+                if j == len(self.ydot_out_result[n])-1:
+                    of.write(";\n\n")
+                else:
+                    of.write(" +\n")
 
     def _enuc_add_energy_rate(self, n_indent, of):
         # Add tabular per-reaction neutrino energy generation rates to the energy generation rate
@@ -404,7 +465,7 @@ class BaseCxxNetwork(ABC, RateCollection):
                     of.write(f"{self.indent*n_indent}jac.set({nj.c()}, {ni.c()}, scratch);\n\n")
 
     def _initial_mass_fractions(self, n_indent, of):
-        for i, n in enumerate(self.unique_nuclei):
+        for i, _ in enumerate(self.unique_nuclei):
             if i == 0:
                 of.write(f"{self.indent*n_indent}unit_test.X{i+1} = 1.0\n")
             else:

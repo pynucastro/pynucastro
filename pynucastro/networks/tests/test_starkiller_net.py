@@ -1,6 +1,6 @@
 # unit tests for rates
 import pynucastro.networks as networks
-import pynucastro.rates as rates
+from pynucastro.nucleus import Nucleus
 import os
 import filecmp
 
@@ -212,6 +212,7 @@ class TestStarKillerNetwork:
 
         assert not errors, f"errors: {' '.join(errors)}"
 
+
 class TestReaclibChapterNetwork:
     @classmethod
     def setup_class(cls):
@@ -240,17 +241,17 @@ class TestReaclibChapterNetwork:
 
         self.fn = networks.StarKillerNetwork(files)
 
-        self.n = rates.Nucleus("n")
-        self.p = rates.Nucleus("p")
-        self.d = rates.Nucleus("d")
-        self.t = rates.Nucleus("t")
-        self.he3 = rates.Nucleus("he3")
-        self.he4 = rates.Nucleus("he4")
-        self.he6 = rates.Nucleus("he6")
-        self.li7 = rates.Nucleus("li7")
-        self.b17 = rates.Nucleus("b17")
-        self.c12 = rates.Nucleus("c12")
-        self.c14 = rates.Nucleus("c14")
+        self.n = Nucleus("n")
+        self.p = Nucleus("p")
+        self.d = Nucleus("d")
+        self.t = Nucleus("t")
+        self.he3 = Nucleus("he3")
+        self.he4 = Nucleus("he4")
+        self.he6 = Nucleus("he6")
+        self.li7 = Nucleus("li7")
+        self.b17 = Nucleus("b17")
+        self.c12 = Nucleus("c12")
+        self.c14 = Nucleus("c14")
 
     def teardown_method(self):
         """ this is run after each test """

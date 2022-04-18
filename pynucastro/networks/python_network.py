@@ -1,7 +1,6 @@
 """Support modules to write a pure python reaction network ODE
 source"""
 
-
 import sys
 
 from pynucastro.networks import RateCollection
@@ -105,14 +104,14 @@ class PythonNetwork(RateCollection):
             if y_i == r:
                 if c == 1:
                     continue
-                if n > 0 and n < len(set(rate.reactants))-1:
+                if 0 < n < len(set(rate.reactants))-1:
                     Y_string += "*"
                 if c > 2:
                     Y_string += f"{c}*Y[i{r}]**{c-1}"
                 elif c == 2:
                     Y_string += f"2*Y[i{r}]"
             else:
-                if n > 0 and n < len(set(rate.reactants))-1:
+                if 0 < n < len(set(rate.reactants))-1:
                     Y_string += "*"
                 if c > 1:
                     Y_string += f"Y[i{r}]**{c}"
@@ -156,7 +155,8 @@ class PythonNetwork(RateCollection):
         else:
             try:
                 of = open(outfile, "w")
-            except:
+            except IOError:
+                print(f"unable to open {outfile}")
                 raise
 
         of.write("import numpy as np\n")
@@ -207,7 +207,6 @@ class PythonNetwork(RateCollection):
             of.write(f"{indent}i{n} = {i}\n")
 
         of.write(f"{indent}nnuc = {len(self.unique_nuclei)}\n\n")
-
 
         # get the rates
         of.write(f"{indent}tf = Tfactors(T)\n\n")

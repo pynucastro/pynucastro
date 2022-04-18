@@ -1,6 +1,7 @@
 # unit tests for rates
 import math
 
+from pynucastro.nucleus import Nucleus
 import pynucastro.rates as rates
 from pytest import approx
 
@@ -31,56 +32,6 @@ class TestTfactors:
         assert self.tf.T913 == approx(2.0**(1./3.))
         assert self.tf.T953 == approx(2.0**(5./3.))
         assert self.tf.lnT9 == approx(math.log(2.0))
-
-
-class TestNucleus:
-    @classmethod
-    def setup_class(cls):
-        """ this is run once for each class before any tests """
-        pass
-
-    @classmethod
-    def teardown_class(cls):
-        """ this is run once for each class after all tests """
-        pass
-
-    def setup_method(self):
-        """ this is run before each test """
-
-        self.p = rates.Nucleus("p")
-        self.h1 = rates.Nucleus("H1")
-        self.d = rates.Nucleus("d")
-        self.he4 = rates.Nucleus("He4")
-        self.c12 = rates.Nucleus("C12")
-        self.o16 = rates.Nucleus("O16")
-        self.ni56 = rates.Nucleus("Ni56")
-        self.u238 = rates.Nucleus("U238")
-        self.he4_also = rates.Nucleus("he4")
-
-    def teardown_method(self):
-        """ this is run after each test """
-        pass
-
-    def test_atomic_weights(self):
-        assert self.d.A == 2
-        assert self.he4.A == 4
-        assert self.c12.A == 12
-        assert self.ni56.A == 56
-        assert self.u238.A == 238
-
-    def test_atomic_numbers(self):
-        assert self.d.Z == 1
-        assert self.he4.Z == 2
-        assert self.c12.Z == 6
-        assert self.ni56.Z == 28
-        assert self.u238.Z == 92
-
-    def test_comparisons(self):
-        assert self.p == self.h1
-        assert self.d != self.he4
-        assert self.d < self.he4
-        assert self.ni56 > self.c12
-        assert self.he4_also == self.he4
 
 
 class TestRate:
@@ -131,32 +82,32 @@ class TestRate:
         # chapter-11
         self.rate11 = rates.Rate("b17-nnn-c14-wc12")
 
-        self.n = rates.Nucleus("n")
+        self.n = Nucleus("n")
 
-        self.p = rates.Nucleus("p")
-        self.h1 = rates.Nucleus("H1")
-        self.d = rates.Nucleus("d")
-        self.h3 = rates.Nucleus("H3")
+        self.p = Nucleus("p")
+        self.h1 = Nucleus("H1")
+        self.d = Nucleus("d")
+        self.h3 = Nucleus("H3")
 
-        self.he3 = rates.Nucleus("He3")
-        self.he4 = rates.Nucleus("He4")
-        self.he6 = rates.Nucleus("He6")
+        self.he3 = Nucleus("He3")
+        self.he4 = Nucleus("He4")
+        self.he6 = Nucleus("He6")
 
-        self.li7 = rates.Nucleus("Li7")
+        self.li7 = Nucleus("Li7")
 
-        self.b17 = rates.Nucleus("B17")
+        self.b17 = Nucleus("B17")
 
-        self.c12 = rates.Nucleus("C12")
-        self.c14 = rates.Nucleus("C14")
+        self.c12 = Nucleus("C12")
+        self.c14 = Nucleus("C14")
 
-        self.n15 = rates.Nucleus("N15")
+        self.n15 = Nucleus("N15")
 
-        self.o15 = rates.Nucleus("O15")
-        self.o16 = rates.Nucleus("O16")
+        self.o15 = Nucleus("O15")
+        self.o16 = Nucleus("O16")
 
-        self.ni56 = rates.Nucleus("Ni56")
-        self.u238 = rates.Nucleus("U238")
-        self.he4_also = rates.Nucleus("he4")
+        self.ni56 = Nucleus("Ni56")
+        self.u238 = Nucleus("U238")
+        self.he4_also = Nucleus("he4")
 
     def teardown_method(self):
         """ this is run after each test """
@@ -232,3 +183,88 @@ class TestRate:
 
     def test_eval(self):
         assert self.rate8.eval(1.e8) == approx(2.0403192412842946e-24)
+
+    def test_comparison(self):
+        assert self.rate1 > self.rate2
+        assert self.rate1 > self.rate4
+        assert self.rate8 > self.rate9
+
+    def test_weak(self):
+        assert self.rate1.weak
+        assert not self.rate2.weak
+
+    def test_screen(self):
+        assert not self.rate1.ion_screen
+        assert self.rate4.ion_screen == [Nucleus("he4"), Nucleus("c12")]
+        assert self.rate8.ion_screen == 3*[Nucleus("he4")]
+
+    def test_heaviest_lightest(self):
+        assert self.rate4.heaviest() == Nucleus("o16")
+        assert self.rate4.lightest() == Nucleus("he4")
+        assert self.rate2.lightest() == Nucleus("n")
+        assert self.rate2.heaviest() == Nucleus("t")
+
+
+class TestWeakRates:
+
+    @classmethod
+    def setup_class(cls):
+        """ this is run once for each class before any tests """
+        pass
+
+    @classmethod
+    def teardown_class(cls):
+        """ this is run once for each class after all tests """
+        pass
+
+    def setup_method(self):
+        """ this is run before each test """
+
+        self.rate1 = rates.Rate("o18--f18-toki")
+        self.rate2 = rates.Rate("na22--ne22-toki")
+
+    def teardown_method(self):
+        """ this is run after each test """
+        pass
+
+    def test_reactants(self):
+
+        assert len(self.rate1.reactants) == 1 and len(self.rate1.products) == 1
+        assert self.rate1.products[0] == Nucleus("f18")
+        assert self.rate1.reactants[0] == Nucleus("o18")
+        assert self.rate1.eval(1.e10, 1.e7) == approx(3.990249e-11)
+
+        assert len(self.rate2.reactants) == 1 and len(self.rate2.products) == 1
+        assert self.rate2.products[0] == Nucleus("ne22")
+        assert self.rate2.reactants[0] == Nucleus("na22")
+        assert self.rate2.eval(1.e9, 1.e6) == approx(1.387075e-05)
+
+
+class TestModify:
+
+    @classmethod
+    def setup_class(cls):
+        """ this is run once for each class before any tests """
+        pass
+
+    @classmethod
+    def teardown_class(cls):
+        """ this is run once for each class after all tests """
+        pass
+
+    def setup_method(self):
+        """ this is run before each test """
+
+        self.rate = rates.Rate("c12-c12n-mg23-cf88")
+
+    def teardown_method(self):
+        """ this is run after each test """
+        pass
+
+    def test_modify(self):
+
+        self.rate.modify_products("mg24")
+
+        assert self.rate.Q == approx(13.93356)
+        assert self.rate.products == [Nucleus("mg24")]
+        assert self.rate.modified

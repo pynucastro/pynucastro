@@ -1,6 +1,6 @@
 # unit tests for rates
 import pynucastro.networks as networks
-import pynucastro.rates as rates
+from pynucastro.nucleus import Nucleus
 
 from pytest import approx
 
@@ -18,12 +18,12 @@ class TestComposition:
 
     def setup_method(self):
         """ this is run before each test """
-        self.nuclei = [rates.Nucleus("h1"),
-                       rates.Nucleus("he4"),
-                       rates.Nucleus("c12"),
-                       rates.Nucleus("o16"),
-                       rates.Nucleus("n14"),
-                       rates.Nucleus("ca40")]
+        self.nuclei = [Nucleus("h1"),
+                       Nucleus("he4"),
+                       Nucleus("c12"),
+                       Nucleus("o16"),
+                       Nucleus("n14"),
+                       Nucleus("ca40")]
 
         self.comp = networks.Composition(self.nuclei)
 
@@ -39,7 +39,7 @@ class TestComposition:
             sum += self.comp.X[k]
 
         assert sum == approx(1.0)
-        assert self.comp.X[rates.Nucleus("h1")] == approx(0.7)
+        assert self.comp.X[Nucleus("h1")] == approx(0.7)
 
     def test_set_all(self):
         val = 1.0/len(self.nuclei)
@@ -55,7 +55,7 @@ class TestComposition:
     def test_get_molar(self):
         self.comp.set_solar_like(Z=0.02)
         molar = self.comp.get_molar()
-        assert molar[rates.Nucleus("he4")] == approx((0.3-0.02)/4.0)
+        assert molar[Nucleus("he4")] == approx((0.3-0.02)/4.0)
 
 
 class TestRateCollection:
@@ -81,15 +81,15 @@ class TestRateCollection:
                  "o15--n15-wc12"]
         self.rc = networks.RateCollection(files)
 
-        self.p = rates.Nucleus("p")
-        self.he4 = rates.Nucleus("he4")
-        self.c12 = rates.Nucleus("c12")
-        self.c13 = rates.Nucleus("c13")
-        self.n13 = rates.Nucleus("n13")
-        self.n14 = rates.Nucleus("n14")
-        self.n15 = rates.Nucleus("n15")
-        self.o14 = rates.Nucleus("o14")
-        self.o15 = rates.Nucleus("o15")
+        self.p = Nucleus("p")
+        self.he4 = Nucleus("he4")
+        self.c12 = Nucleus("c12")
+        self.c13 = Nucleus("c13")
+        self.n13 = Nucleus("n13")
+        self.n14 = Nucleus("n14")
+        self.n15 = Nucleus("n15")
+        self.o14 = Nucleus("o14")
+        self.o15 = Nucleus("o15")
 
     def teardown_method(self):
         """ this is run after each test """
@@ -179,4 +179,4 @@ class TestRateCollection:
     produced by:
        n14 + p --> o15
 """
-        assert self.rc.network_overview().replace(" ","").strip() == ostr.replace(" ","").strip()
+        assert self.rc.network_overview().replace(" ", "").strip() == ostr.replace(" ", "").strip()

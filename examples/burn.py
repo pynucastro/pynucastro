@@ -46,7 +46,7 @@ if __name__ == "__main__":
     Y0[network.ihe4] = 0.28
     Y0[network.ic12] = 0.02
     # End initial conditions
-    
+
     Y0[:] = Y0[:]/network.A[:]
 
     t, Y_out = burn(Y0, rho, T, tmax, nsteps)
