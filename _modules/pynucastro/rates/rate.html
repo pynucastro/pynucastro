@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.rates.rate &mdash; pynucastro 1.6.0.post90+g10edd0a documentation</title>
+  <title>pynucastro.rates.rate &mdash; pynucastro 1.6.0.post91+gfc9c700 documentation</title>
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -302,6 +302,12 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">tabular</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">Q</span> <span class="o">=</span> <span class="n">Q</span>
+
+        <span class="c1"># some rates will have no nuclei particles (e.g. gamma) on the left or</span>
+        <span class="c1"># right -- we&#39;ll try to infer those here</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">lhs_other</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rhs_other</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">rfile</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span><span class="p">:</span>
             <span class="c1"># read in the file, parse the different sets and store them as</span>
@@ -724,7 +730,12 @@
 
     <span class="k">def</span> <span class="nf">_set_print_representation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; compose the string representations of this Rate. &quot;&quot;&quot;</span>
+
+        <span class="c1"># string is output to the terminal, rid is used as a dict key,</span>
+        <span class="c1"># and pretty_string is latex</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">string</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rid</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pretty_string</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;$&quot;</span>
 
         <span class="c1"># put p, n, and alpha second</span>
@@ -735,22 +746,126 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">treactants</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
 
+        <span class="c1"># figure out if there are any non-nuclei present</span>
+        <span class="c1"># for the moment, we just handle strong rates</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">weak</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabular</span><span class="p">:</span>
+            <span class="c1"># there should be the same number of protons on each side and</span>
+            <span class="c1"># the same number of neutrons on each side</span>
+            <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">([</span><span class="n">n</span><span class="o">.</span><span class="n">Z</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">])</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">([</span><span class="n">n</span><span class="o">.</span><span class="n">Z</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">products</span><span class="p">])</span>
+            <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">([</span><span class="n">n</span><span class="o">.</span><span class="n">A</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">])</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">([</span><span class="n">n</span><span class="o">.</span><span class="n">A</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">products</span><span class="p">])</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">products</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">rhs_other</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;gamma&quot;</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabular</span><span class="p">:</span>
+
+                <span class="c1"># these are either electron capture or beta- decay</span>
+
+                <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">([</span><span class="n">n</span><span class="o">.</span><span class="n">Z</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">])</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">([</span><span class="n">n</span><span class="o">.</span><span class="n">Z</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">products</span><span class="p">])</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="c1"># electron capture</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">lhs_other</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;e-&quot;</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">rhs_other</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;nu&quot;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># beta- decay</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">rhs_other</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;e-&quot;</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">rhs_other</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;nubar&quot;</span><span class="p">)</span>
+
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">weak_type</span> <span class="o">==</span> <span class="s2">&quot;electron_capture&quot;</span><span class="p">:</span>
+
+                <span class="c1"># we assume that all the tabular rates are electron capture for now</span>
+
+                <span class="c1"># we expect an electron on the left -- let&#39;s make sure</span>
+                <span class="c1"># the charge on the left should be +1 the charge on the right</span>
+                <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">([</span><span class="n">n</span><span class="o">.</span><span class="n">Z</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">])</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">([</span><span class="n">n</span><span class="o">.</span><span class="n">Z</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">products</span><span class="p">])</span> <span class="o">+</span> <span class="mi">1</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">lhs_other</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;e-&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">rhs_other</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;nu&quot;</span><span class="p">)</span>
+
+            <span class="k">elif</span> <span class="s2">&quot;_pos_&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">weak_type</span><span class="p">:</span>
+
+                <span class="c1"># we expect a positron on the right -- let&#39;s make sure</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">([</span><span class="n">n</span><span class="o">.</span><span class="n">Z</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">])</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">([</span><span class="n">n</span><span class="o">.</span><span class="n">Z</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">products</span><span class="p">])</span> <span class="o">+</span> <span class="mi">1</span>
+                <span class="k">except</span> <span class="ne">AssertionError</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">products</span><span class="p">)</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="p">)</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">weak_type</span><span class="p">)</span>
+                    <span class="k">raise</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">rhs_other</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;e+&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">rhs_other</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;nu&quot;</span><span class="p">)</span>
+
+            <span class="k">elif</span> <span class="s2">&quot;_neg_&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">weak_type</span><span class="p">:</span>
+
+                <span class="c1"># we expect an electron on the right -- let&#39;s make sure</span>
+                <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">([</span><span class="n">n</span><span class="o">.</span><span class="n">Z</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">])</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">([</span><span class="n">n</span><span class="o">.</span><span class="n">Z</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">products</span><span class="p">])</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">rhs_other</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;e-&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">rhs_other</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;nubar&quot;</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+
+                <span class="c1"># we need to figure out what the rate is.  We&#39;ll assume that it is</span>
+                <span class="c1"># not an electron capture</span>
+
+                <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">([</span><span class="n">n</span><span class="o">.</span><span class="n">Z</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">])</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">([</span><span class="n">n</span><span class="o">.</span><span class="n">Z</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">products</span><span class="p">])</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">rhs_other</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;e+&quot;</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">rhs_other</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;nu&quot;</span><span class="p">)</span>
+
+                <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">([</span><span class="n">n</span><span class="o">.</span><span class="n">Z</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">])</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">([</span><span class="n">n</span><span class="o">.</span><span class="n">Z</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">products</span><span class="p">]):</span>
+
+                    <span class="bp">self</span><span class="o">.</span><span class="n">rhs_other</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;e-&quot;</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">rhs_other</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;nubar&quot;</span><span class="p">)</span>
+
         <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">treactants</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">c</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rid</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">pretty_string</span> <span class="o">+=</span> <span class="sa">fr</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">pretty</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">n</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot; + &quot;</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">rid</span> <span class="o">+=</span> <span class="s2">&quot; + &quot;</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">pretty_string</span> <span class="o">+=</span> <span class="sa">r</span><span class="s2">&quot; + &quot;</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot; --&gt; &quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">lhs_other</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">lhs_other</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">o</span> <span class="o">==</span> <span class="s2">&quot;e-&quot;</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot; + e⁻&quot;</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">pretty_string</span> <span class="o">+=</span> <span class="sa">r</span><span class="s2">&quot; + \mathrm</span><span class="si">{e}</span><span class="s2">^-&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot; ⟶ &quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rid</span> <span class="o">+=</span> <span class="s2">&quot; --&gt; &quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pretty_string</span> <span class="o">+=</span> <span class="sa">r</span><span class="s2">&quot; \rightarrow &quot;</span>
 
         <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">products</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">p</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">p</span><span class="o">.</span><span class="n">c</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rid</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">p</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">pretty_string</span> <span class="o">+=</span> <span class="sa">fr</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">p</span><span class="o">.</span><span class="n">pretty</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">n</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">products</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot; + &quot;</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">rid</span> <span class="o">+=</span> <span class="s2">&quot; + &quot;</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">pretty_string</span> <span class="o">+=</span> <span class="sa">r</span><span class="s2">&quot; + &quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rhs_other</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rhs_other</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">o</span> <span class="o">==</span> <span class="s2">&quot;gamma&quot;</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot; + 𝛾&quot;</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">pretty_string</span> <span class="o">+=</span> <span class="sa">r</span><span class="s2">&quot;+ \gamma&quot;</span>
+                <span class="k">elif</span> <span class="n">o</span> <span class="o">==</span> <span class="s2">&quot;nu&quot;</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot; + 𝜈&quot;</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">pretty_string</span> <span class="o">+=</span> <span class="sa">r</span><span class="s2">&quot;+ \nu_e&quot;</span>
+                <span class="k">elif</span> <span class="n">o</span> <span class="o">==</span> <span class="s2">&quot;nubar&quot;</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot; + 𝜈&quot;</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">pretty_string</span> <span class="o">+=</span> <span class="sa">r</span><span class="s2">&quot;+ \bar{\nu}_e&quot;</span>
+                <span class="k">if</span> <span class="n">o</span> <span class="o">==</span> <span class="s2">&quot;e-&quot;</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot; + e⁻&quot;</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">pretty_string</span> <span class="o">+=</span> <span class="sa">r</span><span class="s2">&quot; + \mathrm</span><span class="si">{e}</span><span class="s2">^-&quot;</span>
+                <span class="k">if</span> <span class="n">o</span> <span class="o">==</span> <span class="s2">&quot;e+&quot;</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot; + e⁺&quot;</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">pretty_string</span> <span class="o">+=</span> <span class="sa">r</span><span class="s2">&quot; + \mathrm</span><span class="si">{e}</span><span class="s2">^+&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">pretty_string</span> <span class="o">+=</span> <span class="sa">r</span><span class="s2">&quot;$&quot;</span>
 
@@ -783,7 +898,7 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabular</span><span class="p">:</span>
             <span class="n">ssrc</span> <span class="o">=</span> <span class="s1">&#39;tabular&#39;</span>
 
-        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span><span class="si">}</span><span class="s1"> &lt;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">ssrc</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">sweak</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">srev</span><span class="si">}</span><span class="s1">&gt;&#39;</span></div>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rid</span><span class="si">}</span><span class="s1"> &lt;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">ssrc</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">sweak</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">srev</span><span class="si">}</span><span class="s1">&gt;&#39;</span></div>
 
 <div class="viewcode-block" id="Rate.heaviest"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.Rate.heaviest">[docs]</a>    <span class="k">def</span> <span class="nf">heaviest</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>

@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Example of integrating a network &mdash; pynucastro 1.6.0.post90+g10edd0a documentation</title>
+  <title>Example of integrating a network &mdash; pynucastro 1.6.0.post91+gfc9c700 documentation</title>
       <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -409,7 +409,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-c13 + p --&gt; n14
+C13 + p ⟶ N14 + 𝛾
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
@@ -797,14 +797,14 @@ def rhs_eq(t, Y, rho, T):
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
 <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
 
-<span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">cno</span><span class="o">.</span><span class="n">nnuc</span><span class="p">):</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">sol</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">sol</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="n">n</span><span class="p">,:]</span> <span class="o">*</span> <span class="n">cno</span><span class="o">.</span><span class="n">A</span><span class="p">[</span><span class="n">n</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;X(</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">cno</span><span class="o">.</span><span class="n">nnuc</span><span class="p">):</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">sol</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">sol</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span> <span class="o">*</span> <span class="n">cno</span><span class="o">.</span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;X(</span><span class="si">{</span><span class="n">cno</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
 
 <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="mf">1.e10</span><span class="p">,</span> <span class="mf">1.e20</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mf">1.e-8</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
@@ -819,14 +819,6 @@ def rhs_eq(t, Y, rho, T):
 </div>
 <div class="output_area docutils container">
 <img alt="_images/pynucastro-integration_25_0.png" src="_images/pynucastro-integration_25_0.png" />
-</div>
-</div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>
-</pre></div>
 </div>
 </div>
 <script type="application/vnd.jupyter.widget-state+json">
