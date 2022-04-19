@@ -5,12 +5,19 @@ Classes and methods to interface with files storing rate data.
 import os
 import re
 
+from scipy.constants import physical_constants
 from pynucastro.nucdata import UnidentifiedElement, PeriodicTable, PartitionFunctionCollection, BindingTable, SpinTable
+from pynucastro.nucdata.mass_nuclide import MassTable
 
 _pynucastro_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 _pynucastro_rates_dir = os.path.join(_pynucastro_dir, 'library')
 _pynucastro_tabular_dir = os.path.join(_pynucastro_rates_dir, 'tabular')
 
+#set the atomic mass unit constant in MeV
+m_u, _, _ = physical_constants['atomic mass constant energy equivalent in MeV']
+
+#read the mass excess table once and store it at the module-level
+_mass_table = MassTable()
 
 #read the spin table once and store it at the module-level
 _spin_table = SpinTable(set_double_gs=False)
@@ -18,7 +25,7 @@ _spin_table = SpinTable(set_double_gs=False)
 # read the binding energy table once and store it at the module-level
 _binding_table = BindingTable()
 
-
+# read the partition function table once and store it at the module-level
 _pcollection = PartitionFunctionCollection(use_high_temperatures=True, use_set='frdm')
 
 
@@ -41,6 +48,7 @@ class Nucleus:
     :var caps_name:       capitalized short species name (e.g. "He4")
     :var el:              element name (e.g. "he")
     :var pretty:          LaTeX formatted version of the nucleus name
+    :var A_nuc:           Nuclear Mass in amu
 
     """
     _cache = {}
@@ -140,6 +148,13 @@ class Nucleus:
         except NotImplementedError:
             # the binding energy table doesn't know about this nucleus
             self.nucbind = None
+
+        # Now we will define the Nuclear Mass,
+
+        try:
+            self.A_nuc = float(self.A) + _mass_table.get_mass_diff(self.short_spec_name).dm / m_u
+        except NotImplementedError:
+            self.A_nuc = None
 
     @classmethod
     def from_cache(cls, name, dummy=False):

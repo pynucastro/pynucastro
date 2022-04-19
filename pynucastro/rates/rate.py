@@ -1,8 +1,7 @@
 """
 Classes and methods to interface with files storing rate data.
 """
-from astropy import constants as const
-from astropy.units import cds
+from scipy.constants import physical_constants
 import os
 import re
 import io
@@ -17,11 +16,12 @@ try:
 except ImportError:
     from numba import jitclass
 
-hbar = const.hbar.value
-amu = const.u.value
-k_B_mev_k = const.k_B.to(cds.eV / cds.K).value / (1.0e6)
-k_B = const.k_B.value
-N_A = const.N_A.value
+hbar, _, _ = physical_constants['reduced Planck constant']
+amu, _, _  = physical_constants['atomic mass constant']
+k_B_mev_k, _, _ = physical_constants['Boltzmann constant in eV/K']
+k_B_mev_k /= 1.0e6
+k_B, _, _ = physical_constants['Boltzmann constant']
+N_a, _, _ = physical_constants['Avogadro constant']
 
 _pynucastro_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 _pynucastro_rates_dir = os.path.join(_pynucastro_dir, 'library')
@@ -881,16 +881,18 @@ class DerivedRate(Rate):
             prefactor = 0.0
 
             if len(rate.products) == 1:
-                prefactor = -np.log(N_A)
+                prefactor = -np.log(N_a)
 
             for nucr in rate.reactants:
-                prefactor += np.log(nucr.spin_states) + 3.0*np.log(nucr.A)/2.0
+                prefactor += np.log(nucr.spin_states) + 1.5*np.log(nucr.A_nuc)
             for nucp in rate.products:
-                prefactor += -np.log(nucp.spin_states) - 3.0*np.log(nucp.A)/2.0
+                prefactor += -np.log(nucp.spin_states) - 1.5*np.log(nucp.A_nuc)
 
-            F = (amu * k_B * 1.0e5 / (2.0*np.pi*hbar**2))**(1.5*(len(rate.reactants) - len(rate.products)))
-
-            prefactor += np.log(F)
+            if len(rate.reactants) == len(rate.products):
+                prefactor += 0.0
+            else:
+                F = (amu * k_B * 1.0e5 / (2.0*np.pi*hbar**2))**(1.5*(len(rate.reactants) - len(rate.products)))
+                prefactor += np.log(F)
 
             a_rev = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
             a_rev[0] = prefactor + a[0]
