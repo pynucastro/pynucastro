@@ -235,15 +235,15 @@ class TestDerivedRate:
         reaction type.
         """
 
-        specs = rates.RateFilter(reactants=['ar37', 'n'], products=['s34', 'a'])
-        specs_inv = rates.RateFilter(reactants=['s34', 'a'], products=['ar37', 'n'])
+        specs = rates.RateFilter(reactants=['s34', 'a'], products=['ar37', 'n'])
+        specs_inv = rates.RateFilter(reactants=['ar37', 'n'], products=['s34', 'a'])
 
-        ar37_na_s34 = self.reaclib_data.filter(filter_spec=specs).get_rates()[0]
-        s34_an_ar37_reaclib = self.reaclib_data.filter(filter_spec=specs_inv).get_rates()[0]
+        s34_an_ar37 = self.reaclib_data.filter(filter_spec=specs).get_rates()[0]
+        ar37_na_s34_reaclib = self.reaclib_data.filter(filter_spec=specs_inv).get_rates()[0]
 
-        s34_an_ar37_derived = rates.DerivedRate(rate=ar37_na_s34)
+        ar37_na_s34_derived = rates.DerivedRate(rate=s34_an_ar37)
 
-        assert s34_an_ar37_reaclib.eval(T=2.0e9) == approx(s34_an_ar37_derived.eval(T=2.0e9), rel=2.4e-5)
+        assert ar37_na_s34_reaclib.eval(T=2.0e9) == approx(ar37_na_s34_derived.eval(T=2.0e9), rel=2.4e-5)
 
     def test_ar35_pg_k36(self):
         """
