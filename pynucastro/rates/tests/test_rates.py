@@ -204,14 +204,14 @@ class TestRate:
         assert self.rate2.lightest() == Nucleus("n")
         assert self.rate2.heaviest() == Nucleus("t")
 
-
+        
 class TestDerivedRate:
-
+  
     @classmethod
     def setup_class(cls):
         """ this is run once for each class before any tests """
         pass
-
+  
     @classmethod
     def teardown_class(cls):
         """ this is run once for each class before any tests """
@@ -264,6 +264,40 @@ class TestDerivedRate:
         k36_gp_ar35_derived = rates.DerivedRate(rate=ar35_pg_k36)
 
         assert k36_gp_ar35_reaclib.eval(T=2.0e9) == approx(k36_gp_ar35_derived.eval(T=2.0e9), rel=1.7e-5)
+
+        
+class TestWeakRates:
+          
+    @classmethod
+    def setup_class(cls):
+        """ this is run once for each class before any tests """
+        pass
+      
+    def teardown_class(cls):
+        """ this is run once for each class after all tests """
+        pass
+
+    def setup_method(self):
+        """ this is run before each test """
+
+        self.rate1 = rates.Rate("o18--f18-toki")
+        self.rate2 = rates.Rate("na22--ne22-toki")
+
+    def teardown_method(self):
+        """ this is run after each test """
+        pass
+
+    def test_reactants(self):
+
+        assert len(self.rate1.reactants) == 1 and len(self.rate1.products) == 1
+        assert self.rate1.products[0] == Nucleus("f18")
+        assert self.rate1.reactants[0] == Nucleus("o18")
+        assert self.rate1.eval(1.e10, 1.e7) == approx(3.990249e-11)
+
+        assert len(self.rate2.reactants) == 1 and len(self.rate2.products) == 1
+        assert self.rate2.products[0] == Nucleus("ne22")
+        assert self.rate2.reactants[0] == Nucleus("na22")
+        assert self.rate2.eval(1.e9, 1.e6) == approx(1.387075e-05)
 
 
 class TestModify:
