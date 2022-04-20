@@ -204,14 +204,14 @@ class TestRate:
         assert self.rate2.lightest() == Nucleus("n")
         assert self.rate2.heaviest() == Nucleus("t")
 
-        
+
 class TestDerivedRate:
-  
+
     @classmethod
     def setup_class(cls):
         """ this is run once for each class before any tests """
         pass
-  
+
     @classmethod
     def teardown_class(cls):
         """ this is run once for each class before any tests """
@@ -265,14 +265,14 @@ class TestDerivedRate:
 
         assert k36_gp_ar35_reaclib.eval(T=2.0e9) == approx(k36_gp_ar35_derived.eval(T=2.0e9), rel=1.7e-5)
 
-        
+
 class TestWeakRates:
-          
+
     @classmethod
     def setup_class(cls):
         """ this is run once for each class before any tests """
         pass
-      
+
     def teardown_class(cls):
         """ this is run once for each class after all tests """
         pass

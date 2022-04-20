@@ -1,5 +1,3 @@
-import os
-import numpy
 import argparse
 
 #os.path.dirname(os.path.realpath(__file__))
@@ -7,6 +5,7 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument('input', type=str, help='Name of the input table')
 parser.add_argument('-o', '--output', type=str, default='mass_excess2020', help='Name of the formatted mass escess table')
+
 
 args = parser.parse_args()
 
@@ -18,8 +17,8 @@ for _ in range(25):
 fout = open(args.output+'.txt', 'w')
 fout.write('# Mass difference evaluation table: {} \n'.format(args.output))
 fout.write('# only ground states are tabulated \n')
-fout.write('\n')
-fout.write('')
+fout.write('#\n')
+fout.write('#\n')
 fout.write('==A== {:18s} ==Z== {:10s} ======dm===== \n'.format(' ', ' '))
 
 for line in finput:
@@ -27,7 +26,7 @@ for line in finput:
     isomer_string = line[7]
     isomer = int(isomer_string)
 
-    if isomer !=0:
+    if isomer != 0:
         continue
 
     A_string = line[0:3].strip()
@@ -39,7 +38,7 @@ for line in finput:
 
     #dm is measured in keV, but we want MeV
     dm = float(dm_string)/1.0e3
-    fout.write( '{:3d} {:20s} {:3d} {:10s} {:15.6} \n'.format(A, ' ', Z, ' ', dm))
+    fout.write('{:3d} {:20s} {:3d} {:10s} {:15.6} \n'.format(A, ' ', Z, ' ', dm))
 
 finput.close()
 fout.close()

@@ -5,6 +5,7 @@ filename = 'mass_excess2020.txt'
 dir_nucdata = os.path.dirname(os.path.realpath(__file__))
 dir_mass_data = os.path.join(os.path.join(dir_nucdata, 'AtomicMassEvaluation'), filename)
 
+
 class MassNuclide:
 
     def __init__(self, a, z, dm):
@@ -25,6 +26,7 @@ class MassNuclide:
     def __eq__(self, other):
 
         return self.a == other.a and self.z == self.z
+
 
 class MassTable:
 

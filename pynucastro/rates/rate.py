@@ -17,7 +17,7 @@ except ImportError:
     from numba import jitclass
 
 hbar, _, _ = physical_constants['reduced Planck constant']
-amu, _, _  = physical_constants['atomic mass constant']
+amu, _, _ = physical_constants['atomic mass constant']
 k_B_mev_k, _, _ = physical_constants['Boltzmann constant in eV/K']
 k_B_mev_k /= 1.0e6
 k_B, _, _ = physical_constants['Boltzmann constant']
