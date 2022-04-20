@@ -881,7 +881,7 @@ class Rate:
         """ evauate the reaction rate for temperature T """
 
         if self.tabular:
-            data = self.tabular_data_table.astype(np.float)
+            data = self.tabular_data_table.astype(float)
             # find the nearest value of T and rhoY in the data table
             T_nearest = (data[:, 1])[np.abs((data[:, 1]) - T).argmin()]
             rhoY_nearest = (data[:, 0])[np.abs((data[:, 0]) - rhoY).argmin()]
