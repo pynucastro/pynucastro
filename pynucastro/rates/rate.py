@@ -884,9 +884,9 @@ class DerivedRate(Rate):
                 prefactor = -np.log(N_a)
 
             for nucr in rate.reactants:
-                prefactor += np.log(nucr.spin_states) + 1.5*np.log(nucr.A_nuc)
+                prefactor += np.log(nucr.spin_states) + 1.5*np.log(nucr.A)
             for nucp in rate.products:
-                prefactor += -np.log(nucp.spin_states) - 1.5*np.log(nucp.A_nuc)
+                prefactor += -np.log(nucp.spin_states) - 1.5*np.log(nucp.A)
 
             if len(rate.reactants) == len(rate.products):
                 prefactor += 0.0
