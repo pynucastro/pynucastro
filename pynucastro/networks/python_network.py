@@ -17,7 +17,7 @@ class PythonNetwork(RateCollection):
         rate is an object of class Rate
         """
 
-        tstring = f"# {rate.string}\n"
+        tstring = f"# {rate.rid}\n"
         tstring += f"{prefix} = 0.0\n\n"
 
         for s in rate.sets:

@@ -66,7 +66,7 @@ class Nucleus:
             self.el = "h"
             self.A = 1
             self.short_spec_name = "h1"
-            self.caps_name = "H1"
+            self.caps_name = "p"
         elif name == "d":
             self.el = "h"
             self.A = 2
@@ -93,7 +93,7 @@ class Nucleus:
             self.short_spec_name = "n"
             self.spec_name = "neutron"
             self.pretty = fr"\mathrm{{{self.el}}}"
-            self.caps_name = "N"
+            self.caps_name = "n"
         else:
             e = re.match(r"([a-zA-Z]*)(\d*)", name)
             self.el = e.group(1).title()  # chemical symbol
@@ -170,8 +170,12 @@ class Nucleus:
         return hash((self.Z, self.A))
 
     def c(self):
-        """return the name capitalized"""
+        """return the capitalized-style name"""
         return self.caps_name
+
+    def cindex(self):
+        """return the name for C++ indexing"""
+        return self.short_spec_name.capitalize()
 
     def __eq__(self, other):
         if isinstance(other, Nucleus):
