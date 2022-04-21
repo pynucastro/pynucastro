@@ -10,3 +10,4 @@ from .binding_table import BindingTable
 from .elements import Element, UnidentifiedElement, PeriodicTable
 from .partition_function import PartitionFunction, PartitionFunctionTable, PartitionFunctionCollection
 from .spin_nuclide import SpinNuclide, SpinTable
+from .mass_nuclide import MassNuclide, MassTable
