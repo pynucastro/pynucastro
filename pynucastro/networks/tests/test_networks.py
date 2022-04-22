@@ -1,4 +1,4 @@
-# unit tests for rates
+# unit tests for networks
 import pynucastro.networks as networks
 from pynucastro.nucleus import Nucleus
 

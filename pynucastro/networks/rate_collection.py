@@ -114,6 +114,13 @@ class ScreeningPair:
     def add_rate(self, rate):
         self.rates.append(rate)
 
+    def __str__(self):
+        ostr = f"screening for {self.n1} + {self.n2}\n"
+        ostr += "rates:\n"
+        for r in self.rates:
+            ostr += f"  {r}\n"
+        return ostr
+
     def __eq__(self, other):
         """all we care about is whether the names are the same -- that conveys
         what the reaction is"""
