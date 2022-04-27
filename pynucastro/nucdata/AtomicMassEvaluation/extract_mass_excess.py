@@ -1,5 +1,13 @@
 import argparse
 
+"""
+This module extract the (A,Z, dm) tuples from `nubase_3.mas20.txt`, where:
+
+:var A: is the atomic weight measured in atomic mass units.
+:var Z: is the atomic number.
+:var dm: is the mass difference A_{nuc}-A.
+"""
+
 #os.path.dirname(os.path.realpath(__file__))
 
 parser = argparse.ArgumentParser()

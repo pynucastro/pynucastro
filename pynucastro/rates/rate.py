@@ -983,6 +983,10 @@ class Rate:
 
 
 class DerivedRate(Rate):
+    """
+    This class is a derived class from `Rate` with the purpose of computing the inverse rate
+    by the application of detailed balance to the forward reactions.
+    """
 
     def __init__(self, rate):
 
@@ -1035,6 +1039,17 @@ class DerivedRate(Rate):
 
         super().__init__(rfile=rate.rfile, rfile_path=rate.rfile_path, chapter=rate.chapter, original_source=rate.original_source,
                 reactants=rate.products, products=rate.reactants, sets=derived_sets, labelprops=rate.labelprops, Q=-rate.Q)
+
+    def set_atomic_nuclear_weight(A):
+        """
+        If `set__atomic_nuclear_weight()` is called, then we will overwrite self.eval(T)
+        """
+
+        pass
+
+    def set_partition_function(self):
+
+        pass
 
 
 class RatePair:

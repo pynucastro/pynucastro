@@ -26,13 +26,13 @@ def num_states(spin_str_element):
 
     Parameters
     ----------
-    spin_str_element: This string class element contains the information
+    :var spin_str_element: This string class element contains the information
                       in [88:102], about spin, parity, and
                       isospin charge.
 
     Returns:
     --------
-    states: this integer variable contains the number of states associated
+    :var states: this integer variable contains the number of states associated
             to the `spin_str_element` string
 
     """

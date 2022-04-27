@@ -7,6 +7,17 @@ dir_mass_data = os.path.join(os.path.join(dir_nucdata, 'AtomicMassEvaluation'), 
 
 
 class MassNuclide:
+    """
+    The purpose of this class is to contain the nuclei information and create an instance
+    represented by a string that contains the nuclide and the atomic weight A number, for
+    example, o16, to the Oxygen-16 nuclei.
+
+    The variables required to construct MassNuclide class instance are:
+
+    :var a:        The Atomic weight, measured in atomic number units.
+    :var z:        The Atomic Number.
+    :var dm:       The mass difference, measured in MeV.
+    """
 
     def __init__(self, a, z, dm):
         self.a = a
@@ -29,6 +40,20 @@ class MassNuclide:
 
 
 class MassTable:
+    """
+    The purpose of this class is to:
+
+    a) Create a dictionary between MassNuclide objects, previously constructed
+       from the table mass_excess2020.txt, and their mass excess A_nuc - A
+       measured in MeV.
+
+    b) Parse the information of the previously defined dictionary to the Nucleus
+       class.
+
+    The only required variable to construct an instance of this class is : var filename:
+    that contains the .txt table file with the nuclei and their mass excess. If this
+    variable is not provided, then mass_excess2020.txt is considered by default.
+    """
 
     def __init__(self, filename=None):
 
