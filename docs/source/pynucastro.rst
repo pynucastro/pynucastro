@@ -14,4 +14,5 @@ Subpackages
 
    pynucastro.networks
    pynucastro.nucdata
+   pynucastro.nucleus
    pynucastro.rates
