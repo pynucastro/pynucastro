@@ -114,6 +114,13 @@ class ScreeningPair:
     def add_rate(self, rate):
         self.rates.append(rate)
 
+    def __str__(self):
+        ostr = f"screening for {self.n1} + {self.n2}\n"
+        ostr += "rates:\n"
+        for r in self.rates:
+            ostr += f"  {r}\n"
+        return ostr
+
     def __eq__(self, other):
         """all we care about is whether the names are the same -- that conveys
         what the reaction is"""
@@ -550,7 +557,7 @@ class RateCollection:
              node_size=1000, node_font_size=13, node_color="#A0CBE2", node_shape="o",
              curved_edges=False,
              N_range=None, Z_range=None, rotated=False,
-             always_show_p=False, always_show_alpha=False, hide_xalpha=False,\
+             always_show_p=False, always_show_alpha=False, hide_xalpha=False,
              nucleus_filter_function=None, rate_filter_function=None):
         """Make a plot of the network structure showing the links between
         nuclei.  If a full set of thermodymamic conditions are

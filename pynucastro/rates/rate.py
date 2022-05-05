@@ -221,6 +221,12 @@ class Rate:
 
         self.Q = Q
 
+        # some rates will have no nuclei particles (e.g. gamma) on the left or
+        # right -- we'll try to infer those here
+
+        self.lhs_other = []
+        self.rhs_other = []
+
         if type(rfile) == str:
             # read in the file, parse the different sets and store them as
             # SingleSet objects in sets[]
@@ -642,7 +648,12 @@ class Rate:
 
     def _set_print_representation(self):
         """ compose the string representations of this Rate. """
+
+        # string is output to the terminal, rid is used as a dict key,
+        # and pretty_string is latex
+
         self.string = ""
+        self.rid = ""
         self.pretty_string = r"$"
 
         # put p, n, and alpha second
@@ -653,22 +664,126 @@ class Rate:
             else:
                 treactants.append(n)
 
+        # figure out if there are any non-nuclei present
+        # for the moment, we just handle strong rates
+
+        if not self.weak and not self.tabular:
+            # there should be the same number of protons on each side and
+            # the same number of neutrons on each side
+            assert np.sum([n.Z for n in self.reactants]) == np.sum([n.Z for n in self.products])
+            assert np.sum([n.A for n in self.reactants]) == np.sum([n.A for n in self.products])
+
+            if len(self.products) == 1:
+                self.rhs_other.append("gamma")
+
+        else:
+
+            if self.tabular:
+
+                # these are either electron capture or beta- decay
+
+                if np.sum([n.Z for n in self.reactants]) == np.sum([n.Z for n in self.products]) + 1:
+                    # electron capture
+                    self.lhs_other.append("e-")
+                    self.rhs_other.append("nu")
+                else:
+                    # beta- decay
+                    self.rhs_other.append("e-")
+                    self.rhs_other.append("nubar")
+
+            elif self.weak_type == "electron_capture":
+
+                # we assume that all the tabular rates are electron capture for now
+
+                # we expect an electron on the left -- let's make sure
+                # the charge on the left should be +1 the charge on the right
+                assert np.sum([n.Z for n in self.reactants]) == np.sum([n.Z for n in self.products]) + 1
+
+                self.lhs_other.append("e-")
+                self.rhs_other.append("nu")
+
+            elif "_pos_" in self.weak_type:
+
+                # we expect a positron on the right -- let's make sure
+                try:
+                    assert np.sum([n.Z for n in self.reactants]) == np.sum([n.Z for n in self.products]) + 1
+                except AssertionError:
+                    print(self.reactants)
+                    print(self.products)
+                    print(self.label)
+                    print(self.weak_type)
+                    raise
+
+                self.rhs_other.append("e+")
+                self.rhs_other.append("nu")
+
+            elif "_neg_" in self.weak_type:
+
+                # we expect an electron on the right -- let's make sure
+                assert np.sum([n.Z for n in self.reactants]) + 1 == np.sum([n.Z for n in self.products])
+
+                self.rhs_other.append("e-")
+                self.rhs_other.append("nubar")
+
+            else:
+
+                # we need to figure out what the rate is.  We'll assume that it is
+                # not an electron capture
+
+                if np.sum([n.Z for n in self.reactants]) == np.sum([n.Z for n in self.products]) + 1:
+                    self.rhs_other.append("e+")
+                    self.rhs_other.append("nu")
+
+                elif np.sum([n.Z for n in self.reactants]) + 1 == np.sum([n.Z for n in self.products]):
+
+                    self.rhs_other.append("e-")
+                    self.rhs_other.append("nubar")
+
         for n, r in enumerate(treactants):
-            self.string += f"{r}"
+            self.string += f"{r.c()}"
+            self.rid += f"{r}"
             self.pretty_string += fr"{r.pretty}"
             if not n == len(self.reactants)-1:
                 self.string += " + "
+                self.rid += " + "
                 self.pretty_string += r" + "
 
-        self.string += " --> "
+        if self.lhs_other:
+            for o in self.lhs_other:
+                if o == "e-":
+                    self.string += " + e⁻"
+                    self.pretty_string += r" + \mathrm{e}^-"
+
+        self.string += " ⟶ "
+        self.rid += " --> "
         self.pretty_string += r" \rightarrow "
 
         for n, p in enumerate(self.products):
-            self.string += f"{p}"
+            self.string += f"{p.c()}"
+            self.rid += f"{p}"
             self.pretty_string += fr"{p.pretty}"
             if not n == len(self.products)-1:
                 self.string += " + "
+                self.rid += " + "
                 self.pretty_string += r" + "
+
+        if self.rhs_other:
+            for o in self.rhs_other:
+                if o == "gamma":
+                    self.string += " + 𝛾"
+                    self.pretty_string += r"+ \gamma"
+                elif o == "nu":
+                    self.string += " + 𝜈"
+                    self.pretty_string += r"+ \nu_e"
+                elif o == "nubar":
+                    self.string += " + 𝜈"
+                    self.pretty_string += r"+ \bar{\nu}_e"
+                if o == "e-":
+                    self.string += " + e⁻"
+                    self.pretty_string += r" + \mathrm{e}^-"
+                if o == "e+":
+                    self.string += " + e⁺"
+                    self.pretty_string += r" + \mathrm{e}^+"
 
         self.pretty_string += r"$"
 
@@ -701,7 +816,7 @@ class Rate:
         if self.tabular:
             ssrc = 'tabular'
 
-        return f'{self.__repr__()} <{self.label.strip()}_{ssrc}_{sweak}_{srev}>'
+        return f'{self.rid} <{self.label.strip()}_{ssrc}_{sweak}_{srev}>'
 
     def heaviest(self):
         """
