@@ -1,6 +1,9 @@
 """A collection of classes and methods to deal with collections of
 rates that together make up a network."""
 
+# disable a complaint about SymLogNorm
+#pylint: disable=redundant-keyword-arg
+
 # Common Imports
 import warnings
 import functools
@@ -16,6 +19,8 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from matplotlib.ticker import MaxNLocator
+from matplotlib.colors import SymLogNorm
+from mpl_toolkits.axes_grid1 import ImageGrid
 import networkx as nx
 
 # Import Rate
@@ -379,6 +384,23 @@ class RateCollection:
             act[nuc] = sum(produced) + sum(consumed)
 
         return act
+
+    def _get_network_chart(self, rho, T, composition):
+        """a network chart is a dict, keyed by rate that holds a list of tuples (Nucleus, ydot)"""
+
+        rvals = self.evaluate_rates(rho, T, composition)
+
+        nc = {}
+
+        for rate in rvals:
+            nucs = []
+            for n in set(rate.reactants):
+                nucs.append((n, -rate.reactants.count(n) * rvals[rate]))
+            for n in set(rate.products):
+                nucs.append((n, rate.products.count(n) * rvals[rate]))
+            nc[rate] = nucs
+
+        return nc
 
     def network_overview(self):
         """ return a verbose network overview """
@@ -826,6 +848,105 @@ class RateCollection:
         else:
             plt.tight_layout()
             plt.savefig(outfile, dpi=dpi)
+
+
+    def plot_network_chart(self, outfile=None, rho=None, T=None, comp=None,
+                           size=(800, 800), dpi=100, force_one_column=False):
+
+        nc = self._get_network_chart(rho, T, comp)
+
+        # find the limits
+        _tmp = [nc[r] for r in self.rates]
+
+        _ydot = []
+        for r in self.rates:
+            for _, y in nc[r]:
+                _ydot.append(y)
+
+        _ydot = np.asarray(_ydot)
+        valid_max = np.abs(_ydot[_ydot != 0]).max()
+        valid_min = np.abs(_ydot[_ydot != 0]).min()
+
+        norm = SymLogNorm(valid_max/1.e15, vmin=-valid_max, vmax=valid_max)
+
+        # if there are a lot of rates, we split the network chart into
+        # two side-by-side panes, with the first half of the rates on
+        # the left and the second half of the rates on the right
+
+        # how many panes?
+
+        if len(self.rates) > 3 * len(self.unique_nuclei):
+            npanes = 2
+        else:
+            npanes = 1
+
+        if force_one_column:
+            npanes = 1
+
+        fig, _ax = plt.subplots(1, npanes, constrained_layout=True)
+
+        fig.set_size_inches(size[0]/dpi, size[1]/dpi)
+
+
+        if npanes == 1:
+            drate = len(self.rates)
+        else:
+            drate = (len(self.rates) + 1) // 2
+
+        _rates = sorted(self.rates)
+
+        for ipane in range(npanes):
+
+            if npanes == 2:
+                ax = _ax[ipane]
+            else:
+                ax = _ax
+
+            istart = ipane * drate
+            iend = min((ipane + 1) * drate - 1, len(self.rates)-1)
+
+            nrates = iend - istart + 1
+
+            data = np.zeros((nrates, len(self.unique_nuclei)), dtype=np.float64)
+
+            # loop over rates -- each rate is a line in a grid of nuclei vs rate
+
+            #ax = grid[ipane]
+
+            for irate, r in enumerate(_rates):
+                if istart <= irate <= iend:
+                    irow = irate - istart
+                    for n, ydot in nc[r]:
+                        icol = self.unique_nuclei.index(n)
+                        assert data[irow, icol] == 0.0
+                        data[irow, icol] = ydot
+
+            # each pane has all the nuclei
+            ax.set_xticks(np.arange(len(self.unique_nuclei)), labels=[f"{n}" for n in self.unique_nuclei], rotation=90)
+
+            # each pane only has its subset of rates
+            ax.set_yticks(np.arange(nrates), labels=[f"{r}" for irate, r in enumerate(_rates) if istart <= irate <= iend])
+
+            im = ax.imshow(data, norm=norm, cmap=plt.cm.bwr)
+
+            ax.set_aspect("equal") #, "datalim")
+
+            # Turn spines off and create white grid.
+            ax.spines[:].set_visible(False)
+
+            ax.set_xticks(np.arange(data.shape[1]+1)-.5, minor=True)
+            ax.set_yticks(np.arange(data.shape[0]+1)-.5, minor=True)
+            ax.grid(which="minor", color="w", linestyle='-', linewidth=3)
+            ax.tick_params(which="minor", bottom=False, left=False)
+
+        if npanes == 1:
+            fig.colorbar(im, ax=ax, orientation="horizontal", shrink=0.5)
+        else:
+            fig.colorbar(im, ax=ax, orientation="vertical", shrink=0.25)
+
+        if outfile is not None:
+            fig.savefig(outfile, bbox_inches="tight")
+
 
     @staticmethod
     def _safelog(arr, small):
