@@ -16,3 +16,4 @@ Subpackages
    pynucastro.nucdata
    pynucastro.nucleus
    pynucastro.rates
+   pynucastro.screening
