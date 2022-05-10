@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pynucastro.screening.screen &mdash; pynucastro 1.6.0.post96+g8573be8 documentation</title>
+      <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> pynucastro
+          </a>
+              <div class="version">
+                1.6
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Overview of pynucastro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pynucastro-examples.html">pynucastro usage examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../plot-types.html">Plotting Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../plot-types.html#Network-Chart">Network Chart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pynucastro-integration.html">Example of integrating a network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../library-examples.html">Selecting Rates from a Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modify-example.html">Modifying Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../validate-example.html">Checking your network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../electron-captures.html">Combining ReacLib Rates with Electron Capture Tables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../partition-function.html">Reverse Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../networks.html">Creating Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../sources.html">Third Party Data</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">pynucastro</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      <li>pynucastro.screening.screen</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pynucastro.screening.screen</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Python implementations of screening routines.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">constants</span>
+
+<span class="kn">from</span> <span class="nn">pynucastro.nucleus</span> <span class="kn">import</span> <span class="n">Nucleus</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;PlasmaState&quot;</span><span class="p">,</span> <span class="s2">&quot;ScreenFactors&quot;</span><span class="p">,</span> <span class="s2">&quot;chugunov_2007&quot;</span><span class="p">,</span> <span class="s2">&quot;chugunov_2009&quot;</span><span class="p">]</span>
+
+
+<span class="n">amu</span> <span class="o">=</span> <span class="n">constants</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="s2">&quot;atomic mass constant&quot;</span><span class="p">)</span> <span class="o">/</span> <span class="n">constants</span><span class="o">.</span><span class="n">gram</span>  <span class="c1"># kg to g</span>
+<span class="n">q_e</span> <span class="o">=</span> <span class="n">constants</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="s2">&quot;elementary charge&quot;</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">constants</span><span class="o">.</span><span class="n">c</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span> <span class="o">/</span> <span class="mi">10</span>  <span class="c1"># C to statC (esu)</span>
+<span class="n">hbar</span> <span class="o">=</span> <span class="n">constants</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="s2">&quot;reduced Planck constant&quot;</span><span class="p">)</span> <span class="o">/</span> <span class="n">constants</span><span class="o">.</span><span class="n">erg</span>  <span class="c1"># J*s to erg*s</span>
+<span class="n">k_B</span> <span class="o">=</span> <span class="n">constants</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="s2">&quot;Boltzmann constant&quot;</span><span class="p">)</span> <span class="o">/</span> <span class="n">constants</span><span class="o">.</span><span class="n">erg</span>  <span class="c1"># J/K to erg/K</span>
+<span class="n">n_A</span> <span class="o">=</span> <span class="n">constants</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="s2">&quot;Avogadro constant&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="PlasmaState"><a class="viewcode-back" href="../../../pynucastro.screening.html#pynucastro.screening.screen.PlasmaState">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">PlasmaState</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Stores precomputed values that are reused for all screening correction</span>
+<span class="sd">    factor calculations.</span>
+
+<span class="sd">    :var temp:        temperature in K</span>
+<span class="sd">    :var dens:        density in g/cm^3</span>
+<span class="sd">    :var abar:        average atomic mass</span>
+<span class="sd">    :var zbar:        average ion charge</span>
+<span class="sd">    :var z2bar:       average (ion charge)^2</span>
+<span class="sd">    :var n_e:         electron number density</span>
+<span class="sd">    :var gamma_e_fac: temperature-independent part of Gamma_e</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">temp</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">dens</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">abar</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">zbar</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">z2bar</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">n_e</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">gamma_e_fac</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Average mass and total number density</span>
+        <span class="n">mbar</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">abar</span> <span class="o">*</span> <span class="n">amu</span>
+        <span class="n">ntot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dens</span> <span class="o">/</span> <span class="n">mbar</span>
+        <span class="c1"># Electron number density</span>
+        <span class="c1"># zbar * ntot works out to sum(z[i] * n[i]), after cancelling terms</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_e</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">zbar</span> <span class="o">*</span> <span class="n">ntot</span>
+
+        <span class="c1"># temperature-independent part of Gamma_e, from Chugunov 2009 eq. 6</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gamma_e_fac</span> <span class="o">=</span> <span class="n">q_e</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="n">k_B</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">3</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_e</span><span class="p">)</span>
+
+<div class="viewcode-block" id="PlasmaState.fill"><a class="viewcode-back" href="../../../pynucastro.screening.html#pynucastro.screening.screen.PlasmaState.fill">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">fill</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">temp</span><span class="p">,</span> <span class="n">dens</span><span class="p">,</span> <span class="n">molar_fractions</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Construct a PlasmaState object from simulation data.</span>
+
+<span class="sd">        :param temp:            temperature in K</span>
+<span class="sd">        :param dens:            density in g/cm^3</span>
+<span class="sd">        :param molar_fractions: dictionary of molar abundances for each ion,</span>
+<span class="sd">                                as returned by :meth:`.Composition.get_molar`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ytot</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">y</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">molar_fractions</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+        <span class="n">abar</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">ytot</span>
+
+        <span class="n">zbar</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">Z</span> <span class="o">*</span> <span class="n">y</span> <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">molar_fractions</span><span class="o">.</span><span class="n">items</span><span class="p">())</span> <span class="o">/</span> <span class="n">ytot</span>
+        <span class="n">z2bar</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">Z</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">y</span> <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">molar_fractions</span><span class="o">.</span><span class="n">items</span><span class="p">())</span> <span class="o">/</span> <span class="n">ytot</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">temp</span><span class="p">,</span> <span class="n">dens</span><span class="p">,</span> <span class="n">abar</span><span class="p">,</span> <span class="n">zbar</span><span class="p">,</span> <span class="n">z2bar</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="ScreenFactors"><a class="viewcode-back" href="../../../pynucastro.screening.html#pynucastro.screening.screen.ScreenFactors">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">ScreenFactors</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Stores values that will be used to calculate the screening correction factor</span>
+<span class="sd">    for a specific pair of nuclei.</span>
+
+<span class="sd">    :var n1: first nucleus</span>
+<span class="sd">    :var n2: second nucleus</span>
+<span class="sd">    :var aznut: combination of a1, z1, a2, z2 raised to 1/3 power</span>
+<span class="sd">    :var ztilde: effective ion radius factor for a MCP</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">n1</span><span class="p">:</span> <span class="n">Nucleus</span>
+    <span class="n">n2</span><span class="p">:</span> <span class="n">Nucleus</span>
+    <span class="n">aznut</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">ztilde</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">aznut</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">n1</span><span class="o">.</span><span class="n">Z</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">n2</span><span class="o">.</span><span class="n">Z</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">n1</span><span class="o">.</span><span class="n">A</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">n2</span><span class="o">.</span><span class="n">A</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n1</span><span class="o">.</span><span class="n">A</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">n2</span><span class="o">.</span><span class="n">A</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ztilde</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n1</span><span class="o">.</span><span class="n">Z</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n2</span><span class="o">.</span><span class="n">Z</span><span class="p">))</span></div>
+
+
+<span class="k">def</span> <span class="nf">smooth_clip</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">dx_dT</span><span class="p">,</span> <span class="n">limit</span><span class="p">,</span> <span class="n">start</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Smoothly transition between y=limit and y=x with a half-cosine.</span>
+
+<span class="sd">    Clips smaller values if limit &lt; start and larger values if start &lt; limit.</span>
+
+<span class="sd">    :param x:     the value to clip</span>
+<span class="sd">    :param dx_dT: derivative of x w.r.t. temperature</span>
+<span class="sd">    :param limit: the constant value to clip x to</span>
+<span class="sd">    :param start: the x-value at which to start the transition</span>
+<span class="sd">    :returns: (y, dy/dT)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">limit</span> <span class="o">&lt;</span> <span class="n">start</span><span class="p">:</span>
+        <span class="n">lower</span> <span class="o">=</span> <span class="n">limit</span>
+        <span class="n">dlower_dT</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">upper</span> <span class="o">=</span> <span class="n">x</span>
+        <span class="n">dupper_dT</span> <span class="o">=</span> <span class="n">dx_dT</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">lower</span> <span class="o">=</span> <span class="n">x</span>
+        <span class="n">dlower_dT</span> <span class="o">=</span> <span class="n">dx_dT</span>
+        <span class="n">upper</span> <span class="o">=</span> <span class="n">limit</span>
+        <span class="n">dupper_dT</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+    <span class="k">if</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="nb">min</span><span class="p">(</span><span class="n">limit</span><span class="p">,</span> <span class="n">start</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">lower</span><span class="p">,</span> <span class="n">dlower_dT</span>
+    <span class="k">if</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="nb">max</span><span class="p">(</span><span class="n">limit</span><span class="p">,</span> <span class="n">start</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">upper</span><span class="p">,</span> <span class="n">dupper_dT</span>
+
+    <span class="n">delta</span> <span class="o">=</span> <span class="n">start</span> <span class="o">-</span> <span class="n">limit</span>
+    <span class="n">tmp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="nb">min</span><span class="p">(</span><span class="n">limit</span><span class="p">,</span> <span class="n">start</span><span class="p">))</span> <span class="o">/</span> <span class="n">delta</span>
+    <span class="n">dtmp_dT</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">delta</span> <span class="o">*</span> <span class="n">dx_dT</span>
+
+    <span class="n">f</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">tmp</span><span class="p">))</span> <span class="o">/</span> <span class="mi">2</span>
+    <span class="n">df_dT</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span> <span class="o">*</span> <span class="n">dtmp_dT</span> <span class="o">/</span> <span class="mi">2</span>
+
+    <span class="n">tmp</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">f</span><span class="p">)</span> <span class="o">*</span> <span class="n">lower</span> <span class="o">+</span> <span class="n">f</span> <span class="o">*</span> <span class="n">upper</span>
+    <span class="n">dtmp_dT</span> <span class="o">=</span> <span class="n">dlower_dT</span> <span class="o">+</span> <span class="n">df_dT</span> <span class="o">*</span> <span class="p">(</span><span class="n">upper</span> <span class="o">-</span> <span class="n">lower</span><span class="p">)</span> <span class="o">+</span> <span class="n">f</span> <span class="o">*</span> <span class="p">(</span><span class="n">dupper_dT</span> <span class="o">-</span> <span class="n">dlower_dT</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">tmp</span><span class="p">,</span> <span class="n">dtmp_dT</span>
+
+
+<div class="viewcode-block" id="chugunov_2007"><a class="viewcode-back" href="../../../pynucastro.screening.html#pynucastro.screening.screen.chugunov_2007">[docs]</a><span class="k">def</span> <span class="nf">chugunov_2007</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">scn_fac</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Calculates screening factors based on Chugunov et al. 2007.</span>
+
+<span class="sd">    Follows the approach in Yakovlev 2006 to extend to a multi-component plasma.</span>
+
+<span class="sd">    :param state:   the precomputed :class:`PlasmaState`</span>
+<span class="sd">    :param scn_fac: a :class:`ScreenFactors` object</span>
+<span class="sd">    :returns: (screening correction factor, derivative w.r.t. temperature)</span>
+
+<span class="sd">    References:</span>
+<span class="sd">        | Chugunov, DeWitt, and Yakovlev 2007, PhRvD, 76, 025028</span>
+<span class="sd">        | Yakovlev, Gasques, Afanasjev, Beard, and Wiescher 2006, PhRvC, 74, 035803</span>
+<span class="sd">        | Chugunov and DeWitt 2009, PhRvC, 80, 014611</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Plasma temperature T_p</span>
+    <span class="c1"># This formula comes from working backwards from zeta_ij (Chugunov 2009 eq. 12)</span>
+    <span class="c1"># through Chugunov 2007 eq. 3 to Chugunov 2007 eq. 2.</span>
+    <span class="c1"># Ultimately, the changes from the expression in Chugunov 2007 are:</span>
+    <span class="c1">#   Z^2 -&gt; Z1 * Z2</span>
+    <span class="c1">#   n_i -&gt; n_e / ztilde^3, where ztilde = (Z1^(1/3) + Z2^(1/3)) / 2</span>
+    <span class="c1">#   m_i -&gt; 2 mu12 (reduced mass)</span>
+    <span class="c1"># This prescription reduces to the expressions from Chugunov 2007 in the case</span>
+    <span class="c1"># of an OCP, and to Chugunov 2009 in the case of a binary ionic mixture.</span>
+    <span class="c1"># This also matches Yakovlev et al. 2006, eq. 10.</span>
+    <span class="c1">#</span>
+    <span class="c1"># For reference, MESA r21.12.1 does:</span>
+    <span class="c1">#   Z^2 -&gt; Z1 * Z2</span>
+    <span class="c1">#   n_i -&gt; n_e / zbar (=ntot)</span>
+    <span class="c1">#   m_i -&gt; m_u * abar</span>
+    <span class="c1">#</span>
+    <span class="c1"># Sam Jones&#39; Fortran implementation does:</span>
+    <span class="c1">#   Z^2 -&gt; zbar^2</span>
+    <span class="c1">#   n_i -&gt; ntot</span>
+    <span class="c1">#   m_i -&gt; m_u * abar</span>
+    <span class="n">mu12</span> <span class="o">=</span> <span class="n">scn_fac</span><span class="o">.</span><span class="n">n1</span><span class="o">.</span><span class="n">A</span> <span class="o">*</span> <span class="n">scn_fac</span><span class="o">.</span><span class="n">n2</span><span class="o">.</span><span class="n">A</span> <span class="o">/</span> <span class="p">(</span><span class="n">scn_fac</span><span class="o">.</span><span class="n">n1</span><span class="o">.</span><span class="n">A</span> <span class="o">+</span> <span class="n">scn_fac</span><span class="o">.</span><span class="n">n2</span><span class="o">.</span><span class="n">A</span><span class="p">)</span>
+    <span class="n">z_factor</span> <span class="o">=</span> <span class="n">scn_fac</span><span class="o">.</span><span class="n">n1</span><span class="o">.</span><span class="n">Z</span> <span class="o">*</span> <span class="n">scn_fac</span><span class="o">.</span><span class="n">n2</span><span class="o">.</span><span class="n">Z</span>
+    <span class="n">n_i</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">n_e</span> <span class="o">/</span> <span class="n">scn_fac</span><span class="o">.</span><span class="n">ztilde</span> <span class="o">**</span> <span class="mi">3</span>
+    <span class="n">m_i</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">mu12</span> <span class="o">*</span> <span class="n">amu</span>
+
+    <span class="n">T_p</span> <span class="o">=</span> <span class="n">hbar</span> <span class="o">/</span> <span class="n">k_B</span> <span class="o">*</span> <span class="n">q_e</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">z_factor</span> <span class="o">*</span> <span class="n">n_i</span> <span class="o">/</span> <span class="n">m_i</span><span class="p">)</span>
+
+    <span class="c1"># Normalized temperature</span>
+    <span class="n">T_norm</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">temp</span> <span class="o">/</span> <span class="n">T_p</span>
+    <span class="n">dT_norm_dT</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">T_p</span>
+
+    <span class="c1"># The fit has only been verified down to T ~ 0.1 T_p, below which the rate</span>
+    <span class="c1"># should be nearly temperature-independent (in the pycnonuclear regime),</span>
+    <span class="c1"># and we clip the temperature to 0.1 T_p at small T.</span>
+    <span class="c1"># start the transition here</span>
+    <span class="n">T_norm_fade</span> <span class="o">=</span> <span class="mf">0.2</span>
+    <span class="c1"># minimum value of T/T_p</span>
+    <span class="n">T_norm_min</span> <span class="o">=</span> <span class="mf">0.1</span>
+
+    <span class="n">T_norm</span><span class="p">,</span> <span class="n">dT_norm_dT</span> <span class="o">=</span> <span class="n">smooth_clip</span><span class="p">(</span>
+        <span class="n">T_norm</span><span class="p">,</span> <span class="n">dT_norm_dT</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="n">T_norm_min</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="n">T_norm_fade</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Coulomb coupling parameter from Yakovlev 2006, eq. 10</span>
+    <span class="n">Gamma</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">gamma_e_fac</span> <span class="o">*</span> <span class="n">scn_fac</span><span class="o">.</span><span class="n">n1</span><span class="o">.</span><span class="n">Z</span> <span class="o">*</span> <span class="n">scn_fac</span><span class="o">.</span><span class="n">n2</span><span class="o">.</span><span class="n">Z</span> <span class="o">/</span> <span class="p">(</span><span class="n">scn_fac</span><span class="o">.</span><span class="n">ztilde</span> <span class="o">*</span> <span class="n">T_norm</span> <span class="o">*</span> <span class="n">T_p</span><span class="p">)</span>
+    <span class="n">dGamma_dT</span> <span class="o">=</span> <span class="o">-</span><span class="n">Gamma</span> <span class="o">/</span> <span class="n">T_norm</span> <span class="o">*</span> <span class="n">dT_norm_dT</span>
+
+    <span class="c1"># The fit for Gamma is only applicable up to ~600, so smoothly cap its value</span>
+    <span class="n">Gamma_fade</span> <span class="o">=</span> <span class="mi">590</span>
+    <span class="n">Gamma_max</span> <span class="o">=</span> <span class="mi">600</span>
+    <span class="n">Gamma</span><span class="p">,</span> <span class="n">dGamma_dT</span> <span class="o">=</span> <span class="n">smooth_clip</span><span class="p">(</span><span class="n">Gamma</span><span class="p">,</span> <span class="n">dGamma_dT</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="n">Gamma_max</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="n">Gamma_fade</span><span class="p">)</span>
+
+    <span class="c1"># Chugunov 2007 eq. 3</span>
+    <span class="n">zeta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">(</span><span class="mi">4</span> <span class="o">/</span> <span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">T_norm</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="n">dzeta_dT</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="n">T_norm</span><span class="p">)</span> <span class="o">*</span> <span class="n">zeta</span> <span class="o">*</span> <span class="n">dT_norm_dT</span>
+
+    <span class="c1"># Gamma tilde from Chugunov 2007 eq. 21</span>
+    <span class="n">fit_alpha</span> <span class="o">=</span> <span class="mf">0.022</span>
+    <span class="n">fit_beta</span> <span class="o">=</span> <span class="mf">0.41</span> <span class="o">-</span> <span class="mf">0.6</span> <span class="o">/</span> <span class="n">Gamma</span>
+    <span class="n">tmp</span> <span class="o">=</span> <span class="n">dGamma_dT</span> <span class="o">/</span> <span class="n">Gamma</span> <span class="o">**</span> <span class="mi">2</span>
+    <span class="n">dfit_beta_dT</span> <span class="o">=</span> <span class="mf">0.6</span> <span class="o">*</span> <span class="n">tmp</span>
+    <span class="n">fit_gamma</span> <span class="o">=</span> <span class="mf">0.06</span> <span class="o">+</span> <span class="mf">2.2</span> <span class="o">/</span> <span class="n">Gamma</span>
+    <span class="n">dfit_gamma_dT</span> <span class="o">=</span> <span class="o">-</span><span class="mf">2.2</span> <span class="o">*</span> <span class="n">tmp</span>
+
+    <span class="c1"># Polynomial term in Gamma tilde</span>
+    <span class="n">poly</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">zeta</span><span class="o">*</span><span class="p">(</span><span class="n">fit_alpha</span> <span class="o">+</span> <span class="n">zeta</span><span class="o">*</span><span class="p">(</span><span class="n">fit_beta</span> <span class="o">+</span> <span class="n">fit_gamma</span><span class="o">*</span><span class="n">zeta</span><span class="p">))</span>
+    <span class="n">dpoly_dT</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="p">(</span><span class="n">fit_alpha</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">zeta</span> <span class="o">*</span> <span class="n">fit_beta</span> <span class="o">+</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">fit_gamma</span> <span class="o">*</span> <span class="n">zeta</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">dzeta_dT</span> <span class="o">+</span>
+        <span class="n">zeta</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">dfit_beta_dT</span> <span class="o">+</span> <span class="n">dfit_gamma_dT</span> <span class="o">*</span> <span class="n">zeta</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="n">gamtilde</span> <span class="o">=</span> <span class="n">Gamma</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">(</span><span class="n">poly</span><span class="p">)</span>
+    <span class="c1"># this is gamtilde * dlog(gamtilde)/dT</span>
+    <span class="n">dgamtilde_dT</span> <span class="o">=</span> <span class="n">gamtilde</span> <span class="o">*</span> <span class="p">(</span><span class="n">dGamma_dT</span> <span class="o">/</span> <span class="n">Gamma</span> <span class="o">-</span> <span class="n">dpoly_dT</span> <span class="o">/</span> <span class="n">poly</span> <span class="o">/</span> <span class="mi">3</span><span class="p">)</span>
+
+    <span class="c1"># fit parameters just after Chugunov 2007 eq. 19</span>
+    <span class="n">A1</span> <span class="o">=</span> <span class="mf">2.7822</span>
+    <span class="n">A2</span> <span class="o">=</span> <span class="mf">98.34</span>
+    <span class="n">A3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">-</span> <span class="n">A1</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">A2</span><span class="p">)</span>
+    <span class="n">B1</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.7476</span>
+    <span class="n">B2</span> <span class="o">=</span> <span class="mf">66.07</span>
+    <span class="n">B3</span> <span class="o">=</span> <span class="mf">1.12</span>
+    <span class="n">B4</span> <span class="o">=</span> <span class="mi">65</span>
+    <span class="n">gamtilde2</span> <span class="o">=</span> <span class="n">gamtilde</span> <span class="o">**</span> <span class="mi">2</span>
+    <span class="n">dgamtilde2_dT</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">gamtilde</span> <span class="o">*</span> <span class="n">dgamtilde_dT</span>
+
+    <span class="c1"># Chugunov 2007 eq. 19</span>
+    <span class="n">term1</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">A2</span> <span class="o">+</span> <span class="n">gamtilde</span><span class="p">)</span>
+    <span class="n">dterm1_dT</span> <span class="o">=</span> <span class="o">-</span><span class="n">term1</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="n">A2</span> <span class="o">+</span> <span class="n">gamtilde</span><span class="p">)</span> <span class="o">*</span> <span class="n">dgamtilde_dT</span>
+
+    <span class="n">term2</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">gamtilde</span><span class="p">)</span>
+    <span class="n">dterm2_dT</span> <span class="o">=</span> <span class="o">-</span><span class="p">(</span><span class="n">term2</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">dgamtilde_dT</span>
+
+    <span class="n">term3</span> <span class="o">=</span> <span class="n">gamtilde</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="n">B2</span> <span class="o">+</span> <span class="n">gamtilde</span><span class="p">)</span>
+    <span class="n">dterm3_dT</span> <span class="o">=</span> <span class="n">gamtilde</span> <span class="o">*</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">B2</span> <span class="o">+</span> <span class="n">gamtilde</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">B2</span> <span class="o">+</span> <span class="n">gamtilde</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">dgamtilde_dT</span>
+
+    <span class="n">term4</span> <span class="o">=</span> <span class="n">gamtilde2</span> <span class="o">/</span> <span class="p">(</span><span class="n">B4</span> <span class="o">+</span> <span class="n">gamtilde2</span><span class="p">)</span>
+    <span class="n">dterm4_dT</span> <span class="o">=</span> <span class="n">B4</span> <span class="o">/</span> <span class="p">(</span><span class="n">B4</span> <span class="o">+</span> <span class="n">gamtilde2</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">dgamtilde2_dT</span>
+
+    <span class="n">inner</span> <span class="o">=</span> <span class="n">A1</span> <span class="o">*</span> <span class="n">term1</span> <span class="o">+</span> <span class="n">A3</span> <span class="o">*</span> <span class="n">term2</span>
+    <span class="n">dinner_dT</span> <span class="o">=</span> <span class="n">A1</span> <span class="o">*</span> <span class="n">dterm1_dT</span> <span class="o">+</span> <span class="n">A3</span> <span class="o">*</span> <span class="n">dterm2_dT</span>
+
+    <span class="n">gamtilde32</span> <span class="o">=</span> <span class="n">gamtilde</span> <span class="o">**</span> <span class="p">(</span><span class="mi">3</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">dgamtilde32_dT</span> <span class="o">=</span> <span class="mi">3</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">gamtilde</span><span class="p">)</span> <span class="o">*</span> <span class="n">dgamtilde_dT</span>
+    <span class="n">h</span> <span class="o">=</span> <span class="n">gamtilde32</span> <span class="o">*</span> <span class="n">inner</span> <span class="o">+</span> <span class="n">B1</span> <span class="o">*</span> <span class="n">term3</span> <span class="o">+</span> <span class="n">B3</span> <span class="o">*</span> <span class="n">term4</span>
+    <span class="n">dh_dT</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">dgamtilde32_dT</span> <span class="o">*</span> <span class="n">inner</span> <span class="o">+</span>
+        <span class="n">gamtilde32</span> <span class="o">*</span> <span class="n">dinner_dT</span> <span class="o">+</span>
+        <span class="n">B1</span> <span class="o">*</span> <span class="n">dterm3_dT</span> <span class="o">+</span>
+        <span class="n">B3</span> <span class="o">*</span> <span class="n">dterm4_dT</span>
+    <span class="p">)</span>
+
+    <span class="c1"># machine limit the output</span>
+    <span class="n">h_max</span> <span class="o">=</span> <span class="mi">300</span>
+    <span class="n">h</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">h_max</span><span class="p">)</span>
+    <span class="n">scor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">h</span> <span class="o">==</span> <span class="n">h_max</span><span class="p">:</span>
+        <span class="n">dscor_dT</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">dscor_dT</span> <span class="o">=</span> <span class="n">scor</span> <span class="o">*</span> <span class="n">dh_dT</span>
+
+    <span class="k">return</span> <span class="n">scor</span><span class="p">,</span> <span class="n">dscor_dT</span></div>
+
+
+<span class="k">def</span> <span class="nf">f0</span><span class="p">(</span><span class="n">gamma</span><span class="p">,</span> <span class="n">dlog_dT</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Calculate the free energy per ion in a OCP from Chugunov &amp; DeWitt 2009 eq. 24</span>
+
+<span class="sd">    :param gamma: Coulomb coupling parameter</span>
+<span class="sd">    :param dlog_dT: log derivative of gamma w.r.t. temperature:</span>
+<span class="sd">                    :math:`d(log(Gamma))/dT = dGamma/dT / Gamma`</span>
+
+<span class="sd">    :returns: (free energy, derivative w.r.t. temperature)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">A1</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.907</span>
+    <span class="n">A2</span> <span class="o">=</span> <span class="mf">0.62954</span>
+    <span class="n">A3</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">-</span> <span class="n">A1</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">A2</span><span class="p">)</span>
+    <span class="n">B1</span> <span class="o">=</span> <span class="mf">0.00456</span>
+    <span class="n">B2</span> <span class="o">=</span> <span class="mf">211.6</span>
+    <span class="n">B3</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1e-4</span>
+    <span class="n">B4</span> <span class="o">=</span> <span class="mf">0.00462</span>
+
+    <span class="n">term1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">gamma</span> <span class="o">*</span> <span class="p">(</span><span class="n">A2</span> <span class="o">+</span> <span class="n">gamma</span><span class="p">))</span>
+    <span class="n">dterm1_dgamma</span> <span class="o">=</span> <span class="p">(</span><span class="n">A2</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">gamma</span><span class="p">)</span> <span class="o">/</span> <span class="n">term1</span>
+
+    <span class="n">term2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">gamma</span> <span class="o">/</span> <span class="n">A2</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">gamma</span> <span class="o">/</span> <span class="n">A2</span><span class="p">))</span>
+    <span class="n">dterm2_dgamma</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">term1</span><span class="p">)</span>
+
+    <span class="n">gamma_12</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">gamma</span><span class="p">)</span>
+    <span class="n">term3</span> <span class="o">=</span> <span class="n">gamma_12</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">atan</span><span class="p">(</span><span class="n">gamma_12</span><span class="p">)</span>
+    <span class="n">dterm3_dgamma</span> <span class="o">=</span> <span class="n">gamma_12</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">gamma</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+
+    <span class="n">term4</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">gamma</span> <span class="o">/</span> <span class="n">B2</span><span class="p">)</span>
+    <span class="n">dterm4_dgamma</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="n">B2</span> <span class="o">+</span> <span class="n">gamma</span><span class="p">)</span>
+
+    <span class="n">term5</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">gamma</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="n">B4</span><span class="p">)</span>
+    <span class="n">dterm5_dgamma</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">gamma</span> <span class="o">/</span> <span class="p">(</span><span class="n">B4</span> <span class="o">+</span> <span class="n">gamma</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+
+    <span class="n">f</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">A1</span> <span class="o">*</span> <span class="p">(</span><span class="n">term1</span> <span class="o">-</span> <span class="n">A2</span> <span class="o">*</span> <span class="n">term2</span><span class="p">)</span> <span class="o">+</span>
+        <span class="mi">2</span> <span class="o">*</span> <span class="n">A3</span> <span class="o">*</span> <span class="n">term3</span> <span class="o">+</span>
+        <span class="n">B1</span> <span class="o">*</span> <span class="p">(</span><span class="n">gamma</span> <span class="o">-</span> <span class="n">B2</span> <span class="o">*</span> <span class="n">term4</span><span class="p">)</span> <span class="o">+</span>
+        <span class="n">B3</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">term5</span>
+    <span class="p">)</span>
+    <span class="n">df_dgamma</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">A1</span> <span class="o">*</span> <span class="p">(</span><span class="n">dterm1_dgamma</span> <span class="o">-</span> <span class="n">A2</span> <span class="o">*</span> <span class="n">dterm2_dgamma</span><span class="p">)</span> <span class="o">+</span>
+        <span class="mi">2</span> <span class="o">*</span> <span class="n">A3</span> <span class="o">*</span> <span class="n">dterm3_dgamma</span> <span class="o">+</span>
+        <span class="n">B1</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">B2</span> <span class="o">*</span> <span class="n">dterm4_dgamma</span><span class="p">)</span> <span class="o">+</span>
+        <span class="n">B3</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">dterm5_dgamma</span>
+    <span class="p">)</span>
+    <span class="n">df_dT</span> <span class="o">=</span> <span class="n">df_dgamma</span> <span class="o">*</span> <span class="n">dlog_dT</span> <span class="o">*</span> <span class="n">gamma</span>
+    <span class="k">return</span> <span class="n">f</span><span class="p">,</span> <span class="n">df_dT</span>
+
+
+<div class="viewcode-block" id="chugunov_2009"><a class="viewcode-back" href="../../../pynucastro.screening.html#pynucastro.screening.screen.chugunov_2009">[docs]</a><span class="k">def</span> <span class="nf">chugunov_2009</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">scn_fac</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Calculates screening factors based on Chugunov &amp; DeWitt 2009.</span>
+
+<span class="sd">    :param state:   the precomputed :class:`PlasmaState`</span>
+<span class="sd">    :param scn_fac: a :class:`ScreenFactors` object</span>
+<span class="sd">    :returns: (screening correction factor, derivative w.r.t. temperature)</span>
+
+<span class="sd">    References:</span>
+<span class="sd">        | Chugunov and DeWitt 2009, PhRvC, 80, 014611</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">z1z2</span> <span class="o">=</span> <span class="n">scn_fac</span><span class="o">.</span><span class="n">n1</span><span class="o">.</span><span class="n">Z</span> <span class="o">*</span> <span class="n">scn_fac</span><span class="o">.</span><span class="n">n2</span><span class="o">.</span><span class="n">Z</span>
+    <span class="n">zcomp</span> <span class="o">=</span> <span class="n">scn_fac</span><span class="o">.</span><span class="n">n1</span><span class="o">.</span><span class="n">Z</span> <span class="o">+</span> <span class="n">scn_fac</span><span class="o">.</span><span class="n">n2</span><span class="o">.</span><span class="n">Z</span>
+
+    <span class="c1"># Gamma_e from eq. 6</span>
+    <span class="n">Gamma_e</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">gamma_e_fac</span> <span class="o">/</span> <span class="n">state</span><span class="o">.</span><span class="n">temp</span>
+    <span class="c1"># work in terms of log derivatives, since it&#39;s much simpler</span>
+    <span class="n">dlog_Gamma_dT</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">/</span> <span class="n">state</span><span class="o">.</span><span class="n">temp</span>
+
+    <span class="c1"># Coulomb coupling parameters for ions and compound nucleus, eqs. 7 &amp; 9</span>
+    <span class="n">Gamma_1</span> <span class="o">=</span> <span class="n">Gamma_e</span> <span class="o">*</span> <span class="n">scn_fac</span><span class="o">.</span><span class="n">n1</span><span class="o">.</span><span class="n">Z</span> <span class="o">**</span> <span class="p">(</span><span class="mi">5</span> <span class="o">/</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="n">Gamma_2</span> <span class="o">=</span> <span class="n">Gamma_e</span> <span class="o">*</span> <span class="n">scn_fac</span><span class="o">.</span><span class="n">n2</span><span class="o">.</span><span class="n">Z</span> <span class="o">**</span> <span class="p">(</span><span class="mi">5</span> <span class="o">/</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="n">Gamma_comp</span> <span class="o">=</span> <span class="n">Gamma_e</span> <span class="o">*</span> <span class="n">zcomp</span> <span class="o">**</span> <span class="p">(</span><span class="mi">5</span> <span class="o">/</span> <span class="mi">3</span><span class="p">)</span>
+
+    <span class="n">Gamma_12</span> <span class="o">=</span> <span class="n">Gamma_e</span> <span class="o">*</span> <span class="n">z1z2</span> <span class="o">/</span> <span class="n">scn_fac</span><span class="o">.</span><span class="n">ztilde</span>
+
+    <span class="c1"># Coulomb barrier penetrability, eq. 10</span>
+    <span class="n">tau_factor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">(</span><span class="mi">27</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">q_e</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="n">hbar</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">amu</span> <span class="o">/</span> <span class="n">k_B</span><span class="p">)</span>
+    <span class="n">tau_12</span> <span class="o">=</span> <span class="n">tau_factor</span> <span class="o">*</span> <span class="n">scn_fac</span><span class="o">.</span><span class="n">aznut</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">temp</span><span class="p">)</span>
+    <span class="n">dlog_tau_12_dT</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">3</span> <span class="o">/</span> <span class="n">state</span><span class="o">.</span><span class="n">temp</span>
+
+    <span class="c1"># eq. 12</span>
+    <span class="n">zeta</span> <span class="o">=</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">Gamma_12</span> <span class="o">/</span> <span class="n">tau_12</span>
+    <span class="n">dzeta_dT</span> <span class="o">=</span> <span class="n">zeta</span> <span class="o">*</span> <span class="p">(</span><span class="n">dlog_Gamma_dT</span> <span class="o">-</span> <span class="n">dlog_tau_12_dT</span><span class="p">)</span>
+
+    <span class="c1"># additional fit parameters, eq. 25</span>
+    <span class="n">y_12</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">z1z2</span> <span class="o">/</span> <span class="n">zcomp</span> <span class="o">**</span> <span class="mi">2</span>
+    <span class="n">c1</span> <span class="o">=</span> <span class="mf">0.013</span> <span class="o">*</span> <span class="n">y_12</span> <span class="o">**</span> <span class="mi">2</span>
+    <span class="n">c2</span> <span class="o">=</span> <span class="mf">0.406</span> <span class="o">*</span> <span class="n">y_12</span> <span class="o">**</span> <span class="mf">0.14</span>
+    <span class="n">c3</span> <span class="o">=</span> <span class="mf">0.062</span> <span class="o">*</span> <span class="n">y_12</span> <span class="o">**</span> <span class="mf">0.19</span> <span class="o">+</span> <span class="mf">1.8</span> <span class="o">/</span> <span class="n">Gamma_12</span>
+    <span class="n">dc3_dT</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.8</span> <span class="o">/</span> <span class="n">Gamma_12</span> <span class="o">*</span> <span class="n">dlog_Gamma_dT</span>
+
+    <span class="n">poly</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">zeta</span><span class="o">*</span><span class="p">(</span><span class="n">c1</span> <span class="o">+</span> <span class="n">zeta</span><span class="o">*</span><span class="p">(</span><span class="n">c2</span> <span class="o">+</span> <span class="n">c3</span><span class="o">*</span><span class="n">zeta</span><span class="p">))</span>
+    <span class="n">dpoly_dT</span> <span class="o">=</span> <span class="p">(</span><span class="n">c1</span> <span class="o">+</span> <span class="n">zeta</span><span class="o">*</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">c2</span> <span class="o">+</span> <span class="mi">3</span><span class="o">*</span><span class="n">c3</span><span class="o">*</span><span class="n">zeta</span><span class="p">))</span> <span class="o">*</span> <span class="n">dzeta_dT</span> <span class="o">+</span> <span class="n">dc3_dT</span> <span class="o">*</span> <span class="n">zeta</span> <span class="o">**</span> <span class="mi">3</span>
+    <span class="n">t_12</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">(</span><span class="n">poly</span><span class="p">)</span>
+    <span class="n">dlog_t_12_dT</span> <span class="o">=</span> <span class="n">dpoly_dT</span> <span class="o">/</span> <span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="n">poly</span><span class="p">)</span>
+
+    <span class="c1"># strong screening enhancement factor, eq. 23, replacing tau_ij with t_ij</span>
+    <span class="c1"># Using Gamma/tau_ij gives extremely low values, while Gamma/t_ij gives</span>
+    <span class="c1"># values similar to those from Chugunov 2007.</span>
+    <span class="n">dlog_dT</span> <span class="o">=</span> <span class="n">dlog_Gamma_dT</span> <span class="o">-</span> <span class="n">dlog_t_12_dT</span>
+    <span class="n">term1</span><span class="p">,</span> <span class="n">dterm1_dT</span> <span class="o">=</span> <span class="n">f0</span><span class="p">(</span><span class="n">Gamma_1</span> <span class="o">/</span> <span class="n">t_12</span><span class="p">,</span> <span class="n">dlog_dT</span><span class="p">)</span>
+    <span class="n">term2</span><span class="p">,</span> <span class="n">dterm2_dT</span> <span class="o">=</span> <span class="n">f0</span><span class="p">(</span><span class="n">Gamma_2</span> <span class="o">/</span> <span class="n">t_12</span><span class="p">,</span> <span class="n">dlog_dT</span><span class="p">)</span>
+    <span class="n">term3</span><span class="p">,</span> <span class="n">dterm3_dT</span> <span class="o">=</span> <span class="n">f0</span><span class="p">(</span><span class="n">Gamma_comp</span> <span class="o">/</span> <span class="n">t_12</span><span class="p">,</span> <span class="n">dlog_dT</span><span class="p">)</span>
+    <span class="n">h_fit</span> <span class="o">=</span> <span class="n">term1</span> <span class="o">+</span> <span class="n">term2</span> <span class="o">-</span> <span class="n">term3</span>
+    <span class="n">dh_fit_dT</span> <span class="o">=</span> <span class="n">dterm1_dT</span> <span class="o">+</span> <span class="n">dterm2_dT</span> <span class="o">-</span> <span class="n">dterm3_dT</span>
+
+    <span class="c1"># weak screening correction term, eq. A3</span>
+    <span class="n">corr_C</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="mi">3</span> <span class="o">*</span> <span class="n">z1z2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">z2bar</span> <span class="o">/</span> <span class="n">state</span><span class="o">.</span><span class="n">zbar</span><span class="p">)</span> <span class="o">/</span>
+        <span class="p">(</span><span class="n">zcomp</span> <span class="o">**</span> <span class="mf">2.5</span> <span class="o">-</span> <span class="n">scn_fac</span><span class="o">.</span><span class="n">n1</span><span class="o">.</span><span class="n">Z</span> <span class="o">**</span> <span class="mf">2.5</span> <span class="o">-</span> <span class="n">scn_fac</span><span class="o">.</span><span class="n">n2</span><span class="o">.</span><span class="n">Z</span> <span class="o">**</span> <span class="mf">2.5</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="c1"># corrected enhancement factor, eq. A4</span>
+    <span class="n">Gamma_12_2</span> <span class="o">=</span> <span class="n">Gamma_12</span> <span class="o">**</span> <span class="mi">2</span>
+    <span class="n">dGamma_12_2_dT</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">Gamma_12_2</span> <span class="o">*</span> <span class="n">dlog_Gamma_dT</span>
+    <span class="n">numer</span> <span class="o">=</span> <span class="n">corr_C</span> <span class="o">+</span> <span class="n">Gamma_12_2</span>
+    <span class="n">denom</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">Gamma_12_2</span>
+    <span class="n">h12</span> <span class="o">=</span> <span class="n">numer</span> <span class="o">/</span> <span class="n">denom</span> <span class="o">*</span> <span class="n">h_fit</span>
+    <span class="n">dh12_dT</span> <span class="o">=</span> <span class="n">h12</span> <span class="o">*</span> <span class="p">(</span><span class="n">dGamma_12_2_dT</span><span class="o">/</span><span class="n">numer</span> <span class="o">-</span> <span class="n">dGamma_12_2_dT</span><span class="o">/</span><span class="n">denom</span> <span class="o">+</span> <span class="n">dh_fit_dT</span><span class="o">/</span><span class="n">h_fit</span><span class="p">)</span>
+
+    <span class="c1"># machine limit the output</span>
+    <span class="n">h12_max</span> <span class="o">=</span> <span class="mi">300</span>
+    <span class="n">h12</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">h12</span><span class="p">,</span> <span class="n">h12_max</span><span class="p">)</span>
+    <span class="n">scor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">h12</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">h12</span> <span class="o">==</span> <span class="n">h12_max</span><span class="p">:</span>
+        <span class="n">dh12_dT</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">dscor_dT</span> <span class="o">=</span> <span class="n">scor</span> <span class="o">*</span> <span class="n">dh12_dT</span>
+
+    <span class="k">return</span> <span class="n">scor</span><span class="p">,</span> <span class="n">dscor_dT</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Michael Zingale and Donald Willcox.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
