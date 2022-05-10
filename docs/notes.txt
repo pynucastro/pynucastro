@@ -3,9 +3,9 @@ To build the webpages:
    make html
 
 
-To automatically generate the API docs:
+To automatically generate the API docs (from the repository root):
 
-   sphinx-apidoc -f -M -o docs/source/ .
+   sphinx-apidoc -f -M -o docs/source/ pynucastro
 
 
 To support notebooks:
