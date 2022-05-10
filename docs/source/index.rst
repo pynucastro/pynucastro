@@ -30,6 +30,7 @@ codes.
 
    intro
    pynucastro-examples.ipynb
+   plot-types.ipynb
    pynucastro-integration.ipynb
    library-examples.ipynb
    modify-example.ipynb
