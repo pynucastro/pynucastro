@@ -20,7 +20,6 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from matplotlib.ticker import MaxNLocator
 from matplotlib.colors import SymLogNorm
-from mpl_toolkits.axes_grid1 import ImageGrid
 import networkx as nx
 
 # Import Rate
@@ -849,15 +848,12 @@ class RateCollection:
             plt.tight_layout()
             plt.savefig(outfile, dpi=dpi)
 
-
     def plot_network_chart(self, outfile=None, rho=None, T=None, comp=None,
                            size=(800, 800), dpi=100, force_one_column=False):
 
         nc = self._get_network_chart(rho, T, comp)
 
         # find the limits
-        _tmp = [nc[r] for r in self.rates]
-
         _ydot = []
         for r in self.rates:
             for _, y in nc[r]:
@@ -865,7 +861,6 @@ class RateCollection:
 
         _ydot = np.asarray(_ydot)
         valid_max = np.abs(_ydot[_ydot != 0]).max()
-        valid_min = np.abs(_ydot[_ydot != 0]).min()
 
         norm = SymLogNorm(valid_max/1.e15, vmin=-valid_max, vmax=valid_max)
 
@@ -886,7 +881,6 @@ class RateCollection:
         fig, _ax = plt.subplots(1, npanes, constrained_layout=True)
 
         fig.set_size_inches(size[0]/dpi, size[1]/dpi)
-
 
         if npanes == 1:
             drate = len(self.rates)
@@ -929,7 +923,7 @@ class RateCollection:
 
             im = ax.imshow(data, norm=norm, cmap=plt.cm.bwr)
 
-            ax.set_aspect("equal") #, "datalim")
+            ax.set_aspect("equal")
 
             # Turn spines off and create white grid.
             ax.spines[:].set_visible(False)
@@ -946,7 +940,6 @@ class RateCollection:
 
         if outfile is not None:
             fig.savefig(outfile, bbox_inches="tight")
-
 
     @staticmethod
     def _safelog(arr, small):
