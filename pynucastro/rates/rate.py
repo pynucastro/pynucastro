@@ -988,7 +988,10 @@ class DerivedRate(Rate):
     by the application of detailed balance to the forward reactions.
     """
 
-    def __init__(self, rate):
+    def __init__(self, rate, use_pf=False, use_A_nuc=False):
+
+        self.use_pf = use_pf
+        self.use_A_nuc = use_A_nuc
 
         assert isinstance(rate, Rate)
 
@@ -1015,10 +1018,16 @@ class DerivedRate(Rate):
             if len(rate.products) == 1:
                 prefactor = -np.log(N_a)
 
-            for nucr in rate.reactants:
-                prefactor += np.log(nucr.spin_states) + 1.5*np.log(nucr.A)
-            for nucp in rate.products:
-                prefactor += -np.log(nucp.spin_states) - 1.5*np.log(nucp.A)
+            if not self.use_A_nuc:
+                for nucr in rate.reactants:
+                    prefactor += np.log(nucr.spin_states) + 1.5*np.log(nucr.A)
+                for nucp in rate.products:
+                    prefactor += -np.log(nucp.spin_states) - 1.5*np.log(nucp.A)
+            else:
+                for nucr in rate.reactants:
+                    prefactor += np.log(nucr.spin_states) + 1.5*np.log(nucr.A_nuc)
+                for nucp in rate.products:
+                    prefactor += -np.log(nucp.spin_states) - 1.5*np.log(nucp.A_nuc)
 
             if len(rate.reactants) == len(rate.products):
                 prefactor += 0.0
@@ -1039,17 +1048,6 @@ class DerivedRate(Rate):
 
         super().__init__(rfile=rate.rfile, rfile_path=rate.rfile_path, chapter=rate.chapter, original_source=rate.original_source,
                 reactants=rate.products, products=rate.reactants, sets=derived_sets, labelprops=rate.labelprops, Q=-rate.Q)
-
-    def set_atomic_nuclear_weight(A):
-        """
-        If `set__atomic_nuclear_weight()` is called, then we will overwrite self.eval(T)
-        """
-
-        pass
-
-    def set_partition_function(self):
-
-        pass
 
 
 class RatePair:
