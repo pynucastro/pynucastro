@@ -29,7 +29,8 @@ class TestPythonNetwork:
 
     def teardown_method(self):
         """ this is run after each test """
-        self.tf = None
+        self.pyn = None
+        self.rate = None
 
     def test_ydot_string(self):
         ydot = self.pyn.ydot_string(self.rate)

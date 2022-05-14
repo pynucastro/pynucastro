@@ -274,18 +274,18 @@ class BaseCxxNetwork(ABC, RateCollection):
 
     def _ebind(self, n_indent, of):
         for nuc in self.unique_nuclei:
-            of.write(f'{self.indent*n_indent}ebind_per_nucleon({nuc.c()}) = {nuc.nucbind}_rt;\n')
+            of.write(f'{self.indent*n_indent}ebind_per_nucleon({nuc.cindex()}) = {nuc.nucbind}_rt;\n')
 
     def _screen_add(self, n_indent, of):
         screening_map = self.get_screening_map()
         for scr in screening_map:
             of.write(f'{self.indent*n_indent}add_screening_factor(jscr++, ')
             if not scr.n1.dummy:
-                of.write(f'zion[{scr.n1.c()}-1], aion[{scr.n1.c()}-1], ')
+                of.write(f'zion[{scr.n1.cindex()}-1], aion[{scr.n1.cindex()}-1], ')
             else:
                 of.write(f'{float(scr.n1.Z)}_rt, {float(scr.n1.A)}_rt, ')
             if not scr.n2.dummy:
-                of.write(f'zion[{scr.n2.c()}-1], aion[{scr.n2.c()}-1]);\n\n')
+                of.write(f'zion[{scr.n2.cindex()}-1], aion[{scr.n2.cindex()}-1]);\n\n')
             else:
                 of.write(f'{float(scr.n2.Z)}_rt, {float(scr.n2.A)}_rt);\n\n')
 
@@ -399,7 +399,7 @@ class BaseCxxNetwork(ABC, RateCollection):
     def _ydot(self, n_indent, of):
         # Write YDOT
         for n in self.unique_nuclei:
-            of.write(f"{self.indent*n_indent}{self.symbol_rates.name_ydot_nuc}({n.c()}) =\n")
+            of.write(f"{self.indent*n_indent}{self.symbol_rates.name_ydot_nuc}({n.cindex()}) =\n")
             for j, pair in enumerate(self.ydot_out_result[n]):
                 # pair here is the forward, reverse pair for a single rate as it affects
                 # nucleus n
@@ -450,7 +450,7 @@ class BaseCxxNetwork(ABC, RateCollection):
                     sys.exit('ERROR: Unknown energy rate corrections for a reaction where the number of reactants is not 1.')
                 else:
                     reactant = r.reactants[0]
-                    of.write(f'{idnt}enuc += C::Legacy::n_A * {self.symbol_rates.name_y}({reactant.c()}) * rate_eval.add_energy_rate(k_{r.fname});\n')
+                    of.write(f'{idnt}enuc += C::Legacy::n_A * {self.symbol_rates.name_y}({reactant.cindex()}) * rate_eval.add_energy_rate(k_{r.fname});\n')
 
     def _jacnuc(self, n_indent, of):
         # now make the Jacobian
@@ -462,7 +462,7 @@ class BaseCxxNetwork(ABC, RateCollection):
                     jvalue = self.symbol_rates.cxxify(sympy.cxxcode(self.jac_out_result[jac_idx], precision=15,
                                                                      standard="c++11"))
                     of.write(f"{self.indent*(n_indent)}scratch = {jvalue};\n")
-                    of.write(f"{self.indent*n_indent}jac.set({nj.c()}, {ni.c()}, scratch);\n\n")
+                    of.write(f"{self.indent*n_indent}jac.set({nj.cindex()}, {ni.cindex()}, scratch);\n\n")
 
     def _initial_mass_fractions(self, n_indent, of):
         for i, _ in enumerate(self.unique_nuclei):
