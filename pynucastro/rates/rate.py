@@ -1037,9 +1037,9 @@ class ApproximateRate:
             # the first secondary rate should be A(a,p)X, where X is the
             # intermediate nucleus
 
-            assert self.primary_reactant in self.secondary_rates[0].reactants and
-                   Nucleus("he4") in self.secondary_rates[0].reactants and
-                   Nucleus("p") in self.secondary_rates[0].products
+            assert (self.primary_reactant in self.secondary_rates[0].reactants and
+                    Nucleus("he4") in self.secondary_rates[0].reactants and
+                    Nucleus("p") in self.secondary_rates[0].products)
 
             # the intermediate nucleus is not in our network, so make it
             # dummy
@@ -1049,9 +1049,9 @@ class ApproximateRate:
 
             # now the second secondary rate show be X(p,g)B
 
-            assert self.intermediate_nucleus in self.secondary_rates[1].reactants and
-                   Nucleus("p") in self.secondary_rates[1].reactants and
-                   self.primary_product in secondary_rates[1].products
+            assert (self.intermediate_nucleus in self.secondary_rates[1].reactants and
+                    Nucleus("p") in self.secondary_rates[1].reactants and
+                    self.primary_product in secondary_rates[1].products)
 
             # now ensure that the reverse rate makes sense
 
@@ -1060,7 +1060,6 @@ class ApproximateRate:
         if not is_inverse:
             self.__super__(reactants=[self.primary_reactant, Nucleus("he4")],
                            products=[self.primary_product])
-
 
     def __set_screening(self):
         # the individual rates are screened -- we don't screen the combination of them
