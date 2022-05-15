@@ -1063,7 +1063,7 @@ class DerivedRate(Rate):
             for nucp in self.rate.products:
                 z_p *= nucp.partition_function(T)
 
-            return r*z_p/z_r
+            return r*z_r/z_p
 
         else:
             return r
