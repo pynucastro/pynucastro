@@ -10,9 +10,11 @@ from pynucastro.networks import BaseCxxNetwork
 
 
 class StarKillerCxxNetwork(BaseCxxNetwork):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, rate_params=None, *args, **kwargs):
         # Initialize BaseFortranNetwork parent class
         super().__init__(*args, **kwargs)
+
+        self.rate_params = rate_params
 
     def _get_template_files(self):
 
@@ -40,3 +42,10 @@ class StarKillerCxxNetwork(BaseCxxNetwork):
         # write out some network properties
         with open("NETWORK_PROPERTIES", "w") as of:
             of.write(f"NSCREEN := {self.num_screen_calls}\n")
+
+        # write the _parameters file
+        with open("_parameters", "w") as of:
+            of.write("@namespace: network\n\n")
+            if self.rate_params:
+                for p in self.rate_params:
+                    of.write(f"{p}    int     0\n")
