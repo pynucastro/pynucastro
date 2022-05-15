@@ -265,6 +265,30 @@ class TestDerivedRate:
 
         assert k36_gp_ar35_reaclib.eval(T=2.0e9) == approx(k36_gp_ar35_derived.eval(T=2.0e9), rel=1.7e-5)
 
+    def test_ar35_pg_k36_with_pf(self):
+        """
+        This function test the correct rate value if we take in consideration the partition
+        functions on the range 1.0e9 to 100.0e9
+        """
+
+        specs = rates.RateFilter(reactants=['p', 'ar35'], products=['k36'])
+        ar35_pg_k36 = self.reaclib_data.filter(filter_spec=specs).get_rates()[0]
+        k36_gp_ar35_derived = rates.DerivedRate(rate=ar35_pg_k36, use_pf=True)
+
+        assert k36_gp_ar35_derived.eval(T=2.0e9) == approx(4197540.737818229)
+
+    def test_ar35_pg_k36_with_A_nuc(self):
+        """
+        This function test the correct rate value if we take in consideration the
+        exact values of atomic nuclear weight instead of the atomic weight A_nuc = A*m_u
+        """
+
+        specs = rates.RateFilter(reactants=['p', 'ar35'], products=['k36'])
+        ar35_pg_k36 = self.reaclib_data.filter(filter_spec=specs).get_rates()[0]
+        k36_gp_ar35_derived = rates.DerivedRate(rate=ar35_pg_k36, use_A_nuc=True)
+
+        assert k36_gp_ar35_derived.eval(T=2.0e9) == approx(5103206.8505866425)
+
 
 class TestWeakRates:
 
