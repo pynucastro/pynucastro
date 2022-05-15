@@ -1054,6 +1054,8 @@ class DerivedRate(Rate):
     def eval(self, T, rhoY=None):
 
         r = super().eval(T=T, rhoY=rhoY)
+        z_r = 1.0
+        z_p = 1.0
         if self.use_pf:
             for nucr in self.rate.reactants:
                 z_r *= nucr.partition_function(T)
@@ -1065,10 +1067,6 @@ class DerivedRate(Rate):
 
         else:
             return r
-
-
-
-
 
 
 class RatePair:
