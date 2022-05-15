@@ -14,6 +14,11 @@ class StarKillerCxxNetwork(BaseCxxNetwork):
         # Initialize BaseFortranNetwork parent class
         super().__init__(*args, **kwargs)
 
+        self.ftags['<rate_param_tests>'] = self._rate_param_tests
+
+        if rate_params is None:
+            rate_params = []
+
         self.rate_params = rate_params
 
     def _get_template_files(self):
@@ -24,6 +29,16 @@ class StarKillerCxxNetwork(BaseCxxNetwork):
                                         '*.template')
 
         return glob.glob(template_pattern)
+
+    def _rate_param_tests(self, n_indent, of):
+
+        for _, r in enumerate(self.rates):
+            if r in self.rate_params:
+                of.write(f"{self.indent*n_indent}if (i == k_{r.fname} && disable_{r.fname}) {{\n")
+                of.write(f"{self.indent*n_indent}    rate_eval.screened_rates(i) = 0.0;\n")
+                of.write(f"{self.indent*n_indent}    rate_eval.dscreened_rates_dT(i) = 0.0;\n")
+                of.write(f"{self.indent.n_indent}    continue;\n")
+                of.write(f"{self.indent.n_indent}}}\n")
 
     def _write_network(self, odir=None):
         """
@@ -47,5 +62,5 @@ class StarKillerCxxNetwork(BaseCxxNetwork):
         with open("_parameters", "w") as of:
             of.write("@namespace: network\n\n")
             if self.rate_params:
-                for p in self.rate_params:
-                    of.write(f"{p}    int     0\n")
+                for r in self.rate_params:
+                    of.write(f"disable_{r.fname}    int     0\n")
