@@ -200,6 +200,10 @@ class Library:
             print("ERROR: rate identifier does not match a rate in this library.")
             raise
 
+    def get_nuclei(self):
+        """get the list of unique nuclei"""
+        return {nuc for r in self.get_rates() for nuc in r.reactants + r.products}
+
     def diff(self, other_library):
         """Return a Library containing the rates in this library that are not
         contained in other_library"""
@@ -258,8 +262,16 @@ class Library:
             if include:
                 filtered_rates.append(r)
 
-        # Return library containing the filtered rates
-        return Library(rates=filtered_rates)
+        # create a new library containing the filtered rates
+        new_lib = Library(rates=filtered_rates)
+
+        # print out a warning if one of the input nuclei is not linked
+        lib_nuclei = new_lib.get_nuclei()
+        for nuc in nucleus_set:
+            if nuc not in lib_nuclei:
+                print(f"warning {nuc} was not able to be linked")
+
+        return new_lib
 
     def filter(self, filter_spec):
         """
