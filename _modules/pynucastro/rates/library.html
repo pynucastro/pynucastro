@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.rates.library &mdash; pynucastro 1.6.0.post97+ge8c6827 documentation</title>
+  <title>pynucastro.rates.library &mdash; pynucastro 1.6.0.post98+gc375c37 documentation</title>
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -283,6 +283,10 @@
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ERROR: rate identifier does not match a rate in this library.&quot;</span><span class="p">)</span>
             <span class="k">raise</span></div>
 
+<div class="viewcode-block" id="Library.get_nuclei"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.library.Library.get_nuclei">[docs]</a>    <span class="k">def</span> <span class="nf">get_nuclei</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;get the list of unique nuclei&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">nuc</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_rates</span><span class="p">()</span> <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="n">r</span><span class="o">.</span><span class="n">reactants</span> <span class="o">+</span> <span class="n">r</span><span class="o">.</span><span class="n">products</span><span class="p">}</span></div>
+
 <div class="viewcode-block" id="Library.diff"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.library.Library.diff">[docs]</a>    <span class="k">def</span> <span class="nf">diff</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other_library</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return a Library containing the rates in this library that are not</span>
 <span class="sd">        contained in other_library&quot;&quot;&quot;</span>
@@ -341,8 +345,16 @@
             <span class="k">if</span> <span class="n">include</span><span class="p">:</span>
                 <span class="n">filtered_rates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
 
-        <span class="c1"># Return library containing the filtered rates</span>
-        <span class="k">return</span> <span class="n">Library</span><span class="p">(</span><span class="n">rates</span><span class="o">=</span><span class="n">filtered_rates</span><span class="p">)</span></div>
+        <span class="c1"># create a new library containing the filtered rates</span>
+        <span class="n">new_lib</span> <span class="o">=</span> <span class="n">Library</span><span class="p">(</span><span class="n">rates</span><span class="o">=</span><span class="n">filtered_rates</span><span class="p">)</span>
+
+        <span class="c1"># print out a warning if one of the input nuclei is not linked</span>
+        <span class="n">lib_nuclei</span> <span class="o">=</span> <span class="n">new_lib</span><span class="o">.</span><span class="n">get_nuclei</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="n">nucleus_set</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">nuc</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">lib_nuclei</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;warning </span><span class="si">{</span><span class="n">nuc</span><span class="si">}</span><span class="s2"> was not able to be linked&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">new_lib</span></div>
 
 <div class="viewcode-block" id="Library.filter"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.library.Library.filter">[docs]</a>    <span class="k">def</span> <span class="nf">filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filter_spec</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
