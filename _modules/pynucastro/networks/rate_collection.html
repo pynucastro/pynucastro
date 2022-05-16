@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.networks.rate_collection &mdash; pynucastro 1.6.0.post98+gc375c37 documentation</title>
+  <title>pynucastro.networks.rate_collection &mdash; pynucastro 1.6.0.post99+g209c1e3 documentation</title>
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -404,6 +404,19 @@
 <div class="viewcode-block" id="RateCollection.get_nuclei"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.get_nuclei">[docs]</a>    <span class="k">def</span> <span class="nf">get_nuclei</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; get all the nuclei that are part of the network &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span></div>
+
+<div class="viewcode-block" id="RateCollection.get_rates"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.get_rates">[docs]</a>    <span class="k">def</span> <span class="nf">get_rates</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; get a list of the reaction rates in this network&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span></div>
+
+<div class="viewcode-block" id="RateCollection.get_rate"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.get_rate">[docs]</a>    <span class="k">def</span> <span class="nf">get_rate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rid</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Return a rate matching the id provided.  Here rid should be</span>
+<span class="sd">        the string return by Rate.fname&quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span> <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">fname</span> <span class="o">==</span> <span class="n">rid</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ERROR: rate identifier does not match a rate in this network.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span></div>
 
 <div class="viewcode-block" id="RateCollection.evaluate_rates"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.evaluate_rates">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate_rates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">composition</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;evaluate the rates for a specific density, temperature, and</span>
