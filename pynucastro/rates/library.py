@@ -197,13 +197,15 @@ class Library:
         try:
             return self._rates[rid]
         except KeyError:
-            # fallback to the rate fname
-            try:
-                r = [q for q in self.get_rates() if q.fname == rid][0]
-                return r
-            except IndexError:
-                print("ERROR: rate identifier does not match a rate in this library.")
-                raise
+            pass
+
+        # fallback to the rate fname
+        try:
+            r = [q for q in self.get_rates() if q.fname == rid][0]
+            return r
+        except IndexError:
+            print("ERROR: rate identifier does not match a rate in this library.")
+            raise
 
     def get_nuclei(self):
         """get the list of unique nuclei"""
