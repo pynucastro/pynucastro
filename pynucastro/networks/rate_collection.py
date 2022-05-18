@@ -322,6 +322,19 @@ class RateCollection:
         """ get all the nuclei that are part of the network """
         return self.unique_nuclei
 
+    def get_rates(self):
+        """ get a list of the reaction rates in this network"""
+        return self.rates
+
+    def get_rate(self, rid):
+        """ Return a rate matching the id provided.  Here rid should be
+        the string return by Rate.fname"""
+        try:
+            return [r for r in self.rates if r.fname == rid][0]
+        except IndexError:
+            print("ERROR: rate identifier does not match a rate in this network.")
+            raise
+
     def evaluate_rates(self, rho, T, composition):
         """evaluate the rates for a specific density, temperature, and
         composition"""
