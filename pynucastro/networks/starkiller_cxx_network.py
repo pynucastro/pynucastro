@@ -37,8 +37,8 @@ class StarKillerCxxNetwork(BaseCxxNetwork):
                 of.write(f"{self.indent*n_indent}if (i == k_{r.fname} && disable_{r.fname}) {{\n")
                 of.write(f"{self.indent*n_indent}    rate_eval.screened_rates(i) = 0.0;\n")
                 of.write(f"{self.indent*n_indent}    rate_eval.dscreened_rates_dT(i) = 0.0;\n")
-                of.write(f"{self.indent.n_indent}    continue;\n")
-                of.write(f"{self.indent.n_indent}}}\n")
+                of.write(f"{self.indent*n_indent}    continue;\n")
+                of.write(f"{self.indent*n_indent}}}\n")
 
     def _write_network(self, odir=None):
         """
