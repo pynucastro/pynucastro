@@ -377,10 +377,37 @@ class Library:
         only_bwd = self.filter(only_bwd_filter)
         return only_bwd
 
+    def derived_forward(self):
+
+        collect_rates = []
+        onlyfwd = self.forward()
+
+        for r in onlyfwd.get_rates():
+            try:
+                DerivedRate(r, use_pf=True, use_A_nuc=True)
+            except AssertionError:
+                continue
+            collect_rates.append(r)
+
+        list1 = Library(rates=collect_rates)
+        return list1
+
+    def derived_backward(self, use_pf=False, use_A_nuc=False):
+
+        derived_rates = []
+        onlyfwd = self.derived_forward()
+
+        for r in onlyfwd.get_rates():
+            i = DerivedRate(r, use_pf=use_pf, use_A_nuc=use_A_nuc)
+            derived_rates.append(i)
+
+        onlybwd = Library(rates=derived_rates)
+
+        return onlybwd
+
 
 class RateFilter:
     """RateFilter filters out a specified rate or set of rates
-
     A RateFilter stores selection rules specifying a rate or group of
     rates to assist in searching for rates stored in a Library.
     """
@@ -530,24 +557,6 @@ class RateFilter:
                                min_products=self.min_reactants,
                                max_products=self.max_reactants)
         return newfilter
-
-    def derive_reverse_rates(self, use_pf=False, use_A_nuc=False):
-
-        derived_rates = []
-
-        onlyfwd = self.forward()
-        for r in onlyfwd._rates:
-            i = DerivedRate(r, use_pf=use_pf, use_A_nuc=use_A_nuc)
-            derived_rates.append(i)
-
-        onlybwd = Library(derived_rates)
-        whole = onlyfwd + onlybwd
-
-        return whole
-
-
-
-
 
 
 class ReacLibLibrary(Library):

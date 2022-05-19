@@ -995,6 +995,7 @@ class DerivedRate(Rate):
         self.use_A_nuc = use_A_nuc
 
         assert not self.rate.tabular
+        assert not self.rate.weak
         assert isinstance(rate, Rate)
 
         for nuc in self.rate.reactants:
