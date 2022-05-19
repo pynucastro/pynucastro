@@ -2,8 +2,8 @@
 !USDB  GT+Fermi    Q(20Na-20Ne) = 13.8921 MeV
 !Experimental data are used.
 !
-!Log(rhoY) Log(T) mu     dQ       Vs        e-cap-rate    nu-energy-loss  gamma-energy
-!                    (MeV)   (MeV)   (MeV)        (1/s)           (MeV/s)           (MeV/s)  
+!rhoY        T            mu           dQ           Vs           e-cap-rate   nu-energy-loss gamma-energy
+!g/cm^3      K            erg          erg          erg          1/s          erg/s        erg/s
 1.000000e+07 1.000000e+07 1.954179e-06 4.788916e-08 1.360251e-08 3.734737e-01 4.961709e-06 5.579834e-06
 1.000000e+07 1.584893e+07 1.952256e-06 4.764883e-08 1.360251e-08 3.685021e-01 4.894759e-06 5.504924e-06
 1.000000e+07 2.511886e+07 1.949533e-06 4.731238e-08 1.360251e-08 3.664966e-01 4.867672e-06 5.474712e-06

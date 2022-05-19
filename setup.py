@@ -14,9 +14,9 @@ setup(name='pynucastro',
                                    
                                    "nucdata/AtomicMassEvaluation/*", "nucdata/PartitionFunction/*"]},
 
-      install_requires=['networkx', 'numpy', 'numba',
-                        'sympy', 'scipy', 'matplotlib',
-                        'ipywidgets', 'numba'],
+      install_requires=['networkx', 'numpy', 'sympy',
+                        'scipy', 'matplotlib', 'ipywidgets'],
+      extras_require={"numba": ["numba"]},
       use_scm_version={"version_scheme": "post-release",
                        "write_to": "pynucastro/_version.py"},
       setup_requires=["setuptools_scm"],

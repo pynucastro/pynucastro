@@ -2,8 +2,8 @@
 !GT+F  USDB
 !Experimental data used.   Q=4.056 MeV
 !
-!Log(rhoY) Log(T) mu     Dq        Vs        e-cap-rate    nu-energy-loss  gamma-energy
-!               (MeV)                                    (1/s)        (MeV/s)        (MeV/s)  
+!rhoY        T            mu           dQ           Vs           e-cap-rate   nu-energy-loss gamma-energy
+!g/cm^3      K            erg          erg          erg          1/s          erg/s        erg/s
 1.000000e+07 1.000000e+07 1.967797e-06 5.094932e-08 1.490027e-08 6.591739e-02 4.608518e-07 1.634976e-08
 1.000000e+07 1.584893e+07 1.965875e-06 5.078911e-08 1.490027e-08 6.556922e-02 4.582277e-07 1.625217e-08
 1.000000e+07 2.511886e+07 1.963151e-06 5.046867e-08 1.490027e-08 6.543348e-02 4.573001e-07 1.621852e-08

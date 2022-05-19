@@ -3,8 +3,8 @@
 !FB (0+ -> 2+) is included
 !Experimental data are taken into account;  energies, GT stemgth
 !
-!Log(rhoY) Log(T) mu       dQ       Vs         e-cap-rate    nu-energy-loss  gamma-energy
-!                      (MeV)   (MeV)   (MeV)           (1/s)           (MeV/s)           (MeV/s)  
+!rhoY        T            mu           dQ           Vs           e-cap-rate   nu-energy-loss gamma-energy
+!g/cm^3      K            erg          erg          erg          1/s          erg/s        erg/s
 1.000000e+07 1.000000e+07 1.967797e-06 4.471684e-08 1.235281e-08 0.000000e+00 0.000000e+00 0.000000e+00
 1.000000e+07 1.584893e+07 1.965875e-06 4.446049e-08 1.235281e-08 0.000000e+00 0.000000e+00 0.000000e+00
 1.000000e+07 2.511886e+07 1.963151e-06 4.412404e-08 1.235281e-08 0.000000e+00 0.000000e+00 0.000000e+00
