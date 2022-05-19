@@ -4,6 +4,7 @@ import collections
 
 from pynucastro.nucleus import Nucleus, UnsupportedNucleus
 from pynucastro.rates import Rate, _find_rate_file
+from pynucastro.rates.rate import DerivedRate
 
 
 def list_known_rates():
@@ -529,6 +530,24 @@ class RateFilter:
                                min_products=self.min_reactants,
                                max_products=self.max_reactants)
         return newfilter
+
+    def derive_reverse_rates(self, use_pf=False, use_A_nuc=False):
+
+        derived_rates = []
+
+        onlyfwd = self.forward()
+        for r in onlyfwd._rates:
+            i = DerivedRate(r, use_pf=use_pf, use_A_nuc=use_A_nuc)
+            derived_rates.append(i)
+
+        onlybwd = Library(derived_rates)
+        whole = onlyfwd + onlybwd
+
+        return whole
+
+
+
+
 
 
 class ReacLibLibrary(Library):
