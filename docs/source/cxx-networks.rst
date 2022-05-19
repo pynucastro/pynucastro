@@ -10,14 +10,14 @@ C++ 3-alpha network that works with ``Microphysics`` can be created via:
 
 .. code:: python
 
-|    import pynucastro as pyna
+   import pynucastro as pyna
 
-|    reaclib_library = pyna.ReacLibLibrary()
+   reaclib_library = pyna.ReacLibLibrary()
 
-|    mylib = reaclib_library.linking_nuclei(["he4", "c12", "o16"])
+   mylib = reaclib_library.linking_nuclei(["he4", "c12", "o16"])
 
-|    net = pyna.StarKillerCxxNetwork(libraries=[mylib], rate_params=[r])
-|    net.write_network()
+   net = pyna.StarKillerCxxNetwork(libraries=[mylib], rate_params=[r])
+   net.write_network()
 
 The C++ network uses a set of template files in
 ``pynucastro/templates/starkiller-cxx-microphysics/`` which have
@@ -78,15 +78,24 @@ Finally, there are a few meta-data files:
 
 * ``pynucsastro.net``
 
+  This lists the nuclei in the network and their properties in a format that
+  Microphysics requires.
+
 * ``reaclib_rate_metadata.dat``
+
+  This stores the data for the ReacLib rates -- the 7 coefficients for each
+  interpolant in each set for a rate.
 
 and some files related to the Microphysics build system
 
 * ``Make.package``
 
+  This is a stub for the build system that list the files needed to build
+  the network.
+
 * ``_parameters``
 
-* ``NETWORK_PROPERTIES``
+  This lists the runtime parameters that affect the network.
 
 To test the library, you can use the unit tests in ``Microphysics/unit_test/``, for example,
 ``test_react``.
