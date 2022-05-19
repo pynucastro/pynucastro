@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Example of integrating a network &mdash; pynucastro 1.6.0.post101+g02feefa documentation</title>
+  <title>Example of integrating a network &mdash; pynucastro 1.6.0.post102+gda7c21e documentation</title>
       <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -441,7 +441,7 @@ C13 + p ⟶ N14 + 𝛾
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-rho*Y[ip]*Y[ic13]*lambda_p_c13__n14
+rho*Y[jp]*Y[jc13]*lambda_p_c13__n14
 </pre></div></div>
 </div>
 <p>and the code needed to evaluate that rate (the T-dependent part) as:</p>
@@ -506,40 +506,40 @@ import numpy as np
 from pynucastro.rates import Tfactors
 import numba
 
-ip = 0
-ihe4 = 1
-ic12 = 2
-ic13 = 3
-in13 = 4
-in14 = 5
-in15 = 6
-io14 = 7
-io15 = 8
+jp = 0
+jhe4 = 1
+jc12 = 2
+jc13 = 3
+jn13 = 4
+jn14 = 5
+jn15 = 6
+jo14 = 7
+jo15 = 8
 nnuc = 9
 
 A = np.zeros((nnuc), dtype=np.int32)
 
-A[ip] = 1
-A[ihe4] = 4
-A[ic12] = 12
-A[ic13] = 13
-A[in13] = 13
-A[in14] = 14
-A[in15] = 15
-A[io14] = 14
-A[io15] = 15
+A[jp] = 1
+A[jhe4] = 4
+A[jc12] = 12
+A[jc13] = 13
+A[jn13] = 13
+A[jn14] = 14
+A[jn15] = 15
+A[jo14] = 14
+A[jo15] = 15
 
 Z = np.zeros((nnuc), dtype=np.int32)
 
-Z[ip] = 1
-Z[ihe4] = 2
-Z[ic12] = 6
-Z[ic13] = 6
-Z[in13] = 7
-Z[in14] = 7
-Z[in15] = 7
-Z[io14] = 8
-Z[io15] = 8
+Z[jp] = 1
+Z[jhe4] = 2
+Z[jc12] = 6
+Z[jc13] = 6
+Z[jn13] = 7
+Z[jn14] = 7
+Z[jn15] = 7
+Z[jo14] = 8
+Z[jo15] = 8
 
 names = []
 names.append(&#34;h1&#34;)
@@ -677,15 +677,15 @@ def rhs(t, Y, rho, T):
 @numba.njit()
 def rhs_eq(t, Y, rho, T):
 
-    ip = 0
-    ihe4 = 1
-    ic12 = 2
-    ic13 = 3
-    in13 = 4
-    in14 = 5
-    in15 = 6
-    io14 = 7
-    io15 = 8
+    jp = 0
+    jhe4 = 1
+    jc12 = 2
+    jc13 = 3
+    jn13 = 4
+    jn14 = 5
+    jn15 = 6
+    jo14 = 7
+    jo15 = 8
     nnuc = 9
 
     tf = Tfactors(T)
@@ -701,53 +701,53 @@ def rhs_eq(t, Y, rho, T):
 
     dYdt = np.zeros((nnuc), dtype=np.float64)
 
-    dYdt[ip] = (
-       -rho*Y[ip]*Y[ic12]*lambda_p_c12__n13
-       -rho*Y[ip]*Y[ic13]*lambda_p_c13__n14
-       -rho*Y[ip]*Y[in13]*lambda_p_n13__o14
-       -rho*Y[ip]*Y[in14]*lambda_p_n14__o15
-       -rho*Y[ip]*Y[in15]*lambda_p_n15__he4_c12
+    dYdt[jp] = (
+       -rho*Y[jp]*Y[jc12]*lambda_p_c12__n13
+       -rho*Y[jp]*Y[jc13]*lambda_p_c13__n14
+       -rho*Y[jp]*Y[jn13]*lambda_p_n13__o14
+       -rho*Y[jp]*Y[jn14]*lambda_p_n14__o15
+       -rho*Y[jp]*Y[jn15]*lambda_p_n15__he4_c12
        )
 
-    dYdt[ihe4] = (
-       +rho*Y[ip]*Y[in15]*lambda_p_n15__he4_c12
+    dYdt[jhe4] = (
+       +rho*Y[jp]*Y[jn15]*lambda_p_n15__he4_c12
        )
 
-    dYdt[ic12] = (
-       -rho*Y[ip]*Y[ic12]*lambda_p_c12__n13
-       +rho*Y[ip]*Y[in15]*lambda_p_n15__he4_c12
+    dYdt[jc12] = (
+       -rho*Y[jp]*Y[jc12]*lambda_p_c12__n13
+       +rho*Y[jp]*Y[jn15]*lambda_p_n15__he4_c12
        )
 
-    dYdt[ic13] = (
-       -rho*Y[ip]*Y[ic13]*lambda_p_c13__n14
-       +Y[in13]*lambda_n13__c13__weak__wc12
+    dYdt[jc13] = (
+       -rho*Y[jp]*Y[jc13]*lambda_p_c13__n14
+       +Y[jn13]*lambda_n13__c13__weak__wc12
        )
 
-    dYdt[in13] = (
-       -Y[in13]*lambda_n13__c13__weak__wc12
-       -rho*Y[ip]*Y[in13]*lambda_p_n13__o14
-       +rho*Y[ip]*Y[ic12]*lambda_p_c12__n13
+    dYdt[jn13] = (
+       -Y[jn13]*lambda_n13__c13__weak__wc12
+       -rho*Y[jp]*Y[jn13]*lambda_p_n13__o14
+       +rho*Y[jp]*Y[jc12]*lambda_p_c12__n13
        )
 
-    dYdt[in14] = (
-       -rho*Y[ip]*Y[in14]*lambda_p_n14__o15
-       +rho*Y[ip]*Y[ic13]*lambda_p_c13__n14
-       +Y[io14]*lambda_o14__n14__weak__wc12
+    dYdt[jn14] = (
+       -rho*Y[jp]*Y[jn14]*lambda_p_n14__o15
+       +rho*Y[jp]*Y[jc13]*lambda_p_c13__n14
+       +Y[jo14]*lambda_o14__n14__weak__wc12
        )
 
-    dYdt[in15] = (
-       -rho*Y[ip]*Y[in15]*lambda_p_n15__he4_c12
-       +Y[io15]*lambda_o15__n15__weak__wc12
+    dYdt[jn15] = (
+       -rho*Y[jp]*Y[jn15]*lambda_p_n15__he4_c12
+       +Y[jo15]*lambda_o15__n15__weak__wc12
        )
 
-    dYdt[io14] = (
-       -Y[io14]*lambda_o14__n14__weak__wc12
-       +rho*Y[ip]*Y[in13]*lambda_p_n13__o14
+    dYdt[jo14] = (
+       -Y[jo14]*lambda_o14__n14__weak__wc12
+       +rho*Y[jp]*Y[jn13]*lambda_p_n13__o14
        )
 
-    dYdt[io15] = (
-       -Y[io15]*lambda_o15__n15__weak__wc12
-       +rho*Y[ip]*Y[in14]*lambda_p_n14__o15
+    dYdt[jo15] = (
+       -Y[jo15]*lambda_o15__n15__weak__wc12
+       +rho*Y[jp]*Y[jn14]*lambda_p_n14__o15
        )
 
     return dYdt
@@ -783,9 +783,9 @@ def rhs_eq(t, Y, rho, T):
 <span class="n">T</span> <span class="o">=</span> <span class="mf">1.5e7</span>
 
 <span class="n">X0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">cno</span><span class="o">.</span><span class="n">nnuc</span><span class="p">)</span>
-<span class="n">X0</span><span class="p">[</span><span class="n">cno</span><span class="o">.</span><span class="n">ip</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.7</span>
-<span class="n">X0</span><span class="p">[</span><span class="n">cno</span><span class="o">.</span><span class="n">ihe4</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.28</span>
-<span class="n">X0</span><span class="p">[</span><span class="n">cno</span><span class="o">.</span><span class="n">ic12</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.02</span>
+<span class="n">X0</span><span class="p">[</span><span class="n">cno</span><span class="o">.</span><span class="n">jp</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.7</span>
+<span class="n">X0</span><span class="p">[</span><span class="n">cno</span><span class="o">.</span><span class="n">jhe4</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.28</span>
+<span class="n">X0</span><span class="p">[</span><span class="n">cno</span><span class="o">.</span><span class="n">jc12</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.02</span>
 
 <span class="n">Y0</span> <span class="o">=</span> <span class="n">X0</span><span class="o">/</span><span class="n">cno</span><span class="o">.</span><span class="n">A</span>
 </pre></div>
