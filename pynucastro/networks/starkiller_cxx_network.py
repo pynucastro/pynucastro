@@ -10,14 +10,18 @@ from pynucastro.networks import BaseCxxNetwork
 
 
 class StarKillerCxxNetwork(BaseCxxNetwork):
-    def __init__(self, rate_params=None, *args, **kwargs):
-        # Initialize BaseFortranNetwork parent class
+    def __init__(self, *args, **kwargs):
+
+        # this network can have a special kwarg called rate_params
+        try:
+            rate_params = kwargs.pop("rate_params")
+        except KeyError:
+            rate_params = []
+
+        # Initialize BaseCxxNetwork parent class
         super().__init__(*args, **kwargs)
 
         self.ftags['<rate_param_tests>'] = self._rate_param_tests
-
-        if rate_params is None:
-            rate_params = []
 
         self.rate_params = rate_params
 
