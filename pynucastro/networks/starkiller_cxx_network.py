@@ -12,18 +12,18 @@ from pynucastro.networks import BaseCxxNetwork
 class StarKillerCxxNetwork(BaseCxxNetwork):
     def __init__(self, *args, **kwargs):
 
-        # this network can have a special kwarg called rate_params
+        # this network can have a special kwarg called disable_rate_params
         try:
-            rate_params = kwargs.pop("rate_params")
+            disable_rate_params = kwargs.pop("disable_rate_params")
         except KeyError:
-            rate_params = []
+            disable_rate_params = []
 
         # Initialize BaseCxxNetwork parent class
         super().__init__(*args, **kwargs)
 
         self.ftags['<rate_param_tests>'] = self._rate_param_tests
 
-        self.rate_params = rate_params
+        self.disable_rate_params = disable_rate_params
 
     def _get_template_files(self):
 
@@ -37,7 +37,7 @@ class StarKillerCxxNetwork(BaseCxxNetwork):
     def _rate_param_tests(self, n_indent, of):
 
         for _, r in enumerate(self.rates):
-            if r in self.rate_params:
+            if r in self.disable_rate_params:
                 of.write(f"{self.indent*n_indent}if (i == k_{r.fname} && disable_{r.fname}) {{\n")
                 of.write(f"{self.indent*n_indent}    rate_eval.screened_rates(i) = 0.0;\n")
                 of.write(f"{self.indent*n_indent}    rate_eval.dscreened_rates_dT(i) = 0.0;\n")
@@ -65,6 +65,6 @@ class StarKillerCxxNetwork(BaseCxxNetwork):
         # write the _parameters file
         with open("_parameters", "w") as of:
             of.write("@namespace: network\n\n")
-            if self.rate_params:
-                for r in self.rate_params:
+            if self.disable_rate_params:
+                for r in self.disable_rate_params:
                     of.write(f"disable_{r.fname}    int     0\n")
