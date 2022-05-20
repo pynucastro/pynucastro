@@ -7,14 +7,41 @@ import re
 import io
 import numpy as np
 import matplotlib.pyplot as plt
-import numba
+try:
+    import numba
+    try:
+        from numba.experimental import jitclass
+    except ImportError:
+        from numba import jitclass
+except ImportError:
+    numba = None
+    import functools
+
+    # no-op jitclass placeholder
+    def jitclass(cls_or_spec=None, spec=None):
+        if (cls_or_spec is not None and
+            spec is None and
+                not isinstance(cls_or_spec, type)):
+            # Used like
+            # @jitclass([("x", intp)])
+            # class Foo:
+            #     ...
+            spec = cls_or_spec
+            cls_or_spec = None
+
+        def wrap(cls):
+            # this copies the function name and docstring to the wrapper function
+            @functools.wraps(cls)
+            def wrapper(*args, **kwargs):
+                return cls(*args, **kwargs)
+            return wrapper
+
+        if cls_or_spec is None:
+            return wrap
+        return wrap(cls_or_spec)
+
 
 from pynucastro.nucleus import Nucleus
-
-try:
-    from numba.experimental import jitclass
-except ImportError:
-    from numba import jitclass
 
 
 _pynucastro_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
@@ -46,14 +73,17 @@ def _find_rate_file(ratename):
     raise Exception(f'File {ratename} not found in the working directory, {_pynucastro_rates_dir}, or {_pynucastro_tabular_dir}')
 
 
-Tfactor_spec = [
-    ('T9', numba.float64),
-    ('T9i', numba.float64),
-    ('T913', numba.float64),
-    ('T913i', numba.float64),
-    ('T953', numba.float64),
-    ('lnT9', numba.float64)
-]
+if numba is not None:
+    Tfactor_spec = [
+        ('T9', numba.float64),
+        ('T9i', numba.float64),
+        ('T913', numba.float64),
+        ('T913i', numba.float64),
+        ('T953', numba.float64),
+        ('lnT9', numba.float64)
+    ]
+else:
+    Tfactor_spec = []
 
 
 @jitclass(Tfactor_spec)
