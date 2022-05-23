@@ -267,7 +267,7 @@ contains
 
     ! Calculate the derivative of rate with temperature, d(rate)/d(t)
     ! (Clamp interpolations in rhoy to avoid unphysical temperature derivatives)
-    if (( itemp_lo .eq. 1 ) .or. ( itemp_lo .eq. num_temp-1 )) then
+    if (( itemp_lo .eq. 1 ) .or. ( itemp_hi .eq. num_temp-1 )) then
        ! We're at the first or last table cell (in temperature)
        ! First do bilinear interpolation in rhoy for the table at tlo and thi
        call bl_clamp(rhoy_lo, rhoy_hi, &
@@ -285,7 +285,7 @@ contains
        t_im1 = temp_table( itemp_lo-1 )
        t_i   = temp_table( itemp_lo )
        t_ip1 = temp_table( itemp_hi )
-       t_ip2 = temp_table( itemp_lo+2 )
+       t_ip2 = temp_table( itemp_hi+1 )
        call bl_clamp(rhoy_lo, rhoy_hi, &
             rate_table( itemp_lo-1, irhoy_lo, jtab_rate ), &
             rate_table( itemp_lo-1, irhoy_hi, jtab_rate ), &
@@ -299,8 +299,8 @@ contains
             rate_table( itemp_hi, irhoy_hi, jtab_rate ), &
             rhoy, f_ip1)
        call bl_clamp(rhoy_lo, rhoy_hi, &
-            rate_table( itemp_lo+2, irhoy_lo, jtab_rate ), &
-            rate_table( itemp_lo+2, irhoy_hi, jtab_rate ), &
+            rate_table( itemp_hi+1, irhoy_lo, jtab_rate ), &
+            rate_table( itemp_hi+1, irhoy_hi, jtab_rate ), &
             rhoy, f_ip2)
        ! Get central difference derivatives at the box corners
        drdt_i   = (f_ip1 - f_im1) / (t_ip1 - t_im1)

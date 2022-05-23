@@ -250,7 +250,7 @@ get_entries(const table_t& table_meta,
     // Calculate the derivative of rate with temperature, d(rate)/d(t)
     // (Clamp interpolations in rhoy to avoid unphysical temperature derivatives)
 
-    if ((itemp_lo == 1) || (itemp_lo == table_meta.ntemp-1)) {
+    if ((itemp_lo == 1) || (itemp_hi == table_meta.ntemp-1)) {
         // We're at the first or last table cell (in temperature)
         // First do bilinear interpolation in rhoy for the table at tlo and thi
 
@@ -274,7 +274,7 @@ get_entries(const table_t& table_meta,
         Real t_im1 = temp_table(itemp_lo-1);
         Real t_i   = temp_table(itemp_lo);
         Real t_ip1 = temp_table(itemp_hi);
-        Real t_ip2 = temp_table(itemp_lo+2);
+        Real t_ip2 = temp_table(itemp_hi+1);
 
         Real f_im1 = bl_clamp(rhoy_lo, rhoy_hi,
                               data(itemp_lo-1, irhoy_lo, jtab_rate),
@@ -292,8 +292,8 @@ get_entries(const table_t& table_meta,
                               rhoy);
 
         Real f_ip2 = bl_clamp(rhoy_lo, rhoy_hi,
-                              data(itemp_lo+2, irhoy_lo, jtab_rate ),
-                              data(itemp_lo+2, irhoy_hi, jtab_rate ),
+                              data(itemp_hi+1, irhoy_lo, jtab_rate ),
+                              data(itemp_hi+1, irhoy_hi, jtab_rate ),
                               rhoy);
 
         // Get central difference derivatives at the box corners
