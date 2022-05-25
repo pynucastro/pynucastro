@@ -385,13 +385,12 @@ class RateCollection:
         m_n_MeV = constants.value('neutron mass energy equivalent in MeV')
         m_p_MeV = constants.value('proton mass energy equivalent in MeV')
         m_e_MeV = constants.value('electron mass energy equivalent in MeV')
-        MeV2erg = (constants.eV * constants.mega) /constants.erg
+        MeV2erg = (constants.eV * constants.mega) / constants.erg
 
         # ion binding energy contributions. basically e=mc^2
         for nuc in self.unique_nuclei:
             # add up mass in MeV then convert to erg
-            mass = ((nuc.A - nuc.Z) * m_n_MeV + nuc.Z * ( m_p_MeV + m_e_MeV)
-                    - nuc.A * nuc.nucbind) * MeV2erg
+            mass = ((nuc.A - nuc.Z) * m_n_MeV + nuc.Z * (m_p_MeV + m_e_MeV) - nuc.A * nuc.nucbind) * MeV2erg
             enuc += ydots[nuc] * mass
 
         #convert from molar value to erg/g/s
