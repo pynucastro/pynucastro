@@ -923,7 +923,7 @@ class Rate:
 
     def get_nu_loss(self, T, rhoY):
         """ get the neutrino loss rate for the reaction if tabulated"""
-        
+
         nu_loss = None
         if self.tabular:
             data = self.tabular_data_table.astype(np.float)
