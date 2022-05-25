@@ -921,6 +921,20 @@ class Rate:
 
         return r
 
+    def get_nu_loss(self, T, rhoY):
+        """ get the neutrino loss rate for the reaction if tabulated"""
+        
+        nu_loss = None
+        if self.tabular:
+            data = self.tabular_data_table.astype(np.float)
+            # find the nearest value of T and rhoY in the data table
+            T_nearest = (data[:, 1])[np.abs((data[:, 1]) - T).argmin()]
+            rhoY_nearest = (data[:, 0])[np.abs((data[:, 0]) - rhoY).argmin()]
+            inde = np.where((data[:, 1] == T_nearest) & (data[:, 0] == rhoY_nearest))[0][0]
+            nu_loss = data[inde][6]
+
+        return nu_loss
+
     def get_rate_exponent(self, T0):
         """
         for a rate written as a power law, r = r_0 (T/T0)**nu, return
