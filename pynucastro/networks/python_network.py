@@ -83,6 +83,29 @@ class PythonNetwork(RateCollection):
         return "{}{}{}{}*lambda_{}".format(prefactor_string, dens_string,
                                            y_e_string, Y_string, rate.fname)
 
+    def full_ydot_string(self, nucleus, indent=""):
+
+        ostr = ""
+        if not self.nuclei_consumed[nucleus] + self.nuclei_produced[nucleus]:
+            ostr += f"{indent}dYdt[j{nucleus}] = 0.0\n\n"
+        else:
+            ostr += f"{indent}dYdt[j{nucleus}] = (\n"
+            for r in self.nuclei_consumed[nucleus]:
+                c = r.reactants.count(nucleus)
+                if c == 1:
+                    ostr += f"{indent}   -{self.ydot_string(r)}\n"
+                else:
+                    ostr += f"{indent}   -{c}*{self.ydot_string(r)}\n"
+            for r in self.nuclei_produced[nucleus]:
+                c = r.products.count(nucleus)
+                if c == 1:
+                    ostr += f"{indent}   +{self.ydot_string(r)}\n"
+                else:
+                    ostr += f"{indent}   +{c}*{self.ydot_string(r)}\n"
+            ostr += f"{indent}   )\n\n"
+
+        return ostr
+
     def jacobian_string(self, rate, ydot_j, y_i):
         """
         Return a string containing the term in a jacobian matrix
@@ -219,22 +242,6 @@ class PythonNetwork(RateCollection):
 
         # now make the RHSs
         for n in self.unique_nuclei:
-            if not self.nuclei_consumed[n] + self.nuclei_produced[n]:
-                of.write(f"{indent}dYdt[j{n}] = 0.0\n\n")
-            else:
-                of.write(f"{indent}dYdt[j{n}] = (\n")
-                for r in self.nuclei_consumed[n]:
-                    c = r.reactants.count(n)
-                    if c == 1:
-                        of.write(f"{indent}   -{self.ydot_string(r)}\n")
-                    else:
-                        of.write(f"{indent}   -{c}*{self.ydot_string(r)}\n")
-                for r in self.nuclei_produced[n]:
-                    c = r.products.count(n)
-                    if c == 1:
-                        of.write(f"{indent}   +{self.ydot_string(r)}\n")
-                    else:
-                        of.write(f"{indent}   +{c}*{self.ydot_string(r)}\n")
-                of.write(f"{indent}   )\n\n")
+            of.write(self.full_ydot_string(n, indent=indent))
 
         of.write(f"{indent}return dYdt\n")
