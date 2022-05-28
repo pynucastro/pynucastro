@@ -219,19 +219,22 @@ class PythonNetwork(RateCollection):
 
         # now make the RHSs
         for n in self.unique_nuclei:
-            of.write(f"{indent}dYdt[j{n}] = (\n")
-            for r in self.nuclei_consumed[n]:
-                c = r.reactants.count(n)
-                if c == 1:
-                    of.write(f"{indent}   -{self.ydot_string(r)}\n")
-                else:
-                    of.write(f"{indent}   -{c}*{self.ydot_string(r)}\n")
-            for r in self.nuclei_produced[n]:
-                c = r.products.count(n)
-                if c == 1:
-                    of.write(f"{indent}   +{self.ydot_string(r)}\n")
-                else:
-                    of.write(f"{indent}   +{c}*{self.ydot_string(r)}\n")
-            of.write(f"{indent}   )\n\n")
+            if not self.nuclei_consumed[n] + self.nuclei_produced[n]:
+                of.write(f"{indent}dYdt[j{n}] = 0.0\n\n")
+            else:
+                of.write(f"{indent}dYdt[j{n}] = (\n")
+                for r in self.nuclei_consumed[n]:
+                    c = r.reactants.count(n)
+                    if c == 1:
+                        of.write(f"{indent}   -{self.ydot_string(r)}\n")
+                    else:
+                        of.write(f"{indent}   -{c}*{self.ydot_string(r)}\n")
+                for r in self.nuclei_produced[n]:
+                    c = r.products.count(n)
+                    if c == 1:
+                        of.write(f"{indent}   +{self.ydot_string(r)}\n")
+                    else:
+                        of.write(f"{indent}   +{c}*{self.ydot_string(r)}\n")
+                of.write(f"{indent}   )\n\n")
 
         of.write(f"{indent}return dYdt\n")
