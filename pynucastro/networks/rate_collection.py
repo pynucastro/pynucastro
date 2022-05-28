@@ -233,7 +233,7 @@ class RateCollection:
                     nuc = n
                 else:
                     nuc = Nucleus(n)
-                if not nuc in self.unique_nuclei:
+                if nuc not in self.unique_nuclei:
                     self.unique_nuclei.append(nuc)
 
         # now make a list of each rate that touches each nucleus
