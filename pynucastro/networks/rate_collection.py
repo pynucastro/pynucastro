@@ -275,36 +275,63 @@ class RateCollection:
                 else:
                     self.library = self.library + rflib
 
+    def get_forward_rates(self):
+        """return a list of the forward (exothermic) rates"""
+
+        # first handle the ones that have Q defined
+        forward_rates = [r for r in self.rates if r.Q is not None and r.Q >= 0.0]
+
+        # e-capture tabular rates don't have a Q defined, so just go off of the binding energy
+        forward_rates += [r for r in self.rates if r.Q is None and r.reactants[0].nucbind <= r.products[0].nucbind]
+
+        return forward_rates
+
+    def get_reverse_rates(self):
+        """return a list of the reverse (endothermic) rates)"""
+
+        # first handle the ones that have Q defined
+        reverse_rates = [r for r in self.rates if r.Q is not None and r.Q < 0.0]
+
+        # e-capture tabular rates don't have a Q defined, so just go off of the binding energy
+        reverse_rates += [r for r in self.rates if r.Q is None and r.reactants[0].nucbind > r.products[0].nucbind]
+
+        return reverse_rates
+
+    def find_reverse(self, forward_rate, reverse_rates=None):
+        """given a forward rate, locate the rate that is its reverse"""
+
+        if reverse_rates is None:
+            reverse_rates = self.get_reverse_rates()
+
+        reverse = None
+
+        for rr in reverse_rates:
+            if sorted(forward_rate.reactants, key=lambda x: x.A) == sorted(rr.products, key=lambda x: x.A) and \
+               sorted(forward_rate.products, key=lambda x: x.A) == sorted(rr.reactants, key=lambda x: x.A):
+                reverse = rr
+                break
+
+        return reverse
+
     def get_rate_pairs(self):
         """ return a list of RatePair objects, grouping the rates together
             by forward and reverse"""
 
-        # first handle the ones that have Q defined
-
-        forward_rates = [r for r in self.rates if r.Q is not None and r.Q >= 0.0]
-        reverse_rates = [r for r in self.rates if r.Q is not None and r.Q < 0.0]
-
-        # e-capture tabular rates don't have a Q defined, so just go off of the binding energy
-
-        forward_rates += [r for r in self.rates if r.Q is None and r.reactants[0].nucbind <= r.products[0].nucbind]
-        reverse_rates += [r for r in self.rates if r.Q is None and r.reactants[0].nucbind > r.products[0].nucbind]
-
         rate_pairs = []
+
+        reverse_rates = self.get_reverse_rates()
 
         # loop over all the forward rates and find the matching reverse rate
         # if it exists
-        for fr in forward_rates:
+        for fr in self.get_forward_rates():
             rp = RatePair(forward=fr)
-            matched = False
-            for rr in reverse_rates:
-                if sorted(fr.reactants, key=lambda x: x.A) == sorted(rr.products, key=lambda x: x.A) and \
-                   sorted(fr.products, key=lambda x: x.A) == sorted(rr.reactants, key=lambda x: x.A):
-                    matched = True
-                    rp.reverse = rr
-                    break
+
+            rr = self.find_reverse(fr, reverse_rates=reverse_rates)
+
             # since we found a match, remove the reverse rate we paired
             # from out list so no other forward rate can match with it
-            if matched:
+            if rr is not None:
+                rp.reverse = rr
                 reverse_rates.remove(rp.reverse)
 
             rate_pairs.append(rp)
