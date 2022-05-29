@@ -35,3 +35,7 @@ class TestRateCollection:
     def test_get_rate(self):
         r = self.rc.get_rate("he4_he4_he4__c12")
         assert r.fname == "he4_he4_he4__c12"
+
+    def test_find_reverse(self):
+        rr = self.rc.find_reverse(self.rc.get_rate("he4_c12__o16"))
+        assert rr.fname == "o16__he4_c12"
