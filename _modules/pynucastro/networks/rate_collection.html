@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.networks.rate_collection &mdash; pynucastro 1.6.0.post108+g35d7609 documentation</title>
+  <title>pynucastro.networks.rate_collection &mdash; pynucastro 1.6.0.post109+gba23dc6 documentation</title>
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -374,36 +374,63 @@
                 <span class="k">else</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">library</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">library</span> <span class="o">+</span> <span class="n">rflib</span>
 
+<div class="viewcode-block" id="RateCollection.get_forward_rates"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.get_forward_rates">[docs]</a>    <span class="k">def</span> <span class="nf">get_forward_rates</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;return a list of the forward (exothermic) rates&quot;&quot;&quot;</span>
+
+        <span class="c1"># first handle the ones that have Q defined</span>
+        <span class="n">forward_rates</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span> <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">Q</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">r</span><span class="o">.</span><span class="n">Q</span> <span class="o">&gt;=</span> <span class="mf">0.0</span><span class="p">]</span>
+
+        <span class="c1"># e-capture tabular rates don&#39;t have a Q defined, so just go off of the binding energy</span>
+        <span class="n">forward_rates</span> <span class="o">+=</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span> <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">Q</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">nucbind</span> <span class="o">&lt;=</span> <span class="n">r</span><span class="o">.</span><span class="n">products</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">nucbind</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">forward_rates</span></div>
+
+<div class="viewcode-block" id="RateCollection.get_reverse_rates"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.get_reverse_rates">[docs]</a>    <span class="k">def</span> <span class="nf">get_reverse_rates</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;return a list of the reverse (endothermic) rates)&quot;&quot;&quot;</span>
+
+        <span class="c1"># first handle the ones that have Q defined</span>
+        <span class="n">reverse_rates</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span> <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">Q</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">r</span><span class="o">.</span><span class="n">Q</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">]</span>
+
+        <span class="c1"># e-capture tabular rates don&#39;t have a Q defined, so just go off of the binding energy</span>
+        <span class="n">reverse_rates</span> <span class="o">+=</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span> <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">Q</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">nucbind</span> <span class="o">&gt;</span> <span class="n">r</span><span class="o">.</span><span class="n">products</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">nucbind</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">reverse_rates</span></div>
+
+<div class="viewcode-block" id="RateCollection.find_reverse"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.find_reverse">[docs]</a>    <span class="k">def</span> <span class="nf">find_reverse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">forward_rate</span><span class="p">,</span> <span class="n">reverse_rates</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;given a forward rate, locate the rate that is its reverse&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">reverse_rates</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">reverse_rates</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_reverse_rates</span><span class="p">()</span>
+
+        <span class="n">reverse</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">for</span> <span class="n">rr</span> <span class="ow">in</span> <span class="n">reverse_rates</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">forward_rate</span><span class="o">.</span><span class="n">reactants</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">A</span><span class="p">)</span> <span class="o">==</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">rr</span><span class="o">.</span><span class="n">products</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">A</span><span class="p">)</span> <span class="ow">and</span> \
+               <span class="nb">sorted</span><span class="p">(</span><span class="n">forward_rate</span><span class="o">.</span><span class="n">products</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">A</span><span class="p">)</span> <span class="o">==</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">rr</span><span class="o">.</span><span class="n">reactants</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">A</span><span class="p">):</span>
+                <span class="n">reverse</span> <span class="o">=</span> <span class="n">rr</span>
+                <span class="k">break</span>
+
+        <span class="k">return</span> <span class="n">reverse</span></div>
+
 <div class="viewcode-block" id="RateCollection.get_rate_pairs"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.get_rate_pairs">[docs]</a>    <span class="k">def</span> <span class="nf">get_rate_pairs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; return a list of RatePair objects, grouping the rates together</span>
 <span class="sd">            by forward and reverse&quot;&quot;&quot;</span>
 
-        <span class="c1"># first handle the ones that have Q defined</span>
-
-        <span class="n">forward_rates</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span> <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">Q</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">r</span><span class="o">.</span><span class="n">Q</span> <span class="o">&gt;=</span> <span class="mf">0.0</span><span class="p">]</span>
-        <span class="n">reverse_rates</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span> <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">Q</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">r</span><span class="o">.</span><span class="n">Q</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">]</span>
-
-        <span class="c1"># e-capture tabular rates don&#39;t have a Q defined, so just go off of the binding energy</span>
-
-        <span class="n">forward_rates</span> <span class="o">+=</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span> <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">Q</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">nucbind</span> <span class="o">&lt;=</span> <span class="n">r</span><span class="o">.</span><span class="n">products</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">nucbind</span><span class="p">]</span>
-        <span class="n">reverse_rates</span> <span class="o">+=</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span> <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">Q</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">nucbind</span> <span class="o">&gt;</span> <span class="n">r</span><span class="o">.</span><span class="n">products</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">nucbind</span><span class="p">]</span>
-
         <span class="n">rate_pairs</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">reverse_rates</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_reverse_rates</span><span class="p">()</span>
 
         <span class="c1"># loop over all the forward rates and find the matching reverse rate</span>
         <span class="c1"># if it exists</span>
-        <span class="k">for</span> <span class="n">fr</span> <span class="ow">in</span> <span class="n">forward_rates</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">fr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_forward_rates</span><span class="p">():</span>
             <span class="n">rp</span> <span class="o">=</span> <span class="n">RatePair</span><span class="p">(</span><span class="n">forward</span><span class="o">=</span><span class="n">fr</span><span class="p">)</span>
-            <span class="n">matched</span> <span class="o">=</span> <span class="kc">False</span>
-            <span class="k">for</span> <span class="n">rr</span> <span class="ow">in</span> <span class="n">reverse_rates</span><span class="p">:</span>
-                <span class="k">if</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">fr</span><span class="o">.</span><span class="n">reactants</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">A</span><span class="p">)</span> <span class="o">==</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">rr</span><span class="o">.</span><span class="n">products</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">A</span><span class="p">)</span> <span class="ow">and</span> \
-                   <span class="nb">sorted</span><span class="p">(</span><span class="n">fr</span><span class="o">.</span><span class="n">products</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">A</span><span class="p">)</span> <span class="o">==</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">rr</span><span class="o">.</span><span class="n">reactants</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">A</span><span class="p">):</span>
-                    <span class="n">matched</span> <span class="o">=</span> <span class="kc">True</span>
-                    <span class="n">rp</span><span class="o">.</span><span class="n">reverse</span> <span class="o">=</span> <span class="n">rr</span>
-                    <span class="k">break</span>
+
+            <span class="n">rr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_reverse</span><span class="p">(</span><span class="n">fr</span><span class="p">,</span> <span class="n">reverse_rates</span><span class="o">=</span><span class="n">reverse_rates</span><span class="p">)</span>
+
             <span class="c1"># since we found a match, remove the reverse rate we paired</span>
             <span class="c1"># from out list so no other forward rate can match with it</span>
-            <span class="k">if</span> <span class="n">matched</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">rr</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">rp</span><span class="o">.</span><span class="n">reverse</span> <span class="o">=</span> <span class="n">rr</span>
                 <span class="n">reverse_rates</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">rp</span><span class="o">.</span><span class="n">reverse</span><span class="p">)</span>
 
             <span class="n">rate_pairs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rp</span><span class="p">)</span>
