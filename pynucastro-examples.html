@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro usage examples &mdash; pynucastro 1.6.0.post107+g8d10b9e documentation</title>
+  <title>pynucastro usage examples &mdash; pynucastro 1.6.0.post108+g35d7609 documentation</title>
       <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -15,6 +15,7 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
         <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
@@ -387,7 +388,7 @@ div.rendered_html tbody tr:hover {
 }
 </style>
 <section id="pynucastro-usage-examples">
-<h1>pynucastro usage examples<a class="headerlink" href="#pynucastro-usage-examples" title="Permalink to this headline">¶</a></h1>
+<h1>pynucastro usage examples<a class="headerlink" href="#pynucastro-usage-examples" title="Permalink to this heading">¶</a></h1>
 <p>This notebook illustrates some of the higher-level data structures in <code class="docutils literal notranslate"><span class="pre">pynucastro</span></code>.</p>
 <p>Note to run properly, you install pynucastro via:</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>python setup.py install
@@ -403,7 +404,7 @@ div.rendered_html tbody tr:hover {
 </div>
 </div>
 <section id="Loading-a-single-rate">
-<h2>Loading a single rate<a class="headerlink" href="#Loading-a-single-rate" title="Permalink to this headline">¶</a></h2>
+<h2>Loading a single rate<a class="headerlink" href="#Loading-a-single-rate" title="Permalink to this heading">¶</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">Rate</span></code> class holds a single reaction rate and takes a reaclib file as input. There are a lot of methods in the <code class="docutils literal notranslate"><span class="pre">Rate</span></code> class that allow you to explore the rate.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
@@ -414,7 +415,7 @@ div.rendered_html tbody tr:hover {
 </div>
 </div>
 <section id="the-original-reaclib-source">
-<h3>the original reaclib source<a class="headerlink" href="#the-original-reaclib-source" title="Permalink to this headline">¶</a></h3>
+<h3>the original reaclib source<a class="headerlink" href="#the-original-reaclib-source" title="Permalink to this heading">¶</a></h3>
 <p>we can easily see the original source from ReacLib</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
@@ -449,7 +450,7 @@ div.rendered_html tbody tr:hover {
 \[\lambda = \exp \left [ a_0 + \sum_{i=1}^5 a_i T_9^{(2i-5)/3} + a_6 \ln T_9 \right ]\]</div>
 </section>
 <section id="evaluate-the-rate-at-a-given-temperature-(in-K)">
-<h3>evaluate the rate at a given temperature (in K)<a class="headerlink" href="#evaluate-the-rate-at-a-given-temperature-(in-K)" title="Permalink to this headline">¶</a></h3>
+<h3>evaluate the rate at a given temperature (in K)<a class="headerlink" href="#evaluate-the-rate-at-a-given-temperature-(in-K)" title="Permalink to this heading">¶</a></h3>
 <p>This is just the temperature dependent portion of the rate, usually expressed as <span class="math notranslate nohighlight">\(N_A \langle \sigma v \rangle\)</span></p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
@@ -470,7 +471,7 @@ div.rendered_html tbody tr:hover {
 </div>
 </section>
 <section id="human-readable-string">
-<h3>human readable string<a class="headerlink" href="#human-readable-string" title="Permalink to this headline">¶</a></h3>
+<h3>human readable string<a class="headerlink" href="#human-readable-string" title="Permalink to this heading">¶</a></h3>
 <p>We can print out a string describing the rate, and the nuclei involved</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
@@ -551,7 +552,7 @@ pynucastro.nucleus.nucleus.Nucleus
 </div>
 </section>
 <section id="temperature-sensitivity">
-<h3>temperature sensitivity<a class="headerlink" href="#temperature-sensitivity" title="Permalink to this headline">¶</a></h3>
+<h3>temperature sensitivity<a class="headerlink" href="#temperature-sensitivity" title="Permalink to this heading">¶</a></h3>
 <p>We can find the temperature sensitivity about some reference temperature. This is the exponent when we write the rate as</p>
 <div class="math notranslate nohighlight">
 \[r = r_0 \left ( \frac{T}{T_0} \right )^\nu\]</div>
@@ -576,7 +577,7 @@ pynucastro.nucleus.nucleus.Nucleus
 </div>
 </section>
 <section id="plot-the-rate’s-temperature-dependence">
-<h3>plot the rate’s temperature dependence<a class="headerlink" href="#plot-the-rate’s-temperature-dependence" title="Permalink to this headline">¶</a></h3>
+<h3>plot the rate’s temperature dependence<a class="headerlink" href="#plot-the-rate’s-temperature-dependence" title="Permalink to this heading">¶</a></h3>
 <p>A reaction rate has a complex temperature dependence that is defined in the reaclib files. The <code class="docutils literal notranslate"><span class="pre">plot()</span></code> method will plot this for us</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
@@ -595,7 +596,7 @@ pynucastro.nucleus.nucleus.Nucleus
 </div>
 </section>
 <section id="density-dependence">
-<h3>density dependence<a class="headerlink" href="#density-dependence" title="Permalink to this headline">¶</a></h3>
+<h3>density dependence<a class="headerlink" href="#density-dependence" title="Permalink to this heading">¶</a></h3>
 <p>A rate also knows its density dependence – this is inferred from the reactants in the rate description and is used to construct the terms needed to write a reaction network. Note: since we want reaction rates per gram, this number is 1 less than the number of nuclei</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
@@ -617,7 +618,7 @@ pynucastro.nucleus.nucleus.Nucleus
 </section>
 </section>
 <section id="Working-with-a-group-of-rates">
-<h2>Working with a group of rates<a class="headerlink" href="#Working-with-a-group-of-rates" title="Permalink to this headline">¶</a></h2>
+<h2>Working with a group of rates<a class="headerlink" href="#Working-with-a-group-of-rates" title="Permalink to this heading">¶</a></h2>
 <p>A <code class="docutils literal notranslate"><span class="pre">RateCollection()</span></code> class allows us to work with a group of rates. This is used to explore their relationship. Other classes (introduced soon) are built on this and will allow us to output network code directly.</p>
 <p>We distribute a number of popular rate files (from JINA ReacLib) in the <code class="docutils literal notranslate"><span class="pre">Library/</span></code> directory, as well as a snapshot of the entire ReacLib database. Here we create a list with some of the individual rate files in that library:</p>
 <div class="nbinput nblast docutils container">
@@ -737,7 +738,7 @@ o15
 </pre></div></div>
 </div>
 <section id="show-a-network-diagram">
-<h3>show a network diagram<a class="headerlink" href="#show-a-network-diagram" title="Permalink to this headline">¶</a></h3>
+<h3>show a network diagram<a class="headerlink" href="#show-a-network-diagram" title="Permalink to this heading">¶</a></h3>
 <p>We visualize the network using NetworkX. By default, this does not show H or He unless we have H + H or triple-alpha reactions in the network. This is intended to reduce clutter.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
@@ -758,7 +759,7 @@ o15
 </section>
 </section>
 <section id="Explore-the-network’s-rates">
-<h2>Explore the network’s rates<a class="headerlink" href="#Explore-the-network’s-rates" title="Permalink to this headline">¶</a></h2>
+<h2>Explore the network’s rates<a class="headerlink" href="#Explore-the-network’s-rates" title="Permalink to this heading">¶</a></h2>
 <p>To evaluate the rates, we need a composition</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:

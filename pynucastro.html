@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro package &mdash; pynucastro 1.6.0.post107+g8d10b9e documentation</title>
+  <title>pynucastro package &mdash; pynucastro 1.6.0.post108+g35d7609 documentation</title>
       <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -15,6 +15,7 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
         <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
@@ -143,7 +144,7 @@
 }
 </style>
 <section id="module-pynucastro">
-<span id="pynucastro-package"></span><h1>pynucastro package<a class="headerlink" href="#module-pynucastro" title="Permalink to this headline">¶</a></h1>
+<span id="pynucastro-package"></span><h1>pynucastro package<a class="headerlink" href="#module-pynucastro" title="Permalink to this heading">¶</a></h1>
 <p>pynucastro is a python module that interprets the nuclear reaction rates,
 including those cataloged by the JINA ReacLib project:</p>
 <p><a class="reference external" href="https://groups.nscl.msu.edu/jina/reaclib/db/">https://groups.nscl.msu.edu/jina/reaclib/db/</a></p>
@@ -154,7 +155,7 @@ routines.</p>
 <p>Several different packages provide the data structures needed to
 interpret rates and build networks.</p>
 <section id="library">
-<h2>library<a class="headerlink" href="#library" title="Permalink to this headline">¶</a></h2>
+<h2>library<a class="headerlink" href="#library" title="Permalink to this heading">¶</a></h2>
 <p>library stores Reaclib rate files in Reaclib 1 or 2 formats as well as the
 directory <cite>library/tabular</cite> containing tabulated rates. pynucastro
 will search these directories for rate files as well as the current
@@ -164,7 +165,7 @@ JINA ReacLib project and placing them in the library folder. They must
 be in the Reaclib 1 format.</p>
 </section>
 <section id="nucdata">
-<h2>nucdata<a class="headerlink" href="#nucdata" title="Permalink to this headline">¶</a></h2>
+<h2>nucdata<a class="headerlink" href="#nucdata" title="Permalink to this heading">¶</a></h2>
 <p>nucdata provides:</p>
 <ul class="simple">
 <li><p>Nucleus : a single nucleus, with a descriptive name and its
@@ -180,7 +181,7 @@ Mass Evaluation tables and generating binding energy tables for pynucastro
 are provided in <cite>pynucastro/nucdata/AtomicMassEvaluation</cite>.</p>
 </section>
 <section id="networks">
-<h2>networks<a class="headerlink" href="#networks" title="Permalink to this headline">¶</a></h2>
+<h2>networks<a class="headerlink" href="#networks" title="Permalink to this heading">¶</a></h2>
 <p>networks provides classes and functions for organizing collection of
 rates, including:</p>
 <ul class="simple">
@@ -207,7 +208,7 @@ Microphysics repository.</p></li>
 </ul>
 </section>
 <section id="rates">
-<h2>rates<a class="headerlink" href="#rates" title="Permalink to this headline">¶</a></h2>
+<h2>rates<a class="headerlink" href="#rates" title="Permalink to this heading">¶</a></h2>
 <p>rates provides classes and functions for interpreting individual
 reaction rates, including:</p>
 <ul class="simple">
@@ -225,7 +226,7 @@ desired rate or group of rates from a RateLibrary.</p></li>
 </ul>
 </section>
 <section id="screening">
-<h2>screening<a class="headerlink" href="#screening" title="Permalink to this headline">¶</a></h2>
+<h2>screening<a class="headerlink" href="#screening" title="Permalink to this heading">¶</a></h2>
 <p>screening provides routines used by the BaseFortranNetwork and
 BaseCxxNetwork to screen Reaclib reaction rates in the weak,
 intermediate, and strong regimes. Tabulated rates are not screened.</p>
@@ -235,7 +236,7 @@ rate screening, but they use the screening module in the StarKiller
 Microphysics repository.</p>
 </section>
 <section id="templates">
-<h2>templates<a class="headerlink" href="#templates" title="Permalink to this headline">¶</a></h2>
+<h2>templates<a class="headerlink" href="#templates" title="Permalink to this heading">¶</a></h2>
 <p>templates contains subdirectories for generating BaseFortranNetwork,
 StarKillerNetwork Fortran modules, and StarKillerCxxNetwork C++ files
 implementing the ODE right hand side, jacobian, and integration driver
@@ -244,7 +245,7 @@ of the form <cite>&lt;tag&gt;</cite> with generated code specific to a given cho
 reaction rates.</p>
 </section>
 <section id="subpackages">
-<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this heading">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="pynucastro.networks.html">pynucastro.networks package</a><ul>

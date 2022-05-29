@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.networks package &mdash; pynucastro 1.6.0.post107+g8d10b9e documentation</title>
+  <title>pynucastro.networks package &mdash; pynucastro 1.6.0.post108+g35d7609 documentation</title>
       <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -15,6 +15,7 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
         <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
@@ -144,7 +145,7 @@
 }
 </style>
 <section id="module-pynucastro.networks">
-<span id="pynucastro-networks-package"></span><h1>pynucastro.networks package<a class="headerlink" href="#module-pynucastro.networks" title="Permalink to this headline">¶</a></h1>
+<span id="pynucastro-networks-package"></span><h1>pynucastro.networks package<a class="headerlink" href="#module-pynucastro.networks" title="Permalink to this heading">¶</a></h1>
 <p>The pynucastro modules that support the creation of networks.
 There are several main submodules here:</p>
 <p><a class="reference internal" href="#module-pynucastro.networks.rate_collection" title="pynucastro.networks.rate_collection"><code class="xref py py-meth docutils literal notranslate"><span class="pre">rate_collection</span></code></a>: this is
@@ -168,17 +169,17 @@ the support routines to generate a C++ network that can be incorporated
 into the StarKiller microphysics routines supported by astrophysical
 hydrodynamics codes.</p>
 <section id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading">¶</a></h2>
 </section>
 <section id="module-pynucastro.networks.base_cxx_network">
-<span id="pynucastro-networks-base-cxx-network-module"></span><h2>pynucastro.networks.base_cxx_network module<a class="headerlink" href="#module-pynucastro.networks.base_cxx_network" title="Permalink to this headline">¶</a></h2>
+<span id="pynucastro-networks-base-cxx-network-module"></span><h2>pynucastro.networks.base_cxx_network module<a class="headerlink" href="#module-pynucastro.networks.base_cxx_network" title="Permalink to this heading">¶</a></h2>
 <p>Support for a pure C++ reaction network.  These functions will
 write the C++ code necessary to integrate a reaction network
 comprised of the rates that are passed in.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="pynucastro.networks.base_cxx_network.BaseCxxNetwork">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.networks.base_cxx_network.</span></span><span class="sig-name descname"><span class="pre">BaseCxxNetwork</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/base_cxx_network.html#BaseCxxNetwork"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.base_cxx_network.BaseCxxNetwork" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code>, <a class="reference internal" href="#pynucastro.networks.rate_collection.RateCollection" title="pynucastro.networks.rate_collection.RateCollection"><code class="xref py py-class docutils literal notranslate"><span class="pre">pynucastro.networks.rate_collection.RateCollection</span></code></a></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code>, <a class="reference internal" href="#pynucastro.networks.rate_collection.RateCollection" title="pynucastro.networks.rate_collection.RateCollection"><code class="xref py py-class docutils literal notranslate"><span class="pre">RateCollection</span></code></a></p>
 <p>Interpret the collection of rates and nuclei and produce the
 C++ code needed to integrate the network.</p>
 <dl class="py method">
@@ -206,14 +207,14 @@ value is a list of tuples, with the forward-reverse pairs of a rate</p>
 
 </section>
 <section id="module-pynucastro.networks.base_fortran_network">
-<span id="pynucastro-networks-base-fortran-network-module"></span><h2>pynucastro.networks.base_fortran_network module<a class="headerlink" href="#module-pynucastro.networks.base_fortran_network" title="Permalink to this headline">¶</a></h2>
+<span id="pynucastro-networks-base-fortran-network-module"></span><h2>pynucastro.networks.base_fortran_network module<a class="headerlink" href="#module-pynucastro.networks.base_fortran_network" title="Permalink to this heading">¶</a></h2>
 <p>Support for a pure Fortran reaction network.  These functions will
 write the Fortran code necessary to integrate a reaction network
 comprised of the rates that are passed in.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="pynucastro.networks.base_fortran_network.BaseFortranNetwork">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.networks.base_fortran_network.</span></span><span class="sig-name descname"><span class="pre">BaseFortranNetwork</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/base_fortran_network.html#BaseFortranNetwork"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.base_fortran_network.BaseFortranNetwork" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code>, <a class="reference internal" href="#pynucastro.networks.rate_collection.RateCollection" title="pynucastro.networks.rate_collection.RateCollection"><code class="xref py py-class docutils literal notranslate"><span class="pre">pynucastro.networks.rate_collection.RateCollection</span></code></a></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code>, <a class="reference internal" href="#pynucastro.networks.rate_collection.RateCollection" title="pynucastro.networks.rate_collection.RateCollection"><code class="xref py py-class docutils literal notranslate"><span class="pre">RateCollection</span></code></a></p>
 <p>Interpret the collection of rates and nuclei and produce the
 Fortran code needed to integrate the network.</p>
 <dl class="py method">
@@ -251,13 +252,13 @@ molar fraction.</p>
 
 </section>
 <section id="module-pynucastro.networks.python_network">
-<span id="pynucastro-networks-python-network-module"></span><h2>pynucastro.networks.python_network module<a class="headerlink" href="#module-pynucastro.networks.python_network" title="Permalink to this headline">¶</a></h2>
+<span id="pynucastro-networks-python-network-module"></span><h2>pynucastro.networks.python_network module<a class="headerlink" href="#module-pynucastro.networks.python_network" title="Permalink to this heading">¶</a></h2>
 <p>Support modules to write a pure python reaction network ODE
 source</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="pynucastro.networks.python_network.PythonNetwork">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.networks.python_network.</span></span><span class="sig-name descname"><span class="pre">PythonNetwork</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rate_files</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">libraries</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rates</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">precedence</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">symmetric_screening</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">do_screening</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/python_network.html#PythonNetwork"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.python_network.PythonNetwork" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#pynucastro.networks.rate_collection.RateCollection" title="pynucastro.networks.rate_collection.RateCollection"><code class="xref py py-class docutils literal notranslate"><span class="pre">pynucastro.networks.rate_collection.RateCollection</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#pynucastro.networks.rate_collection.RateCollection" title="pynucastro.networks.rate_collection.RateCollection"><code class="xref py py-class docutils literal notranslate"><span class="pre">RateCollection</span></code></a></p>
 <p>A pure python reaction network.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.networks.python_network.PythonNetwork.function_string">
@@ -295,7 +296,7 @@ in a reaction network corresponding to this rate.</p>
 
 </section>
 <section id="module-pynucastro.networks.rate_collection">
-<span id="pynucastro-networks-rate-collection-module"></span><h2>pynucastro.networks.rate_collection module<a class="headerlink" href="#module-pynucastro.networks.rate_collection" title="Permalink to this headline">¶</a></h2>
+<span id="pynucastro-networks-rate-collection-module"></span><h2>pynucastro.networks.rate_collection module<a class="headerlink" href="#module-pynucastro.networks.rate_collection" title="Permalink to this heading">¶</a></h2>
 <p>A collection of classes and methods to deal with collections of
 rates that together make up a network.</p>
 <dl class="py class">
@@ -525,7 +526,7 @@ object and returns true or false if it is to be shown as an edge.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pynucastro.networks.rate_collection.RateCollection.pynucastro_dir">
-<span class="sig-name descname"><span class="pre">pynucastro_dir</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'/opt/hostedtoolcache/Python/3.8.12/x64/lib/python3.8/site-packages/pynucastro-1.6.0.post107+g8d10b9e-py3.8.egg/pynucastro'</span></em><a class="headerlink" href="#pynucastro.networks.rate_collection.RateCollection.pynucastro_dir" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">pynucastro_dir</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'/opt/hostedtoolcache/Python/3.8.12/x64/lib/python3.8/site-packages/pynucastro-1.6.0.post108+g35d7609-py3.8.egg/pynucastro'</span></em><a class="headerlink" href="#pynucastro.networks.rate_collection.RateCollection.pynucastro_dir" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -558,26 +559,26 @@ list of all rates that match this pair of nuclei</p>
 
 </section>
 <section id="module-pynucastro.networks.starkiller_cxx_network">
-<span id="pynucastro-networks-starkiller-cxx-network-module"></span><h2>pynucastro.networks.starkiller_cxx_network module<a class="headerlink" href="#module-pynucastro.networks.starkiller_cxx_network" title="Permalink to this headline">¶</a></h2>
+<span id="pynucastro-networks-starkiller-cxx-network-module"></span><h2>pynucastro.networks.starkiller_cxx_network module<a class="headerlink" href="#module-pynucastro.networks.starkiller_cxx_network" title="Permalink to this heading">¶</a></h2>
 <p>A Fortran reaction network for integration into the StarKiller
 Microphysics set of reaction networks used by astrophysical hydrodynamics
 codes</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="pynucastro.networks.starkiller_cxx_network.StarKillerCxxNetwork">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.networks.starkiller_cxx_network.</span></span><span class="sig-name descname"><span class="pre">StarKillerCxxNetwork</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/starkiller_cxx_network.html#StarKillerCxxNetwork"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.starkiller_cxx_network.StarKillerCxxNetwork" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#pynucastro.networks.base_cxx_network.BaseCxxNetwork" title="pynucastro.networks.base_cxx_network.BaseCxxNetwork"><code class="xref py py-class docutils literal notranslate"><span class="pre">pynucastro.networks.base_cxx_network.BaseCxxNetwork</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#pynucastro.networks.base_cxx_network.BaseCxxNetwork" title="pynucastro.networks.base_cxx_network.BaseCxxNetwork"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseCxxNetwork</span></code></a></p>
 </dd></dl>
 
 </section>
 <section id="module-pynucastro.networks.starkiller_network">
-<span id="pynucastro-networks-starkiller-network-module"></span><h2>pynucastro.networks.starkiller_network module<a class="headerlink" href="#module-pynucastro.networks.starkiller_network" title="Permalink to this headline">¶</a></h2>
+<span id="pynucastro-networks-starkiller-network-module"></span><h2>pynucastro.networks.starkiller_network module<a class="headerlink" href="#module-pynucastro.networks.starkiller_network" title="Permalink to this heading">¶</a></h2>
 <p>A Fortran reaction network for integration into the StarKiller
 Microphysics set of reaction networks used by astrophysical hydrodynamics
 codes</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="pynucastro.networks.starkiller_network.StarKillerNetwork">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.networks.starkiller_network.</span></span><span class="sig-name descname"><span class="pre">StarKillerNetwork</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/starkiller_network.html#StarKillerNetwork"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.starkiller_network.StarKillerNetwork" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#pynucastro.networks.base_fortran_network.BaseFortranNetwork" title="pynucastro.networks.base_fortran_network.BaseFortranNetwork"><code class="xref py py-class docutils literal notranslate"><span class="pre">pynucastro.networks.base_fortran_network.BaseFortranNetwork</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#pynucastro.networks.base_fortran_network.BaseFortranNetwork" title="pynucastro.networks.base_fortran_network.BaseFortranNetwork"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseFortranNetwork</span></code></a></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.networks.starkiller_network.StarKillerNetwork.get_csr_jac_metadata">
 <span class="sig-name descname"><span class="pre">get_csr_jac_metadata</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/starkiller_network.html#StarKillerNetwork.get_csr_jac_metadata"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.starkiller_network.StarKillerNetwork.get_csr_jac_metadata" title="Permalink to this definition">¶</a></dt>
@@ -592,7 +593,7 @@ codes</p>
 
 </section>
 <section id="module-pynucastro.networks.sympy_network_support">
-<span id="pynucastro-networks-sympy-network-support-module"></span><h2>pynucastro.networks.sympy_network_support module<a class="headerlink" href="#module-pynucastro.networks.sympy_network_support" title="Permalink to this headline">¶</a></h2>
+<span id="pynucastro-networks-sympy-network-support-module"></span><h2>pynucastro.networks.sympy_network_support module<a class="headerlink" href="#module-pynucastro.networks.sympy_network_support" title="Permalink to this heading">¶</a></h2>
 <p>This is a module that interprets the rates, ydots, and Jacobian
 through sympy</p>
 <dl class="py class">

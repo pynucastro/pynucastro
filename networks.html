@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Creating Networks &mdash; pynucastro 1.6.0.post107+g8d10b9e documentation</title>
+  <title>Creating Networks &mdash; pynucastro 1.6.0.post108+g35d7609 documentation</title>
       <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -15,6 +15,7 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
         <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
@@ -131,11 +132,11 @@
 }
 </style>
 <section id="creating-networks">
-<h1>Creating Networks<a class="headerlink" href="#creating-networks" title="Permalink to this headline">¶</a></h1>
+<h1>Creating Networks<a class="headerlink" href="#creating-networks" title="Permalink to this heading">¶</a></h1>
 <p>pynucastro can output the righthand side functions for ODE integration
 in Python or in a form for the AMReX-Astrophysics Microphysics package in C++</p>
 <section id="all-networks">
-<h2>All networks<a class="headerlink" href="#all-networks" title="Permalink to this headline">¶</a></h2>
+<h2>All networks<a class="headerlink" href="#all-networks" title="Permalink to this heading">¶</a></h2>
 <p>The first few steps to setting up any of the available network options
 are as follows. See the following section for details about the
 particular kind of network you are interested in creating.</p>
@@ -165,14 +166,14 @@ e.g. <code class="docutils literal notranslate"><span class="pre">mynet.py</span
 </ul>
 </section>
 <section id="python-network">
-<h2>Python network<a class="headerlink" href="#python-network" title="Permalink to this headline">¶</a></h2>
+<h2>Python network<a class="headerlink" href="#python-network" title="Permalink to this heading">¶</a></h2>
 <p>First follow the steps above for all networks. To integrate a Python
 network using the SciPy integration routines, customize
 <a class="reference external" href="https://github.com/pynucastro/pynucastro/blob/main/examples/CNO/burn.py">examples/CNO/burn.py</a> to initialize and run your network using the
 right hand side module you generated above.</p>
 </section>
 <section id="amrex-astro-microphysics-network">
-<h2>AMReX-Astro Microphysics network<a class="headerlink" href="#amrex-astro-microphysics-network" title="Permalink to this headline">¶</a></h2>
+<h2>AMReX-Astro Microphysics network<a class="headerlink" href="#amrex-astro-microphysics-network" title="Permalink to this heading">¶</a></h2>
 <p>The <a class="reference external" href="https://github.com/pynucastro/pynucastro/tree/main/examples/urca-23_starkiller">examples/urca-23_starkiller</a> example builds the right hand side, Jacobian,
 and helper Fortran modules to copy into the <code class="docutils literal notranslate"><span class="pre">networks/</span></code> subdirectory
 of the StarKiller Microphysics repository.</p>
@@ -180,7 +181,7 @@ of the StarKiller Microphysics repository.</p>
 all networks above.</p>
 </section>
 <section id="tabular-rates">
-<h2>Tabular Rates<a class="headerlink" href="#tabular-rates" title="Permalink to this headline">¶</a></h2>
+<h2>Tabular Rates<a class="headerlink" href="#tabular-rates" title="Permalink to this heading">¶</a></h2>
 <p>Tabular rates for reactions of the form <span class="math notranslate nohighlight">\(\rm{A \rightarrow B}\)</span>
 are supported by the standalone Fortran and StarKiller Microphysics
 network outputs.</p>
