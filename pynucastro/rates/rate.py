@@ -1069,11 +1069,12 @@ class ApproximateRate:
 
             assert len(secondary_rates) == 2
 
+            # make sure that the primary forward rate makes sense
+            # this should be A(a,g)B
+
             assert Nucleus("he4") in self.primary_rate.reactants and len(self.primary_rate.products) == 1
 
-            # first make sure that the forward rate makes sense
-
-            # this should be A(a,g)B
+            # we are going to define the product A and reactant B from this reaction
 
             self.primary_reactant = sorted(self.primary_rate.reactants)[-1]
             self.primary_product = sorted(self.primary_rate.products)[-1]
@@ -1089,7 +1090,7 @@ class ApproximateRate:
             # dummy
 
             self.intermediate_nucleus = sorted(self.secondary_rates[0].products)[-1]
-            self.intermediate_nucleus.dummy = True
+            #self.intermediate_nucleus.dummy = True
 
             # now the second secondary rate show be X(p,g)B
 
@@ -1099,12 +1100,39 @@ class ApproximateRate:
 
             # now ensure that the reverse rate makes sense
 
+            # the primary reverse rate is B(g,a)A
+
+            assert (self.primary_product in self.primary_inverse.reactants and
+                    self.primary_reactant in self.primary_inverse.products)
+
+            # now the first secondary inverse rate should be B(g,p)X
+
+            assert (self.primary_product in self.secondary_inverse[0].reactants and
+                    self.intermediate_nucleus in secondary_inverse[0].products and
+                    Nucleus("p") in secondary_inverse[0].products)
+
+            # and the second secondary inverse rate should be X(p,a)A
+
+            assert (self.intermediate_nucleus in self.secondary_inverse[1].reactants and
+                    Nucleus("p") in self.secondary_inverse[1].reactants and
+                    self.primary_reactant in self.secondary_inverse[1].products and
+                    Nucleus("he4") in self.secondary_inverse[1].products)
+
         # now initialize the super class with these reactants and products
 
         if not is_inverse:
             self.__super__(reactants=[self.primary_reactant, Nucleus("he4")],
                            products=[self.primary_product])
+        else:
+            self.__super__(reactants=[self.primary_product],
+                           products=[self.primary_reactant, Nucleus("he4")])
+
+        # update the Q value
+        self._set_q()
 
     def __set_screening(self):
         # the individual rates are screened -- we don't screen the combination of them
         pass
+
+    def eval(self, T):
+        """evaluate the approximate rate"""
