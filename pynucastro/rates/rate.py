@@ -412,9 +412,7 @@ class Rate:
         """ Set label and flags indicating Rate is resonant,
             weak, or reverse. """
         assert isinstance(self.labelprops, str)
-        if len(self.labelprops) != 6:
-            assert self.labelprops == 'tabular'
-
+        if self.labelprops == 'tabular':
             self.label = 'tabular'
             self.resonant = False
             self.resonance_combined = False
@@ -422,7 +420,16 @@ class Rate:
             self.weak_type = None
             self.reverse = False
             self.tabular = True
+        elif self.labelprops == "approx":
+            self.label = "approx"
+            self.resonant = False
+            self.resonance_combined = False
+            self.weak = False 
+            self.weak_type = None
+            self.reverse = False
+            self.tabular = False
         else:
+            assert len(self.labelprops) == 6
             self.label = self.labelprops[0:4]
             self.resonant = self.labelprops[4] == 'r'
             self.weak = self.labelprops[4] == 'w'
@@ -1122,10 +1129,10 @@ class ApproximateRate(Rate):
 
         if not is_inverse:
             super().__init__(reactants=[self.primary_reactant, Nucleus("he4")],
-                             products=[self.primary_product])
+                             products=[self.primary_product], labelprops="approx")
         else:
             super().__init__(reactants=[self.primary_product],
-                             products=[self.primary_reactant, Nucleus("he4")])
+                             products=[self.primary_reactant, Nucleus("he4")], labelprops="approx")
 
         # update the Q value
         self._set_q()
