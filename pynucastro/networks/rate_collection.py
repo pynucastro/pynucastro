@@ -518,7 +518,7 @@ class RateCollection:
                 all_screen_nuclei.append(screen_nuclei)
 
             for screen_nuclei in all_screen_nuclei:
-                # screen_nuclei may be [] if it is a decay, gamma-capture, or neutron-capture 
+                # screen_nuclei may be [] if it is a decay, gamma-capture, or neutron-capture
                 if screen_nuclei:
                     nucs = "_".join([str(q) for q in screen_nuclei])
 
