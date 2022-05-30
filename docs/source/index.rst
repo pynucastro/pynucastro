@@ -51,6 +51,7 @@ codes.
    :maxdepth: 1
    :caption: Advanced Usage
 
+   screening-examples
    partition-function
 
 .. toctree::
