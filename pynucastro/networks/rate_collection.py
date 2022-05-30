@@ -24,7 +24,7 @@ import networkx as nx
 
 # Import Rate
 from pynucastro.nucleus import Nucleus
-from pynucastro.rates import Rate, RatePair, Library
+from pynucastro.rates import Rate, RatePair, ApproximateRate, Library
 
 mpl.rcParams['figure.dpi'] = 100
 
@@ -510,7 +510,7 @@ class RateCollection:
             if isinstance(r, ApproximateRate):
                 # loop over all of the rates in the approximate rate and grab their
                 # screening nuclei and append to the list
-                raise ImplmenentationError("haven't writtne this yet")
+                raise NotImplementedError("haven't writtne this yet")
             else:
                 screen_nuclei = r.ion_screen
                 if self.symmetric_screening:

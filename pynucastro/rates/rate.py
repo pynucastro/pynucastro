@@ -1047,7 +1047,7 @@ class RatePair:
         return self.forward == other.forward and self.reverse == other.reverse
 
 
-class ApproximateRate:
+class ApproximateRate(Rate):
 
     def __init__(self, primary_rate, secondary_rates,
                  primary_inverse, secondary_inverse, is_inverse=False, approx_type="ap_pg"):
@@ -1121,11 +1121,11 @@ class ApproximateRate:
         # now initialize the super class with these reactants and products
 
         if not is_inverse:
-            self.__super__(reactants=[self.primary_reactant, Nucleus("he4")],
-                           products=[self.primary_product])
+            super().__init__(reactants=[self.primary_reactant, Nucleus("he4")],
+                             products=[self.primary_product])
         else:
-            self.__super__(reactants=[self.primary_product],
-                           products=[self.primary_reactant, Nucleus("he4")])
+            super().__init__(reactants=[self.primary_product],
+                             products=[self.primary_reactant, Nucleus("he4")])
 
         # update the Q value
         self._set_q()
