@@ -518,49 +518,51 @@ class RateCollection:
                 all_screen_nuclei.append(screen_nuclei)
 
             for screen_nuclei in all_screen_nuclei:
-                nucs = "_".join([str(q) for q in screen_nuclei])
+                # screen_nuclei may be [] if it is a decay, gamma-capture, or neutron-capture 
+                if screen_nuclei:
+                    nucs = "_".join([str(q) for q in screen_nuclei])
 
-                scr = [q for q in screening_map if q.name == nucs]
+                    scr = [q for q in screening_map if q.name == nucs]
 
-                assert len(scr) <= 1
+                    assert len(scr) <= 1
 
-                if scr:
-                    # we already have the reactants in our map, so we
-                    # will already be doing the screening factors.
-                    # Just append this new rate to the list we are
-                    # keeping of the rates where this screening is
-                    # needed
+                    if scr:
+                        # we already have the reactants in our map, so we
+                        # will already be doing the screening factors.
+                        # Just append this new rate to the list we are
+                        # keeping of the rates where this screening is
+                        # needed
 
-                    scr[0].add_rate(r)
+                        scr[0].add_rate(r)
 
-                    # if we got here because nuc == "he4_he4_he4",
-                    # then we also have to add to "he4_he4_he4_dummy"
+                        # if we got here because nuc == "he4_he4_he4",
+                        # then we also have to add to "he4_he4_he4_dummy"
 
-                    if nucs == "he4_he4_he4":
-                        scr2 = [q for q in screening_map if q.name == nucs + "_dummy"]
-                        assert len(scr2) == 1
+                        if nucs == "he4_he4_he4":
+                            scr2 = [q for q in screening_map if q.name == nucs + "_dummy"]
+                            assert len(scr2) == 1
 
-                        scr2[0].add_rate(r)
-
-                else:
-
-                    # we handle 3-alpha specially -- we actually need
-                    # 2 screening factors for it
-
-                    if nucs == "he4_he4_he4":
-                        # he4 + he4
-                        scr1 = ScreeningPair(nucs, screen_nuclei[0], screen_nuclei[1], r)
-
-                        # he4 + be8
-                        be8 = Nucleus("Be8", dummy=True)
-                        scr2 = ScreeningPair(nucs + "_dummy", screen_nuclei[2], be8, r)
-
-                        screening_map.append(scr1)
-                        screening_map.append(scr2)
+                            scr2[0].add_rate(r)
 
                     else:
-                        scr1 = ScreeningPair(nucs, screen_nuclei[0], screen_nuclei[1], r)
-                        screening_map.append(scr1)
+
+                        # we handle 3-alpha specially -- we actually need
+                        # 2 screening factors for it
+
+                        if nucs == "he4_he4_he4":
+                            # he4 + he4
+                            scr1 = ScreeningPair(nucs, screen_nuclei[0], screen_nuclei[1], r)
+
+                            # he4 + be8
+                            be8 = Nucleus("Be8", dummy=True)
+                            scr2 = ScreeningPair(nucs + "_dummy", screen_nuclei[2], be8, r)
+
+                            screening_map.append(scr1)
+                            screening_map.append(scr2)
+
+                        else:
+                            scr1 = ScreeningPair(nucs, screen_nuclei[0], screen_nuclei[1], r)
+                            screening_map.append(scr1)
 
         return screening_map
 
