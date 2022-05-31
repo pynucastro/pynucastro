@@ -48,7 +48,9 @@ class TestRateCollection:
         comp.set_all(0.3)
         comp.normalize()
 
-        assert rc.evaluate_energy_generation(1e5, 1e8, comp) == 32.24796008826701
+        rho = 1e5
+        T = 1e8
+        assert self.rc.evaluate_energy_generation(rho, T, comp) == 32.24796008826701
 
         
 
