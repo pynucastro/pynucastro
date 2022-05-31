@@ -20,6 +20,7 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from matplotlib.ticker import MaxNLocator
 from matplotlib.colors import SymLogNorm
+from matplotlib.scale import SymmetricalLogTransform
 import networkx as nx
 from scipy import constants
 # Import Rate
@@ -275,36 +276,63 @@ class RateCollection:
                 else:
                     self.library = self.library + rflib
 
+    def get_forward_rates(self):
+        """return a list of the forward (exothermic) rates"""
+
+        # first handle the ones that have Q defined
+        forward_rates = [r for r in self.rates if r.Q is not None and r.Q >= 0.0]
+
+        # e-capture tabular rates don't have a Q defined, so just go off of the binding energy
+        forward_rates += [r for r in self.rates if r.Q is None and r.reactants[0].nucbind <= r.products[0].nucbind]
+
+        return forward_rates
+
+    def get_reverse_rates(self):
+        """return a list of the reverse (endothermic) rates)"""
+
+        # first handle the ones that have Q defined
+        reverse_rates = [r for r in self.rates if r.Q is not None and r.Q < 0.0]
+
+        # e-capture tabular rates don't have a Q defined, so just go off of the binding energy
+        reverse_rates += [r for r in self.rates if r.Q is None and r.reactants[0].nucbind > r.products[0].nucbind]
+
+        return reverse_rates
+
+    def find_reverse(self, forward_rate, reverse_rates=None):
+        """given a forward rate, locate the rate that is its reverse"""
+
+        if reverse_rates is None:
+            reverse_rates = self.get_reverse_rates()
+
+        reverse = None
+
+        for rr in reverse_rates:
+            if sorted(forward_rate.reactants, key=lambda x: x.A) == sorted(rr.products, key=lambda x: x.A) and \
+               sorted(forward_rate.products, key=lambda x: x.A) == sorted(rr.reactants, key=lambda x: x.A):
+                reverse = rr
+                break
+
+        return reverse
+
     def get_rate_pairs(self):
         """ return a list of RatePair objects, grouping the rates together
             by forward and reverse"""
 
-        # first handle the ones that have Q defined
-
-        forward_rates = [r for r in self.rates if r.Q is not None and r.Q >= 0.0]
-        reverse_rates = [r for r in self.rates if r.Q is not None and r.Q < 0.0]
-
-        # e-capture tabular rates don't have a Q defined, so just go off of the binding energy
-
-        forward_rates += [r for r in self.rates if r.Q is None and r.reactants[0].nucbind <= r.products[0].nucbind]
-        reverse_rates += [r for r in self.rates if r.Q is None and r.reactants[0].nucbind > r.products[0].nucbind]
-
         rate_pairs = []
+
+        reverse_rates = self.get_reverse_rates()
 
         # loop over all the forward rates and find the matching reverse rate
         # if it exists
-        for fr in forward_rates:
+        for fr in self.get_forward_rates():
             rp = RatePair(forward=fr)
-            matched = False
-            for rr in reverse_rates:
-                if sorted(fr.reactants, key=lambda x: x.A) == sorted(rr.products, key=lambda x: x.A) and \
-                   sorted(fr.products, key=lambda x: x.A) == sorted(rr.reactants, key=lambda x: x.A):
-                    matched = True
-                    rp.reverse = rr
-                    break
+
+            rr = self.find_reverse(fr, reverse_rates=reverse_rates)
+
             # since we found a match, remove the reverse rate we paired
             # from out list so no other forward rate can match with it
-            if matched:
+            if rr is not None:
+                rp.reverse = rr
                 reverse_rates.remove(rp.reverse)
 
             rate_pairs.append(rp)
@@ -1000,15 +1028,12 @@ class RateCollection:
         return np.log10(arr)
 
     @staticmethod
-    def _symlog(arr, linthresh=1.0):
+    def _symlog(arr, linthresh=1.0, linscale=1.0):
 
-        assert linthresh >= 1.0
-        neg = arr < 0.0
-        arr = np.abs(arr)
-        needslog = arr > linthresh
+        # Assume log base 10
+        symlog_transform = SymmetricalLogTransform(10, linthresh, linscale)
+        arr = symlog_transform.transform_non_affine(arr)
 
-        arr[needslog] = np.log10(arr[needslog]) + linthresh
-        arr[neg] *= -1
         return arr
 
     @staticmethod
@@ -1047,6 +1072,8 @@ class RateCollection:
             - *small* -- If using logarithmic scaling, zeros will be replaced with
               this value. 1e-30 by default.
             - *linthresh* -- Linearity threshold for symlog scaling.
+            - *linscale* --  The number of decades to use for each half of the linear
+              range. Stretches linear range relative to the logarithmic range.
             - *filter_function* -- A callable to filter Nucleus objects with. Should
               return *True* if the nuclide should be plotted.
             - *outfile* -- Output file to save the plot to. The plot will be shown if
@@ -1080,6 +1107,7 @@ class RateCollection:
         filter_function = kwargs.pop("filter_function", None)
         dpi = kwargs.pop("dpi", 100)
         linthresh = kwargs.pop("linthresh", 1.0)
+        linscale = kwargs.pop("linscale", 1.0)
 
         if kwargs:
             warnings.warn(f"Unrecognized keyword arguments: {kwargs.keys()}")
@@ -1133,7 +1161,7 @@ class RateCollection:
         if scale == "log":
             values = self._safelog(values, small)
         elif scale == "symlog":
-            values = self._symlog(values, linthresh)
+            values = self._symlog(values, linthresh, linscale)
 
         if cbar_bounds is None:
             cbar_bounds = values.min(), values.max()
