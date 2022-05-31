@@ -979,7 +979,7 @@ class RateCollection:
         else:
             fig.colorbar(im, ax=ax, orientation="vertical", shrink=0.25)
 
-        if outfile is not None: 
+        if outfile is not None:
             fig.savefig(outfile, bbox_inches="tight")
 
     @staticmethod
@@ -1037,7 +1037,7 @@ class RateCollection:
             - *small* -- If using logarithmic scaling, zeros will be replaced with
               this value. 1e-30 by default.
             - *linthresh* -- Linearity threshold for symlog scaling.
-            - *linscale* --  The number of decades to use for each half of the linear 
+            - *linscale* --  The number of decades to use for each half of the linear
               range. Stretches linear range relative to the logarithmic range.
             - *filter_function* -- A callable to filter Nucleus objects with. Should
               return *True* if the nuclide should be plotted.
@@ -1073,7 +1073,7 @@ class RateCollection:
         dpi = kwargs.pop("dpi", 100)
         linthresh = kwargs.pop("linthresh", 1.0)
         linscale = kwargs.pop("linscale", 1.0)
-        
+
         if kwargs:
             warnings.warn(f"Unrecognized keyword arguments: {kwargs.keys()}")
 
