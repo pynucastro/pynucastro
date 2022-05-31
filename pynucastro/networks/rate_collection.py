@@ -363,7 +363,17 @@ class RateCollection:
         except IndexError:
             print("ERROR: rate identifier does not match a rate in this network.")
             raise
-    
+
+    def get_rate_by_nuclei(self, reactants, products):
+        """given a list of reactants and products, return any matching rates"""
+        _tmp = [r for r in self.rates if
+                sorted(r.reactants) == sorted(reactants) and
+                sorted(r.products) == sorted(products)]
+
+        if not _tmp:
+            return None
+        else:
+            return _tmp
 
     def make_ap_pg_approx(self):
         """combine the rates A(a,g)B and A(a,p)X(p,g)B (and the reverse) into a single
@@ -372,38 +382,90 @@ class RateCollection:
         # find all of the (a,g) rates
         ag_rates = []
         for r in self.rates:
-            if (len(self.reactants) == 2 and
-                Nucleus("he4") in self.reactants and
-                len(self.products) == 1):
+            if (len(r.reactants) == 2 and Nucleus("he4") in r.reactants and
+                len(r.products) == 1):
                 ag_rates.append(r)
 
         # for each (a,g), check to see if the remaining rates are present
         approx_rates = []
+        intermediate_nuclei = []
+
         for r_ag in ag_rates:
-            prim_nuc = sorted(r_ag)[-1]
-            inter_nuc_Z = primary_nucleus.Z + 1
-            inter_nuc_A = primary_nucleus.A + 3
+            prim_nuc = sorted(r_ag.reactants)[-1]
+            prim_prod = sorted(r_ag.products)[-1]
 
-            element = PeriodicTable.lookup_Z(intermediate_nucleus_Z)
+            inter_nuc_Z = prim_nuc.Z + 1
+            inter_nuc_A = prim_nuc.A + 3
 
-            inter_nuc = Nucleus(f"{element.abbreviation}{intermediate_nucleus_A}")
+            element = PeriodicTable.lookup_Z(inter_nuc_Z)
+
+            inter_nuc = Nucleus(f"{element.abbreviation}{inter_nuc_A}")
 
             # look for A(a,p)X
-            _tmp = [r for r in self.rates if
-                    len(r.reactants) == 2 and prim_nuc in r.reactants and Nucleus("he4") in r.reactants and
-                    len(r.products) == 2 and inter_nuc in r.products and Nucleus("p") in r.products]
+            _r = self.get_rate_by_nuclei([prim_nuc, Nucleus("he4")], [inter_nuc, Nucleus("p")])
 
-            if _tmp:
-                r_ap = _tmp[-1]
+            if _r:
+                r_ap = _r[-1]
             else:
                 continue
 
+            # look for X(p,g)B
+            _r = self.get_rate_by_nuclei([inter_nuc, Nucleus("p")], [prim_prod])
 
-        # build the approximate rate
+            if _r:
+                r_pg = _r[-1]
+            else:
+                continue
 
-        # keep track of the intermediate nuclei
+            # look for reverse B(g,a)A
+            _r = self.get_rate_by_nuclei([prim_prod], [prim_nuc, Nucleus("he4")])
+
+            if _r:
+                r_ga = _r[-1]
+            else:
+                continue
+
+            # look for reverse B(g,p)X
+            _r = self.get_rate_by_nuclei([prim_prod], [inter_nuc, Nucleus("p")])
+
+            if _r:
+                r_gp = _r[-1]
+            else:
+                continue
+
+            # look for reverse X(p,a)A
+            _r = self.get_rate_by_nuclei([inter_nuc, Nucleus("p")], [Nucleus("he4"), prim_nuc])
+
+            if _r:
+                r_pa = _r[-1]
+            else:
+                continue
+
+            # build the approximate rates
+            ar = ApproximateRate(r_ag, [r_ap, r_pg], r_ga, [r_gp, r_pa], approx_type="ap_pg")
+            ar_reverse = ApproximateRate(r_ag, [r_ap, r_pg], r_ga, [r_gp, r_pa], is_reverse=True, approx_type="ap_pg")
+
+            print(f"using approximate rate {ar}")
+            print(f"using approximate rate {ar_reverse}")
+
+            # keep track of the intermediate nuclei
+            intermediate_nuclei.append(inter_nuc)
+
+            # approximate rates
+            approx_rates += [ar, ar_reverse]
 
         # remove the old rates from the rate list and add the approximate rate
+
+        for ar in approx_rates:
+            for r in ar.get_child_rates():
+                try:
+                    self.rates.remove(r)
+                    print(f"removing rate {r}")
+                except ValueError:
+                    pass
+
+            # add the approximate rates
+            self.rates.append(ar)
 
         # if the intermediate nuclei are not used anywhere else, then mark them as dummy
 
