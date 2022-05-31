@@ -1057,7 +1057,7 @@ class RatePair:
 class ApproximateRate(Rate):
 
     def __init__(self, primary_rate, secondary_rates,
-                 primary_inverse, secondary_inverse, is_inverse=False, approx_type="ap_pg"):
+                 primary_reverse, secondary_reverse, is_reverse=False, approx_type="ap_pg"):
         """the primary rate has the same reactants and products and the final
         approximate rate would have.  The secondary rates are ordered such that
         together they would give the same sequence"""
@@ -1065,14 +1065,17 @@ class ApproximateRate(Rate):
         self.primary_rate = primary_rate
         self.secondary_rates = secondary_rates
 
-        self.primary_inverse = primary_inverse
-        self.secondary_inverse = secondary_inverse
+        self.primary_reverse = primary_reverse
+        self.secondary_reverse = secondary_reverse
 
-        self.is_inverse = is_inverse
+        self.is_reverse = is_reverse
 
         self.approx_type = approx_type
 
-        if approx_type == "ap_pg":
+        if self.approx_type == "ap_pg":
+
+            # an ap_pg approximate rate combines A(a,g)B and A(a,p)X(p,g)B into a
+            # single effective rate by assuming proton equilibrium.
 
             assert len(secondary_rates) == 2
 
@@ -1109,30 +1112,33 @@ class ApproximateRate(Rate):
 
             # the primary reverse rate is B(g,a)A
 
-            assert (self.primary_product in self.primary_inverse.reactants and
-                    self.primary_reactant in self.primary_inverse.products)
+            assert (self.primary_product in self.primary_reverse.reactants and
+                    self.primary_reactant in self.primary_reverse.products)
 
-            # now the first secondary inverse rate should be B(g,p)X
+            # now the first secondary reverse rate should be B(g,p)X
 
-            assert (self.primary_product in self.secondary_inverse[0].reactants and
-                    self.intermediate_nucleus in secondary_inverse[0].products and
-                    Nucleus("p") in secondary_inverse[0].products)
+            assert (self.primary_product in self.secondary_reverse[0].reactants and
+                    self.intermediate_nucleus in secondary_reverse[0].products and
+                    Nucleus("p") in secondary_reverse[0].products)
 
-            # and the second secondary inverse rate should be X(p,a)A
+            # and the second secondary reverse rate should be X(p,a)A
 
-            assert (self.intermediate_nucleus in self.secondary_inverse[1].reactants and
-                    Nucleus("p") in self.secondary_inverse[1].reactants and
-                    self.primary_reactant in self.secondary_inverse[1].products and
-                    Nucleus("he4") in self.secondary_inverse[1].products)
+            assert (self.intermediate_nucleus in self.secondary_reverse[1].reactants and
+                    Nucleus("p") in self.secondary_reverse[1].reactants and
+                    self.primary_reactant in self.secondary_reverse[1].products and
+                    Nucleus("he4") in self.secondary_reverse[1].products)
 
-        # now initialize the super class with these reactants and products
+            # now initialize the super class with these reactants and products
 
-        if not is_inverse:
-            super().__init__(reactants=[self.primary_reactant, Nucleus("he4")],
-                             products=[self.primary_product], labelprops="approx")
+            if not self.is_reverse:
+                super().__init__(reactants=[self.primary_reactant, Nucleus("he4")],
+                                 products=[self.primary_product], labelprops="approx")
+            else:
+                super().__init__(reactants=[self.primary_product],
+                                 products=[self.primary_reactant, Nucleus("he4")], labelprops="approx")
+
         else:
-            super().__init__(reactants=[self.primary_product],
-                             products=[self.primary_reactant, Nucleus("he4")], labelprops="approx")
+            raise NotImplementedError(f"approximation type {self.approx_type} not supported")
 
         # update the Q value
         self._set_q()
@@ -1143,3 +1149,26 @@ class ApproximateRate(Rate):
 
     def eval(self, T):
         """evaluate the approximate rate"""
+
+        if self.approx_type == "ap_pg":
+            if not self.is_reverse:
+                # the approximate forward rate is r_ag + r_ap r_pg / (r_pg + r_pa)
+                r_ag = self.primary_rate.eval(T)
+                r_ap = self.secondary_rates[0].eval(T)
+                r_pg = self.secondary_rates[1].eval(T)
+
+                r_pa = self.secondary_reverse[1].eval(T)
+
+                return r_ag + r_ap * r_pg / (r_pg + r_pa)
+
+            else:
+                # the approximate reverse rate is r_ga + r_pa r_gp / (r_pg + r_pa)
+
+                r_ga = self.primary_reverse.eval(T)
+                r_gp = self.secondary_reverse[0].eval(T)
+                r_pa = self.secondary_reverse[1].eval(T)
+
+                r_pg = self.secondary_rate[1].eval(T)
+
+                return r_ga + r_pa * r_gp / (r_pg + r_pa)
+
