@@ -1132,10 +1132,12 @@ class ApproximateRate(Rate):
 
             if not self.is_reverse:
                 super().__init__(reactants=[self.primary_reactant, Nucleus("he4")],
-                                 products=[self.primary_product], labelprops="approx")
+                                 products=[self.primary_product],
+                                 labelprops="approx", chapter=-1)
             else:
                 super().__init__(reactants=[self.primary_product],
-                                 products=[self.primary_reactant, Nucleus("he4")], labelprops="approx")
+                                 products=[self.primary_reactant, Nucleus("he4")],
+                                 labelprops="approx", chapter=-1)
 
         else:
             raise NotImplementedError(f"approximation type {self.approx_type} not supported")

@@ -216,6 +216,10 @@ class RateCollection:
         if precedence:
             self._make_distinguishable(precedence)
 
+        self._build_collection()
+
+    def _build_collection(self):
+
         # get the unique nuclei
         u = []
         for r in self.rates:
@@ -258,9 +262,7 @@ class RateCollection:
             elif isinstance(r.chapter, int):
                 self.reaclib_rates.append(n)
             else:
-                print('ERROR: Chapter type unknown for rate chapter {}'.format(
-                    str(r.chapter)))
-                exit()
+                raise NotImplementedError(f"Chapter type unknown for rate chapter {r.chapter}")
 
     def _read_rate_files(self, rate_files):
         # get the rates
@@ -468,6 +470,9 @@ class RateCollection:
             self.rates.append(ar)
 
         # if the intermediate nuclei are not used anywhere else, then mark them as dummy
+
+        # regenerate the links
+        self._build_collection()
 
     def evaluate_rates(self, rho, T, composition):
         """evaluate the rates for a specific density, temperature, and
