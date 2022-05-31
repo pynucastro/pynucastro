@@ -1037,6 +1037,8 @@ class RateCollection:
             - *small* -- If using logarithmic scaling, zeros will be replaced with
               this value. 1e-30 by default.
             - *linthresh* -- Linearity threshold for symlog scaling.
+            - *linscale* --  The number of decades to use for each half of the linear 
+              range. Stretches linear range relative to the logarithmic range.
             - *filter_function* -- A callable to filter Nucleus objects with. Should
               return *True* if the nuclide should be plotted.
             - *outfile* -- Output file to save the plot to. The plot will be shown if
