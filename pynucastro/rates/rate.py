@@ -1168,6 +1168,6 @@ class ApproximateRate(Rate):
                 r_gp = self.secondary_reverse[0].eval(T)
                 r_pa = self.secondary_reverse[1].eval(T)
 
-                r_pg = self.secondary_rate[1].eval(T)
+                r_pg = self.secondary_rates[1].eval(T)
 
                 return r_ga + r_pa * r_gp / (r_pg + r_pa)
