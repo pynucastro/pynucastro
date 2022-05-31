@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.networks.rate_collection &mdash; pynucastro 1.6.0.post109+gba23dc6 documentation</title>
+  <title>pynucastro.networks.rate_collection &mdash; pynucastro 1.6.0.post110+g49b77db documentation</title>
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -119,6 +119,7 @@
 <span class="kn">from</span> <span class="nn">mpl_toolkits.axes_grid1</span> <span class="kn">import</span> <span class="n">make_axes_locatable</span>
 <span class="kn">from</span> <span class="nn">matplotlib.ticker</span> <span class="kn">import</span> <span class="n">MaxNLocator</span>
 <span class="kn">from</span> <span class="nn">matplotlib.colors</span> <span class="kn">import</span> <span class="n">SymLogNorm</span>
+<span class="kn">from</span> <span class="nn">matplotlib.scale</span> <span class="kn">import</span> <span class="n">SymmetricalLogTransform</span>
 <span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
 
 <span class="c1"># Import Rate</span>
@@ -1091,15 +1092,12 @@
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_symlog</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">linthresh</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_symlog</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">linthresh</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">linscale</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
 
-        <span class="k">assert</span> <span class="n">linthresh</span> <span class="o">&gt;=</span> <span class="mf">1.0</span>
-        <span class="n">neg</span> <span class="o">=</span> <span class="n">arr</span> <span class="o">&lt;</span> <span class="mf">0.0</span>
-        <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
-        <span class="n">needslog</span> <span class="o">=</span> <span class="n">arr</span> <span class="o">&gt;</span> <span class="n">linthresh</span>
+        <span class="c1"># Assume log base 10</span>
+        <span class="n">symlog_transform</span> <span class="o">=</span> <span class="n">SymmetricalLogTransform</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">linthresh</span><span class="p">,</span> <span class="n">linscale</span><span class="p">)</span>
+        <span class="n">arr</span> <span class="o">=</span> <span class="n">symlog_transform</span><span class="o">.</span><span class="n">transform_non_affine</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
 
-        <span class="n">arr</span><span class="p">[</span><span class="n">needslog</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">arr</span><span class="p">[</span><span class="n">needslog</span><span class="p">])</span> <span class="o">+</span> <span class="n">linthresh</span>
-        <span class="n">arr</span><span class="p">[</span><span class="n">neg</span><span class="p">]</span> <span class="o">*=</span> <span class="o">-</span><span class="mi">1</span>
         <span class="k">return</span> <span class="n">arr</span>
 
     <span class="nd">@staticmethod</span>
@@ -1138,6 +1136,8 @@
 <span class="sd">            - *small* -- If using logarithmic scaling, zeros will be replaced with</span>
 <span class="sd">              this value. 1e-30 by default.</span>
 <span class="sd">            - *linthresh* -- Linearity threshold for symlog scaling.</span>
+<span class="sd">            - *linscale* --  The number of decades to use for each half of the linear</span>
+<span class="sd">              range. Stretches linear range relative to the logarithmic range.</span>
 <span class="sd">            - *filter_function* -- A callable to filter Nucleus objects with. Should</span>
 <span class="sd">              return *True* if the nuclide should be plotted.</span>
 <span class="sd">            - *outfile* -- Output file to save the plot to. The plot will be shown if</span>
@@ -1171,6 +1171,7 @@
         <span class="n">filter_function</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;filter_function&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="n">dpi</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;dpi&quot;</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
         <span class="n">linthresh</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;linthresh&quot;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+        <span class="n">linscale</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;linscale&quot;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">kwargs</span><span class="p">:</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unrecognized keyword arguments: </span><span class="si">{</span><span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -1224,7 +1225,7 @@
         <span class="k">if</span> <span class="n">scale</span> <span class="o">==</span> <span class="s2">&quot;log&quot;</span><span class="p">:</span>
             <span class="n">values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_safelog</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">small</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">scale</span> <span class="o">==</span> <span class="s2">&quot;symlog&quot;</span><span class="p">:</span>
-            <span class="n">values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_symlog</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">linthresh</span><span class="p">)</span>
+            <span class="n">values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_symlog</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">linthresh</span><span class="p">,</span> <span class="n">linscale</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">cbar_bounds</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">cbar_bounds</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">values</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
