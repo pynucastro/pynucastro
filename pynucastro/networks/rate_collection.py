@@ -396,6 +396,17 @@ class RateCollection:
         #convert from molar value to erg/g/s
         enuc *= -1*constants.Avogadro
 
+        #subtract neutrino losses for tabular weak reactions
+        for r in self.rates:
+            if r.weak and r.tabular:
+                # get composition
+                ys = composition.get_molar()
+                y_e = composition.eval_ye()
+
+                # need to get reactant nucleus
+                nuc = r.reactants[0]
+                enuc -= constants.Avogadro * ys[nuc] * r.get_nu_loss(T, rho * y_e)
+
         return enuc
 
     def evaluate_activity(self, rho, T, composition):
