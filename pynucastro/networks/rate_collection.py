@@ -26,6 +26,8 @@ import networkx as nx
 from pynucastro.nucleus import Nucleus
 from pynucastro.rates import Rate, RatePair, ApproximateRate, Library
 
+from pynucastro.nucdata import PeriodicTable
+
 mpl.rcParams['figure.dpi'] = 100
 
 
@@ -361,6 +363,49 @@ class RateCollection:
         except IndexError:
             print("ERROR: rate identifier does not match a rate in this network.")
             raise
+    
+
+    def make_ap_pg_approx(self):
+        """combine the rates A(a,g)B and A(a,p)X(p,g)B (and the reverse) into a single
+        effective approximate rate."""
+
+        # find all of the (a,g) rates
+        ag_rates = []
+        for r in self.rates:
+            if (len(self.reactants) == 2 and
+                Nucleus("he4") in self.reactants and
+                len(self.products) == 1):
+                ag_rates.append(r)
+
+        # for each (a,g), check to see if the remaining rates are present
+        approx_rates = []
+        for r_ag in ag_rates:
+            prim_nuc = sorted(r_ag)[-1]
+            inter_nuc_Z = primary_nucleus.Z + 1
+            inter_nuc_A = primary_nucleus.A + 3
+
+            element = PeriodicTable.lookup_Z(intermediate_nucleus_Z)
+
+            inter_nuc = Nucleus(f"{element.abbreviation}{intermediate_nucleus_A}")
+
+            # look for A(a,p)X
+            _tmp = [r for r in self.rates if
+                    len(r.reactants) == 2 and prim_nuc in r.reactants and Nucleus("he4") in r.reactants and
+                    len(r.products) == 2 and inter_nuc in r.products and Nucleus("p") in r.products]
+
+            if _tmp:
+                r_ap = _tmp[-1]
+            else:
+                continue
+
+
+        # build the approximate rate
+
+        # keep track of the intermediate nuclei
+
+        # remove the old rates from the rate list and add the approximate rate
+
+        # if the intermediate nuclei are not used anywhere else, then mark them as dummy
 
     def evaluate_rates(self, rho, T, composition):
         """evaluate the rates for a specific density, temperature, and
