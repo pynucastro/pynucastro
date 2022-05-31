@@ -1143,6 +1143,14 @@ class ApproximateRate(Rate):
         # update the Q value
         self._set_q()
 
+    def get_child_rates(self):
+        """return a list of all of the rates that are used in this approximation"""
+        tlist = [self.primary_rate]
+        tlist += self.secondary_rates
+        tlist += [self.primary_reverse]
+        tlist += self.secondary_reverse
+        return tlist
+
     def __set_screening(self):
         # the individual rates are screened -- we don't screen the combination of them
         pass
