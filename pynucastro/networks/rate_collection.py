@@ -995,7 +995,7 @@ class RateCollection:
     @staticmethod
     def _symlog(arr, linthresh=1.0, linscale=1.0):
 
-        # Assume log base 10 and linscale = 1.0
+        # Assume log base 10
         symlog_transform = SymmetricalLogTransform(10, linthresh, linscale)
         arr = symlog_transform.transform_non_affine(arr)
 
