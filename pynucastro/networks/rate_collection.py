@@ -20,6 +20,7 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from matplotlib.ticker import MaxNLocator
 from matplotlib.colors import SymLogNorm
+from matplotlib.scale import SymmetricalLogTransform
 import networkx as nx
 
 # Import Rate
@@ -978,7 +979,7 @@ class RateCollection:
         else:
             fig.colorbar(im, ax=ax, orientation="vertical", shrink=0.25)
 
-        if outfile is not None:
+        if outfile is not None: 
             fig.savefig(outfile, bbox_inches="tight")
 
     @staticmethod
@@ -992,15 +993,12 @@ class RateCollection:
         return np.log10(arr)
 
     @staticmethod
-    def _symlog(arr, linthresh=1.0):
+    def _symlog(arr, linthresh=1.0, linscale=1.0):
 
-        assert linthresh >= 1.0
-        neg = arr < 0.0
-        arr = np.abs(arr)
-        needslog = arr > linthresh
+        # Assume log base 10 and linscale = 1.0
+        symlog_transform = SymmetricalLogTransform(10, linthresh, linscale)
+        arr = symlog_transform.transform_non_affine(arr)
 
-        arr[needslog] = np.log10(arr[needslog]) + linthresh
-        arr[neg] *= -1
         return arr
 
     @staticmethod
@@ -1072,7 +1070,8 @@ class RateCollection:
         filter_function = kwargs.pop("filter_function", None)
         dpi = kwargs.pop("dpi", 100)
         linthresh = kwargs.pop("linthresh", 1.0)
-
+        linscale = kwargs.pop("linscale", 1.0)
+        
         if kwargs:
             warnings.warn(f"Unrecognized keyword arguments: {kwargs.keys()}")
 
@@ -1125,7 +1124,7 @@ class RateCollection:
         if scale == "log":
             values = self._safelog(values, small)
         elif scale == "symlog":
-            values = self._symlog(values, linthresh)
+            values = self._symlog(values, linthresh, linscale)
 
         if cbar_bounds is None:
             cbar_bounds = values.min(), values.max()
