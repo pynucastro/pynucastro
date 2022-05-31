@@ -424,7 +424,7 @@ class Rate:
             self.label = "approx"
             self.resonant = False
             self.resonance_combined = False
-            self.weak = False 
+            self.weak = False
             self.weak_type = None
             self.reverse = False
             self.tabular = False
@@ -1171,4 +1171,3 @@ class ApproximateRate(Rate):
                 r_pg = self.secondary_rate[1].eval(T)
 
                 return r_ga + r_pa * r_gp / (r_pg + r_pa)
-
