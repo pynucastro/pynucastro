@@ -378,6 +378,23 @@ class RateCollection:
         else:
             return _tmp
 
+    def remove_nuclei(self, nuc_list):
+        """remove the nuclei in nuc_list from the network along with any rates
+        that directly involve them (this doesn't affect approximate rates that
+        may have these nuclei as hidden intermediate links)"""
+
+        rates_to_delete = []
+        for nuc in nuc_list:
+            for rate in self.rates:
+                if nuc in rate.reactants + rate.products:
+                    print(f"looking to remove {rate}")
+                    rates_to_delete.append(rate)
+
+        for rate in set(rates_to_delete):
+            self.rates.remove(rate)
+
+        self._build_collection()
+
     def make_ap_pg_approx(self):
         """combine the rates A(a,g)B and A(a,p)X(p,g)B (and the reverse) into a single
         effective approximate rate."""
@@ -458,7 +475,6 @@ class RateCollection:
             approx_rates += [ar, ar_reverse]
 
         # remove the old rates from the rate list and add the approximate rate
-
         for ar in approx_rates:
             for r in ar.get_child_rates():
                 try:
@@ -469,8 +485,6 @@ class RateCollection:
 
             # add the approximate rates
             self.rates.append(ar)
-
-        # if the intermediate nuclei are not used anywhere else, then mark them as dummy
 
         # regenerate the links
         self._build_collection()
