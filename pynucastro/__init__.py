@@ -142,6 +142,7 @@ from pynucastro.networks import \
 from pynucastro.rates import \
     Tfactors, \
     Rate, \
+    ApproximateRate, \
     RateFilter, \
     Library, \
     ReacLibLibrary, \
