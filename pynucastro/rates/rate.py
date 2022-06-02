@@ -1086,8 +1086,8 @@ class ApproximateRate(Rate):
 
             # we are going to define the product A and reactant B from this reaction
 
-            self.primary_reactant = sorted(self.primary_rate.reactants)[-1]
-            self.primary_product = sorted(self.primary_rate.products)[-1]
+            self.primary_reactant = max(self.primary_rate.reactants)
+            self.primary_product = max(self.primary_rate.products)
 
             # the first secondary rate should be A(a,p)X, where X is the
             # intermediate nucleus
@@ -1099,7 +1099,7 @@ class ApproximateRate(Rate):
             # the intermediate nucleus is not in our network, so make it
             # dummy
 
-            self.intermediate_nucleus = sorted(self.secondary_rates[0].products)[-1]
+            self.intermediate_nucleus = max(self.secondary_rates[0].products)
             #self.intermediate_nucleus.dummy = True
 
             # now the second secondary rate show be X(p,g)B
