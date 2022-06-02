@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.rates.rate &mdash; pynucastro 1.6.0.post110+g49b77db documentation</title>
+  <title>pynucastro.rates.rate &mdash; pynucastro 1.6.0.post111+g7e05a14 documentation</title>
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -511,9 +511,7 @@
         <span class="sd">&quot;&quot;&quot; Set label and flags indicating Rate is resonant,</span>
 <span class="sd">            weak, or reverse. &quot;&quot;&quot;</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">6</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span> <span class="o">==</span> <span class="s1">&#39;tabular&#39;</span>
-
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span> <span class="o">==</span> <span class="s1">&#39;tabular&#39;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;tabular&#39;</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">resonant</span> <span class="o">=</span> <span class="kc">False</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">resonance_combined</span> <span class="o">=</span> <span class="kc">False</span>
@@ -521,7 +519,16 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">weak_type</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">reverse</span> <span class="o">=</span> <span class="kc">False</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">tabular</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span> <span class="o">==</span> <span class="s2">&quot;approx&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;approx&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">resonant</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">resonance_combined</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">weak</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">weak_type</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">reverse</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tabular</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">else</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span><span class="p">)</span> <span class="o">==</span> <span class="mi">6</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">resonant</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;r&#39;</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">weak</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;w&#39;</span>
@@ -1144,6 +1151,125 @@
 
     <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">forward</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">reverse</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">reverse</span></div>
+
+
+<div class="viewcode-block" id="ApproximateRate"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.ApproximateRate">[docs]</a><span class="k">class</span> <span class="nc">ApproximateRate</span><span class="p">(</span><span class="n">Rate</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">primary_rate</span><span class="p">,</span> <span class="n">secondary_rates</span><span class="p">,</span>
+                 <span class="n">primary_reverse</span><span class="p">,</span> <span class="n">secondary_reverse</span><span class="p">,</span> <span class="n">is_reverse</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">approx_type</span><span class="o">=</span><span class="s2">&quot;ap_pg&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;the primary rate has the same reactants and products and the final</span>
+<span class="sd">        approximate rate would have.  The secondary rates are ordered such that</span>
+<span class="sd">        together they would give the same sequence&quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">primary_rate</span> <span class="o">=</span> <span class="n">primary_rate</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">secondary_rates</span> <span class="o">=</span> <span class="n">secondary_rates</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">primary_reverse</span> <span class="o">=</span> <span class="n">primary_reverse</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">secondary_reverse</span> <span class="o">=</span> <span class="n">secondary_reverse</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_reverse</span> <span class="o">=</span> <span class="n">is_reverse</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">approx_type</span> <span class="o">=</span> <span class="n">approx_type</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">approx_type</span> <span class="o">==</span> <span class="s2">&quot;ap_pg&quot;</span><span class="p">:</span>
+
+            <span class="c1"># an ap_pg approximate rate combines A(a,g)B and A(a,p)X(p,g)B into a</span>
+            <span class="c1"># single effective rate by assuming proton equilibrium.</span>
+
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">secondary_rates</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
+
+            <span class="c1"># make sure that the primary forward rate makes sense</span>
+            <span class="c1"># this should be A(a,g)B</span>
+
+            <span class="k">assert</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">primary_rate</span><span class="o">.</span><span class="n">reactants</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">primary_rate</span><span class="o">.</span><span class="n">products</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+
+            <span class="c1"># we are going to define the product A and reactant B from this reaction</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">primary_reactant</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">primary_rate</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">primary_product</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">primary_rate</span><span class="o">.</span><span class="n">products</span><span class="p">)</span>
+
+            <span class="c1"># the first secondary rate should be A(a,p)X, where X is the</span>
+            <span class="c1"># intermediate nucleus</span>
+
+            <span class="k">assert</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">primary_reactant</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">secondary_rates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">reactants</span> <span class="ow">and</span>
+                    <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">secondary_rates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">reactants</span> <span class="ow">and</span>
+                    <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">secondary_rates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">products</span><span class="p">)</span>
+
+            <span class="c1"># the intermediate nucleus is not in our network, so make it</span>
+            <span class="c1"># dummy</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">intermediate_nucleus</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">secondary_rates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">products</span><span class="p">)</span>
+            <span class="c1">#self.intermediate_nucleus.dummy = True</span>
+
+            <span class="c1"># now the second secondary rate show be X(p,g)B</span>
+
+            <span class="k">assert</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">intermediate_nucleus</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">secondary_rates</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">reactants</span> <span class="ow">and</span>
+                    <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">secondary_rates</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">reactants</span> <span class="ow">and</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">primary_product</span> <span class="ow">in</span> <span class="n">secondary_rates</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">products</span><span class="p">)</span>
+
+            <span class="c1"># now ensure that the reverse rate makes sense</span>
+
+            <span class="c1"># the primary reverse rate is B(g,a)A</span>
+
+            <span class="k">assert</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">primary_product</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">primary_reverse</span><span class="o">.</span><span class="n">reactants</span> <span class="ow">and</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">primary_reactant</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">primary_reverse</span><span class="o">.</span><span class="n">products</span><span class="p">)</span>
+
+            <span class="c1"># now the first secondary reverse rate should be B(g,p)X</span>
+
+            <span class="k">assert</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">primary_product</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">secondary_reverse</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">reactants</span> <span class="ow">and</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">intermediate_nucleus</span> <span class="ow">in</span> <span class="n">secondary_reverse</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">products</span> <span class="ow">and</span>
+                    <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">secondary_reverse</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">products</span><span class="p">)</span>
+
+            <span class="c1"># and the second secondary reverse rate should be X(p,a)A</span>
+
+            <span class="k">assert</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">intermediate_nucleus</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">secondary_reverse</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">reactants</span> <span class="ow">and</span>
+                    <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">secondary_reverse</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">reactants</span> <span class="ow">and</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">primary_reactant</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">secondary_reverse</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">products</span> <span class="ow">and</span>
+                    <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">secondary_reverse</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">products</span><span class="p">)</span>
+
+            <span class="c1"># now initialize the super class with these reactants and products</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_reverse</span><span class="p">:</span>
+                <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">reactants</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">primary_reactant</span><span class="p">,</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">)],</span>
+                                 <span class="n">products</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">primary_product</span><span class="p">],</span> <span class="n">labelprops</span><span class="o">=</span><span class="s2">&quot;approx&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">reactants</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">primary_product</span><span class="p">],</span>
+                                 <span class="n">products</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">primary_reactant</span><span class="p">,</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">)],</span> <span class="n">labelprops</span><span class="o">=</span><span class="s2">&quot;approx&quot;</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;approximation type </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">approx_type</span><span class="si">}</span><span class="s2"> not supported&quot;</span><span class="p">)</span>
+
+        <span class="c1"># update the Q value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_q</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__set_screening</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># the individual rates are screened -- we don&#39;t screen the combination of them</span>
+        <span class="k">pass</span>
+
+<div class="viewcode-block" id="ApproximateRate.eval"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.ApproximateRate.eval">[docs]</a>    <span class="k">def</span> <span class="nf">eval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;evaluate the approximate rate&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">approx_type</span> <span class="o">==</span> <span class="s2">&quot;ap_pg&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_reverse</span><span class="p">:</span>
+                <span class="c1"># the approximate forward rate is r_ag + r_ap r_pg / (r_pg + r_pa)</span>
+                <span class="n">r_ag</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">primary_rate</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
+                <span class="n">r_ap</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">secondary_rates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
+                <span class="n">r_pg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">secondary_rates</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
+
+                <span class="n">r_pa</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">secondary_reverse</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
+
+                <span class="k">return</span> <span class="n">r_ag</span> <span class="o">+</span> <span class="n">r_ap</span> <span class="o">*</span> <span class="n">r_pg</span> <span class="o">/</span> <span class="p">(</span><span class="n">r_pg</span> <span class="o">+</span> <span class="n">r_pa</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># the approximate reverse rate is r_ga + r_pa r_gp / (r_pg + r_pa)</span>
+
+                <span class="n">r_ga</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">primary_reverse</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
+                <span class="n">r_gp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">secondary_reverse</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
+                <span class="n">r_pa</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">secondary_reverse</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
+
+                <span class="n">r_pg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">secondary_rates</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
+
+                <span class="k">return</span> <span class="n">r_ga</span> <span class="o">+</span> <span class="n">r_pa</span> <span class="o">*</span> <span class="n">r_gp</span> <span class="o">/</span> <span class="p">(</span><span class="n">r_pg</span> <span class="o">+</span> <span class="n">r_pa</span><span class="p">)</span></div></div>
 </pre></div>
 
            </div>

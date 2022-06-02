@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.networks.rate_collection &mdash; pynucastro 1.6.0.post110+g49b77db documentation</title>
+  <title>pynucastro.networks.rate_collection &mdash; pynucastro 1.6.0.post111+g7e05a14 documentation</title>
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -124,7 +124,7 @@
 
 <span class="c1"># Import Rate</span>
 <span class="kn">from</span> <span class="nn">pynucastro.nucleus</span> <span class="kn">import</span> <span class="n">Nucleus</span>
-<span class="kn">from</span> <span class="nn">pynucastro.rates</span> <span class="kn">import</span> <span class="n">Rate</span><span class="p">,</span> <span class="n">RatePair</span><span class="p">,</span> <span class="n">Library</span>
+<span class="kn">from</span> <span class="nn">pynucastro.rates</span> <span class="kn">import</span> <span class="n">Rate</span><span class="p">,</span> <span class="n">RatePair</span><span class="p">,</span> <span class="n">ApproximateRate</span><span class="p">,</span> <span class="n">Library</span>
 
 <span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;figure.dpi&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">100</span>
 
@@ -606,11 +606,22 @@
             <span class="k">return</span> <span class="n">screening_map</span>
 
         <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">:</span>
-            <span class="n">screen_nuclei</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">ion_screen</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">symmetric_screening</span><span class="p">:</span>
-                <span class="n">screen_nuclei</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">symmetric_screen</span>
+            <span class="n">all_screen_nuclei</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">ApproximateRate</span><span class="p">):</span>
+                <span class="c1"># loop over all of the rates in the approximate rate and grab their</span>
+                <span class="c1"># screening nuclei and append to the list</span>
+                <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;haven&#39;t writtne this yet&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">screen_nuclei</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">ion_screen</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">symmetric_screening</span><span class="p">:</span>
+                    <span class="n">screen_nuclei</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">symmetric_screen</span>
+                <span class="n">all_screen_nuclei</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">screen_nuclei</span><span class="p">)</span>
 
-            <span class="k">if</span> <span class="n">screen_nuclei</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">screen_nuclei</span> <span class="ow">in</span> <span class="n">all_screen_nuclei</span><span class="p">:</span>
+                <span class="c1"># screen_nuclei may be [] if it is a decay, gamma-capture, or neutron-capture</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">screen_nuclei</span><span class="p">:</span>
+                    <span class="k">continue</span>
+
                 <span class="n">nucs</span> <span class="o">=</span> <span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">q</span><span class="p">)</span> <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="n">screen_nuclei</span><span class="p">])</span>
 
                 <span class="n">scr</span> <span class="o">=</span> <span class="p">[</span><span class="n">q</span> <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="n">screening_map</span> <span class="k">if</span> <span class="n">q</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">nucs</span><span class="p">]</span>
