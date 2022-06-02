@@ -31,6 +31,31 @@ from pynucastro.nucdata import PeriodicTable
 
 mpl.rcParams['figure.dpi'] = 100
 
+def _skip_xalpha(p, r):
+    """utility function to consider if we show an (a, x) or (x, a) rate.  Here, p is the
+    product we want to link to"""
+
+    # first check is alpha is the heaviest nucleus on the RHS
+    rhs_heavy = sorted(r.products)[-1]
+    if not (rhs_heavy.Z == 2 and rhs_heavy.A == 4):
+
+        # for rates that are A (x, alpha) B, where A and B are heavy nuclei,
+        # don't show the connection of the nucleus to alpha, only show it to B
+        if p.Z == 2 and p.A == 4:
+            return True
+
+        # likewise, hide A (alpha, x) B, unless A itself is an alpha
+        c = r.reactants
+        n_alpha = 0
+        for nuc in c:
+            if nuc.Z == 2 and nuc.A == 4:
+                n_alpha += 1
+        # if there is only 1 alpha and we are working on the alpha node,
+        # then skip
+        if n_alpha == 1 and n.Z == 2 and n.A == 4:
+            return True
+
+    return False
 
 class Composition:
     """a composition holds the mass fractions of the nuclei in a network
@@ -228,6 +253,13 @@ class RateCollection:
             u = set(list(u) + list(t))
 
         self.unique_nuclei = sorted(u)
+
+        # approx nuclei are used in approximate rates
+        self.approx_nuclei = []
+        for r in self.rates:
+            if isinstance(r, ApproximateRate):
+                if r.intermediate_nucleus not in self.unique_nuclei + self.approx_nuclei:
+                    self.approx_nuclei.append(r.intermediate_nucleus)
 
         # now make a list of each rate that touches each nucleus
         # we'll store this in a dictionary keyed on the nucleus
@@ -838,17 +870,32 @@ class RateCollection:
         # nodes -- the node nuclei will be all of the heavies
         # add all the nuclei into G.node
         node_nuclei = []
+        colors = []
         for n in self.unique_nuclei:
             if n.raw not in hidden_nuclei:
                 node_nuclei.append(n)
+                colors.append(node_color)
             else:
                 for r in self.rates:
                     if r.reactants.count(n) > 1:
                         node_nuclei.append(n)
+                        colors.append(node_color)
                         break
+
+        # approx nuclei are given a different color
+        for n in self.approx_nuclei:
+            node_nuclei.append(n)
+            colors.append("#555555")
 
         if nucleus_filter_function is not None:
             node_nuclei = list(filter(nucleus_filter_function, node_nuclei))
+            # redo the colors:
+            colors = []
+            for n in node_nuclei:
+                if n in self.approx_nuclei:
+                    colors.append("#555555")
+                else:
+                    colors.append(node_color)
 
         for n in node_nuclei:
             G.add_node(n)
@@ -871,8 +918,10 @@ class RateCollection:
                 if ydots[r] < ydot_cutoff_value:
                     invisible_rates.add(r)
 
-        # edges
+        # edges for the rates that are explicitly in the network
         for n in node_nuclei:
+            if n not in self.nuclei_consumed:
+                continue
             for r in self.nuclei_consumed[n]:
                 if rate_filter_function is not None:
                     if not rate_filter_function(r):
@@ -881,36 +930,18 @@ class RateCollection:
                 for p in r.products:
                     if p in node_nuclei:
 
-                        if hide_xalpha:
-
-                            # first check is alpha is the heaviest nucleus on the RHS
-                            rhs_heavy = sorted(r.products)[-1]
-                            if not (rhs_heavy.Z == 2 and rhs_heavy.A == 4):
-
-                                # for rates that are A (x, alpha) B, where A and B are heavy nuclei,
-                                # don't show the connection of the nucleus to alpha, only show it to B
-                                if p.Z == 2 and p.A == 4:
-                                    continue
-
-                                # likewise, hide A (alpha, x) B, unless A itself is an alpha
-                                c = r.reactants
-                                n_alpha = 0
-                                for nuc in c:
-                                    if nuc.Z == 2 and nuc.A == 4:
-                                        n_alpha += 1
-                                # if there is only 1 alpha and we are working on the alpha node,
-                                # then skip
-                                if n_alpha == 1 and n.Z == 2 and n.A == 4:
-                                    continue
+                        if hide_xalpha and _skip_xalpha(p, r):
+                            continue
 
                         # networkx doesn't seem to keep the edges in
                         # any particular order, so we associate data
                         # to the edges here directly, in this case,
                         # the reaction rate, which will be used to
                         # color it
+                        # here real means that it is not an approximate rate
 
                         if ydots is None:
-                            G.add_edges_from([(n, p)], weight=0.5)
+                            G.add_edges_from([(n, p)], weight=0.5, real=1)
                         else:
                             if r in invisible_rates:
                                 continue
@@ -922,13 +953,35 @@ class RateCollection:
                                 # for python floats
                                 rate_weight = -308
 
-                            G.add_edges_from([(n, p)], weight=rate_weight)
+                            G.add_edges_from([(n, p)], weight=rate_weight, real=1)
+
+        # now consider the rates that are approximated out of the network
+        rate_seen = []
+        for r in self.rates:
+            if not isinstance(r, ApproximateRate):
+                continue
+            for sr in r.secondary_rates + r.secondary_reverse:
+                if sr in rate_seen:
+                    continue
+                rate_seen.append(sr)
+
+                for n in sr.reactants:
+                    if n not in node_nuclei:
+                        continue
+                    for p in sr.products:
+                        if p not in node_nuclei:
+                            continue
+
+                        if hide_xalpha and _skip_xalpha(p, sr):
+                            continue
+
+                        G.add_edges_from([(n, p)], weight=0, real=0)
 
         # It seems that networkx broke backwards compatability, and 'zorder' is no longer a valid
         # keyword argument. The 'linewidth' argument has also changed to 'linewidths'.
 
         nx.draw_networkx_nodes(G, G.position,      # plot the element at the correct position
-                               node_color=node_color, alpha=1.0,
+                               node_color=colors, alpha=1.0,
                                node_shape=node_shape, node_size=node_size, linewidths=2.0, ax=ax)
 
         nx.draw_networkx_labels(G, G.position, G.labels,   # label the name of element at the correct position
