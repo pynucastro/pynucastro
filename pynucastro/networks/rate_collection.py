@@ -31,7 +31,8 @@ from pynucastro.nucdata import PeriodicTable
 
 mpl.rcParams['figure.dpi'] = 100
 
-def _skip_xalpha(p, r):
+
+def _skip_xalpha(n, p, r):
     """utility function to consider if we show an (a, x) or (x, a) rate.  Here, p is the
     product we want to link to"""
 
@@ -56,6 +57,7 @@ def _skip_xalpha(p, r):
             return True
 
     return False
+
 
 class Composition:
     """a composition holds the mass fractions of the nuclei in a network
@@ -932,7 +934,7 @@ class RateCollection:
                 for p in r.products:
                     if p in node_nuclei:
 
-                        if hide_xalpha and _skip_xalpha(p, r):
+                        if hide_xalpha and _skip_xalpha(n, p, r):
                             continue
 
                         # networkx doesn't seem to keep the edges in
@@ -974,7 +976,7 @@ class RateCollection:
                         if p not in node_nuclei:
                             continue
 
-                        if hide_xalpha and _skip_xalpha(p, sr):
+                        if hide_xalpha and _skip_xalpha(n, p, sr):
                             continue
 
                         G.add_edges_from([(n, p)], weight=0, real=0)
