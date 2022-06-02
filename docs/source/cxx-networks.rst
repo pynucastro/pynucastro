@@ -76,7 +76,7 @@ There are 2 C++ files that are essentially used to define the global arrays.
 
 Finally, there are a few meta-data files:
 
-* ``pynucsastro.net``
+* ``pynucastro.net``
 
   This lists the nuclei in the network and their properties in a format that
   Microphysics requires.
