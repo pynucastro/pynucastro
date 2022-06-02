@@ -58,6 +58,7 @@ codes.
    :caption: Writing Networks
 
    networks
+   cxx-networks
 
 .. toctree::
    :maxdepth: 1
