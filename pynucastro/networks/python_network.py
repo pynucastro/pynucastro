@@ -17,7 +17,7 @@ class PythonNetwork(RateCollection):
         rate is an object of class Rate
         """
 
-        tstring = f"# {rate.string}\n"
+        tstring = f"# {rate.rid}\n"
         tstring += f"{prefix} = 0.0\n\n"
 
         for s in rate.sets:
@@ -53,9 +53,9 @@ class PythonNetwork(RateCollection):
         for n, r in enumerate(sorted(set(rate.reactants))):
             c = rate.reactants.count(r)
             if c > 1:
-                Y_string += f"Y[i{r}]**{c}"
+                Y_string += f"Y[j{r}]**{c}"
             else:
-                Y_string += f"Y[i{r}]"
+                Y_string += f"Y[j{r}]"
 
             if n < len(set(rate.reactants))-1:
                 Y_string += "*"
@@ -107,16 +107,16 @@ class PythonNetwork(RateCollection):
                 if 0 < n < len(set(rate.reactants))-1:
                     Y_string += "*"
                 if c > 2:
-                    Y_string += f"{c}*Y[i{r}]**{c-1}"
+                    Y_string += f"{c}*Y[j{r}]**{c-1}"
                 elif c == 2:
-                    Y_string += f"2*Y[i{r}]"
+                    Y_string += f"2*Y[j{r}]"
             else:
                 if 0 < n < len(set(rate.reactants))-1:
                     Y_string += "*"
                 if c > 1:
-                    Y_string += f"Y[i{r}]**{c}"
+                    Y_string += f"Y[j{r}]**{c}"
                 else:
-                    Y_string += f"Y[i{r}]"
+                    Y_string += f"Y[j{r}]"
 
         # density dependence
         if rate.dens_exp == 0:
@@ -165,19 +165,19 @@ class PythonNetwork(RateCollection):
 
         # integer keys
         for i, n in enumerate(self.unique_nuclei):
-            of.write(f"i{n} = {i}\n")
+            of.write(f"j{n} = {i}\n")
 
         of.write(f"nnuc = {len(self.unique_nuclei)}\n\n")
 
         of.write("A = np.zeros((nnuc), dtype=np.int32)\n\n")
         for n in self.unique_nuclei:
-            of.write(f"A[i{n}] = {n.A}\n")
+            of.write(f"A[j{n}] = {n.A}\n")
 
         of.write("\n")
 
         of.write("Z = np.zeros((nnuc), dtype=np.int32)\n\n")
         for n in self.unique_nuclei:
-            of.write(f"Z[i{n}] = {n.Z}\n")
+            of.write(f"Z[j{n}] = {n.Z}\n")
 
         of.write("\n")
 
@@ -204,7 +204,7 @@ class PythonNetwork(RateCollection):
         of.write("def rhs_eq(t, Y, rho, T):\n\n")
         # integer keys
         for i, n in enumerate(self.unique_nuclei):
-            of.write(f"{indent}i{n} = {i}\n")
+            of.write(f"{indent}j{n} = {i}\n")
 
         of.write(f"{indent}nnuc = {len(self.unique_nuclei)}\n\n")
 
@@ -219,7 +219,7 @@ class PythonNetwork(RateCollection):
 
         # now make the RHSs
         for n in self.unique_nuclei:
-            of.write(f"{indent}dYdt[i{n}] = (\n")
+            of.write(f"{indent}dYdt[j{n}] = (\n")
             for r in self.nuclei_consumed[n]:
                 c = r.reactants.count(n)
                 if c == 1:

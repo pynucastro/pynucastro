@@ -1,6 +1,6 @@
 # unit tests for rates
 
-import pynucastro.rates as rates
+from pynucastro.nucleus import Nucleus
 from pytest import approx
 
 
@@ -18,15 +18,18 @@ class TestNucleus:
     def setup_method(self):
         """ this is run before each test """
 
-        self.p = rates.Nucleus("p")
-        self.h1 = rates.Nucleus("H1")
-        self.d = rates.Nucleus("d")
-        self.he4 = rates.Nucleus("He4")
-        self.c12 = rates.Nucleus("C12")
-        self.o16 = rates.Nucleus("O16")
-        self.ni56 = rates.Nucleus("Ni56")
-        self.u238 = rates.Nucleus("U238")
-        self.he4_also = rates.Nucleus("he4")
+        self.p = Nucleus("p")
+        self.h1 = Nucleus("H1")
+        self.d = Nucleus("d")
+        self.he4 = Nucleus("He4")
+        self.c12 = Nucleus("C12")
+        self.o16 = Nucleus("O16")
+        self.ni56 = Nucleus("Ni56")
+        self.u238 = Nucleus("U238")
+        self.he4_also = Nucleus("he4")
+        self.ne41 = Nucleus("ne41")
+        self.ni61 = Nucleus("ni61")
+        self.pb237 = Nucleus("pb237")
 
     def teardown_method(self):
         """ this is run after each test """
@@ -59,3 +62,27 @@ class TestNucleus:
 
     def test_binding(self):
         assert self.ni56.nucbind == approx(8.642779)
+
+    def test_spin(self):
+
+        assert int(self.p.spin_states) == 2
+        assert int(self.he4.spin_states) == 1
+        assert int(self.d.spin_states) == 3
+        assert int(self.c12.spin_states) == 1
+        assert int(self.ni56.spin_states) == 1
+
+    def test_partition_low_temp(self):
+
+        assert self.p.partition_function(0.35e9) == approx(1.0)
+        assert self.h1.partition_function(0.35e9) == approx(1.0)
+        assert self.ne41.partition_function(0.35e9) == approx(1.0121446711436666)
+        assert self.ni61.partition_function(0.35e9) == approx(1.160524742683722)
+        assert self.pb237.partition_function(0.35e9) == approx(1.4410114805045504)
+
+    def test_partition_high_temp(self):
+
+        assert self.p.partition_function(32.0e9) == approx(1.0)
+        assert self.h1.partition_function(32.0e9) == approx(1.0)
+        assert self.ne41.partition_function(32.0e9) == approx(4.901052000000001)
+        assert self.ni61.partition_function(32.0e9) == approx(1927800.437886083)
+        assert self.pb237.partition_function(32.0e9) == approx(5.05620611030359e+28)

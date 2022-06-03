@@ -1,6 +1,9 @@
 """A collection of classes and methods to deal with collections of
 rates that together make up a network."""
 
+# disable a complaint about SymLogNorm
+#pylint: disable=redundant-keyword-arg
+
 # Common Imports
 import warnings
 import functools
@@ -16,10 +19,13 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from matplotlib.ticker import MaxNLocator
+from matplotlib.colors import SymLogNorm
+from matplotlib.scale import SymmetricalLogTransform
 import networkx as nx
 
 # Import Rate
-from pynucastro.rates import Rate, RatePair, Nucleus, Library
+from pynucastro.nucleus import Nucleus
+from pynucastro.rates import Rate, RatePair, ApproximateRate, Library
 
 mpl.rcParams['figure.dpi'] = 100
 
@@ -112,6 +118,13 @@ class ScreeningPair:
 
     def add_rate(self, rate):
         self.rates.append(rate)
+
+    def __str__(self):
+        ostr = f"screening for {self.n1} + {self.n2}\n"
+        ostr += "rates:\n"
+        for r in self.rates:
+            ostr += f"  {r}\n"
+        return ostr
 
     def __eq__(self, other):
         """all we care about is whether the names are the same -- that conveys
@@ -263,36 +276,63 @@ class RateCollection:
                 else:
                     self.library = self.library + rflib
 
+    def get_forward_rates(self):
+        """return a list of the forward (exothermic) rates"""
+
+        # first handle the ones that have Q defined
+        forward_rates = [r for r in self.rates if r.Q is not None and r.Q >= 0.0]
+
+        # e-capture tabular rates don't have a Q defined, so just go off of the binding energy
+        forward_rates += [r for r in self.rates if r.Q is None and r.reactants[0].nucbind <= r.products[0].nucbind]
+
+        return forward_rates
+
+    def get_reverse_rates(self):
+        """return a list of the reverse (endothermic) rates)"""
+
+        # first handle the ones that have Q defined
+        reverse_rates = [r for r in self.rates if r.Q is not None and r.Q < 0.0]
+
+        # e-capture tabular rates don't have a Q defined, so just go off of the binding energy
+        reverse_rates += [r for r in self.rates if r.Q is None and r.reactants[0].nucbind > r.products[0].nucbind]
+
+        return reverse_rates
+
+    def find_reverse(self, forward_rate, reverse_rates=None):
+        """given a forward rate, locate the rate that is its reverse"""
+
+        if reverse_rates is None:
+            reverse_rates = self.get_reverse_rates()
+
+        reverse = None
+
+        for rr in reverse_rates:
+            if sorted(forward_rate.reactants, key=lambda x: x.A) == sorted(rr.products, key=lambda x: x.A) and \
+               sorted(forward_rate.products, key=lambda x: x.A) == sorted(rr.reactants, key=lambda x: x.A):
+                reverse = rr
+                break
+
+        return reverse
+
     def get_rate_pairs(self):
         """ return a list of RatePair objects, grouping the rates together
             by forward and reverse"""
 
-        # first handle the ones that have Q defined
-
-        forward_rates = [r for r in self.rates if r.Q is not None and r.Q >= 0.0]
-        reverse_rates = [r for r in self.rates if r.Q is not None and r.Q < 0.0]
-
-        # e-capture tabular rates don't have a Q defined, so just go off of the binding energy
-
-        forward_rates += [r for r in self.rates if r.Q is None and r.reactants[0].nucbind <= r.products[0].nucbind]
-        reverse_rates += [r for r in self.rates if r.Q is None and r.reactants[0].nucbind > r.products[0].nucbind]
-
         rate_pairs = []
+
+        reverse_rates = self.get_reverse_rates()
 
         # loop over all the forward rates and find the matching reverse rate
         # if it exists
-        for fr in forward_rates:
+        for fr in self.get_forward_rates():
             rp = RatePair(forward=fr)
-            matched = False
-            for rr in reverse_rates:
-                if sorted(fr.reactants, key=lambda x: x.A) == sorted(rr.products, key=lambda x: x.A) and \
-                   sorted(fr.products, key=lambda x: x.A) == sorted(rr.reactants, key=lambda x: x.A):
-                    matched = True
-                    rp.reverse = rr
-                    break
+
+            rr = self.find_reverse(fr, reverse_rates=reverse_rates)
+
             # since we found a match, remove the reverse rate we paired
             # from out list so no other forward rate can match with it
-            if matched:
+            if rr is not None:
+                rp.reverse = rr
                 reverse_rates.remove(rp.reverse)
 
             rate_pairs.append(rp)
@@ -309,6 +349,19 @@ class RateCollection:
     def get_nuclei(self):
         """ get all the nuclei that are part of the network """
         return self.unique_nuclei
+
+    def get_rates(self):
+        """ get a list of the reaction rates in this network"""
+        return self.rates
+
+    def get_rate(self, rid):
+        """ Return a rate matching the id provided.  Here rid should be
+        the string return by Rate.fname"""
+        try:
+            return [r for r in self.rates if r.fname == rid][0]
+        except IndexError:
+            print("ERROR: rate identifier does not match a rate in this network.")
+            raise
 
     def evaluate_rates(self, rho, T, composition):
         """evaluate the rates for a specific density, temperature, and
@@ -371,6 +424,23 @@ class RateCollection:
             act[nuc] = sum(produced) + sum(consumed)
 
         return act
+
+    def _get_network_chart(self, rho, T, composition):
+        """a network chart is a dict, keyed by rate that holds a list of tuples (Nucleus, ydot)"""
+
+        rvals = self.evaluate_rates(rho, T, composition)
+
+        nc = {}
+
+        for rate in rvals:
+            nucs = []
+            for n in set(rate.reactants):
+                nucs.append((n, -rate.reactants.count(n) * rvals[rate]))
+            for n in set(rate.products):
+                nucs.append((n, rate.products.count(n) * rvals[rate]))
+            nc[rate] = nucs
+
+        return nc
 
     def network_overview(self):
         """ return a verbose network overview """
@@ -437,11 +507,22 @@ class RateCollection:
             return screening_map
 
         for r in self.rates:
-            screen_nuclei = r.ion_screen
-            if self.symmetric_screening:
-                screen_nuclei = r.symmetric_screen
+            all_screen_nuclei = []
+            if isinstance(r, ApproximateRate):
+                # loop over all of the rates in the approximate rate and grab their
+                # screening nuclei and append to the list
+                raise NotImplementedError("haven't writtne this yet")
+            else:
+                screen_nuclei = r.ion_screen
+                if self.symmetric_screening:
+                    screen_nuclei = r.symmetric_screen
+                all_screen_nuclei.append(screen_nuclei)
 
-            if screen_nuclei:
+            for screen_nuclei in all_screen_nuclei:
+                # screen_nuclei may be [] if it is a decay, gamma-capture, or neutron-capture
+                if not screen_nuclei:
+                    continue
+
                 nucs = "_".join([str(q) for q in screen_nuclei])
 
                 scr = [q for q in screening_map if q.name == nucs]
@@ -549,7 +630,8 @@ class RateCollection:
              node_size=1000, node_font_size=13, node_color="#A0CBE2", node_shape="o",
              curved_edges=False,
              N_range=None, Z_range=None, rotated=False,
-             always_show_p=False, always_show_alpha=False, hide_xalpha=False, filter_function=None):
+             always_show_p=False, always_show_alpha=False, hide_xalpha=False,
+             nucleus_filter_function=None, rate_filter_function=None):
         """Make a plot of the network structure showing the links between
         nuclei.  If a full set of thermodymamic conditions are
         provided (rho, T, comp), then the links are colored by rate
@@ -595,15 +677,19 @@ class RateCollection:
         always_show_p: include p as a node on the plot even if we
         don't have p+p reactions
 
-        always_show_alpha: include He4 as a node on the plot even if we don't have 3-alpha
+        always_show_alpha: include He4 as a node on the plot even if
+        we don't have 3-alpha
 
         hide_xalpha=False: dont connect the links to alpha for heavy
-        nuclei reactions of the form A(alpha,X)B or A(X,alpha)B, except if alpha
-        is the heaviest product.
+        nuclei reactions of the form A(alpha,X)B or A(X,alpha)B,
+        except if alpha is the heaviest product.
 
-        filter_function: name of a custom function that takes the list
-        of nuclei and returns a new list with the nuclei to be shown
-        as nodes.
+        nucleus_filter_funcion: name of a custom function that takes a
+        Nucleus object and returns true or false if it is to be shown
+        as a node.
+
+        rate_filter_funcion: name of a custom function that takes a Rate
+        object and returns true or false if it is to be shown as an edge.
 
         """
 
@@ -637,8 +723,8 @@ class RateCollection:
                         node_nuclei.append(n)
                         break
 
-        if filter_function is not None:
-            node_nuclei = list(filter(filter_function, node_nuclei))
+        if nucleus_filter_function is not None:
+            node_nuclei = list(filter(nucleus_filter_function, node_nuclei))
 
         for n in node_nuclei:
             G.add_node(n)
@@ -664,8 +750,11 @@ class RateCollection:
         # edges
         for n in node_nuclei:
             for r in self.nuclei_consumed[n]:
-                for p in r.products:
+                if rate_filter_function is not None:
+                    if not rate_filter_function(r):
+                        continue
 
+                for p in r.products:
                     if p in node_nuclei:
 
                         if hide_xalpha:
@@ -695,6 +784,7 @@ class RateCollection:
                         # to the edges here directly, in this case,
                         # the reaction rate, which will be used to
                         # color it
+
                         if ydots is None:
                             G.add_edges_from([(n, p)], weight=0.5)
                         else:
@@ -810,6 +900,99 @@ class RateCollection:
             plt.tight_layout()
             plt.savefig(outfile, dpi=dpi)
 
+    def plot_network_chart(self, outfile=None, rho=None, T=None, comp=None,
+                           size=(800, 800), dpi=100, force_one_column=False):
+
+        nc = self._get_network_chart(rho, T, comp)
+
+        # find the limits
+        _ydot = []
+        for r in self.rates:
+            for _, y in nc[r]:
+                _ydot.append(y)
+
+        _ydot = np.asarray(_ydot)
+        valid_max = np.abs(_ydot[_ydot != 0]).max()
+
+        norm = SymLogNorm(valid_max/1.e15, vmin=-valid_max, vmax=valid_max)
+
+        # if there are a lot of rates, we split the network chart into
+        # two side-by-side panes, with the first half of the rates on
+        # the left and the second half of the rates on the right
+
+        # how many panes?
+
+        if len(self.rates) > 3 * len(self.unique_nuclei):
+            npanes = 2
+        else:
+            npanes = 1
+
+        if force_one_column:
+            npanes = 1
+
+        fig, _ax = plt.subplots(1, npanes, constrained_layout=True)
+
+        fig.set_size_inches(size[0]/dpi, size[1]/dpi)
+
+        if npanes == 1:
+            drate = len(self.rates)
+        else:
+            drate = (len(self.rates) + 1) // 2
+
+        _rates = sorted(self.rates)
+
+        for ipane in range(npanes):
+
+            if npanes == 2:
+                ax = _ax[ipane]
+            else:
+                ax = _ax
+
+            istart = ipane * drate
+            iend = min((ipane + 1) * drate - 1, len(self.rates)-1)
+
+            nrates = iend - istart + 1
+
+            data = np.zeros((nrates, len(self.unique_nuclei)), dtype=np.float64)
+
+            # loop over rates -- each rate is a line in a grid of nuclei vs rate
+
+            #ax = grid[ipane]
+
+            for irate, r in enumerate(_rates):
+                if istart <= irate <= iend:
+                    irow = irate - istart
+                    for n, ydot in nc[r]:
+                        icol = self.unique_nuclei.index(n)
+                        assert data[irow, icol] == 0.0
+                        data[irow, icol] = ydot
+
+            # each pane has all the nuclei
+            ax.set_xticks(np.arange(len(self.unique_nuclei)), labels=[f"${n.pretty}$" for n in self.unique_nuclei], rotation=90)
+
+            # each pane only has its subset of rates
+            ax.set_yticks(np.arange(nrates), labels=[f"{r.pretty_string}" for irate, r in enumerate(_rates) if istart <= irate <= iend])
+
+            im = ax.imshow(data, norm=norm, cmap=plt.cm.bwr)
+
+            ax.set_aspect("equal")
+
+            # Turn spines off and create white grid.
+            ax.spines[:].set_visible(False)
+
+            ax.set_xticks(np.arange(data.shape[1]+1)-.5, minor=True)
+            ax.set_yticks(np.arange(data.shape[0]+1)-.5, minor=True)
+            ax.grid(which="minor", color="w", linestyle='-', linewidth=3)
+            ax.tick_params(which="minor", bottom=False, left=False)
+
+        if npanes == 1:
+            fig.colorbar(im, ax=ax, orientation="horizontal", shrink=0.75)
+        else:
+            fig.colorbar(im, ax=ax, orientation="vertical", shrink=0.25)
+
+        if outfile is not None:
+            fig.savefig(outfile, bbox_inches="tight")
+
     @staticmethod
     def _safelog(arr, small):
 
@@ -821,15 +1004,12 @@ class RateCollection:
         return np.log10(arr)
 
     @staticmethod
-    def _symlog(arr, linthresh=1.0):
+    def _symlog(arr, linthresh=1.0, linscale=1.0):
 
-        assert linthresh >= 1.0
-        neg = arr < 0.0
-        arr = np.abs(arr)
-        needslog = arr > linthresh
+        # Assume log base 10
+        symlog_transform = SymmetricalLogTransform(10, linthresh, linscale)
+        arr = symlog_transform.transform_non_affine(arr)
 
-        arr[needslog] = np.log10(arr[needslog]) + linthresh
-        arr[neg] *= -1
         return arr
 
     @staticmethod
@@ -868,6 +1048,8 @@ class RateCollection:
             - *small* -- If using logarithmic scaling, zeros will be replaced with
               this value. 1e-30 by default.
             - *linthresh* -- Linearity threshold for symlog scaling.
+            - *linscale* --  The number of decades to use for each half of the linear
+              range. Stretches linear range relative to the logarithmic range.
             - *filter_function* -- A callable to filter Nucleus objects with. Should
               return *True* if the nuclide should be plotted.
             - *outfile* -- Output file to save the plot to. The plot will be shown if
@@ -901,6 +1083,7 @@ class RateCollection:
         filter_function = kwargs.pop("filter_function", None)
         dpi = kwargs.pop("dpi", 100)
         linthresh = kwargs.pop("linthresh", 1.0)
+        linscale = kwargs.pop("linscale", 1.0)
 
         if kwargs:
             warnings.warn(f"Unrecognized keyword arguments: {kwargs.keys()}")
@@ -954,7 +1137,7 @@ class RateCollection:
         if scale == "log":
             values = self._safelog(values, small)
         elif scale == "symlog":
-            values = self._symlog(values, linthresh)
+            values = self._symlog(values, linthresh, linscale)
 
         if cbar_bounds is None:
             cbar_bounds = values.min(), values.max()

@@ -32,7 +32,7 @@ class TestStarKillerCxxNetwork:
 
     def teardown_method(self):
         """ this is run after each test """
-        self.tf = None
+        self.fn = None
 
     def cromulent_ftag(self, ftag, answer, n_indent=1):
         """ check to see if function ftag returns answer """
@@ -48,12 +48,14 @@ class TestStarKillerCxxNetwork:
 
         answer = ('    const int NrateReaclib = 5;\n' +
                   '    const int NumReaclibSets = 6;\n')
+
         assert self.cromulent_ftag(self.fn._nrat_reaclib, answer, n_indent=1)
 
     def test_nrat_tabular(self):
         """ test the _nrat_tabular function """
 
         answer = '    const int NrateTabular = 2;\n'
+
         assert self.cromulent_ftag(self.fn._nrat_tabular, answer, n_indent=1)
 
     def test_nrxn(self):

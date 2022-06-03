@@ -2,7 +2,6 @@
 through sympy"""
 
 import re
-from collections import OrderedDict
 
 import sympy
 
@@ -13,7 +12,7 @@ class SympyRates:
 
         self.ctype = ctype
 
-        self.symbol_ludict = OrderedDict()  # Symbol lookup dictionary
+        self.symbol_ludict = {}  # Symbol lookup dictionary
 
         if self.ctype == "Fortran":
             self.name_density = 'state % rho'
@@ -67,7 +66,7 @@ class SympyRates:
             if self.ctype == "Fortran":
                 sym_final = f'{self.name_y}(j{r})'
             else:
-                sym_final = f'{self.name_y}({r.c()})'
+                sym_final = f'{self.name_y}({r.cindex()})'
             sym_temp = f'Y__j{r}__'
             self.symbol_ludict[sym_temp] = sym_final
             Y_sym = Y_sym * sympy.symbols(sym_temp)**c

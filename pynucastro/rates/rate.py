@@ -7,28 +7,46 @@ import re
 import io
 import numpy as np
 import matplotlib.pyplot as plt
-import numba
-
 try:
-    from numba.experimental import jitclass
+    import numba
+    try:
+        from numba.experimental import jitclass
+    except ImportError:
+        from numba import jitclass
 except ImportError:
-    from numba import jitclass
+    numba = None
+    import functools
 
-from pynucastro.nucdata import UnidentifiedElement, PeriodicTable, PartitionFunctionCollection, BindingTable, SpinTable
+    # no-op jitclass placeholder
+    def jitclass(cls_or_spec=None, spec=None):
+        if (cls_or_spec is not None and
+            spec is None and
+                not isinstance(cls_or_spec, type)):
+            # Used like
+            # @jitclass([("x", intp)])
+            # class Foo:
+            #     ...
+            spec = cls_or_spec
+            cls_or_spec = None
+
+        def wrap(cls):
+            # this copies the function name and docstring to the wrapper function
+            @functools.wraps(cls)
+            def wrapper(*args, **kwargs):
+                return cls(*args, **kwargs)
+            return wrapper
+
+        if cls_or_spec is None:
+            return wrap
+        return wrap(cls_or_spec)
+
+
+from pynucastro.nucleus import Nucleus
+
 
 _pynucastro_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 _pynucastro_rates_dir = os.path.join(_pynucastro_dir, 'library')
 _pynucastro_tabular_dir = os.path.join(_pynucastro_rates_dir, 'tabular')
-
-
-#read the spin table once and store it at the module-level
-_spin_table = SpinTable(set_double_gs=False)
-
-# read the binding energy table once and store it at the module-level
-_binding_table = BindingTable()
-
-
-_pcollection = PartitionFunctionCollection(use_high_temperatures=True, use_set='frdm')
 
 
 def _find_rate_file(ratename):
@@ -55,14 +73,17 @@ def _find_rate_file(ratename):
     raise Exception(f'File {ratename} not found in the working directory, {_pynucastro_rates_dir}, or {_pynucastro_tabular_dir}')
 
 
-Tfactor_spec = [
-    ('T9', numba.float64),
-    ('T9i', numba.float64),
-    ('T913', numba.float64),
-    ('T913i', numba.float64),
-    ('T953', numba.float64),
-    ('lnT9', numba.float64)
-]
+if numba is not None:
+    Tfactor_spec = [
+        ('T9', numba.float64),
+        ('T9i', numba.float64),
+        ('T913', numba.float64),
+        ('T913i', numba.float64),
+        ('T953', numba.float64),
+        ('lnT9', numba.float64)
+    ]
+else:
+    Tfactor_spec = []
 
 
 @jitclass(Tfactor_spec)
@@ -178,156 +199,6 @@ class SingleSet:
         return string
 
 
-class UnsupportedNucleus(BaseException):
-    def __init__(self):
-        return
-
-
-class Nucleus:
-    """
-    a nucleus that participates in a reaction -- we store it in a
-    class to hold its properties, define a sorting, and give it a
-    pretty printing string.
-
-    :var Z:               atomic number
-    :var N:               neutron number
-    :var A:               atomic mass
-    :var nucbind:         nuclear binding energy (MeV / nucleon)
-    :var short_spec_name: nucleus abbrevation (e.g. "he4")
-    :var caps_name:       capitalized short species name (e.g. "He4")
-    :var el:              element name (e.g. "he")
-    :var pretty:          LaTeX formatted version of the nucleus name
-
-    """
-    _cache = {}
-
-    def __init__(self, name, dummy=False):
-        name = name.lower()
-        self.raw = name
-
-        # a dummy nucleus is one that we can use where a nucleus is needed
-        # but it is not considered to be part of the network
-        self.dummy = dummy
-
-        # element symbol and atomic weight
-        if name == "p":
-            self.el = "h"
-            self.A = 1
-            self.short_spec_name = "h1"
-            self.caps_name = "H1"
-        elif name == "d":
-            self.el = "h"
-            self.A = 2
-            self.short_spec_name = "h2"
-            self.caps_name = "H2"
-        elif name == "t":
-            self.el = "h"
-            self.A = 3
-            self.short_spec_name = "h3"
-            self.caps_name = "H3"
-        elif name == "a":
-            #this is a convenience, enabling the use of a commonly-used alias:
-            #    He4 --> \alpha --> "a" , e.g. c12(a,g)o16
-            self.el = "he"
-            self.A = 4
-            self.short_spec_name = "he4"
-            self.raw = "he4"
-            self.caps_name = "He4"
-        elif name == "n":
-            self.el = "n"
-            self.A = 1
-            self.Z = 0
-            self.N = 1
-            self.short_spec_name = "n"
-            self.spec_name = "neutron"
-            self.pretty = fr"\mathrm{{{self.el}}}"
-            self.caps_name = "N"
-        else:
-            e = re.match(r"([a-zA-Z]*)(\d*)", name)
-            self.el = e.group(1).title()  # chemical symbol
-            assert self.el
-            try:
-                self.A = int(e.group(2))
-            except (TypeError, ValueError):
-                if (name.strip() == 'al-6' or
-                    name.strip() == 'al*6'):
-                    raise UnsupportedNucleus()
-                else:
-                    raise
-            assert self.A >= 0
-            self.short_spec_name = name
-            self.caps_name = name.capitalize()
-
-        # set the number of spin states
-        try:
-            self.spin_states = _spin_table.get_spin_nuclide(self.short_spec_name).spin_states
-        except NotImplementedError:
-            self.spin_states = None
-
-        # use lowercase element abbreviation regardless the case of the input
-        self.el = self.el.lower()
-
-        # set a partition function object to every nucleus
-        self.partition_function = _pcollection.get_partition_function(self.short_spec_name)
-
-        # atomic number comes from periodic table
-        if name != "n":
-            try:
-                i = PeriodicTable.lookup_abbreviation(self.el)
-            except UnidentifiedElement:
-                print(f'Could not identify element: {self.el}')
-                raise
-            else:
-                self.Z = i.Z
-                assert isinstance(self.Z, int)
-                assert self.Z >= 0
-                self.N = self.A - self.Z
-                assert isinstance(self.N, int)
-                assert self.N >= 0
-
-                # long name
-                self.spec_name = f'{i.name}-{self.A}'
-
-                # latex formatted style
-                self.pretty = fr"{{}}^{{{self.A}}}\mathrm{{{self.el.capitalize()}}}"
-
-        try:
-            self.nucbind = _binding_table.get_nuclide(n=self.N, z=self.Z).nucbind
-        except NotImplementedError:
-            # the binding energy table doesn't know about this nucleus
-            self.nucbind = None
-
-    @classmethod
-    def from_cache(cls, name, dummy=False):
-        key = (name.lower(), dummy)
-        if key not in cls._cache:
-            cls._cache[key] = Nucleus(name, dummy)
-        return cls._cache[key]
-
-    def __repr__(self):
-        return self.raw
-
-    def __hash__(self):
-        return hash((self.Z, self.A))
-
-    def c(self):
-        """return the name capitalized"""
-        return self.caps_name
-
-    def __eq__(self, other):
-        if isinstance(other, Nucleus):
-            return self.el == other.el and \
-                self.Z == other.Z and self.A == other.A
-        if isinstance(other, tuple):
-            return (self.Z, self.A) == other
-        return NotImplemented
-
-    def __lt__(self, other):
-        if not self.Z == other.Z:
-            return self.Z < other.Z
-        return self.A < other.A
-
-
 class Rate:
     """A single reaction rate.  Currently, this can be a
     Reaclib rate, which can be composed of multiple sets, or a tabulated
@@ -379,6 +250,12 @@ class Rate:
         self.tabular = None
 
         self.Q = Q
+
+        # some rates will have no nuclei particles (e.g. gamma) on the left or
+        # right -- we'll try to infer those here
+
+        self.lhs_other = []
+        self.rhs_other = []
 
         if type(rfile) == str:
             # read in the file, parse the different sets and store them as
@@ -535,9 +412,7 @@ class Rate:
         """ Set label and flags indicating Rate is resonant,
             weak, or reverse. """
         assert isinstance(self.labelprops, str)
-        if len(self.labelprops) != 6:
-            assert self.labelprops == 'tabular'
-
+        if self.labelprops == 'tabular':
             self.label = 'tabular'
             self.resonant = False
             self.resonance_combined = False
@@ -545,7 +420,16 @@ class Rate:
             self.weak_type = None
             self.reverse = False
             self.tabular = True
+        elif self.labelprops == "approx":
+            self.label = "approx"
+            self.resonant = False
+            self.resonance_combined = False
+            self.weak = False
+            self.weak_type = None
+            self.reverse = False
+            self.tabular = False
         else:
+            assert len(self.labelprops) == 6
             self.label = self.labelprops[0:4]
             self.resonant = self.labelprops[4] == 'r'
             self.weak = self.labelprops[4] == 'w'
@@ -801,7 +685,12 @@ class Rate:
 
     def _set_print_representation(self):
         """ compose the string representations of this Rate. """
+
+        # string is output to the terminal, rid is used as a dict key,
+        # and pretty_string is latex
+
         self.string = ""
+        self.rid = ""
         self.pretty_string = r"$"
 
         # put p, n, and alpha second
@@ -812,22 +701,126 @@ class Rate:
             else:
                 treactants.append(n)
 
+        # figure out if there are any non-nuclei present
+        # for the moment, we just handle strong rates
+
+        if not self.weak and not self.tabular:
+            # there should be the same number of protons on each side and
+            # the same number of neutrons on each side
+            assert np.sum([n.Z for n in self.reactants]) == np.sum([n.Z for n in self.products])
+            assert np.sum([n.A for n in self.reactants]) == np.sum([n.A for n in self.products])
+
+            if len(self.products) == 1:
+                self.rhs_other.append("gamma")
+
+        else:
+
+            if self.tabular:
+
+                # these are either electron capture or beta- decay
+
+                if np.sum([n.Z for n in self.reactants]) == np.sum([n.Z for n in self.products]) + 1:
+                    # electron capture
+                    self.lhs_other.append("e-")
+                    self.rhs_other.append("nu")
+                else:
+                    # beta- decay
+                    self.rhs_other.append("e-")
+                    self.rhs_other.append("nubar")
+
+            elif self.weak_type == "electron_capture":
+
+                # we assume that all the tabular rates are electron capture for now
+
+                # we expect an electron on the left -- let's make sure
+                # the charge on the left should be +1 the charge on the right
+                assert np.sum([n.Z for n in self.reactants]) == np.sum([n.Z for n in self.products]) + 1
+
+                self.lhs_other.append("e-")
+                self.rhs_other.append("nu")
+
+            elif "_pos_" in self.weak_type:
+
+                # we expect a positron on the right -- let's make sure
+                try:
+                    assert np.sum([n.Z for n in self.reactants]) == np.sum([n.Z for n in self.products]) + 1
+                except AssertionError:
+                    print(self.reactants)
+                    print(self.products)
+                    print(self.label)
+                    print(self.weak_type)
+                    raise
+
+                self.rhs_other.append("e+")
+                self.rhs_other.append("nu")
+
+            elif "_neg_" in self.weak_type:
+
+                # we expect an electron on the right -- let's make sure
+                assert np.sum([n.Z for n in self.reactants]) + 1 == np.sum([n.Z for n in self.products])
+
+                self.rhs_other.append("e-")
+                self.rhs_other.append("nubar")
+
+            else:
+
+                # we need to figure out what the rate is.  We'll assume that it is
+                # not an electron capture
+
+                if np.sum([n.Z for n in self.reactants]) == np.sum([n.Z for n in self.products]) + 1:
+                    self.rhs_other.append("e+")
+                    self.rhs_other.append("nu")
+
+                elif np.sum([n.Z for n in self.reactants]) + 1 == np.sum([n.Z for n in self.products]):
+
+                    self.rhs_other.append("e-")
+                    self.rhs_other.append("nubar")
+
         for n, r in enumerate(treactants):
-            self.string += f"{r}"
+            self.string += f"{r.c()}"
+            self.rid += f"{r}"
             self.pretty_string += fr"{r.pretty}"
             if not n == len(self.reactants)-1:
                 self.string += " + "
+                self.rid += " + "
                 self.pretty_string += r" + "
 
-        self.string += " --> "
+        if self.lhs_other:
+            for o in self.lhs_other:
+                if o == "e-":
+                    self.string += " + e⁻"
+                    self.pretty_string += r" + \mathrm{e}^-"
+
+        self.string += " ⟶ "
+        self.rid += " --> "
         self.pretty_string += r" \rightarrow "
 
         for n, p in enumerate(self.products):
-            self.string += f"{p}"
+            self.string += f"{p.c()}"
+            self.rid += f"{p}"
             self.pretty_string += fr"{p.pretty}"
             if not n == len(self.products)-1:
                 self.string += " + "
+                self.rid += " + "
                 self.pretty_string += r" + "
+
+        if self.rhs_other:
+            for o in self.rhs_other:
+                if o == "gamma":
+                    self.string += " + 𝛾"
+                    self.pretty_string += r"+ \gamma"
+                elif o == "nu":
+                    self.string += " + 𝜈"
+                    self.pretty_string += r"+ \nu_e"
+                elif o == "nubar":
+                    self.string += " + 𝜈"
+                    self.pretty_string += r"+ \bar{\nu}_e"
+                if o == "e-":
+                    self.string += " + e⁻"
+                    self.pretty_string += r" + \mathrm{e}^-"
+                if o == "e+":
+                    self.string += " + e⁺"
+                    self.pretty_string += r" + \mathrm{e}^+"
 
         self.pretty_string += r"$"
 
@@ -860,7 +853,7 @@ class Rate:
         if self.tabular:
             ssrc = 'tabular'
 
-        return f'{self.__repr__()} <{self.label.strip()}_{ssrc}_{sweak}_{srev}>'
+        return f'{self.rid} <{self.label.strip()}_{ssrc}_{sweak}_{srev}>'
 
     def heaviest(self):
         """
@@ -935,6 +928,20 @@ class Rate:
 
         return r
 
+    def get_nu_loss(self, T, rhoY):
+        """ get the neutrino loss rate for the reaction if tabulated"""
+
+        nu_loss = None
+        if self.tabular:
+            data = self.tabular_data_table.astype(np.float)
+            # find the nearest value of T and rhoY in the data table
+            T_nearest = (data[:, 1])[np.abs((data[:, 1]) - T).argmin()]
+            rhoY_nearest = (data[:, 0])[np.abs((data[:, 0]) - rhoY).argmin()]
+            inde = np.where((data[:, 1] == T_nearest) & (data[:, 0] == rhoY_nearest))[0][0]
+            nu_loss = data[inde][6]
+
+        return nu_loss
+
     def get_rate_exponent(self, T0):
         """
         for a rate written as a power law, r = r_0 (T/T0)**nu, return
@@ -949,8 +956,22 @@ class Rate:
         drdT = (r2 - r1)/dT
         return (T0/r1)*drdT
 
-    def plot(self, Tmin=1.e8, Tmax=1.6e9, rhoYmin=3.9e8, rhoYmax=2.e9):
-        """plot the rate's temperature sensitivity vs temperature"""
+    def plot(self, Tmin=1.e8, Tmax=1.6e9, rhoYmin=3.9e8, rhoYmax=2.e9,
+             figsize=(10, 10)):
+        """plot the rate's temperature sensitivity vs temperature
+
+        :param float Tmin:    minimum temperature for plot
+        :param float Tmax:    maximum temperature for plot
+        :param float rhoYmin: minimum electron density to plot (e-capture rates only)
+        :param float rhoYmax: maximum electron density to plot (e-capture rates only)
+        :param tuple figsize: figure size specification for matplotlib
+
+        :return: a matplotlib figure object
+        :rtype: matplotlib.figure.Figure
+
+        """
+
+        fig, ax = plt.subplots(figsize=figsize)
 
         if self.tabular:
             data = self.tabular_data_table.astype(np.float)  # convert from str to float
@@ -969,22 +990,20 @@ class Rate:
             except ValueError:
                 print("Divide by zero encountered in log10\nChange the scale of T or rhoY")
 
-            _, ax = plt.subplots(figsize=(10, 10))
+            im = ax.imshow(pivot_table, cmap='magma')
+            fig.colorbar(im, ax=ax)
 
-            im = ax.imshow(pivot_table, cmap='jet')
-            plt.colorbar(im)
-
-            plt.xlabel("$T$ [K]")
-            plt.ylabel("$\\rho Y$ [g/cm$^3$]")
+            ax.set_xlabel(r"$\log(T)$ [K]")
+            ax.set_ylabel(r"$\log(\rho Y_e)$ [g/cm$^3$]")
             ax.set_title(fr"{self.pretty_string}" +
                          "\n"+"electron-capture/beta-decay rate in log10(1/s)")
             ax.set_yticks(range(len(rows)))
-            ax.set_yticklabels(rows)
+            ylabels = [f"{np.log10(q):4.2f}" for q in rows]
+            ax.set_yticklabels(ylabels)
             ax.set_xticks(range(len(cols)))
-            ax.set_xticklabels(cols)
-            plt.setp(ax.get_xticklabels(), rotation=90, ha="right", rotation_mode="anchor")
-            plt.gca().invert_yaxis()
-            plt.show()
+            xlabels = [f"{np.log10(q):4.2f}" for q in cols]
+            ax.set_xticklabels(xlabels, rotation=90, ha="right", rotation_mode="anchor")
+            ax.invert_yaxis()
 
         else:
             temps = np.logspace(np.log10(Tmin), np.log10(Tmax), 100)
@@ -993,18 +1012,19 @@ class Rate:
             for n, T in enumerate(temps):
                 r[n] = self.eval(T)
 
-            plt.loglog(temps, r)
-            plt.xlabel(r"$T$")
+            ax.loglog(temps, r)
+            ax.set_xlabel(r"$T$")
 
             if self.dens_exp == 0:
-                plt.ylabel(r"\tau")
+                ax.set_ylabel(r"\tau")
             elif self.dens_exp == 1:
-                plt.ylabel(r"$N_A <\sigma v>$")
+                ax.set_ylabel(r"$N_A <\sigma v>$")
             elif self.dens_exp == 2:
-                plt.ylabel(r"$N_A^2 <n_a n_b n_c v>$")
+                ax.set_ylabel(r"$N_A^2 <n_a n_b n_c v>$")
 
-            plt.title(fr"{self.pretty_string}")
-            plt.show()
+            ax.set_title(fr"{self.pretty_string}")
+
+        return fig
 
 
 class RatePair:
@@ -1032,3 +1052,122 @@ class RatePair:
 
     def __eq__(self, other):
         return self.forward == other.forward and self.reverse == other.reverse
+
+
+class ApproximateRate(Rate):
+
+    def __init__(self, primary_rate, secondary_rates,
+                 primary_reverse, secondary_reverse, is_reverse=False, approx_type="ap_pg"):
+        """the primary rate has the same reactants and products and the final
+        approximate rate would have.  The secondary rates are ordered such that
+        together they would give the same sequence"""
+
+        self.primary_rate = primary_rate
+        self.secondary_rates = secondary_rates
+
+        self.primary_reverse = primary_reverse
+        self.secondary_reverse = secondary_reverse
+
+        self.is_reverse = is_reverse
+
+        self.approx_type = approx_type
+
+        if self.approx_type == "ap_pg":
+
+            # an ap_pg approximate rate combines A(a,g)B and A(a,p)X(p,g)B into a
+            # single effective rate by assuming proton equilibrium.
+
+            assert len(secondary_rates) == 2
+
+            # make sure that the primary forward rate makes sense
+            # this should be A(a,g)B
+
+            assert Nucleus("he4") in self.primary_rate.reactants and len(self.primary_rate.products) == 1
+
+            # we are going to define the product A and reactant B from this reaction
+
+            self.primary_reactant = max(self.primary_rate.reactants)
+            self.primary_product = max(self.primary_rate.products)
+
+            # the first secondary rate should be A(a,p)X, where X is the
+            # intermediate nucleus
+
+            assert (self.primary_reactant in self.secondary_rates[0].reactants and
+                    Nucleus("he4") in self.secondary_rates[0].reactants and
+                    Nucleus("p") in self.secondary_rates[0].products)
+
+            # the intermediate nucleus is not in our network, so make it
+            # dummy
+
+            self.intermediate_nucleus = max(self.secondary_rates[0].products)
+            #self.intermediate_nucleus.dummy = True
+
+            # now the second secondary rate show be X(p,g)B
+
+            assert (self.intermediate_nucleus in self.secondary_rates[1].reactants and
+                    Nucleus("p") in self.secondary_rates[1].reactants and
+                    self.primary_product in secondary_rates[1].products)
+
+            # now ensure that the reverse rate makes sense
+
+            # the primary reverse rate is B(g,a)A
+
+            assert (self.primary_product in self.primary_reverse.reactants and
+                    self.primary_reactant in self.primary_reverse.products)
+
+            # now the first secondary reverse rate should be B(g,p)X
+
+            assert (self.primary_product in self.secondary_reverse[0].reactants and
+                    self.intermediate_nucleus in secondary_reverse[0].products and
+                    Nucleus("p") in secondary_reverse[0].products)
+
+            # and the second secondary reverse rate should be X(p,a)A
+
+            assert (self.intermediate_nucleus in self.secondary_reverse[1].reactants and
+                    Nucleus("p") in self.secondary_reverse[1].reactants and
+                    self.primary_reactant in self.secondary_reverse[1].products and
+                    Nucleus("he4") in self.secondary_reverse[1].products)
+
+            # now initialize the super class with these reactants and products
+
+            if not self.is_reverse:
+                super().__init__(reactants=[self.primary_reactant, Nucleus("he4")],
+                                 products=[self.primary_product], labelprops="approx")
+            else:
+                super().__init__(reactants=[self.primary_product],
+                                 products=[self.primary_reactant, Nucleus("he4")], labelprops="approx")
+
+        else:
+            raise NotImplementedError(f"approximation type {self.approx_type} not supported")
+
+        # update the Q value
+        self._set_q()
+
+    def __set_screening(self):
+        # the individual rates are screened -- we don't screen the combination of them
+        pass
+
+    def eval(self, T):
+        """evaluate the approximate rate"""
+
+        if self.approx_type == "ap_pg":
+            if not self.is_reverse:
+                # the approximate forward rate is r_ag + r_ap r_pg / (r_pg + r_pa)
+                r_ag = self.primary_rate.eval(T)
+                r_ap = self.secondary_rates[0].eval(T)
+                r_pg = self.secondary_rates[1].eval(T)
+
+                r_pa = self.secondary_reverse[1].eval(T)
+
+                return r_ag + r_ap * r_pg / (r_pg + r_pa)
+
+            else:
+                # the approximate reverse rate is r_ga + r_pa r_gp / (r_pg + r_pa)
+
+                r_ga = self.primary_reverse.eval(T)
+                r_gp = self.secondary_reverse[0].eval(T)
+                r_pa = self.secondary_reverse[1].eval(T)
+
+                r_pg = self.secondary_rates[1].eval(T)
+
+                return r_ga + r_pa * r_gp / (r_pg + r_pa)

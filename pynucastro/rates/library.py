@@ -2,7 +2,8 @@ import os
 import io
 import collections
 
-from pynucastro.rates import Rate, Nucleus, UnsupportedNucleus, _find_rate_file
+from pynucastro.nucleus import Nucleus, UnsupportedNucleus
+from pynucastro.rates import Rate, _find_rate_file
 
 
 def list_known_rates():
@@ -47,7 +48,7 @@ class Library:
             elif isinstance(rates, (list, set)):
                 self._add_from_rate_list(rates)
         else:
-            self._rates = collections.OrderedDict()
+            self._rates = {}
         self._library_source_lines = collections.deque()
 
         if self._library_file and read_library:
@@ -81,7 +82,7 @@ class Library:
     def _add_from_rate_list(self, ratelist):
         """ Add to the rate dictionary from the supplied list of Rate objects. """
         if not self._rates:
-            self._rates = collections.OrderedDict()
+            self._rates = {}
         for r in ratelist:
             rid = r.get_rate_id()
             assert rid not in self._rates, "ERROR: supplied a Rate object already in the Library."
@@ -195,9 +196,20 @@ class Library:
         """ Return a rate matching the id provided. """
         try:
             return self._rates[rid]
+        except KeyError:
+            pass
+
+        # fallback to the rate fname
+        try:
+            r = [q for q in self.get_rates() if q.fname == rid][0]
+            return r
         except IndexError:
             print("ERROR: rate identifier does not match a rate in this library.")
             raise
+
+    def get_nuclei(self):
+        """get the list of unique nuclei"""
+        return {nuc for r in self.get_rates() for nuc in r.reactants + r.products}
 
     def diff(self, other_library):
         """Return a Library containing the rates in this library that are not
@@ -257,8 +269,16 @@ class Library:
             if include:
                 filtered_rates.append(r)
 
-        # Return library containing the filtered rates
-        return Library(rates=filtered_rates)
+        # create a new library containing the filtered rates
+        new_lib = Library(rates=filtered_rates)
+
+        # print out a warning if one of the input nuclei is not linked
+        lib_nuclei = new_lib.get_nuclei()
+        for nuc in nucleus_set:
+            if nuc not in lib_nuclei:
+                print(f"warning {nuc} was not able to be linked")
+
+        return new_lib
 
     def filter(self, filter_spec):
         """
@@ -277,7 +297,7 @@ class Library:
                 raise
             else:
                 filter_specifications = filter_spec
-        matching_rates = collections.OrderedDict()
+        matching_rates = {}
         for rid, r in self._rates.items():
             for f in filter_specifications:
                 if f.matches(r):
