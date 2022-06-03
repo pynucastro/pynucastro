@@ -1229,7 +1229,7 @@ class Explorer:
                  ydot_cutoff_value=None, rotated=False,
                  hide_xalpha=False,
                  always_show_p=False, always_show_alpha=False,
-                 node_size=1000, node_font_size=11):
+                 node_size=1000, node_font_size=13):
         """ take a RateCollection and a composition """
         self.rc = rc
         self.comp = comp
