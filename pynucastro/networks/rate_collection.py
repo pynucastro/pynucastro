@@ -991,41 +991,46 @@ class RateCollection:
         nx.draw_networkx_labels(G, G.position, G.labels,   # label the name of element at the correct position
                                 font_size=node_font_size, font_color="w", ax=ax)
 
-        # get the edges and weights coupled in the same order
-        edges, weights = zip(*nx.get_edge_attributes(G, 'weight').items())
-
-        edge_color = weights
-        ww = np.array(weights)
-        min_weight = ww.min()
-        max_weight = ww.max()
-        dw = (max_weight - min_weight)/4
-        widths = np.ones_like(ww)
-        widths[ww > min_weight + dw] = 1.5
-        widths[ww > min_weight + 2*dw] = 2.5
-        widths[ww > min_weight + 3*dw] = 4
+        # now we'll draw edges in two groups -- real links and approximate links
 
         if curved_edges:
             connectionstyle = "arc3, rad = 0.2"
         else:
             connectionstyle = "arc3"
 
-        # plot the arrow of reaction
-        edges_lc = nx.draw_networkx_edges(G, G.position, width=list(widths),
-                                          edgelist=edges, edge_color=edge_color,
-                                          connectionstyle=connectionstyle,
-                                          node_size=node_size,
-                                          edge_cmap=plt.cm.viridis, ax=ax)
+        real_edges = [(u, v) for u, v, e in G.edges(data=True) if e["real"] == 1]
+        real_weights = [e["weight"] for u, v, e in G.edges(data=True) if e["real"] == 1]
 
-        # for networkx <= 2.0 draw_networkx_edges returns a
-        # LineCollection matplotlib type which we can use for the
-        # colorbar directly.  For networkx >= 2.1, it is a collection
-        # of FancyArrowPatch-s, which we need to run through a
-        # PatchCollection.  See:
-        # https://stackoverflow.com/questions/18658047/adding-a-matplotlib-colorbar-from-a-patchcollection
+        edge_color = real_weights
+        ww = np.array(real_weights)
+        min_weight = ww.min()
+        max_weight = ww.max()
+        dw = (max_weight - min_weight)/4
+        widths = np.ones_like(ww)
+        if dw > 0:
+            widths[ww > min_weight + dw] = 1.5
+            widths[ww > min_weight + 2*dw] = 2.5
+            widths[ww > min_weight + 3*dw] = 4
+        else:
+            widths *= 2
+
+        # plot the arrow of reaction
+        real_edges_lc = nx.draw_networkx_edges(G, G.position, width=list(widths),
+                                               edgelist=real_edges, edge_color=edge_color,
+                                               connectionstyle=connectionstyle,
+                                               node_size=node_size,
+                                               edge_cmap=plt.cm.viridis, ax=ax)
+
+        approx_edges = [(u, v) for u, v, e in G.edges(data=True) if e["real"] == 0]
+
+        approx_edges_lc = nx.draw_networkx_edges(G, G.position, width=1,
+                                                 edgelist=approx_edges, edge_color="0.5",
+                                                 connectionstyle=connectionstyle,
+                                                 style="dotted", node_size=node_size, ax=ax)
 
         if ydots is not None:
-            pc = mpl.collections.PatchCollection(edges_lc, cmap=plt.cm.viridis)
-            pc.set_array(weights)
+            pc = mpl.collections.PatchCollection(real_edges_lc, cmap=plt.cm.viridis)
+            pc.set_array(real_weights)
             if not rotated:
                 plt.colorbar(pc, ax=ax, label="log10(rate)")
             else:
