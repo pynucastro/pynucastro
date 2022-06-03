@@ -385,8 +385,11 @@ class RateCollection:
 
         rates_to_delete = []
         for nuc in nuc_list:
+            nn = nuc
+            if not isinstance(nuc, Nucleus):
+                nn = Nucleus(nuc)
             for rate in self.rates:
-                if nuc in rate.reactants + rate.products:
+                if nn in rate.reactants + rate.products:
                     print(f"looking to remove {rate}")
                     rates_to_delete.append(rate)
 
@@ -395,9 +398,17 @@ class RateCollection:
 
         self._build_collection()
 
-    def make_ap_pg_approx(self):
+    def make_ap_pg_approx(self, intermediate_nuclei=None):
         """combine the rates A(a,g)B and A(a,p)X(p,g)B (and the reverse) into a single
         effective approximate rate."""
+
+        # make sure that the intermediate_nuclei list are Nuclei objects
+        _inter_nuclei_remove = []
+        for nn in intermediate_nuclei:
+            if isinstance(nn, Nucleus):
+                _inter_nuclei_remove.append(nn)
+            else:
+                _inter_nuclei_remove.append(Nucleus(nn))
 
         # find all of the (a,g) rates
         ag_rates = []
@@ -406,9 +417,10 @@ class RateCollection:
                 len(r.products) == 1):
                 ag_rates.append(r)
 
+        print(ag_rates)
+
         # for each (a,g), check to see if the remaining rates are present
         approx_rates = []
-        intermediate_nuclei = []
 
         for r_ag in ag_rates:
             prim_nuc = sorted(r_ag.reactants)[-1]
@@ -420,6 +432,9 @@ class RateCollection:
             element = PeriodicTable.lookup_Z(inter_nuc_Z)
 
             inter_nuc = Nucleus(f"{element.abbreviation}{inter_nuc_A}")
+
+            if intermediate_nuclei and inter_nuc not in _inter_nuclei_remove:
+                continue
 
             # look for A(a,p)X
             _r = self.get_rate_by_nuclei([prim_nuc, Nucleus("he4")], [inter_nuc, Nucleus("p")])
@@ -467,9 +482,6 @@ class RateCollection:
 
             print(f"using approximate rate {ar}")
             print(f"using approximate rate {ar_reverse}")
-
-            # keep track of the intermediate nuclei
-            intermediate_nuclei.append(inter_nuc)
 
             # approximate rates
             approx_rates += [ar, ar_reverse]
