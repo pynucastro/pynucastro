@@ -178,7 +178,7 @@ class SingleSet:
         returns the minimum temperature needed to find reasonable rates.
         """
         def func(T):
-            return self.f())(Tfactors(T))
+            return self.f()(Tfactors(T))
         #func = lambda T: self.f()(Tfactors(T))
 
         guess = 1.0e7
