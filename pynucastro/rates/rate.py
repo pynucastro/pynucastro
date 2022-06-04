@@ -179,13 +179,12 @@ class SingleSet:
         """
         def func(T):
             return self.f()(Tfactors(T))
-        #func = lambda T: self.f()(Tfactors(T))
 
         guess = 1.0e7
         T_min = minimize(func, guess, method="Nelder-Mead", tol=1.0e5)
 
         return T_min.x[0]
-        
+
     def set_string(self, prefix="set", plus_equal=False):
         """
         return a string containing the python code for this set
@@ -936,7 +935,7 @@ class Rate:
         else:
             tf = Tfactors(T)
             r = 0.0
-            
+
             for s in self.sets:
 
                 if check_T_min:
