@@ -7,6 +7,7 @@ import re
 import io
 import numpy as np
 import matplotlib.pyplot as plt
+from scipy.optimize import minimize
 try:
     import numba
     try:
@@ -172,6 +173,16 @@ class SingleSet:
                                  self.a[5]*tf.T953 +
                                  self.a[6]*tf.lnT9)
 
+    def find_T_min(self):
+        """
+        returns the minimum temperature needed to find reasonable rates.
+        """
+        func = lambda T: self.f()(Tfactors(T))
+        guess = 1.0e7
+        T_min = minimize(func, guess, method="Nelder-Mead", tol=1.0e5)
+
+        return T_min.x[0]
+        
     def set_string(self, prefix="set", plus_equal=False):
         """
         return a string containing the python code for this set
@@ -908,7 +919,7 @@ class Rate:
 
         self.tabular_data_table = np.array(t_data2d)
 
-    def eval(self, T, rhoY=None):
+    def eval(self, T, rhoY=None, check_T_min=False):
         """ evauate the reaction rate for temperature T """
 
         if self.tabular:
@@ -922,7 +933,13 @@ class Rate:
         else:
             tf = Tfactors(T)
             r = 0.0
+            
             for s in self.sets:
+
+                if check_T_min:
+                    T_min = s.find_T_min()
+                    assert T > T_min, f"T must be greater than {T_min} K to get reasonable rates"
+
                 f = s.f()
                 r += f(tf)
 
@@ -1148,7 +1165,7 @@ class ApproximateRate(Rate):
         pass
 
     def eval(self, T):
-        """evaluate the approximate rate"""
+        """egvaluate the approximate rate"""
 
         if self.approx_type == "ap_pg":
             if not self.is_reverse:
