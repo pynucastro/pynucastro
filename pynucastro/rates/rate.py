@@ -177,7 +177,10 @@ class SingleSet:
         """
         returns the minimum temperature needed to find reasonable rates.
         """
-        func = lambda T: self.f()(Tfactors(T))
+        def func(T):
+            return self.f())(Tfactors(T))
+        #func = lambda T: self.f()(Tfactors(T))
+
         guess = 1.0e7
         T_min = minimize(func, guess, method="Nelder-Mead", tol=1.0e5)
 
@@ -1165,7 +1168,7 @@ class ApproximateRate(Rate):
         pass
 
     def eval(self, T):
-        """egvaluate the approximate rate"""
+        """evaluate the approximate rate"""
 
         if self.approx_type == "ap_pg":
             if not self.is_reverse:
