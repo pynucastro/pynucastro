@@ -241,6 +241,10 @@ class Rate:
 
         self.labelprops = labelprops
 
+        self.approx = False
+        if self.labelprops == "approx":
+            self.approx = True
+
         self.label = None
         self.resonant = None
         self.resonance_combined = None
@@ -835,6 +839,8 @@ class Rate:
                 self.fname += f'__weak__{self.weak_type}'
             if self.modified:
                 self.fname += "__modified"
+            if self.approx:
+                self.fname += "__approx"
 
     def get_rate_id(self):
         """ Get an identifying string for this rate.
