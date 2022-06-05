@@ -4,6 +4,7 @@ source"""
 import sys
 
 from pynucastro.networks import RateCollection
+from pynucastro.rates.rate import ApproximateRate
 
 
 class PythonNetwork(RateCollection):
@@ -194,8 +195,20 @@ class PythonNetwork(RateCollection):
         of.write("def ye(Y):\n")
         of.write(f"{indent}return np.sum(Z * Y)/np.sum(A * Y)\n\n")
 
+        _rate_func_written = []
         for r in self.rates:
-            of.write(self.function_string(r))
+            if isinstance(r, ApproximateRate):
+                # write out the function string for all of the rates we depend on
+                for cr in r.get_child_rates():
+                    if cr in _rate_func_written:
+                        continue
+                    of.write(self.function_string(cr))
+                    _rate_func_written.append(cr)
+            else:
+                if r in _rate_func_written:
+                    continue
+                of.write(self.function_string(r))
+                _rate_func_written.append(r)
 
         of.write("def rhs(t, Y, rho, T):\n")
         of.write(f"{indent}return rhs_eq(t, Y, rho, T)\n\n")

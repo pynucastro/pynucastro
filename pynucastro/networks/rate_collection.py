@@ -404,11 +404,12 @@ class RateCollection:
 
         # make sure that the intermediate_nuclei list are Nuclei objects
         _inter_nuclei_remove = []
-        for nn in intermediate_nuclei:
-            if isinstance(nn, Nucleus):
-                _inter_nuclei_remove.append(nn)
-            else:
-                _inter_nuclei_remove.append(Nucleus(nn))
+        if intermediate_nuclei:
+            for nn in intermediate_nuclei:
+                if isinstance(nn, Nucleus):
+                    _inter_nuclei_remove.append(nn)
+                else:
+                    _inter_nuclei_remove.append(Nucleus(nn))
 
         # find all of the (a,g) rates
         ag_rates = []
