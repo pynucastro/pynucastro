@@ -43,6 +43,44 @@ class PythonNetwork(RateCollection):
         string += "    return rate\n\n"
         return string
 
+    def approx_function_string(self, rate):
+        """
+        Return a string containing python function that computes the
+        approximate rate
+        """
+
+        if not rate.approx_type == "ap_pg":
+            raise NotImplementedError("don't know how to work with this approximation")
+
+        string = ""
+        string += "@numba.njit()\n"
+        string += f"def {rate.fname}(tf):\n"
+
+        if not rate.is_reverse:
+
+            # first we need to get all of the rates that make this up
+            string += f"    r_ag = {rate.primary_rate.fname}(tf)\n"
+            string += f"    r_ap = {rate.secondary_rates[0].fname}(tf)\n"
+            string += f"    r_pg = {rate.secondary_rates[1].fname}(tf)\n"
+            string += f"    r_pa = {rate.secondary_reverse[1].fname}(tf)\n"
+
+            # now the approximation
+            string += f"    rate = r_ag + r_ap * r_pg / (r_pg + r_pa)\n"
+
+        else:
+
+            # first we need to get all of the rates that make this up
+            string += f"    r_ga = {rate.primary_reverse.fname}(tf)\n"
+            string += f"    r_pa = {rate.secondary_reverse[1].fname}(tf)\n"
+            string += f"    r_gp = {rate.secondary_reverse[0].fname}(tf)\n"
+            string += f"    r_pg = {rate.secondary_rates[1].fname}(tf)\n"
+
+            # now the approximation
+            string += f"    rate = r_ga + r_pa * r_gp / (r_pg + r_pa)\n"
+
+        string += "    return rate\n\n"
+        return string
+
     def ydot_string(self, rate):
         """
         Return a string containing the term in a dY/dt equation
@@ -204,6 +242,10 @@ class PythonNetwork(RateCollection):
                         continue
                     of.write(self.function_string(cr))
                     _rate_func_written.append(cr)
+
+                # now write out the function that computes the
+                # approximate rate
+                of.write(self.approx_function_string(r))
             else:
                 if r in _rate_func_written:
                     continue
