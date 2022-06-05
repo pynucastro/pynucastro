@@ -25,19 +25,45 @@ codes.
 
 
 .. toctree::
-   :maxdepth: 2
-   :caption: Contents
+   :maxdepth: 1
+   :caption: Introduction
 
    intro
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Exploring Networks in Python
+
    pynucastro-examples.ipynb
    plot-types.ipynb
    pynucastro-integration.ipynb
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Selecting Rates
+
    library-examples.ipynb
    modify-example.ipynb
    validate-example.ipynb
    electron-captures.ipynb
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Advanced Usage
+
    partition-function
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Writing Networks
+
    networks
+   cxx-networks
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Reference
+
    API <modules>
    sources
 

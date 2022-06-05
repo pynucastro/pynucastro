@@ -11,8 +11,19 @@ from pynucastro.networks import BaseCxxNetwork
 
 class StarKillerCxxNetwork(BaseCxxNetwork):
     def __init__(self, *args, **kwargs):
-        # Initialize BaseFortranNetwork parent class
+
+        # this network can have a special kwarg called disable_rate_params
+        try:
+            disable_rate_params = kwargs.pop("disable_rate_params")
+        except KeyError:
+            disable_rate_params = []
+
+        # Initialize BaseCxxNetwork parent class
         super().__init__(*args, **kwargs)
+
+        self.ftags['<rate_param_tests>'] = self._rate_param_tests
+
+        self.disable_rate_params = disable_rate_params
 
     def _get_template_files(self):
 
@@ -22,6 +33,16 @@ class StarKillerCxxNetwork(BaseCxxNetwork):
                                         '*.template')
 
         return glob.glob(template_pattern)
+
+    def _rate_param_tests(self, n_indent, of):
+
+        for _, r in enumerate(self.rates):
+            if r in self.disable_rate_params:
+                of.write(f"{self.indent*n_indent}if (i == k_{r.fname} && disable_{r.fname}) {{\n")
+                of.write(f"{self.indent*n_indent}    rate_eval.screened_rates(i) = 0.0;\n")
+                of.write(f"{self.indent*n_indent}    rate_eval.dscreened_rates_dT(i) = 0.0;\n")
+                of.write(f"{self.indent*n_indent}    continue;\n")
+                of.write(f"{self.indent*n_indent}}}\n")
 
     def _write_network(self, odir=None):
         """
@@ -40,3 +61,10 @@ class StarKillerCxxNetwork(BaseCxxNetwork):
         # write out some network properties
         with open("NETWORK_PROPERTIES", "w") as of:
             of.write(f"NSCREEN := {self.num_screen_calls}\n")
+
+        # write the _parameters file
+        with open("_parameters", "w") as of:
+            of.write("@namespace: network\n\n")
+            if self.disable_rate_params:
+                for r in self.disable_rate_params:
+                    of.write(f"disable_{r.fname}    int     0\n")

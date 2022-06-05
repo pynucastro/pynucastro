@@ -69,17 +69,17 @@ void evaluate_rates(const burn_t& state, rate_eval_t& rate_eval) {
 
     tf_t tfactors = evaluate_tfactors(state.T);
 
-    if (jacobian == 1) {
-        for (int i = 1; i <= NrateReaclib; ++i) {
+    for (int i = 1; i <= NrateReaclib; ++i) {
+
+
+        if (jacobian == 1) {
             Real rate;
             Real drate_dt;
             constexpr int do_T_derivatives = 1;
             reaclib_evaluate<do_T_derivatives>(pstate, tfactors, i, rate, drate_dt);
             rate_eval.screened_rates(i) = rate;
             rate_eval.dscreened_rates_dT(i) = drate_dt;
-        }
-    } else {
-        for (int i = 1; i <= NrateReaclib; ++i) {
+        } else {
             Real rate;
             Real drate_dt;
             // drate_dt is not used in this case

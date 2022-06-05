@@ -20,11 +20,12 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from matplotlib.ticker import MaxNLocator
 from matplotlib.colors import SymLogNorm
+from matplotlib.scale import SymmetricalLogTransform
 import networkx as nx
 
 # Import Rate
 from pynucastro.nucleus import Nucleus
-from pynucastro.rates import Rate, RatePair, Library
+from pynucastro.rates import Rate, RatePair, ApproximateRate, Library
 
 mpl.rcParams['figure.dpi'] = 100
 
@@ -275,36 +276,63 @@ class RateCollection:
                 else:
                     self.library = self.library + rflib
 
+    def get_forward_rates(self):
+        """return a list of the forward (exothermic) rates"""
+
+        # first handle the ones that have Q defined
+        forward_rates = [r for r in self.rates if r.Q is not None and r.Q >= 0.0]
+
+        # e-capture tabular rates don't have a Q defined, so just go off of the binding energy
+        forward_rates += [r for r in self.rates if r.Q is None and r.reactants[0].nucbind <= r.products[0].nucbind]
+
+        return forward_rates
+
+    def get_reverse_rates(self):
+        """return a list of the reverse (endothermic) rates)"""
+
+        # first handle the ones that have Q defined
+        reverse_rates = [r for r in self.rates if r.Q is not None and r.Q < 0.0]
+
+        # e-capture tabular rates don't have a Q defined, so just go off of the binding energy
+        reverse_rates += [r for r in self.rates if r.Q is None and r.reactants[0].nucbind > r.products[0].nucbind]
+
+        return reverse_rates
+
+    def find_reverse(self, forward_rate, reverse_rates=None):
+        """given a forward rate, locate the rate that is its reverse"""
+
+        if reverse_rates is None:
+            reverse_rates = self.get_reverse_rates()
+
+        reverse = None
+
+        for rr in reverse_rates:
+            if sorted(forward_rate.reactants, key=lambda x: x.A) == sorted(rr.products, key=lambda x: x.A) and \
+               sorted(forward_rate.products, key=lambda x: x.A) == sorted(rr.reactants, key=lambda x: x.A):
+                reverse = rr
+                break
+
+        return reverse
+
     def get_rate_pairs(self):
         """ return a list of RatePair objects, grouping the rates together
             by forward and reverse"""
 
-        # first handle the ones that have Q defined
-
-        forward_rates = [r for r in self.rates if r.Q is not None and r.Q >= 0.0]
-        reverse_rates = [r for r in self.rates if r.Q is not None and r.Q < 0.0]
-
-        # e-capture tabular rates don't have a Q defined, so just go off of the binding energy
-
-        forward_rates += [r for r in self.rates if r.Q is None and r.reactants[0].nucbind <= r.products[0].nucbind]
-        reverse_rates += [r for r in self.rates if r.Q is None and r.reactants[0].nucbind > r.products[0].nucbind]
-
         rate_pairs = []
+
+        reverse_rates = self.get_reverse_rates()
 
         # loop over all the forward rates and find the matching reverse rate
         # if it exists
-        for fr in forward_rates:
+        for fr in self.get_forward_rates():
             rp = RatePair(forward=fr)
-            matched = False
-            for rr in reverse_rates:
-                if sorted(fr.reactants, key=lambda x: x.A) == sorted(rr.products, key=lambda x: x.A) and \
-                   sorted(fr.products, key=lambda x: x.A) == sorted(rr.reactants, key=lambda x: x.A):
-                    matched = True
-                    rp.reverse = rr
-                    break
+
+            rr = self.find_reverse(fr, reverse_rates=reverse_rates)
+
             # since we found a match, remove the reverse rate we paired
             # from out list so no other forward rate can match with it
-            if matched:
+            if rr is not None:
+                rp.reverse = rr
                 reverse_rates.remove(rp.reverse)
 
             rate_pairs.append(rp)
@@ -321,6 +349,19 @@ class RateCollection:
     def get_nuclei(self):
         """ get all the nuclei that are part of the network """
         return self.unique_nuclei
+
+    def get_rates(self):
+        """ get a list of the reaction rates in this network"""
+        return self.rates
+
+    def get_rate(self, rid):
+        """ Return a rate matching the id provided.  Here rid should be
+        the string return by Rate.fname"""
+        try:
+            return [r for r in self.rates if r.fname == rid][0]
+        except IndexError:
+            print("ERROR: rate identifier does not match a rate in this network.")
+            raise
 
     def evaluate_rates(self, rho, T, composition):
         """evaluate the rates for a specific density, temperature, and
@@ -466,11 +507,22 @@ class RateCollection:
             return screening_map
 
         for r in self.rates:
-            screen_nuclei = r.ion_screen
-            if self.symmetric_screening:
-                screen_nuclei = r.symmetric_screen
+            all_screen_nuclei = []
+            if isinstance(r, ApproximateRate):
+                # loop over all of the rates in the approximate rate and grab their
+                # screening nuclei and append to the list
+                raise NotImplementedError("haven't writtne this yet")
+            else:
+                screen_nuclei = r.ion_screen
+                if self.symmetric_screening:
+                    screen_nuclei = r.symmetric_screen
+                all_screen_nuclei.append(screen_nuclei)
 
-            if screen_nuclei:
+            for screen_nuclei in all_screen_nuclei:
+                # screen_nuclei may be [] if it is a decay, gamma-capture, or neutron-capture
+                if not screen_nuclei:
+                    continue
+
                 nucs = "_".join([str(q) for q in screen_nuclei])
 
                 scr = [q for q in screening_map if q.name == nucs]
@@ -952,15 +1004,12 @@ class RateCollection:
         return np.log10(arr)
 
     @staticmethod
-    def _symlog(arr, linthresh=1.0):
+    def _symlog(arr, linthresh=1.0, linscale=1.0):
 
-        assert linthresh >= 1.0
-        neg = arr < 0.0
-        arr = np.abs(arr)
-        needslog = arr > linthresh
+        # Assume log base 10
+        symlog_transform = SymmetricalLogTransform(10, linthresh, linscale)
+        arr = symlog_transform.transform_non_affine(arr)
 
-        arr[needslog] = np.log10(arr[needslog]) + linthresh
-        arr[neg] *= -1
         return arr
 
     @staticmethod
@@ -999,6 +1048,8 @@ class RateCollection:
             - *small* -- If using logarithmic scaling, zeros will be replaced with
               this value. 1e-30 by default.
             - *linthresh* -- Linearity threshold for symlog scaling.
+            - *linscale* --  The number of decades to use for each half of the linear
+              range. Stretches linear range relative to the logarithmic range.
             - *filter_function* -- A callable to filter Nucleus objects with. Should
               return *True* if the nuclide should be plotted.
             - *outfile* -- Output file to save the plot to. The plot will be shown if
@@ -1032,6 +1083,7 @@ class RateCollection:
         filter_function = kwargs.pop("filter_function", None)
         dpi = kwargs.pop("dpi", 100)
         linthresh = kwargs.pop("linthresh", 1.0)
+        linscale = kwargs.pop("linscale", 1.0)
 
         if kwargs:
             warnings.warn(f"Unrecognized keyword arguments: {kwargs.keys()}")
@@ -1085,7 +1137,7 @@ class RateCollection:
         if scale == "log":
             values = self._safelog(values, small)
         elif scale == "symlog":
-            values = self._symlog(values, linthresh)
+            values = self._symlog(values, linthresh, linscale)
 
         if cbar_bounds is None:
             cbar_bounds = values.min(), values.max()
@@ -1174,8 +1226,10 @@ class RateCollection:
 class Explorer:
     """ interactively explore a rate collection """
     def __init__(self, rc, comp, size=(800, 600),
-                 ydot_cutoff_value=None,
-                 always_show_p=False, always_show_alpha=False):
+                 ydot_cutoff_value=None, rotated=False,
+                 hide_xalpha=False,
+                 always_show_p=False, always_show_alpha=False,
+                 node_size=1000, node_font_size=13):
         """ take a RateCollection and a composition """
         self.rc = rc
         self.comp = comp
@@ -1183,13 +1237,20 @@ class Explorer:
         self.ydot_cutoff_value = ydot_cutoff_value
         self.always_show_p = always_show_p
         self.always_show_alpha = always_show_alpha
+        self.hide_xalpha = hide_xalpha
+        self.rotated = rotated
+        self.node_size = node_size
+        self.node_font_size = node_font_size
 
     def _make_plot(self, logrho, logT):
         self.rc.plot(rho=10.0**logrho, T=10.0**logT,
                      comp=self.comp, size=self.size,
                      ydot_cutoff_value=self.ydot_cutoff_value,
                      always_show_p=self.always_show_p,
-                     always_show_alpha=self.always_show_alpha)
+                     always_show_alpha=self.always_show_alpha,
+                     rotated=self.rotated,
+                     hide_xalpha=self.hide_xalpha,
+                     node_size=self.node_size, node_font_size=self.node_font_size)
 
     def explore(self, logrho=(2, 6, 0.1), logT=(7, 9, 0.1)):
         """Perform interactive exploration of the network structure."""

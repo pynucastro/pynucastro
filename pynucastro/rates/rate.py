@@ -7,14 +7,41 @@ import re
 import io
 import numpy as np
 import matplotlib.pyplot as plt
-import numba
+try:
+    import numba
+    try:
+        from numba.experimental import jitclass
+    except ImportError:
+        from numba import jitclass
+except ImportError:
+    numba = None
+    import functools
+
+    # no-op jitclass placeholder
+    def jitclass(cls_or_spec=None, spec=None):
+        if (cls_or_spec is not None and
+            spec is None and
+                not isinstance(cls_or_spec, type)):
+            # Used like
+            # @jitclass([("x", intp)])
+            # class Foo:
+            #     ...
+            spec = cls_or_spec
+            cls_or_spec = None
+
+        def wrap(cls):
+            # this copies the function name and docstring to the wrapper function
+            @functools.wraps(cls)
+            def wrapper(*args, **kwargs):
+                return cls(*args, **kwargs)
+            return wrapper
+
+        if cls_or_spec is None:
+            return wrap
+        return wrap(cls_or_spec)
+
 
 from pynucastro.nucleus import Nucleus
-
-try:
-    from numba.experimental import jitclass
-except ImportError:
-    from numba import jitclass
 
 hbar, _, _ = physical_constants['reduced Planck constant']
 amu, _, _ = physical_constants['atomic mass constant']
@@ -52,14 +79,17 @@ def _find_rate_file(ratename):
     raise Exception(f'File {ratename} not found in the working directory, {_pynucastro_rates_dir}, or {_pynucastro_tabular_dir}')
 
 
-Tfactor_spec = [
-    ('T9', numba.float64),
-    ('T9i', numba.float64),
-    ('T913', numba.float64),
-    ('T913i', numba.float64),
-    ('T953', numba.float64),
-    ('lnT9', numba.float64)
-]
+if numba is not None:
+    Tfactor_spec = [
+        ('T9', numba.float64),
+        ('T9i', numba.float64),
+        ('T913', numba.float64),
+        ('T913i', numba.float64),
+        ('T953', numba.float64),
+        ('lnT9', numba.float64)
+    ]
+else:
+    Tfactor_spec = []
 
 
 @jitclass(Tfactor_spec)
@@ -388,9 +418,7 @@ class Rate:
         """ Set label and flags indicating Rate is resonant,
             weak, or reverse. """
         assert isinstance(self.labelprops, str)
-        if len(self.labelprops) != 6:
-            assert self.labelprops == 'tabular'
-
+        if self.labelprops == 'tabular':
             self.label = 'tabular'
             self.resonant = False
             self.resonance_combined = False
@@ -398,7 +426,16 @@ class Rate:
             self.weak_type = None
             self.reverse = False
             self.tabular = True
+        elif self.labelprops == "approx":
+            self.label = "approx"
+            self.resonant = False
+            self.resonance_combined = False
+            self.weak = False
+            self.weak_type = None
+            self.reverse = False
+            self.tabular = False
         else:
+            assert len(self.labelprops) == 6
             self.label = self.labelprops[0:4]
             self.resonant = self.labelprops[4] == 'r'
             self.weak = self.labelprops[4] == 'w'
@@ -897,6 +934,20 @@ class Rate:
 
         return r
 
+    def get_nu_loss(self, T, rhoY):
+        """ get the neutrino loss rate for the reaction if tabulated"""
+
+        nu_loss = None
+        if self.tabular:
+            data = self.tabular_data_table.astype(np.float)
+            # find the nearest value of T and rhoY in the data table
+            T_nearest = (data[:, 1])[np.abs((data[:, 1]) - T).argmin()]
+            rhoY_nearest = (data[:, 0])[np.abs((data[:, 0]) - rhoY).argmin()]
+            inde = np.where((data[:, 1] == T_nearest) & (data[:, 0] == rhoY_nearest))[0][0]
+            nu_loss = data[inde][6]
+
+        return nu_loss
+
     def get_rate_exponent(self, T0):
         """
         for a rate written as a power law, r = r_0 (T/T0)**nu, return
@@ -1095,3 +1146,122 @@ class RatePair:
 
     def __eq__(self, other):
         return self.forward == other.forward and self.reverse == other.reverse
+
+
+class ApproximateRate(Rate):
+
+    def __init__(self, primary_rate, secondary_rates,
+                 primary_reverse, secondary_reverse, is_reverse=False, approx_type="ap_pg"):
+        """the primary rate has the same reactants and products and the final
+        approximate rate would have.  The secondary rates are ordered such that
+        together they would give the same sequence"""
+
+        self.primary_rate = primary_rate
+        self.secondary_rates = secondary_rates
+
+        self.primary_reverse = primary_reverse
+        self.secondary_reverse = secondary_reverse
+
+        self.is_reverse = is_reverse
+
+        self.approx_type = approx_type
+
+        if self.approx_type == "ap_pg":
+
+            # an ap_pg approximate rate combines A(a,g)B and A(a,p)X(p,g)B into a
+            # single effective rate by assuming proton equilibrium.
+
+            assert len(secondary_rates) == 2
+
+            # make sure that the primary forward rate makes sense
+            # this should be A(a,g)B
+
+            assert Nucleus("he4") in self.primary_rate.reactants and len(self.primary_rate.products) == 1
+
+            # we are going to define the product A and reactant B from this reaction
+
+            self.primary_reactant = max(self.primary_rate.reactants)
+            self.primary_product = max(self.primary_rate.products)
+
+            # the first secondary rate should be A(a,p)X, where X is the
+            # intermediate nucleus
+
+            assert (self.primary_reactant in self.secondary_rates[0].reactants and
+                    Nucleus("he4") in self.secondary_rates[0].reactants and
+                    Nucleus("p") in self.secondary_rates[0].products)
+
+            # the intermediate nucleus is not in our network, so make it
+            # dummy
+
+            self.intermediate_nucleus = max(self.secondary_rates[0].products)
+            #self.intermediate_nucleus.dummy = True
+
+            # now the second secondary rate show be X(p,g)B
+
+            assert (self.intermediate_nucleus in self.secondary_rates[1].reactants and
+                    Nucleus("p") in self.secondary_rates[1].reactants and
+                    self.primary_product in secondary_rates[1].products)
+
+            # now ensure that the reverse rate makes sense
+
+            # the primary reverse rate is B(g,a)A
+
+            assert (self.primary_product in self.primary_reverse.reactants and
+                    self.primary_reactant in self.primary_reverse.products)
+
+            # now the first secondary reverse rate should be B(g,p)X
+
+            assert (self.primary_product in self.secondary_reverse[0].reactants and
+                    self.intermediate_nucleus in secondary_reverse[0].products and
+                    Nucleus("p") in secondary_reverse[0].products)
+
+            # and the second secondary reverse rate should be X(p,a)A
+
+            assert (self.intermediate_nucleus in self.secondary_reverse[1].reactants and
+                    Nucleus("p") in self.secondary_reverse[1].reactants and
+                    self.primary_reactant in self.secondary_reverse[1].products and
+                    Nucleus("he4") in self.secondary_reverse[1].products)
+
+            # now initialize the super class with these reactants and products
+
+            if not self.is_reverse:
+                super().__init__(reactants=[self.primary_reactant, Nucleus("he4")],
+                                 products=[self.primary_product], labelprops="approx")
+            else:
+                super().__init__(reactants=[self.primary_product],
+                                 products=[self.primary_reactant, Nucleus("he4")], labelprops="approx")
+
+        else:
+            raise NotImplementedError(f"approximation type {self.approx_type} not supported")
+
+        # update the Q value
+        self._set_q()
+
+    def __set_screening(self):
+        # the individual rates are screened -- we don't screen the combination of them
+        pass
+
+    def eval(self, T):
+        """evaluate the approximate rate"""
+
+        if self.approx_type == "ap_pg":
+            if not self.is_reverse:
+                # the approximate forward rate is r_ag + r_ap r_pg / (r_pg + r_pa)
+                r_ag = self.primary_rate.eval(T)
+                r_ap = self.secondary_rates[0].eval(T)
+                r_pg = self.secondary_rates[1].eval(T)
+
+                r_pa = self.secondary_reverse[1].eval(T)
+
+                return r_ag + r_ap * r_pg / (r_pg + r_pa)
+
+            else:
+                # the approximate reverse rate is r_ga + r_pa r_gp / (r_pg + r_pa)
+
+                r_ga = self.primary_reverse.eval(T)
+                r_gp = self.secondary_reverse[0].eval(T)
+                r_pa = self.secondary_reverse[1].eval(T)
+
+                r_pg = self.secondary_rates[1].eval(T)
+
+                return r_ga + r_pa * r_gp / (r_pg + r_pa)

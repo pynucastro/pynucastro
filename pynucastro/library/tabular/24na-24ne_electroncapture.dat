@@ -2,8 +2,8 @@
 !USDB                        Q=-2.4663 MeV
 !Experimental energies, exp. B(GT) for 1+(0.472, 1.3467MeV) -> 0+(g.s.)
 !
-!Log(rhoY) Log(T) mu       dQ       Vs         e-cap-rate    nu-energy-loss  gamma-energy
-!                       (MeV)   (MeV)   (MeV)         (1/s)           (MeV/s)           (MeV/s)  
+!rhoY        T            mu           dQ           Vs           e-cap-rate   nu-energy-loss gamma-energy
+!g/cm^3      K            erg          erg          erg          1/s          erg/s        erg/s
 1.000000e+07 1.000000e+07 1.954179e-06 4.788916e-08 1.360251e-08 0.000000e+00 0.000000e+00 0.000000e+00
 1.000000e+07 1.584893e+07 1.952256e-06 4.764883e-08 1.360251e-08 0.000000e+00 0.000000e+00 0.000000e+00
 1.000000e+07 2.511886e+07 1.949533e-06 4.731238e-08 1.360251e-08 0.000000e+00 0.000000e+00 0.000000e+00
