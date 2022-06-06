@@ -739,7 +739,7 @@ class RateCollection:
             else:
                 all_rates.append(r)
 
-        for r in set(all_rates):
+        for r in all_rates:
             screen_nuclei = r.ion_screen
             if self.symmetric_screening:
                 screen_nuclei = r.symmetric_screen
@@ -759,7 +759,8 @@ class RateCollection:
                 # will already be doing the screening factors.
                 # Just append this new rate to the list we are
                 # keeping of the rates where this screening is
-                # needed
+                # needed -- if the rate is already in the list, then
+                # this is a no-op
 
                 scr[0].add_rate(r)
 
