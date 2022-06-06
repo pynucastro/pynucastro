@@ -207,6 +207,8 @@ class RateCollection:
         self.symmetric_screening = symmetric_screening
         self.do_screening = do_screening
 
+        self.inert_nuclei = inert_nuclei
+
         if rate_files:
             if isinstance(rate_files, str):
                 rate_files = [rate_files]
@@ -268,8 +270,8 @@ class RateCollection:
                 if r.intermediate_nucleus not in self.unique_nuclei + self.approx_nuclei:
                     self.approx_nuclei.append(r.intermediate_nucleus)
 
-        if inert_nuclei:
-            for n in inert_nuclei:
+        if self.inert_nuclei:
+            for n in self.inert_nuclei:
                 if isinstance(n, Nucleus):
                     nuc = n
                 else:
@@ -1037,10 +1039,10 @@ class RateCollection:
 
         approx_edges = [(u, v) for u, v, e in G.edges(data=True) if e["real"] == 0]
 
-        approx_edges_lc = nx.draw_networkx_edges(G, G.position, width=1,
-                                                 edgelist=approx_edges, edge_color="0.5",
-                                                 connectionstyle=connectionstyle,
-                                                 style="dotted", node_size=node_size, ax=ax)
+        _ = nx.draw_networkx_edges(G, G.position, width=1,
+                                   edgelist=approx_edges, edge_color="0.5",
+                                   connectionstyle=connectionstyle,
+                                   style="dotted", node_size=node_size, ax=ax)
 
         if ydots is not None:
             pc = mpl.collections.PatchCollection(real_edges_lc, cmap=plt.cm.viridis)
