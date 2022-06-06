@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.networks.rate_collection &mdash; pynucastro 1.6.0.post117+g76b994f documentation</title>
+  <title>pynucastro.networks.rate_collection &mdash; pynucastro 1.6.0.post118+g8d15367 documentation</title>
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -278,6 +278,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">rates</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">library</span> <span class="o">=</span> <span class="kc">None</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">inert_nuclei</span> <span class="o">=</span> <span class="n">inert_nuclei</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">symmetric_screening</span> <span class="o">=</span> <span class="n">symmetric_screening</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">do_screening</span> <span class="o">=</span> <span class="n">do_screening</span>
 
@@ -335,8 +337,8 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">inert_nuclei</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">inert_nuclei</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">inert_nuclei</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">inert_nuclei</span><span class="p">:</span>
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">Nucleus</span><span class="p">):</span>
                     <span class="n">nuc</span> <span class="o">=</span> <span class="n">n</span>
                 <span class="k">else</span><span class="p">:</span>
