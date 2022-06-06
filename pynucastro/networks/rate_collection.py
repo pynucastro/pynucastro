@@ -37,7 +37,7 @@ def _skip_xalpha(n, p, r):
     product we want to link to"""
 
     # first check is alpha is the heaviest nucleus on the RHS
-    rhs_heavy = sorted(r.products)[-1]
+    rhs_heavy = max(r.products)
     if not (rhs_heavy.Z == 2 and rhs_heavy.A == 4):
 
         # for rates that are A (x, alpha) B, where A and B are heavy nuclei,
