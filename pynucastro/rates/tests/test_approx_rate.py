@@ -36,7 +36,7 @@ class TestTfactors:
         """ this is run after each test """
 
     def test_label(self):
-        assert self.ar.fname == "mg24_he4__si28"
+        assert self.ar.fname == "mg24_he4__si28__approx"
 
     def test_low_temp(self):
         # at low temperatures, the approximate (a,g) should be ~ (a,g) + (a,p)
@@ -46,3 +46,15 @@ class TestTfactors:
 
         T = 1.e9
         assert self.ar.eval(T) == approx(self.rp.eval(T) + self.rs[0].eval(T), 0.1)
+
+    def test_child_rates(self):
+
+        cr = self.ar.get_child_rates()
+        assert cr[0].fname == "he4_mg24__si28"
+        assert cr[1].fname == "he4_mg24__p_al27"
+        assert cr[2].fname == "p_al27__si28"
+        assert cr[3].fname == "si28__he4_mg24"
+        assert cr[4].fname == "si28__p_al27"
+        assert cr[5].fname == "p_al27__he4_mg24"
+
+        assert len(cr) == 6
