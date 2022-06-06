@@ -36,7 +36,7 @@ def _skip_xalpha(n, p, r):
     """utility function to consider if we show an (a, x) or (x, a) rate.  Here, p is the
     product we want to link to"""
 
-    # first check is alpha is the heaviest nucleus on the RHS
+    # first check if alpha is the heaviest nucleus on the RHS
     rhs_heavy = max(r.products)
     if not (rhs_heavy.Z == 2 and rhs_heavy.A == 4):
 
