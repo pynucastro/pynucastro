@@ -22,7 +22,7 @@ from matplotlib.ticker import MaxNLocator
 from matplotlib.colors import SymLogNorm
 from matplotlib.scale import SymmetricalLogTransform
 import networkx as nx
-
+from scipy import constants
 # Import Rate
 from pynucastro.nucleus import Nucleus
 from pynucastro.rates import Rate, RatePair, ApproximateRate, Library
@@ -30,6 +30,33 @@ from pynucastro.rates import Rate, RatePair, ApproximateRate, Library
 from pynucastro.nucdata import PeriodicTable
 
 mpl.rcParams['figure.dpi'] = 100
+
+
+def _skip_xalpha(n, p, r):
+    """utility function to consider if we show an (a, x) or (x, a) rate.  Here, p is the
+    product we want to link to"""
+
+    # first check if alpha is the heaviest nucleus on the RHS
+    rhs_heavy = max(r.products)
+    if not (rhs_heavy.Z == 2 and rhs_heavy.A == 4):
+
+        # for rates that are A (x, alpha) B, where A and B are heavy nuclei,
+        # don't show the connection of the nucleus to alpha, only show it to B
+        if p.Z == 2 and p.A == 4:
+            return True
+
+        # likewise, hide A (alpha, x) B, unless A itself is an alpha
+        c = r.reactants
+        n_alpha = 0
+        for nuc in c:
+            if nuc.Z == 2 and nuc.A == 4:
+                n_alpha += 1
+        # if there is only 1 alpha and we are working on the alpha node,
+        # then skip
+        if n_alpha == 1 and n.Z == 2 and n.A == 4:
+            return True
+
+    return False
 
 
 class Composition:
@@ -183,6 +210,8 @@ class RateCollection:
         self.symmetric_screening = symmetric_screening
         self.do_screening = do_screening
 
+        self.inert_nuclei = inert_nuclei
+
         if rate_files:
             if isinstance(rate_files, str):
                 rate_files = [rate_files]
@@ -236,6 +265,13 @@ class RateCollection:
             u = set(list(u) + list(t))
 
         self.unique_nuclei = sorted(u)
+
+        # approx nuclei are used in approximate rates
+        self.approx_nuclei = []
+        for r in self.rates:
+            if isinstance(r, ApproximateRate):
+                if r.intermediate_nucleus not in self.unique_nuclei + self.approx_nuclei:
+                    self.approx_nuclei.append(r.intermediate_nucleus)
 
         if self.inert_nuclei:
             for n in self.inert_nuclei:
@@ -556,6 +592,41 @@ class RateCollection:
 
         return ydots
 
+    def evaluate_energy_generation(self, rho, T, composition):
+        """evaluate the specific energy generation rate of the network for a specific
+        density, temperature and composition"""
+
+        ydots = self.evaluate_ydots(rho, T, composition)
+        enuc = 0.
+
+        # compute constants and units
+        m_n_MeV = constants.value('neutron mass energy equivalent in MeV')
+        m_p_MeV = constants.value('proton mass energy equivalent in MeV')
+        m_e_MeV = constants.value('electron mass energy equivalent in MeV')
+        MeV2erg = (constants.eV * constants.mega) / constants.erg
+
+        # ion binding energy contributions. basically e=mc^2
+        for nuc in self.unique_nuclei:
+            # add up mass in MeV then convert to erg
+            mass = ((nuc.A - nuc.Z) * m_n_MeV + nuc.Z * (m_p_MeV + m_e_MeV) - nuc.A * nuc.nucbind) * MeV2erg
+            enuc += ydots[nuc] * mass
+
+        #convert from molar value to erg/g/s
+        enuc *= -1*constants.Avogadro
+
+        #subtract neutrino losses for tabular weak reactions
+        for r in self.rates:
+            if r.weak and r.tabular:
+                # get composition
+                ys = composition.get_molar()
+                y_e = composition.eval_ye()
+
+                # need to get reactant nucleus
+                nuc = r.reactants[0]
+                enuc -= constants.Avogadro * ys[nuc] * r.get_nu_loss(T, rho * y_e)
+
+        return enuc
+
     def evaluate_activity(self, rho, T, composition):
         """sum over all of the terms contributing to ydot,
         neglecting sign"""
@@ -868,17 +939,32 @@ class RateCollection:
         # nodes -- the node nuclei will be all of the heavies
         # add all the nuclei into G.node
         node_nuclei = []
+        colors = []
         for n in self.unique_nuclei:
             if n.raw not in hidden_nuclei:
                 node_nuclei.append(n)
+                colors.append(node_color)
             else:
                 for r in self.rates:
                     if r.reactants.count(n) > 1:
                         node_nuclei.append(n)
+                        colors.append(node_color)
                         break
+
+        # approx nuclei are given a different color
+        for n in self.approx_nuclei:
+            node_nuclei.append(n)
+            colors.append("#555555")
 
         if nucleus_filter_function is not None:
             node_nuclei = list(filter(nucleus_filter_function, node_nuclei))
+            # redo the colors:
+            colors = []
+            for n in node_nuclei:
+                if n in self.approx_nuclei:
+                    colors.append("#555555")
+                else:
+                    colors.append(node_color)
 
         for n in node_nuclei:
             G.add_node(n)
@@ -901,8 +987,10 @@ class RateCollection:
                 if ydots[r] < ydot_cutoff_value:
                     invisible_rates.add(r)
 
-        # edges
+        # edges for the rates that are explicitly in the network
         for n in node_nuclei:
+            if n not in self.nuclei_consumed:
+                continue
             for r in self.nuclei_consumed[n]:
                 if rate_filter_function is not None:
                     if not rate_filter_function(r):
@@ -911,36 +999,18 @@ class RateCollection:
                 for p in r.products:
                     if p in node_nuclei:
 
-                        if hide_xalpha:
-
-                            # first check is alpha is the heaviest nucleus on the RHS
-                            rhs_heavy = sorted(r.products)[-1]
-                            if not (rhs_heavy.Z == 2 and rhs_heavy.A == 4):
-
-                                # for rates that are A (x, alpha) B, where A and B are heavy nuclei,
-                                # don't show the connection of the nucleus to alpha, only show it to B
-                                if p.Z == 2 and p.A == 4:
-                                    continue
-
-                                # likewise, hide A (alpha, x) B, unless A itself is an alpha
-                                c = r.reactants
-                                n_alpha = 0
-                                for nuc in c:
-                                    if nuc.Z == 2 and nuc.A == 4:
-                                        n_alpha += 1
-                                # if there is only 1 alpha and we are working on the alpha node,
-                                # then skip
-                                if n_alpha == 1 and n.Z == 2 and n.A == 4:
-                                    continue
+                        if hide_xalpha and _skip_xalpha(n, p, r):
+                            continue
 
                         # networkx doesn't seem to keep the edges in
                         # any particular order, so we associate data
                         # to the edges here directly, in this case,
                         # the reaction rate, which will be used to
                         # color it
+                        # here real means that it is not an approximate rate
 
                         if ydots is None:
-                            G.add_edges_from([(n, p)], weight=0.5)
+                            G.add_edges_from([(n, p)], weight=0.5, real=1)
                         else:
                             if r in invisible_rates:
                                 continue
@@ -952,53 +1022,80 @@ class RateCollection:
                                 # for python floats
                                 rate_weight = -308
 
-                            G.add_edges_from([(n, p)], weight=rate_weight)
+                            G.add_edges_from([(n, p)], weight=rate_weight, real=1)
+
+        # now consider the rates that are approximated out of the network
+        rate_seen = []
+        for r in self.rates:
+            if not isinstance(r, ApproximateRate):
+                continue
+            for sr in r.secondary_rates + r.secondary_reverse:
+                if sr in rate_seen:
+                    continue
+                rate_seen.append(sr)
+
+                for n in sr.reactants:
+                    if n not in node_nuclei:
+                        continue
+                    for p in sr.products:
+                        if p not in node_nuclei:
+                            continue
+
+                        if hide_xalpha and _skip_xalpha(n, p, sr):
+                            continue
+
+                        G.add_edges_from([(n, p)], weight=0, real=0)
 
         # It seems that networkx broke backwards compatability, and 'zorder' is no longer a valid
         # keyword argument. The 'linewidth' argument has also changed to 'linewidths'.
 
         nx.draw_networkx_nodes(G, G.position,      # plot the element at the correct position
-                               node_color=node_color, alpha=1.0,
+                               node_color=colors, alpha=1.0,
                                node_shape=node_shape, node_size=node_size, linewidths=2.0, ax=ax)
 
         nx.draw_networkx_labels(G, G.position, G.labels,   # label the name of element at the correct position
                                 font_size=node_font_size, font_color="w", ax=ax)
 
-        # get the edges and weights coupled in the same order
-        edges, weights = zip(*nx.get_edge_attributes(G, 'weight').items())
-
-        edge_color = weights
-        ww = np.array(weights)
-        min_weight = ww.min()
-        max_weight = ww.max()
-        dw = (max_weight - min_weight)/4
-        widths = np.ones_like(ww)
-        widths[ww > min_weight + dw] = 1.5
-        widths[ww > min_weight + 2*dw] = 2.5
-        widths[ww > min_weight + 3*dw] = 4
+        # now we'll draw edges in two groups -- real links and approximate links
 
         if curved_edges:
             connectionstyle = "arc3, rad = 0.2"
         else:
             connectionstyle = "arc3"
 
-        # plot the arrow of reaction
-        edges_lc = nx.draw_networkx_edges(G, G.position, width=list(widths),
-                                          edgelist=edges, edge_color=edge_color,
-                                          connectionstyle=connectionstyle,
-                                          node_size=node_size,
-                                          edge_cmap=plt.cm.viridis, ax=ax)
+        real_edges = [(u, v) for u, v, e in G.edges(data=True) if e["real"] == 1]
+        real_weights = [e["weight"] for u, v, e in G.edges(data=True) if e["real"] == 1]
 
-        # for networkx <= 2.0 draw_networkx_edges returns a
-        # LineCollection matplotlib type which we can use for the
-        # colorbar directly.  For networkx >= 2.1, it is a collection
-        # of FancyArrowPatch-s, which we need to run through a
-        # PatchCollection.  See:
-        # https://stackoverflow.com/questions/18658047/adding-a-matplotlib-colorbar-from-a-patchcollection
+        edge_color = real_weights
+        ww = np.array(real_weights)
+        min_weight = ww.min()
+        max_weight = ww.max()
+        dw = (max_weight - min_weight)/4
+        widths = np.ones_like(ww)
+        if dw > 0:
+            widths[ww > min_weight + dw] = 1.5
+            widths[ww > min_weight + 2*dw] = 2.5
+            widths[ww > min_weight + 3*dw] = 4
+        else:
+            widths *= 2
+
+        # plot the arrow of reaction
+        real_edges_lc = nx.draw_networkx_edges(G, G.position, width=list(widths),
+                                               edgelist=real_edges, edge_color=edge_color,
+                                               connectionstyle=connectionstyle,
+                                               node_size=node_size,
+                                               edge_cmap=plt.cm.viridis, ax=ax)
+
+        approx_edges = [(u, v) for u, v, e in G.edges(data=True) if e["real"] == 0]
+
+        _ = nx.draw_networkx_edges(G, G.position, width=1,
+                                   edgelist=approx_edges, edge_color="0.5",
+                                   connectionstyle=connectionstyle,
+                                   style="dotted", node_size=node_size, ax=ax)
 
         if ydots is not None:
-            pc = mpl.collections.PatchCollection(edges_lc, cmap=plt.cm.viridis)
-            pc.set_array(weights)
+            pc = mpl.collections.PatchCollection(real_edges_lc, cmap=plt.cm.viridis)
+            pc.set_array(real_weights)
             if not rotated:
                 plt.colorbar(pc, ax=ax, label="log10(rate)")
             else:
