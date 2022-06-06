@@ -67,17 +67,17 @@ def mg24_he4__si28__approx(tf):
 def he4_mg24__si28(tf):
     # mg24 + he4 --> si28
     rate = 0.0
-    
+
     # st08r
     rate += np.exp(  -50.5494 + -12.8332*tf.T9i + 21.3721*tf.T913i + 37.7649*tf.T913
                   + -4.10635*tf.T9 + 0.249618*tf.T953 + -1.5*tf.lnT9)
     # st08r
     rate += np.exp(  8.03977 + -15.629*tf.T9i
                   + -1.5*tf.lnT9)
-    
+
     return rate
 
 """
 
         r = self.pynet.get_rate("mg24_he4__si28__approx")
-        assert self.pynet.function_string(r.get_child_rates()[0])  == ostr
+        assert self.pynet.function_string(r.get_child_rates()[0]).replace(" ", "").strip() == ostr.replace(" ", "").strip()
