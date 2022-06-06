@@ -144,20 +144,23 @@ class BaseCxxNetwork(ABC, RateCollection):
 
         ydot = {}
         for n in self.unique_nuclei:
-            ydot_sym_terms = []
-            for rp in self.nuclei_rate_pairs[n]:
-                if rp.forward is not None:
-                    fwd = self.symbol_rates.ydot_term_symbol(rp.forward, n)
-                else:
-                    fwd = None
+            if not self.nuclei_rate_pairs[n]:
+                ydot[n] = None
+            else:
+                ydot_sym_terms = []
+                for rp in self.nuclei_rate_pairs[n]:
+                    if rp.forward is not None:
+                        fwd = self.symbol_rates.ydot_term_symbol(rp.forward, n)
+                    else:
+                        fwd = None
 
-                if rp.reverse is not None:
-                    rvs = self.symbol_rates.ydot_term_symbol(rp.reverse, n)
-                else:
-                    rvs = None
+                    if rp.reverse is not None:
+                        rvs = self.symbol_rates.ydot_term_symbol(rp.reverse, n)
+                    else:
+                        rvs = None
 
-                ydot_sym_terms.append((fwd, rvs))
-            ydot[n] = ydot_sym_terms
+                    ydot_sym_terms.append((fwd, rvs))
+                ydot[n] = ydot_sym_terms
 
         self.ydot_out_result = ydot
         self.solved_ydot = True
@@ -399,6 +402,10 @@ class BaseCxxNetwork(ABC, RateCollection):
     def _ydot(self, n_indent, of):
         # Write YDOT
         for n in self.unique_nuclei:
+            if self.ydot_out_result[n] is None:
+                of.write(f"{self.indent*n_indent}{self.symbol_rates.name_ydot_nuc}({n.cindex()}) = 0.0;\n\n")
+                continue
+
             of.write(f"{self.indent*n_indent}{self.symbol_rates.name_ydot_nuc}({n.cindex()}) =\n")
             for j, pair in enumerate(self.ydot_out_result[n]):
                 # pair here is the forward, reverse pair for a single rate as it affects

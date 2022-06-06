@@ -139,6 +139,7 @@ class RateCollection:
     pynucastro_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 
     def __init__(self, rate_files=None, libraries=None, rates=None, precedence=(),
+                 inert_nuclei=None,
                  symmetric_screening=False, do_screening=True):
         """rate_files are the files that together define the network.  This
         can be any iterable or single string.
@@ -157,6 +158,10 @@ class RateCollection:
         same name. If all of their labels were given a ranking, the rate with
         the label that comes first in the sequence will be retained and the
         rest discarded.
+
+        inert_nuclei is a list of nuclei (as Nucleus objects) that
+        should be part of the collection but are not linked via reactions
+        to the other nuclei in the network.
 
         symmetric_screening means that we screen the reverse rates
         using the same factor as the forward rates, for rates computed
@@ -222,6 +227,15 @@ class RateCollection:
             u = set(list(u) + list(t))
 
         self.unique_nuclei = sorted(u)
+
+        if inert_nuclei:
+            for n in inert_nuclei:
+                if isinstance(n, Nucleus):
+                    nuc = n
+                else:
+                    nuc = Nucleus(n)
+                if nuc not in self.unique_nuclei:
+                    self.unique_nuclei.append(nuc)
 
         # now make a list of each rate that touches each nucleus
         # we'll store this in a dictionary keyed on the nucleus
