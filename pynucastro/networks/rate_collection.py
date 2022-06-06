@@ -25,7 +25,9 @@ import networkx as nx
 from scipy import constants
 # Import Rate
 from pynucastro.nucleus import Nucleus
-from pynucastro.rates import Rate, RatePair, Library
+from pynucastro.rates import Rate, RatePair, ApproximateRate, Library
+
+from pynucastro.nucdata import PeriodicTable
 
 mpl.rcParams['figure.dpi'] = 100
 
@@ -139,6 +141,7 @@ class RateCollection:
     pynucastro_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 
     def __init__(self, rate_files=None, libraries=None, rates=None, precedence=(),
+                 inert_nuclei=None,
                  symmetric_screening=False, do_screening=True):
         """rate_files are the files that together define the network.  This
         can be any iterable or single string.
@@ -158,6 +161,10 @@ class RateCollection:
         the label that comes first in the sequence will be retained and the
         rest discarded.
 
+        inert_nuclei is a list of nuclei (as Nucleus objects) that
+        should be part of the collection but are not linked via reactions
+        to the other nuclei in the network.
+
         symmetric_screening means that we screen the reverse rates
         using the same factor as the forward rates, for rates computed
         via detailed balance.
@@ -169,6 +176,8 @@ class RateCollection:
         self.files = []
         self.rates = []
         self.library = None
+
+        self.inert_nuclei = inert_nuclei
 
         self.symmetric_screening = symmetric_screening
         self.do_screening = do_screening
@@ -215,6 +224,10 @@ class RateCollection:
         if precedence:
             self._make_distinguishable(precedence)
 
+        self._build_collection()
+
+    def _build_collection(self):
+
         # get the unique nuclei
         u = []
         for r in self.rates:
@@ -222,6 +235,15 @@ class RateCollection:
             u = set(list(u) + list(t))
 
         self.unique_nuclei = sorted(u)
+
+        if self.inert_nuclei:
+            for n in self.inert_nuclei:
+                if isinstance(n, Nucleus):
+                    nuc = n
+                else:
+                    nuc = Nucleus(n)
+                if nuc not in self.unique_nuclei:
+                    self.unique_nuclei.append(nuc)
 
         # now make a list of each rate that touches each nucleus
         # we'll store this in a dictionary keyed on the nucleus
@@ -257,9 +279,7 @@ class RateCollection:
             elif isinstance(r.chapter, int):
                 self.reaclib_rates.append(n)
             else:
-                print('ERROR: Chapter type unknown for rate chapter {}'.format(
-                    str(r.chapter)))
-                exit()
+                raise NotImplementedError(f"Chapter type unknown for rate chapter {r.chapter}")
 
     def _read_rate_files(self, rate_files):
         # get the rates
@@ -362,6 +382,128 @@ class RateCollection:
         except IndexError:
             print("ERROR: rate identifier does not match a rate in this network.")
             raise
+
+    def get_rate_by_nuclei(self, reactants, products):
+        """given a list of reactants and products, return any matching rates"""
+        _tmp = [r for r in self.rates if
+                sorted(r.reactants) == sorted(reactants) and
+                sorted(r.products) == sorted(products)]
+
+        if not _tmp:
+            return None
+        else:
+            return _tmp
+
+    def remove_nuclei(self, nuc_list):
+        """remove the nuclei in nuc_list from the network along with any rates
+        that directly involve them (this doesn't affect approximate rates that
+        may have these nuclei as hidden intermediate links)"""
+
+        rates_to_delete = []
+        for nuc in nuc_list:
+            for rate in self.rates:
+                if nuc in rate.reactants + rate.products:
+                    print(f"looking to remove {rate}")
+                    rates_to_delete.append(rate)
+
+        for rate in set(rates_to_delete):
+            self.rates.remove(rate)
+
+        self._build_collection()
+
+    def make_ap_pg_approx(self):
+        """combine the rates A(a,g)B and A(a,p)X(p,g)B (and the reverse) into a single
+        effective approximate rate."""
+
+        # find all of the (a,g) rates
+        ag_rates = []
+        for r in self.rates:
+            if (len(r.reactants) == 2 and Nucleus("he4") in r.reactants and
+                len(r.products) == 1):
+                ag_rates.append(r)
+
+        # for each (a,g), check to see if the remaining rates are present
+        approx_rates = []
+        intermediate_nuclei = []
+
+        for r_ag in ag_rates:
+            prim_nuc = sorted(r_ag.reactants)[-1]
+            prim_prod = sorted(r_ag.products)[-1]
+
+            inter_nuc_Z = prim_nuc.Z + 1
+            inter_nuc_A = prim_nuc.A + 3
+
+            element = PeriodicTable.lookup_Z(inter_nuc_Z)
+
+            inter_nuc = Nucleus(f"{element.abbreviation}{inter_nuc_A}")
+
+            # look for A(a,p)X
+            _r = self.get_rate_by_nuclei([prim_nuc, Nucleus("he4")], [inter_nuc, Nucleus("p")])
+
+            if _r:
+                r_ap = _r[-1]
+            else:
+                continue
+
+            # look for X(p,g)B
+            _r = self.get_rate_by_nuclei([inter_nuc, Nucleus("p")], [prim_prod])
+
+            if _r:
+                r_pg = _r[-1]
+            else:
+                continue
+
+            # look for reverse B(g,a)A
+            _r = self.get_rate_by_nuclei([prim_prod], [prim_nuc, Nucleus("he4")])
+
+            if _r:
+                r_ga = _r[-1]
+            else:
+                continue
+
+            # look for reverse B(g,p)X
+            _r = self.get_rate_by_nuclei([prim_prod], [inter_nuc, Nucleus("p")])
+
+            if _r:
+                r_gp = _r[-1]
+            else:
+                continue
+
+            # look for reverse X(p,a)A
+            _r = self.get_rate_by_nuclei([inter_nuc, Nucleus("p")], [Nucleus("he4"), prim_nuc])
+
+            if _r:
+                r_pa = _r[-1]
+            else:
+                continue
+
+            # build the approximate rates
+            ar = ApproximateRate(r_ag, [r_ap, r_pg], r_ga, [r_gp, r_pa], approx_type="ap_pg")
+            ar_reverse = ApproximateRate(r_ag, [r_ap, r_pg], r_ga, [r_gp, r_pa], is_reverse=True, approx_type="ap_pg")
+
+            print(f"using approximate rate {ar}")
+            print(f"using approximate rate {ar_reverse}")
+
+            # keep track of the intermediate nuclei
+            intermediate_nuclei.append(inter_nuc)
+
+            # approximate rates
+            approx_rates += [ar, ar_reverse]
+
+        # remove the old rates from the rate list and add the approximate rate
+        for ar in approx_rates:
+            for r in ar.get_child_rates():
+                try:
+                    self.rates.remove(r)
+                    print(f"removing rate {r}")
+                except ValueError:
+                    pass
+
+            # add the approximate rates
+            self.rates.append(ar)
+
+        # regenerate the links
+        self._build_collection()
 
     def evaluate_rates(self, rho, T, composition):
         """evaluate the rates for a specific density, temperature, and
@@ -542,11 +684,22 @@ class RateCollection:
             return screening_map
 
         for r in self.rates:
-            screen_nuclei = r.ion_screen
-            if self.symmetric_screening:
-                screen_nuclei = r.symmetric_screen
+            all_screen_nuclei = []
+            if isinstance(r, ApproximateRate):
+                # loop over all of the rates in the approximate rate and grab their
+                # screening nuclei and append to the list
+                raise NotImplementedError("haven't writtne this yet")
+            else:
+                screen_nuclei = r.ion_screen
+                if self.symmetric_screening:
+                    screen_nuclei = r.symmetric_screen
+                all_screen_nuclei.append(screen_nuclei)
 
-            if screen_nuclei:
+            for screen_nuclei in all_screen_nuclei:
+                # screen_nuclei may be [] if it is a decay, gamma-capture, or neutron-capture
+                if not screen_nuclei:
+                    continue
+
                 nucs = "_".join([str(q) for q in screen_nuclei])
 
                 scr = [q for q in screening_map if q.name == nucs]
@@ -1250,8 +1403,10 @@ class RateCollection:
 class Explorer:
     """ interactively explore a rate collection """
     def __init__(self, rc, comp, size=(800, 600),
-                 ydot_cutoff_value=None,
-                 always_show_p=False, always_show_alpha=False):
+                 ydot_cutoff_value=None, rotated=False,
+                 hide_xalpha=False,
+                 always_show_p=False, always_show_alpha=False,
+                 node_size=1000, node_font_size=13):
         """ take a RateCollection and a composition """
         self.rc = rc
         self.comp = comp
@@ -1259,13 +1414,20 @@ class Explorer:
         self.ydot_cutoff_value = ydot_cutoff_value
         self.always_show_p = always_show_p
         self.always_show_alpha = always_show_alpha
+        self.hide_xalpha = hide_xalpha
+        self.rotated = rotated
+        self.node_size = node_size
+        self.node_font_size = node_font_size
 
     def _make_plot(self, logrho, logT):
         self.rc.plot(rho=10.0**logrho, T=10.0**logT,
                      comp=self.comp, size=self.size,
                      ydot_cutoff_value=self.ydot_cutoff_value,
                      always_show_p=self.always_show_p,
-                     always_show_alpha=self.always_show_alpha)
+                     always_show_alpha=self.always_show_alpha,
+                     rotated=self.rotated,
+                     hide_xalpha=self.hide_xalpha,
+                     node_size=self.node_size, node_font_size=self.node_font_size)
 
     def explore(self, logrho=(2, 6, 0.1), logT=(7, 9, 0.1)):
         """Perform interactive exploration of the network structure."""
