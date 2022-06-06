@@ -307,6 +307,22 @@
    "source": [
     "rc_new.evaluate_rates(rho=7.e9, T=1.e9, composition=comp)"
    ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Additionally, we can see the specific energy generation rate for these conditions"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "rc_new.evaluate_energy_generation(rho=7.e9, T=1.e9, composition=comp)"
+   ]
   }
  ],
  "metadata": {

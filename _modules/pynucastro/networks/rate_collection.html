@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.networks.rate_collection &mdash; pynucastro 1.6.0.post118+g8d15367 documentation</title>
+  <title>pynucastro.networks.rate_collection &mdash; pynucastro 1.6.0.post119+g6a0a176 documentation</title>
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -123,7 +123,7 @@
 <span class="kn">from</span> <span class="nn">matplotlib.colors</span> <span class="kn">import</span> <span class="n">SymLogNorm</span>
 <span class="kn">from</span> <span class="nn">matplotlib.scale</span> <span class="kn">import</span> <span class="n">SymmetricalLogTransform</span>
 <span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
-
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">constants</span>
 <span class="c1"># Import Rate</span>
 <span class="kn">from</span> <span class="nn">pynucastro.nucleus</span> <span class="kn">import</span> <span class="n">Nucleus</span>
 <span class="kn">from</span> <span class="nn">pynucastro.rates</span> <span class="kn">import</span> <span class="n">Rate</span><span class="p">,</span> <span class="n">RatePair</span><span class="p">,</span> <span class="n">ApproximateRate</span><span class="p">,</span> <span class="n">Library</span>
@@ -644,6 +644,41 @@
             <span class="n">ydots</span><span class="p">[</span><span class="n">nuc</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">produced</span><span class="p">)</span> <span class="o">-</span> <span class="nb">sum</span><span class="p">(</span><span class="n">consumed</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">ydots</span></div>
+
+<div class="viewcode-block" id="RateCollection.evaluate_energy_generation"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.evaluate_energy_generation">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate_energy_generation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">composition</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;evaluate the specific energy generation rate of the network for a specific</span>
+<span class="sd">        density, temperature and composition&quot;&quot;&quot;</span>
+
+        <span class="n">ydots</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_ydots</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">composition</span><span class="p">)</span>
+        <span class="n">enuc</span> <span class="o">=</span> <span class="mf">0.</span>
+
+        <span class="c1"># compute constants and units</span>
+        <span class="n">m_n_MeV</span> <span class="o">=</span> <span class="n">constants</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="s1">&#39;neutron mass energy equivalent in MeV&#39;</span><span class="p">)</span>
+        <span class="n">m_p_MeV</span> <span class="o">=</span> <span class="n">constants</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="s1">&#39;proton mass energy equivalent in MeV&#39;</span><span class="p">)</span>
+        <span class="n">m_e_MeV</span> <span class="o">=</span> <span class="n">constants</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="s1">&#39;electron mass energy equivalent in MeV&#39;</span><span class="p">)</span>
+        <span class="n">MeV2erg</span> <span class="o">=</span> <span class="p">(</span><span class="n">constants</span><span class="o">.</span><span class="n">eV</span> <span class="o">*</span> <span class="n">constants</span><span class="o">.</span><span class="n">mega</span><span class="p">)</span> <span class="o">/</span> <span class="n">constants</span><span class="o">.</span><span class="n">erg</span>
+
+        <span class="c1"># ion binding energy contributions. basically e=mc^2</span>
+        <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">:</span>
+            <span class="c1"># add up mass in MeV then convert to erg</span>
+            <span class="n">mass</span> <span class="o">=</span> <span class="p">((</span><span class="n">nuc</span><span class="o">.</span><span class="n">A</span> <span class="o">-</span> <span class="n">nuc</span><span class="o">.</span><span class="n">Z</span><span class="p">)</span> <span class="o">*</span> <span class="n">m_n_MeV</span> <span class="o">+</span> <span class="n">nuc</span><span class="o">.</span><span class="n">Z</span> <span class="o">*</span> <span class="p">(</span><span class="n">m_p_MeV</span> <span class="o">+</span> <span class="n">m_e_MeV</span><span class="p">)</span> <span class="o">-</span> <span class="n">nuc</span><span class="o">.</span><span class="n">A</span> <span class="o">*</span> <span class="n">nuc</span><span class="o">.</span><span class="n">nucbind</span><span class="p">)</span> <span class="o">*</span> <span class="n">MeV2erg</span>
+            <span class="n">enuc</span> <span class="o">+=</span> <span class="n">ydots</span><span class="p">[</span><span class="n">nuc</span><span class="p">]</span> <span class="o">*</span> <span class="n">mass</span>
+
+        <span class="c1">#convert from molar value to erg/g/s</span>
+        <span class="n">enuc</span> <span class="o">*=</span> <span class="o">-</span><span class="mi">1</span><span class="o">*</span><span class="n">constants</span><span class="o">.</span><span class="n">Avogadro</span>
+
+        <span class="c1">#subtract neutrino losses for tabular weak reactions</span>
+        <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">weak</span> <span class="ow">and</span> <span class="n">r</span><span class="o">.</span><span class="n">tabular</span><span class="p">:</span>
+                <span class="c1"># get composition</span>
+                <span class="n">ys</span> <span class="o">=</span> <span class="n">composition</span><span class="o">.</span><span class="n">get_molar</span><span class="p">()</span>
+                <span class="n">y_e</span> <span class="o">=</span> <span class="n">composition</span><span class="o">.</span><span class="n">eval_ye</span><span class="p">()</span>
+
+                <span class="c1"># need to get reactant nucleus</span>
+                <span class="n">nuc</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">enuc</span> <span class="o">-=</span> <span class="n">constants</span><span class="o">.</span><span class="n">Avogadro</span> <span class="o">*</span> <span class="n">ys</span><span class="p">[</span><span class="n">nuc</span><span class="p">]</span> <span class="o">*</span> <span class="n">r</span><span class="o">.</span><span class="n">get_nu_loss</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">rho</span> <span class="o">*</span> <span class="n">y_e</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">enuc</span></div>
 
 <div class="viewcode-block" id="RateCollection.evaluate_activity"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.evaluate_activity">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate_activity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">composition</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;sum over all of the terms contributing to ydot,</span>

@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Combining ReacLib Rates with Electron Capture Tables &mdash; pynucastro 1.6.0.post118+g8d15367 documentation</title>
+  <title>Combining ReacLib Rates with Electron Capture Tables &mdash; pynucastro 1.6.0.post119+g6a0a176 documentation</title>
       <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -596,6 +596,15 @@ s32 --&gt; p + p31                [Q =  -8.86 MeV] (s32 --&gt; p + p31 &lt;il10_
  o20 --&gt; f20: 3.4692267612601718e-28,
  f20 --&gt; ne20: 1.216193699146343e-14}
 </pre></div></div>
+</div>
+<p>Additionally, we can see the specific energy generation rate for these conditions</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rc_new</span><span class="o">.</span><span class="n">evaluate_energy_generation</span><span class="p">(</span><span class="n">rho</span><span class="o">=</span><span class="mf">7.e9</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mf">1.e9</span><span class="p">,</span> <span class="n">composition</span><span class="o">=</span><span class="n">comp</span><span class="p">)</span>
+</pre></div>
+</div>
 </div>
 </section>
 
