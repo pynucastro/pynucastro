@@ -22,7 +22,7 @@ from matplotlib.ticker import MaxNLocator
 from matplotlib.colors import SymLogNorm
 from matplotlib.scale import SymmetricalLogTransform
 import networkx as nx
-
+from scipy import constants
 # Import Rate
 from pynucastro.nucleus import Nucleus
 from pynucastro.rates import Rate, RatePair, ApproximateRate, Library
@@ -203,6 +203,8 @@ class RateCollection:
         self.files = []
         self.rates = []
         self.library = None
+
+        self.inert_nuclei = inert_nuclei
 
         self.symmetric_screening = symmetric_screening
         self.do_screening = do_screening
@@ -577,6 +579,41 @@ class RateCollection:
             ydots[nuc] = sum(produced) - sum(consumed)
 
         return ydots
+
+    def evaluate_energy_generation(self, rho, T, composition):
+        """evaluate the specific energy generation rate of the network for a specific
+        density, temperature and composition"""
+
+        ydots = self.evaluate_ydots(rho, T, composition)
+        enuc = 0.
+
+        # compute constants and units
+        m_n_MeV = constants.value('neutron mass energy equivalent in MeV')
+        m_p_MeV = constants.value('proton mass energy equivalent in MeV')
+        m_e_MeV = constants.value('electron mass energy equivalent in MeV')
+        MeV2erg = (constants.eV * constants.mega) / constants.erg
+
+        # ion binding energy contributions. basically e=mc^2
+        for nuc in self.unique_nuclei:
+            # add up mass in MeV then convert to erg
+            mass = ((nuc.A - nuc.Z) * m_n_MeV + nuc.Z * (m_p_MeV + m_e_MeV) - nuc.A * nuc.nucbind) * MeV2erg
+            enuc += ydots[nuc] * mass
+
+        #convert from molar value to erg/g/s
+        enuc *= -1*constants.Avogadro
+
+        #subtract neutrino losses for tabular weak reactions
+        for r in self.rates:
+            if r.weak and r.tabular:
+                # get composition
+                ys = composition.get_molar()
+                y_e = composition.eval_ye()
+
+                # need to get reactant nucleus
+                nuc = r.reactants[0]
+                enuc -= constants.Avogadro * ys[nuc] * r.get_nu_loss(T, rho * y_e)
+
+        return enuc
 
     def evaluate_activity(self, rho, T, composition):
         """sum over all of the terms contributing to ydot,
