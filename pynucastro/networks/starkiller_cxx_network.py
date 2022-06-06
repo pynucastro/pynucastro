@@ -44,6 +44,15 @@ class StarKillerCxxNetwork(BaseCxxNetwork):
                 of.write(f"{self.indent*n_indent}    continue;\n")
                 of.write(f"{self.indent*n_indent}}}\n")
 
+                # check for the reverse too -- we disable it with the same parameter
+                rr = self.find_reverse(r)
+                if rr is not None:
+                    of.write(f"{self.indent*n_indent}if (i == k_{rr.fname} && disable_{r.fname}) {{\n")
+                    of.write(f"{self.indent*n_indent}    rate_eval.screened_rates(i) = 0.0;\n")
+                    of.write(f"{self.indent*n_indent}    rate_eval.dscreened_rates_dT(i) = 0.0;\n")
+                    of.write(f"{self.indent*n_indent}    continue;\n")
+                    of.write(f"{self.indent*n_indent}}}\n")
+
     def _write_network(self, odir=None):
         """
         This writes the RHS, jacobian and ancillary files for the system of ODEs that

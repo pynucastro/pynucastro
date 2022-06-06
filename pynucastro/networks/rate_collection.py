@@ -168,6 +168,7 @@ class RateCollection:
     pynucastro_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 
     def __init__(self, rate_files=None, libraries=None, rates=None, precedence=(),
+                 inert_nuclei=None,
                  symmetric_screening=False, do_screening=True):
         """rate_files are the files that together define the network.  This
         can be any iterable or single string.
@@ -186,6 +187,10 @@ class RateCollection:
         same name. If all of their labels were given a ranking, the rate with
         the label that comes first in the sequence will be retained and the
         rest discarded.
+
+        inert_nuclei is a list of nuclei (as Nucleus objects) that
+        should be part of the collection but are not linked via reactions
+        to the other nuclei in the network.
 
         symmetric_screening means that we screen the reverse rates
         using the same factor as the forward rates, for rates computed
@@ -262,6 +267,15 @@ class RateCollection:
             if isinstance(r, ApproximateRate):
                 if r.intermediate_nucleus not in self.unique_nuclei + self.approx_nuclei:
                     self.approx_nuclei.append(r.intermediate_nucleus)
+
+        if inert_nuclei:
+            for n in inert_nuclei:
+                if isinstance(n, Nucleus):
+                    nuc = n
+                else:
+                    nuc = Nucleus(n)
+                if nuc not in self.unique_nuclei:
+                    self.unique_nuclei.append(nuc)
 
         # now make a list of each rate that touches each nucleus
         # we'll store this in a dictionary keyed on the nucleus
@@ -1412,8 +1426,10 @@ class RateCollection:
 class Explorer:
     """ interactively explore a rate collection """
     def __init__(self, rc, comp, size=(800, 600),
-                 ydot_cutoff_value=None,
-                 always_show_p=False, always_show_alpha=False):
+                 ydot_cutoff_value=None, rotated=False,
+                 hide_xalpha=False,
+                 always_show_p=False, always_show_alpha=False,
+                 node_size=1000, node_font_size=13):
         """ take a RateCollection and a composition """
         self.rc = rc
         self.comp = comp
@@ -1421,13 +1437,20 @@ class Explorer:
         self.ydot_cutoff_value = ydot_cutoff_value
         self.always_show_p = always_show_p
         self.always_show_alpha = always_show_alpha
+        self.hide_xalpha = hide_xalpha
+        self.rotated = rotated
+        self.node_size = node_size
+        self.node_font_size = node_font_size
 
     def _make_plot(self, logrho, logT):
         self.rc.plot(rho=10.0**logrho, T=10.0**logT,
                      comp=self.comp, size=self.size,
                      ydot_cutoff_value=self.ydot_cutoff_value,
                      always_show_p=self.always_show_p,
-                     always_show_alpha=self.always_show_alpha)
+                     always_show_alpha=self.always_show_alpha,
+                     rotated=self.rotated,
+                     hide_xalpha=self.hide_xalpha,
+                     node_size=self.node_size, node_font_size=self.node_font_size)
 
     def explore(self, logrho=(2, 6, 0.1), logT=(7, 9, 0.1)):
         """Perform interactive exploration of the network structure."""
