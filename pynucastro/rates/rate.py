@@ -1157,7 +1157,7 @@ class ApproximateRate(Rate):
         # the individual rates are screened -- we don't screen the combination of them
         pass
 
-    def eval(self, T):
+    def eval(self, T, rhoY=None):
         """evaluate the approximate rate"""
 
         if self.approx_type == "ap_pg":
