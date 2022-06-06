@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.networks.rate_collection &mdash; pynucastro 1.6.0.post119+g6a0a176 documentation</title>
+  <title>pynucastro.networks.rate_collection &mdash; pynucastro 1.6.0.post120+gcbcfed7 documentation</title>
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -131,6 +131,33 @@
 <span class="kn">from</span> <span class="nn">pynucastro.nucdata</span> <span class="kn">import</span> <span class="n">PeriodicTable</span>
 
 <span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;figure.dpi&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">100</span>
+
+
+<span class="k">def</span> <span class="nf">_skip_xalpha</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">r</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;utility function to consider if we show an (a, x) or (x, a) rate.  Here, p is the</span>
+<span class="sd">    product we want to link to&quot;&quot;&quot;</span>
+
+    <span class="c1"># first check if alpha is the heaviest nucleus on the RHS</span>
+    <span class="n">rhs_heavy</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">products</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">rhs_heavy</span><span class="o">.</span><span class="n">Z</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">rhs_heavy</span><span class="o">.</span><span class="n">A</span> <span class="o">==</span> <span class="mi">4</span><span class="p">):</span>
+
+        <span class="c1"># for rates that are A (x, alpha) B, where A and B are heavy nuclei,</span>
+        <span class="c1"># don&#39;t show the connection of the nucleus to alpha, only show it to B</span>
+        <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">Z</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">p</span><span class="o">.</span><span class="n">A</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="c1"># likewise, hide A (alpha, x) B, unless A itself is an alpha</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">reactants</span>
+        <span class="n">n_alpha</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="n">c</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">nuc</span><span class="o">.</span><span class="n">Z</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">nuc</span><span class="o">.</span><span class="n">A</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+                <span class="n">n_alpha</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="c1"># if there is only 1 alpha and we are working on the alpha node,</span>
+        <span class="c1"># then skip</span>
+        <span class="k">if</span> <span class="n">n_alpha</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">n</span><span class="o">.</span><span class="n">Z</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">n</span><span class="o">.</span><span class="n">A</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="k">return</span> <span class="kc">False</span>
 
 
 <div class="viewcode-block" id="Composition"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.Composition">[docs]</a><span class="k">class</span> <span class="nc">Composition</span><span class="p">:</span>
@@ -283,6 +310,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">symmetric_screening</span> <span class="o">=</span> <span class="n">symmetric_screening</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">do_screening</span> <span class="o">=</span> <span class="n">do_screening</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">inert_nuclei</span> <span class="o">=</span> <span class="n">inert_nuclei</span>
+
         <span class="k">if</span> <span class="n">rate_files</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rate_files</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
                 <span class="n">rate_files</span> <span class="o">=</span> <span class="p">[</span><span class="n">rate_files</span><span class="p">]</span>
@@ -336,6 +365,13 @@
             <span class="n">u</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">u</span><span class="p">)</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">t</span><span class="p">))</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
+
+        <span class="c1"># approx nuclei are used in approximate rates</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">approx_nuclei</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">ApproximateRate</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">intermediate_nucleus</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">approx_nuclei</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">approx_nuclei</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">intermediate_nucleus</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">inert_nuclei</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">inert_nuclei</span><span class="p">:</span>
@@ -992,17 +1028,32 @@
         <span class="c1"># nodes -- the node nuclei will be all of the heavies</span>
         <span class="c1"># add all the nuclei into G.node</span>
         <span class="n">node_nuclei</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">colors</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">n</span><span class="o">.</span><span class="n">raw</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">hidden_nuclei</span><span class="p">:</span>
                 <span class="n">node_nuclei</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+                <span class="n">colors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node_color</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">:</span>
                     <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
                         <span class="n">node_nuclei</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+                        <span class="n">colors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node_color</span><span class="p">)</span>
                         <span class="k">break</span>
+
+        <span class="c1"># approx nuclei are given a different color</span>
+        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">approx_nuclei</span><span class="p">:</span>
+            <span class="n">node_nuclei</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+            <span class="n">colors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;#555555&quot;</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">nucleus_filter_function</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">node_nuclei</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="n">nucleus_filter_function</span><span class="p">,</span> <span class="n">node_nuclei</span><span class="p">))</span>
+            <span class="c1"># redo the colors:</span>
+            <span class="n">colors</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">node_nuclei</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">approx_nuclei</span><span class="p">:</span>
+                    <span class="n">colors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;#555555&quot;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">colors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node_color</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">node_nuclei</span><span class="p">:</span>
             <span class="n">G</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
@@ -1025,8 +1076,10 @@
                 <span class="k">if</span> <span class="n">ydots</span><span class="p">[</span><span class="n">r</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">ydot_cutoff_value</span><span class="p">:</span>
                     <span class="n">invisible_rates</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
 
-        <span class="c1"># edges</span>
+        <span class="c1"># edges for the rates that are explicitly in the network</span>
         <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">node_nuclei</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">n</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nuclei_consumed</span><span class="p">:</span>
+                <span class="k">continue</span>
             <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nuclei_consumed</span><span class="p">[</span><span class="n">n</span><span class="p">]:</span>
                 <span class="k">if</span> <span class="n">rate_filter_function</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="k">if</span> <span class="ow">not</span> <span class="n">rate_filter_function</span><span class="p">(</span><span class="n">r</span><span class="p">):</span>
@@ -1035,36 +1088,18 @@
                 <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">r</span><span class="o">.</span><span class="n">products</span><span class="p">:</span>
                     <span class="k">if</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">node_nuclei</span><span class="p">:</span>
 
-                        <span class="k">if</span> <span class="n">hide_xalpha</span><span class="p">:</span>
-
-                            <span class="c1"># first check is alpha is the heaviest nucleus on the RHS</span>
-                            <span class="n">rhs_heavy</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">products</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-                            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">rhs_heavy</span><span class="o">.</span><span class="n">Z</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">rhs_heavy</span><span class="o">.</span><span class="n">A</span> <span class="o">==</span> <span class="mi">4</span><span class="p">):</span>
-
-                                <span class="c1"># for rates that are A (x, alpha) B, where A and B are heavy nuclei,</span>
-                                <span class="c1"># don&#39;t show the connection of the nucleus to alpha, only show it to B</span>
-                                <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">Z</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">p</span><span class="o">.</span><span class="n">A</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
-                                    <span class="k">continue</span>
-
-                                <span class="c1"># likewise, hide A (alpha, x) B, unless A itself is an alpha</span>
-                                <span class="n">c</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">reactants</span>
-                                <span class="n">n_alpha</span> <span class="o">=</span> <span class="mi">0</span>
-                                <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="n">c</span><span class="p">:</span>
-                                    <span class="k">if</span> <span class="n">nuc</span><span class="o">.</span><span class="n">Z</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">nuc</span><span class="o">.</span><span class="n">A</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
-                                        <span class="n">n_alpha</span> <span class="o">+=</span> <span class="mi">1</span>
-                                <span class="c1"># if there is only 1 alpha and we are working on the alpha node,</span>
-                                <span class="c1"># then skip</span>
-                                <span class="k">if</span> <span class="n">n_alpha</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">n</span><span class="o">.</span><span class="n">Z</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">n</span><span class="o">.</span><span class="n">A</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
-                                    <span class="k">continue</span>
+                        <span class="k">if</span> <span class="n">hide_xalpha</span> <span class="ow">and</span> <span class="n">_skip_xalpha</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">r</span><span class="p">):</span>
+                            <span class="k">continue</span>
 
                         <span class="c1"># networkx doesn&#39;t seem to keep the edges in</span>
                         <span class="c1"># any particular order, so we associate data</span>
                         <span class="c1"># to the edges here directly, in this case,</span>
                         <span class="c1"># the reaction rate, which will be used to</span>
                         <span class="c1"># color it</span>
+                        <span class="c1"># here real means that it is not an approximate rate</span>
 
                         <span class="k">if</span> <span class="n">ydots</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                            <span class="n">G</span><span class="o">.</span><span class="n">add_edges_from</span><span class="p">([(</span><span class="n">n</span><span class="p">,</span> <span class="n">p</span><span class="p">)],</span> <span class="n">weight</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+                            <span class="n">G</span><span class="o">.</span><span class="n">add_edges_from</span><span class="p">([(</span><span class="n">n</span><span class="p">,</span> <span class="n">p</span><span class="p">)],</span> <span class="n">weight</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">real</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
                         <span class="k">else</span><span class="p">:</span>
                             <span class="k">if</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">invisible_rates</span><span class="p">:</span>
                                 <span class="k">continue</span>
@@ -1076,53 +1111,80 @@
                                 <span class="c1"># for python floats</span>
                                 <span class="n">rate_weight</span> <span class="o">=</span> <span class="o">-</span><span class="mi">308</span>
 
-                            <span class="n">G</span><span class="o">.</span><span class="n">add_edges_from</span><span class="p">([(</span><span class="n">n</span><span class="p">,</span> <span class="n">p</span><span class="p">)],</span> <span class="n">weight</span><span class="o">=</span><span class="n">rate_weight</span><span class="p">)</span>
+                            <span class="n">G</span><span class="o">.</span><span class="n">add_edges_from</span><span class="p">([(</span><span class="n">n</span><span class="p">,</span> <span class="n">p</span><span class="p">)],</span> <span class="n">weight</span><span class="o">=</span><span class="n">rate_weight</span><span class="p">,</span> <span class="n">real</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># now consider the rates that are approximated out of the network</span>
+        <span class="n">rate_seen</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">ApproximateRate</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="k">for</span> <span class="n">sr</span> <span class="ow">in</span> <span class="n">r</span><span class="o">.</span><span class="n">secondary_rates</span> <span class="o">+</span> <span class="n">r</span><span class="o">.</span><span class="n">secondary_reverse</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">sr</span> <span class="ow">in</span> <span class="n">rate_seen</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="n">rate_seen</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sr</span><span class="p">)</span>
+
+                <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">sr</span><span class="o">.</span><span class="n">reactants</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">n</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">node_nuclei</span><span class="p">:</span>
+                        <span class="k">continue</span>
+                    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">sr</span><span class="o">.</span><span class="n">products</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">p</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">node_nuclei</span><span class="p">:</span>
+                            <span class="k">continue</span>
+
+                        <span class="k">if</span> <span class="n">hide_xalpha</span> <span class="ow">and</span> <span class="n">_skip_xalpha</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">sr</span><span class="p">):</span>
+                            <span class="k">continue</span>
+
+                        <span class="n">G</span><span class="o">.</span><span class="n">add_edges_from</span><span class="p">([(</span><span class="n">n</span><span class="p">,</span> <span class="n">p</span><span class="p">)],</span> <span class="n">weight</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">real</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
         <span class="c1"># It seems that networkx broke backwards compatability, and &#39;zorder&#39; is no longer a valid</span>
         <span class="c1"># keyword argument. The &#39;linewidth&#39; argument has also changed to &#39;linewidths&#39;.</span>
 
         <span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx_nodes</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">G</span><span class="o">.</span><span class="n">position</span><span class="p">,</span>      <span class="c1"># plot the element at the correct position</span>
-                               <span class="n">node_color</span><span class="o">=</span><span class="n">node_color</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+                               <span class="n">node_color</span><span class="o">=</span><span class="n">colors</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
                                <span class="n">node_shape</span><span class="o">=</span><span class="n">node_shape</span><span class="p">,</span> <span class="n">node_size</span><span class="o">=</span><span class="n">node_size</span><span class="p">,</span> <span class="n">linewidths</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
 
         <span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx_labels</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">G</span><span class="o">.</span><span class="n">position</span><span class="p">,</span> <span class="n">G</span><span class="o">.</span><span class="n">labels</span><span class="p">,</span>   <span class="c1"># label the name of element at the correct position</span>
                                 <span class="n">font_size</span><span class="o">=</span><span class="n">node_font_size</span><span class="p">,</span> <span class="n">font_color</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
 
-        <span class="c1"># get the edges and weights coupled in the same order</span>
-        <span class="n">edges</span><span class="p">,</span> <span class="n">weights</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">nx</span><span class="o">.</span><span class="n">get_edge_attributes</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="s1">&#39;weight&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
-
-        <span class="n">edge_color</span> <span class="o">=</span> <span class="n">weights</span>
-        <span class="n">ww</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
-        <span class="n">min_weight</span> <span class="o">=</span> <span class="n">ww</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
-        <span class="n">max_weight</span> <span class="o">=</span> <span class="n">ww</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
-        <span class="n">dw</span> <span class="o">=</span> <span class="p">(</span><span class="n">max_weight</span> <span class="o">-</span> <span class="n">min_weight</span><span class="p">)</span><span class="o">/</span><span class="mi">4</span>
-        <span class="n">widths</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">ww</span><span class="p">)</span>
-        <span class="n">widths</span><span class="p">[</span><span class="n">ww</span> <span class="o">&gt;</span> <span class="n">min_weight</span> <span class="o">+</span> <span class="n">dw</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.5</span>
-        <span class="n">widths</span><span class="p">[</span><span class="n">ww</span> <span class="o">&gt;</span> <span class="n">min_weight</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">dw</span><span class="p">]</span> <span class="o">=</span> <span class="mf">2.5</span>
-        <span class="n">widths</span><span class="p">[</span><span class="n">ww</span> <span class="o">&gt;</span> <span class="n">min_weight</span> <span class="o">+</span> <span class="mi">3</span><span class="o">*</span><span class="n">dw</span><span class="p">]</span> <span class="o">=</span> <span class="mi">4</span>
+        <span class="c1"># now we&#39;ll draw edges in two groups -- real links and approximate links</span>
 
         <span class="k">if</span> <span class="n">curved_edges</span><span class="p">:</span>
             <span class="n">connectionstyle</span> <span class="o">=</span> <span class="s2">&quot;arc3, rad = 0.2&quot;</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">connectionstyle</span> <span class="o">=</span> <span class="s2">&quot;arc3&quot;</span>
 
-        <span class="c1"># plot the arrow of reaction</span>
-        <span class="n">edges_lc</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx_edges</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">G</span><span class="o">.</span><span class="n">position</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">widths</span><span class="p">),</span>
-                                          <span class="n">edgelist</span><span class="o">=</span><span class="n">edges</span><span class="p">,</span> <span class="n">edge_color</span><span class="o">=</span><span class="n">edge_color</span><span class="p">,</span>
-                                          <span class="n">connectionstyle</span><span class="o">=</span><span class="n">connectionstyle</span><span class="p">,</span>
-                                          <span class="n">node_size</span><span class="o">=</span><span class="n">node_size</span><span class="p">,</span>
-                                          <span class="n">edge_cmap</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">viridis</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+        <span class="n">real_edges</span> <span class="o">=</span> <span class="p">[(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">G</span><span class="o">.</span><span class="n">edges</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">if</span> <span class="n">e</span><span class="p">[</span><span class="s2">&quot;real&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="n">real_weights</span> <span class="o">=</span> <span class="p">[</span><span class="n">e</span><span class="p">[</span><span class="s2">&quot;weight&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">G</span><span class="o">.</span><span class="n">edges</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">if</span> <span class="n">e</span><span class="p">[</span><span class="s2">&quot;real&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span>
 
-        <span class="c1"># for networkx &lt;= 2.0 draw_networkx_edges returns a</span>
-        <span class="c1"># LineCollection matplotlib type which we can use for the</span>
-        <span class="c1"># colorbar directly.  For networkx &gt;= 2.1, it is a collection</span>
-        <span class="c1"># of FancyArrowPatch-s, which we need to run through a</span>
-        <span class="c1"># PatchCollection.  See:</span>
-        <span class="c1"># https://stackoverflow.com/questions/18658047/adding-a-matplotlib-colorbar-from-a-patchcollection</span>
+        <span class="n">edge_color</span> <span class="o">=</span> <span class="n">real_weights</span>
+        <span class="n">ww</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">real_weights</span><span class="p">)</span>
+        <span class="n">min_weight</span> <span class="o">=</span> <span class="n">ww</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+        <span class="n">max_weight</span> <span class="o">=</span> <span class="n">ww</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+        <span class="n">dw</span> <span class="o">=</span> <span class="p">(</span><span class="n">max_weight</span> <span class="o">-</span> <span class="n">min_weight</span><span class="p">)</span><span class="o">/</span><span class="mi">4</span>
+        <span class="n">widths</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">ww</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">dw</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">widths</span><span class="p">[</span><span class="n">ww</span> <span class="o">&gt;</span> <span class="n">min_weight</span> <span class="o">+</span> <span class="n">dw</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.5</span>
+            <span class="n">widths</span><span class="p">[</span><span class="n">ww</span> <span class="o">&gt;</span> <span class="n">min_weight</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">dw</span><span class="p">]</span> <span class="o">=</span> <span class="mf">2.5</span>
+            <span class="n">widths</span><span class="p">[</span><span class="n">ww</span> <span class="o">&gt;</span> <span class="n">min_weight</span> <span class="o">+</span> <span class="mi">3</span><span class="o">*</span><span class="n">dw</span><span class="p">]</span> <span class="o">=</span> <span class="mi">4</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">widths</span> <span class="o">*=</span> <span class="mi">2</span>
+
+        <span class="c1"># plot the arrow of reaction</span>
+        <span class="n">real_edges_lc</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx_edges</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">G</span><span class="o">.</span><span class="n">position</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">widths</span><span class="p">),</span>
+                                               <span class="n">edgelist</span><span class="o">=</span><span class="n">real_edges</span><span class="p">,</span> <span class="n">edge_color</span><span class="o">=</span><span class="n">edge_color</span><span class="p">,</span>
+                                               <span class="n">connectionstyle</span><span class="o">=</span><span class="n">connectionstyle</span><span class="p">,</span>
+                                               <span class="n">node_size</span><span class="o">=</span><span class="n">node_size</span><span class="p">,</span>
+                                               <span class="n">edge_cmap</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">viridis</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+
+        <span class="n">approx_edges</span> <span class="o">=</span> <span class="p">[(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">G</span><span class="o">.</span><span class="n">edges</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">if</span> <span class="n">e</span><span class="p">[</span><span class="s2">&quot;real&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">_</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx_edges</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">G</span><span class="o">.</span><span class="n">position</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                                   <span class="n">edgelist</span><span class="o">=</span><span class="n">approx_edges</span><span class="p">,</span> <span class="n">edge_color</span><span class="o">=</span><span class="s2">&quot;0.5&quot;</span><span class="p">,</span>
+                                   <span class="n">connectionstyle</span><span class="o">=</span><span class="n">connectionstyle</span><span class="p">,</span>
+                                   <span class="n">style</span><span class="o">=</span><span class="s2">&quot;dotted&quot;</span><span class="p">,</span> <span class="n">node_size</span><span class="o">=</span><span class="n">node_size</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">ydots</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">pc</span> <span class="o">=</span> <span class="n">mpl</span><span class="o">.</span><span class="n">collections</span><span class="o">.</span><span class="n">PatchCollection</span><span class="p">(</span><span class="n">edges_lc</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">viridis</span><span class="p">)</span>
-            <span class="n">pc</span><span class="o">.</span><span class="n">set_array</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
+            <span class="n">pc</span> <span class="o">=</span> <span class="n">mpl</span><span class="o">.</span><span class="n">collections</span><span class="o">.</span><span class="n">PatchCollection</span><span class="p">(</span><span class="n">real_edges_lc</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">viridis</span><span class="p">)</span>
+            <span class="n">pc</span><span class="o">.</span><span class="n">set_array</span><span class="p">(</span><span class="n">real_weights</span><span class="p">)</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">rotated</span><span class="p">:</span>
                 <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">pc</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;log10(rate)&quot;</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
