@@ -177,6 +177,8 @@ class RateCollection:
         self.rates = []
         self.library = None
 
+        self.inert_nuclei = inert_nuclei
+
         self.symmetric_screening = symmetric_screening
         self.do_screening = do_screening
 
@@ -234,8 +236,8 @@ class RateCollection:
 
         self.unique_nuclei = sorted(u)
 
-        if inert_nuclei:
-            for n in inert_nuclei:
+        if self.inert_nuclei:
+            for n in self.inert_nuclei:
                 if isinstance(n, Nucleus):
                     nuc = n
                 else:
