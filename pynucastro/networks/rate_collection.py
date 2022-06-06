@@ -735,9 +735,9 @@ class RateCollection:
         all_rates = []
         for r in self.rates:
             if isinstance(r, ApproximateRate):
-                self.rates += r.get_child_rates
+                all_rates += r.get_child_rates
             else:
-                self.rates.append(r)
+                all_rates.append(r)
 
         for r in set(all_rates):
             screen_nuclei = r.ion_screen
