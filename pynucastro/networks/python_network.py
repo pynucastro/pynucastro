@@ -65,7 +65,7 @@ class PythonNetwork(RateCollection):
             string += f"    r_pa = {rate.secondary_reverse[1].fname}(tf)\n"
 
             # now the approximation
-            string += f"    rate = r_ag + r_ap * r_pg / (r_pg + r_pa)\n"
+            string += "    rate = r_ag + r_ap * r_pg / (r_pg + r_pa)\n"
 
         else:
 
@@ -76,7 +76,7 @@ class PythonNetwork(RateCollection):
             string += f"    r_pg = {rate.secondary_rates[1].fname}(tf)\n"
 
             # now the approximation
-            string += f"    rate = r_ga + r_pa * r_gp / (r_pg + r_pa)\n"
+            string += "    rate = r_ga + r_pa * r_gp / (r_pg + r_pa)\n"
 
         string += "    return rate\n\n"
         return string
