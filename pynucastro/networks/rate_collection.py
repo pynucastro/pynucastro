@@ -27,6 +27,8 @@ import networkx as nx
 from pynucastro.nucleus import Nucleus
 from pynucastro.rates import Rate, RatePair, ApproximateRate, Library
 
+from pynucastro.nucdata import PeriodicTable
+
 mpl.rcParams['figure.dpi'] = 100
 
 
@@ -220,6 +222,10 @@ class RateCollection:
         if precedence:
             self._make_distinguishable(precedence)
 
+        self._build_collection()
+
+    def _build_collection(self):
+
         # get the unique nuclei
         u = []
         for r in self.rates:
@@ -271,9 +277,7 @@ class RateCollection:
             elif isinstance(r.chapter, int):
                 self.reaclib_rates.append(n)
             else:
-                print('ERROR: Chapter type unknown for rate chapter {}'.format(
-                    str(r.chapter)))
-                exit()
+                raise NotImplementedError(f"Chapter type unknown for rate chapter {r.chapter}")
 
     def _read_rate_files(self, rate_files):
         # get the rates
@@ -376,6 +380,128 @@ class RateCollection:
         except IndexError:
             print("ERROR: rate identifier does not match a rate in this network.")
             raise
+
+    def get_rate_by_nuclei(self, reactants, products):
+        """given a list of reactants and products, return any matching rates"""
+        _tmp = [r for r in self.rates if
+                sorted(r.reactants) == sorted(reactants) and
+                sorted(r.products) == sorted(products)]
+
+        if not _tmp:
+            return None
+        else:
+            return _tmp
+
+    def remove_nuclei(self, nuc_list):
+        """remove the nuclei in nuc_list from the network along with any rates
+        that directly involve them (this doesn't affect approximate rates that
+        may have these nuclei as hidden intermediate links)"""
+
+        rates_to_delete = []
+        for nuc in nuc_list:
+            for rate in self.rates:
+                if nuc in rate.reactants + rate.products:
+                    print(f"looking to remove {rate}")
+                    rates_to_delete.append(rate)
+
+        for rate in set(rates_to_delete):
+            self.rates.remove(rate)
+
+        self._build_collection()
+
+    def make_ap_pg_approx(self):
+        """combine the rates A(a,g)B and A(a,p)X(p,g)B (and the reverse) into a single
+        effective approximate rate."""
+
+        # find all of the (a,g) rates
+        ag_rates = []
+        for r in self.rates:
+            if (len(r.reactants) == 2 and Nucleus("he4") in r.reactants and
+                len(r.products) == 1):
+                ag_rates.append(r)
+
+        # for each (a,g), check to see if the remaining rates are present
+        approx_rates = []
+        intermediate_nuclei = []
+
+        for r_ag in ag_rates:
+            prim_nuc = sorted(r_ag.reactants)[-1]
+            prim_prod = sorted(r_ag.products)[-1]
+
+            inter_nuc_Z = prim_nuc.Z + 1
+            inter_nuc_A = prim_nuc.A + 3
+
+            element = PeriodicTable.lookup_Z(inter_nuc_Z)
+
+            inter_nuc = Nucleus(f"{element.abbreviation}{inter_nuc_A}")
+
+            # look for A(a,p)X
+            _r = self.get_rate_by_nuclei([prim_nuc, Nucleus("he4")], [inter_nuc, Nucleus("p")])
+
+            if _r:
+                r_ap = _r[-1]
+            else:
+                continue
+
+            # look for X(p,g)B
+            _r = self.get_rate_by_nuclei([inter_nuc, Nucleus("p")], [prim_prod])
+
+            if _r:
+                r_pg = _r[-1]
+            else:
+                continue
+
+            # look for reverse B(g,a)A
+            _r = self.get_rate_by_nuclei([prim_prod], [prim_nuc, Nucleus("he4")])
+
+            if _r:
+                r_ga = _r[-1]
+            else:
+                continue
+
+            # look for reverse B(g,p)X
+            _r = self.get_rate_by_nuclei([prim_prod], [inter_nuc, Nucleus("p")])
+
+            if _r:
+                r_gp = _r[-1]
+            else:
+                continue
+
+            # look for reverse X(p,a)A
+            _r = self.get_rate_by_nuclei([inter_nuc, Nucleus("p")], [Nucleus("he4"), prim_nuc])
+
+            if _r:
+                r_pa = _r[-1]
+            else:
+                continue
+
+            # build the approximate rates
+            ar = ApproximateRate(r_ag, [r_ap, r_pg], r_ga, [r_gp, r_pa], approx_type="ap_pg")
+            ar_reverse = ApproximateRate(r_ag, [r_ap, r_pg], r_ga, [r_gp, r_pa], is_reverse=True, approx_type="ap_pg")
+
+            print(f"using approximate rate {ar}")
+            print(f"using approximate rate {ar_reverse}")
+
+            # keep track of the intermediate nuclei
+            intermediate_nuclei.append(inter_nuc)
+
+            # approximate rates
+            approx_rates += [ar, ar_reverse]
+
+        # remove the old rates from the rate list and add the approximate rate
+        for ar in approx_rates:
+            for r in ar.get_child_rates():
+                try:
+                    self.rates.remove(r)
+                    print(f"removing rate {r}")
+                except ValueError:
+                    pass
+
+            # add the approximate rates
+            self.rates.append(ar)
+
+        # regenerate the links
+        self._build_collection()
 
     def evaluate_rates(self, rho, T, composition):
         """evaluate the rates for a specific density, temperature, and
