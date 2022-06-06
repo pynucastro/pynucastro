@@ -39,3 +39,14 @@ class TestRateCollection:
     def test_find_reverse(self):
         rr = self.rc.find_reverse(self.rc.get_rate("he4_c12__o16"))
         assert rr.fname == "o16__he4_c12"
+
+    def test_evaluate_energy_gen(self):
+        # define a composition
+        comp = pyna.Composition(self.rc.unique_nuclei)
+
+        comp.set_all(0.3)
+        comp.normalize()
+
+        rho = 1e5
+        T = 1e8
+        assert self.rc.evaluate_energy_generation(rho, T, comp) == 32.24796008826701
