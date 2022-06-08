@@ -930,7 +930,7 @@ class Rate:
             r = self._find_rate(T)
 
         return r
-    
+
     def _find_rate(self, T):
         """ A helper function to find minimum temperature required to get reasonable rates
         and evaluate appropriate rates for each set"""
