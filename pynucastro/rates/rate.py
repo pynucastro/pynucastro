@@ -173,17 +173,6 @@ class SingleSet:
                                  self.a[5]*tf.T953 +
                                  self.a[6]*tf.lnT9)
 
-    def find_T_min(self):
-        """
-        returns the minimum temperature needed to find reasonable rates.
-        """
-        def func(T):
-            return self.f()(Tfactors(T))
-
-        guess = 1.0e7
-        T_min = minimize(func, guess, method="Nelder-Mead", tol=1.0e5)
-
-        return T_min.x[0]
 
     def set_string(self, prefix="set", plus_equal=False):
         """
@@ -922,7 +911,7 @@ class Rate:
         self.tabular_data_table = np.array(t_data2d)
 
     def eval(self, T, rhoY=None, check_T_min=False):
-        """ evauate the reaction rate for temperature T """
+        """ evaluate the reaction rate for temperature T """
 
         if self.tabular:
             data = self.tabular_data_table.astype(np.float)
@@ -933,20 +922,32 @@ class Rate:
             r = data[inde][5]
 
         else:
-            tf = Tfactors(T)
-            r = 0.0
 
-            for s in self.sets:
+            if (check_T_min and T < 1.0e8):
 
-                if check_T_min:
-                    T_min = s.find_T_min()
-                    assert T > T_min, f"T must be greater than {T_min} K to get reasonable rates"
+                T_min = minimize(self._find_rate, 1.0e7, method="Nelder-Mead", tol=1.0e5).x[0]
 
-                f = s.f()
-                r += f(tf)
-
+                assert T > T_min, f"T must be greater than {T_min} K to get reasonable rates"
+                
+            r = self._find_rate(T)
+                
         return r
-
+    
+    def _find_rate(self, T):
+        """ A helper function to find minimum temperature required to get reasonable rates
+        and evaluate appropriate rates for each set"""
+        
+        r = 0.0
+        tf = Tfactors(T)
+        
+        for s in self.sets:
+            
+            f = s.f()
+            r += f(tf)
+        
+        return r
+    
+    
     def get_nu_loss(self, T, rhoY):
         """ get the neutrino loss rate for the reaction if tabulated"""
 
