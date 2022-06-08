@@ -173,7 +173,6 @@ class SingleSet:
                                  self.a[5]*tf.T953 +
                                  self.a[6]*tf.lnT9)
 
-
     def set_string(self, prefix="set", plus_equal=False):
         """
         return a string containing the python code for this set
@@ -926,28 +925,26 @@ class Rate:
             if (check_T_min and T < 1.0e8):
 
                 T_min = minimize(self._find_rate, 1.0e7, method="Nelder-Mead", tol=1.0e5).x[0]
-
                 assert T > T_min, f"T must be greater than {T_min} K to get reasonable rates"
-                
+
             r = self._find_rate(T)
-                
+
         return r
     
     def _find_rate(self, T):
         """ A helper function to find minimum temperature required to get reasonable rates
         and evaluate appropriate rates for each set"""
-        
+
         r = 0.0
         tf = Tfactors(T)
-        
+
         for s in self.sets:
-            
+
             f = s.f()
             r += f(tf)
-        
+
         return r
-    
-    
+
     def get_nu_loss(self, T, rhoY):
         """ get the neutrino loss rate for the reaction if tabulated"""
 
