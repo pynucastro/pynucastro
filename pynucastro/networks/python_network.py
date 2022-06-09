@@ -4,6 +4,7 @@ source"""
 import sys
 
 from pynucastro.networks import RateCollection
+from pynucastro.rates.rate import ApproximateRate
 
 
 class PythonNetwork(RateCollection):
@@ -39,6 +40,44 @@ class PythonNetwork(RateCollection):
         string += "@numba.njit()\n"
         string += f"def {rate.fname}(tf):\n"
         string += f"{self.rate_string(rate, indent=4)}"
+        string += "    return rate\n\n"
+        return string
+
+    def approx_function_string(self, rate):
+        """
+        Return a string containing python function that computes the
+        approximate rate
+        """
+
+        if not rate.approx_type == "ap_pg":
+            raise NotImplementedError("don't know how to work with this approximation")
+
+        string = ""
+        string += "@numba.njit()\n"
+        string += f"def {rate.fname}(tf):\n"
+
+        if not rate.is_reverse:
+
+            # first we need to get all of the rates that make this up
+            string += f"    r_ag = {rate.primary_rate.fname}(tf)\n"
+            string += f"    r_ap = {rate.secondary_rates[0].fname}(tf)\n"
+            string += f"    r_pg = {rate.secondary_rates[1].fname}(tf)\n"
+            string += f"    r_pa = {rate.secondary_reverse[1].fname}(tf)\n"
+
+            # now the approximation
+            string += "    rate = r_ag + r_ap * r_pg / (r_pg + r_pa)\n"
+
+        else:
+
+            # first we need to get all of the rates that make this up
+            string += f"    r_ga = {rate.primary_reverse.fname}(tf)\n"
+            string += f"    r_pa = {rate.secondary_reverse[1].fname}(tf)\n"
+            string += f"    r_gp = {rate.secondary_reverse[0].fname}(tf)\n"
+            string += f"    r_pg = {rate.secondary_rates[1].fname}(tf)\n"
+
+            # now the approximation
+            string += "    rate = r_ga + r_pa * r_gp / (r_pg + r_pa)\n"
+
         string += "    return rate\n\n"
         return string
 
@@ -217,8 +256,24 @@ class PythonNetwork(RateCollection):
         of.write("def ye(Y):\n")
         of.write(f"{indent}return np.sum(Z * Y)/np.sum(A * Y)\n\n")
 
+        _rate_func_written = []
         for r in self.rates:
-            of.write(self.function_string(r))
+            if isinstance(r, ApproximateRate):
+                # write out the function string for all of the rates we depend on
+                for cr in r.get_child_rates():
+                    if cr in _rate_func_written:
+                        continue
+                    of.write(self.function_string(cr))
+                    _rate_func_written.append(cr)
+
+                # now write out the function that computes the
+                # approximate rate
+                of.write(self.approx_function_string(r))
+            else:
+                if r in _rate_func_written:
+                    continue
+                of.write(self.function_string(r))
+                _rate_func_written.append(r)
 
         of.write("def rhs(t, Y, rho, T):\n")
         of.write(f"{indent}return rhs_eq(t, Y, rho, T)\n\n")
