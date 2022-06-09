@@ -735,7 +735,7 @@ class RateCollection:
         all_rates = []
         for r in self.rates:
             if isinstance(r, ApproximateRate):
-                all_rates += r.get_child_rates
+                all_rates += r.get_child_rates()
             else:
                 all_rates.append(r)
 
