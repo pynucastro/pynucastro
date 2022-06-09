@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.nucdata.partition_function &mdash; pynucastro 1.6.0.post121+gb9bd80f documentation</title>
+  <title>pynucastro.nucdata.partition_function &mdash; pynucastro 1.6.0.post122+g3f0122e documentation</title>
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -55,12 +55,13 @@
 <p class="caption" role="heading"><span class="caption-text">Selecting Rates</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../library-examples.html">Selecting Rates from a Library</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../modify-example.html">Modifying Rates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../validate-example.html">Checking your network</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../electron-captures.html">Combining ReacLib Rates with Electron Capture Tables</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Advanced Usage</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../modify-example.html">Modifying Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../approx-rates-examples.html">Approximate Rates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../partition-function.html">Reverse Rates</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Writing Networks</span></p>
@@ -123,9 +124,10 @@
 <span class="sd">    lower_temperature() : returns the lowest value temperature value of the temperature list.</span>
 <span class="sd">    upper_temperature() : returns the lowest value temperature value of the temperature list.</span>
 <span class="sd">    construct_spline_interpolant(order) : interpolates temperature vs log(partition_function), using the</span>
-<span class="sd">                                      spline interpolation of order=3 by default, returning the function of T.</span>
+<span class="sd">    spline interpolation of order=3 by default, returning the function of T.</span>
 
 <span class="sd">    The dunder methods of this class are</span>
+
 <span class="sd">    __add__ : if two partition functions do not overlap their temperatures, we define the addition at the incorporation</span>
 <span class="sd">          of all the temperatures and their partition function values, respectively.</span>
 <span class="sd">    __call__: This object allow us to treat the class object as function of T, returning the appropiate value of</span>

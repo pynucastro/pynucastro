@@ -43,7 +43,6 @@ codes.
    :caption: Selecting Rates
 
    library-examples.ipynb
-   modify-example.ipynb
    validate-example.ipynb
    electron-captures.ipynb
 
@@ -51,6 +50,8 @@ codes.
    :maxdepth: 1
    :caption: Advanced Usage
 
+   modify-example.ipynb
+   approx-rates-examples.ipynb
    partition-function
 
 .. toctree::

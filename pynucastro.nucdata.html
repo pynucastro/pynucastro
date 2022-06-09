@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.nucdata package &mdash; pynucastro 1.6.0.post121+gb9bd80f documentation</title>
+  <title>pynucastro.nucdata package &mdash; pynucastro 1.6.0.post122+g3f0122e documentation</title>
       <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -58,12 +58,13 @@
 <p class="caption" role="heading"><span class="caption-text">Selecting Rates</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="library-examples.html">Selecting Rates from a Library</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modify-example.html">Modifying Rates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="validate-example.html">Checking your network</a></li>
 <li class="toctree-l1"><a class="reference internal" href="electron-captures.html">Combining ReacLib Rates with Electron Capture Tables</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Advanced Usage</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="modify-example.html">Modifying Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="approx-rates-examples.html">Approximate Rates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="partition-function.html">Reverse Rates</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Writing Networks</span></p>
@@ -252,16 +253,12 @@ interpolant_order  : stores the interpolation spline order.</p>
 upper_partition()   : returns the highest temperature value of the partition_function list.
 lower_temperature() : returns the lowest value temperature value of the temperature list.
 upper_temperature() : returns the lowest value temperature value of the temperature list.
-construct_spline_interpolant(order) : interpolates temperature vs log(partition_function), using the</p>
-<blockquote>
-<div><p>spline interpolation of order=3 by default, returning the function of T.</p>
-</div></blockquote>
-<p>The dunder methods of this class are
-__add__ : if two partition functions do not overlap their temperatures, we define the addition at the incorporation</p>
-<blockquote>
-<div><p>of all the temperatures and their partition function values, respectively.</p>
-</div></blockquote>
+construct_spline_interpolant(order) : interpolates temperature vs log(partition_function), using the
+spline interpolation of order=3 by default, returning the function of T.</p>
+<p>The dunder methods of this class are</p>
 <dl class="simple">
+<dt>__add__<span class="classifier">if two partition functions do not overlap their temperatures, we define the addition at the incorporation</span></dt><dd><p>of all the temperatures and their partition function values, respectively.</p>
+</dd>
 <dt>__call__: This object allow us to treat the class object as function of T, returning the appropiate value of</dt><dd><p>the partition function.</p>
 </dd>
 </dl>
