@@ -205,7 +205,7 @@ class TestRate:
         assert self.rate2.heaviest() == Nucleus("t")
 
 
-class TestWeakRates:
+class TestDerivedRate:
 
     @classmethod
     def setup_class(cls):
@@ -213,6 +213,90 @@ class TestWeakRates:
         pass
 
     @classmethod
+    def teardown_class(cls):
+        """ this is run once for each class before any tests """
+        pass
+
+    def setup_method(self):
+        """ this is run once for each class before any tests """
+        self.reaclib_data = rates.Library('20180319default2')
+
+    def teardown_method(self):
+        """ this is run once for each class before any tests """
+        pass
+
+    def test_ar37_na_s34(self):
+        """
+        Here we test the inverse rate, computed by the use of detailed balance
+        of a:
+
+        A + B -> C + D
+
+        reaction type.
+        """
+
+        specs = rates.RateFilter(reactants=['s34', 'a'], products=['ar37', 'n'])
+        specs_inv = rates.RateFilter(reactants=['ar37', 'n'], products=['s34', 'a'])
+
+        s34_an_ar37 = self.reaclib_data.filter(filter_spec=specs).get_rates()[0]
+        ar37_na_s34_reaclib = self.reaclib_data.filter(filter_spec=specs_inv).get_rates()[0]
+
+        ar37_na_s34_derived = rates.DerivedRate(rate=s34_an_ar37)
+
+        assert ar37_na_s34_reaclib.eval(T=2.0e9) == approx(ar37_na_s34_derived.eval(T=2.0e9), rel=2.4e-5)
+
+    def test_ar35_pg_k36(self):
+        """
+        Here we test the inverse rate, computed by the use of detailed balance
+        of a:
+
+        A + B -> C
+
+        reaction type.
+        """
+
+        specs = rates.RateFilter(reactants=['p', 'ar35'], products=['k36'])
+        specs_inv = rates.RateFilter(reactants=['k36'], products=['p', 'ar35'])
+
+        ar35_pg_k36 = self.reaclib_data.filter(filter_spec=specs).get_rates()[0]
+        k36_gp_ar35_reaclib = self.reaclib_data.filter(filter_spec=specs_inv).get_rates()[0]
+
+        k36_gp_ar35_derived = rates.DerivedRate(rate=ar35_pg_k36)
+
+        assert k36_gp_ar35_reaclib.eval(T=2.0e9) == approx(k36_gp_ar35_derived.eval(T=2.0e9), rel=1.7e-5)
+
+    def test_ar35_pg_k36_with_pf(self):
+        """
+        This function test the correct rate value if we take in consideration the partition
+        functions on the range 1.0e9 to 100.0e9
+        """
+
+        specs = rates.RateFilter(reactants=['p', 'ar35'], products=['k36'])
+        ar35_pg_k36 = self.reaclib_data.filter(filter_spec=specs).get_rates()[0]
+        k36_gp_ar35_derived = rates.DerivedRate(rate=ar35_pg_k36, use_pf=True)
+
+        assert k36_gp_ar35_derived.eval(T=2.0e9) == approx(4197540.737818229)
+
+    def test_ar35_pg_k36_with_A_nuc(self):
+        """
+        This function test the correct rate value if we take in consideration the
+        exact values of atomic nuclear weight instead of the atomic weight A_nuc = A*m_u
+        """
+
+        specs = rates.RateFilter(reactants=['p', 'ar35'], products=['k36'])
+        ar35_pg_k36 = self.reaclib_data.filter(filter_spec=specs).get_rates()[0]
+        k36_gp_ar35_derived = rates.DerivedRate(rate=ar35_pg_k36, use_A_nuc=True)
+
+        assert k36_gp_ar35_derived.eval(T=2.0e9) == approx(5103206.8505866425)
+
+
+class TestWeakRates:
+
+    @classmethod
+    def setup_class(cls):
+        """ this is run once for each class before any tests """
+        pass
+
     def teardown_class(cls):
         """ this is run once for each class after all tests """
         pass

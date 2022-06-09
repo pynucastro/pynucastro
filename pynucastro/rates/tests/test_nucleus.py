@@ -19,6 +19,7 @@ class TestNucleus:
         """ this is run before each test """
 
         self.p = Nucleus("p")
+        self.n = Nucleus("n")
         self.h1 = Nucleus("H1")
         self.d = Nucleus("d")
         self.he4 = Nucleus("He4")
@@ -86,3 +87,10 @@ class TestNucleus:
         assert self.ne41.partition_function(32.0e9) == approx(4.901052000000001)
         assert self.ni61.partition_function(32.0e9) == approx(1927800.437886083)
         assert self.pb237.partition_function(32.0e9) == approx(5.05620611030359e+28)
+
+    def test_mass(self):
+
+        assert self.p.A_nuc == approx(1.0078250307554963)
+        assert self.n.A_nuc == approx(1.0086649179839473)
+        assert self.o16.A_nuc == approx(15.994914621587304)
+        assert self.c12.A_nuc == 12.0

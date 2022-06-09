@@ -1,7 +1,7 @@
 """
 Classes and methods to interface with files storing rate data.
 """
-
+from scipy.constants import physical_constants
 import os
 import re
 import io
@@ -43,6 +43,12 @@ except ImportError:
 
 from pynucastro.nucleus import Nucleus
 
+hbar, _, _ = physical_constants['reduced Planck constant']
+amu, _, _ = physical_constants['atomic mass constant']
+k_B_mev_k, _, _ = physical_constants['Boltzmann constant in eV/K']
+k_B_mev_k /= 1.0e6
+k_B, _, _ = physical_constants['Boltzmann constant']
+N_a, _, _ = physical_constants['Avogadro constant']
 
 _pynucastro_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 _pynucastro_rates_dir = os.path.join(_pynucastro_dir, 'library')
@@ -918,7 +924,7 @@ class Rate:
         """ evauate the reaction rate for temperature T """
 
         if self.tabular:
-            data = self.tabular_data_table.astype(np.float)
+            data = self.tabular_data_table.astype(float)
             # find the nearest value of T and rhoY in the data table
             T_nearest = (data[:, 1])[np.abs((data[:, 1]) - T).argmin()]
             rhoY_nearest = (data[:, 0])[np.abs((data[:, 0]) - rhoY).argmin()]
@@ -1031,6 +1037,94 @@ class Rate:
             ax.set_title(fr"{self.pretty_string}")
 
         return fig
+
+
+class DerivedRate(Rate):
+    """
+    This class is a derived class from `Rate` with the purpose of computing the inverse rate
+    by the application of detailed balance to the forward reactions.
+    """
+
+    def __init__(self, rate, use_pf=False, use_A_nuc=False):
+
+        self.use_pf = use_pf
+        self.rate = rate
+        self.use_A_nuc = use_A_nuc
+
+        assert not self.rate.tabular
+        assert not self.rate.weak
+        assert isinstance(rate, Rate)
+
+        for nuc in self.rate.reactants:
+            try:
+                assert nuc.spin_states
+            except AssertionError:
+                raise Exception('One of the reactants spin ground state, is not defined')
+
+        for nuc in self.rate.products:
+            try:
+                assert nuc.spin_states
+            except AssertionError:
+                raise Exception('One of the products spin ground state, is not defined')
+
+        if self.rate.reverse:
+            raise Exception("ERROR: Computing derived rates from reverse rates")
+
+        derived_sets = []
+        for ssets in self.rate.sets:
+            a = ssets.a
+            prefactor = 0.0
+
+            if len(self.rate.products) == 1:
+                prefactor = -np.log(N_a)
+
+            if not self.use_A_nuc:
+                for nucr in self.rate.reactants:
+                    prefactor += np.log(nucr.spin_states) + 1.5*np.log(nucr.A)
+                for nucp in self.rate.products:
+                    prefactor += -np.log(nucp.spin_states) - 1.5*np.log(nucp.A)
+            else:
+                for nucr in self.rate.reactants:
+                    prefactor += np.log(nucr.spin_states) + 1.5*np.log(nucr.A_nuc)
+                for nucp in self.rate.products:
+                    prefactor += -np.log(nucp.spin_states) - 1.5*np.log(nucp.A_nuc)
+
+            if len(self.rate.reactants) == len(self.rate.products):
+                prefactor += 0.0
+            else:
+                F = (amu * k_B * 1.0e5 / (2.0*np.pi*hbar**2))**(1.5*(len(self.rate.reactants) - len(self.rate.products)))
+                prefactor += np.log(F)
+
+            a_rev = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+            a_rev[0] = prefactor + a[0]
+            a_rev[1] = a[1] - self.rate.Q / (1.0e9 * k_B_mev_k)
+            a_rev[2] = a[2]
+            a_rev[3] = a[3]
+            a_rev[4] = a[4]
+            a_rev[5] = a[5]
+            a_rev[6] = a[6] + 1.5*(len(self.rate.reactants) - len(self.rate.products))
+            sset_d = SingleSet(a=a_rev, labelprops=rate.labelprops)
+            derived_sets.append(sset_d)
+
+        super().__init__(rfile=self.rate.rfile, rfile_path=self.rate.rfile_path, chapter=self.rate.chapter, original_source=self.rate.original_source,
+                reactants=self.rate.products, products=self.rate.reactants, sets=derived_sets, labelprops=self.rate.labelprops, Q=-self.rate.Q)
+
+    def eval(self, T, rhoY=None):
+
+        r = super().eval(T=T, rhoY=rhoY)
+        z_r = 1.0
+        z_p = 1.0
+        if self.use_pf:
+            for nucr in self.rate.reactants:
+                z_r *= nucr.partition_function(T)
+
+            for nucp in self.rate.products:
+                z_p *= nucp.partition_function(T)
+
+            return r*z_r/z_p
+
+        else:
+            return r
 
 
 class RatePair:
