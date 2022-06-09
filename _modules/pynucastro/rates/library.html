@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.rates.library &mdash; pynucastro 1.6.0.post122+g3f0122e documentation</title>
+  <title>pynucastro.rates.library &mdash; pynucastro 1.6.0.post123+ga669e25 documentation</title>
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -106,6 +106,7 @@
 
 <span class="kn">from</span> <span class="nn">pynucastro.nucleus</span> <span class="kn">import</span> <span class="n">Nucleus</span><span class="p">,</span> <span class="n">UnsupportedNucleus</span>
 <span class="kn">from</span> <span class="nn">pynucastro.rates</span> <span class="kn">import</span> <span class="n">Rate</span><span class="p">,</span> <span class="n">_find_rate_file</span>
+<span class="kn">from</span> <span class="nn">pynucastro.rates.rate</span> <span class="kn">import</span> <span class="n">DerivedRate</span>
 
 
 <div class="viewcode-block" id="list_known_rates"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.library.list_known_rates">[docs]</a><span class="k">def</span> <span class="nf">list_known_rates</span><span class="p">():</span>
@@ -495,12 +496,39 @@
 
         <span class="n">only_bwd_filter</span> <span class="o">=</span> <span class="n">RateFilter</span><span class="p">(</span><span class="n">filter_function</span><span class="o">=</span><span class="k">lambda</span> <span class="n">r</span><span class="p">:</span> <span class="n">r</span><span class="o">.</span><span class="n">reverse</span><span class="p">)</span>
         <span class="n">only_bwd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">only_bwd_filter</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">only_bwd</span></div></div>
+        <span class="k">return</span> <span class="n">only_bwd</span></div>
+
+<div class="viewcode-block" id="Library.derived_forward"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.library.Library.derived_forward">[docs]</a>    <span class="k">def</span> <span class="nf">derived_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="n">collect_rates</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">onlyfwd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">onlyfwd</span><span class="o">.</span><span class="n">get_rates</span><span class="p">():</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">DerivedRate</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">use_pf</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">use_A_nuc</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">AssertionError</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">collect_rates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+
+        <span class="n">list1</span> <span class="o">=</span> <span class="n">Library</span><span class="p">(</span><span class="n">rates</span><span class="o">=</span><span class="n">collect_rates</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">list1</span></div>
+
+<div class="viewcode-block" id="Library.derived_backward"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.library.Library.derived_backward">[docs]</a>    <span class="k">def</span> <span class="nf">derived_backward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">use_pf</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">use_A_nuc</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+
+        <span class="n">derived_rates</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">onlyfwd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">derived_forward</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">onlyfwd</span><span class="o">.</span><span class="n">get_rates</span><span class="p">():</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="n">DerivedRate</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">use_pf</span><span class="o">=</span><span class="n">use_pf</span><span class="p">,</span> <span class="n">use_A_nuc</span><span class="o">=</span><span class="n">use_A_nuc</span><span class="p">)</span>
+            <span class="n">derived_rates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+        <span class="n">onlybwd</span> <span class="o">=</span> <span class="n">Library</span><span class="p">(</span><span class="n">rates</span><span class="o">=</span><span class="n">derived_rates</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">onlybwd</span></div></div>
 
 
 <div class="viewcode-block" id="RateFilter"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.library.RateFilter">[docs]</a><span class="k">class</span> <span class="nc">RateFilter</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;RateFilter filters out a specified rate or set of rates</span>
-
 <span class="sd">    A RateFilter stores selection rules specifying a rate or group of</span>
 <span class="sd">    rates to assist in searching for rates stored in a Library.</span>
 <span class="sd">    &quot;&quot;&quot;</span>

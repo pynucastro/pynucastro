@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.rates.rate &mdash; pynucastro 1.6.0.post122+g3f0122e documentation</title>
+  <title>pynucastro.rates.rate &mdash; pynucastro 1.6.0.post123+ga669e25 documentation</title>
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -103,7 +103,7 @@
 <span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Classes and methods to interface with files storing rate data.</span>
 <span class="sd">&quot;&quot;&quot;</span>
-
+<span class="kn">from</span> <span class="nn">scipy.constants</span> <span class="kn">import</span> <span class="n">physical_constants</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">io</span>
@@ -145,6 +145,12 @@
 
 <span class="kn">from</span> <span class="nn">pynucastro.nucleus</span> <span class="kn">import</span> <span class="n">Nucleus</span>
 
+<span class="n">hbar</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">physical_constants</span><span class="p">[</span><span class="s1">&#39;reduced Planck constant&#39;</span><span class="p">]</span>
+<span class="n">amu</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">physical_constants</span><span class="p">[</span><span class="s1">&#39;atomic mass constant&#39;</span><span class="p">]</span>
+<span class="n">k_B_mev_k</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">physical_constants</span><span class="p">[</span><span class="s1">&#39;Boltzmann constant in eV/K&#39;</span><span class="p">]</span>
+<span class="n">k_B_mev_k</span> <span class="o">/=</span> <span class="mf">1.0e6</span>
+<span class="n">k_B</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">physical_constants</span><span class="p">[</span><span class="s1">&#39;Boltzmann constant&#39;</span><span class="p">]</span>
+<span class="n">N_a</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">physical_constants</span><span class="p">[</span><span class="s1">&#39;Avogadro constant&#39;</span><span class="p">]</span>
 
 <span class="n">_pynucastro_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)))</span>
 <span class="n">_pynucastro_rates_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_pynucastro_dir</span><span class="p">,</span> <span class="s1">&#39;library&#39;</span><span class="p">)</span>
@@ -1020,7 +1026,7 @@
         <span class="sd">&quot;&quot;&quot; evauate the reaction rate for temperature T &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabular</span><span class="p">:</span>
-            <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabular_data_table</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabular_data_table</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
             <span class="c1"># find the nearest value of T and rhoY in the data table</span>
             <span class="n">T_nearest</span> <span class="o">=</span> <span class="p">(</span><span class="n">data</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])[</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">((</span><span class="n">data</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])</span> <span class="o">-</span> <span class="n">T</span><span class="p">)</span><span class="o">.</span><span class="n">argmin</span><span class="p">()]</span>
             <span class="n">rhoY_nearest</span> <span class="o">=</span> <span class="p">(</span><span class="n">data</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])[</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">((</span><span class="n">data</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span> <span class="o">-</span> <span class="n">rhoY</span><span class="p">)</span><span class="o">.</span><span class="n">argmin</span><span class="p">()]</span>
@@ -1133,6 +1139,94 @@
             <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">fr</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">pretty_string</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">fig</span></div></div>
+
+
+<div class="viewcode-block" id="DerivedRate"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.DerivedRate">[docs]</a><span class="k">class</span> <span class="nc">DerivedRate</span><span class="p">(</span><span class="n">Rate</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This class is a derived class from `Rate` with the purpose of computing the inverse rate</span>
+<span class="sd">    by the application of detailed balance to the forward reactions.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rate</span><span class="p">,</span> <span class="n">use_pf</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">use_A_nuc</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">use_pf</span> <span class="o">=</span> <span class="n">use_pf</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rate</span> <span class="o">=</span> <span class="n">rate</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">use_A_nuc</span> <span class="o">=</span> <span class="n">use_A_nuc</span>
+
+        <span class="k">assert</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">tabular</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">weak</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rate</span><span class="p">,</span> <span class="n">Rate</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">reactants</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="n">nuc</span><span class="o">.</span><span class="n">spin_states</span>
+            <span class="k">except</span> <span class="ne">AssertionError</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;One of the reactants spin ground state, is not defined&#39;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">products</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="n">nuc</span><span class="o">.</span><span class="n">spin_states</span>
+            <span class="k">except</span> <span class="ne">AssertionError</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;One of the products spin ground state, is not defined&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">reverse</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;ERROR: Computing derived rates from reverse rates&quot;</span><span class="p">)</span>
+
+        <span class="n">derived_sets</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">ssets</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">sets</span><span class="p">:</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="n">ssets</span><span class="o">.</span><span class="n">a</span>
+            <span class="n">prefactor</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">products</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">prefactor</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">N_a</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_A_nuc</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">nucr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">reactants</span><span class="p">:</span>
+                    <span class="n">prefactor</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">nucr</span><span class="o">.</span><span class="n">spin_states</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1.5</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">nucr</span><span class="o">.</span><span class="n">A</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">nucp</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">products</span><span class="p">:</span>
+                    <span class="n">prefactor</span> <span class="o">+=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">nucp</span><span class="o">.</span><span class="n">spin_states</span><span class="p">)</span> <span class="o">-</span> <span class="mf">1.5</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">nucp</span><span class="o">.</span><span class="n">A</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">nucr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">reactants</span><span class="p">:</span>
+                    <span class="n">prefactor</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">nucr</span><span class="o">.</span><span class="n">spin_states</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1.5</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">nucr</span><span class="o">.</span><span class="n">A_nuc</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">nucp</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">products</span><span class="p">:</span>
+                    <span class="n">prefactor</span> <span class="o">+=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">nucp</span><span class="o">.</span><span class="n">spin_states</span><span class="p">)</span> <span class="o">-</span> <span class="mf">1.5</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">nucp</span><span class="o">.</span><span class="n">A_nuc</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">products</span><span class="p">):</span>
+                <span class="n">prefactor</span> <span class="o">+=</span> <span class="mf">0.0</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">F</span> <span class="o">=</span> <span class="p">(</span><span class="n">amu</span> <span class="o">*</span> <span class="n">k_B</span> <span class="o">*</span> <span class="mf">1.0e5</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.0</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">hbar</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span><span class="o">**</span><span class="p">(</span><span class="mf">1.5</span><span class="o">*</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">products</span><span class="p">)))</span>
+                <span class="n">prefactor</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">F</span><span class="p">)</span>
+
+            <span class="n">a_rev</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
+            <span class="n">a_rev</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">prefactor</span> <span class="o">+</span> <span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">a_rev</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">Q</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0e9</span> <span class="o">*</span> <span class="n">k_B_mev_k</span><span class="p">)</span>
+            <span class="n">a_rev</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+            <span class="n">a_rev</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+            <span class="n">a_rev</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+            <span class="n">a_rev</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>
+            <span class="n">a_rev</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span> <span class="o">+</span> <span class="mf">1.5</span><span class="o">*</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">products</span><span class="p">))</span>
+            <span class="n">sset_d</span> <span class="o">=</span> <span class="n">SingleSet</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="n">a_rev</span><span class="p">,</span> <span class="n">labelprops</span><span class="o">=</span><span class="n">rate</span><span class="o">.</span><span class="n">labelprops</span><span class="p">)</span>
+            <span class="n">derived_sets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sset_d</span><span class="p">)</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">rfile</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">rfile</span><span class="p">,</span> <span class="n">rfile_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">rfile_path</span><span class="p">,</span> <span class="n">chapter</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">chapter</span><span class="p">,</span> <span class="n">original_source</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">original_source</span><span class="p">,</span>
+                <span class="n">reactants</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">products</span><span class="p">,</span> <span class="n">products</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">reactants</span><span class="p">,</span> <span class="n">sets</span><span class="o">=</span><span class="n">derived_sets</span><span class="p">,</span> <span class="n">labelprops</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">labelprops</span><span class="p">,</span> <span class="n">Q</span><span class="o">=-</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">Q</span><span class="p">)</span>
+
+<div class="viewcode-block" id="DerivedRate.eval"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.DerivedRate.eval">[docs]</a>    <span class="k">def</span> <span class="nf">eval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">rhoY</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+        <span class="n">r</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">T</span><span class="o">=</span><span class="n">T</span><span class="p">,</span> <span class="n">rhoY</span><span class="o">=</span><span class="n">rhoY</span><span class="p">)</span>
+        <span class="n">z_r</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="n">z_p</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_pf</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">nucr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">reactants</span><span class="p">:</span>
+                <span class="n">z_r</span> <span class="o">*=</span> <span class="n">nucr</span><span class="o">.</span><span class="n">partition_function</span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">nucp</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">products</span><span class="p">:</span>
+                <span class="n">z_p</span> <span class="o">*=</span> <span class="n">nucp</span><span class="o">.</span><span class="n">partition_function</span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">r</span><span class="o">*</span><span class="n">z_r</span><span class="o">/</span><span class="n">z_p</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">r</span></div></div>
 
 
 <div class="viewcode-block" id="RatePair"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.RatePair">[docs]</a><span class="k">class</span> <span class="nc">RatePair</span><span class="p">:</span>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.nucleus.nucleus &mdash; pynucastro 1.6.0.post122+g3f0122e documentation</title>
+  <title>pynucastro.nucleus.nucleus &mdash; pynucastro 1.6.0.post123+ga669e25 documentation</title>
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -107,12 +107,19 @@
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">re</span>
 
+<span class="kn">from</span> <span class="nn">scipy.constants</span> <span class="kn">import</span> <span class="n">physical_constants</span>
 <span class="kn">from</span> <span class="nn">pynucastro.nucdata</span> <span class="kn">import</span> <span class="n">UnidentifiedElement</span><span class="p">,</span> <span class="n">PeriodicTable</span><span class="p">,</span> <span class="n">PartitionFunctionCollection</span><span class="p">,</span> <span class="n">BindingTable</span><span class="p">,</span> <span class="n">SpinTable</span>
+<span class="kn">from</span> <span class="nn">pynucastro.nucdata.mass_nuclide</span> <span class="kn">import</span> <span class="n">MassTable</span>
 
 <span class="n">_pynucastro_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)))</span>
 <span class="n">_pynucastro_rates_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_pynucastro_dir</span><span class="p">,</span> <span class="s1">&#39;library&#39;</span><span class="p">)</span>
 <span class="n">_pynucastro_tabular_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_pynucastro_rates_dir</span><span class="p">,</span> <span class="s1">&#39;tabular&#39;</span><span class="p">)</span>
 
+<span class="c1">#set the atomic mass unit constant in MeV</span>
+<span class="n">m_u</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">physical_constants</span><span class="p">[</span><span class="s1">&#39;atomic mass constant energy equivalent in MeV&#39;</span><span class="p">]</span>
+
+<span class="c1">#read the mass excess table once and store it at the module-level</span>
+<span class="n">_mass_table</span> <span class="o">=</span> <span class="n">MassTable</span><span class="p">()</span>
 
 <span class="c1">#read the spin table once and store it at the module-level</span>
 <span class="n">_spin_table</span> <span class="o">=</span> <span class="n">SpinTable</span><span class="p">(</span><span class="n">set_double_gs</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
@@ -120,7 +127,7 @@
 <span class="c1"># read the binding energy table once and store it at the module-level</span>
 <span class="n">_binding_table</span> <span class="o">=</span> <span class="n">BindingTable</span><span class="p">()</span>
 
-
+<span class="c1"># read the partition function table once and store it at the module-level</span>
 <span class="n">_pcollection</span> <span class="o">=</span> <span class="n">PartitionFunctionCollection</span><span class="p">(</span><span class="n">use_high_temperatures</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">use_set</span><span class="o">=</span><span class="s1">&#39;frdm&#39;</span><span class="p">)</span>
 
 
@@ -143,6 +150,7 @@
 <span class="sd">    :var caps_name:       capitalized short species name (e.g. &quot;He4&quot;)</span>
 <span class="sd">    :var el:              element name (e.g. &quot;he&quot;)</span>
 <span class="sd">    :var pretty:          LaTeX formatted version of the nucleus name</span>
+<span class="sd">    :var A_nuc:           Nuclear Mass in amu</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">_cache</span> <span class="o">=</span> <span class="p">{}</span>
@@ -242,6 +250,13 @@
         <span class="k">except</span> <span class="ne">NotImplementedError</span><span class="p">:</span>
             <span class="c1"># the binding energy table doesn&#39;t know about this nucleus</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">nucbind</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># Now we will define the Nuclear Mass,</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">A_nuc</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">A</span><span class="p">)</span> <span class="o">+</span> <span class="n">_mass_table</span><span class="o">.</span><span class="n">get_mass_diff</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">short_spec_name</span><span class="p">)</span><span class="o">.</span><span class="n">dm</span> <span class="o">/</span> <span class="n">m_u</span>
+        <span class="k">except</span> <span class="ne">NotImplementedError</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">A_nuc</span> <span class="o">=</span> <span class="kc">None</span>
 
 <div class="viewcode-block" id="Nucleus.from_cache"><a class="viewcode-back" href="../../../pynucastro.nucleus.html#pynucastro.nucleus.nucleus.Nucleus.from_cache">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_cache</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">dummy</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
