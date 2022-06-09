@@ -22,9 +22,10 @@ class PartitionFunction:
     lower_temperature() : returns the lowest value temperature value of the temperature list.
     upper_temperature() : returns the lowest value temperature value of the temperature list.
     construct_spline_interpolant(order) : interpolates temperature vs log(partition_function), using the
-                                      spline interpolation of order=3 by default, returning the function of T.
+    spline interpolation of order=3 by default, returning the function of T.
 
     The dunder methods of this class are
+
     __add__ : if two partition functions do not overlap their temperatures, we define the addition at the incorporation
           of all the temperatures and their partition function values, respectively.
     __call__: This object allow us to treat the class object as function of T, returning the appropiate value of
