@@ -52,7 +52,6 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.ftags['<nrat_tabular>'] = self._nrat_tabular
         self.ftags['<nrxn>'] = self._nrxn
         self.ftags['<ebind>'] = self._ebind
-        self.ftags['<screen_add>'] = self._screen_add
         self.ftags['<compute_screening_factors>'] = self._compute_screening_factors
         self.ftags['<write_reaclib_metadata>'] = self._write_reaclib_metadata
         self.ftags['<table_num>'] = self._table_num
@@ -278,19 +277,6 @@ class BaseCxxNetwork(ABC, RateCollection):
     def _ebind(self, n_indent, of):
         for nuc in self.unique_nuclei:
             of.write(f'{self.indent*n_indent}ebind_per_nucleon({nuc.cindex()}) = {nuc.nucbind}_rt;\n')
-
-    def _screen_add(self, n_indent, of):
-        screening_map = self.get_screening_map()
-        for scr in screening_map:
-            of.write(f'{self.indent*n_indent}add_screening_factor(jscr++, ')
-            if not scr.n1.dummy:
-                of.write(f'zion[{scr.n1.cindex()}-1], aion[{scr.n1.cindex()}-1], ')
-            else:
-                of.write(f'{float(scr.n1.Z)}_rt, {float(scr.n1.A)}_rt, ')
-            if not scr.n2.dummy:
-                of.write(f'zion[{scr.n2.cindex()}-1], aion[{scr.n2.cindex()}-1]);\n\n')
-            else:
-                of.write(f'{float(scr.n2.Z)}_rt, {float(scr.n2.A)}_rt);\n\n')
 
     def _write_reaclib_metadata(self, n_indent, of):
         jset = 0
