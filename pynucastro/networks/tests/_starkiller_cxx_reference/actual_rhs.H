@@ -385,10 +385,6 @@ void actual_rhs_init () {
 
     init_tabular();
 
-    screening_init();
-
-    net_screening_init();
-
 }
 
 
