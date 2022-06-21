@@ -717,8 +717,8 @@ class Rate:
         if not self.weak and not self.tabular:
             # there should be the same number of protons on each side and
             # the same number of neutrons on each side
-            assert np.sum([n.Z for n in self.reactants]) == np.sum([n.Z for n in self.products])
-            assert np.sum([n.A for n in self.reactants]) == np.sum([n.A for n in self.products])
+            assert sum(n.Z for n in self.reactants) == sum(n.Z for n in self.products)
+            assert sum(n.A for n in self.reactants) == sum(n.A for n in self.products)
 
             if len(self.products) == 1:
                 self.rhs_other.append("gamma")
@@ -729,7 +729,7 @@ class Rate:
 
                 # these are either electron capture or beta- decay
 
-                if np.sum([n.Z for n in self.reactants]) == np.sum([n.Z for n in self.products]) + 1:
+                if sum(n.Z for n in self.reactants) == sum(n.Z for n in self.products) + 1:
                     # electron capture
                     self.lhs_other.append("e-")
                     self.rhs_other.append("nu")
@@ -744,7 +744,7 @@ class Rate:
 
                 # we expect an electron on the left -- let's make sure
                 # the charge on the left should be +1 the charge on the right
-                assert np.sum([n.Z for n in self.reactants]) == np.sum([n.Z for n in self.products]) + 1
+                assert sum(n.Z for n in self.reactants) == sum(n.Z for n in self.products) + 1
 
                 self.lhs_other.append("e-")
                 self.rhs_other.append("nu")
@@ -753,7 +753,7 @@ class Rate:
 
                 # we expect a positron on the right -- let's make sure
                 try:
-                    assert np.sum([n.Z for n in self.reactants]) == np.sum([n.Z for n in self.products]) + 1
+                    assert sum(n.Z for n in self.reactants) == sum(n.Z for n in self.products) + 1
                 except AssertionError:
                     print(self.reactants)
                     print(self.products)
@@ -767,7 +767,7 @@ class Rate:
             elif "_neg_" in self.weak_type:
 
                 # we expect an electron on the right -- let's make sure
-                assert np.sum([n.Z for n in self.reactants]) + 1 == np.sum([n.Z for n in self.products])
+                assert sum(n.Z for n in self.reactants) + 1 == sum(n.Z for n in self.products)
 
                 self.rhs_other.append("e-")
                 self.rhs_other.append("nubar")
@@ -777,11 +777,11 @@ class Rate:
                 # we need to figure out what the rate is.  We'll assume that it is
                 # not an electron capture
 
-                if np.sum([n.Z for n in self.reactants]) == np.sum([n.Z for n in self.products]) + 1:
+                if sum(n.Z for n in self.reactants) == sum(n.Z for n in self.products) + 1:
                     self.rhs_other.append("e+")
                     self.rhs_other.append("nu")
 
-                elif np.sum([n.Z for n in self.reactants]) + 1 == np.sum([n.Z for n in self.products]):
+                elif sum(n.Z for n in self.reactants) + 1 == sum(n.Z for n in self.products):
 
                     self.rhs_other.append("e-")
                     self.rhs_other.append("nubar")
