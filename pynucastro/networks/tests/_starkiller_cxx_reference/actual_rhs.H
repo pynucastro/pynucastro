@@ -104,7 +104,7 @@ void evaluate_rates(const burn_t& state, rate_eval_t& rate_eval) {
         static_assert(scn_fac.z1 == 6.0_rt);
 
 
-        actual_screen5(pstate, scn_fac, scor, dscor_dt);
+        actual_screen(pstate, scn_fac, scor, dscor_dt);
     }
 
 
@@ -131,7 +131,7 @@ void evaluate_rates(const burn_t& state, rate_eval_t& rate_eval) {
         static_assert(scn_fac.z1 == 2.0_rt);
 
 
-        actual_screen5(pstate, scn_fac, scor, dscor_dt);
+        actual_screen(pstate, scn_fac, scor, dscor_dt);
     }
 
 
