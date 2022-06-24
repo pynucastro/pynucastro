@@ -3,7 +3,7 @@ rates that together make up a network."""
 
 # disable a complaint about SymLogNorm
 #pylint: disable=redundant-keyword-arg
-
+ 
 # Common Imports
 import warnings
 import functools
@@ -23,6 +23,7 @@ from matplotlib.colors import SymLogNorm
 from matplotlib.scale import SymmetricalLogTransform
 import networkx as nx
 from scipy import constants
+from scipy.optimize import fsolve
 # Import Rate
 from pynucastro.nucleus import Nucleus
 from pynucastro.rates import Rate, RatePair, ApproximateRate, Library
@@ -569,6 +570,138 @@ class RateCollection:
 
         return rvals
 
+    def evaluate_limiter(self, rho, T, composition, f=0.05, dx=1.0e6, rel=False):
+        """ Find the full limiter for burning limiter scheme for a given rho, T, composition
+        characteristic scale f for burning limiter, and simulation cell size dx."""
+
+        # Estimate specific internal energy assume ideal gas:
+        k = constants.value("Boltzmann constant")*1.0e7          #boltzmann in erg/K
+        m_u = constants.value("unified atomic mass unit")*1.0e3  #atomic unit mass in g
+        Y = composition.get_molar()
+        inverse_u = composition.eval_ye()   
+        # specific internal energy and sound speed assume ideal gas and adiabatic sound
+        e_int = 3.0/2.0*k*T/m_u*inverse_u
+        c_s = np.sqrt(5.0/3.0*k*T/m_u*inverse_u)
+
+        if rel:
+            e_int *= 2.0
+            c_s = constants.value("speed of light in vaccum")/np.sqrt(3.0)*100.0
+
+        t_s = dx/c_s
+
+        ydots = self.evaluate_ydots(rho, T, composition)
+        Y_npa = 0.
+        Y_npa_dot = 0.
+        Y_tilde= 0.
+        Y_tilde_dot = 0.
+        X_npa = 0.
+        X_tilde = 0.
+
+        p = Nucleus("p")
+        n = Nucleus("n")
+        he4 = Nucleus("he4")
+
+        for nuc in Y:
+            if nuc==p or nuc==n or nuc==he4:
+                Y_npa += Y[nuc]
+                Y_npa_dot += ydots[nuc]
+                X_npa += composition.X[nuc]
+            else:
+                Y_tilde += Y[nuc]
+                Y_tilde_dot += ydots[nuc]
+                X_tilde += composition.X[nuc]
+
+        # Find burning limiters
+        f_e = min(1.0, e_int*f/abs(self.evaluate_energy_generation(rho, T, composition))/t_s)
+        f_npa = min(1.0, Y_npa*f/t_s/abs(Y_npa_dot))
+        f_tilde = min(1.0, Y_tilde*f/t_s/abs(Y_tilde_dot))
+        f_full = min(f_e, 1.0/(X_npa/f_npa + X_tilde/f_tilde))
+
+        return f_full
+
+    def evaluate_X_NSE(self, u, rho, T, composition):
+        """ Finds the mass fraction of each nuclide in NSE state, u[0] is bar{mu_p} + mu_p^C 
+        while u[1] is bar{mu_n}"""
+        
+        m_u = constants.value("unified atomic mass unit")*1.0e3  # atomic unit mass in g
+        k = constants.value("Boltzmann constant")*1.0e7          # boltzmann in erg/K
+        h = constants.value("Planck constant")*1.0e7             # in cgs
+        e = 4.8032e-10                                           # electron charge in cgs
+        
+        A_1 = -0.9052
+        A_2 = 0.6322
+        A_3 = -np.sqrt(32.0)-A_1/np.sqrt(A_2)
+        n_e = rho*composition.eval_ye()/m_u
+
+        X_NSE = {}
+        
+        for nuc in self.unique_nuclei:
+            gamma = nuc.Z**(5./3.)*e**2*(4.0*np.pi*n_e/3.0)**(1./3.)/k/T
+            u_c = k*T*A_1*(np.sqrt(gamma*(A_2+gamma))-A_2*np.log(np.sqrt(gamma/A_2)+np.sqrt(1.0+gamma/A_2))) \
+             + 2.0*A_3*(np.sqrt(gamma)-np.arctan(np.sqrt(gamma)))
+            print(m_u*nuc.A_nuc*nuc.partition_function(T)/rho*(2.*np.pi*m_u*nuc.A_nuc*k*T/h**2)**(3./2.))
+            X_NSE[nuc] = m_u*nuc.A_nuc*nuc.partition_function(T)/rho*(2.*np.pi*m_u*nuc.A_nuc*k*T/h**2)**(3./2.) \
+            *np.exp((nuc.Z*u[0]++nuc.N*u[1]-u_c+nuc.nucbind*nuc.A)/k/T*1.6022e-6)
+
+        return X_NSE
+
+    def constraint_eq(self, u, rho, T, composition):
+        """ Constraint Equations used to evaluate chemical potential for proton and neutron,
+        which is used when evaluating X_NSE, mass fraction at NSE"""
+
+        m_u = constants.value("unified atomic mass unit")*1.0e3  # atomic unit mass in g
+        eq1 = sum(self.evaluate_X_NSE(u, rho, T, composition).values()) - 1
+
+        y_e = composition.eval_ye()
+
+        eq2 = 0.0
+        X_NSE = self.evaluate_X_NSE(u, rho, T, composition)
+        
+        for nuc in self.unique_nuclei:
+            eq2 += ((y_e-1)*nuc.Z + y_e*nuc.N)*X_NSE[nuc]/m_u/nuc.A_nuc
+
+        return [eq1, eq2]
+        
+    
+    def ASE_scheme(self, rho, T, composition):
+        """ Adaptive Statistical Equilibrium scheme"""
+
+        # Check to see if there are n,p,a in the first place
+        p = Nucleus("p")
+        n = Nucleus("n")
+        he4 = Nucleus("he4")
+
+        assert all(nuc in self.unique_nuclei for nuc in [p, n, he4]), "p, n, he4 are not fully present"
+        
+        # First check if n,p,a are in equilibrium in order to proceed to ASE
+        u = fsolve(self.constraint_eq, [-20.0,-5.0], args=(rho, T, composition,), xtol=1.5e-5,maxfev=5000)
+
+        print(u)
+        print(np.isclose(self.constraint_eq(u,rho,T,composition),[0.0,0.0]))
+
+        X_NSE = self.evaluate_X_NSE(u, rho, T, composition)
+        Y_NSE = {}
+
+        for nuc in self.unique_nuclei:
+            Y_NSE[nuc] = X_NSE[nuc]/nuc.A
+        print(Y_NSE)
+        Y = composition.get_molar()
+
+        r = Y[he4]/(Y[n]**2 * Y[p]**2)
+        r_NSE = Y_NSE[he4]/(Y_NSE[n]**2 * Y_NSE[p]**2)
+
+        print(f"r is {r} and r_NSE is {r_NSE}")
+        assert abs((r-r_NSE)/r_NSE) < 0.5, f"""p, n, he4 currently not in equilibrium, where 
+        r_NSE = {r_NSE} and r = {r}"""
+
+        # Need to find a fast reaction cycle that exchanges he4 with two n and two p
+        
+            
+    
+        # Then Do ASE 
+        
+
+        
     def evaluate_ydots(self, rho, T, composition):
         """evaluate net rate of change of molar abundance for each nucleus
         for a specific density, temperature, and composition"""
