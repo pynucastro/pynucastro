@@ -310,13 +310,25 @@ class RateCollection:
 
         self.tabular_rates = []
         self.reaclib_rates = []
-        for n, r in enumerate(self.rates):
-            if r.chapter == 't':
-                self.tabular_rates.append(n)
+        self.approx_rates = []
+        for r in enumerate(self.rates):
+            if isinstance(r, ApproximateRate):
+                self.approx_rates.append(r)
+                for cr in r.get_child_rates():
+                    assert cr.chapter != "t"
+                    self.reaclib_rates.append(cr)
+            elif r.chapter == 't':
+                self.tabular_rates.append(r)
             elif isinstance(r.chapter, int):
-                self.reaclib_rates.append(n)
+                self.reaclib_rates.append(r)
             else:
                 raise NotImplementedError(f"Chapter type unknown for rate chapter {r.chapter}")
+
+        # there may be dupes in the list of reaclib rates, since some
+        # approx rates will use the same child rates
+        self.reaclib_rates = list(set(self.reaclib_rates))
+
+
 
     def _read_rate_files(self, rate_files):
         # get the rates
