@@ -301,8 +301,7 @@ class RateCollection:
 
         # Re-order self.rates so Reaclib rates come first,
         # followed by Tabular rates. This is needed if
-        # reaclib coefficients are targets of a pointer array
-        # in the Fortran network.
+        # reaclib coefficients are targets of a pointer array.
         # It is desired to avoid wasting array size
         # storing meaningless Tabular coefficient pointers.
         self.rates = sorted(self.rates,

@@ -1,4 +1,4 @@
-"""A Fortran reaction network for integration into the StarKiller
+"""A C++ reaction network for integration into the StarKiller
 Microphysics set of reaction networks used by astrophysical hydrodynamics
 codes"""
 
