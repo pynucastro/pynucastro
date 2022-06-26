@@ -310,7 +310,7 @@ class RateCollection:
         self.tabular_rates = []
         self.reaclib_rates = []
         self.approx_rates = []
-        for r in enumerate(self.rates):
+        for r in self.rates:
             if isinstance(r, ApproximateRate):
                 self.approx_rates.append(r)
                 for cr in r.get_child_rates():
