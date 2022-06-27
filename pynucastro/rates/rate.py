@@ -178,7 +178,7 @@ class SingleSet:
                                  self.a[5]*tf.T953 +
                                  self.a[6]*tf.lnT9)
 
-    def set_string(self, prefix="set", plus_equal=False):
+    def set_string_py(self, prefix="set", plus_equal=False):
         """
         return a string containing the python code for this set
         """
@@ -194,7 +194,8 @@ class SingleSet:
         if not self.a[3] == 0.0:
             string += f" + {self.a[3]}*tf.T913"
         if not (self.a[4] == 0.0 and self.a[5] == 0.0 and self.a[6] == 0.0):
-            string += "\n{}         ".format(len(prefix)*" ")
+            indent = len(prefix)*" "
+            string += f"\n{indent}         "
         if not self.a[4] == 0.0:
             string += f" + {self.a[4]}*tf.T9"
         if not self.a[5] == 0.0:
@@ -202,6 +203,33 @@ class SingleSet:
         if not self.a[6] == 0.0:
             string += f" + {self.a[6]}*tf.lnT9"
         string += ")"
+        return string
+
+    def set_string_cxx(self, prefix="set", plus_equal=False):
+        """
+        return a string containing the python code for this set
+        """
+        if plus_equal:
+            string = f"{prefix} += std::exp( "
+        else:
+            string = f"{prefix} = np.exp( "
+        string += f" {self.a[0]}"
+        if not self.a[1] == 0.0:
+            string += f" + {self.a[1]}*tfactors.T9i"
+        if not self.a[2] == 0.0:
+            string += f" + {self.a[2]}*tfactors.T913i"
+        if not self.a[3] == 0.0:
+            string += f" + {self.a[3]}*tfactors.T913"
+        if not (self.a[4] == 0.0 and self.a[5] == 0.0 and self.a[6] == 0.0):
+            indent = len(prefix)*" "
+            string += f"\n{indent}         "
+        if not self.a[4] == 0.0:
+            string += f" + {self.a[4]}*tfactors.T9"
+        if not self.a[5] == 0.0:
+            string += f" + {self.a[5]}*tfactors.T953"
+        if not self.a[6] == 0.0:
+            string += f" + {self.a[6]}*tfactors.lnT9"
+        string += ");"
         return string
 
 
@@ -919,6 +947,50 @@ class Rate:
             t_data2d.remove([])
 
         self.tabular_data_table = np.array(t_data2d)
+
+    def function_string_py(self, prefix="rate"):
+        """
+        Return a string containing python function that computes the
+        rate
+        """
+
+        fstring = ""
+        fstring += "@numba.njit()\n"
+        fstring += f"def {self.fname}(tf):\n"
+        fstring += f"    # {self.rid}\n"
+        fstring += f"    {prefix} = 0.0\n\n"
+
+        for s in self.sets:
+            fstring += f"    # {s.labelprops[0:5]}\n"
+            set_string = s.set_string_py(prefix=prefix, plus_equal=True)
+            for t in set_string.split("\n"):
+                fstring += "    " + t + "\n"
+
+        fstring += "\n"
+        fstring += "    return rate\n\n"
+        return fstring
+
+    def function_string_cxx(self, dtype="double", specifiers="inline"):
+        """
+        Return a string containing C++ function that computes the
+        rate
+        """
+
+        fstring = ""
+        fstring += f"{specifiers}\n"
+        fstring += f"{dtype} rate_{self.fname}(const Tfactors& tfactors) {{\n\n"
+        fstring += f"    // {self.rid}\n"
+        fstring += f"    {dtype} rate = 0.0;\n\n"
+
+        for s in self.sets:
+            fstring += f"    // {s.labelprops[0:5]}\n"
+            set_string = s.set_string_cxx(prefix="rate", plus_equal=True)
+            for t in set_string.split("\n"):
+                fstring += "    " + t + "\n"
+
+        fstring += "    return rate;\n"
+        fstring += "}\n"
+        return fstring
 
     def eval(self, T, rhoY=None):
         """ evauate the reaction rate for temperature T """

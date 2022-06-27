@@ -80,4 +80,4 @@ def he4_mg24__si28(tf):
 """
 
         r = self.pynet.get_rate("mg24_he4__si28__approx")
-        assert self.pynet.function_string(r.get_child_rates()[0]).replace(" ", "").strip() == ostr.replace(" ", "").strip()
+        assert r.get_child_rates()[0].function_string_py().strip() == ostr.strip()
