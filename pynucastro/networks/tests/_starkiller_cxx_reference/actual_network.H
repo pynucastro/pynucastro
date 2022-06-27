@@ -43,6 +43,21 @@ namespace Rates
 
     const int NrateTabular = 2;
 
+    // rate names -- note: the rates are 1-based, not zero-based, so we pad
+    // this vector with rate_names[0] = "" so the indices line up with the
+    // NetworkRates enum
+
+    static const std::vector<std::string> rate_names = {
+        "",   // 0
+        "c12_c12__he4_ne20",  // 1,
+        "c12_c12__n_mg23",  // 2,
+        "c12_c12__p_na23",  // 3,
+        "he4_c12__o16",  // 4,
+        "n__p__weak__wc12",  // 5,
+        "na23__ne23",  // 6,
+        "ne23__na23"  // 7,
+    };
+
 }
 
 namespace reaclib_rates
