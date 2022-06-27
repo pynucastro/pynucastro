@@ -51,6 +51,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.ftags['<nrat_reaclib>'] = self._nrat_reaclib
         self.ftags['<nrat_tabular>'] = self._nrat_tabular
         self.ftags['<nrxn>'] = self._nrxn
+        self.ftags['<rate_names>'] = self._rate_names
         self.ftags['<ebind>'] = self._ebind
         self.ftags['<compute_screening_factors>'] = self._compute_screening_factors
         self.ftags['<write_reaclib_metadata>'] = self._write_reaclib_metadata
@@ -273,6 +274,14 @@ class BaseCxxNetwork(ABC, RateCollection):
         for i, r in enumerate(self.rates):
             of.write(f'{self.indent*n_indent}k_{r.fname} = {i+1},\n')
         of.write(f'{self.indent*n_indent}NumRates = k_{self.rates[-1].fname}\n')
+
+    def _rate_names(self, n_indent, of):
+        for i, r in enumerate(self.rates):
+            if i < len(self.rates)-1:
+                cont = ","
+            else:
+                cont = ""
+            of.write(f'{self.indent*n_indent}"{r.fname}"{cont}  // {i+1},\n')
 
     def _ebind(self, n_indent, of):
         for nuc in self.unique_nuclei:
