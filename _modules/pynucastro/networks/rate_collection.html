@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.networks.rate_collection &mdash; pynucastro 1.6.0.post126+g95ee98a documentation</title>
+  <title>pynucastro.networks.rate_collection &mdash; pynucastro 1.6.0.post127+g229807b documentation</title>
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -403,8 +403,7 @@
 
         <span class="c1"># Re-order self.rates so Reaclib rates come first,</span>
         <span class="c1"># followed by Tabular rates. This is needed if</span>
-        <span class="c1"># reaclib coefficients are targets of a pointer array</span>
-        <span class="c1"># in the Fortran network.</span>
+        <span class="c1"># reaclib coefficients are targets of a pointer array.</span>
         <span class="c1"># It is desired to avoid wasting array size</span>
         <span class="c1"># storing meaningless Tabular coefficient pointers.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rates</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">,</span>
