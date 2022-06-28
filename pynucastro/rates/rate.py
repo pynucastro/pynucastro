@@ -205,14 +205,16 @@ class SingleSet:
         string += ")"
         return string
 
-    def set_string_cxx(self, prefix="set", plus_equal=False):
+    def set_string_cxx(self, prefix="set", plus_equal=False, with_exp=True):
         """
         return a string containing the python code for this set
         """
         if plus_equal:
-            string = f"{prefix} += std::exp( "
+            string = f"{prefix} += "
         else:
-            string = f"{prefix} = std::exp( "
+            string = f"{prefix} = "
+        if with_exp:
+            string += "std::exp( "
         string += f" {self.a[0]}"
         if not self.a[1] == 0.0:
             string += f" + {self.a[1]}*tfactors.T9i"
@@ -229,7 +231,10 @@ class SingleSet:
             string += f" + {self.a[5]}*tfactors.T953"
         if not self.a[6] == 0.0:
             string += f" + {self.a[6]}*tfactors.lnT9"
-        string += ");"
+        if with_exp:
+            string += ");"
+        else:
+            string += ";"
         return string
 
 
@@ -978,16 +983,24 @@ class Rate:
 
         fstring = ""
         fstring += f"{specifiers}\n"
-        fstring += f"{dtype} rate_{self.fname}(const tf_t& tfactors) {{\n\n"
-        fstring += f"    // {self.rid}\n"
-        fstring += f"    {dtype} rate = 0.0;\n\n"
+        fstring += f"void rate_{self.fname}(const tf_t& tfactors, {dtype}& rate, {dtype}& drate_dT) {{\n\n"
+        fstring += f"    // {self.rid}\n\n"
+        fstring += "    rate = 0.0;\n"
+        fstring += "    drate_dT = 0.0;\n\n"
+        fstring += f"    {dtype} ln_set_rate{{0.0}};\n"
+        fstring += f"    {dtyle} set_rate{{0.0}};\n\n"
 
         for s in self.sets:
             fstring += f"    // {s.labelprops[0:5]}\n"
-            set_string = s.set_string_cxx(prefix="rate", plus_equal=True)
+            set_string = s.set_string_cxx(prefix="ln_set_rate", plus_equal=True, with_exp=False)
             for t in set_string.split("\n"):
                 fstring += "    " + t + "\n"
             fstring += "\n"
+
+            fstring += "    // avoid underflows by zeroing rates in [0.0, 1.e-100]\n"
+            fstring += "    ln_set_rate = std::max(ln_set_rate, -230.0);\n"
+            fstring += "    set_rate = std::exp(ln_set_rate);\n"
+            fstring += "    rate += set_rate;\n\n"
 
         fstring += "    return rate;\n"
         fstring += "}\n\n"
