@@ -978,7 +978,7 @@ class Rate:
 
         fstring = ""
         fstring += f"{specifiers}\n"
-        fstring += f"{dtype} rate_{self.fname}(const Tfactors& tfactors) {{\n\n"
+        fstring += f"{dtype} rate_{self.fname}(const tf_t& tfactors) {{\n\n"
         fstring += f"    // {self.rid}\n"
         fstring += f"    {dtype} rate = 0.0;\n\n"
 
@@ -987,9 +987,10 @@ class Rate:
             set_string = s.set_string_cxx(prefix="rate", plus_equal=True)
             for t in set_string.split("\n"):
                 fstring += "    " + t + "\n"
+            fstring += "\n"
 
         fstring += "    return rate;\n"
-        fstring += "}\n"
+        fstring += "}\n\n"
         return fstring
 
     def eval(self, T, rhoY=None):

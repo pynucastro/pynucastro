@@ -24,6 +24,8 @@ class StarKillerCxxNetwork(BaseCxxNetwork):
         self.ftags['<rate_param_tests>'] = self._rate_param_tests
 
         self.disable_rate_params = disable_rate_params
+        self.function_specifier = "AMREX_GPU_HOST_DEVICE AMREX_INLINE"
+        self.dtype = "Real"
 
     def _get_template_files(self):
 

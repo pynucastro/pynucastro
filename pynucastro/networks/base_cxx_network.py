@@ -43,7 +43,8 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.jac_null_entries = None
         self.solved_jacobian = False
 
-        self.secret_code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=32))
+        self.function_specifier = "inline"
+        self.dtype = "double"
 
         # a dictionary of functions to call to handle specific parts
         # of the C++ template
@@ -442,4 +443,4 @@ class BaseCxxNetwork(ABC, RateCollection):
 
     def _reaclib_rate_functions(self, n_indent, of):
         for r in self.reaclib_rates:
-            of.write(r.function_string_cxx())
+            of.write(r.function_string_cxx(dtype=self.dtype, specifiers=self.function_specifier))
