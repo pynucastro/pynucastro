@@ -988,7 +988,7 @@ class Rate:
         fstring += "    rate = 0.0;\n"
         fstring += "    drate_dT = 0.0;\n\n"
         fstring += f"    {dtype} ln_set_rate{{0.0}};\n"
-        fstring += f"    {dtyle} set_rate{{0.0}};\n\n"
+        fstring += f"    {dtype} set_rate{{0.0}};\n\n"
 
         for s in self.sets:
             fstring += f"    // {s.labelprops[0:5]}\n"
