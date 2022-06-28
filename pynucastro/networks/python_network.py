@@ -10,39 +10,6 @@ from pynucastro.rates.rate import ApproximateRate
 class PythonNetwork(RateCollection):
     """A pure python reaction network."""
 
-    def rate_string(self, rate, indent=0, prefix="rate"):
-        """
-        Return the functional form of rate as a function of
-        the temperature (as Tfactors)
-
-        rate is an object of class Rate
-        """
-
-        tstring = f"# {rate.rid}\n"
-        tstring += f"{prefix} = 0.0\n\n"
-
-        for s in rate.sets:
-            tstring += f"# {s.labelprops[0:5]}\n"
-            tstring += f"{s.set_string(prefix=prefix, plus_equal=True)}\n"
-
-        string = ""
-        for t in tstring.split("\n"):
-            string += indent*" " + t + "\n"
-        return string
-
-    def function_string(self, rate):
-        """
-        Return a string containing python function that computes the
-        rate
-        """
-
-        string = ""
-        string += "@numba.njit()\n"
-        string += f"def {rate.fname}(tf):\n"
-        string += f"{self.rate_string(rate, indent=4)}"
-        string += "    return rate\n\n"
-        return string
-
     def approx_function_string(self, rate):
         """
         Return a string containing python function that computes the
@@ -263,7 +230,7 @@ class PythonNetwork(RateCollection):
                 for cr in r.get_child_rates():
                     if cr in _rate_func_written:
                         continue
-                    of.write(self.function_string(cr))
+                    of.write(cr.function_string_py())
                     _rate_func_written.append(cr)
 
                 # now write out the function that computes the
@@ -272,7 +239,7 @@ class PythonNetwork(RateCollection):
             else:
                 if r in _rate_func_written:
                     continue
-                of.write(self.function_string(r))
+                of.write(r.function_string_py())
                 _rate_func_written.append(r)
 
         of.write("def rhs(t, Y, rho, T):\n")
