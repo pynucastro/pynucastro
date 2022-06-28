@@ -397,30 +397,45 @@ class Library:
         return only_bwd
 
     def derived_forward(self):
+        """
+        We exclude the weak and tabular rates from the .foward() library.
+        """
 
         collect_rates = []
         onlyfwd = self.forward()
 
         for r in onlyfwd.get_rates():
+
             try:
                 DerivedRate(r, use_pf=True, use_A_nuc=True)
+            except ValueError:
+                continue
             except AssertionError:
                 continue
+
             collect_rates.append(r)
 
         list1 = Library(rates=collect_rates)
         return list1
 
     def derived_backward(self, use_pf=False, use_A_nuc=False):
+        """
+        We apply the detailed balance calculations over the selected .derived_forward()
+        library rates
+        """
 
         derived_rates = []
         onlyfwd = self.derived_forward()
 
         for r in onlyfwd.get_rates():
-            i = DerivedRate(r, use_pf=use_pf, use_A_nuc=use_A_nuc)
-            derived_rates.append(i)
-
-        onlybwd = Library(rates=derived_rates)
+            try:
+                DerivedRate(r, use_pf=use_pf, use_A_nuc=use_A_nuc)
+            except:
+                continue
+            else:
+                i = DerivedRate(r, use_pf=use_pf, use_A_nuc=use_A_nuc)
+                derived_rates.append(i)
+                onlybwd = Library(rates=derived_rates)
 
         return onlybwd
 
