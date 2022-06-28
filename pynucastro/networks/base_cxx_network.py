@@ -54,7 +54,6 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.ftags['<rate_names>'] = self._rate_names
         self.ftags['<ebind>'] = self._ebind
         self.ftags['<compute_screening_factors>'] = self._compute_screening_factors
-        self.ftags['<write_reaclib_metadata>'] = self._write_reaclib_metadata
         self.ftags['<table_num>'] = self._table_num
         self.ftags['<declare_tables>'] = self._declare_tables
         self.ftags['<table_declare_meta>'] = self._table_declare_meta
@@ -67,8 +66,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.ftags['<jacnuc>'] = self._jacnuc
         self.ftags['<initial_mass_fractions>'] = self._initial_mass_fractions
         self.ftags['<pynucastro_home>'] = self._pynucastro_home
-        self.ftags['<secret_code>'] = self._secret_code_write
-        self.ftags['<secret_code_set>'] = self._secret_code_write_reference
+        self.ftags['<reaclib_rate_functions>'] = self._reaclib_rate_functions
         self.indent = '    '
 
         self.num_screen_calls = None
@@ -287,25 +285,6 @@ class BaseCxxNetwork(ABC, RateCollection):
         for nuc in self.unique_nuclei:
             of.write(f'{self.indent*n_indent}ebind_per_nucleon({nuc.cindex()}) = {nuc.nucbind}_rt;\n')
 
-    def _write_reaclib_metadata(self, n_indent, of):
-        jset = 0
-        for nr in self.reaclib_rates:
-            r = self.rates[nr]
-            for s in r.sets:
-                jset = jset + 1
-                for an in s.a:
-                    of.write(f'{an}\n')
-        j = 1
-        for i, r in enumerate(self.rates):
-            if i in self.reaclib_rates:
-                of.write(f'{j}\n')
-                j = j + len(r.sets)
-
-        for i, r in enumerate(self.rates):
-            if i in self.reaclib_rates:
-                j = len(r.sets)-1
-                of.write(f'{j}\n')
-
     def _table_num(self, n_indent, of):
         of.write(f'{self.indent*n_indent}const int num_tables = {len(self.tabular_rates)};\n')
 
@@ -477,8 +456,6 @@ class BaseCxxNetwork(ABC, RateCollection):
         of.write('{}PYNUCASTRO_HOME := {}\n'.format(self.indent*n_indent,
                                                     os.path.dirname(self.pynucastro_dir)))
 
-    def _secret_code_write(self, n_indent, of):
-        of.write(f"{self.indent*n_indent}{self.secret_code}\n")
-
-    def _secret_code_write_reference(self, n_indent, of):
-        of.write(f"{self.indent*n_indent}const std::string secret_code_reference = \"{self.secret_code}\";\n")
+    def _reaclib_rate_functions(self, n_indent, of):
+        for r in self.reaclib_rates:
+            of.write(r.function_string_cxx())
