@@ -60,7 +60,6 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.ftags['<table_declare_meta>'] = self._table_declare_meta
         self.ftags['<table_init_meta>'] = self._table_init_meta
         self.ftags['<table_term_meta>'] = self._table_term_meta
-        self.ftags['<table_rates_indices>'] = self._table_rates_indices
         self.ftags['<compute_tabular_rates>'] = self._compute_tabular_rates
         self.ftags['<ydot>'] = self._ydot
         self.ftags['<enuc_add_energy_rate>'] = self._enuc_add_energy_rate
@@ -123,8 +122,7 @@ class BaseCxxNetwork(ABC, RateCollection):
 
         # Copy any tables in the network to the current directory
         # if the table file cannot be found, print a warning and continue.
-        for i_tab in self.tabular_rates:
-            tr = self.rates[i_tab]
+        for tr in self.tabular_rates:
             tdir = os.path.dirname(tr.rfile_path)
             if tdir != os.getcwd():
                 tdat_file = os.path.join(tdir, tr.table_file)
@@ -260,8 +258,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         of.write(f'{self.indent*n_indent}const int NrateReaclib = {len(self.reaclib_rates)};\n')
 
         nreaclib_sets = 0
-        for nr in self.reaclib_rates:
-            r = self.rates[nr]
+        for r in self.reaclib_rates:
             nreaclib_sets = nreaclib_sets + len(r.sets)
 
         of.write(f'{self.indent*n_indent}const int NumReaclibSets = {nreaclib_sets};\n')
@@ -289,20 +286,19 @@ class BaseCxxNetwork(ABC, RateCollection):
 
     def _write_reaclib_metadata(self, n_indent, of):
         jset = 0
-        for nr in self.reaclib_rates:
-            r = self.rates[nr]
+        for r in self.reaclib_rates:
             for s in r.sets:
                 jset = jset + 1
                 for an in s.a:
                     of.write(f'{an}\n')
         j = 1
-        for i, r in enumerate(self.rates):
-            if i in self.reaclib_rates:
+        for r in self.rates:
+            if r in self.reaclib_rates:
                 of.write(f'{j}\n')
                 j = j + len(r.sets)
 
-        for i, r in enumerate(self.rates):
-            if i in self.reaclib_rates:
+        for r in self.rates:
+            if r in self.reaclib_rates:
                 j = len(r.sets)-1
                 of.write(f'{j}\n')
 
@@ -310,8 +306,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         of.write(f'{self.indent*n_indent}const int num_tables = {len(self.tabular_rates)};\n')
 
     def _declare_tables(self, n_indent, of):
-        for irate in self.tabular_rates:
-            r = self.rates[irate]
+        for r in self.tabular_rates:
             idnt = self.indent*n_indent
 
             of.write(f'{idnt}extern AMREX_GPU_MANAGED table_t {r.table_index_name}_meta;\n')
@@ -321,8 +316,7 @@ class BaseCxxNetwork(ABC, RateCollection):
             of.write('\n')
 
     def _table_declare_meta(self, n_indent, of):
-        for irate in self.tabular_rates:
-            r = self.rates[irate]
+        for r in self.tabular_rates:
             idnt = self.indent*n_indent
 
             of.write(f"{idnt}AMREX_GPU_MANAGED table_t {r.table_index_name}_meta;\n")
@@ -333,8 +327,7 @@ class BaseCxxNetwork(ABC, RateCollection):
             of.write(f'{idnt}AMREX_GPU_MANAGED Array1D<Real, 1, {r.table_temp_lines}> {r.table_index_name}_temp;\n\n')
 
     def _table_init_meta(self, n_indent, of):
-        for irate in self.tabular_rates:
-            r = self.rates[irate]
+        for r in self.tabular_rates:
             idnt = self.indent*n_indent
             of.write(f'{idnt}{r.table_index_name}_meta.ntemp = {r.table_temp_lines};\n')
             of.write(f'{idnt}{r.table_index_name}_meta.nrhoy = {r.table_rhoy_lines};\n')
@@ -347,8 +340,7 @@ class BaseCxxNetwork(ABC, RateCollection):
             of.write('\n')
 
     def _table_term_meta(self, n_indent, of):
-        for irate in self.tabular_rates:
-            r = self.rates[irate]
+        for r in self.tabular_rates:
 
             of.write('{}deallocate(num_temp_{})\n'.format(
                 self.indent*n_indent, r.table_index_name))
@@ -370,21 +362,12 @@ class BaseCxxNetwork(ABC, RateCollection):
 
             of.write('\n')
 
-    def _table_rates_indices(self, n_indent, of):
-        for n, irate in enumerate(self.tabular_rates):
-            r = self.rates[irate]
-            of.write(f'{self.indent*n_indent}{r.table_index_name}')
-            if n != len(self.tabular_rates)-1:
-                of.write(', &')
-            of.write('\n')
-
     def _compute_tabular_rates(self, n_indent, of):
         if len(self.tabular_rates) > 0:
 
             idnt = self.indent*n_indent
 
-            for irate in self.tabular_rates:
-                r = self.rates[irate]
+            for r in self.tabular_rates:
 
                 of.write(f'{idnt}tabular_evaluate({r.table_index_name}_meta, {r.table_index_name}_rhoy, {r.table_index_name}_temp, {r.table_index_name}_data,\n')
                 of.write(f'{idnt}                 rhoy, state.T, rate, drate_dt, edot_nu);\n')
@@ -446,8 +429,8 @@ class BaseCxxNetwork(ABC, RateCollection):
 
         idnt = self.indent * n_indent
 
-        for nr, r in enumerate(self.rates):
-            if nr in self.tabular_rates:
+        for r in self.rates:
+            if r in self.tabular_rates:
                 if len(r.reactants) != 1:
                     sys.exit('ERROR: Unknown energy rate corrections for a reaction where the number of reactants is not 1.')
                 else:
