@@ -430,12 +430,14 @@ class Library:
         for r in onlyfwd.get_rates():
             try:
                 DerivedRate(r, use_pf=use_pf, use_A_nuc=use_A_nuc)
-            except:
+            except AssertionError:
                 continue
-            else:
-                i = DerivedRate(r, use_pf=use_pf, use_A_nuc=use_A_nuc)
-                derived_rates.append(i)
-                onlybwd = Library(rates=derived_rates)
+            except ValueError:
+                continue
+
+            i = DerivedRate(r, use_pf=use_pf, use_A_nuc=use_A_nuc)
+            derived_rates.append(i)
+            onlybwd = Library(rates=derived_rates)
 
         return onlybwd
 
