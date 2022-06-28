@@ -1051,10 +1051,11 @@ class DerivedRate(Rate):
         self.rate = rate
         self.use_A_nuc = use_A_nuc
 
-        assert not self.rate.tabular
-        assert not self.rate.weak
-        assert not self.rate.reverse
         assert isinstance(rate, Rate)
+
+        if (self.rate.tabular or self.rate.weak or
+            self.rate.reverse):
+            raise ValueError('The rate is reverse or weak or tabular')
 
         for nuc in self.rate.reactants:
 

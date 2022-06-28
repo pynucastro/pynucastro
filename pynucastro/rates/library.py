@@ -408,10 +408,10 @@ class Library:
 
             try:
                 DerivedRate(r, use_pf=True, use_A_nuc=True)
-            except (ValueError, AssertionError):
+            except ValueError:
                 continue
-
-            collect_rates.append(r)
+            else:
+                collect_rates.append(r)
 
         list1 = Library(rates=collect_rates)
         return list1
@@ -428,12 +428,12 @@ class Library:
         for r in onlyfwd.get_rates():
             try:
                 i = DerivedRate(r, use_pf=use_pf, use_A_nuc=use_A_nuc)
-            except (AssertionError, ValueError):
+            except ValueError:
                 continue
+            else:
+                derived_rates.append(i)
 
-            derived_rates.append(i)
-            onlybwd = Library(rates=derived_rates)
-
+        onlybwd = Library(rates=derived_rates)
         return onlybwd
 
 
