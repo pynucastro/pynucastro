@@ -22,13 +22,6 @@ using namespace Rates;
 
 using namespace rate_tables;
 
-struct rate_eval_t {
-    Array1D<Real, 1, NumRates>  screened_rates;
-    Array1D<Real, 1, NumRates>  dscreened_rates_dT;
-    Array1D<Real, NrateReaclib+1, NrateReaclib+NrateTabular> add_energy_rate;
-};
-
-
 
 template<class T>
 AMREX_GPU_HOST_DEVICE AMREX_INLINE
@@ -226,8 +219,6 @@ void actual_jac(const burn_t& state, MatrixType& jac)
 
 AMREX_INLINE
 void actual_rhs_init () {
-
-    init_reaclib();
 
     init_tabular();
 

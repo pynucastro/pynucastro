@@ -992,7 +992,7 @@ class Rate:
 
         for s in self.sets:
             fstring += f"    // {s.labelprops[0:5]}\n"
-            set_string = s.set_string_cxx(prefix="ln_set_rate", plus_equal=True, with_exp=False)
+            set_string = s.set_string_cxx(prefix="ln_set_rate", plus_equal=False, with_exp=False)
             for t in set_string.split("\n"):
                 fstring += "    " + t + "\n"
             fstring += "\n"
@@ -1002,7 +1002,6 @@ class Rate:
             fstring += "    set_rate = std::exp(ln_set_rate);\n"
             fstring += "    rate += set_rate;\n\n"
 
-        fstring += "    return rate;\n"
         fstring += "}\n\n"
         return fstring
 

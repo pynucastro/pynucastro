@@ -67,6 +67,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.ftags['<initial_mass_fractions>'] = self._initial_mass_fractions
         self.ftags['<pynucastro_home>'] = self._pynucastro_home
         self.ftags['<reaclib_rate_functions>'] = self._reaclib_rate_functions
+        self.ftags['<fill_reaclib_rates>'] = self._fill_reaclib_rates
         self.indent = '    '
 
         self.num_screen_calls = None
@@ -444,3 +445,9 @@ class BaseCxxNetwork(ABC, RateCollection):
     def _reaclib_rate_functions(self, n_indent, of):
         for r in self.reaclib_rates:
             of.write(r.function_string_cxx(dtype=self.dtype, specifiers=self.function_specifier))
+
+    def _fill_reaclib_rates(self, n_indent, of):
+        for r in self.reaclib_rates:
+            of.write(f"{self.indent*n_indent}rate_{r.fname}(tfactors, rate, drate_dT);\n")
+            of.write(f"{self.indent*n_indent}rate_eval.screened_rates(k_{r.fname}) = rate;\n")
+            of.write(f"{self.indent*n_indent}rate_eval.dscreened_rates_dT(k_{r.fname}) = drate_dT;\n\n")
