@@ -212,7 +212,7 @@ class SingleSet:
         if plus_equal:
             string = f"{prefix} += std::exp( "
         else:
-            string = f"{prefix} = np.exp( "
+            string = f"{prefix} = std::exp( "
         string += f" {self.a[0]}"
         if not self.a[1] == 0.0:
             string += f" + {self.a[1]}*tfactors.T9i"
