@@ -207,7 +207,7 @@ class SingleSet:
 
     def set_string_cxx(self, prefix="set", plus_equal=False, with_exp=True):
         """
-        return a string containing the python code for this set
+        return a string containing the C++ code for this set
         """
         if plus_equal:
             string = f"{prefix} += "
@@ -217,24 +217,50 @@ class SingleSet:
             string += "std::exp( "
         string += f" {self.a[0]}"
         if not self.a[1] == 0.0:
-            string += f" + {self.a[1]}*tfactors.T9i"
+            string += f" + {self.a[1]} * tfactors.T9i"
         if not self.a[2] == 0.0:
-            string += f" + {self.a[2]}*tfactors.T913i"
+            string += f" + {self.a[2]} * tfactors.T913i"
         if not self.a[3] == 0.0:
-            string += f" + {self.a[3]}*tfactors.T913"
+            string += f" + {self.a[3]} * tfactors.T913"
         if not (self.a[4] == 0.0 and self.a[5] == 0.0 and self.a[6] == 0.0):
             indent = len(prefix)*" "
             string += f"\n{indent}         "
         if not self.a[4] == 0.0:
-            string += f" + {self.a[4]}*tfactors.T9"
+            string += f" + {self.a[4]} * tfactors.T9"
         if not self.a[5] == 0.0:
-            string += f" + {self.a[5]}*tfactors.T953"
+            string += f" + {self.a[5]} * tfactors.T953"
         if not self.a[6] == 0.0:
-            string += f" + {self.a[6]}*tfactors.lnT9"
+            string += f" + {self.a[6]} * tfactors.lnT9"
         if with_exp:
             string += ");"
         else:
             string += ";"
+        return string
+
+    def dln_set_string_dT9_cxx(self, prefix="dset_dT", plus_equal=False):
+        """
+        return a string containing the C++ code for d/dT9 ln(set)
+        """
+        if plus_equal:
+            string = f"{prefix} += "
+        else:
+            string = f"{prefix} = "
+        if not self.a[1] == 0.0:
+            string += f" {-self.a[1]} * tfactors.T9i * tfactors.T9i"
+        if not self.a[2] == 0.0:
+            string += f" + -(1.0/3.0) * {self.a[2]} * tfactors.T943i"
+        if not self.a[3] == 0.0:
+            string += f" + (1.0/3.0) * {self.a[3]} * tfactors.T923i"
+        if not (self.a[4] == 0.0 and self.a[5] == 0.0 and self.a[6] == 0.0):
+            indent = len(prefix)*" "
+            string += f"\n{indent}         "
+        if not self.a[4] == 0.0:
+            string += f" + {self.a[4]}"
+        if not self.a[5] == 0.0:
+            string += f" + (5.0/3.0) * {self.a[5]} * tfactors.T923"
+        if not self.a[6] == 0.0:
+            string += f" + {self.a[6]} * tfactors.T9i"
+        string += ";"
         return string
 
 
@@ -988,6 +1014,7 @@ class Rate:
         fstring += "    rate = 0.0;\n"
         fstring += "    drate_dT = 0.0;\n\n"
         fstring += f"    {dtype} ln_set_rate{{0.0}};\n"
+        fstring += f"    {dtype} dln_set_rate_dT9{{0.0}};\n"
         fstring += f"    {dtype} set_rate{{0.0}};\n\n"
 
         for s in self.sets:
@@ -997,10 +1024,18 @@ class Rate:
                 fstring += "    " + t + "\n"
             fstring += "\n"
 
+            dln_set_string_dT9 = s.dln_set_string_dT9_cxx(prefix="dln_set_rate_dT9", plus_equal=False)
+            for t in dln_set_string_dT9.split("\n"):
+                fstring += "    " + t + "\n"
+            fstring += "\n"
+
             fstring += "    // avoid underflows by zeroing rates in [0.0, 1.e-100]\n"
             fstring += "    ln_set_rate = std::max(ln_set_rate, -230.0);\n"
             fstring += "    set_rate = std::exp(ln_set_rate);\n"
-            fstring += "    rate += set_rate;\n\n"
+
+            fstring += "    rate += set_rate;\n"
+
+            fstring += "    drate_dT += set_rate * dln_set_rate_dT9 / 1.0e9;\n\n"
 
         fstring += "}\n\n"
         return fstring
