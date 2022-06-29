@@ -24,6 +24,8 @@ from matplotlib.scale import SymmetricalLogTransform
 import networkx as nx
 from scipy import constants
 from scipy.optimize import fsolve
+import copy
+
 # Import Rate
 from pynucastro.nucleus import Nucleus
 from pynucastro.rates import Rate, RatePair, ApproximateRate, Library
@@ -31,7 +33,6 @@ from pynucastro.rates import Rate, RatePair, ApproximateRate, Library
 from pynucastro.nucdata import PeriodicTable
 
 mpl.rcParams['figure.dpi'] = 100
-
 
 def _skip_xalpha(n, p, r):
     """utility function to consider if we show an (a, x) or (x, a) rate.  Here, p is the
@@ -620,9 +621,9 @@ class RateCollection:
 
         return f_full
 
-    def evaluate_comp_NSE(self, u, rho, T, composition):
-        """ Finds the mass fraction of each nuclide in NSE state, u[0] is mu_p^C 
-        while u[1] is bar{mu_n}"""
+    def _evaluate_comp_NSE(self, u, rho, T, composition):
+        """ A helper equationt that finds the mass fraction of each nuclide 
+        in NSE state, u[0] is mu_p^C while u[1] is bar{mu_n}"""
         
         m_u = constants.value("unified atomic mass unit")*1.0e3  # atomic unit mass in g
         k = constants.value("Boltzmann constant")*1.0e7          # boltzmann in erg/K
@@ -631,42 +632,71 @@ class RateCollection:
 
         A_1 = -0.9052
         A_2 = 0.6322
-        A_3 = -np.sqrt(32.0)-A_1/np.sqrt(A_2)
+        A_3 = -0.5*np.sqrt(3.0)-A_1/np.sqrt(A_2)
+        
+        comp_NSE = copy.deepcopy(composition)
 
-        comp_NSE = Composition(list(composition.X.keys()))
-        comp_NSE.set_solar_like()
-
-        n_e = rho*comp_NSE.eval_ye()/m_u
-
-        gamma_p = e**2*(4.0*np.pi*n_e/3.0)**(1./3.)/k/T
-        u_p = 624151.0*k*T*(A_1*(np.sqrt(gamma_p*(A_2+gamma_p))-A_2*np.log(np.sqrt(gamma_p/A_2)+np.sqrt(1.0+gamma_p/A_2))) \
-             + 2.0*A_3*(np.sqrt(gamma_p)-np.arctan(np.sqrt(gamma_p))))
+        # presribed electron fraction
+        n_e = rho*composition.eval_ye()/m_u
 
         for nuc in self.unique_nuclei:
             gamma = nuc.Z**(5./3.)*e**2*(4.0*np.pi*n_e/3.0)**(1./3.)/k/T
             u_c = 624151.0*k*T*(A_1*(np.sqrt(gamma*(A_2+gamma))-A_2*np.log(np.sqrt(gamma/A_2)+np.sqrt(1.0+gamma/A_2))) \
              + 2.0*A_3*(np.sqrt(gamma)-np.arctan(np.sqrt(gamma))))
             comp_NSE.X[nuc] = m_u*nuc.A_nuc*nuc.partition_function(T)/rho*(2.*np.pi*m_u*nuc.A_nuc*k*T/h**2)**(3./2.) \
-            *np.exp((nuc.Z*u[0]+nuc.Z*u_p+nuc.N*u[1]-u_c+nuc.nucbind*nuc.A)/k/T*1.6022e-6)
-
+            *np.exp((nuc.Z*u[0]+nuc.N*u[1]-u_c+nuc.nucbind*nuc.A)/k/T*1.6022e-6)
+            
         return comp_NSE   
 
-    def constraint_eq(self, u, rho, T, composition):
+    def _constraint_eq(self, u, rho, T, composition):
         """ Constraint Equations used to evaluate chemical potential for proton and neutron,
         which is used when evaluating X_NSE, mass fraction at NSE"""
 
-        m_u = constants.value("unified atomic mass unit")*1.0e3  # atomic unit mass in g
-        comp_NSE = self.evaluate_comp_NSE(u, rho, T, composition)
-        y_e = comp_NSE.eval_ye()
-    
+        comp_NSE = self._evaluate_comp_NSE(u, rho, T, composition)
+        
         eq1 = sum(comp_NSE.X.values()) - 1
-        eq2 = 0.0
-
-        for nuc in self.unique_nuclei:
-            eq2 += ((y_e-1)*nuc.Z + y_e*nuc.N)*comp_NSE.X[nuc] #/m_u/nuc.A_nuc
+        eq2 = composition.eval_ye() - comp_NSE.eval_ye()
 
         return [eq1, eq2]
 
+    def get_comp_NSE(self, rho, T, composition, init_guess=[-7.0, -12.0], iter_count=15):
+        """Returns the NSE composition given a composition, density, and temperature 
+        using scipy.fsolve. The given composition gives prescribed electron fraction.
+        One can specify 'iter_count' or # of times to allow modifications
+        of the initial guess to get correct answer"""
+
+        assert rho >= 1.0e6 and T >= 1.0e9, "Density and(or) Temperature too low to acheive NSE!"
+        
+        found_sol = False
+        n = 0
+        dx = 0.5
+        init_guess = np.array(init_guess)
+        is_pos_old = False
+
+        while (n < iter_count):
+
+            u = fsolve(self._constraint_eq, init_guess, args=(rho, T, composition,), xtol=1.5e-5)
+            res = self._constraint_eq(u, rho, T, composition)
+            is_pos_new = all(k > 0 for k in res)
+            found_sol = np.all(np.isclose(res, [0.0,0.0], rtol=1e-4, atol=1e-6))
+            
+            if found_sol:
+                comp_NSE = self._evaluate_comp_NSE(u, rho, T, composition)
+                return comp_NSE 
+                
+            if is_pos_old != is_pos_new:
+                dx *= 0.5
+            
+            if is_pos_new:
+                init_guess -= dx
+            else:
+                init_guess += dx
+                
+            is_pos_old = is_pos_new
+            n += 1
+
+        raise ValueError("No solution is founded, try to manually adjust initial guess or increase iter_count")
+    
     def ASE_scheme(self, rho, T, composition):
         """ Adaptive Statistical Equilibrium scheme"""
 
@@ -678,12 +708,7 @@ class RateCollection:
         assert all(nuc in self.unique_nuclei for nuc in [p, n, he4]), "p, n, he4 are not fully present"
         
         # First check if n,p,a are in equilibrium in order to proceed to ASE
-        u = fsolve(self.constraint_eq, [-10.0,-8.0], args=(rho, T, composition,), xtol=1.5e-4)
-
-        print(f"u is {u}")
-        print(self.constraint_eq(u,rho,T,composition))
-
-        comp_NSE = self.evaluate_comp_NSE(u, rho, T, composition)
+        comp_NSE = self.get_comp_NSE(u, rho, T, composition)
         Y_NSE = comp_NSE.get_molar()
 
         print(f"Y_NSE is {Y_NSE}")
@@ -694,15 +719,14 @@ class RateCollection:
 
         print(f"r is {r} and r_NSE is {r_NSE}")
 
-        #assert r_NSE < r,  f"""p, n, he4 currently not in equilibrium, where 
-        #r_NSE = {r_NSE} and r = {r}"""
-
-        assert abs((r-r_NSE)/r) < 0.5, f"""p, n, he4 currently not in equilibrium, where 
+        assert r_NSE < r,  f"""p, n, he4 currently not in equilibrium, where 
         r_NSE = {r_NSE} and r = {r}"""
 
+#        assert abs((r-r_NSE)/r) < 0.5, f"""p, n, he4 currently not in equilibrium, where 
+ #       r_NSE = {r_NSE} and r = {r}"""
+
         # Need to find a fast reaction cycle that exchanges he4 with two n and two p
-        
-            
+
     
         # Then Do ASE 
         
