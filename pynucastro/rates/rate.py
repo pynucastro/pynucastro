@@ -245,6 +245,11 @@ class SingleSet:
             string = f"{prefix} += "
         else:
             string = f"{prefix} = "
+
+        if all([q == 0.0 for q in self.q]):
+            string += "0.0;"
+            return string
+
         if not self.a[1] == 0.0:
             string += f" {-self.a[1]} * tfactors.T9i * tfactors.T9i"
         if not self.a[2] == 0.0:
