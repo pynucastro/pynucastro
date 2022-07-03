@@ -10,8 +10,6 @@ import shutil
 import sys
 import re
 from abc import ABC, abstractmethod
-import random
-import string
 
 import sympy
 from pynucastro.networks import RateCollection
