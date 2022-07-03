@@ -246,7 +246,7 @@ class SingleSet:
         else:
             string = f"{prefix} = "
 
-        if all([q == 0.0 for q in self.q]):
+        if all([q == 0.0 for q in self.a[1:]]):
             string += "0.0;"
             return string
 
