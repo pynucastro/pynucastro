@@ -182,7 +182,7 @@ void rate_n__p__weak__wc12(const tf_t& tfactors, Real& rate, Real& drate_dT) {
     // wc12w
     ln_set_rate =  -6.78161;
 
-    dln_set_rate_dT9 = ;
+    dln_set_rate_dT9 = 0.0;
 
     // avoid underflows by zeroing rates in [0.0, 1.e-100]
     ln_set_rate = std::max(ln_set_rate, -230.0);
