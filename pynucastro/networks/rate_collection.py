@@ -571,56 +571,6 @@ class RateCollection:
 
         return rvals
 
-    def evaluate_limiter(self, rho, T, composition, f=0.05, dx=1.0e6, rel=False):
-        """ Find the full limiter for burning limiter scheme for a given rho, T, composition
-        characteristic scale f for burning limiter, and simulation cell size dx."""
-
-        # Estimate specific internal energy assume ideal gas:
-        k = constants.value("Boltzmann constant")*1.0e7          #boltzmann in erg/K
-        m_u = constants.value("unified atomic mass unit")*1.0e3  #atomic unit mass in g
-        Y = composition.get_molar()
-        inverse_u = composition.eval_ye() + sum(Y.values())
-
-        # specific internal energy and sound speed assume ideal gas and adiabatic sound
-        e_int = 3.0/2.0*k*T/m_u*inverse_u
-        c_s = np.sqrt(5.0/3.0*k*T/m_u*inverse_u)
-
-        if rel:
-            e_int *= 2.0
-            c_s = constants.value("speed of light in vaccum")/np.sqrt(3.0)*100.0
-
-        t_s = dx/c_s
-
-        ydots = self.evaluate_ydots(rho, T, composition)
-        Y_npa = 0.
-        Y_npa_dot = 0.
-        Y_tilde= 0.
-        Y_tilde_dot = 0.
-        X_npa = 0.
-        X_tilde = 0.
-
-        p = Nucleus("p")
-        n = Nucleus("n")
-        he4 = Nucleus("he4")
-
-        for nuc in Y:
-            if nuc==p or nuc==n or nuc==he4:
-                Y_npa += Y[nuc]
-                Y_npa_dot += ydots[nuc]
-                X_npa += composition.X[nuc]
-            else:
-                Y_tilde += Y[nuc]
-                Y_tilde_dot += ydots[nuc]
-                X_tilde += composition.X[nuc]
-
-        # Find burning limiters
-        f_e = min(1.0, e_int*f/abs(self.evaluate_energy_generation(rho, T, composition))/t_s)
-        f_npa = min(1.0, Y_npa*f/t_s/abs(Y_npa_dot))
-        f_tilde = min(1.0, Y_tilde*f/t_s/abs(Y_tilde_dot))
-        f_full = min(f_e, 1.0/(X_npa/f_npa + X_tilde/f_tilde))
-
-        return f_full
-
     def _evaluate_comp_NSE(self, u, rho, T, composition):
         """ A helper equationt that finds the mass fraction of each nuclide 
         in NSE state, u[0] is mu_p^C while u[1] is bar{mu_n}"""
@@ -659,33 +609,33 @@ class RateCollection:
 
         return [eq1, eq2]
 
-    def get_comp_NSE(self, rho, T, composition, init_guess=[-7.0, -12.0], iter_count=15):
+    def get_comp_NSE(self, rho, T, composition, init_guess=[-2.0, -15.0], dx= 0.5):
         """Returns the NSE composition given a composition, density, and temperature 
         using scipy.fsolve. The given composition gives prescribed electron fraction.
         One can specify 'iter_count' or # of times to allow modifications
         of the initial guess to get correct answer"""
 
-        assert rho >= 1.0e6 and T >= 1.0e9, "Density and(or) Temperature too low to acheive NSE!"
+        assert rho >= 1.0e6 and T >= 2.0e9, "Density and(or) Temperature too low to acheive NSE!"
         
         found_sol = False
         n = 0
-        dx = 0.5
         init_guess = np.array(init_guess)
         is_pos_old = False
 
-        while (n < iter_count):
+        while (n < 30):
 
-            u = fsolve(self._constraint_eq, init_guess, args=(rho, T, composition,), xtol=1.5e-5)
+            u = fsolve(self._constraint_eq, init_guess, args=(rho, T, composition,), xtol=1.5e-4)
             res = self._constraint_eq(u, rho, T, composition)
-            is_pos_new = all(k > 0 for k in res)
-            found_sol = np.all(np.isclose(res, [0.0,0.0], rtol=1e-4, atol=1e-6))
             
+            is_pos_new = all(k > 0 for k in res)
+            found_sol = np.all(np.isclose(res, [0.0,0.0], rtol=1e-3, atol=1e-4))
+            #print(f"res is {res}")
             if found_sol:
                 comp_NSE = self._evaluate_comp_NSE(u, rho, T, composition)
                 return comp_NSE 
                 
             if is_pos_old != is_pos_new:
-                dx *= 0.5
+                dx *= 0.7
             
             if is_pos_new:
                 init_guess -= dx
@@ -694,11 +644,26 @@ class RateCollection:
                 
             is_pos_old = is_pos_new
             n += 1
-
+            
         raise ValueError("No solution is founded, try to manually adjust initial guess or increase iter_count")
     
-    def ASE_scheme(self, rho, T, composition):
-        """ Adaptive Statistical Equilibrium scheme"""
+    def ASE_scheme(self, rho, T, composition, init_guess=[-2.0, -15.0], nse_dx=0.5,
+                   f=0.05, cell_dx=1.0e6, rel=False, tol=0.1,):
+        """
+        Adaptive Statistical Equilibrium scheme:
+        
+        parameters
+        ------------------
+        rho: density in cgs
+        T: Temperature in Kelvin
+        composition: Composition using the composition class, also used to determine prescribed electron fraction
+        init_guess: initial guess of the chemical potential for determining the NSE state
+        nse_dx: parameter to describe incremental value of the initial guess during loop.
+        f: characteristic parameter for f_limiter
+        cell_dx: cell size for simulation in cm
+        rel: Consider complete relativistic gas or not
+        tol: tolerance for determining the equilibrium status of reaction network
+        """
 
         # Check to see if there are n,p,a in the first place
         p = Nucleus("p")
@@ -708,10 +673,9 @@ class RateCollection:
         assert all(nuc in self.unique_nuclei for nuc in [p, n, he4]), "p, n, he4 are not fully present"
         
         # First check if n,p,a are in equilibrium in order to proceed to ASE
-        comp_NSE = self.get_comp_NSE(u, rho, T, composition)
+        comp_NSE = self.get_comp_NSE(rho, T, composition, init_guess=init_guess, dx=nse_dx)
         Y_NSE = comp_NSE.get_molar()
 
-        print(f"Y_NSE is {Y_NSE}")
         Y = composition.get_molar()
 
         r = Y[he4]/(Y[n]**2 * Y[p]**2)
@@ -722,16 +686,120 @@ class RateCollection:
         assert r_NSE < r,  f"""p, n, he4 currently not in equilibrium, where 
         r_NSE = {r_NSE} and r = {r}"""
 
-#        assert abs((r-r_NSE)/r) < 0.5, f"""p, n, he4 currently not in equilibrium, where 
- #       r_NSE = {r_NSE} and r = {r}"""
+        #assert abs((r-r_NSE)/r) < 0.5, f"""p, n, he4 currently not in equilibrium, where 
+        #r_NSE = {r_NSE} and r = {r}"""
+
+        # Find burning limiter:
+                # Estimate specific internal energy assume ideal gas:
+        k = constants.value("Boltzmann constant")*1.0e7          #boltzmann in erg/K
+        m_u = constants.value("unified atomic mass unit")*1.0e3  #atomic unit mass in g
+        inverse_u = composition.eval_ye() + sum(Y.values())
+
+        # specific internal energy and sound speed assume ideal gas and adiabatic sound
+        e_int = 3.0/2.0*k*T/m_u*inverse_u
+        c_s = np.sqrt(5.0/3.0*k*T/m_u*inverse_u)
+
+        if rel:
+            e_int *= 2.0
+            c_s = constants.value("speed of light in vaccum")/np.sqrt(3.0)*100.0
+
+        t_s = cell_dx/c_s
+
+        ydots = self.evaluate_ydots(rho, T, composition)
+        Y_npa = 0.
+        Y_npa_dot = 0.
+        Y_tilde= 0.
+        Y_tilde_dot = 0.
+        X_npa = 0.
+        X_tilde = 0.
+
+        for nuc in Y:
+            if nuc==p or nuc==n or nuc==he4:
+                Y_npa += Y[nuc]
+                Y_npa_dot += ydots[nuc]
+                X_npa += composition.X[nuc]
+            else:
+                Y_tilde += Y[nuc]
+                Y_tilde_dot += ydots[nuc]
+                X_tilde += composition.X[nuc]
+
+        # Calculate burning limiters
+        f_e = min(1.0, e_int*f/abs(self.evaluate_energy_generation(rho, T, composition))/t_s)
+        f_npa = min(1.0, Y_npa*f/t_s/abs(Y_npa_dot))
+        f_tilde = min(1.0, Y_tilde*f/t_s/abs(Y_tilde_dot))
+        f_full = min(f_e, 1.0/(X_npa/f_npa + X_tilde/f_tilde))
 
         # Need to find a fast reaction cycle that exchanges he4 with two n and two p
+        # For current state of pynucastro, need to check whether contain all intermediate nuclei.
 
-    
-        # Then Do ASE 
+        rvals = self.evaluate_rates(rho, T, composition)
+        found_fast_reac = False
         
+        for nuc in reversed(self.unique_nuclei):
+            if found_fast_reac:
+                break
+            
+            reactions = [[nuc],]
+            reactions.append([sec_nucs for sec_nucs in self.unique_nuclei if (sec_nucs.A==nuc.A-1 and sec_nucs.Z in [nuc.Z,nuc.Z-1])])
+            reactions.append([third_nucs for third_nucs in self.unique_nuclei if (third_nucs.A==nuc.A-2 and third_nucs.Z in [nuc.Z,nuc.Z-1,nuc.Z-2])])
+            reactions.append([fourth_nucs for fourth_nucs in self.unique_nuclei if (fourth_nucs.A==nuc.A-3 and fourth_nucs.Z in [nuc.Z-1,nuc.Z-2])])
+            reactions.append([fifth_nucs for fifth_nucs in self.unique_nuclei if (fifth_nucs.A==nuc.A-4 and fifth_nucs.Z == nuc.Z-2)])
+            reactions[4].append(nuc)
+            reactions.append([nuc])
 
-        
+            fast_reac = [[nuc],[],[],[],[]]
+            # skip this nuc there are no intermediate nuclei linked
+            if not all(reactions[1:-2]):
+                continue
+
+            for i, reaction in enumerate(reactions[:4]):
+                for reac_nuc in reaction:
+                    if reac_nuc == nuc and i != 0:
+                        continue
+                    for aft_reac_nuc in reactions[i+1]:
+                        # Get forward and reverse rates. Note here I do not care if it is actually forward or reverse rate
+                        if reac_nuc.A==aft_reac_nuc.A-4:
+                            f_rate = self.get_rate_by_nuclei([reac_nuc,he4],[aft_reac_nuc])
+                            r_rate = self.get_rate_by_nuclei([aft_reac_nuc],[reac_nuc,he4])
+                        elif reac_nuc.A==aft_reac_nuc.A-3 and reac_nuc.Z==aft_reac_nuc.Z-2:
+                            f_rate = self.get_rate_by_nuclei([reac_nuc,he4],[aft_reac_nuc,n])
+                            r_rate = self.get_rate_by_nuclei([aft_reac_nuc,n],[reac_nuc,he4])
+                        elif reac_nuc.A==aft_reac_nuc.A-3 and reac_nuc.Z==aft_reac_nuc.Z-1:
+                            f_rate = self.get_rate_by_nuclei([reac_nuc,he4],[aft_reac_nuc,p])
+                            r_rate = self.get_rate_by_nuclei([aft_reac_nuc,p],[reac_nuc,he4])
+                        elif reac_nuc.Z==aft_reac_nuc.Z:
+                            f_rate = self.get_rate_by_nuclei([reac_nuc],[aft_reac_nuc,n])
+                            r_rate = self.get_rate_by_nuclei([aft_reac_nuc,n],[reac_nuc])
+                        elif reac_nuc.Z==aft_reac_nuc.Z+1:
+                            f_rate = self.get_rate_by_nuclei([reac_nuc],[aft_reac_nuc,p])
+                            r_rate = self.get_rate_by_nuclei([aft_reac_nuc,p],[reac_nuc])
+                        else:
+                            continue
+
+                        b_f =  f_full*rvals[f_rate[0]]
+                        b_r =  f_full*rvals[r_rate[0]]
+
+                        if ((Y[reac_nuc]/min(b_f,b_r) < tol*t_s or Y[aft_reac_nuc]/min(b_f,b_r) < tol*t_s) \
+                            and 2*abs(b_f - b_r)/(b_f + b_r) < tol):
+                            
+                            fast_reac[i+1].append(aft_reac_nuc)
+                        else:    
+                            continue
+
+                if fast_reac[i+1]:
+                    reactions[i+1] = fast_reac[i+1]
+                    if nuc in fast_reac[i+1]:
+                        found_fast_reac = True            
+                else:
+                    break
+
+        print(f"fast_reac is {fast_reac}")
+        if found_fast_reac:
+            # do ASE        
+            print("Found fast reaction")
+        else:
+            print(f"Did not find fast reaction, ")
+
     def evaluate_ydots(self, rho, T, composition):
         """evaluate net rate of change of molar abundance for each nucleus
         for a specific density, temperature, and composition"""
