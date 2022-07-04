@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.networks.sympy_network_support &mdash; pynucastro 1.6.0.post130+g5cdc7d3 documentation</title>
+  <title>pynucastro.networks.sympy_network_support &mdash; pynucastro 1.6.0.post131+g6c7da50 documentation</title>
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -115,6 +115,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">ctype</span> <span class="o">=</span> <span class="n">ctype</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">symbol_ludict</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># Symbol lookup dictionary</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ydot_term_cache</span> <span class="o">=</span> <span class="p">{}</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ctype</span> <span class="o">==</span> <span class="s2">&quot;Fortran&quot;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">name_density</span> <span class="o">=</span> <span class="s1">&#39;state </span><span class="si">% r</span><span class="s1">ho&#39;</span>
@@ -140,6 +141,9 @@
 <span class="sd">        return a sympy expression containing this rate&#39;s contribution to</span>
 <span class="sd">        the ydot term for nuclide y_i.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="p">(</span><span class="n">rate</span><span class="o">.</span><span class="n">fname</span><span class="p">,</span> <span class="n">y_i</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ydot_term_cache</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ydot_term_cache</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
         <span class="n">srate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">specific_rate_symbol</span><span class="p">(</span><span class="n">rate</span><span class="p">)</span>
 
         <span class="c1"># Check if y_i is a reactant or product</span>
@@ -151,7 +155,9 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># y_i appears as a product or reactant</span>
             <span class="n">ydot_sym</span> <span class="o">=</span> <span class="p">(</span><span class="n">c_prod</span> <span class="o">-</span> <span class="n">c_reac</span><span class="p">)</span> <span class="o">*</span> <span class="n">srate</span>
-        <span class="k">return</span> <span class="n">ydot_sym</span><span class="o">.</span><span class="n">evalf</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">float_explicit_num_digits</span><span class="p">)</span></div>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">ydot_sym</span><span class="o">.</span><span class="n">evalf</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">float_explicit_num_digits</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ydot_term_cache</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span>
+        <span class="k">return</span> <span class="n">result</span></div>
 
 <div class="viewcode-block" id="SympyRates.specific_rate_symbol"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.sympy_network_support.SympyRates.specific_rate_symbol">[docs]</a>    <span class="k">def</span> <span class="nf">specific_rate_symbol</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rate</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
