@@ -13,6 +13,7 @@ class SympyRates:
         self.ctype = ctype
 
         self.symbol_ludict = {}  # Symbol lookup dictionary
+        self._ydot_term_cache = {}
 
         if self.ctype == "Fortran":
             self.name_density = 'state % rho'
@@ -38,6 +39,9 @@ class SympyRates:
         return a sympy expression containing this rate's contribution to
         the ydot term for nuclide y_i.
         """
+        key = (rate.fname, y_i)
+        if key in self._ydot_term_cache:
+            return self._ydot_term_cache[key]
         srate = self.specific_rate_symbol(rate)
 
         # Check if y_i is a reactant or product
@@ -49,7 +53,9 @@ class SympyRates:
         else:
             # y_i appears as a product or reactant
             ydot_sym = (c_prod - c_reac) * srate
-        return ydot_sym.evalf(n=self.float_explicit_num_digits)
+        result = ydot_sym.evalf(n=self.float_explicit_num_digits)
+        self._ydot_term_cache[key] = result
+        return result
 
     def specific_rate_symbol(self, rate):
         """
