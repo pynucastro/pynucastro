@@ -266,13 +266,13 @@ class BaseCxxNetwork(ABC, RateCollection):
         of.write(f'{self.indent*n_indent}const int NrateTabular = {len(self.tabular_rates)};\n')
 
     def _nrxn(self, n_indent, of):
-        for i, r in enumerate(self.rates):
+        for i, r in enumerate(self.all_rates):
             of.write(f'{self.indent*n_indent}k_{r.fname} = {i+1},\n')
-        of.write(f'{self.indent*n_indent}NumRates = k_{self.rates[-1].fname}\n')
+        of.write(f'{self.indent*n_indent}NumRates = k_{self.all_rates[-1].fname}\n')
 
     def _rate_names(self, n_indent, of):
-        for i, r in enumerate(self.rates):
-            if i < len(self.rates)-1:
+        for i, r in enumerate(self.all_rates):
+            if i < len(self.all_rates)-1:
                 cont = ","
             else:
                 cont = ""
@@ -409,13 +409,12 @@ class BaseCxxNetwork(ABC, RateCollection):
 
         idnt = self.indent * n_indent
 
-        for r in self.rates:
-            if r in self.tabular_rates:
-                if len(r.reactants) != 1:
-                    sys.exit('ERROR: Unknown energy rate corrections for a reaction where the number of reactants is not 1.')
-                else:
-                    reactant = r.reactants[0]
-                    of.write(f'{idnt}enuc += C::Legacy::n_A * {self.symbol_rates.name_y}({reactant.cindex()}) * rate_eval.add_energy_rate(k_{r.fname});\n')
+        for r in self.tabular_rates:
+            if len(r.reactants) != 1:
+                sys.exit('ERROR: Unknown energy rate corrections for a reaction where the number of reactants is not 1.')
+            else:
+                reactant = r.reactants[0]
+                of.write(f'{idnt}enuc += C::Legacy::n_A * {self.symbol_rates.name_y}({reactant.cindex()}) * rate_eval.add_energy_rate(k_{r.fname});\n')
 
     def _jacnuc(self, n_indent, of):
         # now make the Jacobian
