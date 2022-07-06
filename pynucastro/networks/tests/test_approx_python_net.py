@@ -58,7 +58,7 @@ def mg24_he4__si28__approx(tf):
 
 """
         r = self.pynet.get_rate("mg24_he4__si28__approx")
-        assert self.pynet.approx_function_string(r) == ostr
+        assert r.function_string_py() == ostr
 
     def test_function_string(self):
 
