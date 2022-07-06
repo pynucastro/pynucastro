@@ -10,8 +10,6 @@ class SympyRates:
 
     def __init__(self):
 
-        self.ctype = ctype
-
         self.symbol_ludict = {}  # Symbol lookup dictionary
         self._ydot_term_cache = {}
 
