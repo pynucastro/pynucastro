@@ -33,7 +33,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         # Get the template files for writing this network code
         self.template_files = self._get_template_files()
 
-        self.symbol_rates = SympyRates(ctype="C++")
+        self.symbol_rates = SympyRates()
 
         self.ydot_out_result = None
         self.solved_ydot = False
