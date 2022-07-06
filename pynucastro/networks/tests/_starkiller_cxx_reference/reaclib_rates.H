@@ -33,10 +33,8 @@ tf_t evaluate_tfactors(const Real T)
     tf_t tf;
     tf.T9 = T / 1.e9_rt;
     tf.T9i = 1.0_rt / tf.T9;
-    //tf.T913 = std::cbrt(tf.T9);
-    //tf.T913i = 1.0_rt / tf.T913;
-    tf.T913 = std::pow(tf.T9, 1.0_rt/3.0_rt);
-    tf.T913i = std::pow(tf.T9i, 1.0_rt/3.0_rt);
+    tf.T913 = std::cbrt(tf.T9);
+    tf.T913i = 1.0_rt / tf.T913;
     tf.T923i = tf.T913i * tf.T913i;
     tf.T943i = tf.T9i * tf.T913i;
     tf.T923 = tf.T913 * tf.T913;
