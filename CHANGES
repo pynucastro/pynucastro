@@ -1,5 +1,45 @@
 # changes since the last release
 
+  -- the Rate class now knows how to make its function string in
+     python and C++ (#328)
+
+  -- C++ networks now have a std::vector<std::string> of rate names
+     (#326)
+
+  -- support for Fortran networks was removed (#324)
+
+  -- numerous optimizations (#263, #264, #321, #331)
+
+  -- a DerivedRate class was added (#272)
+
+  -- approximate rate support was added to python networks (#316, #315, #313, #271)
+
+  -- energy generation was added to python networks (#301)
+
+  -- support for inert nuclei was added (#307)
+
+  -- the ability to disable rates in C++ networks was added (#304, #290)
+
+  -- methods for finding reverse rates were added (#303)
+
+  -- a method to find neutrino loss energy from tabulated rates was added (#302)
+
+  -- the ability to run without Numba was added (#300)
+
+  -- weak rate table units in the header were fixed (#297)
+
+  -- python nuclei variable indicies now begin with 'j' (#296)
+
+  -- python implementations of screening were added (#281)
+
+  -- the network chart plot was added (#202)
+
+  -- a rate filter for the network plot was added (#187)
+
+  -- the Explorer class was expanded to have more options (#251)
+
+  -- the rate plot now returns a matplotlib Figure object (#231)
+
   -- added the ability to modify rate products (#252)
 
   -- allow for the edges between nodes to be curved (#257)
