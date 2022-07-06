@@ -1,5 +1,11 @@
 # changes since the last release
 
+  -- C++ networks now hardcode the coefficients in a function to
+     compute the rates instead of storing a metadata table that is
+     read at runtime (#329)
+
+# 1.7.0
+
   -- the Rate class now knows how to make its function string in
      python and C++ (#328)
 

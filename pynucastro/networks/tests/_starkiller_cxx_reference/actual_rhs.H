@@ -22,13 +22,6 @@ using namespace Rates;
 
 using namespace rate_tables;
 
-struct rate_eval_t {
-    Array1D<Real, 1, NumRates>  screened_rates;
-    Array1D<Real, 1, NumRates>  dscreened_rates_dT;
-    Array1D<Real, NrateReaclib+1, NrateReaclib+NrateTabular> add_energy_rate;
-};
-
-
 
 template<class T>
 AMREX_GPU_HOST_DEVICE AMREX_INLINE
@@ -69,26 +62,9 @@ void evaluate_rates(const burn_t& state, rate_eval_t& rate_eval) {
 
     tf_t tfactors = evaluate_tfactors(state.T);
 
-    for (int i = 1; i <= NrateReaclib; ++i) {
+    fill_reaclib_rates(tfactors, rate_eval);
 
 
-        if (jacobian == 1) {
-            Real rate;
-            Real drate_dt;
-            constexpr int do_T_derivatives = 1;
-            reaclib_evaluate<do_T_derivatives>(pstate, tfactors, i, rate, drate_dt);
-            rate_eval.screened_rates(i) = rate;
-            rate_eval.dscreened_rates_dT(i) = drate_dt;
-        } else {
-            Real rate;
-            Real drate_dt;
-            // drate_dt is not used in this case
-            constexpr int do_T_derivatives = 0;
-            reaclib_evaluate<do_T_derivatives>(pstate, tfactors, i, rate, drate_dt);
-            rate_eval.screened_rates(i) = rate;
-            rate_eval.dscreened_rates_dT(i) = drate_dt;
-        }
-    }
 
     // Evaluate screening factors
 
@@ -380,8 +356,6 @@ void actual_jac(const burn_t& state, MatrixType& jac)
 
 AMREX_INLINE
 void actual_rhs_init () {
-
-    init_reaclib();
 
     init_tabular();
 

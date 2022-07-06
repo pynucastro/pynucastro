@@ -10,8 +10,6 @@ import shutil
 import sys
 import re
 from abc import ABC, abstractmethod
-import random
-import string
 
 import sympy
 from pynucastro.networks import RateCollection
@@ -43,7 +41,8 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.jac_null_entries = None
         self.solved_jacobian = False
 
-        self.secret_code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=32))
+        self.function_specifier = "inline"
+        self.dtype = "double"
 
         # a dictionary of functions to call to handle specific parts
         # of the C++ template
@@ -54,7 +53,6 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.ftags['<rate_names>'] = self._rate_names
         self.ftags['<ebind>'] = self._ebind
         self.ftags['<compute_screening_factors>'] = self._compute_screening_factors
-        self.ftags['<write_reaclib_metadata>'] = self._write_reaclib_metadata
         self.ftags['<table_num>'] = self._table_num
         self.ftags['<declare_tables>'] = self._declare_tables
         self.ftags['<table_declare_meta>'] = self._table_declare_meta
@@ -66,8 +64,8 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.ftags['<jacnuc>'] = self._jacnuc
         self.ftags['<initial_mass_fractions>'] = self._initial_mass_fractions
         self.ftags['<pynucastro_home>'] = self._pynucastro_home
-        self.ftags['<secret_code>'] = self._secret_code_write
-        self.ftags['<secret_code_set>'] = self._secret_code_write_reference
+        self.ftags['<reaclib_rate_functions>'] = self._reaclib_rate_functions
+        self.ftags['<fill_reaclib_rates>'] = self._fill_reaclib_rates
         self.indent = '    '
 
         self.num_screen_calls = None
@@ -284,24 +282,6 @@ class BaseCxxNetwork(ABC, RateCollection):
         for nuc in self.unique_nuclei:
             of.write(f'{self.indent*n_indent}ebind_per_nucleon({nuc.cindex()}) = {nuc.nucbind}_rt;\n')
 
-    def _write_reaclib_metadata(self, n_indent, of):
-        jset = 0
-        for r in self.reaclib_rates:
-            for s in r.sets:
-                jset = jset + 1
-                for an in s.a:
-                    of.write(f'{an}\n')
-        j = 1
-        for r in self.rates:
-            if r in self.reaclib_rates:
-                of.write(f'{j}\n')
-                j = j + len(r.sets)
-
-        for r in self.rates:
-            if r in self.reaclib_rates:
-                j = len(r.sets)-1
-                of.write(f'{j}\n')
-
     def _table_num(self, n_indent, of):
         of.write(f'{self.indent*n_indent}const int num_tables = {len(self.tabular_rates)};\n')
 
@@ -460,8 +440,12 @@ class BaseCxxNetwork(ABC, RateCollection):
         of.write('{}PYNUCASTRO_HOME := {}\n'.format(self.indent*n_indent,
                                                     os.path.dirname(self.pynucastro_dir)))
 
-    def _secret_code_write(self, n_indent, of):
-        of.write(f"{self.indent*n_indent}{self.secret_code}\n")
+    def _reaclib_rate_functions(self, n_indent, of):
+        for r in self.reaclib_rates:
+            of.write(r.function_string_cxx(dtype=self.dtype, specifiers=self.function_specifier))
 
-    def _secret_code_write_reference(self, n_indent, of):
-        of.write(f"{self.indent*n_indent}const std::string secret_code_reference = \"{self.secret_code}\";\n")
+    def _fill_reaclib_rates(self, n_indent, of):
+        for r in self.reaclib_rates:
+            of.write(f"{self.indent*n_indent}rate_{r.fname}(tfactors, rate, drate_dT);\n")
+            of.write(f"{self.indent*n_indent}rate_eval.screened_rates(k_{r.fname}) = rate;\n")
+            of.write(f"{self.indent*n_indent}rate_eval.dscreened_rates_dT(k_{r.fname}) = drate_dT;\n\n")
