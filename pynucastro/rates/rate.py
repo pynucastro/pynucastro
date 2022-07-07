@@ -865,7 +865,7 @@ class Rate:
                     self.string += " + e⁻"
                     self.pretty_string += r" + \mathrm{e}^-"
 
-        self.string += " ⟶ "
+        self.string += " ⟶  "
         self.rid += " --> "
         self.pretty_string += r" \rightarrow "
 
