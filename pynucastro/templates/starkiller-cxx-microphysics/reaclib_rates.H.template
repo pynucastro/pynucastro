@@ -46,6 +46,8 @@ tf_t evaluate_tfactors(const Real T)
 
 <reaclib_rate_functions>(0)
 
+<approx_rate_functions>(0)
+
 AMREX_GPU_HOST_DEVICE AMREX_INLINE
 void
 fill_reaclib_rates(const tf_t& tfactors, rate_eval_t& rate_eval)
@@ -55,6 +57,8 @@ fill_reaclib_rates(const tf_t& tfactors, rate_eval_t& rate_eval)
     Real drate_dT;
 
     <fill_reaclib_rates>(1)
+
+    <fill_approx_rates>(1)
 
 }
 

@@ -14,7 +14,7 @@ from abc import ABC, abstractmethod
 import sympy
 from pynucastro.networks import RateCollection
 from pynucastro.networks import SympyRates
-
+from pynucastro.rates.rate import ApproximateRate
 
 class BaseCxxNetwork(ABC, RateCollection):
     """Interpret the collection of rates and nuclei and produce the
@@ -66,6 +66,8 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.ftags['<pynucastro_home>'] = self._pynucastro_home
         self.ftags['<reaclib_rate_functions>'] = self._reaclib_rate_functions
         self.ftags['<fill_reaclib_rates>'] = self._fill_reaclib_rates
+        self.ftags['<approx_rate_functions>'] = self._approx_rate_functions
+        self.ftags['<fill_approx_rates>'] = self._fill_approx_rates
         self.indent = '    '
 
         self.num_screen_calls = None
@@ -443,8 +445,18 @@ class BaseCxxNetwork(ABC, RateCollection):
         for r in self.reaclib_rates:
             of.write(r.function_string_cxx(dtype=self.dtype, specifiers=self.function_specifier))
 
+    def _approx_rate_functions(self, n_indent, of):
+        for r in self.approx_rates:
+            of.write(r.function_string_cxx(dtype=self.dtype, specifiers=self.function_specifier))
+
     def _fill_reaclib_rates(self, n_indent, of):
         for r in self.reaclib_rates:
+            of.write(f"{self.indent*n_indent}rate_{r.fname}(tfactors, rate, drate_dT);\n")
+            of.write(f"{self.indent*n_indent}rate_eval.screened_rates(k_{r.fname}) = rate;\n")
+            of.write(f"{self.indent*n_indent}rate_eval.dscreened_rates_dT(k_{r.fname}) = drate_dT;\n\n")
+
+    def _fill_approx_rates(self, n_indent, of):
+        for r in self.approx_rates:
             of.write(f"{self.indent*n_indent}rate_{r.fname}(tfactors, rate, drate_dT);\n")
             of.write(f"{self.indent*n_indent}rate_eval.screened_rates(k_{r.fname}) = rate;\n")
             of.write(f"{self.indent*n_indent}rate_eval.dscreened_rates_dT(k_{r.fname}) = drate_dT;\n\n")
