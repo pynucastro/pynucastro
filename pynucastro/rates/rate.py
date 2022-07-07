@@ -1559,7 +1559,7 @@ class ApproximateRate(Rate):
 
         fstring = ""
         fstring += f"{specifiers}\n"
-        fstring += f"void rate_{self.fname}(const tf_t& tfactors, {dtype}& rate, {dtype}& drate_dT) {{\n\n"
+        fstring += f"void rate_{self.fname}(const rate_eval_t& rate_eval, {dtype}& rate, {dtype}& drate_dT) {{\n\n"
 
         if not self.is_reverse:
 
@@ -1576,8 +1576,8 @@ class ApproximateRate(Rate):
 
             # now the approximation
             fstring += f"    {dtype} dd = 1.0_rt / (r_pg + r_pa);\n"
-            fstring += f"    {dtype} rate = r_ag + r_ap * r_pg * dd;\n"
-            fstring += f"    {dtype} drate_dT = drdT_ag + drdT_ap * r_pg * dd + r_ap * drdT_pg * dd - r_ap * r_pg * dd * dd * (drdT_pg + drdT_pa);\n"
+            fstring += f"    rate = r_ag + r_ap * r_pg * dd;\n"
+            fstring += f"    drate_dT = drdT_ag + drdT_ap * r_pg * dd + r_ap * drdT_pg * dd - r_ap * r_pg * dd * dd * (drdT_pg + drdT_pa);\n"
         else:
 
             # first we need to get all of the rates that make this up
@@ -1593,8 +1593,8 @@ class ApproximateRate(Rate):
 
             # now the approximation
             fstring += f"    {dtype} dd = 1.0_rt / (r_pg + r_pa);\n"
-            fstring += f"    {dtype} rate = r_ga + r_gp * r_pa * dd;\n"
-            fstring += f"    {dtype} drate_dT = drdT_ga + drdT_gp * r_pa * dd + r_gp * drdT_pa * dd - r_gp * r_pa * dd * dd * (drdT_pg + drdT_pa);\n"
+            fstring += f"    rate = r_ga + r_gp * r_pa * dd;\n"
+            fstring += f"    drate_dT = drdT_ga + drdT_gp * r_pa * dd + r_gp * drdT_pa * dd - r_gp * r_pa * dd * dd * (drdT_pg + drdT_pa);\n"
 
         fstring += "}\n\n"
         return fstring
