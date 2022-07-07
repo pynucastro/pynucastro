@@ -571,7 +571,7 @@ class RateCollection:
 
         return rvals
 
-    def _evaluate_comp_NSE(self, u, rho, T, composition):
+    def _evaluate_comp_NSE(self, u, rho, T, composition, ye=None):
         """ A helper equationt that finds the mass fraction of each nuclide 
         in NSE state, u[0] is mu_p^C while u[1] is bar{mu_n}"""
         
@@ -587,7 +587,10 @@ class RateCollection:
         comp_NSE = copy.deepcopy(composition)
 
         # presribed electron fraction
-        n_e = rho*composition.eval_ye()/m_u
+        if ye is None:
+            ye = composition.eval_ye()
+
+        n_e = rho*ye/m_u
 
         for nuc in self.unique_nuclei:
             gamma = nuc.Z**(5./3.)*e**2*(4.0*np.pi*n_e/3.0)**(1./3.)/k/T
@@ -598,56 +601,64 @@ class RateCollection:
             
         return comp_NSE   
 
-    def _constraint_eq(self, u, rho, T, composition):
+    def _constraint_eq(self, u, rho, T, composition, ye=None):
         """ Constraint Equations used to evaluate chemical potential for proton and neutron,
         which is used when evaluating X_NSE, mass fraction at NSE"""
 
+        if ye is None:
+            ye = composition.eval_ye()
+
         comp_NSE = self._evaluate_comp_NSE(u, rho, T, composition)
         
-        eq1 = sum(comp_NSE.X.values()) - 1
-        eq2 = composition.eval_ye() - comp_NSE.eval_ye()
-
+        eq1 = sum(comp_NSE.X.values()) - 1.0
+        eq2 = ye - comp_NSE.eval_ye()
+        
         return [eq1, eq2]
 
-    def get_comp_NSE(self, rho, T, composition, init_guess=[-2.0, -15.0], dx= 0.5):
+    def get_comp_NSE(self, rho, T, composition, ye=None, init_guess=[-3.5, -15.0], dx= 0.5):
         """Returns the NSE composition given a composition, density, and temperature 
         using scipy.fsolve. The given composition gives prescribed electron fraction.
         One can specify 'iter_count' or # of times to allow modifications
         of the initial guess to get correct answer"""
 
-        assert rho >= 1.0e6 and T >= 2.0e9, "Density and(or) Temperature too low to acheive NSE!"
+        #assert T >= 1.0e9, "Temperature too low to acheive NSE!"
         
         found_sol = False
         n = 0
-        init_guess = np.array(init_guess)
+        j = 0
+        init_guess = np.array(init_guess)        
         is_pos_old = False
 
-        while (n < 30):
+        while (j < 10):
+            n = 0
+            guess = copy.deepcopy(init_guess)
+            while (n < 20):
+                u = fsolve(self._constraint_eq, guess, args=(rho, T, composition,ye), xtol=1.5e-4)
+                res = self._constraint_eq(u, rho, T, composition, ye=ye)
+                
+                is_pos_new = all(k > 0 for k in res)
+                found_sol = np.all(np.isclose(res, [0.0,0.0], rtol=1e-3, atol=1e-4))
+                #print(f"res is {res}")
+                if found_sol:
+                    comp_NSE = self._evaluate_comp_NSE(u, rho, T, composition, ye=ye)
+                    return comp_NSE 
+                
+                if is_pos_old != is_pos_new:
+                    dx *= 0.7
+                    
+                if is_pos_new:
+                    guess -= dx
+                else:
+                    guess += dx
 
-            u = fsolve(self._constraint_eq, init_guess, args=(rho, T, composition,), xtol=1.5e-4)
-            res = self._constraint_eq(u, rho, T, composition)
-            
-            is_pos_new = all(k > 0 for k in res)
-            found_sol = np.all(np.isclose(res, [0.0,0.0], rtol=1e-3, atol=1e-4))
-            #print(f"res is {res}")
-            if found_sol:
-                comp_NSE = self._evaluate_comp_NSE(u, rho, T, composition)
-                return comp_NSE 
-                
-            if is_pos_old != is_pos_new:
-                dx *= 0.7
-            
-            if is_pos_new:
-                init_guess -= dx
-            else:
-                init_guess += dx
-                
-            is_pos_old = is_pos_new
-            n += 1
-            
+                is_pos_old = is_pos_new
+                n += 1
+            j += 1
+            init_guess[0] -= 0.5
+
         raise ValueError("No solution is founded, try to manually adjust initial guess or increase iter_count")
     
-    def ASE_scheme(self, rho, T, composition, init_guess=[-2.0, -15.0], nse_dx=0.5,
+    def ASE_scheme(self, rho, T, composition, ye=None, init_guess=[-2.0, -15.0], nse_dx=0.5,
                    f=0.05, cell_dx=1.0e6, rel=False, tol=0.1,):
         """
         Adaptive Statistical Equilibrium scheme:
@@ -673,7 +684,7 @@ class RateCollection:
         assert all(nuc in self.unique_nuclei for nuc in [p, n, he4]), "p, n, he4 are not fully present"
         
         # First check if n,p,a are in equilibrium in order to proceed to ASE
-        comp_NSE = self.get_comp_NSE(rho, T, composition, init_guess=init_guess, dx=nse_dx)
+        comp_NSE = self.get_comp_NSE(rho, T, composition, ye=ye, init_guess=init_guess, dx=nse_dx)
         Y_NSE = comp_NSE.get_molar()
 
         Y = composition.get_molar()
@@ -690,7 +701,6 @@ class RateCollection:
         #r_NSE = {r_NSE} and r = {r}"""
 
         # Find burning limiter:
-                # Estimate specific internal energy assume ideal gas:
         k = constants.value("Boltzmann constant")*1.0e7          #boltzmann in erg/K
         m_u = constants.value("unified atomic mass unit")*1.0e3  #atomic unit mass in g
         inverse_u = composition.eval_ye() + sum(Y.values())
@@ -794,9 +804,11 @@ class RateCollection:
                     break
 
         print(f"fast_reac is {fast_reac}")
+
         if found_fast_reac:
             # do ASE        
             print("Found fast reaction")
+            
         else:
             print(f"Did not find fast reaction, ")
 
