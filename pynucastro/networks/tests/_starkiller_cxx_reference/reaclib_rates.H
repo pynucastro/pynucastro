@@ -191,6 +191,7 @@ void rate_n__p__weak__wc12(const tf_t& tfactors, Real& rate, Real& drate_dT) {
 }
 
 
+
 AMREX_GPU_HOST_DEVICE AMREX_INLINE
 void
 fill_reaclib_rates(const tf_t& tfactors, rate_eval_t& rate_eval)
@@ -218,6 +219,7 @@ fill_reaclib_rates(const tf_t& tfactors, rate_eval_t& rate_eval)
     rate_n__p__weak__wc12(tfactors, rate, drate_dT);
     rate_eval.screened_rates(k_n__p__weak__wc12) = rate;
     rate_eval.dscreened_rates_dT(k_n__p__weak__wc12) = drate_dT;
+
 
 
 }

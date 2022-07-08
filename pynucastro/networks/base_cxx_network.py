@@ -14,7 +14,7 @@ from abc import ABC, abstractmethod
 import sympy
 from pynucastro.networks import RateCollection
 from pynucastro.networks import SympyRates
-from pynucastro.rates.rate import ApproximateRate
+
 
 class BaseCxxNetwork(ABC, RateCollection):
     """Interpret the collection of rates and nuclei and produce the
