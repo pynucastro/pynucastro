@@ -572,34 +572,40 @@ class RateCollection:
         return rvals
 
     def _evaluate_comp_NSE(self, u, rho, T, composition, ye=None):
-        """ A helper equationt that finds the mass fraction of each nuclide 
-        in NSE state, u[0] is mu_p^C while u[1] is bar{mu_n}"""
-        
+        """ A helper equationt that finds the mass fraction of each nuclide in NSE state, 
+        u[0] is chemical potential of proton  while u[1] is chemical potential of neutron"""
+
         m_u = constants.value("unified atomic mass unit")*1.0e3  # atomic unit mass in g
         k = constants.value("Boltzmann constant")*1.0e7          # boltzmann in erg/K
         h = constants.value("Planck constant")*1.0e7             # in cgs
         e = 4.8032e-10                                           # electron charge in cgs
 
+        # These are three constants for calculating coulomb corrections of chemical energy, see Calders paper: iopscience 510709, appendix
         A_1 = -0.9052
         A_2 = 0.6322
+        
+        #There seems to be a typo in calders paper, and I used number from paper that Calder send us.
         A_3 = -0.5*np.sqrt(3.0)-A_1/np.sqrt(A_2)
         
         comp_NSE = copy.deepcopy(composition)
 
-        # presribed electron fraction
+        # Use electron fraction from composition by default, else use the specific electron fraction provided
         if ye is None:
             ye = composition.eval_ye()
 
+        # electron number density
         n_e = rho*ye/m_u
 
+        # u_c is the coulomb correction term.
+        # Calculate the composition at NSE, equations found in appendix of Calder paper
         for nuc in self.unique_nuclei:
             gamma = nuc.Z**(5./3.)*e**2*(4.0*np.pi*n_e/3.0)**(1./3.)/k/T
             u_c = 624151.0*k*T*(A_1*(np.sqrt(gamma*(A_2+gamma))-A_2*np.log(np.sqrt(gamma/A_2)+np.sqrt(1.0+gamma/A_2))) \
              + 2.0*A_3*(np.sqrt(gamma)-np.arctan(np.sqrt(gamma))))
             comp_NSE.X[nuc] = m_u*nuc.A_nuc*nuc.partition_function(T)/rho*(2.*np.pi*m_u*nuc.A_nuc*k*T/h**2)**(3./2.) \
             *np.exp((nuc.Z*u[0]+nuc.N*u[1]-u_c+nuc.nucbind*nuc.A)/k/T*1.6022e-6)
-            
-        return comp_NSE   
+
+        return comp_NSE
 
     def _constraint_eq(self, u, rho, T, composition, ye=None):
         """ Constraint Equations used to evaluate chemical potential for proton and neutron,
@@ -609,7 +615,10 @@ class RateCollection:
             ye = composition.eval_ye()
 
         comp_NSE = self._evaluate_comp_NSE(u, rho, T, composition)
-        
+
+        # These two are the constraint equations for solving NSE mass fractions
+        # eq1 ensure the sum of mass fractions equals to 1
+        # eq2 ensure the electron fraction at NSE state equals to the prescribed electron fraction
         eq1 = sum(comp_NSE.X.values()) - 1.0
         eq2 = ye - comp_NSE.eval_ye()
         
@@ -621,42 +630,47 @@ class RateCollection:
         One can specify 'iter_count' or # of times to allow modifications
         of the initial guess to get correct answer"""
 
-        #assert T >= 1.0e9, "Temperature too low to acheive NSE!"
-        
-        found_sol = False
-        n = 0
+        found_sol = False                  
+        i = 0
         j = 0
         init_guess = np.array(init_guess)        
         is_pos_old = False
 
-        while (j < 10):
-            n = 0
+        # First loop over the initial guess. Each loop I decrease the guess of proton's chemical energy
+        while (j < 20):
+            i = 0
             guess = copy.deepcopy(init_guess)
-            while (n < 20):
-                u = fsolve(self._constraint_eq, guess, args=(rho, T, composition,ye), xtol=1.5e-4)
+            init_dx = dx
+
+            # in this loop I fine-tune the initial guess if iteration failed
+            while (i < 20):
+                u = fsolve(self._constraint_eq, guess, args=(rho, T, composition,ye), xtol=1.5e-9)  #xtol=1.5e-4
                 res = self._constraint_eq(u, rho, T, composition, ye=ye)
-                
                 is_pos_new = all(k > 0 for k in res)
-                found_sol = np.all(np.isclose(res, [0.0,0.0], rtol=1e-3, atol=1e-4))
-                #print(f"res is {res}")
+
+                # rtol=1e-3, atol=1e-4
+                found_sol = np.all(np.isclose(res, [0.0,0.0], rtol=1e-2, atol=1e-3))
+                print(f"res is {res}")
+                
                 if found_sol:
                     comp_NSE = self._evaluate_comp_NSE(u, rho, T, composition, ye=ye)
                     return comp_NSE 
-                
+
                 if is_pos_old != is_pos_new:
-                    dx *= 0.7
-                    
+                    init_dx *= 0.8
+
+                # decrease guess if both constraint equation give positive value, else increase guess
                 if is_pos_new:
-                    guess -= dx
+                    guess -= init_dx
                 else:
-                    guess += dx
+                    guess += init_dx
 
                 is_pos_old = is_pos_new
-                n += 1
+                i += 1
             j += 1
             init_guess[0] -= 0.5
 
-        raise ValueError("No solution is founded, try to manually adjust initial guess or increase iter_count")
+        raise ValueError("No solution is founded, try to manually adjust initial guess")
     
     def ASE_scheme(self, rho, T, composition, ye=None, init_guess=[-2.0, -15.0], nse_dx=0.5,
                    f=0.05, cell_dx=1.0e6, rel=False, tol=0.1,):
