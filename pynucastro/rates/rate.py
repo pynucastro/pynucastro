@@ -1045,6 +1045,109 @@ class Rate:
         fstring += "}\n\n"
         return fstring
 
+    def ydot_string_py(self):
+        """
+        Return a string containing the term in a dY/dt equation
+        in a reaction network corresponding to this rate.
+        """
+
+        # composition dependence
+        Y_string = ""
+        for n, r in enumerate(sorted(set(self.reactants))):
+            c = self.reactants.count(r)
+            if c > 1:
+                Y_string += f"Y[j{r}]**{c}"
+            else:
+                Y_string += f"Y[j{r}]"
+
+            if n < len(set(self.reactants))-1:
+                Y_string += "*"
+
+        # density dependence
+        if self.dens_exp == 0:
+            dens_string = ""
+        elif self.dens_exp == 1:
+            dens_string = "rho*"
+        else:
+            dens_string = f"rho**{self.dens_exp}*"
+
+        # electron fraction dependence
+        if (self.weak_type == 'electron_capture' and not self.tabular):
+            y_e_string = 'ye(Y)*'
+        else:
+            y_e_string = ''
+
+        # prefactor
+        if not self.prefactor == 1.0:
+            prefactor_string = f"{self.prefactor:1.14e}*"
+        else:
+            prefactor_string = ""
+
+        return "{}{}{}{}*lambda_{}".format(prefactor_string, dens_string,
+                                           y_e_string, Y_string, self.fname)
+
+    def jacobian_string_py(self, ydot_j, y_i):
+        """
+        Return a string containing the term in a jacobian matrix
+        in a reaction network corresponding to this rate.
+
+        Returns the derivative of the j-th YDOT wrt. the i-th Y
+        If the derivative is zero, returns the empty string ''
+
+        ydot_j and y_i are objects of the class ``Nucleus``.
+        """
+        if (ydot_j not in self.reactants and ydot_j not in self.products) or \
+           y_i not in self.reactants:
+            return ''
+
+        # composition dependence
+        Y_string = ""
+        for n, r in enumerate(sorted(set(self.reactants))):
+            c = self.reactants.count(r)
+            if y_i == r:
+                if c == 1:
+                    continue
+                if 0 < n < len(set(self.reactants))-1:
+                    Y_string += "*"
+                if c > 2:
+                    Y_string += f"{c}*Y[j{r}]**{c-1}"
+                elif c == 2:
+                    Y_string += f"2*Y[j{r}]"
+            else:
+                if 0 < n < len(set(self.reactants))-1:
+                    Y_string += "*"
+                if c > 1:
+                    Y_string += f"Y[j{r}]**{c}"
+                else:
+                    Y_string += f"Y[j{r}]"
+
+        # density dependence
+        if self.dens_exp == 0:
+            dens_string = ""
+        elif self.dens_exp == 1:
+            dens_string = "rho*"
+        else:
+            dens_string = f"rho**{self.dens_exp}*"
+
+        # electron fraction dependence
+        if (self.weak_type == 'electron_capture' and not self.tabular):
+            y_e_string = 'ye(Y)*'
+        else:
+            y_e_string = ''
+
+        # prefactor
+        if not self.prefactor == 1.0:
+            prefactor_string = f"{self.prefactor:1.14e}*"
+        else:
+            prefactor_string = ""
+
+        if Y_string == "" and dens_string == "" and prefactor_string == "":
+            rstring = "{}{}{}lambda_{}"
+        else:
+            rstring = "{}{}{}{}*lambda_{}"
+        return rstring.format(prefactor_string, dens_string,
+                              y_e_string, Y_string, self.fname)
+
     def eval(self, T, rhoY=None):
         """ evauate the reaction rate for temperature T """
 
@@ -1406,3 +1509,41 @@ class ApproximateRate(Rate):
                 r_pg = self.secondary_rates[1].eval(T)
 
                 return r_ga + r_pa * r_gp / (r_pg + r_pa)
+
+    def function_string_py(self):
+        """
+        Return a string containing python function that computes the
+        approximate rate
+        """
+
+        if not self.approx_type == "ap_pg":
+            raise NotImplementedError("don't know how to work with this approximation")
+
+        string = ""
+        string += "@numba.njit()\n"
+        string += f"def {self.fname}(tf):\n"
+
+        if not self.is_reverse:
+
+            # first we need to get all of the rates that make this up
+            string += f"    r_ag = {self.primary_rate.fname}(tf)\n"
+            string += f"    r_ap = {self.secondary_rates[0].fname}(tf)\n"
+            string += f"    r_pg = {self.secondary_rates[1].fname}(tf)\n"
+            string += f"    r_pa = {self.secondary_reverse[1].fname}(tf)\n"
+
+            # now the approximation
+            string += "    rate = r_ag + r_ap * r_pg / (r_pg + r_pa)\n"
+
+        else:
+
+            # first we need to get all of the rates that make this up
+            string += f"    r_ga = {self.primary_reverse.fname}(tf)\n"
+            string += f"    r_pa = {self.secondary_reverse[1].fname}(tf)\n"
+            string += f"    r_gp = {self.secondary_reverse[0].fname}(tf)\n"
+            string += f"    r_pg = {self.secondary_rates[1].fname}(tf)\n"
+
+            # now the approximation
+            string += "    rate = r_ga + r_pa * r_gp / (r_pg + r_pa)\n"
+
+        string += "    return rate\n\n"
+        return string

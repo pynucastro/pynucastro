@@ -33,14 +33,13 @@ class TestPythonNetwork:
         self.rate = None
 
     def test_ydot_string(self):
-        ydot = self.pyn.ydot_string(self.rate)
+        ydot = self.rate.ydot_string_py()
         assert ydot == "rho*Y[jc13]*Y[jp]*lambda_p_c13__n14" or \
                ydot == "rho*Y[jp]*Y[jc13]*lambda_p_c13__n14"
 
     def test_jacobian_string(self):
-        jac = self.pyn.jacobian_string(self.rate,
-                                       self.rate.products[0],
-                                       self.rate.reactants[0])
+        jac = self.rate.jacobian_string_py(self.rate.products[0],
+                                           self.rate.reactants[0])
         assert jac == "rho*Y[jc13]*lambda_p_c13__n14"
 
     def test_function_string(self):
