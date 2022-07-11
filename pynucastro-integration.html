@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Example of integrating a network &mdash; pynucastro 1.7.0.post4+gc698764 documentation</title>
+  <title>Example of integrating a network &mdash; pynucastro 1.7.0.post5+g2e3294b documentation</title>
       <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -440,11 +440,12 @@ div.rendered_html tbody tr:hover {
 C13 + p ⟶ N14 + 𝛾
 </pre></div></div>
 </div>
+<p>a rate also knows what its contribution is to the <span class="math notranslate nohighlight">\(dY/dt\)</span> equation is:</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">pynet</span><span class="o">.</span><span class="n">ydot_string</span><span class="p">(</span><span class="n">r</span><span class="p">))</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">ydot_string_py</span><span class="p">())</span>
 </pre></div>
 </div>
 </div>
@@ -849,7 +850,7 @@ def rhs_eq(t, Y, rho, T):
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/pynucastro-integration_25_0.png" src="_images/pynucastro-integration_25_0.png" />
+<img alt="_images/pynucastro-integration_26_0.png" src="_images/pynucastro-integration_26_0.png" />
 </div>
 </div>
 <script type="application/vnd.jupyter.widget-state+json">

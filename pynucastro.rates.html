@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.rates package &mdash; pynucastro 1.7.0.post4+gc698764 documentation</title>
+  <title>pynucastro.rates package &mdash; pynucastro 1.7.0.post5+g2e3294b documentation</title>
       <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -318,6 +318,13 @@ rates to assist in searching for rates stored in a Library.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="pynucastro.rates.rate.ApproximateRate.function_string_py">
+<span class="sig-name descname"><span class="pre">function_string_py</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#ApproximateRate.function_string_py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.ApproximateRate.function_string_py" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a string containing python function that computes the
+approximate rate</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.ApproximateRate.get_child_rates">
 <span class="sig-name descname"><span class="pre">get_child_rates</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#ApproximateRate.get_child_rates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.ApproximateRate.get_child_rates" title="Permalink to this definition">¶</a></dt>
 <dd><p>return a list of all of the rates that are used in this approximation</p>
@@ -402,6 +409,16 @@ lowest atomic number.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="pynucastro.rates.rate.Rate.jacobian_string_py">
+<span class="sig-name descname"><span class="pre">jacobian_string_py</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ydot_j</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_i</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#Rate.jacobian_string_py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.Rate.jacobian_string_py" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a string containing the term in a jacobian matrix
+in a reaction network corresponding to this rate.</p>
+<p>Returns the derivative of the j-th YDOT wrt. the i-th Y
+If the derivative is zero, returns the empty string ‘’</p>
+<p>ydot_j and y_i are objects of the class <code class="docutils literal notranslate"><span class="pre">Nucleus</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.Rate.lightest">
 <span class="sig-name descname"><span class="pre">lightest</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#Rate.lightest"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.Rate.lightest" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the lightest nuclide in this Rate.</p>
@@ -435,6 +452,13 @@ highest atomic number.</p>
 <dd class="field-odd"><p>matplotlib.figure.Figure</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pynucastro.rates.rate.Rate.ydot_string_py">
+<span class="sig-name descname"><span class="pre">ydot_string_py</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#Rate.ydot_string_py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.Rate.ydot_string_py" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a string containing the term in a dY/dt equation
+in a reaction network corresponding to this rate.</p>
 </dd></dl>
 
 </dd></dl>
