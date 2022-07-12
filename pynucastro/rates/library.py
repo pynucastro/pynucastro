@@ -398,7 +398,8 @@ class Library:
 
     def derived_forward(self):
         """
-        We exclude the weak and tabular rates from the .foward() library.
+        In this library, We exclude the weak and tabular rates from the .foward() library which includes all
+        the ReacLib forward reactions.
         """
 
         collect_rates = []
@@ -418,8 +419,8 @@ class Library:
 
     def derived_backward(self, use_pf=False, use_A_nuc=False):
         """
-        We apply the detailed balance calculations over the selected .derived_forward()
-        library rates
+        This library contains the detailed balance reverse reactions over the selected .derived_forward()
+        library.
         """
 
         derived_rates = []
