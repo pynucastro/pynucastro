@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.rates.library &mdash; pynucastro 1.7.0.post5+g2e3294b documentation</title>
+  <title>pynucastro.rates.library &mdash; pynucastro 1.7.0.post6+g25ee4e2 documentation</title>
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -499,31 +499,54 @@
         <span class="k">return</span> <span class="n">only_bwd</span></div>
 
 <div class="viewcode-block" id="Library.derived_forward"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.library.Library.derived_forward">[docs]</a>    <span class="k">def</span> <span class="nf">derived_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        In this library, We exclude the weak and tabular rates from the .foward() library which includes all</span>
+<span class="sd">        the ReacLib forward reactions.</span>
+
+<span class="sd">        In a future PR, we will classify forward reactions as exothermic (Q&gt;0), and reverse by endothermic (Q&lt;0).</span>
+<span class="sd">        However, ReacLib does not follow this path. If a reaction is measured experimentally (independent of Q),</span>
+<span class="sd">        they use detailed balance to get the opposite direction. Eventually, I want to classify forward and reverse</span>
+<span class="sd">        by positive Q and negative Q; however, for testing purposes, making this classification may eventually lead to</span>
+<span class="sd">        computing the detailed balance twice.</span>
+
+<span class="sd">        The idea of derived_forward is to eliminate the reverse and weak, and see if our job gives the same Reaclib</span>
+<span class="sd">        predictions, checking the NSE convergence with the pf functions. In the future, I want to move this function</span>
+<span class="sd">        in a unit test.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">collect_rates</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">onlyfwd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward</span><span class="p">()</span>
 
         <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">onlyfwd</span><span class="o">.</span><span class="n">get_rates</span><span class="p">():</span>
+
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">DerivedRate</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">use_pf</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">use_A_nuc</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-            <span class="k">except</span> <span class="ne">AssertionError</span><span class="p">:</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
                 <span class="k">continue</span>
-            <span class="n">collect_rates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">collect_rates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
 
         <span class="n">list1</span> <span class="o">=</span> <span class="n">Library</span><span class="p">(</span><span class="n">rates</span><span class="o">=</span><span class="n">collect_rates</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">list1</span></div>
 
 <div class="viewcode-block" id="Library.derived_backward"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.library.Library.derived_backward">[docs]</a>    <span class="k">def</span> <span class="nf">derived_backward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">use_pf</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">use_A_nuc</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This library contains the detailed balance reverse reactions over the selected .derived_forward(),</span>
+<span class="sd">        computed by hand.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">derived_rates</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">onlyfwd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">derived_forward</span><span class="p">()</span>
 
         <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">onlyfwd</span><span class="o">.</span><span class="n">get_rates</span><span class="p">():</span>
-            <span class="n">i</span> <span class="o">=</span> <span class="n">DerivedRate</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">use_pf</span><span class="o">=</span><span class="n">use_pf</span><span class="p">,</span> <span class="n">use_A_nuc</span><span class="o">=</span><span class="n">use_A_nuc</span><span class="p">)</span>
-            <span class="n">derived_rates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">i</span> <span class="o">=</span> <span class="n">DerivedRate</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">use_pf</span><span class="o">=</span><span class="n">use_pf</span><span class="p">,</span> <span class="n">use_A_nuc</span><span class="o">=</span><span class="n">use_A_nuc</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">derived_rates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
 
         <span class="n">onlybwd</span> <span class="o">=</span> <span class="n">Library</span><span class="p">(</span><span class="n">rates</span><span class="o">=</span><span class="n">derived_rates</span><span class="p">)</span>
-
         <span class="k">return</span> <span class="n">onlybwd</span></div></div>
 
 

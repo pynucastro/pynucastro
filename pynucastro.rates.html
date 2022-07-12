@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.rates package &mdash; pynucastro 1.7.0.post5+g2e3294b documentation</title>
+  <title>pynucastro.rates package &mdash; pynucastro 1.7.0.post6+g25ee4e2 documentation</title>
       <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -173,12 +173,24 @@ specified by RateFilter objects.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.library.Library.derived_backward">
 <span class="sig-name descname"><span class="pre">derived_backward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">use_pf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_A_nuc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/library.html#Library.derived_backward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.Library.derived_backward" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>This library contains the detailed balance reverse reactions over the selected .derived_forward(),
+computed by hand.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.library.Library.derived_forward">
 <span class="sig-name descname"><span class="pre">derived_forward</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/library.html#Library.derived_forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.Library.derived_forward" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>In this library, We exclude the weak and tabular rates from the .foward() library which includes all
+the ReacLib forward reactions.</p>
+<p>In a future PR, we will classify forward reactions as exothermic (Q&gt;0), and reverse by endothermic (Q&lt;0).
+However, ReacLib does not follow this path. If a reaction is measured experimentally (independent of Q),
+they use detailed balance to get the opposite direction. Eventually, I want to classify forward and reverse
+by positive Q and negative Q; however, for testing purposes, making this classification may eventually lead to
+computing the detailed balance twice.</p>
+<p>The idea of derived_forward is to eliminate the reverse and weak, and see if our job gives the same Reaclib
+predictions, checking the NSE convergence with the pf functions. In the future, I want to move this function
+in a unit test.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.library.Library.diff">
