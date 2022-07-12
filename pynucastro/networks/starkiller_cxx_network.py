@@ -1,4 +1,4 @@
-"""A Fortran reaction network for integration into the StarKiller
+"""A C++ reaction network for integration into the StarKiller
 Microphysics set of reaction networks used by astrophysical hydrodynamics
 codes"""
 
@@ -24,6 +24,8 @@ class StarKillerCxxNetwork(BaseCxxNetwork):
         self.ftags['<rate_param_tests>'] = self._rate_param_tests
 
         self.disable_rate_params = disable_rate_params
+        self.function_specifier = "AMREX_GPU_HOST_DEVICE AMREX_INLINE"
+        self.dtype = "Real"
 
     def _get_template_files(self):
 
@@ -38,20 +40,17 @@ class StarKillerCxxNetwork(BaseCxxNetwork):
 
         for _, r in enumerate(self.rates):
             if r in self.disable_rate_params:
-                of.write(f"{self.indent*n_indent}if (i == k_{r.fname} && disable_{r.fname}) {{\n")
-                of.write(f"{self.indent*n_indent}    rate_eval.screened_rates(i) = 0.0;\n")
-                of.write(f"{self.indent*n_indent}    rate_eval.dscreened_rates_dT(i) = 0.0;\n")
-                of.write(f"{self.indent*n_indent}    continue;\n")
-                of.write(f"{self.indent*n_indent}}}\n")
+                of.write(f"{self.indent*n_indent}if (disable_{r.fname}) {{\n")
+                of.write(f"{self.indent*n_indent}    rate_eval.screened_rates(k_{r.fname}) = 0.0;\n")
+                of.write(f"{self.indent*n_indent}    rate_eval.dscreened_rates_dT(k_{r.fname}) = 0.0;\n")
 
                 # check for the reverse too -- we disable it with the same parameter
                 rr = self.find_reverse(r)
                 if rr is not None:
-                    of.write(f"{self.indent*n_indent}if (i == k_{rr.fname} && disable_{r.fname}) {{\n")
-                    of.write(f"{self.indent*n_indent}    rate_eval.screened_rates(i) = 0.0;\n")
-                    of.write(f"{self.indent*n_indent}    rate_eval.dscreened_rates_dT(i) = 0.0;\n")
-                    of.write(f"{self.indent*n_indent}    continue;\n")
-                    of.write(f"{self.indent*n_indent}}}\n")
+                    of.write(f"{self.indent*n_indent}    rate_eval.screened_rates(k_{rr.fname}) = 0.0;\n")
+                    of.write(f"{self.indent*n_indent}    rate_eval.dscreened_rates_dT(k_{rr.fname}) = 0.0;\n")
+
+                of.write(f"{self.indent*n_indent}}}\n\n")
 
     def _write_network(self, odir=None):
         """

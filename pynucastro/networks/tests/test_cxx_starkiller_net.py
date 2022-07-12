@@ -99,7 +99,6 @@ class TestStarKillerCxxNetwork:
                  "inputs.burn_cell.VODE",
                  "Make.package",
                  "_parameters",
-                 "reaclib_rate_metadata.dat",
                  "reaclib_rates.H",
                  "table_rates_data.cpp",
                  "table_rates.H"]

@@ -6,8 +6,13 @@
 
 #include <actual_network.H>
 
-using namespace reaclib_rates;
 using namespace Rates;
+
+struct rate_eval_t {
+    Array1D<Real, 1, NumRates>  screened_rates;
+    Array1D<Real, 1, NumRates>  dscreened_rates_dT;
+    Array1D<Real, NrateReaclib+1, NrateReaclib+NrateTabular> add_energy_rate;
+};
 
 struct tf_t {
     Real T9;
@@ -21,51 +26,6 @@ struct tf_t {
     Real lnT9;
 };
 
-AMREX_INLINE
-void init_reaclib() {
-
-    const std::string secret_code_reference = "testing";
-
-    amrex::Print() << "reading in reaclib rates..." << std::endl;
-
-    std::ifstream table;
-    table.open("reaclib_rate_metadata.dat");
-
-    std::string secret_code_file;
-    std::getline(table, secret_code_file);
-
-    if (secret_code_file != secret_code_reference) {
-        amrex::Error("invalid reaclib_rate_metadata.dat");
-    }
-
-    std::string line;
-
-    // read in all of the reaclib rate sets
-
-    for (int ireaclib = 1; ireaclib <= NumReaclibSets; ++ireaclib) {
-        for (int icoeff = 1; icoeff <= 7; ++icoeff) {
-            std::getline(table, line);
-            std::istringstream data(line);
-            data >> ctemp_rate(icoeff, ireaclib);
-        }
-    }
-
-    for (int ireaclib = 1; ireaclib <= NrateReaclib; ++ireaclib) {
-        std::getline(table, line);
-        std::istringstream data(line);
-        data >> rate_start_idx(ireaclib);
-    }
-
-    for (int ireaclib = 1; ireaclib <= NrateReaclib; ++ireaclib) {
-        std::getline(table, line);
-        std::istringstream data(line);
-        data >> rate_extra_mult(ireaclib);
-    }
-
-    table.close();
-
-}
-
 AMREX_GPU_HOST_DEVICE AMREX_INLINE
 tf_t evaluate_tfactors(const Real T)
 {
@@ -73,10 +33,10 @@ tf_t evaluate_tfactors(const Real T)
     tf_t tf;
     tf.T9 = T / 1.e9_rt;
     tf.T9i = 1.0_rt / tf.T9;
-    tf.T913i = std::pow(tf.T9i, 1.0_rt/3.0_rt);
+    tf.T913 = std::cbrt(tf.T9);
+    tf.T913i = 1.0_rt / tf.T913;
     tf.T923i = tf.T913i * tf.T913i;
     tf.T943i = tf.T9i * tf.T913i;
-    tf.T913 = std::pow(tf.T9, 1.0_rt/3.0_rt);
     tf.T923 = tf.T913 * tf.T913;
     tf.T953 = tf.T9 * tf.T923;
     tf.lnT9 = std::log(tf.T9);
@@ -84,67 +44,182 @@ tf_t evaluate_tfactors(const Real T)
     return tf;
 }
 
-template <int do_T_derivatives>
 AMREX_GPU_HOST_DEVICE AMREX_INLINE
-void reaclib_evaluate(plasma_state_t& pstate, const tf_t& tfactors, const int iwhich,
-                      Real& rate, Real& drate_dt) {
+void rate_c12_c12__he4_ne20(const tf_t& tfactors, Real& rate, Real& drate_dT) {
 
-    // iwhich is the rate to evaluate
-    // we then return the rate and its temperature derivative
+    // c12 + c12 --> he4 + ne20
 
-    Real irate = 0.0e0_rt;
-    Real dirate_dt = 0.0e0_rt;
+    rate = 0.0;
+    drate_dT = 0.0;
 
-    rate = 0.0e0_rt;
-    drate_dt = 0.0e0_rt;
+    Real ln_set_rate{0.0};
+    Real dln_set_rate_dT9{0.0};
+    Real set_rate{0.0};
 
-    // Get the number of additional Reaclib sets for this rate
-    // Total number of Reaclib sets for this rate is m + 1
-    int m = reaclib_rates::rate_extra_mult(iwhich);
+    // cf88r
+    ln_set_rate =  61.2863 + -84.165 * tfactors.T913i + -1.56627 * tfactors.T913
+                         + -0.0736084 * tfactors.T9 + -0.072797 * tfactors.T953 + -0.666667 * tfactors.lnT9;
 
-    int istart = reaclib_rates::rate_start_idx(iwhich);
+    dln_set_rate_dT9 =  + -(1.0/3.0) * -84.165 * tfactors.T943i + (1.0/3.0) * -1.56627 * tfactors.T923i
+                              + -0.0736084 + (5.0/3.0) * -0.072797 * tfactors.T923 + -0.666667 * tfactors.T9i;
 
-    for (int i = 0; i <= m; ++i) {
+    // avoid underflows by zeroing rates in [0.0, 1.e-100]
+    ln_set_rate = std::max(ln_set_rate, -230.0);
+    set_rate = std::exp(ln_set_rate);
+    rate += set_rate;
+    drate_dT += set_rate * dln_set_rate_dT9 / 1.0e9;
 
-        // compute the log of the i component of the rate, in Reaclib form
+}
 
-        Real lnirate =
-            reaclib_rates::ctemp_rate(1, istart+i) +
-            reaclib_rates::ctemp_rate(2, istart+i) * tfactors.T9i +
-            reaclib_rates::ctemp_rate(3, istart+i) * tfactors.T913i +
-            reaclib_rates::ctemp_rate(4, istart+i) * tfactors.T913 +
-            reaclib_rates::ctemp_rate(5, istart+i) * tfactors.T9 +
-            reaclib_rates::ctemp_rate(6, istart+i) * tfactors.T953 +
-            reaclib_rates::ctemp_rate(7, istart+i) * tfactors.lnT9;
+AMREX_GPU_HOST_DEVICE AMREX_INLINE
+void rate_c12_c12__n_mg23(const tf_t& tfactors, Real& rate, Real& drate_dT) {
 
-        // compute the derivative of the log of the rate
+    // c12 + c12 --> n + mg23
 
-        Real dlnirate_dT9{0.0};
+    rate = 0.0;
+    drate_dT = 0.0;
 
-        if constexpr (do_T_derivatives == 1) {
-            dlnirate_dT9 =
-                -reaclib_rates::ctemp_rate(2, istart+i) * tfactors.T9i * tfactors.T9i +
-                -(1.0_rt/3.0_rt) * reaclib_rates::ctemp_rate(3, istart+i) * tfactors.T943i +
-                (1.0_rt/3.0_rt) * reaclib_rates::ctemp_rate(4, istart+i) * tfactors.T923i +
-                reaclib_rates::ctemp_rate(5, istart+i) +
-                (5.0_rt/3.0_rt) * reaclib_rates::ctemp_rate(6, istart+i) * tfactors.T923 +
-                reaclib_rates::ctemp_rate(7, istart+i) * tfactors.T9i;
-        }
+    Real ln_set_rate{0.0};
+    Real dln_set_rate_dT9{0.0};
+    Real set_rate{0.0};
 
-        // If the rate will be in the approx. interval [0.0, 1.0E-100], replace by 0.0
-        // This avoids issues with passing very large negative values to EXP
-        // and getting results between 0.0 and 1.0E-308, the limit for IEEE 754.
-        // And avoids SIGFPE in CVODE due to tiny rates.
+    // cf88r
+    ln_set_rate =  -12.8056 + -30.1485 * tfactors.T9i + 11.4826 * tfactors.T913
+                         + 1.82849 * tfactors.T9 + -0.34844 * tfactors.T953;
 
-        lnirate = amrex::max(lnirate, -230.0e0_rt);
-        irate = std::exp(lnirate);
-        rate += irate;
+    dln_set_rate_dT9 =  30.1485 * tfactors.T9i * tfactors.T9i + (1.0/3.0) * 11.4826 * tfactors.T923i
+                              + 1.82849 + (5.0/3.0) * -0.34844 * tfactors.T923;
 
-        if constexpr (do_T_derivatives == 1) {
-            dirate_dt = irate * dlnirate_dT9 / 1.0e9_rt;
-            drate_dt += dirate_dt;
-        }
-    }
+    // avoid underflows by zeroing rates in [0.0, 1.e-100]
+    ln_set_rate = std::max(ln_set_rate, -230.0);
+    set_rate = std::exp(ln_set_rate);
+    rate += set_rate;
+    drate_dT += set_rate * dln_set_rate_dT9 / 1.0e9;
+
+}
+
+AMREX_GPU_HOST_DEVICE AMREX_INLINE
+void rate_c12_c12__p_na23(const tf_t& tfactors, Real& rate, Real& drate_dT) {
+
+    // c12 + c12 --> p + na23
+
+    rate = 0.0;
+    drate_dT = 0.0;
+
+    Real ln_set_rate{0.0};
+    Real dln_set_rate_dT9{0.0};
+    Real set_rate{0.0};
+
+    // cf88r
+    ln_set_rate =  60.9649 + -84.165 * tfactors.T913i + -1.4191 * tfactors.T913
+                         + -0.114619 * tfactors.T9 + -0.070307 * tfactors.T953 + -0.666667 * tfactors.lnT9;
+
+    dln_set_rate_dT9 =  + -(1.0/3.0) * -84.165 * tfactors.T943i + (1.0/3.0) * -1.4191 * tfactors.T923i
+                              + -0.114619 + (5.0/3.0) * -0.070307 * tfactors.T923 + -0.666667 * tfactors.T9i;
+
+    // avoid underflows by zeroing rates in [0.0, 1.e-100]
+    ln_set_rate = std::max(ln_set_rate, -230.0);
+    set_rate = std::exp(ln_set_rate);
+    rate += set_rate;
+    drate_dT += set_rate * dln_set_rate_dT9 / 1.0e9;
+
+}
+
+AMREX_GPU_HOST_DEVICE AMREX_INLINE
+void rate_he4_c12__o16(const tf_t& tfactors, Real& rate, Real& drate_dT) {
+
+    // c12 + he4 --> o16
+
+    rate = 0.0;
+    drate_dT = 0.0;
+
+    Real ln_set_rate{0.0};
+    Real dln_set_rate_dT9{0.0};
+    Real set_rate{0.0};
+
+    // nac2 
+    ln_set_rate =  69.6526 + -1.39254 * tfactors.T9i + 58.9128 * tfactors.T913i + -148.273 * tfactors.T913
+                         + 9.08324 * tfactors.T9 + -0.541041 * tfactors.T953 + 70.3554 * tfactors.lnT9;
+
+    dln_set_rate_dT9 =  1.39254 * tfactors.T9i * tfactors.T9i + -(1.0/3.0) * 58.9128 * tfactors.T943i + (1.0/3.0) * -148.273 * tfactors.T923i
+                              + 9.08324 + (5.0/3.0) * -0.541041 * tfactors.T923 + 70.3554 * tfactors.T9i;
+
+    // avoid underflows by zeroing rates in [0.0, 1.e-100]
+    ln_set_rate = std::max(ln_set_rate, -230.0);
+    set_rate = std::exp(ln_set_rate);
+    rate += set_rate;
+    drate_dT += set_rate * dln_set_rate_dT9 / 1.0e9;
+
+    // nac2 
+    ln_set_rate =  254.634 + -1.84097 * tfactors.T9i + 103.411 * tfactors.T913i + -420.567 * tfactors.T913
+                         + 64.0874 * tfactors.T9 + -12.4624 * tfactors.T953 + 137.303 * tfactors.lnT9;
+
+    dln_set_rate_dT9 =  1.84097 * tfactors.T9i * tfactors.T9i + -(1.0/3.0) * 103.411 * tfactors.T943i + (1.0/3.0) * -420.567 * tfactors.T923i
+                              + 64.0874 + (5.0/3.0) * -12.4624 * tfactors.T923 + 137.303 * tfactors.T9i;
+
+    // avoid underflows by zeroing rates in [0.0, 1.e-100]
+    ln_set_rate = std::max(ln_set_rate, -230.0);
+    set_rate = std::exp(ln_set_rate);
+    rate += set_rate;
+    drate_dT += set_rate * dln_set_rate_dT9 / 1.0e9;
+
+}
+
+AMREX_GPU_HOST_DEVICE AMREX_INLINE
+void rate_n__p__weak__wc12(const tf_t& tfactors, Real& rate, Real& drate_dT) {
+
+    // n --> p
+
+    rate = 0.0;
+    drate_dT = 0.0;
+
+    Real ln_set_rate{0.0};
+    Real dln_set_rate_dT9{0.0};
+    Real set_rate{0.0};
+
+    // wc12w
+    ln_set_rate =  -6.78161;
+
+    dln_set_rate_dT9 = 0.0;
+
+    // avoid underflows by zeroing rates in [0.0, 1.e-100]
+    ln_set_rate = std::max(ln_set_rate, -230.0);
+    set_rate = std::exp(ln_set_rate);
+    rate += set_rate;
+    drate_dT += set_rate * dln_set_rate_dT9 / 1.0e9;
+
+}
+
+
+AMREX_GPU_HOST_DEVICE AMREX_INLINE
+void
+fill_reaclib_rates(const tf_t& tfactors, rate_eval_t& rate_eval)
+{
+
+    Real rate;
+    Real drate_dT;
+
+    rate_c12_c12__he4_ne20(tfactors, rate, drate_dT);
+    rate_eval.screened_rates(k_c12_c12__he4_ne20) = rate;
+    rate_eval.dscreened_rates_dT(k_c12_c12__he4_ne20) = drate_dT;
+
+    rate_c12_c12__n_mg23(tfactors, rate, drate_dT);
+    rate_eval.screened_rates(k_c12_c12__n_mg23) = rate;
+    rate_eval.dscreened_rates_dT(k_c12_c12__n_mg23) = drate_dT;
+
+    rate_c12_c12__p_na23(tfactors, rate, drate_dT);
+    rate_eval.screened_rates(k_c12_c12__p_na23) = rate;
+    rate_eval.dscreened_rates_dT(k_c12_c12__p_na23) = drate_dT;
+
+    rate_he4_c12__o16(tfactors, rate, drate_dT);
+    rate_eval.screened_rates(k_he4_c12__o16) = rate;
+    rate_eval.dscreened_rates_dT(k_he4_c12__o16) = drate_dT;
+
+    rate_n__p__weak__wc12(tfactors, rate, drate_dT);
+    rate_eval.screened_rates(k_n__p__weak__wc12) = rate;
+    rate_eval.dscreened_rates_dT(k_n__p__weak__wc12) = drate_dT;
+
+
 }
 
 #endif

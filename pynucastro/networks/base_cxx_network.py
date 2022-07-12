@@ -10,8 +10,6 @@ import shutil
 import sys
 import re
 from abc import ABC, abstractmethod
-import random
-import string
 
 import sympy
 from pynucastro.networks import RateCollection
@@ -35,7 +33,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         # Get the template files for writing this network code
         self.template_files = self._get_template_files()
 
-        self.symbol_rates = SympyRates(ctype="C++")
+        self.symbol_rates = SympyRates()
 
         self.ydot_out_result = None
         self.solved_ydot = False
@@ -43,7 +41,8 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.jac_null_entries = None
         self.solved_jacobian = False
 
-        self.secret_code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=32))
+        self.function_specifier = "inline"
+        self.dtype = "double"
 
         # a dictionary of functions to call to handle specific parts
         # of the C++ template
@@ -51,23 +50,22 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.ftags['<nrat_reaclib>'] = self._nrat_reaclib
         self.ftags['<nrat_tabular>'] = self._nrat_tabular
         self.ftags['<nrxn>'] = self._nrxn
+        self.ftags['<rate_names>'] = self._rate_names
         self.ftags['<ebind>'] = self._ebind
         self.ftags['<compute_screening_factors>'] = self._compute_screening_factors
-        self.ftags['<write_reaclib_metadata>'] = self._write_reaclib_metadata
         self.ftags['<table_num>'] = self._table_num
         self.ftags['<declare_tables>'] = self._declare_tables
         self.ftags['<table_declare_meta>'] = self._table_declare_meta
         self.ftags['<table_init_meta>'] = self._table_init_meta
         self.ftags['<table_term_meta>'] = self._table_term_meta
-        self.ftags['<table_rates_indices>'] = self._table_rates_indices
         self.ftags['<compute_tabular_rates>'] = self._compute_tabular_rates
         self.ftags['<ydot>'] = self._ydot
         self.ftags['<enuc_add_energy_rate>'] = self._enuc_add_energy_rate
         self.ftags['<jacnuc>'] = self._jacnuc
         self.ftags['<initial_mass_fractions>'] = self._initial_mass_fractions
         self.ftags['<pynucastro_home>'] = self._pynucastro_home
-        self.ftags['<secret_code>'] = self._secret_code_write
-        self.ftags['<secret_code_set>'] = self._secret_code_write_reference
+        self.ftags['<reaclib_rate_functions>'] = self._reaclib_rate_functions
+        self.ftags['<fill_reaclib_rates>'] = self._fill_reaclib_rates
         self.indent = '    '
 
         self.num_screen_calls = None
@@ -122,8 +120,7 @@ class BaseCxxNetwork(ABC, RateCollection):
 
         # Copy any tables in the network to the current directory
         # if the table file cannot be found, print a warning and continue.
-        for i_tab in self.tabular_rates:
-            tr = self.rates[i_tab]
+        for tr in self.tabular_rates:
             tdir = os.path.dirname(tr.rfile_path)
             if tdir != os.getcwd():
                 tdat_file = os.path.join(tdir, tr.table_file)
@@ -259,8 +256,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         of.write(f'{self.indent*n_indent}const int NrateReaclib = {len(self.reaclib_rates)};\n')
 
         nreaclib_sets = 0
-        for nr in self.reaclib_rates:
-            r = self.rates[nr]
+        for r in self.reaclib_rates:
             nreaclib_sets = nreaclib_sets + len(r.sets)
 
         of.write(f'{self.indent*n_indent}const int NumReaclibSets = {nreaclib_sets};\n')
@@ -274,35 +270,23 @@ class BaseCxxNetwork(ABC, RateCollection):
             of.write(f'{self.indent*n_indent}k_{r.fname} = {i+1},\n')
         of.write(f'{self.indent*n_indent}NumRates = k_{self.rates[-1].fname}\n')
 
+    def _rate_names(self, n_indent, of):
+        for i, r in enumerate(self.rates):
+            if i < len(self.rates)-1:
+                cont = ","
+            else:
+                cont = ""
+            of.write(f'{self.indent*n_indent}"{r.fname}"{cont}  // {i+1},\n')
+
     def _ebind(self, n_indent, of):
         for nuc in self.unique_nuclei:
             of.write(f'{self.indent*n_indent}ebind_per_nucleon({nuc.cindex()}) = {nuc.nucbind}_rt;\n')
-
-    def _write_reaclib_metadata(self, n_indent, of):
-        jset = 0
-        for nr in self.reaclib_rates:
-            r = self.rates[nr]
-            for s in r.sets:
-                jset = jset + 1
-                for an in s.a:
-                    of.write(f'{an}\n')
-        j = 1
-        for i, r in enumerate(self.rates):
-            if i in self.reaclib_rates:
-                of.write(f'{j}\n')
-                j = j + len(r.sets)
-
-        for i, r in enumerate(self.rates):
-            if i in self.reaclib_rates:
-                j = len(r.sets)-1
-                of.write(f'{j}\n')
 
     def _table_num(self, n_indent, of):
         of.write(f'{self.indent*n_indent}const int num_tables = {len(self.tabular_rates)};\n')
 
     def _declare_tables(self, n_indent, of):
-        for irate in self.tabular_rates:
-            r = self.rates[irate]
+        for r in self.tabular_rates:
             idnt = self.indent*n_indent
 
             of.write(f'{idnt}extern AMREX_GPU_MANAGED table_t {r.table_index_name}_meta;\n')
@@ -312,8 +296,7 @@ class BaseCxxNetwork(ABC, RateCollection):
             of.write('\n')
 
     def _table_declare_meta(self, n_indent, of):
-        for irate in self.tabular_rates:
-            r = self.rates[irate]
+        for r in self.tabular_rates:
             idnt = self.indent*n_indent
 
             of.write(f"{idnt}AMREX_GPU_MANAGED table_t {r.table_index_name}_meta;\n")
@@ -324,8 +307,7 @@ class BaseCxxNetwork(ABC, RateCollection):
             of.write(f'{idnt}AMREX_GPU_MANAGED Array1D<Real, 1, {r.table_temp_lines}> {r.table_index_name}_temp;\n\n')
 
     def _table_init_meta(self, n_indent, of):
-        for irate in self.tabular_rates:
-            r = self.rates[irate]
+        for r in self.tabular_rates:
             idnt = self.indent*n_indent
             of.write(f'{idnt}{r.table_index_name}_meta.ntemp = {r.table_temp_lines};\n')
             of.write(f'{idnt}{r.table_index_name}_meta.nrhoy = {r.table_rhoy_lines};\n')
@@ -338,8 +320,7 @@ class BaseCxxNetwork(ABC, RateCollection):
             of.write('\n')
 
     def _table_term_meta(self, n_indent, of):
-        for irate in self.tabular_rates:
-            r = self.rates[irate]
+        for r in self.tabular_rates:
 
             of.write('{}deallocate(num_temp_{})\n'.format(
                 self.indent*n_indent, r.table_index_name))
@@ -361,21 +342,12 @@ class BaseCxxNetwork(ABC, RateCollection):
 
             of.write('\n')
 
-    def _table_rates_indices(self, n_indent, of):
-        for n, irate in enumerate(self.tabular_rates):
-            r = self.rates[irate]
-            of.write(f'{self.indent*n_indent}{r.table_index_name}')
-            if n != len(self.tabular_rates)-1:
-                of.write(', &')
-            of.write('\n')
-
     def _compute_tabular_rates(self, n_indent, of):
         if len(self.tabular_rates) > 0:
 
             idnt = self.indent*n_indent
 
-            for irate in self.tabular_rates:
-                r = self.rates[irate]
+            for r in self.tabular_rates:
 
                 of.write(f'{idnt}tabular_evaluate({r.table_index_name}_meta, {r.table_index_name}_rhoy, {r.table_index_name}_temp, {r.table_index_name}_data,\n')
                 of.write(f'{idnt}                 rhoy, state.T, rate, drate_dt, edot_nu);\n')
@@ -437,8 +409,8 @@ class BaseCxxNetwork(ABC, RateCollection):
 
         idnt = self.indent * n_indent
 
-        for nr, r in enumerate(self.rates):
-            if nr in self.tabular_rates:
+        for r in self.rates:
+            if r in self.tabular_rates:
                 if len(r.reactants) != 1:
                     sys.exit('ERROR: Unknown energy rate corrections for a reaction where the number of reactants is not 1.')
                 else:
@@ -468,8 +440,12 @@ class BaseCxxNetwork(ABC, RateCollection):
         of.write('{}PYNUCASTRO_HOME := {}\n'.format(self.indent*n_indent,
                                                     os.path.dirname(self.pynucastro_dir)))
 
-    def _secret_code_write(self, n_indent, of):
-        of.write(f"{self.indent*n_indent}{self.secret_code}\n")
+    def _reaclib_rate_functions(self, n_indent, of):
+        for r in self.reaclib_rates:
+            of.write(r.function_string_cxx(dtype=self.dtype, specifiers=self.function_specifier))
 
-    def _secret_code_write_reference(self, n_indent, of):
-        of.write(f"{self.indent*n_indent}const std::string secret_code_reference = \"{self.secret_code}\";\n")
+    def _fill_reaclib_rates(self, n_indent, of):
+        for r in self.reaclib_rates:
+            of.write(f"{self.indent*n_indent}rate_{r.fname}(tfactors, rate, drate_dT);\n")
+            of.write(f"{self.indent*n_indent}rate_eval.screened_rates(k_{r.fname}) = rate;\n")
+            of.write(f"{self.indent*n_indent}rate_eval.dscreened_rates_dT(k_{r.fname}) = drate_dT;\n\n")
