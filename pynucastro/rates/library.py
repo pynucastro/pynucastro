@@ -400,6 +400,16 @@ class Library:
         """
         In this library, We exclude the weak and tabular rates from the .foward() library which includes all
         the ReacLib forward reactions.
+
+        In a future PR, we will classify forward reactions as exothermic (Q>0), and reverse by endothermic (Q<0).
+        However, ReacLib does not follow this path. If a reaction is measured experimentally (independent of Q),
+        they use detailed balance to get the opposite direction. Eventually, I want to classify forward and reverse
+        by positive Q and negative Q; however, for testing purposes, making this classification may eventually lead to
+        computing the detailed balance twice.
+
+        The idea of derived_forward is to eliminate the reverse and weak, and see if our job gives the same Reaclib
+        predictions, checking the NSE convergence with the pf functions. In the future, I want to move this function
+        in a unit test.
         """
 
         collect_rates = []
@@ -419,8 +429,8 @@ class Library:
 
     def derived_backward(self, use_pf=False, use_A_nuc=False):
         """
-        This library contains the detailed balance reverse reactions over the selected .derived_forward()
-        library.
+        This library contains the detailed balance reverse reactions over the selected .derived_forward(),
+        computed by hand.
         """
 
         derived_rates = []
