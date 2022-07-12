@@ -506,6 +506,14 @@ class Rate:
             self.weak_type = None
             self.reverse = False
             self.tabular = False
+        elif self.labelprops == "derived":
+            self.label = "derived"
+            self.resonant = False  # Derived may be resonant in some cases
+            self.resonance_combined = False
+            self.weak = False
+            self.weak_type = None
+            self.reverse = False
+            self.tabular = False
         else:
             assert len(self.labelprops) == 6
             self.label = self.labelprops[0:4]
