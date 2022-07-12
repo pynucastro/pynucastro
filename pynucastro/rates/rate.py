@@ -1279,24 +1279,21 @@ class DerivedRate(Rate):
         self.rate = rate
         self.use_A_nuc = use_A_nuc
 
-        assert not self.rate.tabular
-        assert not self.rate.weak
         assert isinstance(rate, Rate)
 
+        if (self.rate.tabular or self.rate.weak or
+            self.rate.reverse):
+            raise ValueError('The rate is reverse or weak or tabular')
+
         for nuc in self.rate.reactants:
-            try:
-                assert nuc.spin_states
-            except AssertionError:
-                raise Exception('One of the reactants spin ground state, is not defined')
+
+            if not nuc.spin_states:
+                raise ValueError('One of the reactants spin ground state, is not defined')
 
         for nuc in self.rate.products:
-            try:
-                assert nuc.spin_states
-            except AssertionError:
-                raise Exception('One of the products spin ground state, is not defined')
 
-        if self.rate.reverse:
-            raise Exception("ERROR: Computing derived rates from reverse rates")
+            if not nuc.spin_states:
+                raise ValueError('One of the products spin ground state, is not defined')
 
         derived_sets = []
         for ssets in self.rate.sets:
