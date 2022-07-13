@@ -16,6 +16,8 @@ disable = [
   "too-few-public-methods",
   "invalid-name",
   "consider-using-f-string",
+  "consider-using-with",
+  "cyclic-import",
 ]
 
 [tool.pylint.FORMAT]

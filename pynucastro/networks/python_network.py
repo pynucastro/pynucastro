@@ -38,6 +38,7 @@ class PythonNetwork(RateCollection):
         This is the actual RHS for the system of ODEs that
         this network describes.
         """
+        # pylint: disable=arguments-differ
         if outfile is None:
             of = sys.stdout
         else:

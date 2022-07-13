@@ -246,7 +246,7 @@ class SingleSet:
         else:
             string = f"{prefix} = "
 
-        if all([q == 0.0 for q in self.a[1:]]):
+        if all(q == 0.0 for q in self.a[1:]):
             string += "0.0;"
             return string
 
@@ -281,7 +281,7 @@ class Rate:
         self.rfile_path = rfile_path
         self.rfile = None
 
-        if type(rfile) == str:
+        if isinstance(rfile, str):
             self.rfile_path = _find_rate_file(rfile)
             self.rfile = os.path.basename(rfile)
 
@@ -331,11 +331,11 @@ class Rate:
         self.lhs_other = []
         self.rhs_other = []
 
-        if type(rfile) == str:
+        if isinstance(rfile, str):
             # read in the file, parse the different sets and store them as
             # SingleSet objects in sets[]
             f = open(self.rfile_path)
-        elif type(rfile) == io.StringIO:
+        elif isinstance(rfile, io.StringIO):
             # Set f to the io.StringIO object
             f = rfile
         else:
@@ -1078,7 +1078,7 @@ class Rate:
             y_e_string = ''
 
         # prefactor
-        if not self.prefactor == 1.0:
+        if self.prefactor != 1.0:
             prefactor_string = f"{self.prefactor:1.14e}*"
         else:
             prefactor_string = ""
@@ -1136,7 +1136,7 @@ class Rate:
             y_e_string = ''
 
         # prefactor
-        if not self.prefactor == 1.0:
+        if self.prefactor != 1.0:
             prefactor_string = f"{self.prefactor:1.14e}*"
         else:
             prefactor_string = ""
@@ -1347,9 +1347,7 @@ class DerivedRate(Rate):
                 z_p *= nucp.partition_function(T)
 
             return r*z_r/z_p
-
-        else:
-            return r
+        return r
 
 
 class RatePair:
@@ -1371,7 +1369,7 @@ class RatePair:
     def __lt__(self, other):
         if self.forward is not None and other.forward is not None:
             return self.forward < other.forward
-        elif self.forward is None:
+        if self.forward is None:
             return False
         return True
 
@@ -1478,7 +1476,7 @@ class ApproximateRate(Rate):
         tlist += self.secondary_reverse
         return tlist
 
-    def __set_screening(self):
+    def _set_screening(self):
         # the individual rates are screened -- we don't screen the combination of them
         pass
 
@@ -1486,7 +1484,7 @@ class ApproximateRate(Rate):
         """evaluate the approximate rate"""
 
         if self.approx_type == "ap_pg":
-            if not self.is_reverse:
+            if not self.is_reverse:  # pylint: disable=no-else-return
                 # the approximate forward rate is r_ag + r_ap r_pg / (r_pg + r_pa)
                 r_ag = self.primary_rate.eval(T)
                 r_ap = self.secondary_rates[0].eval(T)
@@ -1506,6 +1504,7 @@ class ApproximateRate(Rate):
                 r_pg = self.secondary_rates[1].eval(T)
 
                 return r_ga + r_pa * r_gp / (r_pg + r_pa)
+        raise NotImplementedError(f"approximation type {self.approx_type} not supported")
 
     def function_string_py(self):
         """
@@ -1513,7 +1512,7 @@ class ApproximateRate(Rate):
         approximate rate
         """
 
-        if not self.approx_type == "ap_pg":
+        if self.approx_type != "ap_pg":
             raise NotImplementedError("don't know how to work with this approximation")
 
         string = ""
@@ -1551,7 +1550,7 @@ class ApproximateRate(Rate):
         approximate rate
         """
 
-        if not self.approx_type == "ap_pg":
+        if self.approx_type != "ap_pg":
             raise NotImplementedError("don't know how to work with this approximation")
 
         fstring = ""

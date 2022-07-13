@@ -22,7 +22,7 @@ class SpinNuclide:
             rep = 'n'
         else:
             element = PeriodicTable.lookup_Z(self.z)
-            rep = '{}{}'.format(element.abbreviation, self.a)
+            rep = f'{element.abbreviation}{self.a}'
 
         return rep
 
@@ -60,8 +60,8 @@ class SpinTable:
 
     def _add_spin_nuclide(self, spin_nuc):
 
-        assert type(spin_nuc) == SpinNuclide
-        assert not str(spin_nuc) in self._spin_nuclide.keys()
+        assert isinstance(spin_nuc, SpinNuclide)
+        assert str(spin_nuc) not in self._spin_nuclide
 
         self._spin_nuclide[str(spin_nuc)] = spin_nuc
 
@@ -103,7 +103,6 @@ class SpinTable:
         finput.close()
 
     def get_spin_nuclide(self, nuc):
-        if str(nuc) in self._spin_nuclide.keys():
+        if str(nuc) in self._spin_nuclide:
             return self._spin_nuclide[str(nuc)]
-        else:
-            raise NotImplementedError("nuclear spin data is not available for the selected nucleus")
+        raise NotImplementedError("nuclear spin data is not available for the selected nucleus")
