@@ -3,7 +3,7 @@ rates that together make up a network."""
 
 # disable a complaint about SymLogNorm
 #pylint: disable=redundant-keyword-arg
- 
+
 # Common Imports
 import warnings
 import functools
@@ -33,6 +33,7 @@ from pynucastro.rates import Rate, RatePair, ApproximateRate, Library
 from pynucastro.nucdata import PeriodicTable
 
 mpl.rcParams['figure.dpi'] = 100
+
 
 def _skip_xalpha(n, p, r):
     """utility function to consider if we show an (a, x) or (x, a) rate.  Here, p is the
@@ -596,7 +597,7 @@ class RateCollection:
         A_1 = -0.9052
         A_2 = 0.6322
         A_3 = -0.5*np.sqrt(3.0)-A_1/np.sqrt(A_2)
-        
+
         # Create composition object for NSE and find electron number density
         comp_NSE = Composition(self.unique_nuclei)
         n_e = rho*ye/m_u
@@ -605,9 +606,9 @@ class RateCollection:
         # Calculate the composition at NSE, equations found in appendix of Calder paper
         for nuc in self.unique_nuclei:
             gamma = nuc.Z**(5./3.)*e**2*(4.0*np.pi*n_e/3.0)**(1./3.)/k/T
-            u_c = 624151.0*k*T*(A_1*(np.sqrt(gamma*(A_2+gamma))-A_2*np.log(np.sqrt(gamma/A_2)+np.sqrt(1.0+gamma/A_2))) \
-             + 2.0*A_3*(np.sqrt(gamma)-np.arctan(np.sqrt(gamma))))
-            comp_NSE.X[nuc] = m_u*nuc.A_nuc*nuc.partition_function(T)/rho*(2.*np.pi*m_u*nuc.A_nuc*k*T/h**2)**(3./2.) \
+            u_c = 624151.0*k*T*(A_1*(np.sqrt(gamma*(A_2+gamma))-A_2*np.log(np.sqrt(gamma/A_2)+np.sqrt(1.0+gamma/A_2)))
+                                + 2.0*A_3*(np.sqrt(gamma)-np.arctan(np.sqrt(gamma))))
+            comp_NSE.X[nuc] = m_u*nuc.A_nuc*nuc.partition_function(T)/rho*(2.0*np.pi*m_u*nuc.A_nuc*k*T/h**2)**(3./2.) \
             *np.exp((nuc.Z*u[0]+nuc.N*u[1]-u_c+nuc.nucbind*nuc.A)/k/T*1.6022e-6)
 
         return comp_NSE
@@ -620,26 +621,24 @@ class RateCollection:
 
         eq1 = sum(comp_NSE.X.values()) - 1.0
         eq2 = ye - comp_NSE.eval_ye()
-        
+
         return [eq1, eq2]
 
     def get_comp_NSE(self, rho, T, ye, init_guess=[-3.5, -15.0], tell_guess=False):
         """
         Returns the NSE composition given density, temperature and prescribed electron fraction
-        using scipy.fsolve. 
-        
+        using scipy.fsolve.
         init_guess is optional, however one should change init_guess accordingly if unable or 
         taking long time to find solution.
-        
         One can enable printing the actual guess that found the solution after fine-tuning, which is useful
         when calling this method multiple times such as making a plot. One can turn it off if it is annoying. 
         """
 
         j = 0
-        init_guess = np.array(init_guess)        
+        init_guess = np.array(init_guess)
         is_pos_old = False
-        found_sol = False              
-        
+        found_sol = False
+
         # This nested loops should fine-tune the initial guess if fsolve is unable to find a solution
         while (j < 15):
             i = 0
@@ -656,8 +655,8 @@ class RateCollection:
                     if tell_guess:
                         print(f"After fine-tuning the initial guess, the actual guess that found the solution was {guess}")
                     comp_NSE = self._evaluate_comp_NSE(u, rho, T, ye)
-                    
-                    return comp_NSE 
+
+                    return comp_NSE
 
                 if is_pos_old != is_pos_new:
                     init_dx *= 0.8
