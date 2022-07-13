@@ -1544,3 +1544,54 @@ class ApproximateRate(Rate):
 
         string += "    return rate\n\n"
         return string
+
+    def function_string_cxx(self, dtype="double", specifiers="inline"):
+        """
+        Return a string containing C++ function that computes the
+        approximate rate
+        """
+
+        if not self.approx_type == "ap_pg":
+            raise NotImplementedError("don't know how to work with this approximation")
+
+        fstring = ""
+        fstring += f"{specifiers}\n"
+        fstring += f"void rate_{self.fname}(const rate_eval_t& rate_eval, {dtype}& rate, {dtype}& drate_dT) {{\n\n"
+
+        if not self.is_reverse:
+
+            # first we need to get all of the rates that make this up
+            fstring += f"    {dtype} r_ag = rate_eval.screened_rates(k_{self.primary_rate.fname});\n"
+            fstring += f"    {dtype} r_ap = rate_eval.screened_rates(k_{self.secondary_rates[0].fname});\n"
+            fstring += f"    {dtype} r_pg = rate_eval.screened_rates(k_{self.secondary_rates[1].fname});\n"
+            fstring += f"    {dtype} r_pa = rate_eval.screened_rates(k_{self.secondary_reverse[1].fname});\n"
+
+            fstring += f"    {dtype} drdT_ag = rate_eval.dscreened_rates_dT(k_{self.primary_rate.fname});\n"
+            fstring += f"    {dtype} drdT_ap = rate_eval.dscreened_rates_dT(k_{self.secondary_rates[0].fname});\n"
+            fstring += f"    {dtype} drdT_pg = rate_eval.dscreened_rates_dT(k_{self.secondary_rates[1].fname});\n"
+            fstring += f"    {dtype} drdT_pa = rate_eval.dscreened_rates_dT(k_{self.secondary_reverse[1].fname});\n"
+
+            # now the approximation
+            fstring += f"    {dtype} dd = 1.0_rt / (r_pg + r_pa);\n"
+            fstring += "    rate = r_ag + r_ap * r_pg * dd;\n"
+            fstring += "    drate_dT = drdT_ag + drdT_ap * r_pg * dd + r_ap * drdT_pg * dd - r_ap * r_pg * dd * dd * (drdT_pg + drdT_pa);\n"
+        else:
+
+            # first we need to get all of the rates that make this up
+            fstring += f"    {dtype} r_ga = rate_eval.screened_rates(k_{self.primary_reverse.fname});\n"
+            fstring += f"    {dtype} r_pa = rate_eval.screened_rates(k_{self.secondary_reverse[1].fname});\n"
+            fstring += f"    {dtype} r_gp = rate_eval.screened_rates(k_{self.secondary_reverse[0].fname});\n"
+            fstring += f"    {dtype} r_pg = rate_eval.screened_rates(k_{self.secondary_rates[1].fname});\n"
+
+            fstring += f"    {dtype} drdT_ga = rate_eval.dscreened_rates_dT(k_{self.primary_reverse.fname});\n"
+            fstring += f"    {dtype} drdT_pa = rate_eval.dscreened_rates_dT(k_{self.secondary_reverse[1].fname});\n"
+            fstring += f"    {dtype} drdT_gp = rate_eval.dscreened_rates_dT(k_{self.secondary_reverse[0].fname});\n"
+            fstring += f"    {dtype} drdT_pg = rate_eval.dscreened_rates_dT(k_{self.secondary_rates[1].fname});\n"
+
+            # now the approximation
+            fstring += f"    {dtype} dd = 1.0_rt / (r_pg + r_pa);\n"
+            fstring += "    rate = r_ga + r_gp * r_pa * dd;\n"
+            fstring += "    drate_dT = drdT_ga + drdT_gp * r_pa * dd + r_gp * drdT_pa * dd - r_gp * r_pa * dd * dd * (drdT_pg + drdT_pa);\n"
+
+        fstring += "}\n\n"
+        return fstring
