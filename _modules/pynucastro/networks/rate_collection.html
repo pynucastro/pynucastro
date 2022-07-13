@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.networks.rate_collection &mdash; pynucastro 1.7.0.post6+g25ee4e2 documentation</title>
+  <title>pynucastro.networks.rate_collection &mdash; pynucastro 1.7.0.post7+g2f6e2e3 documentation</title>
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -428,6 +428,8 @@
                     <span class="bp">self</span><span class="o">.</span><span class="n">reaclib_rates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Chapter type unknown for rate chapter </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">chapter</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">all_rates</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reaclib_rates</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabular_rates</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">approx_rates</span>
 
     <span class="k">def</span> <span class="nf">_read_rate_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rate_files</span><span class="p">):</span>
         <span class="c1"># get the rates</span>
