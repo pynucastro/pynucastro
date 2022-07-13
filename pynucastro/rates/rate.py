@@ -178,7 +178,7 @@ class SingleSet:
                                  self.a[5]*tf.T953 +
                                  self.a[6]*tf.lnT9)
 
-    def set_string(self, prefix="set", plus_equal=False):
+    def set_string_py(self, prefix="set", plus_equal=False):
         """
         return a string containing the python code for this set
         """
@@ -194,7 +194,8 @@ class SingleSet:
         if not self.a[3] == 0.0:
             string += f" + {self.a[3]}*tf.T913"
         if not (self.a[4] == 0.0 and self.a[5] == 0.0 and self.a[6] == 0.0):
-            string += "\n{}         ".format(len(prefix)*" ")
+            indent = len(prefix)*" "
+            string += f"\n{indent}         "
         if not self.a[4] == 0.0:
             string += f" + {self.a[4]}*tf.T9"
         if not self.a[5] == 0.0:
@@ -202,6 +203,69 @@ class SingleSet:
         if not self.a[6] == 0.0:
             string += f" + {self.a[6]}*tf.lnT9"
         string += ")"
+        return string
+
+    def set_string_cxx(self, prefix="set", plus_equal=False, with_exp=True):
+        """
+        return a string containing the C++ code for this set
+        """
+        if plus_equal:
+            string = f"{prefix} += "
+        else:
+            string = f"{prefix} = "
+        if with_exp:
+            string += "std::exp( "
+        string += f" {self.a[0]}"
+        if not self.a[1] == 0.0:
+            string += f" + {self.a[1]} * tfactors.T9i"
+        if not self.a[2] == 0.0:
+            string += f" + {self.a[2]} * tfactors.T913i"
+        if not self.a[3] == 0.0:
+            string += f" + {self.a[3]} * tfactors.T913"
+        if not (self.a[4] == 0.0 and self.a[5] == 0.0 and self.a[6] == 0.0):
+            indent = len(prefix)*" "
+            string += f"\n{indent}         "
+        if not self.a[4] == 0.0:
+            string += f" + {self.a[4]} * tfactors.T9"
+        if not self.a[5] == 0.0:
+            string += f" + {self.a[5]} * tfactors.T953"
+        if not self.a[6] == 0.0:
+            string += f" + {self.a[6]} * tfactors.lnT9"
+        if with_exp:
+            string += ");"
+        else:
+            string += ";"
+        return string
+
+    def dln_set_string_dT9_cxx(self, prefix="dset_dT", plus_equal=False):
+        """
+        return a string containing the C++ code for d/dT9 ln(set)
+        """
+        if plus_equal:
+            string = f"{prefix} += "
+        else:
+            string = f"{prefix} = "
+
+        if all([q == 0.0 for q in self.a[1:]]):
+            string += "0.0;"
+            return string
+
+        if not self.a[1] == 0.0:
+            string += f" {-self.a[1]} * tfactors.T9i * tfactors.T9i"
+        if not self.a[2] == 0.0:
+            string += f" + -(1.0/3.0) * {self.a[2]} * tfactors.T943i"
+        if not self.a[3] == 0.0:
+            string += f" + (1.0/3.0) * {self.a[3]} * tfactors.T923i"
+        if not (self.a[4] == 0.0 and self.a[5] == 0.0 and self.a[6] == 0.0):
+            indent = len(prefix)*" "
+            string += f"\n{indent}         "
+        if not self.a[4] == 0.0:
+            string += f" + {self.a[4]}"
+        if not self.a[5] == 0.0:
+            string += f" + (5.0/3.0) * {self.a[5]} * tfactors.T923"
+        if not self.a[6] == 0.0:
+            string += f" + {self.a[6]} * tfactors.T9i"
+        string += ";"
         return string
 
 
@@ -717,8 +781,8 @@ class Rate:
         if not self.weak and not self.tabular:
             # there should be the same number of protons on each side and
             # the same number of neutrons on each side
-            assert np.sum([n.Z for n in self.reactants]) == np.sum([n.Z for n in self.products])
-            assert np.sum([n.A for n in self.reactants]) == np.sum([n.A for n in self.products])
+            assert sum(n.Z for n in self.reactants) == sum(n.Z for n in self.products)
+            assert sum(n.A for n in self.reactants) == sum(n.A for n in self.products)
 
             if len(self.products) == 1:
                 self.rhs_other.append("gamma")
@@ -729,7 +793,7 @@ class Rate:
 
                 # these are either electron capture or beta- decay
 
-                if np.sum([n.Z for n in self.reactants]) == np.sum([n.Z for n in self.products]) + 1:
+                if sum(n.Z for n in self.reactants) == sum(n.Z for n in self.products) + 1:
                     # electron capture
                     self.lhs_other.append("e-")
                     self.rhs_other.append("nu")
@@ -744,7 +808,7 @@ class Rate:
 
                 # we expect an electron on the left -- let's make sure
                 # the charge on the left should be +1 the charge on the right
-                assert np.sum([n.Z for n in self.reactants]) == np.sum([n.Z for n in self.products]) + 1
+                assert sum(n.Z for n in self.reactants) == sum(n.Z for n in self.products) + 1
 
                 self.lhs_other.append("e-")
                 self.rhs_other.append("nu")
@@ -753,7 +817,7 @@ class Rate:
 
                 # we expect a positron on the right -- let's make sure
                 try:
-                    assert np.sum([n.Z for n in self.reactants]) == np.sum([n.Z for n in self.products]) + 1
+                    assert sum(n.Z for n in self.reactants) == sum(n.Z for n in self.products) + 1
                 except AssertionError:
                     print(self.reactants)
                     print(self.products)
@@ -767,7 +831,7 @@ class Rate:
             elif "_neg_" in self.weak_type:
 
                 # we expect an electron on the right -- let's make sure
-                assert np.sum([n.Z for n in self.reactants]) + 1 == np.sum([n.Z for n in self.products])
+                assert sum(n.Z for n in self.reactants) + 1 == sum(n.Z for n in self.products)
 
                 self.rhs_other.append("e-")
                 self.rhs_other.append("nubar")
@@ -777,11 +841,11 @@ class Rate:
                 # we need to figure out what the rate is.  We'll assume that it is
                 # not an electron capture
 
-                if np.sum([n.Z for n in self.reactants]) == np.sum([n.Z for n in self.products]) + 1:
+                if sum(n.Z for n in self.reactants) == sum(n.Z for n in self.products) + 1:
                     self.rhs_other.append("e+")
                     self.rhs_other.append("nu")
 
-                elif np.sum([n.Z for n in self.reactants]) + 1 == np.sum([n.Z for n in self.products]):
+                elif sum(n.Z for n in self.reactants) + 1 == sum(n.Z for n in self.products):
 
                     self.rhs_other.append("e-")
                     self.rhs_other.append("nubar")
@@ -920,6 +984,170 @@ class Rate:
 
         self.tabular_data_table = np.array(t_data2d)
 
+    def function_string_py(self, prefix="rate"):
+        """
+        Return a string containing python function that computes the
+        rate
+        """
+
+        fstring = ""
+        fstring += "@numba.njit()\n"
+        fstring += f"def {self.fname}(tf):\n"
+        fstring += f"    # {self.rid}\n"
+        fstring += f"    {prefix} = 0.0\n\n"
+
+        for s in self.sets:
+            fstring += f"    # {s.labelprops[0:5]}\n"
+            set_string = s.set_string_py(prefix=prefix, plus_equal=True)
+            for t in set_string.split("\n"):
+                fstring += "    " + t + "\n"
+
+        fstring += "\n"
+        fstring += "    return rate\n\n"
+        return fstring
+
+    def function_string_cxx(self, dtype="double", specifiers="inline"):
+        """
+        Return a string containing C++ function that computes the
+        rate
+        """
+
+        fstring = ""
+        fstring += f"{specifiers}\n"
+        fstring += f"void rate_{self.fname}(const tf_t& tfactors, {dtype}& rate, {dtype}& drate_dT) {{\n\n"
+        fstring += f"    // {self.rid}\n\n"
+        fstring += "    rate = 0.0;\n"
+        fstring += "    drate_dT = 0.0;\n\n"
+        fstring += f"    {dtype} ln_set_rate{{0.0}};\n"
+        fstring += f"    {dtype} dln_set_rate_dT9{{0.0}};\n"
+        fstring += f"    {dtype} set_rate{{0.0}};\n\n"
+
+        for s in self.sets:
+            fstring += f"    // {s.labelprops[0:5]}\n"
+            set_string = s.set_string_cxx(prefix="ln_set_rate", plus_equal=False, with_exp=False)
+            for t in set_string.split("\n"):
+                fstring += "    " + t + "\n"
+            fstring += "\n"
+
+            dln_set_string_dT9 = s.dln_set_string_dT9_cxx(prefix="dln_set_rate_dT9", plus_equal=False)
+            for t in dln_set_string_dT9.split("\n"):
+                fstring += "    " + t + "\n"
+            fstring += "\n"
+
+            fstring += "    // avoid underflows by zeroing rates in [0.0, 1.e-100]\n"
+            fstring += "    ln_set_rate = std::max(ln_set_rate, -230.0);\n"
+            fstring += "    set_rate = std::exp(ln_set_rate);\n"
+
+            fstring += "    rate += set_rate;\n"
+
+            fstring += "    drate_dT += set_rate * dln_set_rate_dT9 / 1.0e9;\n\n"
+
+        fstring += "}\n\n"
+        return fstring
+
+    def ydot_string_py(self):
+        """
+        Return a string containing the term in a dY/dt equation
+        in a reaction network corresponding to this rate.
+        """
+
+        # composition dependence
+        Y_string = ""
+        for n, r in enumerate(sorted(set(self.reactants))):
+            c = self.reactants.count(r)
+            if c > 1:
+                Y_string += f"Y[j{r}]**{c}"
+            else:
+                Y_string += f"Y[j{r}]"
+
+            if n < len(set(self.reactants))-1:
+                Y_string += "*"
+
+        # density dependence
+        if self.dens_exp == 0:
+            dens_string = ""
+        elif self.dens_exp == 1:
+            dens_string = "rho*"
+        else:
+            dens_string = f"rho**{self.dens_exp}*"
+
+        # electron fraction dependence
+        if (self.weak_type == 'electron_capture' and not self.tabular):
+            y_e_string = 'ye(Y)*'
+        else:
+            y_e_string = ''
+
+        # prefactor
+        if not self.prefactor == 1.0:
+            prefactor_string = f"{self.prefactor:1.14e}*"
+        else:
+            prefactor_string = ""
+
+        return "{}{}{}{}*lambda_{}".format(prefactor_string, dens_string,
+                                           y_e_string, Y_string, self.fname)
+
+    def jacobian_string_py(self, ydot_j, y_i):
+        """
+        Return a string containing the term in a jacobian matrix
+        in a reaction network corresponding to this rate.
+
+        Returns the derivative of the j-th YDOT wrt. the i-th Y
+        If the derivative is zero, returns the empty string ''
+
+        ydot_j and y_i are objects of the class ``Nucleus``.
+        """
+        if (ydot_j not in self.reactants and ydot_j not in self.products) or \
+           y_i not in self.reactants:
+            return ''
+
+        # composition dependence
+        Y_string = ""
+        for n, r in enumerate(sorted(set(self.reactants))):
+            c = self.reactants.count(r)
+            if y_i == r:
+                if c == 1:
+                    continue
+                if 0 < n < len(set(self.reactants))-1:
+                    Y_string += "*"
+                if c > 2:
+                    Y_string += f"{c}*Y[j{r}]**{c-1}"
+                elif c == 2:
+                    Y_string += f"2*Y[j{r}]"
+            else:
+                if 0 < n < len(set(self.reactants))-1:
+                    Y_string += "*"
+                if c > 1:
+                    Y_string += f"Y[j{r}]**{c}"
+                else:
+                    Y_string += f"Y[j{r}]"
+
+        # density dependence
+        if self.dens_exp == 0:
+            dens_string = ""
+        elif self.dens_exp == 1:
+            dens_string = "rho*"
+        else:
+            dens_string = f"rho**{self.dens_exp}*"
+
+        # electron fraction dependence
+        if (self.weak_type == 'electron_capture' and not self.tabular):
+            y_e_string = 'ye(Y)*'
+        else:
+            y_e_string = ''
+
+        # prefactor
+        if not self.prefactor == 1.0:
+            prefactor_string = f"{self.prefactor:1.14e}*"
+        else:
+            prefactor_string = ""
+
+        if Y_string == "" and dens_string == "" and prefactor_string == "":
+            rstring = "{}{}{}lambda_{}"
+        else:
+            rstring = "{}{}{}{}*lambda_{}"
+        return rstring.format(prefactor_string, dens_string,
+                              y_e_string, Y_string, self.fname)
+
     def eval(self, T, rhoY=None):
         """ evauate the reaction rate for temperature T """
 
@@ -1051,24 +1279,21 @@ class DerivedRate(Rate):
         self.rate = rate
         self.use_A_nuc = use_A_nuc
 
-        assert not self.rate.tabular
-        assert not self.rate.weak
         assert isinstance(rate, Rate)
 
+        if (self.rate.tabular or self.rate.weak or
+            self.rate.reverse):
+            raise ValueError('The rate is reverse or weak or tabular')
+
         for nuc in self.rate.reactants:
-            try:
-                assert nuc.spin_states
-            except AssertionError:
-                raise Exception('One of the reactants spin ground state, is not defined')
+
+            if not nuc.spin_states:
+                raise ValueError('One of the reactants spin ground state, is not defined')
 
         for nuc in self.rate.products:
-            try:
-                assert nuc.spin_states
-            except AssertionError:
-                raise Exception('One of the products spin ground state, is not defined')
 
-        if self.rate.reverse:
-            raise Exception("ERROR: Computing derived rates from reverse rates")
+            if not nuc.spin_states:
+                raise ValueError('One of the products spin ground state, is not defined')
 
         derived_sets = []
         for ssets in self.rate.sets:
@@ -1281,3 +1506,92 @@ class ApproximateRate(Rate):
                 r_pg = self.secondary_rates[1].eval(T)
 
                 return r_ga + r_pa * r_gp / (r_pg + r_pa)
+
+    def function_string_py(self):
+        """
+        Return a string containing python function that computes the
+        approximate rate
+        """
+
+        if not self.approx_type == "ap_pg":
+            raise NotImplementedError("don't know how to work with this approximation")
+
+        string = ""
+        string += "@numba.njit()\n"
+        string += f"def {self.fname}(tf):\n"
+
+        if not self.is_reverse:
+
+            # first we need to get all of the rates that make this up
+            string += f"    r_ag = {self.primary_rate.fname}(tf)\n"
+            string += f"    r_ap = {self.secondary_rates[0].fname}(tf)\n"
+            string += f"    r_pg = {self.secondary_rates[1].fname}(tf)\n"
+            string += f"    r_pa = {self.secondary_reverse[1].fname}(tf)\n"
+
+            # now the approximation
+            string += "    rate = r_ag + r_ap * r_pg / (r_pg + r_pa)\n"
+
+        else:
+
+            # first we need to get all of the rates that make this up
+            string += f"    r_ga = {self.primary_reverse.fname}(tf)\n"
+            string += f"    r_pa = {self.secondary_reverse[1].fname}(tf)\n"
+            string += f"    r_gp = {self.secondary_reverse[0].fname}(tf)\n"
+            string += f"    r_pg = {self.secondary_rates[1].fname}(tf)\n"
+
+            # now the approximation
+            string += "    rate = r_ga + r_pa * r_gp / (r_pg + r_pa)\n"
+
+        string += "    return rate\n\n"
+        return string
+
+    def function_string_cxx(self, dtype="double", specifiers="inline"):
+        """
+        Return a string containing C++ function that computes the
+        approximate rate
+        """
+
+        if not self.approx_type == "ap_pg":
+            raise NotImplementedError("don't know how to work with this approximation")
+
+        fstring = ""
+        fstring += f"{specifiers}\n"
+        fstring += f"void rate_{self.fname}(const rate_eval_t& rate_eval, {dtype}& rate, {dtype}& drate_dT) {{\n\n"
+
+        if not self.is_reverse:
+
+            # first we need to get all of the rates that make this up
+            fstring += f"    {dtype} r_ag = rate_eval.screened_rates(k_{self.primary_rate.fname});\n"
+            fstring += f"    {dtype} r_ap = rate_eval.screened_rates(k_{self.secondary_rates[0].fname});\n"
+            fstring += f"    {dtype} r_pg = rate_eval.screened_rates(k_{self.secondary_rates[1].fname});\n"
+            fstring += f"    {dtype} r_pa = rate_eval.screened_rates(k_{self.secondary_reverse[1].fname});\n"
+
+            fstring += f"    {dtype} drdT_ag = rate_eval.dscreened_rates_dT(k_{self.primary_rate.fname});\n"
+            fstring += f"    {dtype} drdT_ap = rate_eval.dscreened_rates_dT(k_{self.secondary_rates[0].fname});\n"
+            fstring += f"    {dtype} drdT_pg = rate_eval.dscreened_rates_dT(k_{self.secondary_rates[1].fname});\n"
+            fstring += f"    {dtype} drdT_pa = rate_eval.dscreened_rates_dT(k_{self.secondary_reverse[1].fname});\n"
+
+            # now the approximation
+            fstring += f"    {dtype} dd = 1.0_rt / (r_pg + r_pa);\n"
+            fstring += "    rate = r_ag + r_ap * r_pg * dd;\n"
+            fstring += "    drate_dT = drdT_ag + drdT_ap * r_pg * dd + r_ap * drdT_pg * dd - r_ap * r_pg * dd * dd * (drdT_pg + drdT_pa);\n"
+        else:
+
+            # first we need to get all of the rates that make this up
+            fstring += f"    {dtype} r_ga = rate_eval.screened_rates(k_{self.primary_reverse.fname});\n"
+            fstring += f"    {dtype} r_pa = rate_eval.screened_rates(k_{self.secondary_reverse[1].fname});\n"
+            fstring += f"    {dtype} r_gp = rate_eval.screened_rates(k_{self.secondary_reverse[0].fname});\n"
+            fstring += f"    {dtype} r_pg = rate_eval.screened_rates(k_{self.secondary_rates[1].fname});\n"
+
+            fstring += f"    {dtype} drdT_ga = rate_eval.dscreened_rates_dT(k_{self.primary_reverse.fname});\n"
+            fstring += f"    {dtype} drdT_pa = rate_eval.dscreened_rates_dT(k_{self.secondary_reverse[1].fname});\n"
+            fstring += f"    {dtype} drdT_gp = rate_eval.dscreened_rates_dT(k_{self.secondary_reverse[0].fname});\n"
+            fstring += f"    {dtype} drdT_pg = rate_eval.dscreened_rates_dT(k_{self.secondary_rates[1].fname});\n"
+
+            # now the approximation
+            fstring += f"    {dtype} dd = 1.0_rt / (r_pg + r_pa);\n"
+            fstring += "    rate = r_ga + r_gp * r_pa * dd;\n"
+            fstring += "    drate_dT = drdT_ga + drdT_gp * r_pa * dd + r_gp * drdT_pa * dd - r_gp * r_pa * dd * dd * (drdT_pg + drdT_pa);\n"
+
+        fstring += "}\n\n"
+        return fstring

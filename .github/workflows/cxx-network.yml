@@ -74,5 +74,5 @@ jobs:
       - name: Compare to stored output
         run: |
           cd external/Microphysics/unit_test/burn_cell
-          diff -I "^AMReX" test.out subch2_unit_test.out
+          diff -I "^AMReX" -I "^reading in reaclib rates" test.out subch2_unit_test.out
 

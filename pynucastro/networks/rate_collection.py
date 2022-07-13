@@ -303,8 +303,7 @@ class RateCollection:
 
         # Re-order self.rates so Reaclib rates come first,
         # followed by Tabular rates. This is needed if
-        # reaclib coefficients are targets of a pointer array
-        # in the Fortran network.
+        # reaclib coefficients are targets of a pointer array.
         # It is desired to avoid wasting array size
         # storing meaningless Tabular coefficient pointers.
         self.rates = sorted(self.rates,
@@ -312,13 +311,25 @@ class RateCollection:
 
         self.tabular_rates = []
         self.reaclib_rates = []
-        for n, r in enumerate(self.rates):
-            if r.chapter == 't':
-                self.tabular_rates.append(n)
+        self.approx_rates = []
+        for r in self.rates:
+            if isinstance(r, ApproximateRate):
+                self.approx_rates.append(r)
+                for cr in r.get_child_rates():
+                    assert cr.chapter != "t"
+                    # there may be dupes in the list of reaclib rates, since some
+                    # approx rates will use the same child rates
+                    if cr not in self.reaclib_rates:
+                        self.reaclib_rates.append(cr)
+            elif r.chapter == 't':
+                self.tabular_rates.append(r)
             elif isinstance(r.chapter, int):
-                self.reaclib_rates.append(n)
+                if r not in self.reaclib_rates:
+                    self.reaclib_rates.append(r)
             else:
                 raise NotImplementedError(f"Chapter type unknown for rate chapter {r.chapter}")
+
+        self.all_rates = self.reaclib_rates + self.tabular_rates + self.approx_rates
 
     def _read_rate_files(self, rate_files):
         # get the rates

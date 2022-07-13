@@ -10,118 +10,6 @@ from pynucastro.rates.rate import ApproximateRate
 class PythonNetwork(RateCollection):
     """A pure python reaction network."""
 
-    def rate_string(self, rate, indent=0, prefix="rate"):
-        """
-        Return the functional form of rate as a function of
-        the temperature (as Tfactors)
-
-        rate is an object of class Rate
-        """
-
-        tstring = f"# {rate.rid}\n"
-        tstring += f"{prefix} = 0.0\n\n"
-
-        for s in rate.sets:
-            tstring += f"# {s.labelprops[0:5]}\n"
-            tstring += f"{s.set_string(prefix=prefix, plus_equal=True)}\n"
-
-        string = ""
-        for t in tstring.split("\n"):
-            string += indent*" " + t + "\n"
-        return string
-
-    def function_string(self, rate):
-        """
-        Return a string containing python function that computes the
-        rate
-        """
-
-        string = ""
-        string += "@numba.njit()\n"
-        string += f"def {rate.fname}(tf):\n"
-        string += f"{self.rate_string(rate, indent=4)}"
-        string += "    return rate\n\n"
-        return string
-
-    def approx_function_string(self, rate):
-        """
-        Return a string containing python function that computes the
-        approximate rate
-        """
-
-        if not rate.approx_type == "ap_pg":
-            raise NotImplementedError("don't know how to work with this approximation")
-
-        string = ""
-        string += "@numba.njit()\n"
-        string += f"def {rate.fname}(tf):\n"
-
-        if not rate.is_reverse:
-
-            # first we need to get all of the rates that make this up
-            string += f"    r_ag = {rate.primary_rate.fname}(tf)\n"
-            string += f"    r_ap = {rate.secondary_rates[0].fname}(tf)\n"
-            string += f"    r_pg = {rate.secondary_rates[1].fname}(tf)\n"
-            string += f"    r_pa = {rate.secondary_reverse[1].fname}(tf)\n"
-
-            # now the approximation
-            string += "    rate = r_ag + r_ap * r_pg / (r_pg + r_pa)\n"
-
-        else:
-
-            # first we need to get all of the rates that make this up
-            string += f"    r_ga = {rate.primary_reverse.fname}(tf)\n"
-            string += f"    r_pa = {rate.secondary_reverse[1].fname}(tf)\n"
-            string += f"    r_gp = {rate.secondary_reverse[0].fname}(tf)\n"
-            string += f"    r_pg = {rate.secondary_rates[1].fname}(tf)\n"
-
-            # now the approximation
-            string += "    rate = r_ga + r_pa * r_gp / (r_pg + r_pa)\n"
-
-        string += "    return rate\n\n"
-        return string
-
-    def ydot_string(self, rate):
-        """
-        Return a string containing the term in a dY/dt equation
-        in a reaction network corresponding to this rate.
-        """
-
-        # composition dependence
-        Y_string = ""
-        for n, r in enumerate(sorted(set(rate.reactants))):
-            c = rate.reactants.count(r)
-            if c > 1:
-                Y_string += f"Y[j{r}]**{c}"
-            else:
-                Y_string += f"Y[j{r}]"
-
-            if n < len(set(rate.reactants))-1:
-                Y_string += "*"
-
-        # density dependence
-        if rate.dens_exp == 0:
-            dens_string = ""
-        elif rate.dens_exp == 1:
-            dens_string = "rho*"
-        else:
-            dens_string = f"rho**{rate.dens_exp}*"
-
-        # electron fraction dependence
-        if (rate.weak_type == 'electron_capture' and not rate.tabular):
-            y_e_string = 'ye(Y)*'
-        else:
-            y_e_string = ''
-
-        # prefactor
-        if not rate.prefactor == 1.0:
-            prefactor_string = f"{rate.prefactor:1.14e}*"
-        else:
-            prefactor_string = ""
-
-        return "{}{}{}{}*lambda_{}".format(prefactor_string, dens_string,
-                                           y_e_string, Y_string, rate.fname)
-
     def full_ydot_string(self, nucleus, indent=""):
 
         ostr = ""
@@ -132,80 +20,18 @@ class PythonNetwork(RateCollection):
             for r in self.nuclei_consumed[nucleus]:
                 c = r.reactants.count(nucleus)
                 if c == 1:
-                    ostr += f"{indent}   -{self.ydot_string(r)}\n"
+                    ostr += f"{indent}   -{r.ydot_string_py()}\n"
                 else:
-                    ostr += f"{indent}   -{c}*{self.ydot_string(r)}\n"
+                    ostr += f"{indent}   -{c}*{r.ydot_string_py()}\n"
             for r in self.nuclei_produced[nucleus]:
                 c = r.products.count(nucleus)
                 if c == 1:
-                    ostr += f"{indent}   +{self.ydot_string(r)}\n"
+                    ostr += f"{indent}   +{r.ydot_string_py()}\n"
                 else:
-                    ostr += f"{indent}   +{c}*{self.ydot_string(r)}\n"
+                    ostr += f"{indent}   +{c}*{r.ydot_string_py()}\n"
             ostr += f"{indent}   )\n\n"
 
         return ostr
-
-    def jacobian_string(self, rate, ydot_j, y_i):
-        """
-        Return a string containing the term in a jacobian matrix
-        in a reaction network corresponding to this rate.
-
-        Returns the derivative of the j-th YDOT wrt. the i-th Y
-        If the derivative is zero, returns the empty string ''
-
-        ydot_j and y_i are objects of the class ``Nucleus``.
-        """
-        if (ydot_j not in rate.reactants and ydot_j not in rate.products) or \
-           y_i not in rate.reactants:
-            return ''
-
-        # composition dependence
-        Y_string = ""
-        for n, r in enumerate(sorted(set(rate.reactants))):
-            c = rate.reactants.count(r)
-            if y_i == r:
-                if c == 1:
-                    continue
-                if 0 < n < len(set(rate.reactants))-1:
-                    Y_string += "*"
-                if c > 2:
-                    Y_string += f"{c}*Y[j{r}]**{c-1}"
-                elif c == 2:
-                    Y_string += f"2*Y[j{r}]"
-            else:
-                if 0 < n < len(set(rate.reactants))-1:
-                    Y_string += "*"
-                if c > 1:
-                    Y_string += f"Y[j{r}]**{c}"
-                else:
-                    Y_string += f"Y[j{r}]"
-
-        # density dependence
-        if rate.dens_exp == 0:
-            dens_string = ""
-        elif rate.dens_exp == 1:
-            dens_string = "rho*"
-        else:
-            dens_string = f"rho**{rate.dens_exp}*"
-
-        # electron fraction dependence
-        if (rate.weak_type == 'electron_capture' and not rate.tabular):
-            y_e_string = 'ye(Y)*'
-        else:
-            y_e_string = ''
-
-        # prefactor
-        if not rate.prefactor == 1.0:
-            prefactor_string = f"{rate.prefactor:1.14e}*"
-        else:
-            prefactor_string = ""
-
-        if Y_string == "" and dens_string == "" and prefactor_string == "":
-            rstring = "{}{}{}lambda_{}"
-        else:
-            rstring = "{}{}{}{}*lambda_{}"
-        return rstring.format(prefactor_string, dens_string,
-                              y_e_string, Y_string, rate.fname)
 
     def _write_network(self, outfile=None):
         """
@@ -263,16 +89,16 @@ class PythonNetwork(RateCollection):
                 for cr in r.get_child_rates():
                     if cr in _rate_func_written:
                         continue
-                    of.write(self.function_string(cr))
+                    of.write(cr.function_string_py())
                     _rate_func_written.append(cr)
 
                 # now write out the function that computes the
                 # approximate rate
-                of.write(self.approx_function_string(r))
+                of.write(r.function_string_py())
             else:
                 if r in _rate_func_written:
                     continue
-                of.write(self.function_string(r))
+                of.write(r.function_string_py())
                 _rate_func_written.append(r)
 
         of.write("def rhs(t, Y, rho, T):\n")
