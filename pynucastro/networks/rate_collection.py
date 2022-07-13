@@ -582,10 +582,11 @@ class RateCollection:
 
         return rvals
 
-    def _evaluate_comp_NSE(self, u, rho, T, composition, ye=None):
-        """ A helper equationt that finds the mass fraction of each nuclide in NSE state, 
+    def _evaluate_comp_NSE(self, u, rho, T, ye):
+        """ A helper equation that finds the mass fraction of each nuclide in NSE state, 
         u[0] is chemical potential of proton  while u[1] is chemical potential of neutron"""
 
+        # Define constants: amu, boltzmann, planck, and electron charge
         m_u = constants.value("unified atomic mass unit")*1.0e3  # atomic unit mass in g
         k = constants.value("Boltzmann constant")*1.0e7          # boltzmann in erg/K
         h = constants.value("Planck constant")*1.0e7             # in cgs
@@ -594,20 +595,13 @@ class RateCollection:
         # These are three constants for calculating coulomb corrections of chemical energy, see Calders paper: iopscience 510709, appendix
         A_1 = -0.9052
         A_2 = 0.6322
-        
-        #There seems to be a typo in calders paper, and I used number from paper that Calder send us.
         A_3 = -0.5*np.sqrt(3.0)-A_1/np.sqrt(A_2)
         
-        comp_NSE = copy.deepcopy(composition)
-
-        # Use electron fraction from composition by default, else use the specific electron fraction provided
-        if ye is None:
-            ye = composition.eval_ye()
-
-        # electron number density
+        # Create composition object for NSE and find electron number density
+        comp_NSE = Composition(self.unique_nuclei)
         n_e = rho*ye/m_u
 
-        # u_c is the coulomb correction term.
+        # u_c is the coulomb correction term for NSE
         # Calculate the composition at NSE, equations found in appendix of Calder paper
         for nuc in self.unique_nuclei:
             gamma = nuc.Z**(5./3.)*e**2*(4.0*np.pi*n_e/3.0)**(1./3.)/k/T
@@ -618,63 +612,56 @@ class RateCollection:
 
         return comp_NSE
 
-    def _constraint_eq(self, u, rho, T, composition, ye=None):
+    def _constraint_eq(self, u, rho, T, ye):
         """ Constraint Equations used to evaluate chemical potential for proton and neutron,
-        which is used when evaluating X_NSE, mass fraction at NSE"""
+        which is used when evaluating composition at NSE"""
 
-        if ye is None:
-            ye = composition.eval_ye()
+        comp_NSE = self._evaluate_comp_NSE(u, rho, T, ye)
 
-        comp_NSE = self._evaluate_comp_NSE(u, rho, T, composition)
-
-        # These two are the constraint equations for solving NSE mass fractions
-        # eq1 ensure the sum of mass fractions equals to 1
-        # eq2 ensure the electron fraction at NSE state equals to the prescribed electron fraction
         eq1 = sum(comp_NSE.X.values()) - 1.0
         eq2 = ye - comp_NSE.eval_ye()
         
         return [eq1, eq2]
 
-    def get_comp_NSE(self, rho, T, composition, ye=None, init_guess=[-3.5, -15.0], dx= 0.5):
+    def get_comp_NSE(self, rho, T, ye, init_guess=[-3.5, -15.0], tell_guess=False):
         """
-        Returns the NSE composition given a composition, density, and temperature 
-        using scipy.fsolve. The given composition gives prescribed electron fraction by default.
-        However, one can also specify a electron fraction of choice. 
+        Returns the NSE composition given density, temperature and prescribed electron fraction
+        using scipy.fsolve. 
         
-        One should change init_guess accordingly if unable or taking long time to find solution.
+        init_guess is optional, however one should change init_guess accordingly if unable or 
+        taking long time to find solution.
+        
+        One can enable printing the actual guess that found the solution after fine-tuning, which is useful
+        when calling this method multiple times such as making a plot. One can turn it off if it is annoying. 
         """
 
-        found_sol = False                  
-        i = 0
         j = 0
         init_guess = np.array(init_guess)        
         is_pos_old = False
-
-        # First loop over the initial guess. Each loop I decrease the guess of proton's chemical energy
-        while (j < 20):
+        found_sol = False              
+        
+        # This nested loops should fine-tune the initial guess if fsolve is unable to find a solution
+        while (j < 15):
             i = 0
             guess = copy.deepcopy(init_guess)
-            init_dx = dx
+            init_dx = 0.5
 
-            # in this loop I fine-tune the initial guess if iteration failed
-            while (i < 20):
-                u = fsolve(self._constraint_eq, guess, args=(rho, T, composition,ye), xtol=1.5e-9)
-                res = self._constraint_eq(u, rho, T, composition, ye=ye)
-                # if are results from constraint equations are positive
+            while (i < 15):
+                u = fsolve(self._constraint_eq, guess, args=(rho, T, ye), xtol=1.5e-9, maxfev=800)
+                res = self._constraint_eq(u, rho, T, ye)
                 is_pos_new = all(k > 0 for k in res)
-                # found_solution if numbers are close to 0.
                 found_sol = np.all(np.isclose(res, [0.0,0.0], rtol=1e-2, atol=1e-3))
 
                 if found_sol:
-                    print(f"Guess that found solution was {guess}")
-                    comp_NSE = self._evaluate_comp_NSE(u, rho, T, composition, ye=ye)
+                    if tell_guess:
+                        print(f"After fine-tuning the initial guess, the actual guess that found the solution was {guess}")
+                    comp_NSE = self._evaluate_comp_NSE(u, rho, T, ye)
+                    
                     return comp_NSE 
-                # decrease the increment value if result from constraint happens to wander between negative and positive.
-                # although there are cases where one value is positive and one value is negative, it still works okay.
+
                 if is_pos_old != is_pos_new:
                     init_dx *= 0.8
 
-                # decrease guess if both constraint equation give positive value, else increase guess value
                 if is_pos_new:
                     guess -= init_dx
                 else:
@@ -682,195 +669,11 @@ class RateCollection:
 
                 is_pos_old = is_pos_new
                 i += 1
+
             j += 1
-            # if unable to find solution, decrease the first value of guess only.
             init_guess[0] -= 0.5
 
         raise ValueError("Unable to find a solution, try to adjust initial guess manually")
-    
-    def ASE_scheme(self, rho, T, composition, ye=None, init_guess=[-3.5, -15.0], nse_dx=0.5,
-                   f=0.05, cell_dx=1.0e6, rel=False, tol=0.1,):
-        """
-        Adaptive Statistical Equilibrium scheme:
-        
-        parameters
-        ------------------
-        rho: density in cgs
-        T: Temperature in Kelvin
-        composition: Composition using the composition class, also used to determine prescribed electron fraction
-        init_guess: initial guess of the chemical potential for determining the NSE state
-        nse_dx: parameter to describe incremental value of the initial guess during loop.
-        f: characteristic parameter for f_limiter
-        cell_dx: cell size for simulation in cm
-        rel: Consider complete relativistic gas or not
-        tol: tolerance for determining the equilibrium status of reaction network
-        """
-
-        # Check to see if there are n,p,a in the first place
-        p = Nucleus("p")
-        n = Nucleus("n")
-        he4 = Nucleus("he4")
-
-        assert all(nuc in self.unique_nuclei for nuc in [p, n, he4]), "p, n, he4 are not fully present"
-
-        # First check if n,p,a are in equilibrium in order to proceed to ASE
-        comp_NSE = self.get_comp_NSE(rho, T, composition, ye=ye, init_guess=init_guess, dx=nse_dx)
-        Y_NSE = comp_NSE.get_molar()
-        Y = composition.get_molar()
-
-        # These are two ratios defined in the ASE paper to check whether current composition is in NSE
-        r = Y[he4]/(Y[n]**2 * Y[p]**2)
-        r_NSE = Y_NSE[he4]/(Y_NSE[n]**2 * Y_NSE[p]**2)
-
-        print(f"r is {r} and r_NSE is {r_NSE}")
-
-        #assert r_NSE < r,  f"""p, n, he4 currently not in equilibrium, where 
-        #r_NSE = {r_NSE} and r = {r}"""
-
-        # First check to see if current composition is in NSE, see Eq 14 in ASE paper
-        assert abs((r-r_NSE)/r) < 0.5, f"""p, n, he4 currently not in equilibrium, where 
-        r_NSE = {r_NSE} and r = {r}"""
-
-        # Find burning limiter, a constant ratio multiplied to all rates, to make rates smaller:
-        k = constants.value("Boltzmann constant")*1.0e7          #boltzmann in erg/K
-        m_u = constants.value("unified atomic mass unit")*1.0e3  #atomic unit mass in g
-        inverse_u = composition.eval_ye() + sum(Y.values())
-
-        # specific internal energy and sound speed assume ideal gas and adiabatic sound
-        e_int = 3.0/2.0*k*T/m_u*inverse_u
-        c_s = np.sqrt(5.0/3.0*k*T/m_u*inverse_u)
-
-        # relativisitic specific internal energy and sound speed
-        if rel:
-            e_int *= 2.0
-            c_s = constants.value("speed of light in vaccum")/np.sqrt(3.0)*100.0
-
-        # cell_dx is the size of simulation mesh size, and t_s is characteristic timescale called specific cell sound crossing time.
-        t_s = cell_dx/c_s
-
-        ydots = self.evaluate_ydots(rho, T, composition)
-        Y_npa = 0.
-        Y_npa_dot = 0.
-        Y_tilde= 0.
-        Y_tilde_dot = 0.
-        X_npa = 0.
-        X_tilde = 0.
-
-        for nuc in Y:
-            if nuc==p or nuc==n or nuc==he4:
-                Y_npa += Y[nuc]
-                Y_npa_dot += ydots[nuc]
-                X_npa += composition.X[nuc]
-            else:
-                Y_tilde += Y[nuc]
-                Y_tilde_dot += ydots[nuc]
-                X_tilde += composition.X[nuc]
-
-        # Calculate burning limiters based on Equation 6 and 7 in the ASE paper
-        f_e = min(1.0, e_int*f/abs(self.evaluate_energy_generation(rho, T, composition))/t_s)
-        f_npa = min(1.0, Y_npa*f/t_s/abs(Y_npa_dot))
-        f_tilde = min(1.0, Y_tilde*f/t_s/abs(Y_tilde_dot))
-
-        # f_full is the actual limiter, or the constant that we use to decrease the rates.
-        f_full = min(f_e, 1.0/(X_npa/f_npa + X_tilde/f_tilde))
-
-        # Here we do a second check to see if the current reaction network is appropriate for ASE
-        # We need to find a fast reaction cycle that exchanges he4 with two n and two p, see section 4.4.3 in ASE paper
-        # For current state of pynucastro, we need to check whether contain all intermediate nuclei.
-
-        rvals = self.evaluate_rates(rho, T, composition)
-        found_fast_reac = False
-
-        # Start off by the heavy nuclei
-        for nuc in reversed(self.unique_nuclei):
-            if found_fast_reac:
-                break
-            
-            # Here I add all possible nuclei involved in the network that start off with the starting nuclei: nuc
-            # First list in the list:reactions, will always be the nuc itself
-            # Second list in the list:reactions, will always have nuclei.a == nuc.A-1 and nuclei.Z==nuc.Z or nuclei.Z == nuc.Z-1
-            # and so on
-            # The last list and the list before the last list should also contain nuc itself, since its a cycle.
-            reactions = [[nuc],]                                  
-            reactions.append([sec_nucs for sec_nucs in self.unique_nuclei if (sec_nucs.A==nuc.A-1 and sec_nucs.Z in [nuc.Z,nuc.Z-1])])
-            reactions.append([third_nucs for third_nucs in self.unique_nuclei if (third_nucs.A==nuc.A-2 and third_nucs.Z in [nuc.Z,nuc.Z-1,nuc.Z-2])])
-            reactions.append([fourth_nucs for fourth_nucs in self.unique_nuclei if (fourth_nucs.A==nuc.A-3 and fourth_nucs.Z in [nuc.Z-1,nuc.Z-2])])
-            reactions.append([fifth_nucs for fifth_nucs in self.unique_nuclei if (fifth_nucs.A==nuc.A-4 and fifth_nucs.Z == nuc.Z-2)])
-            reactions[4].append(nuc)
-            reactions.append([nuc])
-
-            fast_reac = [[nuc],[],[],[],[],[]]
-            
-            # Skip this nuc if there are no intermediate nuclei linked
-            if not all(reactions[1:-2]):
-                continue
-
-            # loop over all list except for the last list.
-            for i, reaction in enumerate(reactions[:-1]):
-                # loop over all nuclei in the current list
-                for reac_nuc in reaction:
-                    # skip this loop if we have reac_nuc is nuc at later stages of reaction
-                    if reac_nuc == nuc and i != 0:
-                        continue
-                    # Get the nuclei of the next stage in reactions
-                    for aft_reac_nuc in reactions[i+1]:
-                        # Have variety of conditions to tell which reaction we have.
-                        # Get forward and reverse rates. Note here I do not care if it is actually forward or reverse rate
-                        if reac_nuc.A==aft_reac_nuc.A-4:
-                            # (alpha,gamma) reaction
-                            f_rate = self.get_rate_by_nuclei([reac_nuc,he4],[aft_reac_nuc])
-                            r_rate = self.get_rate_by_nuclei([aft_reac_nuc],[reac_nuc,he4])
-                        elif reac_nuc.A==aft_reac_nuc.A-3 and reac_nuc.Z==aft_reac_nuc.Z-2:
-                            # (alpha, n) reaction
-                            f_rate = self.get_rate_by_nuclei([reac_nuc,he4],[aft_reac_nuc,n])
-                            r_rate = self.get_rate_by_nuclei([aft_reac_nuc,n],[reac_nuc,he4])
-                        elif reac_nuc.A==aft_reac_nuc.A-3 and reac_nuc.Z==aft_reac_nuc.Z-1:
-                            # (alpha, p) reaction
-                            f_rate = self.get_rate_by_nuclei([reac_nuc,he4],[aft_reac_nuc,p])
-                            r_rate = self.get_rate_by_nuclei([aft_reac_nuc,p],[reac_nuc,he4])
-                        elif reac_nuc.Z==aft_reac_nuc.Z:
-                            # (n,gamma) reaction
-                            f_rate = self.get_rate_by_nuclei([reac_nuc],[aft_reac_nuc,n])
-                            r_rate = self.get_rate_by_nuclei([aft_reac_nuc,n],[reac_nuc])
-                        elif reac_nuc.Z==aft_reac_nuc.Z+1:
-                            # (p, gamma) reaction
-                            f_rate = self.get_rate_by_nuclei([reac_nuc],[aft_reac_nuc,p])
-                            r_rate = self.get_rate_by_nuclei([aft_reac_nuc,p],[reac_nuc])
-                        else:
-                            # continue if the current nuclei does not have any match reaction with the after nuclei
-                            continue
-
-                        # Find the two rates by multiplying it by burning limiter found above
-                        b_f =  f_full*rvals[f_rate[0]]
-                        b_r =  f_full*rvals[r_rate[0]]
-
-                        # A conditional check given by Eq 10 to 12 in ASE paper
-                        if ((Y[reac_nuc]/min(b_f,b_r) < tol*t_s or Y[aft_reac_nuc]/min(b_f,b_r) < tol*t_s) \
-                            and 2*abs(b_f - b_r)/(b_f + b_r) < tol):
-                            # add after nuclei to fast_reac if pass condition
-                            fast_reac[i+1].append(aft_reac_nuc)
-                        else:    
-                            continue
-
-                # If there are fast reaction nuclei found in the next reaction stage, replace nuclei in reactions with these nuclei
-                if fast_reac[i+1]:
-                    reactions[i+1] = fast_reac[i+1]
-
-                    # if found the starting nuc itself in the next reaction stage, meaning we finished the cycle. Hence found_fast_reac
-                    if nuc in fast_reac[i+1]:
-                        found_fast_reac = True
-                # break if there are no fast reaction nuclei found in the next reaction stage.
-                else:
-                    break
-
-        print(f"fast_reac is {fast_reac}")
-
-        if found_fast_reac:
-            # do ASE        
-            print("Found fast reaction")
-            
-        else:
-            raise Exception("Did not find fast reaction")
 
     def evaluate_ydots(self, rho, T, composition):
         """evaluate net rate of change of molar abundance for each nucleus
