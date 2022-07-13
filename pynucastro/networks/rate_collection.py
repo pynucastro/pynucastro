@@ -701,7 +701,7 @@ class RateCollection:
         he4 = Nucleus("he4")
 
         assert all(nuc in self.unique_nuclei for nuc in [p, n, he4]), "p, n, he4 are not fully present"
-        
+
         # First check if n,p,a are in equilibrium in order to proceed to ASE
         comp_NSE = self.get_comp_NSE(rho, T, composition, ye=ye, init_guess=init_guess, dx=nse_dx)
         Y_NSE = comp_NSE.get_molar()
@@ -788,7 +788,7 @@ class RateCollection:
             reactions[4].append(nuc)
             reactions.append([nuc])
 
-            fast_reac = [[nuc],[],[],[],[]]
+            fast_reac = [[nuc],[],[],[],[],[]]
             
             # Skip this nuc if there are no intermediate nuclei linked
             if not all(reactions[1:-2]):
@@ -840,6 +840,7 @@ class RateCollection:
                             fast_reac[i+1].append(aft_reac_nuc)
                         else:    
                             continue
+
                 # If there are fast reaction nuclei found in the next reaction stage, replace nuclei in reactions with these nuclei
                 if fast_reac[i+1]:
                     reactions[i+1] = fast_reac[i+1]
@@ -858,7 +859,7 @@ class RateCollection:
             print("Found fast reaction")
             
         else:
-            print(f"Did not find fast reaction, ")
+            raise Exception("Did not find fast reaction")
 
     def evaluate_ydots(self, rho, T, composition):
         """evaluate net rate of change of molar abundance for each nucleus
