@@ -56,10 +56,10 @@ jobs:
           sudo apt-get update -y -qq
           sudo apt-get -qq -y install curl cmake jq clang g++>=9.3.0
 
-      - name: Regenerate subch2 network
+      - name: Regenerate subch_full network
         run: |
-          cd external/Microphysics/networks/subch2
-          python subch2.py
+          cd external/Microphysics/networks/subch_full
+          python subch_full.py
 
       - name: Compile burn_cell
         run: |
