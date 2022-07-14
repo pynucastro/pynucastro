@@ -220,33 +220,25 @@ class RateCollection:
         if rates:
             if isinstance(rates, Rate):
                 rates = [rates]
-            try:
-                for r in rates:
-                    assert isinstance(r, Rate)
-            except AssertionError:
-                print('Expected Rate object or list of Rate objects passed as the rates argument.')
-                raise
+            for r in rates:
+                if not isinstance(r, Rate):
+                    raise ValueError('Expected Rate object or list of Rate objects passed as the rates argument.')
+            rlib = Library(rates=rates)
+            if not self.library:
+                self.library = rlib
             else:
-                rlib = Library(rates=rates)
-                if not self.library:
-                    self.library = rlib
-                else:
-                    self.library = self.library + rlib
+                self.library = self.library + rlib
 
         if libraries:
             if isinstance(libraries, Library):
                 libraries = [libraries]
-            try:
-                for lib in libraries:
-                    assert isinstance(lib, Library)
-            except AssertionError:
-                print('Expected Library object or list of Library objects passed as the libraries argument.')
-                raise
-            else:
-                if not self.library:
-                    self.library = libraries.pop(0)
-                for lib in libraries:
-                    self.library = self.library + lib
+            for lib in libraries:
+                if not isinstance(lib, Library):
+                    raise ValueError('Expected Library object or list of Library objects passed as the libraries argument.')
+            if not self.library:
+                self.library = libraries.pop(0)
+            for lib in libraries:
+                self.library = self.library + lib
 
         if self.library:
             self.rates = self.rates + self.library.get_rates()
@@ -335,14 +327,12 @@ class RateCollection:
         for rf in self.files:
             try:
                 rflib = Library(rf)
-            except:  # noqa
-                print(f"Error reading library from file: {rf}")
-                raise
+            except Exception as ex:
+                raise Exception(f"Error reading library from file: {rf}") from ex
+            if not self.library:
+                self.library = rflib
             else:
-                if not self.library:
-                    self.library = rflib
-                else:
-                    self.library = self.library + rflib
+                self.library = self.library + rflib
 
     def get_forward_rates(self):
         """return a list of the forward (exothermic) rates"""
@@ -428,8 +418,7 @@ class RateCollection:
         try:
             return [r for r in self.rates if r.fname == rid][0]
         except IndexError:
-            print("ERROR: rate identifier does not match a rate in this network.")
-            raise
+            raise LookupError(f"rate identifier {rid!r} does not match a rate in this network.") from None
 
     def get_rate_by_nuclei(self, reactants, products):
         """given a list of reactants and products, return any matching rates"""

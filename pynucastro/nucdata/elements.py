@@ -5,9 +5,8 @@ class Element:
         self.Z = Z
 
 
-class UnidentifiedElement(BaseException):
-    def __init__(self):
-        return
+class UnidentifiedElement(Exception):
+    pass
 
 
 class PeriodicTable:
@@ -138,7 +137,7 @@ class PeriodicTable:
         try:
             return cls.table[abbrev.lower()]
         except IndexError:
-            raise UnidentifiedElement
+            raise UnidentifiedElement(f'Could not identify element: {abbrev}') from None
 
     @classmethod
     def lookup_Z(cls, Z):

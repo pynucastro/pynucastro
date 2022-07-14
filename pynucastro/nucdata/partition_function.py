@@ -35,7 +35,7 @@ class PartitionFunction:
     is defined.
     """
 
-    def __init__(self, nucleus=None, name=None, temperature=None, partition_function=None):
+    def __init__(self, nucleus, name, temperature, partition_function):
 
         assert isinstance(nucleus, str)
 
@@ -81,8 +81,6 @@ class PartitionFunction:
         """
 
         assert self.nucleus == other.nucleus
-        assert self.upper_temperature() < other.lower_temperature() or \
-               self.lower_temperature() > other.upper_temperature()
 
         if self.upper_temperature() < other.lower_temperature():
             lower = self
@@ -90,6 +88,8 @@ class PartitionFunction:
         else:
             lower = other
             upper = self
+        if lower.upper_temperature() >= upper.lower_temperature():
+            raise ValueError("temperature ranges cannot overlap")
 
         temperature = np.array(list(lower.temperature) +
                                list(upper.temperature))
@@ -292,7 +292,7 @@ class PartitionFunctionCollection:
             pf_hi_table = self._partition_function_tables['etfsiq_high']
             pf_hi = pf_hi_table.get_partition_function(nuc)
         else:
-            raise Exception("invalid partition function type")
+            raise ValueError("invalid partition function type")
 
         if self.use_high_temperatures:
             if pf_lo and pf_hi:

@@ -42,11 +42,7 @@ class PythonNetwork(RateCollection):
         if outfile is None:
             of = sys.stdout
         else:
-            try:
-                of = open(outfile, "w")
-            except IOError:
-                print(f"unable to open {outfile}")
-                raise
+            of = open(outfile, "w")
 
         of.write("import numpy as np\n")
         of.write("from pynucastro.rates import Tfactors\n")

@@ -39,7 +39,7 @@ class BindingTable:
             f = open(self.datfile, 'r')
         except IOError:
             print('ERROR: data file not found!')
-            exit()
+            raise
 
         # Get rid of the header
         for _ in range(self.header_length):
@@ -61,4 +61,4 @@ class BindingTable:
         try:
             return self.nuclides[f"{n}_{z}"]
         except KeyError:
-            raise NotImplementedError(f"nuclear data for Z={z} and N={n} not available")
+            raise NotImplementedError(f"nuclear data for Z={z} and N={n} not available") from None

@@ -76,7 +76,7 @@ def _find_rate_file(ratename):
         return os.path.realpath(x)
 
     # notify user we can't find the file
-    raise Exception(f'File {ratename} not found in the working directory, {_pynucastro_rates_dir}, or {_pynucastro_tabular_dir}')
+    raise Exception(f'File {ratename!r} not found in the working directory, {_pynucastro_rates_dir}, or {_pynucastro_tabular_dir}')
 
 
 if numba is not None:
@@ -127,7 +127,7 @@ class SingleSet:
 
     """
 
-    def __init__(self, a, labelprops=None):
+    def __init__(self, a, labelprops):
         """here a is iterable (e.g., list or numpy array), storing the
            coefficients, a0, ..., a6
 
@@ -544,9 +544,8 @@ class Rate:
             try:
                 self.reactants.append(Nucleus.from_cache(f[0]))
                 self.products.append(Nucleus.from_cache(f[1]))
-            except ValueError:
-                print(f'Nucleus objects not be identified in {self.original_source}')
-                raise
+            except Exception as ex:
+                raise Exception(f'Nucleus objects could not be identified in {self.original_source}') from ex
 
             self.table_file = s2.strip()
             self.table_header_lines = int(s3.strip())
@@ -566,20 +565,14 @@ class Rate:
                 try:
                     # see if there is a chapter number preceding the set
                     check_chapter = int(check_chapter)
+                    # check that the chapter number is the same as the first
+                    # set in this rate file
+                    assert check_chapter == self.chapter, f'read chapter {check_chapter}, expected chapter {self.chapter} for this rate set.'
+                    # get rid of chapter number so we can read a rate set
+                    set_lines.pop(0)
                 except (TypeError, ValueError):
                     # there was no chapter number, proceed reading a set
                     pass
-                else:
-                    # there was a chapter number so check that the chapter number
-                    # is the same as the first set in this rate file
-                    try:
-                        assert check_chapter == self.chapter
-                    except AssertionError:
-                        print(f'ERROR: read chapter {check_chapter}, expected chapter {self.chapter} for this rate set.')
-                        raise
-                    else:
-                        # get rid of chapter number so we can read a rate set
-                        set_lines.pop(0)
 
                 # sets are 3 lines long
                 s1 = set_lines.pop(0)
@@ -962,9 +955,8 @@ class Rate:
 
         # find .dat file and read it
         self.table_path = _find_rate_file(self.table_file)
-        tabular_file = open(self.table_path)
-        t_data = tabular_file.readlines()
-        tabular_file.close()
+        with open(self.table_path) as tabular_file:
+            t_data = tabular_file.readlines()
 
         # delete header lines
         del t_data[0:self.table_header_lines]
