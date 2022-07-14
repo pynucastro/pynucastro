@@ -72,4 +72,3 @@ class TestApproxScreening:
             assert nucs[0] in r.ion_screen and nucs[1] in r.ion_screen
             r_scn = [q for q in screening_map if q.n1 in r.ion_screen and q.n2 in r.ion_screen]
             assert len(r_scn) == 1
-
