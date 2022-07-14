@@ -315,6 +315,10 @@ class Rate:
         if self.labelprops == "approx":
             self.approx = True
 
+        self.derived = False
+        if self.labelprops == "derived":
+            self.derived = True
+
         self.label = None
         self.resonant = None
         self.resonance_combined = None
@@ -497,6 +501,14 @@ class Rate:
         elif self.labelprops == "approx":
             self.label = "approx"
             self.resonant = False
+            self.resonance_combined = False
+            self.weak = False
+            self.weak_type = None
+            self.reverse = False
+            self.tabular = False
+        elif self.labelprops == "derived":
+            self.label = "derived"
+            self.resonant = False  # Derived may be resonant in some cases
             self.resonance_combined = False
             self.weak = False
             self.weak_type = None
@@ -904,6 +916,8 @@ class Rate:
                 self.fname += "__modified"
             if self.approx:
                 self.fname += "__approx"
+            if self.derived:
+                self.fname += "__derived"
 
     def get_rate_id(self):
         """ Get an identifying string for this rate.
@@ -1324,7 +1338,7 @@ class DerivedRate(Rate):
             derived_sets.append(sset_d)
 
         super().__init__(rfile=self.rate.rfile, rfile_path=self.rate.rfile_path, chapter=self.rate.chapter, original_source=self.rate.original_source,
-                reactants=self.rate.products, products=self.rate.reactants, sets=derived_sets, labelprops=self.rate.labelprops, Q=-self.rate.Q)
+                reactants=self.rate.products, products=self.rate.reactants, sets=derived_sets, labelprops="derived", Q=-self.rate.Q)
 
     def eval(self, T, rhoY=None):
 
