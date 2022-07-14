@@ -6,7 +6,7 @@ import os
 import re
 
 from scipy.constants import physical_constants
-from pynucastro.nucdata import UnidentifiedElement, PeriodicTable, PartitionFunctionCollection, BindingTable, SpinTable
+from pynucastro.nucdata import PeriodicTable, PartitionFunctionCollection, BindingTable, SpinTable
 from pynucastro.nucdata.mass_nuclide import MassTable
 
 _pynucastro_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
@@ -29,9 +29,8 @@ _binding_table = BindingTable()
 _pcollection = PartitionFunctionCollection(use_high_temperatures=True, use_set='frdm')
 
 
-class UnsupportedNucleus(BaseException):
-    def __init__(self):
-        return
+class UnsupportedNucleus(Exception):
+    pass
 
 
 class Nucleus:
@@ -94,18 +93,13 @@ class Nucleus:
             self.spec_name = "neutron"
             self.pretty = fr"\mathrm{{{self.el}}}"
             self.caps_name = "n"
+        elif name.strip() in ("al-6", "al*6"):
+            raise UnsupportedNucleus()
         else:
             e = re.match(r"([a-zA-Z]*)(\d*)", name)
             self.el = e.group(1).title()  # chemical symbol
             assert self.el
-            try:
-                self.A = int(e.group(2))
-            except (TypeError, ValueError):
-                if (name.strip() == 'al-6' or
-                    name.strip() == 'al*6'):
-                    raise UnsupportedNucleus()
-                else:
-                    raise
+            self.A = int(e.group(2))
             assert self.A >= 0
             self.short_spec_name = name
             self.caps_name = name.capitalize()
@@ -124,24 +118,19 @@ class Nucleus:
 
         # atomic number comes from periodic table
         if name != "n":
-            try:
-                i = PeriodicTable.lookup_abbreviation(self.el)
-            except UnidentifiedElement:
-                print(f'Could not identify element: {self.el}')
-                raise
-            else:
-                self.Z = i.Z
-                assert isinstance(self.Z, int)
-                assert self.Z >= 0
-                self.N = self.A - self.Z
-                assert isinstance(self.N, int)
-                assert self.N >= 0
+            i = PeriodicTable.lookup_abbreviation(self.el)
+            self.Z = i.Z
+            assert isinstance(self.Z, int)
+            assert self.Z >= 0
+            self.N = self.A - self.Z
+            assert isinstance(self.N, int)
+            assert self.N >= 0
 
-                # long name
-                self.spec_name = f'{i.name}-{self.A}'
+            # long name
+            self.spec_name = f'{i.name}-{self.A}'
 
-                # latex formatted style
-                self.pretty = fr"{{}}^{{{self.A}}}\mathrm{{{self.el.capitalize()}}}"
+            # latex formatted style
+            self.pretty = fr"{{}}^{{{self.A}}}\mathrm{{{self.el.capitalize()}}}"
 
         try:
             self.nucbind = _binding_table.get_nuclide(n=self.N, z=self.Z).nucbind
