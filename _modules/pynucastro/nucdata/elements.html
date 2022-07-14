@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.nucdata.elements &mdash; pynucastro 1.7.0.post10+g4bb1452 documentation</title>
+  <title>pynucastro.nucdata.elements &mdash; pynucastro 1.7.0.post11+g956ba1a documentation</title>
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -108,9 +108,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">Z</span> <span class="o">=</span> <span class="n">Z</span></div>
 
 
-<div class="viewcode-block" id="UnidentifiedElement"><a class="viewcode-back" href="../../../pynucastro.nucdata.html#pynucastro.nucdata.elements.UnidentifiedElement">[docs]</a><span class="k">class</span> <span class="nc">UnidentifiedElement</span><span class="p">(</span><span class="ne">BaseException</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span></div>
+<div class="viewcode-block" id="UnidentifiedElement"><a class="viewcode-back" href="../../../pynucastro.nucdata.html#pynucastro.nucdata.elements.UnidentifiedElement">[docs]</a><span class="k">class</span> <span class="nc">UnidentifiedElement</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">pass</span></div>
 
 
 <div class="viewcode-block" id="PeriodicTable"><a class="viewcode-back" href="../../../pynucastro.nucdata.html#pynucastro.nucdata.elements.PeriodicTable">[docs]</a><span class="k">class</span> <span class="nc">PeriodicTable</span><span class="p">:</span>
@@ -241,7 +240,7 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="n">abbrev</span><span class="o">.</span><span class="n">lower</span><span class="p">()]</span>
         <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">UnidentifiedElement</span></div>
+            <span class="k">raise</span> <span class="n">UnidentifiedElement</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Could not identify element: </span><span class="si">{</span><span class="n">abbrev</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span> <span class="kn">from</span> <span class="bp">None</span></div>
 
 <div class="viewcode-block" id="PeriodicTable.lookup_Z"><a class="viewcode-back" href="../../../pynucastro.nucdata.html#pynucastro.nucdata.elements.PeriodicTable.lookup_Z">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">lookup_Z</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">Z</span><span class="p">):</span>

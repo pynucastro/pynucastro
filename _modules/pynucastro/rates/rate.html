@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.rates.rate &mdash; pynucastro 1.7.0.post10+g4bb1452 documentation</title>
+  <title>pynucastro.rates.rate &mdash; pynucastro 1.7.0.post11+g956ba1a documentation</title>
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -179,7 +179,7 @@
         <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 
     <span class="c1"># notify user we can&#39;t find the file</span>
-    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;File </span><span class="si">{</span><span class="n">ratename</span><span class="si">}</span><span class="s1"> not found in the working directory, </span><span class="si">{</span><span class="n">_pynucastro_rates_dir</span><span class="si">}</span><span class="s1">, or </span><span class="si">{</span><span class="n">_pynucastro_tabular_dir</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;File </span><span class="si">{</span><span class="n">ratename</span><span class="si">!r}</span><span class="s1"> not found in the working directory, </span><span class="si">{</span><span class="n">_pynucastro_rates_dir</span><span class="si">}</span><span class="s1">, or </span><span class="si">{</span><span class="n">_pynucastro_tabular_dir</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
 
 
 <span class="k">if</span> <span class="n">numba</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -230,7 +230,7 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">labelprops</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">labelprops</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;here a is iterable (e.g., list or numpy array), storing the</span>
 <span class="sd">           coefficients, a0, ..., a6</span>
 
@@ -647,9 +647,8 @@
             <span class="k">try</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Nucleus</span><span class="o">.</span><span class="n">from_cache</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">products</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Nucleus</span><span class="o">.</span><span class="n">from_cache</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
-            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Nucleus objects not be identified in </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">original_source</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-                <span class="k">raise</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Nucleus objects could not be identified in </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">original_source</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">ex</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">table_file</span> <span class="o">=</span> <span class="n">s2</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">table_header_lines</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">s3</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
@@ -669,20 +668,14 @@
                 <span class="k">try</span><span class="p">:</span>
                     <span class="c1"># see if there is a chapter number preceding the set</span>
                     <span class="n">check_chapter</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">check_chapter</span><span class="p">)</span>
+                    <span class="c1"># check that the chapter number is the same as the first</span>
+                    <span class="c1"># set in this rate file</span>
+                    <span class="k">assert</span> <span class="n">check_chapter</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">chapter</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;read chapter </span><span class="si">{</span><span class="n">check_chapter</span><span class="si">}</span><span class="s1">, expected chapter </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">chapter</span><span class="si">}</span><span class="s1"> for this rate set.&#39;</span>
+                    <span class="c1"># get rid of chapter number so we can read a rate set</span>
+                    <span class="n">set_lines</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
                 <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
                     <span class="c1"># there was no chapter number, proceed reading a set</span>
                     <span class="k">pass</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="c1"># there was a chapter number so check that the chapter number</span>
-                    <span class="c1"># is the same as the first set in this rate file</span>
-                    <span class="k">try</span><span class="p">:</span>
-                        <span class="k">assert</span> <span class="n">check_chapter</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">chapter</span>
-                    <span class="k">except</span> <span class="ne">AssertionError</span><span class="p">:</span>
-                        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;ERROR: read chapter </span><span class="si">{</span><span class="n">check_chapter</span><span class="si">}</span><span class="s1">, expected chapter </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">chapter</span><span class="si">}</span><span class="s1"> for this rate set.&#39;</span><span class="p">)</span>
-                        <span class="k">raise</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="c1"># get rid of chapter number so we can read a rate set</span>
-                        <span class="n">set_lines</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 
                 <span class="c1"># sets are 3 lines long</span>
                 <span class="n">s1</span> <span class="o">=</span> <span class="n">set_lines</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
@@ -1065,9 +1058,8 @@
 
         <span class="c1"># find .dat file and read it</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">table_path</span> <span class="o">=</span> <span class="n">_find_rate_file</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table_file</span><span class="p">)</span>
-        <span class="n">tabular_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table_path</span><span class="p">)</span>
-        <span class="n">t_data</span> <span class="o">=</span> <span class="n">tabular_file</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
-        <span class="n">tabular_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">tabular_file</span><span class="p">:</span>
+            <span class="n">t_data</span> <span class="o">=</span> <span class="n">tabular_file</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
 
         <span class="c1"># delete header lines</span>
         <span class="k">del</span> <span class="n">t_data</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">table_header_lines</span><span class="p">]</span>
