@@ -6,7 +6,7 @@ from dataclasses import dataclass, field
 import numpy as np
 from scipy import constants
 
-from pynucastro.nucleus import Nucleus
+from pynucastro.nucdata import Nucleus
 
 __all__ = ["PlasmaState", "ScreenFactors", "chugunov_2007", "chugunov_2009"]
 
