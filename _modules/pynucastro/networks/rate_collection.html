@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.networks.rate_collection &mdash; pynucastro 1.7.0.post8+gffd83e7 documentation</title>
+  <title>pynucastro.networks.rate_collection &mdash; pynucastro 1.7.0.post9+gc9250d5 documentation</title>
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -103,9 +103,6 @@
   <h1>Source code for pynucastro.networks.rate_collection</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;A collection of classes and methods to deal with collections of</span>
 <span class="sd">rates that together make up a network.&quot;&quot;&quot;</span>
-
-<span class="c1"># disable a complaint about SymLogNorm</span>
-<span class="c1">#pylint: disable=redundant-keyword-arg</span>
 
 <span class="c1"># Common Imports</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
@@ -545,8 +542,7 @@
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">_tmp</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">_tmp</span></div>
+        <span class="k">return</span> <span class="n">_tmp</span></div>
 
 <div class="viewcode-block" id="RateCollection.remove_nuclei"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.remove_nuclei">[docs]</a>    <span class="k">def</span> <span class="nf">remove_nuclei</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nuc_list</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;remove the nuclei in nuc_list from the network along with any rates</span>
@@ -783,7 +779,7 @@
 <span class="sd">        for a specific density, temperature, and composition&quot;&quot;&quot;</span>
 
         <span class="n">rvals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_rates</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">composition</span><span class="p">)</span>
-        <span class="n">ydots</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="n">ydots</span> <span class="o">=</span> <span class="p">{}</span>
 
         <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">:</span>
 
@@ -841,7 +837,7 @@
 <span class="sd">        neglecting sign&quot;&quot;&quot;</span>
 
         <span class="n">rvals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_rates</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">composition</span><span class="p">)</span>
-        <span class="n">act</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="n">act</span> <span class="o">=</span> <span class="p">{}</span>
 
         <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">:</span>
 
@@ -866,12 +862,12 @@
 
         <span class="n">nc</span> <span class="o">=</span> <span class="p">{}</span>
 
-        <span class="k">for</span> <span class="n">rate</span> <span class="ow">in</span> <span class="n">rvals</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">rate</span><span class="p">,</span> <span class="n">rval</span> <span class="ow">in</span> <span class="n">rvals</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">nucs</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">rate</span><span class="o">.</span><span class="n">reactants</span><span class="p">):</span>
-                <span class="n">nucs</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="o">-</span><span class="n">rate</span><span class="o">.</span><span class="n">reactants</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">*</span> <span class="n">rvals</span><span class="p">[</span><span class="n">rate</span><span class="p">]))</span>
+                <span class="n">nucs</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="o">-</span><span class="n">rate</span><span class="o">.</span><span class="n">reactants</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">*</span> <span class="n">rval</span><span class="p">))</span>
             <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">rate</span><span class="o">.</span><span class="n">products</span><span class="p">):</span>
-                <span class="n">nucs</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="n">rate</span><span class="o">.</span><span class="n">products</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">*</span> <span class="n">rvals</span><span class="p">[</span><span class="n">rate</span><span class="p">]))</span>
+                <span class="n">nucs</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="n">rate</span><span class="o">.</span><span class="n">products</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">*</span> <span class="n">rval</span><span class="p">))</span>
             <span class="n">nc</span><span class="p">[</span><span class="n">rate</span><span class="p">]</span> <span class="o">=</span> <span class="n">nucs</span>
 
         <span class="k">return</span> <span class="n">nc</span>
@@ -1057,6 +1053,7 @@
     <span class="k">def</span> <span class="nf">_write_network</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;A stub for function to output the network -- this is implementation</span>
 <span class="sd">        dependent.&quot;&quot;&quot;</span>
+        <span class="c1"># pylint: disable=unused-argument</span>
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;To create network integration source code, use a class that implements a specific network type.&#39;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="RateCollection.plot"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outfile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -1207,32 +1204,33 @@
                         <span class="k">continue</span>
 
                 <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">r</span><span class="o">.</span><span class="n">products</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">node_nuclei</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">p</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">node_nuclei</span><span class="p">:</span>
+                        <span class="k">continue</span>
 
-                        <span class="k">if</span> <span class="n">hide_xalpha</span> <span class="ow">and</span> <span class="n">_skip_xalpha</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">r</span><span class="p">):</span>
-                            <span class="k">continue</span>
+                    <span class="k">if</span> <span class="n">hide_xalpha</span> <span class="ow">and</span> <span class="n">_skip_xalpha</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">r</span><span class="p">):</span>
+                        <span class="k">continue</span>
 
-                        <span class="c1"># networkx doesn&#39;t seem to keep the edges in</span>
-                        <span class="c1"># any particular order, so we associate data</span>
-                        <span class="c1"># to the edges here directly, in this case,</span>
-                        <span class="c1"># the reaction rate, which will be used to</span>
-                        <span class="c1"># color it</span>
-                        <span class="c1"># here real means that it is not an approximate rate</span>
+                    <span class="c1"># networkx doesn&#39;t seem to keep the edges in</span>
+                    <span class="c1"># any particular order, so we associate data</span>
+                    <span class="c1"># to the edges here directly, in this case,</span>
+                    <span class="c1"># the reaction rate, which will be used to</span>
+                    <span class="c1"># color it</span>
+                    <span class="c1"># here real means that it is not an approximate rate</span>
 
-                        <span class="k">if</span> <span class="n">ydots</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                            <span class="n">G</span><span class="o">.</span><span class="n">add_edges_from</span><span class="p">([(</span><span class="n">n</span><span class="p">,</span> <span class="n">p</span><span class="p">)],</span> <span class="n">weight</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">real</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-                        <span class="k">else</span><span class="p">:</span>
-                            <span class="k">if</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">invisible_rates</span><span class="p">:</span>
-                                <span class="k">continue</span>
-                            <span class="k">try</span><span class="p">:</span>
-                                <span class="n">rate_weight</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">ydots</span><span class="p">[</span><span class="n">r</span><span class="p">])</span>
-                            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-                                <span class="c1"># if ydots[r] is zero, then set the weight</span>
-                                <span class="c1"># to roughly the minimum exponent possible</span>
-                                <span class="c1"># for python floats</span>
-                                <span class="n">rate_weight</span> <span class="o">=</span> <span class="o">-</span><span class="mi">308</span>
+                    <span class="k">if</span> <span class="n">ydots</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">G</span><span class="o">.</span><span class="n">add_edges_from</span><span class="p">([(</span><span class="n">n</span><span class="p">,</span> <span class="n">p</span><span class="p">)],</span> <span class="n">weight</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">real</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+                        <span class="k">continue</span>
+                    <span class="k">if</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">invisible_rates</span><span class="p">:</span>
+                        <span class="k">continue</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">rate_weight</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">ydots</span><span class="p">[</span><span class="n">r</span><span class="p">])</span>
+                    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                        <span class="c1"># if ydots[r] is zero, then set the weight</span>
+                        <span class="c1"># to roughly the minimum exponent possible</span>
+                        <span class="c1"># for python floats</span>
+                        <span class="n">rate_weight</span> <span class="o">=</span> <span class="o">-</span><span class="mi">308</span>
 
-                            <span class="n">G</span><span class="o">.</span><span class="n">add_edges_from</span><span class="p">([(</span><span class="n">n</span><span class="p">,</span> <span class="n">p</span><span class="p">)],</span> <span class="n">weight</span><span class="o">=</span><span class="n">rate_weight</span><span class="p">,</span> <span class="n">real</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+                    <span class="n">G</span><span class="o">.</span><span class="n">add_edges_from</span><span class="p">([(</span><span class="n">n</span><span class="p">,</span> <span class="n">p</span><span class="p">)],</span> <span class="n">weight</span><span class="o">=</span><span class="n">rate_weight</span><span class="p">,</span> <span class="n">real</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
         <span class="c1"># now consider the rates that are approximated out of the network</span>
         <span class="n">rate_seen</span> <span class="o">=</span> <span class="p">[]</span>
@@ -1375,6 +1373,7 @@
         <span class="n">_ydot</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">_ydot</span><span class="p">)</span>
         <span class="n">valid_max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">_ydot</span><span class="p">[</span><span class="n">_ydot</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
 
+        <span class="c1"># pylint: disable-next=redundant-keyword-arg</span>
         <span class="n">norm</span> <span class="o">=</span> <span class="n">SymLogNorm</span><span class="p">(</span><span class="n">valid_max</span><span class="o">/</span><span class="mf">1.e15</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=-</span><span class="n">valid_max</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">valid_max</span><span class="p">)</span>
 
         <span class="c1"># if there are a lot of rates, we split the network chart into</span>

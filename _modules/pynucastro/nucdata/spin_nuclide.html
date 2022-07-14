@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.nucdata.spin_nuclide &mdash; pynucastro 1.7.0.post8+gffd83e7 documentation</title>
+  <title>pynucastro.nucdata.spin_nuclide &mdash; pynucastro 1.7.0.post9+gc9250d5 documentation</title>
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -125,7 +125,7 @@
             <span class="n">rep</span> <span class="o">=</span> <span class="s1">&#39;n&#39;</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">element</span> <span class="o">=</span> <span class="n">PeriodicTable</span><span class="o">.</span><span class="n">lookup_Z</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">)</span>
-            <span class="n">rep</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">element</span><span class="o">.</span><span class="n">abbreviation</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">)</span>
+            <span class="n">rep</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">element</span><span class="o">.</span><span class="n">abbreviation</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="si">}</span><span class="s1">&#39;</span>
 
         <span class="k">return</span> <span class="n">rep</span>
 
@@ -163,8 +163,8 @@
 
     <span class="k">def</span> <span class="nf">_add_spin_nuclide</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spin_nuc</span><span class="p">):</span>
 
-        <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">spin_nuc</span><span class="p">)</span> <span class="o">==</span> <span class="n">SpinNuclide</span>
-        <span class="k">assert</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">(</span><span class="n">spin_nuc</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spin_nuclide</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spin_nuc</span><span class="p">,</span> <span class="n">SpinNuclide</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">str</span><span class="p">(</span><span class="n">spin_nuc</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spin_nuclide</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_spin_nuclide</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">spin_nuc</span><span class="p">)]</span> <span class="o">=</span> <span class="n">spin_nuc</span>
 
@@ -206,10 +206,9 @@
         <span class="n">finput</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
 <div class="viewcode-block" id="SpinTable.get_spin_nuclide"><a class="viewcode-back" href="../../../pynucastro.nucdata.html#pynucastro.nucdata.spin_nuclide.SpinTable.get_spin_nuclide">[docs]</a>    <span class="k">def</span> <span class="nf">get_spin_nuclide</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nuc</span><span class="p">):</span>
-        <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">nuc</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spin_nuclide</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">nuc</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spin_nuclide</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spin_nuclide</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">nuc</span><span class="p">)]</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;nuclear spin data is not available for the selected nucleus&quot;</span><span class="p">)</span></div></div>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;nuclear spin data is not available for the selected nucleus&quot;</span><span class="p">)</span></div></div>
 </pre></div>
 
            </div>

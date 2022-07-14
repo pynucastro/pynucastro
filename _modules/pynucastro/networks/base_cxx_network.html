@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.networks.base_cxx_network &mdash; pynucastro 1.7.0.post8+gffd83e7 documentation</title>
+  <title>pynucastro.networks.base_cxx_network &mdash; pynucastro 1.7.0.post9+gc9250d5 documentation</title>
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -192,6 +192,7 @@
 <span class="sd">        This writes the RHS, jacobian and ancillary files for the system of ODEs that</span>
 <span class="sd">        this network describes, using the template files.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># pylint: disable=arguments-differ</span>
 
         <span class="c1"># Prepare RHS terms</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">solved_ydot</span><span class="p">:</span>
@@ -215,11 +216,11 @@
                 <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">ifile</span><span class="p">:</span>
                     <span class="n">ls</span> <span class="o">=</span> <span class="n">l</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
                     <span class="n">foundkey</span> <span class="o">=</span> <span class="kc">False</span>
-                    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">func</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                         <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">ls</span><span class="p">:</span>
                             <span class="n">foundkey</span> <span class="o">=</span> <span class="kc">True</span>
                             <span class="n">n_indent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_indent_amt</span><span class="p">(</span><span class="n">ls</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
-                            <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="n">k</span><span class="p">](</span><span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">)</span>
+                            <span class="n">func</span><span class="p">(</span><span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">)</span>
                     <span class="k">if</span> <span class="ow">not</span> <span class="n">foundkey</span><span class="p">:</span>
                         <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">l</span><span class="p">)</span>
 
@@ -291,7 +292,7 @@
 
     <span class="k">def</span> <span class="nf">_compute_screening_factors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
         <span class="n">screening_map</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_screening_map</span><span class="p">()</span>
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">scr</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">screening_map</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">scr</span> <span class="ow">in</span> <span class="n">screening_map</span><span class="p">:</span>
 
             <span class="n">nuc1_info</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="nb">float</span><span class="p">(</span><span class="n">scr</span><span class="o">.</span><span class="n">n1</span><span class="o">.</span><span class="n">Z</span><span class="p">)</span><span class="si">}</span><span class="s1">_rt, </span><span class="si">{</span><span class="nb">float</span><span class="p">(</span><span class="n">scr</span><span class="o">.</span><span class="n">n1</span><span class="o">.</span><span class="n">A</span><span class="p">)</span><span class="si">}</span><span class="s1">_rt&#39;</span>
             <span class="n">nuc2_info</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="nb">float</span><span class="p">(</span><span class="n">scr</span><span class="o">.</span><span class="n">n2</span><span class="o">.</span><span class="n">Z</span><span class="p">)</span><span class="si">}</span><span class="s1">_rt, </span><span class="si">{</span><span class="nb">float</span><span class="p">(</span><span class="n">scr</span><span class="o">.</span><span class="n">n2</span><span class="o">.</span><span class="n">A</span><span class="p">)</span><span class="si">}</span><span class="s1">_rt&#39;</span>
@@ -545,10 +546,12 @@
                                                     <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pynucastro_dir</span><span class="p">)))</span>
 
     <span class="k">def</span> <span class="nf">_reaclib_rate_functions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">n_indent</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;function definitions must be at top level&quot;</span>
         <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reaclib_rates</span><span class="p">:</span>
             <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">function_string_cxx</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">specifiers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">function_specifier</span><span class="p">))</span>
 
     <span class="k">def</span> <span class="nf">_approx_rate_functions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">n_indent</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;function definitions must be at top level&quot;</span>
         <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">approx_rates</span><span class="p">:</span>
             <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">function_string_cxx</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">specifiers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">function_specifier</span><span class="p">))</span>
 

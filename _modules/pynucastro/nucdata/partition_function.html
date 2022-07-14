@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.nucdata.partition_function &mdash; pynucastro 1.7.0.post8+gffd83e7 documentation</title>
+  <title>pynucastro.nucdata.partition_function &mdash; pynucastro 1.7.0.post9+gc9250d5 documentation</title>
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -142,7 +142,7 @@
 
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">nucleus</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">nucleus</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">nucleus</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nucleus</span> <span class="o">=</span> <span class="n">nucleus</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">temperature</span> <span class="o">=</span> <span class="n">temperature</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">partition_function</span> <span class="o">=</span> <span class="n">partition_function</span>
@@ -200,7 +200,7 @@
         <span class="n">partition_function</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">lower</span><span class="o">.</span><span class="n">partition_function</span><span class="p">)</span> <span class="o">+</span>
                              <span class="nb">list</span><span class="p">(</span><span class="n">upper</span><span class="o">.</span><span class="n">partition_function</span><span class="p">))</span>
 
-        <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">+</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lower</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">upper</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">lower</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">+</span><span class="si">{</span><span class="n">upper</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">&#39;</span>
 
         <span class="n">newpf</span> <span class="o">=</span> <span class="n">PartitionFunction</span><span class="p">(</span><span class="n">nucleus</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nucleus</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
                                   <span class="n">temperature</span><span class="o">=</span><span class="n">temperature</span><span class="p">,</span> <span class="n">partition_function</span><span class="o">=</span><span class="n">partition_function</span><span class="p">)</span>
@@ -280,17 +280,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_partition_function</span><span class="p">[</span><span class="n">nuc</span><span class="p">]</span> <span class="o">=</span> <span class="n">pfun</span>
 
 <div class="viewcode-block" id="PartitionFunctionTable.get_nuclei"><a class="viewcode-back" href="../../../pynucastro.nucdata.html#pynucastro.nucdata.partition_function.PartitionFunctionTable.get_nuclei">[docs]</a>    <span class="k">def</span> <span class="nf">get_nuclei</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-
-        <span class="n">nuclei</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">nc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_partition_function</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-            <span class="n">nuclei</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nc</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">nuclei</span></div>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_partition_function</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="PartitionFunctionTable.get_partition_function"><a class="viewcode-back" href="../../../pynucastro.nucdata.html#pynucastro.nucdata.partition_function.PartitionFunctionTable.get_partition_function">[docs]</a>    <span class="k">def</span> <span class="nf">get_partition_function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nuc</span><span class="p">):</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">nuc</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
-        <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">nuc</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_partition_function</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_partition_function</span><span class="p">[</span><span class="n">nuc</span><span class="p">]</span></div>
+        <span class="k">if</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_partition_function</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_partition_function</span><span class="p">[</span><span class="n">nuc</span><span class="p">]</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
 
     <span class="k">def</span> <span class="nf">_read_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">):</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fin</span><span class="p">:</span>
@@ -371,10 +367,10 @@
 
 <div class="viewcode-block" id="PartitionFunctionCollection.get_nuclei"><a class="viewcode-back" href="../../../pynucastro.nucdata.html#pynucastro.nucdata.partition_function.PartitionFunctionCollection.get_nuclei">[docs]</a>    <span class="k">def</span> <span class="nf">get_nuclei</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
-        <span class="n">nuclei</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">jk</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_partition_function_tables</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-            <span class="n">nuclei</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_partition_function_tables</span><span class="p">[</span><span class="n">jk</span><span class="p">]</span><span class="o">.</span><span class="n">get_nuclei</span><span class="p">()</span>
-        <span class="k">return</span> <span class="nb">set</span><span class="p">(</span><span class="n">nuclei</span><span class="p">)</span></div>
+        <span class="n">nuclei</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">table</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_partition_function_tables</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">nuclei</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">table</span><span class="o">.</span><span class="n">get_nuclei</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">nuclei</span></div>
 
     <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_nuclei</span><span class="p">():</span>
