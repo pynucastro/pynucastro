@@ -53,7 +53,8 @@ codes.
    modify-example.ipynb
    approx-rates-examples.ipynb
    partition-function
-
+   NSE-example.ipynb
+   
 .. toctree::
    :maxdepth: 1
    :caption: Writing Networks
