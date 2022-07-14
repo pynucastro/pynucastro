@@ -293,13 +293,13 @@ def f0(gamma, dlog_dT):
     dterm2_dgamma = 1 / (2 * term1)
 
     gamma_12 = np.sqrt(gamma)
-    term3 = gamma_12 - np.atan(gamma_12)
+    term3 = gamma_12 - np.arctan(gamma_12)
     dterm3_dgamma = gamma_12 / (1 + gamma) / 2
 
-    term4 = np.log(1 + gamma / B2)
+    term4 = np.log1p(gamma / B2)
     dterm4_dgamma = 1 / (B2 + gamma)
 
-    term5 = np.log(1 + gamma ** 2 / B4)
+    term5 = np.log1p(gamma ** 2 / B4)
     dterm5_dgamma = 2 * gamma / (B4 + gamma ** 2)
 
     f = (

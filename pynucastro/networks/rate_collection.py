@@ -26,6 +26,7 @@ import copy
 # Import Rate
 from pynucastro.nucleus import Nucleus
 from pynucastro.rates import Rate, RatePair, ApproximateRate, Library
+from pynucastro.screening import PlasmaState, ScreenFactors
 
 from pynucastro.nucdata import PeriodicTable
 
@@ -552,21 +553,64 @@ class RateCollection:
         # regenerate the links
         self._build_collection()
 
-    def evaluate_rates(self, rho, T, composition):
+    def evaluate_rates(self, rho, T, composition, screen_func=None):
         """evaluate the rates for a specific density, temperature, and
-        composition"""
+        composition, with optional screening"""
         rvals = {}
         ys = composition.get_molar()
         y_e = composition.eval_ye()
+
+        if screen_func is not None:
+            screen_factors = self.evaluate_screening(rho, T, composition, screen_func)
+        else:
+            screen_factors = {}
 
         for r in self.rates:
             val = r.prefactor * rho**r.dens_exp * r.eval(T, rho * y_e)
             if (r.weak_type == 'electron_capture' and not r.tabular):
                 val = val * y_e
             yfac = functools.reduce(mul, [ys[q] for q in r.reactants])
-            rvals[r] = yfac * val
+            rvals[r] = yfac * val * screen_factors.get(r, 1.0)
 
         return rvals
+
+    def evaluate_screening(self, rho, T, composition, screen_func):
+        """Evaluate the screening factors for each rate, using one of the
+        methods in :py:mod:`pynucastro.screening`"""
+        # this follows the same logic as BaseCxxNetwork._compute_screening_factors()
+        factors = {}
+        ys = composition.get_molar()
+        plasma_state = PlasmaState.fill(T, rho, ys)
+        screening_map = self.get_screening_map()
+
+        for i, scr in enumerate(screening_map):
+            if not (scr.n1.dummy or scr.n2.dummy):
+                scn_fac = ScreenFactors(scr.n1, scr.n2)
+                scor = screen_func(plasma_state, scn_fac)[0]
+            if scr.name == "he4_he4_he4":
+                # we don't need to do anything here, but we want to avoid
+                # immediately applying the screening
+                pass
+            elif scr.name == "he4_he4_he4_dummy":
+                # make sure the previous iteration was the first part of 3-alpha
+                assert screening_map[i - 1].name == "he4_he4_he4"
+                # handle the second part of the screening for 3-alpha
+                scn_fac2 = ScreenFactors(scr.n1, scr.n2)
+                scor2 = screen_func(plasma_state, scn_fac2)[0]
+
+                # there might be both the forward and reverse 3-alpha
+                # if we are doing symmetric screening
+                for r in scr.rates:
+                    # use scor from the previous loop iteration
+                    factors[r] = scor * scor2
+            else:
+                # there might be several rates that have the same
+                # reactants and therefore the same screening applies
+                # -- handle them all now
+                for r in scr.rates:
+                    factors[r] = scor
+
+        return factors
 
     def _evaluate_comp_NSE(self, u, rho, T, ye):
         """ A helper equation that finds the mass fraction of each nuclide in NSE state,
@@ -660,11 +704,11 @@ class RateCollection:
 
         raise ValueError("Unable to find a solution, try to adjust initial guess manually")
 
-    def evaluate_ydots(self, rho, T, composition):
+    def evaluate_ydots(self, rho, T, composition, screen_func=None):
         """evaluate net rate of change of molar abundance for each nucleus
         for a specific density, temperature, and composition"""
 
-        rvals = self.evaluate_rates(rho, T, composition)
+        rvals = self.evaluate_rates(rho, T, composition, screen_func)
         ydots = {}
 
         for nuc in self.unique_nuclei:
@@ -683,11 +727,11 @@ class RateCollection:
 
         return ydots
 
-    def evaluate_energy_generation(self, rho, T, composition):
+    def evaluate_energy_generation(self, rho, T, composition, screen_func=None):
         """evaluate the specific energy generation rate of the network for a specific
         density, temperature and composition"""
 
-        ydots = self.evaluate_ydots(rho, T, composition)
+        ydots = self.evaluate_ydots(rho, T, composition, screen_func)
         enuc = 0.
 
         # compute constants and units
@@ -718,11 +762,11 @@ class RateCollection:
 
         return enuc
 
-    def evaluate_activity(self, rho, T, composition):
+    def evaluate_activity(self, rho, T, composition, screen_func=None):
         """sum over all of the terms contributing to ydot,
         neglecting sign"""
 
-        rvals = self.evaluate_rates(rho, T, composition)
+        rvals = self.evaluate_rates(rho, T, composition, screen_func)
         act = {}
 
         for nuc in self.unique_nuclei:

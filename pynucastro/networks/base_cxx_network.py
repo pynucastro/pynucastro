@@ -189,7 +189,7 @@ class BaseCxxNetwork(ABC, RateCollection):
 
     def _compute_screening_factors(self, n_indent, of):
         screening_map = self.get_screening_map()
-        for scr in screening_map:
+        for i, scr in enumerate(screening_map):
 
             nuc1_info = f'{float(scr.n1.Z)}_rt, {float(scr.n1.A)}_rt'
             nuc2_info = f'{float(scr.n2.Z)}_rt, {float(scr.n2.A)}_rt'
@@ -213,6 +213,8 @@ class BaseCxxNetwork(ABC, RateCollection):
                 pass
 
             elif scr.name == "he4_he4_he4_dummy":
+                # make sure the previous iteration was the first part of 3-alpha
+                assert screening_map[i - 1].name == "he4_he4_he4"
                 # handle the second part of the screening for 3-alpha
                 of.write(f'\n{self.indent*n_indent}' + '{')
 
