@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.rates.rate &mdash; pynucastro 1.7.0.post11+g956ba1a documentation</title>
+  <title>pynucastro.rates.rate &mdash; pynucastro 1.7.0.post12+g5133506 documentation</title>
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -418,6 +418,10 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span> <span class="o">==</span> <span class="s2">&quot;approx&quot;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">approx</span> <span class="o">=</span> <span class="kc">True</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">derived</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span> <span class="o">==</span> <span class="s2">&quot;derived&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">derived</span> <span class="o">=</span> <span class="kc">True</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">resonant</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">resonance_combined</span> <span class="o">=</span> <span class="kc">None</span>
@@ -600,6 +604,14 @@
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span> <span class="o">==</span> <span class="s2">&quot;approx&quot;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;approx&quot;</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">resonant</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">resonance_combined</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">weak</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">weak_type</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">reverse</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tabular</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span> <span class="o">==</span> <span class="s2">&quot;derived&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;derived&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">resonant</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># Derived may be resonant in some cases</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">resonance_combined</span> <span class="o">=</span> <span class="kc">False</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">weak</span> <span class="o">=</span> <span class="kc">False</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">weak_type</span> <span class="o">=</span> <span class="kc">None</span>
@@ -1007,6 +1019,8 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">fname</span> <span class="o">+=</span> <span class="s2">&quot;__modified&quot;</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">approx</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">fname</span> <span class="o">+=</span> <span class="s2">&quot;__approx&quot;</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">derived</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">fname</span> <span class="o">+=</span> <span class="s2">&quot;__derived&quot;</span>
 
 <div class="viewcode-block" id="Rate.get_rate_id"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.Rate.get_rate_id">[docs]</a>    <span class="k">def</span> <span class="nf">get_rate_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Get an identifying string for this rate.</span>
@@ -1427,7 +1441,7 @@
             <span class="n">derived_sets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sset_d</span><span class="p">)</span>
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">rfile</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">rfile</span><span class="p">,</span> <span class="n">rfile_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">rfile_path</span><span class="p">,</span> <span class="n">chapter</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">chapter</span><span class="p">,</span> <span class="n">original_source</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">original_source</span><span class="p">,</span>
-                <span class="n">reactants</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">products</span><span class="p">,</span> <span class="n">products</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">reactants</span><span class="p">,</span> <span class="n">sets</span><span class="o">=</span><span class="n">derived_sets</span><span class="p">,</span> <span class="n">labelprops</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">labelprops</span><span class="p">,</span> <span class="n">Q</span><span class="o">=-</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">Q</span><span class="p">)</span>
+                <span class="n">reactants</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">products</span><span class="p">,</span> <span class="n">products</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">reactants</span><span class="p">,</span> <span class="n">sets</span><span class="o">=</span><span class="n">derived_sets</span><span class="p">,</span> <span class="n">labelprops</span><span class="o">=</span><span class="s2">&quot;derived&quot;</span><span class="p">,</span> <span class="n">Q</span><span class="o">=-</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">Q</span><span class="p">)</span>
 
 <div class="viewcode-block" id="DerivedRate.eval"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.DerivedRate.eval">[docs]</a>    <span class="k">def</span> <span class="nf">eval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">rhoY</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 
