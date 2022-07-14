@@ -112,8 +112,7 @@ class SympyRates:
         Given string s, will replace the symbols appearing as keys in
         self.symbol_ludict with their corresponding entries.
         """
-        for k in self.symbol_ludict:
-            v = self.symbol_ludict[k]
+        for k, v in self.symbol_ludict.items():
             s = s.replace(k, v)
         if s == '0':
             s = '0.0e0'

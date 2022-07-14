@@ -1,9 +1,6 @@
 """A collection of classes and methods to deal with collections of
 rates that together make up a network."""
 
-# disable a complaint about SymLogNorm
-#pylint: disable=redundant-keyword-arg
-
 # Common Imports
 import warnings
 import functools
@@ -442,8 +439,7 @@ class RateCollection:
 
         if not _tmp:
             return None
-        else:
-            return _tmp
+        return _tmp
 
     def remove_nuclei(self, nuc_list):
         """remove the nuclei in nuc_list from the network along with any rates
@@ -680,7 +676,7 @@ class RateCollection:
         for a specific density, temperature, and composition"""
 
         rvals = self.evaluate_rates(rho, T, composition)
-        ydots = dict()
+        ydots = {}
 
         for nuc in self.unique_nuclei:
 
@@ -738,7 +734,7 @@ class RateCollection:
         neglecting sign"""
 
         rvals = self.evaluate_rates(rho, T, composition)
-        act = dict()
+        act = {}
 
         for nuc in self.unique_nuclei:
 
@@ -763,12 +759,12 @@ class RateCollection:
 
         nc = {}
 
-        for rate in rvals:
+        for rate, rval in rvals.items():
             nucs = []
             for n in set(rate.reactants):
-                nucs.append((n, -rate.reactants.count(n) * rvals[rate]))
+                nucs.append((n, -rate.reactants.count(n) * rval))
             for n in set(rate.products):
-                nucs.append((n, rate.products.count(n) * rvals[rate]))
+                nucs.append((n, rate.products.count(n) * rval))
             nc[rate] = nucs
 
         return nc
@@ -954,6 +950,7 @@ class RateCollection:
     def _write_network(self, *args, **kwargs):
         """A stub for function to output the network -- this is implementation
         dependent."""
+        # pylint: disable=unused-argument
         print('To create network integration source code, use a class that implements a specific network type.')
 
     def plot(self, outfile=None, rho=None, T=None, comp=None,
@@ -1104,32 +1101,33 @@ class RateCollection:
                         continue
 
                 for p in r.products:
-                    if p in node_nuclei:
+                    if p not in node_nuclei:
+                        continue
 
-                        if hide_xalpha and _skip_xalpha(n, p, r):
-                            continue
+                    if hide_xalpha and _skip_xalpha(n, p, r):
+                        continue
 
-                        # networkx doesn't seem to keep the edges in
-                        # any particular order, so we associate data
-                        # to the edges here directly, in this case,
-                        # the reaction rate, which will be used to
-                        # color it
-                        # here real means that it is not an approximate rate
+                    # networkx doesn't seem to keep the edges in
+                    # any particular order, so we associate data
+                    # to the edges here directly, in this case,
+                    # the reaction rate, which will be used to
+                    # color it
+                    # here real means that it is not an approximate rate
 
-                        if ydots is None:
-                            G.add_edges_from([(n, p)], weight=0.5, real=1)
-                        else:
-                            if r in invisible_rates:
-                                continue
-                            try:
-                                rate_weight = math.log10(ydots[r])
-                            except ValueError:
-                                # if ydots[r] is zero, then set the weight
-                                # to roughly the minimum exponent possible
-                                # for python floats
-                                rate_weight = -308
+                    if ydots is None:
+                        G.add_edges_from([(n, p)], weight=0.5, real=1)
+                        continue
+                    if r in invisible_rates:
+                        continue
+                    try:
+                        rate_weight = math.log10(ydots[r])
+                    except ValueError:
+                        # if ydots[r] is zero, then set the weight
+                        # to roughly the minimum exponent possible
+                        # for python floats
+                        rate_weight = -308
 
-                            G.add_edges_from([(n, p)], weight=rate_weight, real=1)
+                    G.add_edges_from([(n, p)], weight=rate_weight, real=1)
 
         # now consider the rates that are approximated out of the network
         rate_seen = []
@@ -1272,6 +1270,7 @@ class RateCollection:
         _ydot = np.asarray(_ydot)
         valid_max = np.abs(_ydot[_ydot != 0]).max()
 
+        # pylint: disable-next=redundant-keyword-arg
         norm = SymLogNorm(valid_max/1.e15, vmin=-valid_max, vmax=valid_max)
 
         # if there are a lot of rates, we split the network chart into
