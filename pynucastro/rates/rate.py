@@ -1092,18 +1092,15 @@ class Rate:
         return "{}{}{}{}*lambda_{}".format(prefactor_string, dens_string,
                                            y_e_string, Y_string, self.fname)
 
-    def jacobian_string_py(self, ydot_j, y_i):
+    def jacobian_string_py(self, y_i):
         """
         Return a string containing the term in a jacobian matrix
-        in a reaction network corresponding to this rate.
+        in a reaction network corresponding to this rate differentiated
+        with respect to y_i
 
-        Returns the derivative of the j-th YDOT wrt. the i-th Y
-        If the derivative is zero, returns the empty string ''
-
-        ydot_j and y_i are objects of the class ``Nucleus``.
+        y_i is an objecs of the class ``Nucleus``.
         """
-        if (ydot_j not in self.reactants and ydot_j not in self.products) or \
-           y_i not in self.reactants:
+        if y_i not in self.reactants:
             return ''
 
         # composition dependence
