@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.networks.rate_collection &mdash; pynucastro 1.7.0.post12+g5133506 documentation</title>
+  <title>pynucastro.networks.rate_collection &mdash; pynucastro 1.7.0.post13+gb9cf86d documentation</title>
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -129,6 +129,7 @@
 <span class="c1"># Import Rate</span>
 <span class="kn">from</span> <span class="nn">pynucastro.nucleus</span> <span class="kn">import</span> <span class="n">Nucleus</span>
 <span class="kn">from</span> <span class="nn">pynucastro.rates</span> <span class="kn">import</span> <span class="n">Rate</span><span class="p">,</span> <span class="n">RatePair</span><span class="p">,</span> <span class="n">ApproximateRate</span><span class="p">,</span> <span class="n">Library</span>
+<span class="kn">from</span> <span class="nn">pynucastro.screening</span> <span class="kn">import</span> <span class="n">PlasmaState</span><span class="p">,</span> <span class="n">ScreenFactors</span>
 
 <span class="kn">from</span> <span class="nn">pynucastro.nucdata</span> <span class="kn">import</span> <span class="n">PeriodicTable</span>
 
@@ -655,21 +656,64 @@
         <span class="c1"># regenerate the links</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_build_collection</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="RateCollection.evaluate_rates"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.evaluate_rates">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate_rates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">composition</span><span class="p">):</span>
+<div class="viewcode-block" id="RateCollection.evaluate_rates"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.evaluate_rates">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate_rates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">composition</span><span class="p">,</span> <span class="n">screen_func</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;evaluate the rates for a specific density, temperature, and</span>
-<span class="sd">        composition&quot;&quot;&quot;</span>
+<span class="sd">        composition, with optional screening&quot;&quot;&quot;</span>
         <span class="n">rvals</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">ys</span> <span class="o">=</span> <span class="n">composition</span><span class="o">.</span><span class="n">get_molar</span><span class="p">()</span>
         <span class="n">y_e</span> <span class="o">=</span> <span class="n">composition</span><span class="o">.</span><span class="n">eval_ye</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">screen_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">screen_factors</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_screening</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">composition</span><span class="p">,</span> <span class="n">screen_func</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">screen_factors</span> <span class="o">=</span> <span class="p">{}</span>
 
         <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">:</span>
             <span class="n">val</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">prefactor</span> <span class="o">*</span> <span class="n">rho</span><span class="o">**</span><span class="n">r</span><span class="o">.</span><span class="n">dens_exp</span> <span class="o">*</span> <span class="n">r</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">rho</span> <span class="o">*</span> <span class="n">y_e</span><span class="p">)</span>
             <span class="k">if</span> <span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">weak_type</span> <span class="o">==</span> <span class="s1">&#39;electron_capture&#39;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">r</span><span class="o">.</span><span class="n">tabular</span><span class="p">):</span>
                 <span class="n">val</span> <span class="o">=</span> <span class="n">val</span> <span class="o">*</span> <span class="n">y_e</span>
             <span class="n">yfac</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span><span class="n">mul</span><span class="p">,</span> <span class="p">[</span><span class="n">ys</span><span class="p">[</span><span class="n">q</span><span class="p">]</span> <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">])</span>
-            <span class="n">rvals</span><span class="p">[</span><span class="n">r</span><span class="p">]</span> <span class="o">=</span> <span class="n">yfac</span> <span class="o">*</span> <span class="n">val</span>
+            <span class="n">rvals</span><span class="p">[</span><span class="n">r</span><span class="p">]</span> <span class="o">=</span> <span class="n">yfac</span> <span class="o">*</span> <span class="n">val</span> <span class="o">*</span> <span class="n">screen_factors</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">rvals</span></div>
+
+<div class="viewcode-block" id="RateCollection.evaluate_screening"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.evaluate_screening">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate_screening</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">composition</span><span class="p">,</span> <span class="n">screen_func</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Evaluate the screening factors for each rate, using one of the</span>
+<span class="sd">        methods in :py:mod:`pynucastro.screening`&quot;&quot;&quot;</span>
+        <span class="c1"># this follows the same logic as BaseCxxNetwork._compute_screening_factors()</span>
+        <span class="n">factors</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">ys</span> <span class="o">=</span> <span class="n">composition</span><span class="o">.</span><span class="n">get_molar</span><span class="p">()</span>
+        <span class="n">plasma_state</span> <span class="o">=</span> <span class="n">PlasmaState</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">ys</span><span class="p">)</span>
+        <span class="n">screening_map</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_screening_map</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">scr</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">screening_map</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">scr</span><span class="o">.</span><span class="n">n1</span><span class="o">.</span><span class="n">dummy</span> <span class="ow">or</span> <span class="n">scr</span><span class="o">.</span><span class="n">n2</span><span class="o">.</span><span class="n">dummy</span><span class="p">):</span>
+                <span class="n">scn_fac</span> <span class="o">=</span> <span class="n">ScreenFactors</span><span class="p">(</span><span class="n">scr</span><span class="o">.</span><span class="n">n1</span><span class="p">,</span> <span class="n">scr</span><span class="o">.</span><span class="n">n2</span><span class="p">)</span>
+                <span class="n">scor</span> <span class="o">=</span> <span class="n">screen_func</span><span class="p">(</span><span class="n">plasma_state</span><span class="p">,</span> <span class="n">scn_fac</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">scr</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;he4_he4_he4&quot;</span><span class="p">:</span>
+                <span class="c1"># we don&#39;t need to do anything here, but we want to avoid</span>
+                <span class="c1"># immediately applying the screening</span>
+                <span class="k">pass</span>
+            <span class="k">elif</span> <span class="n">scr</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;he4_he4_he4_dummy&quot;</span><span class="p">:</span>
+                <span class="c1"># make sure the previous iteration was the first part of 3-alpha</span>
+                <span class="k">assert</span> <span class="n">screening_map</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;he4_he4_he4&quot;</span>
+                <span class="c1"># handle the second part of the screening for 3-alpha</span>
+                <span class="n">scn_fac2</span> <span class="o">=</span> <span class="n">ScreenFactors</span><span class="p">(</span><span class="n">scr</span><span class="o">.</span><span class="n">n1</span><span class="p">,</span> <span class="n">scr</span><span class="o">.</span><span class="n">n2</span><span class="p">)</span>
+                <span class="n">scor2</span> <span class="o">=</span> <span class="n">screen_func</span><span class="p">(</span><span class="n">plasma_state</span><span class="p">,</span> <span class="n">scn_fac2</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+                <span class="c1"># there might be both the forward and reverse 3-alpha</span>
+                <span class="c1"># if we are doing symmetric screening</span>
+                <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">scr</span><span class="o">.</span><span class="n">rates</span><span class="p">:</span>
+                    <span class="c1"># use scor from the previous loop iteration</span>
+                    <span class="n">factors</span><span class="p">[</span><span class="n">r</span><span class="p">]</span> <span class="o">=</span> <span class="n">scor</span> <span class="o">*</span> <span class="n">scor2</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># there might be several rates that have the same</span>
+                <span class="c1"># reactants and therefore the same screening applies</span>
+                <span class="c1"># -- handle them all now</span>
+                <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">scr</span><span class="o">.</span><span class="n">rates</span><span class="p">:</span>
+                    <span class="n">factors</span><span class="p">[</span><span class="n">r</span><span class="p">]</span> <span class="o">=</span> <span class="n">scor</span>
+
+        <span class="k">return</span> <span class="n">factors</span></div>
 
     <span class="k">def</span> <span class="nf">_evaluate_comp_NSE</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">ye</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; A helper equation that finds the mass fraction of each nuclide in NSE state,</span>
@@ -763,11 +807,11 @@
 
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unable to find a solution, try to adjust initial guess manually&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="RateCollection.evaluate_ydots"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.evaluate_ydots">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate_ydots</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">composition</span><span class="p">):</span>
+<div class="viewcode-block" id="RateCollection.evaluate_ydots"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.evaluate_ydots">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate_ydots</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">composition</span><span class="p">,</span> <span class="n">screen_func</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;evaluate net rate of change of molar abundance for each nucleus</span>
 <span class="sd">        for a specific density, temperature, and composition&quot;&quot;&quot;</span>
 
-        <span class="n">rvals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_rates</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">composition</span><span class="p">)</span>
+        <span class="n">rvals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_rates</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">composition</span><span class="p">,</span> <span class="n">screen_func</span><span class="p">)</span>
         <span class="n">ydots</span> <span class="o">=</span> <span class="p">{}</span>
 
         <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">:</span>
@@ -786,11 +830,11 @@
 
         <span class="k">return</span> <span class="n">ydots</span></div>
 
-<div class="viewcode-block" id="RateCollection.evaluate_energy_generation"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.evaluate_energy_generation">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate_energy_generation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">composition</span><span class="p">):</span>
+<div class="viewcode-block" id="RateCollection.evaluate_energy_generation"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.evaluate_energy_generation">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate_energy_generation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">composition</span><span class="p">,</span> <span class="n">screen_func</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;evaluate the specific energy generation rate of the network for a specific</span>
 <span class="sd">        density, temperature and composition&quot;&quot;&quot;</span>
 
-        <span class="n">ydots</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_ydots</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">composition</span><span class="p">)</span>
+        <span class="n">ydots</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_ydots</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">composition</span><span class="p">,</span> <span class="n">screen_func</span><span class="p">)</span>
         <span class="n">enuc</span> <span class="o">=</span> <span class="mf">0.</span>
 
         <span class="c1"># compute constants and units</span>
@@ -821,11 +865,11 @@
 
         <span class="k">return</span> <span class="n">enuc</span></div>
 
-<div class="viewcode-block" id="RateCollection.evaluate_activity"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.evaluate_activity">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate_activity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">composition</span><span class="p">):</span>
+<div class="viewcode-block" id="RateCollection.evaluate_activity"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.evaluate_activity">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate_activity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">composition</span><span class="p">,</span> <span class="n">screen_func</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;sum over all of the terms contributing to ydot,</span>
 <span class="sd">        neglecting sign&quot;&quot;&quot;</span>
 
-        <span class="n">rvals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_rates</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">composition</span><span class="p">)</span>
+        <span class="n">rvals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_rates</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">composition</span><span class="p">,</span> <span class="n">screen_func</span><span class="p">)</span>
         <span class="n">act</span> <span class="o">=</span> <span class="p">{}</span>
 
         <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">:</span>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.screening.screen &mdash; pynucastro 1.7.0.post12+g5133506 documentation</title>
+  <title>pynucastro.screening.screen &mdash; pynucastro 1.7.0.post13+gb9cf86d documentation</title>
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -396,13 +396,13 @@
     <span class="n">dterm2_dgamma</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">term1</span><span class="p">)</span>
 
     <span class="n">gamma_12</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">gamma</span><span class="p">)</span>
-    <span class="n">term3</span> <span class="o">=</span> <span class="n">gamma_12</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">atan</span><span class="p">(</span><span class="n">gamma_12</span><span class="p">)</span>
+    <span class="n">term3</span> <span class="o">=</span> <span class="n">gamma_12</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan</span><span class="p">(</span><span class="n">gamma_12</span><span class="p">)</span>
     <span class="n">dterm3_dgamma</span> <span class="o">=</span> <span class="n">gamma_12</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">gamma</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
 
-    <span class="n">term4</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">gamma</span> <span class="o">/</span> <span class="n">B2</span><span class="p">)</span>
+    <span class="n">term4</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log1p</span><span class="p">(</span><span class="n">gamma</span> <span class="o">/</span> <span class="n">B2</span><span class="p">)</span>
     <span class="n">dterm4_dgamma</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="n">B2</span> <span class="o">+</span> <span class="n">gamma</span><span class="p">)</span>
 
-    <span class="n">term5</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">gamma</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="n">B4</span><span class="p">)</span>
+    <span class="n">term5</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log1p</span><span class="p">(</span><span class="n">gamma</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="n">B4</span><span class="p">)</span>
     <span class="n">dterm5_dgamma</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">gamma</span> <span class="o">/</span> <span class="p">(</span><span class="n">B4</span> <span class="o">+</span> <span class="n">gamma</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
 
     <span class="n">f</span> <span class="o">=</span> <span class="p">(</span>
