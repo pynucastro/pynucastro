@@ -24,7 +24,7 @@ from scipy.optimize import fsolve
 import copy
 
 # Import Rate
-from pynucastro.nucleus import Nucleus
+from pynucastro.nucdata import Nucleus
 from pynucastro.rates import Rate, RatePair, ApproximateRate, Library
 from pynucastro.screening import PlasmaState, ScreenFactors
 

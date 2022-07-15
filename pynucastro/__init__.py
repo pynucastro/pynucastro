@@ -114,7 +114,7 @@ from ._version import version
 
 __version__ = version
 
-from pynucastro.nucleus import \
+from pynucastro.nucdata import \
     Nucleus
 
 from pynucastro.networks import \

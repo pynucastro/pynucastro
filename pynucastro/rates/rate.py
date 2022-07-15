@@ -41,7 +41,7 @@ except ImportError:
         return wrap(cls_or_spec)
 
 
-from pynucastro.nucleus import Nucleus
+from pynucastro.nucdata import Nucleus
 
 hbar, _, _ = physical_constants['reduced Planck constant']
 amu, _, _ = physical_constants['atomic mass constant']

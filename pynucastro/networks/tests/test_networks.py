@@ -1,6 +1,6 @@
 # unit tests for networks
 import pynucastro.networks as networks
-from pynucastro.nucleus import Nucleus
+from pynucastro.nucdata import Nucleus
 
 from pytest import approx
 
