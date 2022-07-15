@@ -39,7 +39,7 @@ class PythonNetwork(RateCollection):
         """return the Jacobian element dYdot(ydot_i_nucleus)/dY(y_j_nucleus)"""
 
         # this is the jac(i,j) string
-        idx_str = f"jac[j{ydot_i_nucleus},j{y_j_nucleus}]"
+        idx_str = f"jac[j{ydot_i_nucleus}, j{y_j_nucleus}]"
 
         ostr = ""
         if not self.nuclei_consumed[ydot_i_nucleus] + self.nuclei_produced[ydot_i_nucleus]:
@@ -167,7 +167,7 @@ class PythonNetwork(RateCollection):
         for n in self.unique_nuclei:
             of.write(self.full_ydot_string(n, indent=indent))
 
-        of.write(f"{indent}return dYdt\n")
+        of.write(f"{indent}return dYdt\n\n")
 
         # the jacobian() function
 

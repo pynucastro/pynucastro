@@ -1147,8 +1147,8 @@ class Rate:
         else:
             prefactor_string = ""
 
-        if Y_string == "" and dens_string == "" and prefactor_string == "":
-            rstring = "{}{}{}lambda_{}"
+        if Y_string == "" and dens_string == "" and prefactor_string == "" and y_e_string == "":
+            rstring = "{}{}{}{}lambda_{}"
         else:
             rstring = "{}{}{}{}*lambda_{}"
         return rstring.format(prefactor_string, dens_string,
