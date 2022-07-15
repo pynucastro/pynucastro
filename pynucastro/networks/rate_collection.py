@@ -133,29 +133,29 @@ class Composition:
         for k in self.X:
             ostr += f"  X({k}) : {self.X[k]}\n"
         return ostr
-    
+
     def plot(self, trace_threshold=0.1, size=(9, 5)):
         """ Make a pie chart of Composition. group trace nuceli together and explode into bar chart
 
         parameters
         ----------
-        
-        trace_threshold : the threshold to consider a component to be trace.  
+
+        trace_threshold : the threshold to consider a component to be trace.
         """
 
         trace_keys = []
         trace_tot = 0.
         main_keys = []
-        for k in self.X:            
+        for k in self.X:
             # if below threshold, count as trace element
             if self.X[k] < trace_threshold:
                 trace_keys.append(k)
                 trace_tot += self.X[k]
             else:
                 main_keys.append(k)
-        
+
         # check if any trace nuclei
-        if trace_keys == []:
+        if not trace_keys:
             #just do pie chart without including trace
 
             fig, ax = plt.subplots(1, 1, figsize=size)
@@ -169,8 +169,8 @@ class Composition:
 
             # pie chart parameters
             main_values = [trace_tot] + [self.X[k] for k in main_keys]
-            main_labels = ['trace'] + main_keys 
-            explode = [ 0.2] + [0. for i in range(len(main_keys))] 
+            main_labels = ['trace'] + main_keys
+            explode = [ 0.2] + [0. for i in range(len(main_keys))]
 
             # rotate so that first wedge is split by the x-axis
             angle = -180 * main_values[0]
@@ -220,7 +220,7 @@ class Composition:
             con.set_color(trace_wedge_color)
             ax2.add_artist(con)
             con.set_linewidth(4)
-        
+
         plt.show()
         return fig
 
