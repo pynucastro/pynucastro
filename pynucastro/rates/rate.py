@@ -990,7 +990,7 @@ class Rate:
 
         self.tabular_data_table = np.array(t_data2d)
 
-    def function_string_py(self, prefix="rate"):
+    def function_string_py(self):
         """
         Return a string containing python function that computes the
         rate
@@ -1000,11 +1000,11 @@ class Rate:
         fstring += "@numba.njit()\n"
         fstring += f"def {self.fname}(tf):\n"
         fstring += f"    # {self.rid}\n"
-        fstring += f"    {prefix} = 0.0\n\n"
+        fstring += "    rate = 0.0\n\n"
 
         for s in self.sets:
             fstring += f"    # {s.labelprops[0:5]}\n"
-            set_string = s.set_string_py(prefix=prefix, plus_equal=True)
+            set_string = s.set_string_py(prefix="rate", plus_equal=True)
             for t in set_string.split("\n"):
                 fstring += "    " + t + "\n"
 
