@@ -1101,13 +1101,14 @@ class Rate:
         y_i is an objecs of the class ``Nucleus``.
         """
         if y_i not in self.reactants:
-            return ''
+            return ""
 
         # composition dependence
         Y_string = ""
         for n, r in enumerate(sorted(set(self.reactants))):
             c = self.reactants.count(r)
             if y_i == r:
+                # take the derivative
                 if c == 1:
                     continue
                 if 0 < n < len(set(self.reactants))-1:
@@ -1117,6 +1118,8 @@ class Rate:
                 elif c == 2:
                     Y_string += f"2*Y[j{r}]"
             else:
+                # this nucleus is in the rate form, but we are not
+                # differentiating with respect to it
                 if 0 < n < len(set(self.reactants))-1:
                     Y_string += "*"
                 if c > 1:
@@ -1136,7 +1139,7 @@ class Rate:
         if (self.weak_type == 'electron_capture' and not self.tabular):
             y_e_string = 'ye(Y)*'
         else:
-            y_e_string = ''
+            y_e_string = ""
 
         # prefactor
         if self.prefactor != 1.0:

@@ -11,9 +11,11 @@ class PythonNetwork(RateCollection):
     """A pure python reaction network."""
 
     def full_ydot_string(self, nucleus, indent=""):
+        """construct the python form of dY(nucleus)/dt"""
 
         ostr = ""
         if not self.nuclei_consumed[nucleus] + self.nuclei_produced[nucleus]:
+            # this captures an inert nucleus
             ostr += f"{indent}dYdt[j{nucleus}] = 0.0\n\n"
         else:
             ostr += f"{indent}dYdt[j{nucleus}] = (\n"
@@ -29,6 +31,50 @@ class PythonNetwork(RateCollection):
                     ostr += f"{indent}   +{r.ydot_string_py()}\n"
                 else:
                     ostr += f"{indent}   +{c}*{r.ydot_string_py()}\n"
+            ostr += f"{indent}   )\n\n"
+
+        return ostr
+
+    def full_jacobian_element_string(self, ydot_i_nucleus, y_j_nucleus, indent=""):
+        """return the Jacobian element dYdot(ydot_i_nucleus)/dY(y_j_nucleus)"""
+
+        # this is the jac(i,j) string
+        idx_str = f"jac[j{ydot_i_nucleus},j{y_j_nucleus}]"
+
+        ostr = ""
+        if not self.nuclei_consumed[ydot_i_nucleus] + self.nuclei_produced[ydot_i_nucleus]:
+            ostr += f"{indent}{idx_str} = 0.0\n\n"
+        else:
+            ostr += f"{indent}{idx_str} = (\n"
+            rate_terms_str = ""
+            for r in self.nuclei_consumed[ydot_i_nucleus]:
+                c = r.reactants.count(ydot_i_nucleus)
+
+                jac_str = r.jacobian_string_py(y_j_nucleus)
+                if jac_str == "":
+                    continue
+
+                if c == 1:
+                    rate_terms_str += f"{indent}   -{jac_str}\n"
+                else:
+                    rate_terms_str += f"{indent}   -{c}*{jac_str}\n"
+            for r in self.nuclei_produced[ydot_i_nucleus]:
+                c = r.products.count(ydot_i_nucleus)
+
+                jac_str = r.jacobian_string_py(y_j_nucleus)
+                if jac_str == "":
+                    continue
+
+                if c == 1:
+                    rate_terms_str += f"{indent}   +{jac_str}\n"
+                else:
+                    rate_terms_str += f"{indent}   +{c}*{jac_str}\n"
+
+            if rate_terms_str == "":
+                return ""
+            else:
+                ostr += rate_terms_str
+
             ostr += f"{indent}   )\n\n"
 
         return ostr
@@ -79,6 +125,8 @@ class PythonNetwork(RateCollection):
         of.write("def ye(Y):\n")
         of.write(f"{indent}return np.sum(Z * Y)/np.sum(A * Y)\n\n")
 
+        # the functions to evaluate the temperature dependence of the rates
+
         _rate_func_written = []
         for r in self.rates:
             if isinstance(r, ApproximateRate):
@@ -98,16 +146,13 @@ class PythonNetwork(RateCollection):
                 of.write(r.function_string_py())
                 _rate_func_written.append(r)
 
+        # the rhs() function
+
         of.write("def rhs(t, Y, rho, T):\n")
         of.write(f"{indent}return rhs_eq(t, Y, rho, T)\n\n")
 
         of.write("@numba.njit()\n")
         of.write("def rhs_eq(t, Y, rho, T):\n\n")
-        # integer keys
-        for i, n in enumerate(self.unique_nuclei):
-            of.write(f"{indent}j{n} = {i}\n")
-
-        of.write(f"{indent}nnuc = {len(self.unique_nuclei)}\n\n")
 
         # get the rates
         of.write(f"{indent}tf = Tfactors(T)\n\n")
@@ -123,3 +168,27 @@ class PythonNetwork(RateCollection):
             of.write(self.full_ydot_string(n, indent=indent))
 
         of.write(f"{indent}return dYdt\n")
+
+        # the jacobian() function
+
+        of.write("def jacobian(t, Y, rho, T):\n")
+        of.write(f"{indent}return jacobian_eq(t, Y, rho, T)\n\n")
+
+        of.write("@numba.njit()\n")
+        of.write("def jacobian_eq(t, Y, rho, T):\n\n")
+
+        # get the rates
+        of.write(f"{indent}tf = Tfactors(T)\n\n")
+        for r in self.rates:
+            of.write(f"{indent}lambda_{r.fname} = {r.fname}(tf)\n")
+
+        of.write("\n")
+
+        of.write(f"{indent}jac = np.zeros((nnuc, nnuc), dtype=np.float64)\n\n")
+
+        # now fill each Jacobian element
+        for n_i in self.unique_nuclei:
+            for n_j in self.unique_nuclei:
+                of.write(self.full_jacobian_element_string(n_i, n_j, indent=indent))
+
+        of.write(f"{indent}return jac\n")
