@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.nucdata package &mdash; pynucastro 1.7.0.post14+g0985516 documentation</title>
+  <title>pynucastro.nucdata package &mdash; pynucastro 1.7.0.post15+g334312d documentation</title>
       <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -22,7 +22,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="pynucastro.nucleus package" href="pynucastro.nucleus.html" />
+    <link rel="next" title="pynucastro.rates package" href="pynucastro.rates.html" />
     <link rel="prev" title="pynucastro.networks package" href="pynucastro.networks.html" /> 
 </head>
 
@@ -86,7 +86,6 @@
 <li class="toctree-l3 current"><a class="reference internal" href="pynucastro.html#subpackages">Subpackages</a><ul class="current">
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.html">pynucastro.networks package</a></li>
 <li class="toctree-l4 current"><a class="current reference internal" href="#">pynucastro.nucdata package</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.nucleus.html">pynucastro.nucleus package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.html">pynucastro.rates package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.screening.html">pynucastro.screening package</a></li>
 </ul>
@@ -235,6 +234,101 @@ particular, the binding energies)</p>
 </dd></dl>
 
 </section>
+<section id="module-pynucastro.nucdata.mass_nuclide">
+<span id="pynucastro-nucdata-mass-nuclide-module"></span><h2>pynucastro.nucdata.mass_nuclide module<a class="headerlink" href="#module-pynucastro.nucdata.mass_nuclide" title="Permalink to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pynucastro.nucdata.mass_nuclide.MassNuclide">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.nucdata.mass_nuclide.</span></span><span class="sig-name descname"><span class="pre">MassNuclide</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dm</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/mass_nuclide.html#MassNuclide"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.mass_nuclide.MassNuclide" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The purpose of this class is to contain the nuclei information and create an instance
+represented by a string that contains the nuclide and the atomic weight A number, for
+example, o16, to the Oxygen-16 nuclei.</p>
+<p>The variables required to construct MassNuclide class instance are:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>a</strong> – The Atomic weight, measured in atomic number units.</p></li>
+<li><p><strong>z</strong> – The Atomic Number.</p></li>
+<li><p><strong>dm</strong> – The mass difference, measured in MeV.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pynucastro.nucdata.mass_nuclide.MassTable">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.nucdata.mass_nuclide.</span></span><span class="sig-name descname"><span class="pre">MassTable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/mass_nuclide.html#MassTable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.mass_nuclide.MassTable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The purpose of this class is to:</p>
+<ol class="loweralpha simple">
+<li><p>Create a dictionary between MassNuclide objects, previously constructed
+from the table mass_excess2020.txt, and their mass excess A_nuc - A
+measured in MeV.</p></li>
+<li><p>Parse the information of the previously defined dictionary to the Nucleus
+class.</p></li>
+</ol>
+<p>The only required variable to construct an instance of this class is : var filename:
+that contains the .txt table file with the nuclei and their mass excess. If this
+variable is not provided, then mass_excess2020.txt is considered by default.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pynucastro.nucdata.mass_nuclide.MassTable.get_mass_diff">
+<span class="sig-name descname"><span class="pre">get_mass_diff</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nuc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/mass_nuclide.html#MassTable.get_mass_diff"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.mass_nuclide.MassTable.get_mass_diff" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-pynucastro.nucdata.nucleus">
+<span id="pynucastro-nucdata-nucleus-module"></span><h2>pynucastro.nucdata.nucleus module<a class="headerlink" href="#module-pynucastro.nucdata.nucleus" title="Permalink to this heading">¶</a></h2>
+<p>Classes and methods to interface with files storing rate data.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="pynucastro.nucdata.nucleus.Nucleus">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.nucdata.nucleus.</span></span><span class="sig-name descname"><span class="pre">Nucleus</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dummy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/nucleus.html#Nucleus"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.nucleus.Nucleus" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>a nucleus that participates in a reaction – we store it in a
+class to hold its properties, define a sorting, and give it a
+pretty printing string.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Z</strong> – atomic number</p></li>
+<li><p><strong>N</strong> – neutron number</p></li>
+<li><p><strong>A</strong> – atomic mass</p></li>
+<li><p><strong>nucbind</strong> – nuclear binding energy (MeV / nucleon)</p></li>
+<li><p><strong>short_spec_name</strong> – nucleus abbrevation (e.g. “he4”)</p></li>
+<li><p><strong>caps_name</strong> – capitalized short species name (e.g. “He4”)</p></li>
+<li><p><strong>el</strong> – element name (e.g. “he”)</p></li>
+<li><p><strong>pretty</strong> – LaTeX formatted version of the nucleus name</p></li>
+<li><p><strong>A_nuc</strong> – Nuclear Mass in amu</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="pynucastro.nucdata.nucleus.Nucleus.c">
+<span class="sig-name descname"><span class="pre">c</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/nucleus.html#Nucleus.c"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.nucleus.Nucleus.c" title="Permalink to this definition">¶</a></dt>
+<dd><p>return the capitalized-style name</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pynucastro.nucdata.nucleus.Nucleus.cindex">
+<span class="sig-name descname"><span class="pre">cindex</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/nucleus.html#Nucleus.cindex"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.nucleus.Nucleus.cindex" title="Permalink to this definition">¶</a></dt>
+<dd><p>return the name for C++ indexing</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pynucastro.nucdata.nucleus.Nucleus.from_cache">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_cache</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dummy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/nucleus.html#Nucleus.from_cache"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.nucleus.Nucleus.from_cache" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="pynucastro.nucdata.nucleus.UnsupportedNucleus">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.nucdata.nucleus.</span></span><span class="sig-name descname"><span class="pre">UnsupportedNucleus</span></span><a class="reference internal" href="_modules/pynucastro/nucdata/nucleus.html#UnsupportedNucleus"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.nucleus.UnsupportedNucleus" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+</dd></dl>
+
+</section>
 <section id="module-pynucastro.nucdata.partition_function">
 <span id="pynucastro-nucdata-partition-function-module"></span><h2>pynucastro.nucdata.partition_function module<a class="headerlink" href="#module-pynucastro.nucdata.partition_function" title="Permalink to this heading">¶</a></h2>
 <dl class="py class">
@@ -375,7 +469,7 @@ data structure from a designated Nucleus class.</p>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="pynucastro.networks.html" class="btn btn-neutral float-left" title="pynucastro.networks package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="pynucastro.nucleus.html" class="btn btn-neutral float-right" title="pynucastro.nucleus package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="pynucastro.rates.html" class="btn btn-neutral float-right" title="pynucastro.rates package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

@@ -33,6 +33,22 @@ pynucastro.nucdata.elements module
    :undoc-members:
    :show-inheritance:
 
+pynucastro.nucdata.mass\_nuclide module
+---------------------------------------
+
+.. automodule:: pynucastro.nucdata.mass_nuclide
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+pynucastro.nucdata.nucleus module
+---------------------------------
+
+.. automodule:: pynucastro.nucdata.nucleus
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 pynucastro.nucdata.partition\_function module
 ---------------------------------------------
 
