@@ -31,6 +31,12 @@ class TestPythonNetwork:
     def test_num_rates(self):
         assert len(self.pynet.rates) == 4
 
+    def test_num_reaclib_rates(self):
+        assert len(self.pynet.reaclib_rates) == 12
+
+    def test_num_approx_rates(self):
+        assert len(self.pynet.approx_rates) == 4
+
     def test_full_ydot_string(self):
         ostr = \
 """dYdt[jhe4] = (
