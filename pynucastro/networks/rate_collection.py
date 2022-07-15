@@ -675,6 +675,203 @@ class RateCollection:
 
         raise ValueError("Unable to find a solution, try to adjust initial guess manually")
 
+    def ASE_scheme(self, rho, T, composition, init_guess=[-3.5, -15.0], nse_tol=1.5e-9,
+                   f=0.05, cell_dx=5.0e5, rel=False, burning_tol=0.1):
+        """
+        Adaptive Statistical Equilibrium scheme:
+        parameters
+        ------------------
+        rho: density in cgs
+        T: Temperature in Kelvin
+        composition: Composition object, also used to determine prescribed electron fraction for NSE
+        init_guess: initial guess of the chemical potential for determining the NSE state
+        nse_tol: scipy.fsolve tolerance for solving NSE
+        f: characteristic parameter for f_limiter
+        cell_dx: cell size for simulation in cm
+        rel: Consider complete relativistic gas or not
+        burning_tol: tolerance for determining the equilibrium status of reaction network
+        """
+
+        # Check to see if there are n,p,a in the first place
+        p = Nucleus("p")
+        n = Nucleus("n")
+        he4 = Nucleus("he4")
+
+        assert all(nuc in self.unique_nuclei for nuc in [p, n, he4]), "p, n, he4 are not fully present"
+
+        # First check if n,p,a are in equilibrium in order to proceed to ASE
+        ye = composition.eval_ye()
+        comp_NSE = self.get_comp_NSE(rho, T, ye, init_guess=init_guess, tol=nse_tol)
+        Y_NSE = comp_NSE.get_molar()
+        Y = composition.get_molar()
+
+        # These are two ratios defined in the ASE paper to check whether current composition is in the ballpark of NSE
+        r = Y[he4] / (Y[n]**2 * Y[p]**2)
+        r_NSE = Y_NSE[he4] / (Y_NSE[n]**2 * Y_NSE[p]**2)
+
+        print(f"r is {r} and r_NSE is {r_NSE}")
+
+        # First check to see if current composition is in NSE, see Eq 14 in ASE paper
+        assert abs((r - r_NSE) / r) < 0.5, f"""p, n, he4 currently not in equilibrium, where
+        r_NSE = {r_NSE} and r = {r}"""
+
+        # Find burning limiter, a constant ratio multiplied to all rates, to make rates smaller:
+        k = constants.value("Boltzmann constant") * 1.0e7          #boltzmann in erg/K
+        m_u = constants.value("unified atomic mass unit") * 1.0e3  #atomic unit mass in g
+        inverse_u = ye + sum(Y.values())
+
+        # specific internal energy and sound speed assume ideal gas and adiabatic sound
+        e_int = 3.0 / 2.0 * k * T / m_u * inverse_u
+        c_s = np.sqrt(5.0 / 3.0 * k * T / m_u * inverse_u)
+
+        # relativisitic specific internal energy and sound speed
+        if rel:
+            e_int *= 2.0
+            c_s = constants.value("speed of light in vacuum") / np.sqrt(3.0) * 100.0
+
+        # cell_dx is the size of simulation cell size, and t_s is characteristic timescale called specific cell sound crossing time.
+        t_s = cell_dx / c_s
+
+        ydots = self.evaluate_ydots(rho, T, composition)
+        Y_npa = 0.
+        Y_npa_dot = 0.
+        Y_tilde= 0.
+        Y_tilde_dot = 0.
+        X_npa = 0.
+        X_tilde = 0.
+
+        for nuc in Y:
+            if nuc == p or nuc == n or nuc == he4:
+                Y_npa += Y[nuc]
+                Y_npa_dot += ydots[nuc]
+                X_npa += composition.X[nuc]
+            else:
+                Y_tilde += Y[nuc]
+                Y_tilde_dot += ydots[nuc]
+                X_tilde += composition.X[nuc]
+
+        # Calculate burning limiters based on Equation 6 and 7 in the ASE paper
+        f_e = min(1.0, e_int * f / abs(self.evaluate_energy_generation(rho, T, composition)) / t_s)
+        f_npa = min(1.0, Y_npa * f / t_s / abs(Y_npa_dot))
+        f_tilde = min(1.0, Y_tilde * f / t_s / abs(Y_tilde_dot))
+        # f_full is the actual limiter, or the constant that we use to decrease the rates.
+        f_full = min(f_e, 1.0 / (X_npa / f_npa + X_tilde / f_tilde))
+
+        print(f"f_e is {f_e}")
+        print(f"f_npa is {f_npa}")
+        print(f"f_tilde is {f_tilde}")
+        print(f"f_full is {f_full}")
+        print(f"t_s is {t_s}")
+        
+        # Here we do a second check to see if the current reaction network is appropriate for ASE
+        # We need to find a fast reaction cycle that exchanges he4 with two n and two p, see section 4.4.3 in ASE paper
+        # For current state of pynucastro, we need to check whether contain all intermediate nuclei.
+        rvals = self.evaluate_rates(rho, T, composition)
+        found_fast_reac = False
+
+        # Start off by the heavy nuclei
+        for nuc in reversed(self.unique_nuclei):
+            if found_fast_reac:
+                break
+
+            # Here I add all possible nuclei involved in the network that start off with the starting nuclei: nuc
+            # First list in the list:reactions, will always be the nuc itself
+            # Second list in the list:reactions, will always have nuclei.a == nuc.A-1 and nuclei.Z==nuc.Z or nuclei.Z == nuc.Z-1
+            # and so on
+            # The last list and the list before the last list should also contain nuc itself, since its a cycle.
+            reactions = [[nuc], ]
+            reactions.append([sec_nucs for sec_nucs in self.unique_nuclei if (sec_nucs.A == nuc.A-1 and sec_nucs.Z in [nuc.Z, nuc.Z-1])])
+            reactions.append([third_nucs for third_nucs in self.unique_nuclei if (third_nucs.A == nuc.A-2 and third_nucs.Z in [nuc.Z, nuc.Z-1, nuc.Z-2])])
+            reactions.append([fourth_nucs for fourth_nucs in self.unique_nuclei if (fourth_nucs.A == nuc.A-3 and fourth_nucs.Z in [nuc.Z-1, nuc.Z-2])])
+            reactions.append([fifth_nucs for fifth_nucs in self.unique_nuclei if (fifth_nucs.A == nuc.A-4 and fifth_nucs.Z == nuc.Z-2)])
+            reactions[4].append(nuc)
+            reactions.append([nuc])
+
+            fast_reac = [[nuc], [], [], [], [], []]
+
+            # Skip this nuc if there are no intermediate nuclei linked
+            if not all(reactions[1:-2]):
+                continue
+
+            # loop over all list except for the last list.
+            for i, reaction in enumerate(reactions[:-1]):
+                # loop over all nuclei in the current list
+                for reac_nuc in reaction:
+                    # skip this loop if we have reac_nuc is nuc at later stages of reaction
+                    if reac_nuc == nuc and i != 0:
+                        continue
+                    # Get the nuclei of the next stage in reactions
+                    for aft_reac_nuc in reactions[i+1]:
+                        # Have variety of conditions to tell which reaction we have.
+                        # Get forward and reverse rates. Note here I do not care if it is actually forward or reverse rate
+                        # Y_i are the n,p, or alpha involved in this reaction step
+                        if reac_nuc.A == aft_reac_nuc.A - 4:
+                            # (alpha,gamma) reaction
+                            f_rate = self.get_rate_by_nuclei([reac_nuc, he4], [aft_reac_nuc])
+                            r_rate = self.get_rate_by_nuclei([aft_reac_nuc], [reac_nuc, he4])
+                            Y_i = [Y[he4]]
+                        elif reac_nuc.A == aft_reac_nuc.A - 3 and reac_nuc.Z == aft_reac_nuc.Z - 2:
+                            # (alpha, n) reaction
+                            f_rate = self.get_rate_by_nuclei([reac_nuc, he4], [aft_reac_nuc, n])
+                            r_rate = self.get_rate_by_nuclei([aft_reac_nuc, n], [reac_nuc, he4])
+                            Y_i = [Y[he4], Y[n]]
+                        elif reac_nuc.A == aft_reac_nuc.A - 3 and reac_nuc.Z == aft_reac_nuc.Z - 1:
+                            # (alpha, p) reaction
+                            f_rate = self.get_rate_by_nuclei([reac_nuc, he4], [aft_reac_nuc, p])
+                            r_rate = self.get_rate_by_nuclei([aft_reac_nuc, p], [reac_nuc, he4])
+                            Y_i = [Y[he4], Y[p]]
+                        elif reac_nuc.Z == aft_reac_nuc.Z:
+                            # (n,gamma) reaction
+                            f_rate = self.get_rate_by_nuclei([reac_nuc], [aft_reac_nuc, n])
+                            r_rate = self.get_rate_by_nuclei([aft_reac_nuc, n], [reac_nuc])
+                            Y_i = [Y[n]]
+                        elif reac_nuc.Z == aft_reac_nuc.Z + 1:
+                            # (p, gamma) reaction
+                            f_rate = self.get_rate_by_nuclei([reac_nuc], [aft_reac_nuc, p])
+                            r_rate = self.get_rate_by_nuclei([aft_reac_nuc, p], [reac_nuc])
+                            Y_i = [Y[p]]
+                        else:
+                            # continue if the current nuclei does not have any match reaction with the after nuclei
+                            continue
+
+                        # Find the two rates by multiplying it by burning limiter found above
+                        b_f =  f_full * rvals[f_rate[0]]
+                        b_r =  f_full * rvals[r_rate[0]]
+
+                        # A conditional check given by Eq 10 to 12 in ASE paper
+                        #if ((Y[reac_nuc] / min(b_f, b_r) < burning_tol * t_s or Y[aft_reac_nuc] / min(b_f, b_r) < burning_tol * t_s) \
+                        #    and 2.0 * abs(b_f - b_r) / (b_f + b_r) < burning_tol):
+                        # print(Y_i)
+                        print(f"b_f is {b_f} and b_r is {b_r}")
+                        # print(f"burning_tol * t_s is {burning_tol * t_s}")
+                        # print([y_i / min(b_f, b_r) < burning_tol * t_s for y_i in Y_i])
+                        if all(y_i / min(b_f, b_r) < burning_tol * t_s for y_i in Y_i):
+                        # add after nuclei to fast_reac if pass condition
+                            fast_reac[i+1].append(aft_reac_nuc)
+                        else:
+                            continue
+
+                # If there are fast reaction nuclei found in the next reaction stage, replace nuclei in reactions with these nuclei
+                if fast_reac[i+1]:
+                    reactions[i+1] = fast_reac[i+1]
+
+                    # if found the starting nuc itself in the next reaction stage, meaning we finished the cycle. Hence found_fast_reac
+                    if nuc in fast_reac[i+1]:
+                        found_fast_reac = True
+                # break if there are no fast reaction nuclei found in the next reaction stage.
+                else:
+                    break
+
+        print(f"fast_reac is {fast_reac}")
+
+        if found_fast_reac:
+            # do ASE stuff
+            print("Found fast reaction")
+
+        else:
+            raise Exception("Did not find fast reaction")
+
+    
     def evaluate_ydots(self, rho, T, composition):
         """evaluate net rate of change of molar abundance for each nucleus
         for a specific density, temperature, and composition"""
