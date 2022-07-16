@@ -455,13 +455,31 @@ class BaseCxxNetwork(ABC, RateCollection):
             of.write(r.function_string_cxx(dtype=self.dtype, specifiers=self.function_specifier))
 
     def _fill_reaclib_rates(self, n_indent, of):
+        of.write(f"{self.indent*n_indent}if (jacobian == 1) {{\n")
+        of.write(f"{self.indent*n_indent}    constexpr int do_T_derivatives = 1;\n")
         for r in self.reaclib_rates:
-            of.write(f"{self.indent*n_indent}rate_{r.fname}(tfactors, rate, drate_dT);\n")
-            of.write(f"{self.indent*n_indent}rate_eval.screened_rates(k_{r.fname}) = rate;\n")
-            of.write(f"{self.indent*n_indent}rate_eval.dscreened_rates_dT(k_{r.fname}) = drate_dT;\n\n")
+            of.write(f"{self.indent*n_indent}    rate_{r.fname}<do_T_derivatives>(tfactors, rate, drate_dT);\n")
+            of.write(f"{self.indent*n_indent}    rate_eval.screened_rates(k_{r.fname}) = rate;\n")
+            of.write(f"{self.indent*n_indent}    rate_eval.dscreened_rates_dT(k_{r.fname}) = drate_dT;\n\n")
+        of.write(f"{self.indent*n_indent}}} else {{\n")
+        of.write(f"{self.indent*n_indent}    constexpr int do_T_derivatives = 0;\n")
+        for r in self.reaclib_rates:
+            of.write(f"{self.indent*n_indent}    rate_{r.fname}<do_T_derivatives>(tfactors, rate, drate_dT);\n")
+            of.write(f"{self.indent*n_indent}    rate_eval.screened_rates(k_{r.fname}) = rate;\n")
+            of.write(f"{self.indent*n_indent}    rate_eval.dscreened_rates_dT(k_{r.fname}) = drate_dT;\n\n")
+        of.write(f"{self.indent*n_indent}}}\n")
 
     def _fill_approx_rates(self, n_indent, of):
+        of.write(f"{self.indent*n_indent}if (jacobian == 1) {{\n")
+        of.write(f"{self.indent*n_indent}    constexpr int do_T_derivatives = 1;\n")
         for r in self.approx_rates:
-            of.write(f"{self.indent*n_indent}rate_{r.fname}(rate_eval, rate, drate_dT);\n")
-            of.write(f"{self.indent*n_indent}rate_eval.screened_rates(k_{r.fname}) = rate;\n")
-            of.write(f"{self.indent*n_indent}rate_eval.dscreened_rates_dT(k_{r.fname}) = drate_dT;\n\n")
+            of.write(f"{self.indent*n_indent}    rate_{r.fname}<do_T_derivatives>(rate_eval, rate, drate_dT);\n")
+            of.write(f"{self.indent*n_indent}    rate_eval.screened_rates(k_{r.fname}) = rate;\n")
+            of.write(f"{self.indent*n_indent}    rate_eval.dscreened_rates_dT(k_{r.fname}) = drate_dT;\n\n")
+        of.write(f"{self.indent*n_indent}}} else {{\n")
+        of.write(f"{self.indent*n_indent}    constexpr int do_T_derivatives = 0;\n")
+        for r in self.approx_rates:
+            of.write(f"{self.indent*n_indent}    rate_{r.fname}<do_T_derivatives>(rate_eval, rate, drate_dT);\n")
+            of.write(f"{self.indent*n_indent}    rate_eval.screened_rates(k_{r.fname}) = rate;\n")
+            of.write(f"{self.indent*n_indent}    rate_eval.dscreened_rates_dT(k_{r.fname}) = drate_dT;\n\n")
+        of.write(f"{self.indent*n_indent}}}\n")
