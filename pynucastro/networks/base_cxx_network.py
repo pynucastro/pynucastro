@@ -361,7 +361,7 @@ class BaseCxxNetwork(ABC, RateCollection):
                 of.write(f'{idnt}                 rhoy, state.T, rate, drate_dt, edot_nu);\n')
 
                 of.write(f'{idnt}rate_eval.screened_rates(k_{r.fname}) = rate;\n')
-                
+
                 of.write(f'{idnt}if constexpr (std::is_same<T, rate_derivs_t>::value) {{\n')
                 of.write(f'{idnt}    rate_eval.dscreened_rates_dT(k_{r.fname}) = drate_dt;\n')
                 of.write(f'{idnt}}}\n')
