@@ -1565,9 +1565,9 @@ class ApproximateRate(Rate):
             raise NotImplementedError("don't know how to work with this approximation")
 
         fstring = ""
-        fstring = "template <int do_T_derivatives>\n"
+        fstring = "template <typename T>\n"
         fstring += f"{specifiers}\n"
-        fstring += f"void rate_{self.fname}(const rate_eval_t& rate_eval, {dtype}& rate, {dtype}& drate_dT) {{\n\n"
+        fstring += f"void rate_{self.fname}(const T& rate_eval, {dtype}& rate, {dtype}& drate_dT) {{\n\n"
 
         if not self.is_reverse:
 
@@ -1580,7 +1580,7 @@ class ApproximateRate(Rate):
             # now the approximation
             fstring += f"    {dtype} dd = 1.0_rt / (r_pg + r_pa);\n"
             fstring += "    rate = r_ag + r_ap * r_pg * dd;\n"
-            fstring += "    if constexpr (do_T_derivatives) {\n"
+            fstring += "    if constexpr (std::is_same<T, rate_derivs_t>::value) {\n"
             fstring += f"        {dtype} drdT_ag = rate_eval.dscreened_rates_dT(k_{self.primary_rate.fname});\n"
             fstring += f"        {dtype} drdT_ap = rate_eval.dscreened_rates_dT(k_{self.secondary_rates[0].fname});\n"
             fstring += f"        {dtype} drdT_pg = rate_eval.dscreened_rates_dT(k_{self.secondary_rates[1].fname});\n"
@@ -1598,7 +1598,7 @@ class ApproximateRate(Rate):
             # now the approximation
             fstring += f"    {dtype} dd = 1.0_rt / (r_pg + r_pa);\n"
             fstring += "    rate = r_ga + r_gp * r_pa * dd;\n"
-            fstring += "    if constexpr (do_T_derivatives) {\n"
+            fstring += "    if constexpr (std::is_same<T, rate_derivs_t>::value) {\n"
             fstring += f"        {dtype} drdT_ga = rate_eval.dscreened_rates_dT(k_{self.primary_reverse.fname});\n"
             fstring += f"        {dtype} drdT_pa = rate_eval.dscreened_rates_dT(k_{self.secondary_reverse[1].fname});\n"
             fstring += f"        {dtype} drdT_gp = rate_eval.dscreened_rates_dT(k_{self.secondary_reverse[0].fname});\n"

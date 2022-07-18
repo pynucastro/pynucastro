@@ -42,9 +42,9 @@ void ener_gener_rate(T const& dydt, Real& enuc)
 }
 
 
-template <int do_T_derivatives>
+template <int do_T_derivatives, typename T>
 AMREX_GPU_HOST_DEVICE AMREX_INLINE
-void evaluate_rates(const burn_t& state, rate_eval_t& rate_eval) {
+void evaluate_rates(const burn_t& state, T& rate_eval) {
 
 
     // create molar fractions
@@ -63,7 +63,7 @@ void evaluate_rates(const burn_t& state, rate_eval_t& rate_eval) {
 
     tf_t tfactors = evaluate_tfactors(state.T);
 
-    fill_reaclib_rates<do_T_derivatives>(tfactors, rate_eval);
+    fill_reaclib_rates<do_T_derivatives, T>(tfactors, rate_eval);
 
     <rate_param_tests>(1)
 
@@ -112,10 +112,10 @@ void actual_rhs (burn_t& state, Array1D<Real, 1, neqs>& ydot)
 
     // build the rates
 
-    rate_eval_t rate_eval;
+    rate_t rate_eval;
 
     constexpr int do_T_derivatives = 0;
-    evaluate_rates<do_T_derivatives>(state, rate_eval);
+    evaluate_rates<do_T_derivatives, rate_t>(state, rate_eval);
 
     rhs_nuc(state, ydot, Y, rate_eval.screened_rates);
 
@@ -170,10 +170,10 @@ void actual_jac(const burn_t& state, MatrixType& jac)
 
     jac.zero();
 
-    rate_eval_t rate_eval;
+    rate_derivs_t rate_eval;
 
     constexpr int do_T_derivatives = 1;
-    evaluate_rates<do_T_derivatives>(state, rate_eval);
+    evaluate_rates<do_T_derivatives, rate_derivs_t>(state, rate_eval);
 
     // Species Jacobian elements with respect to other species
 
