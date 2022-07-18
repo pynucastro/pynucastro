@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.rates.rate &mdash; pynucastro 1.7.0.post16+gc52abee documentation</title>
+  <title>pynucastro.rates.rate &mdash; pynucastro 1.7.0.post17+g7fa5deb documentation</title>
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -1195,25 +1195,23 @@
         <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{}{}{}{}</span><span class="s2">*lambda_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefactor_string</span><span class="p">,</span> <span class="n">dens_string</span><span class="p">,</span>
                                            <span class="n">y_e_string</span><span class="p">,</span> <span class="n">Y_string</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Rate.jacobian_string_py"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.Rate.jacobian_string_py">[docs]</a>    <span class="k">def</span> <span class="nf">jacobian_string_py</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ydot_j</span><span class="p">,</span> <span class="n">y_i</span><span class="p">):</span>
+<div class="viewcode-block" id="Rate.jacobian_string_py"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.Rate.jacobian_string_py">[docs]</a>    <span class="k">def</span> <span class="nf">jacobian_string_py</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y_i</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return a string containing the term in a jacobian matrix</span>
-<span class="sd">        in a reaction network corresponding to this rate.</span>
+<span class="sd">        in a reaction network corresponding to this rate differentiated</span>
+<span class="sd">        with respect to y_i</span>
 
-<span class="sd">        Returns the derivative of the j-th YDOT wrt. the i-th Y</span>
-<span class="sd">        If the derivative is zero, returns the empty string &#39;&#39;</span>
-
-<span class="sd">        ydot_j and y_i are objects of the class ``Nucleus``.</span>
+<span class="sd">        y_i is an objecs of the class ``Nucleus``.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">ydot_j</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span> <span class="ow">and</span> <span class="n">ydot_j</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">products</span><span class="p">)</span> <span class="ow">or</span> \
-           <span class="n">y_i</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s1">&#39;&#39;</span>
+        <span class="k">if</span> <span class="n">y_i</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;&quot;</span>
 
         <span class="c1"># composition dependence</span>
         <span class="n">Y_string</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">))):</span>
             <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">y_i</span> <span class="o">==</span> <span class="n">r</span><span class="p">:</span>
+                <span class="c1"># take the derivative</span>
                 <span class="k">if</span> <span class="n">c</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
                     <span class="k">continue</span>
                 <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">))</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
@@ -1223,6 +1221,8 @@
                 <span class="k">elif</span> <span class="n">c</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
                     <span class="n">Y_string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;2*Y[j</span><span class="si">{</span><span class="n">r</span><span class="si">}</span><span class="s2">]&quot;</span>
             <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># this nucleus is in the rate form, but we are not</span>
+                <span class="c1"># differentiating with respect to it</span>
                 <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">))</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
                     <span class="n">Y_string</span> <span class="o">+=</span> <span class="s2">&quot;*&quot;</span>
                 <span class="k">if</span> <span class="n">c</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
@@ -1242,7 +1242,7 @@
         <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">weak_type</span> <span class="o">==</span> <span class="s1">&#39;electron_capture&#39;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabular</span><span class="p">):</span>
             <span class="n">y_e_string</span> <span class="o">=</span> <span class="s1">&#39;ye(Y)*&#39;</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">y_e_string</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+            <span class="n">y_e_string</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
 
         <span class="c1"># prefactor</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefactor</span> <span class="o">!=</span> <span class="mf">1.0</span><span class="p">:</span>
@@ -1250,8 +1250,8 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">prefactor_string</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
 
-        <span class="k">if</span> <span class="n">Y_string</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span> <span class="ow">and</span> <span class="n">dens_string</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span> <span class="ow">and</span> <span class="n">prefactor_string</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
-            <span class="n">rstring</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}{}{}</span><span class="s2">lambda_</span><span class="si">{}</span><span class="s2">&quot;</span>
+        <span class="k">if</span> <span class="n">Y_string</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span> <span class="ow">and</span> <span class="n">dens_string</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span> <span class="ow">and</span> <span class="n">prefactor_string</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span> <span class="ow">and</span> <span class="n">y_e_string</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="n">rstring</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}{}{}{}</span><span class="s2">lambda_</span><span class="si">{}</span><span class="s2">&quot;</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">rstring</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}{}{}{}</span><span class="s2">*lambda_</span><span class="si">{}</span><span class="s2">&quot;</span>
         <span class="k">return</span> <span class="n">rstring</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefactor_string</span><span class="p">,</span> <span class="n">dens_string</span><span class="p">,</span>

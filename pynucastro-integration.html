@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Example of integrating a network &mdash; pynucastro 1.7.0.post16+gc52abee documentation</title>
+  <title>Example of integrating a network &mdash; pynucastro 1.7.0.post17+g7fa5deb documentation</title>
       <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -57,6 +57,7 @@
 <li class="toctree-l1"><a class="reference internal" href="plot-types.html">Plotting Examples</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Example of integrating a network</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#Integrating-the-network">Integrating the network</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Plotting-the-results">Plotting the results</a></li>
 </ul>
 </li>
 </ul>
@@ -694,17 +695,6 @@ def rhs(t, Y, rho, T):
 @numba.njit()
 def rhs_eq(t, Y, rho, T):
 
-    jp = 0
-    jhe4 = 1
-    jc12 = 2
-    jc13 = 3
-    jn13 = 4
-    jn14 = 5
-    jn15 = 6
-    jo14 = 7
-    jo15 = 8
-    nnuc = 9
-
     tf = Tfactors(T)
 
     lambda_p_c12__n13 = p_c12__n13(tf)
@@ -768,6 +758,155 @@ def rhs_eq(t, Y, rho, T):
        )
 
     return dYdt
+
+def jacobian(t, Y, rho, T):
+    return jacobian_eq(t, Y, rho, T)
+
+@numba.njit()
+def jacobian_eq(t, Y, rho, T):
+
+    tf = Tfactors(T)
+
+    lambda_p_c12__n13 = p_c12__n13(tf)
+    lambda_p_c13__n14 = p_c13__n14(tf)
+    lambda_n13__c13__weak__wc12 = n13__c13__weak__wc12(tf)
+    lambda_p_n13__o14 = p_n13__o14(tf)
+    lambda_p_n14__o15 = p_n14__o15(tf)
+    lambda_p_n15__he4_c12 = p_n15__he4_c12(tf)
+    lambda_o14__n14__weak__wc12 = o14__n14__weak__wc12(tf)
+    lambda_o15__n15__weak__wc12 = o15__n15__weak__wc12(tf)
+
+    jac = np.zeros((nnuc, nnuc), dtype=np.float64)
+
+    jac[jp, jp] = (
+       -rho*Y[jc12]*lambda_p_c12__n13
+       -rho*Y[jc13]*lambda_p_c13__n14
+       -rho*Y[jn13]*lambda_p_n13__o14
+       -rho*Y[jn14]*lambda_p_n14__o15
+       -rho*Y[jn15]*lambda_p_n15__he4_c12
+       )
+
+    jac[jp, jc12] = (
+       -rho*Y[jp]*lambda_p_c12__n13
+       )
+
+    jac[jp, jc13] = (
+       -rho*Y[jp]*lambda_p_c13__n14
+       )
+
+    jac[jp, jn13] = (
+       -rho*Y[jp]*lambda_p_n13__o14
+       )
+
+    jac[jp, jn14] = (
+       -rho*Y[jp]*lambda_p_n14__o15
+       )
+
+    jac[jp, jn15] = (
+       -rho*Y[jp]*lambda_p_n15__he4_c12
+       )
+
+    jac[jhe4, jp] = (
+       +rho*Y[jn15]*lambda_p_n15__he4_c12
+       )
+
+    jac[jhe4, jn15] = (
+       +rho*Y[jp]*lambda_p_n15__he4_c12
+       )
+
+    jac[jc12, jp] = (
+       -rho*Y[jc12]*lambda_p_c12__n13
+       +rho*Y[jn15]*lambda_p_n15__he4_c12
+       )
+
+    jac[jc12, jc12] = (
+       -rho*Y[jp]*lambda_p_c12__n13
+       )
+
+    jac[jc12, jn15] = (
+       +rho*Y[jp]*lambda_p_n15__he4_c12
+       )
+
+    jac[jc13, jp] = (
+       -rho*Y[jc13]*lambda_p_c13__n14
+       )
+
+    jac[jc13, jc13] = (
+       -rho*Y[jp]*lambda_p_c13__n14
+       )
+
+    jac[jc13, jn13] = (
+       +lambda_n13__c13__weak__wc12
+       )
+
+    jac[jn13, jp] = (
+       -rho*Y[jn13]*lambda_p_n13__o14
+       +rho*Y[jc12]*lambda_p_c12__n13
+       )
+
+    jac[jn13, jc12] = (
+       +rho*Y[jp]*lambda_p_c12__n13
+       )
+
+    jac[jn13, jn13] = (
+       -lambda_n13__c13__weak__wc12
+       -rho*Y[jp]*lambda_p_n13__o14
+       )
+
+    jac[jn14, jp] = (
+       -rho*Y[jn14]*lambda_p_n14__o15
+       +rho*Y[jc13]*lambda_p_c13__n14
+       )
+
+    jac[jn14, jc13] = (
+       +rho*Y[jp]*lambda_p_c13__n14
+       )
+
+    jac[jn14, jn14] = (
+       -rho*Y[jp]*lambda_p_n14__o15
+       )
+
+    jac[jn14, jo14] = (
+       +lambda_o14__n14__weak__wc12
+       )
+
+    jac[jn15, jp] = (
+       -rho*Y[jn15]*lambda_p_n15__he4_c12
+       )
+
+    jac[jn15, jn15] = (
+       -rho*Y[jp]*lambda_p_n15__he4_c12
+       )
+
+    jac[jn15, jo15] = (
+       +lambda_o15__n15__weak__wc12
+       )
+
+    jac[jo14, jp] = (
+       +rho*Y[jn13]*lambda_p_n13__o14
+       )
+
+    jac[jo14, jn13] = (
+       +rho*Y[jp]*lambda_p_n13__o14
+       )
+
+    jac[jo14, jo14] = (
+       -lambda_o14__n14__weak__wc12
+       )
+
+    jac[jo15, jp] = (
+       +rho*Y[jn14]*lambda_p_n14__o15
+       )
+
+    jac[jo15, jn14] = (
+       +rho*Y[jp]*lambda_p_n14__o15
+       )
+
+    jac[jo15, jo15] = (
+       -lambda_o15__n15__weak__wc12
+       )
+
+    return jac
 </pre></div></div>
 </div>
 <p>We can now import the network that was just created and integrate it using the SciPy ODE solvers</p>
@@ -781,7 +920,7 @@ def rhs_eq(t, Y, rho, T):
 </div>
 <section id="Integrating-the-network">
 <h2>Integrating the network<a class="headerlink" href="#Integrating-the-network" title="Permalink to this heading">¶</a></h2>
-<p>We can use the stiff ODE integration solvers that are part of Scipy to integrate this system now</p>
+<p>We can use the stiff ODE integration solvers that are part of SciPy to integrate this system now</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
@@ -815,12 +954,14 @@ def rhs_eq(t, Y, rho, T):
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tmax</span> <span class="o">=</span> <span class="mf">1.e20</span>
 
-<span class="n">sol</span> <span class="o">=</span> <span class="n">solve_ivp</span><span class="p">(</span><span class="n">cno</span><span class="o">.</span><span class="n">rhs</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">tmax</span><span class="p">],</span> <span class="n">Y0</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;BDF&quot;</span><span class="p">,</span>
+<span class="n">sol</span> <span class="o">=</span> <span class="n">solve_ivp</span><span class="p">(</span><span class="n">cno</span><span class="o">.</span><span class="n">rhs</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">tmax</span><span class="p">],</span> <span class="n">Y0</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;BDF&quot;</span><span class="p">,</span> <span class="n">jac</span><span class="o">=</span><span class="n">cno</span><span class="o">.</span><span class="n">jacobian</span><span class="p">,</span>
                 <span class="n">dense_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">),</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1.e-6</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1.e-6</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-<p>A network plot</p>
+</section>
+<section id="Plotting-the-results">
+<h2>Plotting the results<a class="headerlink" href="#Plotting-the-results" title="Permalink to this heading">¶</a></h2>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
 </pre></div>
@@ -842,6 +983,8 @@ def rhs_eq(t, Y, rho, T):
 <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="mf">1.e10</span><span class="p">,</span> <span class="mf">1.e20</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mf">1.e-8</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="s2">&quot;small&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;t (s)&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;X&quot;</span><span class="p">)</span>
 
 <span class="n">fig</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">((</span><span class="mi">10</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
 </pre></div>

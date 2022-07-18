@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.rates package &mdash; pynucastro 1.7.0.post16+gc52abee documentation</title>
+  <title>pynucastro.rates package &mdash; pynucastro 1.7.0.post17+g7fa5deb documentation</title>
       <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -429,12 +429,11 @@ lowest atomic number.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.Rate.jacobian_string_py">
-<span class="sig-name descname"><span class="pre">jacobian_string_py</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ydot_j</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_i</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#Rate.jacobian_string_py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.Rate.jacobian_string_py" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">jacobian_string_py</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y_i</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#Rate.jacobian_string_py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.Rate.jacobian_string_py" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a string containing the term in a jacobian matrix
-in a reaction network corresponding to this rate.</p>
-<p>Returns the derivative of the j-th YDOT wrt. the i-th Y
-If the derivative is zero, returns the empty string ‘’</p>
-<p>ydot_j and y_i are objects of the class <code class="docutils literal notranslate"><span class="pre">Nucleus</span></code>.</p>
+in a reaction network corresponding to this rate differentiated
+with respect to y_i</p>
+<p>y_i is an objecs of the class <code class="docutils literal notranslate"><span class="pre">Nucleus</span></code>.</p>
 </dd></dl>
 
 <dl class="py method">

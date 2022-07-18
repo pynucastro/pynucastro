@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.networks.python_network &mdash; pynucastro 1.7.0.post16+gc52abee documentation</title>
+  <title>pynucastro.networks.python_network &mdash; pynucastro 1.7.0.post17+g7fa5deb documentation</title>
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -114,9 +114,11 @@
     <span class="sd">&quot;&quot;&quot;A pure python reaction network.&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="PythonNetwork.full_ydot_string"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.python_network.PythonNetwork.full_ydot_string">[docs]</a>    <span class="k">def</span> <span class="nf">full_ydot_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nucleus</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;construct the python form of dY(nucleus)/dt&quot;&quot;&quot;</span>
 
         <span class="n">ostr</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">nuclei_consumed</span><span class="p">[</span><span class="n">nucleus</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">nuclei_produced</span><span class="p">[</span><span class="n">nucleus</span><span class="p">]:</span>
+            <span class="c1"># this captures an inert nucleus</span>
             <span class="n">ostr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2">dYdt[j</span><span class="si">{</span><span class="n">nucleus</span><span class="si">}</span><span class="s2">] = 0.0</span><span class="se">\n\n</span><span class="s2">&quot;</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">ostr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2">dYdt[j</span><span class="si">{</span><span class="n">nucleus</span><span class="si">}</span><span class="s2">] = (</span><span class="se">\n</span><span class="s2">&quot;</span>
@@ -132,6 +134,50 @@
                     <span class="n">ostr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2">   +</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">ydot_string_py</span><span class="p">()</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">ostr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2">   +</span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s2">*</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">ydot_string_py</span><span class="p">()</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">ostr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2">   )</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+
+        <span class="k">return</span> <span class="n">ostr</span></div>
+
+<div class="viewcode-block" id="PythonNetwork.full_jacobian_element_string"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.python_network.PythonNetwork.full_jacobian_element_string">[docs]</a>    <span class="k">def</span> <span class="nf">full_jacobian_element_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ydot_i_nucleus</span><span class="p">,</span> <span class="n">y_j_nucleus</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;return the Jacobian element dYdot(ydot_i_nucleus)/dY(y_j_nucleus)&quot;&quot;&quot;</span>
+
+        <span class="c1"># this is the jac(i,j) string</span>
+        <span class="n">idx_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;jac[j</span><span class="si">{</span><span class="n">ydot_i_nucleus</span><span class="si">}</span><span class="s2">, j</span><span class="si">{</span><span class="n">y_j_nucleus</span><span class="si">}</span><span class="s2">]&quot;</span>
+
+        <span class="n">ostr</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">nuclei_consumed</span><span class="p">[</span><span class="n">ydot_i_nucleus</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">nuclei_produced</span><span class="p">[</span><span class="n">ydot_i_nucleus</span><span class="p">]:</span>
+            <span class="n">ostr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">indent</span><span class="si">}{</span><span class="n">idx_str</span><span class="si">}</span><span class="s2"> = 0.0</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ostr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">indent</span><span class="si">}{</span><span class="n">idx_str</span><span class="si">}</span><span class="s2"> = (</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">rate_terms_str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+            <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nuclei_consumed</span><span class="p">[</span><span class="n">ydot_i_nucleus</span><span class="p">]:</span>
+                <span class="n">c</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">ydot_i_nucleus</span><span class="p">)</span>
+
+                <span class="n">jac_str</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">jacobian_string_py</span><span class="p">(</span><span class="n">y_j_nucleus</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">jac_str</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+                    <span class="k">continue</span>
+
+                <span class="k">if</span> <span class="n">c</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">rate_terms_str</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2">   -</span><span class="si">{</span><span class="n">jac_str</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">rate_terms_str</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2">   -</span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s2">*</span><span class="si">{</span><span class="n">jac_str</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nuclei_produced</span><span class="p">[</span><span class="n">ydot_i_nucleus</span><span class="p">]:</span>
+                <span class="n">c</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">products</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">ydot_i_nucleus</span><span class="p">)</span>
+
+                <span class="n">jac_str</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">jacobian_string_py</span><span class="p">(</span><span class="n">y_j_nucleus</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">jac_str</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+                    <span class="k">continue</span>
+
+                <span class="k">if</span> <span class="n">c</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">rate_terms_str</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2">   +</span><span class="si">{</span><span class="n">jac_str</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">rate_terms_str</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2">   +</span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s2">*</span><span class="si">{</span><span class="n">jac_str</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+            <span class="k">if</span> <span class="n">rate_terms_str</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+                <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">ostr</span> <span class="o">+=</span> <span class="n">rate_terms_str</span>
+
             <span class="n">ostr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2">   )</span><span class="se">\n\n</span><span class="s2">&quot;</span>
 
         <span class="k">return</span> <span class="n">ostr</span></div>
@@ -182,6 +228,8 @@
         <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;def ye(Y):</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2">return np.sum(Z * Y)/np.sum(A * Y)</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
 
+        <span class="c1"># the functions to evaluate the temperature dependence of the rates</span>
+
         <span class="n">_rate_func_written</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">ApproximateRate</span><span class="p">):</span>
@@ -201,16 +249,13 @@
                 <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">function_string_py</span><span class="p">())</span>
                 <span class="n">_rate_func_written</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
 
+        <span class="c1"># the rhs() function</span>
+
         <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;def rhs(t, Y, rho, T):</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2">return rhs_eq(t, Y, rho, T)</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;@numba.njit()</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;def rhs_eq(t, Y, rho, T):</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="c1"># integer keys</span>
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">):</span>
-            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2">j</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-
-        <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2">nnuc = </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">)</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="c1"># get the rates</span>
         <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2">tf = Tfactors(T)</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -225,7 +270,31 @@
         <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">:</span>
             <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">full_ydot_string</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="n">indent</span><span class="p">))</span>
 
-        <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2">return dYdt</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span></div>
+        <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2">return dYdt</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># the jacobian() function</span>
+
+        <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;def jacobian(t, Y, rho, T):</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2">return jacobian_eq(t, Y, rho, T)</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;@numba.njit()</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;def jacobian_eq(t, Y, rho, T):</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># get the rates</span>
+        <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2">tf = Tfactors(T)</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">:</span>
+            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2">lambda_</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">(tf)</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2">jac = np.zeros((nnuc, nnuc), dtype=np.float64)</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># now fill each Jacobian element</span>
+        <span class="k">for</span> <span class="n">n_i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">n_j</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">:</span>
+                <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">full_jacobian_element_string</span><span class="p">(</span><span class="n">n_i</span><span class="p">,</span> <span class="n">n_j</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="n">indent</span><span class="p">))</span>
+
+        <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2">return jac</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span></div>
 </pre></div>
 
            </div>
