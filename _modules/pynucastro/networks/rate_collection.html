@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.networks.rate_collection &mdash; pynucastro 1.7.0.post15+g334312d documentation</title>
+  <title>pynucastro.networks.rate_collection &mdash; pynucastro 1.7.0.post16+gc52abee documentation</title>
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -757,7 +757,7 @@
 
         <span class="k">return</span> <span class="p">[</span><span class="n">eq1</span><span class="p">,</span> <span class="n">eq2</span><span class="p">]</span>
 
-<div class="viewcode-block" id="RateCollection.get_comp_NSE"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.get_comp_NSE">[docs]</a>    <span class="k">def</span> <span class="nf">get_comp_NSE</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">ye</span><span class="p">,</span> <span class="n">init_guess</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mf">3.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">15.0</span><span class="p">],</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1.5e-9</span><span class="p">,</span> <span class="n">tell_guess</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="RateCollection.get_comp_NSE"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.get_comp_NSE">[docs]</a>    <span class="k">def</span> <span class="nf">get_comp_NSE</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">ye</span><span class="p">,</span> <span class="n">init_guess</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mf">3.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">15.0</span><span class="p">),</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1.5e-9</span><span class="p">,</span> <span class="n">tell_guess</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the NSE composition given density, temperature and prescribed electron fraction</span>
 <span class="sd">        using scipy.fsolve, `tol` is an optional parameter for the tolerance of scipy.fsolve.</span>

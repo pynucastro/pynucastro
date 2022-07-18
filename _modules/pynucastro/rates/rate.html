@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.rates.rate &mdash; pynucastro 1.7.0.post15+g334312d documentation</title>
+  <title>pynucastro.rates.rate &mdash; pynucastro 1.7.0.post16+gc52abee documentation</title>
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -1093,7 +1093,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">tabular_data_table</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">t_data2d</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Rate.function_string_py"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.Rate.function_string_py">[docs]</a>    <span class="k">def</span> <span class="nf">function_string_py</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;rate&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="Rate.function_string_py"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.Rate.function_string_py">[docs]</a>    <span class="k">def</span> <span class="nf">function_string_py</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return a string containing python function that computes the</span>
 <span class="sd">        rate</span>
@@ -1103,11 +1103,11 @@
         <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;@numba.njit()</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;def </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">(tf):</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    # </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rid</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2"> = 0.0</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    rate = 0.0</span><span class="se">\n\n</span><span class="s2">&quot;</span>
 
         <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sets</span><span class="p">:</span>
             <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    # </span><span class="si">{</span><span class="n">s</span><span class="o">.</span><span class="n">labelprops</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">5</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="n">set_string</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">set_string_py</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span> <span class="n">plus_equal</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">set_string</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">set_string_py</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;rate&quot;</span><span class="p">,</span> <span class="n">plus_equal</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">set_string</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">):</span>
                 <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    &quot;</span> <span class="o">+</span> <span class="n">t</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
 
