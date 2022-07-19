@@ -134,15 +134,21 @@ class Composition:
             ostr += f"  X({k}) : {self.X[k]}\n"
         return ostr
 
-    def plot(self, trace_threshold=0.1, size=(9, 5)):
+    def plot(self, trace_threshold=0.1, hard_limit = None, size=(9, 5)):
         """ Make a pie chart of Composition. group trace nuceli together and explode into bar chart
 
         parameters
         ----------
 
         trace_threshold : the threshold to consider a component to be trace.
+
+        hard_limit : hard limit for nuclei to be labeled in the plot. Default is None which will set the limit to 5% of total trace abundance
+
+        size: tuple giving width x height of the plot in inches
+
         """
 
+        # find trace nuclei
         trace_keys = []
         trace_tot = 0.
         main_keys = []
@@ -156,13 +162,18 @@ class Composition:
 
         # check if any trace nuclei
         if not trace_keys:
-            #just do pie chart without including trace
+            # just do pie chart without including trace
 
             fig, ax = plt.subplots(1, 1, figsize=size)
 
             ax.pie(self.X.values(), labels=self.X.keys(), autopct=lambda p: f"{p/100:0.3f}")
 
         else:
+            # find trace nuclei which contribute little to trace proportion
+            if hard_limit is None:
+                # make hardlimit proportional to trace abundance
+                hard_limit = 0.05*trace_tot
+
             # make figure and assign axis objects
             fig, (ax1, ax2) = plt.subplots(1, 2, figsize=size)
             fig.subplots_adjust(wspace=0)
@@ -191,7 +202,11 @@ class Composition:
                 bottom -= height
                 bc = ax2.bar(0, height, width, bottom=bottom, color=trace_wedge_color, label=label,
                             alpha=alpha_list[j])
-                ax2.bar_label(bc, labels=[f"{height:.2e}"], label_type='center')
+
+                if height > hard_limit:
+                    ax2.bar_label(bc, labels=[f"{height:.2e}"], label_type='center')
+                    ax2.bar_label(bc, labels=[f"{label.short_spec_name:>30}"], label_type='center')
+
 
             ax2.set_title('Composition of Trace Nuclei')
             ax2.legend()
