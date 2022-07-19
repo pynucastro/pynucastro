@@ -1580,11 +1580,11 @@ class RateCollection:
 
         elif color_field == "x":
 
-            values = np.array([self.X[nuc] for nuc in nuclei])
+            values = np.array([comp.X[nuc] for nuc in nuclei])
 
         elif color_field == "y":
 
-            ys = self.get_molar()
+            ys = comp.get_molar()
             values = np.array([ys[nuc] for nuc in nuclei])
 
         elif color_field in {"ydot", "xdot"}:
