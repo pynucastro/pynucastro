@@ -173,6 +173,16 @@ class Composition:
             if hard_limit is None:
                 # make hardlimit proportional to trace abundance
                 hard_limit = 0.05*trace_tot
+            
+            limited_trace_keys = []
+            other_trace_tot = 0.
+            for k in trace_keys:
+                if self.X[k] < hard_limit:
+                    print(f"Not including {k} in plot as abundance ({self.X[k]:0.2e})is below hard limit {hard_limit:0.2e}")
+                    other_trace_tot += self.X[k]
+                else:
+                    limited_trace_keys.append(k)
+                    
 
             # make figure and assign axis objects
             fig, (ax1, ax2) = plt.subplots(1, 2, figsize=size)
@@ -189,13 +199,13 @@ class Composition:
                                 labels=main_labels, explode=explode)
 
             # bar chart parameters
-            trace_values = [self.X[k] for k in trace_keys]
-            trace_labels = trace_keys
+            trace_values = [self.X[k] for k in limited_trace_keys] + [other_trace_tot]
+            trace_labels = [k.short_spec_name for k in limited_trace_keys] + ['other']
             bottom = 1
             width = 0.1
 
             # Adding from the top matches the legend.
-            alpha_list = np.linspace(0.1, 1, len(trace_keys))
+            alpha_list = np.linspace(0.1, 1, len(trace_values))
             trace_wedge_color = wedges[0].get_facecolor()
 
             for j, (height, label) in enumerate([*zip(trace_values, trace_labels)]):
@@ -203,9 +213,8 @@ class Composition:
                 bc = ax2.bar(0, height, width, bottom=bottom, color=trace_wedge_color, label=label,
                             alpha=alpha_list[j])
 
-                if height > hard_limit:
-                    ax2.bar_label(bc, labels=[f"{height:.2e}"], label_type='center')
-                    ax2.bar_label(bc, labels=[f"{label.short_spec_name:>30}"], label_type='center')
+                ax2.bar_label(bc, labels=[f"{height:.2e}"], label_type='center')
+                ax2.bar_label(bc, labels=[f"{label:>30}"], label_type='center')
 
 
             ax2.set_title('Composition of Trace Nuclei')
