@@ -134,7 +134,7 @@ class Composition:
             ostr += f"  X({k}) : {self.X[k]}\n"
         return ostr
 
-    def plot(self, trace_threshold=0.1, hard_limit = None, size=(9, 5)):
+    def plot(self, trace_threshold=0.1, hard_limit=None, size=(9, 5)):
         """ Make a pie chart of Composition. group trace nuceli together and explode into bar chart
 
         parameters
@@ -173,7 +173,7 @@ class Composition:
             if hard_limit is None:
                 # make hardlimit proportional to trace abundance
                 hard_limit = 0.05*trace_tot
-            
+
             limited_trace_keys = []
             other_trace_tot = 0.
             for k in trace_keys:
@@ -181,7 +181,6 @@ class Composition:
                     other_trace_tot += self.X[k]
                 else:
                     limited_trace_keys.append(k)
-                    
 
             # make figure and assign axis objects
             fig, (ax1, ax2) = plt.subplots(1, 2, figsize=size)
@@ -190,7 +189,7 @@ class Composition:
             # pie chart parameters
             main_values = [trace_tot] + [self.X[k] for k in main_keys]
             main_labels = ['trace'] + main_keys
-            explode = [ 0.2] + [0. for i in range(len(main_keys))]
+            explode = [0.2] + [0. for i in range(len(main_keys))]
 
             # rotate so that first wedge is split by the x-axis
             angle = -180 * main_values[0]
@@ -214,7 +213,6 @@ class Composition:
 
                 ax2.bar_label(bc, labels=[f"{height:.2e}"], label_type='center')
                 ax2.bar_label(bc, labels=[f"{label:>30}"], label_type='center')
-
 
             ax2.set_title('Composition of Trace Nuclei')
             ax2.axis('off')
@@ -245,6 +243,7 @@ class Composition:
 
         plt.show()
         return fig
+
 
 class ScreeningPair:
     """a pair of nuclei that will have rate screening applied.  We store a
