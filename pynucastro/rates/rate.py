@@ -990,7 +990,7 @@ class Rate:
 
         self.tabular_data_table = np.array(t_data2d)
 
-    def function_string_py(self, prefix="rate"):
+    def function_string_py(self):
         """
         Return a string containing python function that computes the
         rate
@@ -1000,11 +1000,11 @@ class Rate:
         fstring += "@numba.njit()\n"
         fstring += f"def {self.fname}(tf):\n"
         fstring += f"    # {self.rid}\n"
-        fstring += f"    {prefix} = 0.0\n\n"
+        fstring += "    rate = 0.0\n\n"
 
         for s in self.sets:
             fstring += f"    # {s.labelprops[0:5]}\n"
-            set_string = s.set_string_py(prefix=prefix, plus_equal=True)
+            set_string = s.set_string_py(prefix="rate", plus_equal=True)
             for t in set_string.split("\n"):
                 fstring += "    " + t + "\n"
 
@@ -1097,25 +1097,23 @@ class Rate:
         return "{}{}{}{}*lambda_{}".format(prefactor_string, dens_string,
                                            y_e_string, Y_string, self.fname)
 
-    def jacobian_string_py(self, ydot_j, y_i):
+    def jacobian_string_py(self, y_i):
         """
         Return a string containing the term in a jacobian matrix
-        in a reaction network corresponding to this rate.
+        in a reaction network corresponding to this rate differentiated
+        with respect to y_i
 
-        Returns the derivative of the j-th YDOT wrt. the i-th Y
-        If the derivative is zero, returns the empty string ''
-
-        ydot_j and y_i are objects of the class ``Nucleus``.
+        y_i is an objecs of the class ``Nucleus``.
         """
-        if (ydot_j not in self.reactants and ydot_j not in self.products) or \
-           y_i not in self.reactants:
-            return ''
+        if y_i not in self.reactants:
+            return ""
 
         # composition dependence
         Y_string = ""
         for n, r in enumerate(sorted(set(self.reactants))):
             c = self.reactants.count(r)
             if y_i == r:
+                # take the derivative
                 if c == 1:
                     continue
                 if 0 < n < len(set(self.reactants))-1:
@@ -1125,6 +1123,8 @@ class Rate:
                 elif c == 2:
                     Y_string += f"2*Y[j{r}]"
             else:
+                # this nucleus is in the rate form, but we are not
+                # differentiating with respect to it
                 if 0 < n < len(set(self.reactants))-1:
                     Y_string += "*"
                 if c > 1:
@@ -1144,7 +1144,7 @@ class Rate:
         if (self.weak_type == 'electron_capture' and not self.tabular):
             y_e_string = 'ye(Y)*'
         else:
-            y_e_string = ''
+            y_e_string = ""
 
         # prefactor
         if self.prefactor != 1.0:
@@ -1152,8 +1152,8 @@ class Rate:
         else:
             prefactor_string = ""
 
-        if Y_string == "" and dens_string == "" and prefactor_string == "":
-            rstring = "{}{}{}lambda_{}"
+        if Y_string == "" and dens_string == "" and prefactor_string == "" and y_e_string == "":
+            rstring = "{}{}{}{}lambda_{}"
         else:
             rstring = "{}{}{}{}*lambda_{}"
         return rstring.format(prefactor_string, dens_string,

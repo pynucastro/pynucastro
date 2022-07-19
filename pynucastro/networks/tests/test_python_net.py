@@ -38,8 +38,7 @@ class TestPythonNetwork:
                ydot == "rho*Y[jp]*Y[jc13]*lambda_p_c13__n14"
 
     def test_jacobian_string(self):
-        jac = self.rate.jacobian_string_py(self.rate.products[0],
-                                           self.rate.reactants[0])
+        jac = self.rate.jacobian_string_py(self.rate.reactants[0])
         assert jac == "rho*Y[jc13]*lambda_p_c13__n14"
 
     def test_function_string(self):

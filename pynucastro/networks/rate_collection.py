@@ -654,7 +654,7 @@ class RateCollection:
 
         return [eq1, eq2]
 
-    def get_comp_NSE(self, rho, T, ye, init_guess=[-3.5, -15.0], tol=1.5e-9, tell_guess=False):
+    def get_comp_NSE(self, rho, T, ye, init_guess=(-3.5, -15.0), tol=1.5e-9, tell_guess=False):
         """
         Returns the NSE composition given density, temperature and prescribed electron fraction
         using scipy.fsolve, `tol` is an optional parameter for the tolerance of scipy.fsolve.
