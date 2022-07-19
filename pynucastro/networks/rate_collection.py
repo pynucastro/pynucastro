@@ -178,7 +178,6 @@ class Composition:
             other_trace_tot = 0.
             for k in trace_keys:
                 if self.X[k] < hard_limit:
-                    print(f"Not including {k} in plot as abundance ({self.X[k]:0.2e})is below hard limit {hard_limit:0.2e}")
                     other_trace_tot += self.X[k]
                 else:
                     limited_trace_keys.append(k)
@@ -218,7 +217,6 @@ class Composition:
 
 
             ax2.set_title('Composition of Trace Nuclei')
-            ax2.legend()
             ax2.axis('off')
             ax2.set_xlim(- 2.5 * width, 2.5 * width)
 
