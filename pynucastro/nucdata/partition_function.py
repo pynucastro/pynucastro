@@ -35,11 +35,11 @@ class PartitionFunction:
     is defined.
     """
 
-    def __init__(self, nucleus=None, name=None, temperature=None, partition_function=None):
+    def __init__(self, nucleus, name, temperature, partition_function):
 
         assert isinstance(nucleus, str)
 
-        self.nucleus = str(nucleus)
+        self.nucleus = nucleus
         self.name = name
         self.temperature = temperature
         self.partition_function = partition_function
@@ -81,8 +81,6 @@ class PartitionFunction:
         """
 
         assert self.nucleus == other.nucleus
-        assert self.upper_temperature() < other.lower_temperature() or \
-               self.lower_temperature() > other.upper_temperature()
 
         if self.upper_temperature() < other.lower_temperature():
             lower = self
@@ -90,6 +88,8 @@ class PartitionFunction:
         else:
             lower = other
             upper = self
+        if lower.upper_temperature() >= upper.lower_temperature():
+            raise ValueError("temperature ranges cannot overlap")
 
         temperature = np.array(list(lower.temperature) +
                                list(upper.temperature))
@@ -97,7 +97,7 @@ class PartitionFunction:
         partition_function = np.array(list(lower.partition_function) +
                              list(upper.partition_function))
 
-        name = '{}+{}'.format(lower.name, upper.name)
+        name = f'{lower.name}+{upper.name}'
 
         newpf = PartitionFunction(nucleus=self.nucleus, name=name,
                                   temperature=temperature, partition_function=partition_function)
@@ -177,17 +177,13 @@ class PartitionFunctionTable:
         self._partition_function[nuc] = pfun
 
     def get_nuclei(self):
-
-        nuclei = []
-        for nc in self._partition_function.keys():
-            nuclei.append(nc)
-
-        return nuclei
+        return list(self._partition_function)
 
     def get_partition_function(self, nuc):
         assert isinstance(nuc, str)
-        if str(nuc) in self._partition_function.keys():
+        if nuc in self._partition_function:
             return self._partition_function[nuc]
+        return None
 
     def _read_table(self, file_name):
         with open(file_name, 'r') as fin:
@@ -268,10 +264,10 @@ class PartitionFunctionCollection:
 
     def get_nuclei(self):
 
-        nuclei = []
-        for jk in self._partition_function_tables.keys():
-            nuclei += self._partition_function_tables[jk].get_nuclei()
-        return set(nuclei)
+        nuclei = set()
+        for table in self._partition_function_tables.values():
+            nuclei.update(table.get_nuclei())
+        return nuclei
 
     def __iter__(self):
         for nuc in self.get_nuclei():
@@ -296,7 +292,7 @@ class PartitionFunctionCollection:
             pf_hi_table = self._partition_function_tables['etfsiq_high']
             pf_hi = pf_hi_table.get_partition_function(nuc)
         else:
-            raise Exception("invalid partition function type")
+            raise ValueError("invalid partition function type")
 
         if self.use_high_temperatures:
             if pf_lo and pf_hi:

@@ -1,6 +1,6 @@
 # Common Imports
 
-class BindingNuclide(object):
+class BindingNuclide:
     """Hold the information for a single nucleus from the binding energy/nucleon table."""
     def __init__(self, n=None, z=None, nucbind=None):
 
@@ -19,6 +19,6 @@ class BindingNuclide(object):
         """
         Print Contents
         """
-        print('n = {}'.format(self.n))
-        print('z = {}'.format(self.z))
-        print('nucbind = {}'.format(self.nucbind))
+        print(f'n = {self.n}')
+        print(f'z = {self.z}')
+        print(f'nucbind = {self.nucbind}')

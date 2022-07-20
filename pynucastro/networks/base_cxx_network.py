@@ -89,6 +89,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         This writes the RHS, jacobian and ancillary files for the system of ODEs that
         this network describes, using the template files.
         """
+        # pylint: disable=arguments-differ
 
         # Prepare RHS terms
         if not self.solved_ydot:
@@ -112,11 +113,11 @@ class BaseCxxNetwork(ABC, RateCollection):
                 for l in ifile:
                     ls = l.strip()
                     foundkey = False
-                    for k in self.ftags:
+                    for k, func in self.ftags.items():
                         if k in ls:
                             foundkey = True
                             n_indent = self.get_indent_amt(ls, k)
-                            self.ftags[k](n_indent, of)
+                            func(n_indent, of)
                     if not foundkey:
                         of.write(l)
 
@@ -212,6 +213,8 @@ class BaseCxxNetwork(ABC, RateCollection):
                 pass
 
             elif scr.name == "he4_he4_he4_dummy":
+                # make sure the previous iteration was the first part of 3-alpha
+                assert screening_map[i - 1].name == "he4_he4_he4"
                 # handle the second part of the screening for 3-alpha
                 of.write(f'\n{self.indent*n_indent}' + '{')
 
@@ -442,10 +445,12 @@ class BaseCxxNetwork(ABC, RateCollection):
                                                     os.path.dirname(self.pynucastro_dir)))
 
     def _reaclib_rate_functions(self, n_indent, of):
+        assert n_indent == 0, "function definitions must be at top level"
         for r in self.reaclib_rates:
             of.write(r.function_string_cxx(dtype=self.dtype, specifiers=self.function_specifier))
 
     def _approx_rate_functions(self, n_indent, of):
+        assert n_indent == 0, "function definitions must be at top level"
         for r in self.approx_rates:
             of.write(r.function_string_cxx(dtype=self.dtype, specifiers=self.function_specifier))
 

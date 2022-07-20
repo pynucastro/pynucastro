@@ -1,7 +1,7 @@
 # unit tests for rates
 import math
 
-from pynucastro.nucleus import Nucleus
+from pynucastro.nucdata import Nucleus
 import pynucastro.rates as rates
 from pytest import approx
 

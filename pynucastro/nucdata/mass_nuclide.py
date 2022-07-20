@@ -1,9 +1,9 @@
 from pynucastro.nucdata import PeriodicTable
 import os
 
-filename = 'mass_excess2020.txt'
+_filename = 'mass_excess2020.txt'
 dir_nucdata = os.path.dirname(os.path.realpath(__file__))
-dir_mass_data = os.path.join(os.path.join(dir_nucdata, 'AtomicMassEvaluation'), filename)
+dir_mass_data = os.path.join(os.path.join(dir_nucdata, 'AtomicMassEvaluation'), _filename)
 
 
 class MassNuclide:
@@ -30,7 +30,7 @@ class MassNuclide:
             rep = 'n'
         else:
             element = PeriodicTable.lookup_Z(self.z)
-            rep = '{}{}'.format(element.abbreviation, self.a)
+            rep = f'{element.abbreviation}{self.a}'
 
         return rep
 
@@ -69,7 +69,7 @@ class MassTable:
     def _add_mass_nuclide(self, nuc):
 
         assert isinstance(nuc, MassNuclide)
-        assert not str(nuc) in self._mass_diff.keys()
+        assert str(nuc) not in self._mass_diff
 
         self._mass_diff[str(nuc)] = nuc
 
@@ -99,7 +99,6 @@ class MassTable:
 
     def get_mass_diff(self, nuc):
 
-        if str(nuc) in self._mass_diff.keys():
+        if str(nuc) in self._mass_diff:
             return self._mass_diff[str(nuc)]
-        else:
-            raise NotImplementedError("Nuclear mass difference is not available")
+        raise NotImplementedError("Nuclear mass difference is not available")

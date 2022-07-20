@@ -41,7 +41,7 @@ except ImportError:
         return wrap(cls_or_spec)
 
 
-from pynucastro.nucleus import Nucleus
+from pynucastro.nucdata import Nucleus
 
 hbar, _, _ = physical_constants['reduced Planck constant']
 amu, _, _ = physical_constants['atomic mass constant']
@@ -76,7 +76,7 @@ def _find_rate_file(ratename):
         return os.path.realpath(x)
 
     # notify user we can't find the file
-    raise Exception(f'File {ratename} not found in the working directory, {_pynucastro_rates_dir}, or {_pynucastro_tabular_dir}')
+    raise Exception(f'File {ratename!r} not found in the working directory, {_pynucastro_rates_dir}, or {_pynucastro_tabular_dir}')
 
 
 if numba is not None:
@@ -127,7 +127,7 @@ class SingleSet:
 
     """
 
-    def __init__(self, a, labelprops=None):
+    def __init__(self, a, labelprops):
         """here a is iterable (e.g., list or numpy array), storing the
            coefficients, a0, ..., a6
 
@@ -246,7 +246,7 @@ class SingleSet:
         else:
             string = f"{prefix} = "
 
-        if all([q == 0.0 for q in self.a[1:]]):
+        if all(q == 0.0 for q in self.a[1:]):
             string += "0.0;"
             return string
 
@@ -281,7 +281,7 @@ class Rate:
         self.rfile_path = rfile_path
         self.rfile = None
 
-        if type(rfile) == str:
+        if isinstance(rfile, str):
             self.rfile_path = _find_rate_file(rfile)
             self.rfile = os.path.basename(rfile)
 
@@ -315,6 +315,10 @@ class Rate:
         if self.labelprops == "approx":
             self.approx = True
 
+        self.derived = False
+        if self.labelprops == "derived":
+            self.derived = True
+
         self.label = None
         self.resonant = None
         self.resonance_combined = None
@@ -331,11 +335,11 @@ class Rate:
         self.lhs_other = []
         self.rhs_other = []
 
-        if type(rfile) == str:
+        if isinstance(rfile, str):
             # read in the file, parse the different sets and store them as
             # SingleSet objects in sets[]
             f = open(self.rfile_path)
-        elif type(rfile) == io.StringIO:
+        elif isinstance(rfile, io.StringIO):
             # Set f to the io.StringIO object
             f = rfile
         else:
@@ -502,6 +506,14 @@ class Rate:
             self.weak_type = None
             self.reverse = False
             self.tabular = False
+        elif self.labelprops == "derived":
+            self.label = "derived"
+            self.resonant = False  # Derived may be resonant in some cases
+            self.resonance_combined = False
+            self.weak = False
+            self.weak_type = None
+            self.reverse = False
+            self.tabular = False
         else:
             assert len(self.labelprops) == 6
             self.label = self.labelprops[0:4]
@@ -544,9 +556,8 @@ class Rate:
             try:
                 self.reactants.append(Nucleus.from_cache(f[0]))
                 self.products.append(Nucleus.from_cache(f[1]))
-            except ValueError:
-                print(f'Nucleus objects not be identified in {self.original_source}')
-                raise
+            except Exception as ex:
+                raise Exception(f'Nucleus objects could not be identified in {self.original_source}') from ex
 
             self.table_file = s2.strip()
             self.table_header_lines = int(s3.strip())
@@ -566,20 +577,14 @@ class Rate:
                 try:
                     # see if there is a chapter number preceding the set
                     check_chapter = int(check_chapter)
+                    # check that the chapter number is the same as the first
+                    # set in this rate file
+                    assert check_chapter == self.chapter, f'read chapter {check_chapter}, expected chapter {self.chapter} for this rate set.'
+                    # get rid of chapter number so we can read a rate set
+                    set_lines.pop(0)
                 except (TypeError, ValueError):
                     # there was no chapter number, proceed reading a set
                     pass
-                else:
-                    # there was a chapter number so check that the chapter number
-                    # is the same as the first set in this rate file
-                    try:
-                        assert check_chapter == self.chapter
-                    except AssertionError:
-                        print(f'ERROR: read chapter {check_chapter}, expected chapter {self.chapter} for this rate set.')
-                        raise
-                    else:
-                        # get rid of chapter number so we can read a rate set
-                        set_lines.pop(0)
 
                 # sets are 3 lines long
                 s1 = set_lines.pop(0)
@@ -911,6 +916,8 @@ class Rate:
                 self.fname += "__modified"
             if self.approx:
                 self.fname += "__approx"
+            if self.derived:
+                self.fname += "__derived"
 
     def get_rate_id(self):
         """ Get an identifying string for this rate.
@@ -962,9 +969,8 @@ class Rate:
 
         # find .dat file and read it
         self.table_path = _find_rate_file(self.table_file)
-        tabular_file = open(self.table_path)
-        t_data = tabular_file.readlines()
-        tabular_file.close()
+        with open(self.table_path) as tabular_file:
+            t_data = tabular_file.readlines()
 
         # delete header lines
         del t_data[0:self.table_header_lines]
@@ -984,7 +990,7 @@ class Rate:
 
         self.tabular_data_table = np.array(t_data2d)
 
-    def function_string_py(self, prefix="rate"):
+    def function_string_py(self):
         """
         Return a string containing python function that computes the
         rate
@@ -994,11 +1000,11 @@ class Rate:
         fstring += "@numba.njit()\n"
         fstring += f"def {self.fname}(tf):\n"
         fstring += f"    # {self.rid}\n"
-        fstring += f"    {prefix} = 0.0\n\n"
+        fstring += "    rate = 0.0\n\n"
 
         for s in self.sets:
             fstring += f"    # {s.labelprops[0:5]}\n"
-            set_string = s.set_string_py(prefix=prefix, plus_equal=True)
+            set_string = s.set_string_py(prefix="rate", plus_equal=True)
             for t in set_string.split("\n"):
                 fstring += "    " + t + "\n"
 
@@ -1078,7 +1084,7 @@ class Rate:
             y_e_string = ''
 
         # prefactor
-        if not self.prefactor == 1.0:
+        if self.prefactor != 1.0:
             prefactor_string = f"{self.prefactor:1.14e}*"
         else:
             prefactor_string = ""
@@ -1086,25 +1092,23 @@ class Rate:
         return "{}{}{}{}*lambda_{}".format(prefactor_string, dens_string,
                                            y_e_string, Y_string, self.fname)
 
-    def jacobian_string_py(self, ydot_j, y_i):
+    def jacobian_string_py(self, y_i):
         """
         Return a string containing the term in a jacobian matrix
-        in a reaction network corresponding to this rate.
+        in a reaction network corresponding to this rate differentiated
+        with respect to y_i
 
-        Returns the derivative of the j-th YDOT wrt. the i-th Y
-        If the derivative is zero, returns the empty string ''
-
-        ydot_j and y_i are objects of the class ``Nucleus``.
+        y_i is an objecs of the class ``Nucleus``.
         """
-        if (ydot_j not in self.reactants and ydot_j not in self.products) or \
-           y_i not in self.reactants:
-            return ''
+        if y_i not in self.reactants:
+            return ""
 
         # composition dependence
         Y_string = ""
         for n, r in enumerate(sorted(set(self.reactants))):
             c = self.reactants.count(r)
             if y_i == r:
+                # take the derivative
                 if c == 1:
                     continue
                 if 0 < n < len(set(self.reactants))-1:
@@ -1114,6 +1118,8 @@ class Rate:
                 elif c == 2:
                     Y_string += f"2*Y[j{r}]"
             else:
+                # this nucleus is in the rate form, but we are not
+                # differentiating with respect to it
                 if 0 < n < len(set(self.reactants))-1:
                     Y_string += "*"
                 if c > 1:
@@ -1133,16 +1139,16 @@ class Rate:
         if (self.weak_type == 'electron_capture' and not self.tabular):
             y_e_string = 'ye(Y)*'
         else:
-            y_e_string = ''
+            y_e_string = ""
 
         # prefactor
-        if not self.prefactor == 1.0:
+        if self.prefactor != 1.0:
             prefactor_string = f"{self.prefactor:1.14e}*"
         else:
             prefactor_string = ""
 
-        if Y_string == "" and dens_string == "" and prefactor_string == "":
-            rstring = "{}{}{}lambda_{}"
+        if Y_string == "" and dens_string == "" and prefactor_string == "" and y_e_string == "":
+            rstring = "{}{}{}{}lambda_{}"
         else:
             rstring = "{}{}{}{}*lambda_{}"
         return rstring.format(prefactor_string, dens_string,
@@ -1332,7 +1338,7 @@ class DerivedRate(Rate):
             derived_sets.append(sset_d)
 
         super().__init__(rfile=self.rate.rfile, rfile_path=self.rate.rfile_path, chapter=self.rate.chapter, original_source=self.rate.original_source,
-                reactants=self.rate.products, products=self.rate.reactants, sets=derived_sets, labelprops=self.rate.labelprops, Q=-self.rate.Q)
+                reactants=self.rate.products, products=self.rate.reactants, sets=derived_sets, labelprops="derived", Q=-self.rate.Q)
 
     def eval(self, T, rhoY=None):
 
@@ -1347,9 +1353,7 @@ class DerivedRate(Rate):
                 z_p *= nucp.partition_function(T)
 
             return r*z_r/z_p
-
-        else:
-            return r
+        return r
 
 
 class RatePair:
@@ -1371,7 +1375,7 @@ class RatePair:
     def __lt__(self, other):
         if self.forward is not None and other.forward is not None:
             return self.forward < other.forward
-        elif self.forward is None:
+        if self.forward is None:
             return False
         return True
 
@@ -1478,7 +1482,7 @@ class ApproximateRate(Rate):
         tlist += self.secondary_reverse
         return tlist
 
-    def __set_screening(self):
+    def _set_screening(self):
         # the individual rates are screened -- we don't screen the combination of them
         pass
 
@@ -1486,7 +1490,7 @@ class ApproximateRate(Rate):
         """evaluate the approximate rate"""
 
         if self.approx_type == "ap_pg":
-            if not self.is_reverse:
+            if not self.is_reverse:  # pylint: disable=no-else-return
                 # the approximate forward rate is r_ag + r_ap r_pg / (r_pg + r_pa)
                 r_ag = self.primary_rate.eval(T)
                 r_ap = self.secondary_rates[0].eval(T)
@@ -1506,6 +1510,7 @@ class ApproximateRate(Rate):
                 r_pg = self.secondary_rates[1].eval(T)
 
                 return r_ga + r_pa * r_gp / (r_pg + r_pa)
+        raise NotImplementedError(f"approximation type {self.approx_type} not supported")
 
     def function_string_py(self):
         """
@@ -1513,7 +1518,7 @@ class ApproximateRate(Rate):
         approximate rate
         """
 
-        if not self.approx_type == "ap_pg":
+        if self.approx_type != "ap_pg":
             raise NotImplementedError("don't know how to work with this approximation")
 
         string = ""
@@ -1551,7 +1556,7 @@ class ApproximateRate(Rate):
         approximate rate
         """
 
-        if not self.approx_type == "ap_pg":
+        if self.approx_type != "ap_pg":
             raise NotImplementedError("don't know how to work with this approximation")
 
         fstring = ""
