@@ -1,7 +1,7 @@
 import os
 import numpy as np
 
-from pynucastro.nucdata import PeriodicTable
+from pynucastro.nucdata.elements import PeriodicTable
 
 
 class SpinNuclide:
