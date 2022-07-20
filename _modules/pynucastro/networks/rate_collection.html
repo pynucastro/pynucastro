@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.networks.rate_collection &mdash; pynucastro 1.7.0.post18+gdde6850 documentation</title>
+  <title>pynucastro.networks.rate_collection &mdash; pynucastro 1.7.0.post19+g8345a0f documentation</title>
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -121,6 +121,7 @@
 <span class="kn">from</span> <span class="nn">matplotlib.ticker</span> <span class="kn">import</span> <span class="n">MaxNLocator</span>
 <span class="kn">from</span> <span class="nn">matplotlib.colors</span> <span class="kn">import</span> <span class="n">SymLogNorm</span>
 <span class="kn">from</span> <span class="nn">matplotlib.scale</span> <span class="kn">import</span> <span class="n">SymmetricalLogTransform</span>
+<span class="kn">from</span> <span class="nn">matplotlib.patches</span> <span class="kn">import</span> <span class="n">ConnectionPatch</span>
 <span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
 <span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">constants</span>
 <span class="kn">from</span> <span class="nn">scipy.optimize</span> <span class="kn">import</span> <span class="n">fsolve</span>
@@ -232,7 +233,117 @@
         <span class="n">ostr</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">:</span>
             <span class="n">ostr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;  X(</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">) : </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="k">return</span> <span class="n">ostr</span></div>
+        <span class="k">return</span> <span class="n">ostr</span>
+
+<div class="viewcode-block" id="Composition.plot"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.Composition.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trace_threshold</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">hard_limit</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">5</span><span class="p">)):</span>
+        <span class="sd">&quot;&quot;&quot; Make a pie chart of Composition. group trace nuceli together and explode into bar chart</span>
+
+<span class="sd">        parameters</span>
+<span class="sd">        ----------</span>
+
+<span class="sd">        trace_threshold : the threshold to consider a component to be trace.</span>
+
+<span class="sd">        hard_limit : hard limit for nuclei to be labeled in the plot. Default is None which will set the limit to 5% of total trace abundance</span>
+
+<span class="sd">        size: tuple giving width x height of the plot in inches</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># find trace nuclei</span>
+        <span class="n">trace_keys</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">trace_tot</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="n">main_keys</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">:</span>
+            <span class="c1"># if below threshold, count as trace element</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">trace_threshold</span><span class="p">:</span>
+                <span class="n">trace_keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+                <span class="n">trace_tot</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">main_keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+
+        <span class="c1"># check if any trace nuclei</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">trace_keys</span><span class="p">:</span>
+            <span class="c1"># just do pie chart without including trace</span>
+
+            <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="n">size</span><span class="p">)</span>
+
+            <span class="n">ax</span><span class="o">.</span><span class="n">pie</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="n">labels</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="n">autopct</span><span class="o">=</span><span class="k">lambda</span> <span class="n">p</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">p</span><span class="o">/</span><span class="mi">100</span><span class="si">:</span><span class="s2">0.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># find trace nuclei which contribute little to trace proportion</span>
+            <span class="k">if</span> <span class="n">hard_limit</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="c1"># make hardlimit proportional to trace abundance</span>
+                <span class="n">hard_limit</span> <span class="o">=</span> <span class="mf">0.05</span><span class="o">*</span><span class="n">trace_tot</span>
+
+            <span class="n">limited_trace_keys</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">other_trace_tot</span> <span class="o">=</span> <span class="mf">0.</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">trace_keys</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">hard_limit</span><span class="p">:</span>
+                    <span class="n">other_trace_tot</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">limited_trace_keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+
+            <span class="c1"># make figure and assign axis objects</span>
+            <span class="n">fig</span><span class="p">,</span> <span class="p">(</span><span class="n">ax1</span><span class="p">,</span> <span class="n">ax2</span><span class="p">)</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="n">size</span><span class="p">)</span>
+            <span class="n">fig</span><span class="o">.</span><span class="n">subplots_adjust</span><span class="p">(</span><span class="n">wspace</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+            <span class="c1"># pie chart parameters</span>
+            <span class="n">main_values</span> <span class="o">=</span> <span class="p">[</span><span class="n">trace_tot</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">main_keys</span><span class="p">]</span>
+            <span class="n">main_labels</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;trace&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">main_keys</span>
+            <span class="n">explode</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.2</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="mf">0.</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">main_keys</span><span class="p">))]</span>
+
+            <span class="c1"># rotate so that first wedge is split by the x-axis</span>
+            <span class="n">angle</span> <span class="o">=</span> <span class="o">-</span><span class="mi">180</span> <span class="o">*</span> <span class="n">main_values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">wedges</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span> <span class="o">=</span> <span class="n">ax1</span><span class="o">.</span><span class="n">pie</span><span class="p">(</span><span class="n">main_values</span><span class="p">,</span> <span class="n">autopct</span><span class="o">=</span><span class="k">lambda</span> <span class="n">p</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">p</span><span class="o">/</span><span class="mi">100</span><span class="si">:</span><span class="s2">0.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">startangle</span><span class="o">=</span><span class="n">angle</span><span class="p">,</span>
+                                <span class="n">labels</span><span class="o">=</span><span class="n">main_labels</span><span class="p">,</span> <span class="n">explode</span><span class="o">=</span><span class="n">explode</span><span class="p">)</span>
+
+            <span class="c1"># bar chart parameters</span>
+            <span class="n">trace_values</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">limited_trace_keys</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">other_trace_tot</span><span class="p">]</span>
+            <span class="n">trace_labels</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span><span class="o">.</span><span class="n">short_spec_name</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">limited_trace_keys</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;other&#39;</span><span class="p">]</span>
+            <span class="n">bottom</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="n">width</span> <span class="o">=</span> <span class="mf">0.1</span>
+
+            <span class="c1"># Adding from the top matches the legend.</span>
+            <span class="n">alpha_list</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">trace_values</span><span class="p">))</span>
+            <span class="n">trace_wedge_color</span> <span class="o">=</span> <span class="n">wedges</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get_facecolor</span><span class="p">()</span>
+
+            <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="p">(</span><span class="n">height</span><span class="p">,</span> <span class="n">label</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">([</span><span class="o">*</span><span class="nb">zip</span><span class="p">(</span><span class="n">trace_values</span><span class="p">,</span> <span class="n">trace_labels</span><span class="p">)]):</span>
+                <span class="n">bottom</span> <span class="o">-=</span> <span class="n">height</span>
+                <span class="n">bc</span> <span class="o">=</span> <span class="n">ax2</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">bottom</span><span class="o">=</span><span class="n">bottom</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">trace_wedge_color</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span>
+                            <span class="n">alpha</span><span class="o">=</span><span class="n">alpha_list</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
+
+                <span class="n">ax2</span><span class="o">.</span><span class="n">bar_label</span><span class="p">(</span><span class="n">bc</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">height</span><span class="si">:</span><span class="s2">.2e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">],</span> <span class="n">label_type</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">)</span>
+                <span class="n">ax2</span><span class="o">.</span><span class="n">bar_label</span><span class="p">(</span><span class="n">bc</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">label</span><span class="si">:</span><span class="s2">&gt;30</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">],</span> <span class="n">label_type</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">)</span>
+
+            <span class="n">ax2</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Composition of Trace Nuclei&#39;</span><span class="p">)</span>
+            <span class="n">ax2</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+            <span class="n">ax2</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="o">-</span> <span class="mf">2.5</span> <span class="o">*</span> <span class="n">width</span><span class="p">,</span> <span class="mf">2.5</span> <span class="o">*</span> <span class="n">width</span><span class="p">)</span>
+
+            <span class="c1"># use ConnectionPatch to draw lines between the two plots</span>
+            <span class="n">theta1</span><span class="p">,</span> <span class="n">theta2</span> <span class="o">=</span> <span class="n">wedges</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">theta1</span><span class="p">,</span> <span class="n">wedges</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">theta2</span>
+            <span class="n">center</span><span class="p">,</span> <span class="n">r</span> <span class="o">=</span> <span class="n">wedges</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">center</span><span class="p">,</span> <span class="n">wedges</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">r</span>
+            <span class="n">bar_height</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">trace_values</span><span class="p">)</span>
+
+            <span class="c1"># draw top connecting line</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">r</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span> <span class="o">*</span> <span class="n">theta2</span><span class="p">)</span> <span class="o">+</span> <span class="n">center</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="n">r</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span> <span class="o">*</span> <span class="n">theta2</span><span class="p">)</span> <span class="o">+</span> <span class="n">center</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">con</span> <span class="o">=</span> <span class="n">ConnectionPatch</span><span class="p">(</span><span class="n">xyA</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="n">width</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">bar_height</span><span class="o">+</span><span class="n">bottom</span><span class="p">),</span> <span class="n">coordsA</span><span class="o">=</span><span class="n">ax2</span><span class="o">.</span><span class="n">transData</span><span class="p">,</span>
+                                <span class="n">xyB</span><span class="o">=</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">),</span> <span class="n">coordsB</span><span class="o">=</span><span class="n">ax1</span><span class="o">.</span><span class="n">transData</span><span class="p">)</span>
+            <span class="n">con</span><span class="o">.</span><span class="n">set_color</span><span class="p">(</span><span class="n">trace_wedge_color</span><span class="p">)</span>
+            <span class="n">con</span><span class="o">.</span><span class="n">set_linewidth</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+            <span class="n">ax2</span><span class="o">.</span><span class="n">add_artist</span><span class="p">(</span><span class="n">con</span><span class="p">)</span>
+
+            <span class="c1"># draw bottom connecting line</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">r</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span> <span class="o">*</span> <span class="n">theta1</span><span class="p">)</span> <span class="o">+</span> <span class="n">center</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="n">r</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span> <span class="o">*</span> <span class="n">theta1</span><span class="p">)</span> <span class="o">+</span> <span class="n">center</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">con</span> <span class="o">=</span> <span class="n">ConnectionPatch</span><span class="p">(</span><span class="n">xyA</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="n">width</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">bottom</span><span class="p">),</span> <span class="n">coordsA</span><span class="o">=</span><span class="n">ax2</span><span class="o">.</span><span class="n">transData</span><span class="p">,</span>
+                                <span class="n">xyB</span><span class="o">=</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">),</span> <span class="n">coordsB</span><span class="o">=</span><span class="n">ax1</span><span class="o">.</span><span class="n">transData</span><span class="p">)</span>
+            <span class="n">con</span><span class="o">.</span><span class="n">set_color</span><span class="p">(</span><span class="n">trace_wedge_color</span><span class="p">)</span>
+            <span class="n">ax2</span><span class="o">.</span><span class="n">add_artist</span><span class="p">(</span><span class="n">con</span><span class="p">)</span>
+            <span class="n">con</span><span class="o">.</span><span class="n">set_linewidth</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">fig</span></div></div>
 
 
 <div class="viewcode-block" id="ScreeningPair"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.ScreeningPair">[docs]</a><span class="k">class</span> <span class="nc">ScreeningPair</span><span class="p">:</span>

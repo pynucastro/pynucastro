@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Nuclear Statistical Equilibrium &mdash; pynucastro 1.7.0.post18+gdde6850 documentation</title>
+  <title>Nuclear Statistical Equilibrium &mdash; pynucastro 1.7.0.post19+g8345a0f documentation</title>
       <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -423,6 +423,7 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">comp</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">get_comp_NSE</span><span class="p">(</span><span class="mf">3e8</span><span class="p">,</span><span class="mf">3e9</span><span class="p">,</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">comp</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">comp</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -430,9 +431,29 @@ div.rendered_html tbody tr:hover {
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/home/bb/Repo/pynucastro/pynucastro/networks/rate_collection.py:725: RuntimeWarning: overflow encountered in exp
+  * np.exp((nuc.Z * u[0] + nuc.N * u[1] - u_c + nuc.nucbind * nuc.A) / k / T / ErgToMeV)
+/home/bb/Repo/pynucastro/pynucastro/networks/rate_collection.py:128: RuntimeWarning: invalid value encountered in multiply
+  electron_frac = np.sum(zvec*xvec/avec)/np.sum(xvec)
+/home/bb/python-venv/nucastro/lib/python3.10/site-packages/scipy/optimize/_minpack_py.py:175: RuntimeWarning: The iteration is not making good progress, as measured by the
+  improvement from the last ten iterations.
+  warnings.warn(msg, RuntimeWarning)
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/NSE-example_5_1.png" src="_images/NSE-example_5_1.png" />
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-After fine-tuning the initial guess, the actual guess that found the solution was [ -3.  -14.5]
   X(n) : 7.242338460543762e-20
   X(p) : 1.7222715732629761e-06
   X(he3) : 1.0266022952564814e-21
@@ -495,20 +516,6 @@ After fine-tuning the initial guess, the actual guess that found the solution wa
   X(ni70) : 4.371207531800234e-101
   X(cu57) : 2.468237566543864e-07
 
-</pre></div></div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-/home/zhi/Github/pynucastro/pynucastro/networks/rate_collection.py:613: RuntimeWarning: overflow encountered in exp
-  * np.exp((nuc.Z * u[0] + nuc.N * u[1] - u_c + nuc.nucbind * nuc.A) / k / T / ErgToMeV)
-/home/zhi/Github/pynucastro/pynucastro/networks/rate_collection.py:127: RuntimeWarning: invalid value encountered in multiply
-  electron_frac = np.sum(zvec*xvec/avec)/np.sum(xvec)
-/usr/lib64/python3.10/site-packages/scipy/optimize/_minpack_py.py:175: RuntimeWarning: The iteration is not making good progress, as measured by the
-  improvement from the last ten iterations.
-  warnings.warn(msg, RuntimeWarning)
 </pre></div></div>
 </div>
 <p>Here we show mass fraction as function of electron fraction and in comparison to Figure 1 and 3 in paper: <a class="reference external" href="https://www.sciencedirect.com/science/article/abs/pii/S0092640X0800051X">https://www.sciencedirect.com/science/article/abs/pii/S0092640X0800051X</a>.</p>
@@ -589,11 +596,18 @@ Text(0.5, 1.0, &#39;$\\rho = 1e7$ and $T=9e9$&#39;)
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-/home/zhi/Github/pynucastro/pynucastro/networks/rate_collection.py:612: RuntimeWarning: overflow encountered in double_scalars
+/home/bb/python-venv/nucastro/lib/python3.10/site-packages/scipy/optimize/_minpack_py.py:175: RuntimeWarning: The iteration is not making good progress, as measured by the
+  improvement from the last ten iterations.
+  warnings.warn(msg, RuntimeWarning)
+/home/bb/Repo/pynucastro/pynucastro/networks/rate_collection.py:724: RuntimeWarning: overflow encountered in double_scalars
   comp_NSE.X[nuc] = m_u * nuc.A_nuc * nuc.partition_function(T) / rho * (2.0 * np.pi * m_u * nuc.A_nuc * k * T / h**2)**(3. / 2.) \
-/home/zhi/Github/pynucastro/pynucastro/networks/rate_collection.py:127: RuntimeWarning: invalid value encountered in double_scalars
+/home/bb/Repo/pynucastro/pynucastro/networks/rate_collection.py:128: RuntimeWarning: invalid value encountered in double_scalars
   electron_frac = np.sum(zvec*xvec/avec)/np.sum(xvec)
-/home/zhi/Github/pynucastro/pynucastro/networks/rate_collection.py:127: RuntimeWarning: overflow encountered in multiply
+/home/bb/Repo/pynucastro/pynucastro/networks/rate_collection.py:725: RuntimeWarning: overflow encountered in exp
+  * np.exp((nuc.Z * u[0] + nuc.N * u[1] - u_c + nuc.nucbind * nuc.A) / k / T / ErgToMeV)
+/home/bb/Repo/pynucastro/pynucastro/networks/rate_collection.py:128: RuntimeWarning: overflow encountered in multiply
+  electron_frac = np.sum(zvec*xvec/avec)/np.sum(xvec)
+/home/bb/Repo/pynucastro/pynucastro/networks/rate_collection.py:128: RuntimeWarning: invalid value encountered in multiply
   electron_frac = np.sum(zvec*xvec/avec)/np.sum(xvec)
 </pre></div></div>
 </div>
