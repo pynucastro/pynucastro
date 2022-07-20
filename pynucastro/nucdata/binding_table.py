@@ -5,7 +5,7 @@ Reads tabular binding energy/nucleon data file and supplies table data.
 # Common Imports
 import os
 
-from pynucastro.nucdata import BindingNuclide
+from pynucastro.nucdata.binding_nuclide import BindingNuclide
 
 
 class BindingTable:

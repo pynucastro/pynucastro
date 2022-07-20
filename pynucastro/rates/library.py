@@ -3,8 +3,7 @@ import io
 import collections
 
 from pynucastro.nucdata import Nucleus, UnsupportedNucleus
-from pynucastro.rates import Rate, _find_rate_file
-from pynucastro.rates.rate import DerivedRate
+from pynucastro.rates.rate import DerivedRate, Rate, _find_rate_file
 
 
 def list_known_rates():

@@ -17,7 +17,6 @@ disable = [
   "invalid-name",
   "consider-using-f-string",
   "consider-using-with",
-  "cyclic-import",
   "missing-class-docstring",
   "missing-function-docstring",
   "missing-module-docstring",
