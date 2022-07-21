@@ -42,8 +42,9 @@ void ener_gener_rate(T const& dydt, Real& enuc)
 }
 
 
+template <int do_T_derivatives, typename T>
 AMREX_GPU_HOST_DEVICE AMREX_INLINE
-void evaluate_rates(const burn_t& state, rate_eval_t& rate_eval) {
+void evaluate_rates(const burn_t& state, T& rate_eval) {
 
 
     // create molar fractions
@@ -62,7 +63,7 @@ void evaluate_rates(const burn_t& state, rate_eval_t& rate_eval) {
 
     tf_t tfactors = evaluate_tfactors(state.T);
 
-    fill_reaclib_rates(tfactors, rate_eval);
+    fill_reaclib_rates<do_T_derivatives, T>(tfactors, rate_eval);
 
 
 
@@ -80,24 +81,30 @@ void evaluate_rates(const burn_t& state, rate_eval_t& rate_eval) {
         static_assert(scn_fac.z1 == 6.0_rt);
 
 
-        actual_screen(pstate, scn_fac, scor, dscor_dt);
+        actual_screen<do_T_derivatives>(pstate, scn_fac, scor, dscor_dt);
     }
 
 
     ratraw = rate_eval.screened_rates(k_c12_c12__he4_ne20);
-    dratraw_dT = rate_eval.dscreened_rates_dT(k_c12_c12__he4_ne20);
     rate_eval.screened_rates(k_c12_c12__he4_ne20) *= scor;
-    rate_eval.dscreened_rates_dT(k_c12_c12__he4_ne20) = ratraw * dscor_dt + dratraw_dT * scor;
+    if constexpr (std::is_same<T, rate_derivs_t>::value) {
+        dratraw_dT = rate_eval.dscreened_rates_dT(k_c12_c12__he4_ne20);
+        rate_eval.dscreened_rates_dT(k_c12_c12__he4_ne20) = ratraw * dscor_dt + dratraw_dT * scor;
+    }
 
     ratraw = rate_eval.screened_rates(k_c12_c12__n_mg23);
-    dratraw_dT = rate_eval.dscreened_rates_dT(k_c12_c12__n_mg23);
     rate_eval.screened_rates(k_c12_c12__n_mg23) *= scor;
-    rate_eval.dscreened_rates_dT(k_c12_c12__n_mg23) = ratraw * dscor_dt + dratraw_dT * scor;
+    if constexpr (std::is_same<T, rate_derivs_t>::value) {
+        dratraw_dT = rate_eval.dscreened_rates_dT(k_c12_c12__n_mg23);
+        rate_eval.dscreened_rates_dT(k_c12_c12__n_mg23) = ratraw * dscor_dt + dratraw_dT * scor;
+    }
 
     ratraw = rate_eval.screened_rates(k_c12_c12__p_na23);
-    dratraw_dT = rate_eval.dscreened_rates_dT(k_c12_c12__p_na23);
     rate_eval.screened_rates(k_c12_c12__p_na23) *= scor;
-    rate_eval.dscreened_rates_dT(k_c12_c12__p_na23) = ratraw * dscor_dt + dratraw_dT * scor;
+    if constexpr (std::is_same<T, rate_derivs_t>::value) {
+        dratraw_dT = rate_eval.dscreened_rates_dT(k_c12_c12__p_na23);
+        rate_eval.dscreened_rates_dT(k_c12_c12__p_na23) = ratraw * dscor_dt + dratraw_dT * scor;
+    }
 
 
     {
@@ -107,14 +114,16 @@ void evaluate_rates(const burn_t& state, rate_eval_t& rate_eval) {
         static_assert(scn_fac.z1 == 2.0_rt);
 
 
-        actual_screen(pstate, scn_fac, scor, dscor_dt);
+        actual_screen<do_T_derivatives>(pstate, scn_fac, scor, dscor_dt);
     }
 
 
     ratraw = rate_eval.screened_rates(k_he4_c12__o16);
-    dratraw_dT = rate_eval.dscreened_rates_dT(k_he4_c12__o16);
     rate_eval.screened_rates(k_he4_c12__o16) *= scor;
-    rate_eval.dscreened_rates_dT(k_he4_c12__o16) = ratraw * dscor_dt + dratraw_dT * scor;
+    if constexpr (std::is_same<T, rate_derivs_t>::value) {
+        dratraw_dT = rate_eval.dscreened_rates_dT(k_he4_c12__o16);
+        rate_eval.dscreened_rates_dT(k_he4_c12__o16) = ratraw * dscor_dt + dratraw_dT * scor;
+    }
 
 
     // Calculate tabular rates
@@ -124,13 +133,17 @@ void evaluate_rates(const burn_t& state, rate_eval_t& rate_eval) {
     tabular_evaluate(j_na23_ne23_meta, j_na23_ne23_rhoy, j_na23_ne23_temp, j_na23_ne23_data,
                      rhoy, state.T, rate, drate_dt, edot_nu);
     rate_eval.screened_rates(k_na23__ne23) = rate;
-    rate_eval.dscreened_rates_dT(k_na23__ne23) = drate_dt;
+    if constexpr (std::is_same<T, rate_derivs_t>::value) {
+        rate_eval.dscreened_rates_dT(k_na23__ne23) = drate_dt;
+    }
     rate_eval.add_energy_rate(k_na23__ne23) = edot_nu;
 
     tabular_evaluate(j_ne23_na23_meta, j_ne23_na23_rhoy, j_ne23_na23_temp, j_ne23_na23_data,
                      rhoy, state.T, rate, drate_dt, edot_nu);
     rate_eval.screened_rates(k_ne23__na23) = rate;
-    rate_eval.dscreened_rates_dT(k_ne23__na23) = drate_dt;
+    if constexpr (std::is_same<T, rate_derivs_t>::value) {
+        rate_eval.dscreened_rates_dT(k_ne23__na23) = drate_dt;
+    }
     rate_eval.add_energy_rate(k_ne23__na23) = edot_nu;
 
 
@@ -197,9 +210,10 @@ void actual_rhs (burn_t& state, Array1D<Real, 1, neqs>& ydot)
 
     // build the rates
 
-    rate_eval_t rate_eval;
+    rate_t rate_eval;
 
-    evaluate_rates(state, rate_eval);
+    constexpr int do_T_derivatives = 0;
+    evaluate_rates<do_T_derivatives, rate_t>(state, rate_eval);
 
     rhs_nuc(state, ydot, Y, rate_eval.screened_rates);
 
@@ -305,9 +319,10 @@ void actual_jac(const burn_t& state, MatrixType& jac)
 
     jac.zero();
 
-    rate_eval_t rate_eval;
+    rate_derivs_t rate_eval;
 
-    evaluate_rates(state, rate_eval);
+    constexpr int do_T_derivatives = 1;
+    evaluate_rates<do_T_derivatives, rate_derivs_t>(state, rate_eval);
 
     // Species Jacobian elements with respect to other species
 
