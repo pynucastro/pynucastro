@@ -12,8 +12,8 @@ import re
 from abc import ABC, abstractmethod
 
 import sympy
-from pynucastro.networks import RateCollection
-from pynucastro.networks import SympyRates
+from pynucastro.networks.rate_collection import RateCollection
+from pynucastro.networks.sympy_network_support import SympyRates
 
 
 class BaseCxxNetwork(ABC, RateCollection):

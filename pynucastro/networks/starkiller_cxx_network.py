@@ -6,7 +6,7 @@ codes"""
 import glob
 import os
 
-from pynucastro.networks import BaseCxxNetwork
+from pynucastro.networks.base_cxx_network import BaseCxxNetwork
 
 
 class StarKillerCxxNetwork(BaseCxxNetwork):

@@ -18,6 +18,7 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 from matplotlib.ticker import MaxNLocator
 from matplotlib.colors import SymLogNorm
 from matplotlib.scale import SymmetricalLogTransform
+from matplotlib.patches import ConnectionPatch
 import networkx as nx
 from scipy import constants
 from scipy.optimize import fsolve
@@ -130,6 +131,116 @@ class Composition:
         for k in self.X:
             ostr += f"  X({k}) : {self.X[k]}\n"
         return ostr
+
+    def plot(self, trace_threshold=0.1, hard_limit=None, size=(9, 5)):
+        """ Make a pie chart of Composition. group trace nuceli together and explode into bar chart
+
+        parameters
+        ----------
+
+        trace_threshold : the threshold to consider a component to be trace.
+
+        hard_limit : hard limit for nuclei to be labeled in the plot. Default is None which will set the limit to 5% of total trace abundance
+
+        size: tuple giving width x height of the plot in inches
+
+        """
+
+        # find trace nuclei
+        trace_keys = []
+        trace_tot = 0.
+        main_keys = []
+        for k in self.X:
+            # if below threshold, count as trace element
+            if self.X[k] < trace_threshold:
+                trace_keys.append(k)
+                trace_tot += self.X[k]
+            else:
+                main_keys.append(k)
+
+        # check if any trace nuclei
+        if not trace_keys:
+            # just do pie chart without including trace
+
+            fig, ax = plt.subplots(1, 1, figsize=size)
+
+            ax.pie(self.X.values(), labels=self.X.keys(), autopct=lambda p: f"{p/100:0.3f}")
+
+        else:
+            # find trace nuclei which contribute little to trace proportion
+            if hard_limit is None:
+                # make hardlimit proportional to trace abundance
+                hard_limit = 0.05*trace_tot
+
+            limited_trace_keys = []
+            other_trace_tot = 0.
+            for k in trace_keys:
+                if self.X[k] < hard_limit:
+                    other_trace_tot += self.X[k]
+                else:
+                    limited_trace_keys.append(k)
+
+            # make figure and assign axis objects
+            fig, (ax1, ax2) = plt.subplots(1, 2, figsize=size)
+            fig.subplots_adjust(wspace=0)
+
+            # pie chart parameters
+            main_values = [trace_tot] + [self.X[k] for k in main_keys]
+            main_labels = ['trace'] + main_keys
+            explode = [0.2] + [0. for i in range(len(main_keys))]
+
+            # rotate so that first wedge is split by the x-axis
+            angle = -180 * main_values[0]
+            wedges, *_ = ax1.pie(main_values, autopct=lambda p: f"{p/100:0.3f}", startangle=angle,
+                                labels=main_labels, explode=explode)
+
+            # bar chart parameters
+            trace_values = [self.X[k] for k in limited_trace_keys] + [other_trace_tot]
+            trace_labels = [k.short_spec_name for k in limited_trace_keys] + ['other']
+            bottom = 1
+            width = 0.1
+
+            # Adding from the top matches the legend.
+            alpha_list = np.linspace(0.1, 1, len(trace_values))
+            trace_wedge_color = wedges[0].get_facecolor()
+
+            for j, (height, label) in enumerate([*zip(trace_values, trace_labels)]):
+                bottom -= height
+                bc = ax2.bar(0, height, width, bottom=bottom, color=trace_wedge_color, label=label,
+                            alpha=alpha_list[j])
+
+                ax2.bar_label(bc, labels=[f"{height:.2e}"], label_type='center')
+                ax2.bar_label(bc, labels=[f"{label:>30}"], label_type='center')
+
+            ax2.set_title('Composition of Trace Nuclei')
+            ax2.axis('off')
+            ax2.set_xlim(- 2.5 * width, 2.5 * width)
+
+            # use ConnectionPatch to draw lines between the two plots
+            theta1, theta2 = wedges[0].theta1, wedges[0].theta2
+            center, r = wedges[0].center, wedges[0].r
+            bar_height = sum(trace_values)
+
+            # draw top connecting line
+            x = r * np.cos(np.pi / 180 * theta2) + center[0]
+            y = r * np.sin(np.pi / 180 * theta2) + center[1]
+            con = ConnectionPatch(xyA=(-width / 2, bar_height+bottom), coordsA=ax2.transData,
+                                xyB=(x, y), coordsB=ax1.transData)
+            con.set_color(trace_wedge_color)
+            con.set_linewidth(4)
+            ax2.add_artist(con)
+
+            # draw bottom connecting line
+            x = r * np.cos(np.pi / 180 * theta1) + center[0]
+            y = r * np.sin(np.pi / 180 * theta1) + center[1]
+            con = ConnectionPatch(xyA=(-width / 2, bottom), coordsA=ax2.transData,
+                                xyB=(x, y), coordsB=ax1.transData)
+            con.set_color(trace_wedge_color)
+            ax2.add_artist(con)
+            con.set_linewidth(4)
+
+        plt.show()
+        return fig
 
 
 class ScreeningPair:

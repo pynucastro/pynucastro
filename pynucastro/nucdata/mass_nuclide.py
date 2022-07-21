@@ -1,4 +1,4 @@
-from pynucastro.nucdata import PeriodicTable
+from pynucastro.nucdata.elements import PeriodicTable
 import os
 
 _filename = 'mass_excess2020.txt'
