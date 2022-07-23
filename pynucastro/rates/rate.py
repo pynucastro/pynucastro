@@ -1375,7 +1375,7 @@ class DerivedRate(Rate):
 
         if self.use_pf:
 
-            fstring += f"\n"
+            fstring += "\n"
             for nucr in self.rate.reactants:
                 fstring += f"    {nucr}_temp_array = np.array({list(nucr.partition_function.temperature/1.0e9)})\n"
                 fstring += f"    {nucr}_pf_array = np.array({list(nucr.partition_function.partition_function)})\n"
@@ -1398,7 +1398,6 @@ class DerivedRate(Rate):
                     break
                 fstring += f"{nucr}_pf*"
 
-
             fstring += "\n"
             fstring += "    "
             fstring += "z_p = "
@@ -1409,7 +1408,7 @@ class DerivedRate(Rate):
                 fstring += f"{nucp}_pf*"
 
             fstring += "\n"
-            fstring += f"    rate *= z_r/z_p\n"
+            fstring += "    rate *= z_r/z_p\n"
 
         fstring += "\n"
         fstring += "    return rate\n\n"
