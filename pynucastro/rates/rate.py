@@ -1355,6 +1355,66 @@ class DerivedRate(Rate):
             return r*z_r/z_p
         return r
 
+    def function_string_py(self):
+        """
+        Return a string containing python function that computes the
+        rate
+        """
+
+        fstring = ""
+        fstring += "@numba.njit()\n"
+        fstring += f"def {self.fname}(tf):\n"
+        fstring += f"    # {self.rid}\n"
+        fstring += "    rate = 0.0\n\n"
+
+        for s in self.sets:
+            fstring += f"    # {s.labelprops[0:5]}\n"
+            set_string = s.set_string_py(prefix="rate", plus_equal=True)
+            for t in set_string.split("\n"):
+                fstring += "    " + t + "\n"
+
+        if self.use_pf:
+
+            fstring += f"\n"
+            for nucr in self.rate.reactants:
+                fstring += f"    {nucr}_temp_array = np.array({list(nucr.partition_function.temperature/1.0e9)})\n"
+                fstring += f"    {nucr}_pf_array = np.array({list(nucr.partition_function.partition_function)})\n"
+                fstring += f"    {nucr}_pf_exponent = np.interp(tf.T9, xp={nucr}_temp_array, fp=np.log10({nucr}_pf_array))\n"
+                fstring += f"    {nucr}_pf = 10.0**{nucr}_pf_exponent\n"
+                fstring += "\n"
+            for nucp in self.rate.products:
+                fstring += f"    {nucp}_temp_array = np.array({list(nucp.partition_function.temperature/1.0e9)})\n"
+                fstring += f"    {nucp}_pf_array = np.array({list(nucp.partition_function.partition_function)})\n"
+                fstring += f"    {nucp}_pf_exponent = np.interp(tf.T9, xp={nucp}_temp_array, fp=np.log10({nucp}_pf_array))\n"
+                fstring += f"    {nucp}_pf = 10.0**{nucp}_pf_exponent\n"
+                fstring += "\n"
+
+            fstring += "\n"
+            fstring += "    "
+            fstring += "z_r = "
+            for index, nucr in enumerate(self.rate.reactants):
+                if index == len(self.rate.reactants)-1:
+                    fstring += f"{nucr}_pf"
+                    break
+                fstring += f"{nucr}_pf*"
+
+
+            fstring += "\n"
+            fstring += "    "
+            fstring += "z_p = "
+            for index, nucp in enumerate(self.rate.products):
+                if index == len(self.rate.products)-1:
+                    fstring += f"{nucp}_pf"
+                    break
+                fstring += f"{nucp}_pf*"
+
+            fstring += "\n"
+            fstring += f"    rate *= z_r/z_p\n"
+
+        fstring += "\n"
+        fstring += "    return rate\n\n"
+        return fstring
+
 
 class RatePair:
     """the forward and reverse rates for a single reaction sequence.
