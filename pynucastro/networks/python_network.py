@@ -3,7 +3,7 @@ source"""
 
 import sys
 
-from pynucastro.networks import RateCollection
+from pynucastro.networks.rate_collection import RateCollection
 from pynucastro.rates.rate import ApproximateRate
 
 
