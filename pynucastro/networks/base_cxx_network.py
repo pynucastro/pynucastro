@@ -12,8 +12,8 @@ import re
 from abc import ABC, abstractmethod
 
 import sympy
-from pynucastro.networks import RateCollection
-from pynucastro.networks import SympyRates
+from pynucastro.networks.rate_collection import RateCollection
+from pynucastro.networks.sympy_network_support import SympyRates
 
 
 class BaseCxxNetwork(ABC, RateCollection):
@@ -317,10 +317,9 @@ class BaseCxxNetwork(ABC, RateCollection):
             of.write(f'{idnt}{r.table_index_name}_meta.ntemp = {r.table_temp_lines};\n')
             of.write(f'{idnt}{r.table_index_name}_meta.nrhoy = {r.table_rhoy_lines};\n')
             of.write(f'{idnt}{r.table_index_name}_meta.nvars = {r.table_num_vars};\n')
-            of.write(f'{idnt}{r.table_index_name}_meta.nheader = {r.table_header_lines};\n')
-            of.write(f'{idnt}{r.table_index_name}_meta.file = "{r.table_file}";\n\n')
+            of.write(f'{idnt}{r.table_index_name}_meta.nheader = {r.table_header_lines};\n\n')
 
-            of.write(f'{idnt}init_tab_info({r.table_index_name}_meta, {r.table_index_name}_rhoy, {r.table_index_name}_temp, {r.table_index_name}_data);\n\n')
+            of.write(f'{idnt}init_tab_info({r.table_index_name}_meta, "{r.table_file}", {r.table_index_name}_rhoy, {r.table_index_name}_temp, {r.table_index_name}_data);\n\n')
 
             of.write('\n')
 

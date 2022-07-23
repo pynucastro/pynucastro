@@ -6,8 +6,12 @@ import os
 import re
 
 from scipy.constants import physical_constants
-from pynucastro.nucdata import PeriodicTable, PartitionFunctionCollection, BindingTable, SpinTable
+
+from pynucastro.nucdata.binding_table import BindingTable
+from pynucastro.nucdata.elements import PeriodicTable
 from pynucastro.nucdata.mass_nuclide import MassTable
+from pynucastro.nucdata.partition_function import PartitionFunctionCollection
+from pynucastro.nucdata.spin_nuclide import SpinTable
 
 _pynucastro_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 _pynucastro_rates_dir = os.path.join(_pynucastro_dir, 'library')
