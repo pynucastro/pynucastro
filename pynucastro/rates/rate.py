@@ -1142,7 +1142,7 @@ class Rate:
 class TabularRate(Rate):
     """A tabular rate."""
     def __init__(self, rfile=None, rfile_path=None,
-                 reactants=None, products=None):
+                 reactants=None, products=None, Q=None):
         """ rfile can be either a string specifying the path to a rate file or
         an io.StringIO object from which to read rate information. """
 
@@ -1189,15 +1189,12 @@ class TabularRate(Rate):
         if f:
             self._read_from_file(f)
             f.close()
-        else:
-            self._set_label_properties()
 
         self._set_rhs_properties()
         self._set_screening()
         self._set_print_representation()
 
-        if self.tabular:
-            self.get_tabular_rate()
+        self.get_tabular_rate()
 
     def __eq__(self, other):
         """ Determine whether two Rate objects are equal.
@@ -1206,7 +1203,7 @@ class TabularRate(Rate):
         return self.reactants == other.reactants and self.products == other.products
 
     def __add__(self, other):
-        Raise NotImplementedError("addition not defined for tabular rates")
+        raise NotImplementedError("addition not defined for tabular rates")
 
     def _read_from_file(self, f):
         """ given a file object, read rate data from the file. """
@@ -1242,7 +1239,6 @@ class TabularRate(Rate):
         self.table_num_vars = 6  # Hard-coded number of variables in tables for now.
         self.table_index_name = f'j_{self.reactants[0]}_{self.products[0]}'
         self.labelprops = 'tabular'
-        self._set_label_properties()
 
     def _set_rhs_properties(self):
         """ compute statistical prefactor and density exponent from the reactants. """
@@ -1252,6 +1248,11 @@ class TabularRate(Rate):
             self.inv_prefactor = self.inv_prefactor * np.math.factorial(self.reactants.count(r))
         self.prefactor = self.prefactor/float(self.inv_prefactor)
         self.dens_exp = len(self.reactants)-1
+
+    def _set_screening(self):
+        """ tabular rates are not currently screened (they are e-capture or beta-decay)"""
+        self.ion_screen = []
+        self.symmetric_screen = []
 
     def _set_print_representation(self):
         """ compose the string representations of this Rate. """
@@ -1274,77 +1275,16 @@ class TabularRate(Rate):
         # figure out if there are any non-nuclei present
         # for the moment, we just handle strong rates
 
-        if not self.weak and not self.tabular:
-            # there should be the same number of protons on each side and
-            # the same number of neutrons on each side
-            assert sum(n.Z for n in self.reactants) == sum(n.Z for n in self.products)
-            assert sum(n.A for n in self.reactants) == sum(n.A for n in self.products)
+        # these are either electron capture or beta- decay
 
-            if len(self.products) == 1:
-                self.rhs_other.append("gamma")
-
+        if sum(n.Z for n in self.reactants) == sum(n.Z for n in self.products) + 1:
+            # electron capture
+            self.lhs_other.append("e-")
+            self.rhs_other.append("nu")
         else:
-
-            if self.tabular:
-
-                # these are either electron capture or beta- decay
-
-                if sum(n.Z for n in self.reactants) == sum(n.Z for n in self.products) + 1:
-                    # electron capture
-                    self.lhs_other.append("e-")
-                    self.rhs_other.append("nu")
-                else:
-                    # beta- decay
-                    self.rhs_other.append("e-")
-                    self.rhs_other.append("nubar")
-
-            elif self.weak_type == "electron_capture":
-
-                # we assume that all the tabular rates are electron capture for now
-
-                # we expect an electron on the left -- let's make sure
-                # the charge on the left should be +1 the charge on the right
-                assert sum(n.Z for n in self.reactants) == sum(n.Z for n in self.products) + 1
-
-                self.lhs_other.append("e-")
-                self.rhs_other.append("nu")
-
-            elif "_pos_" in self.weak_type:
-
-                # we expect a positron on the right -- let's make sure
-                try:
-                    assert sum(n.Z for n in self.reactants) == sum(n.Z for n in self.products) + 1
-                except AssertionError:
-                    print(self.reactants)
-                    print(self.products)
-                    print(self.label)
-                    print(self.weak_type)
-                    raise
-
-                self.rhs_other.append("e+")
-                self.rhs_other.append("nu")
-
-            elif "_neg_" in self.weak_type:
-
-                # we expect an electron on the right -- let's make sure
-                assert sum(n.Z for n in self.reactants) + 1 == sum(n.Z for n in self.products)
-
-                self.rhs_other.append("e-")
-                self.rhs_other.append("nubar")
-
-            else:
-
-                # we need to figure out what the rate is.  We'll assume that it is
-                # not an electron capture
-
-                if sum(n.Z for n in self.reactants) == sum(n.Z for n in self.products) + 1:
-                    self.rhs_other.append("e+")
-                    self.rhs_other.append("nu")
-
-                elif sum(n.Z for n in self.reactants) + 1 == sum(n.Z for n in self.products):
-
-                    self.rhs_other.append("e-")
-                    self.rhs_other.append("nubar")
+            # beta- decay
+            self.rhs_other.append("e-")
+            self.rhs_other.append("nubar")
 
         for n, r in enumerate(treactants):
             self.string += f"{r.c()}"
@@ -1401,14 +1341,6 @@ class TabularRate(Rate):
             reactants_str = '_'.join([repr(nuc) for nuc in self.reactants])
             products_str = '_'.join([repr(nuc) for nuc in self.products])
             self.fname = f'{reactants_str}__{products_str}'
-            if self.weak:
-                self.fname += f'__weak__{self.weak_type}'
-            if self.modified:
-                self.fname += "__modified"
-            if self.approx:
-                self.fname += "__approx"
-            if self.derived:
-                self.fname += "__derived"
 
     def get_rate_id(self):
         """ Get an identifying string for this rate.
