@@ -6,6 +6,7 @@ import re
 import sympy
 from pynucastro.rates import TabularRate
 
+
 class SympyRates:
 
     def __init__(self):
