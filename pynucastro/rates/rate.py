@@ -1305,18 +1305,7 @@ class DerivedRate(Rate):
         for ssets in self.rate.sets:
             a = ssets.a
             prefactor = 0.0
-
-            if len(self.rate.reactants) == 1:
-                prefactor += np.log(N_a)
-
-            if len(self.rate.products) == 1:
-                prefactor += -np.log(N_a)
-
-            if len(self.rate.reactants) == 3:
-                prefactor += -np.log(N_a)
-
-            if len(self.rate.products) == 3:
-                prefactor += np.log(N_a)
+            prefactor += -np.log(N_a) * (len(self.rate.reactants) - len(self.rate.products))
 
             if not self.use_A_nuc:
                 for nucr in self.rate.reactants:
