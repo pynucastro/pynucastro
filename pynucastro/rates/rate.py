@@ -1306,8 +1306,17 @@ class DerivedRate(Rate):
             a = ssets.a
             prefactor = 0.0
 
+            if len(self.rate.reactants) == 1:
+                prefactor += np.log(N_a)
+
             if len(self.rate.products) == 1:
-                prefactor = -np.log(N_a)
+                prefactor += -np.log(N_a)
+
+            if len(self.rate.reactants) == 3:
+                prefactor += -np.log(N_a)
+
+            if len(self.rate.products) == 3:
+                prefactor += np.log(N_a)
 
             if not self.use_A_nuc:
                 for nucr in self.rate.reactants:
@@ -1319,6 +1328,8 @@ class DerivedRate(Rate):
                     prefactor += np.log(nucr.spin_states) + 1.5*np.log(nucr.A_nuc)
                 for nucp in self.rate.products:
                     prefactor += -np.log(nucp.spin_states) - 1.5*np.log(nucp.A_nuc)
+
+            prefactor += np.log(self.counter_factors()[1]) - np.log(self.counter_factors()[0])
 
             if len(self.rate.reactants) == len(self.rate.products):
                 prefactor += 0.0
@@ -1414,6 +1425,33 @@ class DerivedRate(Rate):
         fstring += "    return rate\n\n"
         return fstring
 
+    def nuclei_counter(self):
+
+        nuc_counts = {}
+        nuc_list_raw = self.rate.reactants + self.rate.products
+        nuc_list = []
+
+        for nuc in nuc_list_raw:
+            nuc_list.append(str(nuc))
+
+        for nuc in nuc_list:
+            nuc_counts[str(nuc)] = nuc_list.count(str(nuc))
+
+        return nuc_counts
+
+    def counter_factors(self):
+
+        counts = self.nuclei_counter()
+
+        reactant_factor = 1.0
+        for nuc in set(self.rate.reactants):
+            reactant_factor *=  np.math.factorial(counts[str(nuc)])
+
+        product_factor = 1.0
+        for nuc in set(self.rate.products):
+            product_factor *=  np.math.factorial(counts[str(nuc)])
+
+        return (reactant_factor, product_factor)
 
 class RatePair:
     """the forward and reverse rates for a single reaction sequence.
