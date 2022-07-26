@@ -1445,13 +1445,14 @@ class DerivedRate(Rate):
 
         reactant_factor = 1.0
         for nuc in set(self.rate.reactants):
-            reactant_factor *=  np.math.factorial(counts[str(nuc)])
+            reactant_factor *= np.math.factorial(counts[str(nuc)])
 
         product_factor = 1.0
         for nuc in set(self.rate.products):
-            product_factor *=  np.math.factorial(counts[str(nuc)])
+            product_factor *= np.math.factorial(counts[str(nuc)])
 
         return (reactant_factor, product_factor)
+
 
 class RatePair:
     """the forward and reverse rates for a single reaction sequence.
