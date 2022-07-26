@@ -55,6 +55,16 @@ _pynucastro_rates_dir = os.path.join(_pynucastro_dir, 'library')
 _pynucastro_tabular_dir = os.path.join(_pynucastro_rates_dir, 'tabular')
 
 
+def load_rate(rfile=None, rfile_path=None):
+
+    try:
+        rate = TabularRate(rfile=rfile, rfile_path=rfile_path)
+    except AssertionError:
+        rate = Rate(rfile=rfile, rfile_path=rfile_path)
+
+    return rate
+
+
 def _find_rate_file(ratename):
     """locate the Reaclib or tabular rate or library file given its name.  Return
     None if the file cannot be located, otherwise return its path."""
@@ -1141,8 +1151,7 @@ class Rate:
 
 class TabularRate(Rate):
     """A tabular rate."""
-    def __init__(self, rfile=None, rfile_path=None,
-                 reactants=None, products=None, Q=None):
+    def __init__(self, rfile=None, rfile_path=None):
         """ rfile can be either a string specifying the path to a rate file or
         an io.StringIO object from which to read rate information. """
 
@@ -1155,20 +1164,13 @@ class TabularRate(Rate):
 
         self.fname = None
 
-        if reactants:
-            self.reactants = reactants
-        else:
-            self.reactants = []
-
-        if products:
-            self.products = products
-        else:
-            self.products = []
+        self.reactants = []
+        self.products = []
 
         self.label = "tabular"
         self.tabular = True
 
-        self.Q = Q
+        self.Q = None
 
         # some rates will have no nuclei particles (e.g. gamma) on the left or
         # right -- we'll try to infer those here
