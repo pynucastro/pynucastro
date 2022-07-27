@@ -3,9 +3,17 @@
         {
             "name": "the pynucastro development"
         },
+        {   "affiliation": "Department of Physics and Astronomy, Stony Brook University",
+            "name": "Boyd, Brendan",
+            "orcid": "0000-0002-5419-9751"
+        },
         {
             "affiliation": "The Ohio State University",
             "name": "Cao, Lyra"
+        },
+        {   "affiliation": "Department of Physics and Astronomy, Stony Brook University",
+            "name": "Chen, Zhi",
+            "orcid": "0000-0002-2839-107X"
         },
         {
             "affiliation": "Department of Astronomy, University of California, Berkeley",
