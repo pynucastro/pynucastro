@@ -60,7 +60,10 @@ def load_rate(rfile=None, rfile_path=None):
     try:
         rate = TabularRate(rfile=rfile, rfile_path=rfile_path)
     except AssertionError:
-        rate = Rate(rfile=rfile, rfile_path=rfile_path)
+        try:
+            rate = ReacLibRate(rfile=rfile, rfile_path=rfile_path)
+        except AssertionError:
+            raise
 
     return rate
 
@@ -280,6 +283,301 @@ class SingleSet:
 
 
 class Rate:
+    """The base reaction rate class.  Most rate types will subclass
+    this and extend to their particular format.
+
+    """
+    def __init__(self, reactants=None, products=None, Q=None, weak_type=""):
+        """ rfile can be either a string specifying the path to a rate file or
+        an io.StringIO object from which to read rate information. """
+
+        self.fname = None
+
+        if reactants:
+            self.reactants = reactants
+        else:
+            self.reactants = []
+
+        if products:
+            self.products = products
+        else:
+            self.products = []
+
+        self.label = "generic"
+
+        self.Q = Q
+
+        self.weak_type = weak_type
+
+        # some rates will have no nuclei particles (e.g. gamma) on the left or
+        # right -- we'll try to infer those here
+
+        self.lhs_other = []
+        self.rhs_other = []
+
+        self._set_rhs_properties()
+        self._set_screening()
+        self._set_print_representation()
+
+    def __repr__(self):
+        return self.string
+
+    def __hash__(self):
+        return hash(self.__repr__())
+
+    def __eq__(self, other):
+        """ Determine whether two Rate objects are equal.
+        They are equal if they contain identical reactants and products and
+        if they contain the same SingleSet sets and if their chapters are equal."""
+        x = True
+
+        x = x and (self.reactants == other.reactants)
+        x = x and (self.products == other.products)
+        return x
+
+    def __lt__(self, other):
+        """sort such that lightest reactants come first, and then look at products"""
+
+        # this sort will make two nuclei with the same A be in order of Z
+        # (assuming there are no nuclei with A > 999
+        # we want to compare based on the heaviest first, so we reverse
+
+        self_react_sorted = sorted(self.reactants, key=lambda x: 1000*x.A + x.Z, reverse=True)
+        other_react_sorted = sorted(other.reactants, key=lambda x: 1000*x.A + x.Z, reverse=True)
+
+        if self_react_sorted != other_react_sorted:
+            # reactants are different, so now we can check them
+            for srn, orn in zip(self_react_sorted, other_react_sorted):
+                if not srn == orn:
+                    return srn < orn
+        else:
+            # reactants are the same, so consider products
+            self_prod_sorted = sorted(self.products, key=lambda x: 1000*x.A + x.Z, reverse=True)
+            other_prod_sorted = sorted(other.products, key=lambda x: 1000*x.A + x.Z, reverse=True)
+
+            for spn, opn in zip(self_prod_sorted, other_prod_sorted):
+                if not spn == opn:
+                    return spn < opn
+
+        # if we made it here, then the rates are the same
+        return True
+
+    def _set_q(self):
+        """set the Q value of the reaction (in MeV)"""
+
+        # from the binding energy of the nuclei, Q = -B_reactants + B_products
+        # but note that nucbind is the binding energy *per* nucleon, so we need
+        # to multiply by the number of nucleons
+
+        self.Q = 0
+        for n in self.reactants:
+            self.Q += -n.A * n.nucbind
+        for n in self.products:
+            self.Q += n.A * n.nucbind
+
+    def _set_print_representation(self):
+
+        # string is output to the terminal, rid is used as a dict key,
+        # and pretty_string is latex
+
+        self.string = ""
+        self.rid = ""
+        self.pretty_string = r"$"
+
+        # put p, n, and alpha second
+        treactants = []
+        for n in self.reactants:
+            if n.raw not in ["p", "he4", "n"]:
+                treactants.insert(0, n)
+            else:
+                treactants.append(n)
+
+        # figure out if there are any non-nuclei present
+        # for the moment, we just handle strong rates
+
+        try:
+            # there should be the same number of protons on each side and
+            # the same number of neutrons on each side
+            assert sum(n.Z for n in self.reactants) == sum(n.Z for n in self.products)
+            assert sum(n.A for n in self.reactants) == sum(n.A for n in self.products)
+
+            if len(self.products) == 1:
+                self.rhs_other.append("gamma")
+
+        except AssertionError:
+
+            # this is a weak rate
+
+            if self.weak_type == "electron_capture":
+
+                # we assume that all the tabular rates are electron capture for now
+
+                # we expect an electron on the left -- let's make sure
+                # the charge on the left should be +1 the charge on the right
+                assert sum(n.Z for n in self.reactants) == sum(n.Z for n in self.products) + 1
+
+                self.lhs_other.append("e-")
+                self.rhs_other.append("nu")
+
+            elif "_pos_" in self.weak_type:
+
+                # we expect a positron on the right -- let's make sure
+                try:
+                    assert sum(n.Z for n in self.reactants) == sum(n.Z for n in self.products) + 1
+                except AssertionError:
+                    raise
+
+                self.rhs_other.append("e+")
+                self.rhs_other.append("nu")
+
+            elif "_neg_" in self.weak_type:
+
+                # we expect an electron on the right -- let's make sure
+                assert sum(n.Z for n in self.reactants) + 1 == sum(n.Z for n in self.products)
+
+                self.rhs_other.append("e-")
+                self.rhs_other.append("nubar")
+
+            else:
+
+                # we need to figure out what the rate is.  We'll assume that it is
+                # not an electron capture
+
+                if sum(n.Z for n in self.reactants) == sum(n.Z for n in self.products) + 1:
+                    self.rhs_other.append("e+")
+                    self.rhs_other.append("nu")
+
+                elif sum(n.Z for n in self.reactants) + 1 == sum(n.Z for n in self.products):
+
+                    self.rhs_other.append("e-")
+                    self.rhs_other.append("nubar")
+
+        for n, r in enumerate(treactants):
+            self.string += f"{r.c()}"
+            self.rid += f"{r}"
+            self.pretty_string += fr"{r.pretty}"
+            if not n == len(self.reactants)-1:
+                self.string += " + "
+                self.rid += " + "
+                self.pretty_string += r" + "
+
+        if self.lhs_other:
+            for o in self.lhs_other:
+                if o == "e-":
+                    self.string += " + e⁻"
+                    self.pretty_string += r" + \mathrm{e}^-"
+
+        self.string += " ⟶ "
+        self.rid += " --> "
+        self.pretty_string += r" \rightarrow "
+
+        for n, p in enumerate(self.products):
+            self.string += f"{p.c()}"
+            self.rid += f"{p}"
+            self.pretty_string += fr"{p.pretty}"
+            if not n == len(self.products)-1:
+                self.string += " + "
+                self.rid += " + "
+                self.pretty_string += r" + "
+
+        if self.rhs_other:
+            for o in self.rhs_other:
+                if o == "gamma":
+                    self.string += " + 𝛾"
+                    self.pretty_string += r"+ \gamma"
+                elif o == "nu":
+                    self.string += " + 𝜈"
+                    self.pretty_string += r"+ \nu_e"
+                elif o == "nubar":
+                    self.string += " + 𝜈"
+                    self.pretty_string += r"+ \bar{\nu}_e"
+                if o == "e-":
+                    self.string += " + e⁻"
+                    self.pretty_string += r" + \mathrm{e}^-"
+                if o == "e+":
+                    self.string += " + e⁺"
+                    self.pretty_string += r" + \mathrm{e}^+"
+
+        self.pretty_string += r"$"
+
+    def _set_rhs_properties(self):
+        """ compute statistical prefactor and density exponent from the reactants. """
+        self.prefactor = 1.0  # this is 1/2 for rates like a + a (double counting)
+        self.inv_prefactor = 1
+        for r in set(self.reactants):
+            self.inv_prefactor = self.inv_prefactor * np.math.factorial(self.reactants.count(r))
+        self.prefactor = self.prefactor/float(self.inv_prefactor)
+        self.dens_exp = len(self.reactants)-1
+        if self.weak_type == 'electron_capture':
+            self.dens_exp = self.dens_exp + 1
+
+    def _set_screening(self):
+        """ determine if this rate is eligible for screening and the nuclei to use. """
+        # Tells if this rate is eligible for screening
+        # using screenz.f90 provided by StarKiller Microphysics.
+        # If not eligible for screening, set to None
+        # If eligible for screening, then
+        # Rate.ion_screen is a 2-element (3 for 3-alpha) list of Nucleus objects for screening
+        self.ion_screen = []
+        nucz = [q for q in self.reactants if q.Z != 0]
+        if len(nucz) > 1:
+            nucz.sort(key=lambda x: x.Z)
+            self.ion_screen = []
+            self.ion_screen.append(nucz[0])
+            self.ion_screen.append(nucz[1])
+            if len(nucz) == 3:
+                self.ion_screen.append(nucz[2])
+
+        # if the rate is a reverse rate, via detailed balance, then we
+        # might actually want to compute the screening based on the
+        # reactants of the forward rate that was used in the detailed
+        # balance.  Rate.symmetric_screen is what should be used in
+        # the screening in this case
+        self.symmetric_screen = []
+        if self.reverse:
+            nucz = [q for q in self.products if q.Z != 0]
+            if len(nucz) > 1:
+                nucz.sort(key=lambda x: x.Z)
+                self.symmetric_screen = []
+                self.symmetric_screen.append(nucz[0])
+                self.symmetric_screen.append(nucz[1])
+                if len(nucz) == 3:
+                    self.symmetric_screen.append(nucz[2])
+        else:
+            self.symmetric_screen = self.ion_screen
+
+    def get_rate_id(self):
+        """ Get an identifying string for this rate."""
+        return f'{self.rid} <{self.label.strip()}>'
+
+    def heaviest(self):
+        """
+        Return the heaviest nuclide in this Rate.
+
+        If two nuclei are tied in mass number, return the one with the
+        lowest atomic number.
+        """
+        nuc = self.reactants[0]
+        for n in self.reactants + self.products:
+            if n.A > nuc.A or (n.A == nuc.A and n.Z < nuc.Z):
+                nuc = n
+        return nuc
+
+    def lightest(self):
+        """
+        Return the lightest nuclide in this Rate.
+
+        If two nuclei are tied in mass number, return the one with the
+        highest atomic number.
+        """
+        nuc = self.reactants[0]
+        for n in self.reactants + self.products:
+            if n.A < nuc.A or (n.A == nuc.A and n.Z > nuc.Z):
+                nuc = n
+        return nuc
+
+
+class ReacLibRate(Rate):
     """A single reaction rate.  Currently, this is a ReacLib rate, which
     can be composed of multiple sets, or a tabulated electron capture
     rate.
@@ -366,6 +664,27 @@ class Rate:
         self._set_screening()
         self._set_print_representation()
 
+    def _set_print_representation(self):
+        """ compose the string representations of this Rate. """
+
+        super()._set_print_representation()
+
+        if not self.fname:
+            # This is used to determine which rates to detect as the same reaction
+            # from multiple sources in a Library file, so it should not be unique
+            # to a given source, e.g. wc12, but only unique to the reaction.
+            reactants_str = '_'.join([repr(nuc) for nuc in self.reactants])
+            products_str = '_'.join([repr(nuc) for nuc in self.products])
+            self.fname = f'{reactants_str}__{products_str}'
+            if self.weak:
+                self.fname += f'__weak__{self.weak_type}'
+            if self.modified:
+                self.fname += "__modified"
+            if self.approx:
+                self.fname += "__approx"
+            if self.derived:
+                self.fname += "__derived"
+
     def modify_products(self, new_products):
         if not isinstance(new_products, (set, list, tuple)):
             new_products = [new_products]
@@ -385,12 +704,6 @@ class Rate:
         self._set_screening()
         self.fname = None    # reset so it will be updated
         self._set_print_representation()
-
-    def __repr__(self):
-        return self.string
-
-    def __hash__(self):
-        return hash(self.__repr__())
 
     def __eq__(self, other):
         """ Determine whether two Rate objects are equal.
@@ -413,33 +726,6 @@ class Rate:
 
         return x
 
-    def __lt__(self, other):
-        """sort such that lightest reactants come first, and then look at products"""
-
-        # this sort will make two nuclei with the same A be in order of Z
-        # (assuming there are no nuclei with A > 999
-        # we want to compare based on the heaviest first, so we reverse
-
-        self_react_sorted = sorted(self.reactants, key=lambda x: 1000*x.A + x.Z, reverse=True)
-        other_react_sorted = sorted(other.reactants, key=lambda x: 1000*x.A + x.Z, reverse=True)
-
-        if self_react_sorted != other_react_sorted:
-            # reactants are different, so now we can check them
-            for srn, orn in zip(self_react_sorted, other_react_sorted):
-                if not srn == orn:
-                    return srn < orn
-        else:
-            # reactants are the same, so consider products
-            self_prod_sorted = sorted(self.products, key=lambda x: 1000*x.A + x.Z, reverse=True)
-            other_prod_sorted = sorted(other.products, key=lambda x: 1000*x.A + x.Z, reverse=True)
-
-            for spn, opn in zip(self_prod_sorted, other_prod_sorted):
-                if not spn == opn:
-                    return spn < opn
-
-        # if we made it here, then the rates are the same
-        return True
-
     def __add__(self, other):
         """Combine the sets of two Rate objects if they describe the same
            reaction. Must be Reaclib rates."""
@@ -454,14 +740,14 @@ class Rate:
 
         if self.resonant != other.resonant:
             self._labelprops_combine_resonance()
-        new_rate = Rate(chapter=self.chapter,
-                        original_source='\n'.join([self.original_source,
-                                                   other.original_source]),
-                        reactants=self.reactants,
-                        products=self.products,
-                        sets=self.sets + other.sets,
-                        labelprops=self.labelprops,
-                        Q=self.Q)
+        new_rate = ReacLibRate(chapter=self.chapter,
+                               original_source='\n'.join([self.original_source,
+                                                          other.original_source]),
+                               reactants=self.reactants,
+                               products=self.products,
+                               sets=self.sets + other.sets,
+                               labelprops=self.labelprops,
+                               Q=self.Q)
         return new_rate
 
     def _set_label_properties(self, labelprops=None):
@@ -676,65 +962,6 @@ class Rate:
             self.sets.append(SingleSet(a, labelprops=labelprops))
             self._set_label_properties(labelprops)
 
-    def _set_q(self):
-        """set the Q value of the reaction (in MeV)"""
-
-        # from the binding energy of the nuclei, Q = -B_reactants + B_products
-        # but note that nucbind is the binding energy *per* nucleon, so we need
-        # to multiply by the number of nucleons
-
-        self.Q = 0
-        for n in self.reactants:
-            self.Q += -n.A * n.nucbind
-        for n in self.products:
-            self.Q += n.A * n.nucbind
-
-    def _set_rhs_properties(self):
-        """ compute statistical prefactor and density exponent from the reactants. """
-        self.prefactor = 1.0  # this is 1/2 for rates like a + a (double counting)
-        self.inv_prefactor = 1
-        for r in set(self.reactants):
-            self.inv_prefactor = self.inv_prefactor * np.math.factorial(self.reactants.count(r))
-        self.prefactor = self.prefactor/float(self.inv_prefactor)
-        self.dens_exp = len(self.reactants)-1
-        if self.weak_type == 'electron_capture':
-            self.dens_exp = self.dens_exp + 1
-
-    def _set_screening(self):
-        """ determine if this rate is eligible for screening and the nuclei to use. """
-        # Tells if this rate is eligible for screening
-        # using screenz.f90 provided by StarKiller Microphysics.
-        # If not eligible for screening, set to None
-        # If eligible for screening, then
-        # Rate.ion_screen is a 2-element (3 for 3-alpha) list of Nucleus objects for screening
-        self.ion_screen = []
-        nucz = [q for q in self.reactants if q.Z != 0]
-        if len(nucz) > 1:
-            nucz.sort(key=lambda x: x.Z)
-            self.ion_screen = []
-            self.ion_screen.append(nucz[0])
-            self.ion_screen.append(nucz[1])
-            if len(nucz) == 3:
-                self.ion_screen.append(nucz[2])
-
-        # if the rate is a reverse rate, via detailed balance, then we
-        # might actually want to compute the screening based on the
-        # reactants of the forward rate that was used in the detailed
-        # balance.  Rate.symmetric_screen is what should be used in
-        # the screening in this case
-        self.symmetric_screen = []
-        if self.reverse:
-            nucz = [q for q in self.products if q.Z != 0]
-            if len(nucz) > 1:
-                nucz.sort(key=lambda x: x.Z)
-                self.symmetric_screen = []
-                self.symmetric_screen.append(nucz[0])
-                self.symmetric_screen.append(nucz[1])
-                if len(nucz) == 3:
-                    self.symmetric_screen.append(nucz[2])
-        else:
-            self.symmetric_screen = self.ion_screen
-
     def _set_print_representation(self):
         """ compose the string representations of this Rate. """
 
@@ -756,7 +983,7 @@ class Rate:
         # figure out if there are any non-nuclei present
         # for the moment, we just handle strong rates
 
-        if not self.weak:
+        try:
             # there should be the same number of protons on each side and
             # the same number of neutrons on each side
             assert sum(n.Z for n in self.reactants) == sum(n.Z for n in self.products)
@@ -765,7 +992,9 @@ class Rate:
             if len(self.products) == 1:
                 self.rhs_other.append("gamma")
 
-        else:
+        except AssertionError:
+
+            # the rate is some type of weak rate
 
             if self.weak_type == "electron_capture":
 
@@ -895,32 +1124,6 @@ class Rate:
         ssrc = 'reaclib'
 
         return f'{self.rid} <{self.label.strip()}_{ssrc}_{sweak}_{srev}>'
-
-    def heaviest(self):
-        """
-        Return the heaviest nuclide in this Rate.
-
-        If two nuclei are tied in mass number, return the one with the
-        lowest atomic number.
-        """
-        nuc = self.reactants[0]
-        for n in self.reactants + self.products:
-            if n.A > nuc.A or (n.A == nuc.A and n.Z < nuc.Z):
-                nuc = n
-        return nuc
-
-    def lightest(self):
-        """
-        Return the lightest nuclide in this Rate.
-
-        If two nuclei are tied in mass number, return the one with the
-        highest atomic number.
-        """
-        nuc = self.reactants[0]
-        for n in self.reactants + self.products:
-            if n.A < nuc.A or (n.A == nuc.A and n.Z > nuc.Z):
-                nuc = n
-        return nuc
 
     def function_string_py(self):
         """
@@ -1567,7 +1770,7 @@ class TabularRate(Rate):
         return fig
 
 
-class DerivedRate(Rate):
+class DerivedRate(ReacLibRate):
     """
     This class is a derived class from `Rate` with the purpose of computing the inverse rate
     by the application of detailed balance to the forward reactions.
