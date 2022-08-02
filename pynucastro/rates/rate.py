@@ -790,7 +790,6 @@ class ReacLibRate(Rate):
             self.weak = False
             self.weak_type = None
             self.reverse = False
-            self.tabular = False
         elif self.labelprops == "derived":
             self.label = "derived"
             self.resonant = False  # Derived may be resonant in some cases
@@ -798,7 +797,6 @@ class ReacLibRate(Rate):
             self.weak = False
             self.weak_type = None
             self.reverse = False
-            self.tabular = False
         else:
             assert len(self.labelprops) == 6
             self.label = self.labelprops[0:4]
@@ -812,7 +810,6 @@ class ReacLibRate(Rate):
             else:
                 self.weak_type = None
             self.reverse = self.labelprops[5] == 'v'
-            self.tabular = False
 
     def _read_from_file(self, f):
         """ given a file object, read rate data from the file. """
@@ -1550,7 +1547,7 @@ class DerivedRate(ReacLibRate):
 
         assert isinstance(rate, Rate)
 
-        if (self.rate.tabular or self.rate.weak or
+        if (isinstance(rate, TabularRate) or self.rate.weak or
             self.rate.reverse):
             raise ValueError('The rate is reverse or weak or tabular')
 
