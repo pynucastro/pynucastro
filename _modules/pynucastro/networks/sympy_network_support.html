@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.networks.sympy_network_support &mdash; pynucastro 1.7.0.post23+g153a19e documentation</title>
+  <title>pynucastro.networks.sympy_network_support &mdash; pynucastro 1.7.0.post24+g362b17b documentation</title>
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -107,6 +107,7 @@
 <span class="kn">import</span> <span class="nn">re</span>
 
 <span class="kn">import</span> <span class="nn">sympy</span>
+<span class="kn">from</span> <span class="nn">pynucastro.rates</span> <span class="kn">import</span> <span class="n">TabularRate</span>
 
 
 <div class="viewcode-block" id="SympyRates"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.sympy_network_support.SympyRates">[docs]</a><span class="k">class</span> <span class="nc">SympyRates</span><span class="p">:</span>
@@ -175,10 +176,10 @@
         <span class="n">dens_sym</span> <span class="o">=</span> <span class="n">sympy</span><span class="o">.</span><span class="n">symbols</span><span class="p">(</span><span class="s1">&#39;__dens__&#39;</span><span class="p">)</span><span class="o">**</span><span class="n">rate</span><span class="o">.</span><span class="n">dens_exp</span>
 
         <span class="c1"># electron fraction if electron capture reaction</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">rate</span><span class="o">.</span><span class="n">weak_type</span> <span class="o">==</span> <span class="s1">&#39;electron_capture&#39;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">rate</span><span class="o">.</span><span class="n">tabular</span><span class="p">):</span>
-            <span class="n">y_e_sym</span> <span class="o">=</span> <span class="n">sympy</span><span class="o">.</span><span class="n">symbols</span><span class="p">(</span><span class="s1">&#39;__y_e__&#39;</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">y_e_sym</span> <span class="o">=</span> <span class="n">sympy</span><span class="o">.</span><span class="n">sympify</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">y_e_sym</span> <span class="o">=</span> <span class="n">sympy</span><span class="o">.</span><span class="n">sympify</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rate</span><span class="p">,</span> <span class="n">TabularRate</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">rate</span><span class="o">.</span><span class="n">weak_type</span> <span class="o">==</span> <span class="s1">&#39;electron_capture&#39;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">rate</span><span class="o">.</span><span class="n">tabular</span><span class="p">:</span>
+                <span class="n">y_e_sym</span> <span class="o">=</span> <span class="n">sympy</span><span class="o">.</span><span class="n">symbols</span><span class="p">(</span><span class="s1">&#39;__y_e__&#39;</span><span class="p">)</span>
 
         <span class="c1"># prefactor</span>
         <span class="n">prefactor_sym</span> <span class="o">=</span> <span class="n">sympy</span><span class="o">.</span><span class="n">sympify</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="n">sympy</span><span class="o">.</span><span class="n">sympify</span><span class="p">(</span><span class="n">rate</span><span class="o">.</span><span class="n">inv_prefactor</span><span class="p">)</span>
