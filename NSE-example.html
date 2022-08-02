@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Nuclear Statistical Equilibrium &mdash; pynucastro 1.7.0.post24+g362b17b documentation</title>
+  <title>Nuclear Statistical Equilibrium &mdash; pynucastro 1.7.0.post25+gc2e28f2 documentation</title>
       <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -433,11 +433,11 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-/home/bb/Repo/pynucastro/pynucastro/networks/rate_collection.py:725: RuntimeWarning: overflow encountered in exp
+/home/zhi/Github/pynucastro/pynucastro/networks/rate_collection.py:758: RuntimeWarning: overflow encountered in exp
   * np.exp((nuc.Z * u[0] + nuc.N * u[1] - u_c + nuc.nucbind * nuc.A) / k / T / ErgToMeV)
-/home/bb/Repo/pynucastro/pynucastro/networks/rate_collection.py:128: RuntimeWarning: invalid value encountered in multiply
-  electron_frac = np.sum(zvec*xvec/avec)/np.sum(xvec)
-/home/bb/python-venv/nucastro/lib/python3.10/site-packages/scipy/optimize/_minpack_py.py:175: RuntimeWarning: The iteration is not making good progress, as measured by the
+/home/zhi/Github/pynucastro/pynucastro/networks/rate_collection.py:768: RuntimeWarning: invalid value encountered in double_scalars
+  nse_ye = sum(nuc.Z * comp_NSE.X[nuc] / nuc.A for nuc in self.unique_nuclei)
+/usr/lib64/python3.10/site-packages/scipy/optimize/_minpack_py.py:175: RuntimeWarning: The iteration is not making good progress, as measured by the
   improvement from the last ten iterations.
   warnings.warn(msg, RuntimeWarning)
 </pre></div></div>
@@ -454,67 +454,67 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-  X(n) : 7.242338460543762e-20
-  X(p) : 1.7222715732629761e-06
-  X(he3) : 1.0266022952564814e-21
+  X(n) : 7.24233845988137e-20
+  X(p) : 1.7222715734205213e-06
+  X(he3) : 1.0266022953503974e-21
   X(he4) : 3.200709213650229e-08
-  X(c12) : 3.630050763648919e-17
-  X(c13) : 3.751731950746927e-30
-  X(n13) : 9.159607777344056e-22
-  X(n14) : 2.447314228455439e-25
-  X(o14) : 7.481330798130889e-22
-  X(o15) : 6.034240850943651e-21
+  X(c12) : 3.630050763649099e-17
+  X(c13) : 3.7517319504037886e-30
+  X(n13) : 9.159607778182325e-22
+  X(n14) : 2.447314228455579e-25
+  X(o14) : 7.481330799499921e-22
+  X(o15) : 6.034240851495978e-21
   X(o16) : 6.054046722575347e-16
-  X(o17) : 2.6930705469974435e-30
-  X(o18) : 4.1813481549139133e-38
-  X(f17) : 8.83107997385185e-23
-  X(f18) : 1.058991268037861e-28
-  X(f19) : 4.686330852399488e-32
-  X(ne18) : 4.527542847338931e-24
-  X(ne19) : 1.9377577812621601e-25
-  X(ne20) : 7.7421351769976385e-19
-  X(mg22) : 3.288401949580203e-21
-  X(mg24) : 4.940166503769405e-14
-  X(al27) : 1.011089660485445e-19
-  X(si28) : 4.042719459787969e-08
-  X(p31) : 2.4539745593722217e-14
+  X(o17) : 2.693070546751132e-30
+  X(o18) : 4.181348154149409e-38
+  X(f17) : 8.831079974660742e-23
+  X(f18) : 1.0589912680379812e-28
+  X(f19) : 4.6863308519708045e-32
+  X(ne18) : 4.527542848167183e-24
+  X(ne19) : 1.9377577814396097e-25
+  X(ne20) : 7.742135176998464e-19
+  X(mg22) : 3.288401950182168e-21
+  X(mg24) : 4.9401665037699315e-14
+  X(al27) : 1.0110896603930773e-19
+  X(si28) : 4.0427194597884285e-08
+  X(p31) : 2.4539745591483016e-14
   X(s32) : 2.715694757649468e-07
-  X(cl35) : 2.0003071687286228e-13
-  X(ar36) : 5.765560334592135e-07
-  X(k39) : 3.9723491264988335e-12
-  X(ca40) : 5.900658132283131e-06
+  X(cl35) : 2.000307168546085e-13
+  X(ar36) : 5.765560334593364e-07
+  X(k39) : 3.972349126136365e-12
+  X(ca40) : 5.900658132284409e-06
   X(ti44) : 4.14787629440101e-08
-  X(ti50) : 1.2987667619426204e-31
-  X(cr48) : 6.9781674781378634e-06
-  X(cr49) : 2.1374234265808357e-09
-  X(cr50) : 5.3672014742944525e-09
-  X(cr51) : 7.210661089060408e-15
-  X(cr52) : 5.041377359821795e-16
-  X(cr53) : 5.1722460204310145e-24
-  X(cr54) : 5.196235598748947e-29
-  X(fe52) : 0.00237454527121519
-  X(fe54) : 1.0400468423656194e-05
-  X(fe55) : 2.1471954872240015e-11
-  X(fe56) : 6.152528125242779e-14
-  X(fe57) : 8.572693315507974e-22
-  X(fe58) : 6.241659465158537e-27
-  X(co53) : 1.7340488155759415e-08
-  X(co55) : 5.4269608848619055e-05
-  X(ni55) : 2.544866606409614e-07
-  X(ni56) : 0.9975342735003628
-  X(ni58) : 1.0421824942137715e-05
-  X(ni59) : 9.036537103336628e-12
-  X(ni60) : 3.49912927861985e-14
-  X(ni61) : 5.046086491719354e-22
-  X(ni62) : 5.787648894551437e-26
-  X(ni63) : 3.381002273388489e-35
-  X(ni64) : 5.393150305978409e-41
-  X(ni66) : 1.906476611661547e-58
-  X(ni67) : 5.741128525307456e-70
-  X(ni68) : 2.4402896507004807e-78
-  X(ni69) : 5.3561255620663696e-92
-  X(ni70) : 4.371207531800234e-101
-  X(cu57) : 2.468237566543864e-07
+  X(ti50) : 1.298766761230104e-31
+  X(cr48) : 6.978167478139401e-06
+  X(cr49) : 2.1374234263858155e-09
+  X(cr50) : 5.3672014733125965e-09
+  X(cr51) : 7.210661087083308e-15
+  X(cr52) : 5.041377357977221e-16
+  X(cr53) : 5.172246018066674e-24
+  X(cr54) : 5.19623559589824e-29
+  X(fe52) : 0.002374545271215705
+  X(fe54) : 1.0400468421755786e-05
+  X(fe55) : 2.1471954866347862e-11
+  X(fe56) : 6.152528122991693e-14
+  X(fe57) : 8.572693311590924e-22
+  X(fe58) : 6.241659461732969e-27
+  X(co53) : 1.734048815734564e-08
+  X(co55) : 5.426960884365512e-05
+  X(ni55) : 2.5448666066429486e-07
+  X(ni56) : 0.9975342735005809
+  X(ni58) : 1.0421824940231147e-05
+  X(ni59) : 9.036537100856897e-12
+  X(ni60) : 3.499129277341131e-14
+  X(ni61) : 5.046086489413689e-22
+  X(ni62) : 5.787648891375124e-26
+  X(ni63) : 3.3810022712251283e-35
+  X(ni64) : 5.393150302034296e-41
+  X(ni66) : 1.9064766099177008e-58
+  X(ni67) : 5.7411285195334276e-70
+  X(ni68) : 2.4402896480219058e-78
+  X(ni69) : 5.356125555697512e-92
+  X(ni70) : 4.371207526204467e-101
+  X(cu57) : 2.4682375667707166e-07
 
 </pre></div></div>
 </div>
@@ -575,7 +575,7 @@ Text(0.5, 1.0, &#39;$\\rho = 1e7$ and $T=9e9$&#39;)
 </div>
 </div>
 <p>For <span class="math notranslate nohighlight">\(\rho = 1\times 10^7 [g/cm^{3}]\)</span> and a relatively low temperature of $ T = 3.5:nbsphinx-math:<a href="#id5"><span class="problematic" id="id6">`</span></a>times <a href="#id7"><span class="problematic" id="id8">`</span></a>10^9 [K]$</p>
-<div class="nbinput docutils container">
+<div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
@@ -590,26 +590,6 @@ Text(0.5, 1.0, &#39;$\\rho = 1e7$ and $T=9e9$&#39;)
     <span class="n">X_s_3</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nse_X_s_3</span><span class="p">)</span>
 </pre></div>
 </div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-/home/bb/python-venv/nucastro/lib/python3.10/site-packages/scipy/optimize/_minpack_py.py:175: RuntimeWarning: The iteration is not making good progress, as measured by the
-  improvement from the last ten iterations.
-  warnings.warn(msg, RuntimeWarning)
-/home/bb/Repo/pynucastro/pynucastro/networks/rate_collection.py:724: RuntimeWarning: overflow encountered in double_scalars
-  comp_NSE.X[nuc] = m_u * nuc.A_nuc * nuc.partition_function(T) / rho * (2.0 * np.pi * m_u * nuc.A_nuc * k * T / h**2)**(3. / 2.) \
-/home/bb/Repo/pynucastro/pynucastro/networks/rate_collection.py:128: RuntimeWarning: invalid value encountered in double_scalars
-  electron_frac = np.sum(zvec*xvec/avec)/np.sum(xvec)
-/home/bb/Repo/pynucastro/pynucastro/networks/rate_collection.py:725: RuntimeWarning: overflow encountered in exp
-  * np.exp((nuc.Z * u[0] + nuc.N * u[1] - u_c + nuc.nucbind * nuc.A) / k / T / ErgToMeV)
-/home/bb/Repo/pynucastro/pynucastro/networks/rate_collection.py:128: RuntimeWarning: overflow encountered in multiply
-  electron_frac = np.sum(zvec*xvec/avec)/np.sum(xvec)
-/home/bb/Repo/pynucastro/pynucastro/networks/rate_collection.py:128: RuntimeWarning: invalid value encountered in multiply
-  electron_frac = np.sum(zvec*xvec/avec)/np.sum(xvec)
-</pre></div></div>
 </div>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:

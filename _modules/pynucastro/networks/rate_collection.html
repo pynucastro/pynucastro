@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.networks.rate_collection &mdash; pynucastro 1.7.0.post24+g362b17b documentation</title>
+  <title>pynucastro.networks.rate_collection &mdash; pynucastro 1.7.0.post25+gc2e28f2 documentation</title>
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -868,8 +868,12 @@
 
         <span class="n">comp_NSE</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_evaluate_comp_NSE</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">ye</span><span class="p">)</span>
 
+        <span class="c1"># Don&#39;t use eval_ye() since it does automatic mass fraction normalization.</span>
+        <span class="c1"># However, we should force normalization through constraint eq1.</span>
+        <span class="n">nse_ye</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">nuc</span><span class="o">.</span><span class="n">Z</span> <span class="o">*</span> <span class="n">comp_NSE</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">nuc</span><span class="p">]</span> <span class="o">/</span> <span class="n">nuc</span><span class="o">.</span><span class="n">A</span> <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">)</span>
+
         <span class="n">eq1</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">comp_NSE</span><span class="o">.</span><span class="n">X</span><span class="o">.</span><span class="n">values</span><span class="p">())</span> <span class="o">-</span> <span class="mf">1.0</span>
-        <span class="n">eq2</span> <span class="o">=</span> <span class="n">ye</span> <span class="o">-</span> <span class="n">comp_NSE</span><span class="o">.</span><span class="n">eval_ye</span><span class="p">()</span>
+        <span class="n">eq2</span> <span class="o">=</span> <span class="n">ye</span> <span class="o">-</span> <span class="n">nse_ye</span>
 
         <span class="k">return</span> <span class="p">[</span><span class="n">eq1</span><span class="p">,</span> <span class="n">eq2</span><span class="p">]</span>
 
