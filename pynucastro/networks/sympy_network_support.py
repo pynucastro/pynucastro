@@ -4,6 +4,7 @@ through sympy"""
 import re
 
 import sympy
+from pynucastro.rates import TabularRate
 
 
 class SympyRates:
@@ -72,10 +73,10 @@ class SympyRates:
         dens_sym = sympy.symbols('__dens__')**rate.dens_exp
 
         # electron fraction if electron capture reaction
-        if (rate.weak_type == 'electron_capture' and not rate.tabular):
-            y_e_sym = sympy.symbols('__y_e__')
-        else:
-            y_e_sym = sympy.sympify(1)
+        y_e_sym = sympy.sympify(1)
+        if not isinstance(rate, TabularRate):
+            if rate.weak_type == 'electron_capture' and not rate.tabular:
+                y_e_sym = sympy.symbols('__y_e__')
 
         # prefactor
         prefactor_sym = sympy.sympify(1)/sympy.sympify(rate.inv_prefactor)
