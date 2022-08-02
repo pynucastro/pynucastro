@@ -765,6 +765,8 @@ class RateCollection:
 
         comp_NSE = self._evaluate_comp_NSE(u, rho, T, ye)
 
+        # Don't use eval_ye() since it does automatic mass fraction normalization.
+        # However, we should force normalization through constraint eq1.
         nse_ye = sum(nuc.Z * comp_NSE.X[nuc] / nuc.A for nuc in self.unique_nuclei)
 
         eq1 = sum(comp_NSE.X.values()) - 1.0
