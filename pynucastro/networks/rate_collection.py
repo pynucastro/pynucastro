@@ -765,8 +765,10 @@ class RateCollection:
 
         comp_NSE = self._evaluate_comp_NSE(u, rho, T, ye)
 
-        eq1 = sum(comp_NSE.X.values()) - 1.0
-        eq2 = ye - comp_NSE.eval_ye()
+        nse_ye = sum([nuc.Z * comp_NSE.X[nuc] / nuc.A for nuc in self.unique_nuclei])
+
+        eq1 = sum(comp_NSE.X.values()) - 1.0 
+        eq2 = ye - nse_ye
 
         return [eq1, eq2]
 
