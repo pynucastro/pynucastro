@@ -1,43 +1,28 @@
 # unit tests for rates
 import pynucastro as pyna
+import pytest
 
 
 class TestPythonNetwork:
-    @classmethod
-    def setup_class(cls):
-        """ this is run once for each class before any tests """
-        pass
-
-    @classmethod
-    def teardown_class(cls):
-        """ this is run once for each class after all tests """
-        pass
-
-    def setup_method(self):
-        """ this is run before each test """
-
-        rl = pyna.ReacLibLibrary()
-        mynet = rl.linking_nuclei(["p", "he4", "mg24",
-                                   "al27", "si28", "p31", "s32"])
+    @pytest.fixture(scope="class")
+    def pynet(self, reaclib_library):
+        mynet = reaclib_library.linking_nuclei(["p", "he4", "mg24",
+                                                "al27", "si28", "p31", "s32"])
         pynet = pyna.PythonNetwork(libraries=[mynet])
         pynet.make_ap_pg_approx()
         pynet.remove_nuclei(["al27", "p31"])
-        self.pynet = pynet
+        return pynet
 
-    def teardown_method(self):
-        """ this is run after each test """
-        self.pynet = None
+    def test_num_rates(self, pynet):
+        assert len(pynet.rates) == 4
 
-    def test_num_rates(self):
-        assert len(self.pynet.rates) == 4
+    def test_num_reaclib_rates(self, pynet):
+        assert len(pynet.reaclib_rates) == 12
 
-    def test_num_reaclib_rates(self):
-        assert len(self.pynet.reaclib_rates) == 12
+    def test_num_approx_rates(self, pynet):
+        assert len(pynet.approx_rates) == 4
 
-    def test_num_approx_rates(self):
-        assert len(self.pynet.approx_rates) == 4
-
-    def test_full_ydot_string(self):
+    def test_full_ydot_string(self, pynet):
         ostr = \
 """dYdt[jhe4] = (
    -rho*Y[jhe4]*Y[jmg24]*lambda_mg24_he4__si28__approx
@@ -48,9 +33,9 @@ class TestPythonNetwork:
 
 """
 
-        assert self.pynet.full_ydot_string(pyna.Nucleus("he4")) == ostr
+        assert pynet.full_ydot_string(pyna.Nucleus("he4")) == ostr
 
-    def test_approx_function_string(self):
+    def test_approx_function_string(self, pynet):
 
         ostr = \
 """@numba.njit()
@@ -63,10 +48,10 @@ def mg24_he4__si28__approx(tf):
     return rate
 
 """
-        r = self.pynet.get_rate("mg24_he4__si28__approx")
+        r = pynet.get_rate("mg24_he4__si28__approx")
         assert r.function_string_py() == ostr
 
-    def test_function_string(self):
+    def test_function_string(self, pynet):
 
         ostr = \
 """@numba.njit()
@@ -85,5 +70,5 @@ def he4_mg24__si28(tf):
 
 """
 
-        r = self.pynet.get_rate("mg24_he4__si28__approx")
+        r = pynet.get_rate("mg24_he4__si28__approx")
         assert r.get_child_rates()[0].function_string_py().strip() == ostr.strip()
