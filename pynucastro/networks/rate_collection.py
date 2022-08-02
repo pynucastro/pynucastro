@@ -609,9 +609,11 @@ class RateCollection:
             gamma = nuc.Z**(5. / 3.) * e**2 * (4.0 * np.pi * n_e / 3.0)**(1. / 3.) / k / T
             u_c = ErgToMeV * k * T * (A_1 * (np.sqrt(gamma * (A_2 + gamma)) - A_2 * np.log(np.sqrt(gamma / A_2) +
                                       np.sqrt(1.0 + gamma / A_2))) + 2.0 * A_3 * (np.sqrt(gamma) - np.arctan(np.sqrt(gamma))))
-            comp_NSE.X[nuc] = m_u * nuc.A_nuc * nuc.partition_function(T) / rho * (2.0 * np.pi * m_u * nuc.A_nuc * k * T / h**2)**(3. / 2.) \
-            * np.exp((nuc.Z * u[0] + nuc.N * u[1] - u_c + nuc.nucbind * nuc.A) / k / T / ErgToMeV)
 
+            #nuc.partition_function(T) 
+            comp_NSE.X[nuc] = m_u * nuc.A_nuc / rho * (2.0 * np.pi * m_u * nuc.A_nuc * k * T / h**2)**(3. / 2.) \
+                * np.exp((nuc.Z * u[0] + nuc.N * u[1] - u_c + nuc.nucbind * nuc.A) / k / T / ErgToMeV)
+            
         return comp_NSE
 
     def _constraint_eq(self, u, rho, T, ye):
@@ -621,10 +623,106 @@ class RateCollection:
         comp_NSE = self._evaluate_comp_NSE(u, rho, T, ye)
 
         eq1 = sum(comp_NSE.X.values()) - 1.0
-        eq2 = ye - comp_NSE.eval_ye()
-
+        
+        nse_ye = 0.0
+        for nuc in self.unique_nuclei:
+            nse_ye += nuc.Z * comp_NSE.X[nuc] / nuc.A
+            
+        #eq2 = ye - comp_NSE.eval_ye()
+        eq2 = ye - nse_ye
+        
         return [eq1, eq2]
 
+    def nse_init_guess(self, rho, T, ye):
+        """ Get a rough estimate of the initial guess for nse solver"""
+        
+        # Define constants: amu, boltzmann, planck, and electron charge
+        m_u = constants.value("unified atomic mass unit") * 1.0e3  # atomic unit mass in g
+        k = constants.value("Boltzmann constant") * 1.0e7          # boltzmann in erg/K
+        h = constants.value("Planck constant") * 1.0e7             # in cgs
+        e = 4.8032e-10                                             # electron charge in cgs
+        ErgToMeV = 624151.0
+
+        # These are three constants for calculating coulomb corrections of chemical energy, see Calders paper: iopscience 510709, appendix
+        A_1 = -0.9052
+        A_2 = 0.6322
+        A_3 = -0.5 * np.sqrt(3.0) - A_1 / np.sqrt(A_2)
+
+        # Create composition object for NSE and find electron number density
+        n_e = rho * ye / m_u
+        ni56 = Nucleus("ni56")
+        
+        gamma = ni56.Z**(5. / 3.) * e**2 * (4.0 * np.pi * n_e / 3.0)**(1. / 3.) / k / T
+        u_c = ErgToMeV * k * T * (A_1 * (np.sqrt(gamma * (A_2 + gamma)) - A_2 * np.log(np.sqrt(gamma / A_2) +
+                                      np.sqrt(1.0 + gamma / A_2))) + 2.0 * A_3 * (np.sqrt(gamma) - np.arctan(np.sqrt(gamma))))
+
+
+        fac_1 =  m_u * ni56.A_nuc * ni56.partition_function(T) / rho
+        fac_2 = (2.0 * np.pi * m_u * ni56.A_nuc * k * T / h**2)**(3. / 2.)
+
+        u = []
+        u.append(-(np.log(fac_1 * fac_2) * k * T * ErgToMeV - u_c + ni56.nucbind * ni56.A)/ni56.A)
+        u.append(u[0])
+
+        return u
+    
+    def newton_raphson(self, rho, T, ye, init_guess=[-3.0648236, -14.56045]):
+
+        ErgToMeV = 624151.0
+        k = constants.value("Boltzmann constant") * 1.0e7
+        converge = False
+        print(f" beta is {1/k/T/ErgToMeV}")
+        for i in range(500):
+            comp_NSE = self._evaluate_comp_NSE(init_guess, rho, T, ye)
+            eq = []
+            nse_ye = 0.0
+            for nuc in self.unique_nuclei:
+                nse_ye += nuc.Z * comp_NSE.X[nuc] / nuc.A
+            eq.append(sum(comp_NSE.X.values()) - 1.0)
+            eq.append(nse_ye - ye)
+            print(f"nse ye is {nse_ye}")
+            converge = np.all(np.isclose(eq, [0.0, 0.0], rtol=1e-2, atol=1e-3))
+            if converge:
+                return init_guess
+            jac = np.array([[0.0, 0.0],[0.0, 0.0]])
+
+            jac_inv = np.array([[0.0, 0.0], [0.0, 0.0]])
+            for nuc in self.unique_nuclei:
+                jac[0,0] += nuc.Z * comp_NSE.X[nuc] / k / T / ErgToMeV
+                jac[0,1] += nuc.N * comp_NSE.X[nuc] / k / T / ErgToMeV
+                jac[1,0] += nuc.Z * nuc.Z / nuc.A * comp_NSE.X[nuc] / k / T / ErgToMeV
+                jac[1,1] += nuc.Z * nuc.N / nuc.A * comp_NSE.X[nuc] / k / T / ErgToMeV
+                print(f"{nuc} X is {comp_NSE.X[nuc]}")
+                print(f"{nuc} Z is {nuc.Z}")
+                print(f"{nuc} N is {nuc.N}")
+                print(f"jacobian is {jac}")
+                
+            det = jac[0,0] * jac[1,1] - jac[1,0] * jac[0,1]
+            jac_inv[0,0] = jac[1, 1] / det
+            jac_inv[0,1] = -jac[0, 1] / det
+            jac_inv[1,0] = -jac[1, 0] / det
+            jac_inv[1,1] = jac[0, 0] / det
+            print(f"det is {det}")
+            print(f" jacobian are {jac}")
+            #diff = np.linalg.solve(-jac,np.array(eq))
+            #print(f"diff using solve is {diff}")
+            #jac_inv = np.linalg.inv(jac)
+
+            #print(f"jac is {jac} and jac_inv is {jac_inv}")
+            # update
+            diff = []
+            print(f"constraint eqs are now {eq[0]} and {eq[1]}")
+            diff.append(eq[0] * jac_inv[0,0] + eq[1] * jac_inv[0,1])
+            diff.append(eq[0] * jac_inv[1,0] + eq[1] * jac_inv[1,1])
+            print(f"diff with inv are {diff[0]} and {diff[1]}")
+            diff = np.array(diff)
+            if any(np.abs(diff) > 1.0):
+                diff /= np.max(diff)
+            init_guess -= diff
+            print(f"init guess is now {init_guess}")
+
+        raise ValueError("Unable to find a solution, try to adjust initial guess manually")
+    
     def get_comp_NSE(self, rho, T, ye, init_guess=[-3.5, -15.0], tol=1.5e-9, tell_guess=False):
         """
         Returns the NSE composition given density, temperature and prescribed electron fraction
@@ -651,12 +749,12 @@ class RateCollection:
                 res = self._constraint_eq(u, rho, T, ye)
                 is_pos_new = all(k > 0 for k in res)
                 found_sol = np.all(np.isclose(res, [0.0, 0.0], rtol=1e-2, atol=1e-3))
-
+                
                 if found_sol:
                     if tell_guess:
                         print(f"After fine-tuning the initial guess, the actual guess that found the solution was {guess}")
+                        print(f"And the chemical potential of proton and neutron are {u[0]} and {u[1]}.")
                     comp_NSE = self._evaluate_comp_NSE(u, rho, T, ye)
-
                     return comp_NSE
 
                 if is_pos_old != is_pos_new:
