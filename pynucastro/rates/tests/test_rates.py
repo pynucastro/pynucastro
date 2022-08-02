@@ -304,8 +304,8 @@ class TestWeakRates:
     def setup_method(self):
         """ this is run before each test """
 
-        self.rate1 = rates.Rate("o18--f18-toki")
-        self.rate2 = rates.Rate("na22--ne22-toki")
+        self.rate1 = rates.TabularRate("o18--f18-toki")
+        self.rate2 = rates.TabularRate("na22--ne22-toki")
 
     def teardown_method(self):
         """ this is run after each test """

@@ -26,8 +26,7 @@ import copy
 
 # Import Rate
 from pynucastro.nucdata import Nucleus
-from pynucastro.rates.rate import DerivedRate
-from pynucastro.rates import Rate, RatePair, ApproximateRate, Library
+from pynucastro.rates import Rate, RatePair, DerivedRate, ApproximateRate, Library, load_rate
 from pynucastro.screening import PlasmaState, ScreenFactors
 
 from pynucastro.nucdata import PeriodicTable
@@ -441,10 +440,15 @@ class RateCollection:
         # get the rates
         self.files = rate_files
         for rf in self.files:
+            # create the appropriate rate object first
             try:
-                rflib = Library(rf)
+                rate = load_rate(rf)
             except Exception as ex:
-                raise Exception(f"Error reading library from file: {rf}") from ex
+                raise Exception(f"Error reading rate from file: {rf}") from ex
+
+            # now create a library:
+            rflib = Library(rates=[rate])
+
             if not self.library:
                 self.library = rflib
             else:
