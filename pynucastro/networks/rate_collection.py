@@ -26,6 +26,7 @@ import copy
 
 # Import Rate
 from pynucastro.nucdata import Nucleus
+from pynucastro.rates.rate import DerivedRate
 from pynucastro.rates import Rate, RatePair, ApproximateRate, Library
 from pynucastro.screening import PlasmaState, ScreenFactors
 
@@ -414,6 +415,7 @@ class RateCollection:
         self.tabular_rates = []
         self.reaclib_rates = []
         self.approx_rates = []
+        self.derived_rates = []
         for r in self.rates:
             if isinstance(r, ApproximateRate):
                 self.approx_rates.append(r)
@@ -425,13 +427,15 @@ class RateCollection:
                         self.reaclib_rates.append(cr)
             elif r.chapter == 't':
                 self.tabular_rates.append(r)
+            elif isinstance(r, DerivedRate):
+                self.derived_rates.append(r)
             elif isinstance(r.chapter, int):
                 if r not in self.reaclib_rates:
                     self.reaclib_rates.append(r)
             else:
                 raise NotImplementedError(f"Chapter type unknown for rate chapter {r.chapter}")
 
-        self.all_rates = self.reaclib_rates + self.tabular_rates + self.approx_rates
+        self.all_rates = self.reaclib_rates + self.tabular_rates + self.approx_rates + self.derived_rates
 
     def _read_rate_files(self, rate_files):
         # get the rates
