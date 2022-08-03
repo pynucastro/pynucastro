@@ -1590,9 +1590,9 @@ class DerivedRate(Rate):
 
             if not self.use_A_nuc:
                 for nucr in self.rate.reactants:
-                    prefactor +=  1.5*np.log(nucr.A) + np.log(nucr.spin_states)
+                    prefactor += 1.5*np.log(nucr.A) + np.log(nucr.spin_states)
                 for nucp in self.rate.products:
-                    prefactor +=  -1.5*np.log(nucp.A) - np.log(nucp.spin_states)
+                    prefactor += -1.5*np.log(nucp.A) - np.log(nucp.spin_states)
             else:
                 for nucr in self.rate.reactants:
                     prefactor += np.log(nucr.spin_states) + 1.5*np.log(nucr.A_nuc)
