@@ -2,7 +2,7 @@
 import pynucastro as pyna
 
 
-class TestPythonNetwork:
+class TestPythonDerivedNetwork:
     @classmethod
     def setup_class(cls):
         """ this is run once for each class before any tests """
