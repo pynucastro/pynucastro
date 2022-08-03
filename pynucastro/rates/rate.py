@@ -1707,7 +1707,7 @@ class DerivedRate(Rate):
 
     def counter_factors(self):
 
-        counts = self.nuclei_counter()
+        counts = Counter(self.rate.reactants + self.rate.products)
 
         reactant_factor = 1.0
         for nuc in set(self.rate.reactants):
