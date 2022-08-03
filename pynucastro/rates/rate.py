@@ -1673,11 +1673,7 @@ class DerivedRate(Rate):
             fstring += "\n"
             fstring += "    "
             fstring += "z_r = "
-            for index, nucr in enumerate(self.rate.reactants):
-                if index == len(self.rate.reactants)-1:
-                    fstring += f"{nucr}_pf"
-                    break
-                fstring += f"{nucr}_pf*"
+            fstring += "*".join([f"{nucr}_pf" for nucr in self.rate.reactants])
 
             fstring += "\n"
             fstring += "    "
