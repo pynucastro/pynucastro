@@ -20,7 +20,7 @@ class TestPythonNetwork:
         fwd_reactions = all_reactions.derived_forward()
 
         intermediate_nuclei = ['cr48', 'mn51', 'fe52', 'ni56', 'p', 'n', 'he4', 'co55']
-        beta_decay_modes = ['fe54','fe55', 'fe54', 'fe56', 'cr56', 'mn56']
+        beta_decay_modes = ['fe54', 'fe55', 'fe54', 'fe56', 'cr56', 'mn56']
 
         all_nuclei = intermediate_nuclei + beta_decay_modes
 
