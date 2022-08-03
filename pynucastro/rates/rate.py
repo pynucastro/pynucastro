@@ -1,6 +1,7 @@
 """
 Classes and methods to interface with files storing rate data.
 """
+from collections import Counter
 from scipy.constants import physical_constants
 import os
 import re
@@ -1691,31 +1692,18 @@ class DerivedRate(Rate):
         fstring += "    return rate\n\n"
         return fstring
 
-    def nuclei_counter(self):
-
-        nuc_counts = {}
-        nuc_list_raw = self.rate.reactants + self.rate.products
-        nuc_list = []
-
-        for nuc in nuc_list_raw:
-            nuc_list.append(str(nuc))
-
-        for nuc in nuc_list:
-            nuc_counts[str(nuc)] = nuc_list.count(str(nuc))
-
-        return nuc_counts
-
     def counter_factors(self):
 
-        counts = Counter(self.rate.reactants + self.rate.products)
+        react_counts = Counter(self.rate.reactants)
+        prod_counts = Counter(self.rate.products)
 
         reactant_factor = 1.0
         for nuc in set(self.rate.reactants):
-            reactant_factor *= np.math.factorial(counts[str(nuc)])
+            reactant_factor *= np.math.factorial(react_counts[nuc])
 
         product_factor = 1.0
         for nuc in set(self.rate.products):
-            product_factor *= np.math.factorial(counts[str(nuc)])
+            product_factor *= np.math.factorial(prod_counts[nuc])
 
         return (reactant_factor, product_factor)
 
