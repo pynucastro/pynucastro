@@ -55,38 +55,31 @@ class TestPartition:
     @classmethod
     def setup_class(cls):
         """ this is run once for each class before any tests """
-        pass
+
+        cls.pf_table_etfsiq_low = PartitionFunctionTable(dir_etfsiq_low)
+        cls.pf_table_frdm_low = PartitionFunctionTable(dir_frdm_low)
+        cls.pf_table_etfsiq_high = PartitionFunctionTable(dir_etfsiq_high)
+        cls.pf_table_frdm_high = PartitionFunctionTable(dir_frdm_high)
+
+        cls.pf_collection_frdm = PartitionFunctionCollection(use_set='frdm')
+        cls.pf_collection_etfsiq = PartitionFunctionCollection(use_set='etfsiq')
 
     @classmethod
     def teardown_class(cls):
-        """ this is run once for each class before any tests """
-        pass
+        """ this is run once for each class after all tests """
+        del cls.pf_table_etfsiq_low
+        del cls.pf_table_frdm_low
+        del cls.pf_table_etfsiq_high
+        del cls.pf_table_frdm_high
+
+        del cls.pf_collection_frdm
+        del cls.pf_collection_etfsiq
 
     def setup_method(self):
-        """ this is run once for each class before any tests """
-
-        self.pf_table_etfsiq_low = PartitionFunctionTable(dir_etfsiq_low)
-        self.pf_table_frdm_low = PartitionFunctionTable(dir_frdm_low)
-        self.pf_table_etfsiq_high = PartitionFunctionTable(dir_etfsiq_high)
-        self.pf_table_frdm_high = PartitionFunctionTable(dir_frdm_high)
-
-        self.co46_pf_etfsiq_low = self.pf_table_etfsiq_low.get_partition_function('co46')
-        self.ne37_pf_frdm_low = self.pf_table_frdm_low.get_partition_function('ne37')
-        self.fe47_pf_etfsiq_high = self.pf_table_etfsiq_high.get_partition_function('fe47')
-        self.po188_pf_frdm_high = self.pf_table_frdm_high.get_partition_function('po188')
-
-        self.ne19_pf_frdm_low = self.pf_table_frdm_low.get_partition_function('ne19')
-        self.ne19_pf_frdm_high = self.pf_table_frdm_high.get_partition_function('ne19')
-
-        self.co60_pf_etfsiq_low = self.pf_table_etfsiq_low.get_partition_function('co60')
-        self.co60_pf_etfsiq_high = self.pf_table_etfsiq_high.get_partition_function('co60')
-
-        self.pf_collection_frdm = PartitionFunctionCollection(use_set='frdm')
-        self.pf_collection_etfsiq = PartitionFunctionCollection(use_set='etfsiq')
+        """ this is run before each test """
 
     def teardown_method(self):
-        """ this is run once for each class before any tests """
-        pass
+        """ this is run after each test """
 
     def test_pf(self):
 
@@ -95,19 +88,30 @@ class TestPartition:
 
     def test_pf_table(self):
 
-        assert all(self.co46_pf_etfsiq_low.partition_function == ANSWER_ETFSIQ_LOW)
-        assert all(self.co46_pf_etfsiq_low.temperature == TEMPERATURES_LOW)
+        co46_pf_etfsiq_low = self.pf_table_etfsiq_low.get_partition_function('co46')
+        ne37_pf_frdm_low = self.pf_table_frdm_low.get_partition_function('ne37')
+        fe47_pf_etfsiq_high = self.pf_table_etfsiq_high.get_partition_function('fe47')
+        po188_pf_frdm_high = self.pf_table_frdm_high.get_partition_function('po188')
 
-        assert all(self.ne37_pf_frdm_low.partition_function == ANSWER_FRDM_LOW)
-        assert all(self.ne37_pf_frdm_low.temperature == TEMPERATURES_LOW)
+        assert all(co46_pf_etfsiq_low.partition_function == ANSWER_ETFSIQ_LOW)
+        assert all(co46_pf_etfsiq_low.temperature == TEMPERATURES_LOW)
 
-        assert all(self.fe47_pf_etfsiq_high.partition_function == ANSWER_ETFSIQ_HIGH)
-        assert all(self.fe47_pf_etfsiq_high.temperature == TEMPERATURES_HIGH)
+        assert all(ne37_pf_frdm_low.partition_function == ANSWER_FRDM_LOW)
+        assert all(ne37_pf_frdm_low.temperature == TEMPERATURES_LOW)
 
-        assert all(self.po188_pf_frdm_high.partition_function == ANSWER_FRDM_HIGH)
-        assert all(self.po188_pf_frdm_high.temperature == TEMPERATURES_HIGH)
+        assert all(fe47_pf_etfsiq_high.partition_function == ANSWER_ETFSIQ_HIGH)
+        assert all(fe47_pf_etfsiq_high.temperature == TEMPERATURES_HIGH)
+
+        assert all(po188_pf_frdm_high.partition_function == ANSWER_FRDM_HIGH)
+        assert all(po188_pf_frdm_high.temperature == TEMPERATURES_HIGH)
 
     def test_pfsum(self):
 
-        assert self.pf_collection_etfsiq.get_partition_function('co60') == self.co60_pf_etfsiq_low + self.co60_pf_etfsiq_high
-        assert self.pf_collection_frdm.get_partition_function('ne19') == self.ne19_pf_frdm_high + self.ne19_pf_frdm_low
+        ne19_pf_frdm_low = self.pf_table_frdm_low.get_partition_function('ne19')
+        ne19_pf_frdm_high = self.pf_table_frdm_high.get_partition_function('ne19')
+
+        co60_pf_etfsiq_low = self.pf_table_etfsiq_low.get_partition_function('co60')
+        co60_pf_etfsiq_high = self.pf_table_etfsiq_high.get_partition_function('co60')
+
+        assert self.pf_collection_frdm.get_partition_function('ne19') == ne19_pf_frdm_high + ne19_pf_frdm_low
+        assert self.pf_collection_etfsiq.get_partition_function('co60') == co60_pf_etfsiq_low + co60_pf_etfsiq_high
