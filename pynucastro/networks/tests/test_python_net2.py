@@ -1,30 +1,15 @@
 # unit tests for rates
 import pynucastro as pyna
+import pytest
 
 
 class TestPythonNetwork2:
-    @classmethod
-    def setup_class(cls):
-        """ this is run once for each class before any tests """
-        pass
-
-    @classmethod
-    def teardown_class(cls):
-        """ this is run once for each class after all tests """
-        pass
-
-    def setup_method(self):
-        """ this is run before each test """
-
-        reaclib_library = pyna.ReacLibLibrary()
+    @pytest.fixture(scope="class")
+    def pynet(self, reaclib_library):
         mylib = reaclib_library.linking_nuclei(["he4", "c12", "o16"])
-        self.pynet = pyna.PythonNetwork(libraries=[mylib], inert_nuclei=["ne20"])
+        return pyna.PythonNetwork(libraries=[mylib], inert_nuclei=["ne20"])
 
-    def teardown_method(self):
-        """ this is run after each test """
-        self.pynet = None
-
-    def test_full_ydot_string(self):
+    def test_full_ydot_string(self, pynet):
 
         dyodt = \
 """dYdt[jo16] = (
@@ -39,5 +24,5 @@ class TestPythonNetwork2:
 
 """
 
-        assert self.pynet.full_ydot_string(pyna.Nucleus("o16")) == dyodt
-        assert self.pynet.full_ydot_string(pyna.Nucleus("ne20")) == dynedt
+        assert pynet.full_ydot_string(pyna.Nucleus("o16")) == dyodt
+        assert pynet.full_ydot_string(pyna.Nucleus("ne20")) == dynedt

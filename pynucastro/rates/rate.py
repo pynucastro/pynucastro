@@ -534,7 +534,7 @@ class Rate:
         # balance.  Rate.symmetric_screen is what should be used in
         # the screening in this case
         self.symmetric_screen = []
-        if self.reverse:
+        if self.Q > 0:
             nucz = [q for q in self.products if q.Z != 0]
             if len(nucz) > 1:
                 nucz.sort(key=lambda x: x.Z)
