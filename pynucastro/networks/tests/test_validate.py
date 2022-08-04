@@ -1,7 +1,6 @@
 # unit tests for rates
-import pynucastro.rates as rates
-
 import io
+import pytest
 
 ANSWER = \
 """validation: ni56 produced in Fe52 + He4 ⟶ Ni56 + 𝛾 never consumed.
@@ -85,35 +84,17 @@ validation: missing Co55 + p ⟶ n + Ni55 as alternative to Co55 + p ⟶ Ni56 + 
 
 class TestValidate:
 
-    @classmethod
-    def setup_class(cls):
-        """ this is run once for each class before any tests """
-        pass
-
-    @classmethod
-    def teardown_class(cls):
-        """ this is run once for each class after all tests """
-        pass
-
-    def setup_method(self):
-        """ this is run before each test """
-
-        self.reaclib_library = rates.ReacLibLibrary()
-
+    @pytest.fixture(scope="class")
+    def reduced_library(self, reaclib_library):
         all_reactants = ["n", "p",
                          "he4", "c12", "o16", "ne20", "mg24", "si28", "s32",
                          "ar36", "ca40", "ti44", "cr48", "fe52", "ni56",
                          "al27", "p31", "cl35", "k39", "sc43", "v47", "mn51", "co55",
                          "c14", "n13", "n14", "o18", "f18", "ne21", "mg23", "na23", "si27", "s31"]
 
-        self.reduced_library = self.reaclib_library.linking_nuclei(all_reactants)
+        return reaclib_library.linking_nuclei(all_reactants)
 
-    def teardown_method(self):
-        """ this is run after each test """
-        self.reaclib_library = None
-        self.reduced_library = None
-
-    def test_validate(self):
+    def test_validate(self, reduced_library, reaclib_library):
         output = io.StringIO()
-        self.reduced_library.validate(self.reaclib_library, ostream=output)
+        reduced_library.validate(reaclib_library, ostream=output)
         assert ANSWER == output.getvalue()

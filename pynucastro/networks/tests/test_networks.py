@@ -1,76 +1,55 @@
 # unit tests for networks
-import pynucastro.networks as networks
+from pynucastro import networks
 from pynucastro.nucdata import Nucleus
 
+import pytest
 from pytest import approx
 
 
 class TestComposition:
-    @classmethod
-    def setup_class(cls):
-        """ this is run once for each class before any tests """
-        pass
+    @pytest.fixture(scope="class")
+    def nuclei(self):
+        return [Nucleus("h1"),
+                Nucleus("he4"),
+                Nucleus("c12"),
+                Nucleus("o16"),
+                Nucleus("n14"),
+                Nucleus("ca40")]
 
-    @classmethod
-    def teardown_class(cls):
-        """ this is run once for each class after all tests """
-        pass
+    @pytest.fixture(scope="class")
+    def comp(self, nuclei):
+        return networks.Composition(nuclei)
 
-    def setup_method(self):
-        """ this is run before each test """
-        self.nuclei = [Nucleus("h1"),
-                       Nucleus("he4"),
-                       Nucleus("c12"),
-                       Nucleus("o16"),
-                       Nucleus("n14"),
-                       Nucleus("ca40")]
-
-        self.comp = networks.Composition(self.nuclei)
-
-    def teardown_method(self):
-        """ this is run after each test """
-        self.tf = None
-
-    def test_solar(self):
-        self.comp.set_solar_like()
+    def test_solar(self, comp):
+        comp.set_solar_like()
 
         sum = 0.0
-        for k in self.comp.X:
-            sum += self.comp.X[k]
+        for k in comp.X:
+            sum += comp.X[k]
 
         assert sum == approx(1.0)
-        assert self.comp.X[Nucleus("h1")] == approx(0.7)
+        assert comp.X[Nucleus("h1")] == approx(0.7)
 
-    def test_set_all(self):
-        val = 1.0/len(self.nuclei)
-        self.comp.set_all(1.0/len(self.nuclei))
-        for n in self.nuclei:
-            assert self.comp.X[n] == val
+    def test_set_all(self, nuclei, comp):
+        val = 1.0/len(nuclei)
+        comp.set_all(1.0/len(nuclei))
+        for n in nuclei:
+            assert comp.X[n] == val
 
-    def test_set_nuc(self):
-        n = self.nuclei[0]
-        self.comp.set_nuc(n.raw, 0.55)
-        assert self.comp.X[n] == 0.55
+    def test_set_nuc(self, nuclei, comp):
+        n = nuclei[0]
+        comp.set_nuc(n.raw, 0.55)
+        assert comp.X[n] == 0.55
 
-    def test_get_molar(self):
-        self.comp.set_solar_like(Z=0.02)
-        molar = self.comp.get_molar()
+    def test_get_molar(self, comp):
+        comp.set_solar_like(Z=0.02)
+        molar = comp.get_molar()
         assert molar[Nucleus("he4")] == approx((0.3-0.02)/4.0)
 
 
 class TestRateCollection:
-    @classmethod
-    def setup_class(cls):
-        """ this is run once for each class before any tests """
-        pass
-
-    @classmethod
-    def teardown_class(cls):
-        """ this is run once for each class after all tests """
-        pass
-
-    def setup_method(self):
-        """ this is run before each test """
+    @pytest.fixture(scope="class")
+    def rc(self):
         files = ["c12-pg-n13-ls09",
                  "c13-pg-n14-nacr",
                  "n13--c13-wc12",
@@ -79,29 +58,22 @@ class TestRateCollection:
                  "n15-pa-c12-nacr",
                  "o14--n14-wc12",
                  "o15--n15-wc12"]
-        self.rc = networks.RateCollection(files)
+        return networks.RateCollection(files)
 
-        self.p = Nucleus("p")
-        self.he4 = Nucleus("he4")
-        self.c12 = Nucleus("c12")
-        self.c13 = Nucleus("c13")
-        self.n13 = Nucleus("n13")
-        self.n14 = Nucleus("n14")
-        self.n15 = Nucleus("n15")
-        self.o14 = Nucleus("o14")
-        self.o15 = Nucleus("o15")
+    def test_nuclei(self, rc):
+        nuc = rc.get_nuclei()
+        assert nuc == [Nucleus("p"),
+                       Nucleus("he4"),
+                       Nucleus("c12"),
+                       Nucleus("c13"),
+                       Nucleus("n13"),
+                       Nucleus("n14"),
+                       Nucleus("n15"),
+                       Nucleus("o14"),
+                       Nucleus("o15")]
 
-    def teardown_method(self):
-        """ this is run after each test """
-        self.tf = None
-
-    def test_nuclei(self):
-        nuc = self.rc.get_nuclei()
-        assert nuc == [self.p, self.he4, self.c12, self.c13,
-                       self.n13, self.n14, self.n15, self.o14, self.o15]
-
-    def test_eval(self):
-        c = networks.Composition(self.rc.unique_nuclei)
+    def test_eval(self, rc):
+        c = networks.Composition(rc.unique_nuclei)
         c.set_solar_like()
 
         rates = {"c12 + p --> n13 <ls09_reaclib__>": 4.3825344233265815e-05,
@@ -113,12 +85,12 @@ class TestRateCollection:
                  "o14 --> n14 <wc12_reaclib_weak_>": 2.0036691481625654e-06,
                  "o15 --> n15 <wc12_reaclib_weak_>": 1.0822012944765837e-06}
 
-        rv = self.rc.evaluate_rates(1.e4, 1.e8, c)
+        rv = rc.evaluate_rates(1.e4, 1.e8, c)
 
         for r in rv:
             assert rv[r] == approx(rates[r.get_rate_id()])
 
-    def test_overview(self):
+    def test_overview(self, rc):
 
         ostr = """
 p
@@ -179,4 +151,4 @@ o15
   produced by:
      N14 + p ⟶ O15 + 𝛾
 """
-        assert self.rc.network_overview().replace(" ", "").strip() == ostr.replace(" ", "").strip()
+        assert rc.network_overview().replace(" ", "").strip() == ostr.replace(" ", "").strip()
