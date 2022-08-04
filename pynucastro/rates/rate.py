@@ -1678,11 +1678,7 @@ class DerivedRate(Rate):
             fstring += "\n"
             fstring += "    "
             fstring += "z_p = "
-            for index, nucp in enumerate(self.rate.products):
-                if index == len(self.rate.products)-1:
-                    fstring += f"{nucp}_pf"
-                    break
-                fstring += f"{nucp}_pf*"
+            fstring += "*".join([f"{nucp}_pf" for nucp in self.rate.products])
 
             fstring += "\n"
             fstring += "    rate *= z_r/z_p\n"
