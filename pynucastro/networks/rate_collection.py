@@ -610,8 +610,8 @@ class RateCollection:
             u_c = ErgToMeV * k * T * (A_1 * (np.sqrt(gamma * (A_2 + gamma)) - A_2 * np.log(np.sqrt(gamma / A_2) +
                                       np.sqrt(1.0 + gamma / A_2))) + 2.0 * A_3 * (np.sqrt(gamma) - np.arctan(np.sqrt(gamma))))
 
-            #nuc.partition_function(T) 
-            comp_NSE.X[nuc] = m_u * nuc.A_nuc / rho * (2.0 * np.pi * m_u * nuc.A_nuc * k * T / h**2)**(3. / 2.) \
+            # 
+            comp_NSE.X[nuc] = m_u * nuc.A_nuc *nuc.partition_function(T) / rho * (2.0 * np.pi * m_u * nuc.A_nuc * k * T / h**2)**(3. / 2.) \
                 * np.exp((nuc.Z * u[0] + nuc.N * u[1] - u_c + nuc.nucbind * nuc.A) / k / T / ErgToMeV)
             
         return comp_NSE
@@ -627,8 +627,7 @@ class RateCollection:
         nse_ye = 0.0
         for nuc in self.unique_nuclei:
             nse_ye += nuc.Z * comp_NSE.X[nuc] / nuc.A
-            
-        #eq2 = ye - comp_NSE.eval_ye()
+
         eq2 = ye - nse_ye
         
         return [eq1, eq2]
@@ -661,63 +660,93 @@ class RateCollection:
         fac_2 = (2.0 * np.pi * m_u * ni56.A_nuc * k * T / h**2)**(3. / 2.)
 
         u = []
-        u.append(-(np.log(fac_1 * fac_2) * k * T * ErgToMeV - u_c + ni56.nucbind * ni56.A)/ni56.A)
+        u.append(-(np.log(fac_1 * fac_2) * k * T / ErgToMeV - u_c + ni56.nucbind * ni56.A) / ni56.A)
         u.append(u[0])
 
         return u
     
-    def newton_raphson(self, rho, T, ye, init_guess=[-3.0648236, -14.56045]):
+    def newton_raphson(self, rho, T, ye, init_guess=[-3.0648236, -14.56045], nloops=5000):
 
         ErgToMeV = 624151.0
         k = constants.value("Boltzmann constant") * 1.0e7
         converge = False
-        print(f" beta is {1/k/T/ErgToMeV}")
-        for i in range(500):
+        diff = np.zeros(2)
+        new_diff = np.zeros(2)
+        diff_count = 0
+
+        #print(f" beta is {1/k/T/ErgToMeV}")
+        for i in range(nloops):
             comp_NSE = self._evaluate_comp_NSE(init_guess, rho, T, ye)
+            if any(np.isnan(init_guess)):
+                raise ValueError("nan value encountered, mostly likely due to digit overflow")
+            
             eq = []
             nse_ye = 0.0
+            
             for nuc in self.unique_nuclei:
                 nse_ye += nuc.Z * comp_NSE.X[nuc] / nuc.A
             eq.append(sum(comp_NSE.X.values()) - 1.0)
             eq.append(nse_ye - ye)
-            print(f"nse ye is {nse_ye}")
+            print(f"constraint equations are now {eq}")
+            #print(f"nse ye is {nse_ye}")
+
             converge = np.all(np.isclose(eq, [0.0, 0.0], rtol=1e-2, atol=1e-3))
             if converge:
                 return init_guess
-            jac = np.array([[0.0, 0.0],[0.0, 0.0]])
+            
+            jac = np.zeros((2,2))
+            jac_inv = np.zeros((2,2))
 
-            jac_inv = np.array([[0.0, 0.0], [0.0, 0.0]])
-            for nuc in self.unique_nuclei:
-                jac[0,0] += nuc.Z * comp_NSE.X[nuc] / k / T / ErgToMeV
-                jac[0,1] += nuc.N * comp_NSE.X[nuc] / k / T / ErgToMeV
-                jac[1,0] += nuc.Z * nuc.Z / nuc.A * comp_NSE.X[nuc] / k / T / ErgToMeV
-                jac[1,1] += nuc.Z * nuc.N / nuc.A * comp_NSE.X[nuc] / k / T / ErgToMeV
-                print(f"{nuc} X is {comp_NSE.X[nuc]}")
-                print(f"{nuc} Z is {nuc.Z}")
-                print(f"{nuc} N is {nuc.N}")
-                print(f"jacobian is {jac}")
+            # scale down by a common factor to avoid reaching inf
+            if (max(comp_NSE.X.values()) > 1.0e150):
+                scale_fac = 1.0/max(comp_NSE.X.values())
+            # elif (max(comp_NSE.X.values()) < 1.0e-100):
+            #     scale_fac = 1.0/max(comp_NSE.X.values())
+            else:
+                scale_fac = 1.0
                 
+            print(scale_fac)
+            for nuc in self.unique_nuclei:
+                jac[0,0] += comp_NSE.X[nuc] * scale_fac * nuc.Z / k / T / ErgToMeV
+                jac[0,1] += comp_NSE.X[nuc] * scale_fac * nuc.N / k / T / ErgToMeV 
+                jac[1,0] += comp_NSE.X[nuc] * scale_fac * nuc.Z * nuc.Z / nuc.A / k / T / ErgToMeV
+                jac[1,1] += comp_NSE.X[nuc] * scale_fac * nuc.Z * nuc.N / nuc.A / k / T / ErgToMeV
+                print(f"{nuc} X is {comp_NSE.X[nuc]}")
+                #print(f"{nuc} Z is {nuc.Z}")
+                #print(f"{nuc} N is {nuc.N}")
+                #print(f"jacobian is {jac}")
+
+            # scale_fac = jac.max()
+            # jac /= scale_fac
+
             det = jac[0,0] * jac[1,1] - jac[1,0] * jac[0,1]
-            jac_inv[0,0] = jac[1, 1] / det
-            jac_inv[0,1] = -jac[0, 1] / det
-            jac_inv[1,0] = -jac[1, 0] / det
-            jac_inv[1,1] = jac[0, 0] / det
+            assert det != 0.0, "Jacobian is a singular matrix! Try a different initial guess!"
+            
+            jac_inv[0,0] = jac[1, 1] / det * scale_fac
+            jac_inv[0,1] = -jac[0, 1] / det * scale_fac
+            jac_inv[1,0] = -jac[1, 0] / det * scale_fac
+            jac_inv[1,1] = jac[0, 0] / det * scale_fac
             print(f"det is {det}")
             print(f" jacobian are {jac}")
             #diff = np.linalg.solve(-jac,np.array(eq))
             #print(f"diff using solve is {diff}")
             #jac_inv = np.linalg.inv(jac)
-
-            #print(f"jac is {jac} and jac_inv is {jac_inv}")
+            
+            print(f"jac_inv is {jac_inv}")
             # update
-            diff = []
-            print(f"constraint eqs are now {eq[0]} and {eq[1]}")
-            diff.append(eq[0] * jac_inv[0,0] + eq[1] * jac_inv[0,1])
-            diff.append(eq[0] * jac_inv[1,0] + eq[1] * jac_inv[1,1])
-            print(f"diff with inv are {diff[0]} and {diff[1]}")
-            diff = np.array(diff)
-            if any(np.abs(diff) > 1.0):
-                diff /= np.max(diff)
+            new_diff[0] = eq[0] * jac_inv[0,0] + eq[1] * jac_inv[0,1]
+            new_diff[1] = eq[0] * jac_inv[1,0] + eq[1] * jac_inv[1,1]
+
+            if any(np.abs(new_diff) > np.abs(diff)):
+                diff_count += 1
+            else:
+                diff_count = 0
+                
+            if diff_count > 10:
+                raise ValueError("Not making good progress in finding solution")
+            
+            diff = new_diff
+            print(f"diff are {diff[0]} and {diff[1]}")
             init_guess -= diff
             print(f"init guess is now {init_guess}")
 
