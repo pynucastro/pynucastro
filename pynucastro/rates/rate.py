@@ -1,6 +1,7 @@
 """
 Classes and methods to interface with files storing rate data.
 """
+from collections import Counter
 from scipy.constants import physical_constants
 import os
 import re
@@ -1585,20 +1586,20 @@ class DerivedRate(Rate):
         for ssets in self.rate.sets:
             a = ssets.a
             prefactor = 0.0
-
-            if len(self.rate.products) == 1:
-                prefactor = -np.log(N_a)
+            prefactor += -np.log(N_a) * (len(self.rate.reactants) - len(self.rate.products))
 
             if not self.use_A_nuc:
                 for nucr in self.rate.reactants:
-                    prefactor += np.log(nucr.spin_states) + 1.5*np.log(nucr.A)
+                    prefactor += 1.5*np.log(nucr.A) + np.log(nucr.spin_states)
                 for nucp in self.rate.products:
-                    prefactor += -np.log(nucp.spin_states) - 1.5*np.log(nucp.A)
+                    prefactor += -1.5*np.log(nucp.A) - np.log(nucp.spin_states)
             else:
                 for nucr in self.rate.reactants:
                     prefactor += np.log(nucr.spin_states) + 1.5*np.log(nucr.A_nuc)
                 for nucp in self.rate.products:
                     prefactor += -np.log(nucp.spin_states) - 1.5*np.log(nucp.A_nuc)
+
+            prefactor += np.log(self.counter_factors()[1]) - np.log(self.counter_factors()[0])
 
             if len(self.rate.reactants) == len(self.rate.products):
                 prefactor += 0.0
@@ -1634,6 +1635,76 @@ class DerivedRate(Rate):
 
             return r*z_r/z_p
         return r
+
+    def function_string_py(self):
+        """
+        Return a string containing python function that computes the
+        rate
+        """
+
+        fstring = ""
+        fstring += "@numba.njit()\n"
+        fstring += f"def {self.fname}(tf):\n"
+        fstring += f"    # {self.rid}\n"
+        fstring += "    rate = 0.0\n\n"
+
+        for s in self.sets:
+            fstring += f"    # {s.labelprops[0:5]}\n"
+            set_string = s.set_string_py(prefix="rate", plus_equal=True)
+            for t in set_string.split("\n"):
+                fstring += "    " + t + "\n"
+
+        if self.use_pf:
+
+            fstring += "\n"
+            for nucr in self.rate.reactants:
+                fstring += f"    {nucr}_temp_array = np.array({list(nucr.partition_function.temperature/1.0e9)})\n"
+                fstring += f"    {nucr}_pf_array = np.array({list(nucr.partition_function.partition_function)})\n"
+                fstring += f"    {nucr}_pf_exponent = np.interp(tf.T9, xp={nucr}_temp_array, fp=np.log10({nucr}_pf_array))\n"
+                fstring += f"    {nucr}_pf = 10.0**{nucr}_pf_exponent\n"
+                fstring += "\n"
+            for nucp in self.rate.products:
+                fstring += f"    {nucp}_temp_array = np.array({list(nucp.partition_function.temperature/1.0e9)})\n"
+                fstring += f"    {nucp}_pf_array = np.array({list(nucp.partition_function.partition_function)})\n"
+                fstring += f"    {nucp}_pf_exponent = np.interp(tf.T9, xp={nucp}_temp_array, fp=np.log10({nucp}_pf_array))\n"
+                fstring += f"    {nucp}_pf = 10.0**{nucp}_pf_exponent\n"
+                fstring += "\n"
+
+            fstring += "\n"
+            fstring += "    "
+            fstring += "z_r = "
+            fstring += "*".join([f"{nucr}_pf" for nucr in self.rate.reactants])
+
+            fstring += "\n"
+            fstring += "    "
+            fstring += "z_p = "
+            fstring += "*".join([f"{nucp}_pf" for nucp in self.rate.products])
+
+            fstring += "\n"
+            fstring += "    rate *= z_r/z_p\n"
+
+        fstring += "\n"
+        fstring += "    return rate\n\n"
+        return fstring
+
+    def counter_factors(self):
+        """ This function returns the nucr! = nucr_1! * ... * nucr_r! for each repeated nucr reactant and
+        nucp! = nucp_1! * ... * nucp_p! for each reactant nucp product in a ordered pair (nucr!, nucp!). The
+        factors nucr! and nucp! avoid overcounting when more than one nuclei is involve in the reaction, otherwise
+        it will return 1.0."""
+
+        react_counts = Counter(self.rate.reactants)
+        prod_counts = Counter(self.rate.products)
+
+        reactant_factor = 1.0
+        for nuc in set(self.rate.reactants):
+            reactant_factor *= np.math.factorial(react_counts[nuc])
+
+        product_factor = 1.0
+        for nuc in set(self.rate.products):
+            product_factor *= np.math.factorial(prod_counts[nuc])
+
+        return (reactant_factor, product_factor)
 
 
 class RatePair:
