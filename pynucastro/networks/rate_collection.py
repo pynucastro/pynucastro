@@ -26,7 +26,7 @@ import copy
 
 # Import Rate
 from pynucastro.nucdata import Nucleus
-from pynucastro.rates import Rate, RatePair, ApproximateRate, Library
+from pynucastro.rates import Rate, RatePair, DerivedRate, ApproximateRate, Library, load_rate
 from pynucastro.screening import PlasmaState, ScreenFactors
 
 from pynucastro.nucdata import PeriodicTable
@@ -414,6 +414,7 @@ class RateCollection:
         self.tabular_rates = []
         self.reaclib_rates = []
         self.approx_rates = []
+        self.derived_rates = []
         for r in self.rates:
             if isinstance(r, ApproximateRate):
                 self.approx_rates.append(r)
@@ -425,22 +426,29 @@ class RateCollection:
                         self.reaclib_rates.append(cr)
             elif r.chapter == 't':
                 self.tabular_rates.append(r)
+            elif isinstance(r, DerivedRate):
+                self.derived_rates.append(r)
             elif isinstance(r.chapter, int):
                 if r not in self.reaclib_rates:
                     self.reaclib_rates.append(r)
             else:
                 raise NotImplementedError(f"Chapter type unknown for rate chapter {r.chapter}")
 
-        self.all_rates = self.reaclib_rates + self.tabular_rates + self.approx_rates
+        self.all_rates = self.reaclib_rates + self.tabular_rates + self.approx_rates + self.derived_rates
 
     def _read_rate_files(self, rate_files):
         # get the rates
         self.files = rate_files
         for rf in self.files:
+            # create the appropriate rate object first
             try:
-                rflib = Library(rf)
+                rate = load_rate(rf)
             except Exception as ex:
-                raise Exception(f"Error reading library from file: {rf}") from ex
+                raise Exception(f"Error reading rate from file: {rf}") from ex
+
+            # now create a library:
+            rflib = Library(rates=[rate])
+
             if not self.library:
                 self.library = rflib
             else:
@@ -760,8 +768,12 @@ class RateCollection:
 
         comp_NSE = self._evaluate_comp_NSE(u, rho, T, ye)
 
+        # Don't use eval_ye() since it does automatic mass fraction normalization.
+        # However, we should force normalization through constraint eq1.
+        nse_ye = sum(nuc.Z * comp_NSE.X[nuc] / nuc.A for nuc in self.unique_nuclei)
+
         eq1 = sum(comp_NSE.X.values()) - 1.0
-        eq2 = ye - comp_NSE.eval_ye()
+        eq2 = ye - nse_ye
 
         return [eq1, eq2]
 

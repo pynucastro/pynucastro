@@ -2,36 +2,23 @@
 import math
 
 from pynucastro.nucdata import Nucleus
-import pynucastro.rates as rates
+from pynucastro import rates
+import pytest
 from pytest import approx
 
 
 class TestTfactors:
-    @classmethod
-    def setup_class(cls):
-        """ this is run once for each class before any tests """
-        pass
+    @pytest.fixture(scope="class")
+    def tf(self):
+        return rates.Tfactors(2.e9)
 
-    @classmethod
-    def teardown_class(cls):
-        """ this is run once for each class after all tests """
-        pass
-
-    def setup_method(self):
-        """ this is run before each test """
-        self.tf = rates.Tfactors(2.e9)
-
-    def teardown_method(self):
-        """ this is run after each test """
-        self.tf = None
-
-    def test_tfactors(self):
-        assert self.tf.T9 == approx(2.0)
-        assert self.tf.T9i == approx(0.5)
-        assert self.tf.T913i == approx(0.5**(1./3.))
-        assert self.tf.T913 == approx(2.0**(1./3.))
-        assert self.tf.T953 == approx(2.0**(5./3.))
-        assert self.tf.lnT9 == approx(math.log(2.0))
+    def test_tfactors(self, tf):
+        assert tf.T9 == approx(2.0)
+        assert tf.T9i == approx(0.5)
+        assert tf.T913i == approx(0.5**(1./3.))
+        assert tf.T913 == approx(2.0**(1./3.))
+        assert tf.T953 == approx(2.0**(5./3.))
+        assert tf.lnT9 == approx(math.log(2.0))
 
 
 class TestRate:
@@ -206,26 +193,7 @@ class TestRate:
 
 
 class TestDerivedRate:
-
-    @classmethod
-    def setup_class(cls):
-        """ this is run once for each class before any tests """
-        pass
-
-    @classmethod
-    def teardown_class(cls):
-        """ this is run once for each class before any tests """
-        pass
-
-    def setup_method(self):
-        """ this is run once for each class before any tests """
-        self.reaclib_data = rates.Library('20180319default2')
-
-    def teardown_method(self):
-        """ this is run once for each class before any tests """
-        pass
-
-    def test_ar37_na_s34(self):
+    def test_ar37_na_s34(self, reaclib_library):
         """
         Here we test the inverse rate, computed by the use of detailed balance
         of a:
@@ -235,17 +203,14 @@ class TestDerivedRate:
         reaction type.
         """
 
-        specs = rates.RateFilter(reactants=['s34', 'a'], products=['ar37', 'n'])
-        specs_inv = rates.RateFilter(reactants=['ar37', 'n'], products=['s34', 'a'])
-
-        s34_an_ar37 = self.reaclib_data.filter(filter_spec=specs).get_rates()[0]
-        ar37_na_s34_reaclib = self.reaclib_data.filter(filter_spec=specs_inv).get_rates()[0]
+        s34_an_ar37 = reaclib_library.get_rate("s34 + he4 --> n + ar37 <SM93_reaclib__>")
+        ar37_na_s34_reaclib = reaclib_library.get_rate("ar37 + n --> he4 + s34 <SM93_reaclib__reverse>")
 
         ar37_na_s34_derived = rates.DerivedRate(rate=s34_an_ar37)
 
         assert ar37_na_s34_reaclib.eval(T=2.0e9) == approx(ar37_na_s34_derived.eval(T=2.0e9), rel=2.4e-5)
 
-    def test_ar35_pg_k36(self):
+    def test_ar35_pg_k36(self, reaclib_library):
         """
         Here we test the inverse rate, computed by the use of detailed balance
         of a:
@@ -255,100 +220,67 @@ class TestDerivedRate:
         reaction type.
         """
 
-        specs = rates.RateFilter(reactants=['p', 'ar35'], products=['k36'])
-        specs_inv = rates.RateFilter(reactants=['k36'], products=['p', 'ar35'])
-
-        ar35_pg_k36 = self.reaclib_data.filter(filter_spec=specs).get_rates()[0]
-        k36_gp_ar35_reaclib = self.reaclib_data.filter(filter_spec=specs_inv).get_rates()[0]
+        ar35_pg_k36 = reaclib_library.get_rate("ar35 + p --> k36 <il10_reaclib__>")
+        k36_gp_ar35_reaclib = reaclib_library.get_rate("k36 --> p + ar35 <il10_reaclib__reverse>")
 
         k36_gp_ar35_derived = rates.DerivedRate(rate=ar35_pg_k36)
 
         assert k36_gp_ar35_reaclib.eval(T=2.0e9) == approx(k36_gp_ar35_derived.eval(T=2.0e9), rel=1.7e-5)
 
-    def test_ar35_pg_k36_with_pf(self):
+    def test_ar35_pg_k36_with_pf(self, reaclib_library):
         """
         This function test the correct rate value if we take in consideration the partition
         functions on the range 1.0e9 to 100.0e9
         """
 
-        specs = rates.RateFilter(reactants=['p', 'ar35'], products=['k36'])
-        ar35_pg_k36 = self.reaclib_data.filter(filter_spec=specs).get_rates()[0]
+        ar35_pg_k36 = reaclib_library.get_rate("ar35 + p --> k36 <il10_reaclib__>")
         k36_gp_ar35_derived = rates.DerivedRate(rate=ar35_pg_k36, use_pf=True)
 
         assert k36_gp_ar35_derived.eval(T=2.0e9) == approx(4197540.737818229)
 
-    def test_ar35_pg_k36_with_A_nuc(self):
+    def test_ar35_pg_k36_with_A_nuc(self, reaclib_library):
         """
         This function test the correct rate value if we take in consideration the
         exact values of atomic nuclear weight instead of the atomic weight A_nuc = A*m_u
         """
 
-        specs = rates.RateFilter(reactants=['p', 'ar35'], products=['k36'])
-        ar35_pg_k36 = self.reaclib_data.filter(filter_spec=specs).get_rates()[0]
+        ar35_pg_k36 = reaclib_library.get_rate("ar35 + p --> k36 <il10_reaclib__>")
         k36_gp_ar35_derived = rates.DerivedRate(rate=ar35_pg_k36, use_A_nuc=True)
 
         assert k36_gp_ar35_derived.eval(T=2.0e9) == approx(5103206.8505866425)
 
 
 class TestWeakRates:
+    @pytest.fixture(scope="class")
+    def rate1(self):
+        return rates.TabularRate("o18--f18-toki")
 
-    @classmethod
-    def setup_class(cls):
-        """ this is run once for each class before any tests """
-        pass
+    @pytest.fixture(scope="class")
+    def rate2(self):
+        return rates.TabularRate("na22--ne22-toki")
 
-    def teardown_class(cls):
-        """ this is run once for each class after all tests """
-        pass
+    def test_reactants(self, rate1, rate2):
 
-    def setup_method(self):
-        """ this is run before each test """
+        assert len(rate1.reactants) == 1 and len(rate1.products) == 1
+        assert rate1.products[0] == Nucleus("f18")
+        assert rate1.reactants[0] == Nucleus("o18")
+        assert rate1.eval(1.e10, 1.e7) == approx(3.990249e-11)
 
-        self.rate1 = rates.Rate("o18--f18-toki")
-        self.rate2 = rates.Rate("na22--ne22-toki")
-
-    def teardown_method(self):
-        """ this is run after each test """
-        pass
-
-    def test_reactants(self):
-
-        assert len(self.rate1.reactants) == 1 and len(self.rate1.products) == 1
-        assert self.rate1.products[0] == Nucleus("f18")
-        assert self.rate1.reactants[0] == Nucleus("o18")
-        assert self.rate1.eval(1.e10, 1.e7) == approx(3.990249e-11)
-
-        assert len(self.rate2.reactants) == 1 and len(self.rate2.products) == 1
-        assert self.rate2.products[0] == Nucleus("ne22")
-        assert self.rate2.reactants[0] == Nucleus("na22")
-        assert self.rate2.eval(1.e9, 1.e6) == approx(1.387075e-05)
+        assert len(rate2.reactants) == 1 and len(rate2.products) == 1
+        assert rate2.products[0] == Nucleus("ne22")
+        assert rate2.reactants[0] == Nucleus("na22")
+        assert rate2.eval(1.e9, 1.e6) == approx(1.387075e-05)
 
 
 class TestModify:
+    @pytest.fixture(scope="function")
+    def rate(self):
+        return rates.Rate("c12-c12n-mg23-cf88")
 
-    @classmethod
-    def setup_class(cls):
-        """ this is run once for each class before any tests """
-        pass
+    def test_modify(self, rate):
 
-    @classmethod
-    def teardown_class(cls):
-        """ this is run once for each class after all tests """
-        pass
+        rate.modify_products("mg24")
 
-    def setup_method(self):
-        """ this is run before each test """
-
-        self.rate = rates.Rate("c12-c12n-mg23-cf88")
-
-    def teardown_method(self):
-        """ this is run after each test """
-        pass
-
-    def test_modify(self):
-
-        self.rate.modify_products("mg24")
-
-        assert self.rate.Q == approx(13.93356)
-        assert self.rate.products == [Nucleus("mg24")]
-        assert self.rate.modified
+        assert rate.Q == approx(13.93356)
+        assert rate.products == [Nucleus("mg24")]
+        assert rate.modified

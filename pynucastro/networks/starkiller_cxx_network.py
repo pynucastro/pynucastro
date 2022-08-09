@@ -42,14 +42,16 @@ class StarKillerCxxNetwork(BaseCxxNetwork):
             if r in self.disable_rate_params:
                 of.write(f"{self.indent*n_indent}if (disable_{r.fname}) {{\n")
                 of.write(f"{self.indent*n_indent}    rate_eval.screened_rates(k_{r.fname}) = 0.0;\n")
-                of.write(f"{self.indent*n_indent}    rate_eval.dscreened_rates_dT(k_{r.fname}) = 0.0;\n")
-
+                of.write(f"{self.indent*n_indent}    if constexpr (std::is_same<T, rate_derivs_t>::value) {{\n")
+                of.write(f"{self.indent*n_indent}        rate_eval.dscreened_rates_dT(k_{r.fname}) = 0.0;\n")
+                of.write(f"{self.indent*n_indent}    }}\n")
                 # check for the reverse too -- we disable it with the same parameter
                 rr = self.find_reverse(r)
                 if rr is not None:
                     of.write(f"{self.indent*n_indent}    rate_eval.screened_rates(k_{rr.fname}) = 0.0;\n")
+                    of.write(f"{self.indent*n_indent}    if constexpr (std::is_same<T, rate_derivs_t>::value) {{\n")
                     of.write(f"{self.indent*n_indent}    rate_eval.dscreened_rates_dT(k_{rr.fname}) = 0.0;\n")
-
+                    of.write(f"{self.indent*n_indent}    }}\n")
                 of.write(f"{self.indent*n_indent}}}\n\n")
 
     def _write_network(self, odir=None):
