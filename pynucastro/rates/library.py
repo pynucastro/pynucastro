@@ -3,7 +3,7 @@ import io
 import collections
 
 from pynucastro.nucdata import Nucleus, UnsupportedNucleus
-from pynucastro.rates.rate import DerivedRate, Rate, _find_rate_file
+from pynucastro.rates.rate import DerivedRate, Rate, _find_rate_file, load_rate
 
 
 def list_known_rates():
@@ -131,7 +131,7 @@ class Library:
                                             rlines))
                 #print(sio.getvalue())
                 try:
-                    r = Rate(sio, rfile_path=self._library_file)
+                    r = load_rate(rfile=sio, rfile_path=self._library_file)
                 except UnsupportedNucleus:
                     pass
                 else:
