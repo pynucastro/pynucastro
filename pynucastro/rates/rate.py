@@ -1688,6 +1688,10 @@ class DerivedRate(Rate):
         return fstring
 
     def counter_factors(self):
+        """ This function returns the nucr! = nucr_1! * ... * nucr_r! for each repeated nucr reactant and
+        nucp! = nucp_1! * ... * nucp_p! for each reactant nucp product in a ordered pair (nucr!, nucp!). The
+        factors nucr! and nucp! avoid overcounting when more than one nuclei is involve in the reaction, otherwise
+        it will return 1.0."""
 
         react_counts = Counter(self.rate.reactants)
         prod_counts = Counter(self.rate.products)
