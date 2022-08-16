@@ -1,6 +1,7 @@
 """
 Classes and methods to interface with files storing rate data.
 """
+from collections import Counter
 from scipy.constants import physical_constants
 import os
 import re
@@ -1005,6 +1006,7 @@ class ReacLibRate(Rate):
         """
 
         fstring = ""
+        fstring += "template <int do_T_derivatives>\n"
         fstring += f"{specifiers}\n"
         fstring += f"void rate_{self.fname}(const tf_t& tfactors, {dtype}& rate, {dtype}& drate_dT) {{\n\n"
         fstring += f"    // {self.rid}\n\n"
@@ -1021,9 +1023,11 @@ class ReacLibRate(Rate):
                 fstring += "    " + t + "\n"
             fstring += "\n"
 
+            fstring += "    if constexpr (do_T_derivatives) {\n"
             dln_set_string_dT9 = s.dln_set_string_dT9_cxx(prefix="dln_set_rate_dT9", plus_equal=False)
             for t in dln_set_string_dT9.split("\n"):
-                fstring += "    " + t + "\n"
+                fstring += "        " + t + "\n"
+            fstring += "    }\n"
             fstring += "\n"
 
             fstring += "    // avoid underflows by zeroing rates in [0.0, 1.e-100]\n"
@@ -1032,7 +1036,9 @@ class ReacLibRate(Rate):
 
             fstring += "    rate += set_rate;\n"
 
-            fstring += "    drate_dT += set_rate * dln_set_rate_dT9 / 1.0e9;\n\n"
+            fstring += "    if constexpr (do_T_derivatives) {\n"
+            fstring += "        drate_dT += set_rate * dln_set_rate_dT9 / 1.0e9;\n"
+            fstring += "    }\n\n"
 
         fstring += "}\n\n"
         return fstring
@@ -1565,20 +1571,20 @@ class DerivedRate(ReacLibRate):
         for ssets in self.rate.sets:
             a = ssets.a
             prefactor = 0.0
-
-            if len(self.rate.products) == 1:
-                prefactor = -np.log(N_a)
+            prefactor += -np.log(N_a) * (len(self.rate.reactants) - len(self.rate.products))
 
             if not self.use_A_nuc:
                 for nucr in self.rate.reactants:
-                    prefactor += np.log(nucr.spin_states) + 1.5*np.log(nucr.A)
+                    prefactor += 1.5*np.log(nucr.A) + np.log(nucr.spin_states)
                 for nucp in self.rate.products:
-                    prefactor += -np.log(nucp.spin_states) - 1.5*np.log(nucp.A)
+                    prefactor += -1.5*np.log(nucp.A) - np.log(nucp.spin_states)
             else:
                 for nucr in self.rate.reactants:
                     prefactor += np.log(nucr.spin_states) + 1.5*np.log(nucr.A_nuc)
                 for nucp in self.rate.products:
                     prefactor += -np.log(nucp.spin_states) - 1.5*np.log(nucp.A_nuc)
+
+            prefactor += np.log(self.counter_factors()[1]) - np.log(self.counter_factors()[0])
 
             if len(self.rate.reactants) == len(self.rate.products):
                 prefactor += 0.0
@@ -1614,6 +1620,76 @@ class DerivedRate(ReacLibRate):
 
             return r*z_r/z_p
         return r
+
+    def function_string_py(self):
+        """
+        Return a string containing python function that computes the
+        rate
+        """
+
+        fstring = ""
+        fstring += "@numba.njit()\n"
+        fstring += f"def {self.fname}(tf):\n"
+        fstring += f"    # {self.rid}\n"
+        fstring += "    rate = 0.0\n\n"
+
+        for s in self.sets:
+            fstring += f"    # {s.labelprops[0:5]}\n"
+            set_string = s.set_string_py(prefix="rate", plus_equal=True)
+            for t in set_string.split("\n"):
+                fstring += "    " + t + "\n"
+
+        if self.use_pf:
+
+            fstring += "\n"
+            for nucr in self.rate.reactants:
+                fstring += f"    {nucr}_temp_array = np.array({list(nucr.partition_function.temperature/1.0e9)})\n"
+                fstring += f"    {nucr}_pf_array = np.array({list(nucr.partition_function.partition_function)})\n"
+                fstring += f"    {nucr}_pf_exponent = np.interp(tf.T9, xp={nucr}_temp_array, fp=np.log10({nucr}_pf_array))\n"
+                fstring += f"    {nucr}_pf = 10.0**{nucr}_pf_exponent\n"
+                fstring += "\n"
+            for nucp in self.rate.products:
+                fstring += f"    {nucp}_temp_array = np.array({list(nucp.partition_function.temperature/1.0e9)})\n"
+                fstring += f"    {nucp}_pf_array = np.array({list(nucp.partition_function.partition_function)})\n"
+                fstring += f"    {nucp}_pf_exponent = np.interp(tf.T9, xp={nucp}_temp_array, fp=np.log10({nucp}_pf_array))\n"
+                fstring += f"    {nucp}_pf = 10.0**{nucp}_pf_exponent\n"
+                fstring += "\n"
+
+            fstring += "\n"
+            fstring += "    "
+            fstring += "z_r = "
+            fstring += "*".join([f"{nucr}_pf" for nucr in self.rate.reactants])
+
+            fstring += "\n"
+            fstring += "    "
+            fstring += "z_p = "
+            fstring += "*".join([f"{nucp}_pf" for nucp in self.rate.products])
+
+            fstring += "\n"
+            fstring += "    rate *= z_r/z_p\n"
+
+        fstring += "\n"
+        fstring += "    return rate\n\n"
+        return fstring
+
+    def counter_factors(self):
+        """ This function returns the nucr! = nucr_1! * ... * nucr_r! for each repeated nucr reactant and
+        nucp! = nucp_1! * ... * nucp_p! for each reactant nucp product in a ordered pair (nucr!, nucp!). The
+        factors nucr! and nucp! avoid overcounting when more than one nuclei is involve in the reaction, otherwise
+        it will return 1.0."""
+
+        react_counts = Counter(self.rate.reactants)
+        prod_counts = Counter(self.rate.products)
+
+        reactant_factor = 1.0
+        for nuc in set(self.rate.reactants):
+            reactant_factor *= np.math.factorial(react_counts[nuc])
+
+        product_factor = 1.0
+        for nuc in set(self.rate.products):
+            product_factor *= np.math.factorial(prod_counts[nuc])
+
+        return (reactant_factor, product_factor)
 
 
 class RatePair:
@@ -1820,8 +1896,9 @@ class ApproximateRate(ReacLibRate):
             raise NotImplementedError("don't know how to work with this approximation")
 
         fstring = ""
+        fstring = "template <typename T>\n"
         fstring += f"{specifiers}\n"
-        fstring += f"void rate_{self.fname}(const rate_eval_t& rate_eval, {dtype}& rate, {dtype}& drate_dT) {{\n\n"
+        fstring += f"void rate_{self.fname}(const T& rate_eval, {dtype}& rate, {dtype}& drate_dT) {{\n\n"
 
         if not self.is_reverse:
 
@@ -1831,15 +1908,16 @@ class ApproximateRate(ReacLibRate):
             fstring += f"    {dtype} r_pg = rate_eval.screened_rates(k_{self.secondary_rates[1].fname});\n"
             fstring += f"    {dtype} r_pa = rate_eval.screened_rates(k_{self.secondary_reverse[1].fname});\n"
 
-            fstring += f"    {dtype} drdT_ag = rate_eval.dscreened_rates_dT(k_{self.primary_rate.fname});\n"
-            fstring += f"    {dtype} drdT_ap = rate_eval.dscreened_rates_dT(k_{self.secondary_rates[0].fname});\n"
-            fstring += f"    {dtype} drdT_pg = rate_eval.dscreened_rates_dT(k_{self.secondary_rates[1].fname});\n"
-            fstring += f"    {dtype} drdT_pa = rate_eval.dscreened_rates_dT(k_{self.secondary_reverse[1].fname});\n"
-
             # now the approximation
             fstring += f"    {dtype} dd = 1.0_rt / (r_pg + r_pa);\n"
             fstring += "    rate = r_ag + r_ap * r_pg * dd;\n"
-            fstring += "    drate_dT = drdT_ag + drdT_ap * r_pg * dd + r_ap * drdT_pg * dd - r_ap * r_pg * dd * dd * (drdT_pg + drdT_pa);\n"
+            fstring += "    if constexpr (std::is_same<T, rate_derivs_t>::value) {\n"
+            fstring += f"        {dtype} drdT_ag = rate_eval.dscreened_rates_dT(k_{self.primary_rate.fname});\n"
+            fstring += f"        {dtype} drdT_ap = rate_eval.dscreened_rates_dT(k_{self.secondary_rates[0].fname});\n"
+            fstring += f"        {dtype} drdT_pg = rate_eval.dscreened_rates_dT(k_{self.secondary_rates[1].fname});\n"
+            fstring += f"        {dtype} drdT_pa = rate_eval.dscreened_rates_dT(k_{self.secondary_reverse[1].fname});\n"
+            fstring += "        drate_dT = drdT_ag + drdT_ap * r_pg * dd + r_ap * drdT_pg * dd - r_ap * r_pg * dd * dd * (drdT_pg + drdT_pa);\n"
+            fstring += "    }\n"
         else:
 
             # first we need to get all of the rates that make this up
@@ -1848,15 +1926,16 @@ class ApproximateRate(ReacLibRate):
             fstring += f"    {dtype} r_gp = rate_eval.screened_rates(k_{self.secondary_reverse[0].fname});\n"
             fstring += f"    {dtype} r_pg = rate_eval.screened_rates(k_{self.secondary_rates[1].fname});\n"
 
-            fstring += f"    {dtype} drdT_ga = rate_eval.dscreened_rates_dT(k_{self.primary_reverse.fname});\n"
-            fstring += f"    {dtype} drdT_pa = rate_eval.dscreened_rates_dT(k_{self.secondary_reverse[1].fname});\n"
-            fstring += f"    {dtype} drdT_gp = rate_eval.dscreened_rates_dT(k_{self.secondary_reverse[0].fname});\n"
-            fstring += f"    {dtype} drdT_pg = rate_eval.dscreened_rates_dT(k_{self.secondary_rates[1].fname});\n"
-
             # now the approximation
             fstring += f"    {dtype} dd = 1.0_rt / (r_pg + r_pa);\n"
             fstring += "    rate = r_ga + r_gp * r_pa * dd;\n"
-            fstring += "    drate_dT = drdT_ga + drdT_gp * r_pa * dd + r_gp * drdT_pa * dd - r_gp * r_pa * dd * dd * (drdT_pg + drdT_pa);\n"
+            fstring += "    if constexpr (std::is_same<T, rate_derivs_t>::value) {\n"
+            fstring += f"        {dtype} drdT_ga = rate_eval.dscreened_rates_dT(k_{self.primary_reverse.fname});\n"
+            fstring += f"        {dtype} drdT_pa = rate_eval.dscreened_rates_dT(k_{self.secondary_reverse[1].fname});\n"
+            fstring += f"        {dtype} drdT_gp = rate_eval.dscreened_rates_dT(k_{self.secondary_reverse[0].fname});\n"
+            fstring += f"        {dtype} drdT_pg = rate_eval.dscreened_rates_dT(k_{self.secondary_rates[1].fname});\n"
+            fstring += "        drate_dT = drdT_ga + drdT_gp * r_pa * dd + r_gp * drdT_pa * dd - r_gp * r_pa * dd * dd * (drdT_pg + drdT_pa);\n"
+            fstring += "    }\n"
 
         fstring += "}\n\n"
         return fstring
