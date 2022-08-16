@@ -133,6 +133,7 @@ from pynucastro.rates import \
     RateFilter, \
     Library, \
     ReacLibLibrary, \
-    list_known_rates
+    list_known_rates, \
+    load_rate
 
 import pynucastro.screening

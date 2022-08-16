@@ -396,16 +396,19 @@ class Rate:
         # figure out if there are any non-nuclei present
         # for the moment, we just handle strong rates
 
-        try:
-            # there should be the same number of protons on each side and
-            # the same number of neutrons on each side
-            assert sum(n.Z for n in self.reactants) == sum(n.Z for n in self.products)
-            assert sum(n.A for n in self.reactants) == sum(n.A for n in self.products)
+        # there should be the same number of protons on each side and
+        # the same number of neutrons on each side
+
+        strong_test = sum(n.Z for n in self.reactants) == sum(n.Z for n in self.products) and \
+                      sum(n.A for n in self.reactants) == sum(n.A for n in self.products)
+
+
+        if strong_test:
 
             if len(self.products) == 1:
                 self.rhs_other.append("gamma")
 
-        except AssertionError:
+        else:
 
             # this is a weak rate
 
@@ -706,10 +709,17 @@ class ReacLibRate(Rate):
         self.fname = None    # reset so it will be updated
         self._set_print_representation()
 
+    def __hash__(self):
+        return hash(self.__repr__())
+
     def __eq__(self, other):
         """ Determine whether two Rate objects are equal.
         They are equal if they contain identical reactants and products and
         if they contain the same SingleSet sets and if their chapters are equal."""
+
+        if not isinstance(other, ReacLibRate):
+            return False
+
         x = True
 
         x = x and (self.chapter == other.chapter)
@@ -1238,6 +1248,9 @@ class TabularRate(Rate):
         self.lhs_other = []
         self.rhs_other = []
 
+        # we should initialize this somehow
+        self.weak_type = ""
+
         if isinstance(rfile, str):
             # read in the file, parse the different sets and store them as
             # SingleSet objects in sets[]
@@ -1261,6 +1274,9 @@ class TabularRate(Rate):
     def __eq__(self, other):
         """ Determine whether two Rate objects are equal.
         They are equal if they contain identical reactants and products."""
+
+        if not isinstance(other, TabularRate):
+            return False
 
         return self.reactants == other.reactants and self.products == other.products
 

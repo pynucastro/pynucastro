@@ -3,7 +3,7 @@ import io
 import collections
 
 from pynucastro.nucdata import Nucleus, UnsupportedNucleus
-from pynucastro.rates.rate import DerivedRate, Rate, _find_rate_file, load_rate
+from pynucastro.rates.rate import DerivedRate, Rate, _find_rate_file, load_rate, ReacLibRate, TabularRate
 
 
 def list_known_rates():
@@ -122,16 +122,24 @@ class Library:
             current_chapter = chapter
 
             rlines = None
+            rate_type = None
             if chapter == 't':
                 rlines = [self._library_source_lines.popleft() for i in range(5)]
+                rate_type = "tabular"
             elif isinstance(chapter, int):
                 rlines = [self._library_source_lines.popleft() for i in range(3)]
+                rate_type ="reaclib"
             if rlines:
                 sio = io.StringIO('\n'.join([f'{chapter}'] +
                                             rlines))
                 #print(sio.getvalue())
                 try:
-                    r = load_rate(rfile=sio, rfile_path=self._library_file)
+                    if rate_type == "reaclib":
+                        r = ReacLibRate(rfile=sio, rfile_path=self._library_file)
+                    elif rate_type == "tabular":
+                        r = TabularRate(rfile=sio, rfile_path=self._library_file)
+                    else:
+                        raise NotImplementedError("rate not implemented")
                 except UnsupportedNucleus:
                     pass
                 else:
