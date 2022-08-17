@@ -402,14 +402,10 @@ class Rate:
         strong_test = sum(n.Z for n in self.reactants) == sum(n.Z for n in self.products) and \
                       sum(n.A for n in self.reactants) == sum(n.A for n in self.products)
 
-
         if strong_test:
-
             if len(self.products) == 1:
                 self.rhs_other.append("gamma")
-
         else:
-
             # this is a weak rate
 
             if self.weak_type == "electron_capture":
