@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.networks.rate_collection &mdash; pynucastro 1.7.0.post29+g6822a7c documentation</title>
+  <title>pynucastro.networks.rate_collection &mdash; pynucastro 1.7.0.post30+g7b5103c documentation</title>
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -795,6 +795,19 @@
             <span class="n">rvals</span><span class="p">[</span><span class="n">r</span><span class="p">]</span> <span class="o">=</span> <span class="n">yfac</span> <span class="o">*</span> <span class="n">val</span> <span class="o">*</span> <span class="n">screen_factors</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">rvals</span></div>
+
+<div class="viewcode-block" id="RateCollection.find_unimportant_rates"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.find_unimportant_rates">[docs]</a>    <span class="k">def</span> <span class="nf">find_unimportant_rates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rhos</span><span class="p">,</span> <span class="n">Ts</span><span class="p">,</span> <span class="n">compositions</span><span class="p">,</span> <span class="n">cutoff_ratio</span><span class="p">,</span>
+                               <span class="n">screen_func</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;evaluate the rates at multiple thermodynamic states, and find the</span>
+<span class="sd">        rates that are always less than `cutoff_ratio` times the fastest rate</span>
+<span class="sd">        for each state&quot;&quot;&quot;</span>
+        <span class="n">largest_ratio</span> <span class="o">=</span> <span class="p">{</span><span class="n">r</span><span class="p">:</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">}</span>
+        <span class="k">for</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">rhos</span><span class="p">,</span> <span class="n">Ts</span><span class="p">,</span> <span class="n">compositions</span><span class="p">):</span>
+            <span class="n">rvals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_rates</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span> <span class="n">screen_func</span><span class="p">)</span>
+            <span class="n">fastest</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">rvals</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+            <span class="k">for</span> <span class="n">r</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">rvals</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">largest_ratio</span><span class="p">[</span><span class="n">r</span><span class="p">]</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">largest_ratio</span><span class="p">[</span><span class="n">r</span><span class="p">],</span> <span class="n">value</span> <span class="o">/</span> <span class="n">fastest</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">r</span><span class="p">:</span> <span class="n">ratio</span> <span class="k">for</span> <span class="n">r</span><span class="p">,</span> <span class="n">ratio</span> <span class="ow">in</span> <span class="n">largest_ratio</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">ratio</span> <span class="o">&lt;</span> <span class="n">cutoff_ratio</span><span class="p">}</span></div>
 
 <div class="viewcode-block" id="RateCollection.evaluate_screening"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.evaluate_screening">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate_screening</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">composition</span><span class="p">,</span> <span class="n">screen_func</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Evaluate the screening factors for each rate, using one of the</span>
