@@ -1,4 +1,4 @@
-from numpy import array, all, ones_like
+from numpy import array
 from pynucastro.nucdata import PartitionFunctionTable, PartitionFunctionCollection
 import os
 

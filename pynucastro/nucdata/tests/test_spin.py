@@ -1,5 +1,4 @@
 from pynucastro.nucdata import SpinNuclide, SpinTable
-from numpy import array
 
 
 class TestSpin:

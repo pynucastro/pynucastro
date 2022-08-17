@@ -194,22 +194,6 @@ class TestRate:
 
 
 class TestDerivedRate:
-    def test_ar37_na_s34(self, reaclib_library):
-        """
-        Here we test the inverse rate, computed by the use of detailed balance
-        of a:
-
-        A + B -> C + D
-
-        reaction type.
-        """
-
-        s34_an_ar37 = reaclib_library.get_rate("s34 + he4 --> n + ar37 <SM93_reaclib__>")
-        ar37_na_s34_reaclib = reaclib_library.get_rate("ar37 + n --> he4 + s34 <SM93_reaclib__reverse>")
-
-        ar37_na_s34_derived = rates.DerivedRate(rate=s34_an_ar37)
-
-        assert ar37_na_s34_reaclib.eval(T=2.0e9) == approx(ar37_na_s34_derived.eval(T=2.0e9), rel=2.4e-5)
 
     def a_a_ag_c12(self, reaclib_library):
         """
@@ -227,7 +211,7 @@ class TestDerivedRate:
 
         assert c12_ga_a_a_reaclib.eval(T=2.0e9) == approx(c12_ga_a_a_derived.eval(T=2.0e9), rel=1.7e-5)
 
-    def a_a_ag_c12(self, reaclib_library):
+    def a_a_ag_c12_with_pf(self, reaclib_library):
         """
         This function test the correct rate value if we take in consideration the partition
         functions on the range 1.0e9 to 100.0e9
