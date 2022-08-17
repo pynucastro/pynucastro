@@ -422,10 +422,7 @@ class Rate:
             elif "_pos_" in self.weak_type:
 
                 # we expect a positron on the right -- let's make sure
-                try:
-                    assert sum(n.Z for n in self.reactants) == sum(n.Z for n in self.products) + 1
-                except AssertionError:
-                    raise
+                assert sum(n.Z for n in self.reactants) == sum(n.Z for n in self.products) + 1
 
                 self.rhs_other.append("e+")
                 self.rhs_other.append("nu")
@@ -528,7 +525,7 @@ class Rate:
             if len(nucz) == 3:
                 self.ion_screen.append(nucz[2])
 
-        # if the rate is a reverse rate, via detailed balance, then we
+        # if the rate is a reverse rate (defined as Q < 0), then we
         # might actually want to compute the screening based on the
         # reactants of the forward rate that was used in the detailed
         # balance.  Rate.symmetric_screen is what should be used in
