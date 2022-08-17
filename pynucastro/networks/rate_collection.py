@@ -693,6 +693,19 @@ class RateCollection:
 
         return rvals
 
+    def find_unimportant_rates(self, rhos, Ts, compositions, cutoff_ratio,
+                               screen_func=None):
+        """evaluate the rates at multiple thermodynamic states, and find the
+        rates that are always less than `cutoff_ratio` times the fastest rate
+        for each state"""
+        largest_ratio = {r: 0 for r in self.rates}
+        for rho, T, comp in zip(rhos, Ts, compositions):
+            rvals = self.evaluate_rates(rho, T, comp, screen_func)
+            fastest = max(rvals.values())
+            for r, value in rvals.items():
+                largest_ratio[r] = max(largest_ratio[r], value / fastest)
+        return {r: ratio for r, ratio in largest_ratio.items() if ratio < cutoff_ratio}
+
     def evaluate_screening(self, rho, T, composition, screen_func):
         """Evaluate the screening factors for each rate, using one of the
         methods in :py:mod:`pynucastro.screening`"""
