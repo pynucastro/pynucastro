@@ -6,7 +6,7 @@ from pynucastro.nucdata.elements import PeriodicTable
 
 class SpinNuclide:
     """
-    This class contains the spin information for each nuclei specified in the nubase20.txt table.
+    This class contains the spin information for each nuclei specified in the nubase2020_1.txt table.
     The purpose to create this class lies on the
     """
 
@@ -39,15 +39,15 @@ class SpinTable:
     data structure from a designated Nucleus class.
     """
 
-    def __init__(self, datafile=None, set_double_gs=False):
+    def __init__(self, datafile=None, reliable=None):
 
-        self.set_double_gs = set_double_gs
         self._spin_nuclide = {}
+        self.reliable = reliable
 
         if datafile:
             self.datafile = datafile
         else:
-            datafile_name = 'nubase2020.txt'
+            datafile_name = 'nubase2020_1.txt'
             nucdata_dir = os.path.dirname(os.path.realpath(__file__))
             datafile_dir = os.path.join(os.path.join(nucdata_dir, 'AtomicMassEvaluation'), datafile_name)
 
@@ -75,28 +75,20 @@ class SpinTable:
         for line in finput:
 
             ls = line.strip().split()
-            state_list = []
 
-            if len(ls) == 6:
-                if not self.set_double_gs:
+            A = int(ls.pop(0))
+            Z = int(ls.pop(0))
+            ls.pop(0)           # Spin
+            spin_states = float(ls.pop(0))
+            experimental = ls.pop(0)
+
+            if self.reliable:
+                if experimental == 's':
+                    spin_nuc = SpinNuclide(a=A, z=Z, spin_states=spin_states)
+                    self._add_spin_nuclide(spin_nuc)
+                else:
                     continue
-                A = int(ls.pop(0))
-                Z = int(ls.pop(0))
-                ls.pop(0)           # Spin 1
-                ls.pop(0)           # Spin 2
-                states1 = ls.pop(0)
-                states2 = ls.pop(0)
-
-                state_list.append(states1)
-                state_list.append(states2)
-                double_spin_states = np.array([float(s) for s in state_list])
-                spin_nuc = SpinNuclide(a=A, z=Z, spin_states=double_spin_states)
-                self._add_spin_nuclide(spin_nuc)
             else:
-                A = int(ls.pop(0))
-                Z = int(ls.pop(0))
-                ls.pop(0)           # Spin
-                spin_states = float(ls.pop(0))
                 spin_nuc = SpinNuclide(a=A, z=Z, spin_states=spin_states)
                 self._add_spin_nuclide(spin_nuc)
 

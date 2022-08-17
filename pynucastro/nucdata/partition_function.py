@@ -302,16 +302,22 @@ class PartitionFunctionCollection:
             elif pf_hi:
                 pf = pf_hi
             else:
-                name = 'default'
-                pf_default = PartitionFunction(nuc, name, pf_lo_table.temperatures, np.ones_like(pf_lo_table.temperatures))
-                pf = pf_default
+                #name = 'default'
+                #pf_default = PartitionFunction(nuc, name, pf_lo_table.temperatures, np.ones_like(pf_lo_table.temperatures))
+                #pf = pf_default
+                raise ValueError
+                #if str(nuc) != 'h1' and str(nuc) != 'n' and str(nuc) != 'he4':
+                #    print(f'WARNING: {nuc} partition function is not supported: set pf = 1.0 by default')
 
         else:
             if pf_lo:
                 pf = pf_lo
             else:
-                name = 'default'
-                pf_default = PartitionFunction(nuc, name, pf_lo_table.temperatures, np.ones_like(pf_lo_table.temperatures))
-                pf = pf_default
+                raise ValueError
+                #name = 'default'
+                #pf_default = PartitionFunction(nuc, name, pf_lo_table.temperatures, np.ones_like(pf_lo_table.temperatures))
+                #pf = pf_default
+                #if str(nuc) != 'p' and str(nuc) != 'n' and str(nuc) != 'he4':
+                #    print(f'WARNING: {nuc} partition function is not supported: set pf = 1.0 by default')
 
         return pf
