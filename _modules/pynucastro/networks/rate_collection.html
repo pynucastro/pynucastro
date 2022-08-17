@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.networks.rate_collection &mdash; pynucastro 1.7.0.post31+g98f8130 documentation</title>
+  <title>pynucastro.networks.rate_collection &mdash; pynucastro 1.7.0.post32+g959a4fe documentation</title>
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -129,7 +129,7 @@
 
 <span class="c1"># Import Rate</span>
 <span class="kn">from</span> <span class="nn">pynucastro.nucdata</span> <span class="kn">import</span> <span class="n">Nucleus</span>
-<span class="kn">from</span> <span class="nn">pynucastro.rates</span> <span class="kn">import</span> <span class="n">Rate</span><span class="p">,</span> <span class="n">RatePair</span><span class="p">,</span> <span class="n">DerivedRate</span><span class="p">,</span> <span class="n">ApproximateRate</span><span class="p">,</span> <span class="n">Library</span><span class="p">,</span> <span class="n">load_rate</span>
+<span class="kn">from</span> <span class="nn">pynucastro.rates</span> <span class="kn">import</span> <span class="n">Rate</span><span class="p">,</span> <span class="n">TabularRate</span><span class="p">,</span> <span class="n">RatePair</span><span class="p">,</span> <span class="n">DerivedRate</span><span class="p">,</span> <span class="n">ApproximateRate</span><span class="p">,</span> <span class="n">Library</span><span class="p">,</span> <span class="n">load_rate</span>
 <span class="kn">from</span> <span class="nn">pynucastro.screening</span> <span class="kn">import</span> <span class="n">PlasmaState</span><span class="p">,</span> <span class="n">ScreenFactors</span>
 
 <span class="kn">from</span> <span class="nn">pynucastro.nucdata</span> <span class="kn">import</span> <span class="n">PeriodicTable</span>
@@ -160,6 +160,29 @@
         <span class="c1"># then skip</span>
         <span class="k">if</span> <span class="n">n_alpha</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">n</span><span class="o">.</span><span class="n">Z</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">n</span><span class="o">.</span><span class="n">A</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="k">return</span> <span class="kc">False</span>
+
+
+<span class="k">def</span> <span class="nf">_skip_xp</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">r</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;utility function to consider if we show an (p, x) or (x, p) rate.  Here, p is the</span>
+<span class="sd">    product we want to link to&quot;&quot;&quot;</span>
+
+    <span class="c1"># for rates that are A (x, p) B, where A and B are heavy nuclei,</span>
+    <span class="c1"># don&#39;t show the connection of the nucleus to p, only show it to B</span>
+    <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">Z</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">p</span><span class="o">.</span><span class="n">A</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="c1"># likewise, hide A (p, x) B, unless A itself is an p</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">reactants</span>
+    <span class="n">n_p</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="n">c</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">nuc</span><span class="o">.</span><span class="n">Z</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">nuc</span><span class="o">.</span><span class="n">A</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">n_p</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="c1"># if there is only 1 p and we are working on the p node,</span>
+    <span class="c1"># then skip</span>
+    <span class="k">if</span> <span class="n">n_p</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">n</span><span class="o">.</span><span class="n">Z</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">n</span><span class="o">.</span><span class="n">A</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
 
     <span class="k">return</span> <span class="kc">False</span>
 
@@ -673,6 +696,14 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_build_collection</span><span class="p">()</span></div>
 
+<div class="viewcode-block" id="RateCollection.remove_rates"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.remove_rates">[docs]</a>    <span class="k">def</span> <span class="nf">remove_rates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rate_list</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;remove the rates in rate_list from the network.&quot;&quot;&quot;</span>
+
+        <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">rate_list</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_build_collection</span><span class="p">()</span></div>
+
 <div class="viewcode-block" id="RateCollection.make_ap_pg_approx"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.make_ap_pg_approx">[docs]</a>    <span class="k">def</span> <span class="nf">make_ap_pg_approx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">intermediate_nuclei</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;combine the rates A(a,g)B and A(a,p)X(p,g)B (and the reverse) into a single</span>
 <span class="sd">        effective approximate rate.&quot;&quot;&quot;</span>
@@ -789,7 +820,7 @@
 
         <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">:</span>
             <span class="n">val</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">prefactor</span> <span class="o">*</span> <span class="n">rho</span><span class="o">**</span><span class="n">r</span><span class="o">.</span><span class="n">dens_exp</span> <span class="o">*</span> <span class="n">r</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">rho</span> <span class="o">*</span> <span class="n">y_e</span><span class="p">)</span>
-            <span class="k">if</span> <span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">weak_type</span> <span class="o">==</span> <span class="s1">&#39;electron_capture&#39;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">r</span><span class="o">.</span><span class="n">tabular</span><span class="p">):</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">weak_type</span> <span class="o">==</span> <span class="s1">&#39;electron_capture&#39;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">TabularRate</span><span class="p">)):</span>
                 <span class="n">val</span> <span class="o">=</span> <span class="n">val</span> <span class="o">*</span> <span class="n">y_e</span>
             <span class="n">yfac</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span><span class="n">mul</span><span class="p">,</span> <span class="p">[</span><span class="n">ys</span><span class="p">[</span><span class="n">q</span><span class="p">]</span> <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">])</span>
             <span class="n">rvals</span><span class="p">[</span><span class="n">r</span><span class="p">]</span> <span class="o">=</span> <span class="n">yfac</span> <span class="o">*</span> <span class="n">val</span> <span class="o">*</span> <span class="n">screen_factors</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
@@ -990,7 +1021,7 @@
 
         <span class="c1">#subtract neutrino losses for tabular weak reactions</span>
         <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">weak</span> <span class="ow">and</span> <span class="n">r</span><span class="o">.</span><span class="n">tabular</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">weak</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">TabularRate</span><span class="p">):</span>
                 <span class="c1"># get composition</span>
                 <span class="n">ys</span> <span class="o">=</span> <span class="n">composition</span><span class="o">.</span><span class="n">get_molar</span><span class="p">()</span>
                 <span class="n">y_e</span> <span class="o">=</span> <span class="n">composition</span><span class="o">.</span><span class="n">eval_ye</span><span class="p">()</span>
@@ -1231,7 +1262,8 @@
              <span class="n">node_size</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">node_font_size</span><span class="o">=</span><span class="mi">13</span><span class="p">,</span> <span class="n">node_color</span><span class="o">=</span><span class="s2">&quot;#A0CBE2&quot;</span><span class="p">,</span> <span class="n">node_shape</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">,</span>
              <span class="n">curved_edges</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
              <span class="n">N_range</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">Z_range</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rotated</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-             <span class="n">always_show_p</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">always_show_alpha</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">hide_xalpha</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+             <span class="n">always_show_p</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">always_show_alpha</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+             <span class="n">hide_xp</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">hide_xalpha</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
              <span class="n">nucleus_filter_function</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rate_filter_function</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Make a plot of the network structure showing the links between</span>
 <span class="sd">        nuclei.  If a full set of thermodymamic conditions are</span>
@@ -1284,6 +1316,9 @@
 <span class="sd">        hide_xalpha=False: dont connect the links to alpha for heavy</span>
 <span class="sd">        nuclei reactions of the form A(alpha,X)B or A(X,alpha)B,</span>
 <span class="sd">        except if alpha is the heaviest product.</span>
+
+<span class="sd">        hide_xp=False: dont connect the links to p for heavy</span>
+<span class="sd">        nuclei reactions of the form A(p,X)B or A(X,p)B.</span>
 
 <span class="sd">        nucleus_filter_funcion: name of a custom function that takes a</span>
 <span class="sd">        Nucleus object and returns true or false if it is to be shown</span>
@@ -1379,6 +1414,9 @@
                     <span class="k">if</span> <span class="n">hide_xalpha</span> <span class="ow">and</span> <span class="n">_skip_xalpha</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">r</span><span class="p">):</span>
                         <span class="k">continue</span>
 
+                    <span class="k">if</span> <span class="n">hide_xp</span> <span class="ow">and</span> <span class="n">_skip_xp</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">r</span><span class="p">):</span>
+                        <span class="k">continue</span>
+
                     <span class="c1"># networkx doesn&#39;t seem to keep the edges in</span>
                     <span class="c1"># any particular order, so we associate data</span>
                     <span class="c1"># to the edges here directly, in this case,</span>
@@ -1419,6 +1457,9 @@
                             <span class="k">continue</span>
 
                         <span class="k">if</span> <span class="n">hide_xalpha</span> <span class="ow">and</span> <span class="n">_skip_xalpha</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">sr</span><span class="p">):</span>
+                            <span class="k">continue</span>
+
+                        <span class="k">if</span> <span class="n">hide_xp</span> <span class="ow">and</span> <span class="n">_skip_xp</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">sr</span><span class="p">):</span>
                             <span class="k">continue</span>
 
                         <span class="n">G</span><span class="o">.</span><span class="n">add_edges_from</span><span class="p">([(</span><span class="n">n</span><span class="p">,</span> <span class="n">p</span><span class="p">)],</span> <span class="n">weight</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">real</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
