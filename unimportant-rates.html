@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Checking your network &mdash; pynucastro 1.7.0.post33+g8e0e673 documentation</title>
+  <title>Removing Unimportant Rates &mdash; pynucastro 1.7.0.post33+g8e0e673 documentation</title>
       <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -24,8 +24,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Combining ReacLib Rates with Electron Capture Tables" href="electron-captures.html" />
-    <link rel="prev" title="Selecting Rates from a Library" href="library-examples.html" /> 
+    <link rel="next" title="Reverse Rates" href="partition-function.html" />
+    <link rel="prev" title="Approximate Rates" href="approx-rates-examples.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -58,16 +58,16 @@
 <li class="toctree-l1"><a class="reference internal" href="pynucastro-integration.html">Example of integrating a network</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Selecting Rates</span></p>
-<ul class="current">
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="library-examples.html">Selecting Rates from a Library</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Checking your network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="validate-example.html">Checking your network</a></li>
 <li class="toctree-l1"><a class="reference internal" href="electron-captures.html">Combining ReacLib Rates with Electron Capture Tables</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Advanced Usage</span></p>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="modify-example.html">Modifying Rates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="approx-rates-examples.html">Approximate Rates</a></li>
-<li class="toctree-l1"><a class="reference internal" href="unimportant-rates.html">Removing Unimportant Rates</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Removing Unimportant Rates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="partition-function.html">Reverse Rates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="NSE-example.html">Nuclear Statistical Equilibrium</a></li>
 </ul>
@@ -96,9 +96,9 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Checking your network</li>
+      <li>Removing Unimportant Rates</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="_sources/validate-example.ipynb.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/unimportant-rates.ipynb.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -384,10 +384,11 @@ div.rendered_html tbody tr:hover {
     text-align: unset;
 }
 </style>
-<section id="Checking-your-network">
-<h1>Checking your network<a class="headerlink" href="#Checking-your-network" title="Permalink to this heading">¶</a></h1>
-<p>Selecting which rates to include and which to exclude from your network is a bit of an art. pynucastro has a few tools to help check what you might be missing.</p>
-<p>Let’s start by trying to create a network for carbon burning.</p>
+<section id="Removing-Unimportant-Rates">
+<h1>Removing Unimportant Rates<a class="headerlink" href="#Removing-Unimportant-Rates" title="Permalink to this heading">¶</a></h1>
+<p>When you create a network given a list of nuclei, it will pull in all of the rates that connect those nuclei in the library, even if they are not important for the thermodynamic conditions under which the network will be used.</p>
+<p>Here we see how to feed a set of thermodynamic conditions to a <code class="docutils literal notranslate"><span class="pre">RateCollection</span></code> and remove the rates that are never important.</p>
+<p>Let’s consider the case of wanting to model H burning in conditions close to the core of the Sun. We start by generating a network with all of the pp and CNO nuclei</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
@@ -404,68 +405,28 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 </div>
-<p>To start, let’s pick the nuclei <span class="math notranslate nohighlight">\(\alpha\)</span>, <span class="math notranslate nohighlight">\({}^{12}\mathrm{C}\)</span> and <span class="math notranslate nohighlight">\({}^{20}\mathrm{Ne}\)</span></p>
-<div class="nbinput docutils container">
+<div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">nuclei</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;he4&quot;</span><span class="p">,</span> <span class="s2">&quot;c12&quot;</span><span class="p">,</span> <span class="s2">&quot;ne20&quot;</span><span class="p">]</span>
-<span class="n">cburn_library</span> <span class="o">=</span> <span class="n">reaclib_library</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">(</span><span class="n">nuclei</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">cburn_library</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">h_burn</span> <span class="o">=</span> <span class="n">reaclib_library</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">([</span><span class="s2">&quot;h1&quot;</span><span class="p">,</span> <span class="s2">&quot;h2&quot;</span><span class="p">,</span> <span class="s2">&quot;he3&quot;</span><span class="p">,</span> <span class="s2">&quot;he4&quot;</span><span class="p">,</span>
+                                         <span class="s2">&quot;c12&quot;</span><span class="p">,</span> <span class="s2">&quot;c13&quot;</span><span class="p">,</span> <span class="s2">&quot;n13&quot;</span><span class="p">,</span> <span class="s2">&quot;n14&quot;</span><span class="p">,</span> <span class="s2">&quot;n15&quot;</span><span class="p">,</span> <span class="s2">&quot;o15&quot;</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-he4 + he4 + he4 --&gt; c12        [Q =   7.28 MeV] (he4 + he4 + he4 --&gt; c12 &lt;fy05_reaclib__&gt;)
-c12 + c12 --&gt; he4 + ne20       [Q =   4.62 MeV] (c12 + c12 --&gt; he4 + ne20 &lt;cf88_reaclib__&gt;)
-c12 --&gt; he4 + he4 + he4        [Q =  -7.28 MeV] (c12 --&gt; he4 + he4 + he4 &lt;fy05_reaclib__reverse&gt;)
-ne20 + he4 --&gt; c12 + c12       [Q =  -4.62 MeV] (ne20 + he4 --&gt; c12 + c12 &lt;cf88_reaclib__reverse&gt;)
-</pre></div></div>
-</div>
-<p>Now, since we are primarily interested in <span class="math notranslate nohighlight">\({}^{12}\mathrm{C} + {}^{12}\mathrm{C}\)</span>, let’s make sure we are not missing any other reactions that have the same reactants. The <code class="docutils literal notranslate"><span class="pre">validate()</span></code> method will do this, by comparing the rates we have selected to another library.</p>
-<div class="nbinput docutils container">
+<div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cburn_library</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">reaclib_library</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rc</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">RateCollection</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="p">[</span><span class="n">h_burn</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-validation: ne20 produced in c12 + c12 --&gt; he4 + ne20 never consumed.
-validation: missing he4 + he4 + he4 --&gt; p + b11 as alternative to he4 + he4 + he4 --&gt; c12 (Q = -8.682 MeV).
-validation: missing he4 + he4 + he4 --&gt; n + c11 as alternative to he4 + he4 + he4 --&gt; c12 (Q = -11.4466 MeV).
-validation: missing c12 + c12 --&gt; p + na23 as alternative to c12 + c12 --&gt; he4 + ne20 (Q = 2.242 MeV).
-validation: missing c12 + c12 --&gt; n + mg23 as alternative to c12 + c12 --&gt; he4 + ne20 (Q = -2.598 MeV).
-</pre></div></div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
-</pre></div>
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-False
-</pre></div></div>
-</div>
-<p>This tells us that we are missing 2 branches of the <span class="math notranslate nohighlight">\({}^{12}\mathrm{C} + {}^{12}\mathrm{C}\)</span> reaction. ReacLib already scales the rates based on the branching of the products, so we should try to include these other branches.</p>
-<p>Note: by default, <code class="docutils literal notranslate"><span class="pre">validate()</span></code> only checks forward rates.</p>
-<p>To do so, we need to include the additional nuclei. In particular, the branch that makes <span class="math notranslate nohighlight">\({}^{23}\mathrm{Na}\)</span> is likely important (the rate making <span class="math notranslate nohighlight">\({}^{23}\mathrm{Mg}\)</span> is endothermic, so less likely).</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">nuclei</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">&quot;p&quot;</span><span class="p">,</span> <span class="s2">&quot;na23&quot;</span><span class="p">]</span>
-<span class="n">cburn_library</span> <span class="o">=</span> <span class="n">reaclib_library</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">(</span><span class="n">nuclei</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">cburn_library</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rc</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">hide_xp</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -473,119 +434,108 @@ False
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<div class="highlight"><pre>
-he4 + he4 + he4 --&gt; c12        [Q =   7.28 MeV] (he4 + he4 + he4 --&gt; c12 &lt;fy05_reaclib__&gt;)
-c12 + c12 --&gt; he4 + ne20       [Q =   4.62 MeV] (c12 + c12 --&gt; he4 + ne20 &lt;cf88_reaclib__&gt;)
-c12 + c12 --&gt; p + na23         [Q =   2.24 MeV] (c12 + c12 --&gt; p + na23 &lt;cf88_reaclib__&gt;)
-na23 + p --&gt; he4 + ne20        [Q =   2.38 MeV] (na23 + p --&gt; he4 + ne20 &lt;il10_reaclib__&gt;)
-c12 --&gt; he4 + he4 + he4        [Q =  -7.28 MeV] (c12 --&gt; he4 + he4 + he4 &lt;fy05_reaclib__reverse&gt;)
-ne20 + he4 --&gt; c12 + c12       [Q =  -4.62 MeV] (ne20 + he4 --&gt; c12 + c12 &lt;cf88_reaclib__reverse&gt;)
-ne20 + he4 --&gt; p + na23        [Q =  -2.38 MeV] (ne20 + he4 --&gt; p + na23 &lt;il10_reaclib__reverse&gt;)
-na23 + p --&gt; c12 + c12         [Q =  -2.24 MeV] (na23 + p --&gt; c12 + c12 &lt;cf88_reaclib__reverse&gt;)
-</pre></div></div>
+<img alt="_images/unimportant-rates_5_0.png" src="_images/unimportant-rates_5_0.png" />
 </div>
-<div class="nbinput docutils container">
+</div>
+<p>Notice a few things:</p>
+<ul class="simple">
+<li><p>The 3-alpha rate (and its reverse) are included</p></li>
+<li><p>Lots of reverse rates are included between the CNO nuclei, but we only expect that the forward rates in the traditional CNO cycle matter</p></li>
+</ul>
+<p>To filter rates we need to pass in a set of thermodynamic conditions, including density and temperature (in CGS units) and a <code class="docutils literal notranslate"><span class="pre">Composition</span></code> object giving the mass fractions</p>
+<div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cburn_library</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">reaclib_library</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rhos</span> <span class="o">=</span> <span class="p">[</span><span class="mi">100</span><span class="p">]</span>
+<span class="n">Ts</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.5e7</span><span class="p">]</span>
+<span class="n">comp</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Composition</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">get_nuclei</span><span class="p">())</span>
+<span class="n">comp</span><span class="o">.</span><span class="n">set_solar_like</span><span class="p">()</span>
+<span class="n">compositions</span> <span class="o">=</span> <span class="p">[</span><span class="n">comp</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-validation: ne20 produced in c12 + c12 --&gt; he4 + ne20 never consumed.
-validation: ne20 produced in na23 + p --&gt; he4 + ne20 never consumed.
-validation: missing he4 + he4 + he4 --&gt; p + b11 as alternative to he4 + he4 + he4 --&gt; c12 (Q = -8.682 MeV).
-validation: missing he4 + he4 + he4 --&gt; n + c11 as alternative to he4 + he4 + he4 --&gt; c12 (Q = -11.4466 MeV).
-validation: missing c12 + c12 --&gt; n + mg23 as alternative to c12 + c12 --&gt; he4 + ne20 (Q = -2.598 MeV).
-validation: missing c12 + c12 --&gt; n + mg23 as alternative to c12 + c12 --&gt; p + na23 (Q = -2.598 MeV).
-validation: missing na23 + p --&gt; n + mg23 as alternative to na23 + p --&gt; he4 + ne20 (Q = -4.839 MeV).
-validation: missing na23 + p --&gt; mg24 as alternative to na23 + p --&gt; he4 + ne20 (Q = 11.6927 MeV).
-</pre></div></div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
-</pre></div>
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-False
-</pre></div></div>
-</div>
-<p>Now, looking at what is missing, we probably want to include <span class="math notranslate nohighlight">\({}^{24}\mathrm{Mg}\)</span> as an endpoint for carbon burning.</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">nuclei</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">&quot;mg24&quot;</span><span class="p">]</span>
-<span class="n">cburn_library</span> <span class="o">=</span> <span class="n">reaclib_library</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">(</span><span class="n">nuclei</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">cburn_library</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-he4 + he4 + he4 --&gt; c12        [Q =   7.28 MeV] (he4 + he4 + he4 --&gt; c12 &lt;fy05_reaclib__&gt;)
-c12 + c12 --&gt; he4 + ne20       [Q =   4.62 MeV] (c12 + c12 --&gt; he4 + ne20 &lt;cf88_reaclib__&gt;)
-c12 + c12 --&gt; p + na23         [Q =   2.24 MeV] (c12 + c12 --&gt; p + na23 &lt;cf88_reaclib__&gt;)
-ne20 + he4 --&gt; mg24            [Q =   9.32 MeV] (ne20 + he4 --&gt; mg24 &lt;il10_reaclib__&gt;)
-na23 + p --&gt; he4 + ne20        [Q =   2.38 MeV] (na23 + p --&gt; he4 + ne20 &lt;il10_reaclib__&gt;)
-na23 + p --&gt; mg24              [Q =  11.69 MeV] (na23 + p --&gt; mg24 &lt;il10_reaclib__&gt;)
-c12 --&gt; he4 + he4 + he4        [Q =  -7.28 MeV] (c12 --&gt; he4 + he4 + he4 &lt;fy05_reaclib__reverse&gt;)
-ne20 + he4 --&gt; c12 + c12       [Q =  -4.62 MeV] (ne20 + he4 --&gt; c12 + c12 &lt;cf88_reaclib__reverse&gt;)
-ne20 + he4 --&gt; p + na23        [Q =  -2.38 MeV] (ne20 + he4 --&gt; p + na23 &lt;il10_reaclib__reverse&gt;)
-na23 + p --&gt; c12 + c12         [Q =  -2.24 MeV] (na23 + p --&gt; c12 + c12 &lt;cf88_reaclib__reverse&gt;)
-mg24 --&gt; he4 + ne20            [Q =  -9.32 MeV] (mg24 --&gt; he4 + ne20 &lt;il10_reaclib__reverse&gt;)
-mg24 --&gt; p + na23              [Q = -11.69 MeV] (mg24 --&gt; p + na23 &lt;il10_reaclib__reverse&gt;)
-</pre></div></div>
-</div>
-<div class="nbinput docutils container">
+<p>Now we find the rates that are not important. We pass in a cutoff, such that any rate that is smaller that cutoff <span class="math notranslate nohighlight">\(\times\)</span> fastest-rate will be returned</p>
+<div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cburn_library</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">reaclib_library</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cutoff_ratio</span> <span class="o">=</span> <span class="mf">1.e-20</span>
+<span class="n">unimportant_rates</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">find_unimportant_rates</span><span class="p">(</span><span class="n">rhos</span><span class="p">,</span> <span class="n">Ts</span><span class="p">,</span> <span class="n">compositions</span><span class="p">,</span> <span class="n">cutoff_ratio</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-validation: mg24 produced in ne20 + he4 --&gt; mg24 never consumed.
-validation: mg24 produced in na23 + p --&gt; mg24 never consumed.
-validation: missing he4 + he4 + he4 --&gt; p + b11 as alternative to he4 + he4 + he4 --&gt; c12 (Q = -8.682 MeV).
-validation: missing he4 + he4 + he4 --&gt; n + c11 as alternative to he4 + he4 + he4 --&gt; c12 (Q = -11.4466 MeV).
-validation: missing c12 + c12 --&gt; n + mg23 as alternative to c12 + c12 --&gt; he4 + ne20 (Q = -2.598 MeV).
-validation: missing c12 + c12 --&gt; n + mg23 as alternative to c12 + c12 --&gt; p + na23 (Q = -2.598 MeV).
-validation: missing ne20 + he4 --&gt; n + mg23 as alternative to ne20 + he4 --&gt; mg24 (Q = -7.21457 MeV).
-validation: missing na23 + p --&gt; n + mg23 as alternative to na23 + p --&gt; he4 + ne20 (Q = -4.839 MeV).
-validation: missing na23 + p --&gt; n + mg23 as alternative to na23 + p --&gt; mg24 (Q = -4.839 MeV).
-</pre></div></div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
-</pre></div>
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-False
-</pre></div></div>
-</div>
-<p>Now that we are happy with this, we can make a <code class="docutils literal notranslate"><span class="pre">RateCollection</span></code> and plot it</p>
+<p>Here <code class="docutils literal notranslate"><span class="pre">unimportant_rates</span></code> is a dictionary with the rate as the key and the ratio of the rate compared to the fastest rate as the value.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rc</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">RateCollection</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="p">[</span><span class="n">cburn_library</span><span class="p">])</span>
-<span class="n">rc</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">unimportant_rates</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+{He3 ⟶ p + H2: 0,
+ He4 ⟶ H2 + H2: 0,
+ N13 ⟶ p + C12: 0,
+ N14 ⟶ p + C13: 0,
+ O15 ⟶ p + N14: 0,
+ C12 ⟶ He4 + He4 + He4: 0,
+ p + He4 ⟶ H2 + He3: 0,
+ C12 + He4 ⟶ p + N15: 0,
+ He4 + He4 + He4 ⟶ C12 + 𝛾: 7.974463535202119e-59,
+ p + p + He4 ⟶ He3 + He3: 0}
+</pre></div></div>
+</div>
+<p>If we are happy with what it found, we can remove them from the <code class="docutils literal notranslate"><span class="pre">RateCollection</span></code></p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rc</span><span class="o">.</span><span class="n">remove_rates</span><span class="p">(</span><span class="n">unimportant_rates</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<p>Now we can look at the updated rate collection. Notice that the 3-alpha rate is gone as are a lot of the reverse rates</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rc</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+N13 ⟶ C13 + e⁺ + 𝜈
+O15 ⟶ N15 + e⁺ + 𝜈
+p + p ⟶ H2 + e⁺ + 𝜈
+p + p + e⁻ ⟶ H2 + 𝜈
+H2 + p ⟶ He3 + 𝛾
+H2 + H2 ⟶ He4 + 𝛾
+He3 + p ⟶ He4 + e⁺ + 𝜈
+C12 + p ⟶ N13 + 𝛾
+C13 + p ⟶ N14 + 𝛾
+N14 + p ⟶ O15 + 𝛾
+He3 + H2 ⟶ p + He4
+N15 + p ⟶ He4 + C12
+He3 + He3 ⟶ p + p + He4
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rc</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">hide_xp</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">always_show_alpha</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -593,7 +543,15 @@ False
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/validate-example_15_0.png" src="_images/validate-example_15_0.png" />
+<img alt="_images/unimportant-rates_17_0.png" src="_images/unimportant-rates_17_0.png" />
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
 </div>
 </div>
 </section>
@@ -602,8 +560,8 @@ False
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="library-examples.html" class="btn btn-neutral float-left" title="Selecting Rates from a Library" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="electron-captures.html" class="btn btn-neutral float-right" title="Combining ReacLib Rates with Electron Capture Tables" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="approx-rates-examples.html" class="btn btn-neutral float-left" title="Approximate Rates" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="partition-function.html" class="btn btn-neutral float-right" title="Reverse Rates" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
