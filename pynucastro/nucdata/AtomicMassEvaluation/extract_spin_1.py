@@ -117,9 +117,9 @@ for line in finput:
         elif c == '#':
             experimental_str = 'w'
             theoretical_str = 's'
-        elif c != '(' and c != ')' and c != '*' and c!='#':
+        elif c != '(' and c != ')' and c != '*' and c != '#':
             experimental_str = 's'
-            theoretical_str  = 's'
+            theoretical_str = 's'
 
     if spin_str[0] == '(':
         experimental_str = 'w'
@@ -131,7 +131,6 @@ for line in finput:
         spin_str = spin_str.replace(c, ' ')
 
     spin_str = spin_str.strip().split()
-
 
     if i == 0:
         # We eliminate lines that may contain more than one spin value in the gs
