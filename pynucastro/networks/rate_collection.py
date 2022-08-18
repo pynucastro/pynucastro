@@ -732,6 +732,7 @@ class RateCollection:
         largest_ratio = {r: 0 for r in self.rates}
         for rho, T, comp in zip(rhos, Ts, compositions):
             rvals = self.evaluate_rates(rho, T, comp, screen_func)
+            rvals = {r: abs(val) for r, val in rvals.items()}
             fastest = max(rvals.values())
             for r, value in rvals.items():
                 largest_ratio[r] = max(largest_ratio[r], value / fastest)
