@@ -32,10 +32,13 @@ class SpinNuclide:
 
 class SpinTable:
     """
-    This class stores the nubase2020.txt table information in a dictionary data structure
+    This class stores the nubase2020_1.txt table information in a dictionary data structure
     that maps a pynucastro.rates.Nucleus object to a pynucastro.nucdata.SpinNuclide object.
     Therefore, after setting an SpinTable class in rates.py, we should retrieve the SpinNuclide
     data structure from a designated Nucleus class.
+
+    The variable reliable switch between using all the values of the tables, excluding the nuclei
+    where only intervals are given and the values measured by strong experimental arguments.
     """
 
     def __init__(self, datafile=None, reliable=None):
