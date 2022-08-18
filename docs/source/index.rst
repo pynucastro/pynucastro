@@ -52,6 +52,7 @@ codes.
 
    modify-example.ipynb
    approx-rates-examples.ipynb
+   unimportant-rates.ipynb
    partition-function
    NSE-example.ipynb
    
