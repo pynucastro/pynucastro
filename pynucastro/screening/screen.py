@@ -1,14 +1,20 @@
 """
 Python implementations of screening routines.
 """
-from dataclasses import dataclass, field
-
 import numpy as np
 from scipy import constants
 
-from pynucastro.nucdata import Nucleus
+# use the jitclass placeholder from rate.py
+from pynucastro.rates.rate import numba, jitclass
 
-__all__ = ["PlasmaState", "ScreenFactors", "chugunov_2007", "chugunov_2009"]
+if numba is not None:
+    njit = numba.njit
+else:
+    def njit(func):
+        return func
+
+__all__ = ["PlasmaState", "ScreenFactors", "chugunov_2007", "chugunov_2009",
+           "make_plasma_state", "make_screen_factors"]
 
 
 amu = constants.value("atomic mass constant") / constants.gram  # kg to g
@@ -18,7 +24,7 @@ k_B = constants.value("Boltzmann constant") / constants.erg  # J/K to erg/K
 n_A = constants.value("Avogadro constant")
 
 
-@dataclass
+@jitclass
 class PlasmaState:
     """
     Stores precomputed values that are reused for all screening correction
@@ -37,10 +43,17 @@ class PlasmaState:
     abar: float
     zbar: float
     z2bar: float
-    n_e: float = field(init=False)
-    gamma_e_fac: float = field(init=False)
+    n_e: float
+    gamma_e_fac: float
 
-    def __post_init__(self):
+    def __init__(self, temp, dens, Ys, Zs):
+        self.temp = temp
+        self.dens = dens
+        ytot = np.sum(Ys)
+        self.abar = 1 / ytot
+        self.zbar = np.sum(Zs * Ys) / ytot
+        self.z2bar = np.sum(Zs ** 2 * Ys) / ytot
+
         # Average mass and total number density
         mbar = self.abar * amu
         ntot = self.dens / mbar
@@ -51,46 +64,62 @@ class PlasmaState:
         # temperature-independent part of Gamma_e, from Chugunov 2009 eq. 6
         self.gamma_e_fac = q_e ** 2 / k_B * np.cbrt(4 * np.pi / 3) * np.cbrt(self.n_e)
 
-    @classmethod
-    def fill(cls, temp, dens, molar_fractions):
-        """Construct a PlasmaState object from simulation data.
 
-        :param temp:            temperature in K
-        :param dens:            density in g/cm^3
-        :param molar_fractions: dictionary of molar abundances for each ion,
-                                as returned by :meth:`.Composition.get_molar`
-        """
-        ytot = sum(y for y in molar_fractions.values())
-        abar = 1 / ytot
+def make_plasma_state(temp, dens, molar_fractions):
+    """
+    Construct a PlasmaState object from simulation data.
 
-        zbar = sum(n.Z * y for n, y in molar_fractions.items()) / ytot
-        z2bar = sum(n.Z ** 2 * y for n, y in molar_fractions.items()) / ytot
-        return cls(temp, dens, abar, zbar, z2bar)
+    :param temp:            temperature in K
+    :param dens:            density in g/cm^3
+    :param molar_fractions: dictionary of molar abundances for each ion,
+                            as returned by :meth:`.Composition.get_molar`
+    """
+    nuclei = list(molar_fractions.keys())
+    Ys = np.asarray([molar_fractions[n] for n in nuclei])
+    Zs = np.asarray([n.Z for n in nuclei])
+    return PlasmaState(temp, dens, Ys, Zs)
 
 
-@dataclass
+@jitclass
 class ScreenFactors:
     """
     Stores values that will be used to calculate the screening correction factor
     for a specific pair of nuclei.
 
-    :var n1: first nucleus
-    :var n2: second nucleus
+    :var z1: atomic number of first nucleus
+    :var z2: atomic number of second nucleus
+    :var a1: atomic mass of first nucleus
+    :var a2: atomic mass of second nucleus
     :var aznut: combination of a1, z1, a2, z2 raised to 1/3 power
     :var ztilde: effective ion radius factor for a MCP
     """
-    n1: Nucleus
-    n2: Nucleus
-    aznut: float = field(init=False)
-    ztilde: float = field(init=False)
+    z1: int
+    z2: int
+    a1: int
+    a2: int
+    aznut: float
+    ztilde: float
 
-    def __post_init__(self):
-        self.aznut = np.cbrt(
-            self.n1.Z ** 2 * self.n2.Z ** 2 * self.n1.A * self.n2.A / (self.n1.A + self.n2.A)
-        )
-        self.ztilde = 0.5 * (np.cbrt(self.n1.Z) + np.cbrt(self.n2.Z))
+    def __init__(self, z1, a1, z2, a2):
+        self.z1 = z1
+        self.z2 = z2
+        self.a1 = a1
+        self.a2 = a2
+        self.aznut = np.cbrt(z1 ** 2 * z2 ** 2 * a1 * a2 / (a1 + a2))
+        self.ztilde = 0.5 * (np.cbrt(z1) + np.cbrt(z2))
 
 
+def make_screen_factors(n1, n2):
+    """
+    Construct a ScreenFactors object from a pair of nuclei.
+
+    :param Nucleus n1: first nucleus
+    :param Nucleus n2: second nucleus
+    """
+    return ScreenFactors(n1.Z, n1.A, n2.Z, n2.A)
+
+
+@njit
 def smooth_clip(x, dx_dT, limit, start):
     """Smoothly transition between y=limit and y=x with a half-cosine.
 
@@ -130,13 +159,14 @@ def smooth_clip(x, dx_dT, limit, start):
     return tmp, dtmp_dT
 
 
+@njit
 def chugunov_2007(state, scn_fac):
     """Calculates screening factors based on Chugunov et al. 2007.
 
     Follows the approach in Yakovlev 2006 to extend to a multi-component plasma.
 
-    :param state:   the precomputed :class:`PlasmaState`
-    :param scn_fac: a :class:`ScreenFactors` object
+    :param PlasmaState state:     the precomputed plasma state factors
+    :param ScreenFactors scn_fac: the precomputed ion pair factors
     :returns: (screening correction factor, derivative w.r.t. temperature)
 
     References:
@@ -164,8 +194,8 @@ def chugunov_2007(state, scn_fac):
     #   Z^2 -> zbar^2
     #   n_i -> ntot
     #   m_i -> m_u * abar
-    mu12 = scn_fac.n1.A * scn_fac.n2.A / (scn_fac.n1.A + scn_fac.n2.A)
-    z_factor = scn_fac.n1.Z * scn_fac.n2.Z
+    mu12 = scn_fac.a1 * scn_fac.a2 / (scn_fac.a1 + scn_fac.a2)
+    z_factor = scn_fac.z1 * scn_fac.z2
     n_i = state.n_e / scn_fac.ztilde ** 3
     m_i = 2 * mu12 * amu
 
@@ -188,7 +218,7 @@ def chugunov_2007(state, scn_fac):
     )
 
     # Coulomb coupling parameter from Yakovlev 2006, eq. 10
-    Gamma = state.gamma_e_fac * scn_fac.n1.Z * scn_fac.n2.Z / (scn_fac.ztilde * T_norm * T_p)
+    Gamma = state.gamma_e_fac * scn_fac.z1 * scn_fac.z2 / (scn_fac.ztilde * T_norm * T_p)
     dGamma_dT = -Gamma / T_norm * dT_norm_dT
 
     # The fit for Gamma is only applicable up to ~600, so smoothly cap its value
@@ -269,6 +299,7 @@ def chugunov_2007(state, scn_fac):
     return scor, dscor_dT
 
 
+@njit
 def f0(gamma, dlog_dT):
     r"""Calculate the free energy per ion in a OCP from Chugunov & DeWitt 2009 eq. 24
 
@@ -318,18 +349,19 @@ def f0(gamma, dlog_dT):
     return f, df_dT
 
 
+@njit
 def chugunov_2009(state, scn_fac):
     """Calculates screening factors based on Chugunov & DeWitt 2009.
 
-    :param state:   the precomputed :class:`PlasmaState`
-    :param scn_fac: a :class:`ScreenFactors` object
+    :param PlasmaState state:     the precomputed plasma state factors
+    :param ScreenFactors scn_fac: the precomputed ion pair factors
     :returns: (screening correction factor, derivative w.r.t. temperature)
 
     References:
         | Chugunov and DeWitt 2009, PhRvC, 80, 014611
     """
-    z1z2 = scn_fac.n1.Z * scn_fac.n2.Z
-    zcomp = scn_fac.n1.Z + scn_fac.n2.Z
+    z1z2 = scn_fac.z1 * scn_fac.z2
+    zcomp = scn_fac.z1 + scn_fac.z2
 
     # Gamma_e from eq. 6
     Gamma_e = state.gamma_e_fac / state.temp
@@ -337,8 +369,8 @@ def chugunov_2009(state, scn_fac):
     dlog_Gamma_dT = -1 / state.temp
 
     # Coulomb coupling parameters for ions and compound nucleus, eqs. 7 & 9
-    Gamma_1 = Gamma_e * scn_fac.n1.Z ** (5 / 3)
-    Gamma_2 = Gamma_e * scn_fac.n2.Z ** (5 / 3)
+    Gamma_1 = Gamma_e * scn_fac.z1 ** (5 / 3)
+    Gamma_2 = Gamma_e * scn_fac.z2 ** (5 / 3)
     Gamma_comp = Gamma_e * zcomp ** (5 / 3)
 
     Gamma_12 = Gamma_e * z1z2 / scn_fac.ztilde
@@ -377,7 +409,7 @@ def chugunov_2009(state, scn_fac):
     # weak screening correction term, eq. A3
     corr_C = (
         3 * z1z2 * np.sqrt(state.z2bar / state.zbar) /
-        (zcomp ** 2.5 - scn_fac.n1.Z ** 2.5 - scn_fac.n2.Z ** 2.5)
+        (zcomp ** 2.5 - scn_fac.z1 ** 2.5 - scn_fac.z2 ** 2.5)
     )
 
     # corrected enhancement factor, eq. A4

@@ -27,7 +27,7 @@ import copy
 # Import Rate
 from pynucastro.nucdata import Nucleus
 from pynucastro.rates import Rate, RatePair, DerivedRate, ApproximateRate, Library, load_rate
-from pynucastro.screening import PlasmaState, ScreenFactors
+from pynucastro.screening import make_plasma_state, make_screen_factors
 
 from pynucastro.nucdata import PeriodicTable
 
@@ -712,12 +712,12 @@ class RateCollection:
         # this follows the same logic as BaseCxxNetwork._compute_screening_factors()
         factors = {}
         ys = composition.get_molar()
-        plasma_state = PlasmaState.fill(T, rho, ys)
+        plasma_state = make_plasma_state(T, rho, ys)
         screening_map = self.get_screening_map()
 
         for i, scr in enumerate(screening_map):
             if not (scr.n1.dummy or scr.n2.dummy):
-                scn_fac = ScreenFactors(scr.n1, scr.n2)
+                scn_fac = make_screen_factors(scr.n1, scr.n2)
                 scor = screen_func(plasma_state, scn_fac)[0]
             if scr.name == "he4_he4_he4":
                 # we don't need to do anything here, but we want to avoid
@@ -727,7 +727,7 @@ class RateCollection:
                 # make sure the previous iteration was the first part of 3-alpha
                 assert screening_map[i - 1].name == "he4_he4_he4"
                 # handle the second part of the screening for 3-alpha
-                scn_fac2 = ScreenFactors(scr.n1, scr.n2)
+                scn_fac2 = make_screen_factors(scr.n1, scr.n2)
                 scor2 = screen_func(plasma_state, scn_fac2)[0]
 
                 # there might be both the forward and reverse 3-alpha
