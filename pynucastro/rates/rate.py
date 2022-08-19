@@ -44,6 +44,7 @@ except ImportError:
 
 from pynucastro.nucdata import Nucleus
 
+amu_mev, _, _ = physical_constants['atomic mass constant energy equivalent in MeV']
 hbar, _, _ = physical_constants['reduced Planck constant']
 amu, _, _ = physical_constants['atomic mass constant']
 k_B_mev_k, _, _ = physical_constants['Boltzmann constant in eV/K']
@@ -1554,11 +1555,11 @@ class DerivedRate(ReacLibRate):
     by the application of detailed balance to the forward reactions.
     """
 
-    def __init__(self, rate, use_pf=False, use_A_nuc=False):
+    def __init__(self, rate,  compute_Q=False, use_pf=False):
 
         self.use_pf = use_pf
         self.rate = rate
-        self.use_A_nuc = use_A_nuc
+        self.compute_Q = compute_Q
 
         assert isinstance(rate, Rate)
 
@@ -1580,18 +1581,20 @@ class DerivedRate(ReacLibRate):
         for ssets in self.rate.sets:
             a = ssets.a
             prefactor = 0.0
+            Q = 0.0
             prefactor += -np.log(N_a) * (len(self.rate.reactants) - len(self.rate.products))
 
-            if not self.use_A_nuc:
-                for nucr in self.rate.reactants:
-                    prefactor += 1.5*np.log(nucr.A) + np.log(nucr.spin_states)
-                for nucp in self.rate.products:
-                    prefactor += -1.5*np.log(nucp.A) - np.log(nucp.spin_states)
+            for nucr in self.rate.reactants:
+                prefactor += 1.5*np.log(nucr.A) + np.log(nucr.spin_states)
+                Q += nucr.A_nuc
+            for nucp in self.rate.products:
+                prefactor += -1.5*np.log(nucp.A) - np.log(nucp.spin_states)
+                Q -= nucp.A_nuc
+
+            if self.compute_Q:
+                Q = Q * amu_mev
             else:
-                for nucr in self.rate.reactants:
-                    prefactor += np.log(nucr.spin_states) + 1.5*np.log(nucr.A_nuc)
-                for nucp in self.rate.products:
-                    prefactor += -np.log(nucp.spin_states) - 1.5*np.log(nucp.A_nuc)
+                Q = self.rate.Q
 
             prefactor += np.log(self.counter_factors()[1]) - np.log(self.counter_factors()[0])
 
@@ -1603,7 +1606,7 @@ class DerivedRate(ReacLibRate):
 
             a_rev = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
             a_rev[0] = prefactor + a[0]
-            a_rev[1] = a[1] - self.rate.Q / (1.0e9 * k_B_mev_k)
+            a_rev[1] = a[1] - Q / (1.0e9 * k_B_mev_k)
             a_rev[2] = a[2]
             a_rev[3] = a[3]
             a_rev[4] = a[4]
@@ -1613,7 +1616,7 @@ class DerivedRate(ReacLibRate):
             derived_sets.append(sset_d)
 
         super().__init__(rfile=self.rate.rfile, rfile_path=self.rate.rfile_path, chapter=self.rate.chapter, original_source=self.rate.original_source,
-                reactants=self.rate.products, products=self.rate.reactants, sets=derived_sets, labelprops="derived", Q=-self.rate.Q)
+                reactants=self.rate.products, products=self.rate.reactants, sets=derived_sets, labelprops="derived", Q=-Q)
 
     def eval(self, T, rhoY=None):
 
@@ -1621,10 +1624,20 @@ class DerivedRate(ReacLibRate):
         z_r = 1.0
         z_p = 1.0
         if self.use_pf:
+            for nuc in set(self.rate.reactants + self.rate.products):
+                if not nuc.partition_function and str(nuc) != 'h1' and str(nuc) != 'n' and str(nuc) != 'he4' and str(nuc) != 'p':
+                    print(f'WARNING: {nuc} partition function is not supported by tables: set pf = 1.0 by default')
+
             for nucr in self.rate.reactants:
+                if not nucr.partition_function:
+                    continue
+                    #nucr.partition_function = lambda T: 1.0
                 z_r *= nucr.partition_function(T)
 
             for nucp in self.rate.products:
+                if not nucp.partition_function:
+                    continue
+                    #nucp.partition_function = lambda T: 1.0
                 z_p *= nucp.partition_function(T)
 
             return r*z_r/z_p
@@ -1635,6 +1648,10 @@ class DerivedRate(ReacLibRate):
         Return a string containing python function that computes the
         rate
         """
+
+        for nuc in set(self.rate.reactants + self.rate.products):
+            if not nuc.partition_function and str(nuc) != 'h1' and str(nuc) != 'n' and str(nuc) != 'he4' and str(nuc) != 'p':
+                print(f'WARNING: {nuc} partition function is not supported by tables: set pf = 1.0 by default')
 
         fstring = ""
         fstring += "@numba.njit()\n"
@@ -1652,19 +1669,28 @@ class DerivedRate(ReacLibRate):
 
             fstring += "\n"
             for nucr in self.rate.reactants:
-                fstring += f"    {nucr}_temp_array = np.array({list(nucr.partition_function.temperature/1.0e9)})\n"
-                fstring += f"    {nucr}_pf_array = np.array({list(nucr.partition_function.partition_function)})\n"
-                fstring += f"    {nucr}_pf_exponent = np.interp(tf.T9, xp={nucr}_temp_array, fp=np.log10({nucr}_pf_array))\n"
-                fstring += f"    {nucr}_pf = 10.0**{nucr}_pf_exponent\n"
+                if nucr.partition_function:
+                    fstring += f"    #Interpolating {nucr} partition function\n"
+                    fstring += f"    {nucr}_temp_array = np.array({list(nucr.partition_function.temperature/1.0e9)})\n"
+                    fstring += f"    {nucr}_pf_array = np.array({list(nucr.partition_function.partition_function)})\n"
+                    fstring += f"    {nucr}_pf_exponent = np.interp(tf.T9, xp={nucr}_temp_array, fp=np.log10({nucr}_pf_array))\n"
+                    fstring += f"    {nucr}_pf = 10.0**{nucr}_pf_exponent\n"
+                else:
+                    fstring += f"    #Setting {nucr} partition function to 1.0 by default, independent of T\n"
+                    fstring += f"    {nucr}_pf = 1.0\n"
                 fstring += "\n"
             for nucp in self.rate.products:
-                fstring += f"    {nucp}_temp_array = np.array({list(nucp.partition_function.temperature/1.0e9)})\n"
-                fstring += f"    {nucp}_pf_array = np.array({list(nucp.partition_function.partition_function)})\n"
-                fstring += f"    {nucp}_pf_exponent = np.interp(tf.T9, xp={nucp}_temp_array, fp=np.log10({nucp}_pf_array))\n"
-                fstring += f"    {nucp}_pf = 10.0**{nucp}_pf_exponent\n"
+                if nucp.partition_function:
+                    fstring += f"    #Interpolating {nucp} partition function\n"
+                    fstring += f"    {nucp}_temp_array = np.array({list(nucp.partition_function.temperature/1.0e9)})\n"
+                    fstring += f"    {nucp}_pf_array = np.array({list(nucp.partition_function.partition_function)})\n"
+                    fstring += f"    {nucp}_pf_exponent = np.interp(tf.T9, xp={nucp}_temp_array, fp=np.log10({nucp}_pf_array))\n"
+                    fstring += f"    {nucp}_pf = 10.0**{nucp}_pf_exponent\n"
+                else:
+                    fstring += f"    #Setting {nucp} partition function to 1.0 by default, independent of T\n"
+                    fstring += f"    {nucp}_pf = 1.0\n"
                 fstring += "\n"
 
-            fstring += "\n"
             fstring += "    "
             fstring += "z_r = "
             fstring += "*".join([f"{nucr}_pf" for nucr in self.rate.reactants])
