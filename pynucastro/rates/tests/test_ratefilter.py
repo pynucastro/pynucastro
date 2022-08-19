@@ -28,7 +28,7 @@ class TestRateFilter:
 
         rates = []
         for f in files:
-            rates.append(pyna.Rate(f))
+            rates.append(pyna.load_rate(f))
 
         return pyna.Library(rates=rates)
 

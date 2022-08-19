@@ -6,7 +6,7 @@ import pytest
 class TestPythonNetwork:
     @pytest.fixture(scope="class")
     def rate(self):
-        return rates.Rate("c13-pg-n14-nacr")
+        return rates.ReacLibRate("c13-pg-n14-nacr")
 
     def test_ydot_string(self, rate):
         ydot = rate.ydot_string_py()

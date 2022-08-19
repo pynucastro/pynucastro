@@ -38,37 +38,37 @@ class TestRate:
         """ this is run before each test """
 
         # chapter-1
-        self.rate1 = rates.Rate("o15--n15-wc12")
+        self.rate1 = rates.load_rate("o15--n15-wc12")
 
         # chapter-2
-        self.rate2 = rates.Rate("t-gn-d-nk06")
+        self.rate2 = rates.load_rate("t-gn-d-nk06")
 
         # chapter-3
-        self.rate3 = rates.Rate("he6-gnn-he4-cf88")
+        self.rate3 = rates.load_rate("he6-gnn-he4-cf88")
 
         # chapter-4
-        self.rate4 = rates.Rate("c12-ag-o16-nac2")
+        self.rate4 = rates.load_rate("c12-ag-o16-nac2")
 
         # chapter-5
-        self.rate5 = rates.Rate("n15-pa-c12-nacr")
+        self.rate5 = rates.load_rate("n15-pa-c12-nacr")
 
         # chapter-6
-        self.rate6 = rates.Rate("he3-he3pp-he4-nacr")
+        self.rate6 = rates.load_rate("he3-he3pp-he4-nacr")
 
         # chapter-7
-        self.rate7 = rates.Rate("li7-tnna-he4-mafo")
+        self.rate7 = rates.load_rate("li7-tnna-he4-mafo")
 
         # chapter-8
-        self.rate8 = rates.Rate("he4-aag-c12-fy05")
+        self.rate8 = rates.load_rate("he4-aag-c12-fy05")
 
         # chapter-9
-        self.rate9 = rates.Rate("he4-pphe3-he3-nacr")
+        self.rate9 = rates.load_rate("he4-pphe3-he3-nacr")
 
         # chapter-10
-        self.rate10 = rates.Rate("he4-npahe3-li7-mafo")
+        self.rate10 = rates.load_rate("he4-npahe3-li7-mafo")
 
         # chapter-11
-        self.rate11 = rates.Rate("b17-nnn-c14-wc12")
+        self.rate11 = rates.load_rate("b17-nnn-c14-wc12")
 
         self.n = Nucleus("n")
 
@@ -260,7 +260,7 @@ class TestWeakRates:
 class TestModify:
     @pytest.fixture(scope="function")
     def rate(self):
-        return rates.Rate("c12-c12n-mg23-cf88")
+        return rates.load_rate("c12-c12n-mg23-cf88")
 
     def test_modify(self, rate):
 
