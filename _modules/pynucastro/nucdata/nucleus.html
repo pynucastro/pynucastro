@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.nucdata.nucleus &mdash; pynucastro 1.7.0.post34+g2e95be0 documentation</title>
+  <title>pynucastro.nucdata.nucleus &mdash; pynucastro 1.7.0.post35+gf6ce6b0 documentation</title>
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -128,7 +128,7 @@
 <span class="n">_mass_table</span> <span class="o">=</span> <span class="n">MassTable</span><span class="p">()</span>
 
 <span class="c1">#read the spin table once and store it at the module-level</span>
-<span class="n">_spin_table</span> <span class="o">=</span> <span class="n">SpinTable</span><span class="p">(</span><span class="n">set_double_gs</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">_spin_table</span> <span class="o">=</span> <span class="n">SpinTable</span><span class="p">(</span><span class="n">reliable</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 <span class="c1"># read the binding energy table once and store it at the module-level</span>
 <span class="n">_binding_table</span> <span class="o">=</span> <span class="n">BindingTable</span><span class="p">()</span>
@@ -222,7 +222,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">el</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">el</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
 
         <span class="c1"># set a partition function object to every nucleus</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">partition_function</span> <span class="o">=</span> <span class="n">_pcollection</span><span class="o">.</span><span class="n">get_partition_function</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">short_spec_name</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">partition_function</span> <span class="o">=</span> <span class="n">_pcollection</span><span class="o">.</span><span class="n">get_partition_function</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">short_spec_name</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">partition_function</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="c1"># atomic number comes from periodic table</span>
         <span class="k">if</span> <span class="n">name</span> <span class="o">!=</span> <span class="s2">&quot;n&quot;</span><span class="p">:</span>
@@ -247,7 +250,6 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">nucbind</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="c1"># Now we will define the Nuclear Mass,</span>
-
         <span class="k">try</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">A_nuc</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">A</span><span class="p">)</span> <span class="o">+</span> <span class="n">_mass_table</span><span class="o">.</span><span class="n">get_mass_diff</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">short_spec_name</span><span class="p">)</span><span class="o">.</span><span class="n">dm</span> <span class="o">/</span> <span class="n">m_u</span>
         <span class="k">except</span> <span class="ne">NotImplementedError</span><span class="p">:</span>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.nucdata.spin_nuclide &mdash; pynucastro 1.7.0.post34+g2e95be0 documentation</title>
+  <title>pynucastro.nucdata.spin_nuclide &mdash; pynucastro 1.7.0.post35+gf6ce6b0 documentation</title>
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -103,14 +103,13 @@
              
   <h1>Source code for pynucastro.nucdata.spin_nuclide</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 <span class="kn">from</span> <span class="nn">pynucastro.nucdata.elements</span> <span class="kn">import</span> <span class="n">PeriodicTable</span>
 
 
 <div class="viewcode-block" id="SpinNuclide"><a class="viewcode-back" href="../../../pynucastro.nucdata.html#pynucastro.nucdata.spin_nuclide.SpinNuclide">[docs]</a><span class="k">class</span> <span class="nc">SpinNuclide</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    This class contains the spin information for each nuclei specified in the nubase20.txt table.</span>
+<span class="sd">    This class contains the spin information for each nuclei specified in the nubase2020_1.txt table.</span>
 <span class="sd">    The purpose to create this class lies on the</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -137,21 +136,24 @@
 
 <div class="viewcode-block" id="SpinTable"><a class="viewcode-back" href="../../../pynucastro.nucdata.html#pynucastro.nucdata.spin_nuclide.SpinTable">[docs]</a><span class="k">class</span> <span class="nc">SpinTable</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    This class stores the nubase2020.txt table information in a dictionary data structure</span>
+<span class="sd">    This class stores the nubase2020_1.txt table information in a dictionary data structure</span>
 <span class="sd">    that maps a pynucastro.rates.Nucleus object to a pynucastro.nucdata.SpinNuclide object.</span>
 <span class="sd">    Therefore, after setting an SpinTable class in rates.py, we should retrieve the SpinNuclide</span>
 <span class="sd">    data structure from a designated Nucleus class.</span>
+
+<span class="sd">    The variable reliable switch between using all the values of the tables, excluding the nuclei</span>
+<span class="sd">    where only intervals are given and the values measured by strong experimental arguments.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datafile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">set_double_gs</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datafile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">reliable</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">set_double_gs</span> <span class="o">=</span> <span class="n">set_double_gs</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_spin_nuclide</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reliable</span> <span class="o">=</span> <span class="n">reliable</span>
 
         <span class="k">if</span> <span class="n">datafile</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">datafile</span> <span class="o">=</span> <span class="n">datafile</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">datafile_name</span> <span class="o">=</span> <span class="s1">&#39;nubase2020.txt&#39;</span>
+            <span class="n">datafile_name</span> <span class="o">=</span> <span class="s1">&#39;nubase2020_1.txt&#39;</span>
             <span class="n">nucdata_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
             <span class="n">datafile_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">nucdata_dir</span><span class="p">,</span> <span class="s1">&#39;AtomicMassEvaluation&#39;</span><span class="p">),</span> <span class="n">datafile_name</span><span class="p">)</span>
 
@@ -179,28 +181,20 @@
         <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">finput</span><span class="p">:</span>
 
             <span class="n">ls</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
-            <span class="n">state_list</span> <span class="o">=</span> <span class="p">[]</span>
 
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ls</span><span class="p">)</span> <span class="o">==</span> <span class="mi">6</span><span class="p">:</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">set_double_gs</span><span class="p">:</span>
+            <span class="n">A</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">ls</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+            <span class="n">Z</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">ls</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+            <span class="n">ls</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>           <span class="c1"># Spin</span>
+            <span class="n">spin_states</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">ls</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+            <span class="n">experimental</span> <span class="o">=</span> <span class="n">ls</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">reliable</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">experimental</span> <span class="o">==</span> <span class="s1">&#39;s&#39;</span><span class="p">:</span>
+                    <span class="n">spin_nuc</span> <span class="o">=</span> <span class="n">SpinNuclide</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="n">A</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="n">Z</span><span class="p">,</span> <span class="n">spin_states</span><span class="o">=</span><span class="n">spin_states</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_add_spin_nuclide</span><span class="p">(</span><span class="n">spin_nuc</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
                     <span class="k">continue</span>
-                <span class="n">A</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">ls</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
-                <span class="n">Z</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">ls</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
-                <span class="n">ls</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>           <span class="c1"># Spin 1</span>
-                <span class="n">ls</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>           <span class="c1"># Spin 2</span>
-                <span class="n">states1</span> <span class="o">=</span> <span class="n">ls</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-                <span class="n">states2</span> <span class="o">=</span> <span class="n">ls</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-
-                <span class="n">state_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">states1</span><span class="p">)</span>
-                <span class="n">state_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">states2</span><span class="p">)</span>
-                <span class="n">double_spin_states</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">state_list</span><span class="p">])</span>
-                <span class="n">spin_nuc</span> <span class="o">=</span> <span class="n">SpinNuclide</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="n">A</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="n">Z</span><span class="p">,</span> <span class="n">spin_states</span><span class="o">=</span><span class="n">double_spin_states</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_add_spin_nuclide</span><span class="p">(</span><span class="n">spin_nuc</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">A</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">ls</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
-                <span class="n">Z</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">ls</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
-                <span class="n">ls</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>           <span class="c1"># Spin</span>
-                <span class="n">spin_states</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">ls</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
                 <span class="n">spin_nuc</span> <span class="o">=</span> <span class="n">SpinNuclide</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="n">A</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="n">Z</span><span class="p">,</span> <span class="n">spin_states</span><span class="o">=</span><span class="n">spin_states</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_add_spin_nuclide</span><span class="p">(</span><span class="n">spin_nuc</span><span class="p">)</span>
 

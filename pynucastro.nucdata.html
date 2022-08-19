@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.nucdata package &mdash; pynucastro 1.7.0.post34+g2e95be0 documentation</title>
+  <title>pynucastro.nucdata package &mdash; pynucastro 1.7.0.post35+gf6ce6b0 documentation</title>
       <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -443,18 +443,20 @@ the tables we have previously converted bu using their scripts.</p>
 <dt class="sig sig-object py" id="pynucastro.nucdata.spin_nuclide.SpinNuclide">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.nucdata.spin_nuclide.</span></span><span class="sig-name descname"><span class="pre">SpinNuclide</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spin_states</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/spin_nuclide.html#SpinNuclide"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.spin_nuclide.SpinNuclide" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>This class contains the spin information for each nuclei specified in the nubase20.txt table.
+<p>This class contains the spin information for each nuclei specified in the nubase2020_1.txt table.
 The purpose to create this class lies on the</p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pynucastro.nucdata.spin_nuclide.SpinTable">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.nucdata.spin_nuclide.</span></span><span class="sig-name descname"><span class="pre">SpinTable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datafile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">set_double_gs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/spin_nuclide.html#SpinTable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.spin_nuclide.SpinTable" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.nucdata.spin_nuclide.</span></span><span class="sig-name descname"><span class="pre">SpinTable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datafile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reliable</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/spin_nuclide.html#SpinTable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.spin_nuclide.SpinTable" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>This class stores the nubase2020.txt table information in a dictionary data structure
+<p>This class stores the nubase2020_1.txt table information in a dictionary data structure
 that maps a pynucastro.rates.Nucleus object to a pynucastro.nucdata.SpinNuclide object.
 Therefore, after setting an SpinTable class in rates.py, we should retrieve the SpinNuclide
 data structure from a designated Nucleus class.</p>
+<p>The variable reliable switch between using all the values of the tables, excluding the nuclei
+where only intervals are given and the values measured by strong experimental arguments.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.nucdata.spin_nuclide.SpinTable.get_spin_nuclide">
 <span class="sig-name descname"><span class="pre">get_spin_nuclide</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nuc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/spin_nuclide.html#SpinTable.get_spin_nuclide"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.spin_nuclide.SpinTable.get_spin_nuclide" title="Permalink to this definition">¶</a></dt>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.nucdata.partition_function &mdash; pynucastro 1.7.0.post34+g2e95be0 documentation</title>
+  <title>pynucastro.nucdata.partition_function &mdash; pynucastro 1.7.0.post35+gf6ce6b0 documentation</title>
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -406,17 +406,23 @@
             <span class="k">elif</span> <span class="n">pf_hi</span><span class="p">:</span>
                 <span class="n">pf</span> <span class="o">=</span> <span class="n">pf_hi</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;default&#39;</span>
-                <span class="n">pf_default</span> <span class="o">=</span> <span class="n">PartitionFunction</span><span class="p">(</span><span class="n">nuc</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">pf_lo_table</span><span class="o">.</span><span class="n">temperatures</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">pf_lo_table</span><span class="o">.</span><span class="n">temperatures</span><span class="p">))</span>
-                <span class="n">pf</span> <span class="o">=</span> <span class="n">pf_default</span>
+                <span class="c1">#name = &#39;default&#39;</span>
+                <span class="c1">#pf_default = PartitionFunction(nuc, name, pf_lo_table.temperatures, np.ones_like(pf_lo_table.temperatures))</span>
+                <span class="c1">#pf = pf_default</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span>
+                <span class="c1">#if str(nuc) != &#39;h1&#39; and str(nuc) != &#39;n&#39; and str(nuc) != &#39;he4&#39;:</span>
+                <span class="c1">#    print(f&#39;WARNING: {nuc} partition function is not supported: set pf = 1.0 by default&#39;)</span>
 
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">pf_lo</span><span class="p">:</span>
                 <span class="n">pf</span> <span class="o">=</span> <span class="n">pf_lo</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;default&#39;</span>
-                <span class="n">pf_default</span> <span class="o">=</span> <span class="n">PartitionFunction</span><span class="p">(</span><span class="n">nuc</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">pf_lo_table</span><span class="o">.</span><span class="n">temperatures</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">pf_lo_table</span><span class="o">.</span><span class="n">temperatures</span><span class="p">))</span>
-                <span class="n">pf</span> <span class="o">=</span> <span class="n">pf_default</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span>
+                <span class="c1">#name = &#39;default&#39;</span>
+                <span class="c1">#pf_default = PartitionFunction(nuc, name, pf_lo_table.temperatures, np.ones_like(pf_lo_table.temperatures))</span>
+                <span class="c1">#pf = pf_default</span>
+                <span class="c1">#if str(nuc) != &#39;p&#39; and str(nuc) != &#39;n&#39; and str(nuc) != &#39;he4&#39;:</span>
+                <span class="c1">#    print(f&#39;WARNING: {nuc} partition function is not supported: set pf = 1.0 by default&#39;)</span>
 
         <span class="k">return</span> <span class="n">pf</span></div></div>
 </pre></div>
