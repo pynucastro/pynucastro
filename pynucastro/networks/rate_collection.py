@@ -26,7 +26,7 @@ import copy
 
 # Import Rate
 from pynucastro.nucdata import Nucleus
-from pynucastro.rates import Rate, RatePair, DerivedRate, ApproximateRate, Library, load_rate
+from pynucastro.rates import Rate, TabularRate, RatePair, DerivedRate, ApproximateRate, Library, load_rate
 from pynucastro.screening import make_plasma_state, make_screen_factors
 
 from pynucastro.nucdata import PeriodicTable
@@ -57,6 +57,29 @@ def _skip_xalpha(n, p, r):
         # then skip
         if n_alpha == 1 and n.Z == 2 and n.A == 4:
             return True
+
+    return False
+
+
+def _skip_xp(n, p, r):
+    """utility function to consider if we show an (p, x) or (x, p) rate.  Here, p is the
+    product we want to link to"""
+
+    # for rates that are A (x, p) B, where A and B are heavy nuclei,
+    # don't show the connection of the nucleus to p, only show it to B
+    if p.Z == 1 and p.A == 1:
+        return True
+
+    # likewise, hide A (p, x) B, unless A itself is an p
+    c = r.reactants
+    n_p = 0
+    for nuc in c:
+        if nuc.Z == 1 and nuc.A == 1:
+            n_p += 1
+    # if there is only 1 p and we are working on the p node,
+    # then skip
+    if n_p == 1 and n.Z == 1 and n.A == 1:
+        return True
 
     return False
 
@@ -570,6 +593,14 @@ class RateCollection:
 
         self._build_collection()
 
+    def remove_rates(self, rate_list):
+        """remove the rates in rate_list from the network."""
+
+        for r in rate_list:
+            self.rates.remove(r)
+
+        self._build_collection()
+
     def make_ap_pg_approx(self, intermediate_nuclei=None):
         """combine the rates A(a,g)B and A(a,p)X(p,g)B (and the reverse) into a single
         effective approximate rate."""
@@ -686,7 +717,7 @@ class RateCollection:
 
         for r in self.rates:
             val = r.prefactor * rho**r.dens_exp * r.eval(T, rho * y_e)
-            if (r.weak_type == 'electron_capture' and not r.tabular):
+            if (r.weak_type == 'electron_capture' and not isinstance(r, TabularRate)):
                 val = val * y_e
             yfac = functools.reduce(mul, [ys[q] for q in r.reactants])
             rvals[r] = yfac * val * screen_factors.get(r, 1.0)
@@ -887,7 +918,7 @@ class RateCollection:
 
         #subtract neutrino losses for tabular weak reactions
         for r in self.rates:
-            if r.weak and r.tabular:
+            if r.weak and isinstance(r, TabularRate):
                 # get composition
                 ys = composition.get_molar()
                 y_e = composition.eval_ye()
@@ -1128,7 +1159,8 @@ class RateCollection:
              node_size=1000, node_font_size=13, node_color="#A0CBE2", node_shape="o",
              curved_edges=False,
              N_range=None, Z_range=None, rotated=False,
-             always_show_p=False, always_show_alpha=False, hide_xalpha=False,
+             always_show_p=False, always_show_alpha=False,
+             hide_xp=False, hide_xalpha=False,
              nucleus_filter_function=None, rate_filter_function=None):
         """Make a plot of the network structure showing the links between
         nuclei.  If a full set of thermodymamic conditions are
@@ -1181,6 +1213,9 @@ class RateCollection:
         hide_xalpha=False: dont connect the links to alpha for heavy
         nuclei reactions of the form A(alpha,X)B or A(X,alpha)B,
         except if alpha is the heaviest product.
+
+        hide_xp=False: dont connect the links to p for heavy
+        nuclei reactions of the form A(p,X)B or A(X,p)B.
 
         nucleus_filter_funcion: name of a custom function that takes a
         Nucleus object and returns true or false if it is to be shown
@@ -1276,6 +1311,9 @@ class RateCollection:
                     if hide_xalpha and _skip_xalpha(n, p, r):
                         continue
 
+                    if hide_xp and _skip_xp(n, p, r):
+                        continue
+
                     # networkx doesn't seem to keep the edges in
                     # any particular order, so we associate data
                     # to the edges here directly, in this case,
@@ -1316,6 +1354,9 @@ class RateCollection:
                             continue
 
                         if hide_xalpha and _skip_xalpha(n, p, sr):
+                            continue
+
+                        if hide_xp and _skip_xp(n, p, sr):
                             continue
 
                         G.add_edges_from([(n, p)], weight=0, real=0)
