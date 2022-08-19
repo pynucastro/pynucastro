@@ -41,7 +41,7 @@ http://pynucastro.github.io/pynucastro/
 ```
 import pynucastro
 
-r = pynucastro.Rate("c13-pg-n14-nacr")
+r = pynucastro.load_rate("c13-pg-n14-nacr")
 
 # evaluate this rate at T = 1.e9 K
 print(r.eval(1.0e9))

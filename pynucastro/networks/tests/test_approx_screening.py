@@ -32,7 +32,7 @@ class TestApproxScreening:
         # be in the screening map
 
         for r in pynet_symmetric.reaclib_rates:
-            if r.reverse:
+            if r.Q < 0:
                 nucs = [q for q in r.products if q.Z != 0]
                 if len(nucs) == 1:
                     continue
