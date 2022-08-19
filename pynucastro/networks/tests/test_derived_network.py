@@ -64,7 +64,7 @@ def fe52__p_mn51__derived(tf):
     rate = 0.0
 
     # ths8r
-    rate += np.exp(  61.72798916565748 + -85.6326403498911*tf.T9i + -36.1825*tf.T913i + 0.873042*tf.T913
+    rate += np.exp(  {:.14f} + -85.6326403498911*tf.T9i + -36.1825*tf.T913i + 0.873042*tf.T913
                   + -2.89731*tf.T9 + 0.364394*tf.T953 + 0.833333*tf.lnT9)
 
     #Setting p partition function to 1.0 by default, independent of T

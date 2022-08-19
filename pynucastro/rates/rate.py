@@ -1681,24 +1681,27 @@ class DerivedRate(Rate):
             fstring += "\n"
             for nucr in self.rate.reactants:
                 if nucr.partition_function:
+                    fstring += f"    #Interpolating {nucr} partition function\n"
                     fstring += f"    {nucr}_temp_array = np.array({list(nucr.partition_function.temperature/1.0e9)})\n"
                     fstring += f"    {nucr}_pf_array = np.array({list(nucr.partition_function.partition_function)})\n"
                     fstring += f"    {nucr}_pf_exponent = np.interp(tf.T9, xp={nucr}_temp_array, fp=np.log10({nucr}_pf_array))\n"
                     fstring += f"    {nucr}_pf = 10.0**{nucr}_pf_exponent\n"
                 else:
-                    fstring += f"    {nucr}_pf = 1.0"
+                    fstring += f"    #Setting {nucr} partition function to 1.0 by default, independent of T\n"
+                    fstring += f"    {nucr}_pf = 1.0\n"
                 fstring += "\n"
             for nucp in self.rate.products:
                 if nucp.partition_function:
+                    fstring += f"    #Interpolating {nucp} partition function\n"
                     fstring += f"    {nucp}_temp_array = np.array({list(nucp.partition_function.temperature/1.0e9)})\n"
                     fstring += f"    {nucp}_pf_array = np.array({list(nucp.partition_function.partition_function)})\n"
                     fstring += f"    {nucp}_pf_exponent = np.interp(tf.T9, xp={nucp}_temp_array, fp=np.log10({nucp}_pf_array))\n"
                     fstring += f"    {nucp}_pf = 10.0**{nucp}_pf_exponent\n"
                 else:
-                    fstring += f"    {nucp}_pf = 1.0"
+                    fstring += f"    #Setting {nucp} partition function to 1.0 by default, independent of T\n"
+                    fstring += f"    {nucp}_pf = 1.0\n"
                 fstring += "\n"
 
-            fstring += "\n"
             fstring += "    "
             fstring += "z_r = "
             fstring += "*".join([f"{nucr}_pf" for nucr in self.rate.reactants])
