@@ -724,13 +724,16 @@ class RateCollection:
 
         return rvals
 
-    def find_unimportant_rates(self, rhos, Ts, compositions, cutoff_ratio,
-                               screen_func=None):
+    def find_unimportant_rates(self, states, cutoff_ratio, screen_func=None):
         """evaluate the rates at multiple thermodynamic states, and find the
         rates that are always less than `cutoff_ratio` times the fastest rate
-        for each state"""
+        for each state
+
+        Here, states is a list of tuple of the form (density, temperature, composition),
+        where composition is of type `Composition`.
+        """
         largest_ratio = {r: 0 for r in self.rates}
-        for rho, T, comp in zip(rhos, Ts, compositions):
+        for rho, T, comp in states:
             rvals = self.evaluate_rates(rho, T, comp, screen_func)
             fastest = max(rvals.values())
             for r, value in rvals.items():
