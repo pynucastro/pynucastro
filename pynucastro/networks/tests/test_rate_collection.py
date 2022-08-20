@@ -64,7 +64,7 @@ class TestUnimportantRates:
         T = 1e8
 
         expected = {rc.rates[i] for i in [2, 3, 4, 6, 7]}
-        unimportant = rc.find_unimportant_rates([rho], [T], [comp], cutoff_ratio=1e-4)
+        unimportant = rc.find_unimportant_rates([(rho, T, comp)], cutoff_ratio=1e-4)
         assert rc.rates[0] not in unimportant
         assert unimportant.keys() == expected
 
@@ -73,17 +73,15 @@ class TestUnimportantRates:
         T = 1e10
 
         expected = {rc.rates[i] for i in [0, 2, 4, 6, 7]}
-        unimportant = rc.find_unimportant_rates([rho], [T], [comp], cutoff_ratio=1e-4)
+        unimportant = rc.find_unimportant_rates([(rho, T, comp)], cutoff_ratio=1e-4)
         assert rc.rates[3] not in unimportant
         assert unimportant.keys() == expected
 
     def test_temp_both(self, rc, comp):
-        comps = [comp, comp]
-        rhos = [1e5, 1e5]
-        Ts = [1e8, 1e10]
+        states = [(1.e5, 1.e8, comp), (1.e5, 1.e10, comp)]
 
         expected = {rc.rates[i] for i in [2, 4, 6, 7]}
-        unimportant = rc.find_unimportant_rates(rhos, Ts, comps, cutoff_ratio=1e-4)
+        unimportant = rc.find_unimportant_rates(states, cutoff_ratio=1e-4)
         # C12(p,g)N13 (rate 0) is important at T=1e8, but not T=1e10.
         # N13(p,g)O14 (rate 3) is important at T=1e10, but not T=1e8.
         # If we include both temperatures, then both rates should be considered important.
