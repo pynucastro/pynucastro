@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Removing Unimportant Rates &mdash; pynucastro 1.7.0.post35+gf6ce6b0 documentation</title>
+  <title>Removing Unimportant Rates &mdash; pynucastro 1.7.0.post36+gc1c1ebe documentation</title>
       <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -447,27 +447,28 @@ div.rendered_html tbody tr:hover {
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rhos</span> <span class="o">=</span> <span class="p">[</span><span class="mi">100</span><span class="p">]</span>
-<span class="n">Ts</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.5e7</span><span class="p">]</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rho</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="n">T</span> <span class="o">=</span> <span class="mf">1.5e7</span>
 <span class="n">comp</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Composition</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">get_nuclei</span><span class="p">())</span>
 <span class="n">comp</span><span class="o">.</span><span class="n">set_solar_like</span><span class="p">()</span>
-<span class="n">compositions</span> <span class="o">=</span> <span class="p">[</span><span class="n">comp</span><span class="p">]</span>
+
+<span class="n">state</span> <span class="o">=</span> <span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <p>Now we find the rates that are not important. We pass in a cutoff, such that any rate that is smaller that cutoff <span class="math notranslate nohighlight">\(\times\)</span> fastest-rate will be returned</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cutoff_ratio</span> <span class="o">=</span> <span class="mf">1.e-20</span>
-<span class="n">unimportant_rates</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">find_unimportant_rates</span><span class="p">(</span><span class="n">rhos</span><span class="p">,</span> <span class="n">Ts</span><span class="p">,</span> <span class="n">compositions</span><span class="p">,</span> <span class="n">cutoff_ratio</span><span class="p">)</span>
+<span class="n">unimportant_rates</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">find_unimportant_rates</span><span class="p">([</span><span class="n">state</span><span class="p">],</span> <span class="n">cutoff_ratio</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <p>Here <code class="docutils literal notranslate"><span class="pre">unimportant_rates</span></code> is a dictionary with the rate as the key and the ratio of the rate compared to the fastest rate as the value.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">unimportant_rates</span>
@@ -475,7 +476,7 @@ div.rendered_html tbody tr:hover {
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
@@ -494,7 +495,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <p>If we are happy with what it found, we can remove them from the <code class="docutils literal notranslate"><span class="pre">RateCollection</span></code></p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rc</span><span class="o">.</span><span class="n">remove_rates</span><span class="p">(</span><span class="n">unimportant_rates</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
@@ -503,7 +504,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <p>Now we can look at the updated rate collection. Notice that the 3-alpha rate is gone as are a lot of the reverse rates</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rc</span>
@@ -511,7 +512,7 @@ div.rendered_html tbody tr:hover {
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
@@ -532,7 +533,7 @@ He3 + He3 ⟶ p + p + He4
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rc</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">hide_xp</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">always_show_alpha</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
