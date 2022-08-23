@@ -782,6 +782,15 @@ class RateCollection:
         """ A helper equation that finds the mass fraction of each nuclide in NSE state,
         u[0] is chemical potential of proton  while u[1] is chemical potential of neutron"""
 
+        # If there is proton included in network, upper limit of ye is 1
+        # And if neutron is included in network, lower limit of ye is 0.
+        # However, there are networks where either of them are included
+        # So here I add a general check to find the upper and lower limit of ye
+        # so the input doesn't go outside of the scope and the solver won't be able to converge if it did
+        ye_low = min(nuc.Z/nuc.A for nuc in self.unique_nuclei)
+        ye_max = max(nuc.Z/nuc.A for nuc in self.unique_nuclei)
+        assert ye >= ye_low and ye <= ye_max, "input electron fraction goes outside of scope for current network"
+        
         # Define constants: amu, boltzmann, planck, and electron charge
         m_u = constants.value("unified atomic mass unit") * 1.0e3  # atomic unit mass in g
         k = constants.value("Boltzmann constant") * 1.0e7          # boltzmann in erg/K
