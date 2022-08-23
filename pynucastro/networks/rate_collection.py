@@ -830,7 +830,7 @@ class RateCollection:
 
         return [eq1, eq2]
 
-    def get_comp_NSE(self, rho, T, ye, init_guess=(-3.5, -15.0), tol=1.5e-9, tell_guess=False):
+    def get_comp_NSE(self, rho, T, ye, init_guess=(-3.5, -15.0), tol=1.5e-9, tell_sol=False):
         """
         Returns the NSE composition given density, temperature and prescribed electron fraction
         using scipy.fsolve, `tol` is an optional parameter for the tolerance of scipy.fsolve.
@@ -858,8 +858,8 @@ class RateCollection:
                 found_sol = np.all(np.isclose(res, [0.0, 0.0], rtol=1e-2, atol=1e-3))
 
                 if found_sol:
-                    if tell_guess:
-                        print(f"After fine-tuning the initial guess, the actual guess that found the solution was {guess}")
+                    if tell_sol:
+                        print(f"After solving, chemical potential of proton and neutron are {u[0]} and {u[1]}")
                     comp_NSE = self._evaluate_comp_NSE(u, rho, T, ye)
 
                     return comp_NSE
