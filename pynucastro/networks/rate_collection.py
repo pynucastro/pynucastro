@@ -826,27 +826,10 @@ class RateCollection:
         nse_ye = sum(nuc.Z * comp_NSE.X[nuc] / nuc.A for nuc in self.unique_nuclei)
 
         eq1 = sum(comp_NSE.X.values()) - 1.0
-        eq2 = nse_ye - ye
+        eq2 = ye - nse_ye
 
         return [eq1, eq2]
 
-    def _nse_jac(self, u, rho, T, ye):
-        """ This function finds the jacobian of the nse"""
-
-        k = constants.value("Boltzmann constant") * 1.0e7
-        Erg2MeV = 624151.0
-
-        comp_NSE = self._evaluate_comp_NSE(u, rho, T, ye)
-        jac = np.zeros((2,2))
-
-        for nuc in self.unique_nuclei:
-            jac[0, 0] += comp_NSE.X[nuc] * nuc.Z / k / T / Erg2MeV
-            jac[0, 1] += comp_NSE.X[nuc] * nuc.N / k / T / Erg2MeV
-            jac[1, 0] += comp_NSE.X[nuc] * nuc.Z * nuc.Z / nuc.A / k / T / Erg2MeV
-            jac[1, 1] += comp_NSE.X[nuc] * nuc.Z * nuc.N / nuc.A / k / T / Erg2MeV
-
-        return jac
-        
     def get_comp_NSE(self, rho, T, ye, init_guess=(-3.5, -15.0), tol=1.5e-9, tell_guess=False):
         """
         Returns the NSE composition given density, temperature and prescribed electron fraction
@@ -869,7 +852,7 @@ class RateCollection:
             init_dx = 0.5
 
             while (i < 15):
-                u = fsolve(self._constraint_eq, guess, args=(rho, T, ye), fprime = self._nse_jac, xtol=tol, maxfev=800)
+                u = fsolve(self._constraint_eq, guess, args=(rho, T, ye), xtol=tol, maxfev=800)
                 res = self._constraint_eq(u, rho, T, ye)
                 is_pos_new = all(k > 0 for k in res)
                 found_sol = np.all(np.isclose(res, [0.0, 0.0], rtol=1e-2, atol=1e-3))
