@@ -787,7 +787,7 @@ class RateCollection:
         k = constants.value("Boltzmann constant") * 1.0e7          # boltzmann in erg/K
         h = constants.value("Planck constant") * 1.0e7             # in cgs
         e = 4.8032e-10                                             # electron charge in cgs
-        ErgToMeV = 624151.0
+        Erg2MeV = 624151.0
 
         # These are three constants for calculating coulomb corrections of chemical energy, see Calders paper: iopscience 510709, appendix
         A_1 = -0.9052
@@ -801,11 +801,17 @@ class RateCollection:
         # u_c is the coulomb correction term for NSE
         # Calculate the composition at NSE, equations found in appendix of Calder paper
         for nuc in self.unique_nuclei:
+
+            try:
+                pf = nuc.partition_function(T)
+            except TypeError:
+                pf = 1.0
+            
             gamma = nuc.Z**(5. / 3.) * e**2 * (4.0 * np.pi * n_e / 3.0)**(1. / 3.) / k / T
-            u_c = ErgToMeV * k * T * (A_1 * (np.sqrt(gamma * (A_2 + gamma)) - A_2 * np.log(np.sqrt(gamma / A_2) +
+            u_c = Erg2MeV * k * T * (A_1 * (np.sqrt(gamma * (A_2 + gamma)) - A_2 * np.log(np.sqrt(gamma / A_2) +
                                       np.sqrt(1.0 + gamma / A_2))) + 2.0 * A_3 * (np.sqrt(gamma) - np.arctan(np.sqrt(gamma))))
-            comp_NSE.X[nuc] = m_u * nuc.A_nuc * nuc.partition_function(T) / rho * (2.0 * np.pi * m_u * nuc.A_nuc * k * T / h**2)**(3. / 2.) \
-            * np.exp((nuc.Z * u[0] + nuc.N * u[1] - u_c + nuc.nucbind * nuc.A) / k / T / ErgToMeV)
+            comp_NSE.X[nuc] = m_u * nuc.A_nuc * pf / rho * (2.0 * np.pi * m_u * nuc.A_nuc * k * T / h**2)**(3. / 2.) \
+            * np.exp((nuc.Z * u[0] + nuc.N * u[1] - u_c + nuc.nucbind * nuc.A) / k / T / Erg2MeV)
 
         return comp_NSE
 
@@ -820,10 +826,27 @@ class RateCollection:
         nse_ye = sum(nuc.Z * comp_NSE.X[nuc] / nuc.A for nuc in self.unique_nuclei)
 
         eq1 = sum(comp_NSE.X.values()) - 1.0
-        eq2 = ye - nse_ye
+        eq2 = nse_ye - ye
 
         return [eq1, eq2]
 
+    def _nse_jac(self, u, rho, T, ye):
+        """ This function finds the jacobian of the nse"""
+
+        k = constants.value("Boltzmann constant") * 1.0e7
+        Erg2MeV = 624151.0
+
+        comp_NSE = self._evaluate_comp_NSE(u, rho, T, ye)
+        jac = np.zeros((2,2))
+
+        for nuc in self.unique_nuclei:
+            jac[0, 0] += comp_NSE.X[nuc] * nuc.Z / k / T / Erg2MeV
+            jac[0, 1] += comp_NSE.X[nuc] * nuc.N / k / T / Erg2MeV
+            jac[1, 0] += comp_NSE.X[nuc] * nuc.Z * nuc.Z / nuc.A / k / T / Erg2MeV
+            jac[1, 1] += comp_NSE.X[nuc] * nuc.Z * nuc.N / nuc.A / k / T / Erg2MeV
+
+        return jac
+        
     def get_comp_NSE(self, rho, T, ye, init_guess=(-3.5, -15.0), tol=1.5e-9, tell_guess=False):
         """
         Returns the NSE composition given density, temperature and prescribed electron fraction
@@ -846,7 +869,7 @@ class RateCollection:
             init_dx = 0.5
 
             while (i < 15):
-                u = fsolve(self._constraint_eq, guess, args=(rho, T, ye), xtol=tol, maxfev=800)
+                u = fsolve(self._constraint_eq, guess, args=(rho, T, ye), fprime = self._nse_jac, xtol=tol, maxfev=800)
                 res = self._constraint_eq(u, rho, T, ye)
                 is_pos_new = all(k > 0 for k in res)
                 found_sol = np.all(np.isclose(res, [0.0, 0.0], rtol=1e-2, atol=1e-3))
