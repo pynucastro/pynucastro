@@ -790,7 +790,7 @@ class RateCollection:
         ye_low = min(nuc.Z/nuc.A for nuc in self.unique_nuclei)
         ye_max = max(nuc.Z/nuc.A for nuc in self.unique_nuclei)
         assert ye >= ye_low and ye <= ye_max, "input electron fraction goes outside of scope for current network"
-        
+
         # Define constants: amu, boltzmann, planck, and electron charge
         m_u = constants.value("unified atomic mass unit") * 1.0e3  # atomic unit mass in g
         k = constants.value("Boltzmann constant") * 1.0e7          # boltzmann in erg/K
@@ -810,12 +810,11 @@ class RateCollection:
         # u_c is the coulomb correction term for NSE
         # Calculate the composition at NSE, equations found in appendix of Calder paper
         for nuc in self.unique_nuclei:
-
             try:
                 pf = nuc.partition_function(T)
             except TypeError:
                 pf = 1.0
-            
+
             gamma = nuc.Z**(5. / 3.) * e**2 * (4.0 * np.pi * n_e / 3.0)**(1. / 3.) / k / T
             u_c = Erg2MeV * k * T * (A_1 * (np.sqrt(gamma * (A_2 + gamma)) - A_2 * np.log(np.sqrt(gamma / A_2) +
                                       np.sqrt(1.0 + gamma / A_2))) + 2.0 * A_3 * (np.sqrt(gamma) - np.arctan(np.sqrt(gamma))))
