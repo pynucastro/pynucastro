@@ -810,9 +810,9 @@ class RateCollection:
         # u_c is the coulomb correction term for NSE
         # Calculate the composition at NSE, equations found in appendix of Calder paper
         for nuc in self.unique_nuclei:
-            try:
+            if nuc.partition_function:
                 pf = nuc.partition_function(T)
-            except TypeError:
+            else:
                 pf = 1.0
 
             gamma = nuc.Z**(5. / 3.) * e**2 * (4.0 * np.pi * n_e / 3.0)**(1. / 3.) / k / T
