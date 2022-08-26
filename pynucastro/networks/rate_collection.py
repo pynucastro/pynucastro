@@ -594,10 +594,16 @@ class RateCollection:
         self._build_collection()
 
     def remove_rates(self, rate_list):
-        """remove the rates in rate_list from the network."""
+        """remove the rates in rate_list from the network.  Note, if
+        rate list is a dict, then the keys are assumed to be the rates
+        to remove"""
 
-        for r in rate_list:
-            self.rates.remove(r)
+        if isinstance(rate_list, dict):
+            for r in rate_list.keys():
+                self.rates.remove(r)
+        else:
+            for r in rate_list:
+                self.rates.remove(r)
 
         self._build_collection()
 
