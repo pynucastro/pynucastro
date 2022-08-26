@@ -1,89 +1,28 @@
 # unit tests for rates
 import math
+#from msilib.schema import Complus
 
-import pynucastro.rates as rates
+from pynucastro.nucdata import Nucleus
+from pynucastro import rates
+import pytest
 from pytest import approx
 
 
-class TestTfactors(object):
-    @classmethod
-    def setup_class(cls):
-        """ this is run once for each class before any tests """
-        pass
+class TestTfactors:
+    @pytest.fixture(scope="class")
+    def tf(self):
+        return rates.Tfactors(2.e9)
 
-    @classmethod
-    def teardown_class(cls):
-        """ this is run once for each class after all tests """
-        pass
-
-    def setup_method(self):
-        """ this is run before each test """
-        self.tf = rates.Tfactors(2.e9)
-
-    def teardown_method(self):
-        """ this is run after each test """
-        self.tf = None
-
-    def test_tfactors(self):
-        assert self.tf.T9 == approx(2.0)
-        assert self.tf.T9i == approx(0.5)
-        assert self.tf.T913i == approx(0.5**(1./3.))
-        assert self.tf.T913 == approx(2.0**(1./3.))
-        assert self.tf.T953 == approx(2.0**(5./3.))
-        assert self.tf.lnT9 == approx(math.log(2.0))
+    def test_tfactors(self, tf):
+        assert tf.T9 == approx(2.0)
+        assert tf.T9i == approx(0.5)
+        assert tf.T913i == approx(0.5**(1./3.))
+        assert tf.T913 == approx(2.0**(1./3.))
+        assert tf.T953 == approx(2.0**(5./3.))
+        assert tf.lnT9 == approx(math.log(2.0))
 
 
-class TestNucleus(object):
-    @classmethod
-    def setup_class(cls):
-        """ this is run once for each class before any tests """
-        pass
-
-    @classmethod
-    def teardown_class(cls):
-        """ this is run once for each class after all tests """
-        pass
-
-    def setup_method(self):
-        """ this is run before each test """
-
-        self.p = rates.Nucleus("p")
-        self.h1 = rates.Nucleus("H1")
-        self.d = rates.Nucleus("d")
-        self.he4 = rates.Nucleus("He4")
-        self.c12 = rates.Nucleus("C12")
-        self.o16 = rates.Nucleus("O16")
-        self.ni56 = rates.Nucleus("Ni56")
-        self.u238 = rates.Nucleus("U238")
-        self.he4_also = rates.Nucleus("he4")
-
-    def teardown_method(self):
-        """ this is run after each test """
-        pass
-
-    def test_atomic_weights(self):
-        assert self.d.A == 2
-        assert self.he4.A == 4
-        assert self.c12.A == 12
-        assert self.ni56.A == 56
-        assert self.u238.A == 238
-
-    def test_atomic_numbers(self):
-        assert self.d.Z == 1
-        assert self.he4.Z == 2
-        assert self.c12.Z == 6
-        assert self.ni56.Z == 28
-        assert self.u238.Z == 92
-
-    def test_comparisons(self):
-        assert self.p == self.h1
-        assert self.d != self.he4
-        assert self.d < self.he4
-        assert self.ni56 > self.c12
-        assert self.he4_also == self.he4
-
-
-class TestRate(object):
+class TestRate:
 
     @classmethod
     def setup_class(cls):
@@ -99,64 +38,64 @@ class TestRate(object):
         """ this is run before each test """
 
         # chapter-1
-        self.rate1 = rates.Rate("o15--n15-wc12")
+        self.rate1 = rates.load_rate("o15--n15-wc12")
 
         # chapter-2
-        self.rate2 = rates.Rate("t-gn-d-nk06")
+        self.rate2 = rates.load_rate("t-gn-d-nk06")
 
         # chapter-3
-        self.rate3 = rates.Rate("he6-gnn-he4-cf88")
+        self.rate3 = rates.load_rate("he6-gnn-he4-cf88")
 
         # chapter-4
-        self.rate4 = rates.Rate("c12-ag-o16-nac2")
+        self.rate4 = rates.load_rate("c12-ag-o16-nac2")
 
         # chapter-5
-        self.rate5 = rates.Rate("n15-pa-c12-nacr")
+        self.rate5 = rates.load_rate("n15-pa-c12-nacr")
 
         # chapter-6
-        self.rate6 = rates.Rate("he3-he3pp-he4-nacr")
+        self.rate6 = rates.load_rate("he3-he3pp-he4-nacr")
 
         # chapter-7
-        self.rate7 = rates.Rate("li7-tnna-he4-mafo")
+        self.rate7 = rates.load_rate("li7-tnna-he4-mafo")
 
         # chapter-8
-        self.rate8 = rates.Rate("he4-aag-c12-fy05")
+        self.rate8 = rates.load_rate("he4-aag-c12-fy05")
 
         # chapter-9
-        self.rate9 = rates.Rate("he4-pphe3-he3-nacr")
+        self.rate9 = rates.load_rate("he4-pphe3-he3-nacr")
 
         # chapter-10
-        self.rate10 = rates.Rate("he4-npahe3-li7-mafo")
+        self.rate10 = rates.load_rate("he4-npahe3-li7-mafo")
 
         # chapter-11
-        self.rate11 = rates.Rate("b17-nnn-c14-wc12")
+        self.rate11 = rates.load_rate("b17-nnn-c14-wc12")
 
-        self.n = rates.Nucleus("n")
+        self.n = Nucleus("n")
 
-        self.p = rates.Nucleus("p")
-        self.h1 = rates.Nucleus("H1")
-        self.d = rates.Nucleus("d")
-        self.h3 = rates.Nucleus("H3")
+        self.p = Nucleus("p")
+        self.h1 = Nucleus("H1")
+        self.d = Nucleus("d")
+        self.h3 = Nucleus("H3")
 
-        self.he3 = rates.Nucleus("He3")
-        self.he4 = rates.Nucleus("He4")
-        self.he6 = rates.Nucleus("He6")
+        self.he3 = Nucleus("He3")
+        self.he4 = Nucleus("He4")
+        self.he6 = Nucleus("He6")
 
-        self.li7 = rates.Nucleus("Li7")
+        self.li7 = Nucleus("Li7")
 
-        self.b17 = rates.Nucleus("B17")
+        self.b17 = Nucleus("B17")
 
-        self.c12 = rates.Nucleus("C12")
-        self.c14 = rates.Nucleus("C14")
+        self.c12 = Nucleus("C12")
+        self.c14 = Nucleus("C14")
 
-        self.n15 = rates.Nucleus("N15")
+        self.n15 = Nucleus("N15")
 
-        self.o15 = rates.Nucleus("O15")
-        self.o16 = rates.Nucleus("O16")
+        self.o15 = Nucleus("O15")
+        self.o16 = Nucleus("O16")
 
-        self.ni56 = rates.Nucleus("Ni56")
-        self.u238 = rates.Nucleus("U238")
-        self.he4_also = rates.Nucleus("he4")
+        self.ni56 = Nucleus("Ni56")
+        self.u238 = Nucleus("U238")
+        self.he4_also = Nucleus("he4")
 
     def teardown_method(self):
         """ this is run after each test """
@@ -232,3 +171,101 @@ class TestRate(object):
 
     def test_eval(self):
         assert self.rate8.eval(1.e8) == approx(2.0403192412842946e-24)
+
+    def test_comparison(self):
+        assert self.rate1 > self.rate2
+        assert self.rate1 > self.rate4
+        assert self.rate8 > self.rate9
+
+    def test_weak(self):
+        assert self.rate1.weak
+        assert not self.rate2.weak
+
+    def test_screen(self):
+        assert not self.rate1.ion_screen
+        assert self.rate4.ion_screen == [Nucleus("he4"), Nucleus("c12")]
+        assert self.rate8.ion_screen == 3*[Nucleus("he4")]
+
+    def test_heaviest_lightest(self):
+        assert self.rate4.heaviest() == Nucleus("o16")
+        assert self.rate4.lightest() == Nucleus("he4")
+        assert self.rate2.lightest() == Nucleus("n")
+        assert self.rate2.heaviest() == Nucleus("t")
+
+
+class TestDerivedRate:
+
+    def a_a_ag_c12(self, reaclib_library):
+        """
+        Here we test the inverse rate, computed by the use of detailed balance
+        of a:
+
+        A + B -> C
+
+        reaction type.
+        """
+
+        a_a_ag_c12 = reaclib_library.get_rate('he4 + he4 + he4 --> c12 <fy05_reaclib__>')
+        c12_ga_a_a_reaclib = reaclib_library.get_rate('c12 --> he4 + he4 + he4 <fy05_reaclib__reverse>')
+        c12_ga_a_a_derived = rates.DerivedRate(rate=a_a_ag_c12, compute_Q=False, use_pf=False)
+
+        assert c12_ga_a_a_reaclib.eval(T=2.0e9) == approx(c12_ga_a_a_derived.eval(T=2.0e9), rel=1.7e-5)
+
+    def a_a_ag_c12_with_pf(self, reaclib_library):
+        """
+        This function test the correct rate value if we take in consideration the partition
+        functions on the range 1.0e9 to 100.0e9
+        """
+
+        a_a_ag_c12 = reaclib_library.get_rate('he4 + he4 + he4 --> c12 <fy05_reaclib__>')
+        c12_ga_a_a_derived = rates.DerivedRate(rate=a_a_ag_c12, compute_Q=False, use_pf=True)
+
+        assert c12_ga_a_a_derived.eval(T=2.0e9) == approx(2.8953989705969484e-07)
+
+    def test_a_a_ag_c12_with_Q(self, reaclib_library):
+        """
+        This function test the correct rate value if we take in consideration the
+        exact values of atomic nuclear weight in order to compute the Q capture value
+        of the reaction rate.
+        """
+
+        a_a_ag_c12 = reaclib_library.get_rate('he4 + he4 + he4 --> c12 <fy05_reaclib__>')
+        c12_ga_a_a_derived = rates.DerivedRate(rate=a_a_ag_c12, compute_Q=True, use_pf=False)
+
+        assert c12_ga_a_a_derived.eval(T=2.0e9) == approx(2.899433744446781e-07)
+
+
+class TestWeakRates:
+    @pytest.fixture(scope="class")
+    def rate1(self):
+        return rates.TabularRate("o18--f18-toki")
+
+    @pytest.fixture(scope="class")
+    def rate2(self):
+        return rates.TabularRate("na22--ne22-toki")
+
+    def test_reactants(self, rate1, rate2):
+
+        assert len(rate1.reactants) == 1 and len(rate1.products) == 1
+        assert rate1.products[0] == Nucleus("f18")
+        assert rate1.reactants[0] == Nucleus("o18")
+        assert rate1.eval(1.e10, 1.e7) == approx(3.990249e-11)
+
+        assert len(rate2.reactants) == 1 and len(rate2.products) == 1
+        assert rate2.products[0] == Nucleus("ne22")
+        assert rate2.reactants[0] == Nucleus("na22")
+        assert rate2.eval(1.e9, 1.e6) == approx(1.387075e-05)
+
+
+class TestModify:
+    @pytest.fixture(scope="function")
+    def rate(self):
+        return rates.load_rate("c12-c12n-mg23-cf88")
+
+    def test_modify(self, rate):
+
+        rate.modify_products("mg24")
+
+        assert rate.Q == approx(13.93356)
+        assert rate.products == [Nucleus("mg24")]
+        assert rate.modified

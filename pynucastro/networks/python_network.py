@@ -1,164 +1,94 @@
 """Support modules to write a pure python reaction network ODE
 source"""
 
-from __future__ import print_function
-
 import sys
 
-from pynucastro.networks import RateCollection
+from pynucastro.networks.rate_collection import RateCollection
+from pynucastro.rates.rate import ApproximateRate
 
 
 class PythonNetwork(RateCollection):
     """A pure python reaction network."""
 
-    def rate_string(self, rate, indent=0, prefix="rate"):
-        """
-        Return the functional form of rate as a function of
-        the temperature (as Tfactors)
+    def full_ydot_string(self, nucleus, indent=""):
+        """construct the python form of dY(nucleus)/dt"""
 
-        rate is an object of class Rate
-        """
-
-        tstring = "# {}\n".format(rate.string)
-        tstring += "{} = 0.0\n\n".format(prefix)
-
-        for s in rate.sets:
-            tstring += "# {}\n".format(s.labelprops[0:5])
-            tstring += "{}\n".format(s.set_string(prefix=prefix, plus_equal=True))
-
-        string = ""
-        for t in tstring.split("\n"):
-            string += indent*" " + t + "\n"
-        return string
-
-    def function_string(self, rate):
-        """
-        Return a string containing python function that computes the
-        rate
-        """
-
-        string = ""
-        string += "@numba.njit()\n"
-        string += "def {}(tf):\n".format(rate.fname)
-        string += "{}".format(self.rate_string(rate, indent=4))
-        string += "    return rate\n\n"
-        return string
-
-    def ydot_string(self, rate):
-        """
-        Return a string containing the term in a dY/dt equation
-        in a reaction network corresponding to this rate.
-        """
-
-        # composition dependence
-        Y_string = ""
-        for n, r in enumerate(sorted(set(rate.reactants))):
-            c = rate.reactants.count(r)
-            if c > 1:
-                Y_string += "Y[i{}]**{}".format(r, c)
-            else:
-                Y_string += "Y[i{}]".format(r)
-
-            if n < len(set(rate.reactants))-1:
-                Y_string += "*"
-
-        # density dependence
-        if rate.dens_exp == 0:
-            dens_string = ""
-        elif rate.dens_exp == 1:
-            dens_string = "rho*"
+        ostr = ""
+        if not self.nuclei_consumed[nucleus] + self.nuclei_produced[nucleus]:
+            # this captures an inert nucleus
+            ostr += f"{indent}dYdt[j{nucleus}] = 0.0\n\n"
         else:
-            dens_string = "rho**{}*".format(rate.dens_exp)
-
-        # electron fraction dependence
-        if (rate.weak_type == 'electron_capture' and not rate.tabular):
-            y_e_string = 'ye(Y)*'
-        else:
-            y_e_string = ''
-
-        # prefactor
-        if not rate.prefactor == 1.0:
-            prefactor_string = "{:1.14e}*".format(rate.prefactor)
-        else:
-            prefactor_string = ""
-
-        return "{}{}{}{}*lambda_{}".format(prefactor_string, dens_string,
-                                           y_e_string, Y_string, rate.fname)
-
-    def jacobian_string(self, rate, ydot_j, y_i):
-        """
-        Return a string containing the term in a jacobian matrix
-        in a reaction network corresponding to this rate.
-
-        Returns the derivative of the j-th YDOT wrt. the i-th Y
-        If the derivative is zero, returns the empty string ''
-
-        ydot_j and y_i are objects of the class ``Nucleus``.
-        """
-        if (ydot_j not in rate.reactants and ydot_j not in rate.products) or \
-           y_i not in rate.reactants:
-            return ''
-
-        # composition dependence
-        Y_string = ""
-        for n, r in enumerate(sorted(set(rate.reactants))):
-            c = rate.reactants.count(r)
-            if y_i == r:
+            ostr += f"{indent}dYdt[j{nucleus}] = (\n"
+            for r in self.nuclei_consumed[nucleus]:
+                c = r.reactants.count(nucleus)
                 if c == 1:
-                    continue
-                if n > 0 and n < len(set(rate.reactants))-1:
-                    Y_string += "*"
-                if c > 2:
-                    Y_string += "{}*Y[i{}]**{}".format(c, r, c-1)
-                elif c == 2:
-                    Y_string += "2*Y[i{}]".format(r)
-            else:
-                if n > 0 and n < len(set(rate.reactants))-1:
-                    Y_string += "*"
-                if c > 1:
-                    Y_string += "Y[i{}]**{}".format(r, c)
+                    ostr += f"{indent}   -{r.ydot_string_py()}\n"
                 else:
-                    Y_string += "Y[i{}]".format(r)
+                    ostr += f"{indent}   -{c}*{r.ydot_string_py()}\n"
+            for r in self.nuclei_produced[nucleus]:
+                c = r.products.count(nucleus)
+                if c == 1:
+                    ostr += f"{indent}   +{r.ydot_string_py()}\n"
+                else:
+                    ostr += f"{indent}   +{c}*{r.ydot_string_py()}\n"
+            ostr += f"{indent}   )\n\n"
 
-        # density dependence
-        if rate.dens_exp == 0:
-            dens_string = ""
-        elif rate.dens_exp == 1:
-            dens_string = "rho*"
-        else:
-            dens_string = "rho**{}*".format(rate.dens_exp)
+        return ostr
 
-        # electron fraction dependence
-        if (rate.weak_type == 'electron_capture' and not rate.tabular):
-            y_e_string = 'ye(Y)*'
-        else:
-            y_e_string = ''
+    def full_jacobian_element_string(self, ydot_i_nucleus, y_j_nucleus, indent=""):
+        """return the Jacobian element dYdot(ydot_i_nucleus)/dY(y_j_nucleus)"""
 
-        # prefactor
-        if not rate.prefactor == 1.0:
-            prefactor_string = "{:1.14e}*".format(rate.prefactor)
-        else:
-            prefactor_string = ""
+        # this is the jac(i,j) string
+        idx_str = f"jac[j{ydot_i_nucleus}, j{y_j_nucleus}]"
 
-        if Y_string == "" and dens_string == "" and prefactor_string == "":
-            rstring = "{}{}{}lambda_{}"
+        ostr = ""
+        if not self.nuclei_consumed[ydot_i_nucleus] + self.nuclei_produced[ydot_i_nucleus]:
+            ostr += f"{indent}{idx_str} = 0.0\n\n"
         else:
-            rstring = "{}{}{}{}*lambda_{}"
-        return rstring.format(prefactor_string, dens_string,
-                              y_e_string, Y_string, rate.fname)
+            ostr += f"{indent}{idx_str} = (\n"
+            rate_terms_str = ""
+            for r in self.nuclei_consumed[ydot_i_nucleus]:
+                c = r.reactants.count(ydot_i_nucleus)
+
+                jac_str = r.jacobian_string_py(y_j_nucleus)
+                if jac_str == "":
+                    continue
+
+                if c == 1:
+                    rate_terms_str += f"{indent}   -{jac_str}\n"
+                else:
+                    rate_terms_str += f"{indent}   -{c}*{jac_str}\n"
+            for r in self.nuclei_produced[ydot_i_nucleus]:
+                c = r.products.count(ydot_i_nucleus)
+
+                jac_str = r.jacobian_string_py(y_j_nucleus)
+                if jac_str == "":
+                    continue
+
+                if c == 1:
+                    rate_terms_str += f"{indent}   +{jac_str}\n"
+                else:
+                    rate_terms_str += f"{indent}   +{c}*{jac_str}\n"
+
+            if rate_terms_str == "":
+                return ""
+            else:
+                ostr += rate_terms_str
+
+            ostr += f"{indent}   )\n\n"
+
+        return ostr
 
     def _write_network(self, outfile=None):
         """
         This is the actual RHS for the system of ODEs that
         this network describes.
         """
+        # pylint: disable=arguments-differ
         if outfile is None:
             of = sys.stdout
         else:
-            try:
-                of = open(outfile, "w")
-            except:
-                raise
+            of = open(outfile, "w")
 
         of.write("import numpy as np\n")
         of.write("from pynucastro.rates import Tfactors\n")
@@ -166,19 +96,25 @@ class PythonNetwork(RateCollection):
 
         # integer keys
         for i, n in enumerate(self.unique_nuclei):
-            of.write("i{} = {}\n".format(n, i))
+            of.write(f"j{n} = {i}\n")
 
-        of.write("nnuc = {}\n\n".format(len(self.unique_nuclei)))
+        of.write(f"nnuc = {len(self.unique_nuclei)}\n\n")
 
         of.write("A = np.zeros((nnuc), dtype=np.int32)\n\n")
         for n in self.unique_nuclei:
-            of.write("A[i{}] = {}\n".format(n, n.A))
+            of.write(f"A[j{n}] = {n.A}\n")
 
         of.write("\n")
 
         of.write("Z = np.zeros((nnuc), dtype=np.int32)\n\n")
         for n in self.unique_nuclei:
-            of.write("Z[i{}] = {}\n".format(n, n.Z))
+            of.write(f"Z[j{n}] = {n.Z}\n")
+
+        of.write("\n")
+
+        of.write("names = []\n")
+        for n in self.unique_nuclei:
+            of.write(f"names.append(\"{n.short_spec_name}\")\n")
 
         of.write("\n")
 
@@ -187,47 +123,72 @@ class PythonNetwork(RateCollection):
         of.write("@numba.njit()\n")
 
         of.write("def ye(Y):\n")
-        of.write("{}return np.sum(Z * Y)/np.sum(A * Y)\n\n".format(indent))
+        of.write(f"{indent}return np.sum(Z * Y)/np.sum(A * Y)\n\n")
 
+        # the functions to evaluate the temperature dependence of the rates
+
+        _rate_func_written = []
         for r in self.rates:
-            of.write(self.function_string(r))
+            if isinstance(r, ApproximateRate):
+                # write out the function string for all of the rates we depend on
+                for cr in r.get_child_rates():
+                    if cr in _rate_func_written:
+                        continue
+                    of.write(cr.function_string_py())
+                    _rate_func_written.append(cr)
+
+                # now write out the function that computes the
+                # approximate rate
+                of.write(r.function_string_py())
+            else:
+                if r in _rate_func_written:
+                    continue
+                of.write(r.function_string_py())
+                _rate_func_written.append(r)
+
+        # the rhs() function
 
         of.write("def rhs(t, Y, rho, T):\n")
-        of.write("{}return rhs_eq(t, Y, rho, T)\n\n".format(indent))
+        of.write(f"{indent}return rhs_eq(t, Y, rho, T)\n\n")
 
         of.write("@numba.njit()\n")
         of.write("def rhs_eq(t, Y, rho, T):\n\n")
-        # integer keys
-        for i, n in enumerate(self.unique_nuclei):
-            of.write("{}i{} = {}\n".format(indent, n, i))
-
-        of.write("{}nnuc = {}\n\n".format(indent, len(self.unique_nuclei)))
-
 
         # get the rates
-        of.write("{}tf = Tfactors(T)\n\n".format(indent))
+        of.write(f"{indent}tf = Tfactors(T)\n\n")
         for r in self.rates:
-            of.write("{}lambda_{} = {}(tf)\n".format(indent, r.fname, r.fname))
+            of.write(f"{indent}lambda_{r.fname} = {r.fname}(tf)\n")
 
         of.write("\n")
 
-        of.write("{}dYdt = np.zeros((nnuc), dtype=np.float64)\n\n".format(indent))
+        of.write(f"{indent}dYdt = np.zeros((nnuc), dtype=np.float64)\n\n")
 
         # now make the RHSs
         for n in self.unique_nuclei:
-            of.write("{}dYdt[i{}] = (\n".format(indent, n))
-            for r in self.nuclei_consumed[n]:
-                c = r.reactants.count(n)
-                if c == 1:
-                    of.write("{}   -{}\n".format(indent, self.ydot_string(r)))
-                else:
-                    of.write("{}   -{}*{}\n".format(indent, c, self.ydot_string(r)))
-            for r in self.nuclei_produced[n]:
-                c = r.products.count(n)
-                if c == 1:
-                    of.write("{}   +{}\n".format(indent, self.ydot_string(r)))
-                else:
-                    of.write("{}   +{}*{}\n".format(indent, c, self.ydot_string(r)))
-            of.write("{}   )\n\n".format(indent))
+            of.write(self.full_ydot_string(n, indent=indent))
 
-        of.write("{}return dYdt\n".format(indent))
+        of.write(f"{indent}return dYdt\n\n")
+
+        # the jacobian() function
+
+        of.write("def jacobian(t, Y, rho, T):\n")
+        of.write(f"{indent}return jacobian_eq(t, Y, rho, T)\n\n")
+
+        of.write("@numba.njit()\n")
+        of.write("def jacobian_eq(t, Y, rho, T):\n\n")
+
+        # get the rates
+        of.write(f"{indent}tf = Tfactors(T)\n\n")
+        for r in self.rates:
+            of.write(f"{indent}lambda_{r.fname} = {r.fname}(tf)\n")
+
+        of.write("\n")
+
+        of.write(f"{indent}jac = np.zeros((nnuc, nnuc), dtype=np.float64)\n\n")
+
+        # now fill each Jacobian element
+        for n_i in self.unique_nuclei:
+            for n_j in self.unique_nuclei:
+                of.write(self.full_jacobian_element_string(n_i, n_j, indent=indent))
+
+        of.write(f"{indent}return jac\n")

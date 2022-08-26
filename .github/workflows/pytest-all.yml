@@ -17,7 +17,7 @@ jobs:
 
     strategy:
       matrix:
-        python-version: [3.7, 3.8]
+        python-version: ["3.8", "3.9", "3.10"]
 
     steps:
       - uses: actions/checkout@v2
@@ -42,7 +42,7 @@ jobs:
           pip install -r requirements.txt
 
       - name: Install pynucastro
-        run: python setup.py install --user
+        run: python setup.py develop --user
 
       - name: Run tests with pytest
-        run: pytest -v --cov=. --nbval --ignore=docs --ignore-glob="pynucastro/library/tabular/*.ipynb"
+        run: pytest -v -s --cov=. --nbval --ignore=docs --ignore-glob="pynucastro/library/tabular/*.ipynb" --ignore=examples/rxn-network-integration.ipynb --ignore=examples/o16o16_rates.ipynb

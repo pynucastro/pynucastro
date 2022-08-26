@@ -1,14 +1,15 @@
-class Element(object):
+class Element:
     def __init__(self, abbreviation=None, name=None, Z=None):
         self.abbreviation = abbreviation
         self.name = name
         self.Z = Z
 
-class UnidentifiedElement(BaseException):
-    def __init__(self):
-        return
 
-class PeriodicTable(object):
+class UnidentifiedElement(Exception):
+    pass
+
+
+class PeriodicTable:
     table = {'h':  Element('h',  'hydrogen', 1),
              'he': Element('he', 'helium', 2),
              'li': Element('li', 'lithium', 3),
@@ -132,8 +133,15 @@ class PeriodicTable(object):
         return
 
     @classmethod
-    def lookup_abbreviation(self, abbrev):
+    def lookup_abbreviation(cls, abbrev):
         try:
-            return self.table[abbrev.lower()]
-        except:
-            raise UnidentifiedElement
+            return cls.table[abbrev.lower()]
+        except IndexError:
+            raise UnidentifiedElement(f'Could not identify element: {abbrev}') from None
+
+    @classmethod
+    def lookup_Z(cls, Z):
+        for element in cls.table.values():
+            if element.Z == Z:
+                return element
+        return None

@@ -14,7 +14,7 @@ def pfa_first_pass_reduction(net, target_sources):
     """
 
     # at this point, all the weights are 1
-    G = net.get_reaction_network_graph()
+    G = net.get_networkx_graph()
     paths = nx.multi_source_dijkstra_path(G, sources=target_sources, cutoff=2)
     
     # add only nodes accessible by distance of 2 from sources

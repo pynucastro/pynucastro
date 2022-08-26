@@ -80,20 +80,10 @@ module actual_network
   real(rt), allocatable, save :: aion(:), zion(:), bion(:)
   real(rt), allocatable, save :: nion(:), mion(:), wion(:)
 
-#ifdef AMREX_USE_CUDA
-  attributes(managed) :: aion, zion, bion, nion, mion, wion
-#endif
-
-  !$acc declare create(aion, zion, bion, nion, mion, wion)
-
 #ifdef REACT_SPARSE_JACOBIAN
   ! Shape of Jacobian in Compressed Sparse Row format
   integer, parameter   :: NETWORK_SPARSE_JAC_NNZ = 51
   integer, allocatable :: csr_jac_col_index(:), csr_jac_row_count(:)
-
-#ifdef AMREX_USE_CUDA
-  attributes(managed) :: csr_jac_col_index, csr_jac_row_count
-#endif
 #endif
 
 contains
@@ -185,8 +175,6 @@ contains
 
     ! Common approximation
     !wion(:) = aion(:)
-
-    !$acc update device(aion, zion, bion, nion, mion, wion)
 
 #ifdef REACT_SPARSE_JACOBIAN
     ! Set CSR format metadata for Jacobian
@@ -307,13 +295,9 @@ contains
   subroutine ener_gener_rate(dydt, enuc)
     ! Computes the instantaneous energy generation rate
 
-    !$acc routine seq
-
     implicit none
 
     real(rt) :: dydt(nspec), enuc
-
-    !$gpu
 
     ! This is basically e = m c**2
 

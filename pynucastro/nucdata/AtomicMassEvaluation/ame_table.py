@@ -3,10 +3,10 @@ Reads AME tabular mass data file and supplies table data.
 """
 
 # Common Imports
-from __future__ import print_function
 import os
 
 from ame_nuclide import AMENuclide
+
 
 def str_head_pop(s, n):
     """
@@ -18,6 +18,7 @@ def str_head_pop(s, n):
         return ('', s)
     s = list(s)
     return (''.join(s[n:]), ''.join(s[:n]))
+
 
 def cleanup(s):
     """
@@ -31,6 +32,7 @@ def cleanup(s):
     s = s.replace('*', '')
     s = s.replace(' ', '')
     return s
+
 
 class AMETable(object):
     """A simple class to manage reading and parsing the AME Table data
@@ -62,7 +64,7 @@ class AMETable(object):
         """
         try:
             f = open(self.datfile, 'r')
-        except:
+        except IOError:
             print('ERROR: data file not found!')
             exit()
 
@@ -122,7 +124,7 @@ class AMETable(object):
         """
         try:
             a, abb = tuple(isostring.split('-'))
-        except:
+        except ValueError:
             print('ERROR: Supply an isotope string in the form "4-He"')
             raise
         a = int(a)

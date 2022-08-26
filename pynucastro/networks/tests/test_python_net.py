@@ -1,48 +1,23 @@
 # unit tests for rates
-import pynucastro.networks as networks
-import pynucastro.rates as rates
+from pynucastro import rates
+import pytest
 
 
-class TestPythonNetwork(object):
-    @classmethod
-    def setup_class(cls):
-        """ this is run once for each class before any tests """
-        pass
+class TestPythonNetwork:
+    @pytest.fixture(scope="class")
+    def rate(self):
+        return rates.ReacLibRate("c13-pg-n14-nacr")
 
-    @classmethod
-    def teardown_class(cls):
-        """ this is run once for each class after all tests """
-        pass
+    def test_ydot_string(self, rate):
+        ydot = rate.ydot_string_py()
+        assert ydot in ("rho*Y[jc13]*Y[jp]*lambda_p_c13__n14",
+                        "rho*Y[jp]*Y[jc13]*lambda_p_c13__n14")
 
-    def setup_method(self):
-        """ this is run before each test """
-        files = ["c12-pg-n13-ls09",
-                 "c13-pg-n14-nacr",
-                 "n13--c13-wc12",
-                 "n13-pg-o14-lg06",
-                 "n14-pg-o15-im05",
-                 "n15-pa-c12-nacr",
-                 "o14--n14-wc12",
-                 "o15--n15-wc12"]
-        self.pyn = networks.PythonNetwork(files)
-        self.rate = rates.Rate("c13-pg-n14-nacr")
+    def test_jacobian_string(self, rate):
+        jac = rate.jacobian_string_py(rate.reactants[0])
+        assert jac == "rho*Y[jc13]*lambda_p_c13__n14"
 
-    def teardown_method(self):
-        """ this is run after each test """
-        self.tf = None
-
-    def test_ydot_string(self):
-        ydot = self.pyn.ydot_string(self.rate)
-        assert ydot == "rho*Y[ic13]*Y[ip]*lambda_p_c13__n14" or \
-               ydot == "rho*Y[ip]*Y[ic13]*lambda_p_c13__n14"
-
-    def test_jacobian_string(self):
-        jac = self.pyn.jacobian_string(self.rate,
-                                       self.rate.products[0],
-                                       self.rate.reactants[0])
-        assert jac == "rho*Y[ic13]*lambda_p_c13__n14"
-
-    def test_function_string(self):
+    def test_function_string(self, rate):
 
         ostr = """
 @numba.njit()
@@ -62,4 +37,5 @@ def p_c13__n14(tf):
 
     return rate
 """
-        assert self.pyn.function_string(self.rate).replace(" ","").strip() == ostr.replace(" ","").strip()
+
+        assert rate.function_string_py().strip() == ostr.strip()

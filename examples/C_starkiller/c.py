@@ -9,4 +9,4 @@ files = ["c12-c12a-ne20-cf88",
          "n--p-wc12"]
 
 c_net = StarKillerNetwork(files)
-c_net.write_network(use_cse=True)
+c_net.write_network()

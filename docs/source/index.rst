@@ -4,7 +4,7 @@
    contain the root `toctree` directive.
 
 pynucastro
-==============
+==========
 
 `http://github.com/pynucastro/pynucastro <http://github.com/pynucastro/pynucastro>`_
 
@@ -25,14 +25,48 @@ codes.
 
 
 .. toctree::
-   :maxdepth: 2
-   :caption: Contents
+   :maxdepth: 1
+   :caption: Introduction
 
    intro
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Exploring Networks in Python
+
    pynucastro-examples.ipynb
-   library-examples-nuclei.ipynb
-   library-examples-filtering.ipynb
+   plot-types.ipynb
+   pynucastro-integration.ipynb
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Selecting Rates
+
+   library-examples.ipynb
+   validate-example.ipynb
+   electron-captures.ipynb
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Advanced Usage
+
+   modify-example.ipynb
+   approx-rates-examples.ipynb
+   unimportant-rates.ipynb
+   partition-function
+   NSE-example.ipynb
+   
+.. toctree::
+   :maxdepth: 1
+   :caption: Writing Networks
+
    networks
+   cxx-networks
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Reference
+
    API <modules>
    sources
 

@@ -402,4 +402,4 @@ def drgep(net, conds, targets, tols, returnobj='net', use_mpi=False, use_numpy=F
     elif returnobj == 'coeff':
         return R_TB
     else:
-        raise ValueError("Invalid 'returnobj' argument: '{}'.".format(returnobj))
+        raise ValueError(f"Invalid 'returnobj' argument: '{returnobj}'.")

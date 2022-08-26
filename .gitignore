@@ -17,3 +17,5 @@ _build.*
 .#*
 
 .coverage
+
+pynucastro/_version.py

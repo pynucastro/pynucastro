@@ -9,18 +9,26 @@ code to output networks for integration.
 :meth:`python_network <pynucastro.networks.python_network>`: the
 support routines to generate a full, integrable network in python.
 
-:meth:`base_fortran_network <pynucastro.networks.base_fortran_network>`:
+:meth:`base_cxx_network <pynucastro.networks.base_cxx_network>`:
 the support routines to generate a standalone integrable network in
-pure Fortran.
+pure C++.
 
 :meth:`starkiller_network <pynucastro.networks.starkiller_network>`:
 the support routines to generate a network that can be incorporated
 into the StarKiller microphysics routines supported by astrophysical
 hydrodynamics codes.
 
+:meth:`starkiller_cxx_network <pynucastro.networks.starkiller_cxx_network>`:
+the support routines to generate a C++ network that can be incorporated
+into the StarKiller microphysics routines supported by astrophysical
+hydrodynamics codes.
+
 """
+
+#__all__ = ["python_network", "rate_collection", "starkiller_network", "sympy_network_support"]
 
 from .rate_collection import RateCollection, Composition, Explorer
 from .python_network import PythonNetwork
-from .base_fortran_network import BaseFortranNetwork
-from .starkiller_network import StarKillerNetwork
+from .sympy_network_support import SympyRates
+from .base_cxx_network import BaseCxxNetwork
+from .starkiller_cxx_network import StarKillerCxxNetwork

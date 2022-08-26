@@ -1,0 +1,15 @@
+CEXE_headers += network_properties.H
+
+ifeq ($(USE_REACT),TRUE)
+
+  DEFINES += -DNETWORK_HAS_CXX_IMPLEMENTATION
+
+  CEXE_sources += actual_network_data.cpp
+  CEXE_headers += actual_network.H
+  CEXE_headers += actual_rhs.H
+  CEXE_headers += reaclib_rates.H
+  CEXE_headers += table_rates.H
+  CEXE_sources += table_rates_data.cpp
+  USE_SCREENING = TRUE
+  USE_NEUTRINOS = TRUE
+endif

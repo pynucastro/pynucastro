@@ -1,7 +1,9 @@
 # pynucastro
 
 [![Docs](https://github.com/pynucastro/pynucastro/workflows/github%20pages/badge.svg)](http://pynucastro.github.io/pynucastro/)
-[![pytest-all](https://github.com/pynucastro/pynucastro/workflows/pytest-all/badge.svg?branch=main)](https://github.com/pynucastro/pynucastro/actions)
+[![pytest-all](https://github.com/pynucastro/pynucastro/actions/workflows/pytest-all.yml/badge.svg?branch=main)](https://github.com/pynucastro/pynucastro/actions/workflows/pytest-all.yml)
+[![pylint](https://github.com/pynucastro/pynucastro/actions/workflows/pylint.yml/badge.svg?branch=main)](https://github.com/pynucastro/pynucastro/actions/workflows/pylint.yml)
+[![flake8](https://github.com/pynucastro/pynucastro/actions/workflows/flake8.yml/badge.svg?branch=main)](https://github.com/pynucastro/pynucastro/actions/workflows/flake8.yml)
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 [![DOI](http://joss.theoj.org/papers/10.21105/joss.00588/status.svg)](https://doi.org/10.21105/joss.00588)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1202434.svg)](https://doi.org/10.5281/zenodo.1202434)
@@ -39,18 +41,28 @@ http://pynucastro.github.io/pynucastro/
 ```
 import pynucastro
 
-r = pynucastro.Rate("c13-pg-n14-nacr")
+r = pynucastro.load_rate("c13-pg-n14-nacr")
 
 # evaluate this rate at T = 1.e9 K
 print(r.eval(1.0e9))
 
 ```
 
-Also see the Jupyter notebooks:
+An extensive demonstration of the capabilities of pynucastro is shown in this notebook:
 
-  * [pynucastro-examples.ipynb](https://github.com/pynucastro/pynucastro/blob/main/examples/pynucastro-examples.ipynb)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/pynucastro/pynucastro/main?filepath=examples%2Fpynucastro-examples.ipynb)
 
-  * [interactive-example.ipynb](https://github.com/pynucastro/pynucastro/blob/main/examples/interactive-example.ipynb)
+[pynucastro-examples.ipynb](https://github.com/pynucastro/pynucastro/blob/main/examples/pynucastro-examples.ipynb)
+
+
+We can also interactively explore a reaction network.  Here's an example of hot-CNO with breakout reactions:
+
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/pynucastro/pynucastro/HEAD?labpath=examples%2Fhot-CNO-breakout-example.ipynb)
+
+by increasing the temperature, you can see the transition from CNO to
+hot-CNO (proton captures on C13 become faster than the beta decay) and
+then the breakout of hot-CNO when the alpha capture on O14 becomes
+faster than its decay.
 
 
 # install
@@ -69,7 +81,7 @@ the default location python searches for packages.
 
 # requirements
 
-This package requires Python 3 (release 3.4 or later) and the following Python packages:
+This package requires Python 3 (release 3.6 or later) and the following Python packages:
 
 * `numpy`
 
@@ -83,6 +95,10 @@ This package requires Python 3 (release 3.4 or later) and the following Python p
 
 * `ipywidgets`
 
+* `numba`
+
+* `setuptools_scm`
+
 To build the documentation or run the unit tests, `sphinx` and
 `pytest` are additionally required along with some supporting
 packages. See the included `requirements.txt` file for a list of these
@@ -90,27 +106,28 @@ packages and versions. To install the packages from the requirements
 file, do:
 ```
 pip install -r requirements.txt
+
 ```
+Is important to stress out that all the dependencies should be 
+installed before `pynucastro`, otherwise the installation should be 
+repeated.
 
 # unit tests
 
 We use py.test to do unit tests.  In `pynucastro/`, do:
 ```
-py.test -v .
+pytest -v .
 ```
 
 to see coverage, do:
 ```
-py.test --cov=pynucastro .
+pytest --cov=pynucastro .
 ```
 
 to test the notebooks, do:
 ```
 py.test --nbval examples
 ```
-
-If your OS has both Python 2 and Python 3 installed you may need to
-invoke `pytest` as `py.test-3` when running the unit tests.
 
 
 # Core Developers

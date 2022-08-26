@@ -4,7 +4,7 @@ including those cataloged by the JINA ReacLib project:
 https://groups.nscl.msu.edu/jina/reaclib/db/
 
 It provides both interactive access to the rates, for use in Jupyter
-notebooks as well as methods for writing python and Fortran nuclear
+notebooks as well as methods for writing python and C++ nuclear
 reaction networks, including the the righthand side and Jacobian
 routines.
 
@@ -26,15 +26,20 @@ be in the Reaclib 1 format.
 nucdata
 -------
 
-nucdata provides tables of binding energy per nucleon in MeV for
-nuclides specified by their number of neutrons N and atomic
-number Z.
+nucdata provides:
+
+* Nucleus : a single nucleus, with a descriptive name and its
+  properties.
+
+nucdata provides tables of binding energy per nucleon in MeV,
+partition function and the number of spin states for nuclides specified
+by their number of neutrons N and atomic number Z.
 
 The data for these tables is derived from the Atomic Mass Evaluations
-2012 and 2016. By default, pynucastro uses Atomic Mass Evaluation
-2016. Scripts for reading the Atomic Mass Evaluation tables and
-generating binding energy tables for pynucastro are provided in
-`pynucastro/nucdata/AtomicMassEvaluation`.
+2012, 2016 and 2020. By default, pynucastro uses Atomic Mass Evaluation
+2016, and Nucleus Spin Evaluation 2020. Scripts for reading the Atomic
+Mass Evaluation tables and generating binding energy tables for pynucastro
+are provided in `pynucastro/nucdata/AtomicMassEvaluation`.
 
 networks
 --------
@@ -58,13 +63,12 @@ rates, including:
   of python code that can be used with ODE integrators to solve
   a network.
 
-* BaseFortranNetwork : this extends the RateCollection to enable
-  output of Fortran code that can be used to integrate the network
-  with the included VODE package for ODE integration.
+* BaseCxxNetwork : this extends the RateCollection to enable
+  output of C++ code.
 
-* StarKillerNetwork : this extends the RateCollection to enable output
-  of Fortran code that can be used to add a network to the
-  hydrodynamics codes Castro and Maestro via the StarKiller
+* StarKillerCxxNetwork : this extends the RateCollection to enable
+  output of C++ code that can be used to add a network to the
+  hydrodynamics codes Castro and MAESTROeX via the StarKiller
   Microphysics repository.
 
 
@@ -74,11 +78,11 @@ rates
 rates provides classes and functions for interpreting individual
 reaction rates, including:
 
-* Nucleus : a single nucleus, with a descriptive name and its
-  properties.
-
 * Rate : a single Reaclib rate, with methods for plotting and
   evaluating it.
+
+* RatePair : a pair of rates representing the corresponding forward
+  and reverse rates
 
 * Tfactors : this is a simple container class that holds the various
   temperature powers needed to evaluate a rate.
@@ -93,38 +97,43 @@ reaction rates, including:
 screening
 ---------
 
-screening provides routines used by the BaseFortranNetwork to screen
-Reaclib reaction rates in the weak, intermediate, and strong
-regimes. Tabulated rates are not screened.
-
-The Fortran module in `pynucastro/screening` is only used for the
-standalone Fortran network. StarKiller Microphysics networks also use
-rate screening, but they use the screening module in the StarKiller
-Microphysics repository.
+screening provides python screening routines for the rates.
 
 templates
 ---------
 
-templates contains subdirectories for generating BaseFortranNetwork
-and StarKillerNetwork Fortran modules implementing the ODE right hand
-side, jacobian, and integration driver routines. pynucastro processes
-these template files by replacing tags of the form `<tag>` with
-generated code specific to a given choice of reaction rates.
+templates contains subdirectories for generating StarKillerCxxNetwork
+C++ files implementing the ODE right hand side, jacobian, and
+integration driver routines. pynucastro processes these template files
+by replacing tags of the form `<tag>` with generated code specific to
+a given choice of reaction rates.
 
 """
 
-__version__ = "1.1.0"
+from ._version import version
+
+__version__ = version
+
+from pynucastro.nucdata import \
+    Nucleus
 
 from pynucastro.networks import \
     RateCollection, \
     Composition, \
     Explorer, \
     PythonNetwork, \
-    BaseFortranNetwork, \
-    StarKillerNetwork
+    BaseCxxNetwork, \
+    StarKillerCxxNetwork, \
+    SympyRates
 
 from pynucastro.rates import \
     Tfactors, \
-    Nucleus, \
     Rate, \
-    list_known_rates
+    ApproximateRate, \
+    RateFilter, \
+    Library, \
+    ReacLibLibrary, \
+    list_known_rates, \
+    load_rate
+
+import pynucastro.screening

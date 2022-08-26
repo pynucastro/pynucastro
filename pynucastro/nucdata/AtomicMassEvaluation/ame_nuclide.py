@@ -1,6 +1,3 @@
-# Common Imports
-from __future__ import print_function
-
 class AMENuclide(object):
     """Hold the information for a single nucleus from the AME
     database."""
