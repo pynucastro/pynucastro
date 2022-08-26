@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.networks.rate_collection &mdash; pynucastro 1.7.0.post38+gdf14cc8 documentation</title>
+  <title>pynucastro.networks.rate_collection &mdash; pynucastro 1.7.0.post39+gc4e6b1a documentation</title>
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -698,10 +698,16 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_build_collection</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="RateCollection.remove_rates"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.remove_rates">[docs]</a>    <span class="k">def</span> <span class="nf">remove_rates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rate_list</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;remove the rates in rate_list from the network.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;remove the rates in rate_list from the network.  Note, if</span>
+<span class="sd">        rate list is a dict, then the keys are assumed to be the rates</span>
+<span class="sd">        to remove&quot;&quot;&quot;</span>
 
-        <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">rate_list</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rate_list</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">rate_list</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">rate_list</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_build_collection</span><span class="p">()</span></div>
 
