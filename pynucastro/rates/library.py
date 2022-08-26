@@ -403,7 +403,7 @@ class Library:
         for r in onlyfwd.get_rates():
 
             try:
-                DerivedRate(r, use_pf=True, use_A_nuc=True)
+                DerivedRate(rate=r, compute_Q=False, use_pf=False)
             except ValueError:
                 continue
             else:
@@ -412,7 +412,7 @@ class Library:
         list1 = Library(rates=collect_rates)
         return list1
 
-    def derived_backward(self, use_pf=False, use_A_nuc=False):
+    def derived_backward(self, compute_Q=False, use_pf=False):
         """
         This library contains the detailed balance reverse reactions over the selected .derived_forward(),
         computed by hand.
@@ -423,7 +423,7 @@ class Library:
 
         for r in onlyfwd.get_rates():
             try:
-                i = DerivedRate(r, use_pf=use_pf, use_A_nuc=use_A_nuc)
+                i = DerivedRate(rate=r, compute_Q=compute_Q, use_pf=use_pf)
             except ValueError:
                 continue
             else:

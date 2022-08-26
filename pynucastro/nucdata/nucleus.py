@@ -24,7 +24,7 @@ m_u, _, _ = physical_constants['atomic mass constant energy equivalent in MeV']
 _mass_table = MassTable()
 
 #read the spin table once and store it at the module-level
-_spin_table = SpinTable(set_double_gs=False)
+_spin_table = SpinTable(reliable=True)
 
 # read the binding energy table once and store it at the module-level
 _binding_table = BindingTable()
@@ -118,7 +118,10 @@ class Nucleus:
         self.el = self.el.lower()
 
         # set a partition function object to every nucleus
-        self.partition_function = _pcollection.get_partition_function(self.short_spec_name)
+        try:
+            self.partition_function = _pcollection.get_partition_function(self.short_spec_name)
+        except ValueError:
+            self.partition_function = None
 
         # atomic number comes from periodic table
         if name != "n":
@@ -143,7 +146,6 @@ class Nucleus:
             self.nucbind = None
 
         # Now we will define the Nuclear Mass,
-
         try:
             self.A_nuc = float(self.A) + _mass_table.get_mass_diff(self.short_spec_name).dm / m_u
         except NotImplementedError:

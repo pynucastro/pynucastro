@@ -1,5 +1,6 @@
 # unit tests for rates
 import math
+#from msilib.schema import Complus
 
 from pynucastro.nucdata import Nucleus
 from pynucastro import rates
@@ -193,24 +194,8 @@ class TestRate:
 
 
 class TestDerivedRate:
-    def test_ar37_na_s34(self, reaclib_library):
-        """
-        Here we test the inverse rate, computed by the use of detailed balance
-        of a:
 
-        A + B -> C + D
-
-        reaction type.
-        """
-
-        s34_an_ar37 = reaclib_library.get_rate("s34 + he4 --> n + ar37 <SM93_reaclib__>")
-        ar37_na_s34_reaclib = reaclib_library.get_rate("ar37 + n --> he4 + s34 <SM93_reaclib__reverse>")
-
-        ar37_na_s34_derived = rates.DerivedRate(rate=s34_an_ar37)
-
-        assert ar37_na_s34_reaclib.eval(T=2.0e9) == approx(ar37_na_s34_derived.eval(T=2.0e9), rel=2.4e-5)
-
-    def test_ar35_pg_k36(self, reaclib_library):
+    def a_a_ag_c12(self, reaclib_library):
         """
         Here we test the inverse rate, computed by the use of detailed balance
         of a:
@@ -220,34 +205,34 @@ class TestDerivedRate:
         reaction type.
         """
 
-        ar35_pg_k36 = reaclib_library.get_rate("ar35 + p --> k36 <il10_reaclib__>")
-        k36_gp_ar35_reaclib = reaclib_library.get_rate("k36 --> p + ar35 <il10_reaclib__reverse>")
+        a_a_ag_c12 = reaclib_library.get_rate('he4 + he4 + he4 --> c12 <fy05_reaclib__>')
+        c12_ga_a_a_reaclib = reaclib_library.get_rate('c12 --> he4 + he4 + he4 <fy05_reaclib__reverse>')
+        c12_ga_a_a_derived = rates.DerivedRate(rate=a_a_ag_c12, compute_Q=False, use_pf=False)
 
-        k36_gp_ar35_derived = rates.DerivedRate(rate=ar35_pg_k36)
+        assert c12_ga_a_a_reaclib.eval(T=2.0e9) == approx(c12_ga_a_a_derived.eval(T=2.0e9), rel=1.7e-5)
 
-        assert k36_gp_ar35_reaclib.eval(T=2.0e9) == approx(k36_gp_ar35_derived.eval(T=2.0e9), rel=1.7e-5)
-
-    def test_ar35_pg_k36_with_pf(self, reaclib_library):
+    def a_a_ag_c12_with_pf(self, reaclib_library):
         """
         This function test the correct rate value if we take in consideration the partition
         functions on the range 1.0e9 to 100.0e9
         """
 
-        ar35_pg_k36 = reaclib_library.get_rate("ar35 + p --> k36 <il10_reaclib__>")
-        k36_gp_ar35_derived = rates.DerivedRate(rate=ar35_pg_k36, use_pf=True)
+        a_a_ag_c12 = reaclib_library.get_rate('he4 + he4 + he4 --> c12 <fy05_reaclib__>')
+        c12_ga_a_a_derived = rates.DerivedRate(rate=a_a_ag_c12, compute_Q=False, use_pf=True)
 
-        assert k36_gp_ar35_derived.eval(T=2.0e9) == approx(4197540.737818229)
+        assert c12_ga_a_a_derived.eval(T=2.0e9) == approx(2.8953989705969484e-07)
 
-    def test_ar35_pg_k36_with_A_nuc(self, reaclib_library):
+    def test_a_a_ag_c12_with_Q(self, reaclib_library):
         """
         This function test the correct rate value if we take in consideration the
-        exact values of atomic nuclear weight instead of the atomic weight A_nuc = A*m_u
+        exact values of atomic nuclear weight in order to compute the Q capture value
+        of the reaction rate.
         """
 
-        ar35_pg_k36 = reaclib_library.get_rate("ar35 + p --> k36 <il10_reaclib__>")
-        k36_gp_ar35_derived = rates.DerivedRate(rate=ar35_pg_k36, use_A_nuc=True)
+        a_a_ag_c12 = reaclib_library.get_rate('he4 + he4 + he4 --> c12 <fy05_reaclib__>')
+        c12_ga_a_a_derived = rates.DerivedRate(rate=a_a_ag_c12, compute_Q=True, use_pf=False)
 
-        assert k36_gp_ar35_derived.eval(T=2.0e9) == approx(5103206.8505866425)
+        assert c12_ga_a_a_derived.eval(T=2.0e9) == approx(2.899433744446781e-07)
 
 
 class TestWeakRates:

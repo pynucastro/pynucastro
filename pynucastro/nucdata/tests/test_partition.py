@@ -1,4 +1,4 @@
-from numpy import array, all, ones_like
+from numpy import array
 from pynucastro.nucdata import PartitionFunctionTable, PartitionFunctionCollection
 import os
 
@@ -47,8 +47,6 @@ TEMPERATURES_HIGH = array([12.0E+9, 14.0E+9, 16.0E+9, 18.0E+9, 20.0E+9, 22.0E+9,
                            160.0E+9, 165.0E+9, 170.0E+9, 175.0E+9, 180.0E+9, 190.0E+9, 200.0E+9,
                            210.0E+9, 220.0E+9, 230.0E+9, 240.0E+9, 250.0E+9, 275.0E+9])
 
-DEFAULT = ones_like(TEMPERATURES_LOW)
-
 
 class TestPartition:
 
@@ -61,8 +59,8 @@ class TestPartition:
         cls.pf_table_etfsiq_high = PartitionFunctionTable(dir_etfsiq_high)
         cls.pf_table_frdm_high = PartitionFunctionTable(dir_frdm_high)
 
-        cls.pf_collection_frdm = PartitionFunctionCollection(use_set='frdm')
-        cls.pf_collection_etfsiq = PartitionFunctionCollection(use_set='etfsiq')
+        cls.pf_collection_frdm = PartitionFunctionCollection(use_high_temperatures=True, use_set='frdm')
+        cls.pf_collection_etfsiq = PartitionFunctionCollection(use_high_temperatures=True, use_set='etfsiq')
 
     @classmethod
     def teardown_class(cls):
@@ -80,11 +78,6 @@ class TestPartition:
 
     def teardown_method(self):
         """ this is run after each test """
-
-    def test_pf(self):
-
-        assert all(self.pf_collection_frdm.get_partition_function('p').partition_function == DEFAULT)
-        assert all(self.pf_collection_etfsiq.get_partition_function('n').partition_function == DEFAULT)
 
     def test_pf_table(self):
 

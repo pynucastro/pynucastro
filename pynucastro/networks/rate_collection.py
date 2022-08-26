@@ -724,13 +724,16 @@ class RateCollection:
 
         return rvals
 
-    def find_unimportant_rates(self, rhos, Ts, compositions, cutoff_ratio,
-                               screen_func=None):
+    def find_unimportant_rates(self, states, cutoff_ratio, screen_func=None):
         """evaluate the rates at multiple thermodynamic states, and find the
         rates that are always less than `cutoff_ratio` times the fastest rate
-        for each state"""
+        for each state
+
+        Here, states is a list of tuple of the form (density, temperature, composition),
+        where composition is of type `Composition`.
+        """
         largest_ratio = {r: 0 for r in self.rates}
-        for rho, T, comp in zip(rhos, Ts, compositions):
+        for rho, T, comp in states:
             rvals = self.evaluate_rates(rho, T, comp, screen_func)
             fastest = max(rvals.values())
             for r, value in rvals.items():
@@ -779,12 +782,21 @@ class RateCollection:
         """ A helper equation that finds the mass fraction of each nuclide in NSE state,
         u[0] is chemical potential of proton  while u[1] is chemical potential of neutron"""
 
+        # If there is proton included in network, upper limit of ye is 1
+        # And if neutron is included in network, lower limit of ye is 0.
+        # However, there are networks where either of them are included
+        # So here I add a general check to find the upper and lower limit of ye
+        # so the input doesn't go outside of the scope and the solver won't be able to converge if it did
+        ye_low = min(nuc.Z/nuc.A for nuc in self.unique_nuclei)
+        ye_max = max(nuc.Z/nuc.A for nuc in self.unique_nuclei)
+        assert ye >= ye_low and ye <= ye_max, "input electron fraction goes outside of scope for current network"
+
         # Define constants: amu, boltzmann, planck, and electron charge
         m_u = constants.value("unified atomic mass unit") * 1.0e3  # atomic unit mass in g
         k = constants.value("Boltzmann constant") * 1.0e7          # boltzmann in erg/K
         h = constants.value("Planck constant") * 1.0e7             # in cgs
         e = 4.8032e-10                                             # electron charge in cgs
-        ErgToMeV = 624151.0
+        Erg2MeV = 624151.0
 
         # These are three constants for calculating coulomb corrections of chemical energy, see Calders paper: iopscience 510709, appendix
         A_1 = -0.9052
@@ -798,11 +810,16 @@ class RateCollection:
         # u_c is the coulomb correction term for NSE
         # Calculate the composition at NSE, equations found in appendix of Calder paper
         for nuc in self.unique_nuclei:
+            if nuc.partition_function:
+                pf = nuc.partition_function(T)
+            else:
+                pf = 1.0
+
             gamma = nuc.Z**(5. / 3.) * e**2 * (4.0 * np.pi * n_e / 3.0)**(1. / 3.) / k / T
-            u_c = ErgToMeV * k * T * (A_1 * (np.sqrt(gamma * (A_2 + gamma)) - A_2 * np.log(np.sqrt(gamma / A_2) +
+            u_c = Erg2MeV * k * T * (A_1 * (np.sqrt(gamma * (A_2 + gamma)) - A_2 * np.log(np.sqrt(gamma / A_2) +
                                       np.sqrt(1.0 + gamma / A_2))) + 2.0 * A_3 * (np.sqrt(gamma) - np.arctan(np.sqrt(gamma))))
-            comp_NSE.X[nuc] = m_u * nuc.A_nuc * nuc.partition_function(T) / rho * (2.0 * np.pi * m_u * nuc.A_nuc * k * T / h**2)**(3. / 2.) \
-            * np.exp((nuc.Z * u[0] + nuc.N * u[1] - u_c + nuc.nucbind * nuc.A) / k / T / ErgToMeV)
+            comp_NSE.X[nuc] = m_u * nuc.A_nuc * pf / rho * (2.0 * np.pi * m_u * nuc.A_nuc * k * T / h**2)**(3. / 2.) \
+            * np.exp((nuc.Z * u[0] + nuc.N * u[1] - u_c + nuc.nucbind * nuc.A) / k / T / Erg2MeV)
 
         return comp_NSE
 
@@ -821,7 +838,7 @@ class RateCollection:
 
         return [eq1, eq2]
 
-    def get_comp_NSE(self, rho, T, ye, init_guess=(-3.5, -15.0), tol=1.5e-9, tell_guess=False):
+    def get_comp_NSE(self, rho, T, ye, init_guess=(-3.5, -15.0), tol=1.5e-9, tell_sol=False):
         """
         Returns the NSE composition given density, temperature and prescribed electron fraction
         using scipy.fsolve, `tol` is an optional parameter for the tolerance of scipy.fsolve.
@@ -849,8 +866,8 @@ class RateCollection:
                 found_sol = np.all(np.isclose(res, [0.0, 0.0], rtol=1e-2, atol=1e-3))
 
                 if found_sol:
-                    if tell_guess:
-                        print(f"After fine-tuning the initial guess, the actual guess that found the solution was {guess}")
+                    if tell_sol:
+                        print(f"After solving, chemical potential of proton and neutron are {u[0]} and {u[1]}")
                     comp_NSE = self._evaluate_comp_NSE(u, rho, T, ye)
 
                     return comp_NSE
