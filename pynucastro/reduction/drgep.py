@@ -1,10 +1,5 @@
 import numpy as np
-
-from collections import namedtuple
-from pynucastro import Composition, Nucleus
-from pynucastro.nucdata import BindingTable
 from mpi4py import MPI
-import sys
 
 def calc_adj_matrix(net, rvals):
     
@@ -361,9 +356,9 @@ def drgep(net, conds, targets, tols, returnobj='net', use_mpi=False, use_numpy=F
         interaction coefficients set to 0.0. Can be a single number (will be the same for all targets)
         or a separate value for each target nucleus.
     :param returnobj: The type of object to return. Options are 'net' (a reduced network, the default
-        setting), 'nuclei' (unique nuclei ordered by descending interaction coefficient, where the
-        coefficient is nonzero), and 'coeff' (the interaction coefficients as a NumPy array, with
-        entries corresponding to nuclei in *net.unique_nuclei*).
+        setting), 'nuclei' (unique nuclei with nonzero interaction coefficients, ordered so the
+        interaction coefficients are descending), and 'coeff' (the interaction coefficients as a
+        NumPy array, with entries corresponding to nuclei in *net.unique_nuclei*).
     :param use_mpi: Whether to divide up the set of conditions across MPI processes or not. Default
         setting is *False*.
     :param use_numpy: Whether to use NumPy to vectorize the interaction coefficient calculations or

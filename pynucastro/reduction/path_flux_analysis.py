@@ -7,22 +7,22 @@ from pynucastro.networks import PythonNetwork
 from pynucastro.rates import Library, RateFilter, Nucleus
 from collections import OrderedDict
 
-def first_pass_reduction(G, target_sources):
+def pfa_first_pass_reduction(net, target_sources):
+    """
+    Takes a network and removes all nodes that are more than two edges away from the
+    nuclei in *target_sources*.
+    """
 
     # at this point, all the weights are 1
+    G = net.get_reaction_network_graph()
     paths = nx.multi_source_dijkstra_path(G, sources=target_sources, cutoff=2)
-    u = []
+    
+    # add only nodes accessible by distance of 2 from sources
+    u = set()
     for p in paths:
         u = set(list(u) + list(paths[p]))
-
-    # add only nodes accessible by distance of 2 from sources
-    G_reduced = nx.DiGraph()
-    G_reduced.add_nodes_from(u)
-
-    edges = [e for e in G.edges if ((e[0] in u) and (e[1] in u))]
-    G_reduced.add_edges_from(edges)
-
-    return G_reduced
+    
+    return net.linking_nuclei(u)
 
 def get_maps(net):
     n_map = dict()
@@ -111,24 +111,27 @@ def get_reduced_network(net, r_species):
 def main(endpoint, targets = [Nucleus("p")], tol=0.2):
     net = load_network(endpoint)
     print("Network loaded")
+    
     # skipping the first pass reduction because it is mostly ineffectual
     # due to connectivity of p/he4
+    # reduced_net = pfa_first_pass_reduction(net, [Nucleus('p'), Nucleus('he4')])
+    
     T = 1e9
     rho = 1e4
     comp = pync.Composition(net.get_nuclei())
     comp.set_solar_like()
     rvals = net.evaluate_rates(rho=rho, T=T, composition=comp)
-
+    
     # grab adjacency matrix through PFA calculation on 2-neighbor paths
     A = calc_adj_matrix(net, rvals, tol)
-
+    
     # create new directed graph and perform DFS on targets to get nodes to remove
     G_pfa = graph_from_adj_matrix(net, A)
     r_species = get_remove_list(G_pfa, targets) # when working with many reaction conditions, intersection should be performed over all conditions
-
+    
     # construct new network with only reactions involving reachable species
     reduced_net = get_reduced_network(net, r_species)
-
+    
     print("Number of species in full network: ", len(net.unique_nuclei))
     print("Number of rates in full network: ", len(net.rates))
     print("Number of species in reduced network: ", len(reduced_net.unique_nuclei))
