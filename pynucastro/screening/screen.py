@@ -425,7 +425,7 @@ def chugunov_2009(state, scn_fac):
     h12 = min(h12, h12_max)
     scor = np.exp(h12)
     if h12 == h12_max:
-        dh12_dT = 0
+        dscor_dT = 0
     else:
         dscor_dT = scor * dh12_dT
 
