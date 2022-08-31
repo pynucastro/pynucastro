@@ -812,7 +812,7 @@ class RateCollection:
             # Find electron number density and set electron charge
             e = 4.8032e-10
             n_e = rho * ye / m_u
-            
+
         # Create composition object for NSE ron number density
         comp_NSE = Composition(self.unique_nuclei)
 
