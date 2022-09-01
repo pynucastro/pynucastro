@@ -24,7 +24,7 @@ k_B = constants.value("Boltzmann constant") / constants.erg  # J/K to erg/K
 n_A = constants.value("Avogadro constant")
 
 
-@jitclass
+@jitclass()
 class PlasmaState:
     """
     Stores precomputed values that are reused for all screening correction
@@ -47,6 +47,14 @@ class PlasmaState:
     gamma_e_fac: float
 
     def __init__(self, temp, dens, Ys, Zs):
+        """
+        :param temp: temperature in K
+        :param dens: density in g/cm^3
+        :param Ys:   molar fractions of each ion
+        :type Ys: numpy ndarray
+        :param Zs:   charge of each ion, in the same order as Ys
+        :type Zs: numpy ndarray
+        """
         self.temp = temp
         self.dens = dens
         ytot = np.sum(Ys)
@@ -80,7 +88,7 @@ def make_plasma_state(temp, dens, molar_fractions):
     return PlasmaState(temp, dens, Ys, Zs)
 
 
-@jitclass
+@jitclass()
 class ScreenFactors:
     """
     Stores values that will be used to calculate the screening correction factor

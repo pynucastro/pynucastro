@@ -79,6 +79,69 @@ class PythonNetwork(RateCollection):
 
         return ostr
 
+    def screening_string(self, indent=""):
+        ostr = ""
+        ostr += f"{indent}plasma_state = PlasmaState(T, rho, Y, Z)\n"
+
+        screening_map = self.get_screening_map()
+        for i, scr in enumerate(screening_map):
+            if not (scr.n1.dummy or scr.n2.dummy):
+                # calculate the screening factor
+                ostr += f"\n{indent}scn_fac = ScreenFactors({scr.n1.Z}, {scr.n1.A}, {scr.n2.Z}, {scr.n2.A})\n"
+                ostr += f"{indent}scor = screen_func(plasma_state, scn_fac)[0]\n"
+
+            if scr.name == "he4_he4_he4":
+                # we don't need to do anything here, but we want to avoid immediately applying the screening
+                pass
+
+            elif scr.name == "he4_he4_he4_dummy":
+                # make sure the previous iteration was the first part of 3-alpha
+                assert screening_map[i - 1].name == "he4_he4_he4"
+                # handle the second part of the screening for 3-alpha
+                ostr += f"{indent}scn_fac2 = ScreenFactors({scr.n1.Z}, {scr.n1.A}, {scr.n2.Z}, {scr.n2.A})\n"
+                ostr += f"{indent}scor2 = screen_func(plasma_state, scn_fac2)[0]\n"
+
+                # there might be both the forward and reverse 3-alpha
+                # if we are doing symmetric screening
+
+                for r in scr.rates:
+                    # use scor from the previous loop iteration
+                    ostr += f"{indent}rate_eval.{r.fname} *= scor * scor2\n"
+            else:
+                # there might be several rates that have the same
+                # reactants and therefore the same screening applies
+                # -- handle them all now
+
+                for r in scr.rates:
+                    ostr += f"{indent}rate_eval.{r.fname} *= scor\n"
+
+        return ostr
+
+    def rates_string(self, indent=""):
+        """section for evaluating the rates and storing them in rate_eval"""
+        ostr = ""
+        ostr += f"{indent}# reaclib rates\n"
+        for r in self.reaclib_rates:
+            ostr += f"{indent}{r.fname}(rate_eval, tf)\n"
+
+        if self.derived_rates:
+            ostr += f"\n{indent}# derived rates\n"
+        for r in self.derived_rates:
+            ostr += f"{indent}{r.fname}(rate_eval, tf)\n"
+
+        ostr += "\n"
+
+        # apply screening factors, if we're given a screening function
+        ostr += f"{indent}if screen_func is not None:\n"
+        ostr += self.screening_string(indent=indent + 4*" ")
+
+        if self.approx_rates:
+            ostr += f"\n{indent}# approximate rates\n"
+        for r in self.approx_rates:
+            ostr += f"{indent}{r.fname}(rate_eval, tf)\n"
+
+        return ostr
+
     def _write_network(self, outfile=None):
         """
         This is the actual RHS for the system of ODEs that
@@ -90,9 +153,16 @@ class PythonNetwork(RateCollection):
         else:
             of = open(outfile, "w")
 
+        indent = 4*" "
+
         of.write("import numpy as np\n")
         of.write("from pynucastro.rates import Tfactors\n")
-        of.write("import numba\n\n")
+        of.write("from pynucastro.screening import PlasmaState, ScreenFactors\n")
+        of.write("import numba\n")
+        of.write("try:\n")
+        of.write(f"{indent}from numba.experimental import jitclass\n")
+        of.write("except ImportError:\n")
+        of.write(f"{indent}from numba import jitclass\n\n")
 
         # integer keys
         for i, n in enumerate(self.unique_nuclei):
@@ -118,7 +188,16 @@ class PythonNetwork(RateCollection):
 
         of.write("\n")
 
-        indent = 4*" "
+        of.write("@jitclass([\n")
+        for r in self.all_rates:
+            of.write(f'{indent}("{r.fname}", numba.float64),\n')
+        of.write("])\n")
+        of.write("class RateEval:\n")
+        of.write(f"{indent}def __init__(self):\n")
+        for r in self.all_rates:
+            of.write(f"{indent*2}self.{r.fname} = np.nan\n")
+
+        of.write("\n")
 
         of.write("@numba.njit()\n")
 
@@ -148,16 +227,17 @@ class PythonNetwork(RateCollection):
 
         # the rhs() function
 
-        of.write("def rhs(t, Y, rho, T):\n")
-        of.write(f"{indent}return rhs_eq(t, Y, rho, T)\n\n")
+        of.write("def rhs(t, Y, rho, T, screen_func=None):\n")
+        of.write(f"{indent}return rhs_eq(t, Y, rho, T, screen_func)\n\n")
 
         of.write("@numba.njit()\n")
-        of.write("def rhs_eq(t, Y, rho, T):\n\n")
+        of.write("def rhs_eq(t, Y, rho, T, screen_func):\n\n")
 
         # get the rates
-        of.write(f"{indent}tf = Tfactors(T)\n\n")
-        for r in self.rates:
-            of.write(f"{indent}lambda_{r.fname} = {r.fname}(tf)\n")
+        of.write(f"{indent}tf = Tfactors(T)\n")
+        of.write(f"{indent}rate_eval = RateEval()\n\n")
+
+        of.write(self.rates_string(indent=indent))
 
         of.write("\n")
 
@@ -171,16 +251,17 @@ class PythonNetwork(RateCollection):
 
         # the jacobian() function
 
-        of.write("def jacobian(t, Y, rho, T):\n")
-        of.write(f"{indent}return jacobian_eq(t, Y, rho, T)\n\n")
+        of.write("def jacobian(t, Y, rho, T, screen_func=None):\n")
+        of.write(f"{indent}return jacobian_eq(t, Y, rho, T, screen_func)\n\n")
 
         of.write("@numba.njit()\n")
-        of.write("def jacobian_eq(t, Y, rho, T):\n\n")
+        of.write("def jacobian_eq(t, Y, rho, T, screen_func):\n\n")
 
         # get the rates
-        of.write(f"{indent}tf = Tfactors(T)\n\n")
-        for r in self.rates:
-            of.write(f"{indent}lambda_{r.fname} = {r.fname}(tf)\n")
+        of.write(f"{indent}tf = Tfactors(T)\n")
+        of.write(f"{indent}rate_eval = RateEval()\n\n")
+
+        of.write(self.rates_string(indent=indent))
 
         of.write("\n")
 

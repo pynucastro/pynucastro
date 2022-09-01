@@ -10,18 +10,18 @@ class TestPythonNetwork:
 
     def test_ydot_string(self, rate):
         ydot = rate.ydot_string_py()
-        assert ydot in ("rho*Y[jc13]*Y[jp]*lambda_p_c13__n14",
-                        "rho*Y[jp]*Y[jc13]*lambda_p_c13__n14")
+        assert ydot in ("rho*Y[jc13]*Y[jp]*rate_eval.p_c13__n14",
+                        "rho*Y[jp]*Y[jc13]*rate_eval.p_c13__n14")
 
     def test_jacobian_string(self, rate):
         jac = rate.jacobian_string_py(rate.reactants[0])
-        assert jac == "rho*Y[jc13]*lambda_p_c13__n14"
+        assert jac == "rho*Y[jc13]*rate_eval.p_c13__n14"
 
     def test_function_string(self, rate):
 
         ostr = """
 @numba.njit()
-def p_c13__n14(tf):
+def p_c13__n14(rate_eval, tf):
     # c13 + p --> n14
     rate = 0.0
 
@@ -35,7 +35,7 @@ def p_c13__n14(tf):
     rate += np.exp(  15.1825 + -13.5543*tf.T9i
                   + -1.5*tf.lnT9)
 
-    return rate
+    rate_eval.p_c13__n14 = rate
 """
 
         assert rate.function_string_py().strip() == ostr.strip()

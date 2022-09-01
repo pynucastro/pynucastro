@@ -42,10 +42,10 @@ class TestPythonDerivedNetwork:
 
         ostr = \
 """dYdt[jcr48] = (
-   -rho*Y[jhe4]*Y[jcr48]*lambda_he4_cr48__fe52
-   -rho*Y[jhe4]*Y[jcr48]*lambda_he4_cr48__p_mn51
-   +Y[jfe52]*lambda_fe52__he4_cr48__derived
-   +rho*Y[jp]*Y[jmn51]*lambda_p_mn51__he4_cr48__derived
+   -rho*Y[jhe4]*Y[jcr48]*rate_eval.he4_cr48__fe52
+   -rho*Y[jhe4]*Y[jcr48]*rate_eval.he4_cr48__p_mn51
+   +Y[jfe52]*rate_eval.fe52__he4_cr48__derived
+   +rho*Y[jp]*Y[jmn51]*rate_eval.p_mn51__he4_cr48__derived
    )
 
 """
@@ -59,7 +59,7 @@ class TestPythonDerivedNetwork:
         for i in range(2):
             ostr[i] = \
 """@numba.njit()
-def fe52__p_mn51__derived(tf):
+def fe52__p_mn51__derived(rate_eval, tf):
     # fe52 --> p + mn51
     rate = 0.0
 
@@ -86,7 +86,7 @@ def fe52__p_mn51__derived(tf):
     z_p = fe52_pf
     rate *= z_r/z_p
 
-    return rate
+    rate_eval.fe52__p_mn51__derived = rate
 
 """.format(dispute_values[i])
 
