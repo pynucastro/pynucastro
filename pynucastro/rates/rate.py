@@ -1265,6 +1265,9 @@ class TabularRate(Rate):
 
         self.get_tabular_rate()
 
+    def __hash__(self):
+        return hash(self.__repr__())
+
     def __eq__(self, other):
         """ Determine whether two Rate objects are equal.
         They are equal if they contain identical reactants and products."""
