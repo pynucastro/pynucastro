@@ -9,7 +9,8 @@ from load_network import load_network
 from mpi4py import MPI
 import path_flux_analysis as pfa
 from pynucastro.networks import PythonNetwork
-from pynucastro.rates import Library, RateFilter, Nucleus
+from pynucastro.rates import Library, RateFilter
+from pynucastro.nucdata import Nucleus
 import time
 
 

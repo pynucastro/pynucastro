@@ -2,7 +2,8 @@
 
 import sys
 
-from pynucastro.rates import Library, RateFilter, Nucleus
+from pynucastro.rates import Library, RateFilter
+from pynucastro.nucdata import Nucleus
 from pynucastro.networks import PythonNetwork
 
 def load_network(endpoint=Nucleus('te108')):

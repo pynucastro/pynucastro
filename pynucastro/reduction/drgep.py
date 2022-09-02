@@ -1,5 +1,9 @@
 import numpy as np
-from mpi4py import MPI
+from .reduction_utils import FailedMPIImport, mpi_numpy_decomp
+try:
+    from mpi4py import MPI
+except ImportError:
+    MPI = FailedMPIImport()
 
 def calc_adj_matrix(net, rvals):
     
@@ -222,73 +226,6 @@ def _drgep_numpy(net, conds, targets, tols):
     
     net.clear_arrays()
     return R_TB
-    
-def _drgep_mpi_numpy_decomp(MPI_N, MPI_rank, n):
-
-    if MPI_N <= n[0]:
-        
-        comp_idx = MPI_rank
-        comp_step = MPI_N
-        rho_idx = T_idx = 0
-        rho_step = T_step = 1
-        
-    elif MPI_N <= n[0]*n[1]:
-        
-        m = MPI_N // n[0]
-        
-        if MPI_rank <= n[0]*m:
-            comp_idx = MPI_rank % n[0]
-            comp_step = n[0]
-            rho_idx = MPI_rank // n[0]
-            rho_step = m
-        else:
-            comp_idx = n[0]
-            comp_step = 1
-            rho_idx = n[1]
-            rho_step = 1
-        
-        T_idx = 0
-        T_step = 1
-        
-    elif MPI_N <= n[0]*n[1]*n[2]:
-        
-        m = MPI_N // (n[0] * n[1])
-        
-        if MPI_rank <= n[0]*n[1]*m:
-            comp_idx = MPI_rank % n[0]
-            comp_step = n[0]
-            rho_idx = (MPI_rank // n[0]) % n[1]
-            rho_step = n[1]
-            T_idx = MPI_rank // (n[0] * n[1])
-            T_step = m
-        else:
-            comp_idx = n[0]
-            comp_step = 1
-            rho_idx = n[1]
-            rho_step = 1
-            T_idx = n[2]
-            T_step = 1
-            
-    else:
-        
-        m = MPI_N // (n[0] * n[1])
-        
-        if MPI_rank <= n[0]*n[1]*n[2]:
-            comp_idx = MPI_rank % n[0]
-            comp_step = n[0]
-            rho_idx = (MPI_rank // n[0]) % n[1]
-            rho_step = n[1]
-            T_idx = MPI_rank // (n[0] * n[1])
-            T_step = n[2]
-        else:
-            comp_idx = n[0]
-            comp_step = 1
-            rho_idx = n[1]
-            rho_step = 1
-            T_idx = n[2]
-            T_step = 1
-            
-    return comp_idx, comp_step, rho_idx, rho_step, T_idx, T_step
 
 def _drgep_mpi_numpy(net, conds, targets, tols):
     
@@ -311,8 +248,7 @@ def _drgep_mpi_numpy(net, conds, targets, tols):
     MPI_N = comm.Get_size()
     MPI_rank = comm.Get_rank()
     
-    comp_idx, comp_step, rho_idx, rho_step, T_idx, T_step =\
-            _drgep_mpi_numpy_decomp(MPI_N, MPI_rank, n)
+    comp_idx, comp_step, rho_idx, rho_step, T_idx, T_step = mpi_numpy_decomp(MPI_N, MPI_rank, n)
     
     #--------------------------------------------------------------
     # Calculate interaction coefficients (vectorized and using MPI)
@@ -371,6 +307,8 @@ def drgep(net, conds, targets, tols, returnobj='net', use_mpi=False, use_numpy=F
     # Process arguments
     #------------------
     
+    if returnobj not in {'net', 'nuclei', 'coeff'}:
+        raise ValueError(f"Invalid 'returnobj' argument: '{returnobj}'.")
     targets = _to_list(targets)
     tols = _to_list(tols, len(targets))
     
@@ -401,5 +339,3 @@ def drgep(net, conds, targets, tols, returnobj='net', use_mpi=False, use_numpy=F
         return [net.unique_nuclei[i] for i in idx if R_TB[i] > 0.0]
     elif returnobj == 'coeff':
         return R_TB
-    else:
-        raise ValueError(f"Invalid 'returnobj' argument: '{returnobj}'.")

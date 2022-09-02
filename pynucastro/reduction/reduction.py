@@ -4,8 +4,7 @@ import numpy as np
 
 from collections import namedtuple
 from pynucastro import Composition, Nucleus
-from pynucastro.rates import DummyNucleus
-from pynucastro.nucdata import BindingTable
+from pynucastro.nucdata import DummyNucleus, BindingTable
 import path_flux_analysis as pfa
 from parallel_pfa import ppfa
 from mpi4py import MPI
@@ -30,7 +29,6 @@ def get_net_info(net, comp, rho, T):
     ydots_dict = net.evaluate_ydots(rho, T, comp)
 
     bintable = BindingTable()
-    bintable = {(nuc.n, nuc.z): nuc for nuc in bintable.nuclides}
 
     y = np.zeros(len(net.unique_nuclei), dtype=np.float64)
     ydot = np.zeros(len(net.unique_nuclei), dtype=np.float64)
@@ -50,7 +48,7 @@ def get_net_info(net, comp, rho, T):
         z[i] = n.Z
         a[i] = n.A
         try:
-            ebind[i] = bintable[n.N, n.Z].nucbind
+            ebind[i] = bintable.get_nuclide(n.N, n.Z).nucbind
         except KeyError:
             ebind[i] = 0.0
         m[i] = mass_proton * n.Z + mass_neutron * n.N - ebind[i] / c_light**2
@@ -320,7 +318,8 @@ if __name__ == "__main__":
         endpoint = Nucleus('te108')
         n = 16
     else:
-        print("Usage: ./load_network.py <endpoint>")
+        print("Usage: ./reduction.py <endpoint> <num_conds>")
+        sys.exit(0)
     
     net = load_network(endpoint)
     data = list(dataset(net, n=n))

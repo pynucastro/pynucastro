@@ -237,13 +237,15 @@ class Library:
         else:
             self._rates.pop(rate)
 
-    def linking_nuclei(self, nuclist, with_reverse=True):
+    def linking_nuclei(self, nuclist, with_reverse=True, print_warning=True):
         """
         Return a Library object containing the rates linking the
         nuclei provided in the list of Nucleus objects or nucleus abbreviations 'nuclist'.
 
         If with_reverse is True, then include reverse rates. Otherwise
         include only forward rates.
+        
+        If print_warning is True, then print out a warning if one of the input nuclei is not linked.
         """
 
         if isinstance(nuclist, (Nucleus, str)):
@@ -278,10 +280,11 @@ class Library:
         new_lib = Library(rates=filtered_rates)
 
         # print out a warning if one of the input nuclei is not linked
-        lib_nuclei = new_lib.get_nuclei()
-        for nuc in nucleus_set:
-            if nuc not in lib_nuclei:
-                print(f"warning {nuc} was not able to be linked")
+        if print_warning:
+            lib_nuclei = new_lib.get_nuclei()
+            for nuc in nucleus_set:
+                if nuc not in lib_nuclei:
+                    print(f"warning {nuc} was not able to be linked")
 
         return new_lib
 

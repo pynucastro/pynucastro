@@ -104,7 +104,7 @@ def sens_analysis(network, errfunc, thresh=0.05, use_mpi=False, print_prog=True)
                 _progress_bar(i/len(nuclei))
             
             nuc = nuclei.pop(i)
-            err_i = errfunc(network.linking_nuclei(nuclei))
+            err_i = errfunc(network.linking_nuclei(nuclei, print_warning=False))
             if err_i < err:
                 err = err_i
                 min_idx = i
