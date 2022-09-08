@@ -468,23 +468,23 @@ def potekhin_1998(state, scn_fac):
     A_2 = 0.6322
     A_3 = -np.sqrt(3)/2 - A_1/np.sqrt(A_2)
 
-    f1 = A_1 * (np.sqrt(Gamma_1 * (A_2 + Gamma_1)) - A_2 * np.log(np.sqrt(Gamma_1 / A_2)
-                  + np.sqrt(1.0 + Gamma_1/A_2))) + 2.0 * A_3 * (np.sqrt(Gamma_1) - np.arctan(np.sqrt(Gamma_1)))
+    f1 = A_1 * (np.sqrt(Gamma_1 * (A_2 + Gamma_1)) - A_2 * np.log(np.sqrt(Gamma_1 / A_2) +
+                  np.sqrt(1.0 + Gamma_1/A_2))) + 2.0 * A_3 * (np.sqrt(Gamma_1) - np.arctan(np.sqrt(Gamma_1)))
     df1_dT = dGamma_1_dT * (np.sqrt(Gamma_1) * (A_1 / np.sqrt(A_2 + Gamma_1) + A_3 / (1 + Gamma_1)))
 
-    f2 = A_1 * (np.sqrt(Gamma_2 * (A_2 + Gamma_2)) - A_2 * np.log(np.sqrt(Gamma_2 / A_2)
-                  + np.sqrt(1.0 + Gamma_2/A_2))) + 2.0 * A_3 * (np.sqrt(Gamma_2) - np.arctan(np.sqrt(Gamma_2)))
+    f2 = A_1 * (np.sqrt(Gamma_2 * (A_2 + Gamma_2)) - A_2 * np.log(np.sqrt(Gamma_2 / A_2) +
+                  np.sqrt(1.0 + Gamma_2/A_2))) + 2.0 * A_3 * (np.sqrt(Gamma_2) - np.arctan(np.sqrt(Gamma_2)))
     df2_dT = dGamma_2_dT * (np.sqrt(Gamma_2) * (A_1 / np.sqrt(A_2 + Gamma_2) + A_3 / (1 + Gamma_2)))
 
-    f12 = A_1 * (np.sqrt(Gamma_comp * (A_2 + Gamma_comp)) - A_2 * np.log(np.sqrt(Gamma_comp / A_2)
-                  + np.sqrt(1.0 + Gamma_comp/A_2))) + 2.0 * A_3 * (np.sqrt(Gamma_comp) - np.arctan(np.sqrt(Gamma_comp)))
+    f12 = A_1 * (np.sqrt(Gamma_comp * (A_2 + Gamma_comp)) - A_2 * np.log(np.sqrt(Gamma_comp / A_2) +
+                  np.sqrt(1.0 + Gamma_comp/A_2))) + 2.0 * A_3 * (np.sqrt(Gamma_comp) - np.arctan(np.sqrt(Gamma_comp)))
     df12_dT = dGamma_comp_dT * (np.sqrt(Gamma_comp) * (A_1 / np.sqrt(A_2 + Gamma_comp) + A_3 / (1 + Gamma_comp)))
 
     h12 = f1 + f2 - f12
     dh12_dT = df1_dT + df2_dT - df12_dT
 
     # machine limit the output
-    h12_max = 170
+    h12_max = 300
     h12 = min(h12, h12_max)
     scor = np.exp(h12)
     if h12 == h12_max:
