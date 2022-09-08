@@ -442,30 +442,54 @@ def chugunov_2009(state, scn_fac):
 
 @njit
 def potekhin_1998(state, scn_fac):
+    """Calculates screening factors based on Chabrier & Potekhin 1998.
+
+    :param PlasmaState state:     the precomputed plasma state factors
+    :param ScreenFactors scn_fac: the precomputed ion pair factors
+    :returns: (screening correction factor, derivative w.r.t. temperature)
+
+    References:
+        Chabrier and Potekhin 1998, PhRvE, 58, 4941
+    """
 
     Gamma_e = state.gamma_e_fac / state.temp
     zcomp = scn_fac.z1 + scn_fac.z2
 
     Gamma_1 = Gamma_e * scn_fac.z1 ** (5 / 3)
+    dGamma_1_dT = -Gamma_1 / state.temp
+
     Gamma_2 = Gamma_e * scn_fac.z2 ** (5 / 3)
+    dGamma_2_dT = -Gamma_2 / state.temp
+
     Gamma_comp = Gamma_e * zcomp ** (5 / 3)
+    dGamma_comp_dT = -Gamma_comp / state.temp
 
     A_1 = -0.9052
     A_2 = 0.6322
     A_3 = -np.sqrt(3)/2 - A_1/np.sqrt(A_2)
 
-    f_1 = A_1 * (np.sqrt(Gamma_1 * (A_2 + Gamma_1)) - A_2 * np.log(np.sqrt(Gamma_1 / A_2)
+    f1 = A_1 * (np.sqrt(Gamma_1 * (A_2 + Gamma_1)) - A_2 * np.log(np.sqrt(Gamma_1 / A_2)
                   + np.sqrt(1.0 + Gamma_1/A_2))) + 2.0 * A_3 * (np.sqrt(Gamma_1) - np.arctan(np.sqrt(Gamma_1)))
+    df1_dT = dGamma_1_dT * (np.sqrt(Gamma_1) * (A_1 / np.sqrt(A_2 + Gamma_1) + A_3 / (1 + Gamma_1)))
 
-    f_2 = A_1 * (np.sqrt(Gamma_2 * (A_2 + Gamma_2)) - A_2 * np.log(np.sqrt(Gamma_2 / A_2)
+    f2 = A_1 * (np.sqrt(Gamma_2 * (A_2 + Gamma_2)) - A_2 * np.log(np.sqrt(Gamma_2 / A_2)
                   + np.sqrt(1.0 + Gamma_2/A_2))) + 2.0 * A_3 * (np.sqrt(Gamma_2) - np.arctan(np.sqrt(Gamma_2)))
+    df2_dT = dGamma_2_dT * (np.sqrt(Gamma_2) * (A_1 / np.sqrt(A_2 + Gamma_2) + A_3 / (1 + Gamma_2)))
 
-    f_12 = A_1 * (np.sqrt(Gamma_comp * (A_2 + Gamma_comp)) - A_2 * np.log(np.sqrt(Gamma_comp / A_2)
+    f12 = A_1 * (np.sqrt(Gamma_comp * (A_2 + Gamma_comp)) - A_2 * np.log(np.sqrt(Gamma_comp / A_2)
                   + np.sqrt(1.0 + Gamma_comp/A_2))) + 2.0 * A_3 * (np.sqrt(Gamma_comp) - np.arctan(np.sqrt(Gamma_comp)))
+    df12_dT = dGamma_comp_dT * (np.sqrt(Gamma_comp) * (A_1 / np.sqrt(A_2 + Gamma_comp) + A_3 / (1 + Gamma_comp)))
 
-    h = f_1 + f_2 - f_12
-    scor = np.exp(h)
+    h12 = f1 + f2 - f12
+    dh12_dT = df1_dT + df2_dT - df12_dT
 
-    dscor_dT = 0.0 # I need to implement this
+    # machine limit the output
+    h12_max = 170
+    h12 = min(h12, h12_max)
+    scor = np.exp(h12)
+    if h12 == h12_max:
+        dscor_dT = 0
+    else:
+        dscor_dT = scor * dh12_dT
 
     return scor, dscor_dT
