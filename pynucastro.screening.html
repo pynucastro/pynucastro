@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.screening package &mdash; pynucastro 1.7.0.post42+ge474932 documentation</title>
+  <title>pynucastro.screening package &mdash; pynucastro 1.7.0.post43+gc409118 documentation</title>
       <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -159,8 +159,8 @@
 <p>Python implementations of screening routines.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="pynucastro.screening.screen.PlasmaState">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.screening.screen.</span></span><span class="sig-name descname"><span class="pre">PlasmaState</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">temp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dens</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">abar</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zbar</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z2bar</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/screening/screen.html#PlasmaState"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.screening.screen.PlasmaState" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.screening.screen.</span></span><span class="sig-name descname"><span class="pre">PlasmaState</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pynucastro.screening.screen.PlasmaState" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pynucastro.screening.screen.PlasmaState" title="pynucastro.screening.screen.PlasmaState"><code class="xref py py-class docutils literal notranslate"><span class="pre">PlasmaState</span></code></a></p>
 <p>Stores precomputed values that are reused for all screening correction
 factor calculations.</p>
 <dl class="field-list simple">
@@ -182,25 +182,14 @@ factor calculations.</p>
 <dd></dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="pynucastro.screening.screen.PlasmaState.class_type">
+<span class="sig-name descname"><span class="pre">class_type</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">jitclass.PlasmaState#7fbee90547f0&lt;temp:float64,dens:float64,abar:float64,zbar:float64,z2bar:float64,n_e:float64,gamma_e_fac:float64&gt;</span></em><a class="headerlink" href="#pynucastro.screening.screen.PlasmaState.class_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="pynucastro.screening.screen.PlasmaState.dens">
 <span class="sig-name descname"><span class="pre">dens</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#pynucastro.screening.screen.PlasmaState.dens" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pynucastro.screening.screen.PlasmaState.fill">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fill</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">temp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dens</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">molar_fractions</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/screening/screen.html#PlasmaState.fill"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.screening.screen.PlasmaState.fill" title="Permalink to this definition">¶</a></dt>
-<dd><p>Construct a PlasmaState object from simulation data.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>temp</strong> – temperature in K</p></li>
-<li><p><strong>dens</strong> – density in g/cm^3</p></li>
-<li><p><strong>molar_fractions</strong> – dictionary of molar abundances for each ion,
-as returned by <a class="reference internal" href="pynucastro.networks.html#pynucastro.networks.rate_collection.Composition.get_molar" title="pynucastro.networks.rate_collection.Composition.get_molar"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Composition.get_molar()</span></code></a></p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pynucastro.screening.screen.PlasmaState.gamma_e_fac">
@@ -231,33 +220,50 @@ as returned by <a class="reference internal" href="pynucastro.networks.html#pynu
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pynucastro.screening.screen.ScreenFactors">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.screening.screen.</span></span><span class="sig-name descname"><span class="pre">ScreenFactors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="pynucastro.nucdata.html#pynucastro.nucdata.nucleus.Nucleus" title="pynucastro.nucdata.nucleus.Nucleus"><span class="pre">Nucleus</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">n2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="pynucastro.nucdata.html#pynucastro.nucdata.nucleus.Nucleus" title="pynucastro.nucdata.nucleus.Nucleus"><span class="pre">Nucleus</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/screening/screen.html#ScreenFactors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.screening.screen.ScreenFactors" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.screening.screen.</span></span><span class="sig-name descname"><span class="pre">ScreenFactors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pynucastro.screening.screen.ScreenFactors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pynucastro.screening.screen.ScreenFactors" title="pynucastro.screening.screen.ScreenFactors"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScreenFactors</span></code></a></p>
 <p>Stores values that will be used to calculate the screening correction factor
 for a specific pair of nuclei.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Variables</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>n1</strong> – first nucleus</p></li>
-<li><p><strong>n2</strong> – second nucleus</p></li>
+<li><p><strong>z1</strong> – atomic number of first nucleus</p></li>
+<li><p><strong>z2</strong> – atomic number of second nucleus</p></li>
+<li><p><strong>a1</strong> – atomic mass of first nucleus</p></li>
+<li><p><strong>a2</strong> – atomic mass of second nucleus</p></li>
 <li><p><strong>aznut</strong> – combination of a1, z1, a2, z2 raised to 1/3 power</p></li>
 <li><p><strong>ztilde</strong> – effective ion radius factor for a MCP</p></li>
 </ul>
 </dd>
 </dl>
 <dl class="py attribute">
+<dt class="sig sig-object py" id="pynucastro.screening.screen.ScreenFactors.a1">
+<span class="sig-name descname"><span class="pre">a1</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#pynucastro.screening.screen.ScreenFactors.a1" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynucastro.screening.screen.ScreenFactors.a2">
+<span class="sig-name descname"><span class="pre">a2</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#pynucastro.screening.screen.ScreenFactors.a2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="pynucastro.screening.screen.ScreenFactors.aznut">
 <span class="sig-name descname"><span class="pre">aznut</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#pynucastro.screening.screen.ScreenFactors.aznut" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="pynucastro.screening.screen.ScreenFactors.n1">
-<span class="sig-name descname"><span class="pre">n1</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="pynucastro.nucdata.html#pynucastro.nucdata.nucleus.Nucleus" title="pynucastro.nucdata.nucleus.Nucleus"><span class="pre">Nucleus</span></a></em><a class="headerlink" href="#pynucastro.screening.screen.ScreenFactors.n1" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pynucastro.screening.screen.ScreenFactors.class_type">
+<span class="sig-name descname"><span class="pre">class_type</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">jitclass.ScreenFactors#7fbee9054ca0&lt;z1:int64,z2:int64,a1:int64,a2:int64,aznut:float64,ztilde:float64&gt;</span></em><a class="headerlink" href="#pynucastro.screening.screen.ScreenFactors.class_type" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="pynucastro.screening.screen.ScreenFactors.n2">
-<span class="sig-name descname"><span class="pre">n2</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="pynucastro.nucdata.html#pynucastro.nucdata.nucleus.Nucleus" title="pynucastro.nucdata.nucleus.Nucleus"><span class="pre">Nucleus</span></a></em><a class="headerlink" href="#pynucastro.screening.screen.ScreenFactors.n2" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pynucastro.screening.screen.ScreenFactors.z1">
+<span class="sig-name descname"><span class="pre">z1</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#pynucastro.screening.screen.ScreenFactors.z1" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynucastro.screening.screen.ScreenFactors.z2">
+<span class="sig-name descname"><span class="pre">z2</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#pynucastro.screening.screen.ScreenFactors.z2" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -275,8 +281,8 @@ for a specific pair of nuclei.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>state</strong> – the precomputed <a class="reference internal" href="#pynucastro.screening.screen.PlasmaState" title="pynucastro.screening.screen.PlasmaState"><code class="xref py py-class docutils literal notranslate"><span class="pre">PlasmaState</span></code></a></p></li>
-<li><p><strong>scn_fac</strong> – a <a class="reference internal" href="#pynucastro.screening.screen.ScreenFactors" title="pynucastro.screening.screen.ScreenFactors"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScreenFactors</span></code></a> object</p></li>
+<li><p><strong>state</strong> (<a class="reference internal" href="#pynucastro.screening.screen.PlasmaState" title="pynucastro.screening.screen.PlasmaState"><em>PlasmaState</em></a>) – the precomputed plasma state factors</p></li>
+<li><p><strong>scn_fac</strong> (<a class="reference internal" href="#pynucastro.screening.screen.ScreenFactors" title="pynucastro.screening.screen.ScreenFactors"><em>ScreenFactors</em></a>) – the precomputed ion pair factors</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -300,8 +306,8 @@ for a specific pair of nuclei.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>state</strong> – the precomputed <a class="reference internal" href="#pynucastro.screening.screen.PlasmaState" title="pynucastro.screening.screen.PlasmaState"><code class="xref py py-class docutils literal notranslate"><span class="pre">PlasmaState</span></code></a></p></li>
-<li><p><strong>scn_fac</strong> – a <a class="reference internal" href="#pynucastro.screening.screen.ScreenFactors" title="pynucastro.screening.screen.ScreenFactors"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScreenFactors</span></code></a> object</p></li>
+<li><p><strong>state</strong> (<a class="reference internal" href="#pynucastro.screening.screen.PlasmaState" title="pynucastro.screening.screen.PlasmaState"><em>PlasmaState</em></a>) – the precomputed plasma state factors</p></li>
+<li><p><strong>scn_fac</strong> (<a class="reference internal" href="#pynucastro.screening.screen.ScreenFactors" title="pynucastro.screening.screen.ScreenFactors"><em>ScreenFactors</em></a>) – the precomputed ion pair factors</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -312,6 +318,36 @@ for a specific pair of nuclei.</p>
 <dt>References:</dt><dd><div class="line-block">
 <div class="line">Chugunov and DeWitt 2009, PhRvC, 80, 014611</div>
 </div>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pynucastro.screening.screen.make_plasma_state">
+<span class="sig-prename descclassname"><span class="pre">pynucastro.screening.screen.</span></span><span class="sig-name descname"><span class="pre">make_plasma_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">temp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dens</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">molar_fractions</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/screening/screen.html#make_plasma_state"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.screening.screen.make_plasma_state" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construct a PlasmaState object from simulation data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>temp</strong> – temperature in K</p></li>
+<li><p><strong>dens</strong> – density in g/cm^3</p></li>
+<li><p><strong>molar_fractions</strong> – dictionary of molar abundances for each ion,
+as returned by <a class="reference internal" href="pynucastro.networks.html#pynucastro.networks.rate_collection.Composition.get_molar" title="pynucastro.networks.rate_collection.Composition.get_molar"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Composition.get_molar()</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pynucastro.screening.screen.make_screen_factors">
+<span class="sig-prename descclassname"><span class="pre">pynucastro.screening.screen.</span></span><span class="sig-name descname"><span class="pre">make_screen_factors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/screening/screen.html#make_screen_factors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.screening.screen.make_screen_factors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construct a ScreenFactors object from a pair of nuclei.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n1</strong> (<a class="reference internal" href="pynucastro.nucdata.html#pynucastro.nucdata.nucleus.Nucleus" title="pynucastro.nucdata.nucleus.Nucleus"><em>Nucleus</em></a>) – first nucleus</p></li>
+<li><p><strong>n2</strong> (<a class="reference internal" href="pynucastro.nucdata.html#pynucastro.nucdata.nucleus.Nucleus" title="pynucastro.nucdata.nucleus.Nucleus"><em>Nucleus</em></a>) – second nucleus</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>

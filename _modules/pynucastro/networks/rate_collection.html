@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.networks.rate_collection &mdash; pynucastro 1.7.0.post42+ge474932 documentation</title>
+  <title>pynucastro.networks.rate_collection &mdash; pynucastro 1.7.0.post43+gc409118 documentation</title>
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -131,7 +131,7 @@
 <span class="c1"># Import Rate</span>
 <span class="kn">from</span> <span class="nn">pynucastro.nucdata</span> <span class="kn">import</span> <span class="n">Nucleus</span>
 <span class="kn">from</span> <span class="nn">pynucastro.rates</span> <span class="kn">import</span> <span class="n">Rate</span><span class="p">,</span> <span class="n">TabularRate</span><span class="p">,</span> <span class="n">RatePair</span><span class="p">,</span> <span class="n">DerivedRate</span><span class="p">,</span> <span class="n">ApproximateRate</span><span class="p">,</span> <span class="n">Library</span><span class="p">,</span> <span class="n">load_rate</span>
-<span class="kn">from</span> <span class="nn">pynucastro.screening</span> <span class="kn">import</span> <span class="n">PlasmaState</span><span class="p">,</span> <span class="n">ScreenFactors</span>
+<span class="kn">from</span> <span class="nn">pynucastro.screening</span> <span class="kn">import</span> <span class="n">make_plasma_state</span><span class="p">,</span> <span class="n">make_screen_factors</span>
 
 <span class="kn">from</span> <span class="nn">pynucastro.nucdata</span> <span class="kn">import</span> <span class="n">PeriodicTable</span>
 
@@ -856,12 +856,12 @@
         <span class="c1"># this follows the same logic as BaseCxxNetwork._compute_screening_factors()</span>
         <span class="n">factors</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">ys</span> <span class="o">=</span> <span class="n">composition</span><span class="o">.</span><span class="n">get_molar</span><span class="p">()</span>
-        <span class="n">plasma_state</span> <span class="o">=</span> <span class="n">PlasmaState</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">ys</span><span class="p">)</span>
+        <span class="n">plasma_state</span> <span class="o">=</span> <span class="n">make_plasma_state</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">ys</span><span class="p">)</span>
         <span class="n">screening_map</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_screening_map</span><span class="p">()</span>
 
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">scr</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">screening_map</span><span class="p">):</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">scr</span><span class="o">.</span><span class="n">n1</span><span class="o">.</span><span class="n">dummy</span> <span class="ow">or</span> <span class="n">scr</span><span class="o">.</span><span class="n">n2</span><span class="o">.</span><span class="n">dummy</span><span class="p">):</span>
-                <span class="n">scn_fac</span> <span class="o">=</span> <span class="n">ScreenFactors</span><span class="p">(</span><span class="n">scr</span><span class="o">.</span><span class="n">n1</span><span class="p">,</span> <span class="n">scr</span><span class="o">.</span><span class="n">n2</span><span class="p">)</span>
+                <span class="n">scn_fac</span> <span class="o">=</span> <span class="n">make_screen_factors</span><span class="p">(</span><span class="n">scr</span><span class="o">.</span><span class="n">n1</span><span class="p">,</span> <span class="n">scr</span><span class="o">.</span><span class="n">n2</span><span class="p">)</span>
                 <span class="n">scor</span> <span class="o">=</span> <span class="n">screen_func</span><span class="p">(</span><span class="n">plasma_state</span><span class="p">,</span> <span class="n">scn_fac</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
             <span class="k">if</span> <span class="n">scr</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;he4_he4_he4&quot;</span><span class="p">:</span>
                 <span class="c1"># we don&#39;t need to do anything here, but we want to avoid</span>
@@ -871,7 +871,7 @@
                 <span class="c1"># make sure the previous iteration was the first part of 3-alpha</span>
                 <span class="k">assert</span> <span class="n">screening_map</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;he4_he4_he4&quot;</span>
                 <span class="c1"># handle the second part of the screening for 3-alpha</span>
-                <span class="n">scn_fac2</span> <span class="o">=</span> <span class="n">ScreenFactors</span><span class="p">(</span><span class="n">scr</span><span class="o">.</span><span class="n">n1</span><span class="p">,</span> <span class="n">scr</span><span class="o">.</span><span class="n">n2</span><span class="p">)</span>
+                <span class="n">scn_fac2</span> <span class="o">=</span> <span class="n">make_screen_factors</span><span class="p">(</span><span class="n">scr</span><span class="o">.</span><span class="n">n1</span><span class="p">,</span> <span class="n">scr</span><span class="o">.</span><span class="n">n2</span><span class="p">)</span>
                 <span class="n">scor2</span> <span class="o">=</span> <span class="n">screen_func</span><span class="p">(</span><span class="n">plasma_state</span><span class="p">,</span> <span class="n">scn_fac2</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
                 <span class="c1"># there might be both the forward and reverse 3-alpha</span>
