@@ -989,7 +989,7 @@ class ReacLibRate(Rate):
 
         fstring = ""
         fstring += "@numba.njit()\n"
-        fstring += f"def {self.fname}(tf):\n"
+        fstring += f"def {self.fname}(rate_eval, tf):\n"
         fstring += f"    # {self.rid}\n"
         fstring += "    rate = 0.0\n\n"
 
@@ -1000,7 +1000,7 @@ class ReacLibRate(Rate):
                 fstring += "    " + t + "\n"
 
         fstring += "\n"
-        fstring += "    return rate\n\n"
+        fstring += f"    rate_eval.{self.fname} = rate\n\n"
         return fstring
 
     def function_string_cxx(self, dtype="double", specifiers="inline"):
@@ -1085,7 +1085,7 @@ class ReacLibRate(Rate):
         else:
             prefactor_string = ""
 
-        return "{}{}{}{}*lambda_{}".format(prefactor_string, dens_string,
+        return "{}{}{}{}*rate_eval.{}".format(prefactor_string, dens_string,
                                            y_e_string, Y_string, self.fname)
 
     def jacobian_string_py(self, y_i):
@@ -1144,9 +1144,9 @@ class ReacLibRate(Rate):
             prefactor_string = ""
 
         if Y_string == "" and dens_string == "" and prefactor_string == "" and y_e_string == "":
-            rstring = "{}{}{}{}lambda_{}"
+            rstring = "{}{}{}{}rate_eval.{}"
         else:
-            rstring = "{}{}{}{}*lambda_{}"
+            rstring = "{}{}{}{}*rate_eval.{}"
         return rstring.format(prefactor_string, dens_string,
                               y_e_string, Y_string, self.fname)
 
@@ -1412,8 +1412,8 @@ class TabularRate(Rate):
         else:
             prefactor_string = ""
 
-        return "{}{}{}{}*lambda_{}".format(prefactor_string, dens_string,
-                                           y_e_string, Y_string, self.fname)
+        return "{}{}{}{}*rate_eval.{}".format(prefactor_string, dens_string,
+                                              y_e_string, Y_string, self.fname)
 
     def jacobian_string_py(self, y_i):
         """
@@ -1471,9 +1471,9 @@ class TabularRate(Rate):
             prefactor_string = ""
 
         if Y_string == "" and dens_string == "" and prefactor_string == "" and y_e_string == "":
-            rstring = "{}{}{}{}lambda_{}"
+            rstring = "{}{}{}{}rate_eval.{}"
         else:
-            rstring = "{}{}{}{}*lambda_{}"
+            rstring = "{}{}{}{}*rate_eval.{}"
         return rstring.format(prefactor_string, dens_string,
                               y_e_string, Y_string, self.fname)
 
@@ -1658,7 +1658,7 @@ class DerivedRate(ReacLibRate):
 
         fstring = ""
         fstring += "@numba.njit()\n"
-        fstring += f"def {self.fname}(tf):\n"
+        fstring += f"def {self.fname}(rate_eval, tf):\n"
         fstring += f"    # {self.rid}\n"
         fstring += "    rate = 0.0\n\n"
 
@@ -1707,7 +1707,7 @@ class DerivedRate(ReacLibRate):
             fstring += "    rate *= z_r/z_p\n"
 
         fstring += "\n"
-        fstring += "    return rate\n\n"
+        fstring += f"    rate_eval.{self.fname} = rate\n\n"
         return fstring
 
     def counter_factors(self):
@@ -1897,15 +1897,15 @@ class ApproximateRate(ReacLibRate):
 
         string = ""
         string += "@numba.njit()\n"
-        string += f"def {self.fname}(tf):\n"
+        string += f"def {self.fname}(rate_eval, tf):\n"
 
         if not self.is_reverse:
 
             # first we need to get all of the rates that make this up
-            string += f"    r_ag = {self.primary_rate.fname}(tf)\n"
-            string += f"    r_ap = {self.secondary_rates[0].fname}(tf)\n"
-            string += f"    r_pg = {self.secondary_rates[1].fname}(tf)\n"
-            string += f"    r_pa = {self.secondary_reverse[1].fname}(tf)\n"
+            string += f"    r_ag = rate_eval.{self.primary_rate.fname}\n"
+            string += f"    r_ap = rate_eval.{self.secondary_rates[0].fname}\n"
+            string += f"    r_pg = rate_eval.{self.secondary_rates[1].fname}\n"
+            string += f"    r_pa = rate_eval.{self.secondary_reverse[1].fname}\n"
 
             # now the approximation
             string += "    rate = r_ag + r_ap * r_pg / (r_pg + r_pa)\n"
@@ -1913,15 +1913,15 @@ class ApproximateRate(ReacLibRate):
         else:
 
             # first we need to get all of the rates that make this up
-            string += f"    r_ga = {self.primary_reverse.fname}(tf)\n"
-            string += f"    r_pa = {self.secondary_reverse[1].fname}(tf)\n"
-            string += f"    r_gp = {self.secondary_reverse[0].fname}(tf)\n"
-            string += f"    r_pg = {self.secondary_rates[1].fname}(tf)\n"
+            string += f"    r_ga = rate_eval.{self.primary_reverse.fname}\n"
+            string += f"    r_pa = rate_eval.{self.secondary_reverse[1].fname}\n"
+            string += f"    r_gp = rate_eval.{self.secondary_reverse[0].fname}\n"
+            string += f"    r_pg = rate_eval.{self.secondary_rates[1].fname}\n"
 
             # now the approximation
             string += "    rate = r_ga + r_pa * r_gp / (r_pg + r_pa)\n"
 
-        string += "    return rate\n\n"
+        string += f"    rate_eval.{self.fname} = rate\n\n"
         return string
 
     def function_string_cxx(self, dtype="double", specifiers="inline"):

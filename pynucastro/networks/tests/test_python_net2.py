@@ -13,8 +13,8 @@ class TestPythonNetwork2:
 
         dyodt = \
 """dYdt[jo16] = (
-   -Y[jo16]*lambda_o16__he4_c12
-   +rho*Y[jhe4]*Y[jc12]*lambda_he4_c12__o16
+   -Y[jo16]*rate_eval.o16__he4_c12
+   +rho*Y[jhe4]*Y[jc12]*rate_eval.he4_c12__o16
    )
 
 """

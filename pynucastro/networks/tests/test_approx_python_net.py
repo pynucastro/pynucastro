@@ -25,10 +25,10 @@ class TestPythonNetwork:
     def test_full_ydot_string(self, pynet):
         ostr = \
 """dYdt[jhe4] = (
-   -rho*Y[jhe4]*Y[jmg24]*lambda_mg24_he4__si28__approx
-   -rho*Y[jhe4]*Y[jsi28]*lambda_si28_he4__s32__approx
-   +Y[jsi28]*lambda_si28__mg24_he4__approx
-   +Y[js32]*lambda_s32__si28_he4__approx
+   -rho*Y[jhe4]*Y[jmg24]*rate_eval.mg24_he4__si28__approx
+   -rho*Y[jhe4]*Y[jsi28]*rate_eval.si28_he4__s32__approx
+   +Y[jsi28]*rate_eval.si28__mg24_he4__approx
+   +Y[js32]*rate_eval.s32__si28_he4__approx
    )
 
 """
@@ -39,13 +39,13 @@ class TestPythonNetwork:
 
         ostr = \
 """@numba.njit()
-def mg24_he4__si28__approx(tf):
-    r_ag = he4_mg24__si28(tf)
-    r_ap = he4_mg24__p_al27(tf)
-    r_pg = p_al27__si28(tf)
-    r_pa = p_al27__he4_mg24(tf)
+def mg24_he4__si28__approx(rate_eval, tf):
+    r_ag = rate_eval.he4_mg24__si28
+    r_ap = rate_eval.he4_mg24__p_al27
+    r_pg = rate_eval.p_al27__si28
+    r_pa = rate_eval.p_al27__he4_mg24
     rate = r_ag + r_ap * r_pg / (r_pg + r_pa)
-    return rate
+    rate_eval.mg24_he4__si28__approx = rate
 
 """
         r = pynet.get_rate("mg24_he4__si28__approx")
@@ -55,7 +55,7 @@ def mg24_he4__si28__approx(tf):
 
         ostr = \
 """@numba.njit()
-def he4_mg24__si28(tf):
+def he4_mg24__si28(rate_eval, tf):
     # mg24 + he4 --> si28
     rate = 0.0
 
@@ -66,7 +66,7 @@ def he4_mg24__si28(tf):
     rate += np.exp(  8.03977 + -15.629*tf.T9i
                   + -1.5*tf.lnT9)
 
-    return rate
+    rate_eval.he4_mg24__si28 = rate
 
 """
 
