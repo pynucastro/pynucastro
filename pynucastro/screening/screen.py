@@ -14,7 +14,7 @@ else:
         return func
 
 __all__ = ["PlasmaState", "ScreenFactors", "chugunov_2007", "chugunov_2009",
-           "make_plasma_state", "make_screen_factors"]
+           "make_plasma_state", "make_screen_factors", "potekhin_1998"]
 
 
 amu = constants.value("atomic mass constant") / constants.gram  # kg to g
@@ -436,5 +436,36 @@ def chugunov_2009(state, scn_fac):
         dscor_dT = 0
     else:
         dscor_dT = scor * dh12_dT
+
+    return scor, dscor_dT
+
+
+@njit
+def potekhin_1998(state, scn_fac):
+
+    Gamma_e = state.gamma_e_fac / state.temp
+    zcomp = scn_fac.z1 + scn_fac.z2
+
+    Gamma_1 = Gamma_e * scn_fac.z1 ** (5 / 3)
+    Gamma_2 = Gamma_e * scn_fac.z2 ** (5 / 3)
+    Gamma_comp = Gamma_e * zcomp ** (5 / 3)
+
+    A_1 = -0.9052
+    A_2 = 0.6322
+    A_3 = -np.sqrt(3)/2 - A_1/np.sqrt(A_2)
+
+    f_1 = A_1 * (np.sqrt(Gamma_1 * (A_2 + Gamma_1)) - A_2 * np.log(np.sqrt(Gamma_1 / A_2)
+                  + np.sqrt(1.0 + Gamma_1/A_2))) + 2.0 * A_3 * (np.sqrt(Gamma_1) - np.arctan(np.sqrt(Gamma_1)))
+
+    f_2 = A_1 * (np.sqrt(Gamma_2 * (A_2 + Gamma_2)) - A_2 * np.log(np.sqrt(Gamma_2 / A_2)
+                  + np.sqrt(1.0 + Gamma_2/A_2))) + 2.0 * A_3 * (np.sqrt(Gamma_2) - np.arctan(np.sqrt(Gamma_2)))
+
+    f_12 = A_1 * (np.sqrt(Gamma_comp * (A_2 + Gamma_comp)) - A_2 * np.log(np.sqrt(Gamma_comp / A_2)
+                  + np.sqrt(1.0 + Gamma_comp/A_2))) + 2.0 * A_3 * (np.sqrt(Gamma_comp) - np.arctan(np.sqrt(Gamma_comp)))
+
+    h = f_1 + f_2 - f_12
+    scor = np.exp(h)
+
+    dscor_dT = 0.0 # I need to implement this
 
     return scor, dscor_dT
