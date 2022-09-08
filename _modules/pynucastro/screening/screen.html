@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.screening.screen &mdash; pynucastro 1.7.0.post43+gc409118 documentation</title>
+  <title>pynucastro.screening.screen &mdash; pynucastro 1.7.0.post44+g344352d documentation</title>
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -128,7 +128,7 @@
 <span class="n">n_A</span> <span class="o">=</span> <span class="n">constants</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="s2">&quot;Avogadro constant&quot;</span><span class="p">)</span>
 
 
-<span class="nd">@jitclass</span>
+<span class="nd">@jitclass</span><span class="p">()</span>
 <span class="k">class</span> <span class="nc">PlasmaState</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Stores precomputed values that are reused for all screening correction</span>
@@ -151,6 +151,14 @@
     <span class="n">gamma_e_fac</span><span class="p">:</span> <span class="nb">float</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">temp</span><span class="p">,</span> <span class="n">dens</span><span class="p">,</span> <span class="n">Ys</span><span class="p">,</span> <span class="n">Zs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param temp: temperature in K</span>
+<span class="sd">        :param dens: density in g/cm^3</span>
+<span class="sd">        :param Ys:   molar fractions of each ion</span>
+<span class="sd">        :type Ys: numpy ndarray</span>
+<span class="sd">        :param Zs:   charge of each ion, in the same order as Ys</span>
+<span class="sd">        :type Zs: numpy ndarray</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">temp</span> <span class="o">=</span> <span class="n">temp</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dens</span> <span class="o">=</span> <span class="n">dens</span>
         <span class="n">ytot</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">Ys</span><span class="p">)</span>
@@ -184,7 +192,7 @@
     <span class="k">return</span> <span class="n">PlasmaState</span><span class="p">(</span><span class="n">temp</span><span class="p">,</span> <span class="n">dens</span><span class="p">,</span> <span class="n">Ys</span><span class="p">,</span> <span class="n">Zs</span><span class="p">)</span></div>
 
 
-<span class="nd">@jitclass</span>
+<span class="nd">@jitclass</span><span class="p">()</span>
 <span class="k">class</span> <span class="nc">ScreenFactors</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Stores values that will be used to calculate the screening correction factor</span>
