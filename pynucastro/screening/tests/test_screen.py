@@ -1,5 +1,5 @@
 import pynucastro as pyna
-from pynucastro.screening import chugunov_2007, chugunov_2009, PlasmaState, ScreenFactors
+from pynucastro.screening import chugunov_2007, chugunov_2009, make_plasma_state, make_screen_factors
 
 import pytest
 from pytest import approx
@@ -21,13 +21,13 @@ class TestScreen:
         dens = 1e5
         comp = pyna.Composition(nuclei)
         comp.set_solar_like()
-        return PlasmaState.fill(temp, dens, comp.get_molar())
+        return make_plasma_state(temp, dens, comp.get_molar())
 
     @pytest.fixture(scope="class")
     def scn_fac(self):
         c12 = pyna.Nucleus("c12")
         he4 = pyna.Nucleus("he4")
-        return ScreenFactors(c12, he4)
+        return make_screen_factors(c12, he4)
 
     def test_plasma_state(self, plasma_state):
         assert plasma_state.temp == approx(1e6)
@@ -39,10 +39,10 @@ class TestScreen:
         assert plasma_state.gamma_e_fac == approx(10001498.09343337)
 
     def test_screen_factors(self, scn_fac):
-        assert scn_fac.n1.Z == 6
-        assert scn_fac.n1.A == 12
-        assert scn_fac.n2.Z == 2
-        assert scn_fac.n2.A == 4
+        assert scn_fac.z1 == 6
+        assert scn_fac.a1 == 12
+        assert scn_fac.z2 == 2
+        assert scn_fac.a2 == 4
         assert scn_fac.aznut == approx(7.55952629936924)
         assert scn_fac.ztilde == approx(1.5385208213635064)
 
