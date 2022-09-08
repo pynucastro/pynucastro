@@ -1088,7 +1088,7 @@ class RateCollection:
         y_e = composition.eval_ye()
         prefac = np.zeros(len(self.rates))
         for i, r in enumerate(self.rates):
-            if r.tabular:
+            if r.label == "tabular":
                 raise ValueError('Tabular rates are not supported in vectorized rate calculations.')
             prefac[i] = r.prefactor * rho**r.dens_exp
             if(r.weak_type == 'electron_capture'):

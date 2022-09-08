@@ -6,7 +6,7 @@ from pynucastro.rates import Library, RateFilter
 from pynucastro.nucdata import Nucleus
 from pynucastro.networks import PythonNetwork
 
-def load_network(endpoint=Nucleus('te108')):
+def load_network(endpoint=Nucleus('te108'), library='rp-process-lib'):
     
     def ff(rate):
         
@@ -27,7 +27,7 @@ def load_network(endpoint=Nucleus('te108')):
         return all(react_meet_conds) and all(prod_meet_conds)
         
     filt = RateFilter(filter_function=ff)
-    lib = Library('rp-process-lib')
+    lib = Library(library)
     lib = lib.filter(filt)
     return PythonNetwork(libraries=[lib])
     

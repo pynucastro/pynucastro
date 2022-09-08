@@ -1,6 +1,6 @@
 import numpy as np
 import networkx as nx
-from .reduction_utils import FailedMPIImport, mpi_numpy_decomp
+from reduction_utils import FailedMPIImport, mpi_numpy_decomp, to_list
 try:
     from mpi4py import MPI
 except ImportError:
@@ -89,7 +89,7 @@ def _pfa(net, conds):
     # Calculate interaction coefficients (vectorized)
     #------------------------------------------------
     
-    A = np.zeros((len(net.unique_nuclei), len(net.unique_nuclei)) dtype=np.float64)
+    A = np.zeros((len(net.unique_nuclei), len(net.unique_nuclei)), dtype=np.float64)
 
     for comp in comp_L:
         net.update_yfac_arr(comp)
@@ -122,7 +122,7 @@ def _pfa_mpi(net, conds):
     rank = comm.Get_rank()
     N_proc = comm.Get_size()
     
-    A = np.zeros((len(net.unique_nuclei), len(net.unique_nuclei)) dtype=np.float64)
+    A = np.zeros((len(net.unique_nuclei), len(net.unique_nuclei)), dtype=np.float64)
     comp_idx, comp_step, rho_idx, rho_step, T_idx, T_step = mpi_numpy_decomp(N_proc, rank, n)
 
     # Iterate through conditions and reduce local matrix
@@ -191,14 +191,18 @@ def pfa(net, conds, targets=None, tol=None, returnobj='net', use_mpi=False, firs
         
     can_reduce = (targets is not None) and (tol is not None)
     if returnobj == 'net' or returnobj == 'nuclei':
-        assert can_reduce, "Must supply both 'targets' and 'tol' as arguments if requesting" +
+        assert can_reduce, "Must supply both 'targets' and 'tol' as arguments if requesting" + \
                 f" returnobj '{returnobj}'."
         
-    targets = _to_list(targets)
+    targets = to_list(targets)
     
     #-------------------------------------------------------
     # Determine operation mode and launch appropriate helper
     #-------------------------------------------------------
+    
+    if first_pass:
+        assert targets is not None, "Must supply 'targets' if requesting first pass reduction."
+        pfa_first_pass_reduction(net, targets)
     
     if use_mpi:
         adj = _pfa_mpi(net, conds)

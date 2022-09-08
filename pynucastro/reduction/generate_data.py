@@ -3,7 +3,7 @@
 from pynucastro import Composition, Nucleus
 import numpy as np
 
-def dataset(network, n=10, permute=True):
+def dataset(network, n=10, permute=True, b_rho=None, b_T=None, b_Z=None):
     
     if isinstance(n, int):
         n = np.ones(3, dtype=np.int32) * n
@@ -11,9 +11,12 @@ def dataset(network, n=10, permute=True):
         n = np.array(list(n), dtype=np.int32)
     
     # Bounds on each variable
-    b_rho = (1e2, 1e6) # density (g/cm^3)
-    b_T = (8e6, 1.5e9) # temperature (K)
-    b_Z = (0.02, 0.2) # metallicity
+    if b_rho is None:
+        b_rho = (1e2, 1e6) # density (g/cm^3)
+    if b_T is None:
+        b_T = (8e6, 1.5e9) # temperature (K)
+    if b_Z is None:
+        b_Z = (0.02, 0.2) # metallicity
     
     rho = np.logspace(*map(np.log10, b_rho), num=n[1])
     T = np.logspace(*map(np.log10, b_T), num=n[2])

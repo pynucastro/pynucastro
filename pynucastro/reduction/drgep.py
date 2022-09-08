@@ -1,5 +1,5 @@
 import numpy as np
-from .reduction_utils import FailedMPIImport, mpi_numpy_decomp
+from reduction_utils import FailedMPIImport, mpi_numpy_decomp, to_list
 try:
     from mpi4py import MPI
 except ImportError:
@@ -129,13 +129,6 @@ def drgep_dijkstras(net, r_AB, target, adj_nuc):
         imax = np.argmax(dist)
         
     return R_TB
-    
-def _to_list(x, n=1):
-    
-    try:
-        return list(x)
-    except TypeError:
-        return [x] * n
     
 def _drgep_kernel(net, R_TB, rvals, targets, tols, adj_nuc):
     
@@ -309,8 +302,8 @@ def drgep(net, conds, targets, tols, returnobj='net', use_mpi=False, use_numpy=F
     
     if returnobj not in {'net', 'nuclei', 'coeff'}:
         raise ValueError(f"Invalid 'returnobj' argument: '{returnobj}'.")
-    targets = _to_list(targets)
-    tols = _to_list(tols, len(targets))
+    targets = to_list(targets)
+    tols = to_list(tols, len(targets))
     
     #-------------------------------------------------------
     # Determine operation mode and launch appropriate helper
