@@ -20,6 +20,7 @@ from matplotlib.colors import SymLogNorm
 from matplotlib.scale import SymmetricalLogTransform
 from matplotlib.patches import ConnectionPatch
 import networkx as nx
+from pynucastro.screening.screen import NseState
 from scipy import constants
 from scipy.optimize import fsolve
 import copy
@@ -784,7 +785,7 @@ class RateCollection:
 
         return factors
 
-    def _evaluate_comp_NSE(self, u, rho, T, ye, use_coulomb_corr=True):
+    def _evaluate_mu_c(self, state, use_coulomb_corr=True):
         """ A helper equation that finds the mass fraction of each nuclide in NSE state,
         u[0] is chemical potential of proton  while u[1] is chemical potential of neutron"""
 
@@ -795,12 +796,10 @@ class RateCollection:
         # so the input doesn't go outside of the scope and the solver won't be able to converge if it did
         ye_low = min(nuc.Z/nuc.A for nuc in self.unique_nuclei)
         ye_max = max(nuc.Z/nuc.A for nuc in self.unique_nuclei)
-        assert ye >= ye_low and ye <= ye_max, "input electron fraction goes outside of scope for current network"
+        assert state.ye >= ye_low and state.ye <= ye_max, "input electron fraction goes outside of scope for current network"
 
-        # Define constants: amu, boltzmann, planck, and electron charge
-        m_u = constants.value("unified atomic mass unit") * 1.0e3  # atomic unit mass in g
+        # Seting up the constants needed to compute mu_c
         k = constants.value("Boltzmann constant") * 1.0e7          # boltzmann in erg/K
-        h = constants.value("Planck constant") * 1.0e7             # in cgs
         Erg2MeV = 624151.0
 
         # These are three constants for calculating coulomb corrections of chemical energy, see Calders paper: iopscience 510709, appendix
@@ -809,49 +808,66 @@ class RateCollection:
             A_2 = 0.6322
             A_3 = -0.5 * np.sqrt(3.0) - A_1 / np.sqrt(A_2)
 
-            # Find electron number density and set electron charge
-            e = 4.8032e-10
-            n_e = rho * ye / m_u
-
-        # Create composition object for NSE ron number density
-        comp_NSE = Composition(self.unique_nuclei)
-
         # u_c is the coulomb correction term for NSE
         # Calculate the composition at NSE, equations found in appendix of Calder paper
+        u_c = {}
+        for nuc in self.unique_nuclei:
+            if use_coulomb_corr:
+                Gamma = state.gamma_e_fac * nuc.Z ** (5. / 3.) / state.temp
+                u_c[nuc] = Erg2MeV * k * state.temp * (A_1 * (np.sqrt(Gamma * (A_2 + Gamma)) - A_2 * np.log(np.sqrt(Gamma / A_2) +
+                                      np.sqrt(1.0 + Gamma / A_2))) + 2.0 * A_3 * (np.sqrt(Gamma) - np.arctan(np.sqrt(Gamma))))
+            else:
+                u_c[nuc] = 0.0
+
+        return u_c
+
+    def _nucleon_fraction_nse(self, u, u_c, state):
+
+        # Define constants: amu, boltzmann, planck, and electron charge
+        m_u = constants.value("unified atomic mass unit") * 1.0e3  # atomic unit mass in g
+        k = constants.value("Boltzmann constant") * 1.0e7          # boltzmann in erg/K
+        h = constants.value("Planck constant") * 1.0e7             # in cgs
+        Erg2MeV = 624151.0
+
+        Xs = {}
         for nuc in self.unique_nuclei:
             if nuc.partition_function:
-                pf = nuc.partition_function(T)
+                pf = nuc.partition_function(state.temp)
             else:
                 pf = 1.0
 
-            if use_coulomb_corr:
-                gamma = nuc.Z**(5. / 3.) * e**2 * (4.0 * np.pi * n_e / 3.0)**(1. / 3.) / k / T
-                u_c = Erg2MeV * k * T * (A_1 * (np.sqrt(gamma * (A_2 + gamma)) - A_2 * np.log(np.sqrt(gamma / A_2) +
-                                      np.sqrt(1.0 + gamma / A_2))) + 2.0 * A_3 * (np.sqrt(gamma) - np.arctan(np.sqrt(gamma))))
-            else:
-                u_c = 0.0
+            Xs[nuc] = m_u * nuc.A_nuc * pf / state.dens  * (2.0 * np.pi * m_u * nuc.A_nuc * k * state.temp / h**2)**(3. / 2.) \
+                                  * np.exp((nuc.Z * u[0] + nuc.N * u[1] - u_c[nuc] + nuc.nucbind * nuc.A) / k / state.temp / Erg2MeV)
 
-            comp_NSE.X[nuc] = m_u * nuc.A_nuc * pf / rho * (2.0 * np.pi * m_u * nuc.A_nuc * k * T / h**2)**(3. / 2.) \
-            * np.exp((nuc.Z * u[0] + nuc.N * u[1] - u_c + nuc.nucbind * nuc.A) / k / T / Erg2MeV)
+        return Xs
 
-        return comp_NSE
-
-    def _constraint_eq(self, u, rho, T, ye, use_coulomb_corr=True):
+    def _constraint_eq(self, u, u_c, state):
         """ Constraint Equations used to evaluate chemical potential for proton and neutron,
         which is used when evaluating composition at NSE"""
 
-        comp_NSE = self._evaluate_comp_NSE(u, rho, T, ye, use_coulomb_corr=use_coulomb_corr)
-
         # Don't use eval_ye() since it does automatic mass fraction normalization.
         # However, we should force normalization through constraint eq1.
-        nse_ye = sum(nuc.Z * comp_NSE.X[nuc] / nuc.A for nuc in self.unique_nuclei)
 
-        eq1 = sum(comp_NSE.X.values()) - 1.0
-        eq2 = ye - nse_ye
+        m_u = constants.value("unified atomic mass unit") * 1.0e3  # atomic unit mass in g
 
+        Xs = self._nucleon_fraction_nse(u, u_c, state)
+
+        eq1 = 0.0
+        for nuc in self.unique_nuclei:
+            eq1 += Xs[nuc]
+
+        eq1 += - 1.0
+
+        eq2 = 0.0
+        for nuc in self.unique_nuclei:
+            eq2 += Xs[nuc] * nuc.Z/ nuc.A
+        # for nuc in self.unique_nuclei:
+        #     eq2 += ((state.ye - 1.0) * nuc.Z + state.ye * nuc.N ) * Xs[nuc] / (nuc.A_nuc * m_u)
+
+        eq2 += - state.ye
         return [eq1, eq2]
 
-    def get_comp_NSE(self, rho, T, ye, init_guess=(-3.5, -15.0), tol=1.5e-9, use_coulomb_corr=True, tell_sol=False):
+    def get_comp_nse(self, rho, T, ye, init_guess=(-3.5, -15), tol=1.5e-9, use_coulomb_corr=False):
         """
         Returns the NSE composition given density, temperature and prescribed electron fraction
         using scipy.fsolve, `tol` is an optional parameter for the tolerance of scipy.fsolve.
@@ -861,29 +877,38 @@ class RateCollection:
         when calling this method multiple times such as making a plot.
         """
 
+        #From here we convert the init_guess list into a np.array object:
+
+        init_guess = np.array(init_guess)
+        state = NseState(T, rho, ye)
+        u_c = self._evaluate_mu_c(state, use_coulomb_corr=use_coulomb_corr)
+
+
         j = 0
         init_guess = np.array(init_guess)
         is_pos_old = False
         found_sol = False
 
         # This nested loops should fine-tune the initial guess if fsolve is unable to find a solution
-        while (j < 15):
+        while (j < 20):
             i = 0
             guess = copy.deepcopy(init_guess)
             init_dx = 0.5
 
-            while (i < 15):
-                u = fsolve(self._constraint_eq, guess, args=(rho, T, ye, use_coulomb_corr), xtol=tol, maxfev=800)
-                res = self._constraint_eq(u, rho, T, ye, use_coulomb_corr=use_coulomb_corr)
+            while (i < 20):
+                u = fsolve(self._constraint_eq, guess, args=(u_c, state), xtol=tol, maxfev=800)
+                res = self._constraint_eq(u, u_c, state)
                 is_pos_new = all(k > 0 for k in res)
-                found_sol = np.all(np.isclose(res, [0.0, 0.0], rtol=1e-2, atol=1e-3))
+                found_sol = np.all(np.isclose(res, [0.0, 0.0], rtol=1.0e-2, atol=1.0e-3))
 
                 if found_sol:
-                    if tell_sol:
-                        print(f"After solving, chemical potential of proton and neutron are {u[0]} and {u[1]}")
-                    comp_NSE = self._evaluate_comp_NSE(u, rho, T, ye, use_coulomb_corr=use_coulomb_corr)
+                    Xs = self._nucleon_fraction_nse(u, u_c, state)
+                    comp = Composition(self.unique_nuclei)
 
-                    return comp_NSE
+                    # for nuc in self.unique_nuclei:
+                    comp.X = Xs
+
+                    return comp
 
                 if is_pos_old != is_pos_new:
                     init_dx *= 0.8
