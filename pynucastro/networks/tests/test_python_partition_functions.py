@@ -4,10 +4,9 @@ import pytest
 
 class TestPythonPartitionNetwork:
     @pytest.fixture(scope="class")
-    def fn(self):
+    def fn(self, reaclib_library):
 
-        all_reactions = pyna.ReacLibLibrary()
-        fwd_reactions = all_reactions.derived_forward()
+        fwd_reactions = reaclib_library.derived_forward()
 
         nuclei = ["p", "he4", "fe52", "ni56", "co55"]
 

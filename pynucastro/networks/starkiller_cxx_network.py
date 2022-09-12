@@ -62,18 +62,20 @@ class StarKillerCxxNetwork(BaseCxxNetwork):
 
         super()._write_network(odir=odir)
 
+        if odir is None:
+            odir = os.getcwd()
         # create a .net file with the nuclei properties
-        with open("pynucastro.net", "w") as of:
+        with open(os.path.join(odir, "pynucastro.net"), "w") as of:
             for nuc in self.unique_nuclei:
                 of.write("{:25} {:6} {:6.1f} {:6.1f}\n".format(
                     nuc.spec_name, nuc.short_spec_name, nuc.A, nuc.Z))
 
         # write out some network properties
-        with open("NETWORK_PROPERTIES", "w") as of:
+        with open(os.path.join(odir, "NETWORK_PROPERTIES"), "w") as of:
             of.write(f"NSCREEN := {self.num_screen_calls}\n")
 
         # write the _parameters file
-        with open("_parameters", "w") as of:
+        with open(os.path.join(odir, "_parameters"), "w") as of:
             of.write("@namespace: network\n\n")
             if self.disable_rate_params:
                 for r in self.disable_rate_params:

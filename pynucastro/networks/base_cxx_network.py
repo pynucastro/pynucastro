@@ -128,7 +128,7 @@ class BaseCxxNetwork(ABC, RateCollection):
             if tdir != os.getcwd():
                 tdat_file = os.path.join(tdir, tr.table_file)
                 if os.path.isfile(tdat_file):
-                    shutil.copy(tdat_file, os.getcwd())
+                    shutil.copy(tdat_file, odir or os.getcwd())
                 else:
                     print(f'WARNING: Table data file {tr.table_file} not found.')
 
