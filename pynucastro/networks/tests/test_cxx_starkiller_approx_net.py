@@ -10,9 +10,8 @@ import io
 class TestStarKillerCxxNetwork:
     # pylint: disable=protected-access
     @pytest.fixture(scope="class")
-    def fn(self):
+    def fn(self, reaclib_library):
 
-        reaclib_library = pyna.ReacLibLibrary()
         mylib = reaclib_library.linking_nuclei(["mg24", "al27", "si28", "p31", "s32", "he4", "p"])
         net = pyna.StarKillerCxxNetwork(libraries=[mylib])
         net.make_ap_pg_approx()
