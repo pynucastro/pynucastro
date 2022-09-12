@@ -43,7 +43,9 @@ class TestStarKillerCxxNetwork:
                  "actual_rhs.H",
                  "inputs.burn_cell.VODE",
                  "Make.package",
+                 "NETWORK_PROPERTIES",
                  "_parameters",
+                 "pynucastro.net",
                  "reaclib_rates.H",
                  "table_rates_data.cpp",
                  "table_rates.H"]
@@ -57,4 +59,4 @@ class TestStarKillerCxxNetwork:
                                shallow=False):
                 errors.append(test_file)
 
-        assert not errors, f"errors: {' '.join(errors)}"
+        assert not errors, f"files don't match: {' '.join(errors)}"
