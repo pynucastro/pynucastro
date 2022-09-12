@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.networks.base_cxx_network &mdash; pynucastro 1.7.0.post49+gac2e82e documentation</title>
+  <title>pynucastro.networks.base_cxx_network &mdash; pynucastro 1.7.0.post50+gf0c3487 documentation</title>
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -232,7 +232,7 @@
             <span class="k">if</span> <span class="n">tdir</span> <span class="o">!=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">():</span>
                 <span class="n">tdat_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tdir</span><span class="p">,</span> <span class="n">tr</span><span class="o">.</span><span class="n">table_file</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">tdat_file</span><span class="p">):</span>
-                    <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">tdat_file</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">())</span>
+                    <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">tdat_file</span><span class="p">,</span> <span class="n">odir</span> <span class="ow">or</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">())</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;WARNING: Table data file </span><span class="si">{</span><span class="n">tr</span><span class="o">.</span><span class="n">table_file</span><span class="si">}</span><span class="s1"> not found.&#39;</span><span class="p">)</span>
 
