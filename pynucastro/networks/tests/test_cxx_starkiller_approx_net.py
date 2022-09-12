@@ -10,9 +10,8 @@ import io
 class TestStarKillerCxxNetwork:
     # pylint: disable=protected-access
     @pytest.fixture(scope="class")
-    def fn(self):
+    def fn(self, reaclib_library):
 
-        reaclib_library = pyna.ReacLibLibrary()
         mylib = reaclib_library.linking_nuclei(["mg24", "al27", "si28", "p31", "s32", "he4", "p"])
         net = pyna.StarKillerCxxNetwork(libraries=[mylib])
         net.make_ap_pg_approx()
@@ -43,7 +42,9 @@ class TestStarKillerCxxNetwork:
                  "actual_rhs.H",
                  "inputs.burn_cell.VODE",
                  "Make.package",
+                 "NETWORK_PROPERTIES",
                  "_parameters",
+                 "pynucastro.net",
                  "reaclib_rates.H",
                  "table_rates_data.cpp",
                  "table_rates.H"]
@@ -57,4 +58,4 @@ class TestStarKillerCxxNetwork:
                                shallow=False):
                 errors.append(test_file)
 
-        assert not errors, f"errors: {' '.join(errors)}"
+        assert not errors, f"files don't match: {' '.join(errors)}"
