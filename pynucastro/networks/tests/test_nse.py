@@ -6,8 +6,8 @@ class TestNSE:
     @pytest.fixture(scope="class")
     def pynet(self, reaclib_library):
 
-        lib = reaclib_library.linking_nuclei(["p","he4","fe52",
-                                              "co55","ni56"])
+        lib = reaclib_library.linking_nuclei(["p", "he4", "fe52",
+                                              "co55", "ni56"])
         return pyna.RateCollection(libraries=lib)
 
     def test_nse_coul(self, pynet):
