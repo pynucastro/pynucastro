@@ -836,7 +836,7 @@ class RateCollection:
             else:
                 pf = 1.0
 
-            Xs[nuc] = m_u * nuc.A_nuc * pf / state.dens * (2.0 * np.pi * m_u * nuc.A_nuc * k * state.temp / h**2) ** (3. / 2.) \
+            Xs[nuc] = m_u * nuc.A_nuc * pf * nuc.spin_states / state.dens * (2.0 * np.pi * m_u * nuc.A_nuc * k * state.temp / h**2) ** (3. / 2.) \
                     * np.exp((nuc.Z * u[0] + nuc.N * u[1] - u_c[nuc] + nuc.nucbind * nuc.A) / k / state.temp / Erg2MeV)
 
         return Xs
@@ -867,7 +867,7 @@ class RateCollection:
         eq2 += - state.ye
         return [eq1, eq2]
 
-    def get_comp_nse(self, rho, T, ye, init_guess=(-3.5, -15), tol=1.5e-9, use_coulomb_corr=False):
+    def get_comp_nse(self, rho, T, ye, init_guess=(-3.5, -15), tol=1.0e-11, use_coulomb_corr=False):
         """
         Returns the NSE composition given density, temperature and prescribed electron fraction
         using scipy.fsolve, `tol` is an optional parameter for the tolerance of scipy.fsolve.
@@ -897,7 +897,7 @@ class RateCollection:
                 u = fsolve(self._constraint_eq, guess, args=(u_c, state), xtol=tol, maxfev=800)
                 res = self._constraint_eq(u, u_c, state)
                 is_pos_new = all(k > 0 for k in res)
-                found_sol = np.all(np.isclose(res, [0.0, 0.0], rtol=1.0e-2, atol=1.0e-3))
+                found_sol = np.all(np.isclose(res, [0.0, 0.0], rtol=1.0e-10, atol=1.0e-10))
 
                 if found_sol:
                     Xs = self._nucleon_fraction_nse(u, u_c, state)
