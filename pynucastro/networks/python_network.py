@@ -4,7 +4,7 @@ source"""
 import sys
 
 from pynucastro.networks.rate_collection import RateCollection
-from pynucastro.rates.rate import ApproximateRate
+from pynucastro.rates.rate import ApproximateRate, DerivedRate
 
 
 class PythonNetwork(RateCollection):
@@ -165,10 +165,13 @@ class PythonNetwork(RateCollection):
         of.write(f"{indent}from numba import jitclass\n\n")
 
         # integer keys
+
         for i, n in enumerate(self.unique_nuclei):
             of.write(f"j{n} = {i}\n")
 
         of.write(f"nnuc = {len(self.unique_nuclei)}\n\n")
+
+        # nuclei properties
 
         of.write("A = np.zeros((nnuc), dtype=np.int32)\n\n")
         for n in self.unique_nuclei:
@@ -187,6 +190,24 @@ class PythonNetwork(RateCollection):
             of.write(f"names.append(\"{n.short_spec_name}\")\n")
 
         of.write("\n")
+
+        # partition function data (if needed)
+
+        rates_with_pfs = [q for q in self.all_rates if isinstance(q, DerivedRate) and q.use_pf]
+
+        if rates_with_pfs:
+            nuclei_pfs = []
+            for r in rates_with_pfs:
+                nuclei_pfs += r.reactants + r.products
+            nuclei_pfs = set(nuclei_pfs)
+
+            for n in nuclei_pfs:
+                if n.partition_function:
+                    of.write(f"{n}_temp_array = np.array({list(n.partition_function.temperature/1.0e9)})\n")
+                    of.write(f"{n}_pf_array = np.array({list(n.partition_function.partition_function)})\n")
+                    of.write("\n")
+
+        # rate_eval class
 
         of.write("@jitclass([\n")
         for r in self.all_rates:
