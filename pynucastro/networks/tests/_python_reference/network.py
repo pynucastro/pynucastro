@@ -165,19 +165,19 @@ def rhs_eq(t, Y, rho, T, screen_func):
         plasma_state = PlasmaState(T, rho, Y, Z)
 
         scn_fac = ScreenFactors(6, 12, 6, 12)
-        scor = screen_func(plasma_state, scn_fac)[0]
+        scor = screen_func(plasma_state, scn_fac)
         rate_eval.c12_c12__he4_ne20 *= scor
         rate_eval.c12_c12__n_mg23 *= scor
         rate_eval.c12_c12__p_na23 *= scor
 
         scn_fac = ScreenFactors(2, 4, 6, 12)
-        scor = screen_func(plasma_state, scn_fac)[0]
+        scor = screen_func(plasma_state, scn_fac)
         rate_eval.he4_c12__o16 *= scor
 
         scn_fac = ScreenFactors(2, 4, 2, 4)
-        scor = screen_func(plasma_state, scn_fac)[0]
+        scor = screen_func(plasma_state, scn_fac)
         scn_fac2 = ScreenFactors(2, 4, 4, 8)
-        scor2 = screen_func(plasma_state, scn_fac2)[0]
+        scor2 = screen_func(plasma_state, scn_fac2)
         rate_eval.he4_he4_he4__c12 *= scor * scor2
 
     dYdt = np.zeros((nnuc), dtype=np.float64)
@@ -245,19 +245,19 @@ def jacobian_eq(t, Y, rho, T, screen_func):
         plasma_state = PlasmaState(T, rho, Y, Z)
 
         scn_fac = ScreenFactors(6, 12, 6, 12)
-        scor = screen_func(plasma_state, scn_fac)[0]
+        scor = screen_func(plasma_state, scn_fac)
         rate_eval.c12_c12__he4_ne20 *= scor
         rate_eval.c12_c12__n_mg23 *= scor
         rate_eval.c12_c12__p_na23 *= scor
 
         scn_fac = ScreenFactors(2, 4, 6, 12)
-        scor = screen_func(plasma_state, scn_fac)[0]
+        scor = screen_func(plasma_state, scn_fac)
         rate_eval.he4_c12__o16 *= scor
 
         scn_fac = ScreenFactors(2, 4, 2, 4)
-        scor = screen_func(plasma_state, scn_fac)[0]
+        scor = screen_func(plasma_state, scn_fac)
         scn_fac2 = ScreenFactors(2, 4, 4, 8)
-        scor2 = screen_func(plasma_state, scn_fac2)[0]
+        scor2 = screen_func(plasma_state, scn_fac2)
         rate_eval.he4_he4_he4__c12 *= scor * scor2
 
     jac = np.zeros((nnuc, nnuc), dtype=np.float64)
