@@ -47,11 +47,9 @@ class TestScreen:
         assert scn_fac.ztilde == approx(1.5385208213635064)
 
     def test_chugunov_2007(self, plasma_state, scn_fac):
-        scor, dscor_dT = chugunov_2007(plasma_state, scn_fac)
+        scor = chugunov_2007(plasma_state, scn_fac)
         assert scor == approx(7.785569477042635e+33)
-        assert dscor_dT == approx(-5.447797594230151e+29)
 
     def test_chugunov_2009(self, plasma_state, scn_fac):
-        scor, dscor_dT = chugunov_2009(plasma_state, scn_fac)
+        scor = chugunov_2009(plasma_state, scn_fac)
         assert scor == approx(2.87983449091315e+33)
-        assert dscor_dT == approx(-2.0023375959174666e+29)

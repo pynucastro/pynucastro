@@ -758,7 +758,7 @@ class RateCollection:
         for i, scr in enumerate(screening_map):
             if not (scr.n1.dummy or scr.n2.dummy):
                 scn_fac = make_screen_factors(scr.n1, scr.n2)
-                scor = screen_func(plasma_state, scn_fac)[0]
+                scor = screen_func(plasma_state, scn_fac)
             if scr.name == "he4_he4_he4":
                 # we don't need to do anything here, but we want to avoid
                 # immediately applying the screening
@@ -768,7 +768,7 @@ class RateCollection:
                 assert screening_map[i - 1].name == "he4_he4_he4"
                 # handle the second part of the screening for 3-alpha
                 scn_fac2 = make_screen_factors(scr.n1, scr.n2)
-                scor2 = screen_func(plasma_state, scn_fac2)[0]
+                scor2 = screen_func(plasma_state, scn_fac2)
 
                 # there might be both the forward and reverse 3-alpha
                 # if we are doing symmetric screening
