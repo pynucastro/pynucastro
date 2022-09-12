@@ -130,6 +130,7 @@ from pynucastro.rates import \
     Tfactors, \
     Rate, \
     ApproximateRate, \
+    DerivedRate, \
     RateFilter, \
     Library, \
     ReacLibLibrary, \
