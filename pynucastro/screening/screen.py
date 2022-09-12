@@ -72,6 +72,7 @@ class PlasmaState:
         # temperature-independent part of Gamma_e, from Chugunov 2009 eq. 6
         self.gamma_e_fac = q_e ** 2 / k_B * np.cbrt(4 * np.pi / 3) * np.cbrt(self.n_e)
 
+
 @jitclass()
 class NseState:
     """

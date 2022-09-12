@@ -836,8 +836,8 @@ class RateCollection:
             else:
                 pf = 1.0
 
-            Xs[nuc] = m_u * nuc.A_nuc * pf / state.dens  * (2.0 * np.pi * m_u * nuc.A_nuc * k * state.temp / h**2)**(3. / 2.) \
-                                  * np.exp((nuc.Z * u[0] + nuc.N * u[1] - u_c[nuc] + nuc.nucbind * nuc.A) / k / state.temp / Erg2MeV)
+            Xs[nuc] = m_u * nuc.A_nuc * pf / state.dens * (2.0 * np.pi * m_u * nuc.A_nuc * k * state.temp / h**2) ** (3. / 2.) \
+                    * np.exp((nuc.Z * u[0] + nuc.N * u[1] - u_c[nuc] + nuc.nucbind * nuc.A) / k / state.temp / Erg2MeV)
 
         return Xs
 
@@ -848,7 +848,7 @@ class RateCollection:
         # Don't use eval_ye() since it does automatic mass fraction normalization.
         # However, we should force normalization through constraint eq1.
 
-        m_u = constants.value("unified atomic mass unit") * 1.0e3  # atomic unit mass in g
+        # m_u = constants.value("unified atomic mass unit") * 1.0e3  # atomic unit mass in g
 
         Xs = self._nucleon_fraction_nse(u, u_c, state)
 
@@ -860,7 +860,7 @@ class RateCollection:
 
         eq2 = 0.0
         for nuc in self.unique_nuclei:
-            eq2 += Xs[nuc] * nuc.Z/ nuc.A
+            eq2 += Xs[nuc] * nuc.Z / nuc.A
         # for nuc in self.unique_nuclei:
         #     eq2 += ((state.ye - 1.0) * nuc.Z + state.ye * nuc.N ) * Xs[nuc] / (nuc.A_nuc * m_u)
 
@@ -882,8 +882,6 @@ class RateCollection:
         init_guess = np.array(init_guess)
         state = NseState(T, rho, ye)
         u_c = self._evaluate_mu_c(state, use_coulomb_corr=use_coulomb_corr)
-
-
         j = 0
         init_guess = np.array(init_guess)
         is_pos_old = False
@@ -904,8 +902,6 @@ class RateCollection:
                 if found_sol:
                     Xs = self._nucleon_fraction_nse(u, u_c, state)
                     comp = Composition(self.unique_nuclei)
-
-                    # for nuc in self.unique_nuclei:
                     comp.X = Xs
 
                     return comp
