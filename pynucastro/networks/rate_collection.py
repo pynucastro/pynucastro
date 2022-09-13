@@ -785,7 +785,17 @@ class RateCollection:
 
         return factors
 
-    def _evaluate_mu_c(self, state, use_coulomb_corr=True):
+    def _evaluate_n_e(self, state, Xs):
+
+        m_u = constants.value("unified atomic mass unit") * 1.0e3  # atomic unit mass in g
+
+        n_e = 0.0
+        for nuc in self.unique_nuclei:
+            n_e += nuc.Z* state.dens * Xs[nuc] / (nuc.A * m_u)
+
+        return n_e
+
+    def _evaluate_mu_c(self, n_e, state, use_coulomb_corr=True):
         """ A helper equation that finds the mass fraction of each nuclide in NSE state,
         u[0] is chemical potential of proton  while u[1] is chemical potential of neutron"""
 
@@ -813,7 +823,7 @@ class RateCollection:
         u_c = {}
         for nuc in self.unique_nuclei:
             if use_coulomb_corr:
-                Gamma = state.gamma_e_fac * nuc.Z ** (5. / 3.) / state.temp
+                Gamma = state.gamma_e_fac * n_e ** (1.0/3.0) * nuc.Z ** (5.0 / 3.0) / state.temp
                 u_c[nuc] = Erg2MeV * k * state.temp * (A_1 * (np.sqrt(Gamma * (A_2 + Gamma)) - A_2 * np.log(np.sqrt(Gamma / A_2) +
                                       np.sqrt(1.0 + Gamma / A_2))) + 2.0 * A_3 * (np.sqrt(Gamma) - np.arctan(np.sqrt(Gamma))))
             else:
@@ -830,6 +840,8 @@ class RateCollection:
         Erg2MeV = 624151.0
 
         Xs = {}
+        up_c = u_c[Nucleus("p")]
+
         for nuc in self.unique_nuclei:
             if nuc.partition_function:
                 pf = nuc.partition_function(state.temp)
@@ -837,7 +849,7 @@ class RateCollection:
                 pf = 1.0
 
             Xs[nuc] = m_u * nuc.A_nuc * pf * nuc.spin_states / state.dens * (2.0 * np.pi * m_u * nuc.A_nuc * k * state.temp / h**2) ** (3. / 2.) \
-                    * np.exp((nuc.Z * u[0] + nuc.N * u[1] - u_c[nuc] + nuc.nucbind * nuc.A) / k / state.temp / Erg2MeV)
+                    * np.exp((nuc.Z * u[0] + nuc.N * u[1] - u_c[nuc] + nuc.Z * up_c + nuc.nucbind * nuc.A) / k / state.temp / Erg2MeV)
 
         return Xs
 
@@ -881,7 +893,13 @@ class RateCollection:
 
         init_guess = np.array(init_guess)
         state = NseState(T, rho, ye)
-        u_c = self._evaluate_mu_c(state, use_coulomb_corr=use_coulomb_corr)
+
+        u_c = {}
+        for nuc in self.unique_nuclei:
+            u_c[nuc] = 0.0
+
+        Xs = {}
+
         j = 0
         init_guess = np.array(init_guess)
         is_pos_old = False
@@ -898,6 +916,10 @@ class RateCollection:
 
             while (i < 20):
                 u = fsolve(self._constraint_eq, guess, args=(u_c, state), xtol=tol, maxfev=800)
+                Xs = self._nucleon_fraction_nse(u, u_c, state)
+                n_e = self._evaluate_n_e(state, Xs)
+                u_c = self._evaluate_mu_c(n_e, state, use_coulomb_corr)
+
                 res = self._constraint_eq(u, u_c, state)
                 is_pos_new = all(k > 0 for k in res)
                 found_sol = np.all(np.isclose(res, [0.0, 0.0], rtol=1.0e-10, atol=1.0e-10))

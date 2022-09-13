@@ -108,7 +108,7 @@ class NseState:
         self.temp = temp
         self.dens = dens
         self.ye = ye
-        self.gamma_e_fac = q_e ** 2 / k_B * np.cbrt(4.0 * np.pi * self.dens * self.ye / (3.0 * amu))
+        self.gamma_e_fac = q_e ** 2 / k_B * np.cbrt(4.0 * np.pi / 3.0)
 
 
 def make_plasma_state(temp, dens, molar_fractions):
