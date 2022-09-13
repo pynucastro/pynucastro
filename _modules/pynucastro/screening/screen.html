@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.screening.screen &mdash; pynucastro 1.7.0.post53+g4422c14 documentation</title>
+  <title>pynucastro.screening.screen &mdash; pynucastro 1.7.0.post54+gd5d77f2 documentation</title>
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -175,6 +175,44 @@
 
         <span class="c1"># temperature-independent part of Gamma_e, from Chugunov 2009 eq. 6</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">gamma_e_fac</span> <span class="o">=</span> <span class="n">q_e</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="n">k_B</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">3</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_e</span><span class="p">)</span>
+
+
+<span class="nd">@jitclass</span><span class="p">()</span>
+<span class="k">class</span> <span class="nc">NseState</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Stores precomputed values that are reused in the NSE state screening</span>
+<span class="sd">    calculations</span>
+
+<span class="sd">    :var temp:        temperature in K</span>
+<span class="sd">    :var dens:        density in g/cm^3</span>
+<span class="sd">    :var ye:          electron molar fraction</span>
+<span class="sd">    :var n_e:         electron number density</span>
+<span class="sd">    :var gamma_e_fac: temperature-independent part of Gamma_e</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">temp</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">dens</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">ye</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">gamma_e_fac</span><span class="p">:</span> <span class="nb">float</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">temp</span><span class="p">,</span> <span class="n">dens</span><span class="p">,</span> <span class="n">ye</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param temp:        temperature in K</span>
+<span class="sd">        :param dens:        density in g/cm^3</span>
+<span class="sd">        :param ye:          electron molar fraction</span>
+<span class="sd">        :param Xs:          nucleon fraction of each ion</span>
+<span class="sd">        :type Xs: numpy ndarray</span>
+<span class="sd">        :param As:          atomic mass number of each ion</span>
+<span class="sd">        :type As: numpy ndarray</span>
+<span class="sd">        :param Zs:          atomic number of each ion</span>
+<span class="sd">        :type Zs: numpy ndarray</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">temp</span> <span class="o">=</span> <span class="n">temp</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dens</span> <span class="o">=</span> <span class="n">dens</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ye</span> <span class="o">=</span> <span class="n">ye</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gamma_e_fac</span> <span class="o">=</span> <span class="n">q_e</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="n">k_B</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">(</span><span class="mf">4.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">3.0</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="make_plasma_state"><a class="viewcode-back" href="../../../pynucastro.screening.html#pynucastro.screening.screen.make_plasma_state">[docs]</a><span class="k">def</span> <span class="nf">make_plasma_state</span><span class="p">(</span><span class="n">temp</span><span class="p">,</span> <span class="n">dens</span><span class="p">,</span> <span class="n">molar_fractions</span><span class="p">):</span>
@@ -481,7 +519,7 @@
 
     <span class="n">A_1</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.9052</span>
     <span class="n">A_2</span> <span class="o">=</span> <span class="mf">0.6322</span>
-    <span class="n">A_3</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span> <span class="o">-</span> <span class="n">A_1</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">A_2</span><span class="p">)</span>
+    <span class="n">A_3</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">-</span> <span class="n">A_1</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">A_2</span><span class="p">)</span>
 
     <span class="n">f1</span> <span class="o">=</span> <span class="n">A_1</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">Gamma_1</span> <span class="o">*</span> <span class="p">(</span><span class="n">A_2</span> <span class="o">+</span> <span class="n">Gamma_1</span><span class="p">))</span> <span class="o">-</span> <span class="n">A_2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">Gamma_1</span> <span class="o">/</span> <span class="n">A_2</span><span class="p">)</span> <span class="o">+</span>
                   <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">Gamma_1</span><span class="o">/</span><span class="n">A_2</span><span class="p">)))</span> <span class="o">+</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">A_3</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">Gamma_1</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">Gamma_1</span><span class="p">)))</span>
