@@ -2,10 +2,7 @@ import numpy as np
 from pynucastro.rates import Tfactors
 from pynucastro.screening import PlasmaState, ScreenFactors
 import numba
-try:
-    from numba.experimental import jitclass
-except ImportError:
-    from numba import jitclass
+from numba.experimental import jitclass
 
 jn = 0
 jp = 1
