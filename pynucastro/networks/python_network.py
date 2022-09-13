@@ -159,10 +159,7 @@ class PythonNetwork(RateCollection):
         of.write("from pynucastro.rates import Tfactors\n")
         of.write("from pynucastro.screening import PlasmaState, ScreenFactors\n")
         of.write("import numba\n")
-        of.write("try:\n")
-        of.write(f"{indent}from numba.experimental import jitclass\n")
-        of.write("except ImportError:\n")
-        of.write(f"{indent}from numba import jitclass\n\n")
+        of.write("from numba.experimental import jitclass\n\n")
 
         # integer keys
 

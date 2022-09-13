@@ -10,10 +10,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 try:
     import numba
-    try:
-        from numba.experimental import jitclass
-    except ImportError:
-        from numba import jitclass
+    from numba.experimental import jitclass
 except ImportError:
     numba = None
     import functools
