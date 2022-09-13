@@ -848,8 +848,11 @@ class RateCollection:
             else:
                 pf = 1.0
 
+            nse_exponent = (nuc.Z * u[0] + nuc.N * u[1] - u_c[nuc] + nuc.Z * up_c + nuc.nucbind * nuc.A) / k / state.temp / Erg2MeV
+            nse_exponent = min(500.0, nse_exponent)
+
             Xs[nuc] = m_u * nuc.A_nuc * pf * nuc.spin_states / state.dens * (2.0 * np.pi * m_u * nuc.A_nuc * k * state.temp / h**2) ** (3. / 2.) \
-                    * np.exp((nuc.Z * u[0] + nuc.N * u[1] - u_c[nuc] + nuc.Z * up_c + nuc.nucbind * nuc.A) / k / state.temp / Erg2MeV)
+                    * np.exp(nse_exponent)
 
         return Xs
 
