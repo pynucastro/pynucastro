@@ -73,6 +73,44 @@ class PlasmaState:
         self.gamma_e_fac = q_e ** 2 / k_B * np.cbrt(4 * np.pi / 3) * np.cbrt(self.n_e)
 
 
+@jitclass()
+class NseState:
+    """
+    Stores precomputed values that are reused in the NSE state screening
+    calculations
+
+    :var temp:        temperature in K
+    :var dens:        density in g/cm^3
+    :var ye:          electron molar fraction
+    :var n_e:         electron number density
+    :var gamma_e_fac: temperature-independent part of Gamma_e
+    """
+
+    temp: float
+    dens: float
+    ye: float
+    gamma_e_fac: float
+
+    def __init__(self, temp, dens, ye):
+
+        """
+        :param temp:        temperature in K
+        :param dens:        density in g/cm^3
+        :param ye:          electron molar fraction
+        :param Xs:          nucleon fraction of each ion
+        :type Xs: numpy ndarray
+        :param As:          atomic mass number of each ion
+        :type As: numpy ndarray
+        :param Zs:          atomic number of each ion
+        :type Zs: numpy ndarray
+        """
+
+        self.temp = temp
+        self.dens = dens
+        self.ye = ye
+        self.gamma_e_fac = q_e ** 2 / k_B * np.cbrt(4.0 * np.pi / 3.0)
+
+
 def make_plasma_state(temp, dens, molar_fractions):
     """
     Construct a PlasmaState object from simulation data.
@@ -377,7 +415,7 @@ def potekhin_1998(state, scn_fac):
 
     A_1 = -0.9052
     A_2 = 0.6322
-    A_3 = -np.sqrt(3)/2 - A_1/np.sqrt(A_2)
+    A_3 = -0.5 * np.sqrt(3) - A_1/np.sqrt(A_2)
 
     f1 = A_1 * (np.sqrt(Gamma_1 * (A_2 + Gamma_1)) - A_2 * np.log(np.sqrt(Gamma_1 / A_2) +
                   np.sqrt(1.0 + Gamma_1/A_2))) + 2.0 * A_3 * (np.sqrt(Gamma_1) - np.arctan(np.sqrt(Gamma_1)))
