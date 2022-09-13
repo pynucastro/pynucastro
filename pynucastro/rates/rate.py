@@ -1650,7 +1650,7 @@ class DerivedRate(ReacLibRate):
         """
 
         for nuc in set(self.rate.reactants + self.rate.products):
-            if not nuc.partition_function and str(nuc) != 'h1' and str(nuc) != 'n' and str(nuc) != 'he4' and str(nuc) != 'p':
+            if not nuc.partition_function and str(nuc) not in ['h1', 'n', 'he4', 'p']:
                 print(f'WARNING: {nuc} partition function is not supported by tables: set pf = 1.0 by default')
 
         fstring = ""
@@ -1668,27 +1668,14 @@ class DerivedRate(ReacLibRate):
         if self.use_pf:
 
             fstring += "\n"
-            for nucr in self.rate.reactants:
-                if nucr.partition_function:
-                    fstring += f"    #Interpolating {nucr} partition function\n"
-                    fstring += f"    {nucr}_temp_array = np.array({list(nucr.partition_function.temperature/1.0e9)})\n"
-                    fstring += f"    {nucr}_pf_array = np.array({list(nucr.partition_function.partition_function)})\n"
-                    fstring += f"    {nucr}_pf_exponent = np.interp(tf.T9, xp={nucr}_temp_array, fp=np.log10({nucr}_pf_array))\n"
-                    fstring += f"    {nucr}_pf = 10.0**{nucr}_pf_exponent\n"
+            for nuc in self.rate.reactants + self.rate.products:
+                if nuc.partition_function:
+                    fstring += f"    # interpolating {nuc} partition function\n"
+                    fstring += f"    {nuc}_pf_exponent = np.interp(tf.T9, xp={nuc}_temp_array, fp=np.log10({nuc}_pf_array))\n"
+                    fstring += f"    {nuc}_pf = 10.0**{nuc}_pf_exponent\n"
                 else:
-                    fstring += f"    #Setting {nucr} partition function to 1.0 by default, independent of T\n"
-                    fstring += f"    {nucr}_pf = 1.0\n"
-                fstring += "\n"
-            for nucp in self.rate.products:
-                if nucp.partition_function:
-                    fstring += f"    #Interpolating {nucp} partition function\n"
-                    fstring += f"    {nucp}_temp_array = np.array({list(nucp.partition_function.temperature/1.0e9)})\n"
-                    fstring += f"    {nucp}_pf_array = np.array({list(nucp.partition_function.partition_function)})\n"
-                    fstring += f"    {nucp}_pf_exponent = np.interp(tf.T9, xp={nucp}_temp_array, fp=np.log10({nucp}_pf_array))\n"
-                    fstring += f"    {nucp}_pf = 10.0**{nucp}_pf_exponent\n"
-                else:
-                    fstring += f"    #Setting {nucp} partition function to 1.0 by default, independent of T\n"
-                    fstring += f"    {nucp}_pf = 1.0\n"
+                    fstring += f"    # setting {nuc} partition function to 1.0 by default, independent of T\n"
+                    fstring += f"    {nuc}_pf = 1.0\n"
                 fstring += "\n"
 
             fstring += "    "
@@ -1708,10 +1695,14 @@ class DerivedRate(ReacLibRate):
         return fstring
 
     def counter_factors(self):
-        """ This function returns the nucr! = nucr_1! * ... * nucr_r! for each repeated nucr reactant and
-        nucp! = nucp_1! * ... * nucp_p! for each reactant nucp product in a ordered pair (nucr!, nucp!). The
-        factors nucr! and nucp! avoid overcounting when more than one nuclei is involve in the reaction, otherwise
-        it will return 1.0."""
+        """This function returns the nucr! = nucr_1! * ... * nucr_r!
+        for each repeated nucr reactant and nucp! = nucp_1! * ... *
+        nucp_p! for each reactant nucp product in a ordered pair
+        (nucr!, nucp!). The factors nucr! and nucp! avoid overcounting
+        when more than one nuclei is involve in the reaction,
+        otherwise it will return 1.0.
+
+        """
 
         react_counts = Counter(self.rate.reactants)
         prod_counts = Counter(self.rate.products)
