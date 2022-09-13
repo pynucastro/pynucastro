@@ -848,15 +848,13 @@ class RateCollection:
             else:
                 pf = 1.0
 
-            if nuc.spin_states:
-                spin_state = nuc.spin_states
-            else:
+            if not nuc.spin_states:
                 raise ValueError(f"The spin of {nuc} is not implemented for now.")
 
             nse_exponent = (nuc.Z * u[0] + nuc.N * u[1] - u_c[nuc] + nuc.Z * up_c + nuc.nucbind * nuc.A) / k / state.temp / Erg2MeV
             nse_exponent = min(500.0, nse_exponent)
 
-            Xs[nuc] = m_u * nuc.A_nuc * pf * spin_state / state.dens * (2.0 * np.pi * m_u * nuc.A_nuc * k * state.temp / h**2) ** (3. / 2.) \
+            Xs[nuc] = m_u * nuc.A_nuc * pf * nuc.spin_states / state.dens * (2.0 * np.pi * m_u * nuc.A_nuc * k * state.temp / h**2) ** (3. / 2.) \
                     * np.exp(nse_exponent)
 
         return Xs
