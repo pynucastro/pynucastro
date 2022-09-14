@@ -480,7 +480,6 @@ class BaseCxxNetwork(ABC, RateCollection):
             of.write(f"{self.indent*n_indent}    rate_eval.dscreened_rates_dT(k_{r.fname}) = drate_dT;\n\n")
             of.write(f"{self.indent*n_indent}}}\n")
 
-
     def _fill_parition_function_data(self, n_indent, of):
 
         nuclei_pfs = self.get_nuclei_needing_partition_functions()
