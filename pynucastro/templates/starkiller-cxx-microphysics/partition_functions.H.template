@@ -14,45 +14,46 @@ namespace part_fun {
 
     <part_fun_data>(1)
 
-}
 
-// interpolation routine
+    // interpolation routine
 
-void interpolate_pf(const Real t9, const int npts, const Real* temp_array, const Raal* pf_array,
-                    Real& pf, Real& dpf_dT) {
+    void interpolate_pf(const Real t9, const int npts, const Real* temp_array, const Real* pf_array,
+                        Real& pf, Real& dpf_dT) {
 
-    // find the index of the first temperature element we are larger than
+        // find the index of the first temperature element we are larger than
 
-    int idx = -1;
+        int idx = -1;
 
-    if (idx >= 0) {
+        if (idx >= 0) {
 
-        for (int i = 0; i < npts; ++i) {
-            if (t9 >= temp_array[i]) {
-                idx = i;
-                break;
+            for (int i = 0; i < npts; ++i) {
+                if (t9 >= temp_array[i]) {
+                    idx = i;
+                    break;
+                }
             }
+
+            // construct the slope -- this is (log10(pf_{i+1}) - log10(pf_i)) / (T_{i+1} - T_i)
+
+            Real slope = (pf_array[idx+1] - pf_array[idx]) / (temp_array[idx+1] - temp_array[idx]);
+
+            // find the PF
+
+            Real log10_pf = pf_array[idx] + slope * (t9 - temp_array[idx]);
+            pf = std::pow(10.0_rt, log10_pf);
+
+            // find the derivative (with respect to T, not T9)
+
+            Real dpf_dT9 = pf * std::log(10.0_rt) * slope;
+            dpf_dT = dpf_dT9 / 1.e9_rt;
+
+        } else {
+
+            // T < the smallest T in the partition function table
+            pf = 1.0;
+            dpf_dT = 0.0;
+
         }
-
-        // construct the slope -- this is (log10(pf_{i+1}) - log10(pf_i)) / (T_{i+1} - T_i)
-
-        Real slope = (pf_array[idx+1] - pf_array[idx]) / (temp_array[idx+1] - temp_array[idx]);
-
-        // find the PF
-
-        Real log10_pf = pf_array[idx] + slope * (t9 - temp_array[idx]);
-        pf = std::pow(10.0_rt, log10_pf);
-
-        // find the derivative (with respect to T, not T9)
-
-        Real dpf_dT9 = pf * std::log(10.0_rt) * slope;
-        dpf_dT = dpf_dT9 / 1.e9_rt;
-
-    } else {
-
-        // T < the smallest T in the partition function table
-        pf = 1.0;
-        dpf_dT = 0.0;
 
     }
 
@@ -71,7 +72,7 @@ void get_partition_function(const int inuc, const tf_t& tfactors, Real& pf, Real
     default:
 
         pf = 1.0_rt;
-        dpf_dt = 0.0_rt;
+        dpf_dT = 0.0_rt;
 
     }
 
