@@ -70,6 +70,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.ftags['<approx_rate_functions>'] = self._approx_rate_functions
         self.ftags['<fill_approx_rates>'] = self._fill_approx_rates
         self.ftags['<part_fun_data>'] = self._fill_parition_function_data
+        self.ftags['<part_fun_cases>'] = self._fill_parition_function_cases
         self.indent = '    '
 
         self.num_screen_calls = None
@@ -493,9 +494,13 @@ class BaseCxxNetwork(ABC, RateCollection):
 
                     # write the data out, but for readability, split it to 5 values per line
 
+                    # number of points
+
+                    of.write(f"{self.indent*n_indent}constexpr int {n}_npts = {npts};\n\n")
+
                     # first the temperature (in units of T9)
 
-                    of.write(f"{self.indent*n_indent}{decl} {n}_temp_array[{npts}] = {{\n")
+                    of.write(f"{self.indent*n_indent}{decl} {n}_temp_array[{n}_npts] = {{\n")
 
                     tdata = list(n.partition_function.temperature/1.0e9)
                     while tdata:
@@ -513,7 +518,7 @@ class BaseCxxNetwork(ABC, RateCollection):
 
                     of.write(f"{self.indent*n_indent}// this is log10(partition function)\n\n")
 
-                    of.write(f"{self.indent*n_indent}{decl} {n}_pf_array[{npts}] = {{\n")
+                    of.write(f"{self.indent*n_indent}{decl} {n}_pf_array[{n}_npts] = {{\n")
 
                     tdata = list(n.partition_function.partition_function)
                     while tdata:
@@ -528,3 +533,17 @@ class BaseCxxNetwork(ABC, RateCollection):
                     of.write(f"{self.indent*n_indent}}};\n\n")
 
                     of.write("\n")
+
+    def _fill_parition_function_cases(self, n_indent, of):
+
+        nuclei_pfs = self.get_nuclei_needing_partition_functions()
+
+        decl = "MICROPHYSICS_UNUSED HIP_CONSTEXPR static AMREX_GPU_MANAGED amrex::Real"
+
+        if nuclei_pfs:
+            for n in nuclei_pfs:
+                if n.partition_function:
+
+                    of.write(f"{self.indent*n_indent}case {n.cindex()}:\n")
+                    of.write(f"{self.indent*2*n_indent}interpolate_pf(tfactors.t9, {n}_npts, {n}_temp_array, {n}_pf_array, pf, dpf_dT);\n")
+                    of.write(f"{self.indent*2*n_indent}break;\n\n")

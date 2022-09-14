@@ -20,5 +20,24 @@ namespace part_fun {
 // interpolation routine
 
 
+// main interface
+
+void get_partition_function(const int inuc, const tf_t& tfactors, Real& pf, Real& dpf_dT) {
+
+    // inuc is the 1-based index for the species
+
+    switch (inuc) {
+
+    <part_fun_cases>(1)
+
+    default:
+
+        pf = 1.0_rt;
+        dpf_dt = 0.0_rt;
+
+    }
+
+}
+
 
 #endif
