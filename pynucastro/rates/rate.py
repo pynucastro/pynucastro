@@ -1000,7 +1000,7 @@ class ReacLibRate(Rate):
         fstring += f"    rate_eval.{self.fname} = rate\n\n"
         return fstring
 
-    def function_string_cxx(self, dtype="double", specifiers="inline"):
+    def function_string_cxx(self, dtype="double", specifiers="inline", leave_open=False):
         """
         Return a string containing C++ function that computes the
         rate
@@ -1041,7 +1041,9 @@ class ReacLibRate(Rate):
             fstring += "        drate_dT += set_rate * dln_set_rate_dT9 / 1.0e9;\n"
             fstring += "    }\n\n"
 
-        fstring += "}\n\n"
+        if not leave_open:
+            fstring += "}\n\n"
+
         return fstring
 
     def ydot_string_py(self):
@@ -1680,6 +1682,26 @@ class DerivedRate(ReacLibRate):
             fstring += "\n"
             fstring += f"    rate_eval.{self.fname} *= z_r/z_p\n"
 
+        return fstring
+
+    def function_string_cxx(self, dtype="double", specifiers="inline"):
+        """
+        Return a string containing C++ function that computes the
+        rate
+        """
+
+        for nuc in set(self.rate.reactants + self.rate.products):
+            if not nuc.partition_function and str(nuc) not in ['h1', 'n', 'he4', 'p']:
+                print(f'WARNING: {nuc} partition function is not supported by tables: set pf = 1.0 by default')
+
+        fstring = super().function_string_cxx(dtype=dtype, specifiers=specifiers, leave_open=True)
+
+        # right now we have rate and drate_dT without the partition function
+        # now the partition function corrections
+
+
+
+        fstring += "}\n\n"
         return fstring
 
     def counter_factors(self):
