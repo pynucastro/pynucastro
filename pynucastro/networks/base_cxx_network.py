@@ -11,6 +11,7 @@ import sys
 import re
 from abc import ABC, abstractmethod
 
+import numpy as np
 import sympy
 from pynucastro.networks.rate_collection import RateCollection
 from pynucastro.networks.sympy_network_support import SympyRates
@@ -68,6 +69,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.ftags['<fill_reaclib_rates>'] = self._fill_reaclib_rates
         self.ftags['<approx_rate_functions>'] = self._approx_rate_functions
         self.ftags['<fill_approx_rates>'] = self._fill_approx_rates
+        self.ftags['<part_fun_data>'] = self._fill_parition_function_data
         self.indent = '    '
 
         self.num_screen_calls = None
@@ -475,3 +477,54 @@ class BaseCxxNetwork(ABC, RateCollection):
             of.write(f"{self.indent*n_indent}if constexpr (std::is_same<T, rate_derivs_t>::value) {{\n")
             of.write(f"{self.indent*n_indent}    rate_eval.dscreened_rates_dT(k_{r.fname}) = drate_dT;\n\n")
             of.write(f"{self.indent*n_indent}}}\n")
+
+
+    def _fill_parition_function_data(self, n_indent, of):
+
+        nuclei_pfs = self.get_nuclei_needing_partition_functions()
+
+        decl = "MICROPHYSICS_UNUSED HIP_CONSTEXPR static AMREX_GPU_MANAGED amrex::Real"
+
+        if nuclei_pfs:
+            for n in nuclei_pfs:
+                if n.partition_function:
+                    npts = len(n.partition_function.temperature)
+                    assert len(n.partition_function.temperature) == len(n.partition_function.partition_function)
+
+                    # write the data out, but for readability, split it to 5 values per line
+
+                    # first the temperature (in units of T9)
+
+                    of.write(f"{self.indent*n_indent}{decl} {n}_temp_array[{npts}] = {{\n")
+
+                    tdata = list(n.partition_function.temperature/1.0e9)
+                    while tdata:
+                        if len(tdata) >= 5:
+                            tmp = ", ".join([str(tdata.pop(0)) for _ in range(0, 5)])
+                            if tdata:
+                                tmp += ","
+                        else:
+                            tmp = ", ".join([str(tdata.pop(0)) for _ in range(0, len(tdata))])
+
+                        of.write(f"{2*self.indent*n_indent}{tmp}\n")
+                    of.write(f"{self.indent*n_indent}}};\n\n")
+
+                    # now the partition function itself -- this is log10
+
+                    of.write(f"{self.indent*n_indent}// this is log10(partition function)\n\n")
+
+                    of.write(f"{self.indent*n_indent}{decl} {n}_pf_array[{npts}] = {{\n")
+
+                    tdata = list(n.partition_function.partition_function)
+                    while tdata:
+                        if len(tdata) >= 5:
+                            tmp = ", ".join([str(np.log10(tdata.pop(0))) for _ in range(0, 5)])
+                            if tdata:
+                                tmp += ","
+                        else:
+                            tmp = ", ".join([str(np.log10(tdata.pop(0))) for _ in range(0, len(tdata))])
+
+                        of.write(f"{2*self.indent*n_indent}{tmp}\n")
+                    of.write(f"{self.indent*n_indent}}};\n\n")
+
+                    of.write("\n")
