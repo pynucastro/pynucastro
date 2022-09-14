@@ -71,6 +71,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.ftags['<fill_approx_rates>'] = self._fill_approx_rates
         self.ftags['<part_fun_data>'] = self._fill_parition_function_data
         self.ftags['<part_fun_cases>'] = self._fill_parition_function_cases
+        self.ftags['<spin_state_cases>'] = self._fill_spin_state_cases
         self.indent = '    '
 
         self.num_screen_calls = None
@@ -538,8 +539,6 @@ class BaseCxxNetwork(ABC, RateCollection):
 
         nuclei_pfs = self.get_nuclei_needing_partition_functions()
 
-        decl = "MICROPHYSICS_UNUSED HIP_CONSTEXPR static AMREX_GPU_MANAGED amrex::Real"
-
         if nuclei_pfs:
             for n in nuclei_pfs:
                 if n.partition_function:
@@ -547,3 +546,11 @@ class BaseCxxNetwork(ABC, RateCollection):
                     of.write(f"{self.indent*n_indent}case {n.cindex()}:\n")
                     of.write(f"{self.indent*2*n_indent}part_fun::interpolate_pf(tfactors.T9, part_fun::{n}_npts, part_fun::{n}_temp_array, part_fun::{n}_pf_array, pf, dpf_dT);\n")
                     of.write(f"{self.indent*2*n_indent}break;\n\n")
+
+    def _fill_spin_state_cases(self, n_indent, of):
+
+        for n in self.unique_nuclei:
+            if n.spin_states is not None:
+                of.write(f"{self.indent*n_indent}case {n.cindex()}:\n")
+                of.write(f"{self.indent*2*n_indent}spin = {n.spin_states};\n")
+                of.write(f"{self.indent*2*n_indent}break;\n\n")
