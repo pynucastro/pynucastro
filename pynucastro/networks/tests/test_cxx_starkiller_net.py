@@ -35,8 +35,7 @@ class TestStarKillerCxxNetwork:
     def test_nrat_reaclib(self, fn):
         """ test the _nrat_reaclib function """
 
-        answer = ('    const int NrateReaclib = 5;\n' +
-                  '    const int NumReaclibSets = 6;\n')
+        answer = ('    const int NrateReaclib = 5;\n')
 
         assert self.cromulent_ftag(fn._nrat_reaclib, answer, n_indent=1)
 
