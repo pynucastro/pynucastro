@@ -1699,7 +1699,32 @@ class DerivedRate(ReacLibRate):
         # right now we have rate and drate_dT without the partition function
         # now the partition function corrections
 
+        if self.use_pf:
 
+            fstring += "\n"
+            for nuc in self.rate.reactants + self.rate.products:
+                fstring += f"    Real {nuc}_pf, d{nuc}_pf_dT;\n"
+
+                if nuc.partition_function:
+                    fstring += f"    // interpolating {nuc} partition function\n"
+                    fstring += f"    get_partition_function({nuc}, tfactors, {nuc}_pf, d{nuc}_pf_dT);\n"
+                else:
+                    fstring += f"    // setting {nuc} partition function to 1.0 by default, independent of T\n"
+                    fstring += f"    {nuc}_pf = 1.0_rt;\n"
+                    fstring += f"    d{nuc}_pf_dT = 0.0_rt;\n"
+                fstring += "\n"
+
+            fstring += "    "
+            fstring += "z_r = "
+            fstring += "*".join([f"{nucr}_pf" for nucr in self.rate.reactants])
+
+            fstring += "\n"
+            fstring += "    "
+            fstring += "z_p = "
+            fstring += "*".join([f"{nucp}_pf" for nucp in self.rate.products])
+
+            fstring += "\n"
+            fstring += f"    rate_eval.{self.fname} *= z_r/z_p\n"
 
         fstring += "}\n\n"
         return fstring
