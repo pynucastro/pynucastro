@@ -1503,10 +1503,11 @@ class RateCollection:
 
         if not rotated:
             ax.set_xlim(min(Ns)-1, max(Ns)+1)
+            ax.set_ylim(min(Zs) - 0.5, max(Zs) + 0.5)
         else:
             ax.set_xlim(min(Zs)-1, max(Zs)+1)
-
-        #plt.ylim(min(Zs)-1, max(Zs)+1)
+            tmp = np.array(Ns) - np.array(Zs)
+            ax.set_ylim(min(tmp) - 0.5, max(tmp) + 0.5)
 
         if not rotated:
             plt.xlabel(r"$N$", fontsize="large")
