@@ -937,7 +937,7 @@ class RateCollection:
 
                     if return_sol:
                         return comp, u
-                    
+
                     return comp
 
                 if is_pos_old != is_pos_new:
