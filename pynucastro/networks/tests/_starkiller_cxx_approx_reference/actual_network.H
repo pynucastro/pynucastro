@@ -46,7 +46,6 @@ namespace Rates
     // number of reaclib rates
 
     const int NrateReaclib = 12;
-    const int NumReaclibSets = 30;
 
     // number of tabular rates
 
