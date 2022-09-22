@@ -1653,17 +1653,7 @@ class DerivedRate(ReacLibRate):
             if not nuc.partition_function and str(nuc) not in ['h1', 'n', 'he4', 'p']:
                 print(f'WARNING: {nuc} partition function is not supported by tables: set pf = 1.0 by default')
 
-        fstring = ""
-        fstring += "@numba.njit()\n"
-        fstring += f"def {self.fname}(rate_eval, tf):\n"
-        fstring += f"    # {self.rid}\n"
-        fstring += "    rate = 0.0\n\n"
-
-        for s in self.sets:
-            fstring += f"    # {s.labelprops[0:5]}\n"
-            set_string = s.set_string_py(prefix="rate", plus_equal=True)
-            for t in set_string.split("\n"):
-                fstring += "    " + t + "\n"
+        fstring = super().function_string_py()
 
         if self.use_pf:
 
@@ -1688,10 +1678,8 @@ class DerivedRate(ReacLibRate):
             fstring += "*".join([f"{nucp}_pf" for nucp in self.rate.products])
 
             fstring += "\n"
-            fstring += "    rate *= z_r/z_p\n"
+            fstring += f"    rate_eval.{self.fname} *= z_r/z_p\n"
 
-        fstring += "\n"
-        fstring += f"    rate_eval.{self.fname} = rate\n\n"
         return fstring
 
     def counter_factors(self):

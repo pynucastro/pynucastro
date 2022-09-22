@@ -574,6 +574,19 @@ class RateCollection:
             return None
         return _tmp
 
+    def get_nuclei_needing_partition_functions(self):
+        """return a list of the nuclei that require partition
+        functions for one or more DerivedRates in the collection"""
+
+        rates_with_pfs = [q for q in self.all_rates if isinstance(q, DerivedRate) and q.use_pf]
+
+        if rates_with_pfs:
+            nuclei_pfs = []
+            for r in rates_with_pfs:
+                nuclei_pfs += r.reactants + r.products
+            return set(nuclei_pfs)
+        return None
+
     def remove_nuclei(self, nuc_list):
         """remove the nuclei in nuc_list from the network along with any rates
         that directly involve them (this doesn't affect approximate rates that

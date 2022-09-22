@@ -4,7 +4,7 @@ source"""
 import sys
 
 from pynucastro.networks.rate_collection import RateCollection
-from pynucastro.rates.rate import ApproximateRate, DerivedRate
+from pynucastro.rates.rate import ApproximateRate
 
 
 class PythonNetwork(RateCollection):
@@ -190,14 +190,9 @@ class PythonNetwork(RateCollection):
 
         # partition function data (if needed)
 
-        rates_with_pfs = [q for q in self.all_rates if isinstance(q, DerivedRate) and q.use_pf]
+        nuclei_pfs = self.get_nuclei_needing_partition_functions()
 
-        if rates_with_pfs:
-            nuclei_pfs = []
-            for r in rates_with_pfs:
-                nuclei_pfs += r.reactants + r.products
-            nuclei_pfs = set(nuclei_pfs)
-
+        if nuclei_pfs:
             for n in nuclei_pfs:
                 if n.partition_function:
                     of.write(f"{n}_temp_array = np.array({list(n.partition_function.temperature/1.0e9)})\n")

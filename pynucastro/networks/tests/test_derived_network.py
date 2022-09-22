@@ -67,6 +67,9 @@ def fe52__p_mn51__derived(rate_eval, tf):
     rate += np.exp(  {:.14f} + -85.6326403498911*tf.T9i + -36.1825*tf.T913i + 0.873042*tf.T913
                   + -2.89731*tf.T9 + 0.364394*tf.T953 + 0.833333*tf.lnT9)
 
+    rate_eval.fe52__p_mn51__derived = rate
+
+
     # setting p partition function to 1.0 by default, independent of T
     p_pf = 1.0
 
@@ -80,10 +83,7 @@ def fe52__p_mn51__derived(rate_eval, tf):
 
     z_r = p_pf*mn51_pf
     z_p = fe52_pf
-    rate *= z_r/z_p
-
-    rate_eval.fe52__p_mn51__derived = rate
-
+    rate_eval.fe52__p_mn51__derived *= z_r/z_p
 """.format(dispute_values[i])
 
         r = pynet.get_rate("fe52__p_mn51__derived")
