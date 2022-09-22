@@ -267,12 +267,6 @@ class BaseCxxNetwork(ABC, RateCollection):
         # Writes the number of Reaclib rates
         of.write(f'{self.indent*n_indent}const int NrateReaclib = {len(self.reaclib_rates + self.derived_rates)};\n')
 
-        nreaclib_sets = 0
-        for r in self.reaclib_rates + self.derived_rates:
-            nreaclib_sets = nreaclib_sets + len(r.sets)
-
-        of.write(f'{self.indent*n_indent}const int NumReaclibSets = {nreaclib_sets};\n')
-
     def _nrat_tabular(self, n_indent, of):
         # Writes the number of tabular rates
         of.write(f'{self.indent*n_indent}const int NrateTabular = {len(self.tabular_rates)};\n')
