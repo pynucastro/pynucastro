@@ -861,6 +861,9 @@ class RateCollection:
             else:
                 pf = 1.0
 
+            if not nuc.spin_states:
+                raise ValueError(f"The spin of {nuc} is not implemented for now.")
+
             nse_exponent = (nuc.Z * u[0] + nuc.N * u[1] - u_c[nuc] + nuc.Z * up_c + nuc.nucbind * nuc.A) / k / state.temp / Erg2MeV
             nse_exponent = min(500.0, nse_exponent)
 
@@ -895,7 +898,7 @@ class RateCollection:
         eq2 += - state.ye
         return [eq1, eq2]
 
-    def get_comp_nse(self, rho, T, ye, init_guess=(-3.5, -15), tol=1.0e-11, use_coulomb_corr=False):
+    def get_comp_nse(self, rho, T, ye, init_guess=(-3.5, -15), tol=1.0e-11, use_coulomb_corr=False, return_sol=False):
         """
         Returns the NSE composition given density, temperature and prescribed electron fraction
         using scipy.fsolve, `tol` is an optional parameter for the tolerance of scipy.fsolve.
@@ -938,12 +941,15 @@ class RateCollection:
 
                 res = self._constraint_eq(u, u_c, state)
                 is_pos_new = all(k > 0 for k in res)
-                found_sol = np.all(np.isclose(res, [0.0, 0.0], rtol=1.0e-10, atol=1.0e-10))
+                found_sol = np.all(np.isclose(res, [0.0, 0.0], rtol=1.0e-7, atol=1.0e-7))
 
                 if found_sol:
                     Xs = self._nucleon_fraction_nse(u, u_c, state)
                     comp = Composition(self.unique_nuclei)
                     comp.X = Xs
+
+                    if return_sol:
+                        return comp, u
 
                     return comp
 
