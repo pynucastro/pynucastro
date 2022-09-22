@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.networks.rate_collection &mdash; pynucastro 1.7.0.post59+g153d3479 documentation</title>
+  <title>pynucastro.networks.rate_collection &mdash; pynucastro 1.7.0.post60+g6af82279 documentation</title>
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -677,6 +677,19 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">_tmp</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
         <span class="k">return</span> <span class="n">_tmp</span></div>
+
+<div class="viewcode-block" id="RateCollection.get_nuclei_needing_partition_functions"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.get_nuclei_needing_partition_functions">[docs]</a>    <span class="k">def</span> <span class="nf">get_nuclei_needing_partition_functions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;return a list of the nuclei that require partition</span>
+<span class="sd">        functions for one or more DerivedRates in the collection&quot;&quot;&quot;</span>
+
+        <span class="n">rates_with_pfs</span> <span class="o">=</span> <span class="p">[</span><span class="n">q</span> <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_rates</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">DerivedRate</span><span class="p">)</span> <span class="ow">and</span> <span class="n">q</span><span class="o">.</span><span class="n">use_pf</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">rates_with_pfs</span><span class="p">:</span>
+            <span class="n">nuclei_pfs</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">rates_with_pfs</span><span class="p">:</span>
+                <span class="n">nuclei_pfs</span> <span class="o">+=</span> <span class="n">r</span><span class="o">.</span><span class="n">reactants</span> <span class="o">+</span> <span class="n">r</span><span class="o">.</span><span class="n">products</span>
+            <span class="k">return</span> <span class="nb">set</span><span class="p">(</span><span class="n">nuclei_pfs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
 
 <div class="viewcode-block" id="RateCollection.remove_nuclei"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.remove_nuclei">[docs]</a>    <span class="k">def</span> <span class="nf">remove_nuclei</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nuc_list</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;remove the nuclei in nuc_list from the network along with any rates</span>

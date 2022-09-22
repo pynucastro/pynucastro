@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.rates.rate &mdash; pynucastro 1.7.0.post59+g153d3479 documentation</title>
+  <title>pynucastro.rates.rate &mdash; pynucastro 1.7.0.post60+g6af82279 documentation</title>
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -1757,17 +1757,7 @@
             <span class="k">if</span> <span class="ow">not</span> <span class="n">nuc</span><span class="o">.</span><span class="n">partition_function</span> <span class="ow">and</span> <span class="nb">str</span><span class="p">(</span><span class="n">nuc</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;h1&#39;</span><span class="p">,</span> <span class="s1">&#39;n&#39;</span><span class="p">,</span> <span class="s1">&#39;he4&#39;</span><span class="p">,</span> <span class="s1">&#39;p&#39;</span><span class="p">]:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;WARNING: </span><span class="si">{</span><span class="n">nuc</span><span class="si">}</span><span class="s1"> partition function is not supported by tables: set pf = 1.0 by default&#39;</span><span class="p">)</span>
 
-        <span class="n">fstring</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;@numba.njit()</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;def </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">(rate_eval, tf):</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    # </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rid</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    rate = 0.0</span><span class="se">\n\n</span><span class="s2">&quot;</span>
-
-        <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sets</span><span class="p">:</span>
-            <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    # </span><span class="si">{</span><span class="n">s</span><span class="o">.</span><span class="n">labelprops</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">5</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="n">set_string</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">set_string_py</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;rate&quot;</span><span class="p">,</span> <span class="n">plus_equal</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">set_string</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">):</span>
-                <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    &quot;</span> <span class="o">+</span> <span class="n">t</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">fstring</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">function_string_py</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_pf</span><span class="p">:</span>
 
@@ -1792,10 +1782,8 @@
             <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;*&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">nucp</span><span class="si">}</span><span class="s2">_pf&quot;</span> <span class="k">for</span> <span class="n">nucp</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">products</span><span class="p">])</span>
 
             <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    rate *= z_r/z_p</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    rate_eval.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2"> *= z_r/z_p</span><span class="se">\n</span><span class="s2">&quot;</span>
 
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    rate_eval.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2"> = rate</span><span class="se">\n\n</span><span class="s2">&quot;</span>
         <span class="k">return</span> <span class="n">fstring</span></div>
 
 <div class="viewcode-block" id="DerivedRate.counter_factors"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.DerivedRate.counter_factors">[docs]</a>    <span class="k">def</span> <span class="nf">counter_factors</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
