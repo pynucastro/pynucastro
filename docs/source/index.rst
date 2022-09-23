@@ -41,12 +41,13 @@ codes.
    :maxdepth: 1
    :caption: Advanced Usage
 
+   screening-examples
    modify-example.ipynb
    approx-rates-examples.ipynb
    unimportant-rates.ipynb
    partition-function
    NSE-example.ipynb
-   
+
 .. toctree::
    :maxdepth: 1
    :caption: Writing Networks
