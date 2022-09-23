@@ -1,4 +1,4 @@
-"""A Fortran reaction network for integration into the StarKiller
+"""A C++ reaction network for integration into the StarKiller
 Microphysics set of reaction networks used by astrophysical hydrodynamics
 codes"""
 
@@ -6,7 +6,7 @@ codes"""
 import glob
 import os
 
-from pynucastro.networks import BaseCxxNetwork
+from pynucastro.networks.base_cxx_network import BaseCxxNetwork
 
 
 class StarKillerCxxNetwork(BaseCxxNetwork):
@@ -24,6 +24,8 @@ class StarKillerCxxNetwork(BaseCxxNetwork):
         self.ftags['<rate_param_tests>'] = self._rate_param_tests
 
         self.disable_rate_params = disable_rate_params
+        self.function_specifier = "AMREX_GPU_HOST_DEVICE AMREX_INLINE"
+        self.dtype = "Real"
 
     def _get_template_files(self):
 
@@ -38,11 +40,19 @@ class StarKillerCxxNetwork(BaseCxxNetwork):
 
         for _, r in enumerate(self.rates):
             if r in self.disable_rate_params:
-                of.write(f"{self.indent*n_indent}if (i == k_{r.fname} && disable_{r.fname}) {{\n")
-                of.write(f"{self.indent*n_indent}    rate_eval.screened_rates(i) = 0.0;\n")
-                of.write(f"{self.indent*n_indent}    rate_eval.dscreened_rates_dT(i) = 0.0;\n")
-                of.write(f"{self.indent*n_indent}    continue;\n")
-                of.write(f"{self.indent*n_indent}}}\n")
+                of.write(f"{self.indent*n_indent}if (disable_{r.fname}) {{\n")
+                of.write(f"{self.indent*n_indent}    rate_eval.screened_rates(k_{r.fname}) = 0.0;\n")
+                of.write(f"{self.indent*n_indent}    if constexpr (std::is_same<T, rate_derivs_t>::value) {{\n")
+                of.write(f"{self.indent*n_indent}        rate_eval.dscreened_rates_dT(k_{r.fname}) = 0.0;\n")
+                of.write(f"{self.indent*n_indent}    }}\n")
+                # check for the reverse too -- we disable it with the same parameter
+                rr = self.find_reverse(r)
+                if rr is not None:
+                    of.write(f"{self.indent*n_indent}    rate_eval.screened_rates(k_{rr.fname}) = 0.0;\n")
+                    of.write(f"{self.indent*n_indent}    if constexpr (std::is_same<T, rate_derivs_t>::value) {{\n")
+                    of.write(f"{self.indent*n_indent}    rate_eval.dscreened_rates_dT(k_{rr.fname}) = 0.0;\n")
+                    of.write(f"{self.indent*n_indent}    }}\n")
+                of.write(f"{self.indent*n_indent}}}\n\n")
 
     def _write_network(self, odir=None):
         """
@@ -52,18 +62,20 @@ class StarKillerCxxNetwork(BaseCxxNetwork):
 
         super()._write_network(odir=odir)
 
+        if odir is None:
+            odir = os.getcwd()
         # create a .net file with the nuclei properties
-        with open("pynucastro.net", "w") as of:
+        with open(os.path.join(odir, "pynucastro.net"), "w") as of:
             for nuc in self.unique_nuclei:
                 of.write("{:25} {:6} {:6.1f} {:6.1f}\n".format(
                     nuc.spec_name, nuc.short_spec_name, nuc.A, nuc.Z))
 
         # write out some network properties
-        with open("NETWORK_PROPERTIES", "w") as of:
+        with open(os.path.join(odir, "NETWORK_PROPERTIES"), "w") as of:
             of.write(f"NSCREEN := {self.num_screen_calls}\n")
 
         # write the _parameters file
-        with open("_parameters", "w") as of:
+        with open(os.path.join(odir, "_parameters"), "w") as of:
             of.write("@namespace: network\n\n")
             if self.disable_rate_params:
                 for r in self.disable_rate_params:

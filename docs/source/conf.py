@@ -58,6 +58,8 @@ project = 'pynucastro'
 copyright = '2022, Michael Zingale and Donald Willcox'
 author = 'pynucastro development team'
 
+html_logo = "logo.png"
+
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
 # built documents.

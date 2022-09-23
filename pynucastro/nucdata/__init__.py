@@ -8,5 +8,7 @@ particular, the binding energies)
 from .binding_nuclide import BindingNuclide
 from .binding_table import BindingTable
 from .elements import Element, UnidentifiedElement, PeriodicTable
+from .mass_nuclide import MassNuclide, MassTable
+from .nucleus import Nucleus, UnsupportedNucleus
 from .partition_function import PartitionFunction, PartitionFunctionTable, PartitionFunctionCollection
 from .spin_nuclide import SpinNuclide, SpinTable

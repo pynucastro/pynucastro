@@ -18,14 +18,14 @@ class TestLibrary:
         """ this is run before each test """
 
         trates = []
-        trates.append(pyna.Rate("c12-pg-n13-ls09"))
-        trates.append(pyna.Rate("c13-pg-n14-nacr"))
-        trates.append(pyna.Rate("n13--c13-wc12"))
-        trates.append(pyna.Rate("n13-pg-o14-lg06"))
-        trates.append(pyna.Rate("n14-pg-o15-im05"))
-        trates.append(pyna.Rate("n15-pa-c12-nacr"))
-        trates.append(pyna.Rate("o14--n14-wc12"))
-        trates.append(pyna.Rate("o15--n15-wc12"))
+        trates.append(pyna.load_rate("c12-pg-n13-ls09"))
+        trates.append(pyna.load_rate("c13-pg-n14-nacr"))
+        trates.append(pyna.load_rate("n13--c13-wc12"))
+        trates.append(pyna.load_rate("n13-pg-o14-lg06"))
+        trates.append(pyna.load_rate("n14-pg-o15-im05"))
+        trates.append(pyna.load_rate("n15-pa-c12-nacr"))
+        trates.append(pyna.load_rate("o14--n14-wc12"))
+        trates.append(pyna.load_rate("o15--n15-wc12"))
 
         self.library = pyna.Library(rates=trates)
 
@@ -51,7 +51,7 @@ class TestLibrary:
         assert self.library.get_num_rates() == 8
 
     def test_get_rate(self):
-        assert self.library.get_rate("c12 + p --> n13 <ls09_reaclib__>") == pyna.Rate("c12-pg-n13-ls09")
+        assert self.library.get_rate("c12 + p --> n13 <ls09_reaclib__>") == pyna.load_rate("c12-pg-n13-ls09")
 
     def test_diff(self):
         diff_lib = self.library - self.smaller_lib
@@ -60,8 +60,8 @@ class TestLibrary:
     def test_linking_nuclei(self):
         new_lib = self.library.linking_nuclei(["p", "c12", "n13", "c13"])
 
-        assert sorted(new_lib.get_rates()) == sorted([pyna.Rate("c12-pg-n13-ls09"),
-                                                      pyna.Rate("n13--c13-wc12")])
+        assert sorted(new_lib.get_rates()) == sorted([pyna.load_rate("c12-pg-n13-ls09"),
+                                                      pyna.load_rate("n13--c13-wc12")])
 
     def test_forward_backward(self):
         assert self.library.backward() is None

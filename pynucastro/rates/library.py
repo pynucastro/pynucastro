@@ -2,8 +2,8 @@ import os
 import io
 import collections
 
-from pynucastro.nucleus import Nucleus, UnsupportedNucleus
-from pynucastro.rates import Rate, _find_rate_file
+from pynucastro.nucdata import Nucleus, UnsupportedNucleus
+from pynucastro.rates.rate import DerivedRate, Rate, _find_rate_file, ReacLibRate, TabularRate
 
 
 def list_known_rates():
@@ -18,12 +18,11 @@ def list_known_rates():
                 continue
             try:
                 lib = Library(f)
-            except:  # noqa
+            except Exception:  # pylint: disable=broad-except
                 continue
-            else:
-                print(f"{f:32} : ")
-                for r in lib.get_rates():
-                    print(f"                                 : {r}")
+            print(f"{f:32} : ")
+            for r in lib.get_rates():
+                print(f"                                 : {r}")
 
 
 class Library:
@@ -42,11 +41,12 @@ class Library:
             self._rates = None
             if isinstance(rates, Rate):
                 rates = [rates]
-            assert isinstance(rates, (dict, list, set)), "ERROR: rates in Library constructor must be a Rate object, list of Rate objects, or dictionary of Rate objects keyed by Rate.get_rate_id()"
             if isinstance(rates, dict):
                 self._rates = rates
             elif isinstance(rates, (list, set)):
                 self._add_from_rate_list(rates)
+            else:
+                raise TypeError("rates in Library constructor must be a Rate object, list of Rate objects, or dictionary of Rate objects keyed by Rate.get_rate_id()")
         else:
             self._rates = {}
         self._library_source_lines = collections.deque()
@@ -85,21 +85,17 @@ class Library:
             self._rates = {}
         for r in ratelist:
             rid = r.get_rate_id()
-            assert rid not in self._rates, "ERROR: supplied a Rate object already in the Library."
+            if rid in self._rates:
+                raise ValueError(f"supplied a Rate object already in the Library: {r}")
             self._rates[rid] = r
 
     def _read_library_file(self):
         # loop through library file, read lines
-        try:
-            flib = open(self._library_file)
-        except IOError:
-            print(f'Could not open file {self._library_file}')
-            raise
-        for line in flib:
-            ls = line.rstrip('\n')
-            if ls.strip():
-                self._library_source_lines.append(ls)
-        flib.close()
+        with open(self._library_file) as flib:
+            for line in flib:
+                ls = line.rstrip('\n')
+                if ls.strip():
+                    self._library_source_lines.append(ls)
 
         # identify distinct rates from library lines
         current_chapter = None
@@ -119,28 +115,31 @@ class Library:
                     chapter = int(line)
                 except (TypeError, ValueError):
                     # we can't interpret line as a chapter so use current_chapter
-                    try:
-                        assert current_chapter
-                    except AssertionError:
-                        print(f'ERROR: malformed library file {self._library_file}, cannot identify chapter.')
-                        raise
-                    else:
-                        chapter = current_chapter
+                    assert current_chapter, f'malformed library file {self._library_file}, cannot identify chapter.'
+                    chapter = current_chapter
                 else:
                     self._library_source_lines.popleft()
             current_chapter = chapter
 
             rlines = None
+            rate_type = None
             if chapter == 't':
                 rlines = [self._library_source_lines.popleft() for i in range(5)]
+                rate_type = "tabular"
             elif isinstance(chapter, int):
                 rlines = [self._library_source_lines.popleft() for i in range(3)]
+                rate_type = "reaclib"
             if rlines:
                 sio = io.StringIO('\n'.join([f'{chapter}'] +
                                             rlines))
                 #print(sio.getvalue())
                 try:
-                    r = Rate(sio, rfile_path=self._library_file)
+                    if rate_type == "reaclib":
+                        r = ReacLibRate(rfile=sio, rfile_path=self._library_file)
+                    elif rate_type == "tabular":
+                        r = TabularRate(rfile=sio, rfile_path=self._library_file)
+                    else:
+                        raise NotImplementedError("rate not implemented")
                 except UnsupportedNucleus:
                     pass
                 else:
@@ -167,12 +166,9 @@ class Library:
         """ Add two libraries to get a library containing rates from both. """
         new_rates = self._rates
         for rid, r in other._rates.items():
-            try:
-                assert rid not in new_rates
-            except AssertionError:
+            if rid in new_rates:
                 if r != new_rates[rid]:
-                    print(f'ERROR: rate {r} defined differently in libraries {self._library_file} and {other._library_file}\n')
-                    raise
+                    raise ValueError(f'rate {r} defined differently in libraries {self._library_file} and {other._library_file}')
             else:
                 new_rates[rid] = r
         new_library = Library(libfile=f'{self._library_file} + {other._library_file}',
@@ -204,8 +200,7 @@ class Library:
             r = [q for q in self.get_rates() if q.fname == rid][0]
             return r
         except IndexError:
-            print("ERROR: rate identifier does not match a rate in this library.")
-            raise
+            raise LookupError(f"rate identifier {rid!r} does not match a rate in this library.") from None
 
     def get_nuclei(self):
         """get the list of unique nuclei"""
@@ -245,12 +240,8 @@ class Library:
             if isinstance(nuc, Nucleus):
                 nucleus_set.add(nuc)
             else:
-                try:
-                    anuc = Nucleus(nuc)
-                except:  # noqa
-                    raise
-                else:
-                    nucleus_set.add(anuc)
+                anuc = Nucleus(nuc)
+                nucleus_set.add(anuc)
 
         # Discard rates with nuclei that are not in nucleus_set
         filtered_rates = []
@@ -291,12 +282,7 @@ class Library:
         if isinstance(filter_spec, RateFilter):
             filter_specifications = [filter_spec]
         else:
-            try:
-                iter(filter_spec)
-            except TypeError:
-                raise
-            else:
-                filter_specifications = filter_spec
+            filter_specifications = list(filter_spec)
         matching_rates = {}
         for rid, r in self._rates.items():
             for f in filter_specifications:
@@ -395,10 +381,60 @@ class Library:
         only_bwd = self.filter(only_bwd_filter)
         return only_bwd
 
+    def derived_forward(self):
+        """
+        In this library, We exclude the weak and tabular rates from the .foward() library which includes all
+        the ReacLib forward reactions.
+
+        In a future PR, we will classify forward reactions as exothermic (Q>0), and reverse by endothermic (Q<0).
+        However, ReacLib does not follow this path. If a reaction is measured experimentally (independent of Q),
+        they use detailed balance to get the opposite direction. Eventually, I want to classify forward and reverse
+        by positive Q and negative Q; however, for testing purposes, making this classification may eventually lead to
+        computing the detailed balance twice.
+
+        The idea of derived_forward is to eliminate the reverse and weak, and see if our job gives the same Reaclib
+        predictions, checking the NSE convergence with the pf functions. In the future, I want to move this function
+        in a unit test.
+        """
+
+        collect_rates = []
+        onlyfwd = self.forward()
+
+        for r in onlyfwd.get_rates():
+
+            try:
+                DerivedRate(rate=r, compute_Q=False, use_pf=False)
+            except ValueError:
+                continue
+            else:
+                collect_rates.append(r)
+
+        list1 = Library(rates=collect_rates)
+        return list1
+
+    def derived_backward(self, compute_Q=False, use_pf=False):
+        """
+        This library contains the detailed balance reverse reactions over the selected .derived_forward(),
+        computed by hand.
+        """
+
+        derived_rates = []
+        onlyfwd = self.derived_forward()
+
+        for r in onlyfwd.get_rates():
+            try:
+                i = DerivedRate(rate=r, compute_Q=compute_Q, use_pf=use_pf)
+            except ValueError:
+                continue
+            else:
+                derived_rates.append(i)
+
+        onlybwd = Library(rates=derived_rates)
+        return onlybwd
+
 
 class RateFilter:
     """RateFilter filters out a specified rate or set of rates
-
     A RateFilter stores selection rules specifying a rate or group of
     rates to assist in searching for rates stored in a Library.
     """

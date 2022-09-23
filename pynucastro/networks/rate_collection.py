@@ -1,9 +1,6 @@
 """A collection of classes and methods to deal with collections of
 rates that together make up a network."""
 
-# disable a complaint about SymLogNorm
-#pylint: disable=redundant-keyword-arg
-
 # Common Imports
 import warnings
 import functools
@@ -20,13 +17,72 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from matplotlib.ticker import MaxNLocator
 from matplotlib.colors import SymLogNorm
+from matplotlib.scale import SymmetricalLogTransform
+from matplotlib.patches import ConnectionPatch
 import networkx as nx
+from pynucastro.screening.screen import NseState
+from scipy import constants
+from scipy.optimize import fsolve
+import copy
 
 # Import Rate
-from pynucastro.nucleus import Nucleus
-from pynucastro.rates import Rate, RatePair, Library
+from pynucastro.nucdata import Nucleus
+from pynucastro.rates import Rate, TabularRate, RatePair, DerivedRate, ApproximateRate, Library, load_rate
+from pynucastro.screening import make_plasma_state, make_screen_factors
+
+from pynucastro.nucdata import PeriodicTable
 
 mpl.rcParams['figure.dpi'] = 100
+
+
+def _skip_xalpha(n, p, r):
+    """utility function to consider if we show an (a, x) or (x, a) rate.  Here, p is the
+    product we want to link to"""
+
+    # first check if alpha is the heaviest nucleus on the RHS
+    rhs_heavy = max(r.products)
+    if not (rhs_heavy.Z == 2 and rhs_heavy.A == 4):
+
+        # for rates that are A (x, alpha) B, where A and B are heavy nuclei,
+        # don't show the connection of the nucleus to alpha, only show it to B
+        if p.Z == 2 and p.A == 4:
+            return True
+
+        # likewise, hide A (alpha, x) B, unless A itself is an alpha
+        c = r.reactants
+        n_alpha = 0
+        for nuc in c:
+            if nuc.Z == 2 and nuc.A == 4:
+                n_alpha += 1
+        # if there is only 1 alpha and we are working on the alpha node,
+        # then skip
+        if n_alpha == 1 and n.Z == 2 and n.A == 4:
+            return True
+
+    return False
+
+
+def _skip_xp(n, p, r):
+    """utility function to consider if we show an (p, x) or (x, p) rate.  Here, p is the
+    product we want to link to"""
+
+    # for rates that are A (x, p) B, where A and B are heavy nuclei,
+    # don't show the connection of the nucleus to p, only show it to B
+    if p.Z == 1 and p.A == 1:
+        return True
+
+    # likewise, hide A (p, x) B, unless A itself is an p
+    c = r.reactants
+    n_p = 0
+    for nuc in c:
+        if nuc.Z == 1 and nuc.A == 1:
+            n_p += 1
+    # if there is only 1 p and we are working on the p node,
+    # then skip
+    if n_p == 1 and n.Z == 1 and n.A == 1:
+        return True
+
+    return False
 
 
 class Composition:
@@ -100,6 +156,116 @@ class Composition:
             ostr += f"  X({k}) : {self.X[k]}\n"
         return ostr
 
+    def plot(self, trace_threshold=0.1, hard_limit=None, size=(9, 5)):
+        """ Make a pie chart of Composition. group trace nuceli together and explode into bar chart
+
+        parameters
+        ----------
+
+        trace_threshold : the threshold to consider a component to be trace.
+
+        hard_limit : hard limit for nuclei to be labeled in the plot. Default is None which will set the limit to 5% of total trace abundance
+
+        size: tuple giving width x height of the plot in inches
+
+        """
+
+        # find trace nuclei
+        trace_keys = []
+        trace_tot = 0.
+        main_keys = []
+        for k in self.X:
+            # if below threshold, count as trace element
+            if self.X[k] < trace_threshold:
+                trace_keys.append(k)
+                trace_tot += self.X[k]
+            else:
+                main_keys.append(k)
+
+        # check if any trace nuclei
+        if not trace_keys:
+            # just do pie chart without including trace
+
+            fig, ax = plt.subplots(1, 1, figsize=size)
+
+            ax.pie(self.X.values(), labels=self.X.keys(), autopct=lambda p: f"{p/100:0.3f}")
+
+        else:
+            # find trace nuclei which contribute little to trace proportion
+            if hard_limit is None:
+                # make hardlimit proportional to trace abundance
+                hard_limit = 0.05*trace_tot
+
+            limited_trace_keys = []
+            other_trace_tot = 0.
+            for k in trace_keys:
+                if self.X[k] < hard_limit:
+                    other_trace_tot += self.X[k]
+                else:
+                    limited_trace_keys.append(k)
+
+            # make figure and assign axis objects
+            fig, (ax1, ax2) = plt.subplots(1, 2, figsize=size)
+            fig.subplots_adjust(wspace=0)
+
+            # pie chart parameters
+            main_values = [trace_tot] + [self.X[k] for k in main_keys]
+            main_labels = ['trace'] + main_keys
+            explode = [0.2] + [0. for i in range(len(main_keys))]
+
+            # rotate so that first wedge is split by the x-axis
+            angle = -180 * main_values[0]
+            wedges, *_ = ax1.pie(main_values, autopct=lambda p: f"{p/100:0.3f}", startangle=angle,
+                                labels=main_labels, explode=explode)
+
+            # bar chart parameters
+            trace_values = [self.X[k] for k in limited_trace_keys] + [other_trace_tot]
+            trace_labels = [k.short_spec_name for k in limited_trace_keys] + ['other']
+            bottom = 1
+            width = 0.1
+
+            # Adding from the top matches the legend.
+            alpha_list = np.linspace(0.1, 1, len(trace_values))
+            trace_wedge_color = wedges[0].get_facecolor()
+
+            for j, (height, label) in enumerate([*zip(trace_values, trace_labels)]):
+                bottom -= height
+                bc = ax2.bar(0, height, width, bottom=bottom, color=trace_wedge_color, label=label,
+                            alpha=alpha_list[j])
+
+                ax2.bar_label(bc, labels=[f"{height:.2e}"], label_type='center')
+                ax2.bar_label(bc, labels=[f"{label:>30}"], label_type='center')
+
+            ax2.set_title('Composition of Trace Nuclei')
+            ax2.axis('off')
+            ax2.set_xlim(- 2.5 * width, 2.5 * width)
+
+            # use ConnectionPatch to draw lines between the two plots
+            theta1, theta2 = wedges[0].theta1, wedges[0].theta2
+            center, r = wedges[0].center, wedges[0].r
+            bar_height = sum(trace_values)
+
+            # draw top connecting line
+            x = r * np.cos(np.pi / 180 * theta2) + center[0]
+            y = r * np.sin(np.pi / 180 * theta2) + center[1]
+            con = ConnectionPatch(xyA=(-width / 2, bar_height+bottom), coordsA=ax2.transData,
+                                xyB=(x, y), coordsB=ax1.transData)
+            con.set_color(trace_wedge_color)
+            con.set_linewidth(4)
+            ax2.add_artist(con)
+
+            # draw bottom connecting line
+            x = r * np.cos(np.pi / 180 * theta1) + center[0]
+            y = r * np.sin(np.pi / 180 * theta1) + center[1]
+            con = ConnectionPatch(xyA=(-width / 2, bottom), coordsA=ax2.transData,
+                                xyB=(x, y), coordsB=ax1.transData)
+            con.set_color(trace_wedge_color)
+            ax2.add_artist(con)
+            con.set_linewidth(4)
+
+        plt.show()
+        return fig
+
 
 class ScreeningPair:
     """a pair of nuclei that will have rate screening applied.  We store a
@@ -116,7 +282,8 @@ class ScreeningPair:
             self.rates = [rate]
 
     def add_rate(self, rate):
-        self.rates.append(rate)
+        if rate not in self.rates:
+            self.rates.append(rate)
 
     def __str__(self):
         ostr = f"screening for {self.n1} + {self.n2}\n"
@@ -138,6 +305,7 @@ class RateCollection:
     pynucastro_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 
     def __init__(self, rate_files=None, libraries=None, rates=None, precedence=(),
+                 inert_nuclei=None,
                  symmetric_screening=False, do_screening=True):
         """rate_files are the files that together define the network.  This
         can be any iterable or single string.
@@ -157,6 +325,10 @@ class RateCollection:
         the label that comes first in the sequence will be retained and the
         rest discarded.
 
+        inert_nuclei is a list of nuclei (as Nucleus objects) that
+        should be part of the collection but are not linked via reactions
+        to the other nuclei in the network.
+
         symmetric_screening means that we screen the reverse rates
         using the same factor as the forward rates, for rates computed
         via detailed balance.
@@ -169,8 +341,12 @@ class RateCollection:
         self.rates = []
         self.library = None
 
+        self.inert_nuclei = inert_nuclei
+
         self.symmetric_screening = symmetric_screening
         self.do_screening = do_screening
+
+        self.inert_nuclei = inert_nuclei
 
         if rate_files:
             if isinstance(rate_files, str):
@@ -180,39 +356,35 @@ class RateCollection:
         if rates:
             if isinstance(rates, Rate):
                 rates = [rates]
-            try:
-                for r in rates:
-                    assert isinstance(r, Rate)
-            except AssertionError:
-                print('Expected Rate object or list of Rate objects passed as the rates argument.')
-                raise
+            for r in rates:
+                if not isinstance(r, Rate):
+                    raise ValueError('Expected Rate object or list of Rate objects passed as the rates argument.')
+            rlib = Library(rates=rates)
+            if not self.library:
+                self.library = rlib
             else:
-                rlib = Library(rates=rates)
-                if not self.library:
-                    self.library = rlib
-                else:
-                    self.library = self.library + rlib
+                self.library = self.library + rlib
 
         if libraries:
             if isinstance(libraries, Library):
                 libraries = [libraries]
-            try:
-                for lib in libraries:
-                    assert isinstance(lib, Library)
-            except AssertionError:
-                print('Expected Library object or list of Library objects passed as the libraries argument.')
-                raise
-            else:
-                if not self.library:
-                    self.library = libraries.pop(0)
-                for lib in libraries:
-                    self.library = self.library + lib
+            for lib in libraries:
+                if not isinstance(lib, Library):
+                    raise ValueError('Expected Library object or list of Library objects passed as the libraries argument.')
+            if not self.library:
+                self.library = libraries.pop(0)
+            for lib in libraries:
+                self.library = self.library + lib
 
         if self.library:
             self.rates = self.rates + self.library.get_rates()
 
         if precedence:
             self._make_distinguishable(precedence)
+
+        self._build_collection()
+
+    def _build_collection(self):
 
         # get the unique nuclei
         u = []
@@ -221,6 +393,22 @@ class RateCollection:
             u = set(list(u) + list(t))
 
         self.unique_nuclei = sorted(u)
+
+        # approx nuclei are used in approximate rates
+        self.approx_nuclei = []
+        for r in self.rates:
+            if isinstance(r, ApproximateRate):
+                if r.intermediate_nucleus not in self.unique_nuclei + self.approx_nuclei:
+                    self.approx_nuclei.append(r.intermediate_nucleus)
+
+        if self.inert_nuclei:
+            for n in self.inert_nuclei:
+                if isinstance(n, Nucleus):
+                    nuc = n
+                else:
+                    nuc = Nucleus(n)
+                if nuc not in self.unique_nuclei:
+                    self.unique_nuclei.append(nuc)
 
         # now make a list of each rate that touches each nucleus
         # we'll store this in a dictionary keyed on the nucleus
@@ -241,8 +429,7 @@ class RateCollection:
 
         # Re-order self.rates so Reaclib rates come first,
         # followed by Tabular rates. This is needed if
-        # reaclib coefficients are targets of a pointer array
-        # in the Fortran network.
+        # reaclib coefficients are targets of a pointer array.
         # It is desired to avoid wasting array size
         # storing meaningless Tabular coefficient pointers.
         self.rates = sorted(self.rates,
@@ -250,30 +437,46 @@ class RateCollection:
 
         self.tabular_rates = []
         self.reaclib_rates = []
-        for n, r in enumerate(self.rates):
-            if r.chapter == 't':
-                self.tabular_rates.append(n)
+        self.approx_rates = []
+        self.derived_rates = []
+        for r in self.rates:
+            if isinstance(r, ApproximateRate):
+                self.approx_rates.append(r)
+                for cr in r.get_child_rates():
+                    assert cr.chapter != "t"
+                    # there may be dupes in the list of reaclib rates, since some
+                    # approx rates will use the same child rates
+                    if cr not in self.reaclib_rates:
+                        self.reaclib_rates.append(cr)
+            elif r.chapter == 't':
+                self.tabular_rates.append(r)
+            elif isinstance(r, DerivedRate):
+                self.derived_rates.append(r)
             elif isinstance(r.chapter, int):
-                self.reaclib_rates.append(n)
+                if r not in self.reaclib_rates:
+                    self.reaclib_rates.append(r)
             else:
-                print('ERROR: Chapter type unknown for rate chapter {}'.format(
-                    str(r.chapter)))
-                exit()
+                raise NotImplementedError(f"Chapter type unknown for rate chapter {r.chapter}")
+
+        self.all_rates = self.reaclib_rates + self.tabular_rates + self.approx_rates + self.derived_rates
 
     def _read_rate_files(self, rate_files):
         # get the rates
         self.files = rate_files
         for rf in self.files:
+            # create the appropriate rate object first
             try:
-                rflib = Library(rf)
-            except:  # noqa
-                print(f"Error reading library from file: {rf}")
-                raise
+                rate = load_rate(rf)
+            except Exception as ex:
+                raise Exception(f"Error reading rate from file: {rf}") from ex
+
+            # now create a library:
+            rflib = Library(rates=[rate])
+
+            if not self.library:
+                self.library = rflib
             else:
-                if not self.library:
-                    self.library = rflib
-                else:
-                    self.library = self.library + rflib
+                self.library = self.library + rflib
 
     def get_forward_rates(self):
         """return a list of the forward (exothermic) rates"""
@@ -359,31 +562,419 @@ class RateCollection:
         try:
             return [r for r in self.rates if r.fname == rid][0]
         except IndexError:
-            print("ERROR: rate identifier does not match a rate in this network.")
-            raise
+            raise LookupError(f"rate identifier {rid!r} does not match a rate in this network.") from None
 
-    def evaluate_rates(self, rho, T, composition):
+    def get_rate_by_nuclei(self, reactants, products):
+        """given a list of reactants and products, return any matching rates"""
+        _tmp = [r for r in self.rates if
+                sorted(r.reactants) == sorted(reactants) and
+                sorted(r.products) == sorted(products)]
+
+        if not _tmp:
+            return None
+        return _tmp
+
+    def get_nuclei_needing_partition_functions(self):
+        """return a list of the nuclei that require partition
+        functions for one or more DerivedRates in the collection"""
+
+        rates_with_pfs = [q for q in self.all_rates if isinstance(q, DerivedRate) and q.use_pf]
+
+        if rates_with_pfs:
+            nuclei_pfs = []
+            for r in rates_with_pfs:
+                nuclei_pfs += r.reactants + r.products
+            return set(nuclei_pfs)
+        return None
+
+    def remove_nuclei(self, nuc_list):
+        """remove the nuclei in nuc_list from the network along with any rates
+        that directly involve them (this doesn't affect approximate rates that
+        may have these nuclei as hidden intermediate links)"""
+
+        rates_to_delete = []
+        for nuc in nuc_list:
+            nn = nuc
+            if not isinstance(nuc, Nucleus):
+                nn = Nucleus(nuc)
+            for rate in self.rates:
+                if nn in rate.reactants + rate.products:
+                    print(f"looking to remove {rate}")
+                    rates_to_delete.append(rate)
+
+        for rate in set(rates_to_delete):
+            self.rates.remove(rate)
+
+        self._build_collection()
+
+    def remove_rates(self, rate_list):
+        """remove the rates in rate_list from the network.  Note, if
+        rate list is a dict, then the keys are assumed to be the rates
+        to remove"""
+
+        if isinstance(rate_list, dict):
+            for r in rate_list.keys():
+                self.rates.remove(r)
+        else:
+            for r in rate_list:
+                self.rates.remove(r)
+
+        self._build_collection()
+
+    def make_ap_pg_approx(self, intermediate_nuclei=None):
+        """combine the rates A(a,g)B and A(a,p)X(p,g)B (and the reverse) into a single
+        effective approximate rate."""
+
+        # make sure that the intermediate_nuclei list are Nuclei objects
+        _inter_nuclei_remove = []
+        if intermediate_nuclei:
+            for nn in intermediate_nuclei:
+                if isinstance(nn, Nucleus):
+                    _inter_nuclei_remove.append(nn)
+                else:
+                    _inter_nuclei_remove.append(Nucleus(nn))
+
+        # find all of the (a,g) rates
+        ag_rates = []
+        for r in self.rates:
+            if (len(r.reactants) == 2 and Nucleus("he4") in r.reactants and
+                len(r.products) == 1):
+                ag_rates.append(r)
+
+        # for each (a,g), check to see if the remaining rates are present
+        approx_rates = []
+
+        for r_ag in ag_rates:
+            prim_nuc = sorted(r_ag.reactants)[-1]
+            prim_prod = sorted(r_ag.products)[-1]
+
+            inter_nuc_Z = prim_nuc.Z + 1
+            inter_nuc_A = prim_nuc.A + 3
+
+            element = PeriodicTable.lookup_Z(inter_nuc_Z)
+
+            inter_nuc = Nucleus(f"{element.abbreviation}{inter_nuc_A}")
+
+            if intermediate_nuclei and inter_nuc not in _inter_nuclei_remove:
+                continue
+
+            # look for A(a,p)X
+            _r = self.get_rate_by_nuclei([prim_nuc, Nucleus("he4")], [inter_nuc, Nucleus("p")])
+
+            if _r:
+                r_ap = _r[-1]
+            else:
+                continue
+
+            # look for X(p,g)B
+            _r = self.get_rate_by_nuclei([inter_nuc, Nucleus("p")], [prim_prod])
+
+            if _r:
+                r_pg = _r[-1]
+            else:
+                continue
+
+            # look for reverse B(g,a)A
+            _r = self.get_rate_by_nuclei([prim_prod], [prim_nuc, Nucleus("he4")])
+
+            if _r:
+                r_ga = _r[-1]
+            else:
+                continue
+
+            # look for reverse B(g,p)X
+            _r = self.get_rate_by_nuclei([prim_prod], [inter_nuc, Nucleus("p")])
+
+            if _r:
+                r_gp = _r[-1]
+            else:
+                continue
+
+            # look for reverse X(p,a)A
+            _r = self.get_rate_by_nuclei([inter_nuc, Nucleus("p")], [Nucleus("he4"), prim_nuc])
+
+            if _r:
+                r_pa = _r[-1]
+            else:
+                continue
+
+            # build the approximate rates
+            ar = ApproximateRate(r_ag, [r_ap, r_pg], r_ga, [r_gp, r_pa], approx_type="ap_pg")
+            ar_reverse = ApproximateRate(r_ag, [r_ap, r_pg], r_ga, [r_gp, r_pa], is_reverse=True, approx_type="ap_pg")
+
+            print(f"using approximate rate {ar}")
+            print(f"using approximate rate {ar_reverse}")
+
+            # approximate rates
+            approx_rates += [ar, ar_reverse]
+
+        # remove the old rates from the rate list and add the approximate rate
+        for ar in approx_rates:
+            for r in ar.get_child_rates():
+                try:
+                    self.rates.remove(r)
+                    print(f"removing rate {r}")
+                except ValueError:
+                    pass
+
+            # add the approximate rates
+            self.rates.append(ar)
+
+        # regenerate the links
+        self._build_collection()
+
+    def evaluate_rates(self, rho, T, composition, screen_func=None):
         """evaluate the rates for a specific density, temperature, and
-        composition"""
+        composition, with optional screening"""
         rvals = {}
         ys = composition.get_molar()
         y_e = composition.eval_ye()
 
+        if screen_func is not None:
+            screen_factors = self.evaluate_screening(rho, T, composition, screen_func)
+        else:
+            screen_factors = {}
+
         for r in self.rates:
             val = r.prefactor * rho**r.dens_exp * r.eval(T, rho * y_e)
-            if (r.weak_type == 'electron_capture' and not r.tabular):
+            if (r.weak_type == 'electron_capture' and not isinstance(r, TabularRate)):
                 val = val * y_e
             yfac = functools.reduce(mul, [ys[q] for q in r.reactants])
-            rvals[r] = yfac * val
+            rvals[r] = yfac * val * screen_factors.get(r, 1.0)
 
         return rvals
 
-    def evaluate_ydots(self, rho, T, composition):
+    def find_unimportant_rates(self, states, cutoff_ratio, screen_func=None):
+        """evaluate the rates at multiple thermodynamic states, and find the
+        rates that are always less than `cutoff_ratio` times the fastest rate
+        for each state
+
+        Here, states is a list of tuple of the form (density, temperature, composition),
+        where composition is of type `Composition`.
+        """
+        largest_ratio = {r: 0 for r in self.rates}
+        for rho, T, comp in states:
+            rvals = self.evaluate_rates(rho, T, comp, screen_func)
+            fastest = max(rvals.values())
+            for r, value in rvals.items():
+                largest_ratio[r] = max(largest_ratio[r], value / fastest)
+        return {r: ratio for r, ratio in largest_ratio.items() if ratio < cutoff_ratio}
+
+    def evaluate_screening(self, rho, T, composition, screen_func):
+        """Evaluate the screening factors for each rate, using one of the
+        methods in :py:mod:`pynucastro.screening`"""
+        # this follows the same logic as BaseCxxNetwork._compute_screening_factors()
+        factors = {}
+        ys = composition.get_molar()
+        plasma_state = make_plasma_state(T, rho, ys)
+        screening_map = self.get_screening_map()
+
+        for i, scr in enumerate(screening_map):
+            if not (scr.n1.dummy or scr.n2.dummy):
+                scn_fac = make_screen_factors(scr.n1, scr.n2)
+                scor = screen_func(plasma_state, scn_fac)
+            if scr.name == "he4_he4_he4":
+                # we don't need to do anything here, but we want to avoid
+                # immediately applying the screening
+                pass
+            elif scr.name == "he4_he4_he4_dummy":
+                # make sure the previous iteration was the first part of 3-alpha
+                assert screening_map[i - 1].name == "he4_he4_he4"
+                # handle the second part of the screening for 3-alpha
+                scn_fac2 = make_screen_factors(scr.n1, scr.n2)
+                scor2 = screen_func(plasma_state, scn_fac2)
+
+                # there might be both the forward and reverse 3-alpha
+                # if we are doing symmetric screening
+                for r in scr.rates:
+                    # use scor from the previous loop iteration
+                    factors[r] = scor * scor2
+            else:
+                # there might be several rates that have the same
+                # reactants and therefore the same screening applies
+                # -- handle them all now
+                for r in scr.rates:
+                    factors[r] = scor
+
+        return factors
+
+    def _evaluate_n_e(self, state, Xs):
+
+        m_u = constants.value("unified atomic mass unit") * 1.0e3  # atomic unit mass in g
+
+        n_e = 0.0
+        for nuc in self.unique_nuclei:
+            n_e += nuc.Z * state.dens * Xs[nuc] / (nuc.A * m_u)
+
+        return n_e
+
+    def _evaluate_mu_c(self, n_e, state, use_coulomb_corr=True):
+        """ A helper equation that finds the mass fraction of each nuclide in NSE state,
+        u[0] is chemical potential of proton  while u[1] is chemical potential of neutron"""
+
+        # If there is proton included in network, upper limit of ye is 1
+        # And if neutron is included in network, lower limit of ye is 0.
+        # However, there are networks where either of them are included
+        # So here I add a general check to find the upper and lower limit of ye
+        # so the input doesn't go outside of the scope and the solver won't be able to converge if it did
+        ye_low = min(nuc.Z/nuc.A for nuc in self.unique_nuclei)
+        ye_max = max(nuc.Z/nuc.A for nuc in self.unique_nuclei)
+        assert state.ye >= ye_low and state.ye <= ye_max, "input electron fraction goes outside of scope for current network"
+
+        # Seting up the constants needed to compute mu_c
+        k = constants.value("Boltzmann constant") * 1.0e7          # boltzmann in erg/K
+        Erg2MeV = 624151.0
+
+        # These are three constants for calculating coulomb corrections of chemical energy, see Calders paper: iopscience 510709, appendix
+        if use_coulomb_corr:
+            A_1 = -0.9052
+            A_2 = 0.6322
+            A_3 = -0.5 * np.sqrt(3.0) - A_1 / np.sqrt(A_2)
+
+        # u_c is the coulomb correction term for NSE
+        # Calculate the composition at NSE, equations found in appendix of Calder paper
+        u_c = {}
+        for nuc in self.unique_nuclei:
+            if use_coulomb_corr:
+                Gamma = state.gamma_e_fac * n_e ** (1.0/3.0) * nuc.Z ** (5.0 / 3.0) / state.temp
+                u_c[nuc] = Erg2MeV * k * state.temp * (A_1 * (np.sqrt(Gamma * (A_2 + Gamma)) - A_2 * np.log(np.sqrt(Gamma / A_2) +
+                                      np.sqrt(1.0 + Gamma / A_2))) + 2.0 * A_3 * (np.sqrt(Gamma) - np.arctan(np.sqrt(Gamma))))
+            else:
+                u_c[nuc] = 0.0
+
+        return u_c
+
+    def _nucleon_fraction_nse(self, u, u_c, state):
+
+        # Define constants: amu, boltzmann, planck, and electron charge
+        m_u = constants.value("unified atomic mass unit") * 1.0e3  # atomic unit mass in g
+        k = constants.value("Boltzmann constant") * 1.0e7          # boltzmann in erg/K
+        h = constants.value("Planck constant") * 1.0e7             # in cgs
+        Erg2MeV = 624151.0
+
+        Xs = {}
+        up_c = u_c[Nucleus("p")]
+
+        for nuc in self.unique_nuclei:
+            if nuc.partition_function:
+                pf = nuc.partition_function(state.temp)
+            else:
+                pf = 1.0
+
+            if not nuc.spin_states:
+                raise ValueError(f"The spin of {nuc} is not implemented for now.")
+
+            nse_exponent = (nuc.Z * u[0] + nuc.N * u[1] - u_c[nuc] + nuc.Z * up_c + nuc.nucbind * nuc.A) / k / state.temp / Erg2MeV
+            nse_exponent = min(500.0, nse_exponent)
+
+            Xs[nuc] = m_u * nuc.A_nuc * pf * nuc.spin_states / state.dens * (2.0 * np.pi * m_u * nuc.A_nuc * k * state.temp / h**2) ** (3. / 2.) \
+                    * np.exp(nse_exponent)
+
+        return Xs
+
+    def _constraint_eq(self, u, u_c, state):
+        """ Constraint Equations used to evaluate chemical potential for proton and neutron,
+        which is used when evaluating composition at NSE"""
+
+        # Don't use eval_ye() since it does automatic mass fraction normalization.
+        # However, we should force normalization through constraint eq1.
+
+        # m_u = constants.value("unified atomic mass unit") * 1.0e3  # atomic unit mass in g
+
+        Xs = self._nucleon_fraction_nse(u, u_c, state)
+
+        eq1 = 0.0
+        for nuc in self.unique_nuclei:
+            eq1 += Xs[nuc]
+
+        eq1 += - 1.0
+
+        eq2 = 0.0
+        for nuc in self.unique_nuclei:
+            eq2 += Xs[nuc] * nuc.Z / nuc.A
+        # for nuc in self.unique_nuclei:
+        #     eq2 += ((state.ye - 1.0) * nuc.Z + state.ye * nuc.N ) * Xs[nuc] / (nuc.A_nuc * m_u)
+
+        eq2 += - state.ye
+        return [eq1, eq2]
+
+    def get_comp_nse(self, rho, T, ye, init_guess=(-3.5, -15), tol=1.0e-11, use_coulomb_corr=False, return_sol=False):
+        """
+        Returns the NSE composition given density, temperature and prescribed electron fraction
+        using scipy.fsolve, `tol` is an optional parameter for the tolerance of scipy.fsolve.
+        init_guess is optional, however one should change init_guess accordingly if unable or
+        taking long time to find solution.
+        One can enable printing the actual guess that found the solution after fine-tuning, which is useful
+        when calling this method multiple times such as making a plot.
+        """
+
+        #From here we convert the init_guess list into a np.array object:
+
+        init_guess = np.array(init_guess)
+        state = NseState(T, rho, ye)
+
+        u_c = {}
+        for nuc in self.unique_nuclei:
+            u_c[nuc] = 0.0
+
+        Xs = {}
+
+        j = 0
+        init_guess = np.array(init_guess)
+        is_pos_old = False
+        found_sol = False
+
+        # Filter out runtimewarnings from fsolve, here we check convergence by np.isclose
+        warnings.filterwarnings("ignore", category=RuntimeWarning)
+
+        # This nested loops should fine-tune the initial guess if fsolve is unable to find a solution
+        while (j < 20):
+            i = 0
+            guess = copy.deepcopy(init_guess)
+            init_dx = 0.5
+
+            while (i < 20):
+                u = fsolve(self._constraint_eq, guess, args=(u_c, state), xtol=tol, maxfev=800)
+                Xs = self._nucleon_fraction_nse(u, u_c, state)
+                n_e = self._evaluate_n_e(state, Xs)
+                u_c = self._evaluate_mu_c(n_e, state, use_coulomb_corr)
+
+                res = self._constraint_eq(u, u_c, state)
+                is_pos_new = all(k > 0 for k in res)
+                found_sol = np.all(np.isclose(res, [0.0, 0.0], rtol=1.0e-7, atol=1.0e-7))
+
+                if found_sol:
+                    Xs = self._nucleon_fraction_nse(u, u_c, state)
+                    comp = Composition(self.unique_nuclei)
+                    comp.X = Xs
+
+                    if return_sol:
+                        return comp, u
+
+                    return comp
+
+                if is_pos_old != is_pos_new:
+                    init_dx *= 0.8
+
+                if is_pos_new:
+                    guess -= init_dx
+                else:
+                    guess += init_dx
+
+                is_pos_old = is_pos_new
+                i += 1
+
+            j += 1
+            init_guess[0] -= 0.5
+
+        raise ValueError("Unable to find a solution, try to adjust initial guess manually")
+
+    def evaluate_ydots(self, rho, T, composition, screen_func=None):
         """evaluate net rate of change of molar abundance for each nucleus
         for a specific density, temperature, and composition"""
 
-        rvals = self.evaluate_rates(rho, T, composition)
-        ydots = dict()
+        rvals = self.evaluate_rates(rho, T, composition, screen_func)
+        ydots = {}
 
         for nuc in self.unique_nuclei:
 
@@ -401,12 +992,47 @@ class RateCollection:
 
         return ydots
 
-    def evaluate_activity(self, rho, T, composition):
+    def evaluate_energy_generation(self, rho, T, composition, screen_func=None):
+        """evaluate the specific energy generation rate of the network for a specific
+        density, temperature and composition"""
+
+        ydots = self.evaluate_ydots(rho, T, composition, screen_func)
+        enuc = 0.
+
+        # compute constants and units
+        m_n_MeV = constants.value('neutron mass energy equivalent in MeV')
+        m_p_MeV = constants.value('proton mass energy equivalent in MeV')
+        m_e_MeV = constants.value('electron mass energy equivalent in MeV')
+        MeV2erg = (constants.eV * constants.mega) / constants.erg
+
+        # ion binding energy contributions. basically e=mc^2
+        for nuc in self.unique_nuclei:
+            # add up mass in MeV then convert to erg
+            mass = ((nuc.A - nuc.Z) * m_n_MeV + nuc.Z * (m_p_MeV + m_e_MeV) - nuc.A * nuc.nucbind) * MeV2erg
+            enuc += ydots[nuc] * mass
+
+        #convert from molar value to erg/g/s
+        enuc *= -1*constants.Avogadro
+
+        #subtract neutrino losses for tabular weak reactions
+        for r in self.rates:
+            if r.weak and isinstance(r, TabularRate):
+                # get composition
+                ys = composition.get_molar()
+                y_e = composition.eval_ye()
+
+                # need to get reactant nucleus
+                nuc = r.reactants[0]
+                enuc -= constants.Avogadro * ys[nuc] * r.get_nu_loss(T, rho * y_e)
+
+        return enuc
+
+    def evaluate_activity(self, rho, T, composition, screen_func=None):
         """sum over all of the terms contributing to ydot,
         neglecting sign"""
 
-        rvals = self.evaluate_rates(rho, T, composition)
-        act = dict()
+        rvals = self.evaluate_rates(rho, T, composition, screen_func)
+        act = {}
 
         for nuc in self.unique_nuclei:
 
@@ -431,12 +1057,12 @@ class RateCollection:
 
         nc = {}
 
-        for rate in rvals:
+        for rate, rval in rvals.items():
             nucs = []
             for n in set(rate.reactants):
-                nucs.append((n, -rate.reactants.count(n) * rvals[rate]))
+                nucs.append((n, -rate.reactants.count(n) * rval))
             for n in set(rate.products):
-                nucs.append((n, rate.products.count(n) * rvals[rate]))
+                nucs.append((n, rate.products.count(n) * rval))
             nc[rate] = nucs
 
         return nc
@@ -505,55 +1131,67 @@ class RateCollection:
         if not self.do_screening:
             return screening_map
 
+        # we need to consider the child rates that come with ApproximateRate
+        all_rates = []
         for r in self.rates:
+            if isinstance(r, ApproximateRate):
+                all_rates += r.get_child_rates()
+            else:
+                all_rates.append(r)
+
+        for r in all_rates:
             screen_nuclei = r.ion_screen
             if self.symmetric_screening:
                 screen_nuclei = r.symmetric_screen
 
-            if screen_nuclei:
-                nucs = "_".join([str(q) for q in screen_nuclei])
+            # screen_nuclei may be [] if it is a decay, gamma-capture, or neutron-capture
+            if not screen_nuclei:
+                continue
 
-                scr = [q for q in screening_map if q.name == nucs]
+            nucs = "_".join([str(q) for q in screen_nuclei])
 
-                assert len(scr) <= 1
+            scr = [q for q in screening_map if q.name == nucs]
 
-                if scr:
-                    # we already have the reactants in our map, so we
-                    # will already be doing the screening factors.
-                    # Just append this new rate to the list we are
-                    # keeping of the rates where this screening is
-                    # needed
+            assert len(scr) <= 1
 
-                    scr[0].add_rate(r)
+            if scr:
+                # we already have the reactants in our map, so we
+                # will already be doing the screening factors.
+                # Just append this new rate to the list we are
+                # keeping of the rates where this screening is
+                # needed -- if the rate is already in the list, then
+                # this is a no-op
 
-                    # if we got here because nuc == "he4_he4_he4",
-                    # then we also have to add to "he4_he4_he4_dummy"
+                scr[0].add_rate(r)
 
-                    if nucs == "he4_he4_he4":
-                        scr2 = [q for q in screening_map if q.name == nucs + "_dummy"]
-                        assert len(scr2) == 1
+                # if we got here because nuc == "he4_he4_he4",
+                # then we also have to add to "he4_he4_he4_dummy"
 
-                        scr2[0].add_rate(r)
+                if nucs == "he4_he4_he4":
+                    scr2 = [q for q in screening_map if q.name == nucs + "_dummy"]
+                    assert len(scr2) == 1
+
+                    scr2[0].add_rate(r)
+
+            else:
+
+                # we handle 3-alpha specially -- we actually need
+                # 2 screening factors for it
+
+                if nucs == "he4_he4_he4":
+                    # he4 + he4
+                    scr1 = ScreeningPair(nucs, screen_nuclei[0], screen_nuclei[1], r)
+
+                    # he4 + be8
+                    be8 = Nucleus("Be8", dummy=True)
+                    scr2 = ScreeningPair(nucs + "_dummy", screen_nuclei[2], be8, r)
+
+                    screening_map.append(scr1)
+                    screening_map.append(scr2)
 
                 else:
-
-                    # we handle 3-alpha specially -- we actually need
-                    # 2 screening factors for it
-
-                    if nucs == "he4_he4_he4":
-                        # he4 + he4
-                        scr1 = ScreeningPair(nucs, screen_nuclei[0], screen_nuclei[1], r)
-
-                        # he4 + be8
-                        be8 = Nucleus("Be8", dummy=True)
-                        scr2 = ScreeningPair(nucs + "_dummy", screen_nuclei[2], be8, r)
-
-                        screening_map.append(scr1)
-                        screening_map.append(scr2)
-
-                    else:
-                        scr1 = ScreeningPair(nucs, screen_nuclei[0], screen_nuclei[1], r)
-                        screening_map.append(scr1)
+                    scr1 = ScreeningPair(nucs, screen_nuclei[0], screen_nuclei[1], r)
+                    screening_map.append(scr1)
 
         return screening_map
 
@@ -610,6 +1248,7 @@ class RateCollection:
     def _write_network(self, *args, **kwargs):
         """A stub for function to output the network -- this is implementation
         dependent."""
+        # pylint: disable=unused-argument
         print('To create network integration source code, use a class that implements a specific network type.')
 
     def plot(self, outfile=None, rho=None, T=None, comp=None,
@@ -618,7 +1257,8 @@ class RateCollection:
              node_size=1000, node_font_size=13, node_color="#A0CBE2", node_shape="o",
              curved_edges=False,
              N_range=None, Z_range=None, rotated=False,
-             always_show_p=False, always_show_alpha=False, hide_xalpha=False,
+             always_show_p=False, always_show_alpha=False,
+             hide_xp=False, hide_xalpha=False,
              nucleus_filter_function=None, rate_filter_function=None):
         """Make a plot of the network structure showing the links between
         nuclei.  If a full set of thermodymamic conditions are
@@ -672,6 +1312,9 @@ class RateCollection:
         nuclei reactions of the form A(alpha,X)B or A(X,alpha)B,
         except if alpha is the heaviest product.
 
+        hide_xp=False: dont connect the links to p for heavy
+        nuclei reactions of the form A(p,X)B or A(X,p)B.
+
         nucleus_filter_funcion: name of a custom function that takes a
         Nucleus object and returns true or false if it is to be shown
         as a node.
@@ -702,17 +1345,32 @@ class RateCollection:
         # nodes -- the node nuclei will be all of the heavies
         # add all the nuclei into G.node
         node_nuclei = []
+        colors = []
         for n in self.unique_nuclei:
             if n.raw not in hidden_nuclei:
                 node_nuclei.append(n)
+                colors.append(node_color)
             else:
                 for r in self.rates:
                     if r.reactants.count(n) > 1:
                         node_nuclei.append(n)
+                        colors.append(node_color)
                         break
+
+        # approx nuclei are given a different color
+        for n in self.approx_nuclei:
+            node_nuclei.append(n)
+            colors.append("#555555")
 
         if nucleus_filter_function is not None:
             node_nuclei = list(filter(nucleus_filter_function, node_nuclei))
+            # redo the colors:
+            colors = []
+            for n in node_nuclei:
+                if n in self.approx_nuclei:
+                    colors.append("#555555")
+                else:
+                    colors.append(node_color)
 
         for n in node_nuclei:
             G.add_node(n)
@@ -735,104 +1393,122 @@ class RateCollection:
                 if ydots[r] < ydot_cutoff_value:
                     invisible_rates.add(r)
 
-        # edges
+        # edges for the rates that are explicitly in the network
         for n in node_nuclei:
+            if n not in self.nuclei_consumed:
+                continue
             for r in self.nuclei_consumed[n]:
                 if rate_filter_function is not None:
                     if not rate_filter_function(r):
                         continue
 
                 for p in r.products:
-                    if p in node_nuclei:
+                    if p not in node_nuclei:
+                        continue
 
-                        if hide_xalpha:
+                    if hide_xalpha and _skip_xalpha(n, p, r):
+                        continue
 
-                            # first check is alpha is the heaviest nucleus on the RHS
-                            rhs_heavy = sorted(r.products)[-1]
-                            if not (rhs_heavy.Z == 2 and rhs_heavy.A == 4):
+                    if hide_xp and _skip_xp(n, p, r):
+                        continue
 
-                                # for rates that are A (x, alpha) B, where A and B are heavy nuclei,
-                                # don't show the connection of the nucleus to alpha, only show it to B
-                                if p.Z == 2 and p.A == 4:
-                                    continue
+                    # networkx doesn't seem to keep the edges in
+                    # any particular order, so we associate data
+                    # to the edges here directly, in this case,
+                    # the reaction rate, which will be used to
+                    # color it
+                    # here real means that it is not an approximate rate
 
-                                # likewise, hide A (alpha, x) B, unless A itself is an alpha
-                                c = r.reactants
-                                n_alpha = 0
-                                for nuc in c:
-                                    if nuc.Z == 2 and nuc.A == 4:
-                                        n_alpha += 1
-                                # if there is only 1 alpha and we are working on the alpha node,
-                                # then skip
-                                if n_alpha == 1 and n.Z == 2 and n.A == 4:
-                                    continue
+                    if ydots is None:
+                        G.add_edges_from([(n, p)], weight=0.5, real=1)
+                        continue
+                    if r in invisible_rates:
+                        continue
+                    try:
+                        rate_weight = math.log10(ydots[r])
+                    except ValueError:
+                        # if ydots[r] is zero, then set the weight
+                        # to roughly the minimum exponent possible
+                        # for python floats
+                        rate_weight = -308
 
-                        # networkx doesn't seem to keep the edges in
-                        # any particular order, so we associate data
-                        # to the edges here directly, in this case,
-                        # the reaction rate, which will be used to
-                        # color it
+                    G.add_edges_from([(n, p)], weight=rate_weight, real=1)
 
-                        if ydots is None:
-                            G.add_edges_from([(n, p)], weight=0.5)
-                        else:
-                            if r in invisible_rates:
-                                continue
-                            try:
-                                rate_weight = math.log10(ydots[r])
-                            except ValueError:
-                                # if ydots[r] is zero, then set the weight
-                                # to roughly the minimum exponent possible
-                                # for python floats
-                                rate_weight = -308
+        # now consider the rates that are approximated out of the network
+        rate_seen = []
+        for r in self.rates:
+            if not isinstance(r, ApproximateRate):
+                continue
+            for sr in r.secondary_rates + r.secondary_reverse:
+                if sr in rate_seen:
+                    continue
+                rate_seen.append(sr)
 
-                            G.add_edges_from([(n, p)], weight=rate_weight)
+                for n in sr.reactants:
+                    if n not in node_nuclei:
+                        continue
+                    for p in sr.products:
+                        if p not in node_nuclei:
+                            continue
+
+                        if hide_xalpha and _skip_xalpha(n, p, sr):
+                            continue
+
+                        if hide_xp and _skip_xp(n, p, sr):
+                            continue
+
+                        G.add_edges_from([(n, p)], weight=0, real=0)
 
         # It seems that networkx broke backwards compatability, and 'zorder' is no longer a valid
         # keyword argument. The 'linewidth' argument has also changed to 'linewidths'.
 
         nx.draw_networkx_nodes(G, G.position,      # plot the element at the correct position
-                               node_color=node_color, alpha=1.0,
+                               node_color=colors, alpha=1.0,
                                node_shape=node_shape, node_size=node_size, linewidths=2.0, ax=ax)
 
         nx.draw_networkx_labels(G, G.position, G.labels,   # label the name of element at the correct position
                                 font_size=node_font_size, font_color="w", ax=ax)
 
-        # get the edges and weights coupled in the same order
-        edges, weights = zip(*nx.get_edge_attributes(G, 'weight').items())
-
-        edge_color = weights
-        ww = np.array(weights)
-        min_weight = ww.min()
-        max_weight = ww.max()
-        dw = (max_weight - min_weight)/4
-        widths = np.ones_like(ww)
-        widths[ww > min_weight + dw] = 1.5
-        widths[ww > min_weight + 2*dw] = 2.5
-        widths[ww > min_weight + 3*dw] = 4
+        # now we'll draw edges in two groups -- real links and approximate links
 
         if curved_edges:
             connectionstyle = "arc3, rad = 0.2"
         else:
             connectionstyle = "arc3"
 
-        # plot the arrow of reaction
-        edges_lc = nx.draw_networkx_edges(G, G.position, width=list(widths),
-                                          edgelist=edges, edge_color=edge_color,
-                                          connectionstyle=connectionstyle,
-                                          node_size=node_size,
-                                          edge_cmap=plt.cm.viridis, ax=ax)
+        real_edges = [(u, v) for u, v, e in G.edges(data=True) if e["real"] == 1]
+        real_weights = [e["weight"] for u, v, e in G.edges(data=True) if e["real"] == 1]
 
-        # for networkx <= 2.0 draw_networkx_edges returns a
-        # LineCollection matplotlib type which we can use for the
-        # colorbar directly.  For networkx >= 2.1, it is a collection
-        # of FancyArrowPatch-s, which we need to run through a
-        # PatchCollection.  See:
-        # https://stackoverflow.com/questions/18658047/adding-a-matplotlib-colorbar-from-a-patchcollection
+        edge_color = real_weights
+        ww = np.array(real_weights)
+        min_weight = ww.min()
+        max_weight = ww.max()
+        dw = (max_weight - min_weight)/4
+        widths = np.ones_like(ww)
+        if dw > 0:
+            widths[ww > min_weight + dw] = 1.5
+            widths[ww > min_weight + 2*dw] = 2.5
+            widths[ww > min_weight + 3*dw] = 4
+        else:
+            widths *= 2
+
+        # plot the arrow of reaction
+        real_edges_lc = nx.draw_networkx_edges(G, G.position, width=list(widths),
+                                               edgelist=real_edges, edge_color=edge_color,
+                                               connectionstyle=connectionstyle,
+                                               node_size=node_size,
+                                               edge_cmap=plt.cm.viridis, ax=ax)
+
+        approx_edges = [(u, v) for u, v, e in G.edges(data=True) if e["real"] == 0]
+
+        _ = nx.draw_networkx_edges(G, G.position, width=1,
+                                   edgelist=approx_edges, edge_color="0.5",
+                                   connectionstyle=connectionstyle,
+                                   style="dotted", node_size=node_size, ax=ax)
 
         if ydots is not None:
-            pc = mpl.collections.PatchCollection(edges_lc, cmap=plt.cm.viridis)
-            pc.set_array(weights)
+            pc = mpl.collections.PatchCollection(real_edges_lc, cmap=plt.cm.viridis)
+            pc.set_array(real_weights)
             if not rotated:
                 plt.colorbar(pc, ax=ax, label="log10(rate)")
             else:
@@ -902,6 +1578,7 @@ class RateCollection:
         _ydot = np.asarray(_ydot)
         valid_max = np.abs(_ydot[_ydot != 0]).max()
 
+        # pylint: disable-next=redundant-keyword-arg
         norm = SymLogNorm(valid_max/1.e15, vmin=-valid_max, vmax=valid_max)
 
         # if there are a lot of rates, we split the network chart into
@@ -992,15 +1669,12 @@ class RateCollection:
         return np.log10(arr)
 
     @staticmethod
-    def _symlog(arr, linthresh=1.0):
+    def _symlog(arr, linthresh=1.0, linscale=1.0):
 
-        assert linthresh >= 1.0
-        neg = arr < 0.0
-        arr = np.abs(arr)
-        needslog = arr > linthresh
+        # Assume log base 10
+        symlog_transform = SymmetricalLogTransform(10, linthresh, linscale)
+        arr = symlog_transform.transform_non_affine(arr)
 
-        arr[needslog] = np.log10(arr[needslog]) + linthresh
-        arr[neg] *= -1
         return arr
 
     @staticmethod
@@ -1039,6 +1713,8 @@ class RateCollection:
             - *small* -- If using logarithmic scaling, zeros will be replaced with
               this value. 1e-30 by default.
             - *linthresh* -- Linearity threshold for symlog scaling.
+            - *linscale* --  The number of decades to use for each half of the linear
+              range. Stretches linear range relative to the logarithmic range.
             - *filter_function* -- A callable to filter Nucleus objects with. Should
               return *True* if the nuclide should be plotted.
             - *outfile* -- Output file to save the plot to. The plot will be shown if
@@ -1072,6 +1748,7 @@ class RateCollection:
         filter_function = kwargs.pop("filter_function", None)
         dpi = kwargs.pop("dpi", 100)
         linthresh = kwargs.pop("linthresh", 1.0)
+        linscale = kwargs.pop("linscale", 1.0)
 
         if kwargs:
             warnings.warn(f"Unrecognized keyword arguments: {kwargs.keys()}")
@@ -1125,7 +1802,7 @@ class RateCollection:
         if scale == "log":
             values = self._safelog(values, small)
         elif scale == "symlog":
-            values = self._symlog(values, linthresh)
+            values = self._symlog(values, linthresh, linscale)
 
         if cbar_bounds is None:
             cbar_bounds = values.min(), values.max()
@@ -1214,8 +1891,10 @@ class RateCollection:
 class Explorer:
     """ interactively explore a rate collection """
     def __init__(self, rc, comp, size=(800, 600),
-                 ydot_cutoff_value=None,
-                 always_show_p=False, always_show_alpha=False):
+                 ydot_cutoff_value=None, rotated=False,
+                 hide_xalpha=False,
+                 always_show_p=False, always_show_alpha=False,
+                 node_size=1000, node_font_size=13):
         """ take a RateCollection and a composition """
         self.rc = rc
         self.comp = comp
@@ -1223,13 +1902,20 @@ class Explorer:
         self.ydot_cutoff_value = ydot_cutoff_value
         self.always_show_p = always_show_p
         self.always_show_alpha = always_show_alpha
+        self.hide_xalpha = hide_xalpha
+        self.rotated = rotated
+        self.node_size = node_size
+        self.node_font_size = node_font_size
 
     def _make_plot(self, logrho, logT):
         self.rc.plot(rho=10.0**logrho, T=10.0**logT,
                      comp=self.comp, size=self.size,
                      ydot_cutoff_value=self.ydot_cutoff_value,
                      always_show_p=self.always_show_p,
-                     always_show_alpha=self.always_show_alpha)
+                     always_show_alpha=self.always_show_alpha,
+                     rotated=self.rotated,
+                     hide_xalpha=self.hide_xalpha,
+                     node_size=self.node_size, node_font_size=self.node_font_size)
 
     def explore(self, logrho=(2, 6, 0.1), logT=(7, 9, 0.1)):
         """Perform interactive exploration of the network structure."""

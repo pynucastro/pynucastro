@@ -1,20 +1,12 @@
 # unit tests for rates
 
 import pynucastro as pyna
+import pytest
 
 
 class TestRateFilter:
-    @classmethod
-    def setup_class(cls):
-        """ this is run once for each class before any tests """
-        pass
-
-    @classmethod
-    def teardown_class(cls):
-        """ this is run once for each class after all tests """
-        pass
-
-    def setup_method(self):
+    @pytest.fixture(scope="class")
+    def library(self):
         """ this is run before each test """
 
         files = ["c12-pg-n13-ls09",
@@ -36,36 +28,32 @@ class TestRateFilter:
 
         rates = []
         for f in files:
-            rates.append(pyna.Rate(f))
+            rates.append(pyna.load_rate(f))
 
-        self.library = pyna.Library(rates=rates)
+        return pyna.Library(rates=rates)
 
-    def teardown_method(self):
-        """ this is run after each test """
-        self.library = None
-
-    def test_inexact_filter(self):
+    def test_inexact_filter(self, library):
         filter = pyna.RateFilter(reactants=['c12'], exact=False)
-        newlib = self.library.filter(filter)
+        newlib = library.filter(filter)
 
         rates = newlib.get_rates()
 
         assert len(rates) == 1
         assert str(rates[0]) == "C12 + p ⟶ N13 + 𝛾"
 
-    def test_custom(self):
+    def test_custom(self, library):
 
         # filter out all the rates with fluorine
 
         filter = pyna.RateFilter(filter_function=lambda r: len([q for q in r.reactants + r.products if q.Z == 9]))
-        newlib = self.library.filter(filter)
+        newlib = library.filter(filter)
 
         assert len(newlib.get_rates()) == 8
 
-    def test_exact(self):
+    def test_exact(self, library):
 
         filter = pyna.RateFilter(reactants=["n15", "p"])
-        newlib = self.library.filter(filter)
+        newlib = library.filter(filter)
 
         rates = newlib.get_rates()
 

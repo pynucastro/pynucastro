@@ -4,22 +4,18 @@ through sympy"""
 import re
 
 import sympy
+from pynucastro.rates import TabularRate
 
 
 class SympyRates:
 
-    def __init__(self, ctype="Fortran"):
-
-        self.ctype = ctype
+    def __init__(self):
 
         self.symbol_ludict = {}  # Symbol lookup dictionary
+        self._ydot_term_cache = {}
 
-        if self.ctype == "Fortran":
-            self.name_density = 'state % rho'
-            self.name_electron_fraction = 'state % y_e'
-        else:
-            self.name_density = 'state.rho'
-            self.name_electron_fraction = 'state.y_e'
+        self.name_density = 'state.rho'
+        self.name_electron_fraction = 'state.y_e'
 
         # Define these for the particular network
         self.name_rate_data = 'screened_rates'
@@ -38,6 +34,9 @@ class SympyRates:
         return a sympy expression containing this rate's contribution to
         the ydot term for nuclide y_i.
         """
+        key = (rate.fname, y_i)
+        if key in self._ydot_term_cache:
+            return self._ydot_term_cache[key]
         srate = self.specific_rate_symbol(rate)
 
         # Check if y_i is a reactant or product
@@ -49,7 +48,9 @@ class SympyRates:
         else:
             # y_i appears as a product or reactant
             ydot_sym = (c_prod - c_reac) * srate
-        return ydot_sym.evalf(n=self.float_explicit_num_digits)
+        result = ydot_sym.evalf(n=self.float_explicit_num_digits)
+        self._ydot_term_cache[key] = result
+        return result
 
     def specific_rate_symbol(self, rate):
         """
@@ -63,10 +64,7 @@ class SympyRates:
         Y_sym = 1
         for r in sorted(set(rate.reactants)):
             c = rate.reactants.count(r)
-            if self.ctype == "Fortran":
-                sym_final = f'{self.name_y}(j{r})'
-            else:
-                sym_final = f'{self.name_y}({r.cindex()})'
+            sym_final = f'{self.name_y}({r.cindex()})'
             sym_temp = f'Y__j{r}__'
             self.symbol_ludict[sym_temp] = sym_final
             Y_sym = Y_sym * sympy.symbols(sym_temp)**c
@@ -75,10 +73,10 @@ class SympyRates:
         dens_sym = sympy.symbols('__dens__')**rate.dens_exp
 
         # electron fraction if electron capture reaction
-        if (rate.weak_type == 'electron_capture' and not rate.tabular):
-            y_e_sym = sympy.symbols('__y_e__')
-        else:
-            y_e_sym = sympy.sympify(1)
+        y_e_sym = sympy.sympify(1)
+        if not isinstance(rate, TabularRate):
+            if rate.weak_type == 'electron_capture' and not rate.tabular:
+                y_e_sym = sympy.symbols('__y_e__')
 
         # prefactor
         prefactor_sym = sympy.sympify(1)/sympy.sympify(rate.inv_prefactor)
@@ -110,48 +108,12 @@ class SympyRates:
             symbol_is_null = True
         return (jac_sym.evalf(n=self.float_explicit_num_digits), symbol_is_null)
 
-    def fortranify(self, s):
-        """
-        Given string s, will replace the symbols appearing as keys in
-        self.symbol_ludict with their corresponding entries.
-        """
-        for k in self.symbol_ludict:
-            v = self.symbol_ludict[k]
-            s = s.replace(k, v)
-        if s == '0':
-            s = '0.0e0_rt'
-
-        # Replace all double precision literals with custom real type
-        # literals
-        # constant type specifier
-        const_spec = "_rt"
-
-        # we want to replace any "d" scientific notation with the new
-        # style this matches stuff like -1.25d-10, and gives us
-        # separate groups for the prefix and exponent.  The [^\w]
-        # makes sure a letter isn't right in front of the match (like
-        # 'k3d-1'). Alternately, we allow for a match at the start of
-        # the string.
-        d_re = re.compile(r"([^\w\+\-]|\A)([\+\-0-9.][0-9.]+)[dD]([\+\-]?[0-9]+)", re.IGNORECASE | re.DOTALL)
-
-        # update "d" scientific notation -- allow for multiple
-        # constants in a single string
-        for dd in d_re.finditer(s):
-            prefix = dd.group(2)
-            exponent = dd.group(3)
-            new_num = f"{prefix}e{exponent}{const_spec}"
-            old_num = dd.group(0).strip()
-            s = s.replace(old_num, new_num)
-
-        return s
-
     def cxxify(self, s):
         """
         Given string s, will replace the symbols appearing as keys in
         self.symbol_ludict with their corresponding entries.
         """
-        for k in self.symbol_ludict:
-            v = self.symbol_ludict[k]
+        for k, v in self.symbol_ludict.items():
             s = s.replace(k, v)
         if s == '0':
             s = '0.0e0'
