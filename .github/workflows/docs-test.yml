@@ -43,4 +43,4 @@ jobs:
       - name: Build docs
         run: |
           cd docs/
-          make html
+          make SPHINXOPTS=-v html
