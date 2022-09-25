@@ -137,4 +137,7 @@ from pynucastro.rates import \
     list_known_rates, \
     load_rate
 
+from pynucastro.screening import \
+    make_plasma_state, make_screen_factors
+
 import pynucastro.screening
