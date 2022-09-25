@@ -49,14 +49,6 @@ pynucastro.networks.starkiller\_cxx\_network module
    :undoc-members:
    :show-inheritance:
 
-pynucastro.networks.starkiller\_network module
-----------------------------------------------
-
-.. automodule:: pynucastro.networks.starkiller_network
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 pynucastro.networks.sympy\_network\_support module
 --------------------------------------------------
 
