@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Nuclear Statistical Equilibrium &mdash; pynucastro 1.7.0.post64+gd8fa9962 documentation</title>
+  <title>Nuclear Statistical Equilibrium &mdash; pynucastro 1.7.0.post65+gb6ab3c1a documentation</title>
       <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -388,8 +388,10 @@ div.rendered_html tbody tr:hover {
 </style>
 <section id="Nuclear-Statistical-Equilibrium">
 <h1>Nuclear Statistical Equilibrium<a class="headerlink" href="#Nuclear-Statistical-Equilibrium" title="Permalink to this heading">¶</a></h1>
-<p>Pynucastro is able to calculate the abundances at nuclear statistical equilibrium of a given reaction network by solving NSE equations using scipy.fsolve(). (see <a class="reference external" href="https://iopscience.iop.org/article/10.1086/510709/pdf">https://iopscience.iop.org/article/10.1086/510709/pdf</a> and <a class="reference external" href="https://www.sciencedirect.com/science/article/abs/pii/S0092640X0800051X">https://www.sciencedirect.com/science/article/abs/pii/S0092640X0800051X</a>).</p>
-<p>This notebook gives an illustration of this feature.</p>
+<p>pynucastro is able to calculate the abundances at nuclear statistical equilibrium of a given reaction network.</p>
+<p>The constrained equations are setup following: * Calder et al. (2007): <a class="reference external" href="https://iopscience.iop.org/article/10.1086/510709/pdf">https://iopscience.iop.org/article/10.1086/510709/pdf</a> * Seitenzahl et al. (2009): <a class="reference external" href="https://www.sciencedirect.com/science/article/abs/pii/S0092640X0800051X">https://www.sciencedirect.com/science/article/abs/pii/S0092640X0800051X</a></p>
+<p>and solved using <code class="docutils literal notranslate"><span class="pre">scipy.optimize.fsolve()</span></code></p>
+<p>Here we show how to find the NSE state of a set of nuclei.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
@@ -407,9 +409,15 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">library</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">ReacLibLibrary</span><span class="p">()</span>
 
-<span class="n">subch_full</span> <span class="o">=</span> <span class="n">library</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">([</span><span class="s2">&quot;p&quot;</span><span class="p">,</span><span class="s2">&quot;he4&quot;</span><span class="p">,</span><span class="s2">&quot;c12&quot;</span><span class="p">,</span><span class="s2">&quot;n13&quot;</span><span class="p">,</span><span class="s2">&quot;n14&quot;</span><span class="p">,</span><span class="s2">&quot;o16&quot;</span><span class="p">,</span><span class="s2">&quot;f18&quot;</span><span class="p">,</span><span class="s2">&quot;ne20&quot;</span><span class="p">,</span>
-                                      <span class="s2">&quot;ne21&quot;</span><span class="p">,</span><span class="s2">&quot;na22&quot;</span><span class="p">,</span><span class="s2">&quot;na23&quot;</span><span class="p">,</span><span class="s2">&quot;mg24&quot;</span><span class="p">,</span><span class="s2">&quot;al27&quot;</span><span class="p">,</span><span class="s2">&quot;si28&quot;</span><span class="p">,</span><span class="s2">&quot;p31&quot;</span><span class="p">,</span><span class="s2">&quot;s32&quot;</span><span class="p">,</span>
-                                     <span class="s2">&quot;cl35&quot;</span><span class="p">,</span><span class="s2">&quot;ar36&quot;</span><span class="p">,</span><span class="s2">&quot;k39&quot;</span><span class="p">,</span><span class="s2">&quot;ca40&quot;</span><span class="p">,</span><span class="s2">&quot;sc43&quot;</span><span class="p">,</span><span class="s2">&quot;ti44&quot;</span><span class="p">,</span><span class="s2">&quot;v47&quot;</span><span class="p">,</span><span class="s2">&quot;cr48&quot;</span><span class="p">,</span><span class="s2">&quot;mn51&quot;</span><span class="p">,</span>
+<span class="n">subch_full</span> <span class="o">=</span> <span class="n">library</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">([</span><span class="s2">&quot;p&quot;</span><span class="p">,</span> <span class="s2">&quot;he4&quot;</span><span class="p">,</span>
+                                     <span class="s2">&quot;c12&quot;</span><span class="p">,</span> <span class="s2">&quot;n13&quot;</span><span class="p">,</span> <span class="s2">&quot;n14&quot;</span><span class="p">,</span>
+                                     <span class="s2">&quot;o16&quot;</span><span class="p">,</span> <span class="s2">&quot;f18&quot;</span><span class="p">,</span> <span class="s2">&quot;ne20&quot;</span><span class="p">,</span>
+                                     <span class="s2">&quot;ne21&quot;</span><span class="p">,</span> <span class="s2">&quot;na22&quot;</span><span class="p">,</span> <span class="s2">&quot;na23&quot;</span><span class="p">,</span>
+                                     <span class="s2">&quot;mg24&quot;</span><span class="p">,</span> <span class="s2">&quot;al27&quot;</span><span class="p">,</span> <span class="s2">&quot;si28&quot;</span><span class="p">,</span>
+                                     <span class="s2">&quot;p31&quot;</span><span class="p">,</span> <span class="s2">&quot;s32&quot;</span><span class="p">,</span> <span class="s2">&quot;cl35&quot;</span><span class="p">,</span>
+                                     <span class="s2">&quot;ar36&quot;</span><span class="p">,</span> <span class="s2">&quot;k39&quot;</span><span class="p">,</span> <span class="s2">&quot;ca40&quot;</span><span class="p">,</span>
+                                     <span class="s2">&quot;sc43&quot;</span><span class="p">,</span> <span class="s2">&quot;ti44&quot;</span><span class="p">,</span> <span class="s2">&quot;v47&quot;</span><span class="p">,</span>
+                                     <span class="s2">&quot;cr48&quot;</span><span class="p">,</span> <span class="s2">&quot;mn51&quot;</span><span class="p">,</span>
                                      <span class="s2">&quot;fe52&quot;</span><span class="p">,</span><span class="s2">&quot;co55&quot;</span><span class="p">,</span><span class="s2">&quot;ni56&quot;</span><span class="p">])</span>
 
 <span class="n">rc</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">RateCollection</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="n">subch_full</span><span class="p">)</span>
@@ -423,17 +431,25 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">comp</span><span class="p">,</span> <span class="n">sol</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">get_comp_nse</span><span class="p">(</span><span class="mf">1e7</span><span class="p">,</span> <span class="mf">6e9</span><span class="p">,</span> <span class="mf">0.50</span><span class="p">,</span> <span class="n">use_coulomb_corr</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">return_sol</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">comp</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">comp</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;After solving, the chemical potential for proton and neutron are </span><span class="si">{</span><span class="n">sol</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">sol</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
-<div class="nboutput docutils container">
+<div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
 <img alt="_images/NSE-example_5_0.png" src="_images/NSE-example_5_0.png" />
+</div>
+</div>
+<p>We can also explicitly print the composition</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">comp</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;After solving, the chemical potential for proton and neutron are </span><span class="si">{</span><span class="n">sol</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">sol</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -441,41 +457,41 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-  X(p) : 0.009350257557755745
+  X(p) : 0.009350257557755846
   X(he4) : 0.4336432648337397
-  X(c12) : 7.728730855863679e-06
-  X(n13) : 2.592044572072426e-10
+  X(c12) : 7.72873085586387e-06
+  X(n13) : 2.5920445720725173e-10
   X(n14) : 1.366332980043754e-09
   X(o16) : 1.5697551606923965e-05
   X(f18) : 2.411406340623987e-11
   X(ne20) : 3.018748620023282e-07
-  X(ne21) : 3.956328637888796e-09
+  X(ne21) : 3.956328637888797e-09
   X(na22) : 9.687083066114455e-10
   X(na23) : 7.296922766617077e-08
-  X(mg24) : 3.4701773454356374e-05
+  X(mg24) : 3.470177345435822e-05
   X(al27) : 3.3526418310423996e-05
   X(si28) : 0.01043957131530905
   X(p31) : 0.00213499350058423
   X(s32) : 0.009160645411758385
-  X(cl35) : 0.004000874822061756
+  X(cl35) : 0.004000874822062196
   X(ar36) : 0.004879636200528169
   X(k39) : 0.005552717409027393
   X(ca40) : 0.0047698633574799545
-  X(sc43) : 0.0003726846903449166
-  X(ti44) : 0.00022925810669629146
-  X(v47) : 0.004900622959185997
-  X(cr48) : 0.0011488659730385128
-  X(mn51) : 0.06904761336409458
-  X(fe52) : 0.00574686874545434
-  X(co55) : 0.41561537762309186
+  X(sc43) : 0.0003726846903449167
+  X(ti44) : 0.00022925810669629148
+  X(v47) : 0.004900622959186554
+  X(cr48) : 0.0011488659730386395
+  X(mn51) : 0.06904761336410219
+  X(fe52) : 0.005746868745454339
+  X(co55) : 0.4156153776230918
   X(ni56) : 0.018914848236755235
 
-After solving, the chemical potential for proton and neutron are -7.738610218875145 and -9.999064522280317
+After solving, the chemical potential for proton and neutron are -7.738610218875142 and -9.99906452228032
 </pre></div></div>
 </div>
-<p>For <span class="math notranslate nohighlight">\(\rho = 1\times 10^7 [g/cm^{3}]\)</span> and electron fraction, <span class="math notranslate nohighlight">\(Y_e = 0.5\)</span></p>
+<p>For <span class="math notranslate nohighlight">\(\rho = 10^7~\mathrm{g~cm^{-3}}\)</span> and electron fraction, <span class="math notranslate nohighlight">\(Y_e = 0.5\)</span>, we can explore how the NSE state changes with temperature.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rho</span> <span class="o">=</span> <span class="mf">1e7</span>
@@ -494,14 +510,14 @@ After solving, the chemical potential for proton and neutron are -7.738610218875
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">X_s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">X_s</span><span class="p">)</span>
 <span class="n">nuc_names</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">get_nuclei</span><span class="p">()</span>
 
 <span class="n">low_limit</span> <span class="o">=</span> <span class="mf">1e-2</span>
-<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">11</span><span class="p">,</span><span class="mi">12</span><span class="p">))</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
 <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">nuc_names</span><span class="p">)):</span>
     <span class="n">line</span><span class="p">,</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">temps</span><span class="p">,</span> <span class="n">X_s</span><span class="p">[:,</span><span class="n">k</span><span class="p">])</span>
@@ -513,33 +529,41 @@ After solving, the chemical potential for proton and neutron are -7.738610218875
 <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Mass Fraction&#39;</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set_yscale</span><span class="p">(</span><span class="s1">&#39;log&#39;</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">([</span><span class="n">low_limit</span><span class="p">,</span><span class="mf">1.1</span><span class="p">])</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$Y_e = 0.5$, $\rho = 1 \times 10^7$&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">rf</span><span class="s2">&quot;$Y_e = </span><span class="si">{</span><span class="n">ye</span><span class="si">}</span><span class="s2">$, $\rho = </span><span class="si">{</span><span class="n">rho</span><span class="si">:</span><span class="s2">6.3g</span><span class="si">}</span><span class="s2">$&quot;</span><span class="p">)</span>
 <br/></pre></div>
 </div>
 </div>
 <div class="nboutput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Text(0.5, 1.0, &#39;$Y_e = 0.5$, $\\rho = 1 \\times 10^7$&#39;)
+Text(0.5, 1.0, &#39;$Y_e = 0.5$, $\\rho =  1e+07$&#39;)
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/NSE-example_8_1.png" src="_images/NSE-example_8_1.png" />
+<img alt="_images/NSE-example_10_1.png" src="_images/NSE-example_10_1.png" />
 </div>
 </div>
-<p>For <span class="math notranslate nohighlight">\(\rho = 1\times 10^7 [g/cm^{3}]\)</span> and a relatively high temperature of $ T = 6 :nbsphinx-math:<a href="#id1"><span class="problematic" id="id2">`</span></a>times <a href="#id3"><span class="problematic" id="id4">`</span></a>10^9 [K]$</p>
+<p>For <span class="math notranslate nohighlight">\(\rho = 10^7~\mathrm{g~cm^{-3}}\)</span> and a relatively high temperature of $ T = 6 <span class="math">\times `10^9~:nbsphinx-math:</span>mathrm{K}`$, we can look at how the NSE state changes with varying <span class="math notranslate nohighlight">\(Y_e\)</span>.</p>
+<p>Note: there will be a lowest <span class="math notranslate nohighlight">\(Y_e\)</span> that is attainable by the network, depending on what species are represented. As long as protons are in the network, we can reach a <span class="math notranslate nohighlight">\(Y_e\)</span> of <span class="math notranslate nohighlight">\(1\)</span>.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ye_low</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">nuc</span><span class="o">.</span><span class="n">Z</span><span class="o">/</span><span class="n">nuc</span><span class="o">.</span><span class="n">A</span> <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="n">rc</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">)</span>
-<span class="n">rho</span> <span class="o">=</span> <span class="mf">1e7</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rho</span> <span class="o">=</span> <span class="mf">1e7</span>
 <span class="n">ye_s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">ye_low</span><span class="p">,</span> <span class="mf">0.65</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
 <span class="n">temp</span> <span class="o">=</span> <span class="mf">6.0e9</span>
 <span class="n">X_s_1</span> <span class="o">=</span> <span class="p">[]</span>
@@ -555,13 +579,13 @@ Text(0.5, 1.0, &#39;$Y_e = 0.5$, $\\rho = 1 \\times 10^7$&#39;)
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">X_s_1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">X_s_1</span><span class="p">)</span>
 <span class="n">nuc_names</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">get_nuclei</span><span class="p">()</span>
 
-<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">))</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
 <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">nuc_names</span><span class="p">)):</span>
     <span class="n">line</span><span class="p">,</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ye_s</span><span class="p">,</span> <span class="n">X_s_1</span><span class="p">[:,</span><span class="n">k</span><span class="p">])</span>
@@ -572,24 +596,24 @@ Text(0.5, 1.0, &#39;$Y_e = 0.5$, $\\rho = 1 \\times 10^7$&#39;)
 <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Mass Fraction&#39;</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set_yscale</span><span class="p">(</span><span class="s1">&#39;log&#39;</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">([</span><span class="mf">0.01</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$\rho = 1 \times 10^7$ and $T=6 \times 10^9$&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">rf</span><span class="s2">&quot;$\rho = </span><span class="si">{</span><span class="n">rho</span><span class="si">:</span><span class="s2">6.3g</span><span class="si">}</span><span class="s2">$ and $T=</span><span class="si">{</span><span class="n">temp</span><span class="si">:</span><span class="s2">6.3g</span><span class="si">}</span><span class="s2">$&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="nboutput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Text(0.5, 1.0, &#39;$\\rho = 1 \\times 10^7$ and $T=6 \\times 10^9$&#39;)
+Text(0.5, 1.0, &#39;$\\rho =  1e+07$ and $T= 6e+09$&#39;)
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/NSE-example_11_1.png" src="_images/NSE-example_11_1.png" />
+<img alt="_images/NSE-example_14_1.png" src="_images/NSE-example_14_1.png" />
 </div>
 </div>
 </section>
