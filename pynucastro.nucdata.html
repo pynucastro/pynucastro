@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.nucdata package &mdash; pynucastro 1.7.0.post61+g3c96ffb3 documentation</title>
+  <title>pynucastro.nucdata package &mdash; pynucastro 1.7.0.post62+gf626d82d documentation</title>
       <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -17,6 +17,7 @@
         <script src="_static/underscore.js"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
     <script src="_static/js/theme.js"></script>
@@ -149,11 +150,11 @@
     text-align: unset;
 }
 </style>
-<section id="module-pynucastro.nucdata">
-<span id="pynucastro-nucdata-package"></span><h1>pynucastro.nucdata package<a class="headerlink" href="#module-pynucastro.nucdata" title="Permalink to this heading">¶</a></h1>
+<section id="pynucastro-nucdata-package">
+<h1>pynucastro.nucdata package<a class="headerlink" href="#pynucastro-nucdata-package" title="Permalink to this heading">¶</a></h1>
 <p>Properties of nuclei needed in construction reaction rates (in
 particular, the binding energies)</p>
-<section id="submodules">
+<span class="target" id="module-pynucastro.nucdata"></span><section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading">¶</a></h2>
 </section>
 <section id="module-pynucastro.nucdata.binding_nuclide">
@@ -172,10 +173,10 @@ particular, the binding energies)</p>
 </dd></dl>
 
 </section>
-<section id="module-pynucastro.nucdata.binding_table">
-<span id="pynucastro-nucdata-binding-table-module"></span><h2>pynucastro.nucdata.binding_table module<a class="headerlink" href="#module-pynucastro.nucdata.binding_table" title="Permalink to this heading">¶</a></h2>
+<section id="pynucastro-nucdata-binding-table-module">
+<h2>pynucastro.nucdata.binding_table module<a class="headerlink" href="#pynucastro-nucdata-binding-table-module" title="Permalink to this heading">¶</a></h2>
 <p>Reads tabular binding energy/nucleon data file and supplies table data.</p>
-<dl class="py class">
+<span class="target" id="module-pynucastro.nucdata.binding_table"></span><dl class="py class">
 <dt class="sig sig-object py" id="pynucastro.nucdata.binding_table.BindingTable">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.nucdata.binding_table.</span></span><span class="sig-name descname"><span class="pre">BindingTable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datfile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/binding_table.html#BindingTable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.binding_table.BindingTable" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
@@ -280,10 +281,10 @@ variable is not provided, then mass_excess2020.txt is considered by default.</p>
 </dd></dl>
 
 </section>
-<section id="module-pynucastro.nucdata.nucleus">
-<span id="pynucastro-nucdata-nucleus-module"></span><h2>pynucastro.nucdata.nucleus module<a class="headerlink" href="#module-pynucastro.nucdata.nucleus" title="Permalink to this heading">¶</a></h2>
+<section id="pynucastro-nucdata-nucleus-module">
+<h2>pynucastro.nucdata.nucleus module<a class="headerlink" href="#pynucastro-nucdata-nucleus-module" title="Permalink to this heading">¶</a></h2>
 <p>Classes and methods to interface with files storing rate data.</p>
-<dl class="py class">
+<span class="target" id="module-pynucastro.nucdata.nucleus"></span><dl class="py class">
 <dt class="sig sig-object py" id="pynucastro.nucdata.nucleus.Nucleus">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.nucdata.nucleus.</span></span><span class="sig-name descname"><span class="pre">Nucleus</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dummy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/nucleus.html#Nucleus"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.nucleus.Nucleus" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>

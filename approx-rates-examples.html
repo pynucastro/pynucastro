@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Approximate Rates &mdash; pynucastro 1.7.0.post61+g3c96ffb3 documentation</title>
+  <title>Approximate Rates &mdash; pynucastro 1.7.0.post62+gf626d82d documentation</title>
       <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -17,6 +17,7 @@
         <script src="_static/underscore.js"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
         <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
@@ -412,27 +413,13 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">reaclib_library</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">ReacLibLibrary</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mylib</span> <span class="o">=</span> <span class="n">reaclib_library</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">([</span><span class="s2">&quot;mg24&quot;</span><span class="p">,</span> <span class="s2">&quot;al27&quot;</span><span class="p">,</span> <span class="s2">&quot;si28&quot;</span><span class="p">,</span> <span class="s2">&quot;p31&quot;</span><span class="p">,</span> <span class="s2">&quot;s32&quot;</span><span class="p">,</span> <span class="s2">&quot;he4&quot;</span><span class="p">,</span> <span class="s2">&quot;p&quot;</span><span class="p">])</span>
-</pre></div>
-</div>
-</div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pynet</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">PythonNetwork</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="p">[</span><span class="n">mylib</span><span class="p">])</span>
+<span class="n">mylib</span> <span class="o">=</span> <span class="n">reaclib_library</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">([</span><span class="s2">&quot;mg24&quot;</span><span class="p">,</span> <span class="s2">&quot;al27&quot;</span><span class="p">,</span> <span class="s2">&quot;si28&quot;</span><span class="p">,</span> <span class="s2">&quot;p31&quot;</span><span class="p">,</span> <span class="s2">&quot;s32&quot;</span><span class="p">,</span> <span class="s2">&quot;he4&quot;</span><span class="p">,</span> <span class="s2">&quot;p&quot;</span><span class="p">])</span>
+<span class="n">pynet</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">PythonNetwork</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="p">[</span><span class="n">mylib</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pynet</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rotated</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">curved_edges</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -443,11 +430,11 @@ div.rendered_html tbody tr:hover {
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/approx-rates-examples_6_0.png" src="_images/approx-rates-examples_6_0.png" />
+<img alt="_images/approx-rates-examples_4_0.png" src="_images/approx-rates-examples_4_0.png" />
 </div>
 </div>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pynet</span><span class="o">.</span><span class="n">write_network</span><span class="p">(</span><span class="s2">&quot;full_net.py&quot;</span><span class="p">)</span>
@@ -455,7 +442,7 @@ div.rendered_html tbody tr:hover {
 </div>
 </div>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">full_net</span>
@@ -466,7 +453,7 @@ div.rendered_html tbody tr:hover {
 <h2>Integrating the full network<a class="headerlink" href="#Integrating-the-full-network" title="Permalink to this heading">¶</a></h2>
 <p>Now let’s integrate this. We’ll start with half <span class="math notranslate nohighlight">\({}^{24}\mathrm{Mg}\)</span> and half <span class="math notranslate nohighlight">\(\alpha\)</span> by mass.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rho</span> <span class="o">=</span> <span class="mf">1.e7</span>
@@ -481,7 +468,7 @@ div.rendered_html tbody tr:hover {
 </div>
 </div>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tmax</span> <span class="o">=</span> <span class="mf">1.e-3</span>
@@ -491,7 +478,7 @@ div.rendered_html tbody tr:hover {
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
@@ -512,7 +499,7 @@ div.rendered_html tbody tr:hover {
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/approx-rates-examples_12_0.png" src="_images/approx-rates-examples_12_0.png" />
+<img alt="_images/approx-rates-examples_10_0.png" src="_images/approx-rates-examples_10_0.png" />
 </div>
 </div>
 </section>
@@ -521,7 +508,7 @@ div.rendered_html tbody tr:hover {
 <p>Now we will approximate the rates, combining <span class="math notranslate nohighlight">\((\alpha, \gamma)\)</span> and <span class="math notranslate nohighlight">\((\alpha, p)(p, \gamma)\)</span> into a single effective rate.</p>
 <p>The routine <code class="docutils literal notranslate"><span class="pre">make_ap_pg_approx()</span></code> will find all of the rates that make up that sequence and create a single <code class="docutils literal notranslate"><span class="pre">ApproximateRate</span></code> that captures the effective rate. The original rates will still be stored in the <code class="docutils literal notranslate"><span class="pre">ApproximateRate</span></code> object and will be evaluated to compute the needed approximation when the effective rate is evaluated.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pynet</span><span class="o">.</span><span class="n">make_ap_pg_approx</span><span class="p">()</span>
@@ -552,7 +539,7 @@ removing rate P31 + p ⟶ He4 + Si28
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pynet</span>
@@ -560,7 +547,7 @@ removing rate P31 + p ⟶ He4 + Si28
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
@@ -575,7 +562,7 @@ S32 ⟶ Si28 + He4
 </div>
 <p>Since we no longer care about the <span class="math notranslate nohighlight">\({}^{27}\mathrm{Al}\)</span> and <span class="math notranslate nohighlight">\({}^{31}\mathrm{P}\)</span>, we can remove them from the network. The <code class="docutils literal notranslate"><span class="pre">ApproximateRate</span></code> object still knows that these are the intermediate nucleus, but now they won’t explicitly appear as one of the nuclei in the network.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pynet</span><span class="o">.</span><span class="n">remove_nuclei</span><span class="p">([</span><span class="s2">&quot;al27&quot;</span><span class="p">,</span> <span class="s2">&quot;p31&quot;</span><span class="p">])</span>
@@ -595,7 +582,7 @@ looking to remove Al27 + He4 ⟶ P31 + 𝛾
 </div>
 <p>Note that since no reactions consume protons after that removal, the protons are all removed from the network, reducing its size from 7 nuclei to 4</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">pynet</span><span class="o">.</span><span class="n">network_overview</span><span class="p">())</span>
@@ -639,7 +626,7 @@ s32
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pynet</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rotated</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">curved_edges</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -650,12 +637,12 @@ s32
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/approx-rates-examples_20_0.png" src="_images/approx-rates-examples_20_0.png" />
+<img alt="_images/approx-rates-examples_18_0.png" src="_images/approx-rates-examples_18_0.png" />
 </div>
 </div>
 <p>As we see above, the nuclei <span class="math notranslate nohighlight">\({}^{27}\mathrm{Al}\)</span> and <span class="math notranslate nohighlight">\({}^{31}\mathrm{P}\)</span> no longer appear in the network, but the links to them are still understood to the network. This reduces the size of the network, while still preserving those flows.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pynet</span><span class="o">.</span><span class="n">write_network</span><span class="p">(</span><span class="s2">&quot;approx_net.py&quot;</span><span class="p">)</span>
@@ -663,7 +650,7 @@ s32
 </div>
 </div>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">approx_net</span>
@@ -672,7 +659,7 @@ s32
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">PythonNetwork</span></code> knows how to write out the code needed to evaluate the rate approximation. For instance, the evolution of <span class="math notranslate nohighlight">\({}^{4}\mathrm{He}\)</span> is determined as:</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">pynet</span><span class="o">.</span><span class="n">full_ydot_string</span><span class="p">(</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">)))</span>
@@ -685,10 +672,10 @@ s32
 <div class="output_area docutils container">
 <div class="highlight"><pre>
 dYdt[jhe4] = (
-   -rho*Y[jhe4]*Y[jmg24]*lambda_mg24_he4__si28__approx
-   -rho*Y[jhe4]*Y[jsi28]*lambda_si28_he4__s32__approx
-   +Y[jsi28]*lambda_si28__mg24_he4__approx
-   +Y[js32]*lambda_s32__si28_he4__approx
+   -rho*Y[jhe4]*Y[jmg24]*rate_eval.mg24_he4__si28__approx
+   -rho*Y[jhe4]*Y[jsi28]*rate_eval.si28_he4__s32__approx
+   +Y[jsi28]*rate_eval.si28__mg24_he4__approx
+   +Y[js32]*rate_eval.s32__si28_he4__approx
    )
 
 
@@ -700,7 +687,7 @@ dYdt[jhe4] = (
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">r</span> <span class="o">=</span> <span class="n">pynet</span><span class="o">.</span><span class="n">get_rate</span><span class="p">(</span><span class="s2">&quot;mg24_he4__si28__approx&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">pynet</span><span class="o">.</span><span class="n">approx_function_string</span><span class="p">(</span><span class="n">r</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">function_string_py</span><span class="p">())</span>
 </pre></div>
 </div>
 </div>
@@ -710,18 +697,18 @@ dYdt[jhe4] = (
 <div class="output_area docutils container">
 <div class="highlight"><pre>
 @numba.njit()
-def mg24_he4__si28__approx(tf):
-    r_ag = he4_mg24__si28(tf)
-    r_ap = he4_mg24__p_al27(tf)
-    r_pg = p_al27__si28(tf)
-    r_pa = p_al27__he4_mg24(tf)
+def mg24_he4__si28__approx(rate_eval, tf):
+    r_ag = rate_eval.he4_mg24__si28
+    r_ap = rate_eval.he4_mg24__p_al27
+    r_pg = rate_eval.p_al27__si28
+    r_pa = rate_eval.p_al27__he4_mg24
     rate = r_ag + r_ap * r_pg / (r_pg + r_pa)
-    return rate
+    rate_eval.mg24_he4__si28__approx = rate
 
 
 </pre></div></div>
 </div>
-<p>where the 4 calls before the rate approximation is made are evaluating the original, unapproximated rates.</p>
+<p>where the 4 lines before the rate approximation is made are evaluating the original, unapproximated rates.</p>
 </section>
 <section id="Integrating-the-approximate-network">
 <h2>Integrating the approximate network<a class="headerlink" href="#Integrating-the-approximate-network" title="Permalink to this heading">¶</a></h2>
@@ -773,7 +760,7 @@ def mg24_he4__si28__approx(tf):
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/approx-rates-examples_32_0.png" src="_images/approx-rates-examples_32_0.png" />
+<img alt="_images/approx-rates-examples_30_0.png" src="_images/approx-rates-examples_30_0.png" />
 </div>
 </div>
 </section>
@@ -809,7 +796,7 @@ def mg24_he4__si28__approx(tf):
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/approx-rates-examples_34_0.png" src="_images/approx-rates-examples_34_0.png" />
+<img alt="_images/approx-rates-examples_32_0.png" src="_images/approx-rates-examples_32_0.png" />
 </div>
 </div>
 <p>Here the dotted line is the approximate network. We see that the results agree well.</p>
@@ -831,7 +818,7 @@ def mg24_he4__si28__approx(tf):
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/approx-rates-examples_37_0.png" src="_images/approx-rates-examples_37_0.png" />
+<img alt="_images/approx-rates-examples_35_0.png" src="_images/approx-rates-examples_35_0.png" />
 </div>
 </div>
 <div class="nbinput nblast docutils container">
@@ -918,7 +905,7 @@ True
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/approx-rates-examples_42_0.png" src="_images/approx-rates-examples_42_0.png" />
+<img alt="_images/approx-rates-examples_40_0.png" src="_images/approx-rates-examples_40_0.png" />
 </div>
 </div>
 <p>Here we see all 3 networks. The full network (7 nuclei) is the solid lines. The approximate version of that is the dotted line. We see that they track reasonably well, especially when the abundance is high. The dashed line is the version of the network that has the same 4 nuclei as the approximate network, but with out approximating the <span class="math notranslate nohighlight">\((\alpha, p)(p,\gamma)\)</span> links, so we see that the <span class="math notranslate nohighlight">\({}^{24}\mathrm{Mg}\)</span> takes longer to burn.</p>
