@@ -17,14 +17,6 @@ pynucastro.networks.base\_cxx\_network module
    :undoc-members:
    :show-inheritance:
 
-pynucastro.networks.base\_fortran\_network module
--------------------------------------------------
-
-.. automodule:: pynucastro.networks.base_fortran_network
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 pynucastro.networks.python\_network module
 ------------------------------------------
 
@@ -45,14 +37,6 @@ pynucastro.networks.starkiller\_cxx\_network module
 ---------------------------------------------------
 
 .. automodule:: pynucastro.networks.starkiller_cxx_network
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-pynucastro.networks.starkiller\_network module
-----------------------------------------------
-
-.. automodule:: pynucastro.networks.starkiller_network
    :members:
    :undoc-members:
    :show-inheritance:

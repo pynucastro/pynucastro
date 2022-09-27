@@ -1016,7 +1016,7 @@ class RateCollection:
 
         #subtract neutrino losses for tabular weak reactions
         for r in self.rates:
-            if r.weak and isinstance(r, TabularRate):
+            if isinstance(r, TabularRate):
                 # get composition
                 ys = composition.get_molar()
                 y_e = composition.eval_ye()
