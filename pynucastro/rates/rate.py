@@ -311,9 +311,6 @@ class Rate:
         # some rates will have no nuclei particles (e.g. gamma) on the left or
         # right -- we'll try to infer those here
 
-        self.lhs_other = []
-        self.rhs_other = []
-
         self._set_rhs_properties()
         self._set_screening()
         self._set_print_representation()
@@ -379,6 +376,9 @@ class Rate:
         # string is output to the terminal, rid is used as a dict key,
         # and pretty_string is latex
 
+        lhs_other = []
+        rhs_other = []
+
         self.string = ""
         self.rid = ""
         self.pretty_string = r"$"
@@ -402,7 +402,7 @@ class Rate:
 
         if strong_test:
             if len(self.products) == 1:
-                self.rhs_other.append("gamma")
+                rhs_other.append("gamma")
         else:
             # this is a weak rate
 
@@ -414,31 +414,31 @@ class Rate:
                 # the charge on the left should be +1 the charge on the right
                 assert sum(n.Z for n in self.reactants) == sum(n.Z for n in self.products) + 1
 
-                self.lhs_other.append("e-")
-                self.rhs_other.append("nu")
+                lhs_other.append("e-")
+                rhs_other.append("nu")
 
             elif self.weak_type == "beta_decay":
                 # we expect an electron on the right
                 assert sum(n.Z for n in self.reactants) + 1 == sum(n.Z for n in self.products)
 
-                self.rhs_other.append("e-")
-                self.rhs_other.append("nubar")
+                rhs_other.append("e-")
+                rhs_other.append("nubar")
 
             elif "_pos_" in self.weak_type:
 
                 # we expect a positron on the right -- let's make sure
                 assert sum(n.Z for n in self.reactants) == sum(n.Z for n in self.products) + 1
 
-                self.rhs_other.append("e+")
-                self.rhs_other.append("nu")
+                rhs_other.append("e+")
+                rhs_other.append("nu")
 
             elif "_neg_" in self.weak_type:
 
                 # we expect an electron on the right -- let's make sure
                 assert sum(n.Z for n in self.reactants) + 1 == sum(n.Z for n in self.products)
 
-                self.rhs_other.append("e-")
-                self.rhs_other.append("nubar")
+                rhs_other.append("e-")
+                rhs_other.append("nubar")
 
             else:
 
@@ -446,13 +446,13 @@ class Rate:
                 # not an electron capture
 
                 if sum(n.Z for n in self.reactants) == sum(n.Z for n in self.products) + 1:
-                    self.rhs_other.append("e+")
-                    self.rhs_other.append("nu")
+                    rhs_other.append("e+")
+                    rhs_other.append("nu")
 
                 elif sum(n.Z for n in self.reactants) + 1 == sum(n.Z for n in self.products):
 
-                    self.rhs_other.append("e-")
-                    self.rhs_other.append("nubar")
+                    rhs_other.append("e-")
+                    rhs_other.append("nubar")
 
         for n, r in enumerate(treactants):
             self.string += f"{r.c()}"
@@ -463,8 +463,8 @@ class Rate:
                 self.rid += " + "
                 self.pretty_string += r" + "
 
-        if self.lhs_other:
-            for o in self.lhs_other:
+        if lhs_other:
+            for o in lhs_other:
                 if o == "e-":
                     self.string += " + e⁻"
                     self.pretty_string += r" + \mathrm{e}^-"
@@ -482,8 +482,8 @@ class Rate:
                 self.rid += " + "
                 self.pretty_string += r" + "
 
-        if self.rhs_other:
-            for o in self.rhs_other:
+        if rhs_other:
+            for o in rhs_other:
                 if o == "gamma":
                     self.string += " + 𝛾"
                     self.pretty_string += r"+ \gamma"
@@ -639,12 +639,6 @@ class ReacLibRate(Rate):
         self.reverse = None
 
         self.Q = Q
-
-        # some rates will have no nuclei particles (e.g. gamma) on the left or
-        # right -- we'll try to infer those here
-
-        self.lhs_other = []
-        self.rhs_other = []
 
         if isinstance(rfile, str):
             # read in the file, parse the different sets and store them as
@@ -1239,12 +1233,6 @@ class TabularRate(Rate):
         self.tabular = True
 
         self.Q = None
-
-        # some rates will have no nuclei particles (e.g. gamma) on the left or
-        # right -- we'll try to infer those here
-
-        self.lhs_other = []
-        self.rhs_other = []
 
         # we should initialize this somehow
         self.weak_type = ""
