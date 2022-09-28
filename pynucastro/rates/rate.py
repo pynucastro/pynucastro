@@ -1312,6 +1312,13 @@ class TabularRate(Rate):
         self.table_index_name = f'j_{self.reactants[0]}_{self.products[0]}'
         self.labelprops = 'tabular'
 
+        # set weak type
+        if "electroncapture" in self.table_file:
+            self.weak_type = "electron_capture"
+
+        elif "betadecay" in self.table_file:
+            self.weak_type = "beta_decay"
+
     def _set_rhs_properties(self):
         """ compute statistical prefactor and density exponent from the reactants. """
         self.prefactor = 1.0  # this is 1/2 for rates like a + a (double counting)
