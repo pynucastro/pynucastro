@@ -443,10 +443,10 @@ class Rate:
             else:
 
                 # we need to figure out what the rate is.  We'll assume that it is
-                # either an electron capture or beta decay
+                # not an electron capture
 
                 if sum(n.Z for n in self.reactants) == sum(n.Z for n in self.products) + 1:
-                    self.lhs_other.append("e-")
+                    self.rhs_other.append("e+")
                     self.rhs_other.append("nu")
 
                 elif sum(n.Z for n in self.reactants) + 1 == sum(n.Z for n in self.products):
