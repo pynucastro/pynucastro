@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.rates.rate &mdash; pynucastro 1.7.0.post65+gb6ab3c1a documentation</title>
+  <title>pynucastro.rates.rate &mdash; pynucastro 1.7.0.post66+g630f3a2b documentation</title>
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -1604,7 +1604,7 @@
 
         <span class="k">return</span> <span class="n">nu_loss</span></div>
 
-<div class="viewcode-block" id="TabularRate.plot"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.TabularRate.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Tmin</span><span class="o">=</span><span class="mf">1.e8</span><span class="p">,</span> <span class="n">Tmax</span><span class="o">=</span><span class="mf">1.6e9</span><span class="p">,</span> <span class="n">rhoYmin</span><span class="o">=</span><span class="mf">3.9e8</span><span class="p">,</span> <span class="n">rhoYmax</span><span class="o">=</span><span class="mf">2.e9</span><span class="p">,</span>
+<div class="viewcode-block" id="TabularRate.plot"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.TabularRate.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Tmin</span><span class="o">=</span><span class="mf">1.e8</span><span class="p">,</span> <span class="n">Tmax</span><span class="o">=</span><span class="mf">1.6e9</span><span class="p">,</span> <span class="n">rhoYmin</span><span class="o">=</span><span class="mf">3.9e8</span><span class="p">,</span> <span class="n">rhoYmax</span><span class="o">=</span><span class="mf">2.e9</span><span class="p">,</span> <span class="n">color_field</span><span class="o">=</span><span class="s1">&#39;rate&#39;</span><span class="p">,</span>
              <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">)):</span>
         <span class="sd">&quot;&quot;&quot;plot the rate&#39;s temperature sensitivity vs temperature</span>
 
@@ -1632,18 +1632,31 @@
         <span class="n">rows</span><span class="p">,</span> <span class="n">row_pos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">data_heatmap</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">return_inverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">cols</span><span class="p">,</span> <span class="n">col_pos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">data_heatmap</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">return_inverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">pivot_table</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">rows</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">cols</span><span class="p">)),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">data_heatmap</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">color_field</span> <span class="o">==</span> <span class="s1">&#39;rate&#39;</span><span class="p">:</span>
+            <span class="n">icol</span> <span class="o">=</span> <span class="mi">5</span>
+            <span class="n">title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">weak_type</span><span class="si">}</span><span class="s2"> rate in log10(1/s)&quot;</span>
+            <span class="n">cmap</span> <span class="o">=</span> <span class="s1">&#39;magma&#39;</span>
+
+        <span class="k">elif</span> <span class="n">color_field</span> <span class="o">==</span> <span class="s1">&#39;nu_loss&#39;</span><span class="p">:</span>
+            <span class="n">icol</span> <span class="o">=</span> <span class="mi">6</span>
+            <span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;neutrino energy loss rate in log10(erg/s)&quot;</span>
+            <span class="n">cmap</span> <span class="o">=</span> <span class="s1">&#39;viridis&#39;</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;color_field must be either &#39;rate&#39; or &#39;nu_loss&#39;.&quot;</span><span class="p">)</span>
+
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">pivot_table</span><span class="p">[</span><span class="n">row_pos</span><span class="p">,</span> <span class="n">col_pos</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">data_heatmap</span><span class="p">[:,</span> <span class="mi">5</span><span class="p">])</span>
+            <span class="n">pivot_table</span><span class="p">[</span><span class="n">row_pos</span><span class="p">,</span> <span class="n">col_pos</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">data_heatmap</span><span class="p">[:,</span> <span class="n">icol</span><span class="p">])</span>
         <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Divide by zero encountered in log10</span><span class="se">\n</span><span class="s2">Change the scale of T or rhoY&quot;</span><span class="p">)</span>
 
-        <span class="n">im</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">pivot_table</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;magma&#39;</span><span class="p">)</span>
+        <span class="n">im</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">pivot_table</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">)</span>
         <span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
 
         <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$\log(T)$ [K]&quot;</span><span class="p">)</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$\log(\rho Y_e)$ [g/cm$^3$]&quot;</span><span class="p">)</span>
-        <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">fr</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">pretty_string</span><span class="si">}</span><span class="s2">&quot;</span> <span class="o">+</span>
-                     <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">+</span><span class="s2">&quot;electron-capture/beta-decay rate in log10(1/s)&quot;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">fr</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">pretty_string</span><span class="si">}</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">title</span><span class="p">)</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rows</span><span class="p">)))</span>
         <span class="n">ylabels</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">q</span><span class="p">)</span><span class="si">:</span><span class="s2">4.2f</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">]</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">set_yticklabels</span><span class="p">(</span><span class="n">ylabels</span><span class="p">)</span>
