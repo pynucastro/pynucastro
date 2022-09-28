@@ -1498,7 +1498,7 @@ class TabularRate(Rate):
 
         return nu_loss
 
-    def plot(self, Tmin=1.e8, Tmax=1.6e9, rhoYmin=3.9e8, rhoYmax=2.e9,
+    def plot(self, Tmin=1.e8, Tmax=1.6e9, rhoYmin=3.9e8, rhoYmax=2.e9, color_field='rate',
              figsize=(10, 10)):
         """plot the rate's temperature sensitivity vs temperature
 
@@ -1526,18 +1526,31 @@ class TabularRate(Rate):
         rows, row_pos = np.unique(data_heatmap[:, 0], return_inverse=True)
         cols, col_pos = np.unique(data_heatmap[:, 1], return_inverse=True)
         pivot_table = np.zeros((len(rows), len(cols)), dtype=data_heatmap.dtype)
+
+        if color_field == 'rate':
+            icol = 5
+            title = f"{self.weak_type} rate in log10(1/s)"
+            cmap = 'magma'
+
+        elif color_field == 'nu_loss':
+            icol = 6
+            title = "neutrino energy loss rate in log10(erg/s)"
+            cmap = 'viridis'
+
+        else:
+            raise ValueError("color_field must be either 'rate' or 'nu_loss'.")
+
         try:
-            pivot_table[row_pos, col_pos] = np.log10(data_heatmap[:, 5])
+            pivot_table[row_pos, col_pos] = np.log10(data_heatmap[:, icol])
         except ValueError:
             print("Divide by zero encountered in log10\nChange the scale of T or rhoY")
 
-        im = ax.imshow(pivot_table, cmap='magma')
+        im = ax.imshow(pivot_table, cmap=cmap)
         fig.colorbar(im, ax=ax)
 
         ax.set_xlabel(r"$\log(T)$ [K]")
         ax.set_ylabel(r"$\log(\rho Y_e)$ [g/cm$^3$]")
-        ax.set_title(fr"{self.pretty_string}" +
-                     "\n"+"electron-capture/beta-decay rate in log10(1/s)")
+        ax.set_title(fr"{self.pretty_string}" + "\n" + title)
         ax.set_yticks(range(len(rows)))
         ylabels = [f"{np.log10(q):4.2f}" for q in rows]
         ax.set_yticklabels(ylabels)
