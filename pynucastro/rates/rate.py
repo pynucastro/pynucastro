@@ -417,6 +417,13 @@ class Rate:
                 self.lhs_other.append("e-")
                 self.rhs_other.append("nu")
 
+            elif self.weak_type == "beta_decay":
+                # we expect an electron on the right
+                assert sum(n.Z for n in self.reactants) + 1 == sum(n.Z for n in self.products)
+
+                self.rhs_other.append("e-")
+                self.rhs_other.append("nubar")
+
             elif "_pos_" in self.weak_type:
 
                 # we expect a positron on the right -- let's make sure
@@ -436,10 +443,10 @@ class Rate:
             else:
 
                 # we need to figure out what the rate is.  We'll assume that it is
-                # not an electron capture
+                # either an electron capture or beta decay
 
                 if sum(n.Z for n in self.reactants) == sum(n.Z for n in self.products) + 1:
-                    self.rhs_other.append("e+")
+                    self.lhs_other.append("e-")
                     self.rhs_other.append("nu")
 
                 elif sum(n.Z for n in self.reactants) + 1 == sum(n.Z for n in self.products):
@@ -1332,8 +1339,6 @@ class TabularRate(Rate):
         """ tabular rates are not currently screened (they are e-capture or beta-decay)"""
         self.ion_screen = []
         self.symmetric_screen = []
-
-        super()._set_print_representation()
 
         if not self.fname:
             # This is used to determine which rates to detect as the same reaction
