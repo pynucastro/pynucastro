@@ -1804,16 +1804,9 @@ class RateCollection:
             values = self._symlog(values, linthresh, linscale)
 
         if cbar_bounds is None:
+            cbar_bounds = values.min(), values.max()
 
-            if scale == "symlog":
-                cbar_bounds = linthresh, linscale, values.min(), values.max()
-
-            else:
-                # log and linear scale share the same cbar_bounds
-
-                cbar_bounds = values.min(), values.max()
-
-        weights = self._scale(values, values.min(), values.max())
+        weights = self._scale(values, *cbar_bounds)
 
         # Plot a square for each nucleus
         for nuc, weight in zip(nuclei, weights):
@@ -1867,7 +1860,7 @@ class RateCollection:
             cax = divider.append_axes('right', size='3.5%', pad=0.1)
 
             if scale == "symlog":
-                cbar_norm = mpl.colors.SymLogNorm(*cbar_bounds)
+                cbar_norm = mpl.colors.SymLogNorm(linthresh, linscale, *cbar_bounds)
             elif scale == "log":
                 cbar_norm = mpl.colors.LogNorm(*cbar_bounds)
             else:
