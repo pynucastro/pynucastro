@@ -626,7 +626,6 @@ class ReacLibRate(Rate):
 
         self.label = None
         self.resonant = None
-        self.resonance_combined = None
         self.weak = None
         self.weak_type = None
         self.reverse = None
@@ -770,8 +769,6 @@ class ReacLibRate(Rate):
         sres = [s.resonant for s in self.sets]
         if True in sres and False in sres:
             self._labelprops_combine_resonance()
-        else:
-            self.resonance_combined = False
 
     def _labelprops_combine_resonance(self):
         """ Update self.labelprops[4] = 'c'.
@@ -779,7 +776,6 @@ class ReacLibRate(Rate):
         llp = list(self.labelprops)
         llp[4] = 'c'
         self.labelprops = ''.join(llp)
-        self.resonance_combined = True
 
     def _update_label_properties(self):
         """ Set label and flags indicating Rate is resonant,
@@ -788,14 +784,12 @@ class ReacLibRate(Rate):
         if self.labelprops == "approx":
             self.label = "approx"
             self.resonant = False
-            self.resonance_combined = False
             self.weak = False
             self.weak_type = None
             self.reverse = False
         elif self.labelprops == "derived":
             self.label = "derived"
             self.resonant = False  # Derived may be resonant in some cases
-            self.resonance_combined = False
             self.weak = False
             self.weak_type = None
             self.reverse = False

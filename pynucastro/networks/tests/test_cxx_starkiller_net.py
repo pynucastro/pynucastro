@@ -20,7 +20,6 @@ class TestStarKillerCxxNetwork:
                  "n--p-wc12"]
 
         fn = networks.StarKillerCxxNetwork(files)
-        fn.secret_code = "testing"
         return fn
 
     def cromulent_ftag(self, ftag, answer, n_indent=1):

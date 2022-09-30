@@ -17,7 +17,6 @@ class TestStarKillerCxxNetwork:
         net.make_ap_pg_approx()
         net.remove_nuclei(["al27", "p31"])
         fn = net
-        fn.secret_code = "testing"
         return fn
 
     def cromulent_ftag(self, ftag, answer, n_indent=1):
