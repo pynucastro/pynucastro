@@ -1671,7 +1671,6 @@ class RateCollection:
     @staticmethod
     def _symlog(arr, linthresh=1.0, linscale=1.0):
 
-        # Assume log base 10
         symlog_transform = SymmetricalLogTransform(10, linthresh, linscale)
         arr = symlog_transform.transform_non_affine(arr)
 
@@ -1805,8 +1804,16 @@ class RateCollection:
             values = self._symlog(values, linthresh, linscale)
 
         if cbar_bounds is None:
-            cbar_bounds = values.min(), values.max()
-        weights = self._scale(values, *cbar_bounds)
+
+            if scale == "symlog":
+                cbar_bounds = linthresh, linscale, values.min(), values.max()
+
+            else:
+                # log and linear scale share the same cbar_bounds
+
+                cbar_bounds = values.min(), values.max()
+
+        weights = self._scale(values, values.min(), values.max())
 
         # Plot a square for each nucleus
         for nuc, weight in zip(nuclei, weights):
@@ -1858,7 +1865,14 @@ class RateCollection:
 
             divider = make_axes_locatable(ax)
             cax = divider.append_axes('right', size='3.5%', pad=0.1)
-            cbar_norm = mpl.colors.Normalize(*cbar_bounds)
+
+            if scale == "symlog":
+                cbar_norm = mpl.colors.SymLogNorm(*cbar_bounds)
+            elif scale == "log":
+                cbar_norm = mpl.colors.LogNorm(*cbar_bounds)
+            else:
+                cbar_norm = mpl.colors.Normalize(*cbar_bounds)
+
             smap = mpl.cm.ScalarMappable(norm=cbar_norm, cmap=cmap)
 
             if not cbar_label:
