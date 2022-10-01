@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.networks.rate_collection &mdash; pynucastro 1.7.0.post66+g630f3a2b documentation</title>
+  <title>pynucastro.networks.rate_collection &mdash; pynucastro 1.7.0.post67+g3efac56a documentation</title>
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -1777,7 +1777,6 @@
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_symlog</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">linthresh</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">linscale</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
 
-        <span class="c1"># Assume log base 10</span>
         <span class="n">symlog_transform</span> <span class="o">=</span> <span class="n">SymmetricalLogTransform</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">linthresh</span><span class="p">,</span> <span class="n">linscale</span><span class="p">)</span>
         <span class="n">arr</span> <span class="o">=</span> <span class="n">symlog_transform</span><span class="o">.</span><span class="n">transform_non_affine</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
 
@@ -1855,6 +1854,7 @@
         <span class="n">dpi</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;dpi&quot;</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
         <span class="n">linthresh</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;linthresh&quot;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
         <span class="n">linscale</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;linscale&quot;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+        <span class="n">cbar_ticks</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;cbar_ticks&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">kwargs</span><span class="p">:</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unrecognized keyword arguments: </span><span class="si">{</span><span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -1912,6 +1912,7 @@
 
         <span class="k">if</span> <span class="n">cbar_bounds</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">cbar_bounds</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">values</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+
         <span class="n">weights</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="o">*</span><span class="n">cbar_bounds</span><span class="p">)</span>
 
         <span class="c1"># Plot a square for each nucleus</span>
@@ -1964,7 +1965,12 @@
 
             <span class="n">divider</span> <span class="o">=</span> <span class="n">make_axes_locatable</span><span class="p">(</span><span class="n">ax</span><span class="p">)</span>
             <span class="n">cax</span> <span class="o">=</span> <span class="n">divider</span><span class="o">.</span><span class="n">append_axes</span><span class="p">(</span><span class="s1">&#39;right&#39;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="s1">&#39;3.5%&#39;</span><span class="p">,</span> <span class="n">pad</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
-            <span class="n">cbar_norm</span> <span class="o">=</span> <span class="n">mpl</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">Normalize</span><span class="p">(</span><span class="o">*</span><span class="n">cbar_bounds</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">scale</span> <span class="o">==</span> <span class="s2">&quot;symlog&quot;</span><span class="p">:</span>
+                <span class="n">cbar_norm</span> <span class="o">=</span> <span class="n">mpl</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">SymLogNorm</span><span class="p">(</span><span class="n">linthresh</span><span class="p">,</span> <span class="n">linscale</span><span class="p">,</span> <span class="o">*</span><span class="n">cbar_bounds</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">cbar_norm</span> <span class="o">=</span> <span class="n">mpl</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">Normalize</span><span class="p">(</span><span class="o">*</span><span class="n">cbar_bounds</span><span class="p">)</span>
+
             <span class="n">smap</span> <span class="o">=</span> <span class="n">mpl</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">ScalarMappable</span><span class="p">(</span><span class="n">norm</span><span class="o">=</span><span class="n">cbar_norm</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="ow">not</span> <span class="n">cbar_label</span><span class="p">:</span>
@@ -1977,8 +1983,24 @@
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">cbar_label</span> <span class="o">=</span> <span class="n">capfield</span>
 
-            <span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">smap</span><span class="p">,</span> <span class="n">cax</span><span class="o">=</span><span class="n">cax</span><span class="p">,</span> <span class="n">orientation</span><span class="o">=</span><span class="s2">&quot;vertical&quot;</span><span class="p">,</span>
-                    <span class="n">label</span><span class="o">=</span><span class="n">cbar_label</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="n">cbar_format</span><span class="p">)</span>
+            <span class="c1"># set number of ticks</span>
+            <span class="k">if</span> <span class="n">cbar_ticks</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">tick_locator</span> <span class="o">=</span> <span class="n">mpl</span><span class="o">.</span><span class="n">ticker</span><span class="o">.</span><span class="n">MaxNLocator</span><span class="p">(</span><span class="n">nbins</span><span class="o">=</span><span class="n">cbar_ticks</span><span class="p">)</span>
+                <span class="n">tick_labels</span> <span class="o">=</span> <span class="n">tick_locator</span><span class="o">.</span><span class="n">tick_values</span><span class="p">(</span><span class="n">values</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">values</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+
+                <span class="c1"># for some reason tick_locator doesn&#39;t give the label of the first tick</span>
+                <span class="c1"># add them manually</span>
+                <span class="k">if</span> <span class="n">scale</span> <span class="o">==</span> <span class="s2">&quot;symlog&quot;</span><span class="p">:</span>
+                    <span class="n">tick_labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tick_labels</span><span class="p">,</span> <span class="p">[</span><span class="n">linthresh</span><span class="p">,</span> <span class="o">-</span><span class="n">linthresh</span><span class="p">])</span>
+
+                <span class="k">if</span> <span class="n">cbar_format</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">cbar_format</span> <span class="o">=</span> <span class="n">mpl</span><span class="o">.</span><span class="n">ticker</span><span class="o">.</span><span class="n">FormatStrFormatter</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%.3g</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">tick_labels</span> <span class="o">=</span> <span class="kc">None</span>
+
+            <span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">smap</span><span class="p">,</span> <span class="n">cax</span><span class="o">=</span><span class="n">cax</span><span class="p">,</span> <span class="n">orientation</span><span class="o">=</span><span class="s2">&quot;vertical&quot;</span><span class="p">,</span> <span class="n">ticks</span><span class="o">=</span><span class="n">tick_labels</span><span class="p">,</span>
+                         <span class="n">label</span><span class="o">=</span><span class="n">cbar_label</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="n">cbar_format</span><span class="p">)</span>
 
         <span class="c1"># Show or save</span>
         <span class="k">if</span> <span class="n">outfile</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
