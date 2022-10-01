@@ -1671,7 +1671,6 @@ class RateCollection:
     @staticmethod
     def _symlog(arr, linthresh=1.0, linscale=1.0):
 
-        # Assume log base 10
         symlog_transform = SymmetricalLogTransform(10, linthresh, linscale)
         arr = symlog_transform.transform_non_affine(arr)
 
@@ -1749,6 +1748,7 @@ class RateCollection:
         dpi = kwargs.pop("dpi", 100)
         linthresh = kwargs.pop("linthresh", 1.0)
         linscale = kwargs.pop("linscale", 1.0)
+        cbar_ticks = kwargs.pop("cbar_ticks", None)
 
         if kwargs:
             warnings.warn(f"Unrecognized keyword arguments: {kwargs.keys()}")
@@ -1806,6 +1806,7 @@ class RateCollection:
 
         if cbar_bounds is None:
             cbar_bounds = values.min(), values.max()
+
         weights = self._scale(values, *cbar_bounds)
 
         # Plot a square for each nucleus
@@ -1858,7 +1859,12 @@ class RateCollection:
 
             divider = make_axes_locatable(ax)
             cax = divider.append_axes('right', size='3.5%', pad=0.1)
-            cbar_norm = mpl.colors.Normalize(*cbar_bounds)
+
+            if scale == "symlog":
+                cbar_norm = mpl.colors.SymLogNorm(linthresh, linscale, *cbar_bounds)
+            else:
+                cbar_norm = mpl.colors.Normalize(*cbar_bounds)
+
             smap = mpl.cm.ScalarMappable(norm=cbar_norm, cmap=cmap)
 
             if not cbar_label:
@@ -1871,8 +1877,24 @@ class RateCollection:
                 else:
                     cbar_label = capfield
 
-            fig.colorbar(smap, cax=cax, orientation="vertical",
-                    label=cbar_label, format=cbar_format)
+            # set number of ticks
+            if cbar_ticks is not None:
+                tick_locator = mpl.ticker.MaxNLocator(nbins=cbar_ticks)
+                tick_labels = tick_locator.tick_values(values.min(), values.max())
+
+                # for some reason tick_locator doesn't give the label of the first tick
+                # add them manually
+                if scale == "symlog":
+                    tick_labels = np.append(tick_labels, [linthresh, -linthresh])
+
+                if cbar_format is None:
+                    cbar_format = mpl.ticker.FormatStrFormatter("%.3g")
+
+            else:
+                tick_labels = None
+
+            fig.colorbar(smap, cax=cax, orientation="vertical", ticks=tick_labels,
+                         label=cbar_label, format=cbar_format)
 
         # Show or save
         if outfile is None:
