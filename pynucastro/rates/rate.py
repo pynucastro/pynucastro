@@ -308,9 +308,6 @@ class Rate:
 
         self.weak_type = weak_type
 
-        # some rates will have no nuclei particles (e.g. gamma) on the left or
-        # right -- we'll try to infer those here
-
         self._set_rhs_properties()
         self._set_screening()
         self._set_print_representation()
@@ -376,6 +373,8 @@ class Rate:
         # string is output to the terminal, rid is used as a dict key,
         # and pretty_string is latex
 
+        # some rates will have no nuclei particles (e.g. gamma) on the left or
+        # right -- we'll try to infer those here
         lhs_other = []
         rhs_other = []
 
