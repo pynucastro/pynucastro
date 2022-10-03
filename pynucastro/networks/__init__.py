@@ -27,3 +27,5 @@ from .python_network import PythonNetwork
 from .sympy_network_support import SympyRates
 from .base_cxx_network import BaseCxxNetwork
 from .amrexastro_cxx_network import AmrexAstroCxxNetwork
+
+StarKillerCxxNetwork = AmrexAstroCxxNetwork

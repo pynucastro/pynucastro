@@ -124,6 +124,7 @@ from pynucastro.networks import \
     PythonNetwork, \
     BaseCxxNetwork, \
     AmrexAstroCxxNetwork, \
+    StarKillerCxxNetwork, \
     SympyRates
 
 from pynucastro.rates import \
@@ -142,5 +143,3 @@ from pynucastro.screening import \
 
 import pynucastro.screening
 
-# for backwards compatibility
-StarKillerCxxNetwork = AmrexAstroCxxNetwork
