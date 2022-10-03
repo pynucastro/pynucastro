@@ -66,9 +66,9 @@ rates, including:
 * BaseCxxNetwork : this extends the RateCollection to enable
   output of C++ code.
 
-* StarKillerCxxNetwork : this extends the RateCollection to enable
+* AmrexAstroCxxNetwork : this extends the RateCollection to enable
   output of C++ code that can be used to add a network to the
-  hydrodynamics codes Castro and MAESTROeX via the StarKiller
+  hydrodynamics codes Castro and MAESTROeX via the AMReX-Astro
   Microphysics repository.
 
 
@@ -102,7 +102,7 @@ screening provides python screening routines for the rates.
 templates
 ---------
 
-templates contains subdirectories for generating StarKillerCxxNetwork
+templates contains subdirectories for generating AmrexAstroCxxNetwork
 C++ files implementing the ODE right hand side, jacobian, and
 integration driver routines. pynucastro processes these template files
 by replacing tags of the form `<tag>` with generated code specific to
@@ -123,7 +123,7 @@ from pynucastro.networks import \
     Explorer, \
     PythonNetwork, \
     BaseCxxNetwork, \
-    StarKillerCxxNetwork, \
+    AmrexAstroCxxNetwork, \
     SympyRates
 
 from pynucastro.rates import \
@@ -141,3 +141,6 @@ from pynucastro.screening import \
     make_plasma_state, make_screen_factors
 
 import pynucastro.screening
+
+# for backwards compatibility
+StarKillerCxxNetwork = AmrexAstroCxxNetwork
