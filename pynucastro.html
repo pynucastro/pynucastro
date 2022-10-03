@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro package &mdash; pynucastro 1.7.0.post68+g15aa342c documentation</title>
+  <title>pynucastro package &mdash; pynucastro 1.7.0.post69+g0c06caae documentation</title>
       <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -205,9 +205,9 @@ of python code that can be used with ODE integrators to solve
 a network.</p></li>
 <li><p>BaseCxxNetwork : this extends the RateCollection to enable
 output of C++ code.</p></li>
-<li><p>StarKillerCxxNetwork : this extends the RateCollection to enable
+<li><p>AmrexAstroCxxNetwork : this extends the RateCollection to enable
 output of C++ code that can be used to add a network to the
-hydrodynamics codes Castro and MAESTROeX via the StarKiller
+hydrodynamics codes Castro and MAESTROeX via the AMReX-Astro
 Microphysics repository.</p></li>
 </ul>
 </section>
@@ -235,7 +235,7 @@ desired rate or group of rates from a RateLibrary.</p></li>
 </section>
 <section id="templates">
 <h2>templates<a class="headerlink" href="#templates" title="Permalink to this heading">¶</a></h2>
-<p>templates contains subdirectories for generating StarKillerCxxNetwork
+<p>templates contains subdirectories for generating AmrexAstroCxxNetwork
 C++ files implementing the ODE right hand side, jacobian, and
 integration driver routines. pynucastro processes these template files
 by replacing tags of the form <cite>&lt;tag&gt;</cite> with generated code specific to
@@ -319,8 +319,8 @@ a given choice of reaction rates.</p>
 </li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="pynucastro.networks.html#pynucastro-networks-starkiller-cxx-network-module">pynucastro.networks.starkiller_cxx_network module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="pynucastro.networks.html#pynucastro.networks.starkiller_cxx_network.StarKillerCxxNetwork"><code class="docutils literal notranslate"><span class="pre">StarKillerCxxNetwork</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pynucastro.networks.html#pynucastro-networks-amrexastro-cxx-network-module">pynucastro.networks.amrexastro_cxx_network module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pynucastro.networks.html#pynucastro.networks.amrexastro_cxx_network.AmrexAstroCxxNetwork"><code class="docutils literal notranslate"><span class="pre">AmrexAstroCxxNetwork</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="pynucastro.networks.html#pynucastro-networks-sympy-network-support-module">pynucastro.networks.sympy_network_support module</a><ul>

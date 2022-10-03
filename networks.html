@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Creating Networks &mdash; pynucastro 1.7.0.post68+g15aa342c documentation</title>
+  <title>Creating Networks &mdash; pynucastro 1.7.0.post69+g0c06caae documentation</title>
       <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -162,7 +162,7 @@ doing:</p>
 e.g. <code class="docutils literal notranslate"><span class="pre">mynet.py</span></code>, based on the following example scripts:</p>
 <ul class="simple">
 <li><p>For Python networks, <a class="reference external" href="https://github.com/pynucastro/pynucastro/blob/main/examples/CNO/cno.py">examples/CNO/cno.py</a></p></li>
-<li><p>For StarKiller Microphysics networks, <a class="reference external" href="https://github.com/pynucastro/pynucastro/blob/main/examples/urca-23_starkiller/urca.py">examples/urca-23_starkiller/urca.py</a></p></li>
+<li><p>For AMReX-Astro Microphysics networks, <a class="reference external" href="https://github.com/pynucastro/pynucastro/blob/main/examples/urca-23_starkiller/urca.py">examples/urca-23_starkiller/urca.py</a></p></li>
 </ul>
 </li>
 <li><p>Run your python script</p>
@@ -183,15 +183,14 @@ right hand side module you generated above.</p>
 <h2>AMReX-Astro Microphysics network<a class="headerlink" href="#amrex-astro-microphysics-network" title="Permalink to this heading">¶</a></h2>
 <p>The <a class="reference external" href="https://github.com/pynucastro/pynucastro/tree/main/examples/urca-23_starkiller">examples/urca-23_starkiller</a> example builds the right hand side, Jacobian,
 and helper Fortran modules to copy into the <code class="docutils literal notranslate"><span class="pre">networks/</span></code> subdirectory
-of the StarKiller Microphysics repository.</p>
+of the AMReX-Astro Microphysics repository.</p>
 <p>No additional customization is required after running the steps for
 all networks above.</p>
 </section>
 <section id="tabular-rates">
 <h2>Tabular Rates<a class="headerlink" href="#tabular-rates" title="Permalink to this heading">¶</a></h2>
 <p>Tabular rates for reactions of the form <span class="math notranslate nohighlight">\(\rm{A \rightarrow B}\)</span>
-are supported by the standalone Fortran and StarKiller Microphysics
-network outputs.</p>
+are supported by the AMReX-Astro Microphysics network outputs.</p>
 <p>If you would like to include tabular rates, for now they must be in
 the form of, e.g. <a class="reference external" href="https://github.com/pynucastro/pynucastro/blob/main/pynucastro/library/tabular/23Na-23Ne_electroncapture.dat">23Na-23Ne_electroncapture.dat</a> in
 <code class="docutils literal notranslate"><span class="pre">pynucastro/library/tabular/</span></code>, indexed by the product of density and

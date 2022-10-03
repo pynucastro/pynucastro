@@ -5,7 +5,7 @@ C++ Networks
 Presently, pynucastro can generate a C++ network that works in the
 AMReX-Astro `Microphysics
 <https://github.com/amrex-astro/Microphysics>`_.  This is done through
-the ``StarKillerCxxNetwork`` class.  A simple 
+the ``AmrexAstroCxxNetwork`` class.  A simple 
 C++ 3-alpha network that works with ``Microphysics`` can be created via:
 
 .. code:: python
@@ -16,11 +16,11 @@ C++ 3-alpha network that works with ``Microphysics`` can be created via:
 
    mylib = reaclib_library.linking_nuclei(["he4", "c12", "o16"])
 
-   net = pyna.StarKillerCxxNetwork(libraries=[mylib], rate_params=[r])
+   net = pyna.AmrexAstroCxxNetwork(libraries=[mylib], rate_params=[r])
    net.write_network()
 
 The C++ network uses a set of template files in
-``pynucastro/templates/starkiller-cxx-microphysics/`` which have
+``pynucastro/templates/amrexastro-cxx-microphysics/`` which have
 placeholders of the form ``<func>(num)``.  Here,
 
 * ``func`` is a tag that corresponds to a function that will be called
