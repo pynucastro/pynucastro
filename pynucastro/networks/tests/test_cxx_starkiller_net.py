@@ -7,7 +7,7 @@ import pytest
 import io
 
 
-class TestStarKillerCxxNetwork:
+class TestAmrexAstroCxxNetwork:
     # pylint: disable=protected-access
     @pytest.fixture(scope="class")
     def fn(self):
@@ -19,7 +19,7 @@ class TestStarKillerCxxNetwork:
                  "ne23--na23-toki",
                  "n--p-wc12"]
 
-        fn = networks.StarKillerCxxNetwork(files)
+        fn = networks.AmrexAstroCxxNetwork(files)
         fn.secret_code = "testing"
         return fn
 
@@ -76,7 +76,7 @@ class TestStarKillerCxxNetwork:
     def test_write_network(self, fn):
         """ test the write_network function"""
         test_path = "_test_cxx/"
-        reference_path = "_starkiller_cxx_reference/"
+        reference_path = "_amrexastro_cxx_reference/"
         base_path = os.path.relpath(os.path.dirname(__file__))
 
         fn.write_network(odir=test_path)
@@ -96,7 +96,7 @@ class TestStarKillerCxxNetwork:
         errors = []
         for test_file in files:
             # note, _test is written under whatever directory pytest is run from,
-            # so it is not necessarily at the same place as _starkiller_reference
+            # so it is not necessarily at the same place as _amrexastro_reference
             if not filecmp.cmp(os.path.normpath(f"{test_path}/{test_file}"),
                                os.path.normpath(f"{base_path}/{reference_path}/{test_file}"),
                                shallow=False):
