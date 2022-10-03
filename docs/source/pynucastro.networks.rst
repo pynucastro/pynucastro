@@ -33,10 +33,10 @@ pynucastro.networks.rate\_collection module
    :undoc-members:
    :show-inheritance:
 
-pynucastro.networks.starkiller\_cxx\_network module
+pynucastro.networks.amrexastro\_cxx\_network module
 ---------------------------------------------------
 
-.. automodule:: pynucastro.networks.starkiller_cxx_network
+.. automodule:: pynucastro.networks.amrexastro_cxx_network
    :members:
    :undoc-members:
    :show-inheritance:
