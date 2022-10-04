@@ -771,8 +771,7 @@ class ReacLibRate(Rate):
             self._labelprops_combine_resonance()
 
     def _labelprops_combine_resonance(self):
-        """ Update self.labelprops[4] = 'c'.
-            Also set the resonance_combined flag. """
+        """ Update self.labelprops[4] = 'c'"""
         llp = list(self.labelprops)
         llp[4] = 'c'
         self.labelprops = ''.join(llp)
