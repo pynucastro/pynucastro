@@ -7,7 +7,7 @@ import pytest
 import io
 
 
-class TestStarKillerCxxNetwork:
+class TestAmrexAstroCxxNetwork:
     # pylint: disable=protected-access
     @pytest.fixture(scope="class")
     def fn(self):
@@ -19,7 +19,7 @@ class TestStarKillerCxxNetwork:
                  "ne23--na23-toki",
                  "n--p-wc12"]
 
-        fn = networks.StarKillerCxxNetwork(files)
+        fn = networks.AmrexAstroCxxNetwork(files)
         fn.secret_code = "testing"
         return fn
 
@@ -35,8 +35,7 @@ class TestStarKillerCxxNetwork:
     def test_nrat_reaclib(self, fn):
         """ test the _nrat_reaclib function """
 
-        answer = ('    const int NrateReaclib = 5;\n' +
-                  '    const int NumReaclibSets = 6;\n')
+        answer = ('    const int NrateReaclib = 5;\n')
 
         assert self.cromulent_ftag(fn._nrat_reaclib, answer, n_indent=1)
 
@@ -77,7 +76,7 @@ class TestStarKillerCxxNetwork:
     def test_write_network(self, fn):
         """ test the write_network function"""
         test_path = "_test_cxx/"
-        reference_path = "_starkiller_cxx_reference/"
+        reference_path = "_amrexastro_cxx_reference/"
         base_path = os.path.relpath(os.path.dirname(__file__))
 
         fn.write_network(odir=test_path)
@@ -87,7 +86,9 @@ class TestStarKillerCxxNetwork:
                  "actual_rhs.H",
                  "inputs.burn_cell.VODE",
                  "Make.package",
+                 "NETWORK_PROPERTIES",
                  "_parameters",
+                 "pynucastro.net",
                  "reaclib_rates.H",
                  "table_rates_data.cpp",
                  "table_rates.H"]
@@ -95,10 +96,10 @@ class TestStarKillerCxxNetwork:
         errors = []
         for test_file in files:
             # note, _test is written under whatever directory pytest is run from,
-            # so it is not necessarily at the same place as _starkiller_reference
+            # so it is not necessarily at the same place as _amrexastro_reference
             if not filecmp.cmp(os.path.normpath(f"{test_path}/{test_file}"),
                                os.path.normpath(f"{base_path}/{reference_path}/{test_file}"),
                                shallow=False):
                 errors.append(test_file)
 
-        assert not errors, f"errors: {' '.join(errors)}"
+        assert not errors, f"files don't match: {' '.join(errors)}"

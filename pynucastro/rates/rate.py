@@ -10,10 +10,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 try:
     import numba
-    try:
-        from numba.experimental import jitclass
-    except ImportError:
-        from numba import jitclass
+    from numba.experimental import jitclass
 except ImportError:
     numba = None
     import functools
@@ -316,12 +313,6 @@ class Rate:
 
         self.weak_type = weak_type
 
-        # some rates will have no nuclei particles (e.g. gamma) on the left or
-        # right -- we'll try to infer those here
-
-        self.lhs_other = []
-        self.rhs_other = []
-
         self._set_rhs_properties()
         self._set_screening()
         self._set_print_representation()
@@ -387,6 +378,11 @@ class Rate:
         # string is output to the terminal, rid is used as a dict key,
         # and pretty_string is latex
 
+        # some rates will have no nuclei particles (e.g. gamma) on the left or
+        # right -- we'll try to infer those here
+        lhs_other = []
+        rhs_other = []
+
         self.string = ""
         self.rid = ""
         self.pretty_string = r"$"
@@ -410,7 +406,7 @@ class Rate:
 
         if strong_test:
             if len(self.products) == 1:
-                self.rhs_other.append("gamma")
+                rhs_other.append("gamma")
         else:
             # this is a weak rate
 
@@ -422,24 +418,31 @@ class Rate:
                 # the charge on the left should be +1 the charge on the right
                 assert sum(n.Z for n in self.reactants) == sum(n.Z for n in self.products) + 1
 
-                self.lhs_other.append("e-")
-                self.rhs_other.append("nu")
+                lhs_other.append("e-")
+                rhs_other.append("nu")
+
+            elif self.weak_type == "beta_decay":
+                # we expect an electron on the right
+                assert sum(n.Z for n in self.reactants) + 1 == sum(n.Z for n in self.products)
+
+                rhs_other.append("e-")
+                rhs_other.append("nubar")
 
             elif "_pos_" in self.weak_type:
 
                 # we expect a positron on the right -- let's make sure
                 assert sum(n.Z for n in self.reactants) == sum(n.Z for n in self.products) + 1
 
-                self.rhs_other.append("e+")
-                self.rhs_other.append("nu")
+                rhs_other.append("e+")
+                rhs_other.append("nu")
 
             elif "_neg_" in self.weak_type:
 
                 # we expect an electron on the right -- let's make sure
                 assert sum(n.Z for n in self.reactants) + 1 == sum(n.Z for n in self.products)
 
-                self.rhs_other.append("e-")
-                self.rhs_other.append("nubar")
+                rhs_other.append("e-")
+                rhs_other.append("nubar")
 
             else:
 
@@ -447,13 +450,13 @@ class Rate:
                 # not an electron capture
 
                 if sum(n.Z for n in self.reactants) == sum(n.Z for n in self.products) + 1:
-                    self.rhs_other.append("e+")
-                    self.rhs_other.append("nu")
+                    rhs_other.append("e+")
+                    rhs_other.append("nu")
 
                 elif sum(n.Z for n in self.reactants) + 1 == sum(n.Z for n in self.products):
 
-                    self.rhs_other.append("e-")
-                    self.rhs_other.append("nubar")
+                    rhs_other.append("e-")
+                    rhs_other.append("nubar")
 
         for n, r in enumerate(treactants):
             self.string += f"{r.c()}"
@@ -464,8 +467,8 @@ class Rate:
                 self.rid += " + "
                 self.pretty_string += r" + "
 
-        if self.lhs_other:
-            for o in self.lhs_other:
+        if lhs_other:
+            for o in lhs_other:
                 if o == "e-":
                     self.string += " + e⁻"
                     self.pretty_string += r" + \mathrm{e}^-"
@@ -483,8 +486,8 @@ class Rate:
                 self.rid += " + "
                 self.pretty_string += r" + "
 
-        if self.rhs_other:
-            for o in self.rhs_other:
+        if rhs_other:
+            for o in rhs_other:
                 if o == "gamma":
                     self.string += " + 𝛾"
                     self.pretty_string += r"+ \gamma"
@@ -640,12 +643,6 @@ class ReacLibRate(Rate):
         self.reverse = None
 
         self.Q = Q
-
-        # some rates will have no nuclei particles (e.g. gamma) on the left or
-        # right -- we'll try to infer those here
-
-        self.lhs_other = []
-        self.rhs_other = []
 
         if isinstance(rfile, str):
             # read in the file, parse the different sets and store them as
@@ -1005,7 +1002,7 @@ class ReacLibRate(Rate):
 
         fstring = ""
         fstring += "@numba.njit()\n"
-        fstring += f"def {self.fname}(tf):\n"
+        fstring += f"def {self.fname}(rate_eval, tf):\n"
         fstring += f"    # {self.rid}\n"
         fstring += "    rate = 0.0\n\n"
 
@@ -1016,7 +1013,7 @@ class ReacLibRate(Rate):
                 fstring += "    " + t + "\n"
 
         fstring += "\n"
-        fstring += "    return rate\n\n"
+        fstring += f"    rate_eval.{self.fname} = rate\n\n"
         return fstring
 
     def function_string_cxx(self, dtype="double", specifiers="inline"):
@@ -1101,7 +1098,7 @@ class ReacLibRate(Rate):
         else:
             prefactor_string = ""
 
-        return "{}{}{}{}*lambda_{}".format(prefactor_string, dens_string,
+        return "{}{}{}{}*rate_eval.{}".format(prefactor_string, dens_string,
                                            y_e_string, Y_string, self.fname)
 
     def jacobian_string_py(self, y_i):
@@ -1160,9 +1157,9 @@ class ReacLibRate(Rate):
             prefactor_string = ""
 
         if Y_string == "" and dens_string == "" and prefactor_string == "" and y_e_string == "":
-            rstring = "{}{}{}{}lambda_{}"
+            rstring = "{}{}{}{}rate_eval.{}"
         else:
-            rstring = "{}{}{}{}*lambda_{}"
+            rstring = "{}{}{}{}*rate_eval.{}"
         return rstring.format(prefactor_string, dens_string,
                               y_e_string, Y_string, self.fname)
 
@@ -1252,12 +1249,6 @@ class TabularRate(Rate):
 
         self.Q = None
 
-        # some rates will have no nuclei particles (e.g. gamma) on the left or
-        # right -- we'll try to infer those here
-
-        self.lhs_other = []
-        self.rhs_other = []
-
         # we should initialize this somehow
         self.weak_type = ""
 
@@ -1280,6 +1271,9 @@ class TabularRate(Rate):
         self._set_print_representation()
 
         self.get_tabular_rate()
+
+    def __hash__(self):
+        return hash(self.__repr__())
 
     def __eq__(self, other):
         """ Determine whether two Rate objects are equal.
@@ -1328,6 +1322,13 @@ class TabularRate(Rate):
         self.table_index_name = f'j_{self.reactants[0]}_{self.products[0]}'
         self.labelprops = 'tabular'
 
+        # set weak type
+        if "electroncapture" in self.table_file:
+            self.weak_type = "electron_capture"
+
+        elif "betadecay" in self.table_file:
+            self.weak_type = "beta_decay"
+
     def _set_rhs_properties(self):
         """ compute statistical prefactor and density exponent from the reactants. """
         self.prefactor = 1.0  # this is 1/2 for rates like a + a (double counting)
@@ -1341,8 +1342,6 @@ class TabularRate(Rate):
         """ tabular rates are not currently screened (they are e-capture or beta-decay)"""
         self.ion_screen = []
         self.symmetric_screen = []
-
-        super()._set_print_representation()
 
         if not self.fname:
             # This is used to determine which rates to detect as the same reaction
@@ -1425,8 +1424,8 @@ class TabularRate(Rate):
         else:
             prefactor_string = ""
 
-        return "{}{}{}{}*lambda_{}".format(prefactor_string, dens_string,
-                                           y_e_string, Y_string, self.fname)
+        return "{}{}{}{}*rate_eval.{}".format(prefactor_string, dens_string,
+                                              y_e_string, Y_string, self.fname)
 
     def jacobian_string_py(self, y_i):
         """
@@ -1484,9 +1483,9 @@ class TabularRate(Rate):
             prefactor_string = ""
 
         if Y_string == "" and dens_string == "" and prefactor_string == "" and y_e_string == "":
-            rstring = "{}{}{}{}lambda_{}"
+            rstring = "{}{}{}{}rate_eval.{}"
         else:
-            rstring = "{}{}{}{}*lambda_{}"
+            rstring = "{}{}{}{}*rate_eval.{}"
         return rstring.format(prefactor_string, dens_string,
                               y_e_string, Y_string, self.fname)
 
@@ -1514,7 +1513,7 @@ class TabularRate(Rate):
 
         return nu_loss
 
-    def plot(self, Tmin=1.e8, Tmax=1.6e9, rhoYmin=3.9e8, rhoYmax=2.e9,
+    def plot(self, Tmin=1.e8, Tmax=1.6e9, rhoYmin=3.9e8, rhoYmax=2.e9, color_field='rate',
              figsize=(10, 10)):
         """plot the rate's temperature sensitivity vs temperature
 
@@ -1542,18 +1541,31 @@ class TabularRate(Rate):
         rows, row_pos = np.unique(data_heatmap[:, 0], return_inverse=True)
         cols, col_pos = np.unique(data_heatmap[:, 1], return_inverse=True)
         pivot_table = np.zeros((len(rows), len(cols)), dtype=data_heatmap.dtype)
+
+        if color_field == 'rate':
+            icol = 5
+            title = f"{self.weak_type} rate in log10(1/s)"
+            cmap = 'magma'
+
+        elif color_field == 'nu_loss':
+            icol = 6
+            title = "neutrino energy loss rate in log10(erg/s)"
+            cmap = 'viridis'
+
+        else:
+            raise ValueError("color_field must be either 'rate' or 'nu_loss'.")
+
         try:
-            pivot_table[row_pos, col_pos] = np.log10(data_heatmap[:, 5])
+            pivot_table[row_pos, col_pos] = np.log10(data_heatmap[:, icol])
         except ValueError:
             print("Divide by zero encountered in log10\nChange the scale of T or rhoY")
 
-        im = ax.imshow(pivot_table, cmap='magma')
+        im = ax.imshow(pivot_table, cmap=cmap)
         fig.colorbar(im, ax=ax)
 
         ax.set_xlabel(r"$\log(T)$ [K]")
         ax.set_ylabel(r"$\log(\rho Y_e)$ [g/cm$^3$]")
-        ax.set_title(fr"{self.pretty_string}" +
-                     "\n"+"electron-capture/beta-decay rate in log10(1/s)")
+        ax.set_title(fr"{self.pretty_string}" + "\n" + title)
         ax.set_yticks(range(len(rows)))
         ylabels = [f"{np.log10(q):4.2f}" for q in rows]
         ax.set_yticklabels(ylabels)
@@ -1666,45 +1678,22 @@ class DerivedRate(ReacLibRate):
         """
 
         for nuc in set(self.rate.reactants + self.rate.products):
-            if not nuc.partition_function and str(nuc) != 'h1' and str(nuc) != 'n' and str(nuc) != 'he4' and str(nuc) != 'p':
+            if not nuc.partition_function and str(nuc) not in ['h1', 'n', 'he4', 'p']:
                 print(f'WARNING: {nuc} partition function is not supported by tables: set pf = 1.0 by default')
 
-        fstring = ""
-        fstring += "@numba.njit()\n"
-        fstring += f"def {self.fname}(tf):\n"
-        fstring += f"    # {self.rid}\n"
-        fstring += "    rate = 0.0\n\n"
-
-        for s in self.sets:
-            fstring += f"    # {s.labelprops[0:5]}\n"
-            set_string = s.set_string_py(prefix="rate", plus_equal=True)
-            for t in set_string.split("\n"):
-                fstring += "    " + t + "\n"
+        fstring = super().function_string_py()
 
         if self.use_pf:
 
             fstring += "\n"
-            for nucr in self.rate.reactants:
-                if nucr.partition_function:
-                    fstring += f"    #Interpolating {nucr} partition function\n"
-                    fstring += f"    {nucr}_temp_array = np.array({list(nucr.partition_function.temperature/1.0e9)})\n"
-                    fstring += f"    {nucr}_pf_array = np.array({list(nucr.partition_function.partition_function)})\n"
-                    fstring += f"    {nucr}_pf_exponent = np.interp(tf.T9, xp={nucr}_temp_array, fp=np.log10({nucr}_pf_array))\n"
-                    fstring += f"    {nucr}_pf = 10.0**{nucr}_pf_exponent\n"
+            for nuc in self.rate.reactants + self.rate.products:
+                if nuc.partition_function:
+                    fstring += f"    # interpolating {nuc} partition function\n"
+                    fstring += f"    {nuc}_pf_exponent = np.interp(tf.T9, xp={nuc}_temp_array, fp=np.log10({nuc}_pf_array))\n"
+                    fstring += f"    {nuc}_pf = 10.0**{nuc}_pf_exponent\n"
                 else:
-                    fstring += f"    #Setting {nucr} partition function to 1.0 by default, independent of T\n"
-                    fstring += f"    {nucr}_pf = 1.0\n"
-                fstring += "\n"
-            for nucp in self.rate.products:
-                if nucp.partition_function:
-                    fstring += f"    #Interpolating {nucp} partition function\n"
-                    fstring += f"    {nucp}_temp_array = np.array({list(nucp.partition_function.temperature/1.0e9)})\n"
-                    fstring += f"    {nucp}_pf_array = np.array({list(nucp.partition_function.partition_function)})\n"
-                    fstring += f"    {nucp}_pf_exponent = np.interp(tf.T9, xp={nucp}_temp_array, fp=np.log10({nucp}_pf_array))\n"
-                    fstring += f"    {nucp}_pf = 10.0**{nucp}_pf_exponent\n"
-                else:
-                    fstring += f"    #Setting {nucp} partition function to 1.0 by default, independent of T\n"
-                    fstring += f"    {nucp}_pf = 1.0\n"
+                    fstring += f"    # setting {nuc} partition function to 1.0 by default, independent of T\n"
+                    fstring += f"    {nuc}_pf = 1.0\n"
                 fstring += "\n"
 
             fstring += "    "
@@ -1717,17 +1706,19 @@ class DerivedRate(ReacLibRate):
             fstring += "*".join([f"{nucp}_pf" for nucp in self.rate.products])
 
             fstring += "\n"
-            fstring += "    rate *= z_r/z_p\n"
+            fstring += f"    rate_eval.{self.fname} *= z_r/z_p\n"
 
-        fstring += "\n"
-        fstring += "    return rate\n\n"
         return fstring
 
     def counter_factors(self):
-        """ This function returns the nucr! = nucr_1! * ... * nucr_r! for each repeated nucr reactant and
-        nucp! = nucp_1! * ... * nucp_p! for each reactant nucp product in a ordered pair (nucr!, nucp!). The
-        factors nucr! and nucp! avoid overcounting when more than one nuclei is involve in the reaction, otherwise
-        it will return 1.0."""
+        """This function returns the nucr! = nucr_1! * ... * nucr_r!
+        for each repeated nucr reactant and nucp! = nucp_1! * ... *
+        nucp_p! for each reactant nucp product in a ordered pair
+        (nucr!, nucp!). The factors nucr! and nucp! avoid overcounting
+        when more than one nuclei is involve in the reaction,
+        otherwise it will return 1.0.
+
+        """
 
         react_counts = Counter(self.rate.reactants)
         prod_counts = Counter(self.rate.products)
@@ -1910,15 +1901,15 @@ class ApproximateRate(ReacLibRate):
 
         string = ""
         string += "@numba.njit()\n"
-        string += f"def {self.fname}(tf):\n"
+        string += f"def {self.fname}(rate_eval, tf):\n"
 
         if not self.is_reverse:
 
             # first we need to get all of the rates that make this up
-            string += f"    r_ag = {self.primary_rate.fname}(tf)\n"
-            string += f"    r_ap = {self.secondary_rates[0].fname}(tf)\n"
-            string += f"    r_pg = {self.secondary_rates[1].fname}(tf)\n"
-            string += f"    r_pa = {self.secondary_reverse[1].fname}(tf)\n"
+            string += f"    r_ag = rate_eval.{self.primary_rate.fname}\n"
+            string += f"    r_ap = rate_eval.{self.secondary_rates[0].fname}\n"
+            string += f"    r_pg = rate_eval.{self.secondary_rates[1].fname}\n"
+            string += f"    r_pa = rate_eval.{self.secondary_reverse[1].fname}\n"
 
             # now the approximation
             string += "    rate = r_ag + r_ap * r_pg / (r_pg + r_pa)\n"
@@ -1926,15 +1917,15 @@ class ApproximateRate(ReacLibRate):
         else:
 
             # first we need to get all of the rates that make this up
-            string += f"    r_ga = {self.primary_reverse.fname}(tf)\n"
-            string += f"    r_pa = {self.secondary_reverse[1].fname}(tf)\n"
-            string += f"    r_gp = {self.secondary_reverse[0].fname}(tf)\n"
-            string += f"    r_pg = {self.secondary_rates[1].fname}(tf)\n"
+            string += f"    r_ga = rate_eval.{self.primary_reverse.fname}\n"
+            string += f"    r_pa = rate_eval.{self.secondary_reverse[1].fname}\n"
+            string += f"    r_gp = rate_eval.{self.secondary_reverse[0].fname}\n"
+            string += f"    r_pg = rate_eval.{self.secondary_rates[1].fname}\n"
 
             # now the approximation
             string += "    rate = r_ga + r_pa * r_gp / (r_pg + r_pa)\n"
 
-        string += "    return rate\n\n"
+        string += f"    rate_eval.{self.fname} = rate\n\n"
         return string
 
     def function_string_cxx(self, dtype="double", specifiers="inline"):

@@ -8,15 +8,6 @@ pynucastro
 
 `http://github.com/pynucastro/pynucastro <http://github.com/pynucastro/pynucastro>`_
 
-.. note::
-
-   pynucastro does not yet calculate nuclear partition functions to
-   correct reverse rates in the Reaclib library. Work is ongoing to
-   implement this functionality. We recommend you consider what
-   problem you wish to study using pynucastro to determine whether
-   reverse rates and partition function corrections are significant at
-   the temperatures of interest.
-
 pynucastro is a set of python interfaces to nuclear reaction rate
 databases (including the JINA reaclib nuclear reaction rate database).
 It is meant for both interactive exploration of rates (through Jupyter
@@ -50,12 +41,13 @@ codes.
    :maxdepth: 1
    :caption: Advanced Usage
 
+   screening-examples
    modify-example.ipynb
    approx-rates-examples.ipynb
    unimportant-rates.ipynb
    partition-function
    NSE-example.ipynb
-   
+
 .. toctree::
    :maxdepth: 1
    :caption: Writing Networks

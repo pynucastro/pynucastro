@@ -17,4 +17,4 @@ ignore = E122, E127, E128, E129, E226, E241, E265, E501, E741, F403, W504
 
 per-file-ignores = __init__.py:F401
 
-exclude = docs/, examples/
+exclude = docs/, examples/, pynucastro/networks/tests/_python_reference/

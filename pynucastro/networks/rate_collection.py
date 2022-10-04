@@ -20,6 +20,7 @@ from matplotlib.colors import SymLogNorm
 from matplotlib.scale import SymmetricalLogTransform
 from matplotlib.patches import ConnectionPatch
 import networkx as nx
+from pynucastro.screening.screen import NseState
 from scipy import constants
 from scipy.optimize import fsolve
 import copy
@@ -28,8 +29,7 @@ import copy
 from pynucastro.nucdata import Nucleus
 from pynucastro.rates import Rate, TabularRate, RatePair, DerivedRate, ApproximateRate, Library, \
         load_rate, Tfactors
-from pynucastro.screening import PlasmaState, ScreenFactors
-
+from pynucastro.screening import make_plasma_state, make_screen_factors
 from pynucastro.nucdata import PeriodicTable
 
 mpl.rcParams['figure.dpi'] = 100
@@ -606,6 +606,19 @@ class RateCollection:
             return None
         return _tmp
 
+    def get_nuclei_needing_partition_functions(self):
+        """return a list of the nuclei that require partition
+        functions for one or more DerivedRates in the collection"""
+
+        rates_with_pfs = [q for q in self.all_rates if isinstance(q, DerivedRate) and q.use_pf]
+
+        if rates_with_pfs:
+            nuclei_pfs = []
+            for r in rates_with_pfs:
+                nuclei_pfs += r.reactants + r.products
+            return set(nuclei_pfs)
+        return None
+
     def remove_nuclei(self, nuc_list):
         """remove the nuclei in nuc_list from the network along with any rates
         that directly involve them (this doesn't affect approximate rates that
@@ -785,13 +798,13 @@ class RateCollection:
         # this follows the same logic as BaseCxxNetwork._compute_screening_factors()
         factors = {}
         ys = composition.get_molar()
-        plasma_state = PlasmaState.fill(T, rho, ys)
+        plasma_state = make_plasma_state(T, rho, ys)
         screening_map = self.get_screening_map()
 
         for i, scr in enumerate(screening_map):
             if not (scr.n1.dummy or scr.n2.dummy):
-                scn_fac = ScreenFactors(scr.n1, scr.n2)
-                scor = screen_func(plasma_state, scn_fac)[0]
+                scn_fac = make_screen_factors(scr.n1, scr.n2)
+                scor = screen_func(plasma_state, scn_fac)
             if scr.name == "he4_he4_he4":
                 # we don't need to do anything here, but we want to avoid
                 # immediately applying the screening
@@ -800,8 +813,8 @@ class RateCollection:
                 # make sure the previous iteration was the first part of 3-alpha
                 assert screening_map[i - 1].name == "he4_he4_he4"
                 # handle the second part of the screening for 3-alpha
-                scn_fac2 = ScreenFactors(scr.n1, scr.n2)
-                scor2 = screen_func(plasma_state, scn_fac2)[0]
+                scn_fac2 = make_screen_factors(scr.n1, scr.n2)
+                scor2 = screen_func(plasma_state, scn_fac2)
 
                 # there might be both the forward and reverse 3-alpha
                 # if we are doing symmetric screening
@@ -817,7 +830,17 @@ class RateCollection:
 
         return factors
 
-    def _evaluate_comp_NSE(self, u, rho, T, ye):
+    def _evaluate_n_e(self, state, Xs):
+
+        m_u = constants.value("unified atomic mass unit") * 1.0e3  # atomic unit mass in g
+
+        n_e = 0.0
+        for nuc in self.unique_nuclei:
+            n_e += nuc.Z * state.dens * Xs[nuc] / (nuc.A * m_u)
+
+        return n_e
+
+    def _evaluate_mu_c(self, n_e, state, use_coulomb_corr=True):
         """ A helper equation that finds the mass fraction of each nuclide in NSE state,
         u[0] is chemical potential of proton  while u[1] is chemical potential of neutron"""
 
@@ -828,56 +851,86 @@ class RateCollection:
         # so the input doesn't go outside of the scope and the solver won't be able to converge if it did
         ye_low = min(nuc.Z/nuc.A for nuc in self.unique_nuclei)
         ye_max = max(nuc.Z/nuc.A for nuc in self.unique_nuclei)
-        assert ye >= ye_low and ye <= ye_max, "input electron fraction goes outside of scope for current network"
+        assert state.ye >= ye_low and state.ye <= ye_max, "input electron fraction goes outside of scope for current network"
+
+        # Seting up the constants needed to compute mu_c
+        k = constants.value("Boltzmann constant") * 1.0e7          # boltzmann in erg/K
+        Erg2MeV = 624151.0
+
+        # These are three constants for calculating coulomb corrections of chemical energy, see Calders paper: iopscience 510709, appendix
+        if use_coulomb_corr:
+            A_1 = -0.9052
+            A_2 = 0.6322
+            A_3 = -0.5 * np.sqrt(3.0) - A_1 / np.sqrt(A_2)
+
+        # u_c is the coulomb correction term for NSE
+        # Calculate the composition at NSE, equations found in appendix of Calder paper
+        u_c = {}
+        for nuc in self.unique_nuclei:
+            if use_coulomb_corr:
+                Gamma = state.gamma_e_fac * n_e ** (1.0/3.0) * nuc.Z ** (5.0 / 3.0) / state.temp
+                u_c[nuc] = Erg2MeV * k * state.temp * (A_1 * (np.sqrt(Gamma * (A_2 + Gamma)) - A_2 * np.log(np.sqrt(Gamma / A_2) +
+                                      np.sqrt(1.0 + Gamma / A_2))) + 2.0 * A_3 * (np.sqrt(Gamma) - np.arctan(np.sqrt(Gamma))))
+            else:
+                u_c[nuc] = 0.0
+
+        return u_c
+
+    def _nucleon_fraction_nse(self, u, u_c, state):
 
         # Define constants: amu, boltzmann, planck, and electron charge
         m_u = constants.value("unified atomic mass unit") * 1.0e3  # atomic unit mass in g
         k = constants.value("Boltzmann constant") * 1.0e7          # boltzmann in erg/K
         h = constants.value("Planck constant") * 1.0e7             # in cgs
-        e = 4.8032e-10                                             # electron charge in cgs
         Erg2MeV = 624151.0
 
-        # These are three constants for calculating coulomb corrections of chemical energy, see Calders paper: iopscience 510709, appendix
-        A_1 = -0.9052
-        A_2 = 0.6322
-        A_3 = -0.5 * np.sqrt(3.0) - A_1 / np.sqrt(A_2)
+        Xs = {}
+        up_c = u_c[Nucleus("p")]
 
-        # Create composition object for NSE and find electron number density
-        comp_NSE = Composition(self.unique_nuclei)
-        n_e = rho * ye / m_u
-
-        # u_c is the coulomb correction term for NSE
-        # Calculate the composition at NSE, equations found in appendix of Calder paper
         for nuc in self.unique_nuclei:
             if nuc.partition_function:
-                pf = nuc.partition_function(T)
+                pf = nuc.partition_function(state.temp)
             else:
                 pf = 1.0
 
-            gamma = nuc.Z**(5. / 3.) * e**2 * (4.0 * np.pi * n_e / 3.0)**(1. / 3.) / k / T
-            u_c = Erg2MeV * k * T * (A_1 * (np.sqrt(gamma * (A_2 + gamma)) - A_2 * np.log(np.sqrt(gamma / A_2) +
-                                      np.sqrt(1.0 + gamma / A_2))) + 2.0 * A_3 * (np.sqrt(gamma) - np.arctan(np.sqrt(gamma))))
-            comp_NSE.X[nuc] = m_u * nuc.A_nuc * pf / rho * (2.0 * np.pi * m_u * nuc.A_nuc * k * T / h**2)**(3. / 2.) \
-            * np.exp((nuc.Z * u[0] + nuc.N * u[1] - u_c + nuc.nucbind * nuc.A) / k / T / Erg2MeV)
+            if not nuc.spin_states:
+                raise ValueError(f"The spin of {nuc} is not implemented for now.")
 
-        return comp_NSE
+            nse_exponent = (nuc.Z * u[0] + nuc.N * u[1] - u_c[nuc] + nuc.Z * up_c + nuc.nucbind * nuc.A) / k / state.temp / Erg2MeV
+            nse_exponent = min(500.0, nse_exponent)
 
-    def _constraint_eq(self, u, rho, T, ye):
+            Xs[nuc] = m_u * nuc.A_nuc * pf * nuc.spin_states / state.dens * (2.0 * np.pi * m_u * nuc.A_nuc * k * state.temp / h**2) ** (3. / 2.) \
+                    * np.exp(nse_exponent)
+
+        return Xs
+
+    def _constraint_eq(self, u, u_c, state):
         """ Constraint Equations used to evaluate chemical potential for proton and neutron,
         which is used when evaluating composition at NSE"""
 
-        comp_NSE = self._evaluate_comp_NSE(u, rho, T, ye)
-
         # Don't use eval_ye() since it does automatic mass fraction normalization.
         # However, we should force normalization through constraint eq1.
-        nse_ye = sum(nuc.Z * comp_NSE.X[nuc] / nuc.A for nuc in self.unique_nuclei)
 
-        eq1 = sum(comp_NSE.X.values()) - 1.0
-        eq2 = ye - nse_ye
+        # m_u = constants.value("unified atomic mass unit") * 1.0e3  # atomic unit mass in g
 
+        Xs = self._nucleon_fraction_nse(u, u_c, state)
+
+        eq1 = 0.0
+        for nuc in self.unique_nuclei:
+            eq1 += Xs[nuc]
+
+        eq1 += - 1.0
+
+        eq2 = 0.0
+        for nuc in self.unique_nuclei:
+            eq2 += Xs[nuc] * nuc.Z / nuc.A
+        # for nuc in self.unique_nuclei:
+        #     eq2 += ((state.ye - 1.0) * nuc.Z + state.ye * nuc.N ) * Xs[nuc] / (nuc.A_nuc * m_u)
+
+        eq2 += - state.ye
         return [eq1, eq2]
 
-    def get_comp_NSE(self, rho, T, ye, init_guess=(-3.5, -15.0), tol=1.5e-9, tell_sol=False):
+    def get_comp_nse(self, rho, T, ye, init_guess=(-3.5, -15), tol=1.0e-11, use_coulomb_corr=False, return_sol=False):
         """
         Returns the NSE composition given density, temperature and prescribed electron fraction
         using scipy.fsolve, `tol` is an optional parameter for the tolerance of scipy.fsolve.
@@ -887,29 +940,50 @@ class RateCollection:
         when calling this method multiple times such as making a plot.
         """
 
+        #From here we convert the init_guess list into a np.array object:
+
+        init_guess = np.array(init_guess)
+        state = NseState(T, rho, ye)
+
+        u_c = {}
+        for nuc in self.unique_nuclei:
+            u_c[nuc] = 0.0
+
+        Xs = {}
+
         j = 0
         init_guess = np.array(init_guess)
         is_pos_old = False
         found_sol = False
 
+        # Filter out runtimewarnings from fsolve, here we check convergence by np.isclose
+        warnings.filterwarnings("ignore", category=RuntimeWarning)
+
         # This nested loops should fine-tune the initial guess if fsolve is unable to find a solution
-        while (j < 15):
+        while (j < 20):
             i = 0
             guess = copy.deepcopy(init_guess)
             init_dx = 0.5
 
-            while (i < 15):
-                u = fsolve(self._constraint_eq, guess, args=(rho, T, ye), xtol=tol, maxfev=800)
-                res = self._constraint_eq(u, rho, T, ye)
+            while (i < 20):
+                u = fsolve(self._constraint_eq, guess, args=(u_c, state), xtol=tol, maxfev=800)
+                Xs = self._nucleon_fraction_nse(u, u_c, state)
+                n_e = self._evaluate_n_e(state, Xs)
+                u_c = self._evaluate_mu_c(n_e, state, use_coulomb_corr)
+
+                res = self._constraint_eq(u, u_c, state)
                 is_pos_new = all(k > 0 for k in res)
-                found_sol = np.all(np.isclose(res, [0.0, 0.0], rtol=1e-2, atol=1e-3))
+                found_sol = np.all(np.isclose(res, [0.0, 0.0], rtol=1.0e-7, atol=1.0e-7))
 
                 if found_sol:
-                    if tell_sol:
-                        print(f"After solving, chemical potential of proton and neutron are {u[0]} and {u[1]}")
-                    comp_NSE = self._evaluate_comp_NSE(u, rho, T, ye)
+                    Xs = self._nucleon_fraction_nse(u, u_c, state)
+                    comp = Composition(self.unique_nuclei)
+                    comp.X = Xs
 
-                    return comp_NSE
+                    if return_sol:
+                        return comp, u
+
+                    return comp
 
                 if is_pos_old != is_pos_new:
                     init_dx *= 0.8
@@ -974,7 +1048,7 @@ class RateCollection:
 
         #subtract neutrino losses for tabular weak reactions
         for r in self.rates:
-            if r.weak and isinstance(r, TabularRate):
+            if isinstance(r, TabularRate):
                 # get composition
                 ys = composition.get_molar()
                 y_e = composition.eval_ye()
@@ -1832,7 +1906,6 @@ class RateCollection:
     @staticmethod
     def _symlog(arr, linthresh=1.0, linscale=1.0):
 
-        # Assume log base 10
         symlog_transform = SymmetricalLogTransform(10, linthresh, linscale)
         arr = symlog_transform.transform_non_affine(arr)
 
@@ -1910,6 +1983,7 @@ class RateCollection:
         dpi = kwargs.pop("dpi", 100)
         linthresh = kwargs.pop("linthresh", 1.0)
         linscale = kwargs.pop("linscale", 1.0)
+        cbar_ticks = kwargs.pop("cbar_ticks", None)
 
         if kwargs:
             warnings.warn(f"Unrecognized keyword arguments: {kwargs.keys()}")
@@ -1967,6 +2041,7 @@ class RateCollection:
 
         if cbar_bounds is None:
             cbar_bounds = values.min(), values.max()
+
         weights = self._scale(values, *cbar_bounds)
 
         # Plot a square for each nucleus
@@ -2019,7 +2094,12 @@ class RateCollection:
 
             divider = make_axes_locatable(ax)
             cax = divider.append_axes('right', size='3.5%', pad=0.1)
-            cbar_norm = mpl.colors.Normalize(*cbar_bounds)
+
+            if scale == "symlog":
+                cbar_norm = mpl.colors.SymLogNorm(linthresh, linscale, *cbar_bounds)
+            else:
+                cbar_norm = mpl.colors.Normalize(*cbar_bounds)
+
             smap = mpl.cm.ScalarMappable(norm=cbar_norm, cmap=cmap)
 
             if not cbar_label:
@@ -2032,8 +2112,24 @@ class RateCollection:
                 else:
                     cbar_label = capfield
 
-            fig.colorbar(smap, cax=cax, orientation="vertical",
-                    label=cbar_label, format=cbar_format)
+            # set number of ticks
+            if cbar_ticks is not None:
+                tick_locator = mpl.ticker.MaxNLocator(nbins=cbar_ticks)
+                tick_labels = tick_locator.tick_values(values.min(), values.max())
+
+                # for some reason tick_locator doesn't give the label of the first tick
+                # add them manually
+                if scale == "symlog":
+                    tick_labels = np.append(tick_labels, [linthresh, -linthresh])
+
+                if cbar_format is None:
+                    cbar_format = mpl.ticker.FormatStrFormatter("%.3g")
+
+            else:
+                tick_labels = None
+
+            fig.colorbar(smap, cax=cax, orientation="vertical", ticks=tick_labels,
+                         label=cbar_label, format=cbar_format)
 
         # Show or save
         if outfile is None:

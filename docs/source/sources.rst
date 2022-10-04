@@ -29,7 +29,7 @@ were obtained from:
 Physical constants from CODATA
 ------------------------------
 
-The standalone Fortran networks and the StarKiller Microphysics
+The standalone AMReX-Astro Microphysics
 networks rely on physical constants sourced from the 2014 CODATA
 recommended values.
 
@@ -40,7 +40,7 @@ recommended values.
 Nuclear binding energies from the Atomic Mass Data Center
 ---------------------------------------------------------
 
-The standalone Fortran networks and the StarKiller Microphysics
+The standalone AMReX-Astro Microphysics
 networks rely on binding energy per nucleon sourced from the Atomic
 Mass Evaluation 2016 (default) and 2012 of the Atomic Mass Data
 Center.

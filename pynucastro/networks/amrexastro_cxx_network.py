@@ -1,4 +1,4 @@
-"""A C++ reaction network for integration into the StarKiller
+"""A C++ reaction network for integration into the AMReX Astro
 Microphysics set of reaction networks used by astrophysical hydrodynamics
 codes"""
 
@@ -9,7 +9,7 @@ import os
 from pynucastro.networks.base_cxx_network import BaseCxxNetwork
 
 
-class StarKillerCxxNetwork(BaseCxxNetwork):
+class AmrexAstroCxxNetwork(BaseCxxNetwork):
     def __init__(self, *args, **kwargs):
 
         # this network can have a special kwarg called disable_rate_params
@@ -31,7 +31,7 @@ class StarKillerCxxNetwork(BaseCxxNetwork):
 
         template_pattern = os.path.join(self.pynucastro_dir,
                                         'templates',
-                                        'starkiller-cxx-microphysics',
+                                        'amrexastro-cxx-microphysics',
                                         '*.template')
 
         return glob.glob(template_pattern)
@@ -62,18 +62,20 @@ class StarKillerCxxNetwork(BaseCxxNetwork):
 
         super()._write_network(odir=odir)
 
+        if odir is None:
+            odir = os.getcwd()
         # create a .net file with the nuclei properties
-        with open("pynucastro.net", "w") as of:
+        with open(os.path.join(odir, "pynucastro.net"), "w") as of:
             for nuc in self.unique_nuclei:
                 of.write("{:25} {:6} {:6.1f} {:6.1f}\n".format(
                     nuc.spec_name, nuc.short_spec_name, nuc.A, nuc.Z))
 
         # write out some network properties
-        with open("NETWORK_PROPERTIES", "w") as of:
+        with open(os.path.join(odir, "NETWORK_PROPERTIES"), "w") as of:
             of.write(f"NSCREEN := {self.num_screen_calls}\n")
 
         # write the _parameters file
-        with open("_parameters", "w") as of:
+        with open(os.path.join(odir, "_parameters"), "w") as of:
             of.write("@namespace: network\n\n")
             if self.disable_rate_params:
                 for r in self.disable_rate_params:
