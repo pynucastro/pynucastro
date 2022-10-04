@@ -1,4 +1,4 @@
-"""A C++ reaction network for integration into the StarKiller
+"""A C++ reaction network for integration into the AMReX Astro
 Microphysics set of reaction networks used by astrophysical hydrodynamics
 codes"""
 
@@ -9,7 +9,7 @@ import os
 from pynucastro.networks.base_cxx_network import BaseCxxNetwork
 
 
-class StarKillerCxxNetwork(BaseCxxNetwork):
+class AmrexAstroCxxNetwork(BaseCxxNetwork):
     def __init__(self, *args, **kwargs):
 
         # this network can have a special kwarg called disable_rate_params
@@ -31,7 +31,7 @@ class StarKillerCxxNetwork(BaseCxxNetwork):
 
         template_pattern = os.path.join(self.pynucastro_dir,
                                         'templates',
-                                        'starkiller-cxx-microphysics',
+                                        'amrexastro-cxx-microphysics',
                                         '*.template')
 
         return glob.glob(template_pattern)
