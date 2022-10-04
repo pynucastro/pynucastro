@@ -270,7 +270,7 @@ def add_dummy_nucleus(red_net, conds):
     Z = (comp.eval_ye() - norm_fac*red_comp.eval_ye()) / Y_new
     
     nuc = DummyNucleus(Z, A, 'dummy')
-    red_net.add_nucleus(nuc)
+    red_net.add_inert_nucleus(nuc)
     
     return nuc
 

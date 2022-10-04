@@ -558,9 +558,10 @@ class RateCollection:
 
         return rate_pairs
 
-    def add_nucleus(self, nuc):
-        """Add a nucleus to this network without adding any rates that utilize it."""
+    def add_inert_nucleus(self, nuc):
+        """Add an inert nucleus to this network."""
         
+        self.inert_nuclei.append(nuc)
         self.unique_nuclei.append(nuc)
         self.nuclei_consumed[nuc] = []
         self.nuclei_produced[nuc] = []
