@@ -1,5 +1,6 @@
-from pynucastro.nucdata import Nucleus
 from pytest import approx
+
+from pynucastro.nucdata import Nucleus
 
 
 class TestNucleus:

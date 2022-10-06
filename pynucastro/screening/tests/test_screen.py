@@ -1,8 +1,9 @@
-import pynucastro as pyna
-from pynucastro.screening import chugunov_2007, chugunov_2009, make_plasma_state, make_screen_factors
-
 import pytest
 from pytest import approx
+
+import pynucastro as pyna
+from pynucastro.screening import (chugunov_2007, chugunov_2009,
+                                  make_plasma_state, make_screen_factors)
 
 
 class TestScreen:

@@ -1,5 +1,6 @@
 # unit tests for rates
 import io
+
 import pytest
 
 ANSWER = \

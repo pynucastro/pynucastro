@@ -1,13 +1,15 @@
 """
 Classes and methods to interface with files storing rate data.
 """
-from collections import Counter
-from scipy.constants import physical_constants
+import io
 import os
 import re
-import io
-import numpy as np
+from collections import Counter
+
 import matplotlib.pyplot as plt
+import numpy as np
+from scipy.constants import physical_constants
+
 try:
     import numba
     from numba.experimental import jitclass

@@ -1,5 +1,6 @@
-from pynucastro.nucdata.elements import PeriodicTable
 import os
+
+from pynucastro.nucdata.elements import PeriodicTable
 
 _filename = 'mass_excess2020.txt'
 dir_nucdata = os.path.dirname(os.path.realpath(__file__))

@@ -1,6 +1,7 @@
 # unit tests for rates
-import pynucastro as pyna
 import pytest
+
+import pynucastro as pyna
 
 
 class TestPythonNetwork:

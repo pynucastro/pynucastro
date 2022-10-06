@@ -5,7 +5,7 @@ import numpy as np
 from scipy import constants
 
 # use the jitclass placeholder from rate.py
-from pynucastro.rates.rate import numba, jitclass
+from pynucastro.rates.rate import jitclass, numba
 
 if numba is not None:
     njit = numba.njit

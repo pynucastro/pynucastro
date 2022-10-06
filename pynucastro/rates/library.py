@@ -1,9 +1,10 @@
-import os
-import io
 import collections
+import io
+import os
 
 from pynucastro.nucdata import Nucleus, UnsupportedNucleus
-from pynucastro.rates.rate import DerivedRate, Rate, _find_rate_file, ReacLibRate, TabularRate
+from pynucastro.rates.rate import (DerivedRate, Rate, ReacLibRate, TabularRate,
+                                   _find_rate_file)
 
 
 def list_known_rates():

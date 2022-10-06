@@ -12,6 +12,7 @@ and are read unmodified by this script.
 """
 
 import argparse
+
 from pynucastro.nucdata import PeriodicTable
 
 #Create a parser variable that demands for a table and creates an option to add a name to the formatted table

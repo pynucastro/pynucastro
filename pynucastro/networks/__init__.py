@@ -22,10 +22,10 @@ hydrodynamics codes.
 
 #__all__ = ["python_network", "rate_collection", "sympy_network_support"]
 
-from .rate_collection import RateCollection, Composition, Explorer
-from .python_network import PythonNetwork
-from .sympy_network_support import SympyRates
-from .base_cxx_network import BaseCxxNetwork
 from .amrexastro_cxx_network import AmrexAstroCxxNetwork
+from .base_cxx_network import BaseCxxNetwork
+from .python_network import PythonNetwork
+from .rate_collection import Composition, Explorer, RateCollection
+from .sympy_network_support import SympyRates
 
 StarKillerCxxNetwork = AmrexAstroCxxNetwork

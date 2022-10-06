@@ -1,11 +1,14 @@
 # unit tests for rates
 import math
-#from msilib.schema import Complus
 
-from pynucastro.nucdata import Nucleus
-from pynucastro import rates
 import pytest
 from pytest import approx
+
+from pynucastro import rates
+from pynucastro.nucdata import Nucleus
+
+#from msilib.schema import Complus
+
 
 
 class TestTfactors:
