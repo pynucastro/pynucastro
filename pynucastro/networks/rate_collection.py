@@ -2,10 +2,10 @@
 rates that together make up a network."""
 
 import copy
+import collections
 import functools
 import math
 import os
-# Common Imports
 import warnings
 from operator import mul
 
@@ -740,6 +740,73 @@ class RateCollection:
             rvals[r] = yfac * val * screen_factors.get(r, 1.0)
 
         return rvals
+
+    def validate(self, other_library, forward_only=True, ostream=None):
+        """perform various checks on the library, comparing to other_library,
+        to ensure that we are not missing important rates.  The idea
+        is that self should be a reduced library where we filtered out
+        a few rates and then we want to compare to the larger
+        other_library to see if we missed something important.
+
+        ostream is the I/O stream to send output to (for instance, a
+        file object or StringIO object).  If it is None, then output
+        is to stdout.
+
+        """
+
+        current_rates = sorted(self.get_rates())
+
+        # check the forward rates to see if any of the products are
+        # not consumed by other forward rates
+
+        passed_validation = True
+
+        for rate in current_rates:
+            if rate.reverse:
+                continue
+            for p in rate.products:
+                found = False
+                for orate in current_rates:
+                    if orate == rate:
+                        continue
+                    if orate.reverse:
+                        continue
+                    if p in orate.reactants:
+                        found = True
+                        break
+                if not found:
+                    passed_validation = False
+                    msg = f"validation: {p} produced in {rate} never consumed."
+                    if ostream is None:
+                        print(msg)
+                    else:
+                        ostream.write(msg + "\n")
+
+        # now check if we are missing any rates from other_library with the exact same reactants
+
+        other_by_reactants = collections.defaultdict(list)
+        for rate in sorted(other_library.get_rates()):
+            other_by_reactants[tuple(sorted(rate.reactants))].append(rate)
+
+        for rate in current_rates:
+            if forward_only and rate.reverse:
+                continue
+
+            key = tuple(sorted(rate.reactants))
+            for other_rate in other_by_reactants[key]:
+                # check to see if other_rate is already in current_rates
+                found = True
+                if other_rate not in current_rates:
+                    found = False
+
+                if not found:
+                    msg = f"validation: missing {other_rate} as alternative to {rate} (Q = {other_rate.Q} MeV)."
+                    if ostream is None:
+                        print(msg)
+                    else:
+                        ostream.write(msg + "\n")
+
+        return passed_validation
 
     def find_unimportant_rates(self, states, cutoff_ratio, screen_func=None):
         """evaluate the rates at multiple thermodynamic states, and find the

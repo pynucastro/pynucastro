@@ -2,6 +2,7 @@
 import io
 
 import pytest
+import pynucastro as pyna
 
 ANSWER = \
 """validation: ni56 produced in Fe52 + He4 ⟶ Ni56 + 𝛾 never consumed.
@@ -97,5 +98,6 @@ class TestValidate:
 
     def test_validate(self, reduced_library, reaclib_library):
         output = io.StringIO()
-        reduced_library.validate(reaclib_library, ostream=output)
+        rc = pyna.RateCollection(libraries=[reduced_library])
+        rc.validate(reaclib_library, ostream=output)
         assert ANSWER == output.getvalue()
