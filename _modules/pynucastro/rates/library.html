@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.rates.library &mdash; pynucastro 1.7.0.post71+g9e879ce0 documentation</title>
+  <title>pynucastro.rates.library &mdash; pynucastro 1.7.0.post72+g7ec17b95 documentation</title>
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -400,73 +400,6 @@
                            <span class="n">rates</span><span class="o">=</span><span class="n">matching_rates</span><span class="p">,</span>
                            <span class="n">read_library</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="k">return</span> <span class="kc">None</span></div>
-
-<div class="viewcode-block" id="Library.validate"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.library.Library.validate">[docs]</a>    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other_library</span><span class="p">,</span> <span class="n">forward_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">ostream</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;perform various checks on the library, comparing to other_library,</span>
-<span class="sd">        to ensure that we are not missing important rates.  The idea</span>
-<span class="sd">        is that self should be a reduced library where we filtered out</span>
-<span class="sd">        a few rates and then we want to compare to the larger</span>
-<span class="sd">        other_library to see if we missed something important.</span>
-
-<span class="sd">        ostream is the I/O stream to send output to (for instance, a</span>
-<span class="sd">        file object or StringIO object).  If it is None, then output</span>
-<span class="sd">        is to stdout.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="n">current_rates</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_rates</span><span class="p">())</span>
-
-        <span class="c1"># check the forward rates to see if any of the products are</span>
-        <span class="c1"># not consumed by other forward rates</span>
-
-        <span class="n">passed_validation</span> <span class="o">=</span> <span class="kc">True</span>
-
-        <span class="k">for</span> <span class="n">rate</span> <span class="ow">in</span> <span class="n">current_rates</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">rate</span><span class="o">.</span><span class="n">reverse</span><span class="p">:</span>
-                <span class="k">continue</span>
-            <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">rate</span><span class="o">.</span><span class="n">products</span><span class="p">:</span>
-                <span class="n">found</span> <span class="o">=</span> <span class="kc">False</span>
-                <span class="k">for</span> <span class="n">orate</span> <span class="ow">in</span> <span class="n">current_rates</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="n">orate</span> <span class="o">==</span> <span class="n">rate</span><span class="p">:</span>
-                        <span class="k">continue</span>
-                    <span class="k">if</span> <span class="n">orate</span><span class="o">.</span><span class="n">reverse</span><span class="p">:</span>
-                        <span class="k">continue</span>
-                    <span class="k">if</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">orate</span><span class="o">.</span><span class="n">reactants</span><span class="p">:</span>
-                        <span class="n">found</span> <span class="o">=</span> <span class="kc">True</span>
-                        <span class="k">break</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="n">found</span><span class="p">:</span>
-                    <span class="n">passed_validation</span> <span class="o">=</span> <span class="kc">False</span>
-                    <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;validation: </span><span class="si">{</span><span class="n">p</span><span class="si">}</span><span class="s2"> produced in </span><span class="si">{</span><span class="n">rate</span><span class="si">}</span><span class="s2"> never consumed.&quot;</span>
-                    <span class="k">if</span> <span class="n">ostream</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                        <span class="nb">print</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="n">ostream</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">msg</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-
-        <span class="c1"># now check if we are missing any rates from other_library with the exact same reactants</span>
-
-        <span class="n">other_by_reactants</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">rate</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">other_library</span><span class="o">.</span><span class="n">get_rates</span><span class="p">()):</span>
-            <span class="n">other_by_reactants</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">rate</span><span class="o">.</span><span class="n">reactants</span><span class="p">))]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rate</span><span class="p">)</span>
-
-        <span class="k">for</span> <span class="n">rate</span> <span class="ow">in</span> <span class="n">current_rates</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">forward_only</span> <span class="ow">and</span> <span class="n">rate</span><span class="o">.</span><span class="n">reverse</span><span class="p">:</span>
-                <span class="k">continue</span>
-
-            <span class="n">key</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">rate</span><span class="o">.</span><span class="n">reactants</span><span class="p">))</span>
-            <span class="k">for</span> <span class="n">other_rate</span> <span class="ow">in</span> <span class="n">other_by_reactants</span><span class="p">[</span><span class="n">key</span><span class="p">]:</span>
-                <span class="c1"># check to see if other_rate is already in current_rates</span>
-                <span class="n">found</span> <span class="o">=</span> <span class="kc">True</span>
-                <span class="k">if</span> <span class="n">other_rate</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">current_rates</span><span class="p">:</span>
-                    <span class="n">found</span> <span class="o">=</span> <span class="kc">False</span>
-
-                <span class="k">if</span> <span class="ow">not</span> <span class="n">found</span><span class="p">:</span>
-                    <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;validation: missing </span><span class="si">{</span><span class="n">other_rate</span><span class="si">}</span><span class="s2"> as alternative to </span><span class="si">{</span><span class="n">rate</span><span class="si">}</span><span class="s2"> (Q = </span><span class="si">{</span><span class="n">other_rate</span><span class="o">.</span><span class="n">Q</span><span class="si">}</span><span class="s2"> MeV).&quot;</span>
-                    <span class="k">if</span> <span class="n">ostream</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                        <span class="nb">print</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="n">ostream</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">msg</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">passed_validation</span></div>
 
 <div class="viewcode-block" id="Library.forward"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.library.Library.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>

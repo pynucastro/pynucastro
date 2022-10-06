@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.rates package &mdash; pynucastro 1.7.0.post71+g9e879ce0 documentation</title>
+  <title>pynucastro.rates package &mdash; pynucastro 1.7.0.post72+g7ec17b95 documentation</title>
       <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -268,19 +268,6 @@ include only forward rates.</p>
 <dt class="sig sig-object py" id="pynucastro.rates.library.Library.remove_rate">
 <span class="sig-name descname"><span class="pre">remove_rate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rate</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/library.html#Library.remove_rate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.Library.remove_rate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Manually remove a rate from the library by supplying the id</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pynucastro.rates.library.Library.validate">
-<span class="sig-name descname"><span class="pre">validate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other_library</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">forward_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ostream</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/library.html#Library.validate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.Library.validate" title="Permalink to this definition">¶</a></dt>
-<dd><p>perform various checks on the library, comparing to other_library,
-to ensure that we are not missing important rates.  The idea
-is that self should be a reduced library where we filtered out
-a few rates and then we want to compare to the larger
-other_library to see if we missed something important.</p>
-<p>ostream is the I/O stream to send output to (for instance, a
-file object or StringIO object).  If it is None, then output
-is to stdout.</p>
 </dd></dl>
 
 </dd></dl>
