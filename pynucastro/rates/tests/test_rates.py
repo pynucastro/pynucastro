@@ -7,9 +7,6 @@ from pytest import approx
 from pynucastro import rates
 from pynucastro.nucdata import Nucleus
 
-#from msilib.schema import Complus
-
-
 
 class TestTfactors:
     @pytest.fixture(scope="class")
