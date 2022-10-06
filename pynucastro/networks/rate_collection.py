@@ -1,8 +1,8 @@
 """A collection of classes and methods to deal with collections of
 rates that together make up a network."""
 
-import copy
 import collections
+import copy
 import functools
 import math
 import os
