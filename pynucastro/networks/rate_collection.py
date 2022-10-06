@@ -1288,7 +1288,7 @@ class RateCollection:
 
         show_small_ydot: if true, then show visibile lines for rates below
         ydot_cutoff_value
-        
+
         node_size: size of a node
 
         node_font_size: size of the font used to write the isotope in the node
@@ -1437,10 +1437,10 @@ class RateCollection:
                     if r in invisible_rates:
                         if show_small_ydot:
                             # use real -1 for displaying rates that are below ydot_cutoff
-                            G.add_edges_from([(n,p)], weight=rate_weight, real=-1)    
+                            G.add_edges_from([(n, p)], weight=rate_weight, real=-1)
 
                         continue
-                                        
+
                     G.add_edges_from([(n, p)], weight=rate_weight, real=1)
 
         # now consider the rates that are approximated out of the network
@@ -1515,15 +1515,14 @@ class RateCollection:
                                    connectionstyle=connectionstyle,
                                    style="dotted", node_size=node_size, ax=ax)
 
-        
         # plot invisible rates, rates that are below ydot_cutoff_value
         invis_edges = [(u, v) for u, v, e in G.edges(data=True) if e["real"] == -1]
-        
+
         _ = nx.draw_networkx_edges(G, G.position, width=1,
                                    edgelist=invis_edges, edge_color="gray",
                                    connectionstyle=connectionstyle,
-                                   style="dotted", node_size=node_size, ax=ax)            
-        
+                                   style="dotted", node_size=node_size, ax=ax)
+
         if ydots is not None:
             pc = mpl.collections.PatchCollection(real_edges_lc, cmap=plt.cm.viridis)
             pc.set_array(real_weights)
