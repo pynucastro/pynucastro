@@ -1253,7 +1253,7 @@ class RateCollection:
 
     def plot(self, outfile=None, rho=None, T=None, comp=None,
              size=(800, 600), dpi=100, title=None,
-             ydot_cutoff_value=None,
+             ydot_cutoff_value=None, show_invisible_lines=False,
              node_size=1000, node_font_size=13, node_color="#A0CBE2", node_shape="o",
              curved_edges=False,
              N_range=None, Z_range=None, rotated=False,
@@ -1286,6 +1286,9 @@ class RateCollection:
         ydot_cutoff_value: rate threshold below which we do not show a
         line corresponding to a rate
 
+        show_invisible_lines: if true, then show visibile lines for rates below
+        ydot_cutoff_value
+        
         node_size: size of a node
 
         node_font_size: size of the font used to write the isotope in the node
