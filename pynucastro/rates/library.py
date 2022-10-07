@@ -37,7 +37,7 @@ class Library:
     specified by RateFilter objects.
     """
 
-    def __init__(self, libfile=None, rates=None, read_library=True):
+    def __init__(self, libfile=None, rates=None):
         self._library_file = libfile
         if rates:
             self._rates = None
@@ -53,7 +53,7 @@ class Library:
             self._rates = {}
         self._library_source_lines = collections.deque()
 
-        if self._library_file and read_library:
+        if self._library_file:
             self._library_file = _find_rate_file(self._library_file)
             self._read_library_file()
 
@@ -173,9 +173,7 @@ class Library:
                     raise ValueError(f'rate {r} defined differently in libraries {self._library_file} and {other._library_file}')
             else:
                 new_rates[rid] = r
-        new_library = Library(libfile=f'{self._library_file} + {other._library_file}',
-                              rates=new_rates,
-                              read_library=False)
+        new_library = Library(rates=new_rates)
         return new_library
 
     def __sub__(self, other):
@@ -350,9 +348,7 @@ class Library:
                     matching_rates[rid] = r
                     break
         if matching_rates:
-            return Library(libfile=self._library_file,
-                           rates=matching_rates,
-                           read_library=False)
+            return Library(rates=matching_rates)
         return None
 
     def forward(self):
@@ -581,9 +577,9 @@ class RateFilter:
 
 class ReacLibLibrary(Library):
 
-    def __init__(self, libfile='reaclib_default2_20220329', rates=None, read_library=True):
-        assert libfile == 'reaclib_default2_20220329' and rates is None and read_library, "Only the reaclib_default2_20220329 default ReacLib snapshot is accepted"
-        Library.__init__(self, libfile=libfile, rates=rates, read_library=read_library)
+    def __init__(self, libfile='reaclib_default2_20220329'):
+        libfile == 'reaclib_default2_20220329'
+        Library.__init__(self, libfile=libfile)
 
 
 class TabularLibrary(Library):
