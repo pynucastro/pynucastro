@@ -1,6 +1,7 @@
 import os
 import io
 import collections
+import re
 
 from pynucastro.nucdata import Nucleus, UnsupportedNucleus
 from pynucastro.rates.rate import DerivedRate, Rate, _find_rate_file, ReacLibRate, TabularRate
@@ -201,6 +202,61 @@ class Library:
             return r
         except IndexError:
             raise LookupError(f"rate identifier {rid!r} does not match a rate in this library.") from None
+
+    def get_rate_by_name(self, name):
+        """Return a rate specified by a name list A(x,y)B"""
+
+        # first try to interpret name as A(x,y)B
+        rate_str = re.compile(r"([A-Za-z0-9]+)\(([A-Za-z0-9]*),([A-Za-z0-9]*)\)([A-Za-z0-9]+)", re.IGNORECASE)
+        nucs = rate_str.search(name)
+        try:
+            _r = [nucs.group(1), nucs.group(2)]
+            _p = [nucs.group(3), nucs.group(4)]
+        except AttributeError:
+            return None
+
+        # now try to make nuclei objects.
+        reactants = []
+        for nuc in _r:
+            if nuc == "":
+                continue
+            try:
+                n = Nucleus(nuc)
+                reactants.append(n)
+            except ValueError:
+                # we need to interpret some things specially
+                if nuc.lower() in ["e", "nu", "_", "g", "gamma"]:
+                    # first electrons and neutrins, and nothing
+                    continue
+                elif nuc.lower() == "aa":
+                    reactants.append(Nucleus("he4"))
+                    reactants.append(Nucleus("he4"))
+                else:
+                    raise
+
+        products = []
+        for nuc in _p:
+            if nuc == "":
+                continue
+            try:
+                n = Nucleus(nuc)
+                products.append(n)
+            except ValueError:
+                # we need to interpret some things specially
+                if nuc.lower() in ["e", "nu", "_", "g", "gamma"]:
+                    # first electrons and neutrinos, gammas, and nothing
+                    continue
+                elif nuc.lower() == "aa":
+                    products.append(Nucleus("he4"))
+                    products.append(Nucleus("he4"))
+                else:
+                    raise
+
+        rf = RateFilter(reactants=reactants, products=products)
+        _lib = self.filter(rf)
+        if _lib is None:
+            return None
+        return _lib.get_rates()
 
     def get_nuclei(self):
         """get the list of unique nuclei"""
