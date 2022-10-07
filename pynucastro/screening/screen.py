@@ -21,7 +21,6 @@ amu = constants.value("atomic mass constant") / constants.gram  # kg to g
 q_e = constants.value("elementary charge") * (constants.c * 100) / 10  # C to statC (esu)
 hbar = constants.value("reduced Planck constant") / constants.erg  # J*s to erg*s
 k_B = constants.value("Boltzmann constant") / constants.erg  # J/K to erg/K
-n_A = constants.value("Avogadro constant")
 
 
 @jitclass()

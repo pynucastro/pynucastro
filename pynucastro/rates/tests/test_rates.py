@@ -211,7 +211,7 @@ class TestDerivedRate:
 
         assert c12_ga_a_a_reaclib.eval(T=2.0e9) == approx(c12_ga_a_a_derived.eval(T=2.0e9), rel=1.7e-5)
 
-    def a_a_ag_c12_with_pf(self, reaclib_library):
+    def test_a_a_ag_c12_with_pf(self, reaclib_library):
         """
         This function test the correct rate value if we take in consideration the partition
         functions on the range 1.0e9 to 100.0e9
