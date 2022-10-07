@@ -1,10 +1,11 @@
-import os
-import io
 import collections
+import io
+import os
 import re
 
 from pynucastro.nucdata import Nucleus, UnsupportedNucleus
-from pynucastro.rates.rate import DerivedRate, Rate, _find_rate_file, ReacLibRate, TabularRate, load_rate
+from pynucastro.rates.rate import (DerivedRate, Rate, ReacLibRate, TabularRate,
+                                   _find_rate_file, load_rate)
 
 
 def list_known_rates():
@@ -256,7 +257,7 @@ class Library:
         _lib = self.filter(rf)
         if _lib is None:
             return None
-        _r =  _lib.get_rates()
+        _r = _lib.get_rates()
         if (len(_r)) == 1:
             return _r[0]
         return _r
