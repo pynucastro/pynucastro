@@ -3,7 +3,7 @@ import io
 import collections
 
 from pynucastro.nucdata import Nucleus, UnsupportedNucleus
-from pynucastro.rates.rate import DerivedRate, Rate, _find_rate_file, ReacLibRate, TabularRate
+from pynucastro.rates.rate import DerivedRate, Rate, _find_rate_file, ReacLibRate, TabularRate, load_rate
 
 
 def list_known_rates():
@@ -524,3 +524,21 @@ class ReacLibLibrary(Library):
     def __init__(self, libfile='reaclib_default2_20220329', rates=None, read_library=True):
         assert libfile == 'reaclib_default2_20220329' and rates is None and read_library, "Only the reaclib_default2_20220329 default ReacLib snapshot is accepted"
         Library.__init__(self, libfile=libfile, rates=rates, read_library=read_library)
+
+
+class TabularLibrary(Library):
+
+    def __init__(self):
+        # find all of the tabular rates that pynucastro knows about
+        # we'll assume that these are of the form *-toki
+
+        lib_path = f"{os.path.dirname(__file__)}/../library/"
+
+        trates = []
+
+        for _, _, filenames in os.walk(lib_path):
+            for f in filenames:
+                if f.endswith("-toki"):
+                    trates.append(load_rate(f))
+
+        Library.__init__(self, rates=trates)

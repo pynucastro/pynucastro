@@ -135,6 +135,7 @@ from pynucastro.rates import \
     RateFilter, \
     Library, \
     ReacLibLibrary, \
+    TabularLibrary, \
     list_known_rates, \
     load_rate
 
