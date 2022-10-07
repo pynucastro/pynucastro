@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.rates.library &mdash; pynucastro 1.7.0.post72+g7ec17b95 documentation</title>
+  <title>pynucastro.rates.library &mdash; pynucastro 1.7.0.post73+ga884a355 documentation</title>
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -109,7 +109,7 @@
 <span class="kn">import</span> <span class="nn">collections</span>
 
 <span class="kn">from</span> <span class="nn">pynucastro.nucdata</span> <span class="kn">import</span> <span class="n">Nucleus</span><span class="p">,</span> <span class="n">UnsupportedNucleus</span>
-<span class="kn">from</span> <span class="nn">pynucastro.rates.rate</span> <span class="kn">import</span> <span class="n">DerivedRate</span><span class="p">,</span> <span class="n">Rate</span><span class="p">,</span> <span class="n">_find_rate_file</span><span class="p">,</span> <span class="n">ReacLibRate</span><span class="p">,</span> <span class="n">TabularRate</span>
+<span class="kn">from</span> <span class="nn">pynucastro.rates.rate</span> <span class="kn">import</span> <span class="n">DerivedRate</span><span class="p">,</span> <span class="n">Rate</span><span class="p">,</span> <span class="n">_find_rate_file</span><span class="p">,</span> <span class="n">ReacLibRate</span><span class="p">,</span> <span class="n">TabularRate</span><span class="p">,</span> <span class="n">load_rate</span>
 
 
 <div class="viewcode-block" id="list_known_rates"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.library.list_known_rates">[docs]</a><span class="k">def</span> <span class="nf">list_known_rates</span><span class="p">():</span>
@@ -630,6 +630,24 @@
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">libfile</span><span class="o">=</span><span class="s1">&#39;reaclib_default2_20220329&#39;</span><span class="p">,</span> <span class="n">rates</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">read_library</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="k">assert</span> <span class="n">libfile</span> <span class="o">==</span> <span class="s1">&#39;reaclib_default2_20220329&#39;</span> <span class="ow">and</span> <span class="n">rates</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">read_library</span><span class="p">,</span> <span class="s2">&quot;Only the reaclib_default2_20220329 default ReacLib snapshot is accepted&quot;</span>
         <span class="n">Library</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">libfile</span><span class="o">=</span><span class="n">libfile</span><span class="p">,</span> <span class="n">rates</span><span class="o">=</span><span class="n">rates</span><span class="p">,</span> <span class="n">read_library</span><span class="o">=</span><span class="n">read_library</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TabularLibrary"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.library.TabularLibrary">[docs]</a><span class="k">class</span> <span class="nc">TabularLibrary</span><span class="p">(</span><span class="n">Library</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># find all of the tabular rates that pynucastro knows about</span>
+        <span class="c1"># we&#39;ll assume that these are of the form *-toki</span>
+
+        <span class="n">lib_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="si">}</span><span class="s2">/../library/&quot;</span>
+
+        <span class="n">trates</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">filenames</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">lib_path</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">filenames</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;-toki&quot;</span><span class="p">):</span>
+                    <span class="n">trates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">load_rate</span><span class="p">(</span><span class="n">f</span><span class="p">))</span>
+
+        <span class="n">Library</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rates</span><span class="o">=</span><span class="n">trates</span><span class="p">)</span></div>
 </pre></div>
 
            </div>
