@@ -1521,7 +1521,7 @@ class RateCollection:
         _ = nx.draw_networkx_edges(G, G.position, width=1,
                                    edgelist=invis_edges, edge_color="gray",
                                    connectionstyle=connectionstyle,
-                                   style="dotted", node_size=node_size, ax=ax)
+                                   style="dashed", node_size=node_size, ax=ax)
 
         if ydots is not None:
             pc = mpl.collections.PatchCollection(real_edges_lc, cmap=plt.cm.viridis)
