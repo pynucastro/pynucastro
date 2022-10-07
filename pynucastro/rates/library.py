@@ -256,7 +256,10 @@ class Library:
         _lib = self.filter(rf)
         if _lib is None:
             return None
-        return _lib.get_rates()
+        _r =  _lib.get_rates()
+        if (len(_r)) == 1:
+            return _r[0]
+        return _r
 
     def get_nuclei(self):
         """get the list of unique nuclei"""
