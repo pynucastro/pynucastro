@@ -1,7 +1,5 @@
 # unit tests for rates
 
-import pynucastro as pyna
-
 
 class TestGetRatesByName:
 
