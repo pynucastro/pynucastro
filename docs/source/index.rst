@@ -59,6 +59,7 @@ codes.
    :maxdepth: 1
    :caption: Reference
 
+   citing
    API <modules>
    sources
 
