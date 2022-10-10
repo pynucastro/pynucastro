@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.rates.library &mdash; pynucastro 1.7.0.post75+g0894b6cf documentation</title>
+  <title>pynucastro.rates.library &mdash; pynucastro 1.7.0.post76+g0c72f41e documentation</title>
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -104,12 +104,14 @@
            <div itemprop="articleBody">
              
   <h1>Source code for pynucastro.rates.library</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span></span><span class="kn">import</span> <span class="nn">collections</span>
 <span class="kn">import</span> <span class="nn">io</span>
-<span class="kn">import</span> <span class="nn">collections</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">re</span>
 
 <span class="kn">from</span> <span class="nn">pynucastro.nucdata</span> <span class="kn">import</span> <span class="n">Nucleus</span><span class="p">,</span> <span class="n">UnsupportedNucleus</span>
-<span class="kn">from</span> <span class="nn">pynucastro.rates.rate</span> <span class="kn">import</span> <span class="n">DerivedRate</span><span class="p">,</span> <span class="n">Rate</span><span class="p">,</span> <span class="n">_find_rate_file</span><span class="p">,</span> <span class="n">ReacLibRate</span><span class="p">,</span> <span class="n">TabularRate</span><span class="p">,</span> <span class="n">load_rate</span>
+<span class="kn">from</span> <span class="nn">pynucastro.rates.rate</span> <span class="kn">import</span> <span class="p">(</span><span class="n">DerivedRate</span><span class="p">,</span> <span class="n">Rate</span><span class="p">,</span> <span class="n">ReacLibRate</span><span class="p">,</span> <span class="n">TabularRate</span><span class="p">,</span>
+                                   <span class="n">_find_rate_file</span><span class="p">,</span> <span class="n">load_rate</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="list_known_rates"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.library.list_known_rates">[docs]</a><span class="k">def</span> <span class="nf">list_known_rates</span><span class="p">():</span>
@@ -129,6 +131,58 @@
             <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">f</span><span class="si">:</span><span class="s2">32</span><span class="si">}</span><span class="s2"> : &quot;</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">lib</span><span class="o">.</span><span class="n">get_rates</span><span class="p">():</span>
                 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;                                 : </span><span class="si">{</span><span class="n">r</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">_rate_name_to_nuc</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+
+    <span class="c1"># first try to interpret name as A(x,y)B</span>
+    <span class="n">rate_str</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;([A-Za-z0-9]+)\(([A-Za-z0-9_]*),([A-Za-z0-9_]*)\)([A-Za-z0-9]+)&quot;</span><span class="p">,</span>
+                          <span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span><span class="p">)</span>
+    <span class="n">nucs</span> <span class="o">=</span> <span class="n">rate_str</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">_r</span> <span class="o">=</span> <span class="p">[</span><span class="n">nucs</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">nucs</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)]</span>
+        <span class="n">_p</span> <span class="o">=</span> <span class="p">[</span><span class="n">nucs</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="n">nucs</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">4</span><span class="p">)]</span>
+    <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="c1"># now try to make nuclei objects.</span>
+    <span class="n">reactants</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="n">_r</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">nuc</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">n</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="p">(</span><span class="n">nuc</span><span class="p">)</span>
+            <span class="n">reactants</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">AssertionError</span><span class="p">):</span>
+            <span class="c1"># we need to interpret some things specially</span>
+            <span class="k">if</span> <span class="n">nuc</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;e&quot;</span><span class="p">,</span> <span class="s2">&quot;nu&quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="s2">&quot;g&quot;</span><span class="p">,</span> <span class="s2">&quot;gamma&quot;</span><span class="p">]:</span>
+                <span class="c1"># first electrons and neutrins, and nothing</span>
+                <span class="k">continue</span>
+            <span class="k">elif</span> <span class="n">nuc</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;aa&quot;</span><span class="p">:</span>
+                <span class="n">reactants</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">))</span>
+                <span class="n">reactants</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span>
+
+    <span class="n">products</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="n">_p</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">nuc</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">n</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="p">(</span><span class="n">nuc</span><span class="p">)</span>
+            <span class="n">products</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">AssertionError</span><span class="p">):</span>
+            <span class="c1"># we need to interpret some things specially</span>
+            <span class="k">if</span> <span class="n">nuc</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;e&quot;</span><span class="p">,</span> <span class="s2">&quot;nu&quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="s2">&quot;g&quot;</span><span class="p">,</span> <span class="s2">&quot;gamma&quot;</span><span class="p">]:</span>
+                <span class="c1"># first electrons and neutrinos, gammas, and nothing</span>
+                <span class="k">continue</span>
+            <span class="k">elif</span> <span class="n">nuc</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;aa&quot;</span><span class="p">:</span>
+                <span class="n">products</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">))</span>
+                <span class="n">products</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span>
+
+    <span class="k">return</span> <span class="n">reactants</span><span class="p">,</span> <span class="n">products</span>
 
 
 <div class="viewcode-block" id="Library"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.library.Library">[docs]</a><span class="k">class</span> <span class="nc">Library</span><span class="p">:</span>
@@ -308,6 +362,34 @@
         <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">LookupError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;rate identifier </span><span class="si">{</span><span class="n">rid</span><span class="si">!r}</span><span class="s2"> does not match a rate in this library.&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="bp">None</span></div>
 
+<div class="viewcode-block" id="Library.get_rate_by_name"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.library.Library.get_rate_by_name">[docs]</a>    <span class="k">def</span> <span class="nf">get_rate_by_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Given a string representing a rate in the form &#39;A(x,y)B&#39;</span>
+<span class="sd">        (or a list of strings for multiple rates) return the Rate</span>
+<span class="sd">        objects that match from the Library.  If there are multiple</span>
+<span class="sd">        inputs, then a list of Rate objects is returned.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">rate_name_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">name</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">rate_name_list</span> <span class="o">=</span> <span class="n">name</span>
+
+        <span class="n">rates_out</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">rname</span> <span class="ow">in</span> <span class="n">rate_name_list</span><span class="p">:</span>
+            <span class="n">reactants</span><span class="p">,</span> <span class="n">products</span> <span class="o">=</span> <span class="n">_rate_name_to_nuc</span><span class="p">(</span><span class="n">rname</span><span class="p">)</span>
+
+            <span class="n">rf</span> <span class="o">=</span> <span class="n">RateFilter</span><span class="p">(</span><span class="n">reactants</span><span class="o">=</span><span class="n">reactants</span><span class="p">,</span> <span class="n">products</span><span class="o">=</span><span class="n">products</span><span class="p">)</span>
+            <span class="n">_lib</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">rf</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">_lib</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">None</span>
+            <span class="n">rates_out</span> <span class="o">+=</span> <span class="n">_lib</span><span class="o">.</span><span class="n">get_rates</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rates_out</span><span class="p">))</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">rates_out</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">rates_out</span></div>
+
 <div class="viewcode-block" id="Library.get_nuclei"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.library.Library.get_nuclei">[docs]</a>    <span class="k">def</span> <span class="nf">get_nuclei</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;get the list of unique nuclei&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">{</span><span class="n">nuc</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_rates</span><span class="p">()</span> <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="n">r</span><span class="o">.</span><span class="n">reactants</span> <span class="o">+</span> <span class="n">r</span><span class="o">.</span><span class="n">products</span><span class="p">}</span></div>
@@ -321,12 +403,17 @@
         <span class="k">return</span> <span class="n">new_library</span></div>
 
 <div class="viewcode-block" id="Library.remove_rate"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.library.Library.remove_rate">[docs]</a>    <span class="k">def</span> <span class="nf">remove_rate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rate</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Manually remove a rate from the library by supplying the id&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Manually remove a rate from the library by supplying the</span>
+<span class="sd">        short name &quot;A(x,y)B, a Rate object, or the rate id&quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rate</span><span class="p">,</span> <span class="n">Rate</span><span class="p">):</span>
             <span class="n">rid</span> <span class="o">=</span> <span class="n">rate</span><span class="o">.</span><span class="n">get_rate_id</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_rates</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">rid</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rate</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">rid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="n">rate</span><span class="p">)</span><span class="o">.</span><span class="n">get_rate_id</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_rates</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">rid</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># we assume that a rate id as provided</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_rates</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">rate</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Library.linking_nuclei"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.library.Library.linking_nuclei">[docs]</a>    <span class="k">def</span> <span class="nf">linking_nuclei</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nuclist</span><span class="p">,</span> <span class="n">with_reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>

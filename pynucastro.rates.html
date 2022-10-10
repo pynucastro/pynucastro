@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.rates package &mdash; pynucastro 1.7.0.post75+g0894b6cf documentation</title>
+  <title>pynucastro.rates package &mdash; pynucastro 1.7.0.post76+g0c72f41e documentation</title>
       <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -238,6 +238,15 @@ by detailed balance.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="pynucastro.rates.library.Library.get_rate_by_name">
+<span class="sig-name descname"><span class="pre">get_rate_by_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/library.html#Library.get_rate_by_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.Library.get_rate_by_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a string representing a rate in the form ‘A(x,y)B’
+(or a list of strings for multiple rates) return the Rate
+objects that match from the Library.  If there are multiple
+inputs, then a list of Rate objects is returned.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.library.Library.get_rates">
 <span class="sig-name descname"><span class="pre">get_rates</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/library.html#Library.get_rates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.Library.get_rates" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a list of the rates in this library.</p>
@@ -267,7 +276,8 @@ include only forward rates.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.library.Library.remove_rate">
 <span class="sig-name descname"><span class="pre">remove_rate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rate</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/library.html#Library.remove_rate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.Library.remove_rate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Manually remove a rate from the library by supplying the id</p>
+<dd><p>Manually remove a rate from the library by supplying the
+short name “A(x,y)B, a Rate object, or the rate id</p>
 </dd></dl>
 
 </dd></dl>
