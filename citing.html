@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Third Party Data &mdash; pynucastro 1.7.0.post78+g78185461 documentation</title>
+  <title>Citing pynucastro &mdash; pynucastro 1.7.0.post78+g78185461 documentation</title>
       <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -23,7 +23,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="pynucastro.screening package" href="pynucastro.screening.html" /> 
+    <link rel="next" title="pynucastro" href="modules.html" />
+    <link rel="prev" title="C++ Networks" href="cxx-networks.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -77,15 +78,9 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Reference</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="citing.html">Citing pynucastro</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Citing pynucastro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modules.html">API</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Third Party Data</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#nuclear-reaction-rates-from-jina-reaclib">Nuclear reaction rates from JINA Reaclib</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#tabulated-weak-nuclear-reaction-rates">Tabulated weak nuclear reaction rates</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#physical-constants-from-codata">Physical constants from CODATA</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#nuclear-binding-energies-from-the-atomic-mass-data-center">Nuclear binding energies from the Atomic Mass Data Center</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="sources.html">Third Party Data</a></li>
 </ul>
 
         </div>
@@ -102,9 +97,9 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Third Party Data</li>
+      <li>Citing pynucastro</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="_sources/sources.rst.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/citing.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -136,58 +131,55 @@
     text-align: unset;
 }
 </style>
-<section id="third-party-data">
-<h1>Third Party Data<a class="headerlink" href="#third-party-data" title="Permalink to this heading">¶</a></h1>
-<p>pynucastro incorporates the following publicly-available
-third-party data. Links to this data as well as citations to the
-relevant publications are as follows.</p>
-<section id="nuclear-reaction-rates-from-jina-reaclib">
-<h2>Nuclear reaction rates from JINA Reaclib<a class="headerlink" href="#nuclear-reaction-rates-from-jina-reaclib" title="Permalink to this heading">¶</a></h2>
-<p>The reaction rate parameterizations in <a class="reference external" href="https://github.com/pynucastro/pynucastro/tree/main/pynucastro/library">pynucastro/library</a>
-were obtained from the <a class="reference external" href="https://groups.nscl.msu.edu/jina/reaclib/db/">JINA Reaclib database</a>.</p>
-<p><a class="reference external" href="http://iopscience.iop.org/article/10.1088/0067-0049/189/1/240">Cyburt et al., ApJS 189 (2010) 240</a></p>
-</section>
-<section id="tabulated-weak-nuclear-reaction-rates">
-<h2>Tabulated weak nuclear reaction rates<a class="headerlink" href="#tabulated-weak-nuclear-reaction-rates" title="Permalink to this heading">¶</a></h2>
-<p>The weak reaction rate tables <a class="reference external" href="https://github.com/pynucastro/pynucastro/blob/main/pynucastro/library/tabular/23Na-23Ne_electroncapture.dat">23Na-23Ne_electroncapture.dat</a>
-and <a class="reference external" href="https://github.com/pynucastro/pynucastro/blob/main/pynucastro/library/tabular/23Ne-23Na_betadecay.dat">23Ne-23Na_betadecay.dat</a>
-were obtained from:</p>
-<p><a class="reference external" href="http://www.phys.chs.nihon-u.ac.jp/suzuki/data2/link.html">http://www.phys.chs.nihon-u.ac.jp/suzuki/data2/link.html</a></p>
-<p><a class="reference external" href="http://iopscience.iop.org/article/10.3847/0004-637X/817/2/163">Suzuki et al., ApJ 817 (2016) 163</a></p>
-</section>
-<section id="physical-constants-from-codata">
-<h2>Physical constants from CODATA<a class="headerlink" href="#physical-constants-from-codata" title="Permalink to this heading">¶</a></h2>
-<p>The standalone AMReX-Astro Microphysics
-networks rely on physical constants sourced from the 2014 CODATA
-recommended values.</p>
-<p><a class="reference external" href="http://physics.nist.gov/constants">P.J. Mohr, D.B. Newell, and B.N. Taylor (2016), “The 2014 CODATA Recommended Values of the Fundamental Physical Constants”</a></p>
-<p><a class="reference external" href="https://journals.aps.org/rmp/abstract/10.1103/RevModPhys.88.035009">Mohr et al., Rev. Mod. Phys. 88, 035009</a></p>
-</section>
-<section id="nuclear-binding-energies-from-the-atomic-mass-data-center">
-<h2>Nuclear binding energies from the Atomic Mass Data Center<a class="headerlink" href="#nuclear-binding-energies-from-the-atomic-mass-data-center" title="Permalink to this heading">¶</a></h2>
-<p>The standalone AMReX-Astro Microphysics
-networks rely on binding energy per nucleon sourced from the Atomic
-Mass Evaluation 2016 (default) and 2012 of the Atomic Mass Data
-Center.</p>
-<p>The Atomic Mass Evaluation 2016 and 2012 are available <a class="reference external" href="https://www-nds.iaea.org/amdc/">online</a>.</p>
-<p>Atomic Mass Evaluation 2016:</p>
-<ul class="simple">
-<li><p><a class="reference external" href="http://iopscience.iop.org/article/10.1088/1674-1137/41/3/030002">Huang et al., Chinese Physics C 41, 030002</a></p></li>
-<li><p><a class="reference external" href="http://iopscience.iop.org/article/10.1088/1674-1137/41/3/030003">Wang et al., Chinese Physics C 41, 030003</a></p></li>
-</ul>
-<p>Atomic Mass Evaluation 2012:</p>
-<ul class="simple">
-<li><p><a class="reference external" href="http://iopscience.iop.org/article/10.1088/1674-1137/36/12/002">Audi et al., Chinese Physics C 36, 1287-1602</a></p></li>
-<li><p><a class="reference external" href="http://iopscience.iop.org/article/10.1088/1674-1137/36/12/003">Wang et al., Chinese Physics C 36, 1603-2014</a></p></li>
-</ul>
-</section>
+<section id="citing-pynucastro">
+<h1>Citing pynucastro<a class="headerlink" href="#citing-pynucastro" title="Permalink to this heading">¶</a></h1>
+<p>If you use pynucastro, please CITE the JOSS paper <em>and</em> the latest
+Zenodo DOI</p>
+<p>JOSS:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@article</span><span class="p">{</span><span class="n">pynucastro</span><span class="p">,</span>
+   <span class="n">author</span> <span class="o">=</span> <span class="p">{{</span><span class="n">Willcox</span><span class="p">},</span> <span class="n">D</span><span class="o">.~</span><span class="n">E</span><span class="o">.</span> <span class="ow">and</span> <span class="p">{</span><span class="n">Zingale</span><span class="p">},</span> <span class="n">M</span><span class="o">.</span><span class="p">},</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;{pynucastro: an interface to nuclear reaction rates and code generator for reaction network equations}&quot;</span><span class="p">,</span>
+  <span class="n">journal</span> <span class="o">=</span> <span class="p">{</span><span class="n">Journal</span> <span class="n">of</span> <span class="n">Open</span> <span class="n">Source</span> <span class="n">Software</span><span class="p">},</span>
+     <span class="n">year</span> <span class="o">=</span> <span class="mi">2018</span><span class="p">,</span>
+   <span class="n">volume</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+   <span class="n">number</span> <span class="o">=</span> <span class="mi">23</span><span class="p">,</span>
+   <span class="n">pages</span> <span class="o">=</span> <span class="mi">588</span><span class="p">,</span>
+     <span class="n">url</span> <span class="o">=</span> <span class="p">{</span><span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">doi</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="mf">10.21105</span><span class="o">/</span><span class="n">joss</span><span class="mf">.00588</span><span class="p">},</span>
+     <span class="n">doi</span> <span class="o">=</span> <span class="p">{</span><span class="mf">10.21105</span><span class="o">/</span><span class="n">joss</span><span class="mf">.00588</span><span class="p">},</span>
+ <span class="n">subject</span> <span class="o">=</span> <span class="p">{</span><span class="n">nuclear</span> <span class="n">astrophysics</span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Zenodo:</p>
+<p>The latest version is always here:
+<a class="reference external" href="https://doi.org/10.5281/zenodo.1202434">https://doi.org/10.5281/zenodo.1202434</a></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@software</span><span class="p">{</span><span class="n">the_pynucastro_development_2022_6802787</span><span class="p">,</span>
+  <span class="n">author</span>       <span class="o">=</span> <span class="p">{</span><span class="n">the</span> <span class="n">pynucastro</span> <span class="n">development</span> <span class="ow">and</span>
+                  <span class="n">Cao</span><span class="p">,</span> <span class="n">Lyra</span> <span class="ow">and</span>
+                  <span class="n">Eiden</span><span class="p">,</span> <span class="n">Kiran</span> <span class="ow">and</span>
+                  <span class="n">Johnson</span><span class="p">,</span> <span class="n">Eric</span> <span class="ow">and</span>
+                  <span class="n">Li</span><span class="p">,</span> <span class="n">Xinlong</span> <span class="ow">and</span>
+                  <span class="n">Smith</span> <span class="n">Clark</span><span class="p">,</span> <span class="n">Alexander</span> <span class="ow">and</span>
+                  <span class="n">Willcox</span><span class="p">,</span> <span class="n">Donald</span> <span class="ow">and</span>
+                  <span class="n">Zingale</span><span class="p">,</span> <span class="n">Michael</span><span class="p">},</span>
+  <span class="n">title</span>        <span class="o">=</span> <span class="p">{</span><span class="n">pynucastro</span><span class="o">/</span><span class="n">pynucastro</span><span class="p">:},</span>
+  <span class="n">month</span>        <span class="o">=</span> <span class="n">jul</span><span class="p">,</span>
+  <span class="n">year</span>         <span class="o">=</span> <span class="mi">2022</span><span class="p">,</span>
+  <span class="n">publisher</span>    <span class="o">=</span> <span class="p">{</span><span class="n">Zenodo</span><span class="p">},</span>
+  <span class="n">version</span>      <span class="o">=</span> <span class="p">{</span><span class="mf">1.7.0</span><span class="p">},</span>
+  <span class="n">doi</span>          <span class="o">=</span> <span class="p">{</span><span class="mf">10.5281</span><span class="o">/</span><span class="n">zenodo</span><span class="mf">.6802787</span><span class="p">},</span>
+  <span class="n">url</span>          <span class="o">=</span> <span class="p">{</span><span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">doi</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="mf">10.5281</span><span class="o">/</span><span class="n">zenodo</span><span class="mf">.6802787</span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
 </section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="pynucastro.screening.html" class="btn btn-neutral float-left" title="pynucastro.screening package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="cxx-networks.html" class="btn btn-neutral float-left" title="C++ Networks" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="modules.html" class="btn btn-neutral float-right" title="pynucastro" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
