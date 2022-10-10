@@ -114,6 +114,7 @@ from ._version import version
 
 __version__ = version
 
+
 import pynucastro.screening
 from pynucastro.networks import (AmrexAstroCxxNetwork, BaseCxxNetwork,
                                  Composition, Explorer, PythonNetwork,
@@ -121,6 +122,6 @@ from pynucastro.networks import (AmrexAstroCxxNetwork, BaseCxxNetwork,
                                  SympyRates)
 from pynucastro.nucdata import Nucleus
 from pynucastro.rates import (ApproximateRate, DerivedRate, Library, Rate,
-                              RateFilter, ReacLibLibrary, Tfactors,
-                              list_known_rates, load_rate)
+                              RateFilter, ReacLibLibrary, TabularLibrary,
+                              Tfactors, list_known_rates, load_rate)
 from pynucastro.screening import make_plasma_state, make_screen_factors
