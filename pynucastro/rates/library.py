@@ -257,18 +257,32 @@ class Library:
             raise LookupError(f"rate identifier {rid!r} does not match a rate in this library.") from None
 
     def get_rate_by_name(self, name):
-        """Return a rate specified by a name list A(x,y)B"""
+        """Given a string representing a rate in the form 'A(x,y)B'
+        (or a list of strings for multiple rates) return the Rate
+        objects that match from the Library.  If there are multiple
+        inputs, then a list of Rate objects is returned.
 
-        reactants, products = _rate_name_to_nuc(name)
+        """
 
-        rf = RateFilter(reactants=reactants, products=products)
-        _lib = self.filter(rf)
-        if _lib is None:
-            return None
-        _r = _lib.get_rates()
-        if (len(_r)) == 1:
-            return _r[0]
-        return _r
+        if isinstance(name, str):
+            rate_name_list = [name]
+        else:
+            rate_name_list = name
+
+        rates_out = []
+
+        for rname in rate_name_list:
+            reactants, products = _rate_name_to_nuc(rname)
+
+            rf = RateFilter(reactants=reactants, products=products)
+            _lib = self.filter(rf)
+            if _lib is None:
+                return None
+            rates_out +=  _lib.get_rates()
+
+        if (len(rates_out)) == 1:
+            return rates_out[0]
+        return rates_out
 
     def get_nuclei(self):
         """get the list of unique nuclei"""
