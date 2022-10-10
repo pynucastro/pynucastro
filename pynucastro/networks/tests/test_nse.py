@@ -1,5 +1,6 @@
-import pynucastro as pyna
 import pytest
+
+import pynucastro as pyna
 
 
 class TestNSE:

@@ -1,8 +1,9 @@
 # unit tests for screening with approximate rates
 # we'll test both symmetric and "normal" screening
 
-import pynucastro as pyna
 import pytest
+
+import pynucastro as pyna
 
 
 class TestApproxScreening:

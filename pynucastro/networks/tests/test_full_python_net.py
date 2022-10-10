@@ -1,6 +1,8 @@
-from pynucastro import networks
 import os
+
 import pytest
+
+from pynucastro import networks
 
 
 class TestFullPythonNetwork:

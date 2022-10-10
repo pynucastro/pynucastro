@@ -1,6 +1,9 @@
-from numpy import array
-from pynucastro.nucdata import PartitionFunctionTable, PartitionFunctionCollection
 import os
+
+from numpy import array
+
+from pynucastro.nucdata import (PartitionFunctionCollection,
+                                PartitionFunctionTable)
 
 nucdata_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 pf_dir = os.path.join(nucdata_dir, 'PartitionFunction')
