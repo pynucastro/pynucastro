@@ -1,34 +1,45 @@
 # pynucastro
 
-[![Docs](https://github.com/pynucastro/pynucastro/workflows/github%20pages/badge.svg)](http://pynucastro.github.io/pynucastro/)
 [![pytest-all](https://github.com/pynucastro/pynucastro/actions/workflows/pytest-all.yml/badge.svg?branch=main)](https://github.com/pynucastro/pynucastro/actions/workflows/pytest-all.yml)
 [![pylint](https://github.com/pynucastro/pynucastro/actions/workflows/pylint.yml/badge.svg?branch=main)](https://github.com/pynucastro/pynucastro/actions/workflows/pylint.yml)
 [![flake8](https://github.com/pynucastro/pynucastro/actions/workflows/flake8.yml/badge.svg?branch=main)](https://github.com/pynucastro/pynucastro/actions/workflows/flake8.yml)
+[![docs build](https://github.com/pynucastro/pynucastro/actions/workflows/docs-test.yml/badge.svg)](https://github.com/pynucastro/pynucastro/actions/workflows/docs-test.yml)
+
+[![Docs](https://github.com/pynucastro/pynucastro/workflows/github%20pages/badge.svg)](http://pynucastro.github.io/pynucastro/)
+
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
+
 [![DOI](http://joss.theoj.org/papers/10.21105/joss.00588/status.svg)](https://doi.org/10.21105/joss.00588)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1202434.svg)](https://doi.org/10.5281/zenodo.1202434)
+
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/pynucastro/pynucastro/main?filepath=examples%2Fpynucastro-examples.ipynb)
 
-Python interfaces to the nuclear reaction rate databases, including
-the JINA Reaclib nuclear reactions database.  This
-project has 2 goals:
+pynucastro is a python library for interactively creating and
+exploring nuclear reaction networks.  It provides interfaces to
+nuclear reaction rate databases, including the JINA Reaclib nuclear
+reactions database.  
 
-  * allow for an exploration of rates and collection of rates (networks)
-    in Jupyter notebooks
+The main features are:
 
-  * allow for the easy creation of the righthand side routines for
-    reaction network integration (the ODEs) 
+  * Ability to create a reaction network based on a collection of rates, a set of nuclei,
+    or an arbitrary filter applied to a library.
 
-To do this, pynucastro provides a parser for the Reaclib format to
-produce either a callable python function for a rate or output the
-python code for a function that can be incorporated into a rate
-module.
+  * Interactive exploration of rates and networks in Jupyter notebooks.
 
-pynucastro does not yet support nuclear partition functions for
-Reaclib reverse rates, as the implementation is currently under
-development. We recommend you consider what problem you wish to study
-using pynucastro to determine whether reverse rates and partition
-function corrections are significant at the temperatures of interest.
+  * Many different ways of visualizing a network.
+
+  * An NSE solver to find the equilibrium abundance of a set of nuclei given a
+    thermodynamic state.
+
+  * Ability to write out python or C++ code needed to integrate the network.
+
+  * Support for tabular weak rates.
+
+  * Rate approximations and the derivation of reverse rates via detailed balance.
+
+  * Easy access to nuclear properties, including T-dependent partition
+    functions, spins, masses, etc.
+
 
 # documentation
 
@@ -106,7 +117,6 @@ packages and versions. To install the packages from the requirements
 file, do:
 ```
 pip install -r requirements.txt
-
 ```
 Is important to stress out that all the dependencies should be 
 installed before `pynucastro`, otherwise the installation should be 

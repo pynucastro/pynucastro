@@ -27,6 +27,58 @@ def list_known_rates():
                 print(f"                                 : {r}")
 
 
+def _rate_name_to_nuc(name):
+
+    # first try to interpret name as A(x,y)B
+    rate_str = re.compile(r"([A-Za-z0-9]+)\(([A-Za-z0-9_]*),([A-Za-z0-9_]*)\)([A-Za-z0-9]+)",
+                          re.IGNORECASE)
+    nucs = rate_str.search(name)
+    try:
+        _r = [nucs.group(1), nucs.group(2)]
+        _p = [nucs.group(3), nucs.group(4)]
+    except AttributeError:
+        return None
+
+    # now try to make nuclei objects.
+    reactants = []
+    for nuc in _r:
+        if nuc == "":
+            continue
+        try:
+            n = Nucleus(nuc)
+            reactants.append(n)
+        except (ValueError, AssertionError):
+            # we need to interpret some things specially
+            if nuc.lower() in ["e", "nu", "_", "g", "gamma"]:
+                # first electrons and neutrins, and nothing
+                continue
+            elif nuc.lower() == "aa":
+                reactants.append(Nucleus("he4"))
+                reactants.append(Nucleus("he4"))
+            else:
+                raise
+
+    products = []
+    for nuc in _p:
+        if nuc == "":
+            continue
+        try:
+            n = Nucleus(nuc)
+            products.append(n)
+        except (ValueError, AssertionError):
+            # we need to interpret some things specially
+            if nuc.lower() in ["e", "nu", "_", "g", "gamma"]:
+                # first electrons and neutrinos, gammas, and nothing
+                continue
+            elif nuc.lower() == "aa":
+                products.append(Nucleus("he4"))
+                products.append(Nucleus("he4"))
+            else:
+                raise
+
+    return reactants, products
+
+
 class Library:
     """
     A Library is a Rate container that reads a single file
@@ -203,62 +255,32 @@ class Library:
             raise LookupError(f"rate identifier {rid!r} does not match a rate in this library.") from None
 
     def get_rate_by_name(self, name):
-        """Return a rate specified by a name list A(x,y)B"""
+        """Given a string representing a rate in the form 'A(x,y)B'
+        (or a list of strings for multiple rates) return the Rate
+        objects that match from the Library.  If there are multiple
+        inputs, then a list of Rate objects is returned.
 
-        # first try to interpret name as A(x,y)B
-        rate_str = re.compile(r"([A-Za-z0-9]+)\(([A-Za-z0-9]*),([A-Za-z0-9]*)\)([A-Za-z0-9]+)", re.IGNORECASE)
-        nucs = rate_str.search(name)
-        try:
-            _r = [nucs.group(1), nucs.group(2)]
-            _p = [nucs.group(3), nucs.group(4)]
-        except AttributeError:
-            return None
+        """
 
-        # now try to make nuclei objects.
-        reactants = []
-        for nuc in _r:
-            if nuc == "":
-                continue
-            try:
-                n = Nucleus(nuc)
-                reactants.append(n)
-            except ValueError:
-                # we need to interpret some things specially
-                if nuc.lower() in ["e", "nu", "_", "g", "gamma"]:
-                    # first electrons and neutrins, and nothing
-                    continue
-                elif nuc.lower() == "aa":
-                    reactants.append(Nucleus("he4"))
-                    reactants.append(Nucleus("he4"))
-                else:
-                    raise
+        if isinstance(name, str):
+            rate_name_list = [name]
+        else:
+            rate_name_list = name
 
-        products = []
-        for nuc in _p:
-            if nuc == "":
-                continue
-            try:
-                n = Nucleus(nuc)
-                products.append(n)
-            except ValueError:
-                # we need to interpret some things specially
-                if nuc.lower() in ["e", "nu", "_", "g", "gamma"]:
-                    # first electrons and neutrinos, gammas, and nothing
-                    continue
-                elif nuc.lower() == "aa":
-                    products.append(Nucleus("he4"))
-                    products.append(Nucleus("he4"))
-                else:
-                    raise
+        rates_out = []
 
-        rf = RateFilter(reactants=reactants, products=products)
-        _lib = self.filter(rf)
-        if _lib is None:
-            return None
-        _r = _lib.get_rates()
-        if (len(_r)) == 1:
-            return _r[0]
-        return _r
+        for rname in rate_name_list:
+            reactants, products = _rate_name_to_nuc(rname)
+
+            rf = RateFilter(reactants=reactants, products=products)
+            _lib = self.filter(rf)
+            if _lib is None:
+                return None
+            rates_out += _lib.get_rates()
+
+        if (len(rates_out)) == 1:
+            return rates_out[0]
+        return rates_out
 
     def get_nuclei(self):
         """get the list of unique nuclei"""
@@ -273,12 +295,17 @@ class Library:
         return new_library
 
     def remove_rate(self, rate):
-        """Manually remove a rate from the library by supplying the id"""
+        """Manually remove a rate from the library by supplying the
+        short name "A(x,y)B, a Rate object, or the rate id"""
 
         if isinstance(rate, Rate):
             rid = rate.get_rate_id()
             self._rates.pop(rid)
+        elif isinstance(rate, str):
+            rid = self.get_rate_by_name(rate).get_rate_id()
+            self._rates.pop(rid)
         else:
+            # we assume that a rate id as provided
             self._rates.pop(rate)
 
     def linking_nuclei(self, nuclist, with_reverse=True):
