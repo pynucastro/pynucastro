@@ -30,7 +30,7 @@ def list_known_rates():
 def _rate_name_to_nuc(name):
 
     # first try to interpret name as A(x,y)B
-    rate_str = re.compile(r"([A-Za-z0-9]+)\(([A-Za-z0-9]*),([A-Za-z0-9]*)\)([A-Za-z0-9]+)",
+    rate_str = re.compile(r"([A-Za-z0-9]+)\(([A-Za-z0-9_]*),([A-Za-z0-9_]*)\)([A-Za-z0-9]+)",
                           re.IGNORECASE)
     nucs = rate_str.search(name)
     try:
@@ -47,7 +47,7 @@ def _rate_name_to_nuc(name):
         try:
             n = Nucleus(nuc)
             reactants.append(n)
-        except ValueError:
+        except (ValueError, AssertionError):
             # we need to interpret some things specially
             if nuc.lower() in ["e", "nu", "_", "g", "gamma"]:
                 # first electrons and neutrins, and nothing
@@ -65,7 +65,7 @@ def _rate_name_to_nuc(name):
         try:
             n = Nucleus(nuc)
             products.append(n)
-        except ValueError:
+        except (ValueError, AssertionError):
             # we need to interpret some things specially
             if nuc.lower() in ["e", "nu", "_", "g", "gamma"]:
                 # first electrons and neutrinos, gammas, and nothing
