@@ -278,7 +278,7 @@ class Library:
             _lib = self.filter(rf)
             if _lib is None:
                 return None
-            rates_out +=  _lib.get_rates()
+            rates_out += _lib.get_rates()
 
         if (len(rates_out)) == 1:
             return rates_out[0]
