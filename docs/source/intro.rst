@@ -17,27 +17,48 @@ The main classes are:
 
 * :func:`Nucleus <pynucastro.rates.rate.Nucleus>`: This is a single
   nucleus.  It knows its proton number, ``Z``, neutron number, ``N``,
-  weight, ``A``, and binding energy, ``nucbind``.
+  weight, ``A``, and binding energy, ``nucbind``, as well as
+  T-dependent partition function and ground state spin.
 
-  Example:
+* :func:`Rate <pynucastro.rates.rate.Rate>`: This is a single rate.
+  It knows the reactants and products and has methods that allow you
+  to evaluate it at a specified temperature and plot its temperature
+  dependence.  A `Rate` also knows how to the generate code (C++ and
+  python) needed to evaluate it.
 
-  .. code:: python
+  There are a few special rates derived from `Rate`:
 
-     he4 = Nucleus("he4")
+  * :func:`ReacLibRate <pynucastro.rates.rate.ReacLibRate>`: This is a rate in the
+    JINA ReacLib format, with the temperature dependence specified by an interpolant
+    with 7 different coefficients.
 
-  The atomic number is then ``he4.Z``.
+  * :func:`TabularRate <pynucastro.rates.rate.TabularRate>`: This is a
+    rate that is tabulated in terms of :math:`(T, \rho Y_e)`.  This is
+    how the weak rate (electron captures and beta-decays) are stored.
+    Interpolation is used to find the rate at any thermodynamic state.
 
-* :func:`Rate <pynucastro.rates.rate.Rate>`: This is a single rate.  It
-  knows the reactants and products and has methods that allow you to
-  evaluate it at a specified temperature and plot its temperature
-  dependence.
+  * :func:`ApproximateRate <pynucastro.rates.rate.ApproximateRate>`:
+    An approximate rate groups together :math:`A(\alpha, \gamma)B` and
+    :math:`A(\alpha,p)X(p,\gamma)B` into a single effective rate, assuming
+    equilibrium of :math:`p` and :math:`X`.
+
+  * :func:`DerivedRate <pynucastro.rates.rate.DerivedRate>`: A
+    derived rate uses detailed balance to recompute a reverse rate from the forward rate.
 
 * :func:`RatePair <pynucastro.rates.rate.RatePair>`: For a single nuclear process,
   this holds the corresponding forward and reverse rates.
 
-* :func:`Library <pynucastro.rates.rate.Library>`: This is a collection of
+* :func:`Library <pynucastro.rates.library.Library>`: This is a collection of
   rates (for example, the entire ReacLib library).  It provides methods
   for filtering out rates based on different sets of rules.
+
+  There are two important subclasses:
+
+  * :func:`ReacLibLibrary <pynucastro.rates.library.ReacLibLibrary>`: The
+    entire ReacLib rate library (> 80,000 rates)
+
+  * :func:`TabularLibrary <pynucastro.rates.library.TabularLibrary>`: A
+    `Library` containing all known tabular weak rates.
 
 * :func:`Composition
   <pynucastro.networks.rate_collection.Composition>`: This is a
@@ -52,10 +73,20 @@ The main classes are:
   reaction networks.  A ``RateCollection`` has methods to evaluate the
   rates and make a plot of the links between rates.
 
-* :func:`PythonNetwork
-  <pynucastro.networks.python_network.PythonNetwork>`: This is a
-  collection of rates with functions that know how to write python
-  code to express the righthand side of the system of ODEs.
+  There are two important subclasses:
+
+  * :func:`PythonNetwork
+    <pynucastro.networks.python_network.PythonNetwork>`: This is a
+    collection of rates with functions that know how to write python
+    code to express the righthand side of the system of ODEs.
+
+  * :func:`AmrexAstroCxxNetwork
+    <pynucastro.networks.amrexastro_cxx_network.AmrexAstroCxxNetwork>`:
+    This is a C++ network of the form needed by the `AMReX
+    Astrophysics Microphysics
+    <https://github.com/AMReX-Astro/Microphysics>`_ library used by
+    the Castro and MAESTROeX simulation codes.
+
 
 Usage
 -----
@@ -79,7 +110,7 @@ There are two modes of usage for pynucastro.
   e.g., `Timmes 1999
   <http://adsabs.harvard.edu/abs/1999ApJS..124..241T>`_).  pynucastro
   will create the righthand sides of this system of ODEs (as python or
-  Fortran code) from the list of rates you provide. One can use this to
+  C++ code) from the list of rates you provide. One can use this to
   add reaction networks to existing simulation codes, for example, the
   `MAESTROeX <https://amrex-astro.github.io/MAESTROeX/>`_ and `Castro
   <https://amrex-astro.github.io/Castro/>`_ codes.
