@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Example of integrating a network &mdash; pynucastro 1.7.0.post78+g78185461 documentation</title>
+  <title>Example of integrating a network &mdash; pynucastro 1.7.0.post79+g3a976f96 documentation</title>
       <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -549,11 +549,12 @@ def p_c13__n14(rate_eval, tf):
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
+import numba
 import numpy as np
+from numba.experimental import jitclass
+
 from pynucastro.rates import Tfactors
 from pynucastro.screening import PlasmaState, ScreenFactors
-import numba
-from numba.experimental import jitclass
 
 jp = 0
 jhe4 = 1
