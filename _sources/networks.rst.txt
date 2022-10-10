@@ -51,7 +51,7 @@ AMReX-Astro Microphysics network
 --------------------------------
 
 The `examples/urca-23_starkiller <https://github.com/pynucastro/pynucastro/tree/main/examples/urca-23_starkiller>`_ example builds the right hand side, Jacobian,
-and helper Fortran modules to copy into the ``networks/`` subdirectory
+and helper C++ modules to copy into the ``networks/`` subdirectory
 of the AMReX-Astro Microphysics repository.
 
 No additional customization is required after running the steps for

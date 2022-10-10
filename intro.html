@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Overview of pynucastro &mdash; pynucastro 1.7.0.post76+g0c72f41e documentation</title>
+  <title>Overview of pynucastro &mdash; pynucastro 1.7.0.post77+gc001111d documentation</title>
       <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -150,22 +150,43 @@ codes.</p>
 <ul>
 <li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">Nucleus</span></code>: This is a single
 nucleus.  It knows its proton number, <code class="docutils literal notranslate"><span class="pre">Z</span></code>, neutron number, <code class="docutils literal notranslate"><span class="pre">N</span></code>,
-weight, <code class="docutils literal notranslate"><span class="pre">A</span></code>, and binding energy, <code class="docutils literal notranslate"><span class="pre">nucbind</span></code>.</p>
-<p>Example:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">he4</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>The atomic number is then <code class="docutils literal notranslate"><span class="pre">he4.Z</span></code>.</p>
+weight, <code class="docutils literal notranslate"><span class="pre">A</span></code>, and binding energy, <code class="docutils literal notranslate"><span class="pre">nucbind</span></code>, as well as
+T-dependent partition function and ground state spin.</p></li>
+<li><p><a class="reference internal" href="pynucastro.rates.html#pynucastro.rates.rate.Rate" title="pynucastro.rates.rate.Rate"><code class="xref py py-func docutils literal notranslate"><span class="pre">Rate</span></code></a>: This is a single rate.
+It knows the reactants and products and has methods that allow you
+to evaluate it at a specified temperature and plot its temperature
+dependence.  A <cite>Rate</cite> also knows how to the generate code (C++ and
+python) needed to evaluate it.</p>
+<p>There are a few special rates derived from <cite>Rate</cite>:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="pynucastro.rates.html#pynucastro.rates.rate.ReacLibRate" title="pynucastro.rates.rate.ReacLibRate"><code class="xref py py-func docutils literal notranslate"><span class="pre">ReacLibRate</span></code></a>: This is a rate in the
+JINA ReacLib format, with the temperature dependence specified by an interpolant
+with 7 different coefficients.</p></li>
+<li><p><a class="reference internal" href="pynucastro.rates.html#pynucastro.rates.rate.TabularRate" title="pynucastro.rates.rate.TabularRate"><code class="xref py py-func docutils literal notranslate"><span class="pre">TabularRate</span></code></a>: This is a
+rate that is tabulated in terms of <span class="math notranslate nohighlight">\((T, \rho Y_e)\)</span>.  This is
+how the weak rate (electron captures and beta-decays) are stored.
+Interpolation is used to find the rate at any thermodynamic state.</p></li>
+<li><p><a class="reference internal" href="pynucastro.rates.html#pynucastro.rates.rate.ApproximateRate" title="pynucastro.rates.rate.ApproximateRate"><code class="xref py py-func docutils literal notranslate"><span class="pre">ApproximateRate</span></code></a>:
+An approximate rate groups together <span class="math notranslate nohighlight">\(A(\alpha, \gamma)B\)</span> and
+<span class="math notranslate nohighlight">\(A(\alpha,p)X(p,\gamma)B\)</span> into a single effective rate, assuming
+equilibrium of <span class="math notranslate nohighlight">\(p\)</span> and <span class="math notranslate nohighlight">\(X\)</span>.</p></li>
+<li><p><a class="reference internal" href="pynucastro.rates.html#pynucastro.rates.rate.DerivedRate" title="pynucastro.rates.rate.DerivedRate"><code class="xref py py-func docutils literal notranslate"><span class="pre">DerivedRate</span></code></a>: A
+derived rate uses detailed balance to recompute a reverse rate from the forward rate.</p></li>
+</ul>
 </li>
-<li><p><a class="reference internal" href="pynucastro.rates.html#pynucastro.rates.rate.Rate" title="pynucastro.rates.rate.Rate"><code class="xref py py-func docutils literal notranslate"><span class="pre">Rate</span></code></a>: This is a single rate.  It
-knows the reactants and products and has methods that allow you to
-evaluate it at a specified temperature and plot its temperature
-dependence.</p></li>
 <li><p><a class="reference internal" href="pynucastro.rates.html#pynucastro.rates.rate.RatePair" title="pynucastro.rates.rate.RatePair"><code class="xref py py-func docutils literal notranslate"><span class="pre">RatePair</span></code></a>: For a single nuclear process,
 this holds the corresponding forward and reverse rates.</p></li>
-<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">Library</span></code>: This is a collection of
+<li><p><a class="reference internal" href="pynucastro.rates.html#pynucastro.rates.library.Library" title="pynucastro.rates.library.Library"><code class="xref py py-func docutils literal notranslate"><span class="pre">Library</span></code></a>: This is a collection of
 rates (for example, the entire ReacLib library).  It provides methods
-for filtering out rates based on different sets of rules.</p></li>
+for filtering out rates based on different sets of rules.</p>
+<p>There are two important subclasses:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="pynucastro.rates.html#pynucastro.rates.library.ReacLibLibrary" title="pynucastro.rates.library.ReacLibLibrary"><code class="xref py py-func docutils literal notranslate"><span class="pre">ReacLibLibrary</span></code></a>: The
+entire ReacLib rate library (&gt; 80,000 rates)</p></li>
+<li><p><a class="reference internal" href="pynucastro.rates.html#pynucastro.rates.library.TabularLibrary" title="pynucastro.rates.library.TabularLibrary"><code class="xref py py-func docutils literal notranslate"><span class="pre">TabularLibrary</span></code></a>: A
+<cite>Library</cite> containing all known tabular weak rates.</p></li>
+</ul>
+</li>
 <li><p><a class="reference internal" href="pynucastro.networks.html#pynucastro.networks.rate_collection.Composition" title="pynucastro.networks.rate_collection.Composition"><code class="xref py py-func docutils literal notranslate"><span class="pre">Composition</span></code></a>: This is a
 collection of nuclei and their mass fractions.  A <code class="docutils literal notranslate"><span class="pre">Composition</span></code> is
 used when evaluating the full rates in a network.</p></li>
@@ -174,10 +195,18 @@ most basic form of a network.  It is a collection of rates and
 nuclei, that knows about the connectivity of the nuclei through
 different reactions.  This acts as the base class for different
 reaction networks.  A <code class="docutils literal notranslate"><span class="pre">RateCollection</span></code> has methods to evaluate the
-rates and make a plot of the links between rates.</p></li>
+rates and make a plot of the links between rates.</p>
+<p>There are two important subclasses:</p>
+<ul class="simple">
 <li><p><a class="reference internal" href="pynucastro.networks.html#pynucastro.networks.python_network.PythonNetwork" title="pynucastro.networks.python_network.PythonNetwork"><code class="xref py py-func docutils literal notranslate"><span class="pre">PythonNetwork</span></code></a>: This is a
 collection of rates with functions that know how to write python
 code to express the righthand side of the system of ODEs.</p></li>
+<li><p><a class="reference internal" href="pynucastro.networks.html#pynucastro.networks.amrexastro_cxx_network.AmrexAstroCxxNetwork" title="pynucastro.networks.amrexastro_cxx_network.AmrexAstroCxxNetwork"><code class="xref py py-func docutils literal notranslate"><span class="pre">AmrexAstroCxxNetwork</span></code></a>:
+This is a C++ network of the form needed by the <a class="reference external" href="https://github.com/AMReX-Astro/Microphysics">AMReX
+Astrophysics Microphysics</a> library used by
+the Castro and MAESTROeX simulation codes.</p></li>
+</ul>
+</li>
 </ul>
 <section id="usage">
 <h2>Usage<a class="headerlink" href="#usage" title="Permalink to this heading">¶</a></h2>
@@ -195,7 +224,7 @@ A reaction network takes the form:</p>
 of species i, represented by the molar fraction <span class="math notranslate nohighlight">\(Y_i\)</span> (see,
 e.g., <a class="reference external" href="http://adsabs.harvard.edu/abs/1999ApJS..124..241T">Timmes 1999</a>).  pynucastro
 will create the righthand sides of this system of ODEs (as python or
-Fortran code) from the list of rates you provide. One can use this to
+C++ code) from the list of rates you provide. One can use this to
 add reaction networks to existing simulation codes, for example, the
 <a class="reference external" href="https://amrex-astro.github.io/MAESTROeX/">MAESTROeX</a> and <a class="reference external" href="https://amrex-astro.github.io/Castro/">Castro</a> codes.</p>
 </li>
