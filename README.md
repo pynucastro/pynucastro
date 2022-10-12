@@ -49,15 +49,29 @@ http://pynucastro.github.io/pynucastro/
 
 
 # example
-```
-import pynucastro
 
-r = pynucastro.load_rate("c13-pg-n14-nacr")
-
-# evaluate this rate at T = 1.e9 K
-print(r.eval(1.0e9))
+The following example reads in the ReacLib rate database and
+gets the rate for C13(p,g)N14 and evaluates it at a
+temperature of 1.e9 K and makes a plot of the T dependence:
 
 ```
+In [1]: import pynucastro as pyna
+
+In [2]: rl = pyna.ReacLibLibrary()
+
+In [3]: c13pg = rl.get_rate_by_name("c13(p,g)n14")
+
+In [4]: c13pg.eval(1.e9)
+Out[4]: 3883.4778216250666
+
+In [5]: fig = c13pg.plot()
+
+In [6]: fig.savefig("c13pg.png")
+
+```
+
+The resulting figure is:
+![c13(p,g)n14](examples/c13pg.png)
 
 An extensive demonstration of the capabilities of pynucastro is shown in this notebook:
 
