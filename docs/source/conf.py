@@ -59,7 +59,7 @@ main_doc = 'index'
 
 # General information about the project.
 project = 'pynucastro'
-copyright = '2022, Michael Zingale and Donald Willcox'
+copyright = '2022, pynucastro development team'
 author = 'pynucastro development team'
 
 html_logo = "logo.png"
