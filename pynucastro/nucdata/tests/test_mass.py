@@ -1,6 +1,7 @@
-from pynucastro.nucdata import MassNuclide, MassTable
 import pytest
 from pytest import approx
+
+from pynucastro.nucdata import MassNuclide, MassTable
 
 
 class TestMass:

@@ -3,6 +3,7 @@
 Uses AMETable class to extract binding energy from an AME Table.
 """
 import argparse
+
 from ame_table import AMETable
 
 parser = argparse.ArgumentParser()

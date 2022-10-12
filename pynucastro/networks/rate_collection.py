@@ -1,37 +1,33 @@
 """A collection of classes and methods to deal with collections of
 rates that together make up a network."""
 
-# Common Imports
 import collections
-import warnings
+import copy
 import functools
 import math
 import os
-
+import warnings
 from operator import mul
 
-from ipywidgets import interact
-
-import numpy as np
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-from mpl_toolkits.axes_grid1 import make_axes_locatable
-from matplotlib.ticker import MaxNLocator
-from matplotlib.colors import SymLogNorm
-from matplotlib.scale import SymmetricalLogTransform
-from matplotlib.patches import ConnectionPatch
 import networkx as nx
-from pynucastro.screening.screen import NseState
+import numpy as np
+from ipywidgets import interact
+from matplotlib.colors import SymLogNorm
+from matplotlib.patches import ConnectionPatch
+from matplotlib.scale import SymmetricalLogTransform
+from matplotlib.ticker import MaxNLocator
+from mpl_toolkits.axes_grid1 import make_axes_locatable
 from scipy import constants
 from scipy.optimize import fsolve
-import copy
 
 # Import Rate
-from pynucastro.nucdata import Nucleus
-from pynucastro.rates import Rate, TabularRate, RatePair, DerivedRate, ApproximateRate, Library, load_rate
+from pynucastro.nucdata import Nucleus, PeriodicTable
+from pynucastro.rates import (ApproximateRate, DerivedRate, Library, Rate,
+                              RatePair, TabularRate, load_rate)
 from pynucastro.screening import make_plasma_state, make_screen_factors
-
-from pynucastro.nucdata import PeriodicTable
+from pynucastro.screening.screen import NseState
 
 mpl.rcParams['figure.dpi'] = 100
 

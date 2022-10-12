@@ -1,10 +1,11 @@
 # unit tests for rates
-import pynucastro as pyna
-import os
 import filecmp
+import io
+import os
+
 import pytest
 
-import io
+import pynucastro as pyna
 
 
 class TestAmrexAstroCxxNetwork:

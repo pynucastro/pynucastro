@@ -4,6 +4,7 @@ through sympy"""
 import re
 
 import sympy
+
 from pynucastro.rates import TabularRate
 
 
