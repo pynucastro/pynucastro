@@ -1341,6 +1341,26 @@ class TabularRate(Rate):
         ssrc = 'tabular'
 
         return f'{self.rid} <{self.label.strip()}_{ssrc}>'
+        
+    def function_string_py(self):
+        """
+        Return a string containing python function that computes the
+        rate
+        """
+
+        fstring = ""
+        fstring += "@numba.njit()\n"
+        fstring += f"def {self.fname}(rate_eval, T, rhoY, data):\n"
+        fstring += f"    # {self.rid}\n"
+
+        # find the nearest value of T and rhoY in the data table
+        fstring += "    T_nearest = (data[:, 1])[np.abs((data[:, 1]) - T).argmin()]\n"
+        fstring += "    rhoY_nearest = (data[:, 0])[np.abs((data[:, 0]) - rhoY).argmin()]\n"
+        fstring += "    inde = np.where((data[:, 1] == T_nearest) & (data[:, 0] == rhoY_nearest))[0][0]\n"
+        fstring += f"    rate_eval.{self.fname} = data[inde][5]\n\n"
+
+        return fstring
+
 
     def get_tabular_rate(self):
         """read the rate data from .dat file """
