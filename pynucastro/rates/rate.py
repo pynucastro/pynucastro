@@ -921,6 +921,10 @@ class ReacLibRate(Rate):
                     self.reactants += [Nucleus.from_cache(f[0]), Nucleus.from_cache(f[1]),
                                        Nucleus.from_cache(f[2])]
                     self.products.append(Nucleus.from_cache(f[3]))
+                    # support historical format, where chapter 8 also handles what are
+                    # now chapter 9 rates
+                    if len(f) == 5:
+                        self.products.append(Nucleus.from_cache(f[4]))
 
                 elif self.chapter == 9:
                     # e1 + e2 + e3 -> e4 + e5
