@@ -603,13 +603,16 @@ class RateFilter:
 
 
 class ReacLibLibrary(Library):
+    """Load the latest stored version of the ReacLib library and
+    return a Library"""
 
-    def __init__(self, libfile='reaclib_default2_20220329'):
-        libfile == 'reaclib_default2_20220329'
+    def __init__(self):
+        libfile = 'reaclib_default2_20220329'
         Library.__init__(self, libfile=libfile)
 
 
 class TabularLibrary(Library):
+    """Load all of the tabular rates known and return a Library"""
 
     def __init__(self):
         # find all of the tabular rates that pynucastro knows about
