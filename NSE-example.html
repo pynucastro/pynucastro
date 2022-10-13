@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Nuclear Statistical Equilibrium &mdash; pynucastro 1.7.0.post82+g2e011402 documentation</title>
+  <title>Nuclear Statistical Equilibrium &mdash; pynucastro 1.7.0.post83+ga532fdd7 documentation</title>
       <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -393,7 +393,7 @@ div.rendered_html tbody tr:hover {
 <p>The constrained equations are setup following: * Calder et al. (2007): <a class="reference external" href="https://iopscience.iop.org/article/10.1086/510709/pdf">https://iopscience.iop.org/article/10.1086/510709/pdf</a> * Seitenzahl et al. (2009): <a class="reference external" href="https://www.sciencedirect.com/science/article/abs/pii/S0092640X0800051X">https://www.sciencedirect.com/science/article/abs/pii/S0092640X0800051X</a></p>
 <p>and solved using <code class="docutils literal notranslate"><span class="pre">scipy.optimize.fsolve()</span></code></p>
 <p>Here we show how to find the NSE state of a set of nuclei.</p>
-<div class="nbinput nblast docutils container">
+<div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
@@ -402,6 +402,14 @@ div.rendered_html tbody tr:hover {
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 </pre></div>
 </div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+Matplotlib is building the font cache; this may take a moment.
+</pre></div></div>
 </div>
 <p>We start by creating a <code class="docutils literal notranslate"><span class="pre">Library</span></code> object that reads all the ReacLib rates and link different nuclei of choice. Then initialize <code class="docutils literal notranslate"><span class="pre">RateCollection</span></code> by using the the rates created by the <code class="docutils literal notranslate"><span class="pre">Library</span></code> object.</p>
 <div class="nbinput nblast docutils container">
