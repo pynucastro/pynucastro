@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.rates.library &mdash; pynucastro 1.7.0.post83+ga532fdd7 documentation</title>
+  <title>pynucastro.rates.library &mdash; pynucastro 2.0.0.post1+g83069108 documentation</title>
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -33,7 +33,7 @@
             <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.7
+                2.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -196,7 +196,7 @@
 <span class="sd">    specified by RateFilter objects.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">libfile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rates</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">read_library</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">libfile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rates</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_library_file</span> <span class="o">=</span> <span class="n">libfile</span>
         <span class="k">if</span> <span class="n">rates</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_rates</span> <span class="o">=</span> <span class="kc">None</span>
@@ -212,7 +212,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_rates</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_library_source_lines</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">deque</span><span class="p">()</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_library_file</span> <span class="ow">and</span> <span class="n">read_library</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_library_file</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_library_file</span> <span class="o">=</span> <span class="n">_find_rate_file</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_library_file</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_read_library_file</span><span class="p">()</span>
 
@@ -332,9 +332,7 @@
                     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;rate </span><span class="si">{</span><span class="n">r</span><span class="si">}</span><span class="s1"> defined differently in libraries </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_library_file</span><span class="si">}</span><span class="s1"> and </span><span class="si">{</span><span class="n">other</span><span class="o">.</span><span class="n">_library_file</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">new_rates</span><span class="p">[</span><span class="n">rid</span><span class="p">]</span> <span class="o">=</span> <span class="n">r</span>
-        <span class="n">new_library</span> <span class="o">=</span> <span class="n">Library</span><span class="p">(</span><span class="n">libfile</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_library_file</span><span class="si">}</span><span class="s1"> + </span><span class="si">{</span><span class="n">other</span><span class="o">.</span><span class="n">_library_file</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
-                              <span class="n">rates</span><span class="o">=</span><span class="n">new_rates</span><span class="p">,</span>
-                              <span class="n">read_library</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">new_library</span> <span class="o">=</span> <span class="n">Library</span><span class="p">(</span><span class="n">rates</span><span class="o">=</span><span class="n">new_rates</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">new_library</span>
 
     <span class="k">def</span> <span class="fm">__sub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
@@ -484,9 +482,7 @@
                     <span class="n">matching_rates</span><span class="p">[</span><span class="n">rid</span><span class="p">]</span> <span class="o">=</span> <span class="n">r</span>
                     <span class="k">break</span>
         <span class="k">if</span> <span class="n">matching_rates</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">Library</span><span class="p">(</span><span class="n">libfile</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_library_file</span><span class="p">,</span>
-                           <span class="n">rates</span><span class="o">=</span><span class="n">matching_rates</span><span class="p">,</span>
-                           <span class="n">read_library</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">Library</span><span class="p">(</span><span class="n">rates</span><span class="o">=</span><span class="n">matching_rates</span><span class="p">)</span>
         <span class="k">return</span> <span class="kc">None</span></div>
 
 <div class="viewcode-block" id="Library.forward"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.library.Library.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -714,13 +710,16 @@
 
 
 <div class="viewcode-block" id="ReacLibLibrary"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.library.ReacLibLibrary">[docs]</a><span class="k">class</span> <span class="nc">ReacLibLibrary</span><span class="p">(</span><span class="n">Library</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Load the latest stored version of the ReacLib library and</span>
+<span class="sd">    return a Library&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">libfile</span><span class="o">=</span><span class="s1">&#39;reaclib_default2_20220329&#39;</span><span class="p">,</span> <span class="n">rates</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">read_library</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-        <span class="k">assert</span> <span class="n">libfile</span> <span class="o">==</span> <span class="s1">&#39;reaclib_default2_20220329&#39;</span> <span class="ow">and</span> <span class="n">rates</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">read_library</span><span class="p">,</span> <span class="s2">&quot;Only the reaclib_default2_20220329 default ReacLib snapshot is accepted&quot;</span>
-        <span class="n">Library</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">libfile</span><span class="o">=</span><span class="n">libfile</span><span class="p">,</span> <span class="n">rates</span><span class="o">=</span><span class="n">rates</span><span class="p">,</span> <span class="n">read_library</span><span class="o">=</span><span class="n">read_library</span><span class="p">)</span></div>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">libfile</span> <span class="o">=</span> <span class="s1">&#39;reaclib_default2_20220329&#39;</span>
+        <span class="n">Library</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">libfile</span><span class="o">=</span><span class="n">libfile</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="TabularLibrary"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.library.TabularLibrary">[docs]</a><span class="k">class</span> <span class="nc">TabularLibrary</span><span class="p">(</span><span class="n">Library</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Load all of the tabular rates known and return a Library&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># find all of the tabular rates that pynucastro knows about</span>

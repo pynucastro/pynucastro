@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.rates package &mdash; pynucastro 1.7.0.post83+ga532fdd7 documentation</title>
+  <title>pynucastro.rates package &mdash; pynucastro 2.0.0.post1+g83069108 documentation</title>
       <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -36,7 +36,7 @@
             <img src="_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.7
+                2.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -161,7 +161,7 @@
 <span id="pynucastro-rates-library-module"></span><h2>pynucastro.rates.library module<a class="headerlink" href="#module-pynucastro.rates.library" title="Permalink to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="pynucastro.rates.library.Library">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.rates.library.</span></span><span class="sig-name descname"><span class="pre">Library</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">libfile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rates</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">read_library</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/library.html#Library"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.Library" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.rates.library.</span></span><span class="sig-name descname"><span class="pre">Library</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">libfile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rates</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/library.html#Library"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.Library" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>A Library is a Rate container that reads a single file
 containing one or many Reaclib rates, possibly containing multiple
@@ -306,14 +306,17 @@ rates to assist in searching for rates stored in a Library.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pynucastro.rates.library.ReacLibLibrary">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.rates.library.</span></span><span class="sig-name descname"><span class="pre">ReacLibLibrary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">libfile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'reaclib_default2_20220329'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rates</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">read_library</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/library.html#ReacLibLibrary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.ReacLibLibrary" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.rates.library.</span></span><span class="sig-name descname"><span class="pre">ReacLibLibrary</span></span><a class="reference internal" href="_modules/pynucastro/rates/library.html#ReacLibLibrary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.ReacLibLibrary" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pynucastro.rates.library.Library" title="pynucastro.rates.library.Library"><code class="xref py py-class docutils literal notranslate"><span class="pre">Library</span></code></a></p>
+<p>Load the latest stored version of the ReacLib library and
+return a Library</p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pynucastro.rates.library.TabularLibrary">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.rates.library.</span></span><span class="sig-name descname"><span class="pre">TabularLibrary</span></span><a class="reference internal" href="_modules/pynucastro/rates/library.html#TabularLibrary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.TabularLibrary" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pynucastro.rates.library.Library" title="pynucastro.rates.library.Library"><code class="xref py py-class docutils literal notranslate"><span class="pre">Library</span></code></a></p>
+<p>Load all of the tabular rates known and return a Library</p>
 </dd></dl>
 
 <dl class="py function">
