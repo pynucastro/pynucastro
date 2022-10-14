@@ -3,7 +3,6 @@ Classes and methods to interface with files storing rate data.
 """
 import io
 import os
-import re
 from collections import Counter
 
 import matplotlib.pyplot as plt
@@ -921,6 +920,10 @@ class ReacLibRate(Rate):
                     self.reactants += [Nucleus.from_cache(f[0]), Nucleus.from_cache(f[1]),
                                        Nucleus.from_cache(f[2])]
                     self.products.append(Nucleus.from_cache(f[3]))
+                    # support historical format, where chapter 8 also handles what are
+                    # now chapter 9 rates
+                    if len(f) == 5:
+                        self.products.append(Nucleus.from_cache(f[4]))
 
                 elif self.chapter == 9:
                     # e1 + e2 + e3 -> e4 + e5
@@ -1344,26 +1347,21 @@ class TabularRate(Rate):
 
         # find .dat file and read it
         self.table_path = _find_rate_file(self.table_file)
-        with open(self.table_path) as tabular_file:
-            t_data = tabular_file.readlines()
-
-        # delete header lines
-        del t_data[0:self.table_header_lines]
-
-        # change the list ["1.23 3.45 5.67\n"] into the list ["1.23","3.45","5.67"]
         t_data2d = []
-        for tt in t_data:
-            t_data2d.append(re.split(r"[ ]", tt.strip('\n')))
+        with open(self.table_path) as tabular_file:
+            for i, line in enumerate(tabular_file):
+                # skip header lines
+                if i < self.table_header_lines:
+                    continue
+                line = line.strip()
+                # skip empty lines
+                if not line:
+                    continue
+                # split the column values on whitespace
+                t_data2d.append(line.split())
 
-        # delete all the "" in each element of data1
-        for tt2d in t_data2d:
-            while '' in tt2d:
-                tt2d.remove('')
-
-        while [] in t_data2d:
-            t_data2d.remove([])
-
-        self.tabular_data_table = np.array(t_data2d)
+        # convert the nested list of string values into a numpy float array
+        self.tabular_data_table = np.array(t_data2d, dtype=float)
 
     def ydot_string_py(self):
         """
@@ -1471,7 +1469,7 @@ class TabularRate(Rate):
     def eval(self, T, rhoY=None):
         """ evauate the reaction rate for temperature T """
 
-        data = self.tabular_data_table.astype(float)
+        data = self.tabular_data_table
         # find the nearest value of T and rhoY in the data table
         T_nearest = (data[:, 1])[np.abs((data[:, 1]) - T).argmin()]
         rhoY_nearest = (data[:, 0])[np.abs((data[:, 0]) - rhoY).argmin()]
@@ -1483,7 +1481,7 @@ class TabularRate(Rate):
         """ get the neutrino loss rate for the reaction if tabulated"""
 
         nu_loss = None
-        data = self.tabular_data_table.astype(np.float)
+        data = self.tabular_data_table
         # find the nearest value of T and rhoY in the data table
         T_nearest = (data[:, 1])[np.abs((data[:, 1]) - T).argmin()]
         rhoY_nearest = (data[:, 0])[np.abs((data[:, 0]) - rhoY).argmin()]
@@ -1509,7 +1507,7 @@ class TabularRate(Rate):
 
         fig, ax = plt.subplots(figsize=figsize)
 
-        data = self.tabular_data_table.astype(np.float)  # convert from str to float
+        data = self.tabular_data_table
 
         inde1 = data[:, 1] <= Tmax
         inde2 = data[:, 1] >= Tmin
