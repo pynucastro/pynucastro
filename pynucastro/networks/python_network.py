@@ -4,7 +4,7 @@ source"""
 import sys
 
 from pynucastro.networks.rate_collection import RateCollection
-from pynucastro.rates.rate import ApproximateRate
+from pynucastro.rates.rate import ApproximateRate, _find_rate_file
 
 
 class PythonNetwork(RateCollection):
@@ -129,6 +129,11 @@ class PythonNetwork(RateCollection):
         for r in self.derived_rates:
             ostr += f"{indent}{r.fname}(rate_eval, tf)\n"
 
+        if self.tabular_rates:
+            ostr += f"\n{indent}# tabular rates\n"
+        for r in self.tabular_rates:
+            ostr += f"{indent}{r.fname}(rate_eval, T, rho*ye(Y))\n"
+
         ostr += "\n"
 
         # apply screening factors, if we're given a screening function
@@ -157,6 +162,7 @@ class PythonNetwork(RateCollection):
 
         of.write("import numba\n")
         of.write("import numpy as np\n")
+        of.write("import re\n")
         of.write("from numba.experimental import jitclass\n\n")
         of.write("from pynucastro.rates import Tfactors\n")
         of.write("from pynucastro.screening import PlasmaState, ScreenFactors\n\n")
@@ -212,6 +218,24 @@ class PythonNetwork(RateCollection):
 
         of.write("\n")
 
+        # tabular rate data
+        for r in self.tabular_rates:
+            
+            of.write(f"# load data for {r.rid}\n")
+            of.write(f"{r.fname}_table_path = '{_find_rate_file(r.table_file)}'\n")
+            of.write(f"with open({r.fname}_table_path) as tabular_file:\n")
+            of.write(f"    t_data = tabular_file.readlines()\n")
+            of.write(f"    del t_data[0:{r.table_header_lines}]\n")
+            of.write(f"    t_data2d = []\n")
+            of.write(f"    for tt in t_data:\n")
+            of.write(f"       t_data2d.append(re.split(r'[ ]', tt.strip('\\n')))\n")
+            of.write(f"    for tt2d in t_data2d:\n")
+            of.write(f"       while '' in tt2d:\n")
+            of.write(f"             tt2d.remove('')\n")
+            of.write(f"       while [] in t_data2d:\n")
+            of.write(f"             t_data2d.remove([])\n")
+            of.write(f"{r.fname}_data = np.array(t_data2d, dtype=float)\n\n")
+        
         of.write("@numba.njit()\n")
 
         of.write("def ye(Y):\n")
