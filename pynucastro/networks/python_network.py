@@ -220,20 +220,20 @@ class PythonNetwork(RateCollection):
 
         # tabular rate data
         for r in self.tabular_rates:
-            
+
             of.write(f"# load data for {r.rid}\n")
             of.write(f"{r.fname}_table_path = '{_find_rate_file(r.table_file)}'\n")
-            of.write(f"t_data2d = []\n")
+            of.write("t_data2d = []\n")
             of.write(f"with open({r.fname}_table_path) as tabular_file:\n")
             of.write(f'{indent}'"for i, line in enumerate(tabular_file):\n")
             of.write(f'{indent*2}'f"if i < {r.table_header_lines}:\n")
-            of.write(f'{indent*3}'f"continue\n")
-            of.write(f'{indent*2}'f"line = line.strip()\n")
-            of.write(f'{indent*2}'f"if not line:\n")
-            of.write(f'{indent*3}'f"continue\n")
-            of.write(f'{indent*2}'f"t_data2d.append(line.split())\n")
+            of.write(f'{indent*3}'"continue\n")
+            of.write(f'{indent*2}'"line = line.strip()\n")
+            of.write(f'{indent*2}'"if not line:\n")
+            of.write(f'{indent*3}'"continue\n")
+            of.write(f'{indent*2}'"t_data2d.append(line.split())\n")
             of.write(f"{r.fname}_data = np.array(t_data2d, dtype=float)\n\n")
-        
+
         of.write("@numba.njit()\n")
 
         of.write("def ye(Y):\n")

@@ -1341,7 +1341,7 @@ class TabularRate(Rate):
         ssrc = 'tabular'
 
         return f'{self.rid} <{self.label.strip()}_{ssrc}>'
-        
+
     def function_string_py(self):
         """
         Return a string containing python function that computes the
@@ -1360,7 +1360,6 @@ class TabularRate(Rate):
         fstring += f"    rate_eval.{self.fname} = {self.fname}_data[inde][5]\n\n"
 
         return fstring
-
 
     def get_tabular_rate(self):
         """read the rate data from .dat file """
