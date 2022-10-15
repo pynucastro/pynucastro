@@ -1341,7 +1341,7 @@ class RateCollection:
 
         comp: composition to evaluate rates with
 
-        size: tuple giving width x height of the plot in inches
+        size: tuple giving width x height of the plot in pixels
 
         dpi: pixels per inch used by matplotlib in rendering bitmap
 
