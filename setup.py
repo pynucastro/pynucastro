@@ -2,6 +2,8 @@ from setuptools import setup, find_packages
 
 setup(name='pynucastro',
       description='A python library for nuclear astrophysics',
+      long_description=open('README.md', 'r').read(),
+      long_description_content_type='text/markdown',
       url='https://github.com/pynucastro/pynucastro',
       author='pynucastro development group',
       author_email='michael.zingale@stonybrook.edu',

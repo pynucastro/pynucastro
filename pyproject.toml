@@ -2,10 +2,6 @@
 [build-system]
 requires = ["setuptools>=45", "wheel", "setuptools_scm>=6.2"]
 
-[project]
-name = "pynucastro"
-description = "A python library for nuclear astrophysics"
-
 [tool.pylint."MESSAGES CONTROL"]
 disable = [
   "unspecified-encoding",
