@@ -1,11 +1,11 @@
 # unit tests for rates
 import math
-#from msilib.schema import Complus
 
-from pynucastro.nucdata import Nucleus
-from pynucastro import rates
 import pytest
 from pytest import approx
+
+from pynucastro import rates
+from pynucastro.nucdata import Nucleus
 
 
 class TestTfactors:
@@ -60,6 +60,9 @@ class TestRate:
 
         # chapter-8
         self.rate8 = rates.load_rate("he4-aag-c12-fy05")
+
+        # chapter-8, historical format (same rate as chapter-9)
+        self.rate8_hist = rates.load_rate("he4-pphe3-he3-nacr-historical")
 
         # chapter-9
         self.rate9 = rates.load_rate("he4-pphe3-he3-nacr")
@@ -141,6 +144,12 @@ class TestRate:
         assert self.rate8.reactants[2] == self.he4
         assert len(self.rate8.reactants) == 3
 
+        # he4-pphe3-he3-nacr-historical
+        assert self.rate8_hist.reactants[0] == self.p
+        assert self.rate8_hist.reactants[1] == self.h1
+        assert self.rate8_hist.reactants[2] == self.he4
+        assert len(self.rate8_hist.reactants) == 3
+
         # he4-pphe3-he3-nacr
         assert self.rate9.reactants[0] == self.p
         assert self.rate9.reactants[1] == self.h1
@@ -161,6 +170,17 @@ class TestRate:
     def test_products(self):
         assert self.rate4.products[0] == self.o16
         assert self.rate8.products[0] == self.c12
+        assert len(self.rate8.products) == 1
+
+        # he4-pphe3-he3-nacr-historical
+        assert self.rate8_hist.products[0] == self.he3
+        assert self.rate8_hist.products[1] == self.he3
+        assert len(self.rate8_hist.products) == 2
+
+        # he4-pphe3-he3-nacr
+        assert self.rate9.products[0] == self.he3
+        assert self.rate9.products[1] == self.he3
+        assert len(self.rate9.products) == 2
 
     def test_prefactor(self):
         assert self.rate4.prefactor == 1.0
@@ -211,7 +231,7 @@ class TestDerivedRate:
 
         assert c12_ga_a_a_reaclib.eval(T=2.0e9) == approx(c12_ga_a_a_derived.eval(T=2.0e9), rel=1.7e-5)
 
-    def a_a_ag_c12_with_pf(self, reaclib_library):
+    def test_a_a_ag_c12_with_pf(self, reaclib_library):
         """
         This function test the correct rate value if we take in consideration the partition
         functions on the range 1.0e9 to 100.0e9

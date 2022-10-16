@@ -13,17 +13,19 @@ support routines to generate a full, integrable network in python.
 the support routines to generate a standalone integrable network in
 pure C++.
 
-:meth:`starkiller_cxx_network <pynucastro.networks.starkiller_cxx_network>`:
+:meth:`anrexastro_cxx_network <pynucastro.networks.amrexastro_cxx_network>`:
 the support routines to generate a C++ network that can be incorporated
-into the StarKiller microphysics routines supported by astrophysical
+into the AMReX-Astro Microphysics routines supported by astrophysical
 hydrodynamics codes.
 
 """
 
 #__all__ = ["python_network", "rate_collection", "sympy_network_support"]
 
-from .rate_collection import RateCollection, Composition, Explorer
-from .python_network import PythonNetwork
-from .sympy_network_support import SympyRates
+from .amrexastro_cxx_network import AmrexAstroCxxNetwork
 from .base_cxx_network import BaseCxxNetwork
-from .starkiller_cxx_network import StarKillerCxxNetwork
+from .python_network import PythonNetwork
+from .rate_collection import Composition, Explorer, RateCollection
+from .sympy_network_support import SympyRates
+
+StarKillerCxxNetwork = AmrexAstroCxxNetwork

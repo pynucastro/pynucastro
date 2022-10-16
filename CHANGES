@@ -1,8 +1,67 @@
-# changes since the last release
+# 2.0.0
+
+  -- Added a method to get a rate by short name: A(x,y)B (#438)
+
+  -- Added the option to show rate links hidden by ydot <
+     ydot_cutoff_value (#436)
+
+  -- Added a TabularLibrary (#429)
+
+  -- Moved validate into RateCollection (#433)
+
+  -- renamed StarKillerCxxNetwork to AmrexAstroCxxNetwork (#426)
+
+  -- Fixed formatting of tabular rate strings (#421)
+
+  -- Fixed normalization of colorbar in grid_plot (#424)
+
+  -- Added the ability to plot neutrino loss for tabular rates (#422)
+
+  -- Added support for partition functions in C++ networks (#404)
+
+  -- NSE solver now can return chemical potentials (#415)
+
+  -- Add spins to NSE calculatons (#405)
+
+  -- Separate the Coulomb calculation from the NSE screening, make it
+     switchable (#398, #380)
+
+  -- Fixed StarKillerCxxNetwork output directory (#400)
+
+  -- Added Potekhin screening (#385)
+
+  -- Added screening to python networks (#383)
+
+  -- Numba accelerated screening (#373)
+
+  -- Fixed C++ approximate rate screening (#384)
+
+  -- Added RateCollection remove_rates() (#368), and allow
+     remove_rates to operate on dictionary keys (#375)
+
+  -- Added NSE solver (#339, #364, #377)
+
+  -- added find_unimportant_rates method (#367, #369, #374)
+
+  -- added spins to partition functions (#371)
+
+  -- Split rate up into several classes, including ReacLibRate (#362)
+     and TabularRate (#360)
+
+  -- added partition function support to python networks (#358)
+
+  -- fixed definition of inverse rate for symmetric screening (#363)
+
+  -- Moved Nucleus into nucdata (#346)
+
+  -- Added screening to RateCollection (#344)
+
+  -- Added approximate rate support to C++ (#333)
 
   -- C++ networks now hardcode the coefficients in a function to
      compute the rates instead of storing a metadata table that is
      read at runtime (#329)
+
 
 # 1.7.0
 

@@ -1,23 +1,23 @@
 # unit tests for rates
-import pynucastro as pyna
-import os
 import filecmp
+import io
+import os
+
 import pytest
 
-import io
+import pynucastro as pyna
 
 
-class TestStarKillerCxxNetwork:
+class TestAmrexAstroCxxNetwork:
     # pylint: disable=protected-access
     @pytest.fixture(scope="class")
     def fn(self, reaclib_library):
 
         mylib = reaclib_library.linking_nuclei(["mg24", "al27", "si28", "p31", "s32", "he4", "p"])
-        net = pyna.StarKillerCxxNetwork(libraries=[mylib])
+        net = pyna.AmrexAstroCxxNetwork(libraries=[mylib])
         net.make_ap_pg_approx()
         net.remove_nuclei(["al27", "p31"])
         fn = net
-        fn.secret_code = "testing"
         return fn
 
     def cromulent_ftag(self, ftag, answer, n_indent=1):
@@ -32,7 +32,7 @@ class TestStarKillerCxxNetwork:
     def test_write_network(self, fn):
         """ test the write_network function"""
         test_path = "_test_cxx_approx/"
-        reference_path = "_starkiller_cxx_approx_reference/"
+        reference_path = "_amrexastro_cxx_approx_reference/"
         base_path = os.path.relpath(os.path.dirname(__file__))
 
         fn.write_network(odir=test_path)
@@ -52,7 +52,7 @@ class TestStarKillerCxxNetwork:
         errors = []
         for test_file in files:
             # note, _test is written under whatever directory pytest is run from,
-            # so it is not necessarily at the same place as _starkiller_reference
+            # so it is not necessarily at the same place as _amrexastro_reference
             if not filecmp.cmp(os.path.normpath(f"{test_path}/{test_file}"),
                                os.path.normpath(f"{base_path}/{reference_path}/{test_file}"),
                                shallow=False):

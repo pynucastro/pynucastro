@@ -1,6 +1,7 @@
 # unit tests for rates
-from pynucastro import rates
 import pytest
+
+from pynucastro import rates
 
 
 class TestPythonNetwork:

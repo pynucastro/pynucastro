@@ -1,13 +1,14 @@
 """
 Classes and methods to interface with files storing rate data.
 """
-from collections import Counter
-from scipy.constants import physical_constants
-import os
-import re
 import io
-import numpy as np
+import os
+from collections import Counter
+
 import matplotlib.pyplot as plt
+import numpy as np
+from scipy.constants import physical_constants
+
 try:
     import numba
     from numba.experimental import jitclass
@@ -308,12 +309,6 @@ class Rate:
 
         self.weak_type = weak_type
 
-        # some rates will have no nuclei particles (e.g. gamma) on the left or
-        # right -- we'll try to infer those here
-
-        self.lhs_other = []
-        self.rhs_other = []
-
         self._set_rhs_properties()
         self._set_screening()
         self._set_print_representation()
@@ -379,6 +374,11 @@ class Rate:
         # string is output to the terminal, rid is used as a dict key,
         # and pretty_string is latex
 
+        # some rates will have no nuclei particles (e.g. gamma) on the left or
+        # right -- we'll try to infer those here
+        lhs_other = []
+        rhs_other = []
+
         self.string = ""
         self.rid = ""
         self.pretty_string = r"$"
@@ -402,7 +402,7 @@ class Rate:
 
         if strong_test:
             if len(self.products) == 1:
-                self.rhs_other.append("gamma")
+                rhs_other.append("gamma")
         else:
             # this is a weak rate
 
@@ -414,24 +414,31 @@ class Rate:
                 # the charge on the left should be +1 the charge on the right
                 assert sum(n.Z for n in self.reactants) == sum(n.Z for n in self.products) + 1
 
-                self.lhs_other.append("e-")
-                self.rhs_other.append("nu")
+                lhs_other.append("e-")
+                rhs_other.append("nu")
+
+            elif self.weak_type == "beta_decay":
+                # we expect an electron on the right
+                assert sum(n.Z for n in self.reactants) + 1 == sum(n.Z for n in self.products)
+
+                rhs_other.append("e-")
+                rhs_other.append("nubar")
 
             elif "_pos_" in self.weak_type:
 
                 # we expect a positron on the right -- let's make sure
                 assert sum(n.Z for n in self.reactants) == sum(n.Z for n in self.products) + 1
 
-                self.rhs_other.append("e+")
-                self.rhs_other.append("nu")
+                rhs_other.append("e+")
+                rhs_other.append("nu")
 
             elif "_neg_" in self.weak_type:
 
                 # we expect an electron on the right -- let's make sure
                 assert sum(n.Z for n in self.reactants) + 1 == sum(n.Z for n in self.products)
 
-                self.rhs_other.append("e-")
-                self.rhs_other.append("nubar")
+                rhs_other.append("e-")
+                rhs_other.append("nubar")
 
             else:
 
@@ -439,13 +446,13 @@ class Rate:
                 # not an electron capture
 
                 if sum(n.Z for n in self.reactants) == sum(n.Z for n in self.products) + 1:
-                    self.rhs_other.append("e+")
-                    self.rhs_other.append("nu")
+                    rhs_other.append("e+")
+                    rhs_other.append("nu")
 
                 elif sum(n.Z for n in self.reactants) + 1 == sum(n.Z for n in self.products):
 
-                    self.rhs_other.append("e-")
-                    self.rhs_other.append("nubar")
+                    rhs_other.append("e-")
+                    rhs_other.append("nubar")
 
         for n, r in enumerate(treactants):
             self.string += f"{r.c()}"
@@ -456,8 +463,8 @@ class Rate:
                 self.rid += " + "
                 self.pretty_string += r" + "
 
-        if self.lhs_other:
-            for o in self.lhs_other:
+        if lhs_other:
+            for o in lhs_other:
                 if o == "e-":
                     self.string += " + e⁻"
                     self.pretty_string += r" + \mathrm{e}^-"
@@ -475,8 +482,8 @@ class Rate:
                 self.rid += " + "
                 self.pretty_string += r" + "
 
-        if self.rhs_other:
-            for o in self.rhs_other:
+        if rhs_other:
+            for o in rhs_other:
                 if o == "gamma":
                     self.string += " + 𝛾"
                     self.pretty_string += r"+ \gamma"
@@ -626,18 +633,11 @@ class ReacLibRate(Rate):
 
         self.label = None
         self.resonant = None
-        self.resonance_combined = None
         self.weak = None
         self.weak_type = None
         self.reverse = None
 
         self.Q = Q
-
-        # some rates will have no nuclei particles (e.g. gamma) on the left or
-        # right -- we'll try to infer those here
-
-        self.lhs_other = []
-        self.rhs_other = []
 
         if isinstance(rfile, str):
             # read in the file, parse the different sets and store them as
@@ -770,16 +770,12 @@ class ReacLibRate(Rate):
         sres = [s.resonant for s in self.sets]
         if True in sres and False in sres:
             self._labelprops_combine_resonance()
-        else:
-            self.resonance_combined = False
 
     def _labelprops_combine_resonance(self):
-        """ Update self.labelprops[4] = 'c'.
-            Also set the resonance_combined flag. """
+        """ Update self.labelprops[4] = 'c'"""
         llp = list(self.labelprops)
         llp[4] = 'c'
         self.labelprops = ''.join(llp)
-        self.resonance_combined = True
 
     def _update_label_properties(self):
         """ Set label and flags indicating Rate is resonant,
@@ -788,14 +784,12 @@ class ReacLibRate(Rate):
         if self.labelprops == "approx":
             self.label = "approx"
             self.resonant = False
-            self.resonance_combined = False
             self.weak = False
             self.weak_type = None
             self.reverse = False
         elif self.labelprops == "derived":
             self.label = "derived"
             self.resonant = False  # Derived may be resonant in some cases
-            self.resonance_combined = False
             self.weak = False
             self.weak_type = None
             self.reverse = False
@@ -926,6 +920,10 @@ class ReacLibRate(Rate):
                     self.reactants += [Nucleus.from_cache(f[0]), Nucleus.from_cache(f[1]),
                                        Nucleus.from_cache(f[2])]
                     self.products.append(Nucleus.from_cache(f[3]))
+                    # support historical format, where chapter 8 also handles what are
+                    # now chapter 9 rates
+                    if len(f) == 5:
+                        self.products.append(Nucleus.from_cache(f[4]))
 
                 elif self.chapter == 9:
                     # e1 + e2 + e3 -> e4 + e5
@@ -1235,12 +1233,6 @@ class TabularRate(Rate):
 
         self.Q = None
 
-        # some rates will have no nuclei particles (e.g. gamma) on the left or
-        # right -- we'll try to infer those here
-
-        self.lhs_other = []
-        self.rhs_other = []
-
         # we should initialize this somehow
         self.weak_type = ""
 
@@ -1314,6 +1306,13 @@ class TabularRate(Rate):
         self.table_index_name = f'j_{self.reactants[0]}_{self.products[0]}'
         self.labelprops = 'tabular'
 
+        # set weak type
+        if "electroncapture" in self.table_file:
+            self.weak_type = "electron_capture"
+
+        elif "betadecay" in self.table_file:
+            self.weak_type = "beta_decay"
+
     def _set_rhs_properties(self):
         """ compute statistical prefactor and density exponent from the reactants. """
         self.prefactor = 1.0  # this is 1/2 for rates like a + a (double counting)
@@ -1327,8 +1326,6 @@ class TabularRate(Rate):
         """ tabular rates are not currently screened (they are e-capture or beta-decay)"""
         self.ion_screen = []
         self.symmetric_screen = []
-
-        super()._set_print_representation()
 
         if not self.fname:
             # This is used to determine which rates to detect as the same reaction
@@ -1352,26 +1349,21 @@ class TabularRate(Rate):
 
         # find .dat file and read it
         self.table_path = _find_rate_file(self.table_file)
-        with open(self.table_path) as tabular_file:
-            t_data = tabular_file.readlines()
-
-        # delete header lines
-        del t_data[0:self.table_header_lines]
-
-        # change the list ["1.23 3.45 5.67\n"] into the list ["1.23","3.45","5.67"]
         t_data2d = []
-        for tt in t_data:
-            t_data2d.append(re.split(r"[ ]", tt.strip('\n')))
+        with open(self.table_path) as tabular_file:
+            for i, line in enumerate(tabular_file):
+                # skip header lines
+                if i < self.table_header_lines:
+                    continue
+                line = line.strip()
+                # skip empty lines
+                if not line:
+                    continue
+                # split the column values on whitespace
+                t_data2d.append(line.split())
 
-        # delete all the "" in each element of data1
-        for tt2d in t_data2d:
-            while '' in tt2d:
-                tt2d.remove('')
-
-        while [] in t_data2d:
-            t_data2d.remove([])
-
-        self.tabular_data_table = np.array(t_data2d)
+        # convert the nested list of string values into a numpy float array
+        self.tabular_data_table = np.array(t_data2d, dtype=float)
 
     def ydot_string_py(self):
         """
@@ -1479,7 +1471,7 @@ class TabularRate(Rate):
     def eval(self, T, rhoY=None):
         """ evauate the reaction rate for temperature T """
 
-        data = self.tabular_data_table.astype(float)
+        data = self.tabular_data_table
         # find the nearest value of T and rhoY in the data table
         T_nearest = (data[:, 1])[np.abs((data[:, 1]) - T).argmin()]
         rhoY_nearest = (data[:, 0])[np.abs((data[:, 0]) - rhoY).argmin()]
@@ -1491,7 +1483,7 @@ class TabularRate(Rate):
         """ get the neutrino loss rate for the reaction if tabulated"""
 
         nu_loss = None
-        data = self.tabular_data_table.astype(np.float)
+        data = self.tabular_data_table
         # find the nearest value of T and rhoY in the data table
         T_nearest = (data[:, 1])[np.abs((data[:, 1]) - T).argmin()]
         rhoY_nearest = (data[:, 0])[np.abs((data[:, 0]) - rhoY).argmin()]
@@ -1500,7 +1492,7 @@ class TabularRate(Rate):
 
         return nu_loss
 
-    def plot(self, Tmin=1.e8, Tmax=1.6e9, rhoYmin=3.9e8, rhoYmax=2.e9,
+    def plot(self, Tmin=1.e8, Tmax=1.6e9, rhoYmin=3.9e8, rhoYmax=2.e9, color_field='rate',
              figsize=(10, 10)):
         """plot the rate's temperature sensitivity vs temperature
 
@@ -1517,7 +1509,7 @@ class TabularRate(Rate):
 
         fig, ax = plt.subplots(figsize=figsize)
 
-        data = self.tabular_data_table.astype(np.float)  # convert from str to float
+        data = self.tabular_data_table
 
         inde1 = data[:, 1] <= Tmax
         inde2 = data[:, 1] >= Tmin
@@ -1528,18 +1520,31 @@ class TabularRate(Rate):
         rows, row_pos = np.unique(data_heatmap[:, 0], return_inverse=True)
         cols, col_pos = np.unique(data_heatmap[:, 1], return_inverse=True)
         pivot_table = np.zeros((len(rows), len(cols)), dtype=data_heatmap.dtype)
+
+        if color_field == 'rate':
+            icol = 5
+            title = f"{self.weak_type} rate in log10(1/s)"
+            cmap = 'magma'
+
+        elif color_field == 'nu_loss':
+            icol = 6
+            title = "neutrino energy loss rate in log10(erg/s)"
+            cmap = 'viridis'
+
+        else:
+            raise ValueError("color_field must be either 'rate' or 'nu_loss'.")
+
         try:
-            pivot_table[row_pos, col_pos] = np.log10(data_heatmap[:, 5])
+            pivot_table[row_pos, col_pos] = np.log10(data_heatmap[:, icol])
         except ValueError:
             print("Divide by zero encountered in log10\nChange the scale of T or rhoY")
 
-        im = ax.imshow(pivot_table, cmap='magma')
+        im = ax.imshow(pivot_table, cmap=cmap)
         fig.colorbar(im, ax=ax)
 
         ax.set_xlabel(r"$\log(T)$ [K]")
         ax.set_ylabel(r"$\log(\rho Y_e)$ [g/cm$^3$]")
-        ax.set_title(fr"{self.pretty_string}" +
-                     "\n"+"electron-capture/beta-decay rate in log10(1/s)")
+        ax.set_title(fr"{self.pretty_string}" + "\n" + title)
         ax.set_yticks(range(len(rows)))
         ylabels = [f"{np.log10(q):4.2f}" for q in rows]
         ax.set_yticklabels(ylabels)

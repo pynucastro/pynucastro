@@ -1,9 +1,11 @@
-import os
-import io
 import collections
+import io
+import os
+import re
 
 from pynucastro.nucdata import Nucleus, UnsupportedNucleus
-from pynucastro.rates.rate import DerivedRate, Rate, _find_rate_file, ReacLibRate, TabularRate
+from pynucastro.rates.rate import (DerivedRate, Rate, ReacLibRate, TabularRate,
+                                   _find_rate_file, load_rate)
 
 
 def list_known_rates():
@@ -25,6 +27,58 @@ def list_known_rates():
                 print(f"                                 : {r}")
 
 
+def _rate_name_to_nuc(name):
+
+    # first try to interpret name as A(x,y)B
+    rate_str = re.compile(r"([A-Za-z0-9]+)\(([A-Za-z0-9_]*),([A-Za-z0-9_]*)\)([A-Za-z0-9]+)",
+                          re.IGNORECASE)
+    nucs = rate_str.search(name)
+    try:
+        _r = [nucs.group(1), nucs.group(2)]
+        _p = [nucs.group(3), nucs.group(4)]
+    except AttributeError:
+        return None
+
+    # now try to make nuclei objects.
+    reactants = []
+    for nuc in _r:
+        if nuc == "":
+            continue
+        try:
+            n = Nucleus(nuc)
+            reactants.append(n)
+        except (ValueError, AssertionError):
+            # we need to interpret some things specially
+            if nuc.lower() in ["e", "nu", "_", "g", "gamma"]:
+                # first electrons and neutrins, and nothing
+                continue
+            elif nuc.lower() == "aa":
+                reactants.append(Nucleus("he4"))
+                reactants.append(Nucleus("he4"))
+            else:
+                raise
+
+    products = []
+    for nuc in _p:
+        if nuc == "":
+            continue
+        try:
+            n = Nucleus(nuc)
+            products.append(n)
+        except (ValueError, AssertionError):
+            # we need to interpret some things specially
+            if nuc.lower() in ["e", "nu", "_", "g", "gamma"]:
+                # first electrons and neutrinos, gammas, and nothing
+                continue
+            elif nuc.lower() == "aa":
+                products.append(Nucleus("he4"))
+                products.append(Nucleus("he4"))
+            else:
+                raise
+
+    return reactants, products
+
+
 class Library:
     """
     A Library is a Rate container that reads a single file
@@ -35,7 +89,7 @@ class Library:
     specified by RateFilter objects.
     """
 
-    def __init__(self, libfile=None, rates=None, read_library=True):
+    def __init__(self, libfile=None, rates=None):
         self._library_file = libfile
         if rates:
             self._rates = None
@@ -51,7 +105,7 @@ class Library:
             self._rates = {}
         self._library_source_lines = collections.deque()
 
-        if self._library_file and read_library:
+        if self._library_file:
             self._library_file = _find_rate_file(self._library_file)
             self._read_library_file()
 
@@ -171,9 +225,7 @@ class Library:
                     raise ValueError(f'rate {r} defined differently in libraries {self._library_file} and {other._library_file}')
             else:
                 new_rates[rid] = r
-        new_library = Library(libfile=f'{self._library_file} + {other._library_file}',
-                              rates=new_rates,
-                              read_library=False)
+        new_library = Library(rates=new_rates)
         return new_library
 
     def __sub__(self, other):
@@ -202,6 +254,34 @@ class Library:
         except IndexError:
             raise LookupError(f"rate identifier {rid!r} does not match a rate in this library.") from None
 
+    def get_rate_by_name(self, name):
+        """Given a string representing a rate in the form 'A(x,y)B'
+        (or a list of strings for multiple rates) return the Rate
+        objects that match from the Library.  If there are multiple
+        inputs, then a list of Rate objects is returned.
+
+        """
+
+        if isinstance(name, str):
+            rate_name_list = [name]
+        else:
+            rate_name_list = name
+
+        rates_out = []
+
+        for rname in rate_name_list:
+            reactants, products = _rate_name_to_nuc(rname)
+
+            rf = RateFilter(reactants=reactants, products=products)
+            _lib = self.filter(rf)
+            if _lib is None:
+                return None
+            rates_out += _lib.get_rates()
+
+        if (len(rates_out)) == 1:
+            return rates_out[0]
+        return rates_out
+
     def get_nuclei(self):
         """get the list of unique nuclei"""
         return {nuc for r in self.get_rates() for nuc in r.reactants + r.products}
@@ -215,12 +295,17 @@ class Library:
         return new_library
 
     def remove_rate(self, rate):
-        """Manually remove a rate from the library by supplying the id"""
+        """Manually remove a rate from the library by supplying the
+        short name "A(x,y)B, a Rate object, or the rate id"""
 
         if isinstance(rate, Rate):
             rid = rate.get_rate_id()
             self._rates.pop(rid)
+        elif isinstance(rate, str):
+            rid = self.get_rate_by_name(rate).get_rate_id()
+            self._rates.pop(rid)
         else:
+            # we assume that a rate id as provided
             self._rates.pop(rate)
 
     def linking_nuclei(self, nuclist, with_reverse=True):
@@ -290,77 +375,8 @@ class Library:
                     matching_rates[rid] = r
                     break
         if matching_rates:
-            return Library(libfile=self._library_file,
-                           rates=matching_rates,
-                           read_library=False)
+            return Library(rates=matching_rates)
         return None
-
-    def validate(self, other_library, forward_only=True, ostream=None):
-        """perform various checks on the library, comparing to other_library,
-        to ensure that we are not missing important rates.  The idea
-        is that self should be a reduced library where we filtered out
-        a few rates and then we want to compare to the larger
-        other_library to see if we missed something important.
-
-        ostream is the I/O stream to send output to (for instance, a
-        file object or StringIO object).  If it is None, then output
-        is to stdout.
-
-        """
-
-        current_rates = sorted(self.get_rates())
-
-        # check the forward rates to see if any of the products are
-        # not consumed by other forward rates
-
-        passed_validation = True
-
-        for rate in current_rates:
-            if rate.reverse:
-                continue
-            for p in rate.products:
-                found = False
-                for orate in current_rates:
-                    if orate == rate:
-                        continue
-                    if orate.reverse:
-                        continue
-                    if p in orate.reactants:
-                        found = True
-                        break
-                if not found:
-                    passed_validation = False
-                    msg = f"validation: {p} produced in {rate} never consumed."
-                    if ostream is None:
-                        print(msg)
-                    else:
-                        ostream.write(msg + "\n")
-
-        # now check if we are missing any rates from other_library with the exact same reactants
-
-        other_by_reactants = collections.defaultdict(list)
-        for rate in sorted(other_library.get_rates()):
-            other_by_reactants[tuple(sorted(rate.reactants))].append(rate)
-
-        for rate in current_rates:
-            if forward_only and rate.reverse:
-                continue
-
-            key = tuple(sorted(rate.reactants))
-            for other_rate in other_by_reactants[key]:
-                # check to see if other_rate is already in current_rates
-                found = True
-                if other_rate not in current_rates:
-                    found = False
-
-                if not found:
-                    msg = f"validation: missing {other_rate} as alternative to {rate} (Q = {other_rate.Q} MeV)."
-                    if ostream is None:
-                        print(msg)
-                    else:
-                        ostream.write(msg + "\n")
-
-        return passed_validation
 
     def forward(self):
         """
@@ -587,7 +603,28 @@ class RateFilter:
 
 
 class ReacLibLibrary(Library):
+    """Load the latest stored version of the ReacLib library and
+    return a Library"""
 
-    def __init__(self, libfile='reaclib_default2_20220329', rates=None, read_library=True):
-        assert libfile == 'reaclib_default2_20220329' and rates is None and read_library, "Only the reaclib_default2_20220329 default ReacLib snapshot is accepted"
-        Library.__init__(self, libfile=libfile, rates=rates, read_library=read_library)
+    def __init__(self):
+        libfile = 'reaclib_default2_20220329'
+        Library.__init__(self, libfile=libfile)
+
+
+class TabularLibrary(Library):
+    """Load all of the tabular rates known and return a Library"""
+
+    def __init__(self):
+        # find all of the tabular rates that pynucastro knows about
+        # we'll assume that these are of the form *-toki
+
+        lib_path = f"{os.path.dirname(__file__)}/../library/"
+
+        trates = []
+
+        for _, _, filenames in os.walk(lib_path):
+            for f in filenames:
+                if f.endswith("-toki"):
+                    trates.append(load_rate(f))
+
+        Library.__init__(self, rates=trates)

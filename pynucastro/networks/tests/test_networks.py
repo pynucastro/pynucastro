@@ -1,9 +1,9 @@
 # unit tests for networks
-from pynucastro import networks
-from pynucastro.nucdata import Nucleus
-
 import pytest
 from pytest import approx
+
+from pynucastro import networks
+from pynucastro.nucdata import Nucleus
 
 
 class TestComposition:

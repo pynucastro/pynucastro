@@ -6,13 +6,14 @@ comprised of the rates that are passed in.
 
 
 import os
+import re
 import shutil
 import sys
-import re
 from abc import ABC, abstractmethod
 
 import numpy as np
 import sympy
+
 from pynucastro.networks.rate_collection import RateCollection
 from pynucastro.networks.sympy_network_support import SympyRates
 

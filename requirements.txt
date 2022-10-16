@@ -14,3 +14,4 @@ numba>=0.52
 pytest-cov>=2.6.0
 setuptools_scm>=6.2
 jinja2==3.0.3
+sphinx-mdinclude

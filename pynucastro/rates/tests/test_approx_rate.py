@@ -1,8 +1,9 @@
 # unit tests for rates
 
-import pynucastro as pyna
 import pytest
 from pytest import approx
+
+import pynucastro as pyna
 
 
 class TestTfactors:

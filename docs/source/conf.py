@@ -39,6 +39,7 @@ extensions = ['sphinx.ext.autodoc',
     'sphinx.ext.viewcode',
     'nbsphinx',
     'sphinx.ext.githubpages',
+    'sphinx_mdinclude',
     'IPython.sphinxext.ipython_console_highlighting']
 
 # Add any paths that contain templates here, relative to this directory.
@@ -58,7 +59,7 @@ main_doc = 'index'
 
 # General information about the project.
 project = 'pynucastro'
-copyright = '2022, Michael Zingale and Donald Willcox'
+copyright = '2022, pynucastro development team'
 author = 'pynucastro development team'
 
 html_logo = "logo.png"

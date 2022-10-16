@@ -1,36 +1,33 @@
 """A collection of classes and methods to deal with collections of
 rates that together make up a network."""
 
-# Common Imports
-import warnings
+import collections
+import copy
 import functools
 import math
 import os
-
+import warnings
 from operator import mul
 
-from ipywidgets import interact
-
-import numpy as np
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-from mpl_toolkits.axes_grid1 import make_axes_locatable
-from matplotlib.ticker import MaxNLocator
-from matplotlib.colors import SymLogNorm
-from matplotlib.scale import SymmetricalLogTransform
-from matplotlib.patches import ConnectionPatch
 import networkx as nx
-from pynucastro.screening.screen import NseState
+import numpy as np
+from ipywidgets import interact
+from matplotlib.colors import SymLogNorm
+from matplotlib.patches import ConnectionPatch
+from matplotlib.scale import SymmetricalLogTransform
+from matplotlib.ticker import MaxNLocator
+from mpl_toolkits.axes_grid1 import make_axes_locatable
 from scipy import constants
 from scipy.optimize import fsolve
-import copy
 
 # Import Rate
-from pynucastro.nucdata import Nucleus
-from pynucastro.rates import Rate, TabularRate, RatePair, DerivedRate, ApproximateRate, Library, load_rate
+from pynucastro.nucdata import Nucleus, PeriodicTable
+from pynucastro.rates import (ApproximateRate, DerivedRate, Library, Rate,
+                              RatePair, TabularRate, load_rate)
 from pynucastro.screening import make_plasma_state, make_screen_factors
-
-from pynucastro.nucdata import PeriodicTable
+from pynucastro.screening.screen import NseState
 
 mpl.rcParams['figure.dpi'] = 100
 
@@ -744,6 +741,73 @@ class RateCollection:
 
         return rvals
 
+    def validate(self, other_library, forward_only=True, ostream=None):
+        """perform various checks on the library, comparing to other_library,
+        to ensure that we are not missing important rates.  The idea
+        is that self should be a reduced library where we filtered out
+        a few rates and then we want to compare to the larger
+        other_library to see if we missed something important.
+
+        ostream is the I/O stream to send output to (for instance, a
+        file object or StringIO object).  If it is None, then output
+        is to stdout.
+
+        """
+
+        current_rates = sorted(self.get_rates())
+
+        # check the forward rates to see if any of the products are
+        # not consumed by other forward rates
+
+        passed_validation = True
+
+        for rate in current_rates:
+            if rate.reverse:
+                continue
+            for p in rate.products:
+                found = False
+                for orate in current_rates:
+                    if orate == rate:
+                        continue
+                    if orate.reverse:
+                        continue
+                    if p in orate.reactants:
+                        found = True
+                        break
+                if not found:
+                    passed_validation = False
+                    msg = f"validation: {p} produced in {rate} never consumed."
+                    if ostream is None:
+                        print(msg)
+                    else:
+                        ostream.write(msg + "\n")
+
+        # now check if we are missing any rates from other_library with the exact same reactants
+
+        other_by_reactants = collections.defaultdict(list)
+        for rate in sorted(other_library.get_rates()):
+            other_by_reactants[tuple(sorted(rate.reactants))].append(rate)
+
+        for rate in current_rates:
+            if forward_only and rate.reverse:
+                continue
+
+            key = tuple(sorted(rate.reactants))
+            for other_rate in other_by_reactants[key]:
+                # check to see if other_rate is already in current_rates
+                found = True
+                if other_rate not in current_rates:
+                    found = False
+
+                if not found:
+                    msg = f"validation: missing {other_rate} as alternative to {rate} (Q = {other_rate.Q} MeV)."
+                    if ostream is None:
+                        print(msg)
+                    else:
+                        ostream.write(msg + "\n")
+
+        return passed_validation
+
     def find_unimportant_rates(self, states, cutoff_ratio, screen_func=None):
         """evaluate the rates at multiple thermodynamic states, and find the
         rates that are always less than `cutoff_ratio` times the fastest rate
@@ -1253,7 +1317,7 @@ class RateCollection:
 
     def plot(self, outfile=None, rho=None, T=None, comp=None,
              size=(800, 600), dpi=100, title=None,
-             ydot_cutoff_value=None,
+             ydot_cutoff_value=None, show_small_ydot=False,
              node_size=1000, node_font_size=13, node_color="#A0CBE2", node_shape="o",
              curved_edges=False,
              N_range=None, Z_range=None, rotated=False,
@@ -1277,7 +1341,7 @@ class RateCollection:
 
         comp: composition to evaluate rates with
 
-        size: tuple giving width x height of the plot in inches
+        size: tuple giving width x height of the plot in pixels
 
         dpi: pixels per inch used by matplotlib in rendering bitmap
 
@@ -1285,6 +1349,9 @@ class RateCollection:
 
         ydot_cutoff_value: rate threshold below which we do not show a
         line corresponding to a rate
+
+        show_small_ydot: if true, then show visibile lines for rates below
+        ydot_cutoff_value
 
         node_size: size of a node
 
@@ -1422,8 +1489,7 @@ class RateCollection:
                     if ydots is None:
                         G.add_edges_from([(n, p)], weight=0.5, real=1)
                         continue
-                    if r in invisible_rates:
-                        continue
+
                     try:
                         rate_weight = math.log10(ydots[r])
                     except ValueError:
@@ -1431,6 +1497,13 @@ class RateCollection:
                         # to roughly the minimum exponent possible
                         # for python floats
                         rate_weight = -308
+
+                    if r in invisible_rates:
+                        if show_small_ydot:
+                            # use real -1 for displaying rates that are below ydot_cutoff
+                            G.add_edges_from([(n, p)], weight=rate_weight, real=-1)
+
+                        continue
 
                     G.add_edges_from([(n, p)], weight=rate_weight, real=1)
 
@@ -1505,6 +1578,14 @@ class RateCollection:
                                    edgelist=approx_edges, edge_color="0.5",
                                    connectionstyle=connectionstyle,
                                    style="dotted", node_size=node_size, ax=ax)
+
+        # plot invisible rates, rates that are below ydot_cutoff_value
+        invis_edges = [(u, v) for u, v, e in G.edges(data=True) if e["real"] == -1]
+
+        _ = nx.draw_networkx_edges(G, G.position, width=1,
+                                   edgelist=invis_edges, edge_color="gray",
+                                   connectionstyle=connectionstyle,
+                                   style="dashed", node_size=node_size, ax=ax)
 
         if ydots is not None:
             pc = mpl.collections.PatchCollection(real_edges_lc, cmap=plt.cm.viridis)
@@ -1671,7 +1752,6 @@ class RateCollection:
     @staticmethod
     def _symlog(arr, linthresh=1.0, linscale=1.0):
 
-        # Assume log base 10
         symlog_transform = SymmetricalLogTransform(10, linthresh, linscale)
         arr = symlog_transform.transform_non_affine(arr)
 
@@ -1749,6 +1829,7 @@ class RateCollection:
         dpi = kwargs.pop("dpi", 100)
         linthresh = kwargs.pop("linthresh", 1.0)
         linscale = kwargs.pop("linscale", 1.0)
+        cbar_ticks = kwargs.pop("cbar_ticks", None)
 
         if kwargs:
             warnings.warn(f"Unrecognized keyword arguments: {kwargs.keys()}")
@@ -1806,6 +1887,7 @@ class RateCollection:
 
         if cbar_bounds is None:
             cbar_bounds = values.min(), values.max()
+
         weights = self._scale(values, *cbar_bounds)
 
         # Plot a square for each nucleus
@@ -1858,7 +1940,12 @@ class RateCollection:
 
             divider = make_axes_locatable(ax)
             cax = divider.append_axes('right', size='3.5%', pad=0.1)
-            cbar_norm = mpl.colors.Normalize(*cbar_bounds)
+
+            if scale == "symlog":
+                cbar_norm = mpl.colors.SymLogNorm(linthresh, linscale, *cbar_bounds)
+            else:
+                cbar_norm = mpl.colors.Normalize(*cbar_bounds)
+
             smap = mpl.cm.ScalarMappable(norm=cbar_norm, cmap=cmap)
 
             if not cbar_label:
@@ -1871,8 +1958,24 @@ class RateCollection:
                 else:
                     cbar_label = capfield
 
-            fig.colorbar(smap, cax=cax, orientation="vertical",
-                    label=cbar_label, format=cbar_format)
+            # set number of ticks
+            if cbar_ticks is not None:
+                tick_locator = mpl.ticker.MaxNLocator(nbins=cbar_ticks)
+                tick_labels = tick_locator.tick_values(values.min(), values.max())
+
+                # for some reason tick_locator doesn't give the label of the first tick
+                # add them manually
+                if scale == "symlog":
+                    tick_labels = np.append(tick_labels, [linthresh, -linthresh])
+
+                if cbar_format is None:
+                    cbar_format = mpl.ticker.FormatStrFormatter("%.3g")
+
+            else:
+                tick_labels = None
+
+            fig.colorbar(smap, cax=cax, orientation="vertical", ticks=tick_labels,
+                         label=cbar_label, format=cbar_format)
 
         # Show or save
         if outfile is None:
