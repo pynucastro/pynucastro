@@ -1,3 +1,11 @@
+# 2.0.1
+
+  -- Fix some setup.py metadata for PyPI (#453)
+
+  -- Change how tabular rate tables are stored and read (#450)
+
+  -- Support historial ReacLib format (#449)
+
 # 2.0.0
 
   -- Added a method to get a rate by short name: A(x,y)B (#438)
