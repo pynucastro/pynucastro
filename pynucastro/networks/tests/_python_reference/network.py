@@ -11,9 +11,10 @@ jhe4 = 2
 jc12 = 3
 jo16 = 4
 jne20 = 5
-jna23 = 6
-jmg23 = 7
-nnuc = 8
+jne23 = 6
+jna23 = 7
+jmg23 = 8
+nnuc = 9
 
 A = np.zeros((nnuc), dtype=np.int32)
 
@@ -23,6 +24,7 @@ A[jhe4] = 4
 A[jc12] = 12
 A[jo16] = 16
 A[jne20] = 20
+A[jne23] = 23
 A[jna23] = 23
 A[jmg23] = 23
 
@@ -34,6 +36,7 @@ Z[jhe4] = 2
 Z[jc12] = 6
 Z[jo16] = 8
 Z[jne20] = 10
+Z[jne23] = 10
 Z[jna23] = 11
 Z[jmg23] = 12
 
@@ -44,6 +47,7 @@ names.append("he4")
 names.append("c12")
 names.append("o16")
 names.append("ne20")
+names.append("ne23")
 names.append("na23")
 names.append("mg23")
 
@@ -53,7 +57,8 @@ names.append("mg23")
     ("c12_c12__p_na23", numba.float64),
     ("he4_c12__o16", numba.float64),
     ("n__p__weak__wc12", numba.float64),
-    ("he4_he4_he4__c12", numba.float64),
+    ("na23__ne23", numba.float64),
+    ("ne23__na23", numba.float64),
 ])
 class RateEval:
     def __init__(self):
@@ -62,7 +67,34 @@ class RateEval:
         self.c12_c12__p_na23 = np.nan
         self.he4_c12__o16 = np.nan
         self.n__p__weak__wc12 = np.nan
-        self.he4_he4_he4__c12 = np.nan
+        self.na23__ne23 = np.nan
+        self.ne23__na23 = np.nan
+
+# load data for na23 --> ne23
+na23__ne23_table_path = '/home/bb/Repo/pynucastro/pynucastro/library/tabular/23Na-23Ne_electroncapture.dat'
+t_data2d = []
+with open(na23__ne23_table_path) as tabular_file:
+    for i, line in enumerate(tabular_file):
+        if i < 6:
+            continue
+        line = line.strip()
+        if not line:
+            continue
+        t_data2d.append(line.split())
+na23__ne23_data = np.array(t_data2d, dtype=float)
+
+# load data for ne23 --> na23
+ne23__na23_table_path = '/home/bb/Repo/pynucastro/pynucastro/library/tabular/23Ne-23Na_betadecay.dat'
+t_data2d = []
+with open(ne23__na23_table_path) as tabular_file:
+    for i, line in enumerate(tabular_file):
+        if i < 5:
+            continue
+        line = line.strip()
+        if not line:
+            continue
+        t_data2d.append(line.split())
+ne23__na23_data = np.array(t_data2d, dtype=float)
 
 @numba.njit()
 def ye(Y):
@@ -126,21 +158,20 @@ def n__p__weak__wc12(rate_eval, tf):
     rate_eval.n__p__weak__wc12 = rate
 
 @numba.njit()
-def he4_he4_he4__c12(rate_eval, tf):
-    # he4 + he4 + he4 --> c12
-    rate = 0.0
+def na23__ne23(rate_eval, T, rhoY):
+    # na23 --> ne23
+    T_nearest = (na23__ne23_data[:, 1])[np.abs((na23__ne23_data[:, 1]) - T).argmin()]
+    rhoY_nearest = (na23__ne23_data[:, 0])[np.abs((na23__ne23_data[:, 0]) - rhoY).argmin()]
+    inde = np.where((na23__ne23_data[:, 1] == T_nearest) & (na23__ne23_data[:, 0] == rhoY_nearest))[0][0]
+    rate_eval.na23__ne23 = na23__ne23_data[inde][5]
 
-    # fy05n
-    rate += np.exp(  -0.971052 + -37.06*tf.T913i + 29.3493*tf.T913
-                  + -115.507*tf.T9 + -10.0*tf.T953 + -1.33333*tf.lnT9)
-    # fy05r
-    rate += np.exp(  -24.3505 + -4.12656*tf.T9i + -13.49*tf.T913i + 21.4259*tf.T913
-                  + -1.34769*tf.T9 + 0.0879816*tf.T953 + -13.1653*tf.lnT9)
-    # fy05r
-    rate += np.exp(  -11.7884 + -1.02446*tf.T9i + -23.57*tf.T913i + 20.4886*tf.T913
-                  + -12.9882*tf.T9 + -20.0*tf.T953 + -2.16667*tf.lnT9)
-
-    rate_eval.he4_he4_he4__c12 = rate
+@numba.njit()
+def ne23__na23(rate_eval, T, rhoY):
+    # ne23 --> na23
+    T_nearest = (ne23__na23_data[:, 1])[np.abs((ne23__na23_data[:, 1]) - T).argmin()]
+    rhoY_nearest = (ne23__na23_data[:, 0])[np.abs((ne23__na23_data[:, 0]) - rhoY).argmin()]
+    inde = np.where((ne23__na23_data[:, 1] == T_nearest) & (ne23__na23_data[:, 0] == rhoY_nearest))[0][0]
+    rate_eval.ne23__na23 = ne23__na23_data[inde][5]
 
 def rhs(t, Y, rho, T, screen_func=None):
     return rhs_eq(t, Y, rho, T, screen_func)
@@ -157,7 +188,10 @@ def rhs_eq(t, Y, rho, T, screen_func):
     c12_c12__p_na23(rate_eval, tf)
     he4_c12__o16(rate_eval, tf)
     n__p__weak__wc12(rate_eval, tf)
-    he4_he4_he4__c12(rate_eval, tf)
+
+    # tabular rates
+    na23__ne23(rate_eval, T, rho*ye(Y))
+    ne23__na23(rate_eval, T, rho*ye(Y))
 
     if screen_func is not None:
         plasma_state = PlasmaState(T, rho, Y, Z)
@@ -171,12 +205,6 @@ def rhs_eq(t, Y, rho, T, screen_func):
         scn_fac = ScreenFactors(2, 4, 6, 12)
         scor = screen_func(plasma_state, scn_fac)
         rate_eval.he4_c12__o16 *= scor
-
-        scn_fac = ScreenFactors(2, 4, 2, 4)
-        scor = screen_func(plasma_state, scn_fac)
-        scn_fac2 = ScreenFactors(2, 4, 4, 8)
-        scor2 = screen_func(plasma_state, scn_fac2)
-        rate_eval.he4_he4_he4__c12 *= scor * scor2
 
     dYdt = np.zeros((nnuc), dtype=np.float64)
 
@@ -192,7 +220,6 @@ def rhs_eq(t, Y, rho, T, screen_func):
 
     dYdt[jhe4] = (
        -rho*Y[jhe4]*Y[jc12]*rate_eval.he4_c12__o16
-       -3*1.66666666666667e-01*rho**2*Y[jhe4]**3*rate_eval.he4_he4_he4__c12
        +5.00000000000000e-01*rho*Y[jc12]**2*rate_eval.c12_c12__he4_ne20
        )
 
@@ -201,7 +228,6 @@ def rhs_eq(t, Y, rho, T, screen_func):
        -2*5.00000000000000e-01*rho*Y[jc12]**2*rate_eval.c12_c12__n_mg23
        -2*5.00000000000000e-01*rho*Y[jc12]**2*rate_eval.c12_c12__p_na23
        -rho*Y[jhe4]*Y[jc12]*rate_eval.he4_c12__o16
-       +1.66666666666667e-01*rho**2*Y[jhe4]**3*rate_eval.he4_he4_he4__c12
        )
 
     dYdt[jo16] = (
@@ -212,8 +238,15 @@ def rhs_eq(t, Y, rho, T, screen_func):
        +5.00000000000000e-01*rho*Y[jc12]**2*rate_eval.c12_c12__he4_ne20
        )
 
+    dYdt[jne23] = (
+       -Y[jne23]*rate_eval.ne23__na23
+       +Y[jna23]*rate_eval.na23__ne23
+       )
+
     dYdt[jna23] = (
+       -Y[jna23]*rate_eval.na23__ne23
        +5.00000000000000e-01*rho*Y[jc12]**2*rate_eval.c12_c12__p_na23
+       +Y[jne23]*rate_eval.ne23__na23
        )
 
     dYdt[jmg23] = (
@@ -237,7 +270,10 @@ def jacobian_eq(t, Y, rho, T, screen_func):
     c12_c12__p_na23(rate_eval, tf)
     he4_c12__o16(rate_eval, tf)
     n__p__weak__wc12(rate_eval, tf)
-    he4_he4_he4__c12(rate_eval, tf)
+
+    # tabular rates
+    na23__ne23(rate_eval, T, rho*ye(Y))
+    ne23__na23(rate_eval, T, rho*ye(Y))
 
     if screen_func is not None:
         plasma_state = PlasmaState(T, rho, Y, Z)
@@ -251,12 +287,6 @@ def jacobian_eq(t, Y, rho, T, screen_func):
         scn_fac = ScreenFactors(2, 4, 6, 12)
         scor = screen_func(plasma_state, scn_fac)
         rate_eval.he4_c12__o16 *= scor
-
-        scn_fac = ScreenFactors(2, 4, 2, 4)
-        scor = screen_func(plasma_state, scn_fac)
-        scn_fac2 = ScreenFactors(2, 4, 4, 8)
-        scor2 = screen_func(plasma_state, scn_fac2)
-        rate_eval.he4_he4_he4__c12 *= scor * scor2
 
     jac = np.zeros((nnuc, nnuc), dtype=np.float64)
 
@@ -278,7 +308,6 @@ def jacobian_eq(t, Y, rho, T, screen_func):
 
     jac[jhe4, jhe4] = (
        -rho*Y[jc12]*rate_eval.he4_c12__o16
-       -3*1.66666666666667e-01*rho**2*3*Y[jhe4]**2*rate_eval.he4_he4_he4__c12
        )
 
     jac[jhe4, jc12] = (
@@ -288,7 +317,6 @@ def jacobian_eq(t, Y, rho, T, screen_func):
 
     jac[jc12, jhe4] = (
        -rho*Y[jc12]*rate_eval.he4_c12__o16
-       +1.66666666666667e-01*rho**2*3*Y[jhe4]**2*rate_eval.he4_he4_he4__c12
        )
 
     jac[jc12, jc12] = (
@@ -310,8 +338,24 @@ def jacobian_eq(t, Y, rho, T, screen_func):
        +5.00000000000000e-01*rho*2*Y[jc12]*rate_eval.c12_c12__he4_ne20
        )
 
+    jac[jne23, jne23] = (
+       -rate_eval.ne23__na23
+       )
+
+    jac[jne23, jna23] = (
+       +rate_eval.na23__ne23
+       )
+
     jac[jna23, jc12] = (
        +5.00000000000000e-01*rho*2*Y[jc12]*rate_eval.c12_c12__p_na23
+       )
+
+    jac[jna23, jne23] = (
+       +rate_eval.ne23__na23
+       )
+
+    jac[jna23, jna23] = (
+       -rate_eval.na23__ne23
        )
 
     jac[jmg23, jc12] = (
