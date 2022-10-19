@@ -71,7 +71,7 @@ In [6]: fig.savefig("c13pg.png")
 ```
 
 The resulting figure is:
-![c13(p,g)n14](examples/c13pg.png)
+![](https://raw.githubusercontent.com/pynucastro/pynucastro/main/examples/c13pg.png)
 
 An extensive demonstration of the capabilities of pynucastro is shown in this notebook:
 
@@ -92,7 +92,12 @@ faster than its decay.
 
 # install
 
-To install the package, you can run:
+pynucastro is available on PyPI and can be installed via:
+```
+pip install pynucastro
+```
+
+Alternately, to install via source, you can do:
 ```
 python setup.py install
 ```

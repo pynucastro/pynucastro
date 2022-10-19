@@ -1,8 +1,10 @@
 from setuptools import setup, find_packages
 
 setup(name='pynucastro',
-      description='Python Interfaces to nuclear reaction rate databases',
-      url='https://github.com/pynucastro/nucastro',
+      description='A python library for nuclear astrophysics',
+      long_description=open('README.md', 'r').read(),
+      long_description_content_type='text/markdown',
+      url='https://github.com/pynucastro/pynucastro',
       author='pynucastro development group',
       author_email='michael.zingale@stonybrook.edu',
       license='BSD',
