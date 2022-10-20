@@ -1,5 +1,29 @@
-If you use pynucastro, please CITE the JOSS paper _and_ the latest
-Zenodo DOI
+If you use pynucastro, please CITE the "2.0" paper _and_ the latest
+Zenodo DOI.  You can also cite the JOSS paper.
+
+
+2.0 paper:
+
+```
+@ARTICLE{pynucastro2,
+       author = {{Smith Clark}, Alexander and {Johnson}, Eric T. and {Chen}, Zhi and
+                 {Eiden}, Kiran and {Willcox}, Donald E. and {Boyd}, Brendan and
+                 {Cao}, Lyra and {DeGrendele}, Christopher J. and {Zingale}, Michael},
+        title = "{pynucastro: A Python Library for Nuclear Astrophysics}",
+      journal = {arXiv e-prints},
+     keywords = {Astrophysics - Instrumentation and Methods for Astrophysics, Nuclear Experiment},
+         year = 2022,
+        month = oct,
+          eid = {arXiv:2210.09965},
+        pages = {arXiv:2210.09965},
+archivePrefix = {arXiv},
+       eprint = {2210.09965},
+ primaryClass = {astro-ph.IM},
+       adsurl = {https://ui.adsabs.harvard.edu/abs/2022arXiv221009965S},
+      adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+}
+```
+
 
 JOSS:
 
