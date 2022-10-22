@@ -4,11 +4,12 @@
 #include <AMReX_REAL.H>
 #include <AMReX_Array.H>
 
+#include <tfactors.H>
 #include <fundamental_constants.H>
 #include <network_properties.H>
 
 using namespace amrex;
-
+using namespace Species;
 
 namespace part_fun {
 
