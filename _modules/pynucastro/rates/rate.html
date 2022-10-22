@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.rates.rate &mdash; pynucastro 2.0.2 documentation</title>
+  <title>pynucastro.rates.rate &mdash; pynucastro 2.0.2.post1+gb61fcd95 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
@@ -1105,7 +1105,7 @@
         <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    rate_eval.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2"> = rate</span><span class="se">\n\n</span><span class="s2">&quot;</span>
         <span class="k">return</span> <span class="n">fstring</span></div>
 
-<div class="viewcode-block" id="ReacLibRate.function_string_cxx"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.ReacLibRate.function_string_cxx">[docs]</a>    <span class="k">def</span> <span class="nf">function_string_cxx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;double&quot;</span><span class="p">,</span> <span class="n">specifiers</span><span class="o">=</span><span class="s2">&quot;inline&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="ReacLibRate.function_string_cxx"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.ReacLibRate.function_string_cxx">[docs]</a>    <span class="k">def</span> <span class="nf">function_string_cxx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;double&quot;</span><span class="p">,</span> <span class="n">specifiers</span><span class="o">=</span><span class="s2">&quot;inline&quot;</span><span class="p">,</span> <span class="n">leave_open</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return a string containing C++ function that computes the</span>
 <span class="sd">        rate</span>
@@ -1146,7 +1146,9 @@
             <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;        drate_dT += set_rate * dln_set_rate_dT9 / 1.0e9;</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    }</span><span class="se">\n\n</span><span class="s2">&quot;</span>
 
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;}</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">leave_open</span><span class="p">:</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;}</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+
         <span class="k">return</span> <span class="n">fstring</span></div>
 
 <div class="viewcode-block" id="ReacLibRate.ydot_string_py"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.ReacLibRate.ydot_string_py">[docs]</a>    <span class="k">def</span> <span class="nf">ydot_string_py</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1792,6 +1794,71 @@
             <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    rate_eval.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2"> *= z_r/z_p</span><span class="se">\n</span><span class="s2">&quot;</span>
 
+        <span class="k">return</span> <span class="n">fstring</span></div>
+
+<div class="viewcode-block" id="DerivedRate.function_string_cxx"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.DerivedRate.function_string_cxx">[docs]</a>    <span class="k">def</span> <span class="nf">function_string_cxx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;double&quot;</span><span class="p">,</span> <span class="n">specifiers</span><span class="o">=</span><span class="s2">&quot;inline&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return a string containing C++ function that computes the</span>
+<span class="sd">        rate</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">reactants</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">products</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">nuc</span><span class="o">.</span><span class="n">partition_function</span> <span class="ow">and</span> <span class="nb">str</span><span class="p">(</span><span class="n">nuc</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;h1&#39;</span><span class="p">,</span> <span class="s1">&#39;n&#39;</span><span class="p">,</span> <span class="s1">&#39;he4&#39;</span><span class="p">,</span> <span class="s1">&#39;p&#39;</span><span class="p">]:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;WARNING: </span><span class="si">{</span><span class="n">nuc</span><span class="si">}</span><span class="s1"> partition function is not supported by tables: set pf = 1.0 by default&#39;</span><span class="p">)</span>
+
+        <span class="n">fstring</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">function_string_cxx</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span> <span class="n">specifiers</span><span class="o">=</span><span class="n">specifiers</span><span class="p">,</span> <span class="n">leave_open</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># right now we have rate and drate_dT without the partition function</span>
+        <span class="c1"># now the partition function corrections</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_pf</span><span class="p">:</span>
+
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">reactants</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">products</span><span class="p">:</span>
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    Real </span><span class="si">{</span><span class="n">nuc</span><span class="si">}</span><span class="s2">_pf, d</span><span class="si">{</span><span class="n">nuc</span><span class="si">}</span><span class="s2">_pf_dT;</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+                <span class="k">if</span> <span class="n">nuc</span><span class="o">.</span><span class="n">partition_function</span><span class="p">:</span>
+                    <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    // interpolating </span><span class="si">{</span><span class="n">nuc</span><span class="si">}</span><span class="s2"> partition function</span><span class="se">\n</span><span class="s2">&quot;</span>
+                    <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    get_partition_function(</span><span class="si">{</span><span class="n">nuc</span><span class="o">.</span><span class="n">cindex</span><span class="p">()</span><span class="si">}</span><span class="s2">, tfactors, </span><span class="si">{</span><span class="n">nuc</span><span class="si">}</span><span class="s2">_pf, d</span><span class="si">{</span><span class="n">nuc</span><span class="si">}</span><span class="s2">_pf_dT);</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    // setting </span><span class="si">{</span><span class="n">nuc</span><span class="si">}</span><span class="s2"> partition function to 1.0 by default, independent of T</span><span class="se">\n</span><span class="s2">&quot;</span>
+                    <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">nuc</span><span class="si">}</span><span class="s2">_pf = 1.0_rt;</span><span class="se">\n</span><span class="s2">&quot;</span>
+                    <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    d</span><span class="si">{</span><span class="n">nuc</span><span class="si">}</span><span class="s2">_pf_dT = 0.0_rt;</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    Real z_r = &quot;</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot; * &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">nucr</span><span class="si">}</span><span class="s2">_pf&quot;</span> <span class="k">for</span> <span class="n">nucr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">reactants</span><span class="p">])</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;;</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    Real z_p = &quot;</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot; * &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">nucp</span><span class="si">}</span><span class="s2">_pf&quot;</span> <span class="k">for</span> <span class="n">nucp</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">products</span><span class="p">])</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;;</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+
+            <span class="c1"># now the derivatives, via chain rule</span>
+            <span class="n">chain_terms</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">reactants</span><span class="p">:</span>
+                <span class="n">chain_terms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot; * &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">nucr</span><span class="si">}</span><span class="s2">_pf&quot;</span> <span class="k">for</span> <span class="n">nucr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">reactants</span> <span class="k">if</span> <span class="n">nucr</span> <span class="o">!=</span> <span class="n">n</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;d</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">_pf_dT&quot;</span><span class="p">]))</span>
+
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    Real dz_r_dT = &quot;</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot; + &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">chain_terms</span><span class="p">)</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;;</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+            <span class="n">chain_terms</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">products</span><span class="p">:</span>
+                <span class="n">chain_terms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot; * &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">nucp</span><span class="si">}</span><span class="s2">_pf&quot;</span> <span class="k">for</span> <span class="n">nucp</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">products</span> <span class="k">if</span> <span class="n">nucp</span> <span class="o">!=</span> <span class="n">n</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;d</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">_pf_dT&quot;</span><span class="p">]))</span>
+
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    Real dz_p_dT = &quot;</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot; + &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">chain_terms</span><span class="p">)</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;;</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    Real dzterm_dT = (z_p * dz_r_dT - z_r * dz_p_dT) / (z_p * z_p);</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+
+            <span class="c1"># final terms</span>
+
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    drate_dT = dzterm_dT * rate + drate_dT * (z_r / z_p);</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    rate *= z_r/z_p;</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;}</span><span class="se">\n\n</span><span class="s2">&quot;</span>
         <span class="k">return</span> <span class="n">fstring</span></div>
 
 <div class="viewcode-block" id="DerivedRate.counter_factors"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.DerivedRate.counter_factors">[docs]</a>    <span class="k">def</span> <span class="nf">counter_factors</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
