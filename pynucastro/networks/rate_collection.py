@@ -898,7 +898,7 @@ class RateCollection:
         # u_c is the coulomb correction term for NSE
         # Calculate the composition at NSE, equations found in appendix of Calder paper
         u_c = {}
-        for nuc in self.unique_nuclei:
+        for nuc in set(list(self.unique_nuclei) + [Nucleus("p")]):
             if use_coulomb_corr:
                 Gamma = state.gamma_e_fac * n_e ** (1.0/3.0) * nuc.Z ** (5.0 / 3.0) / state.temp
                 u_c[nuc] = Erg2MeV * k * state.temp * (A_1 * (np.sqrt(Gamma * (A_2 + Gamma)) - A_2 * np.log(np.sqrt(Gamma / A_2) +
@@ -978,7 +978,7 @@ class RateCollection:
         state = NseState(T, rho, ye)
 
         u_c = {}
-        for nuc in self.unique_nuclei:
+        for nuc in set(list(self.unique_nuclei) + [Nucleus("p")]):
             u_c[nuc] = 0.0
 
         Xs = {}
