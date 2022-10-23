@@ -998,7 +998,7 @@ class ReacLibRate(Rate):
         fstring += f"    rate_eval.{self.fname} = rate\n\n"
         return fstring
 
-    def function_string_cxx(self, dtype="double", specifiers="inline"):
+    def function_string_cxx(self, dtype="double", specifiers="inline", leave_open=False):
         """
         Return a string containing C++ function that computes the
         rate
@@ -1039,7 +1039,9 @@ class ReacLibRate(Rate):
             fstring += "        drate_dT += set_rate * dln_set_rate_dT9 / 1.0e9;\n"
             fstring += "    }\n\n"
 
-        fstring += "}\n\n"
+        if not leave_open:
+            fstring += "}\n\n"
+
         return fstring
 
     def ydot_string_py(self):
@@ -1685,6 +1687,71 @@ class DerivedRate(ReacLibRate):
             fstring += "\n"
             fstring += f"    rate_eval.{self.fname} *= z_r/z_p\n"
 
+        return fstring
+
+    def function_string_cxx(self, dtype="double", specifiers="inline"):
+        """
+        Return a string containing C++ function that computes the
+        rate
+        """
+
+        for nuc in set(self.rate.reactants + self.rate.products):
+            if not nuc.partition_function and str(nuc) not in ['h1', 'n', 'he4', 'p']:
+                print(f'WARNING: {nuc} partition function is not supported by tables: set pf = 1.0 by default')
+
+        fstring = super().function_string_cxx(dtype=dtype, specifiers=specifiers, leave_open=True)
+
+        # right now we have rate and drate_dT without the partition function
+        # now the partition function corrections
+
+        if self.use_pf:
+
+            fstring += "\n"
+            for nuc in self.rate.reactants + self.rate.products:
+                fstring += f"    Real {nuc}_pf, d{nuc}_pf_dT;\n"
+
+                if nuc.partition_function:
+                    fstring += f"    // interpolating {nuc} partition function\n"
+                    fstring += f"    get_partition_function({nuc.cindex()}, tfactors, {nuc}_pf, d{nuc}_pf_dT);\n"
+                else:
+                    fstring += f"    // setting {nuc} partition function to 1.0 by default, independent of T\n"
+                    fstring += f"    {nuc}_pf = 1.0_rt;\n"
+                    fstring += f"    d{nuc}_pf_dT = 0.0_rt;\n"
+                fstring += "\n"
+
+            fstring += "    Real z_r = "
+            fstring += " * ".join([f"{nucr}_pf" for nucr in self.rate.reactants])
+            fstring += ";\n"
+
+            fstring += "    Real z_p = "
+            fstring += " * ".join([f"{nucp}_pf" for nucp in self.rate.products])
+            fstring += ";\n\n"
+
+            # now the derivatives, via chain rule
+            chain_terms = []
+            for n in self.rate.reactants:
+                chain_terms.append(" * ".join([f"{nucr}_pf" for nucr in self.rate.reactants if nucr != n] + [f"d{n}_pf_dT"]))
+
+            fstring += "    Real dz_r_dT = "
+            fstring += " + ".join(chain_terms)
+            fstring += ";\n"
+
+            chain_terms = []
+            for n in self.rate.products:
+                chain_terms.append(" * ".join([f"{nucp}_pf" for nucp in self.rate.products if nucp != n] + [f"d{n}_pf_dT"]))
+
+            fstring += "    Real dz_p_dT = "
+            fstring += " + ".join(chain_terms)
+            fstring += ";\n\n"
+
+            fstring += "    Real dzterm_dT = (z_p * dz_r_dT - z_r * dz_p_dT) / (z_p * z_p);\n\n"
+
+            # final terms
+
+            fstring += "    drate_dT = dzterm_dT * rate + drate_dT * (z_r / z_p);\n"
+            fstring += "    rate *= z_r/z_p;\n\n"
+
+        fstring += "}\n\n"
         return fstring
 
     def counter_factors(self):
