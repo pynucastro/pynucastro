@@ -1164,18 +1164,18 @@ class ReacLibRate(Rate):
         ymolar = comp.get_molar()
 
         # composition dependence
-        Y_term = 0.0
+        Y_term = 1.0
         for n, r in enumerate(sorted(set(self.reactants))):
             c = self.reactants.count(r)
             if y_i == r:
                 # take the derivative
                 if c == 1:
                     continue
-                Y_term *= c * ymolar[y_i]**(c-1)
+                Y_term *= c * ymolar[r]**(c-1)
             else:
                 # this nucleus is in the rate form, but we are not
                 # differentiating with respect to it
-                Y_term *= ymolar[y_i]**c
+                Y_term *= ymolar[r]**c
 
         # density dependence
         dens_term = rho**self.dens_exp

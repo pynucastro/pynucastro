@@ -1,0 +1,63 @@
+# unit tests for rates
+import math
+
+import pytest
+from pytest import approx
+
+from pynucastro import rates
+from pynucastro.nucdata import Nucleus
+from pynucastro.networks import Composition
+
+class TestJacTerm:
+
+    @pytest.fixture(scope="class")
+    def comp(self):
+        nuc_list = [Nucleus("he4"), Nucleus("c12"), Nucleus("o16"),
+                    Nucleus("ne20"), Nucleus("mg24")]
+        comp = Composition(nuc_list)
+        comp.set_solar_like()
+        return comp
+
+    def test_jac_3alpha(self, comp, reaclib_library):
+
+        r = reaclib_library.get_rate_by_name("he4(aa,g)c12")
+
+        rho = 1.e6
+        T = 3.e8
+        ymolar = comp.get_molar()
+
+        # the full rate is Y(alpha)**3 rho**2 N_A <sigma v> / 6
+        # where the 6 is the 3! that comes from like nuclei
+
+        # consider drate/d(he4)
+
+        # the derivative with respect to alpha is:
+        # 3*Y(alpha)**2 rho**2 N_A <sigma v> / 6
+
+        dr_dalpha = 3 * ymolar[Nucleus("he4")]**2 * rho**2 * r.eval(T) / 6
+        assert r.eval_jacobian_term(T, rho, comp, Nucleus("he4")) == approx(dr_dalpha)
+
+        # now consider the rate with respect to c12 -- the derivative
+        # should be zero
+
+        assert r.eval_jacobian_term(T, rho, comp, Nucleus("c12")) == 0.0
+
+    def test_c12ag(self, comp, reaclib_library):
+
+        r = reaclib_library.get_rate_by_name("c12(a,g)o16")
+
+        rho = 1.e6
+        T = 3.e8
+        ymolar = comp.get_molar()
+
+        # the full rate is Y(c12) Y(alpha) rho N_A <sigma v>
+
+        # consider drate/d(he4)
+
+        dr_dalpha = ymolar[Nucleus("c12")] * rho * r.eval(T)
+        assert r.eval_jacobian_term(T, rho, comp, Nucleus("he4")) == approx(dr_dalpha)
+
+        # now drate/d(c12)
+
+        dr_dc12 = ymolar[Nucleus("he4")] * rho * r.eval(T)
+        assert r.eval_jacobian_term(T, rho, comp, Nucleus("c12")) == approx(dr_dc12)
