@@ -6,7 +6,7 @@
 pynucastro
 ==========
 
-`http://github.com/pynucastro/pynucastro <http://github.com/pynucastro/pynucastro>`_
+`https://github.com/pynucastro/pynucastro <https://github.com/pynucastro/pynucastro>`_
 
 pynucastro is a set of python interfaces to nuclear reaction rate
 databases (including the JINA reaclib nuclear reaction rate database).
