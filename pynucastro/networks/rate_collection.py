@@ -26,6 +26,7 @@ from scipy.optimize import fsolve
 from pynucastro.nucdata import Nucleus, PeriodicTable
 from pynucastro.rates import (ApproximateRate, DerivedRate, Library, Rate,
                               RatePair, TabularRate, load_rate)
+from pynucastro.rates.library import _rate_name_to_nuc
 from pynucastro.screening import make_plasma_state, make_screen_factors
 from pynucastro.screening.screen import NseState
 
@@ -570,6 +571,12 @@ class RateCollection:
         if not _tmp:
             return None
         return _tmp
+
+    def get_rate_by_name(self, name):
+        """given a rate in the form 'A(x,y)B' return the Rate"""
+
+        reactants, products = _rate_name_to_nuc(name)
+        return self.get_rate_by_nuclei(reactants, products)
 
     def get_nuclei_needing_partition_functions(self):
         """return a list of the nuclei that require partition
