@@ -1,10 +1,7 @@
 # unit tests for rates
-import math
-
 import pytest
 from pytest import approx
 
-from pynucastro import rates
 from pynucastro.networks import Composition
 from pynucastro.nucdata import Nucleus
 
