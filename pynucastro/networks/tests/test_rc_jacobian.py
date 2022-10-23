@@ -1,5 +1,6 @@
 # unit tests for a rate collection
 import pytest
+from pytest import approx
 
 import pynucastro as pyna
 
@@ -32,13 +33,21 @@ class TestRateCollectionJacobian:
         # 3-alpha
         # r = rho**2 Y(alpha)**3 N_A<sigma v> / 6
         # 3 alphas are destroyed
-        jac_alpha_alpha += -3.0 * rho**2 * 3 * ymolar[Nucleus("he4")]**2 
+        r = rc.get_rate_by_name("he4(aa,g)c12")
+        jac_alpha_alpha += -3.0 * rho**2 * 3 * ymolar[pyna.Nucleus("he4")]**2 * r.eval(T)
 
         # C12(a,g)O16
         # r = rho * Y(alpha) * Y(c12) N_A<sigma v>
+        r = rc.get_rate_by_name("c12(a,g)o16")
+        jac_alpha_alpha += -rho * ymolar[pyna.Nucleus("c12")] * r.eval(T)
 
         # C12(C12,a)Ne20
         # r = rho * Y(c12)**2 N_A<sigma v> / 2
+        # but the rate does not depend on alpha
 
         # O16(a,g)Ne20
         # r = rho * Y(o16) * Y(alpha) N_A<sigma v>
+        r = rc.get_rate_by_name("o16(a,g)ne20")
+        jac_alpha_alpha += -rho * ymolar[pyna.Nucleus("o16")] * r.eval(T)
+
+        assert jac_alpha_alpha == approx(jac[0, 0])
