@@ -741,6 +741,40 @@ class RateCollection:
 
         return rvals
 
+    def evaluate_jacobian(self, rho, T, comp, screen_func=None):
+        """return an array of the form J_ij = dYdot_i/dY_j for the network"""
+
+        # the rate.eval_jacobian_term does not compute the screening,
+        # so we multiply by the factors afterwards
+        if screen_func is not None:
+            screen_factors = self.evaluate_screening(rho, T, comp, screen_func)
+        else:
+            screen_factors = {}
+
+        nnuc = len(self.unique_nuclei)
+        jac = np.zeros((nnuc, nnuc), dtype=np.float64)
+
+        for i, n_i in enumerate(self.unique_nuclei):
+            for j, n_j in enumerate(self.unique_nuclei):
+
+                # we are considering dYdot(n_i) / dY(n_j)
+
+                jac[i, j] = 0.0
+
+                for r in self.nuclei_consumed[n_i]:
+                    # how many of n_i are destroyed by this reaction
+                    c = r.reactants.count(n_i)
+                    jac[i, j] -= c * screen_factors.get(r, 1.0) *\
+                        r.eval_jacobian_term(T, rho, comp, n_j)
+
+                for r in self.nuclei_produced[n_i]:
+                    # how many of n_i are produced by this reaction
+                    c = r.products.count(n_i)
+                    jac[i, j] += c * screen_factors.get(r, 1.0) *\
+                        r.eval_jacobian_term(T, rho, comp, n_j)
+
+        return jac
+
     def validate(self, other_library, forward_only=True, ostream=None):
         """perform various checks on the library, comparing to other_library,
         to ensure that we are not missing important rates.  The idea

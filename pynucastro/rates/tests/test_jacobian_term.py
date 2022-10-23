@@ -61,3 +61,6 @@ class TestJacTerm:
 
         dr_dc12 = ymolar[Nucleus("he4")] * rho * r.eval(T)
         assert r.eval_jacobian_term(T, rho, comp, Nucleus("c12")) == approx(dr_dc12)
+
+        # now drate/d(o16) should be 0
+        assert r.eval_jacobian_term(T, rho, comp, Nucleus("o16")) == 0.0

@@ -43,6 +43,8 @@ class PythonNetwork(RateCollection):
 
         ostr = ""
         if not self.nuclei_consumed[ydot_i_nucleus] + self.nuclei_produced[ydot_i_nucleus]:
+            # this covers the case where a nucleus is not created or
+            # destroyed in the entire network, but is just passive
             ostr += f"{indent}{idx_str} = 0.0\n\n"
         else:
             ostr += f"{indent}{idx_str} = (\n"
