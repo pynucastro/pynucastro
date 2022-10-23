@@ -1086,12 +1086,13 @@ class ReacLibRate(Rate):
                                            y_e_string, Y_string, self.fname)
 
     def jacobian_string_py(self, y_i):
-        """
-        Return a string containing the term in a jacobian matrix
-        in a reaction network corresponding to this rate differentiated
-        with respect to y_i
+        """Return a string containing the term in a jacobian matrix
+        in a reaction network corresponding to this rate
+        differentiated with respect to y_i.  This does not include any
+        stoichiometric factors.
 
         y_i is an objecs of the class ``Nucleus``.
+
         """
         if y_i not in self.reactants:
             return ""
@@ -1146,6 +1147,49 @@ class ReacLibRate(Rate):
             rstring = "{}{}{}{}*rate_eval.{}"
         return rstring.format(prefactor_string, dens_string,
                               y_e_string, Y_string, self.fname)
+
+    def eval_jacobian_term(self, T, rho, comp, y_i):
+        """Evaluate drate/d(y_i), y_i is a Nucleus object.  This rate
+        term has the full composition and density dependence, i.e.:
+
+          rate = rho**n Y1**a Y2**b ... N_A <sigma v>
+
+        The derivative is only non-zero if this term depends on
+        nucleus y_i.
+
+        """
+        if y_i not in self.reactants:
+            return 0.0
+
+        ymolar = comp.get_molar()
+
+        # composition dependence
+        Y_term = 0.0
+        for n, r in enumerate(sorted(set(self.reactants))):
+            c = self.reactants.count(r)
+            if y_i == r:
+                # take the derivative
+                if c == 1:
+                    continue
+                Y_term *= c * ymolar[y_i]**(c-1)
+            else:
+                # this nucleus is in the rate form, but we are not
+                # differentiating with respect to it
+                Y_term *= ymolar[y_i]**c
+
+        # density dependence
+        dens_term = rho**self.dens_exp
+
+        # electron fraction dependence
+        if self.weak_type == 'electron_capture':
+            y_e_term = comp.eval_ye()
+        else:
+            y_e_term = 1.0
+
+        # finally evaluate the rate
+        rate_eval = self.eval(T)
+
+        return self.prefactor * dens_term * y_e_term * Y_term * rate_eval
 
     def eval(self, T, rhoY=None):
         """ evauate the reaction rate for temperature T """
