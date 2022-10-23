@@ -216,7 +216,6 @@ class TestRate:
 
         assert err < 1.e-6
 
-
     def test_comparison(self):
         assert self.rate1 > self.rate2
         assert self.rate1 > self.rate4
