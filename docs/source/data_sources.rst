@@ -30,6 +30,9 @@ where :math:`\lambda` is of the form:
                    \end{array} \right .
 
 
+Chapters
+^^^^^^^^
+
 The rates are divided into chapters, based on how many nuclei are on each side of the reaction:
 
 ========  ====================================================
@@ -48,11 +51,68 @@ chapter    reaction format
 11        :math:`e_1 \rightarrow e_2 + e_3 + e_4 + e_5`
 ========  ====================================================
 
+Labels
+^^^^^^
 
-Sources
+The ReacLib database lists the source / reference of each rate with a 6 character string.
 
-Electron capture
+* The first 4 characters are the label that gives the source of the rate, according to:
+  https://reaclib.jinaweb.org/labels.php
+
+  This is stored in both ``SingleSet`` and ``ReacLibRate`` as the
+  ``.label`` attribute.
+
+* The next character is ``n`` for a non-resonant set, ``r`` for a
+  resonance, or ``w`` to indicate that it is a weak rate.
+
+  Different sets can have either `n` or `r` (and there can be multiple
+  resonances).
+
+  * For a ``SingleSet``, ``SingleSet.resonant`` is ``True`` if it is a
+    resonance
+
+  * For the combined ``ReacLibRate`` object, we combine all of the
+    resonances and the non-resonance set, and change the flag to ``c``
+    for _combined_.
+
+  If the weak flag, ``w`` is set, then ``ReacLibRate.weak`` will be ``True``.
+
+* The 6th character indicates it the rate is a derived reverse rate,
+  by the presence of a `v`.  This is stored in both ``SingleSet`` and
+  ``ReacLibRate`` as the ``.reverse`` attribute.
+
+
+Weak rates
+^^^^^^^^^^
+
+Electron capture capture rates are those identified with a label of either ``ec`` or ``bec``.  These
+have ``ReacLibRate.weak_type`` set to ``electron_capture``.  For these rates, and only these rates,
+we include :math:`Y_e` in the overall rate (multiplying density).
+
+.. note::
+
+   There is some ambiguity as to whether :math:`Y_e` should be included for ``bec`` rates.
+
+
+The only other place ``weak_type`` is used for ``ReacLibRate`` is to set the print representation.
+
 
 Reverse rates
+^^^^^^^^^^^^^
 
+As noted above, rates with the ``v`` flag in the label are reverse
+rates that were computed from the forward rate via detailed balance.
+These rates do not include the corrections from partition functions,
+and therefore, should not be used directly.  Instead, the
+``DerivedRate`` functionality in pynucastro can be used to redo the
+detailed balance including the effects of partition functions.
 
+.. note::
+
+   In ReacLib, _reverse_ does not always mean :math:`Q < 0`.  Sometimes the
+   rate with :math:`Q < 0` is easier to measure experimentally, and so
+   that is measured and then the :math:`Q > 0` rate is computed via
+   detailed balance.
+
+ydot term
+^^^^^^^^^
