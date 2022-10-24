@@ -2,7 +2,7 @@ import numba
 import numpy as np
 from numba.experimental import jitclass
 
-from pynucastro.rates import Tfactors
+from pynucastro.rates import Tfactors, _find_rate_file
 from pynucastro.screening import PlasmaState, ScreenFactors
 
 jn = 0
@@ -73,7 +73,7 @@ class RateEval:
         self.ne23__na23 = np.nan
 
 # load data for na23 --> ne23
-na23__ne23_table_path = '/home/runner/work/pynucastro/pynucastro/pynucastro/library/tabular/23Na-23Ne_electroncapture.dat'
+na23__ne23_table_path = _find_rate_file('23Na-23Ne_electroncapture.dat')
 t_data2d = []
 with open(na23__ne23_table_path) as tabular_file:
     for i, line in enumerate(tabular_file):
@@ -86,7 +86,7 @@ with open(na23__ne23_table_path) as tabular_file:
 na23__ne23_data = np.array(t_data2d, dtype=float)
 
 # load data for ne23 --> na23
-ne23__na23_table_path = '/home/runner/work/pynucastro/pynucastro/pynucastro/library/tabular/23Ne-23Na_betadecay.dat'
+ne23__na23_table_path = _find_rate_file('23Ne-23Na_betadecay.dat')
 t_data2d = []
 with open(ne23__na23_table_path) as tabular_file:
     for i, line in enumerate(tabular_file):
