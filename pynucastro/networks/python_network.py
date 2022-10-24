@@ -4,7 +4,7 @@ source"""
 import sys
 
 from pynucastro.networks.rate_collection import RateCollection
-from pynucastro.rates.rate import ApproximateRate, _find_rate_file
+from pynucastro.rates.rate import ApproximateRate
 
 
 class PythonNetwork(RateCollection):
@@ -163,7 +163,7 @@ class PythonNetwork(RateCollection):
         of.write("import numba\n")
         of.write("import numpy as np\n")
         of.write("from numba.experimental import jitclass\n\n")
-        of.write("from pynucastro.rates import Tfactors\n")
+        of.write("from pynucastro.rates import Tfactors, _find_rate_file\n")
         of.write("from pynucastro.screening import PlasmaState, ScreenFactors\n\n")
 
         # integer keys
@@ -221,7 +221,7 @@ class PythonNetwork(RateCollection):
         for r in self.tabular_rates:
 
             of.write(f"# load data for {r.rid}\n")
-            of.write(f"{r.fname}_table_path = '{_find_rate_file(r.table_file)}'\n")
+            of.write(f"{r.fname}_table_path = _find_rate_file('{r.table_file}')\n")
             of.write("t_data2d = []\n")
             of.write(f"with open({r.fname}_table_path) as tabular_file:\n")
             of.write(f'{indent}'"for i, line in enumerate(tabular_file):\n")
