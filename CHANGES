@@ -1,3 +1,7 @@
+# 2.0.2
+
+  -- Fix the installation of the C++ templates via setup.py (#460)
+
 # 2.0.1
 
   -- Fix some setup.py metadata for PyPI (#453)
