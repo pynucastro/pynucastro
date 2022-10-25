@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Data Sources and Rate Types &mdash; pynucastro 2.0.2.post9+gb2c25388 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+        <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="pynucastro usage examples" href="pynucastro-examples.html" />
+    <link rel="prev" title="Overview of pynucastro" href="intro.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> pynucastro
+            <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Overview of pynucastro</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Data Sources and Rate Types</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#reaclib">ReacLib</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#chapters">Chapters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#labels">Labels</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#weak-rates">Weak rates</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#reverse-rates">Reverse rates</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#rate-evaluation-functions">Rate evaluation functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ydot-term">ydot term</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#tabulated-rates">Tabulated Rates</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Exploring Networks in Python</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="pynucastro-examples.html">pynucastro usage examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plot-types.html">Plotting Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pynucastro-integration.html">Example of integrating a network</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Selecting Rates</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="library-examples.html">Selecting Rates from a Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="validate-example.html">Checking your network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="electron-captures.html">Combining ReacLib Rates with Electron Capture Tables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Advanced Usage</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="screening-examples.html">Screening Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modify-example.html">Modifying Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="approx-rates-examples.html">Approximate Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="unimportant-rates.html">Removing Unimportant Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="partition-function.html">Reverse Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="NSE-example.html">Nuclear Statistical Equilibrium</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Writing Networks</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="networks.html">Creating Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cxx-networks.html">C++ Networks</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="citing.html">Citing pynucastro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sources.html">Third Party Data</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pynucastro</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Data Sources and Rate Types</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/data_sources.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<section id="data-sources-and-rate-types">
+<h1>Data Sources and Rate Types<a class="headerlink" href="#data-sources-and-rate-types" title="Permalink to this heading">¶</a></h1>
+<p>pynucastro makes use of data sources from several different nuclear
+physics compilations.  Here we explain how these are used in
+pynucastro.</p>
+<section id="reaclib">
+<h2>ReacLib<a class="headerlink" href="#reaclib" title="Permalink to this heading">¶</a></h2>
+<p>The <a class="reference external" href="https://reaclib.jinaweb.org/">JINA ReacLib database</a> provides
+the core thermonuclear rates.  These are managed in pynucastro through
+the <a class="reference internal" href="pynucastro.rates.html#pynucastro.rates.rate.ReacLibRate" title="pynucastro.rates.rate.ReacLibRate"><code class="xref py py-func docutils literal notranslate"><span class="pre">ReacLibRate</span></code></a> class.</p>
+<p>A ReacLib rate is composed of several sets (managed as
+<a class="reference internal" href="pynucastro.rates.html#pynucastro.rates.rate.SingleSet" title="pynucastro.rates.rate.SingleSet"><code class="xref py py-func docutils literal notranslate"><span class="pre">SingleSet</span></code></a> objects, each
+taking the form:</p>
+<div class="math notranslate nohighlight">
+\[\lambda = \exp{\left (a_0 + \sum_{i=1}^5  a_i T_9^{(2i-5)/3}  + a_6 \log T_9\right )}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\lambda\)</span> is of the form:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\lambda = \left \{ \begin{array}{cc} \tau^{-1}  &amp; \mbox{unary reaction} \\
+                                  N_A \langle \sigma v\rangle &amp; \mbox{binary reaction} \\
+                                  N_A^2 \langle \sigma v\rangle &amp; \mbox{trinary reaction}
+                \end{array} \right .\end{split}\]</div>
+<section id="chapters">
+<h3>Chapters<a class="headerlink" href="#chapters" title="Permalink to this heading">¶</a></h3>
+<p>The rates are divided into chapters, based on how many nuclei are on each side of the reaction:</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 13%" />
+<col style="width: 87%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>chapter</p></td>
+<td><p>reaction format</p></td>
+</tr>
+<tr class="row-even"><td><p>1</p></td>
+<td><p><span class="math notranslate nohighlight">\(e_1 \rightarrow e_2\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p><span class="math notranslate nohighlight">\(e_1 \rightarrow e_2 + e_3\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p>3</p></td>
+<td><p><span class="math notranslate nohighlight">\(e_1 \rightarrow e_2 + e_3 + e_4\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>4</p></td>
+<td><p><span class="math notranslate nohighlight">\(e_1 + e_2 \rightarrow e_3\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p>5</p></td>
+<td><p><span class="math notranslate nohighlight">\(e_1 + e_2 \rightarrow e_3 + e_4\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>6</p></td>
+<td><p><span class="math notranslate nohighlight">\(e_1 + e_2 \rightarrow e_3 + e_4 + e_5\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p>7</p></td>
+<td><p><span class="math notranslate nohighlight">\(e_1 + e_2 \rightarrow e_3 + e_4 + e_5 + e_6\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>8</p></td>
+<td><p><span class="math notranslate nohighlight">\(e_1 + e_2 + e_3 \rightarrow e_4\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p>9</p></td>
+<td><p><span class="math notranslate nohighlight">\(e_1 + e_2 + e_3 \rightarrow e_4 + e_5\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>10</p></td>
+<td><p><span class="math notranslate nohighlight">\(e_1 + e_2 + e_3 + e_4 \rightarrow e_5 + e_6\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p>11</p></td>
+<td><p><span class="math notranslate nohighlight">\(e_1 \rightarrow e_2 + e_3 + e_4 + e_5\)</span></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="labels">
+<h3>Labels<a class="headerlink" href="#labels" title="Permalink to this heading">¶</a></h3>
+<p>The ReacLib database lists the source / reference of each rate with a 6 character string.</p>
+<ul>
+<li><p>The first 4 characters are the label that gives the source of the rate, according to:
+<a class="reference external" href="https://reaclib.jinaweb.org/labels.php">https://reaclib.jinaweb.org/labels.php</a></p>
+<p>This is stored in both <code class="docutils literal notranslate"><span class="pre">SingleSet</span></code> and <code class="docutils literal notranslate"><span class="pre">ReacLibRate</span></code> as the
+<code class="docutils literal notranslate"><span class="pre">.label</span></code> attribute.</p>
+</li>
+<li><p>The next character is <code class="docutils literal notranslate"><span class="pre">n</span></code> for a non-resonant set, <code class="docutils literal notranslate"><span class="pre">r</span></code> for a
+resonance, or <code class="docutils literal notranslate"><span class="pre">w</span></code> to indicate that it is a weak rate.</p>
+<p>Different sets can have either <cite>n</cite> or <cite>r</cite> (and there can be multiple
+resonances).</p>
+<ul class="simple">
+<li><p>For a <code class="docutils literal notranslate"><span class="pre">SingleSet</span></code>, <code class="docutils literal notranslate"><span class="pre">SingleSet.resonant</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code> if it is a
+resonance</p></li>
+<li><p>For the combined <code class="docutils literal notranslate"><span class="pre">ReacLibRate</span></code> object, we combine all of the
+resonances and the non-resonance set, and change the flag to <code class="docutils literal notranslate"><span class="pre">c</span></code>
+for _combined_.</p></li>
+</ul>
+<p>If the weak flag, <code class="docutils literal notranslate"><span class="pre">w</span></code> is set, then <code class="docutils literal notranslate"><span class="pre">ReacLibRate.weak</span></code> will be <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p>
+</li>
+<li><p>The 6th character indicates it the rate is a derived reverse rate,
+by the presence of a <cite>v</cite>.  This is stored in both <code class="docutils literal notranslate"><span class="pre">SingleSet</span></code> and
+<code class="docutils literal notranslate"><span class="pre">ReacLibRate</span></code> as the <code class="docutils literal notranslate"><span class="pre">.reverse</span></code> attribute.</p></li>
+</ul>
+</section>
+<section id="weak-rates">
+<h3>Weak rates<a class="headerlink" href="#weak-rates" title="Permalink to this heading">¶</a></h3>
+<p>Electron capture capture rates are those identified with a label of either <code class="docutils literal notranslate"><span class="pre">ec</span></code> or <code class="docutils literal notranslate"><span class="pre">bec</span></code>.  These
+have <code class="docutils literal notranslate"><span class="pre">ReacLibRate.weak_type</span></code> set to <code class="docutils literal notranslate"><span class="pre">electron_capture</span></code>.  For these rates, and only these rates,
+we include <span class="math notranslate nohighlight">\(Y_e\)</span> in the overall rate (multiplying density).</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>There is some ambiguity as to whether <span class="math notranslate nohighlight">\(Y_e\)</span> should be included for <code class="docutils literal notranslate"><span class="pre">bec</span></code> rates.</p>
+</div>
+<p>The only other place <code class="docutils literal notranslate"><span class="pre">weak_type</span></code> is used for <code class="docutils literal notranslate"><span class="pre">ReacLibRate</span></code> is to set the print representation.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>ReacLib only provides a fit to the temperature dependence of a
+rate, so for electron-captures, it may not be a very good
+approximation, and tabulated electron capture rates should be used
+instead.</p>
+</div>
+</section>
+<section id="reverse-rates">
+<h3>Reverse rates<a class="headerlink" href="#reverse-rates" title="Permalink to this heading">¶</a></h3>
+<p>As noted above, rates with the <code class="docutils literal notranslate"><span class="pre">v</span></code> flag in the label are reverse
+rates that were computed from the forward rate via detailed balance.
+These rates do not include the corrections from partition functions,
+and therefore, should not be used directly.  Instead, the
+<a class="reference internal" href="pynucastro.rates.html#pynucastro.rates.rate.DerivedRate" title="pynucastro.rates.rate.DerivedRate"><code class="xref py py-func docutils literal notranslate"><span class="pre">DerivedRate</span></code></a> functionality in pynucastro can be used to redo the
+detailed balance including the effects of partition functions.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In ReacLib, _reverse_ does not always mean <span class="math notranslate nohighlight">\(Q &lt; 0\)</span>.  Sometimes the
+rate with <span class="math notranslate nohighlight">\(Q &lt; 0\)</span> is easier to measure experimentally, and so
+that is measured and then the <span class="math notranslate nohighlight">\(Q &gt; 0\)</span> rate is computed via
+detailed balance.</p>
+</div>
+</section>
+<section id="rate-evaluation-functions">
+<h3>Rate evaluation functions<a class="headerlink" href="#rate-evaluation-functions" title="Permalink to this heading">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">ReacLibRate</span></code> class has functions <a class="reference internal" href="pynucastro.rates.html#pynucastro.rates.rate.ReacLibRate.function_string_py" title="pynucastro.rates.rate.ReacLibRate.function_string_py"><code class="xref py py-func docutils literal notranslate"><span class="pre">function_string_py</span></code></a> and
+<a class="reference internal" href="pynucastro.rates.html#pynucastro.rates.rate.ReacLibRate.function_string_cxx" title="pynucastro.rates.rate.ReacLibRate.function_string_cxx"><code class="xref py py-func docutils literal notranslate"><span class="pre">function_string_cxx</span></code></a> to write out
+the python and C++ code needed to evaluate the T-dependent portion of
+the reaction rate (basically what is encoded in the ReacLib database).</p>
+<p>For the C++ version, templating is used to allow for the derivative
+with respect to temperature to also be computed.</p>
+</section>
+<section id="ydot-term">
+<h3>ydot term<a class="headerlink" href="#ydot-term" title="Permalink to this heading">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">ReacLibRate</span></code> class knows how to output the contribution to the
+molar fraction evolution (<span class="math notranslate nohighlight">\(\dot{Y}\)</span>) as a python expression (for
+C++, this is handled separately via SymPy in the <code class="docutils literal notranslate"><span class="pre">network</span></code> module).
+This is handled by <code class="docutils literal notranslate"><span class="pre">ReacLibRate.ydot_string_py()</span></code>.</p>
+<p>For a unary reaction involving nucleus <span class="math notranslate nohighlight">\(A\)</span>, it takes the form:</p>
+<div class="math notranslate nohighlight">
+\[\dot{Y} = \frac{Y(A)}{\tau}\]</div>
+<p>for a binary reaction, <span class="math notranslate nohighlight">\(A + B\)</span>, it takes the form:</p>
+<div class="math notranslate nohighlight">
+\[\dot{Y} = \rho Y(A) Y(B) \frac{N_A \langle \sigma v \rangle}{1 + \delta_{AB}}\]</div>
+<p>where the <span class="math notranslate nohighlight">\(1 + \delta_{AB}\)</span> factor is stored in the rate as <code class="docutils literal notranslate"><span class="pre">Rate.prefactor</span></code>.</p>
+<p>and for a trinary reaction, it is:</p>
+<div class="math notranslate nohighlight">
+\[\dot{Y} = \rho^2 Y(A)^{n_A} Y(B)^{n_B} Y(C)^{n_C} \frac{N_A^2 \langle \sigma v \rangle}{n_A! n_B! n_C!}\]</div>
+<p>where <span class="math notranslate nohighlight">\(n_A\)</span> is the number of nucleus <span class="math notranslate nohighlight">\(A\)</span> in the reaction.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The rate class does not include the stoichiometric factors – that
+is the responsibility of the network.</p>
+</div>
+<p>Similarly, <code class="docutils literal notranslate"><span class="pre">ReacLib.jacobian_string_py()</span></code> outputs the contribution to the Jacobian for this rate.</p>
+</section>
+</section>
+<section id="tabulated-rates">
+<h2>Tabulated Rates<a class="headerlink" href="#tabulated-rates" title="Permalink to this heading">¶</a></h2>
+<p>For electron captures and beta-decays, we used tabulated rates.  These are two-dimensional tables,
+in terms of <span class="math notranslate nohighlight">\(T\)</span> and <span class="math notranslate nohighlight">\(\rho Y_e\)</span>.</p>
+<p>A tabular rate is described by 2 files.  The first file mimics the
+ReacLib header, with a chapter indicated as <code class="docutils literal notranslate"><span class="pre">t</span></code> and gives the name
+of the table and the number of columns, density, and temperature
+points.</p>
+<p>The second file is the table itself.  The columns of the tables (and
+units) are:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>!rhoY        T            mu           dQ           Vs           e-cap-rate   nu-energy-loss gamma-energy
+!g/cm^3      K            erg          erg          erg          1/s          erg/s        erg/s
+</pre></div>
+</div>
+<p>and the data is ordered with <code class="docutils literal notranslate"><span class="pre">rhoY</span></code> varying the slowest (i.e., for a
+given <code class="docutils literal notranslate"><span class="pre">rhoY</span></code> we loop over all of the temperatures).</p>
+<p>pynucastro uses linear interpolation to return the rate given the
+temperature and electron density.</p>
+<p>The form of the reaction <span class="math notranslate nohighlight">\(A \rightarrow B\)</span></p>
+<div class="math notranslate nohighlight">
+\[\dot{Y} = Y(A) \lambda\]</div>
+<p>where <span class="math notranslate nohighlight">\(\lambda\)</span> is the rate returned from the table.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="intro.html" class="btn btn-neutral float-left" title="Overview of pynucastro" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="pynucastro-examples.html" class="btn btn-neutral float-right" title="pynucastro usage examples" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, pynucastro development team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
