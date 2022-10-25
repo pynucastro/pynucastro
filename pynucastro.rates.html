@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.rates package &mdash; pynucastro 2.0.2.post9+gb2c25388 documentation</title>
+  <title>pynucastro.rates package &mdash; pynucastro 2.0.2.post10+gc15fd490 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
@@ -422,11 +422,27 @@ lowest atomic number.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="pynucastro.rates.rate.Rate.jacobian_string_py">
+<span class="sig-name descname"><span class="pre">jacobian_string_py</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y_i</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#Rate.jacobian_string_py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.Rate.jacobian_string_py" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a string containing the term in a jacobian matrix
+in a reaction network corresponding to this rate differentiated
+with respect to y_i</p>
+<p>y_i is an objecs of the class <code class="docutils literal notranslate"><span class="pre">Nucleus</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.Rate.lightest">
 <span class="sig-name descname"><span class="pre">lightest</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#Rate.lightest"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.Rate.lightest" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the lightest nuclide in this Rate.</p>
 <p>If two nuclei are tied in mass number, return the one with the
 highest atomic number.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pynucastro.rates.rate.Rate.ydot_string_py">
+<span class="sig-name descname"><span class="pre">ydot_string_py</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#Rate.ydot_string_py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.Rate.ydot_string_py" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a string containing the term in a dY/dt equation
+in a reaction network corresponding to this rate.</p>
 </dd></dl>
 
 </dd></dl>
@@ -490,15 +506,6 @@ non-resonant versions of reactions.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="pynucastro.rates.rate.ReacLibRate.jacobian_string_py">
-<span class="sig-name descname"><span class="pre">jacobian_string_py</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y_i</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#ReacLibRate.jacobian_string_py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.ReacLibRate.jacobian_string_py" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a string containing the term in a jacobian matrix
-in a reaction network corresponding to this rate differentiated
-with respect to y_i</p>
-<p>y_i is an objecs of the class <code class="docutils literal notranslate"><span class="pre">Nucleus</span></code>.</p>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.ReacLibRate.modify_products">
 <span class="sig-name descname"><span class="pre">modify_products</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_products</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#ReacLibRate.modify_products"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.ReacLibRate.modify_products" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -524,13 +531,6 @@ with respect to y_i</p>
 <dd class="field-odd"><p>matplotlib.figure.Figure</p>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pynucastro.rates.rate.ReacLibRate.ydot_string_py">
-<span class="sig-name descname"><span class="pre">ydot_string_py</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#ReacLibRate.ydot_string_py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.ReacLibRate.ydot_string_py" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a string containing the term in a dY/dt equation
-in a reaction network corresponding to this rate.</p>
 </dd></dl>
 
 </dd></dl>
@@ -618,15 +618,6 @@ non-resonant versions of reactions.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="pynucastro.rates.rate.TabularRate.jacobian_string_py">
-<span class="sig-name descname"><span class="pre">jacobian_string_py</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y_i</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#TabularRate.jacobian_string_py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.TabularRate.jacobian_string_py" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a string containing the term in a jacobian matrix
-in a reaction network corresponding to this rate differentiated
-with respect to y_i</p>
-<p>y_i is an objecs of the class <code class="docutils literal notranslate"><span class="pre">Nucleus</span></code>.</p>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.TabularRate.plot">
 <span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Tmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Tmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1600000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rhoYmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">390000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rhoYmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2000000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color_field</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'rate'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(10,</span> <span class="pre">10)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#TabularRate.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.TabularRate.plot" title="Permalink to this definition">¶</a></dt>
 <dd><p>plot the rate’s temperature sensitivity vs temperature</p>
@@ -647,13 +638,6 @@ with respect to y_i</p>
 <dd class="field-odd"><p>matplotlib.figure.Figure</p>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pynucastro.rates.rate.TabularRate.ydot_string_py">
-<span class="sig-name descname"><span class="pre">ydot_string_py</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#TabularRate.ydot_string_py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.TabularRate.ydot_string_py" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a string containing the term in a dY/dt equation
-in a reaction network corresponding to this rate.</p>
 </dd></dl>
 
 </dd></dl>

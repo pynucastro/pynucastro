@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.rates.rate &mdash; pynucastro 2.0.2.post9+gb2c25388 documentation</title>
+  <title>pynucastro.rates.rate &mdash; pynucastro 2.0.2.post10+gc15fd490 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
@@ -421,6 +421,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_set_screening</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_set_print_representation</span><span class="p">()</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">tabular</span> <span class="o">=</span> <span class="kc">False</span>
+
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">string</span>
 
@@ -684,7 +686,110 @@
         <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">products</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">n</span><span class="o">.</span><span class="n">A</span> <span class="o">&lt;</span> <span class="n">nuc</span><span class="o">.</span><span class="n">A</span> <span class="ow">or</span> <span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">A</span> <span class="o">==</span> <span class="n">nuc</span><span class="o">.</span><span class="n">A</span> <span class="ow">and</span> <span class="n">n</span><span class="o">.</span><span class="n">Z</span> <span class="o">&gt;</span> <span class="n">nuc</span><span class="o">.</span><span class="n">Z</span><span class="p">):</span>
                 <span class="n">nuc</span> <span class="o">=</span> <span class="n">n</span>
-        <span class="k">return</span> <span class="n">nuc</span></div></div>
+        <span class="k">return</span> <span class="n">nuc</span></div>
+
+<div class="viewcode-block" id="Rate.ydot_string_py"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.Rate.ydot_string_py">[docs]</a>    <span class="k">def</span> <span class="nf">ydot_string_py</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return a string containing the term in a dY/dt equation</span>
+<span class="sd">        in a reaction network corresponding to this rate.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># composition dependence</span>
+        <span class="n">Y_string</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">))):</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">c</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">Y_string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;Y[j</span><span class="si">{</span><span class="n">r</span><span class="si">}</span><span class="s2">]**</span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">Y_string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;Y[j</span><span class="si">{</span><span class="n">r</span><span class="si">}</span><span class="s2">]&quot;</span>
+
+            <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">))</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                <span class="n">Y_string</span> <span class="o">+=</span> <span class="s2">&quot;*&quot;</span>
+
+        <span class="c1"># density dependence</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dens_exp</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">dens_string</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">dens_exp</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">dens_string</span> <span class="o">=</span> <span class="s2">&quot;rho*&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dens_string</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;rho**</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dens_exp</span><span class="si">}</span><span class="s2">*&quot;</span>
+
+        <span class="c1"># electron fraction dependence</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">weak_type</span> <span class="o">==</span> <span class="s1">&#39;electron_capture&#39;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabular</span><span class="p">:</span>
+            <span class="n">y_e_string</span> <span class="o">=</span> <span class="s1">&#39;ye(Y)*&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">y_e_string</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+        <span class="c1"># prefactor</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefactor</span> <span class="o">!=</span> <span class="mf">1.0</span><span class="p">:</span>
+            <span class="n">prefactor_string</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">prefactor</span><span class="si">:</span><span class="s2">1.14e</span><span class="si">}</span><span class="s2">*&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">prefactor_string</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{}{}{}{}</span><span class="s2">*rate_eval.</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefactor_string</span><span class="p">,</span> <span class="n">dens_string</span><span class="p">,</span>
+                                           <span class="n">y_e_string</span><span class="p">,</span> <span class="n">Y_string</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Rate.jacobian_string_py"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.Rate.jacobian_string_py">[docs]</a>    <span class="k">def</span> <span class="nf">jacobian_string_py</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y_i</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return a string containing the term in a jacobian matrix</span>
+<span class="sd">        in a reaction network corresponding to this rate differentiated</span>
+<span class="sd">        with respect to y_i</span>
+
+<span class="sd">        y_i is an objecs of the class ``Nucleus``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">y_i</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+
+        <span class="c1"># composition dependence</span>
+        <span class="n">Y_string</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">))):</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">y_i</span> <span class="o">==</span> <span class="n">r</span><span class="p">:</span>
+                <span class="c1"># take the derivative</span>
+                <span class="k">if</span> <span class="n">c</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">))</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                    <span class="n">Y_string</span> <span class="o">+=</span> <span class="s2">&quot;*&quot;</span>
+                <span class="k">if</span> <span class="n">c</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+                    <span class="n">Y_string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s2">*Y[j</span><span class="si">{</span><span class="n">r</span><span class="si">}</span><span class="s2">]**</span><span class="si">{</span><span class="n">c</span><span class="o">-</span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="k">elif</span> <span class="n">c</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                    <span class="n">Y_string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;2*Y[j</span><span class="si">{</span><span class="n">r</span><span class="si">}</span><span class="s2">]&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># this nucleus is in the rate form, but we are not</span>
+                <span class="c1"># differentiating with respect to it</span>
+                <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">))</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                    <span class="n">Y_string</span> <span class="o">+=</span> <span class="s2">&quot;*&quot;</span>
+                <span class="k">if</span> <span class="n">c</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">Y_string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;Y[j</span><span class="si">{</span><span class="n">r</span><span class="si">}</span><span class="s2">]**</span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">Y_string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;Y[j</span><span class="si">{</span><span class="n">r</span><span class="si">}</span><span class="s2">]&quot;</span>
+
+        <span class="c1"># density dependence</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dens_exp</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">dens_string</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">dens_exp</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">dens_string</span> <span class="o">=</span> <span class="s2">&quot;rho*&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dens_string</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;rho**</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dens_exp</span><span class="si">}</span><span class="s2">*&quot;</span>
+
+        <span class="c1"># electron fraction dependence</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">weak_type</span> <span class="o">==</span> <span class="s1">&#39;electron_capture&#39;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabular</span><span class="p">:</span>
+            <span class="n">y_e_string</span> <span class="o">=</span> <span class="s1">&#39;ye(Y)*&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">y_e_string</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+        <span class="c1"># prefactor</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefactor</span> <span class="o">!=</span> <span class="mf">1.0</span><span class="p">:</span>
+            <span class="n">prefactor_string</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">prefactor</span><span class="si">:</span><span class="s2">1.14e</span><span class="si">}</span><span class="s2">*&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">prefactor_string</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">Y_string</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span> <span class="ow">and</span> <span class="n">dens_string</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span> <span class="ow">and</span> <span class="n">prefactor_string</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span> <span class="ow">and</span> <span class="n">y_e_string</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="n">rstring</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}{}{}{}</span><span class="s2">rate_eval.</span><span class="si">{}</span><span class="s2">&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">rstring</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}{}{}{}</span><span class="s2">*rate_eval.</span><span class="si">{}</span><span class="s2">&quot;</span>
+        <span class="k">return</span> <span class="n">rstring</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefactor_string</span><span class="p">,</span> <span class="n">dens_string</span><span class="p">,</span>
+                              <span class="n">y_e_string</span><span class="p">,</span> <span class="n">Y_string</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="ReacLibRate"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.ReacLibRate">[docs]</a><span class="k">class</span> <span class="nc">ReacLibRate</span><span class="p">(</span><span class="n">Rate</span><span class="p">):</span>
@@ -746,6 +851,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">reverse</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">Q</span> <span class="o">=</span> <span class="n">Q</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">tabular</span> <span class="o">=</span> <span class="kc">False</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rfile</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="c1"># read in the file, parse the different sets and store them as</span>
@@ -1152,109 +1259,6 @@
 
         <span class="k">return</span> <span class="n">fstring</span></div>
 
-<div class="viewcode-block" id="ReacLibRate.ydot_string_py"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.ReacLibRate.ydot_string_py">[docs]</a>    <span class="k">def</span> <span class="nf">ydot_string_py</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Return a string containing the term in a dY/dt equation</span>
-<span class="sd">        in a reaction network corresponding to this rate.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="c1"># composition dependence</span>
-        <span class="n">Y_string</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-        <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">))):</span>
-            <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">c</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="n">Y_string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;Y[j</span><span class="si">{</span><span class="n">r</span><span class="si">}</span><span class="s2">]**</span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">Y_string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;Y[j</span><span class="si">{</span><span class="n">r</span><span class="si">}</span><span class="s2">]&quot;</span>
-
-            <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">))</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
-                <span class="n">Y_string</span> <span class="o">+=</span> <span class="s2">&quot;*&quot;</span>
-
-        <span class="c1"># density dependence</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dens_exp</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">dens_string</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">dens_exp</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">dens_string</span> <span class="o">=</span> <span class="s2">&quot;rho*&quot;</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">dens_string</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;rho**</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dens_exp</span><span class="si">}</span><span class="s2">*&quot;</span>
-
-        <span class="c1"># electron fraction dependence</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">weak_type</span> <span class="o">==</span> <span class="s1">&#39;electron_capture&#39;</span><span class="p">:</span>
-            <span class="n">y_e_string</span> <span class="o">=</span> <span class="s1">&#39;ye(Y)*&#39;</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">y_e_string</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
-
-        <span class="c1"># prefactor</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefactor</span> <span class="o">!=</span> <span class="mf">1.0</span><span class="p">:</span>
-            <span class="n">prefactor_string</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">prefactor</span><span class="si">:</span><span class="s2">1.14e</span><span class="si">}</span><span class="s2">*&quot;</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">prefactor_string</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-
-        <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{}{}{}{}</span><span class="s2">*rate_eval.</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefactor_string</span><span class="p">,</span> <span class="n">dens_string</span><span class="p">,</span>
-                                           <span class="n">y_e_string</span><span class="p">,</span> <span class="n">Y_string</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="p">)</span></div>
-
-<div class="viewcode-block" id="ReacLibRate.jacobian_string_py"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.ReacLibRate.jacobian_string_py">[docs]</a>    <span class="k">def</span> <span class="nf">jacobian_string_py</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y_i</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Return a string containing the term in a jacobian matrix</span>
-<span class="sd">        in a reaction network corresponding to this rate differentiated</span>
-<span class="sd">        with respect to y_i</span>
-
-<span class="sd">        y_i is an objecs of the class ``Nucleus``.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">y_i</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s2">&quot;&quot;</span>
-
-        <span class="c1"># composition dependence</span>
-        <span class="n">Y_string</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-        <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">))):</span>
-            <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">y_i</span> <span class="o">==</span> <span class="n">r</span><span class="p">:</span>
-                <span class="c1"># take the derivative</span>
-                <span class="k">if</span> <span class="n">c</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                    <span class="k">continue</span>
-                <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">))</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
-                    <span class="n">Y_string</span> <span class="o">+=</span> <span class="s2">&quot;*&quot;</span>
-                <span class="k">if</span> <span class="n">c</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
-                    <span class="n">Y_string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s2">*Y[j</span><span class="si">{</span><span class="n">r</span><span class="si">}</span><span class="s2">]**</span><span class="si">{</span><span class="n">c</span><span class="o">-</span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span>
-                <span class="k">elif</span> <span class="n">c</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-                    <span class="n">Y_string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;2*Y[j</span><span class="si">{</span><span class="n">r</span><span class="si">}</span><span class="s2">]&quot;</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="c1"># this nucleus is in the rate form, but we are not</span>
-                <span class="c1"># differentiating with respect to it</span>
-                <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">))</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
-                    <span class="n">Y_string</span> <span class="o">+=</span> <span class="s2">&quot;*&quot;</span>
-                <span class="k">if</span> <span class="n">c</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-                    <span class="n">Y_string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;Y[j</span><span class="si">{</span><span class="n">r</span><span class="si">}</span><span class="s2">]**</span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s2">&quot;</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">Y_string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;Y[j</span><span class="si">{</span><span class="n">r</span><span class="si">}</span><span class="s2">]&quot;</span>
-
-        <span class="c1"># density dependence</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dens_exp</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">dens_string</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">dens_exp</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">dens_string</span> <span class="o">=</span> <span class="s2">&quot;rho*&quot;</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">dens_string</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;rho**</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dens_exp</span><span class="si">}</span><span class="s2">*&quot;</span>
-
-        <span class="c1"># electron fraction dependence</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">weak_type</span> <span class="o">==</span> <span class="s1">&#39;electron_capture&#39;</span><span class="p">:</span>
-            <span class="n">y_e_string</span> <span class="o">=</span> <span class="s1">&#39;ye(Y)*&#39;</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">y_e_string</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-
-        <span class="c1"># prefactor</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefactor</span> <span class="o">!=</span> <span class="mf">1.0</span><span class="p">:</span>
-            <span class="n">prefactor_string</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">prefactor</span><span class="si">:</span><span class="s2">1.14e</span><span class="si">}</span><span class="s2">*&quot;</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">prefactor_string</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-
-        <span class="k">if</span> <span class="n">Y_string</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span> <span class="ow">and</span> <span class="n">dens_string</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span> <span class="ow">and</span> <span class="n">prefactor_string</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span> <span class="ow">and</span> <span class="n">y_e_string</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
-            <span class="n">rstring</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}{}{}{}</span><span class="s2">rate_eval.</span><span class="si">{}</span><span class="s2">&quot;</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">rstring</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}{}{}{}</span><span class="s2">*rate_eval.</span><span class="si">{}</span><span class="s2">&quot;</span>
-        <span class="k">return</span> <span class="n">rstring</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefactor_string</span><span class="p">,</span> <span class="n">dens_string</span><span class="p">,</span>
-                              <span class="n">y_e_string</span><span class="p">,</span> <span class="n">Y_string</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="p">)</span></div>
-
 <div class="viewcode-block" id="ReacLibRate.eval"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.ReacLibRate.eval">[docs]</a>    <span class="k">def</span> <span class="nf">eval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">rhoY</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; evauate the reaction rate for temperature T &quot;&quot;&quot;</span>
 
@@ -1491,109 +1495,6 @@
 
         <span class="c1"># convert the nested list of string values into a numpy float array</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tabular_data_table</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">t_data2d</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span></div>
-
-<div class="viewcode-block" id="TabularRate.ydot_string_py"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.TabularRate.ydot_string_py">[docs]</a>    <span class="k">def</span> <span class="nf">ydot_string_py</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Return a string containing the term in a dY/dt equation</span>
-<span class="sd">        in a reaction network corresponding to this rate.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="c1"># composition dependence</span>
-        <span class="n">Y_string</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-        <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">))):</span>
-            <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">c</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="n">Y_string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;Y[j</span><span class="si">{</span><span class="n">r</span><span class="si">}</span><span class="s2">]**</span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">Y_string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;Y[j</span><span class="si">{</span><span class="n">r</span><span class="si">}</span><span class="s2">]&quot;</span>
-
-            <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">))</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
-                <span class="n">Y_string</span> <span class="o">+=</span> <span class="s2">&quot;*&quot;</span>
-
-        <span class="c1"># density dependence</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dens_exp</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">dens_string</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">dens_exp</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">dens_string</span> <span class="o">=</span> <span class="s2">&quot;rho*&quot;</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">dens_string</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;rho**</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dens_exp</span><span class="si">}</span><span class="s2">*&quot;</span>
-
-        <span class="c1"># electron fraction dependence</span>
-        <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">weak_type</span> <span class="o">==</span> <span class="s1">&#39;electron_capture&#39;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabular</span><span class="p">):</span>
-            <span class="n">y_e_string</span> <span class="o">=</span> <span class="s1">&#39;ye(Y)*&#39;</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">y_e_string</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
-
-        <span class="c1"># prefactor</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefactor</span> <span class="o">!=</span> <span class="mf">1.0</span><span class="p">:</span>
-            <span class="n">prefactor_string</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">prefactor</span><span class="si">:</span><span class="s2">1.14e</span><span class="si">}</span><span class="s2">*&quot;</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">prefactor_string</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-
-        <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{}{}{}{}</span><span class="s2">*rate_eval.</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefactor_string</span><span class="p">,</span> <span class="n">dens_string</span><span class="p">,</span>
-                                              <span class="n">y_e_string</span><span class="p">,</span> <span class="n">Y_string</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="p">)</span></div>
-
-<div class="viewcode-block" id="TabularRate.jacobian_string_py"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.TabularRate.jacobian_string_py">[docs]</a>    <span class="k">def</span> <span class="nf">jacobian_string_py</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y_i</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Return a string containing the term in a jacobian matrix</span>
-<span class="sd">        in a reaction network corresponding to this rate differentiated</span>
-<span class="sd">        with respect to y_i</span>
-
-<span class="sd">        y_i is an objecs of the class ``Nucleus``.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">y_i</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s2">&quot;&quot;</span>
-
-        <span class="c1"># composition dependence</span>
-        <span class="n">Y_string</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-        <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">))):</span>
-            <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">y_i</span> <span class="o">==</span> <span class="n">r</span><span class="p">:</span>
-                <span class="c1"># take the derivative</span>
-                <span class="k">if</span> <span class="n">c</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                    <span class="k">continue</span>
-                <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">))</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
-                    <span class="n">Y_string</span> <span class="o">+=</span> <span class="s2">&quot;*&quot;</span>
-                <span class="k">if</span> <span class="n">c</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
-                    <span class="n">Y_string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s2">*Y[j</span><span class="si">{</span><span class="n">r</span><span class="si">}</span><span class="s2">]**</span><span class="si">{</span><span class="n">c</span><span class="o">-</span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span>
-                <span class="k">elif</span> <span class="n">c</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-                    <span class="n">Y_string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;2*Y[j</span><span class="si">{</span><span class="n">r</span><span class="si">}</span><span class="s2">]&quot;</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="c1"># this nucleus is in the rate form, but we are not</span>
-                <span class="c1"># differentiating with respect to it</span>
-                <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">))</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
-                    <span class="n">Y_string</span> <span class="o">+=</span> <span class="s2">&quot;*&quot;</span>
-                <span class="k">if</span> <span class="n">c</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-                    <span class="n">Y_string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;Y[j</span><span class="si">{</span><span class="n">r</span><span class="si">}</span><span class="s2">]**</span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s2">&quot;</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">Y_string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;Y[j</span><span class="si">{</span><span class="n">r</span><span class="si">}</span><span class="s2">]&quot;</span>
-
-        <span class="c1"># density dependence</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dens_exp</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">dens_string</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">dens_exp</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">dens_string</span> <span class="o">=</span> <span class="s2">&quot;rho*&quot;</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">dens_string</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;rho**</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dens_exp</span><span class="si">}</span><span class="s2">*&quot;</span>
-
-        <span class="c1"># electron fraction dependence</span>
-        <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">weak_type</span> <span class="o">==</span> <span class="s1">&#39;electron_capture&#39;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabular</span><span class="p">):</span>
-            <span class="n">y_e_string</span> <span class="o">=</span> <span class="s1">&#39;ye(Y)*&#39;</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">y_e_string</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-
-        <span class="c1"># prefactor</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefactor</span> <span class="o">!=</span> <span class="mf">1.0</span><span class="p">:</span>
-            <span class="n">prefactor_string</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">prefactor</span><span class="si">:</span><span class="s2">1.14e</span><span class="si">}</span><span class="s2">*&quot;</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">prefactor_string</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-
-        <span class="k">if</span> <span class="n">Y_string</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span> <span class="ow">and</span> <span class="n">dens_string</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span> <span class="ow">and</span> <span class="n">prefactor_string</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span> <span class="ow">and</span> <span class="n">y_e_string</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
-            <span class="n">rstring</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}{}{}{}</span><span class="s2">rate_eval.</span><span class="si">{}</span><span class="s2">&quot;</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">rstring</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}{}{}{}</span><span class="s2">*rate_eval.</span><span class="si">{}</span><span class="s2">&quot;</span>
-        <span class="k">return</span> <span class="n">rstring</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefactor_string</span><span class="p">,</span> <span class="n">dens_string</span><span class="p">,</span>
-                              <span class="n">y_e_string</span><span class="p">,</span> <span class="n">Y_string</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="TabularRate.eval"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.TabularRate.eval">[docs]</a>    <span class="k">def</span> <span class="nf">eval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">rhoY</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; evauate the reaction rate for temperature T &quot;&quot;&quot;</span>
