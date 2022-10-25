@@ -621,50 +621,6 @@ class Rate:
         return "{}{}{}{}*rate_eval.{}".format(prefactor_string, dens_string,
                                            y_e_string, Y_string, self.fname)
 
-    def eval_jacobian_term(self, T, rho, comp, y_i):
-        """Evaluate drate/d(y_i), y_i is a Nucleus object.  This rate
-        term has the full composition and density dependence, i.e.:
-
-          rate = rho**n Y1**a Y2**b ... N_A <sigma v>
-
-        The derivative is only non-zero if this term depends on
-        nucleus y_i.
-
-        """
-        if y_i not in self.reactants:
-            return 0.0
-
-        ymolar = comp.get_molar()
-
-        # composition dependence
-        Y_term = 1.0
-        for n, r in enumerate(sorted(set(self.reactants))):
-            c = self.reactants.count(r)
-            if y_i == r:
-                # take the derivative
-                if c == 1:
-                    continue
-                Y_term *= c * ymolar[r]**(c-1)
-            else:
-                # this nucleus is in the rate form, but we are not
-                # differentiating with respect to it
-                Y_term *= ymolar[r]**c
-
-        # density dependence
-        dens_term = rho**self.dens_exp
-
-        # electron fraction dependence
-        if self.weak_type == 'electron_capture':
-            y_e_term = comp.eval_ye()
-        else:
-            y_e_term = 1.0
-
-        # finally evaluate the rate
-        rate_eval = self.eval(T)
-
-        return self.prefactor * dens_term * y_e_term * Y_term * rate_eval
-
-
     def jacobian_string_py(self, y_i):
         """
         Return a string containing the term in a jacobian matrix
@@ -1205,6 +1161,49 @@ class ReacLibRate(Rate):
             r += f(tf)
 
         return r
+
+    def eval_jacobian_term(self, T, rho, comp, y_i):
+        """Evaluate drate/d(y_i), y_i is a Nucleus object.  This rate
+        term has the full composition and density dependence, i.e.:
+
+          rate = rho**n Y1**a Y2**b ... N_A <sigma v>
+
+        The derivative is only non-zero if this term depends on
+        nucleus y_i.
+
+        """
+        if y_i not in self.reactants:
+            return 0.0
+
+        ymolar = comp.get_molar()
+
+        # composition dependence
+        Y_term = 1.0
+        for n, r in enumerate(sorted(set(self.reactants))):
+            c = self.reactants.count(r)
+            if y_i == r:
+                # take the derivative
+                if c == 1:
+                    continue
+                Y_term *= c * ymolar[r]**(c-1)
+            else:
+                # this nucleus is in the rate form, but we are not
+                # differentiating with respect to it
+                Y_term *= ymolar[r]**c
+
+        # density dependence
+        dens_term = rho**self.dens_exp
+
+        # electron fraction dependence
+        if self.weak_type == 'electron_capture':
+            y_e_term = comp.eval_ye()
+        else:
+            y_e_term = 1.0
+
+        # finally evaluate the rate
+        rate_eval = self.eval(T)
+
+        return self.prefactor * dens_term * y_e_term * Y_term * rate_eval
 
     def get_rate_exponent(self, T0):
         """
