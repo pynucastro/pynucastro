@@ -208,11 +208,15 @@ class Library:
         rstrings = []
         tmp_rates = [v for k, v in self._rates.items()]
         for r in sorted(tmp_rates):
-            if r.Q >= 0:
+            if r.Q is not None and r.Q >= 0:
                 rstrings.append(f'{r.__repr__():30} [Q = {float(r.Q):6.2f} MeV] ({r.get_rate_id()})')
         for r in sorted(tmp_rates):
-            if r.Q < 0:
+            if r.Q is not None and r.Q < 0:
                 rstrings.append(f'{r.__repr__():30} [Q = {float(r.Q):6.2f} MeV] ({r.get_rate_id()})')
+
+        for r in sorted(tmp_rates):
+            if r.Q is None:
+                rstrings.append(f'{r.__repr__():30} ({r.get_rate_id()})')
 
         return '\n'.join(rstrings)
 
