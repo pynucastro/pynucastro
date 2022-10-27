@@ -11,7 +11,7 @@ class TestJacTerm:
     @pytest.fixture(scope="class")
     def comp(self):
         nuc_list = [Nucleus("he4"), Nucleus("c12"), Nucleus("o16"),
-                    Nucleus("ne20"), Nucleus("mg24")]
+                    Nucleus("ne20"), Nucleus("f20"), Nucleus("mg24")]
         comp = Composition(nuc_list)
         comp.set_solar_like()
         return comp
@@ -62,3 +62,22 @@ class TestJacTerm:
 
         # now drate/d(o16) should be 0
         assert r.eval_jacobian_term(T, rho, comp, Nucleus("o16")) == 0.0
+
+    def test_tabular_rate(self, comp, tabular_library):
+
+        r = tabular_library.get_rate_by_name("ne20(,)f20")
+
+        rho = 5.e9
+        T = 3.e8
+        ymolar = comp.get_molar()
+
+        # this full rate is Y(ne20) lambda, where lambda is the 1/tau
+        # read from the table
+
+        # the rate does not dependent on alpha
+        dr_dalpha = 0.0
+        assert r.eval_jacobian_term(T, rho, comp, Nucleus("he4")) == 0.0
+
+        # for dr/dY(ne20), we just have the raw rate from the table
+        dr_dne20 = r.eval(T, rhoY=rho*comp.eval_ye())
+        assert r.eval_jacobian_term(T, rho, comp, Nucleus("ne20")) == dr_dne20
