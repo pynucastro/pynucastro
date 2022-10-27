@@ -611,17 +611,27 @@ class RateCollection:
 
         self._build_collection()
 
-    def remove_rates(self, rate_list):
-        """remove the rates in rate_list from the network.  Note, if
+    def remove_rates(self, rates):
+        """remove the Rate objects in rates from the network.  Note, if
         rate list is a dict, then the keys are assumed to be the rates
         to remove"""
 
-        if isinstance(rate_list, dict):
-            for r in rate_list.keys():
-                self.rates.remove(r)
+        if isinstance(rates, Rate):
+            self.rates.remove(rates)
         else:
-            for r in rate_list:
+            for r in rates:
                 self.rates.remove(r)
+
+        self._build_collection()
+
+    def add_rates(self, rates):
+        """add the Rate objects in rates from the network."""
+
+        if isinstance(rates, Rate):
+            self.rates.append(rates)
+        else:
+            for r in rates:
+                self.rates.append(r)
 
         self._build_collection()
 
