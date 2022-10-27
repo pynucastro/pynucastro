@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.rates.library &mdash; pynucastro 2.0.2.post11+g150f4885 documentation</title>
+  <title>pynucastro.rates.library &mdash; pynucastro 2.0.2.post12+gbfb3cd2d documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
@@ -496,7 +496,7 @@
 <span class="sd">        by detailed balance.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">only_fwd_filter</span> <span class="o">=</span> <span class="n">RateFilter</span><span class="p">(</span><span class="n">filter_function</span><span class="o">=</span><span class="k">lambda</span> <span class="n">r</span><span class="p">:</span> <span class="ow">not</span> <span class="n">r</span><span class="o">.</span><span class="n">reverse</span><span class="p">)</span>
+        <span class="n">only_fwd_filter</span> <span class="o">=</span> <span class="n">RateFilter</span><span class="p">(</span><span class="n">reverse</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="n">only_fwd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">only_fwd_filter</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">only_fwd</span></div>
 
@@ -505,7 +505,7 @@
 <span class="sd">        Select only the reverse rates, obtained by detailed balance.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">only_bwd_filter</span> <span class="o">=</span> <span class="n">RateFilter</span><span class="p">(</span><span class="n">filter_function</span><span class="o">=</span><span class="k">lambda</span> <span class="n">r</span><span class="p">:</span> <span class="n">r</span><span class="o">.</span><span class="n">reverse</span><span class="p">)</span>
+        <span class="n">only_bwd_filter</span> <span class="o">=</span> <span class="n">RateFilter</span><span class="p">(</span><span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">only_bwd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">only_bwd_filter</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">only_bwd</span></div>
 
@@ -650,7 +650,7 @@
 <span class="sd">        If either a or b is None, return True only if both a and b are None.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">a</span> <span class="ow">and</span> <span class="n">b</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">collections</span><span class="o">.</span><span class="n">Counter</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">==</span> <span class="n">collections</span><span class="o">.</span><span class="n">Counter</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+            <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">==</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
         <span class="k">return</span> <span class="p">(</span><span class="ow">not</span> <span class="n">a</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="n">b</span><span class="p">)</span>
 
     <span class="nd">@staticmethod</span>
@@ -672,18 +672,12 @@
 
 <div class="viewcode-block" id="RateFilter.matches"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.library.RateFilter.matches">[docs]</a>    <span class="k">def</span> <span class="nf">matches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">r</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Given a Rate r, see if it matches this RateFilter. &quot;&quot;&quot;</span>
-        <span class="n">matches_reactants</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="n">matches_products</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="c1"># do cheaper checks first</span>
         <span class="n">matches_reverse</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="n">matches_min_reactants</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="n">matches_min_products</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="n">matches_max_reactants</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="n">matches_max_products</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="n">matches_filter_function</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">:</span>
-            <span class="n">matches_reactants</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compare_nuclides</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">exact</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">products</span><span class="p">:</span>
-            <span class="n">matches_products</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compare_nuclides</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">products</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">products</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">exact</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reverse</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
             <span class="n">matches_reverse</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reverse</span> <span class="o">==</span> <span class="n">r</span><span class="o">.</span><span class="n">reverse</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">min_reactants</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
@@ -694,12 +688,22 @@
             <span class="n">matches_max_reactants</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_reactants</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max_products</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
             <span class="n">matches_max_products</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">products</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_products</span>
+        <span class="c1"># exit early if any of these checks failed</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">matches_reverse</span> <span class="ow">and</span> <span class="n">matches_min_reactants</span> <span class="ow">and</span>
+                <span class="n">matches_min_products</span> <span class="ow">and</span> <span class="n">matches_max_reactants</span> <span class="ow">and</span>
+                <span class="n">matches_max_products</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="c1"># now do more expensive checks, and exit immediately if any fail</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compare_nuclides</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">exact</span><span class="p">):</span>
+                <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">products</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compare_nuclides</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">products</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">products</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">exact</span><span class="p">):</span>
+                <span class="k">return</span> <span class="kc">False</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_function</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">matches_filter_function</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_function</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
-        <span class="k">return</span> <span class="p">(</span><span class="n">matches_reactants</span> <span class="ow">and</span> <span class="n">matches_products</span> <span class="ow">and</span> <span class="n">matches_reverse</span> <span class="ow">and</span>
-                <span class="n">matches_min_reactants</span> <span class="ow">and</span> <span class="n">matches_max_reactants</span> <span class="ow">and</span>
-                <span class="n">matches_min_products</span> <span class="ow">and</span> <span class="n">matches_max_products</span> <span class="ow">and</span>
-                <span class="n">matches_filter_function</span><span class="p">)</span></div>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_function</span><span class="p">(</span><span class="n">r</span><span class="p">):</span>
+                <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
 
 <div class="viewcode-block" id="RateFilter.invert"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.library.RateFilter.invert">[docs]</a>    <span class="k">def</span> <span class="nf">invert</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Return a RateFilter matching the inverse rate. &quot;&quot;&quot;</span>
