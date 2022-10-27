@@ -609,10 +609,7 @@ class RateCollection:
         rate list is a dict, then the keys are assumed to be the rates
         to remove"""
 
-        if isinstance(rates, dict):
-            for r in rates.keys():
-                self.rates.remove(r)
-        elif isinstance(rates, Rate):
+        if isinstance(rates, Rate):
             self.rates.remove(rates)
         else:
             for r in rates:
