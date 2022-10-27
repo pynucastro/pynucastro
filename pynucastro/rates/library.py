@@ -208,11 +208,15 @@ class Library:
         rstrings = []
         tmp_rates = [v for k, v in self._rates.items()]
         for r in sorted(tmp_rates):
-            if not r.reverse:
+            if r.Q is not None and r.Q >= 0:
                 rstrings.append(f'{r.__repr__():30} [Q = {float(r.Q):6.2f} MeV] ({r.get_rate_id()})')
         for r in sorted(tmp_rates):
-            if r.reverse:
+            if r.Q is not None and r.Q < 0:
                 rstrings.append(f'{r.__repr__():30} [Q = {float(r.Q):6.2f} MeV] ({r.get_rate_id()})')
+
+        for r in sorted(tmp_rates):
+            if r.Q is None:
+                rstrings.append(f'{r.__repr__():30} ({r.get_rate_id()})')
 
         return '\n'.join(rstrings)
 
@@ -384,7 +388,7 @@ class Library:
         by detailed balance.
         """
 
-        only_fwd_filter = RateFilter(filter_function=lambda r: not r.reverse)
+        only_fwd_filter = RateFilter(reverse=False)
         only_fwd = self.filter(only_fwd_filter)
         return only_fwd
 
@@ -393,7 +397,7 @@ class Library:
         Select only the reverse rates, obtained by detailed balance.
         """
 
-        only_bwd_filter = RateFilter(filter_function=lambda r: r.reverse)
+        only_bwd_filter = RateFilter(reverse=True)
         only_bwd = self.filter(only_bwd_filter)
         return only_bwd
 
@@ -538,7 +542,7 @@ class RateFilter:
         If either a or b is None, return True only if both a and b are None.
         """
         if a and b:
-            return collections.Counter(a) == collections.Counter(b)
+            return len(a) == len(b) and sorted(a) == sorted(b)
         return (not a) and (not b)
 
     @staticmethod
@@ -560,18 +564,12 @@ class RateFilter:
 
     def matches(self, r):
         """ Given a Rate r, see if it matches this RateFilter. """
-        matches_reactants = True
-        matches_products = True
+        # do cheaper checks first
         matches_reverse = True
         matches_min_reactants = True
         matches_min_products = True
         matches_max_reactants = True
         matches_max_products = True
-        matches_filter_function = True
-        if self.reactants:
-            matches_reactants = self._compare_nuclides(self.reactants, r.reactants, self.exact)
-        if self.products:
-            matches_products = self._compare_nuclides(self.products, r.products, self.exact)
         if isinstance(self.reverse, bool):
             matches_reverse = self.reverse == r.reverse
         if isinstance(self.min_reactants, int):
@@ -582,12 +580,22 @@ class RateFilter:
             matches_max_reactants = len(r.reactants) <= self.max_reactants
         if isinstance(self.max_products, int):
             matches_max_products = len(r.products) <= self.max_products
+        # exit early if any of these checks failed
+        if not (matches_reverse and matches_min_reactants and
+                matches_min_products and matches_max_reactants and
+                matches_max_products):
+            return False
+        # now do more expensive checks, and exit immediately if any fail
+        if self.reactants:
+            if not self._compare_nuclides(self.reactants, r.reactants, self.exact):
+                return False
+        if self.products:
+            if not self._compare_nuclides(self.products, r.products, self.exact):
+                return False
         if self.filter_function is not None:
-            matches_filter_function = self.filter_function(r)
-        return (matches_reactants and matches_products and matches_reverse and
-                matches_min_reactants and matches_max_reactants and
-                matches_min_products and matches_max_products and
-                matches_filter_function)
+            if not self.filter_function(r):
+                return False
+        return True
 
     def invert(self):
         """ Return a RateFilter matching the inverse rate. """
