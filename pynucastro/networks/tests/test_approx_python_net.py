@@ -1,11 +1,12 @@
 # unit tests for rates
 import importlib
 
-from scipy.integrate import solve_ivp
 import numpy as np
-import pynucastro as pyna
 import pytest
 from pytest import approx
+from scipy.integrate import solve_ivp
+
+import pynucastro as pyna
 from pynucastro.screening import chugunov_2007
 
 
