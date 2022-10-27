@@ -69,13 +69,11 @@ class TestJacTerm:
 
         rho = 5.e9
         T = 3.e8
-        ymolar = comp.get_molar()
 
         # this full rate is Y(ne20) lambda, where lambda is the 1/tau
         # read from the table
 
         # the rate does not dependent on alpha
-        dr_dalpha = 0.0
         assert r.eval_jacobian_term(T, rho, comp, Nucleus("he4")) == 0.0
 
         # for dr/dY(ne20), we just have the raw rate from the table
