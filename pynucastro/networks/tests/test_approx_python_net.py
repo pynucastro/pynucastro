@@ -1,7 +1,12 @@
 # unit tests for rates
-import pytest
+import importlib
 
+from scipy.integrate import solve_ivp
+import numpy as np
 import pynucastro as pyna
+import pytest
+from pytest import approx
+from pynucastro.screening import chugunov_2007
 
 
 class TestPythonNetwork:
@@ -73,3 +78,27 @@ def he4_mg24__si28(rate_eval, tf):
 
         r = pynet.get_rate("mg24_he4__si28__approx")
         assert r.get_child_rates()[0].function_string_py().strip() == ostr.strip()
+
+    def test_integrating(self, pynet):
+        pynet.write_network("app.py")
+        app = importlib.import_module("app")
+
+        rho = 1.e7
+        T = 3e9
+
+        X0 = np.zeros(app.nnuc)
+        X0[app.jhe4] = 0.5
+        X0[app.jmg24] = 0.5
+
+        Y0 = X0 / app.A
+
+        tmax = 1.e-3
+        sol = solve_ivp(app.rhs, [0, tmax], Y0, method="BDF",
+                        jac=app.jacobian,
+                        dense_output=True, args=(rho, T, chugunov_2007), rtol=1.e-6, atol=1.e-10)
+
+        # these are the final molar fractions
+        answer = [8.33333490e-02, 9.24569852e-20, 1.56798113e-08, 2.08333177e-02]
+
+        for i in range(app.nnuc):
+            assert answer[i] == approx(sol.y[i, -1])
