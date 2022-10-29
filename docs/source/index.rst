@@ -20,6 +20,7 @@ codes.
    :caption: Introduction
 
    intro
+   data_sources
 
 .. toctree::
    :maxdepth: 1

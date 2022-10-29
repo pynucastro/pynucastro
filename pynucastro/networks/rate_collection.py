@@ -26,6 +26,7 @@ from scipy.optimize import fsolve
 from pynucastro.nucdata import Nucleus, PeriodicTable
 from pynucastro.rates import (ApproximateRate, DerivedRate, Library, Rate,
                               RatePair, TabularRate, load_rate)
+from pynucastro.rates.library import _rate_name_to_nuc
 from pynucastro.screening import make_plasma_state, make_screen_factors
 from pynucastro.screening.screen import NseState
 
@@ -571,6 +572,12 @@ class RateCollection:
             return None
         return _tmp
 
+    def get_rate_by_name(self, name):
+        """given a rate in the form 'A(x,y)B' return the Rate"""
+
+        reactants, products = _rate_name_to_nuc(name)
+        return self.get_rate_by_nuclei(reactants, products)
+
     def get_nuclei_needing_partition_functions(self):
         """return a list of the nuclei that require partition
         functions for one or more DerivedRates in the collection"""
@@ -604,17 +611,27 @@ class RateCollection:
 
         self._build_collection()
 
-    def remove_rates(self, rate_list):
-        """remove the rates in rate_list from the network.  Note, if
+    def remove_rates(self, rates):
+        """remove the Rate objects in rates from the network.  Note, if
         rate list is a dict, then the keys are assumed to be the rates
         to remove"""
 
-        if isinstance(rate_list, dict):
-            for r in rate_list.keys():
-                self.rates.remove(r)
+        if isinstance(rates, Rate):
+            self.rates.remove(rates)
         else:
-            for r in rate_list:
+            for r in rates:
                 self.rates.remove(r)
+
+        self._build_collection()
+
+    def add_rates(self, rates):
+        """add the Rate objects in rates from the network."""
+
+        if isinstance(rates, Rate):
+            self.rates.append(rates)
+        else:
+            for r in rates:
+                self.rates.append(r)
 
         self._build_collection()
 
