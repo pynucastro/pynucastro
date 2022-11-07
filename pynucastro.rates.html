@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.rates package &mdash; pynucastro 2.0.2.post17+g28268704 documentation</title>
+  <title>pynucastro.rates package &mdash; pynucastro 2.0.2.post18+g335cfde5 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
@@ -171,6 +171,12 @@ sets per rate.</p>
 <p>The Library class also implements searching based on rules
 specified by RateFilter objects.</p>
 <dl class="py method">
+<dt class="sig sig-object py" id="pynucastro.rates.library.Library.add_rate">
+<span class="sig-name descname"><span class="pre">add_rate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rate</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/library.html#Library.add_rate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.Library.add_rate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Manually add a rate by giving a Rate object</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.library.Library.backward">
 <span class="sig-name descname"><span class="pre">backward</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/library.html#Library.backward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.Library.backward" title="Permalink to this definition">¶</a></dt>
 <dd><p>Select only the reverse rates, obtained by detailed balance.</p>
@@ -247,6 +253,12 @@ by detailed balance.</p>
 (or a list of strings for multiple rates) return the Rate
 objects that match from the Library.  If there are multiple
 inputs, then a list of Rate objects is returned.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pynucastro.rates.library.Library.get_rate_by_nuclei">
+<span class="sig-name descname"><span class="pre">get_rate_by_nuclei</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reactants</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">products</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/library.html#Library.get_rate_by_nuclei"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.Library.get_rate_by_nuclei" title="Permalink to this definition">¶</a></dt>
+<dd><p>given a list of reactants and products, return any matching rates</p>
 </dd></dl>
 
 <dl class="py method">

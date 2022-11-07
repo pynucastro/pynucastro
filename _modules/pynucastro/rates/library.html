@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.rates.library &mdash; pynucastro 2.0.2.post17+g28268704 documentation</title>
+  <title>pynucastro.rates.library &mdash; pynucastro 2.0.2.post18+g335cfde5 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
@@ -367,6 +367,18 @@
         <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">LookupError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;rate identifier </span><span class="si">{</span><span class="n">rid</span><span class="si">!r}</span><span class="s2"> does not match a rate in this library.&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="bp">None</span></div>
 
+<div class="viewcode-block" id="Library.get_rate_by_nuclei"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.library.Library.get_rate_by_nuclei">[docs]</a>    <span class="k">def</span> <span class="nf">get_rate_by_nuclei</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reactants</span><span class="p">,</span> <span class="n">products</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;given a list of reactants and products, return any matching rates&quot;&quot;&quot;</span>
+        <span class="n">_tmp</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_rates</span><span class="p">()</span> <span class="k">if</span>
+                <span class="nb">sorted</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span> <span class="o">==</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">reactants</span><span class="p">)</span> <span class="ow">and</span>
+                <span class="nb">sorted</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">products</span><span class="p">)</span> <span class="o">==</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">products</span><span class="p">)]</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">_tmp</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">_tmp</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">_tmp</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">_tmp</span></div>
+
 <div class="viewcode-block" id="Library.get_rate_by_name"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.library.Library.get_rate_by_name">[docs]</a>    <span class="k">def</span> <span class="nf">get_rate_by_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Given a string representing a rate in the form &#39;A(x,y)B&#39;</span>
 <span class="sd">        (or a list of strings for multiple rates) return the Rate</span>
@@ -420,6 +432,14 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># we assume that a rate id as provided</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_rates</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">rate</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Library.add_rate"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.library.Library.add_rate">[docs]</a>    <span class="k">def</span> <span class="nf">add_rate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rate</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Manually add a rate by giving a Rate object&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rate</span><span class="p">,</span> <span class="n">Rate</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_rates</span><span class="p">[</span><span class="n">rate</span><span class="o">.</span><span class="n">get_rate_id</span><span class="p">()]</span> <span class="o">=</span> <span class="n">rate</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;invalid Rate object&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Library.linking_nuclei"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.library.Library.linking_nuclei">[docs]</a>    <span class="k">def</span> <span class="nf">linking_nuclei</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nuclist</span><span class="p">,</span> <span class="n">with_reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
