@@ -1533,7 +1533,8 @@ class RateCollection:
 
                         continue
 
-                    G.add_edges_from([(n, p)], weight=rate_weight, real=1)
+                    G.add_edges_from([(n, p)], weight=rate_weight,
+                                     real=1, highlight=highlight)
 
         # now consider the rates that are approximated out of the network
         rate_seen = []
