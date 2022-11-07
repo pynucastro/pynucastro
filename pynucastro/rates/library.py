@@ -258,6 +258,18 @@ class Library:
         except IndexError:
             raise LookupError(f"rate identifier {rid!r} does not match a rate in this library.") from None
 
+    def get_rate_by_nuclei(self, reactants, products):
+        """given a list of reactants and products, return any matching rates"""
+        _tmp = [r for r in self.get_rates() if
+                sorted(r.reactants) == sorted(reactants) and
+                sorted(r.products) == sorted(products)]
+
+        if not _tmp:
+            return None
+        if len(_tmp) == 1:
+            return _tmp[0]
+        return _tmp
+
     def get_rate_by_name(self, name):
         """Given a string representing a rate in the form 'A(x,y)B'
         (or a list of strings for multiple rates) return the Rate
@@ -311,6 +323,14 @@ class Library:
         else:
             # we assume that a rate id as provided
             self._rates.pop(rate)
+
+    def add_rate(self, rate):
+        """Manually add a rate by giving a Rate object"""
+
+        if isinstance(rate, Rate):
+            self._rates[rate.get_rate_id()] = rate
+        else:
+            raise TypeError("invalid Rate object")
 
     def linking_nuclei(self, nuclist, with_reverse=True):
         """
