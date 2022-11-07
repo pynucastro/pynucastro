@@ -21,6 +21,7 @@ codes.
 
    intro
    data_sources
+   install
 
 .. toctree::
    :maxdepth: 1
