@@ -330,7 +330,7 @@ class Library:
         if isinstance(rate, Rate):
             self._rates[rate.get_rate_id()] = rate
         else:
-            raise ValueError("invalid Rate object")
+            raise TypeError("invalid Rate object")
 
     def linking_nuclei(self, nuclist, with_reverse=True):
         """
