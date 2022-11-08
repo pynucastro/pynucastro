@@ -1609,7 +1609,7 @@ class DerivedRate(ReacLibRate):
 
         return fstring
 
-    def function_string_cxx(self, dtype="double", specifiers="inline"):
+    def function_string_cxx(self, dtype="double", specifiers="inline", leave_open=False):
         """
         Return a string containing C++ function that computes the
         rate
@@ -1671,7 +1671,9 @@ class DerivedRate(ReacLibRate):
             fstring += "    drate_dT = dzterm_dT * rate + drate_dT * (z_r / z_p);\n"
             fstring += "    rate *= z_r/z_p;\n\n"
 
-        fstring += "}\n\n"
+        if not leave_open:
+            fstring += "}\n\n"
+
         return fstring
 
     def counter_factors(self):
@@ -1892,7 +1894,7 @@ class ApproximateRate(ReacLibRate):
         string += f"    rate_eval.{self.fname} = rate\n\n"
         return string
 
-    def function_string_cxx(self, dtype="double", specifiers="inline"):
+    def function_string_cxx(self, dtype="double", specifiers="inline", leave_open=False):
         """
         Return a string containing C++ function that computes the
         approximate rate
@@ -1943,5 +1945,7 @@ class ApproximateRate(ReacLibRate):
             fstring += "        drate_dT = drdT_ga + drdT_gp * r_pa * dd + r_gp * drdT_pa * dd - r_gp * r_pa * dd * dd * (drdT_pg + drdT_pa);\n"
             fstring += "    }\n"
 
-        fstring += "}\n\n"
+        if not leave_open:
+            fstring += "}\n\n"
+
         return fstring
