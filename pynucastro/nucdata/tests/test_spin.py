@@ -1,4 +1,4 @@
-from pynucastro.nucdata import SpinNuclide, SpinTable
+from pynucastro.nucdata import SpinTable
 
 
 class TestSpin:
@@ -28,9 +28,12 @@ class TestSpin:
 
     def test_spin_table(self):
 
-        assert self.spintable_gs_reliable.get_spin_nuclide('n') == SpinNuclide(a=1, z=0, spin_states=2)
-        assert self.spintable_gs_reliable.get_spin_nuclide('be14') == SpinNuclide(a=14, z=4, spin_states=1)
-        assert self.spintable_gs_reliable.get_spin_nuclide('ac219') == SpinNuclide(a=219, z=89, spin_states=10)
-        assert self.spintable_gs_not_reliable.get_spin_nuclide('pd91') == SpinNuclide(a=91, z=46, spin_states=8)
-        assert self.spintable_gs_not_reliable.get_spin_nuclide('bh275') == SpinNuclide(a=275, z=107, spin_states=6)
-        assert self.spintable_gs_not_reliable.get_spin_nuclide('o11') == SpinNuclide(a=11, z=8, spin_states=4)
+        assert self.spintable_gs_reliable.get_spin_data(a=1, z=0).spin_states == 2
+        assert self.spintable_gs_reliable.get_spin_data(a=14, z=4).spin_states == 1
+        assert self.spintable_gs_reliable.get_spin_data(a=219, z=89).spin_states == 10
+        assert self.spintable_gs_not_reliable.get_spin_data(a=1, z=0).spin_states == 2
+        assert self.spintable_gs_not_reliable.get_spin_data(a=14, z=4).spin_states == 1
+        assert self.spintable_gs_not_reliable.get_spin_data(a=219, z=89).spin_states == 10
+        assert self.spintable_gs_not_reliable.get_spin_data(a=91, z=46).spin_states == 8
+        assert self.spintable_gs_not_reliable.get_spin_data(a=275, z=107).spin_states == 6
+        assert self.spintable_gs_not_reliable.get_spin_data(a=11, z=8).spin_states == 4
