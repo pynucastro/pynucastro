@@ -70,7 +70,7 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
                 of.write(f"{nuc.spec_name:25} {nuc.short_spec_name:6} {nuc.A:6.1f} {nuc.Z:6.1f}\n")
 
             for nuc in self.approx_nuclei:
-                  of.write(f"__extra_{nuc.spec_name:17} {nuc.short_spec_name:6} {nuc.A:6.1f} {nuc.Z:6.1f}\n")
+                of.write(f"__extra_{nuc.spec_name:17} {nuc.short_spec_name:6} {nuc.A:6.1f} {nuc.Z:6.1f}\n")
 
         # write out some network properties
         with open(os.path.join(odir, "NETWORK_PROPERTIES"), "w") as of:
