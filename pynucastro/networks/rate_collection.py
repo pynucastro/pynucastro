@@ -1690,11 +1690,11 @@ class RateCollection:
         if title is not None:
             fig.suptitle(title)
 
-        if outfile is None:
-            plt.show()
-        else:
+        if outfile is not None:
             plt.tight_layout()
             plt.savefig(outfile, dpi=dpi)
+
+        return fig
 
     def plot_jacobian(self, outfile=None, rho=None, T=None, comp=None,
                       screen_func=None,
@@ -1828,6 +1828,8 @@ class RateCollection:
 
         if outfile is not None:
             fig.savefig(outfile, bbox_inches="tight")
+
+        return fig
 
     @staticmethod
     def _safelog(arr, small):
@@ -2067,12 +2069,11 @@ class RateCollection:
             fig.colorbar(smap, cax=cax, orientation="vertical", ticks=tick_labels,
                          label=cbar_label, format=cbar_format)
 
-        # Show or save
-        if outfile is None:
-            plt.show()
-        else:
+        if outfile is not None:
             plt.tight_layout()
             plt.savefig(outfile, dpi=dpi)
+
+        return fig
 
     def __repr__(self):
         string = ""
