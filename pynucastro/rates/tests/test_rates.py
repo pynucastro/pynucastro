@@ -192,6 +192,30 @@ class TestRate:
     def test_eval(self):
         assert self.rate8.eval(1.e8) == approx(2.0403192412842946e-24)
 
+    def test_eval_deriv(self):
+        T0 = 1.e8
+        eps = 1.e-8
+
+        # compare finite diff to analytic diff
+
+        # rate4
+        diff = (self.rate4.eval(T0*(1.0+eps)) - self.rate4.eval(T0)) / (T0 * eps)
+        err = abs(diff - self.rate4.eval_deriv(T0)) / diff
+
+        assert err < 1.e-6
+
+        # rate5
+        diff = (self.rate5.eval(T0*(1.0+eps)) - self.rate5.eval(T0)) / (T0 * eps)
+        err = abs(diff - self.rate5.eval_deriv(T0)) / diff
+
+        assert err < 1.e-6
+
+        # rate6
+        diff = (self.rate6.eval(T0*(1.0+eps)) - self.rate6.eval(T0)) / (T0 * eps)
+        err = abs(diff - self.rate6.eval_deriv(T0)) / diff
+
+        assert err < 1.e-6
+
     def test_comparison(self):
         assert self.rate1 > self.rate2
         assert self.rate1 > self.rate4
