@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.rates package &mdash; pynucastro 2.0.2.post20+g602903a1 documentation</title>
+  <title>pynucastro.rates package &mdash; pynucastro 2.0.2.post21+g60e5cc29 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
@@ -490,6 +490,12 @@ rate.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="pynucastro.rates.rate.ReacLibRate.eval_deriv">
+<span class="sig-name descname"><span class="pre">eval_deriv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rhoY</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#ReacLibRate.eval_deriv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.ReacLibRate.eval_deriv" title="Permalink to this definition">¶</a></dt>
+<dd><p>evauate the derivative of reaction rate with respect to T</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.ReacLibRate.function_string_cxx">
 <span class="sig-name descname"><span class="pre">function_string_cxx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'double'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">specifiers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'inline'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">leave_open</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#ReacLibRate.function_string_cxx"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.ReacLibRate.function_string_cxx" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a string containing C++ function that computes the
@@ -566,6 +572,13 @@ non-resonant versions of reactions.</p>
 </dd>
 </dl>
 <dl class="py method">
+<dt class="sig sig-object py" id="pynucastro.rates.rate.SingleSet.dfdT">
+<span class="sig-name descname"><span class="pre">dfdT</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#SingleSet.dfdT"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.SingleSet.dfdT" title="Permalink to this definition">¶</a></dt>
+<dd><p>return a function for this dratedT(tf), where tf is a
+Tfactors object</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.SingleSet.dln_set_string_dT9_cxx">
 <span class="sig-name descname"><span class="pre">dln_set_string_dT9_cxx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'dset_dT'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plus_equal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#SingleSet.dln_set_string_dT9_cxx"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.SingleSet.dln_set_string_dT9_cxx" title="Permalink to this definition">¶</a></dt>
 <dd><p>return a string containing the C++ code for d/dT9 ln(set)</p>
@@ -574,7 +587,7 @@ non-resonant versions of reactions.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.SingleSet.f">
 <span class="sig-name descname"><span class="pre">f</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#SingleSet.f"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.SingleSet.f" title="Permalink to this definition">¶</a></dt>
-<dd><p>return a function for this set – note: Tf here is a Tfactors
+<dd><p>return a function for rate(tf) where tf is a Tfactors
 object</p>
 </dd></dl>
 

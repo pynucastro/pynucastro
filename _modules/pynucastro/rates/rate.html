@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.rates.rate &mdash; pynucastro 2.0.2.post20+g602903a1 documentation</title>
+  <title>pynucastro.rates.rate &mdash; pynucastro 2.0.2.post21+g60e5cc29 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
@@ -288,10 +288,8 @@
         <span class="k">return</span> <span class="n">x</span>
 
 <div class="viewcode-block" id="SingleSet.f"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.SingleSet.f">[docs]</a>    <span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        return a function for this set -- note: Tf here is a Tfactors</span>
-<span class="sd">        object</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot; return a function for rate(tf) where tf is a Tfactors</span>
+<span class="sd">        object &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="k">lambda</span> <span class="n">tf</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span>
                                  <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">tf</span><span class="o">.</span><span class="n">T9i</span> <span class="o">+</span>
                                  <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">*</span><span class="n">tf</span><span class="o">.</span><span class="n">T913i</span> <span class="o">+</span>
@@ -299,6 +297,21 @@
                                  <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">*</span><span class="n">tf</span><span class="o">.</span><span class="n">T9</span> <span class="o">+</span>
                                  <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">*</span><span class="n">tf</span><span class="o">.</span><span class="n">T953</span> <span class="o">+</span>
                                  <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span><span class="o">*</span><span class="n">tf</span><span class="o">.</span><span class="n">lnT9</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SingleSet.dfdT"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.SingleSet.dfdT">[docs]</a>    <span class="k">def</span> <span class="nf">dfdT</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; return a function for this dratedT(tf), where tf is a</span>
+<span class="sd">        Tfactors object &quot;&quot;&quot;</span>
+
+        <span class="c1"># we have lambda = exp(f(T_9))</span>
+        <span class="c1"># so dlambda/dT9 = lambda * df/dT9</span>
+        <span class="c1"># and dlambda/dT = dlambda/dT9 / 1.e9</span>
+
+        <span class="k">return</span> <span class="k">lambda</span> <span class="n">tf</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">f</span><span class="p">()(</span><span class="n">tf</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">tf</span><span class="o">.</span><span class="n">T9i</span> <span class="o">*</span> <span class="n">tf</span><span class="o">.</span><span class="n">T9i</span> <span class="o">+</span>
+                                          <span class="o">-</span><span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="mf">3.</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="n">tf</span><span class="o">.</span><span class="n">T913i</span> <span class="o">*</span> <span class="n">tf</span><span class="o">.</span><span class="n">T9i</span> <span class="o">+</span>
+                                          <span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="mf">3.</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">*</span> <span class="n">tf</span><span class="o">.</span><span class="n">T913i</span> <span class="o">*</span> <span class="n">tf</span><span class="o">.</span><span class="n">T913i</span> <span class="o">+</span>
+                                          <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">+</span>
+                                          <span class="p">(</span><span class="mf">5.</span><span class="o">/</span><span class="mf">3.</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="o">*</span> <span class="n">tf</span><span class="o">.</span><span class="n">T913</span> <span class="o">*</span> <span class="n">tf</span><span class="o">.</span><span class="n">T913</span> <span class="o">+</span>
+                                          <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span> <span class="o">*</span> <span class="n">tf</span><span class="o">.</span><span class="n">T9i</span><span class="p">)</span> <span class="o">/</span> <span class="mf">1.e9</span></div>
 
 <div class="viewcode-block" id="SingleSet.set_string_py"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.SingleSet.set_string_py">[docs]</a>    <span class="k">def</span> <span class="nf">set_string_py</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;set&quot;</span><span class="p">,</span> <span class="n">plus_equal</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -1270,6 +1283,17 @@
             <span class="n">r</span> <span class="o">+=</span> <span class="n">f</span><span class="p">(</span><span class="n">tf</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">r</span></div>
+
+<div class="viewcode-block" id="ReacLibRate.eval_deriv"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.ReacLibRate.eval_deriv">[docs]</a>    <span class="k">def</span> <span class="nf">eval_deriv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">rhoY</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; evauate the derivative of reaction rate with respect to T &quot;&quot;&quot;</span>
+
+        <span class="n">tf</span> <span class="o">=</span> <span class="n">Tfactors</span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
+        <span class="n">drdT</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sets</span><span class="p">:</span>
+            <span class="n">dfdT</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">dfdT</span><span class="p">()</span>
+            <span class="n">drdT</span> <span class="o">+=</span> <span class="n">dfdT</span><span class="p">(</span><span class="n">tf</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">drdT</span></div>
 
 <div class="viewcode-block" id="ReacLibRate.get_rate_exponent"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.ReacLibRate.get_rate_exponent">[docs]</a>    <span class="k">def</span> <span class="nf">get_rate_exponent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T0</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
