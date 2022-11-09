@@ -2042,8 +2042,8 @@ class Explorer:
         self.kwargs = kwargs
 
         # we will override any T and rho passed in
-        _ = kwargs.pop("T", None)
-        _ = kwargs.pop("rho", None)
+        kwargs.pop("T", None)
+        kwargs.pop("rho", None)
 
     def _make_plot(self, logrho, logT):
         self.rc.plot(rho=10.0**logrho, T=10.0**logT,
