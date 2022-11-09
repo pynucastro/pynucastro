@@ -129,7 +129,7 @@ class Nucleus:
 
         # set the number of spin states
         try:
-            self.spin_states = _spin_table.get_spin_data(a=self.A, z=self.Z).spin_states
+            self.spin_states = _spin_table.get_spin_states(a=self.A, z=self.Z)
         except NotImplementedError:
             self.spin_states = None
 

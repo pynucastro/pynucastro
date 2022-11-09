@@ -1,24 +1,12 @@
 import os
 
 
-class SpinData:
-    """
-    This class contains the relevant spin information for a nuclide specified in
-    the nubase2020_1.txt table.
-
-    Currently, we only use the number of spin states.
-    """
-
-    def __init__(self, spin_states):
-        self.spin_states = spin_states
-
-
 class SpinTable:
     """
     This class stores the nubase2020_1.txt table information in a dictionary data structure
-    that maps nuclides to a pynucastro.nucdata.SpinData object.
-    Therefore, after setting an SpinTable class in rates.py, we should retrieve the SpinData
-    data structure for a designated Nucleus class.
+    that maps nuclides to their number of nuclear spin states.
+    Therefore, after setting an SpinTable class in rates.py, we can retrieve the
+    spin states for a designated Nucleus class.
 
     The variable reliable switch between using all the values of the tables, excluding the nuclei
     where only intervals are given and the values measured by strong experimental arguments.
@@ -26,7 +14,7 @@ class SpinTable:
 
     def __init__(self, datafile=None, reliable=False):
 
-        self._spin_data = {}
+        self._spin_states = {}
         self.reliable = reliable
 
         if datafile:
@@ -62,15 +50,15 @@ class SpinTable:
 
             if self.reliable:
                 if experimental == 's':
-                    self._spin_data[A, Z] = SpinData(spin_states)
+                    self._spin_states[A, Z] = spin_states
                 else:
                     continue
             else:
-                self._spin_data[A, Z] = SpinData(spin_states)
+                self._spin_states[A, Z] = spin_states
 
         finput.close()
 
-    def get_spin_data(self, a, z):
-        if (a, z) in self._spin_data:
-            return self._spin_data[a, z]
+    def get_spin_states(self, a, z):
+        if (a, z) in self._spin_states:
+            return self._spin_states[a, z]
         raise NotImplementedError("nuclear spin data is not available for the selected nucleus")
