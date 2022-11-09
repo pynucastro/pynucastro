@@ -2040,8 +2040,10 @@ class Explorer:
         self.rc = rc
         self.comp = comp
         self.kwargs = kwargs
-        T = kwargs.pop("T", None)
-        rho = kwargs.pop("rho", None)
+
+        # we will override any T and rho passed in
+        _ = kwargs.pop("T", None)
+        _ = kwargs.pop("rho", None)
 
     def _make_plot(self, logrho, logT):
         self.rc.plot(rho=10.0**logrho, T=10.0**logT,
