@@ -548,3 +548,8 @@ class BaseCxxNetwork(ABC, RateCollection):
                 of.write(f"{self.indent*n_indent}case {n.cindex()}:\n")
                 of.write(f"{self.indent*2*n_indent}spin = {n.spin_states};\n")
                 of.write(f"{self.indent*2*n_indent}break;\n\n")
+        for n in self.approx_nuclei:
+            if n.spin_states is not None:
+                of.write(f"{self.indent*n_indent}case {n.cindex()}:\n")
+                of.write(f"{self.indent*2*n_indent}spin = {n.spin_states};\n")
+                of.write(f"{self.indent*2*n_indent}break;\n\n")
