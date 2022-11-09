@@ -1340,6 +1340,7 @@ class RateCollection:
              N_range=None, Z_range=None, rotated=False,
              always_show_p=False, always_show_alpha=False,
              hide_xp=False, hide_xalpha=False,
+             highlight_filter_function=None,
              nucleus_filter_function=None, rate_filter_function=None):
         """Make a plot of the network structure showing the links between
         nuclei.  If a full set of thermodymamic conditions are
@@ -1398,6 +1399,10 @@ class RateCollection:
 
         hide_xp=False: dont connect the links to p for heavy
         nuclei reactions of the form A(p,X)B or A(X,p)B.
+
+        highlight_filter_function: name of a custom function that
+        takes a Rate object and returns true or false if we want
+        to highlight the rate edge.
 
         nucleus_filter_funcion: name of a custom function that takes a
         Nucleus object and returns true or false if it is to be shown
@@ -1486,6 +1491,10 @@ class RateCollection:
                     if not rate_filter_function(r):
                         continue
 
+                highlight = False
+                if highlight_filter_function is not None:
+                    highlight = highlight_filter_function(r)
+
                 for p in r.products:
                     if p not in node_nuclei:
                         continue
@@ -1504,7 +1513,8 @@ class RateCollection:
                     # here real means that it is not an approximate rate
 
                     if ydots is None:
-                        G.add_edges_from([(n, p)], weight=0.5, real=1)
+                        G.add_edges_from([(n, p)], weight=0.5,
+                                         real=1, highlight=highlight)
                         continue
 
                     try:
@@ -1518,11 +1528,13 @@ class RateCollection:
                     if r in invisible_rates:
                         if show_small_ydot:
                             # use real -1 for displaying rates that are below ydot_cutoff
-                            G.add_edges_from([(n, p)], weight=rate_weight, real=-1)
+                            G.add_edges_from([(n, p)], weight=rate_weight,
+                                             real=-1, highlight=highlight)
 
                         continue
 
-                    G.add_edges_from([(n, p)], weight=rate_weight, real=1)
+                    G.add_edges_from([(n, p)], weight=rate_weight,
+                                     real=1, highlight=highlight)
 
         # now consider the rates that are approximated out of the network
         rate_seen = []
@@ -1533,6 +1545,10 @@ class RateCollection:
                 if sr in rate_seen:
                     continue
                 rate_seen.append(sr)
+
+                highlight = False
+                if highlight_filter_function is not None:
+                    highlight = highlight_filter_function(sr)
 
                 for n in sr.reactants:
                     if n not in node_nuclei:
@@ -1547,7 +1563,7 @@ class RateCollection:
                         if hide_xp and _skip_xp(n, p, sr):
                             continue
 
-                        G.add_edges_from([(n, p)], weight=0, real=0)
+                        G.add_edges_from([(n, p)], weight=0, real=0, highlight=highlight)
 
         # It seems that networkx broke backwards compatability, and 'zorder' is no longer a valid
         # keyword argument. The 'linewidth' argument has also changed to 'linewidths'.
@@ -1604,6 +1620,14 @@ class RateCollection:
                                    connectionstyle=connectionstyle,
                                    style="dashed", node_size=node_size, ax=ax)
 
+        # highlight edges
+        highlight_edges = [(u, v) for u, v, e in G.edges(data=True) if e["highlight"]]
+
+        _ = nx.draw_networkx_edges(G, G.position, width=5,
+                                   edgelist=highlight_edges, edge_color="C0", alpha="0.25",
+                                   connectionstyle=connectionstyle,
+                                   node_size=node_size, ax=ax)
+
         if ydots is not None:
             pc = mpl.collections.PatchCollection(real_edges_lc, cmap=plt.cm.viridis)
             pc.set_array(real_weights)
@@ -1656,11 +1680,11 @@ class RateCollection:
         if title is not None:
             fig.suptitle(title)
 
-        if outfile is None:
-            plt.show()
-        else:
+        if outfile is not None:
             plt.tight_layout()
             plt.savefig(outfile, dpi=dpi)
+
+        return fig
 
     def plot_network_chart(self, outfile=None, rho=None, T=None, comp=None,
                            size=(800, 800), dpi=100, force_one_column=False):
@@ -1755,6 +1779,8 @@ class RateCollection:
 
         if outfile is not None:
             fig.savefig(outfile, bbox_inches="tight")
+
+        return fig
 
     @staticmethod
     def _safelog(arr, small):
@@ -1994,12 +2020,11 @@ class RateCollection:
             fig.colorbar(smap, cax=cax, orientation="vertical", ticks=tick_labels,
                          label=cbar_label, format=cbar_format)
 
-        # Show or save
-        if outfile is None:
-            plt.show()
-        else:
+        if outfile is not None:
             plt.tight_layout()
             plt.savefig(outfile, dpi=dpi)
+
+        return fig
 
     def __repr__(self):
         string = ""
@@ -2010,32 +2035,19 @@ class RateCollection:
 
 class Explorer:
     """ interactively explore a rate collection """
-    def __init__(self, rc, comp, size=(800, 600),
-                 ydot_cutoff_value=None, rotated=False,
-                 hide_xalpha=False,
-                 always_show_p=False, always_show_alpha=False,
-                 node_size=1000, node_font_size=13):
+    def __init__(self, rc, comp, **kwargs):
         """ take a RateCollection and a composition """
         self.rc = rc
         self.comp = comp
-        self.size = size
-        self.ydot_cutoff_value = ydot_cutoff_value
-        self.always_show_p = always_show_p
-        self.always_show_alpha = always_show_alpha
-        self.hide_xalpha = hide_xalpha
-        self.rotated = rotated
-        self.node_size = node_size
-        self.node_font_size = node_font_size
+        self.kwargs = kwargs
+
+        # we will override any T and rho passed in
+        kwargs.pop("T", None)
+        kwargs.pop("rho", None)
 
     def _make_plot(self, logrho, logT):
         self.rc.plot(rho=10.0**logrho, T=10.0**logT,
-                     comp=self.comp, size=self.size,
-                     ydot_cutoff_value=self.ydot_cutoff_value,
-                     always_show_p=self.always_show_p,
-                     always_show_alpha=self.always_show_alpha,
-                     rotated=self.rotated,
-                     hide_xalpha=self.hide_xalpha,
-                     node_size=self.node_size, node_font_size=self.node_font_size)
+                     comp=self.comp, **self.kwargs)
 
     def explore(self, logrho=(2, 6, 0.1), logT=(7, 9, 0.1)):
         """Perform interactive exploration of the network structure."""
