@@ -2010,32 +2010,17 @@ class RateCollection:
 
 class Explorer:
     """ interactively explore a rate collection """
-    def __init__(self, rc, comp, size=(800, 600),
-                 ydot_cutoff_value=None, rotated=False,
-                 hide_xalpha=False,
-                 always_show_p=False, always_show_alpha=False,
-                 node_size=1000, node_font_size=13):
+    def __init__(self, rc, comp, **kwargs):
         """ take a RateCollection and a composition """
         self.rc = rc
         self.comp = comp
-        self.size = size
-        self.ydot_cutoff_value = ydot_cutoff_value
-        self.always_show_p = always_show_p
-        self.always_show_alpha = always_show_alpha
-        self.hide_xalpha = hide_xalpha
-        self.rotated = rotated
-        self.node_size = node_size
-        self.node_font_size = node_font_size
+        self.kwargs = kwargs
+        T = kwargs.pop("T", None)
+        rho = kwargs.pop("rho", None)
 
     def _make_plot(self, logrho, logT):
         self.rc.plot(rho=10.0**logrho, T=10.0**logT,
-                     comp=self.comp, size=self.size,
-                     ydot_cutoff_value=self.ydot_cutoff_value,
-                     always_show_p=self.always_show_p,
-                     always_show_alpha=self.always_show_alpha,
-                     rotated=self.rotated,
-                     hide_xalpha=self.hide_xalpha,
-                     node_size=self.node_size, node_font_size=self.node_font_size)
+                     comp=self.comp, **self.kwargs)
 
     def explore(self, logrho=(2, 6, 0.1), logT=(7, 9, 0.1)):
         """Perform interactive exploration of the network structure."""
