@@ -179,10 +179,8 @@ class SingleSet:
         return x
 
     def f(self):
-        """
-        return a function for this set -- note: Tf here is a Tfactors
-        object
-        """
+        """ return a function for rate(tf) where tf is a Tfactors
+        object """
         return lambda tf: np.exp(self.a[0] +
                                  self.a[1]*tf.T9i +
                                  self.a[2]*tf.T913i +
@@ -190,6 +188,21 @@ class SingleSet:
                                  self.a[4]*tf.T9 +
                                  self.a[5]*tf.T953 +
                                  self.a[6]*tf.lnT9)
+
+    def dfdT(self):
+        """ return a function for this dratedT(tf), where tf is a
+        Tfactors object """
+
+        # we have lambda = exp(f(T_9))
+        # so dlambda/dT9 = lambda * df/dT9
+        # and dlambda/dT = dlambda/dT9 / 1.e9
+
+        return lambda tf: self.f()(tf) * (-self.a[1] * tf.T9i * tf.T9i +
+                                          -(1./3.) * self.a[2] * tf.T913i * tf.T9i +
+                                          (1./3.) * self.a[3] * tf.T913i * tf.T913i +
+                                          self.a[4] +
+                                          (5./3.) * self.a[5] * tf.T913 * tf.T913 +
+                                          self.a[6] * tf.T9i) / 1.e9
 
     def set_string_py(self, prefix="set", plus_equal=False):
         """
@@ -1162,6 +1175,17 @@ class ReacLibRate(Rate):
 
         return r
 
+    def eval_deriv(self, T, rhoY=None):
+        """ evauate the derivative of reaction rate with respect to T """
+
+        tf = Tfactors(T)
+        drdT = 0.0
+        for s in self.sets:
+            dfdT = s.dfdT()
+            drdT += dfdT(tf)
+
+        return drdT
+
     def get_rate_exponent(self, T0):
         """
         for a rate written as a power law, r = r_0 (T/T0)**nu, return
@@ -1609,7 +1633,7 @@ class DerivedRate(ReacLibRate):
 
         return fstring
 
-    def function_string_cxx(self, dtype="double", specifiers="inline"):
+    def function_string_cxx(self, dtype="double", specifiers="inline", leave_open=False):
         """
         Return a string containing C++ function that computes the
         rate
@@ -1671,7 +1695,9 @@ class DerivedRate(ReacLibRate):
             fstring += "    drate_dT = dzterm_dT * rate + drate_dT * (z_r / z_p);\n"
             fstring += "    rate *= z_r/z_p;\n\n"
 
-        fstring += "}\n\n"
+        if not leave_open:
+            fstring += "}\n\n"
+
         return fstring
 
     def counter_factors(self):
@@ -1892,7 +1918,7 @@ class ApproximateRate(ReacLibRate):
         string += f"    rate_eval.{self.fname} = rate\n\n"
         return string
 
-    def function_string_cxx(self, dtype="double", specifiers="inline"):
+    def function_string_cxx(self, dtype="double", specifiers="inline", leave_open=False):
         """
         Return a string containing C++ function that computes the
         approximate rate
@@ -1943,5 +1969,7 @@ class ApproximateRate(ReacLibRate):
             fstring += "        drate_dT = drdT_ga + drdT_gp * r_pa * dd + r_gp * drdT_pa * dd - r_gp * r_pa * dd * dd * (drdT_pg + drdT_pa);\n"
             fstring += "    }\n"
 
-        fstring += "}\n\n"
+        if not leave_open:
+            fstring += "}\n\n"
+
         return fstring
