@@ -453,7 +453,8 @@ class RateCollection:
             elif r.chapter == 't':
                 self.tabular_rates.append(r)
             elif isinstance(r, DerivedRate):
-                self.derived_rates.append(r)
+                if r not in self.derived_rates:
+                    self.derived_rates.append(r)
             elif isinstance(r.chapter, int):
                 if r not in self.reaclib_rates:
                     self.reaclib_rates.append(r)
