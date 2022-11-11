@@ -71,12 +71,12 @@ def fe52__p_mn51__derived(rate_eval, tf):
     rate_eval.fe52__p_mn51__derived = rate
 
 
-    # setting p partition function to 1.0 by default, independent of T
-    p_pf = 1.0
-
     # interpolating mn51 partition function
     mn51_pf_exponent = np.interp(tf.T9, xp=mn51_temp_array, fp=np.log10(mn51_pf_array))
     mn51_pf = 10.0**mn51_pf_exponent
+
+    # setting p partition function to 1.0 by default, independent of T
+    p_pf = 1.0
 
     # interpolating fe52 partition function
     fe52_pf_exponent = np.interp(tf.T9, xp=fe52_temp_array, fp=np.log10(fe52_pf_array))
