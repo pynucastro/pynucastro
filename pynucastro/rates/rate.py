@@ -1613,7 +1613,7 @@ class DerivedRate(ReacLibRate):
         if self.use_pf:
 
             fstring += "\n"
-            for nuc in self.rate.reactants + self.rate.products:
+            for nuc in set(self.rate.reactants + self.rate.products):
                 if nuc.partition_function:
                     fstring += f"    # interpolating {nuc} partition function\n"
                     fstring += f"    {nuc}_pf_exponent = np.interp(tf.T9, xp={nuc}_temp_array, fp=np.log10({nuc}_pf_array))\n"
@@ -1655,7 +1655,7 @@ class DerivedRate(ReacLibRate):
         if self.use_pf:
 
             fstring += "\n"
-            for nuc in self.rate.reactants + self.rate.products:
+            for nuc in set(self.rate.reactants + self.rate.products):
                 fstring += f"    Real {nuc}_pf, d{nuc}_pf_dT;\n"
 
                 if nuc.partition_function:

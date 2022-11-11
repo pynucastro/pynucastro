@@ -442,10 +442,14 @@ class RateCollection:
                 self.approx_rates.append(r)
                 for cr in r.get_child_rates():
                     assert cr.chapter != "t"
-                    # there may be dupes in the list of reaclib rates, since some
-                    # approx rates will use the same child rates
-                    if cr not in self.reaclib_rates:
-                        self.reaclib_rates.append(cr)
+                    # child rates may be ReacLibRates or DerivedRates
+                    # make sure we don't double count
+                    if isinstance(cr, DerivedRate):
+                        if cr not in self.derived_rates:
+                            self.derived_rates.append(cr)
+                    else:
+                        if cr not in self.reaclib_rates:
+                            self.reaclib_rates.append(cr)
             elif r.chapter == 't':
                 self.tabular_rates.append(r)
             elif isinstance(r, DerivedRate):
