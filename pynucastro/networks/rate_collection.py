@@ -467,7 +467,8 @@ class RateCollection:
             else:
                 raise NotImplementedError(f"Chapter type unknown for rate chapter {r.chapter}")
 
-        self.all_rates = self.reaclib_rates + self.tabular_rates + self.approx_rates + self.derived_rates + self.child_rates
+        self.all_rates = self.reaclib_rates + self.tabular_rates + self.approx_rates \
+            + self.derived_rates + self.reaclib_child_rates + self.derived_child_rates
 
     def _read_rate_files(self, rate_files):
         # get the rates
