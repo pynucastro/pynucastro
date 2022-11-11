@@ -437,8 +437,9 @@ class RateCollection:
         self.reaclib_rates = []
         self.approx_rates = []
         self.derived_rates = []
-        self.child_rates = []
-        
+        self.reaclib_child_rates = []
+        self.derived_child_rates = []
+
         for r in self.rates:
             if isinstance(r, ApproximateRate):
                 self.approx_rates.append(r)
@@ -449,21 +450,19 @@ class RateCollection:
                     # let Child ReacLibRates be the first in child_rates
                     # and let DerivedRate be the second.
                     if isinstance(cr, DerivedRate):
-                        if cr not in self.child_rates:
-                            self.child_rates.append(cr)
+                        if cr not in self.derived_child_rates:
+                            self.derived_child_rates.append(cr)
                     else:
-                        if cr not in self.child_rates:
-                            self.child_rates.insert(0, cr)
+                        if cr not in self.reaclib_child_rates:
+                            self.reaclib_child_rates.append(cr)
 
             elif r.chapter == 't':
                 self.tabular_rates.append(r)
             elif isinstance(r, DerivedRate):
-                # if r not in self.derived_rates:
-                if r not in self.child_rates:
+                if r not in self.derived_child_rates:
                     self.derived_rates.append(r)
             elif isinstance(r.chapter, int):
-                # if r not in self.reaclib_rates:
-                if r not in self.child_rates:
+                if r not in self.reaclib_child_rates:
                     self.reaclib_rates.append(r)
             else:
                 raise NotImplementedError(f"Chapter type unknown for rate chapter {r.chapter}")
