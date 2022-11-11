@@ -727,6 +727,12 @@ class RateCollection:
             for r in ar.get_child_rates():
                 try:
                     self.rates.remove(r)
+
+                    # Let the child rates to have suffix child
+                    r.child = True
+                    r.fname = None
+                    r._set_print_representation()
+
                     print(f"removing rate {r}")
                 except ValueError:
                     pass

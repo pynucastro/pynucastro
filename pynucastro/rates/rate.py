@@ -755,6 +755,8 @@ class ReacLibRate(Rate):
         self.weak_type = None
         self.reverse = None
 
+        self.child = None
+
         self.Q = Q
 
         self.tabular = False
@@ -799,6 +801,8 @@ class ReacLibRate(Rate):
                 self.fname += "__approx"
             if self.derived:
                 self.fname += "__derived"
+            if self.child:
+                self.fname += "__child"
 
     def modify_products(self, new_products):
         if not isinstance(new_products, (set, list, tuple)):
