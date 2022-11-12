@@ -446,9 +446,27 @@ class RateCollection:
                     # child rates may be ReacLibRates or DerivedRates
                     # make sure we don't double count
                     if isinstance(cr, DerivedRate):
+                        # Check whether the child rate is removed or not
+                        if cr not in self.rates:
+                            cr.removed = True
+                        else:
+                            cr.removed = False
+
+                        cr.fname = None
+                        cr._set_print_representation()
+
                         if cr not in self.derived_rates:
                             self.derived_rates.append(cr)
+
                     else:
+                        if cr not in self.rates:
+                            cr.removed = True
+                        else:
+                            cr.removed = False
+
+                        cr.fname = None
+                        cr._set_print_representation()
+
                         if cr not in self.reaclib_rates:
                             self.reaclib_rates.append(cr)
 
@@ -636,6 +654,7 @@ class RateCollection:
 
         if isinstance(rates, Rate):
             self.rates.append(rates)
+
         else:
             for r in rates:
                 self.rates.append(r)
@@ -734,11 +753,6 @@ class RateCollection:
             for r in ar.get_child_rates():
                 try:
                     self.rates.remove(r)
-
-                    # Let the child rates to have suffix child
-                    r.child = True
-                    r.fname = None
-                    r._set_print_representation()
 
                     print(f"removing rate {r}")
                 except ValueError:

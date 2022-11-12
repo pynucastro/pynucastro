@@ -47,10 +47,10 @@ class TestPythonNetwork:
         ostr = \
 """@numba.njit()
 def mg24_he4__si28__approx(rate_eval, tf):
-    r_ag = rate_eval.he4_mg24__si28__child
-    r_ap = rate_eval.he4_mg24__p_al27__child
-    r_pg = rate_eval.p_al27__si28__child
-    r_pa = rate_eval.p_al27__he4_mg24__child
+    r_ag = rate_eval.he4_mg24__si28__removed
+    r_ap = rate_eval.he4_mg24__p_al27__removed
+    r_pg = rate_eval.p_al27__si28__removed
+    r_pa = rate_eval.p_al27__he4_mg24__removed
     rate = r_ag + r_ap * r_pg / (r_pg + r_pa)
     rate_eval.mg24_he4__si28__approx = rate
 
@@ -62,7 +62,7 @@ def mg24_he4__si28__approx(rate_eval, tf):
 
         ostr = \
 """@numba.njit()
-def he4_mg24__si28__child(rate_eval, tf):
+def he4_mg24__si28__removed(rate_eval, tf):
     # mg24 + he4 --> si28
     rate = 0.0
 
@@ -73,7 +73,7 @@ def he4_mg24__si28__child(rate_eval, tf):
     rate += np.exp(  8.03977 + -15.629*tf.T9i
                   + -1.5*tf.lnT9)
 
-    rate_eval.he4_mg24__si28__child = rate
+    rate_eval.he4_mg24__si28__removed = rate
 
 """
 
