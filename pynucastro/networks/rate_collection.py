@@ -445,8 +445,6 @@ class RateCollection:
                 self.approx_rates.append(r)
                 for cr in r.get_child_rates():
                     assert cr.chapter != "t"
-                    # child rates may be ReacLibRates or DerivedRates
-                    # make sure we don't double count
                     # let Child ReacLibRates be the first in child_rates
                     # and let DerivedRate be the second.
                     if isinstance(cr, DerivedRate):
@@ -460,6 +458,7 @@ class RateCollection:
                 self.tabular_rates.append(r)
             elif isinstance(r, DerivedRate):
                 if r not in self.derived_child_rates:
+
                     self.derived_rates.append(r)
             elif isinstance(r.chapter, int):
                 if r not in self.reaclib_child_rates:
