@@ -437,6 +437,7 @@ class RateCollection:
         self.reaclib_rates = []
         self.approx_rates = []
         self.derived_rates = []
+
         for r in self.rates:
             if isinstance(r, ApproximateRate):
                 self.approx_rates.append(r)
@@ -445,11 +446,33 @@ class RateCollection:
                     # child rates may be ReacLibRates or DerivedRates
                     # make sure we don't double count
                     if isinstance(cr, DerivedRate):
+
+                        # Here we check whether this child rate is removed or not.
+                        # removed means that this rate is never used on its own to connect two nuclei in the network
+                        # it is only used in one or more ApproximateRate.
+                        if cr not in self.rates:
+                            cr.removed = True
+                        else:
+                            cr.removed = False
+
+                        cr.fname = None
+                        cr._set_print_representation()
+
                         if cr not in self.derived_rates:
                             self.derived_rates.append(cr)
+
                     else:
+                        if cr not in self.rates:
+                            cr.removed = True
+                        else:
+                            cr.removed = False
+
+                        cr.fname = None
+                        cr._set_print_representation()
+
                         if cr not in self.reaclib_rates:
                             self.reaclib_rates.append(cr)
+
             elif r.chapter == 't':
                 self.tabular_rates.append(r)
             elif isinstance(r, DerivedRate):
@@ -634,6 +657,7 @@ class RateCollection:
 
         if isinstance(rates, Rate):
             self.rates.append(rates)
+
         else:
             for r in rates:
                 self.rates.append(r)
@@ -732,6 +756,7 @@ class RateCollection:
             for r in ar.get_child_rates():
                 try:
                     self.rates.remove(r)
+
                     print(f"removing rate {r}")
                 except ValueError:
                     pass
