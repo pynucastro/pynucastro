@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.nucdata package &mdash; pynucastro 2.0.2.post26+gd3eccc06 documentation</title>
+  <title>pynucastro.nucdata package &mdash; pynucastro 2.0.2.post27+g1d8360c3 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
@@ -160,21 +160,8 @@ particular, the binding energies)</p>
 <span class="target" id="module-pynucastro.nucdata"></span><section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading">¶</a></h2>
 </section>
-<section id="module-pynucastro.nucdata.binding_nuclide">
-<span id="pynucastro-nucdata-binding-nuclide-module"></span><h2>pynucastro.nucdata.binding_nuclide module<a class="headerlink" href="#module-pynucastro.nucdata.binding_nuclide" title="Permalink to this heading">¶</a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="pynucastro.nucdata.binding_nuclide.BindingNuclide">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.nucdata.binding_nuclide.</span></span><span class="sig-name descname"><span class="pre">BindingNuclide</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nucbind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/binding_nuclide.html#BindingNuclide"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.binding_nuclide.BindingNuclide" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Hold the information for a single nucleus from the binding energy/nucleon table.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="pynucastro.nucdata.binding_nuclide.BindingNuclide.print_contents">
-<span class="sig-name descname"><span class="pre">print_contents</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/binding_nuclide.html#BindingNuclide.print_contents"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.binding_nuclide.BindingNuclide.print_contents" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print Contents</p>
-</dd></dl>
-
-</dd></dl>
-
+<section id="pynucastro-nucdata-binding-nuclide-module">
+<h2>pynucastro.nucdata.binding_nuclide module<a class="headerlink" href="#pynucastro-nucdata-binding-nuclide-module" title="Permalink to this heading">¶</a></h2>
 </section>
 <section id="pynucastro-nucdata-binding-table-module">
 <h2>pynucastro.nucdata.binding_table module<a class="headerlink" href="#pynucastro-nucdata-binding-table-module" title="Permalink to this heading">¶</a></h2>
@@ -185,9 +172,9 @@ particular, the binding energies)</p>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>A simple class to manage reading and parsing the table of binding energy/nucleon.</p>
 <dl class="py method">
-<dt class="sig sig-object py" id="pynucastro.nucdata.binding_table.BindingTable.get_nuclide">
-<span class="sig-name descname"><span class="pre">get_nuclide</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/binding_table.html#BindingTable.get_nuclide"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.binding_table.BindingTable.get_nuclide" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the nuclide object given n and z.</p>
+<dt class="sig sig-object py" id="pynucastro.nucdata.binding_table.BindingTable.get_binding_energy">
+<span class="sig-name descname"><span class="pre">get_binding_energy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/binding_table.html#BindingTable.get_binding_energy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.binding_table.BindingTable.get_binding_energy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the binding energy given n and z.</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -208,7 +195,7 @@ particular, the binding energies)</p>
 <span id="pynucastro-nucdata-elements-module"></span><h2>pynucastro.nucdata.elements module<a class="headerlink" href="#module-pynucastro.nucdata.elements" title="Permalink to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="pynucastro.nucdata.elements.Element">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.nucdata.elements.</span></span><span class="sig-name descname"><span class="pre">Element</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">abbreviation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Z</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/elements.html#Element"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.elements.Element" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.nucdata.elements.</span></span><span class="sig-name descname"><span class="pre">Element</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">abbreviation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Z</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/elements.html#Element"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.elements.Element" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 </dd></dl>
 
@@ -240,49 +227,8 @@ particular, the binding energies)</p>
 </dd></dl>
 
 </section>
-<section id="module-pynucastro.nucdata.mass_nuclide">
-<span id="pynucastro-nucdata-mass-nuclide-module"></span><h2>pynucastro.nucdata.mass_nuclide module<a class="headerlink" href="#module-pynucastro.nucdata.mass_nuclide" title="Permalink to this heading">¶</a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="pynucastro.nucdata.mass_nuclide.MassNuclide">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.nucdata.mass_nuclide.</span></span><span class="sig-name descname"><span class="pre">MassNuclide</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dm</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/mass_nuclide.html#MassNuclide"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.mass_nuclide.MassNuclide" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>The purpose of this class is to contain the nuclei information and create an instance
-represented by a string that contains the nuclide and the atomic weight A number, for
-example, o16, to the Oxygen-16 nuclei.</p>
-<p>The variables required to construct MassNuclide class instance are:</p>
-<dl class="field-list simple">
-<dt class="field-odd">Variables</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>a</strong> – The Atomic weight, measured in atomic number units.</p></li>
-<li><p><strong>z</strong> – The Atomic Number.</p></li>
-<li><p><strong>dm</strong> – The mass difference, measured in MeV.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="pynucastro.nucdata.mass_nuclide.MassTable">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.nucdata.mass_nuclide.</span></span><span class="sig-name descname"><span class="pre">MassTable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/mass_nuclide.html#MassTable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.mass_nuclide.MassTable" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>The purpose of this class is to:</p>
-<ol class="loweralpha simple">
-<li><p>Create a dictionary between MassNuclide objects, previously constructed
-from the table mass_excess2020.txt, and their mass excess A_nuc - A
-measured in MeV.</p></li>
-<li><p>Parse the information of the previously defined dictionary to the Nucleus
-class.</p></li>
-</ol>
-<p>The only required variable to construct an instance of this class is : var filename:
-that contains the .txt table file with the nuclei and their mass excess. If this
-variable is not provided, then mass_excess2020.txt is considered by default.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="pynucastro.nucdata.mass_nuclide.MassTable.get_mass_diff">
-<span class="sig-name descname"><span class="pre">get_mass_diff</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nuc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/mass_nuclide.html#MassTable.get_mass_diff"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.mass_nuclide.MassTable.get_mass_diff" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
+<section id="pynucastro-nucdata-mass-nuclide-module">
+<h2>pynucastro.nucdata.mass_nuclide module<a class="headerlink" href="#pynucastro-nucdata-mass-nuclide-module" title="Permalink to this heading">¶</a></h2>
 </section>
 <section id="pynucastro-nucdata-nucleus-module">
 <h2>pynucastro.nucdata.nucleus module<a class="headerlink" href="#pynucastro-nucdata-nucleus-module" title="Permalink to this heading">¶</a></h2>
@@ -442,33 +388,8 @@ the tables we have previously converted bu using their scripts.</p>
 </dd></dl>
 
 </section>
-<section id="module-pynucastro.nucdata.spin_nuclide">
-<span id="pynucastro-nucdata-spin-nuclide-module"></span><h2>pynucastro.nucdata.spin_nuclide module<a class="headerlink" href="#module-pynucastro.nucdata.spin_nuclide" title="Permalink to this heading">¶</a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="pynucastro.nucdata.spin_nuclide.SpinNuclide">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.nucdata.spin_nuclide.</span></span><span class="sig-name descname"><span class="pre">SpinNuclide</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spin_states</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/spin_nuclide.html#SpinNuclide"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.spin_nuclide.SpinNuclide" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>This class contains the spin information for each nuclei specified in the nubase2020_1.txt table.
-The purpose to create this class lies on the</p>
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="pynucastro.nucdata.spin_nuclide.SpinTable">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.nucdata.spin_nuclide.</span></span><span class="sig-name descname"><span class="pre">SpinTable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datafile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reliable</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/spin_nuclide.html#SpinTable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.spin_nuclide.SpinTable" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>This class stores the nubase2020_1.txt table information in a dictionary data structure
-that maps a pynucastro.rates.Nucleus object to a pynucastro.nucdata.SpinNuclide object.
-Therefore, after setting an SpinTable class in rates.py, we should retrieve the SpinNuclide
-data structure from a designated Nucleus class.</p>
-<p>The variable reliable switch between using all the values of the tables, excluding the nuclei
-where only intervals are given and the values measured by strong experimental arguments.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="pynucastro.nucdata.spin_nuclide.SpinTable.get_spin_nuclide">
-<span class="sig-name descname"><span class="pre">get_spin_nuclide</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nuc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/spin_nuclide.html#SpinTable.get_spin_nuclide"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.spin_nuclide.SpinTable.get_spin_nuclide" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
+<section id="pynucastro-nucdata-spin-nuclide-module">
+<h2>pynucastro.nucdata.spin_nuclide module<a class="headerlink" href="#pynucastro-nucdata-spin-nuclide-module" title="Permalink to this heading">¶</a></h2>
 </section>
 </section>
 
