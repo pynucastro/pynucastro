@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.rates.rate &mdash; pynucastro 2.0.2.post28+ge079a722 documentation</title>
+  <title>pynucastro.rates.rate &mdash; pynucastro 2.0.2.post29+g24be8e47 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
@@ -864,6 +864,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">weak_type</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reverse</span> <span class="o">=</span> <span class="kc">None</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">removed</span> <span class="o">=</span> <span class="kc">None</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">Q</span> <span class="o">=</span> <span class="n">Q</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">tabular</span> <span class="o">=</span> <span class="kc">False</span>
@@ -908,6 +910,8 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">fname</span> <span class="o">+=</span> <span class="s2">&quot;__approx&quot;</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">derived</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">fname</span> <span class="o">+=</span> <span class="s2">&quot;__derived&quot;</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">removed</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">fname</span> <span class="o">+=</span> <span class="s2">&quot;__removed&quot;</span>
 
 <div class="viewcode-block" id="ReacLibRate.modify_products"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.ReacLibRate.modify_products">[docs]</a>    <span class="k">def</span> <span class="nf">modify_products</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_products</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">new_products</span><span class="p">,</span> <span class="p">(</span><span class="nb">set</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
