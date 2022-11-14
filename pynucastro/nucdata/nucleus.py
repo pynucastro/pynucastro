@@ -9,9 +9,9 @@ from scipy.constants import physical_constants
 
 from pynucastro.nucdata.binding_table import BindingTable
 from pynucastro.nucdata.elements import PeriodicTable
-from pynucastro.nucdata.mass_nuclide import MassTable
+from pynucastro.nucdata.mass_table import MassTable
 from pynucastro.nucdata.partition_function import PartitionFunctionCollection
-from pynucastro.nucdata.spin_nuclide import SpinTable
+from pynucastro.nucdata.spin_table import SpinTable
 
 _pynucastro_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 _pynucastro_rates_dir = os.path.join(_pynucastro_dir, 'library')
@@ -108,20 +108,8 @@ class Nucleus:
             self.short_spec_name = name
             self.caps_name = name.capitalize()
 
-        # set the number of spin states
-        try:
-            self.spin_states = _spin_table.get_spin_nuclide(self.short_spec_name).spin_states
-        except NotImplementedError:
-            self.spin_states = None
-
         # use lowercase element abbreviation regardless the case of the input
         self.el = self.el.lower()
-
-        # set a partition function object to every nucleus
-        try:
-            self.partition_function = _pcollection.get_partition_function(self.short_spec_name)
-        except ValueError:
-            self.partition_function = None
 
         # atomic number comes from periodic table
         if name != "n":
@@ -139,15 +127,27 @@ class Nucleus:
             # latex formatted style
             self.pretty = fr"{{}}^{{{self.A}}}\mathrm{{{self.el.capitalize()}}}"
 
+        # set the number of spin states
         try:
-            self.nucbind = _binding_table.get_nuclide(n=self.N, z=self.Z).nucbind
+            self.spin_states = _spin_table.get_spin_states(a=self.A, z=self.Z)
+        except NotImplementedError:
+            self.spin_states = None
+
+        # set a partition function object to every nucleus
+        try:
+            self.partition_function = _pcollection.get_partition_function(self.short_spec_name)
+        except ValueError:
+            self.partition_function = None
+
+        try:
+            self.nucbind = _binding_table.get_binding_energy(n=self.N, z=self.Z)
         except NotImplementedError:
             # the binding energy table doesn't know about this nucleus
             self.nucbind = None
 
         # Now we will define the Nuclear Mass,
         try:
-            self.A_nuc = float(self.A) + _mass_table.get_mass_diff(self.short_spec_name).dm / m_u
+            self.A_nuc = float(self.A) + _mass_table.get_mass_diff(a=self.A, z=self.Z) / m_u
         except NotImplementedError:
             self.A_nuc = None
 
