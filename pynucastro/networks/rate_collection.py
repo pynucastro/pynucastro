@@ -449,7 +449,7 @@ class RateCollection:
 
                         # Here we check whether this child rate is removed or not.
                         # removed means that this rate is never used on its own to connect two nuclei in the network
-                        # it is only used in one or more ApproximateRate
+                        # it is only used in one or more ApproximateRate.
                         if cr not in self.rates:
                             cr.removed = True
                         else:
