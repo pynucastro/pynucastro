@@ -446,7 +446,10 @@ class RateCollection:
                     # child rates may be ReacLibRates or DerivedRates
                     # make sure we don't double count
                     if isinstance(cr, DerivedRate):
-                        # Check whether the child rate is removed or not
+
+                        # Here we check whether this child rate is removed or not.
+                        # removed means that this rate is never used on its own to connect two nuclei in the network
+                        # it is only used in one or more ApproximateRate
                         if cr not in self.rates:
                             cr.removed = True
                         else:
