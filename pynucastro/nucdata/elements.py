@@ -1,5 +1,5 @@
 class Element:
-    def __init__(self, abbreviation=None, name=None, Z=None):
+    def __init__(self, abbreviation, name, Z):
         self.abbreviation = abbreviation
         self.name = name
         self.Z = Z
