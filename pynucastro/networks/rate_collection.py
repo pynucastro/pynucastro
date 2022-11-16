@@ -604,7 +604,12 @@ class RateCollection:
         """given a rate in the form 'A(x,y)B' return the Rate"""
 
         reactants, products = _rate_name_to_nuc(name)
-        return self.get_rate_by_nuclei(reactants, products)[0]
+        _r = self.get_rate_by_nuclei(reactants, products)
+        if _r is None:
+            return None
+        if len(_r) == 1:
+            return _r[0]
+        return _r
 
     def get_nuclei_needing_partition_functions(self):
         """return a list of the nuclei that require partition
