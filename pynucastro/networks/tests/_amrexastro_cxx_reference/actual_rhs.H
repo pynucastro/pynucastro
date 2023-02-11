@@ -54,7 +54,7 @@ void evaluate_rates(const burn_t& state, T& rate_eval) {
         Y(n) = state.xn[n-1] * aion_inv[n-1];
     }
 
-    Real rhoy = state.rho * state.y_e;
+    [[maybe_unused]] Real rhoy = state.rho * state.y_e;
 
     // Calculate Reaclib rates
 
@@ -70,8 +70,8 @@ void evaluate_rates(const burn_t& state, T& rate_eval) {
     // Evaluate screening factors
 
     Real ratraw, dratraw_dT;
-    Real scor, dscor_dt, dscor_dd;
-    Real scor2, dscor2_dt, dscor2_dd;
+    Real scor, dscor_dt;
+    Real scor2, dscor2_dt;
 
 
     {
@@ -132,7 +132,7 @@ void evaluate_rates(const burn_t& state, T& rate_eval) {
 
     // Calculate tabular rates
 
-    Real rate, drate_dt, edot_nu;
+    [[maybe_unused]] Real rate, drate_dt, edot_nu;
 
     tabular_evaluate(j_na23_ne23_meta, j_na23_ne23_rhoy, j_na23_ne23_temp, j_na23_ne23_data,
                      rhoy, state.T, rate, drate_dt, edot_nu);
