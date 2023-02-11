@@ -11,17 +11,7 @@
 using namespace Rates;
 using namespace Species;
 
-struct rate_t {
-    Array1D<Real, 1, NumRates>  screened_rates;
-    Array1D<Real, NrateReaclib+1, NrateReaclib+NrateTabular> add_energy_rate;
-};
-
-struct rate_derivs_t {
-    Array1D<Real, 1, NumRates>  screened_rates;
-    Array1D<Real, 1, NumRates>  dscreened_rates_dT;
-    Array1D<Real, NrateReaclib+1, NrateReaclib+NrateTabular> add_energy_rate;
-};
-
+<rate_struct>(0)
 
 <reaclib_rate_functions>(0)
 
