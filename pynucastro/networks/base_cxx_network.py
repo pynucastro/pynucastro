@@ -356,7 +356,7 @@ class BaseCxxNetwork(ABC, RateCollection):
             for r in self.tabular_rates:
 
                 of.write(f'{idnt}tabular_evaluate({r.table_index_name}_meta, {r.table_index_name}_rhoy, {r.table_index_name}_temp, {r.table_index_name}_data,\n')
-                of.write(f'{idnt}                 rhoy, state.T, rate, drate_dt, edot_nu);\n')
+                of.write(f'{idnt}                 rhoy, state.T, rate, drate_dt, edot_nu, edot_gamma);\n')
 
                 of.write(f'{idnt}rate_eval.screened_rates(k_{r.fname}) = rate;\n')
 
@@ -364,7 +364,7 @@ class BaseCxxNetwork(ABC, RateCollection):
                 of.write(f'{idnt}    rate_eval.dscreened_rates_dT(k_{r.fname}) = drate_dt;\n')
                 of.write(f'{idnt}}}\n')
 
-                of.write(f'{idnt}rate_eval.add_energy_rate(k_{r.fname}) = edot_nu;\n')
+                of.write(f'{idnt}rate_eval.add_energy_rate(k_{r.fname}) = edot_nu + edot_gamma;\n')
                 of.write('\n')
 
     def _ydot(self, n_indent, of):
