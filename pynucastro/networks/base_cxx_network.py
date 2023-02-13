@@ -67,6 +67,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.ftags['<initial_mass_fractions>'] = self._initial_mass_fractions
         self.ftags['<pynucastro_home>'] = self._pynucastro_home
         self.ftags['<reaclib_rate_functions>'] = self._reaclib_rate_functions
+        self.ftags['<rate_struct>'] = self._rate_struct
         self.ftags['<fill_reaclib_rates>'] = self._fill_reaclib_rates
         self.ftags['<approx_rate_functions>'] = self._approx_rate_functions
         self.ftags['<fill_approx_rates>'] = self._fill_approx_rates
@@ -453,6 +454,21 @@ class BaseCxxNetwork(ABC, RateCollection):
         assert n_indent == 0, "function definitions must be at top level"
         for r in self.reaclib_rates + self.derived_rates:
             of.write(r.function_string_cxx(dtype=self.dtype, specifiers=self.function_specifier))
+
+    def _rate_struct(self, n_indent, of):
+        assert n_indent == 0, "function definitions must be at top level"
+
+        of.write("struct rate_t {\n")
+        of.write("    Array1D<Real, 1, NumRates>  screened_rates;\n")
+        if len(self.tabular_rates) > 0:
+            of.write("    Array1D<Real, NrateReaclib+1, NrateReaclib+NrateTabular> add_energy_rate;\n")
+        of.write("};\n\n")
+        of.write("struct rate_derivs_t {\n")
+        of.write("    Array1D<Real, 1, NumRates>  screened_rates;\n")
+        of.write("    Array1D<Real, 1, NumRates>  dscreened_rates_dT;\n")
+        if len(self.tabular_rates) > 0:
+            of.write("    Array1D<Real, NrateReaclib+1, NrateReaclib+NrateTabular> add_energy_rate;\n")
+        of.write("};\n\n")
 
     def _approx_rate_functions(self, n_indent, of):
         assert n_indent == 0, "function definitions must be at top level"

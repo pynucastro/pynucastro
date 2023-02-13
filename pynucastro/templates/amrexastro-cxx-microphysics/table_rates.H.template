@@ -57,7 +57,7 @@ namespace rate_tables
 }
 
 template <typename R, typename T, typename D>
-void init_tab_info(const table_t tf, const std::string& file, R& rhoy, T& temp, D& data) {
+void init_tab_info(const table_t& tf, const std::string& file, R& rhoy, T& temp, D& data) {
 
     std::ifstream table;
     table.open(file);
