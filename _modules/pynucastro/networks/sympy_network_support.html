@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.networks.sympy_network_support &mdash; pynucastro 2.0.2.post31+gdabe456c documentation</title>
+  <title>pynucastro.networks.sympy_network_support &mdash; pynucastro 2.0.3.post1+g1c496d25 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
@@ -29,15 +29,19 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../../index.html" class="icon icon-home"> pynucastro
-            <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            pynucastro
+              <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
                 2.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -95,7 +99,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
       <li class="breadcrumb-item active">pynucastro.networks.sympy_network_support</li>
       <li class="wy-breadcrumbs-aside">
@@ -140,7 +144,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">float_explicit_num_digits</span> <span class="o">=</span> <span class="mi">17</span>
 
 <div class="viewcode-block" id="SympyRates.ydot_term_symbol"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.sympy_network_support.SympyRates.ydot_term_symbol">[docs]</a>    <span class="k">def</span> <span class="nf">ydot_term_symbol</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rate</span><span class="p">,</span> <span class="n">y_i</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        return a sympy expression containing this rate&#39;s contribution to</span>
 <span class="sd">        the ydot term for nuclide y_i.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -163,7 +167,7 @@
         <span class="k">return</span> <span class="n">result</span></div>
 
 <div class="viewcode-block" id="SympyRates.specific_rate_symbol"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.sympy_network_support.SympyRates.specific_rate_symbol">[docs]</a>    <span class="k">def</span> <span class="nf">specific_rate_symbol</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rate</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        return a sympy expression containing the term in a dY/dt equation</span>
 <span class="sd">        in a reaction network corresponding to this rate.</span>
 
@@ -201,7 +205,7 @@
         <span class="k">return</span> <span class="n">srate_sym</span></div>
 
 <div class="viewcode-block" id="SympyRates.jacobian_term_symbol"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.sympy_network_support.SympyRates.jacobian_term_symbol">[docs]</a>    <span class="k">def</span> <span class="nf">jacobian_term_symbol</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rate</span><span class="p">,</span> <span class="n">ydot_j</span><span class="p">,</span> <span class="n">y_i</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        return a sympy expression containing the term in a jacobian matrix</span>
 <span class="sd">        in a reaction network corresponding to this rate</span>
 
@@ -219,7 +223,7 @@
         <span class="k">return</span> <span class="p">(</span><span class="n">jac_sym</span><span class="o">.</span><span class="n">evalf</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">float_explicit_num_digits</span><span class="p">),</span> <span class="n">symbol_is_null</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="SympyRates.cxxify"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.sympy_network_support.SympyRates.cxxify">[docs]</a>    <span class="k">def</span> <span class="nf">cxxify</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Given string s, will replace the symbols appearing as keys in</span>
 <span class="sd">        self.symbol_ludict with their corresponding entries.</span>
 <span class="sd">        &quot;&quot;&quot;</span>

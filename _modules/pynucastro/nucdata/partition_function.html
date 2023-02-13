@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.nucdata.partition_function &mdash; pynucastro 2.0.2.post31+gdabe456c documentation</title>
+  <title>pynucastro.nucdata.partition_function &mdash; pynucastro 2.0.3.post1+g1c496d25 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
@@ -29,15 +29,19 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../../index.html" class="icon icon-home"> pynucastro
-            <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            pynucastro
+              <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
                 2.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -95,7 +99,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
       <li class="breadcrumb-item active">pynucastro.nucdata.partition_function</li>
       <li class="wy-breadcrumbs-aside">
@@ -114,7 +118,7 @@
 
 
 <div class="viewcode-block" id="PartitionFunction"><a class="viewcode-back" href="../../../pynucastro.nucdata.html#pynucastro.nucdata.partition_function.PartitionFunction">[docs]</a><span class="k">class</span> <span class="nc">PartitionFunction</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The necessary class public variables of PartitionFunction(nucleus, name, temperature, partition_function)</span>
 <span class="sd">    are characterized as follows:</span>
 
@@ -177,7 +181,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">temperature</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span></div>
 
     <span class="k">def</span> <span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Adding two PartitionFunction objects is implemented by simply</span>
 <span class="sd">        appending the temperature and partition function values of the</span>
 <span class="sd">        higher-temperature partition function to those of the lower-temperature</span>
@@ -232,7 +236,7 @@
                 <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">temperature</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">temperature</span><span class="p">))</span>
 
 <div class="viewcode-block" id="PartitionFunction.construct_spline_interpolant"><a class="viewcode-back" href="../../../pynucastro.nucdata.html#pynucastro.nucdata.partition_function.PartitionFunction.construct_spline_interpolant">[docs]</a>    <span class="k">def</span> <span class="nf">construct_spline_interpolant</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Construct an interpolating univariate spline of order &gt;= 1 and</span>
 <span class="sd">        order &lt;= 5 using the scipy InterpolatedUnivariateSpline</span>
 <span class="sd">        implementation.</span>
@@ -262,7 +266,7 @@
 
 
 <div class="viewcode-block" id="PartitionFunctionTable"><a class="viewcode-back" href="../../../pynucastro.nucdata.html#pynucastro.nucdata.partition_function.PartitionFunctionTable">[docs]</a><span class="k">class</span> <span class="nc">PartitionFunctionTable</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Class for reading a partition function table file. A</span>
 <span class="sd">    PartitionFunction object is constructed for each nucleus and</span>
 <span class="sd">    stored in a dictionary keyed by the lowercase nucleus name in the</span>
@@ -333,7 +337,7 @@
 
 <div class="viewcode-block" id="PartitionFunctionCollection"><a class="viewcode-back" href="../../../pynucastro.nucdata.html#pynucastro.nucdata.partition_function.PartitionFunctionCollection">[docs]</a><span class="k">class</span> <span class="nc">PartitionFunctionCollection</span><span class="p">:</span>
 
-    <span class="sd">&quot;&quot;&quot; The PartitionFunctionCollection holds a collection of PartitionFunctionTable objects in a dictionary keyed</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; The PartitionFunctionCollection holds a collection of PartitionFunctionTable objects in a dictionary keyed</span>
 <span class="sd">    by the name of the tables</span>
 
 <span class="sd">    In our discussion we have two different set of tables&quot;&quot;&quot;</span>
@@ -345,7 +349,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_read_collection</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">_add_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This private function appends a PartitionFunctionTable object to each key characterized by a file_name.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">assert</span> <span class="n">table</span><span class="o">.</span><span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_partition_function_tables</span>
@@ -353,7 +357,7 @@
 
     <span class="k">def</span> <span class="nf">_read_collection</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This private function construct the whole collection of tables</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -385,7 +389,7 @@
 
 <div class="viewcode-block" id="PartitionFunctionCollection.get_partition_function"><a class="viewcode-back" href="../../../pynucastro.nucdata.html#pynucastro.nucdata.partition_function.PartitionFunctionCollection.get_partition_function">[docs]</a>    <span class="k">def</span> <span class="nf">get_partition_function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nuc</span><span class="p">):</span>
 
-        <span class="sd">&quot;&quot;&quot;This function access to the partition function for a given nucleus&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;This function access to the partition function for a given nucleus&quot;&quot;&quot;</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">nuc</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_set</span> <span class="o">==</span> <span class="s1">&#39;frdm&#39;</span><span class="p">:</span>

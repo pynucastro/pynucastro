@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.nucdata.nucleus &mdash; pynucastro 2.0.2.post31+gdabe456c documentation</title>
+  <title>pynucastro.nucdata.nucleus &mdash; pynucastro 2.0.3.post1+g1c496d25 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
@@ -29,15 +29,19 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../../index.html" class="icon icon-home"> pynucastro
-            <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            pynucastro
+              <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
                 2.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -95,7 +99,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
       <li class="breadcrumb-item active">pynucastro.nucdata.nucleus</li>
       <li class="wy-breadcrumbs-aside">
@@ -147,7 +151,7 @@
 
 
 <div class="viewcode-block" id="Nucleus"><a class="viewcode-back" href="../../../pynucastro.nucdata.html#pynucastro.nucdata.nucleus.Nucleus">[docs]</a><span class="k">class</span> <span class="nc">Nucleus</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    a nucleus that participates in a reaction -- we store it in a</span>
 <span class="sd">    class to hold its properties, define a sorting, and give it a</span>
 <span class="sd">    pretty printing string.</span>
@@ -274,11 +278,11 @@
         <span class="k">return</span> <span class="nb">hash</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">Z</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">A</span><span class="p">))</span>
 
 <div class="viewcode-block" id="Nucleus.c"><a class="viewcode-back" href="../../../pynucastro.nucdata.html#pynucastro.nucdata.nucleus.Nucleus.c">[docs]</a>    <span class="k">def</span> <span class="nf">c</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;return the capitalized-style name&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;return the capitalized-style name&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">caps_name</span></div>
 
 <div class="viewcode-block" id="Nucleus.cindex"><a class="viewcode-back" href="../../../pynucastro.nucdata.html#pynucastro.nucdata.nucleus.Nucleus.cindex">[docs]</a>    <span class="k">def</span> <span class="nf">cindex</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;return the name for C++ indexing&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;return the name for C++ indexing&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">short_spec_name</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span></div>
 
     <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
