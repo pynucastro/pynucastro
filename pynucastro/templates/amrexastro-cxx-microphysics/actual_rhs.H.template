@@ -82,7 +82,7 @@ void evaluate_rates(const burn_t& state, T& rate_eval) {
 
     // Calculate tabular rates
 
-    [[maybe_unused]] Real rate, drate_dt, edot_nu, edot_gamma
+    [[maybe_unused]] Real rate, drate_dt, edot_nu, edot_gamma;
 
     <compute_tabular_rates>(1)
 
