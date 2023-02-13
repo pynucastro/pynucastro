@@ -184,7 +184,7 @@ void evaluate_rates(const burn_t& state, T& rate_eval) {
 
     // Calculate tabular rates
 
-    [[maybe_unused]] Real rate, drate_dt, edot_nu;
+    [[maybe_unused]] Real rate, drate_dt, edot_nu, edot_gamma;
 
 
 }
@@ -242,7 +242,7 @@ void actual_rhs (burn_t& state, Array1D<Real, 1, neqs>& ydot)
     Real enuc;
     ener_gener_rate(ydot, enuc);
 
-    // include reaction neutrino losses (non-thermal)
+    // include reaction neutrino losses (non-thermal) and gamma heating
 
     // Get the thermal neutrino losses
 
