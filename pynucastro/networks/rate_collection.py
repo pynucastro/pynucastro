@@ -11,6 +11,7 @@ from operator import mul
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
+import matplotlib.cm as cm
 import networkx as nx
 import numpy as np
 from ipywidgets import interact
@@ -1672,7 +1673,7 @@ class RateCollection:
                                                edgelist=real_edges, edge_color=edge_color,
                                                connectionstyle=connectionstyle,
                                                node_size=node_size,
-                                               edge_cmap=plt.cm.viridis, ax=ax)
+                                               edge_cmap=cm.viridis, ax=ax)
 
         approx_edges = [(u, v) for u, v, e in G.edges(data=True) if e["real"] == 0]
 
@@ -1698,7 +1699,7 @@ class RateCollection:
                                    node_size=node_size, ax=ax)
 
         if ydots is not None:
-            pc = mpl.collections.PatchCollection(real_edges_lc, cmap=plt.cm.viridis)
+            pc = mpl.collections.PatchCollection(real_edges_lc, cmap=cm.viridis)
             pc.set_array(real_weights)
             if not rotated:
                 plt.colorbar(pc, ax=ax, label="log10(rate)")
@@ -1775,7 +1776,7 @@ class RateCollection:
         ax.set_yticks(np.arange(len(self.unique_nuclei)),
                       labels=[f"${n.pretty}$" for n in self.unique_nuclei])
 
-        im = ax.imshow(jac, norm=norm, cmap=plt.cm.bwr)
+        im = ax.imshow(jac, norm=norm, cmap=cm.bwr)
 
         ax.set_aspect("equal")
 
@@ -1868,7 +1869,7 @@ class RateCollection:
             # each pane only has its subset of rates
             ax.set_yticks(np.arange(nrates), labels=[f"{r.pretty_string}" for irate, r in enumerate(_rates) if istart <= irate <= iend])
 
-            im = ax.imshow(data, norm=norm, cmap=plt.cm.bwr)
+            im = ax.imshow(data, norm=norm, cmap=cm.bwr)
 
             ax.set_aspect("equal")
 
@@ -1987,7 +1988,7 @@ class RateCollection:
 
         # Get figure, colormap
         fig, ax = plt.subplots()
-        cmap = mpl.cm.get_cmap(cmap)
+        cmap = cm.get_cmap(cmap)
 
         # Get nuclei and all 3 numbers
         nuclei = self.unique_nuclei
@@ -2097,7 +2098,7 @@ class RateCollection:
             else:
                 cbar_norm = mpl.colors.Normalize(*cbar_bounds)
 
-            smap = mpl.cm.ScalarMappable(norm=cbar_norm, cmap=cmap)
+            smap = cm.ScalarMappable(norm=cbar_norm, cmap=cmap)
 
             if not cbar_label:
 
