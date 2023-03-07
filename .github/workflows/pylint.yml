@@ -41,5 +41,4 @@ jobs:
         run: python setup.py install --user
 
       - name: Validate
-        run: pylint --errors-only --generated-members=viridis,bwr pynucastro
-        # see https://github.com/PyCQA/pylint/issues/2289 for the generated-members
+        run: pylint --errors-only pynucastro
