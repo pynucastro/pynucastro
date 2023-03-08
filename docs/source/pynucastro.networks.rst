@@ -9,10 +9,34 @@ pynucastro.networks package
 Submodules
 ----------
 
+pynucastro.networks.amrexastro\_cxx\_network module
+---------------------------------------------------
+
+.. automodule:: pynucastro.networks.amrexastro_cxx_network
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+pynucastro.networks.app module
+------------------------------
+
+.. automodule:: pynucastro.networks.app
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 pynucastro.networks.base\_cxx\_network module
 ---------------------------------------------
 
 .. automodule:: pynucastro.networks.base_cxx_network
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+pynucastro.networks.der\_net module
+-----------------------------------
+
+.. automodule:: pynucastro.networks.der_net
    :members:
    :undoc-members:
    :show-inheritance:
@@ -29,14 +53,6 @@ pynucastro.networks.rate\_collection module
 -------------------------------------------
 
 .. automodule:: pynucastro.networks.rate_collection
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-pynucastro.networks.amrexastro\_cxx\_network module
----------------------------------------------------
-
-.. automodule:: pynucastro.networks.amrexastro_cxx_network
    :members:
    :undoc-members:
    :show-inheritance:
