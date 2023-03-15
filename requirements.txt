@@ -5,8 +5,8 @@ sympy>=1.1.1
 matplotlib>=2.1.0
 jupyter>=1.0.0
 ipywidgets>=7.1.2
-sphinx_rtd_theme
-Sphinx==5.2.0
+sphinx_rtd_theme>=1.1.0
+Sphinx
 nbsphinx>=0.3.1
 pytest>=3.6
 nbval>=0.9.0
