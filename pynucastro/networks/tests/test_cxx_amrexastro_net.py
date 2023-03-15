@@ -91,7 +91,9 @@ class TestAmrexAstroCxxNetwork:
                  "pynucastro.net",
                  "reaclib_rates.H",
                  "table_rates_data.cpp",
-                 "table_rates.H"]
+                 "table_rates.H",
+                 "partition_functions.H",
+                 "tfactors.H"]
 
         errors = []
         for test_file in files:
