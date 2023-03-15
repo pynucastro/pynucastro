@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro package &mdash; pynucastro 2.0.3.post4+gbba26308 documentation</title>
+  <title>pynucastro package &mdash; pynucastro 2.0.3.post5+g4fafc786 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
@@ -124,7 +124,7 @@
           <li class="breadcrumb-item"><a href="modules.html">pynucastro</a></li>
       <li class="breadcrumb-item active">pynucastro package</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="_sources/pynucastro.rst.txt" rel="nofollow"> View page source</a>
+              <a href="https://github.com/pynucastro/pynucastro/blob/main/docs/source/pynucastro.rst" class="fa fa-github"> Edit on GitHub</a>
       </li>
   </ul>
   <hr/>
@@ -132,31 +132,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  
-<style>
-/* CSS overrides for sphinx_rtd_theme */
-
-/* 24px margin */
-.nbinput.nblast.container,
-.nboutput.nblast.container {
-    margin-bottom: 19px;  /* padding has already 5px */
-}
-
-/* ... except between code cells! */
-.nblast.container + .nbinput.container {
-    margin-top: -19px;
-}
-
-.admonition > p:before {
-    margin-right: 4px;  /* make room for the exclamation icon */
-}
-
-/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
-.math {
-    text-align: unset;
-}
-</style>
-<section id="pynucastro-package">
+  <section id="pynucastro-package">
 <h1>pynucastro package<a class="headerlink" href="#pynucastro-package" title="Permalink to this heading">¶</a></h1>
 <p>pynucastro is a python module that interprets the nuclear reaction rates,
 including those cataloged by the JINA ReacLib project:</p>
@@ -254,6 +230,10 @@ a given choice of reaction rates.</p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="pynucastro.networks.html">pynucastro.networks package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="pynucastro.networks.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pynucastro.networks.html#pynucastro-networks-amrexastro-cxx-network-module">pynucastro.networks.amrexastro_cxx_network module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pynucastro.networks.html#pynucastro.networks.amrexastro_cxx_network.AmrexAstroCxxNetwork"><code class="docutils literal notranslate"><span class="pre">AmrexAstroCxxNetwork</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="pynucastro.networks.html#pynucastro-networks-base-cxx-network-module">pynucastro.networks.base_cxx_network module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="pynucastro.networks.html#pynucastro.networks.base_cxx_network.BaseCxxNetwork"><code class="docutils literal notranslate"><span class="pre">BaseCxxNetwork</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.html#pynucastro.networks.base_cxx_network.BaseCxxNetwork.compose_jacobian"><code class="docutils literal notranslate"><span class="pre">BaseCxxNetwork.compose_jacobian()</span></code></a></li>
@@ -331,10 +311,6 @@ a given choice of reaction rates.</p>
 </li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="pynucastro.networks.html#pynucastro-networks-amrexastro-cxx-network-module">pynucastro.networks.amrexastro_cxx_network module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="pynucastro.networks.html#pynucastro.networks.amrexastro_cxx_network.AmrexAstroCxxNetwork"><code class="docutils literal notranslate"><span class="pre">AmrexAstroCxxNetwork</span></code></a></li>
-</ul>
-</li>
 <li class="toctree-l2"><a class="reference internal" href="pynucastro.networks.html#pynucastro-networks-sympy-network-support-module">pynucastro.networks.sympy_network_support module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="pynucastro.networks.html#pynucastro.networks.sympy_network_support.SympyRates"><code class="docutils literal notranslate"><span class="pre">SympyRates</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.html#pynucastro.networks.sympy_network_support.SympyRates.cxxify"><code class="docutils literal notranslate"><span class="pre">SympyRates.cxxify()</span></code></a></li>
@@ -349,7 +325,6 @@ a given choice of reaction rates.</p>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="pynucastro.nucdata.html">pynucastro.nucdata package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="pynucastro.nucdata.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pynucastro.nucdata.html#pynucastro-nucdata-binding-nuclide-module">pynucastro.nucdata.binding_nuclide module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="pynucastro.nucdata.html#pynucastro-nucdata-binding-table-module">pynucastro.nucdata.binding_table module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="pynucastro.nucdata.html#pynucastro.nucdata.binding_table.BindingTable"><code class="docutils literal notranslate"><span class="pre">BindingTable</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.html#pynucastro.nucdata.binding_table.BindingTable.get_binding_energy"><code class="docutils literal notranslate"><span class="pre">BindingTable.get_binding_energy()</span></code></a></li>
@@ -370,7 +345,13 @@ a given choice of reaction rates.</p>
 <li class="toctree-l3"><a class="reference internal" href="pynucastro.nucdata.html#pynucastro.nucdata.elements.UnidentifiedElement"><code class="docutils literal notranslate"><span class="pre">UnidentifiedElement</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="pynucastro.nucdata.html#pynucastro-nucdata-mass-nuclide-module">pynucastro.nucdata.mass_nuclide module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pynucastro.nucdata.html#module-pynucastro.nucdata.mass_table">pynucastro.nucdata.mass_table module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pynucastro.nucdata.html#pynucastro.nucdata.mass_table.MassTable"><code class="docutils literal notranslate"><span class="pre">MassTable</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.html#pynucastro.nucdata.mass_table.MassTable.get_mass_diff"><code class="docutils literal notranslate"><span class="pre">MassTable.get_mass_diff()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="pynucastro.nucdata.html#pynucastro-nucdata-nucleus-module">pynucastro.nucdata.nucleus module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="pynucastro.nucdata.html#pynucastro.nucdata.nucleus.Nucleus"><code class="docutils literal notranslate"><span class="pre">Nucleus</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.html#pynucastro.nucdata.nucleus.Nucleus.c"><code class="docutils literal notranslate"><span class="pre">Nucleus.c()</span></code></a></li>
@@ -402,7 +383,13 @@ a given choice of reaction rates.</p>
 </li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="pynucastro.nucdata.html#pynucastro-nucdata-spin-nuclide-module">pynucastro.nucdata.spin_nuclide module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pynucastro.nucdata.html#module-pynucastro.nucdata.spin_table">pynucastro.nucdata.spin_table module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pynucastro.nucdata.html#pynucastro.nucdata.spin_table.SpinTable"><code class="docutils literal notranslate"><span class="pre">SpinTable</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.html#pynucastro.nucdata.spin_table.SpinTable.get_spin_states"><code class="docutils literal notranslate"><span class="pre">SpinTable.get_spin_states()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="pynucastro.rates.html">pynucastro.rates package</a><ul>
