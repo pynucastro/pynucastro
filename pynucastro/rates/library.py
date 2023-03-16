@@ -52,7 +52,7 @@ def _rate_name_to_nuc(name):
             if nuc.lower() in ["e", "nu", "_", "g", "gamma"]:
                 # first electrons and neutrins, and nothing
                 continue
-            elif nuc.lower() == "aa":
+            if nuc.lower() == "aa":
                 reactants.append(Nucleus("he4"))
                 reactants.append(Nucleus("he4"))
             else:
@@ -70,7 +70,7 @@ def _rate_name_to_nuc(name):
             if nuc.lower() in ["e", "nu", "_", "g", "gamma"]:
                 # first electrons and neutrinos, gammas, and nothing
                 continue
-            elif nuc.lower() == "aa":
+            if nuc.lower() == "aa":
                 products.append(Nucleus("he4"))
                 products.append(Nucleus("he4"))
             else:

@@ -478,11 +478,10 @@ class Rate:
                 self.rid += " + "
                 self.pretty_string += r" + "
 
-        if lhs_other:
-            for o in lhs_other:
-                if o == "e-":
-                    self.string += " + e⁻"
-                    self.pretty_string += r" + \mathrm{e}^-"
+        for o in lhs_other:
+            if o == "e-":
+                self.string += " + e⁻"
+                self.pretty_string += r" + \mathrm{e}^-"
 
         self.string += " ⟶ "
         self.rid += " --> "
@@ -497,23 +496,22 @@ class Rate:
                 self.rid += " + "
                 self.pretty_string += r" + "
 
-        if rhs_other:
-            for o in rhs_other:
-                if o == "gamma":
-                    self.string += " + 𝛾"
-                    self.pretty_string += r"+ \gamma"
-                elif o == "nu":
-                    self.string += " + 𝜈"
-                    self.pretty_string += r"+ \nu_e"
-                elif o == "nubar":
-                    self.string += " + 𝜈"
-                    self.pretty_string += r"+ \bar{\nu}_e"
-                if o == "e-":
-                    self.string += " + e⁻"
-                    self.pretty_string += r" + \mathrm{e}^-"
-                if o == "e+":
-                    self.string += " + e⁺"
-                    self.pretty_string += r" + \mathrm{e}^+"
+        for o in rhs_other:
+            if o == "gamma":
+                self.string += " + 𝛾"
+                self.pretty_string += r"+ \gamma"
+            elif o == "nu":
+                self.string += " + 𝜈"
+                self.pretty_string += r"+ \nu_e"
+            elif o == "nubar":
+                self.string += " + 𝜈"
+                self.pretty_string += r"+ \bar{\nu}_e"
+            if o == "e-":
+                self.string += " + e⁻"
+                self.pretty_string += r" + \mathrm{e}^-"
+            if o == "e+":
+                self.string += " + e⁺"
+                self.pretty_string += r" + \mathrm{e}^+"
 
         self.pretty_string += r"$"
 
@@ -716,7 +714,7 @@ class Rate:
 
         # composition dependence
         Y_term = 1.0
-        for n, r in enumerate(sorted(set(self.reactants))):
+        for r in sorted(set(self.reactants)):
             c = self.reactants.count(r)
             if y_i == r:
                 # take the derivative
@@ -753,6 +751,7 @@ class ReacLibRate(Rate):
                  reactants=None, products=None, sets=None, labelprops=None, Q=None):
         """ rfile can be either a string specifying the path to a rate file or
         an io.StringIO object from which to read rate information. """
+        # pylint: disable=super-init-not-called
 
         self.rfile_path = rfile_path
         self.rfile = None
@@ -1227,6 +1226,7 @@ class ReacLibRate(Rate):
 
     def eval_deriv(self, T, rhoY=None):
         """ evauate the derivative of reaction rate with respect to T """
+        _ = rhoY  # unused by this subclass
 
         tf = Tfactors(T)
         drdT = 0.0
@@ -1264,6 +1264,7 @@ class ReacLibRate(Rate):
         :rtype: matplotlib.figure.Figure
 
         """
+        _ = (rhoYmin, rhoYmax)  # unused by this subclass
 
         fig, ax = plt.subplots(figsize=figsize)
 
@@ -1293,6 +1294,7 @@ class TabularRate(Rate):
     def __init__(self, rfile=None, rfile_path=None):
         """ rfile can be either a string specifying the path to a rate file or
         an io.StringIO object from which to read rate information. """
+        super().__init__()
 
         self.rfile_path = rfile_path
         self.rfile = None
@@ -1303,13 +1305,8 @@ class TabularRate(Rate):
 
         self.fname = None
 
-        self.reactants = []
-        self.products = []
-
         self.label = "tabular"
         self.tabular = True
-
-        self.Q = None
 
         # we should initialize this somehow
         self.weak_type = ""
@@ -1556,7 +1553,7 @@ class DerivedRate(ReacLibRate):
     by the application of detailed balance to the forward reactions.
     """
 
-    def __init__(self, rate,  compute_Q=False, use_pf=False):
+    def __init__(self, rate, compute_Q=False, use_pf=False):
 
         self.use_pf = use_pf
         self.rate = rate
