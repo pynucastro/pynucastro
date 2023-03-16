@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.nucdata.spin_table &mdash; pynucastro 2.0.3.post8+g4f59d5a7 documentation</title>
+  <title>pynucastro.nucdata.spin_table &mdash; pynucastro 2.0.3.post9+g705ba1e0 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
@@ -132,12 +132,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">datafile_name</span> <span class="o">=</span> <span class="s1">&#39;nubase2020_1.txt&#39;</span>
             <span class="n">nucdata_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
-            <span class="n">datafile_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">nucdata_dir</span><span class="p">,</span> <span class="s1">&#39;AtomicMassEvaluation&#39;</span><span class="p">),</span> <span class="n">datafile_name</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">datafile_dir</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">datafile</span> <span class="o">=</span> <span class="n">datafile_dir</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;ERROR: The spin tabulated file was not found&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">datafile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">nucdata_dir</span><span class="p">,</span> <span class="s1">&#39;AtomicMassEvaluation&#39;</span><span class="p">),</span> <span class="n">datafile_name</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_read_table</span><span class="p">()</span>
 

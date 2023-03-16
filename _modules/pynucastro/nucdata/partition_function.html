@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.nucdata.partition_function &mdash; pynucastro 2.0.3.post8+g4f59d5a7 documentation</title>
+  <title>pynucastro.nucdata.partition_function &mdash; pynucastro 2.0.3.post9+g705ba1e0 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
@@ -256,10 +256,9 @@
         <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;invalid temperature&quot;</span><span class="p">)</span>
             <span class="k">raise</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">interpolant_order</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="k">return</span> <span class="mi">10</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">interpolant</span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
-            <span class="k">return</span> <span class="mi">10</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">interpolant</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">ext</span><span class="o">=</span><span class="s1">&#39;const&#39;</span><span class="p">)</span>  <span class="c1"># extrapolates keeping the boundaries fixed.</span></div>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">interpolant_order</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">10</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">interpolant</span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
+        <span class="k">return</span> <span class="mi">10</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">interpolant</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">ext</span><span class="o">=</span><span class="s1">&#39;const&#39;</span><span class="p">)</span>  <span class="c1"># extrapolates keeping the boundaries fixed.</span></div>
 
 
 <div class="viewcode-block" id="PartitionFunctionTable"><a class="viewcode-back" href="../../../pynucastro.nucdata.html#pynucastro.nucdata.partition_function.PartitionFunctionTable">[docs]</a><span class="k">class</span> <span class="nc">PartitionFunctionTable</span><span class="p">:</span>
