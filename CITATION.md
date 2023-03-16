@@ -48,21 +48,23 @@ The latest version is always here:
 https://doi.org/10.5281/zenodo.1202434
 
 ```
-@software{the_pynucastro_development_2022_6802787,
+@software{the_pynucastro_development_2022_7239007,
   author       = {the pynucastro development and
+                  Boyd, Brendan and
                   Cao, Lyra and
+                  Chen, Zhi and
                   Eiden, Kiran and
                   Johnson, Eric and
                   Li, Xinlong and
                   Smith Clark, Alexander and
                   Willcox, Donald and
                   Zingale, Michael},
-  title        = {pynucastro/pynucastro:},
-  month        = jul,
+  title        = {pynucastro/pynucastro: pynucastro 2.0.2},
+  month        = oct,
   year         = 2022,
   publisher    = {Zenodo},
-  version      = {1.7.0},
-  doi          = {10.5281/zenodo.6802787},
-  url          = {https://doi.org/10.5281/zenodo.6802787}
+  version      = {2.0.2},
+  doi          = {10.5281/zenodo.7239007},
+  url          = {https://doi.org/10.5281/zenodo.7239007}
 }
 ```

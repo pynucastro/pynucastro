@@ -67,6 +67,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.ftags['<initial_mass_fractions>'] = self._initial_mass_fractions
         self.ftags['<pynucastro_home>'] = self._pynucastro_home
         self.ftags['<reaclib_rate_functions>'] = self._reaclib_rate_functions
+        self.ftags['<rate_struct>'] = self._rate_struct
         self.ftags['<fill_reaclib_rates>'] = self._fill_reaclib_rates
         self.ftags['<approx_rate_functions>'] = self._approx_rate_functions
         self.ftags['<fill_approx_rates>'] = self._fill_approx_rates
@@ -356,7 +357,7 @@ class BaseCxxNetwork(ABC, RateCollection):
             for r in self.tabular_rates:
 
                 of.write(f'{idnt}tabular_evaluate({r.table_index_name}_meta, {r.table_index_name}_rhoy, {r.table_index_name}_temp, {r.table_index_name}_data,\n')
-                of.write(f'{idnt}                 rhoy, state.T, rate, drate_dt, edot_nu);\n')
+                of.write(f'{idnt}                 rhoy, state.T, rate, drate_dt, edot_nu, edot_gamma);\n')
 
                 of.write(f'{idnt}rate_eval.screened_rates(k_{r.fname}) = rate;\n')
 
@@ -364,7 +365,7 @@ class BaseCxxNetwork(ABC, RateCollection):
                 of.write(f'{idnt}    rate_eval.dscreened_rates_dT(k_{r.fname}) = drate_dt;\n')
                 of.write(f'{idnt}}}\n')
 
-                of.write(f'{idnt}rate_eval.add_energy_rate(k_{r.fname}) = edot_nu;\n')
+                of.write(f'{idnt}rate_eval.add_energy_rate(k_{r.fname}) = edot_nu + edot_gamma;\n')
                 of.write('\n')
 
     def _ydot(self, n_indent, of):
@@ -453,6 +454,21 @@ class BaseCxxNetwork(ABC, RateCollection):
         assert n_indent == 0, "function definitions must be at top level"
         for r in self.reaclib_rates + self.derived_rates:
             of.write(r.function_string_cxx(dtype=self.dtype, specifiers=self.function_specifier))
+
+    def _rate_struct(self, n_indent, of):
+        assert n_indent == 0, "function definitions must be at top level"
+
+        of.write("struct rate_t {\n")
+        of.write("    Array1D<Real, 1, NumRates>  screened_rates;\n")
+        if len(self.tabular_rates) > 0:
+            of.write("    Array1D<Real, NrateReaclib+1, NrateReaclib+NrateTabular> add_energy_rate;\n")
+        of.write("};\n\n")
+        of.write("struct rate_derivs_t {\n")
+        of.write("    Array1D<Real, 1, NumRates>  screened_rates;\n")
+        of.write("    Array1D<Real, 1, NumRates>  dscreened_rates_dT;\n")
+        if len(self.tabular_rates) > 0:
+            of.write("    Array1D<Real, NrateReaclib+1, NrateReaclib+NrateTabular> add_energy_rate;\n")
+        of.write("};\n\n")
 
     def _approx_rate_functions(self, n_indent, of):
         assert n_indent == 0, "function definitions must be at top level"
@@ -544,6 +560,11 @@ class BaseCxxNetwork(ABC, RateCollection):
     def _fill_spin_state_cases(self, n_indent, of):
 
         for n in self.unique_nuclei:
+            if n.spin_states is not None:
+                of.write(f"{self.indent*n_indent}case {n.cindex()}:\n")
+                of.write(f"{self.indent*2*n_indent}spin = {n.spin_states};\n")
+                of.write(f"{self.indent*2*n_indent}break;\n\n")
+        for n in self.approx_nuclei:
             if n.spin_states is not None:
                 of.write(f"{self.indent*n_indent}case {n.cindex()}:\n")
                 of.write(f"{self.indent*2*n_indent}spin = {n.spin_states};\n")

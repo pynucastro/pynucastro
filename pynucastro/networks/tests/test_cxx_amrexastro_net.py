@@ -81,20 +81,18 @@ class TestAmrexAstroCxxNetwork:
 
         fn.write_network(odir=test_path)
 
-        files = ["actual_network_data.cpp",
-                 "actual_network.H",
-                 "actual_rhs.H",
-                 "inputs.burn_cell.VODE",
-                 "Make.package",
-                 "NETWORK_PROPERTIES",
-                 "_parameters",
-                 "pynucastro.net",
-                 "reaclib_rates.H",
-                 "table_rates_data.cpp",
-                 "table_rates.H"]
+        # get the list of files from the generated directory, so any new files
+        # will need to be added to the reference directory or explicitly ignored
+        files = os.listdir(test_path)
+        skip_files = [
+            "23Na-23Ne_electroncapture.dat",
+            "23Ne-23Na_betadecay.dat",
+        ]
 
         errors = []
         for test_file in files:
+            if test_file in skip_files:
+                continue
             # note, _test is written under whatever directory pytest is run from,
             # so it is not necessarily at the same place as _amrexastro_reference
             if not filecmp.cmp(os.path.normpath(f"{test_path}/{test_file}"),

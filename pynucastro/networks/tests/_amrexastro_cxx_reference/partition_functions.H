@@ -4,11 +4,12 @@
 #include <AMReX_REAL.H>
 #include <AMReX_Array.H>
 
+#include <tfactors.H>
 #include <fundamental_constants.H>
 #include <network_properties.H>
 
 using namespace amrex;
-
+using namespace Species;
 
 namespace part_fun {
 
@@ -62,7 +63,8 @@ namespace part_fun {
 // main interface
 
 AMREX_GPU_HOST_DEVICE AMREX_INLINE
-void get_partition_function(const int inuc, const tf_t& tfactors, Real& pf, Real& dpf_dT) {
+void get_partition_function(const int inuc, [[maybe_unused]] const tf_t& tfactors,
+                            Real& pf, Real& dpf_dT) {
 
     // inuc is the 1-based index for the species
 
@@ -88,39 +90,39 @@ constexpr Real get_spin_state(const int inuc) {
     switch (inuc) {
 
     case N:
-        spin = 2.0;
+        spin = 2;
         break;
 
     case H1:
-        spin = 2.0;
+        spin = 2;
         break;
 
     case He4:
-        spin = 1.0;
+        spin = 1;
         break;
 
     case C12:
-        spin = 1.0;
+        spin = 1;
         break;
 
     case O16:
-        spin = 1.0;
+        spin = 1;
         break;
 
     case Ne20:
-        spin = 1.0;
+        spin = 1;
         break;
 
     case Ne23:
-        spin = 6.0;
+        spin = 6;
         break;
 
     case Na23:
-        spin = 4.0;
+        spin = 4;
         break;
 
     case Mg23:
-        spin = 4.0;
+        spin = 4;
         break;
 
 
