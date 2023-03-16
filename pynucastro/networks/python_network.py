@@ -74,8 +74,7 @@ class PythonNetwork(RateCollection):
 
             if rate_terms_str == "":
                 return ""
-            else:
-                ostr += rate_terms_str
+            ostr += rate_terms_str
 
             ostr += f"{indent}   )\n\n"
 
@@ -199,12 +198,11 @@ class PythonNetwork(RateCollection):
 
         nuclei_pfs = self.get_nuclei_needing_partition_functions()
 
-        if nuclei_pfs:
-            for n in nuclei_pfs:
-                if n.partition_function:
-                    of.write(f"{n}_temp_array = np.array({list(n.partition_function.temperature/1.0e9)})\n")
-                    of.write(f"{n}_pf_array = np.array({list(n.partition_function.partition_function)})\n")
-                    of.write("\n")
+        for n in nuclei_pfs:
+            if n.partition_function:
+                of.write(f"{n}_temp_array = np.array({list(n.partition_function.temperature/1.0e9)})\n")
+                of.write(f"{n}_pf_array = np.array({list(n.partition_function.partition_function)})\n")
+                of.write("\n")
 
         # rate_eval class
 
