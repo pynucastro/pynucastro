@@ -25,7 +25,7 @@ from scipy.optimize import fsolve
 # Import Rate
 from pynucastro.nucdata import Nucleus, PeriodicTable
 from pynucastro.rates import (ApproximateRate, DerivedRate, Library, Rate,
-                              RatePair, TabularRate, load_rate)
+                              RateFileError, RatePair, TabularRate, load_rate)
 from pynucastro.rates.library import _rate_name_to_nuc
 from pynucastro.screening import make_plasma_state, make_screen_factors
 from pynucastro.screening.screen import NseState
@@ -496,8 +496,8 @@ class RateCollection:
             # create the appropriate rate object first
             try:
                 rate = load_rate(rf)
-            except Exception as ex:
-                raise Exception(f"Error reading rate from file: {rf}") from ex
+            except RateFileError as ex:
+                raise RateFileError(f"Error reading rate from file: {rf}") from ex
 
             # now create a library:
             rflib = Library(rates=[rate])
