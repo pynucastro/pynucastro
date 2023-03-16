@@ -40,7 +40,7 @@ except ImportError:
         return wrap(cls_or_spec)
 
 
-from pynucastro.nucdata import Nucleus
+from pynucastro.nucdata import Nucleus, UnsupportedNucleus
 
 amu_mev, _, _ = physical_constants['atomic mass constant energy equivalent in MeV']
 hbar, _, _ = physical_constants['reduced Planck constant']
@@ -55,15 +55,21 @@ _pynucastro_rates_dir = os.path.join(_pynucastro_dir, 'library')
 _pynucastro_tabular_dir = os.path.join(_pynucastro_rates_dir, 'tabular')
 
 
-def load_rate(rfile=None, rfile_path=None):
+class RateFileError(Exception):
+    """An error occurred while trying to read a Rate from a file."""
 
+
+def load_rate(rfile=None, rfile_path=None):
+    """Try to load a rate of any type.
+
+    :raises: :class:`.RateFileError`, :class:`.UnsupportedNucleus`
+    """
+
+    rate: Rate
     try:
         rate = TabularRate(rfile=rfile, rfile_path=rfile_path)
-    except AssertionError:
-        try:
-            rate = ReacLibRate(rfile=rfile, rfile_path=rfile_path)
-        except AssertionError:
-            raise
+    except (RateFileError, UnsupportedNucleus):
+        rate = ReacLibRate(rfile=rfile, rfile_path=rfile_path)
 
     return rate
 
@@ -89,7 +95,7 @@ def _find_rate_file(ratename):
         return os.path.realpath(x)
 
     # notify user we can't find the file
-    raise Exception(f'File {ratename!r} not found in the working directory, {_pynucastro_rates_dir}, or {_pynucastro_tabular_dir}')
+    raise RateFileError(f'File {ratename!r} not found in the working directory, {_pynucastro_rates_dir}, or {_pynucastro_tabular_dir}')
 
 
 if numba is not None:
@@ -746,6 +752,7 @@ class ReacLibRate(Rate):
     can be composed of multiple sets, or a tabulated electron capture
     rate.
 
+    :raises: :class:`.RateFileError`, :class:`.UnsupportedNucleus`
     """
     def __init__(self, rfile=None, rfile_path=None, chapter=None, original_source=None,
                  reactants=None, products=None, sets=None, labelprops=None, Q=None):
@@ -1000,7 +1007,8 @@ class ReacLibRate(Rate):
                 check_chapter = int(check_chapter)
                 # check that the chapter number is the same as the first
                 # set in this rate file
-                assert check_chapter == self.chapter, f'read chapter {check_chapter}, expected chapter {self.chapter} for this rate set.'
+                if check_chapter != self.chapter:
+                    raise RateFileError(f'read chapter {check_chapter}, expected chapter {self.chapter} for this rate set.')
                 # get rid of chapter number so we can read a rate set
                 set_lines.pop(0)
             except (TypeError, ValueError):
@@ -1112,8 +1120,7 @@ class ReacLibRate(Rate):
                     self.products += [Nucleus.from_cache(f[1]), Nucleus.from_cache(f[2]),
                                       Nucleus.from_cache(f[3]), Nucleus.from_cache(f[4])]
                 else:
-                    print(f'Chapter could not be identified in {self.original_source}')
-                    assert isinstance(self.chapter, int) and self.chapter <= 11
+                    raise RateFileError(f'Chapter could not be identified in {self.original_source}')
 
                 first = 0
 
@@ -1290,7 +1297,10 @@ class ReacLibRate(Rate):
 
 
 class TabularRate(Rate):
-    """A tabular rate."""
+    """A tabular rate.
+
+    :raises: :class:`.RateFileError`, :class:`.UnsupportedNucleus`
+    """
     def __init__(self, rfile=None, rfile_path=None):
         """ rfile can be either a string specifying the path to a rate file or
         an io.StringIO object from which to read rate information. """
@@ -1355,7 +1365,8 @@ class TabularRate(Rate):
 
         # first line is the chapter
         self.chapter = lines[0].strip()
-        assert self.chapter == "t"
+        if self.chapter != "t":
+            raise RateFileError(f"Invalid chapter for TabularRate ({self.chapter})")
 
         # remove any blank lines
         set_lines = [l for l in lines[1:] if not l.strip() == ""]
@@ -1370,8 +1381,8 @@ class TabularRate(Rate):
         try:
             self.reactants.append(Nucleus.from_cache(f[0]))
             self.products.append(Nucleus.from_cache(f[1]))
-        except Exception as ex:
-            raise Exception(f'Nucleus objects could not be identified in {self.original_source}') from ex
+        except UnsupportedNucleus as ex:
+            raise RateFileError(f'Nucleus objects could not be identified in {self.original_source}') from ex
 
         self.table_file = s2.strip()
         self.table_header_lines = int(s3.strip())
@@ -1559,7 +1570,8 @@ class DerivedRate(ReacLibRate):
         self.rate = rate
         self.compute_Q = compute_Q
 
-        assert isinstance(rate, Rate)
+        if not isinstance(rate, Rate):
+            raise TypeError('rate must be a Rate subclass')
 
         if (isinstance(rate, TabularRate) or self.rate.weak or
             self.rate.reverse):

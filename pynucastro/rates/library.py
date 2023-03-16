@@ -4,8 +4,9 @@ import os
 import re
 
 from pynucastro.nucdata import Nucleus, UnsupportedNucleus
-from pynucastro.rates.rate import (DerivedRate, Rate, ReacLibRate, TabularRate,
-                                   _find_rate_file, load_rate)
+from pynucastro.rates.rate import (DerivedRate, Rate, RateFileError,
+                                   ReacLibRate, TabularRate, _find_rate_file,
+                                   load_rate)
 
 
 def list_known_rates():
@@ -20,7 +21,7 @@ def list_known_rates():
                 continue
             try:
                 lib = Library(f)
-            except Exception:  # pylint: disable=broad-except
+            except (RateFileError, UnsupportedNucleus):
                 continue
             print(f"{f:32} : ")
             for r in lib.get_rates():
