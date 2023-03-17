@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Removing Unimportant Rates &mdash; pynucastro 2.0.3.post10+g33a07f93 documentation</title>
+  <title>Removing Unimportant Rates &mdash; pynucastro 2.0.3.post11+g5c95f2c4 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/nbsphinx-code-cells.css" type="text/css" />
@@ -13,6 +13,8 @@
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
+        <script src="_static/jquery.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/doctools.js"></script>
         <script src="_static/sphinx_highlight.js"></script>
@@ -114,7 +116,7 @@
            <div itemprop="articleBody">
              
   <section id="Removing-Unimportant-Rates">
-<h1>Removing Unimportant Rates<a class="headerlink" href="#Removing-Unimportant-Rates" title="Permalink to this heading">¶</a></h1>
+<h1>Removing Unimportant Rates<a class="headerlink" href="#Removing-Unimportant-Rates" title="Permalink to this heading"></a></h1>
 <p>When you create a network given a list of nuclei, it will pull in all of the rates that connect those nuclei in the library, even if they are not important for the thermodynamic conditions under which the network will be used.</p>
 <p>Here we see how to feed a set of thermodynamic conditions to a <code class="docutils literal notranslate"><span class="pre">RateCollection</span></code> and remove the rates that are never important.</p>
 <p>Let’s consider the case of wanting to model H burning in conditions close to the core of the Sun. We start by generating a network with all of the pp and CNO nuclei</p>
@@ -313,7 +315,7 @@ He3 + He3 ⟶ p + p + He4
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022, pynucastro development team.</p>
+    <p>&#169; Copyright 2023, pynucastro development team.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Creating Networks &mdash; pynucastro 2.0.3.post10+g33a07f93 documentation</title>
+  <title>Creating Networks &mdash; pynucastro 2.0.3.post11+g5c95f2c4 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
@@ -12,6 +12,8 @@
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
+        <script src="_static/jquery.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/doctools.js"></script>
         <script src="_static/sphinx_highlight.js"></script>
@@ -119,11 +121,11 @@
            <div itemprop="articleBody">
              
   <section id="creating-networks">
-<h1>Creating Networks<a class="headerlink" href="#creating-networks" title="Permalink to this heading">¶</a></h1>
+<h1>Creating Networks<a class="headerlink" href="#creating-networks" title="Permalink to this heading"></a></h1>
 <p>pynucastro can output the righthand side functions for ODE integration
 in Python or in a form for the AMReX-Astrophysics Microphysics package in C++</p>
 <section id="all-networks">
-<h2>All networks<a class="headerlink" href="#all-networks" title="Permalink to this heading">¶</a></h2>
+<h2>All networks<a class="headerlink" href="#all-networks" title="Permalink to this heading"></a></h2>
 <p>The first few steps to setting up any of the available network options
 are as follows. See the following section for details about the
 particular kind of network you are interested in creating.</p>
@@ -153,14 +155,14 @@ e.g. <code class="docutils literal notranslate"><span class="pre">mynet.py</span
 </ul>
 </section>
 <section id="python-network">
-<h2>Python network<a class="headerlink" href="#python-network" title="Permalink to this heading">¶</a></h2>
+<h2>Python network<a class="headerlink" href="#python-network" title="Permalink to this heading"></a></h2>
 <p>First follow the steps above for all networks. To integrate a Python
 network using the SciPy integration routines, customize
 <a class="reference external" href="https://github.com/pynucastro/pynucastro/blob/main/examples/CNO/burn.py">examples/CNO/burn.py</a> to initialize and run your network using the
 right hand side module you generated above.</p>
 </section>
 <section id="amrex-astro-microphysics-network">
-<h2>AMReX-Astro Microphysics network<a class="headerlink" href="#amrex-astro-microphysics-network" title="Permalink to this heading">¶</a></h2>
+<h2>AMReX-Astro Microphysics network<a class="headerlink" href="#amrex-astro-microphysics-network" title="Permalink to this heading"></a></h2>
 <p>The <a class="reference external" href="https://github.com/pynucastro/pynucastro/tree/main/examples/urca-23_starkiller">examples/urca-23_starkiller</a> example builds the right hand side, Jacobian,
 and helper C++ modules to copy into the <code class="docutils literal notranslate"><span class="pre">networks/</span></code> subdirectory
 of the AMReX-Astro Microphysics repository.</p>
@@ -168,7 +170,7 @@ of the AMReX-Astro Microphysics repository.</p>
 all networks above.</p>
 </section>
 <section id="tabular-rates">
-<h2>Tabular Rates<a class="headerlink" href="#tabular-rates" title="Permalink to this heading">¶</a></h2>
+<h2>Tabular Rates<a class="headerlink" href="#tabular-rates" title="Permalink to this heading"></a></h2>
 <p>Tabular rates for reactions of the form <span class="math notranslate nohighlight">\(\rm{A \rightarrow B}\)</span>
 are supported by the AMReX-Astro Microphysics network outputs.</p>
 <p>If you would like to include tabular rates, for now they must be in
@@ -203,7 +205,7 @@ format:</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022, pynucastro development team.</p>
+    <p>&#169; Copyright 2023, pynucastro development team.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Approximate Rates &mdash; pynucastro 2.0.3.post10+g33a07f93 documentation</title>
+  <title>Approximate Rates &mdash; pynucastro 2.0.3.post11+g5c95f2c4 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/nbsphinx-code-cells.css" type="text/css" />
@@ -13,6 +13,8 @@
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
+        <script src="_static/jquery.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/doctools.js"></script>
         <script src="_static/sphinx_highlight.js"></script>
@@ -121,7 +123,7 @@
            <div itemprop="articleBody">
              
   <section id="Approximate-Rates">
-<h1>Approximate Rates<a class="headerlink" href="#Approximate-Rates" title="Permalink to this heading">¶</a></h1>
+<h1>Approximate Rates<a class="headerlink" href="#Approximate-Rates" title="Permalink to this heading"></a></h1>
 <p>pynucastro can use rate approximations for <span class="math notranslate nohighlight">\(A(\alpha,\gamma)B\)</span> and <span class="math notranslate nohighlight">\(A(\alpha,p)X(p,\gamma)B\)</span>, combining them into a single effective rate by assuming that the protons and nucleus <span class="math notranslate nohighlight">\(X\)</span> are in equilibrium.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
@@ -177,7 +179,7 @@
 </div>
 </div>
 <section id="Integrating-the-full-network">
-<h2>Integrating the full network<a class="headerlink" href="#Integrating-the-full-network" title="Permalink to this heading">¶</a></h2>
+<h2>Integrating the full network<a class="headerlink" href="#Integrating-the-full-network" title="Permalink to this heading"></a></h2>
 <p>Now let’s integrate this. We’ll start with half <span class="math notranslate nohighlight">\({}^{24}\mathrm{Mg}\)</span> and half <span class="math notranslate nohighlight">\(\alpha\)</span> by mass.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
@@ -231,7 +233,7 @@
 </div>
 </section>
 <section id="Approximate-Version">
-<h2>Approximate Version<a class="headerlink" href="#Approximate-Version" title="Permalink to this heading">¶</a></h2>
+<h2>Approximate Version<a class="headerlink" href="#Approximate-Version" title="Permalink to this heading"></a></h2>
 <p>Now we will approximate the rates, combining <span class="math notranslate nohighlight">\((\alpha, \gamma)\)</span> and <span class="math notranslate nohighlight">\((\alpha, p)(p, \gamma)\)</span> into a single effective rate.</p>
 <p>The routine <code class="docutils literal notranslate"><span class="pre">make_ap_pg_approx()</span></code> will find all of the rates that make up that sequence and create a single <code class="docutils literal notranslate"><span class="pre">ApproximateRate</span></code> that captures the effective rate. The original rates will still be stored in the <code class="docutils literal notranslate"><span class="pre">ApproximateRate</span></code> object and will be evaluated to compute the needed approximation when the effective rate is evaluated.</p>
 <div class="nbinput docutils container">
@@ -438,7 +440,7 @@ def mg24_he4__si28__approx(rate_eval, tf):
 <p>where the 4 lines before the rate approximation is made are evaluating the original, unapproximated rates.</p>
 </section>
 <section id="Integrating-the-approximate-network">
-<h2>Integrating the approximate network<a class="headerlink" href="#Integrating-the-approximate-network" title="Permalink to this heading">¶</a></h2>
+<h2>Integrating the approximate network<a class="headerlink" href="#Integrating-the-approximate-network" title="Permalink to this heading"></a></h2>
 <p>Let’s integrate this approximate net and compare to above</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
@@ -492,7 +494,7 @@ def mg24_he4__si28__approx(rate_eval, tf):
 </div>
 </section>
 <section id="Comparison">
-<h2>Comparison<a class="headerlink" href="#Comparison" title="Permalink to this heading">¶</a></h2>
+<h2>Comparison<a class="headerlink" href="#Comparison" title="Permalink to this heading"></a></h2>
 <p>Let’s plot both on the same axes to see the comparison.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
@@ -529,7 +531,7 @@ def mg24_he4__si28__approx(rate_eval, tf):
 <p>Here the dotted line is the approximate network. We see that the results agree well.</p>
 </section>
 <section id="No-approximation">
-<h2>No approximation<a class="headerlink" href="#No-approximation" title="Permalink to this heading">¶</a></h2>
+<h2>No approximation<a class="headerlink" href="#No-approximation" title="Permalink to this heading"></a></h2>
 <p>What if we just create a 4 nuclei network without the <span class="math notranslate nohighlight">\((\alpha,p)(p,\gamma)\)</span> links? How does this compare?</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
@@ -650,7 +652,7 @@ True
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022, pynucastro development team.</p>
+    <p>&#169; Copyright 2023, pynucastro development team.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
