@@ -21,6 +21,7 @@ disable = [
   "missing-function-docstring",
   "missing-module-docstring",
 ]
+enable = ["useless-suppression"]
 
 [tool.pylint.FORMAT]
 max-line-length = 132

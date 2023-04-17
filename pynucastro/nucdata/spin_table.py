@@ -22,12 +22,7 @@ class SpinTable:
         else:
             datafile_name = 'nubase2020_1.txt'
             nucdata_dir = os.path.dirname(os.path.realpath(__file__))
-            datafile_dir = os.path.join(os.path.join(nucdata_dir, 'AtomicMassEvaluation'), datafile_name)
-
-        if os.path.isfile(datafile_dir):
-            self.datafile = datafile_dir
-        else:
-            raise Exception('ERROR: The spin tabulated file was not found')
+            self.datafile = os.path.join(os.path.join(nucdata_dir, 'AtomicMassEvaluation'), datafile_name)
 
         self._read_table()
 

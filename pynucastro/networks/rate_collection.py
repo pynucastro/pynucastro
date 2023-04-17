@@ -25,7 +25,7 @@ from scipy.optimize import fsolve
 # Import Rate
 from pynucastro.nucdata import Nucleus, PeriodicTable
 from pynucastro.rates import (ApproximateRate, DerivedRate, Library, Rate,
-                              RatePair, TabularRate, load_rate)
+                              RateFileError, RatePair, TabularRate, load_rate)
 from pynucastro.rates.library import _rate_name_to_nuc
 from pynucastro.screening import make_plasma_state, make_screen_factors
 from pynucastro.screening.screen import NseState
@@ -299,6 +299,7 @@ class ScreeningPair:
 
 class RateCollection:
     """ a collection of rates that together define a network """
+    # pylint: disable=too-many-public-methods
 
     pynucastro_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 
@@ -456,6 +457,7 @@ class RateCollection:
                             cr.removed = False
 
                         cr.fname = None
+                        # pylint: disable-next=protected-access
                         cr._set_print_representation()
 
                         if cr not in self.derived_rates:
@@ -468,6 +470,7 @@ class RateCollection:
                             cr.removed = False
 
                         cr.fname = None
+                        # pylint: disable-next=protected-access
                         cr._set_print_representation()
 
                         if cr not in self.reaclib_rates:
@@ -493,8 +496,8 @@ class RateCollection:
             # create the appropriate rate object first
             try:
                 rate = load_rate(rf)
-            except Exception as ex:
-                raise Exception(f"Error reading rate from file: {rf}") from ex
+            except RateFileError as ex:
+                raise RateFileError(f"Error reading rate from file: {rf}") from ex
 
             # now create a library:
             rflib = Library(rates=[rate])
@@ -567,10 +570,9 @@ class RateCollection:
 
         # we might have some reverse rates remaining for which there
         # were no forward rates -- add those now
-        if reverse_rates:
-            for rr in reverse_rates:
-                rp = RatePair(reverse=rr)
-                rate_pairs.append(rp)
+        for rr in reverse_rates:
+            rp = RatePair(reverse=rr)
+            rate_pairs.append(rp)
 
         return rate_pairs
 
@@ -612,17 +614,14 @@ class RateCollection:
         return _r
 
     def get_nuclei_needing_partition_functions(self):
-        """return a list of the nuclei that require partition
-        functions for one or more DerivedRates in the collection"""
+        """return a set of Nuclei that require partition functions for one or
+        more DerivedRates in the collection"""
 
-        rates_with_pfs = [q for q in self.all_rates if isinstance(q, DerivedRate) and q.use_pf]
-
-        if rates_with_pfs:
-            nuclei_pfs = []
-            for r in rates_with_pfs:
-                nuclei_pfs += r.reactants + r.products
-            return set(nuclei_pfs)
-        return None
+        nuclei_pfs = set()
+        for r in self.all_rates:
+            if isinstance(r, DerivedRate) and r.use_pf:
+                nuclei_pfs.update(r.reactants + r.products)
+        return nuclei_pfs
 
     def remove_nuclei(self, nuc_list):
         """remove the nuclei in nuc_list from the network along with any rates
@@ -675,7 +674,7 @@ class RateCollection:
 
         # make sure that the intermediate_nuclei list are Nuclei objects
         _inter_nuclei_remove = []
-        if intermediate_nuclei:
+        if intermediate_nuclei is not None:
             for nn in intermediate_nuclei:
                 if isinstance(nn, Nucleus):
                     _inter_nuclei_remove.append(nn)
@@ -1078,12 +1077,12 @@ class RateCollection:
         warnings.filterwarnings("ignore", category=RuntimeWarning)
 
         # This nested loops should fine-tune the initial guess if fsolve is unable to find a solution
-        while (j < 20):
+        while j < 20:
             i = 0
             guess = copy.deepcopy(init_guess)
             init_dx = 0.5
 
-            while (i < 20):
+            while i < 20:
                 u = fsolve(self._constraint_eq, guess, args=(u_c, state), xtol=tol, maxfev=800)
                 Xs = self._nucleon_fraction_nse(u, u_c, state)
                 n_e = self._evaluate_n_e(state, Xs)
