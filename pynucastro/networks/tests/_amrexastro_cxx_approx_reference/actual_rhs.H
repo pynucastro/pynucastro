@@ -12,7 +12,6 @@
 #include <sneut5.H>
 #include <reaclib_rates.H>
 #include <table_rates.H>
-#include <extern_parameters.H>
 
 using namespace amrex;
 using namespace ArrayUtil;
