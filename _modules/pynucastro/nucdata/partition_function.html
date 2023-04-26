@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.nucdata.partition_function &mdash; pynucastro 2.0.3.post13+g0c4bd514 documentation</title>
+  <title>pynucastro.nucdata.partition_function &mdash; pynucastro 2.0.3.post14+gf949630c documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
@@ -124,7 +124,7 @@
 <span class="sd">    nucleus            : a string variable composed by an element and the atomic number, e.g ni56.</span>
 <span class="sd">    name               : the name of the table on which the nucleus is read.</span>
 <span class="sd">    temperature        : a list with all the temperatures involved in the table named in the previous variable.</span>
-<span class="sd">    partition_function : a list with all the partition values given in the same order of the previos list.</span>
+<span class="sd">    partition_function : a list with all the partition values given in the same order of the previous list.</span>
 <span class="sd">    interpolant        : stores the interpolant function.</span>
 <span class="sd">    interpolant_order  : stores the interpolation spline order.</span>
 
@@ -141,10 +141,10 @@
 
 <span class="sd">    __add__ : if two partition functions do not overlap their temperatures, we define the addition at the incorporation</span>
 <span class="sd">          of all the temperatures and their partition function values, respectively.</span>
-<span class="sd">    __call__: This object allow us to treat the class object as function of T, returning the appropiate value of</span>
+<span class="sd">    __call__: This object allow us to treat the class object as function of T, returning the appropriate value of</span>
 <span class="sd">          the partition function.</span>
 
-<span class="sd">    The purpose of this oject is to encompass all the nucleus partition function values into a single object, on which +</span>
+<span class="sd">    The purpose of this object is to encompass all the nucleus partition function values into a single object, on which +</span>
 <span class="sd">    is defined.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -273,7 +273,7 @@
 
 <span class="sd">    The class PartitionFunctionTable(file_name) is characterized by the public variable self.name,</span>
 <span class="sd">    which stores the name of the table. The private variable self._partition_function collects all</span>
-<span class="sd">    the tables we have previously converted bu using their scripts.</span>
+<span class="sd">    the tables we have previously converted by using their scripts.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 

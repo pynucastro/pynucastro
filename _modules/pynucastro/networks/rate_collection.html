@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.networks.rate_collection &mdash; pynucastro 2.0.3.post13+g0c4bd514 documentation</title>
+  <title>pynucastro.networks.rate_collection &mdash; pynucastro 2.0.3.post14+gf949630c documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
@@ -1082,7 +1082,7 @@
         <span class="n">ye_max</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">nuc</span><span class="o">.</span><span class="n">Z</span><span class="o">/</span><span class="n">nuc</span><span class="o">.</span><span class="n">A</span> <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">)</span>
         <span class="k">assert</span> <span class="n">state</span><span class="o">.</span><span class="n">ye</span> <span class="o">&gt;=</span> <span class="n">ye_low</span> <span class="ow">and</span> <span class="n">state</span><span class="o">.</span><span class="n">ye</span> <span class="o">&lt;=</span> <span class="n">ye_max</span><span class="p">,</span> <span class="s2">&quot;input electron fraction goes outside of scope for current network&quot;</span>
 
-        <span class="c1"># Seting up the constants needed to compute mu_c</span>
+        <span class="c1"># Setting up the constants needed to compute mu_c</span>
         <span class="n">k</span> <span class="o">=</span> <span class="n">constants</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="s2">&quot;Boltzmann constant&quot;</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1.0e7</span>          <span class="c1"># boltzmann in erg/K</span>
         <span class="n">Erg2MeV</span> <span class="o">=</span> <span class="mf">624151.0</span>
 
@@ -1548,7 +1548,7 @@
 <span class="sd">        ydot_cutoff_value: rate threshold below which we do not show a</span>
 <span class="sd">        line corresponding to a rate</span>
 
-<span class="sd">        show_small_ydot: if true, then show visibile lines for rates below</span>
+<span class="sd">        show_small_ydot: if true, then show visible lines for rates below</span>
 <span class="sd">        ydot_cutoff_value</span>
 
 <span class="sd">        node_size: size of a node</span>
@@ -1745,7 +1745,7 @@
 
                         <span class="n">G</span><span class="o">.</span><span class="n">add_edges_from</span><span class="p">([(</span><span class="n">n</span><span class="p">,</span> <span class="n">p</span><span class="p">)],</span> <span class="n">weight</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">real</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">highlight</span><span class="o">=</span><span class="n">highlight</span><span class="p">)</span>
 
-        <span class="c1"># It seems that networkx broke backwards compatability, and &#39;zorder&#39; is no longer a valid</span>
+        <span class="c1"># It seems that networkx broke backwards compatibility, and &#39;zorder&#39; is no longer a valid</span>
         <span class="c1"># keyword argument. The &#39;linewidth&#39; argument has also changed to &#39;linewidths&#39;.</span>
 
         <span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx_nodes</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">G</span><span class="o">.</span><span class="n">position</span><span class="p">,</span>      <span class="c1"># plot the element at the correct position</span>

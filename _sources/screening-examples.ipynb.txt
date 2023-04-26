@@ -55,7 +55,7 @@
    "source": [
     "To compute the screening factor for a rate, we need to know the entire composition (since the electron number density matters) as well as the two nuclei involved in the reaction.  There are two special types that store this information:\n",
     "\n",
-    "* `PlasmaState` : stores the aggregrate information about the entire plasma\n",
+    "* `PlasmaState` : stores the aggregate information about the entire plasma\n",
     "* `ScreenFactors` : stores the information about the two nuclei\n",
     "\n",
     "We create these objects separate before we call the screening routine since there are some computational expensive calculations here that don't change with repeated calls."

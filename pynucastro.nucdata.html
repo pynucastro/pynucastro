@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.nucdata package &mdash; pynucastro 2.0.3.post13+g0c4bd514 documentation</title>
+  <title>pynucastro.nucdata package &mdash; pynucastro 2.0.3.post14+gf949630c documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
@@ -244,7 +244,7 @@ pretty printing string.</p>
 <li><p><strong>N</strong> – neutron number</p></li>
 <li><p><strong>A</strong> – atomic mass</p></li>
 <li><p><strong>nucbind</strong> – nuclear binding energy (MeV / nucleon)</p></li>
-<li><p><strong>short_spec_name</strong> – nucleus abbrevation (e.g. “he4”)</p></li>
+<li><p><strong>short_spec_name</strong> – nucleus abbreviation (e.g. “he4”)</p></li>
 <li><p><strong>caps_name</strong> – capitalized short species name (e.g. “He4”)</p></li>
 <li><p><strong>el</strong> – element name (e.g. “he”)</p></li>
 <li><p><strong>pretty</strong> – LaTeX formatted version of the nucleus name</p></li>
@@ -289,7 +289,7 @@ are characterized as follows:</p>
 <p>nucleus            : a string variable composed by an element and the atomic number, e.g ni56.
 name               : the name of the table on which the nucleus is read.
 temperature        : a list with all the temperatures involved in the table named in the previous variable.
-partition_function : a list with all the partition values given in the same order of the previos list.
+partition_function : a list with all the partition values given in the same order of the previous list.
 interpolant        : stores the interpolant function.
 interpolant_order  : stores the interpolation spline order.</p>
 <p>The public methods of this class are:</p>
@@ -303,10 +303,10 @@ spline interpolation of order=3 by default, returning the function of T.</p>
 <dl class="simple">
 <dt>__add__<span class="classifier">if two partition functions do not overlap their temperatures, we define the addition at the incorporation</span></dt><dd><p>of all the temperatures and their partition function values, respectively.</p>
 </dd>
-<dt>__call__: This object allow us to treat the class object as function of T, returning the appropiate value of</dt><dd><p>the partition function.</p>
+<dt>__call__: This object allow us to treat the class object as function of T, returning the appropriate value of</dt><dd><p>the partition function.</p>
 </dd>
 </dl>
-<p>The purpose of this oject is to encompass all the nucleus partition function values into a single object, on which +
+<p>The purpose of this object is to encompass all the nucleus partition function values into a single object, on which +
 is defined.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.nucdata.partition_function.PartitionFunction.construct_spline_interpolant">
@@ -371,7 +371,7 @@ form, e.g. “ni56”. The table files are stored in the PartitionFunction
 sub directory.</p>
 <p>The class PartitionFunctionTable(file_name) is characterized by the public variable self.name,
 which stores the name of the table. The private variable self._partition_function collects all
-the tables we have previously converted bu using their scripts.</p>
+the tables we have previously converted by using their scripts.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.nucdata.partition_function.PartitionFunctionTable.get_nuclei">
 <span class="sig-name descname"><span class="pre">get_nuclei</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/partition_function.html#PartitionFunctionTable.get_nuclei"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.partition_function.PartitionFunctionTable.get_nuclei" title="Permalink to this definition"></a></dt>

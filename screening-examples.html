@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Screening Rates &mdash; pynucastro 2.0.3.post13+g0c4bd514 documentation</title>
+  <title>Screening Rates &mdash; pynucastro 2.0.3.post14+gf949630c documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/nbsphinx-code-cells.css" type="text/css" />
@@ -145,7 +145,7 @@
 <h2>Using Screening<a class="headerlink" href="#Using-Screening" title="Permalink to this heading"></a></h2>
 <p>To compute the screening factor for a rate, we need to know the entire composition (since the electron number density matters) as well as the two nuclei involved in the reaction. There are two special types that store this information:</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">PlasmaState</span></code> : stores the aggregrate information about the entire plasma</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">PlasmaState</span></code> : stores the aggregate information about the entire plasma</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">ScreenFactors</span></code> : stores the information about the two nuclei</p></li>
 </ul>
 <p>We create these objects separate before we call the screening routine since there are some computational expensive calculations here that don’t change with repeated calls.</p>
