@@ -12,7 +12,7 @@ class PartitionFunction:
     nucleus            : a string variable composed by an element and the atomic number, e.g ni56.
     name               : the name of the table on which the nucleus is read.
     temperature        : a list with all the temperatures involved in the table named in the previous variable.
-    partition_function : a list with all the partition values given in the same order of the previos list.
+    partition_function : a list with all the partition values given in the same order of the previous list.
     interpolant        : stores the interpolant function.
     interpolant_order  : stores the interpolation spline order.
 
@@ -29,10 +29,10 @@ class PartitionFunction:
 
     __add__ : if two partition functions do not overlap their temperatures, we define the addition at the incorporation
           of all the temperatures and their partition function values, respectively.
-    __call__: This object allow us to treat the class object as function of T, returning the appropiate value of
+    __call__: This object allow us to treat the class object as function of T, returning the appropriate value of
           the partition function.
 
-    The purpose of this oject is to encompass all the nucleus partition function values into a single object, on which +
+    The purpose of this object is to encompass all the nucleus partition function values into a single object, on which +
     is defined.
     """
 
@@ -161,7 +161,7 @@ class PartitionFunctionTable:
 
     The class PartitionFunctionTable(file_name) is characterized by the public variable self.name,
     which stores the name of the table. The private variable self._partition_function collects all
-    the tables we have previously converted bu using their scripts.
+    the tables we have previously converted by using their scripts.
 
     """
 
