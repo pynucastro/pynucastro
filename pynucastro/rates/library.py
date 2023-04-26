@@ -424,7 +424,7 @@ class Library:
 
     def derived_forward(self):
         """
-        In this library, We exclude the weak and tabular rates from the .foward() library which includes all
+        In this library, we exclude the weak and tabular rates from the .forward() library which includes all
         the ReacLib forward reactions.
 
         In a future PR, we will classify forward reactions as exothermic (Q>0), and reverse by endothermic (Q<0).
