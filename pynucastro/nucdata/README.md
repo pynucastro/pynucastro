@@ -20,7 +20,7 @@ citations, and links for the tables are provided in the
 # Partition Functions
 
 The script `convert_rathpf_2000.py` converts the files `part_etfsiq.asc.txt` 
-and `part_frdm.asc.txt` to a convinient format to an standard pynucastro 
+and `part_frdm.asc.txt` to a convenient format to an standard pynucastro 
 format. The table `part_frdm.asc.txt` is depicted in:
 
 T. Rauscher and F.-K.Thielemann, ADNDT 75 (2000) 1.

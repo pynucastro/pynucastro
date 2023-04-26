@@ -29,3 +29,6 @@ max-line-length = 132
 [tool.pylint.TYPECHECK]
 generated-members = ["viridis", "bwr"]
 # see https://github.com/PyCQA/pylint/issues/2289 for the generated-members
+
+[tool.codespell]
+skip = ".git,*docs/build,*.bib"
