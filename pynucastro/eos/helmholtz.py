@@ -8,10 +8,10 @@ class HelmholtzTable:
     #The first step is to interpolate the electron_positron eos table by the use of biquintic
     #polinomials.
 
-    def __init__(self, rho, T, ye, table='helm_table.dat'):
+    def __init__(self, state, table='helm_table.dat'):
 
-        self.din = rho * ye
-        self.ye = ye
+        self.din = state.rho * state.ye
+        self.T = state.T
 
         self.imax = 541   #541 number of dens pts
         self.tlo = 3.0
@@ -362,8 +362,10 @@ class HelmholtzTable:
         wt = self.read_t(der=0)
 
         fwtr = self.interpolate_biquintic(fi,wt)
+        dp_d = np.sum(fwtr * wd)
 
-        pressure = np.sum(fwtr * wd)
+        pressure = self.din**2 * dp_d
+
         return pressure
 
     def compute_entropy(self):
@@ -373,9 +375,11 @@ class HelmholtzTable:
         wt = self.read_t(der=1)
 
         fwtr = self.interpolate_biquintic(fi,wt)
+        df_t = np.sum(fwtr * wd)
 
-        pressure = np.sum(fwtr * wd)
-        return pressure
+        entropy = -df_t
+
+        return entropy
 
     def compute_energy(self):
 
@@ -385,8 +389,11 @@ class HelmholtzTable:
 
         fwtr = self.interpolate_biquintic(fi,wt)
 
-        pressure = np.sum(fwtr * wd)
-        return pressure
+        f = self.compute_free_energy()
+        s = self.compute_entropy
+
+        energy = f + self.T*s
+        return energy
 
     def compute_chemical_potential(self):
 
