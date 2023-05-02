@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.rates.rate &mdash; pynucastro 2.0.3.post15+gdd09f4ff documentation</title>
+  <title>pynucastro.rates.rate &mdash; pynucastro 2.0.3.post16+gace9d50a documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
@@ -223,7 +223,7 @@
     <span class="n">Tfactor_spec</span> <span class="o">=</span> <span class="p">[]</span>
 
 
-<span class="nd">@jitclass</span><span class="p">(</span><span class="n">Tfactor_spec</span><span class="p">)</span>
+<div class="viewcode-block" id="Tfactors"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.Tfactors">[docs]</a><span class="nd">@jitclass</span><span class="p">(</span><span class="n">Tfactor_spec</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">Tfactors</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; precompute temperature factors for speed</span>
 
@@ -243,7 +243,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">T913i</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">T9i</span><span class="o">**</span><span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="mf">3.</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">T913</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">T9</span><span class="o">**</span><span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="mf">3.</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">T953</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">T9</span><span class="o">**</span><span class="p">(</span><span class="mf">5.</span><span class="o">/</span><span class="mf">3.</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">lnT9</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">T9</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lnT9</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">T9</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="SingleSet"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.SingleSet">[docs]</a><span class="k">class</span> <span class="nc">SingleSet</span><span class="p">:</span>

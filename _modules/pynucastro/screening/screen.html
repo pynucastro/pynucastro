@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.screening.screen &mdash; pynucastro 2.0.3.post15+gdd09f4ff documentation</title>
+  <title>pynucastro.screening.screen &mdash; pynucastro 2.0.3.post16+gace9d50a documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
@@ -135,7 +135,7 @@
 <span class="n">k_B</span> <span class="o">=</span> <span class="n">constants</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="s2">&quot;Boltzmann constant&quot;</span><span class="p">)</span> <span class="o">/</span> <span class="n">constants</span><span class="o">.</span><span class="n">erg</span>  <span class="c1"># J/K to erg/K</span>
 
 
-<span class="nd">@jitclass</span><span class="p">()</span>
+<div class="viewcode-block" id="PlasmaState"><a class="viewcode-back" href="../../../pynucastro.screening.html#pynucastro.screening.screen.PlasmaState">[docs]</a><span class="nd">@jitclass</span><span class="p">()</span>
 <span class="k">class</span> <span class="nc">PlasmaState</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Stores precomputed values that are reused for all screening correction</span>
@@ -181,7 +181,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">n_e</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">zbar</span> <span class="o">*</span> <span class="n">ntot</span>
 
         <span class="c1"># temperature-independent part of Gamma_e, from Chugunov 2009 eq. 6</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">gamma_e_fac</span> <span class="o">=</span> <span class="n">q_e</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="n">k_B</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">3</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_e</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gamma_e_fac</span> <span class="o">=</span> <span class="n">q_e</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="n">k_B</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">3</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_e</span><span class="p">)</span></div>
 
 
 <span class="nd">@jitclass</span><span class="p">()</span>
@@ -237,7 +237,7 @@
     <span class="k">return</span> <span class="n">PlasmaState</span><span class="p">(</span><span class="n">temp</span><span class="p">,</span> <span class="n">dens</span><span class="p">,</span> <span class="n">Ys</span><span class="p">,</span> <span class="n">Zs</span><span class="p">)</span></div>
 
 
-<span class="nd">@jitclass</span><span class="p">()</span>
+<div class="viewcode-block" id="ScreenFactors"><a class="viewcode-back" href="../../../pynucastro.screening.html#pynucastro.screening.screen.ScreenFactors">[docs]</a><span class="nd">@jitclass</span><span class="p">()</span>
 <span class="k">class</span> <span class="nc">ScreenFactors</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Stores values that will be used to calculate the screening correction factor</span>
@@ -263,7 +263,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">a1</span> <span class="o">=</span> <span class="n">a1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">a2</span> <span class="o">=</span> <span class="n">a2</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">aznut</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">(</span><span class="n">z1</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">z2</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">a1</span> <span class="o">*</span> <span class="n">a2</span> <span class="o">/</span> <span class="p">(</span><span class="n">a1</span> <span class="o">+</span> <span class="n">a2</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ztilde</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">(</span><span class="n">z1</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">(</span><span class="n">z2</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ztilde</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">(</span><span class="n">z1</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">(</span><span class="n">z2</span><span class="p">))</span></div>
 
 
 <div class="viewcode-block" id="make_screen_factors"><a class="viewcode-back" href="../../../pynucastro.screening.html#pynucastro.screening.screen.make_screen_factors">[docs]</a><span class="k">def</span> <span class="nf">make_screen_factors</span><span class="p">(</span><span class="n">n1</span><span class="p">,</span> <span class="n">n2</span><span class="p">):</span>
