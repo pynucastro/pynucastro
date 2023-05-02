@@ -9,14 +9,6 @@ pynucastro.nucdata package
 Submodules
 ----------
 
-pynucastro.nucdata.binding\_nuclide module
-------------------------------------------
-
-.. automodule:: pynucastro.nucdata.binding_nuclide
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 pynucastro.nucdata.binding\_table module
 ----------------------------------------
 
@@ -33,10 +25,10 @@ pynucastro.nucdata.elements module
    :undoc-members:
    :show-inheritance:
 
-pynucastro.nucdata.mass\_nuclide module
----------------------------------------
+pynucastro.nucdata.mass\_table module
+-------------------------------------
 
-.. automodule:: pynucastro.nucdata.mass_nuclide
+.. automodule:: pynucastro.nucdata.mass_table
    :members:
    :undoc-members:
    :show-inheritance:
@@ -57,10 +49,10 @@ pynucastro.nucdata.partition\_function module
    :undoc-members:
    :show-inheritance:
 
-pynucastro.nucdata.spin\_nuclide module
----------------------------------------
+pynucastro.nucdata.spin\_table module
+-------------------------------------
 
-.. automodule:: pynucastro.nucdata.spin_nuclide
+.. automodule:: pynucastro.nucdata.spin_table
    :members:
    :undoc-members:
    :show-inheritance:

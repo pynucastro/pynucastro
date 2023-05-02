@@ -21,6 +21,11 @@ disable = [
   "missing-function-docstring",
   "missing-module-docstring",
 ]
+enable = ["useless-suppression"]
 
 [tool.pylint.FORMAT]
 max-line-length = 132
+
+[tool.pylint.TYPECHECK]
+generated-members = ["viridis", "bwr"]
+# see https://github.com/PyCQA/pylint/issues/2289 for the generated-members

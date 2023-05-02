@@ -146,10 +146,9 @@ class PartitionFunction:
         except ValueError:
             print("invalid temperature")
             raise
-        else:
-            if self.interpolant_order == 0:
-                return 10**self.interpolant(T)
-            return 10**self.interpolant(T, ext='const')  # extrapolates keeping the boundaries fixed.
+        if self.interpolant_order == 0:
+            return 10**self.interpolant(T)
+        return 10**self.interpolant(T, ext='const')  # extrapolates keeping the boundaries fixed.
 
 
 class PartitionFunctionTable:

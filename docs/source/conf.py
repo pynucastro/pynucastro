@@ -19,8 +19,8 @@
 #
 import os
 import sys
-import sphinx_rtd_theme
 from importlib.metadata import version as importlib_version
+
 sys.path.insert(0, os.path.abspath('..'))
 
 
@@ -39,6 +39,8 @@ extensions = ['sphinx.ext.autodoc',
     'sphinx.ext.viewcode',
     'nbsphinx',
     'sphinx.ext.githubpages',
+    'sphinx_rtd_theme',
+    'sphinx-prompt',
     'sphinx_mdinclude',
     'IPython.sphinxext.ipython_console_highlighting']
 
@@ -59,7 +61,7 @@ main_doc = 'index'
 
 # General information about the project.
 project = 'pynucastro'
-copyright = '2022, pynucastro development team'
+copyright = '2023, pynucastro development team'
 author = 'pynucastro development team'
 
 html_logo = "logo.png"
@@ -79,7 +81,7 @@ version = '.'.join(release.split('.')[:2])
 #
 # This is also used if you do content translation via gettext catalogs.
 # Usually you set "language" from the command line for these cases.
-language = None
+language = "en"
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
@@ -100,13 +102,19 @@ todo_include_todos = False
 #
 #html_theme = 'nature'
 html_theme = "sphinx_rtd_theme"
-html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
 #
-# html_theme_options = {}
+html_theme_options = {"vcs_pageview_mode": "blob"}
+
+html_context = {
+  "display_github": True,
+  "github_repo": "pynucastro",
+  "github_user": "pynucastro",
+  "github_version": "main/docs/source/"
+}
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
