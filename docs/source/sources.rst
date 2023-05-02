@@ -9,9 +9,9 @@ Nuclear reaction rates from JINA Reaclib
 ----------------------------------------
 
 The reaction rate parameterizations in `pynucastro/library <https://github.com/pynucastro/pynucastro/tree/main/pynucastro/library>`_
-were obtained from the `JINA Reaclib database <https://groups.nscl.msu.edu/jina/reaclib/db/>`_.
+were obtained from the `JINA Reaclib database <https://reaclib.jinaweb.org/>`_.
 
-`Cyburt et al., ApJS 189 (2010) 240 <http://iopscience.iop.org/article/10.1088/0067-0049/189/1/240>`_
+`Cyburt et al., ApJS 189 (2010) 240 <https://iopscience.iop.org/article/10.1088/0067-0049/189/1/240>`_
 
 Tabulated weak nuclear reaction rates
 -------------------------------------
@@ -22,9 +22,9 @@ and `23Ne-23Na_betadecay.dat
 <https://github.com/pynucastro/pynucastro/blob/main/pynucastro/library/tabular/23Ne-23Na_betadecay.dat>`_
 were obtained from:
 
-`<http://www.phys.chs.nihon-u.ac.jp/suzuki/data2/link.html>`_
+`<https://www.phys.chs.nihon-u.ac.jp/suzuki/data2/link.html>`_
 
-`Suzuki et al., ApJ 817 (2016) 163 <http://iopscience.iop.org/article/10.3847/0004-637X/817/2/163>`_
+`Suzuki et al., ApJ 817 (2016) 163 <https://iopscience.iop.org/article/10.3847/0004-637X/817/2/163>`_
 
 Physical constants from CODATA
 ------------------------------
@@ -33,7 +33,7 @@ The standalone AMReX-Astro Microphysics
 networks rely on physical constants sourced from the 2014 CODATA
 recommended values.
 
-`P.J. Mohr, D.B. Newell, and B.N. Taylor (2016), "The 2014 CODATA Recommended Values of the Fundamental Physical Constants" <http://physics.nist.gov/constants>`_
+`P.J. Mohr, D.B. Newell, and B.N. Taylor (2016), "The 2014 CODATA Recommended Values of the Fundamental Physical Constants" <https://physics.nist.gov/cuu/Constants/index.html>`_
 
 `Mohr et al., Rev. Mod. Phys. 88, 035009 <https://journals.aps.org/rmp/abstract/10.1103/RevModPhys.88.035009>`_
 
@@ -49,10 +49,10 @@ The Atomic Mass Evaluation 2016 and 2012 are available `online <https://www-nds.
 
 Atomic Mass Evaluation 2016:
 
-* `Huang et al., Chinese Physics C 41, 030002 <http://iopscience.iop.org/article/10.1088/1674-1137/41/3/030002>`_
-* `Wang et al., Chinese Physics C 41, 030003 <http://iopscience.iop.org/article/10.1088/1674-1137/41/3/030003>`_
+* `Huang et al., Chinese Physics C 41, 030002 <https://iopscience.iop.org/article/10.1088/1674-1137/41/3/030002>`_
+* `Wang et al., Chinese Physics C 41, 030003 <https://iopscience.iop.org/article/10.1088/1674-1137/41/3/030003>`_
 
 Atomic Mass Evaluation 2012:
 
-* `Audi et al., Chinese Physics C 36, 1287-1602 <http://iopscience.iop.org/article/10.1088/1674-1137/36/12/002>`_
-* `Wang et al., Chinese Physics C 36, 1603-2014 <http://iopscience.iop.org/article/10.1088/1674-1137/36/12/003>`_
+* `Audi et al., Chinese Physics C 36, 1287-1602 <https://iopscience.iop.org/article/10.1088/1674-1137/36/12/002>`_
+* `Wang et al., Chinese Physics C 36, 1603-2014 <https://iopscience.iop.org/article/10.1088/1674-1137/36/12/003>`_

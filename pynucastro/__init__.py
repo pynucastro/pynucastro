@@ -1,7 +1,7 @@
 """pynucastro is a python module that interprets the nuclear reaction rates,
 including those cataloged by the JINA ReacLib project:
 
-https://groups.nscl.msu.edu/jina/reaclib/db/
+https://reaclib.jinaweb.org/
 
 It provides both interactive access to the rates, for use in Jupyter
 notebooks as well as methods for writing python and C++ nuclear

@@ -647,7 +647,7 @@ class Rate:
         in a reaction network corresponding to this rate differentiated
         with respect to y_i
 
-        y_i is an objecs of the class ``Nucleus``.
+        y_i is an object of the class ``Nucleus``.
         """
         if y_i not in self.reactants:
             return ""
