@@ -8,18 +8,19 @@ class HelmholtzTable:
     #The first step is to interpolate the electron_positron eos table by the use of biquintic
     #polinomials.
 
-    def __init__(self, state, table='helm_table.dat'):
+    def __init__(self, rho, T, ye, table='helm_table.dat'):
 
-        self.din = state.rho * state.ye
-        self.T = state.T
+        self.din = rho * ye
+        self.T = T
+        self.table=table
 
-        self.imax = 541   #541 number of dens pts
+        self.jmax = 201   #201 number of temp pts
         self.tlo = 3.0
         self.thi = 13.0
         self.tstp  = (self.thi - self.tlo) / (self.jmax-1)
         self.tstpi = 1.0 / self.tstp
 
-        self.jmax = 201   #201 number of temp pts
+        self.imax = 541   #541 number of dens pts
         self.dlo   = -12.0
         self.dhi   = 15.0
         self.dstp  = (self.dhi - self.dlo) / (self.imax-1)
@@ -27,12 +28,19 @@ class HelmholtzTable:
 
         self.iat = None
         self.jat = None
+
+        self.f = None
+        self.pd = None
+        self.ef = None
+        self.xnf = None
+
         self.rho_T_indices()
+        self._read_file()
 
-        self.table=table
 
-    # Now, let us define a table row index function
-
+    # Now, let us define a set of indices on which the table will
+    # operate
+    #=============================================================
     def rho_T_indices(self):
 
         iat = int((np.log10(self.din) - self.dlo) * self.dstpi)
@@ -43,18 +51,17 @@ class HelmholtzTable:
 
         return iat, jat
 
-    def indices_to_row(self, iat, jat):
+    def rho_from_index(self, i):
 
-        return jat + self.jmax * iat
+        logrho_i = self.dlo + i * self.dstp
+        return 10.0**logrho_i
 
-    def row_number(self):
+    def T_from_index(self, j):
 
-        iat, jat = self.rho_T_indices()
-        index = self.indices_to_row(iat, jat)
+        logT_j = self.tlo + j * self.tstp
+        return 10.0**logT_j
 
-        return index
-
-    def _read_fi(self):
+    def _read_file(self):
         """ From here we read the table only once to interpolate F"""
 
         def _extract_line_data(line):
@@ -62,40 +69,60 @@ class HelmholtzTable:
             f = np.array([np.float64(s) for s in line_entries])
             return f
 
-        i0, j0 = self.rho_T_indices()
-        idx00 = self.indices_to_row(i0, j0)
-        idx01 = self.indices_to_row(i0, j0+1)
-        idx10 = self.indices_to_row(i0+1, j0)
-        idx11 = self.indices_to_row(i0+1, j0+1)
-
-        funcs: dict = {idx00: _extract_line_data,
-                       idx01: _extract_line_data,
-                       idx10: _extract_line_data,
-                       idx11: _extract_line_data}
-
         with open(self.table, 'r') as file:
 
-            f = []
-            for line_counter, line in enumerate(file):
+            f_local = []
+            for j in range(0,self.jmax):
+                for i in range(0,self.imax):
+                    line = file.readline()
+                    f_local[i][j] = _extract_line_data(line)
 
-                extract_line = funcs.get(line_counter)
+            pd_local = []
+            for j in range(0,self.jmax):
+                for i in range(0,self.imax):
+                    line = file.readline()
+                    pd_local[i][j] = _extract_line_data(line)
 
-                if extract_line:
-                    f.append(extract_line(line))
+            ef_local = []
+            for j in range(0,self.jmax):
+                for i in range(0,self.imax):
+                    line = file.readline()
+                    ef_local[i][j] = _extract_line_data(line)
 
-                if line_counter > idx11:
-                    break
+            xnf_local = []
+            for j in range(0,self.jmax):
+                for i in range(0,self.imax):
+                    line = file.readline()
+                    xnf_local[i][j] = _extract_line_data(line)
 
-            fi = np.reshape(np.array(f), 36)
+        self.f = f_local
+        self.pd = pd_local
+        self.ef = ef_local
+        self.xnf = xnf_local
 
-        return fi
+    #Let us define the bicubic polynomials:
+    #======================================
 
-    def _read_wt(self):
+    # xpsi0
+    def _xpsi0(self, z):
 
-        return None
+        return z * z * (2.0 * z - 3.0) + 1.0
 
-    #Let us define all the polynomials that will be defined
-    #=========
+    def _xdpsi0(self, z):
+
+        return z * (6.0 * z - 6.0)
+
+    # xpsi1
+    def _xpsi1(self, z):
+
+        return z * (z * (z - 2.0) + 1.0)
+
+    def _xdpsi1(self, z):
+
+        return z * (3.0 * z - 4.0) + 1.0
+
+    #Let us define the biquintic the polynomials:
+    #============================================
 
     # psi0
     def _psi0(self, z):
@@ -136,27 +163,19 @@ class HelmholtzTable:
 
         return 0.5 * (z * ( z * (-20.0 * z + 36.0) - 18.0) + 2.0)
 
-    #=============================
-    def rho_from_index(self, i):
+    # Let us read the density coeficients that participate in the
+    # interpolation:
+    #============================================================
 
-        logrho_i = self.dlo + i * self.dstp
-        return 10.0**logrho_i
+    def read_wd(self, der=0, sel='biquintic'):
 
-    def T_from_index(self, j):
-
-        logT_j = self.tlo + j * self.tstp
-        return 10.0**logT_j
-
-    def read_d(self, der=0):
-
-        din_coeff = np.zeros(6)
-        psi = np.zeros(6)
         x = (self.rho - self.rho_from_index(self.iat)) / \
             (self.rho_from_index(self.iat+1) - self.rho_from_index(self.iat))
-        wd = np.zeros(6)
 
-        def no_derivative_coeff(self, psi, x, din_coeff):
+        def no_derivative_coeff(self, x):
 
+            psi = np.zeros(6)
+            din_coeff = np.zeros(6)
             wd = np.zeros(6)
 
             d_din = self.rho_from_index(self.iat+1) - self.rho_from_index(self.iat)
@@ -179,8 +198,10 @@ class HelmholtzTable:
             wd = psi * din_coeff
             return wd
 
-        def first_derivative_coeff(self, psi, x, din_coeff):
+        def first_derivative_coeff(self, x):
 
+            psi = np.zeros(6)
+            din_coeff = np.zeros(6)
             wd = np.zeros(6)
 
             d_din = self.rho_from_index(self.iat+1) - self.rho_from_index(self.iat)
@@ -203,8 +224,10 @@ class HelmholtzTable:
             wd = psi * din_coeff
             return wd
 
-        def second_derivative_coeff(self, psi, x, din_coeff):
+        def second_derivative_coeff(self, x):
 
+            psi = np.zeros(6)
+            din_coeff = np.zeros(6)
             wd = np.zeros(6)
 
             d_din = self.rho_from_index(self.iat+1) - self.rho_from_index(self.iat)
@@ -230,25 +253,82 @@ class HelmholtzTable:
             wd = psi * din_coeff
             return wd
 
-        coeff_derivatives = {0: no_derivative_coeff,
-                             1: first_derivative_coeff,
-                             2: second_derivative_coeff}
+        def no_xderivative_coeff(self, x):
+
+            psi = np.zeros(4)
+            din_coeff = np.zeros(4)
+            wd = np.zeros(4)
+
+            d_din = self.rho_from_index(self.iat+1) - self.rho_from_index(self.iat)
+
+            psi[0] = self._psi0(x)
+            psi[1] = self._psi0(1-x)
+            psi[2] = self._psi1(x)
+            psi[3] = self._psi1(1-x)
+
+            din_coeff[0] = 1
+            din_coeff[1] = 1
+            din_coeff[2] = d_din
+            din_coeff[3] = -d_din
+
+            wd = psi * din_coeff
+            return wd
+
+        def first_xderivative_coeff(self, x):
+
+            psi = np.zeros(4)
+            din_coeff = np.zeros(4)
+            wd = np.zeros(4)
+
+            d_din = self.rho_from_index(self.iat+1) - self.rho_from_index(self.iat)
+            d_din_i = 1.0 / d_din
+
+            psi[0] = self._xdpsi0(x)
+            psi[1] = self._xdpsi0(1-x)
+            psi[2] = self._xdpsi1(x)
+            psi[3] = self._xdpsi1(1-x)
+
+            din_coeff[0] = d_din_i
+            din_coeff[1] = -d_din_i
+            din_coeff[2] = 1
+            din_coeff[3] = -1
+
+            wd = psi * din_coeff
+            return wd
+
+        if sel == "biquintic":
+
+            wd = np.zeros(4)
+            coeff_derivatives = {0: no_derivative_coeff,
+                                 1: first_derivative_coeff,
+                                 2: second_derivative_coeff}
+
+        elif sel == 'bicubic':
+
+            wd = np.zeros(4)
+            coeff_derivatives = {0: no_xderivative_coeff,
+                                 1: first_xderivative_coeff}
+        else:
+
+            raise NotImplementedError("There is no implementation for the selected type")
 
         func = coeff_derivatives.get(der)
-        wd = func(psi, x, din_coeff)
+        wd = func(x)
 
         return wd
 
-    def read_t(self, der=0):
+    # Now we need to construct the temperature coefficients that participate
+    # in the table interpolation.
 
-        tin_coeff = np.zeros(6)
-        psi = np.zeros(6)
+    def read_wt(self, der=0, sel='biquintic'):
+
         y = (self.T - self.T_from_index(self.iat)) / \
             (self.T_from_index(self.iat+1) - self.T_from_index(self.iat))
-        wt = np.zeros(6)
 
-        def no_derivative_coeff(self, psi, y, tin_coeff):
+        def no_derivative_coeff(self, y):
 
+            tin_coeff = np.zeros(6)
+            psi = np.zeros(6)
             wt = np.zeros(6)
 
             d_tin = self.T_from_index(self.iat+1) - self.T_from_index(self.iat)
@@ -271,9 +351,11 @@ class HelmholtzTable:
             wt = psi * tin_coeff
             return wt
 
-        def first_derivative_coeff(self, psi, y, tin_coeff):
+        def first_derivative_coeff(self, y):
 
-            wd = np.zeros(6)
+            tin_coeff = np.zeros(6)
+            psi = np.zeros(6)
+            wt = np.zeros(6)
 
             d_tin = self.T_from_index(self.iat+1) - self.T_from_index(self.iat)
             d_tin_i = 1.0 / d_tin
@@ -292,12 +374,14 @@ class HelmholtzTable:
             tin_coeff[4] = d_tin
             tin_coeff[5] = d_tin
 
-            wd = psi * tin_coeff
-            return wd
+            wt = psi * tin_coeff
+            return wt
 
-        def second_derivative_coeff(self, psi, y, tin_coeff):
+        def second_derivative_coeff(self, y):
 
-            wd = np.zeros(6)
+            tin_coeff = np.zeros(6)
+            psi = np.zeros(6)
+            wt = np.zeros(6)
 
             d_tin = self.T_from_index(self.iat+1) - self.T_from_index(self.iat)
             d_tin_i = 1.0 / d_tin
@@ -319,15 +403,73 @@ class HelmholtzTable:
             tin_coeff[4] = 1.0
             tin_coeff[5] = 1.0
 
-            wd = psi * tin_coeff
-            return wd
+            wt = psi * tin_coeff
+            return wt
+
+        def no_xderivative_coeff(self, y):
+
+            psi = np.zeros(4)
+            din_coeff = np.zeros(4)
+            wd = np.zeros(4)
+
+            d_tin = self.T_from_index(self.iat+1) - self.T_from_index(self.iat)
+
+            psi[0] = self._psi0(y)
+            psi[1] = self._psi0(1-y)
+            psi[2] = self._psi1(y)
+            psi[3] = self._psi1(1-y)
+
+            din_coeff[0] = 1
+            din_coeff[1] = 1
+            din_coeff[2] = d_tin
+            din_coeff[3] = -d_tin
+
+            wt = psi * din_coeff
+            return wt
+
+        def first_xderivative_coeff(self, y):
+
+            psi = np.zeros(4)
+            din_coeff = np.zeros(4)
+            wd = np.zeros(4)
+
+            d_tin = self.T_from_index(self.iat+1) - self.T_from_index(self.iat)
+
+            psi[0] = self._psi0(y)
+            psi[1] = self._psi0(1-y)
+            psi[2] = self._psi1(y)
+            psi[3] = self._psi1(1-y)
+
+            din_coeff[0] = 1
+            din_coeff[1] = 1
+            din_coeff[2] = d_tin
+            din_coeff[3] = -d_tin
+
+            wt = psi * din_coeff
+            return wt
+
+        if sel == "biquintic":
+
+            wt = np.zeros(4)
+            coeff_derivatives = {0: no_derivative_coeff,
+                                 1: first_derivative_coeff,
+                                 2: second_derivative_coeff}
+
+        elif sel == 'bicubic':
+
+            wt = np.zeros(4)
+            coeff_derivatives = {0: no_xderivative_coeff,
+                                 1: first_xderivative_coeff}
+        else:
+
+            raise NotImplementedError("There is no implementation for the selected type")
 
         coeff_derivatives = {0: no_derivative_coeff,
                              1: first_derivative_coeff,
                              2: second_derivative_coeff}
 
         func = coeff_derivatives.get(der)
-        wt = func(psi, y, tin_coeff)
+        wt = func(y)
 
         return wt
 
@@ -335,20 +477,37 @@ class HelmholtzTable:
 
         fwtr = np.zeros(6)
 
-        fwtr[0] = fi[ 0]*wt[0] + fi[ 1]*wt[1] + fi[ 2]*wt[2] + fi[ 9]*wt[3] + fi[10]*wt[4] + fi[11]*wt[5]
-        fwtr[1] = fi[18]*wt[0] + fi[19]*wt[1] + fi[20]*wt[2] + fi[27]*wt[3] + fi[28]*wt[4] + fi[29]*wt[5]
-        fwtr[2] = fi[ 3]*wt[0] + fi[ 5]*wt[1] + fi[ 7]*wt[2] + fi[12]*wt[3] + fi[14]*wt[4] + fi[16]*wt[5]
-        fwtr[3] = fi[21]*wt[0] + fi[23]*wt[1] + fi[25]*wt[2] + fi[30]*wt[3] + fi[32]*wt[4] + fi[34]*wt[5]
-        fwtr[4] = fi[ 4]*wt[0] + fi[ 6]*wt[1] + fi[ 8]*wt[2] + fi[13]*wt[3] + fi[15]*wt[4] + fi[17]*wt[5]
-        fwtr[5] = fi[22]*wt[0] + fi[24]*wt[1] + fi[26]*wt[2] + fi[31]*wt[3] + fi[33]*wt[4] + fi[35]*wt[5]
+        fwtr[0] = fi[ 0]*wt[0] + fi[ 3]*wt[1] + fi[ 1]*wt[2] + fi[ 9]*wt[3] + fi[12]*wt[4] + fi[10]*wt[5]
+        fwtr[1] = fi[18]*wt[0] + fi[21]*wt[1] + fi[19]*wt[2] + fi[27]*wt[3] + fi[30]*wt[4] + fi[28]*wt[5]
+        fwtr[2] = fi[ 4]*wt[0] + fi[ 5]*wt[1] + fi[ 7]*wt[2] + fi[13]*wt[3] + fi[14]*wt[4] + fi[16]*wt[5]
+        fwtr[3] = fi[22]*wt[0] + fi[23]*wt[1] + fi[25]*wt[2] + fi[31]*wt[3] + fi[32]*wt[4] + fi[34]*wt[5]
+        fwtr[4] = fi[ 2]*wt[0] + fi[ 6]*wt[1] + fi[ 8]*wt[2] + fi[11]*wt[3] + fi[15]*wt[4] + fi[17]*wt[5]
+        fwtr[5] = fi[20]*wt[0] + fi[24]*wt[1] + fi[26]*wt[2] + fi[29]*wt[3] + fi[33]*wt[4] + fi[35]*wt[5]
 
         return fwtr
 
+    def interpolate_bicubic(self, fi, wt):
+
+        xfwtr = np.zeros(4)
+
+        xfwtr[0] = fi[00]*wt[0] + fi[00]*wt[1] + fi[00]*wt[2] + fi[00]*wt[3]
+        xfwtr[1] = fi[00]*wt[0] + fi[00]*wt[1] + fi[00]*wt[2] + fi[00]*wt[3]
+        xfwtr[2] = fi[00]*wt[0] + fi[00]*wt[1] + fi[00]*wt[2] + fi[00]*wt[3]
+        xfwtr[3] = fi[00]*wt[0] + fi[00]*wt[1] + fi[00]*wt[2] + fi[00]*wt[3]
+
+        return xfwtr
+
     def compute_free_energy(self):
 
-        fi = self._read_fi()
-        wd = self.read_d(der=0)
-        wt = self.read_t(der=0)
+        fi00 = self.f[self.iat][self.jat]
+        fi10 = self.f[self.iat][self.jat]
+        fi01 = self.f[self.iat][self.jat]
+        fi11 = self.f[self.iat][self.jat]
+
+        fi = np.reshape([fi00, fi10, fi01, fi11], 36)
+
+        wd = self.read_wd(der=0)
+        wt = self.read_wt(der=0)
 
         fwtr = self.interpolate_biquintic(fi,wt)
 
@@ -358,8 +517,8 @@ class HelmholtzTable:
     def compute_pressure(self):
 
         fi = self._read_fi()
-        wd = self.read_d(der=1)
-        wt = self.read_t(der=0)
+        wd = self.read_wd(der=1)
+        wt = self.read_wt(der=0)
 
         fwtr = self.interpolate_biquintic(fi,wt)
         dp_d = np.sum(fwtr * wd)
@@ -371,8 +530,8 @@ class HelmholtzTable:
     def compute_entropy(self):
 
         fi = self._read_fi()
-        wd = self.read_d(der=0)
-        wt = self.read_t(der=1)
+        wd = self.read_wd(der=0)
+        wt = self.read_wt(der=1)
 
         fwtr = self.interpolate_biquintic(fi,wt)
         df_t = np.sum(fwtr * wd)
@@ -383,19 +542,25 @@ class HelmholtzTable:
 
     def compute_energy(self):
 
-        fi = self._read_fi()
-        wd = self.read_d(der=1)
-        wt = self.read_t(der=1)
-
-        fwtr = self.interpolate_biquintic(fi,wt)
-
         f = self.compute_free_energy()
-        s = self.compute_entropy
+        s = self.compute_entropy()
 
         energy = f + self.T*s
         return energy
 
-    def compute_chemical_potential(self):
+    def compute_dp_dr(self):
+
+        raise NotImplementedError
+
+    def compute_eta(self):
+
+        raise NotImplementedError
+
+    def compute_number_fraction(self):
+
+        raise NotImplementedError
+
+    def dp_dr(self):
 
         raise NotImplementedError
 
@@ -405,10 +570,6 @@ class HelmholtzTable:
 
 
 
-
-    def interpolate_bitric(self, fi, wt):
-
-        raise NotImplementedError
 
 
 if __name__== "__main__":
@@ -419,11 +580,15 @@ if __name__== "__main__":
     # print(i,j)
     # print(n)
 
-    # table = HelmholtzTable(rho=1.e-12, T=1.0e3, ye=1.0)
-    # n = table.row_number()
-    # i, j = table.rho_T_indices()
-    # print(i,j)
-    # print(n)
+    table = HelmholtzTable(rho=1.e-12, T=1.0e3, ye=1.0)
+    i, j = table.rho_T_indices()
+    print(i,j)
+    f1 = table.indices_to_row_f(i,j)
+    f2 = table.indices_to_row_pd(i,j)
+    f3 = table.indices_to_row_ef(i,j)
+    f4 = table.indices_to_row_xnf(i,j)
+
+    print(f1, f2, f3, f4)
 
     #table = HelmholtzTable(rho=1.e15, T=1.0e13, ye=1.0)
     # table = HelmholtzTable(rho=1.e-12, T=1.0e3, ye=1.0)
