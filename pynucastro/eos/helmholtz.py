@@ -5,7 +5,7 @@ from pynucastro.networks.rate_collection import Composition
 from pynucastro.nucdata.nucleus import Nucleus
 
 """ Here we implement the helmholtz eos. The idea is to call for two thermodynamic variables and the composition
-of a reaction network."""
+of a reaction network, and compute all the remaining thermodynamic variables"""
 
 class HelmholtzTable:
 
