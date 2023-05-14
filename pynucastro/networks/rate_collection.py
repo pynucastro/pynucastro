@@ -133,6 +133,13 @@ class Composition:
         molar_frac = {k: v/k.A for k, v in self.X.items()}
         return molar_frac
 
+    def eval_abar(self):
+        """ return the ions mean molecular weight"""
+        y0 = list(self.get_molar().values())
+        abar_i = np.sum(y0)
+        abar = 1.0 / abar_i
+        return abar
+
     def eval_ye(self):
         """ return the electron fraction """
         zvec = []
