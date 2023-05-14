@@ -1,6 +1,9 @@
 import numpy as np
 from interface import EosState
 
+from pynucastro.networks.rate_collection import Composition
+from pynucastro.nucdata.nucleus import Nucleus
+
 """ Here we implement the helmholtz eos. The idea is to call for two thermodynamic variables and the composition
 of a reaction network."""
 
@@ -495,7 +498,7 @@ class HelmholtzTable:
 
         return xfwtr
 
-    def _compute_free_energy(self):
+    def _compute_f(self):
 
         fi00 = self.f[self.iat][self.jat]
         fi01 = self.f[self.iat][self.jat+1]
@@ -508,11 +511,11 @@ class HelmholtzTable:
         wt = self._read_wt(der=0)
 
         fwtr = self._interpolate_biquintic(fi, wt)
-
         free_energy = np.sum(fwtr * wd)
+
         return free_energy
 
-    def _compute_pressure(self):
+    def _compute_df_d(self):
 
         fi00 = self.f[self.iat][self.jat]
         fi01 = self.f[self.iat][self.jat+1]
@@ -525,37 +528,67 @@ class HelmholtzTable:
         wt = self._read_wt(der=0)
 
         fwtr = self._interpolate_biquintic(fi, wt)
-
         df_d = np.sum(fwtr * wd)
 
-        pressure = self.din**2 * df_d
-        return pressure
+        return df_d
 
-    def _compute_entropy(self):
+    def _compute_df_t(self):
 
         fi00 = self.f[self.iat][self.jat]
         fi01 = self.f[self.iat][self.jat+1]
         fi10 = self.f[self.iat+1][self.jat]
         fi11 = self.f[self.iat+1][self.jat+1]
 
+        fi = np.array([fi00, fi10, fi01, fi11]).flatten()
+
         wd = self._read_wd(der=0)
         wt = self._read_wt(der=1)
 
-        fi = np.array([fi00, fi10, fi01, fi11]).flatten()
-
-        fwtr = self._interpolate_biquintic(fi,wt)
+        fwtr = self._interpolate_biquintic(fi, wt)
         df_t = np.sum(fwtr * wd)
 
-        entropy = -df_t
-        return entropy
+        return df_t
 
-    def _compute_energy(self):
+    def _compute_df_dt(self):
 
-        f = self._compute_free_energy()
-        s = self._compute_entropy()
+        fi00 = self.f[self.iat][self.jat]
+        fi01 = self.f[self.iat][self.jat+1]
+        fi10 = self.f[self.iat+1][self.jat]
+        fi11 = self.f[self.iat+1][self.jat+1]
 
-        energy = f + self.T*s
-        return energy
+        fi = np.array([fi00, fi10, fi01, fi11]).flatten()
+
+        wd = self._read_wd(der=1)
+        wt = self._read_wt(der=1)
+
+        fwtr = self._interpolate_biquintic(fi, wt)
+        df_t = np.sum(fwtr * wd)
+
+        return df_t
+
+    def _compute_df_tt(self):
+
+        fi00 = self.f[self.iat][self.jat]
+        fi01 = self.f[self.iat][self.jat+1]
+        fi10 = self.f[self.iat+1][self.jat]
+        fi11 = self.f[self.iat+1][self.jat+1]
+
+        fi = np.array([fi00, fi10, fi01, fi11]).flatten()
+
+        wd = self._read_wd(der=0)
+        wt = self._read_wt(der=2)
+
+        fwtr = self._interpolate_biquintic(fi, wt)
+        df_tt = np.sum(fwtr * wd)
+
+        return df_tt
+
+    def _compute_pressure(self):
+
+        df_d = self._compute_df_d()
+        pressure = self.din * self.din * df_d
+
+        return pressure
 
     def _compute_dp_dr(self):
 
@@ -573,6 +606,58 @@ class HelmholtzTable:
         dpdr = np.sum(fwtr*wt)
 
         return dpdr
+
+    def _compute_dp_dt(self):
+
+        df_dt = self._compute_df_dt()
+        dp_t = self.din * self.din * df_dt
+
+        return dp_t
+
+    def _compute_entropy(self):
+
+        df_t = self._compute_df_t()
+        entropy = -self.ye * df_t
+
+        return entropy
+
+    def _compute_ds_d(self):
+
+        df_dt = self._compute_df_dt()
+        ds_d = -self.ye * self.ye * df_dt
+
+        return ds_d
+
+    def _compute_ds_t(self):
+
+        df_tt = self._compute_df_tt()
+        ds_t = -self.ye * df_tt
+
+        return ds_t
+
+    def _compute_energy(self):
+
+        f = self._compute_f()
+        s = self._compute_entropy()
+
+        energy = self.ye*f + self.T*s
+        return energy
+
+    def _compute_de_d(self):
+
+        df_d = self._compute_df_d()
+        ds_d = self._compute_ds_d()
+
+        de_dr = self.ye * df_d + self.T * ds_d
+        return de_dr
+
+    def _compute_de_t(self):
+
+        df_t =  self._compute_df_t()
+        ds_t = self._compute_ds_t()
+
+        ds_t = -self.ye * df_t + ds_t
+        return ds_t
 
     def _compute_eta(self):
 
@@ -617,9 +702,17 @@ class HelmholtzTable:
         self.iat, self.jat = self._rho_T_indices()
 
         state.p += self._compute_pressure()
-        state.s += self._compute_entropy()
-        state.eint += self._compute_energy()
         state.dpdr += self._compute_dp_dr()
+        state.dpdT += self._compute_dp_dt()
+
+        state.s += self._compute_entropy()
+        state.dsdr += self._compute_ds_d()
+        state.dsdT += self._compute_ds_t()
+
+        state.e += self._compute_energy()
+        state.dedr += self._compute_de_d()
+        state.dedT += self._compute_de_t()
+
         state.eta += self._compute_eta()
         state.xn += self._compute_number_fraction()
 
@@ -627,13 +720,24 @@ class HelmholtzTable:
 if __name__== "__main__":
 
     #state = EosState(rho=1.e15, T=1.0e13, ye=1.0)
-    state = EosState(rho=1.e-12, T=1.0e3, ye=1.0)
+    #state = EosState(rho=1.e-12, T=1.0e3, )
+    nuc_list = ["p", "he4",
+               "c12", "c13",
+               "n13", "n14", "n15",
+               "o15"]
+
+    nuc_iter = [Nucleus(nuc) for nuc in nuc_list]
+
+    composition = Composition(nuc_iter)
+    composition.set_solar_like()
+
+    state = EosState(rho=1.0e5, T=1.0e4, composition=composition)
     table = HelmholtzTable()
     table.update(state)
 
     print(f"The pressure               : {state.p}")
     print(f"Entropy                    : {state.s}")
-    print(f"Energy                     : {state.eint}")
-    print(f"Pressure density derivative: {state.dpdr}")
+    print(f"Energy                     : {state.e}")
+    print(f"dpdr                       : {state.dpdr}")
     print(f"Chemical potential         : {state.eta}")
     print(f"Number Fraction            : {state.xn}")
