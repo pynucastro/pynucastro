@@ -49,14 +49,14 @@ class TestAmrexAstroCxxNetwork:
     def test_nrxn(self, fn):
         """ test the _nrxn function """
 
-        answer = ('    k_c12_c12__he4_ne20 = 1,\n' +
-                  '    k_c12_c12__n_mg23 = 2,\n' +
-                  '    k_c12_c12__p_na23 = 3,\n' +
-                  '    k_he4_c12__o16 = 4,\n' +
-                  '    k_n__p__weak__wc12 = 5,\n' +
-                  '    k_na23__ne23 = 6,\n' +
-                  '    k_ne23__na23 = 7,\n' +
-                  '    NumRates = k_ne23__na23\n')
+        answer = ('    k_c12_c12_to_he4_ne20 = 1,\n' +
+                  '    k_c12_c12_to_n_mg23 = 2,\n' +
+                  '    k_c12_c12_to_p_na23 = 3,\n' +
+                  '    k_he4_c12_to_o16 = 4,\n' +
+                  '    k_n_to_p_weak_wc12 = 5,\n' +
+                  '    k_na23_to_ne23 = 6,\n' +
+                  '    k_ne23_to_na23 = 7,\n' +
+                  '    NumRates = k_ne23_to_na23\n')
         assert self.cromulent_ftag(fn._nrxn, answer, n_indent=1)
 
     def test_ebind(self, fn):
