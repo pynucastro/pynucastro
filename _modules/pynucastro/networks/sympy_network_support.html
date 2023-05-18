@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.networks.sympy_network_support &mdash; pynucastro 2.0.3.post16+gace9d50a documentation</title>
+  <title>pynucastro.networks.sympy_network_support &mdash; pynucastro 2.0.3.post17+ge8049643 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
@@ -147,7 +147,7 @@
 <span class="sd">        return a sympy expression containing this rate&#39;s contribution to</span>
 <span class="sd">        the ydot term for nuclide y_i.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">key</span> <span class="o">=</span> <span class="p">(</span><span class="n">rate</span><span class="o">.</span><span class="n">fname</span><span class="p">,</span> <span class="n">y_i</span><span class="p">)</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="p">(</span><span class="n">rate</span><span class="o">.</span><span class="n">cname</span><span class="p">(),</span> <span class="n">y_i</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ydot_term_cache</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ydot_term_cache</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
         <span class="n">srate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">specific_rate_symbol</span><span class="p">(</span><span class="n">rate</span><span class="p">)</span>
@@ -195,8 +195,8 @@
         <span class="n">prefactor_sym</span> <span class="o">=</span> <span class="n">sympy</span><span class="o">.</span><span class="n">sympify</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="n">sympy</span><span class="o">.</span><span class="n">sympify</span><span class="p">(</span><span class="n">rate</span><span class="o">.</span><span class="n">inv_prefactor</span><span class="p">)</span>
 
         <span class="c1"># screened rate</span>
-        <span class="n">sym_final</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name_rate_data</span> <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39;(k_</span><span class="si">{</span><span class="n">rate</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s1">)&#39;</span>
-        <span class="n">sym_temp</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;NRD__k_</span><span class="si">{</span><span class="n">rate</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s1">__&#39;</span>
+        <span class="n">sym_final</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name_rate_data</span> <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39;(k_</span><span class="si">{</span><span class="n">rate</span><span class="o">.</span><span class="n">cname</span><span class="p">()</span><span class="si">}</span><span class="s1">)&#39;</span>
+        <span class="n">sym_temp</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;NRD__k_</span><span class="si">{</span><span class="n">rate</span><span class="o">.</span><span class="n">cname</span><span class="p">()</span><span class="si">}</span><span class="s1">__&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">symbol_ludict</span><span class="p">[</span><span class="n">sym_temp</span><span class="p">]</span> <span class="o">=</span> <span class="n">sym_final</span>
         <span class="n">screened_rate_sym</span> <span class="o">=</span> <span class="n">sympy</span><span class="o">.</span><span class="n">symbols</span><span class="p">(</span><span class="n">sym_temp</span><span class="p">)</span>
 
