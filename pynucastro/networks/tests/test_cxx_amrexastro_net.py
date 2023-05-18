@@ -4,6 +4,7 @@ import io
 import os
 
 import pytest
+
 from pynucastro import networks
 
 
