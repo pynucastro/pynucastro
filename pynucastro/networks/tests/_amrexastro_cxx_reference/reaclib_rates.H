@@ -25,7 +25,7 @@ struct rate_derivs_t {
 
 template <int do_T_derivatives>
 AMREX_GPU_HOST_DEVICE AMREX_INLINE
-void rate_c12_c12__he4_ne20(const tf_t& tfactors, Real& rate, Real& drate_dT) {
+void rate_c12_c12_to_he4_ne20(const tf_t& tfactors, Real& rate, Real& drate_dT) {
 
     // c12 + c12 --> he4 + ne20
 
@@ -57,7 +57,7 @@ void rate_c12_c12__he4_ne20(const tf_t& tfactors, Real& rate, Real& drate_dT) {
 
 template <int do_T_derivatives>
 AMREX_GPU_HOST_DEVICE AMREX_INLINE
-void rate_c12_c12__n_mg23(const tf_t& tfactors, Real& rate, Real& drate_dT) {
+void rate_c12_c12_to_n_mg23(const tf_t& tfactors, Real& rate, Real& drate_dT) {
 
     // c12 + c12 --> n + mg23
 
@@ -89,7 +89,7 @@ void rate_c12_c12__n_mg23(const tf_t& tfactors, Real& rate, Real& drate_dT) {
 
 template <int do_T_derivatives>
 AMREX_GPU_HOST_DEVICE AMREX_INLINE
-void rate_c12_c12__p_na23(const tf_t& tfactors, Real& rate, Real& drate_dT) {
+void rate_c12_c12_to_p_na23(const tf_t& tfactors, Real& rate, Real& drate_dT) {
 
     // c12 + c12 --> p + na23
 
@@ -121,7 +121,7 @@ void rate_c12_c12__p_na23(const tf_t& tfactors, Real& rate, Real& drate_dT) {
 
 template <int do_T_derivatives>
 AMREX_GPU_HOST_DEVICE AMREX_INLINE
-void rate_he4_c12__o16(const tf_t& tfactors, Real& rate, Real& drate_dT) {
+void rate_he4_c12_to_o16(const tf_t& tfactors, Real& rate, Real& drate_dT) {
 
     // c12 + he4 --> o16
 
@@ -170,7 +170,7 @@ void rate_he4_c12__o16(const tf_t& tfactors, Real& rate, Real& drate_dT) {
 
 template <int do_T_derivatives>
 AMREX_GPU_HOST_DEVICE AMREX_INLINE
-void rate_n__p__weak__wc12(const tf_t& tfactors, Real& rate, Real& drate_dT) {
+void rate_n_to_p_weak_wc12(const tf_t& tfactors, Real& rate, Real& drate_dT) {
 
     // n --> p
 
