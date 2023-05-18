@@ -84,25 +84,25 @@ void evaluate_rates(const burn_t& state, T& rate_eval) {
     }
 
 
-    ratraw = rate_eval.screened_rates(k_c12_c12__he4_ne20);
-    rate_eval.screened_rates(k_c12_c12__he4_ne20) *= scor;
+    ratraw = rate_eval.screened_rates(k_c12_c12_to_he4_ne20);
+    rate_eval.screened_rates(k_c12_c12_to_he4_ne20) *= scor;
     if constexpr (std::is_same<T, rate_derivs_t>::value) {
-        dratraw_dT = rate_eval.dscreened_rates_dT(k_c12_c12__he4_ne20);
-        rate_eval.dscreened_rates_dT(k_c12_c12__he4_ne20) = ratraw * dscor_dt + dratraw_dT * scor;
+        dratraw_dT = rate_eval.dscreened_rates_dT(k_c12_c12_to_he4_ne20);
+        rate_eval.dscreened_rates_dT(k_c12_c12_to_he4_ne20) = ratraw * dscor_dt + dratraw_dT * scor;
     }
 
-    ratraw = rate_eval.screened_rates(k_c12_c12__n_mg23);
-    rate_eval.screened_rates(k_c12_c12__n_mg23) *= scor;
+    ratraw = rate_eval.screened_rates(k_c12_c12_to_n_mg23);
+    rate_eval.screened_rates(k_c12_c12_to_n_mg23) *= scor;
     if constexpr (std::is_same<T, rate_derivs_t>::value) {
-        dratraw_dT = rate_eval.dscreened_rates_dT(k_c12_c12__n_mg23);
-        rate_eval.dscreened_rates_dT(k_c12_c12__n_mg23) = ratraw * dscor_dt + dratraw_dT * scor;
+        dratraw_dT = rate_eval.dscreened_rates_dT(k_c12_c12_to_n_mg23);
+        rate_eval.dscreened_rates_dT(k_c12_c12_to_n_mg23) = ratraw * dscor_dt + dratraw_dT * scor;
     }
 
-    ratraw = rate_eval.screened_rates(k_c12_c12__p_na23);
-    rate_eval.screened_rates(k_c12_c12__p_na23) *= scor;
+    ratraw = rate_eval.screened_rates(k_c12_c12_to_p_na23);
+    rate_eval.screened_rates(k_c12_c12_to_p_na23) *= scor;
     if constexpr (std::is_same<T, rate_derivs_t>::value) {
-        dratraw_dT = rate_eval.dscreened_rates_dT(k_c12_c12__p_na23);
-        rate_eval.dscreened_rates_dT(k_c12_c12__p_na23) = ratraw * dscor_dt + dratraw_dT * scor;
+        dratraw_dT = rate_eval.dscreened_rates_dT(k_c12_c12_to_p_na23);
+        rate_eval.dscreened_rates_dT(k_c12_c12_to_p_na23) = ratraw * dscor_dt + dratraw_dT * scor;
     }
 
 
@@ -117,11 +117,11 @@ void evaluate_rates(const burn_t& state, T& rate_eval) {
     }
 
 
-    ratraw = rate_eval.screened_rates(k_he4_c12__o16);
-    rate_eval.screened_rates(k_he4_c12__o16) *= scor;
+    ratraw = rate_eval.screened_rates(k_he4_c12_to_o16);
+    rate_eval.screened_rates(k_he4_c12_to_o16) *= scor;
     if constexpr (std::is_same<T, rate_derivs_t>::value) {
-        dratraw_dT = rate_eval.dscreened_rates_dT(k_he4_c12__o16);
-        rate_eval.dscreened_rates_dT(k_he4_c12__o16) = ratraw * dscor_dt + dratraw_dT * scor;
+        dratraw_dT = rate_eval.dscreened_rates_dT(k_he4_c12_to_o16);
+        rate_eval.dscreened_rates_dT(k_he4_c12_to_o16) = ratraw * dscor_dt + dratraw_dT * scor;
     }
 
 
@@ -135,19 +135,19 @@ void evaluate_rates(const burn_t& state, T& rate_eval) {
 
     tabular_evaluate(j_na23_ne23_meta, j_na23_ne23_rhoy, j_na23_ne23_temp, j_na23_ne23_data,
                      rhoy, state.T, rate, drate_dt, edot_nu, edot_gamma);
-    rate_eval.screened_rates(k_na23__ne23) = rate;
+    rate_eval.screened_rates(k_na23_to_ne23) = rate;
     if constexpr (std::is_same<T, rate_derivs_t>::value) {
-        rate_eval.dscreened_rates_dT(k_na23__ne23) = drate_dt;
+        rate_eval.dscreened_rates_dT(k_na23_to_ne23) = drate_dt;
     }
-    rate_eval.add_energy_rate(k_na23__ne23) = edot_nu + edot_gamma;
+    rate_eval.add_energy_rate(k_na23_to_ne23) = edot_nu + edot_gamma;
 
     tabular_evaluate(j_ne23_na23_meta, j_ne23_na23_rhoy, j_ne23_na23_temp, j_ne23_na23_data,
                      rhoy, state.T, rate, drate_dt, edot_nu, edot_gamma);
-    rate_eval.screened_rates(k_ne23__na23) = rate;
+    rate_eval.screened_rates(k_ne23_to_na23) = rate;
     if constexpr (std::is_same<T, rate_derivs_t>::value) {
-        rate_eval.dscreened_rates_dT(k_ne23__na23) = drate_dt;
+        rate_eval.dscreened_rates_dT(k_ne23_to_na23) = drate_dt;
     }
-    rate_eval.add_energy_rate(k_ne23__na23) = edot_nu + edot_gamma;
+    rate_eval.add_energy_rate(k_ne23_to_na23) = edot_nu + edot_gamma;
 
 
 }
@@ -226,8 +226,8 @@ void actual_rhs (burn_t& state, Array1D<Real, 1, neqs>& ydot)
     ener_gener_rate(ydot, enuc);
 
     // include reaction neutrino losses (non-thermal) and gamma heating
-    enuc += C::Legacy::n_A * Y(Na23) * rate_eval.add_energy_rate(k_na23__ne23);
-    enuc += C::Legacy::n_A * Y(Ne23) * rate_eval.add_energy_rate(k_ne23__na23);
+    enuc += C::Legacy::n_A * Y(Na23) * rate_eval.add_energy_rate(k_na23_to_ne23);
+    enuc += C::Legacy::n_A * Y(Ne23) * rate_eval.add_energy_rate(k_ne23_to_na23);
 
     // Get the thermal neutrino losses
 

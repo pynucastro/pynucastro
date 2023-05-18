@@ -794,76 +794,76 @@ fill_reaclib_rates(const tf_t& tfactors, T& rate_eval)
     Real rate;
     Real drate_dT;
 
-    rate_he4_mg24__si28__removed<do_T_derivatives>(tfactors, rate, drate_dT);
-    rate_eval.screened_rates(k_he4_mg24__si28__removed) = rate;
+    rate_he4_mg24_to_si28_removed<do_T_derivatives>(tfactors, rate, drate_dT);
+    rate_eval.screened_rates(k_he4_mg24_to_si28_removed) = rate;
     if constexpr (std::is_same<T, rate_derivs_t>::value) {
-        rate_eval.dscreened_rates_dT(k_he4_mg24__si28__removed) = drate_dT;
+        rate_eval.dscreened_rates_dT(k_he4_mg24_to_si28_removed) = drate_dT;
 
     }
-    rate_he4_mg24__p_al27__removed<do_T_derivatives>(tfactors, rate, drate_dT);
-    rate_eval.screened_rates(k_he4_mg24__p_al27__removed) = rate;
+    rate_he4_mg24_to_p_al27_removed<do_T_derivatives>(tfactors, rate, drate_dT);
+    rate_eval.screened_rates(k_he4_mg24_to_p_al27_removed) = rate;
     if constexpr (std::is_same<T, rate_derivs_t>::value) {
-        rate_eval.dscreened_rates_dT(k_he4_mg24__p_al27__removed) = drate_dT;
+        rate_eval.dscreened_rates_dT(k_he4_mg24_to_p_al27_removed) = drate_dT;
 
     }
-    rate_p_al27__si28__removed<do_T_derivatives>(tfactors, rate, drate_dT);
-    rate_eval.screened_rates(k_p_al27__si28__removed) = rate;
+    rate_p_al27_to_si28_removed<do_T_derivatives>(tfactors, rate, drate_dT);
+    rate_eval.screened_rates(k_p_al27_to_si28_removed) = rate;
     if constexpr (std::is_same<T, rate_derivs_t>::value) {
-        rate_eval.dscreened_rates_dT(k_p_al27__si28__removed) = drate_dT;
+        rate_eval.dscreened_rates_dT(k_p_al27_to_si28_removed) = drate_dT;
 
     }
-    rate_si28__he4_mg24__removed<do_T_derivatives>(tfactors, rate, drate_dT);
-    rate_eval.screened_rates(k_si28__he4_mg24__removed) = rate;
+    rate_si28_to_he4_mg24_removed<do_T_derivatives>(tfactors, rate, drate_dT);
+    rate_eval.screened_rates(k_si28_to_he4_mg24_removed) = rate;
     if constexpr (std::is_same<T, rate_derivs_t>::value) {
-        rate_eval.dscreened_rates_dT(k_si28__he4_mg24__removed) = drate_dT;
+        rate_eval.dscreened_rates_dT(k_si28_to_he4_mg24_removed) = drate_dT;
 
     }
-    rate_si28__p_al27__removed<do_T_derivatives>(tfactors, rate, drate_dT);
-    rate_eval.screened_rates(k_si28__p_al27__removed) = rate;
+    rate_si28_to_p_al27_removed<do_T_derivatives>(tfactors, rate, drate_dT);
+    rate_eval.screened_rates(k_si28_to_p_al27_removed) = rate;
     if constexpr (std::is_same<T, rate_derivs_t>::value) {
-        rate_eval.dscreened_rates_dT(k_si28__p_al27__removed) = drate_dT;
+        rate_eval.dscreened_rates_dT(k_si28_to_p_al27_removed) = drate_dT;
 
     }
-    rate_p_al27__he4_mg24__removed<do_T_derivatives>(tfactors, rate, drate_dT);
-    rate_eval.screened_rates(k_p_al27__he4_mg24__removed) = rate;
+    rate_p_al27_to_he4_mg24_removed<do_T_derivatives>(tfactors, rate, drate_dT);
+    rate_eval.screened_rates(k_p_al27_to_he4_mg24_removed) = rate;
     if constexpr (std::is_same<T, rate_derivs_t>::value) {
-        rate_eval.dscreened_rates_dT(k_p_al27__he4_mg24__removed) = drate_dT;
+        rate_eval.dscreened_rates_dT(k_p_al27_to_he4_mg24_removed) = drate_dT;
 
     }
-    rate_he4_si28__s32__removed<do_T_derivatives>(tfactors, rate, drate_dT);
-    rate_eval.screened_rates(k_he4_si28__s32__removed) = rate;
+    rate_he4_si28_to_s32_removed<do_T_derivatives>(tfactors, rate, drate_dT);
+    rate_eval.screened_rates(k_he4_si28_to_s32_removed) = rate;
     if constexpr (std::is_same<T, rate_derivs_t>::value) {
-        rate_eval.dscreened_rates_dT(k_he4_si28__s32__removed) = drate_dT;
+        rate_eval.dscreened_rates_dT(k_he4_si28_to_s32_removed) = drate_dT;
 
     }
-    rate_he4_si28__p_p31__removed<do_T_derivatives>(tfactors, rate, drate_dT);
-    rate_eval.screened_rates(k_he4_si28__p_p31__removed) = rate;
+    rate_he4_si28_to_p_p31_removed<do_T_derivatives>(tfactors, rate, drate_dT);
+    rate_eval.screened_rates(k_he4_si28_to_p_p31_removed) = rate;
     if constexpr (std::is_same<T, rate_derivs_t>::value) {
-        rate_eval.dscreened_rates_dT(k_he4_si28__p_p31__removed) = drate_dT;
+        rate_eval.dscreened_rates_dT(k_he4_si28_to_p_p31_removed) = drate_dT;
 
     }
-    rate_p_p31__s32__removed<do_T_derivatives>(tfactors, rate, drate_dT);
-    rate_eval.screened_rates(k_p_p31__s32__removed) = rate;
+    rate_p_p31_to_s32_removed<do_T_derivatives>(tfactors, rate, drate_dT);
+    rate_eval.screened_rates(k_p_p31_to_s32_removed) = rate;
     if constexpr (std::is_same<T, rate_derivs_t>::value) {
-        rate_eval.dscreened_rates_dT(k_p_p31__s32__removed) = drate_dT;
+        rate_eval.dscreened_rates_dT(k_p_p31_to_s32_removed) = drate_dT;
 
     }
-    rate_s32__he4_si28__removed<do_T_derivatives>(tfactors, rate, drate_dT);
-    rate_eval.screened_rates(k_s32__he4_si28__removed) = rate;
+    rate_s32_to_he4_si28_removed<do_T_derivatives>(tfactors, rate, drate_dT);
+    rate_eval.screened_rates(k_s32_to_he4_si28_removed) = rate;
     if constexpr (std::is_same<T, rate_derivs_t>::value) {
-        rate_eval.dscreened_rates_dT(k_s32__he4_si28__removed) = drate_dT;
+        rate_eval.dscreened_rates_dT(k_s32_to_he4_si28_removed) = drate_dT;
 
     }
-    rate_s32__p_p31__removed<do_T_derivatives>(tfactors, rate, drate_dT);
-    rate_eval.screened_rates(k_s32__p_p31__removed) = rate;
+    rate_s32_to_p_p31_removed<do_T_derivatives>(tfactors, rate, drate_dT);
+    rate_eval.screened_rates(k_s32_to_p_p31_removed) = rate;
     if constexpr (std::is_same<T, rate_derivs_t>::value) {
-        rate_eval.dscreened_rates_dT(k_s32__p_p31__removed) = drate_dT;
+        rate_eval.dscreened_rates_dT(k_s32_to_p_p31_removed) = drate_dT;
 
     }
-    rate_p_p31__he4_si28__removed<do_T_derivatives>(tfactors, rate, drate_dT);
-    rate_eval.screened_rates(k_p_p31__he4_si28__removed) = rate;
+    rate_p_p31_to_he4_si28_removed<do_T_derivatives>(tfactors, rate, drate_dT);
+    rate_eval.screened_rates(k_p_p31_to_he4_si28_removed) = rate;
     if constexpr (std::is_same<T, rate_derivs_t>::value) {
-        rate_eval.dscreened_rates_dT(k_p_p31__he4_si28__removed) = drate_dT;
+        rate_eval.dscreened_rates_dT(k_p_p31_to_he4_si28_removed) = drate_dT;
 
     }
 
@@ -878,28 +878,28 @@ fill_approx_rates([[maybe_unused]] const tf_t& tfactors, T& rate_eval)
     Real rate;
     Real drate_dT;
 
-    rate_mg24_he4__si28__approx<T>(rate_eval, rate, drate_dT);
-    rate_eval.screened_rates(k_mg24_he4__si28__approx) = rate;
+    rate_mg24_he4_to_si28_approx<T>(rate_eval, rate, drate_dT);
+    rate_eval.screened_rates(k_mg24_he4_to_si28_approx) = rate;
     if constexpr (std::is_same<T, rate_derivs_t>::value) {
-        rate_eval.dscreened_rates_dT(k_mg24_he4__si28__approx) = drate_dT;
+        rate_eval.dscreened_rates_dT(k_mg24_he4_to_si28_approx) = drate_dT;
 
     }
-    rate_si28__mg24_he4__approx<T>(rate_eval, rate, drate_dT);
-    rate_eval.screened_rates(k_si28__mg24_he4__approx) = rate;
+    rate_si28_to_mg24_he4_approx<T>(rate_eval, rate, drate_dT);
+    rate_eval.screened_rates(k_si28_to_mg24_he4_approx) = rate;
     if constexpr (std::is_same<T, rate_derivs_t>::value) {
-        rate_eval.dscreened_rates_dT(k_si28__mg24_he4__approx) = drate_dT;
+        rate_eval.dscreened_rates_dT(k_si28_to_mg24_he4_approx) = drate_dT;
 
     }
-    rate_si28_he4__s32__approx<T>(rate_eval, rate, drate_dT);
-    rate_eval.screened_rates(k_si28_he4__s32__approx) = rate;
+    rate_si28_he4_to_s32_approx<T>(rate_eval, rate, drate_dT);
+    rate_eval.screened_rates(k_si28_he4_to_s32_approx) = rate;
     if constexpr (std::is_same<T, rate_derivs_t>::value) {
-        rate_eval.dscreened_rates_dT(k_si28_he4__s32__approx) = drate_dT;
+        rate_eval.dscreened_rates_dT(k_si28_he4_to_s32_approx) = drate_dT;
 
     }
-    rate_s32__si28_he4__approx<T>(rate_eval, rate, drate_dT);
-    rate_eval.screened_rates(k_s32__si28_he4__approx) = rate;
+    rate_s32_to_si28_he4_approx<T>(rate_eval, rate, drate_dT);
+    rate_eval.screened_rates(k_s32_to_si28_he4_approx) = rate;
     if constexpr (std::is_same<T, rate_derivs_t>::value) {
-        rate_eval.dscreened_rates_dT(k_s32__si28_he4__approx) = drate_dT;
+        rate_eval.dscreened_rates_dT(k_s32_to_si28_he4_approx) = drate_dT;
 
     }
 

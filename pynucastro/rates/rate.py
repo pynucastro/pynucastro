@@ -567,6 +567,12 @@ class Rate:
         else:
             self.symmetric_screen = self.ion_screen
 
+    def cname(self):
+        """a C++-safe version of the rate name"""
+        # replace the "__" separating reactants and products with "_to_"
+        # and convert all other "__" to single "_"
+        return self.fname.replace("__", "_to_", 1).replace("__", "_")
+
     def get_rate_id(self):
         """ Get an identifying string for this rate."""
         return f'{self.rid} <{self.label.strip()}>'
