@@ -90,8 +90,14 @@ class Composition:
     """
     def __init__(self, nuclei, small=1.e-16):
         """nuclei is an iterable of the nuclei (Nucleus objects) in the network"""
-        if not isinstance(nuclei[0], Nucleus):
-            raise ValueError("must supply an iterable of Nucleus objects")
+
+        num = len(nuclei)
+        for i in range(0, num):
+            if not isinstance(nuclei[i], Nucleus):
+                try:
+                    nuclei[i] = Nucleus(nuclei[i])
+                except:
+                    raise ValueError("must supply an iterable of valid Nucleus objects")
         self.X = {k: small for k in nuclei}
 
     def set_solar_like(self, Z=0.02):
