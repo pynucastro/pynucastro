@@ -1,17 +1,33 @@
 
-class FailedMPIImport(ImportError):
+class MPIImportError(Exception):
+    pass
+
+class FailedMPIImport:
     
-    def __init__(self, *args, **kwargs):
+    def __init__(self, error=None, msg=None):
+                    
+        self.error_obj = error
         
-        super().__init__(*args, **kwargs)
-        
-        if self.msg is None:
-            self.msg = "Failed to import MPI from mpi4py. Check your mpi4py installation if you" + \
+        if msg is None:
+            msg = "Failed to import MPI from mpi4py. Check your mpi4py installation if you" + \
                     " want to run with MPI."
+        self.msg = msg
     
     def __getattr__(self, attr):
         
-        raise self
+        if self.error_obj is not None:
+            raise MPIImportError(self.msg) from self.error_obj
+        else:
+            raise MPIImportError(self.msg)
+            
+def mpi_importer():
+    
+    try:
+        from mpi4py import MPI
+    except (ModuleNotFoundError, ImportError) as e:
+        MPI = FailedMPIImport(e)
+        
+    return MPI
 
 def mpi_numpy_decomp(MPI_N, MPI_rank, n):
 

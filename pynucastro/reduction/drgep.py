@@ -1,9 +1,6 @@
 import numpy as np
-from reduction_utils import FailedMPIImport, mpi_numpy_decomp, to_list
-try:
-    from mpi4py import MPI
-except ImportError:
-    MPI = FailedMPIImport()
+from reduction_utils import mpi_importer, mpi_numpy_decomp, to_list
+MPI = mpi_importer()
 
 def calc_adj_matrix(net, rvals):
     

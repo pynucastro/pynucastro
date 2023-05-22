@@ -1,5 +1,6 @@
 import numpy as np
-from mpi4py import MPI
+from reduction_utils import mpi_importer
+MPI = mpi_importer()
 
 def binary_search_trim(network, nuclei, errfunc, thresh=0.05):
     """
