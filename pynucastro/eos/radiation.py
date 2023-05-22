@@ -34,12 +34,12 @@ class Radiation():
         dp_t = 4.0 * p * T_i
 
         e = 3.0 * p * rho_i
-        de_d = - 3.0 * p * rho_i * rho_i
+        de_d = -3.0 * p * rho_i * rho_i
         de_t = 3.0 * dp_t * rho_i
 
         s = (e + p * rho_i) * T_i
         ds_d = (de_d + dp_d * rho_i - p * rho_i * rho_i) * T_i
-        ds_t = (de_t + dp_t * rho_i) * T_i - (e + p * rho_i)*T_i*T_i
+        ds_t = (de_t + dp_t * rho_i - s) * T_i
 
         state.p += p
         state.dpdr += dp_d
@@ -61,9 +61,9 @@ if __name__ == "__main__":
                "n13", "n14", "n15",
                "o15"]
 
-    nuc_iter = [Nucleus(nuc) for nuc in nuc_list]
+    #nuc_iter = [Nucleus(nuc) for nuc in nuc_list]
 
-    composition = Composition(nuc_iter)
+    composition = Composition(nuc_list)
     composition.set_solar_like()
 
     state = EosState(rho=1.0e5, T=1.0e4, composition=composition)
