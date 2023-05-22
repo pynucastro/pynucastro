@@ -1,8 +1,10 @@
-import pynucastro as pyna
-from pynucastro.screening import chugunov_2007, chugunov_2009, make_plasma_state, make_screen_factors
-
 import pytest
 from pytest import approx
+
+import pynucastro as pyna
+from pynucastro.screening import (chugunov_2007, chugunov_2009,
+                                  make_plasma_state, make_screen_factors,
+                                  potekhin_1998)
 
 
 class TestScreen:
@@ -53,3 +55,7 @@ class TestScreen:
     def test_chugunov_2009(self, plasma_state, scn_fac):
         scor = chugunov_2009(plasma_state, scn_fac)
         assert scor == approx(2.87983449091315e+33)
+
+    def test_potekhin_1998(self, plasma_state, scn_fac):
+        scor = potekhin_1998(plasma_state, scn_fac)
+        assert scor == approx(1.0508243810383098e+36)

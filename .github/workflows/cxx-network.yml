@@ -10,12 +10,12 @@ jobs:
           fetch-depth: 0
 
       - name: Install Python 3.10
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: '3.10'
 
       - name: Cache pip
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           # this path is specific to Ubuntu
           path: ~/.cache/pip
@@ -75,7 +75,7 @@ jobs:
       - name: Compare to stored output (subch_approx)
         run: |
           cd external/Microphysics/unit_test/burn_cell
-          diff -I "^AMReX" -I "^reading in reaclib rates" test.out subch_approx_unit_test.out
+          diff -I "^AMReX" -I "^reading in reaclib rates" test.out ci-benchmarks/subch_approx_unit_test.out
 
       - name: Regenerate ECSN network
         run: |
@@ -96,5 +96,5 @@ jobs:
       - name: Compare to stored output (ECSN)
         run: |
           cd external/Microphysics/unit_test/burn_cell
-          diff -I "^AMReX" -I "^reading in reaclib rates" test.out ecsn_unit_test.out
+          diff -I "^AMReX" -I "^reading in reaclib rates" test.out ci-benchmarks/ecsn_unit_test.out
 

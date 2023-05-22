@@ -1,10 +1,11 @@
 # unit tests for rates
-import pynucastro as pyna
-import os
 import filecmp
+import io
+import os
+
 import pytest
 
-import io
+import pynucastro as pyna
 
 
 class TestAmrexAstroCxxNetwork:
@@ -17,7 +18,6 @@ class TestAmrexAstroCxxNetwork:
         net.make_ap_pg_approx()
         net.remove_nuclei(["al27", "p31"])
         fn = net
-        fn.secret_code = "testing"
         return fn
 
     def cromulent_ftag(self, ftag, answer, n_indent=1):
@@ -37,20 +37,15 @@ class TestAmrexAstroCxxNetwork:
 
         fn.write_network(odir=test_path)
 
-        files = ["actual_network_data.cpp",
-                 "actual_network.H",
-                 "actual_rhs.H",
-                 "inputs.burn_cell.VODE",
-                 "Make.package",
-                 "NETWORK_PROPERTIES",
-                 "_parameters",
-                 "pynucastro.net",
-                 "reaclib_rates.H",
-                 "table_rates_data.cpp",
-                 "table_rates.H"]
+        # get the list of files from the generated directory, so any new files
+        # will need to be added to the reference directory or explicitly ignored
+        files = os.listdir(test_path)
+        skip_files = []
 
         errors = []
         for test_file in files:
+            if test_file in skip_files:
+                continue
             # note, _test is written under whatever directory pytest is run from,
             # so it is not necessarily at the same place as _amrexastro_reference
             if not filecmp.cmp(os.path.normpath(f"{test_path}/{test_file}"),

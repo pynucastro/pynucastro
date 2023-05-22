@@ -17,18 +17,18 @@ jobs:
 
     strategy:
       matrix:
-        python-version: ["3.8", "3.9", "3.10"]
+        python-version: ["3.9", "3.10", "3.11"]
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Install Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
 
       - name: Cache pip
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           # this path is specific to Ubuntu
           path: ~/.cache/pip
@@ -45,4 +45,4 @@ jobs:
         run: python setup.py develop --user
 
       - name: Run tests with pytest
-        run: pytest -v -s --cov=. --nbval --ignore=docs --ignore-glob="pynucastro/library/tabular/*.ipynb" --ignore=examples/rxn-network-integration.ipynb --ignore=examples/o16o16_rates.ipynb
+        run: pytest -v -s --cov=. --nbval --ignore=docs --ignore-glob="pynucastro/library/tabular/*.ipynb" --ignore=examples/rxn-network-integration.ipynb --ignore=examples/o16o16_rates.ipynb --ignore-glob="examples/rp-process/*"

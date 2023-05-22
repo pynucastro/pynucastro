@@ -1,11 +1,9 @@
 CEXE_headers += network_properties.H
 
 ifeq ($(USE_REACT),TRUE)
-
-  DEFINES += -DNETWORK_HAS_CXX_IMPLEMENTATION
-
   CEXE_sources += actual_network_data.cpp
   CEXE_headers += actual_network.H
+  CEXE_headers += tfactors.H
   CEXE_headers += partition_functions.H
   CEXE_headers += actual_rhs.H
   CEXE_headers += reaclib_rates.H

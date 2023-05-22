@@ -1,7 +1,8 @@
-from pynucastro import networks
-from pynucastro.screening import chugunov_2007, chugunov_2009
 import pytest
 from pytest import approx
+
+from pynucastro import networks
+from pynucastro.screening import chugunov_2007, chugunov_2009
 
 
 class TestScreening:

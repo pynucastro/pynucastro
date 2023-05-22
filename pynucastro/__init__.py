@@ -1,7 +1,7 @@
 """pynucastro is a python module that interprets the nuclear reaction rates,
 including those cataloged by the JINA ReacLib project:
 
-https://groups.nscl.msu.edu/jina/reaclib/db/
+https://reaclib.jinaweb.org/
 
 It provides both interactive access to the rates, for use in Jupyter
 notebooks as well as methods for writing python and C++ nuclear
@@ -114,31 +114,14 @@ from ._version import version
 
 __version__ = version
 
-from pynucastro.nucdata import \
-    Nucleus
-
-from pynucastro.networks import \
-    RateCollection, \
-    Composition, \
-    Explorer, \
-    PythonNetwork, \
-    BaseCxxNetwork, \
-    AmrexAstroCxxNetwork, \
-    StarKillerCxxNetwork, \
-    SympyRates
-
-from pynucastro.rates import \
-    Tfactors, \
-    Rate, \
-    ApproximateRate, \
-    DerivedRate, \
-    RateFilter, \
-    Library, \
-    ReacLibLibrary, \
-    list_known_rates, \
-    load_rate
-
-from pynucastro.screening import \
-    make_plasma_state, make_screen_factors
 
 import pynucastro.screening
+from pynucastro.networks import (AmrexAstroCxxNetwork, BaseCxxNetwork,
+                                 Composition, Explorer, PythonNetwork,
+                                 RateCollection, StarKillerCxxNetwork,
+                                 SympyRates)
+from pynucastro.nucdata import Nucleus
+from pynucastro.rates import (ApproximateRate, DerivedRate, Library, Rate,
+                              RateFilter, ReacLibLibrary, TabularLibrary,
+                              Tfactors, list_known_rates, load_rate)
+from pynucastro.screening import make_plasma_state, make_screen_factors

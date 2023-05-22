@@ -1,13 +1,14 @@
 """
 Classes and methods to interface with files storing rate data.
 """
-from collections import Counter
-from scipy.constants import physical_constants
-import os
-import re
 import io
-import numpy as np
+import os
+from collections import Counter
+
 import matplotlib.pyplot as plt
+import numpy as np
+from scipy.constants import physical_constants
+
 try:
     import numba
     from numba.experimental import jitclass
@@ -39,7 +40,7 @@ except ImportError:
         return wrap(cls_or_spec)
 
 
-from pynucastro.nucdata import Nucleus
+from pynucastro.nucdata import Nucleus, UnsupportedNucleus
 
 amu_mev, _, _ = physical_constants['atomic mass constant energy equivalent in MeV']
 hbar, _, _ = physical_constants['reduced Planck constant']
@@ -54,15 +55,21 @@ _pynucastro_rates_dir = os.path.join(_pynucastro_dir, 'library')
 _pynucastro_tabular_dir = os.path.join(_pynucastro_rates_dir, 'tabular')
 
 
-def load_rate(rfile=None, rfile_path=None):
+class RateFileError(Exception):
+    """An error occurred while trying to read a Rate from a file."""
 
+
+def load_rate(rfile=None, rfile_path=None):
+    """Try to load a rate of any type.
+
+    :raises: :class:`.RateFileError`, :class:`.UnsupportedNucleus`
+    """
+
+    rate: Rate
     try:
         rate = TabularRate(rfile=rfile, rfile_path=rfile_path)
-    except AssertionError:
-        try:
-            rate = ReacLibRate(rfile=rfile, rfile_path=rfile_path)
-        except AssertionError:
-            raise
+    except (RateFileError, UnsupportedNucleus):
+        rate = ReacLibRate(rfile=rfile, rfile_path=rfile_path)
 
     return rate
 
@@ -88,7 +95,7 @@ def _find_rate_file(ratename):
         return os.path.realpath(x)
 
     # notify user we can't find the file
-    raise Exception(f'File {ratename!r} not found in the working directory, {_pynucastro_rates_dir}, or {_pynucastro_tabular_dir}')
+    raise RateFileError(f'File {ratename!r} not found in the working directory, {_pynucastro_rates_dir}, or {_pynucastro_tabular_dir}')
 
 
 if numba is not None:
@@ -183,10 +190,8 @@ class SingleSet:
         return x
 
     def f(self):
-        """
-        return a function for this set -- note: Tf here is a Tfactors
-        object
-        """
+        """ return a function for rate(tf) where tf is a Tfactors
+        object """
         return lambda tf: np.exp(self.a[0] +
                                  self.a[1]*tf.T9i +
                                  self.a[2]*tf.T913i +
@@ -194,6 +199,21 @@ class SingleSet:
                                  self.a[4]*tf.T9 +
                                  self.a[5]*tf.T953 +
                                  self.a[6]*tf.lnT9)
+
+    def dfdT(self):
+        """ return a function for this dratedT(tf), where tf is a
+        Tfactors object """
+
+        # we have lambda = exp(f(T_9))
+        # so dlambda/dT9 = lambda * df/dT9
+        # and dlambda/dT = dlambda/dT9 / 1.e9
+
+        return lambda tf: self.f()(tf) * (-self.a[1] * tf.T9i * tf.T9i +
+                                          -(1./3.) * self.a[2] * tf.T913i * tf.T9i +
+                                          (1./3.) * self.a[3] * tf.T913i * tf.T913i +
+                                          self.a[4] +
+                                          (5./3.) * self.a[5] * tf.T913 * tf.T913 +
+                                          self.a[6] * tf.T9i) / 1.e9
 
     def set_string_py(self, prefix="set", plus_equal=False):
         """
@@ -316,6 +336,8 @@ class Rate:
         self._set_rhs_properties()
         self._set_screening()
         self._set_print_representation()
+
+        self.tabular = False
 
     def __repr__(self):
         return self.string
@@ -467,11 +489,10 @@ class Rate:
                 self.rid += " + "
                 self.pretty_string += r" + "
 
-        if lhs_other:
-            for o in lhs_other:
-                if o == "e-":
-                    self.string += " + e⁻"
-                    self.pretty_string += r" + \mathrm{e}^-"
+        for o in lhs_other:
+            if o == "e-":
+                self.string += " + e⁻"
+                self.pretty_string += r" + \mathrm{e}^-"
 
         self.string += " ⟶ "
         self.rid += " --> "
@@ -486,23 +507,22 @@ class Rate:
                 self.rid += " + "
                 self.pretty_string += r" + "
 
-        if rhs_other:
-            for o in rhs_other:
-                if o == "gamma":
-                    self.string += " + 𝛾"
-                    self.pretty_string += r"+ \gamma"
-                elif o == "nu":
-                    self.string += " + 𝜈"
-                    self.pretty_string += r"+ \nu_e"
-                elif o == "nubar":
-                    self.string += " + 𝜈"
-                    self.pretty_string += r"+ \bar{\nu}_e"
-                if o == "e-":
-                    self.string += " + e⁻"
-                    self.pretty_string += r" + \mathrm{e}^-"
-                if o == "e+":
-                    self.string += " + e⁺"
-                    self.pretty_string += r" + \mathrm{e}^+"
+        for o in rhs_other:
+            if o == "gamma":
+                self.string += " + 𝛾"
+                self.pretty_string += r"+ \gamma"
+            elif o == "nu":
+                self.string += " + 𝜈"
+                self.pretty_string += r"+ \nu_e"
+            elif o == "nubar":
+                self.string += " + 𝜈"
+                self.pretty_string += r"+ \bar{\nu}_e"
+            if o == "e-":
+                self.string += " + e⁻"
+                self.pretty_string += r" + \mathrm{e}^-"
+            if o == "e+":
+                self.string += " + e⁺"
+                self.pretty_string += r" + \mathrm{e}^+"
 
         self.pretty_string += r"$"
 
@@ -552,6 +572,12 @@ class Rate:
         else:
             self.symmetric_screen = self.ion_screen
 
+    def cname(self):
+        """a C++-safe version of the rate name"""
+        # replace the "__" separating reactants and products with "_to_"
+        # and convert all other "__" to single "_"
+        return self.fname.replace("__", "_to_", 1).replace("__", "_")
+
     def get_rate_id(self):
         """ Get an identifying string for this rate."""
         return f'{self.rid} <{self.label.strip()}>'
@@ -582,17 +608,168 @@ class Rate:
                 nuc = n
         return nuc
 
+    def ydot_string_py(self):
+        """
+        Return a string containing the term in a dY/dt equation
+        in a reaction network corresponding to this rate.
+        """
+
+        # composition dependence
+        Y_string = ""
+        for n, r in enumerate(sorted(set(self.reactants))):
+            c = self.reactants.count(r)
+            if c > 1:
+                Y_string += f"Y[j{r}]**{c}"
+            else:
+                Y_string += f"Y[j{r}]"
+
+            if n < len(set(self.reactants))-1:
+                Y_string += "*"
+
+        # density dependence
+        if self.dens_exp == 0:
+            dens_string = ""
+        elif self.dens_exp == 1:
+            dens_string = "rho*"
+        else:
+            dens_string = f"rho**{self.dens_exp}*"
+
+        # electron fraction dependence
+        if self.weak_type == 'electron_capture' and not self.tabular:
+            y_e_string = 'ye(Y)*'
+        else:
+            y_e_string = ''
+
+        # prefactor
+        if self.prefactor != 1.0:
+            prefactor_string = f"{self.prefactor:1.14e}*"
+        else:
+            prefactor_string = ""
+
+        return "{}{}{}{}*rate_eval.{}".format(prefactor_string, dens_string,
+                                           y_e_string, Y_string, self.fname)
+
+    def eval(self, T, rhoY=None):
+        raise NotImplementedError("base Rate class does not know how to eval()")
+
+    def jacobian_string_py(self, y_i):
+        """
+        Return a string containing the term in a jacobian matrix
+        in a reaction network corresponding to this rate differentiated
+        with respect to y_i
+
+        y_i is an object of the class ``Nucleus``.
+        """
+        if y_i not in self.reactants:
+            return ""
+
+        # composition dependence
+        Y_string = ""
+        for n, r in enumerate(sorted(set(self.reactants))):
+            c = self.reactants.count(r)
+            if y_i == r:
+                # take the derivative
+                if c == 1:
+                    continue
+                if 0 < n < len(set(self.reactants))-1:
+                    Y_string += "*"
+                if c > 2:
+                    Y_string += f"{c}*Y[j{r}]**{c-1}"
+                elif c == 2:
+                    Y_string += f"2*Y[j{r}]"
+            else:
+                # this nucleus is in the rate form, but we are not
+                # differentiating with respect to it
+                if 0 < n < len(set(self.reactants))-1:
+                    Y_string += "*"
+                if c > 1:
+                    Y_string += f"Y[j{r}]**{c}"
+                else:
+                    Y_string += f"Y[j{r}]"
+
+        # density dependence
+        if self.dens_exp == 0:
+            dens_string = ""
+        elif self.dens_exp == 1:
+            dens_string = "rho*"
+        else:
+            dens_string = f"rho**{self.dens_exp}*"
+
+        # electron fraction dependence
+        if self.weak_type == 'electron_capture' and not self.tabular:
+            y_e_string = 'ye(Y)*'
+        else:
+            y_e_string = ""
+
+        # prefactor
+        if self.prefactor != 1.0:
+            prefactor_string = f"{self.prefactor:1.14e}*"
+        else:
+            prefactor_string = ""
+
+        if Y_string == "" and dens_string == "" and prefactor_string == "" and y_e_string == "":
+            rstring = "{}{}{}{}rate_eval.{}"
+        else:
+            rstring = "{}{}{}{}*rate_eval.{}"
+        return rstring.format(prefactor_string, dens_string,
+                              y_e_string, Y_string, self.fname)
+
+    def eval_jacobian_term(self, T, rho, comp, y_i):
+        """Evaluate drate/d(y_i), y_i is a Nucleus object.  This rate
+        term has the full composition and density dependence, i.e.:
+
+          rate = rho**n Y1**a Y2**b ... N_A <sigma v>
+
+        The derivative is only non-zero if this term depends on
+        nucleus y_i.
+
+        """
+        if y_i not in self.reactants:
+            return 0.0
+
+        ymolar = comp.get_molar()
+
+        # composition dependence
+        Y_term = 1.0
+        for r in sorted(set(self.reactants)):
+            c = self.reactants.count(r)
+            if y_i == r:
+                # take the derivative
+                if c == 1:
+                    continue
+                Y_term *= c * ymolar[r]**(c-1)
+            else:
+                # this nucleus is in the rate form, but we are not
+                # differentiating with respect to it
+                Y_term *= ymolar[r]**c
+
+        # density dependence
+        dens_term = rho**self.dens_exp
+
+        # electron fraction dependence
+        if self.weak_type == 'electron_capture' and not self.tabular:
+            y_e_term = comp.eval_ye()
+        else:
+            y_e_term = 1.0
+
+        # finally evaluate the rate -- for tabular rates, we need to set rhoY
+        rate_eval = self.eval(T, rhoY=rho*comp.eval_ye())
+
+        return self.prefactor * dens_term * y_e_term * Y_term * rate_eval
+
 
 class ReacLibRate(Rate):
     """A single reaction rate.  Currently, this is a ReacLib rate, which
     can be composed of multiple sets, or a tabulated electron capture
     rate.
 
+    :raises: :class:`.RateFileError`, :class:`.UnsupportedNucleus`
     """
     def __init__(self, rfile=None, rfile_path=None, chapter=None, original_source=None,
                  reactants=None, products=None, sets=None, labelprops=None, Q=None):
         """ rfile can be either a string specifying the path to a rate file or
         an io.StringIO object from which to read rate information. """
+        # pylint: disable=super-init-not-called
 
         self.rfile_path = rfile_path
         self.rfile = None
@@ -637,12 +814,15 @@ class ReacLibRate(Rate):
 
         self.label = None
         self.resonant = None
-        self.resonance_combined = None
         self.weak = None
         self.weak_type = None
         self.reverse = None
 
+        self.removed = None
+
         self.Q = Q
+
+        self.tabular = False
 
         if isinstance(rfile, str):
             # read in the file, parse the different sets and store them as
@@ -684,6 +864,8 @@ class ReacLibRate(Rate):
                 self.fname += "__approx"
             if self.derived:
                 self.fname += "__derived"
+            if self.removed:
+                self.fname += "__removed"
 
     def modify_products(self, new_products):
         if not isinstance(new_products, (set, list, tuple)):
@@ -776,16 +958,12 @@ class ReacLibRate(Rate):
         sres = [s.resonant for s in self.sets]
         if True in sres and False in sres:
             self._labelprops_combine_resonance()
-        else:
-            self.resonance_combined = False
 
     def _labelprops_combine_resonance(self):
-        """ Update self.labelprops[4] = 'c'.
-            Also set the resonance_combined flag. """
+        """ Update self.labelprops[4] = 'c'"""
         llp = list(self.labelprops)
         llp[4] = 'c'
         self.labelprops = ''.join(llp)
-        self.resonance_combined = True
 
     def _update_label_properties(self):
         """ Set label and flags indicating Rate is resonant,
@@ -794,14 +972,12 @@ class ReacLibRate(Rate):
         if self.labelprops == "approx":
             self.label = "approx"
             self.resonant = False
-            self.resonance_combined = False
             self.weak = False
             self.weak_type = None
             self.reverse = False
         elif self.labelprops == "derived":
             self.label = "derived"
             self.resonant = False  # Derived may be resonant in some cases
-            self.resonance_combined = False
             self.weak = False
             self.weak_type = None
             self.reverse = False
@@ -843,7 +1019,8 @@ class ReacLibRate(Rate):
                 check_chapter = int(check_chapter)
                 # check that the chapter number is the same as the first
                 # set in this rate file
-                assert check_chapter == self.chapter, f'read chapter {check_chapter}, expected chapter {self.chapter} for this rate set.'
+                if check_chapter != self.chapter:
+                    raise RateFileError(f'read chapter {check_chapter}, expected chapter {self.chapter} for this rate set.')
                 # get rid of chapter number so we can read a rate set
                 set_lines.pop(0)
             except (TypeError, ValueError):
@@ -932,6 +1109,10 @@ class ReacLibRate(Rate):
                     self.reactants += [Nucleus.from_cache(f[0]), Nucleus.from_cache(f[1]),
                                        Nucleus.from_cache(f[2])]
                     self.products.append(Nucleus.from_cache(f[3]))
+                    # support historical format, where chapter 8 also handles what are
+                    # now chapter 9 rates
+                    if len(f) == 5:
+                        self.products.append(Nucleus.from_cache(f[4]))
 
                 elif self.chapter == 9:
                     # e1 + e2 + e3 -> e4 + e5
@@ -951,8 +1132,7 @@ class ReacLibRate(Rate):
                     self.products += [Nucleus.from_cache(f[1]), Nucleus.from_cache(f[2]),
                                       Nucleus.from_cache(f[3]), Nucleus.from_cache(f[4])]
                 else:
-                    print(f'Chapter could not be identified in {self.original_source}')
-                    assert isinstance(self.chapter, int) and self.chapter <= 11
+                    raise RateFileError(f'Chapter could not be identified in {self.original_source}')
 
                 first = 0
 
@@ -1016,7 +1196,7 @@ class ReacLibRate(Rate):
         fstring += f"    rate_eval.{self.fname} = rate\n\n"
         return fstring
 
-    def function_string_cxx(self, dtype="double", specifiers="inline"):
+    def function_string_cxx(self, dtype="double", specifiers="inline", leave_open=False):
         """
         Return a string containing C++ function that computes the
         rate
@@ -1025,7 +1205,7 @@ class ReacLibRate(Rate):
         fstring = ""
         fstring += "template <int do_T_derivatives>\n"
         fstring += f"{specifiers}\n"
-        fstring += f"void rate_{self.fname}(const tf_t& tfactors, {dtype}& rate, {dtype}& drate_dT) {{\n\n"
+        fstring += f"void rate_{self.cname()}(const tf_t& tfactors, {dtype}& rate, {dtype}& drate_dT) {{\n\n"
         fstring += f"    // {self.rid}\n\n"
         fstring += "    rate = 0.0;\n"
         fstring += "    drate_dT = 0.0;\n\n"
@@ -1057,111 +1237,10 @@ class ReacLibRate(Rate):
             fstring += "        drate_dT += set_rate * dln_set_rate_dT9 / 1.0e9;\n"
             fstring += "    }\n\n"
 
-        fstring += "}\n\n"
+        if not leave_open:
+            fstring += "}\n\n"
+
         return fstring
-
-    def ydot_string_py(self):
-        """
-        Return a string containing the term in a dY/dt equation
-        in a reaction network corresponding to this rate.
-        """
-
-        # composition dependence
-        Y_string = ""
-        for n, r in enumerate(sorted(set(self.reactants))):
-            c = self.reactants.count(r)
-            if c > 1:
-                Y_string += f"Y[j{r}]**{c}"
-            else:
-                Y_string += f"Y[j{r}]"
-
-            if n < len(set(self.reactants))-1:
-                Y_string += "*"
-
-        # density dependence
-        if self.dens_exp == 0:
-            dens_string = ""
-        elif self.dens_exp == 1:
-            dens_string = "rho*"
-        else:
-            dens_string = f"rho**{self.dens_exp}*"
-
-        # electron fraction dependence
-        if self.weak_type == 'electron_capture':
-            y_e_string = 'ye(Y)*'
-        else:
-            y_e_string = ''
-
-        # prefactor
-        if self.prefactor != 1.0:
-            prefactor_string = f"{self.prefactor:1.14e}*"
-        else:
-            prefactor_string = ""
-
-        return "{}{}{}{}*rate_eval.{}".format(prefactor_string, dens_string,
-                                           y_e_string, Y_string, self.fname)
-
-    def jacobian_string_py(self, y_i):
-        """
-        Return a string containing the term in a jacobian matrix
-        in a reaction network corresponding to this rate differentiated
-        with respect to y_i
-
-        y_i is an objecs of the class ``Nucleus``.
-        """
-        if y_i not in self.reactants:
-            return ""
-
-        # composition dependence
-        Y_string = ""
-        for n, r in enumerate(sorted(set(self.reactants))):
-            c = self.reactants.count(r)
-            if y_i == r:
-                # take the derivative
-                if c == 1:
-                    continue
-                if 0 < n < len(set(self.reactants))-1:
-                    Y_string += "*"
-                if c > 2:
-                    Y_string += f"{c}*Y[j{r}]**{c-1}"
-                elif c == 2:
-                    Y_string += f"2*Y[j{r}]"
-            else:
-                # this nucleus is in the rate form, but we are not
-                # differentiating with respect to it
-                if 0 < n < len(set(self.reactants))-1:
-                    Y_string += "*"
-                if c > 1:
-                    Y_string += f"Y[j{r}]**{c}"
-                else:
-                    Y_string += f"Y[j{r}]"
-
-        # density dependence
-        if self.dens_exp == 0:
-            dens_string = ""
-        elif self.dens_exp == 1:
-            dens_string = "rho*"
-        else:
-            dens_string = f"rho**{self.dens_exp}*"
-
-        # electron fraction dependence
-        if self.weak_type == 'electron_capture':
-            y_e_string = 'ye(Y)*'
-        else:
-            y_e_string = ""
-
-        # prefactor
-        if self.prefactor != 1.0:
-            prefactor_string = f"{self.prefactor:1.14e}*"
-        else:
-            prefactor_string = ""
-
-        if Y_string == "" and dens_string == "" and prefactor_string == "" and y_e_string == "":
-            rstring = "{}{}{}{}rate_eval.{}"
-        else:
-            rstring = "{}{}{}{}*rate_eval.{}"
-        return rstring.format(prefactor_string, dens_string,
-                              y_e_string, Y_string, self.fname)
 
     def eval(self, T, rhoY=None):
         """ evauate the reaction rate for temperature T """
@@ -1173,6 +1252,18 @@ class ReacLibRate(Rate):
             r += f(tf)
 
         return r
+
+    def eval_deriv(self, T, rhoY=None):
+        """ evauate the derivative of reaction rate with respect to T """
+        _ = rhoY  # unused by this subclass
+
+        tf = Tfactors(T)
+        drdT = 0.0
+        for s in self.sets:
+            dfdT = s.dfdT()
+            drdT += dfdT(tf)
+
+        return drdT
 
     def get_rate_exponent(self, T0):
         """
@@ -1202,6 +1293,7 @@ class ReacLibRate(Rate):
         :rtype: matplotlib.figure.Figure
 
         """
+        _ = (rhoYmin, rhoYmax)  # unused by this subclass
 
         fig, ax = plt.subplots(figsize=figsize)
 
@@ -1227,10 +1319,14 @@ class ReacLibRate(Rate):
 
 
 class TabularRate(Rate):
-    """A tabular rate."""
+    """A tabular rate.
+
+    :raises: :class:`.RateFileError`, :class:`.UnsupportedNucleus`
+    """
     def __init__(self, rfile=None, rfile_path=None):
         """ rfile can be either a string specifying the path to a rate file or
         an io.StringIO object from which to read rate information. """
+        super().__init__()
 
         self.rfile_path = rfile_path
         self.rfile = None
@@ -1241,13 +1337,8 @@ class TabularRate(Rate):
 
         self.fname = None
 
-        self.reactants = []
-        self.products = []
-
         self.label = "tabular"
         self.tabular = True
-
-        self.Q = None
 
         # we should initialize this somehow
         self.weak_type = ""
@@ -1296,7 +1387,8 @@ class TabularRate(Rate):
 
         # first line is the chapter
         self.chapter = lines[0].strip()
-        assert self.chapter == "t"
+        if self.chapter != "t":
+            raise RateFileError(f"Invalid chapter for TabularRate ({self.chapter})")
 
         # remove any blank lines
         set_lines = [l for l in lines[1:] if not l.strip() == ""]
@@ -1311,8 +1403,8 @@ class TabularRate(Rate):
         try:
             self.reactants.append(Nucleus.from_cache(f[0]))
             self.products.append(Nucleus.from_cache(f[1]))
-        except Exception as ex:
-            raise Exception(f'Nucleus objects could not be identified in {self.original_source}') from ex
+        except UnsupportedNucleus as ex:
+            raise RateFileError(f'Nucleus objects could not be identified in {self.original_source}') from ex
 
         self.table_file = s2.strip()
         self.table_header_lines = int(s3.strip())
@@ -1360,139 +1452,50 @@ class TabularRate(Rate):
 
         return f'{self.rid} <{self.label.strip()}_{ssrc}>'
 
+    def function_string_py(self):
+        """
+        Return a string containing python function that computes the
+        rate
+        """
+
+        fstring = ""
+        fstring += "@numba.njit()\n"
+        fstring += f"def {self.fname}(rate_eval, T, rhoY):\n"
+        fstring += f"    # {self.rid}\n"
+
+        # find the nearest value of T and rhoY in the data table
+        fstring += f"    T_nearest = ({self.fname}_data[:, 1])[np.abs(({self.fname}_data[:, 1]) - T).argmin()]\n"
+        fstring += f"    rhoY_nearest = ({self.fname}_data[:, 0])[np.abs(({self.fname}_data[:, 0]) - rhoY).argmin()]\n"
+        fstring += f"    inde = np.where(({self.fname}_data[:, 1] == T_nearest) & ({self.fname}_data[:, 0] == rhoY_nearest))[0][0]\n"
+        fstring += f"    rate_eval.{self.fname} = {self.fname}_data[inde][5]\n\n"
+
+        return fstring
+
     def get_tabular_rate(self):
         """read the rate data from .dat file """
 
         # find .dat file and read it
         self.table_path = _find_rate_file(self.table_file)
-        with open(self.table_path) as tabular_file:
-            t_data = tabular_file.readlines()
-
-        # delete header lines
-        del t_data[0:self.table_header_lines]
-
-        # change the list ["1.23 3.45 5.67\n"] into the list ["1.23","3.45","5.67"]
         t_data2d = []
-        for tt in t_data:
-            t_data2d.append(re.split(r"[ ]", tt.strip('\n')))
-
-        # delete all the "" in each element of data1
-        for tt2d in t_data2d:
-            while '' in tt2d:
-                tt2d.remove('')
-
-        while [] in t_data2d:
-            t_data2d.remove([])
-
-        self.tabular_data_table = np.array(t_data2d)
-
-    def ydot_string_py(self):
-        """
-        Return a string containing the term in a dY/dt equation
-        in a reaction network corresponding to this rate.
-        """
-
-        # composition dependence
-        Y_string = ""
-        for n, r in enumerate(sorted(set(self.reactants))):
-            c = self.reactants.count(r)
-            if c > 1:
-                Y_string += f"Y[j{r}]**{c}"
-            else:
-                Y_string += f"Y[j{r}]"
-
-            if n < len(set(self.reactants))-1:
-                Y_string += "*"
-
-        # density dependence
-        if self.dens_exp == 0:
-            dens_string = ""
-        elif self.dens_exp == 1:
-            dens_string = "rho*"
-        else:
-            dens_string = f"rho**{self.dens_exp}*"
-
-        # electron fraction dependence
-        if (self.weak_type == 'electron_capture' and not self.tabular):
-            y_e_string = 'ye(Y)*'
-        else:
-            y_e_string = ''
-
-        # prefactor
-        if self.prefactor != 1.0:
-            prefactor_string = f"{self.prefactor:1.14e}*"
-        else:
-            prefactor_string = ""
-
-        return "{}{}{}{}*rate_eval.{}".format(prefactor_string, dens_string,
-                                              y_e_string, Y_string, self.fname)
-
-    def jacobian_string_py(self, y_i):
-        """
-        Return a string containing the term in a jacobian matrix
-        in a reaction network corresponding to this rate differentiated
-        with respect to y_i
-
-        y_i is an objecs of the class ``Nucleus``.
-        """
-        if y_i not in self.reactants:
-            return ""
-
-        # composition dependence
-        Y_string = ""
-        for n, r in enumerate(sorted(set(self.reactants))):
-            c = self.reactants.count(r)
-            if y_i == r:
-                # take the derivative
-                if c == 1:
+        with open(self.table_path) as tabular_file:
+            for i, line in enumerate(tabular_file):
+                # skip header lines
+                if i < self.table_header_lines:
                     continue
-                if 0 < n < len(set(self.reactants))-1:
-                    Y_string += "*"
-                if c > 2:
-                    Y_string += f"{c}*Y[j{r}]**{c-1}"
-                elif c == 2:
-                    Y_string += f"2*Y[j{r}]"
-            else:
-                # this nucleus is in the rate form, but we are not
-                # differentiating with respect to it
-                if 0 < n < len(set(self.reactants))-1:
-                    Y_string += "*"
-                if c > 1:
-                    Y_string += f"Y[j{r}]**{c}"
-                else:
-                    Y_string += f"Y[j{r}]"
+                line = line.strip()
+                # skip empty lines
+                if not line:
+                    continue
+                # split the column values on whitespace
+                t_data2d.append(line.split())
 
-        # density dependence
-        if self.dens_exp == 0:
-            dens_string = ""
-        elif self.dens_exp == 1:
-            dens_string = "rho*"
-        else:
-            dens_string = f"rho**{self.dens_exp}*"
-
-        # electron fraction dependence
-        if (self.weak_type == 'electron_capture' and not self.tabular):
-            y_e_string = 'ye(Y)*'
-        else:
-            y_e_string = ""
-
-        # prefactor
-        if self.prefactor != 1.0:
-            prefactor_string = f"{self.prefactor:1.14e}*"
-        else:
-            prefactor_string = ""
-
-        if Y_string == "" and dens_string == "" and prefactor_string == "" and y_e_string == "":
-            rstring = "{}{}{}{}rate_eval.{}"
-        else:
-            rstring = "{}{}{}{}*rate_eval.{}"
-        return rstring.format(prefactor_string, dens_string,
-                              y_e_string, Y_string, self.fname)
+        # convert the nested list of string values into a numpy float array
+        self.tabular_data_table = np.array(t_data2d, dtype=float)
 
     def eval(self, T, rhoY=None):
         """ evauate the reaction rate for temperature T """
 
-        data = self.tabular_data_table.astype(float)
+        data = self.tabular_data_table
         # find the nearest value of T and rhoY in the data table
         T_nearest = (data[:, 1])[np.abs((data[:, 1]) - T).argmin()]
         rhoY_nearest = (data[:, 0])[np.abs((data[:, 0]) - rhoY).argmin()]
@@ -1504,7 +1507,7 @@ class TabularRate(Rate):
         """ get the neutrino loss rate for the reaction if tabulated"""
 
         nu_loss = None
-        data = self.tabular_data_table.astype(np.float)
+        data = self.tabular_data_table
         # find the nearest value of T and rhoY in the data table
         T_nearest = (data[:, 1])[np.abs((data[:, 1]) - T).argmin()]
         rhoY_nearest = (data[:, 0])[np.abs((data[:, 0]) - rhoY).argmin()]
@@ -1530,7 +1533,7 @@ class TabularRate(Rate):
 
         fig, ax = plt.subplots(figsize=figsize)
 
-        data = self.tabular_data_table.astype(np.float)  # convert from str to float
+        data = self.tabular_data_table
 
         inde1 = data[:, 1] <= Tmax
         inde2 = data[:, 1] >= Tmin
@@ -1583,13 +1586,14 @@ class DerivedRate(ReacLibRate):
     by the application of detailed balance to the forward reactions.
     """
 
-    def __init__(self, rate,  compute_Q=False, use_pf=False):
+    def __init__(self, rate, compute_Q=False, use_pf=False):
 
         self.use_pf = use_pf
         self.rate = rate
         self.compute_Q = compute_Q
 
-        assert isinstance(rate, Rate)
+        if not isinstance(rate, Rate):
+            raise TypeError('rate must be a Rate subclass')
 
         if (isinstance(rate, TabularRate) or self.rate.weak or
             self.rate.reverse):
@@ -1686,7 +1690,7 @@ class DerivedRate(ReacLibRate):
         if self.use_pf:
 
             fstring += "\n"
-            for nuc in self.rate.reactants + self.rate.products:
+            for nuc in set(self.rate.reactants + self.rate.products):
                 if nuc.partition_function:
                     fstring += f"    # interpolating {nuc} partition function\n"
                     fstring += f"    {nuc}_pf_exponent = np.interp(tf.T9, xp={nuc}_temp_array, fp=np.log10({nuc}_pf_array))\n"
@@ -1707,6 +1711,73 @@ class DerivedRate(ReacLibRate):
 
             fstring += "\n"
             fstring += f"    rate_eval.{self.fname} *= z_r/z_p\n"
+
+        return fstring
+
+    def function_string_cxx(self, dtype="double", specifiers="inline", leave_open=False):
+        """
+        Return a string containing C++ function that computes the
+        rate
+        """
+
+        for nuc in set(self.rate.reactants + self.rate.products):
+            if not nuc.partition_function and str(nuc) not in ['h1', 'n', 'he4', 'p']:
+                print(f'WARNING: {nuc} partition function is not supported by tables: set pf = 1.0 by default')
+
+        fstring = super().function_string_cxx(dtype=dtype, specifiers=specifiers, leave_open=True)
+
+        # right now we have rate and drate_dT without the partition function
+        # now the partition function corrections
+
+        if self.use_pf:
+
+            fstring += "\n"
+            for nuc in set(self.rate.reactants + self.rate.products):
+                fstring += f"    Real {nuc}_pf, d{nuc}_pf_dT;\n"
+
+                if nuc.partition_function:
+                    fstring += f"    // interpolating {nuc} partition function\n"
+                    fstring += f"    get_partition_function({nuc.cindex()}, tfactors, {nuc}_pf, d{nuc}_pf_dT);\n"
+                else:
+                    fstring += f"    // setting {nuc} partition function to 1.0 by default, independent of T\n"
+                    fstring += f"    {nuc}_pf = 1.0_rt;\n"
+                    fstring += f"    d{nuc}_pf_dT = 0.0_rt;\n"
+                fstring += "\n"
+
+            fstring += "    Real z_r = "
+            fstring += " * ".join([f"{nucr}_pf" for nucr in self.rate.reactants])
+            fstring += ";\n"
+
+            fstring += "    Real z_p = "
+            fstring += " * ".join([f"{nucp}_pf" for nucp in self.rate.products])
+            fstring += ";\n\n"
+
+            # now the derivatives, via chain rule
+            chain_terms = []
+            for n in self.rate.reactants:
+                chain_terms.append(" * ".join([f"{nucr}_pf" for nucr in self.rate.reactants if nucr != n] + [f"d{n}_pf_dT"]))
+
+            fstring += "    Real dz_r_dT = "
+            fstring += " + ".join(chain_terms)
+            fstring += ";\n"
+
+            chain_terms = []
+            for n in self.rate.products:
+                chain_terms.append(" * ".join([f"{nucp}_pf" for nucp in self.rate.products if nucp != n] + [f"d{n}_pf_dT"]))
+
+            fstring += "    Real dz_p_dT = "
+            fstring += " + ".join(chain_terms)
+            fstring += ";\n\n"
+
+            fstring += "    Real dzterm_dT = (z_p * dz_r_dT - z_r * dz_p_dT) / (z_p * z_p);\n\n"
+
+            # final terms
+
+            fstring += "    drate_dT = dzterm_dT * rate + drate_dT * (z_r / z_p);\n"
+            fstring += "    rate *= z_r/z_p;\n\n"
+
+        if not leave_open:
+            fstring += "}\n\n"
 
         return fstring
 
@@ -1928,7 +1999,7 @@ class ApproximateRate(ReacLibRate):
         string += f"    rate_eval.{self.fname} = rate\n\n"
         return string
 
-    def function_string_cxx(self, dtype="double", specifiers="inline"):
+    def function_string_cxx(self, dtype="double", specifiers="inline", leave_open=False):
         """
         Return a string containing C++ function that computes the
         approximate rate
@@ -1940,44 +2011,46 @@ class ApproximateRate(ReacLibRate):
         fstring = ""
         fstring = "template <typename T>\n"
         fstring += f"{specifiers}\n"
-        fstring += f"void rate_{self.fname}(const T& rate_eval, {dtype}& rate, {dtype}& drate_dT) {{\n\n"
+        fstring += f"void rate_{self.cname()}(const T& rate_eval, {dtype}& rate, {dtype}& drate_dT) {{\n\n"
 
         if not self.is_reverse:
 
             # first we need to get all of the rates that make this up
-            fstring += f"    {dtype} r_ag = rate_eval.screened_rates(k_{self.primary_rate.fname});\n"
-            fstring += f"    {dtype} r_ap = rate_eval.screened_rates(k_{self.secondary_rates[0].fname});\n"
-            fstring += f"    {dtype} r_pg = rate_eval.screened_rates(k_{self.secondary_rates[1].fname});\n"
-            fstring += f"    {dtype} r_pa = rate_eval.screened_rates(k_{self.secondary_reverse[1].fname});\n"
+            fstring += f"    {dtype} r_ag = rate_eval.screened_rates(k_{self.primary_rate.cname()});\n"
+            fstring += f"    {dtype} r_ap = rate_eval.screened_rates(k_{self.secondary_rates[0].cname()});\n"
+            fstring += f"    {dtype} r_pg = rate_eval.screened_rates(k_{self.secondary_rates[1].cname()});\n"
+            fstring += f"    {dtype} r_pa = rate_eval.screened_rates(k_{self.secondary_reverse[1].cname()});\n"
 
             # now the approximation
             fstring += f"    {dtype} dd = 1.0_rt / (r_pg + r_pa);\n"
             fstring += "    rate = r_ag + r_ap * r_pg * dd;\n"
             fstring += "    if constexpr (std::is_same<T, rate_derivs_t>::value) {\n"
-            fstring += f"        {dtype} drdT_ag = rate_eval.dscreened_rates_dT(k_{self.primary_rate.fname});\n"
-            fstring += f"        {dtype} drdT_ap = rate_eval.dscreened_rates_dT(k_{self.secondary_rates[0].fname});\n"
-            fstring += f"        {dtype} drdT_pg = rate_eval.dscreened_rates_dT(k_{self.secondary_rates[1].fname});\n"
-            fstring += f"        {dtype} drdT_pa = rate_eval.dscreened_rates_dT(k_{self.secondary_reverse[1].fname});\n"
+            fstring += f"        {dtype} drdT_ag = rate_eval.dscreened_rates_dT(k_{self.primary_rate.cname()});\n"
+            fstring += f"        {dtype} drdT_ap = rate_eval.dscreened_rates_dT(k_{self.secondary_rates[0].cname()});\n"
+            fstring += f"        {dtype} drdT_pg = rate_eval.dscreened_rates_dT(k_{self.secondary_rates[1].cname()});\n"
+            fstring += f"        {dtype} drdT_pa = rate_eval.dscreened_rates_dT(k_{self.secondary_reverse[1].cname()});\n"
             fstring += "        drate_dT = drdT_ag + drdT_ap * r_pg * dd + r_ap * drdT_pg * dd - r_ap * r_pg * dd * dd * (drdT_pg + drdT_pa);\n"
             fstring += "    }\n"
         else:
 
             # first we need to get all of the rates that make this up
-            fstring += f"    {dtype} r_ga = rate_eval.screened_rates(k_{self.primary_reverse.fname});\n"
-            fstring += f"    {dtype} r_pa = rate_eval.screened_rates(k_{self.secondary_reverse[1].fname});\n"
-            fstring += f"    {dtype} r_gp = rate_eval.screened_rates(k_{self.secondary_reverse[0].fname});\n"
-            fstring += f"    {dtype} r_pg = rate_eval.screened_rates(k_{self.secondary_rates[1].fname});\n"
+            fstring += f"    {dtype} r_ga = rate_eval.screened_rates(k_{self.primary_reverse.cname()});\n"
+            fstring += f"    {dtype} r_pa = rate_eval.screened_rates(k_{self.secondary_reverse[1].cname()});\n"
+            fstring += f"    {dtype} r_gp = rate_eval.screened_rates(k_{self.secondary_reverse[0].cname()});\n"
+            fstring += f"    {dtype} r_pg = rate_eval.screened_rates(k_{self.secondary_rates[1].cname()});\n"
 
             # now the approximation
             fstring += f"    {dtype} dd = 1.0_rt / (r_pg + r_pa);\n"
             fstring += "    rate = r_ga + r_gp * r_pa * dd;\n"
             fstring += "    if constexpr (std::is_same<T, rate_derivs_t>::value) {\n"
-            fstring += f"        {dtype} drdT_ga = rate_eval.dscreened_rates_dT(k_{self.primary_reverse.fname});\n"
-            fstring += f"        {dtype} drdT_pa = rate_eval.dscreened_rates_dT(k_{self.secondary_reverse[1].fname});\n"
-            fstring += f"        {dtype} drdT_gp = rate_eval.dscreened_rates_dT(k_{self.secondary_reverse[0].fname});\n"
-            fstring += f"        {dtype} drdT_pg = rate_eval.dscreened_rates_dT(k_{self.secondary_rates[1].fname});\n"
+            fstring += f"        {dtype} drdT_ga = rate_eval.dscreened_rates_dT(k_{self.primary_reverse.cname()});\n"
+            fstring += f"        {dtype} drdT_pa = rate_eval.dscreened_rates_dT(k_{self.secondary_reverse[1].cname()});\n"
+            fstring += f"        {dtype} drdT_gp = rate_eval.dscreened_rates_dT(k_{self.secondary_reverse[0].cname()});\n"
+            fstring += f"        {dtype} drdT_pg = rate_eval.dscreened_rates_dT(k_{self.secondary_rates[1].cname()});\n"
             fstring += "        drate_dT = drdT_ga + drdT_gp * r_pa * dd + r_gp * drdT_pa * dd - r_gp * r_pa * dd * dd * (drdT_pg + drdT_pa);\n"
             fstring += "    }\n"
 
-        fstring += "}\n\n"
+        if not leave_open:
+            fstring += "}\n\n"
+
         return fstring

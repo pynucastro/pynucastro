@@ -1,10 +1,11 @@
 # unit tests for rates
-from pynucastro import networks
-import os
 import filecmp
+import io
+import os
+
 import pytest
 
-import io
+from pynucastro import networks
 
 
 class TestAmrexAstroCxxNetwork:
@@ -20,7 +21,6 @@ class TestAmrexAstroCxxNetwork:
                  "n--p-wc12"]
 
         fn = networks.AmrexAstroCxxNetwork(files)
-        fn.secret_code = "testing"
         return fn
 
     def cromulent_ftag(self, ftag, answer, n_indent=1):
@@ -49,14 +49,14 @@ class TestAmrexAstroCxxNetwork:
     def test_nrxn(self, fn):
         """ test the _nrxn function """
 
-        answer = ('    k_c12_c12__he4_ne20 = 1,\n' +
-                  '    k_c12_c12__n_mg23 = 2,\n' +
-                  '    k_c12_c12__p_na23 = 3,\n' +
-                  '    k_he4_c12__o16 = 4,\n' +
-                  '    k_n__p__weak__wc12 = 5,\n' +
-                  '    k_na23__ne23 = 6,\n' +
-                  '    k_ne23__na23 = 7,\n' +
-                  '    NumRates = k_ne23__na23\n')
+        answer = ('    k_c12_c12_to_he4_ne20 = 1,\n' +
+                  '    k_c12_c12_to_n_mg23 = 2,\n' +
+                  '    k_c12_c12_to_p_na23 = 3,\n' +
+                  '    k_he4_c12_to_o16 = 4,\n' +
+                  '    k_n_to_p_weak_wc12 = 5,\n' +
+                  '    k_na23_to_ne23 = 6,\n' +
+                  '    k_ne23_to_na23 = 7,\n' +
+                  '    NumRates = k_ne23_to_na23\n')
         assert self.cromulent_ftag(fn._nrxn, answer, n_indent=1)
 
     def test_ebind(self, fn):
@@ -81,20 +81,18 @@ class TestAmrexAstroCxxNetwork:
 
         fn.write_network(odir=test_path)
 
-        files = ["actual_network_data.cpp",
-                 "actual_network.H",
-                 "actual_rhs.H",
-                 "inputs.burn_cell.VODE",
-                 "Make.package",
-                 "NETWORK_PROPERTIES",
-                 "_parameters",
-                 "pynucastro.net",
-                 "reaclib_rates.H",
-                 "table_rates_data.cpp",
-                 "table_rates.H"]
+        # get the list of files from the generated directory, so any new files
+        # will need to be added to the reference directory or explicitly ignored
+        files = os.listdir(test_path)
+        skip_files = [
+            "23Na-23Ne_electroncapture.dat",
+            "23Ne-23Na_betadecay.dat",
+        ]
 
         errors = []
         for test_file in files:
+            if test_file in skip_files:
+                continue
             # note, _test is written under whatever directory pytest is run from,
             # so it is not necessarily at the same place as _amrexastro_reference
             if not filecmp.cmp(os.path.normpath(f"{test_path}/{test_file}"),

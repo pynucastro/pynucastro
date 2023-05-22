@@ -4,6 +4,7 @@ through sympy"""
 import re
 
 import sympy
+
 from pynucastro.rates import TabularRate
 
 
@@ -34,7 +35,7 @@ class SympyRates:
         return a sympy expression containing this rate's contribution to
         the ydot term for nuclide y_i.
         """
-        key = (rate.fname, y_i)
+        key = (rate.cname(), y_i)
         if key in self._ydot_term_cache:
             return self._ydot_term_cache[key]
         srate = self.specific_rate_symbol(rate)
@@ -82,8 +83,8 @@ class SympyRates:
         prefactor_sym = sympy.sympify(1)/sympy.sympify(rate.inv_prefactor)
 
         # screened rate
-        sym_final = self.name_rate_data + f'(k_{rate.fname})'
-        sym_temp = f'NRD__k_{rate.fname}__'
+        sym_final = self.name_rate_data + f'(k_{rate.cname()})'
+        sym_temp = f'NRD__k_{rate.cname()}__'
         self.symbol_ludict[sym_temp] = sym_final
         screened_rate_sym = sympy.symbols(sym_temp)
 

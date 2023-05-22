@@ -40,17 +40,17 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
 
         for _, r in enumerate(self.rates):
             if r in self.disable_rate_params:
-                of.write(f"{self.indent*n_indent}if (disable_{r.fname}) {{\n")
-                of.write(f"{self.indent*n_indent}    rate_eval.screened_rates(k_{r.fname}) = 0.0;\n")
+                of.write(f"{self.indent*n_indent}if (disable_{r.cname()}) {{\n")
+                of.write(f"{self.indent*n_indent}    rate_eval.screened_rates(k_{r.cname()}) = 0.0;\n")
                 of.write(f"{self.indent*n_indent}    if constexpr (std::is_same<T, rate_derivs_t>::value) {{\n")
-                of.write(f"{self.indent*n_indent}        rate_eval.dscreened_rates_dT(k_{r.fname}) = 0.0;\n")
+                of.write(f"{self.indent*n_indent}        rate_eval.dscreened_rates_dT(k_{r.cname()}) = 0.0;\n")
                 of.write(f"{self.indent*n_indent}    }}\n")
                 # check for the reverse too -- we disable it with the same parameter
                 rr = self.find_reverse(r)
                 if rr is not None:
-                    of.write(f"{self.indent*n_indent}    rate_eval.screened_rates(k_{rr.fname}) = 0.0;\n")
+                    of.write(f"{self.indent*n_indent}    rate_eval.screened_rates(k_{rr.cname()}) = 0.0;\n")
                     of.write(f"{self.indent*n_indent}    if constexpr (std::is_same<T, rate_derivs_t>::value) {{\n")
-                    of.write(f"{self.indent*n_indent}    rate_eval.dscreened_rates_dT(k_{rr.fname}) = 0.0;\n")
+                    of.write(f"{self.indent*n_indent}    rate_eval.dscreened_rates_dT(k_{rr.cname()}) = 0.0;\n")
                     of.write(f"{self.indent*n_indent}    }}\n")
                 of.write(f"{self.indent*n_indent}}}\n\n")
 
@@ -67,8 +67,10 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
         # create a .net file with the nuclei properties
         with open(os.path.join(odir, "pynucastro.net"), "w") as of:
             for nuc in self.unique_nuclei:
-                of.write("{:25} {:6} {:6.1f} {:6.1f}\n".format(
-                    nuc.spec_name, nuc.short_spec_name, nuc.A, nuc.Z))
+                of.write(f"{nuc.spec_name:25} {nuc.short_spec_name:6} {nuc.A:6.1f} {nuc.Z:6.1f}\n")
+
+            for nuc in self.approx_nuclei:
+                of.write(f"__extra_{nuc.spec_name:17} {nuc.short_spec_name:6} {nuc.A:6.1f} {nuc.Z:6.1f}\n")
 
         # write out some network properties
         with open(os.path.join(odir, "NETWORK_PROPERTIES"), "w") as of:
@@ -79,4 +81,4 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
             of.write("@namespace: network\n\n")
             if self.disable_rate_params:
                 for r in self.disable_rate_params:
-                    of.write(f"disable_{r.fname}    int     0\n")
+                    of.write(f"disable_{r.cname()}    int     0\n")

@@ -1,36 +1,34 @@
 """A collection of classes and methods to deal with collections of
 rates that together make up a network."""
 
-# Common Imports
-import warnings
+import collections
+import copy
 import functools
 import math
 import os
-
+import warnings
 from operator import mul
 
-from ipywidgets import interact
-
-import numpy as np
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-from mpl_toolkits.axes_grid1 import make_axes_locatable
-from matplotlib.ticker import MaxNLocator
-from matplotlib.colors import SymLogNorm
-from matplotlib.scale import SymmetricalLogTransform
-from matplotlib.patches import ConnectionPatch
 import networkx as nx
-from pynucastro.screening.screen import NseState
+import numpy as np
+from ipywidgets import interact
+from matplotlib.colors import SymLogNorm
+from matplotlib.patches import ConnectionPatch
+from matplotlib.scale import SymmetricalLogTransform
+from matplotlib.ticker import MaxNLocator
+from mpl_toolkits.axes_grid1 import make_axes_locatable
 from scipy import constants
 from scipy.optimize import fsolve
-import copy
 
 # Import Rate
-from pynucastro.nucdata import Nucleus
-from pynucastro.rates import Rate, TabularRate, RatePair, DerivedRate, ApproximateRate, Library, \
-        load_rate, Tfactors
+from pynucastro.nucdata import Nucleus, PeriodicTable
+from pynucastro.rates import (ApproximateRate, DerivedRate, Library, Rate,
+                              RateFileError, RatePair, TabularRate, load_rate)
+from pynucastro.rates.library import _rate_name_to_nuc
 from pynucastro.screening import make_plasma_state, make_screen_factors
-from pynucastro.nucdata import PeriodicTable
+from pynucastro.screening.screen import NseState
 
 mpl.rcParams['figure.dpi'] = 100
 
@@ -311,6 +309,7 @@ class ScreeningPair:
 
 class RateCollection:
     """ a collection of rates that together define a network """
+    # pylint: disable=too-many-public-methods
 
     pynucastro_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 
@@ -449,19 +448,49 @@ class RateCollection:
         self.reaclib_rates = []
         self.approx_rates = []
         self.derived_rates = []
+
         for r in self.rates:
             if isinstance(r, ApproximateRate):
                 self.approx_rates.append(r)
                 for cr in r.get_child_rates():
                     assert cr.chapter != "t"
-                    # there may be dupes in the list of reaclib rates, since some
-                    # approx rates will use the same child rates
-                    if cr not in self.reaclib_rates:
-                        self.reaclib_rates.append(cr)
+                    # child rates may be ReacLibRates or DerivedRates
+                    # make sure we don't double count
+                    if isinstance(cr, DerivedRate):
+
+                        # Here we check whether this child rate is removed or not.
+                        # removed means that this rate is never used on its own to connect two nuclei in the network
+                        # it is only used in one or more ApproximateRate.
+                        if cr not in self.rates:
+                            cr.removed = True
+                        else:
+                            cr.removed = False
+
+                        cr.fname = None
+                        # pylint: disable-next=protected-access
+                        cr._set_print_representation()
+
+                        if cr not in self.derived_rates:
+                            self.derived_rates.append(cr)
+
+                    else:
+                        if cr not in self.rates:
+                            cr.removed = True
+                        else:
+                            cr.removed = False
+
+                        cr.fname = None
+                        # pylint: disable-next=protected-access
+                        cr._set_print_representation()
+
+                        if cr not in self.reaclib_rates:
+                            self.reaclib_rates.append(cr)
+
             elif r.chapter == 't':
                 self.tabular_rates.append(r)
             elif isinstance(r, DerivedRate):
-                self.derived_rates.append(r)
+                if r not in self.derived_rates:
+                    self.derived_rates.append(r)
             elif isinstance(r.chapter, int):
                 if r not in self.reaclib_rates:
                     self.reaclib_rates.append(r)
@@ -477,8 +506,8 @@ class RateCollection:
             # create the appropriate rate object first
             try:
                 rate = load_rate(rf)
-            except Exception as ex:
-                raise Exception(f"Error reading rate from file: {rf}") from ex
+            except RateFileError as ex:
+                raise RateFileError(f"Error reading rate from file: {rf}") from ex
 
             # now create a library:
             rflib = Library(rates=[rate])
@@ -551,10 +580,9 @@ class RateCollection:
 
         # we might have some reverse rates remaining for which there
         # were no forward rates -- add those now
-        if reverse_rates:
-            for rr in reverse_rates:
-                rp = RatePair(reverse=rr)
-                rate_pairs.append(rp)
+        for rr in reverse_rates:
+            rp = RatePair(reverse=rr)
+            rate_pairs.append(rp)
 
         return rate_pairs
 
@@ -606,18 +634,26 @@ class RateCollection:
             return None
         return _tmp
 
+    def get_rate_by_name(self, name):
+        """given a rate in the form 'A(x,y)B' return the Rate"""
+
+        reactants, products = _rate_name_to_nuc(name)
+        _r = self.get_rate_by_nuclei(reactants, products)
+        if _r is None:
+            return None
+        if len(_r) == 1:
+            return _r[0]
+        return _r
+
     def get_nuclei_needing_partition_functions(self):
-        """return a list of the nuclei that require partition
-        functions for one or more DerivedRates in the collection"""
+        """return a set of Nuclei that require partition functions for one or
+        more DerivedRates in the collection"""
 
-        rates_with_pfs = [q for q in self.all_rates if isinstance(q, DerivedRate) and q.use_pf]
-
-        if rates_with_pfs:
-            nuclei_pfs = []
-            for r in rates_with_pfs:
-                nuclei_pfs += r.reactants + r.products
-            return set(nuclei_pfs)
-        return None
+        nuclei_pfs = set()
+        for r in self.all_rates:
+            if isinstance(r, DerivedRate) and r.use_pf:
+                nuclei_pfs.update(r.reactants + r.products)
+        return nuclei_pfs
 
     def remove_nuclei(self, nuc_list):
         """remove the nuclei in nuc_list from the network along with any rates
@@ -639,17 +675,28 @@ class RateCollection:
 
         self._build_collection()
 
-    def remove_rates(self, rate_list):
-        """remove the rates in rate_list from the network.  Note, if
+    def remove_rates(self, rates):
+        """remove the Rate objects in rates from the network.  Note, if
         rate list is a dict, then the keys are assumed to be the rates
         to remove"""
 
-        if isinstance(rate_list, dict):
-            for r in rate_list.keys():
-                self.rates.remove(r)
+        if isinstance(rates, Rate):
+            self.rates.remove(rates)
         else:
-            for r in rate_list:
+            for r in rates:
                 self.rates.remove(r)
+
+        self._build_collection()
+
+    def add_rates(self, rates):
+        """add the Rate objects in rates from the network."""
+
+        if isinstance(rates, Rate):
+            self.rates.append(rates)
+
+        else:
+            for r in rates:
+                self.rates.append(r)
 
         self._build_collection()
 
@@ -659,7 +706,7 @@ class RateCollection:
 
         # make sure that the intermediate_nuclei list are Nuclei objects
         _inter_nuclei_remove = []
-        if intermediate_nuclei:
+        if intermediate_nuclei is not None:
             for nn in intermediate_nuclei:
                 if isinstance(nn, Nucleus):
                     _inter_nuclei_remove.append(nn)
@@ -745,6 +792,7 @@ class RateCollection:
             for r in ar.get_child_rates():
                 try:
                     self.rates.remove(r)
+
                     print(f"removing rate {r}")
                 except ValueError:
                     pass
@@ -775,6 +823,107 @@ class RateCollection:
             rvals[r] = yfac * val * screen_factors.get(r, 1.0)
 
         return rvals
+
+    def evaluate_jacobian(self, rho, T, comp, screen_func=None):
+        """return an array of the form J_ij = dYdot_i/dY_j for the network"""
+
+        # the rate.eval_jacobian_term does not compute the screening,
+        # so we multiply by the factors afterwards
+        if screen_func is not None:
+            screen_factors = self.evaluate_screening(rho, T, comp, screen_func)
+        else:
+            screen_factors = {}
+
+        nnuc = len(self.unique_nuclei)
+        jac = np.zeros((nnuc, nnuc), dtype=np.float64)
+
+        for i, n_i in enumerate(self.unique_nuclei):
+            for j, n_j in enumerate(self.unique_nuclei):
+
+                # we are considering dYdot(n_i) / dY(n_j)
+
+                jac[i, j] = 0.0
+
+                for r in self.nuclei_consumed[n_i]:
+                    # how many of n_i are destroyed by this reaction
+                    c = r.reactants.count(n_i)
+                    jac[i, j] -= c * screen_factors.get(r, 1.0) *\
+                        r.eval_jacobian_term(T, rho, comp, n_j)
+
+                for r in self.nuclei_produced[n_i]:
+                    # how many of n_i are produced by this reaction
+                    c = r.products.count(n_i)
+                    jac[i, j] += c * screen_factors.get(r, 1.0) *\
+                        r.eval_jacobian_term(T, rho, comp, n_j)
+
+        return jac
+
+    def validate(self, other_library, forward_only=True, ostream=None):
+        """perform various checks on the library, comparing to other_library,
+        to ensure that we are not missing important rates.  The idea
+        is that self should be a reduced library where we filtered out
+        a few rates and then we want to compare to the larger
+        other_library to see if we missed something important.
+
+        ostream is the I/O stream to send output to (for instance, a
+        file object or StringIO object).  If it is None, then output
+        is to stdout.
+
+        """
+
+        current_rates = sorted(self.get_rates())
+
+        # check the forward rates to see if any of the products are
+        # not consumed by other forward rates
+
+        passed_validation = True
+
+        for rate in current_rates:
+            if rate.reverse:
+                continue
+            for p in rate.products:
+                found = False
+                for orate in current_rates:
+                    if orate == rate:
+                        continue
+                    if orate.reverse:
+                        continue
+                    if p in orate.reactants:
+                        found = True
+                        break
+                if not found:
+                    passed_validation = False
+                    msg = f"validation: {p} produced in {rate} never consumed."
+                    if ostream is None:
+                        print(msg)
+                    else:
+                        ostream.write(msg + "\n")
+
+        # now check if we are missing any rates from other_library with the exact same reactants
+
+        other_by_reactants = collections.defaultdict(list)
+        for rate in sorted(other_library.get_rates()):
+            other_by_reactants[tuple(sorted(rate.reactants))].append(rate)
+
+        for rate in current_rates:
+            if forward_only and rate.reverse:
+                continue
+
+            key = tuple(sorted(rate.reactants))
+            for other_rate in other_by_reactants[key]:
+                # check to see if other_rate is already in current_rates
+                found = True
+                if other_rate not in current_rates:
+                    found = False
+
+                if not found:
+                    msg = f"validation: missing {other_rate} as alternative to {rate} (Q = {other_rate.Q} MeV)."
+                    if ostream is None:
+                        print(msg)
+                    else:
+                        ostream.write(msg + "\n")
+
+        return passed_validation
 
     def find_unimportant_rates(self, states, cutoff_ratio, screen_func=None):
         """evaluate the rates at multiple thermodynamic states, and find the
@@ -853,7 +1002,7 @@ class RateCollection:
         ye_max = max(nuc.Z/nuc.A for nuc in self.unique_nuclei)
         assert state.ye >= ye_low and state.ye <= ye_max, "input electron fraction goes outside of scope for current network"
 
-        # Seting up the constants needed to compute mu_c
+        # Setting up the constants needed to compute mu_c
         k = constants.value("Boltzmann constant") * 1.0e7          # boltzmann in erg/K
         Erg2MeV = 624151.0
 
@@ -866,7 +1015,7 @@ class RateCollection:
         # u_c is the coulomb correction term for NSE
         # Calculate the composition at NSE, equations found in appendix of Calder paper
         u_c = {}
-        for nuc in self.unique_nuclei:
+        for nuc in set(list(self.unique_nuclei) + [Nucleus("p")]):
             if use_coulomb_corr:
                 Gamma = state.gamma_e_fac * n_e ** (1.0/3.0) * nuc.Z ** (5.0 / 3.0) / state.temp
                 u_c[nuc] = Erg2MeV * k * state.temp * (A_1 * (np.sqrt(Gamma * (A_2 + Gamma)) - A_2 * np.log(np.sqrt(Gamma / A_2) +
@@ -946,7 +1095,7 @@ class RateCollection:
         state = NseState(T, rho, ye)
 
         u_c = {}
-        for nuc in self.unique_nuclei:
+        for nuc in set(list(self.unique_nuclei) + [Nucleus("p")]):
             u_c[nuc] = 0.0
 
         Xs = {}
@@ -960,12 +1109,12 @@ class RateCollection:
         warnings.filterwarnings("ignore", category=RuntimeWarning)
 
         # This nested loops should fine-tune the initial guess if fsolve is unable to find a solution
-        while (j < 20):
+        while j < 20:
             i = 0
             guess = copy.deepcopy(init_guess)
             init_dx = 0.5
 
-            while (i < 20):
+            while i < 20:
                 u = fsolve(self._constraint_eq, guess, args=(u_c, state), xtol=tol, maxfev=800)
                 Xs = self._nucleon_fraction_nse(u, u_c, state)
                 n_e = self._evaluate_n_e(state, Xs)
@@ -1488,12 +1637,13 @@ class RateCollection:
 
     def plot(self, outfile=None, rho=None, T=None, comp=None,
              size=(800, 600), dpi=100, title=None,
-             ydot_cutoff_value=None,
+             ydot_cutoff_value=None, show_small_ydot=False,
              node_size=1000, node_font_size=13, node_color="#A0CBE2", node_shape="o",
              curved_edges=False,
              N_range=None, Z_range=None, rotated=False,
              always_show_p=False, always_show_alpha=False,
              hide_xp=False, hide_xalpha=False,
+             highlight_filter_function=None,
              nucleus_filter_function=None, rate_filter_function=None):
         """Make a plot of the network structure showing the links between
         nuclei.  If a full set of thermodymamic conditions are
@@ -1512,7 +1662,7 @@ class RateCollection:
 
         comp: composition to evaluate rates with
 
-        size: tuple giving width x height of the plot in inches
+        size: tuple giving width x height of the plot in pixels
 
         dpi: pixels per inch used by matplotlib in rendering bitmap
 
@@ -1520,6 +1670,9 @@ class RateCollection:
 
         ydot_cutoff_value: rate threshold below which we do not show a
         line corresponding to a rate
+
+        show_small_ydot: if true, then show visible lines for rates below
+        ydot_cutoff_value
 
         node_size: size of a node
 
@@ -1549,6 +1702,10 @@ class RateCollection:
 
         hide_xp=False: dont connect the links to p for heavy
         nuclei reactions of the form A(p,X)B or A(X,p)B.
+
+        highlight_filter_function: name of a custom function that
+        takes a Rate object and returns true or false if we want
+        to highlight the rate edge.
 
         nucleus_filter_funcion: name of a custom function that takes a
         Nucleus object and returns true or false if it is to be shown
@@ -1637,6 +1794,10 @@ class RateCollection:
                     if not rate_filter_function(r):
                         continue
 
+                highlight = False
+                if highlight_filter_function is not None:
+                    highlight = highlight_filter_function(r)
+
                 for p in r.products:
                     if p not in node_nuclei:
                         continue
@@ -1655,10 +1816,10 @@ class RateCollection:
                     # here real means that it is not an approximate rate
 
                     if ydots is None:
-                        G.add_edges_from([(n, p)], weight=0.5, real=1)
+                        G.add_edges_from([(n, p)], weight=0.5,
+                                         real=1, highlight=highlight)
                         continue
-                    if r in invisible_rates:
-                        continue
+
                     try:
                         rate_weight = math.log10(ydots[r])
                     except ValueError:
@@ -1667,7 +1828,16 @@ class RateCollection:
                         # for python floats
                         rate_weight = -308
 
-                    G.add_edges_from([(n, p)], weight=rate_weight, real=1)
+                    if r in invisible_rates:
+                        if show_small_ydot:
+                            # use real -1 for displaying rates that are below ydot_cutoff
+                            G.add_edges_from([(n, p)], weight=rate_weight,
+                                             real=-1, highlight=highlight)
+
+                        continue
+
+                    G.add_edges_from([(n, p)], weight=rate_weight,
+                                     real=1, highlight=highlight)
 
         # now consider the rates that are approximated out of the network
         rate_seen = []
@@ -1678,6 +1848,10 @@ class RateCollection:
                 if sr in rate_seen:
                     continue
                 rate_seen.append(sr)
+
+                highlight = False
+                if highlight_filter_function is not None:
+                    highlight = highlight_filter_function(sr)
 
                 for n in sr.reactants:
                     if n not in node_nuclei:
@@ -1692,9 +1866,9 @@ class RateCollection:
                         if hide_xp and _skip_xp(n, p, sr):
                             continue
 
-                        G.add_edges_from([(n, p)], weight=0, real=0)
+                        G.add_edges_from([(n, p)], weight=0, real=0, highlight=highlight)
 
-        # It seems that networkx broke backwards compatability, and 'zorder' is no longer a valid
+        # It seems that networkx broke backwards compatibility, and 'zorder' is no longer a valid
         # keyword argument. The 'linewidth' argument has also changed to 'linewidths'.
 
         nx.draw_networkx_nodes(G, G.position,      # plot the element at the correct position
@@ -1740,6 +1914,22 @@ class RateCollection:
                                    edgelist=approx_edges, edge_color="0.5",
                                    connectionstyle=connectionstyle,
                                    style="dotted", node_size=node_size, ax=ax)
+
+        # plot invisible rates, rates that are below ydot_cutoff_value
+        invis_edges = [(u, v) for u, v, e in G.edges(data=True) if e["real"] == -1]
+
+        _ = nx.draw_networkx_edges(G, G.position, width=1,
+                                   edgelist=invis_edges, edge_color="gray",
+                                   connectionstyle=connectionstyle,
+                                   style="dashed", node_size=node_size, ax=ax)
+
+        # highlight edges
+        highlight_edges = [(u, v) for u, v, e in G.edges(data=True) if e["highlight"]]
+
+        _ = nx.draw_networkx_edges(G, G.position, width=5,
+                                   edgelist=highlight_edges, edge_color="C0", alpha="0.25",
+                                   connectionstyle=connectionstyle,
+                                   node_size=node_size, ax=ax)
 
         if ydots is not None:
             pc = mpl.collections.PatchCollection(real_edges_lc, cmap=plt.cm.viridis)
@@ -1793,11 +1983,50 @@ class RateCollection:
         if title is not None:
             fig.suptitle(title)
 
-        if outfile is None:
-            plt.show()
-        else:
+        if outfile is not None:
             plt.tight_layout()
             plt.savefig(outfile, dpi=dpi)
+
+        return fig
+
+    def plot_jacobian(self, outfile=None, rho=None, T=None, comp=None,
+                      screen_func=None,
+                      size=(800, 800), dpi=100):
+
+        jac = self.evaluate_jacobian(rho, T, comp, screen_func=screen_func)
+
+        valid_max = np.abs(jac).max()
+
+        # pylint: disable-next=redundant-keyword-arg
+        norm = SymLogNorm(valid_max/1.e10, vmin=-valid_max, vmax=valid_max)
+
+        fig, ax = plt.subplots()
+        fig.set_size_inches(size[0]/dpi, size[1]/dpi)
+
+        ax.set_xticks(np.arange(len(self.unique_nuclei)),
+                      labels=[f"${n.pretty}$" for n in self.unique_nuclei], rotation=90)
+
+        ax.set_yticks(np.arange(len(self.unique_nuclei)),
+                      labels=[f"${n.pretty}$" for n in self.unique_nuclei])
+
+        im = ax.imshow(jac, norm=norm, cmap=plt.cm.bwr)
+
+        ax.set_aspect("equal")
+
+        # Turn spines off and create white grid.
+        #ax.spines[:].set_visible(False)
+
+        ax.set_xticks(np.arange(jac.shape[1]+1)-.5, minor=True)
+        ax.set_yticks(np.arange(jac.shape[0]+1)-.5, minor=True)
+        ax.grid(which="minor", color="w", linestyle='-', linewidth=2)
+        ax.tick_params(which="minor", bottom=False, left=False)
+
+        fig.colorbar(im, ax=ax, shrink=0.75)
+
+        if outfile is not None:
+            fig.savefig(outfile, bbox_inches="tight")
+
+        return fig
 
     def plot_network_chart(self, outfile=None, rho=None, T=None, comp=None,
                            size=(800, 800), dpi=100, force_one_column=False):
@@ -1892,6 +2121,8 @@ class RateCollection:
 
         if outfile is not None:
             fig.savefig(outfile, bbox_inches="tight")
+
+        return fig
 
     @staticmethod
     def _safelog(arr, small):
@@ -2131,12 +2362,11 @@ class RateCollection:
             fig.colorbar(smap, cax=cax, orientation="vertical", ticks=tick_labels,
                          label=cbar_label, format=cbar_format)
 
-        # Show or save
-        if outfile is None:
-            plt.show()
-        else:
+        if outfile is not None:
             plt.tight_layout()
             plt.savefig(outfile, dpi=dpi)
+
+        return fig
 
     def __repr__(self):
         string = ""
@@ -2147,32 +2377,19 @@ class RateCollection:
 
 class Explorer:
     """ interactively explore a rate collection """
-    def __init__(self, rc, comp, size=(800, 600),
-                 ydot_cutoff_value=None, rotated=False,
-                 hide_xalpha=False,
-                 always_show_p=False, always_show_alpha=False,
-                 node_size=1000, node_font_size=13):
+    def __init__(self, rc, comp, **kwargs):
         """ take a RateCollection and a composition """
         self.rc = rc
         self.comp = comp
-        self.size = size
-        self.ydot_cutoff_value = ydot_cutoff_value
-        self.always_show_p = always_show_p
-        self.always_show_alpha = always_show_alpha
-        self.hide_xalpha = hide_xalpha
-        self.rotated = rotated
-        self.node_size = node_size
-        self.node_font_size = node_font_size
+        self.kwargs = kwargs
+
+        # we will override any T and rho passed in
+        kwargs.pop("T", None)
+        kwargs.pop("rho", None)
 
     def _make_plot(self, logrho, logT):
         self.rc.plot(rho=10.0**logrho, T=10.0**logT,
-                     comp=self.comp, size=self.size,
-                     ydot_cutoff_value=self.ydot_cutoff_value,
-                     always_show_p=self.always_show_p,
-                     always_show_alpha=self.always_show_alpha,
-                     rotated=self.rotated,
-                     hide_xalpha=self.hide_xalpha,
-                     node_size=self.node_size, node_font_size=self.node_font_size)
+                     comp=self.comp, **self.kwargs)
 
     def explore(self, logrho=(2, 6, 0.1), logT=(7, 9, 0.1)):
         """Perform interactive exploration of the network structure."""

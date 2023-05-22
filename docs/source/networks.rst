@@ -30,7 +30,7 @@ particular kind of network you are interested in creating.
   e.g. ``mynet.py``, based on the following example scripts:
 
   - For Python networks, `examples/CNO/cno.py <https://github.com/pynucastro/pynucastro/blob/main/examples/CNO/cno.py>`_
-  - For AMReX-Astro Microphysics networks, `examples/urca-23_starkiller/urca.py <https://github.com/pynucastro/pynucastro/blob/main/examples/urca-23_starkiller/urca.py>`_
+  - For AMReX-Astro Microphysics networks, `examples/triple-alpha/triple-alpha-cxx.py <https://github.com/pynucastro/pynucastro/blob/main/examples/triple-alpha/triple-alpha-cxx.py>`_
 
 * Run your python script
 
@@ -50,9 +50,11 @@ right hand side module you generated above.
 AMReX-Astro Microphysics network
 --------------------------------
 
-The `examples/urca-23_starkiller <https://github.com/pynucastro/pynucastro/tree/main/examples/urca-23_starkiller>`_ example builds the right hand side, Jacobian,
-and helper Fortran modules to copy into the ``networks/`` subdirectory
-of the AMReX-Astro Microphysics repository.
+The `examples/triple-alpha/triple-alpha-cxx.py
+<https://github.com/pynucastro/pynucastro/blob/main/examples/triple-alpha/triple-alpha-cxx.py>`_
+example builds the right hand side, Jacobian, and helper C++ modules
+to copy into the ``networks/`` subdirectory of the AMReX-Astro
+Microphysics repository.
 
 No additional customization is required after running the steps for
 all networks above.

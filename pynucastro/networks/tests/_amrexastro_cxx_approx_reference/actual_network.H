@@ -24,23 +24,23 @@ namespace Rates
 
     enum NetworkRates
     {
-        k_he4_mg24__si28 = 1,
-        k_he4_mg24__p_al27 = 2,
-        k_p_al27__si28 = 3,
-        k_si28__he4_mg24 = 4,
-        k_si28__p_al27 = 5,
-        k_p_al27__he4_mg24 = 6,
-        k_he4_si28__s32 = 7,
-        k_he4_si28__p_p31 = 8,
-        k_p_p31__s32 = 9,
-        k_s32__he4_si28 = 10,
-        k_s32__p_p31 = 11,
-        k_p_p31__he4_si28 = 12,
-        k_mg24_he4__si28__approx = 13,
-        k_si28__mg24_he4__approx = 14,
-        k_si28_he4__s32__approx = 15,
-        k_s32__si28_he4__approx = 16,
-        NumRates = k_s32__si28_he4__approx
+        k_he4_mg24_to_si28_removed = 1,
+        k_he4_mg24_to_p_al27_removed = 2,
+        k_p_al27_to_si28_removed = 3,
+        k_si28_to_he4_mg24_removed = 4,
+        k_si28_to_p_al27_removed = 5,
+        k_p_al27_to_he4_mg24_removed = 6,
+        k_he4_si28_to_s32_removed = 7,
+        k_he4_si28_to_p_p31_removed = 8,
+        k_p_p31_to_s32_removed = 9,
+        k_s32_to_he4_si28_removed = 10,
+        k_s32_to_p_p31_removed = 11,
+        k_p_p31_to_he4_si28_removed = 12,
+        k_mg24_he4_to_si28_approx = 13,
+        k_si28_to_mg24_he4_approx = 14,
+        k_si28_he4_to_s32_approx = 15,
+        k_s32_to_si28_he4_approx = 16,
+        NumRates = k_s32_to_si28_he4_approx
     };
 
     // number of reaclib rates
@@ -57,22 +57,22 @@ namespace Rates
 
     static const std::vector<std::string> rate_names = {
         "",   // 0
-        "he4_mg24__si28",  // 1,
-        "he4_mg24__p_al27",  // 2,
-        "p_al27__si28",  // 3,
-        "si28__he4_mg24",  // 4,
-        "si28__p_al27",  // 5,
-        "p_al27__he4_mg24",  // 6,
-        "he4_si28__s32",  // 7,
-        "he4_si28__p_p31",  // 8,
-        "p_p31__s32",  // 9,
-        "s32__he4_si28",  // 10,
-        "s32__p_p31",  // 11,
-        "p_p31__he4_si28",  // 12,
-        "mg24_he4__si28__approx",  // 13,
-        "si28__mg24_he4__approx",  // 14,
-        "si28_he4__s32__approx",  // 15,
-        "s32__si28_he4__approx"  // 16,
+        "he4_mg24_to_si28_removed",  // 1,
+        "he4_mg24_to_p_al27_removed",  // 2,
+        "p_al27_to_si28_removed",  // 3,
+        "si28_to_he4_mg24_removed",  // 4,
+        "si28_to_p_al27_removed",  // 5,
+        "p_al27_to_he4_mg24_removed",  // 6,
+        "he4_si28_to_s32_removed",  // 7,
+        "he4_si28_to_p_p31_removed",  // 8,
+        "p_p31_to_s32_removed",  // 9,
+        "s32_to_he4_si28_removed",  // 10,
+        "s32_to_p_p31_removed",  // 11,
+        "p_p31_to_he4_si28_removed",  // 12,
+        "mg24_he4_to_si28_approx",  // 13,
+        "si28_to_mg24_he4_approx",  // 14,
+        "si28_he4_to_s32_approx",  // 15,
+        "s32_to_si28_he4_approx"  // 16,
     };
 
 }
