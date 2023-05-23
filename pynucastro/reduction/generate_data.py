@@ -4,6 +4,12 @@ from pynucastro import Composition, Nucleus
 import numpy as np
 
 def dataset(network, n=10, permute=True, b_rho=None, b_T=None, b_Z=None):
+    """
+    Generate a dataset with *n* datapoints. Will either be returned as a sequence of tuples,
+    each with order (composition, density, temperature) if *permute* is *True* (default),
+    or the transpose of that if *permute* is *False*. The parameters *b_rho*, *b_T*, and
+    *b_Z* are tuples giving the bounds on density, temperature, and metallicity respectively.
+    """
     
     if isinstance(n, int):
         n = np.ones(3, dtype=np.int32) * n

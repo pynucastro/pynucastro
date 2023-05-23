@@ -9,6 +9,7 @@ from reduction_utils import mpi_importer
 MPI = mpi_importer()
 
 def _wrap_conds(conds):
+    """Return [conds] if conds has 1 dimension, and give back conds otherwise."""
     
     try:
         conds[0]
@@ -25,6 +26,7 @@ NetInfo = namedtuple("NetInfo", "y ydot z a ebind m")
 def get_net_info(net, comp, rho, T):
 
     y_dict = comp.get_molar()
+    # Can alternatively use the NumPy-based method (evaluate_ydots_arr)
     ydots_dict = net.evaluate_ydots(rho, T, comp)
 
     bintable = BindingTable()
@@ -54,37 +56,8 @@ def get_net_info(net, comp, rho, T):
 
     return NetInfo(y, ydot, z, a, ebind, m)
 
-def get_net_info_arr(net, rho, T, comp, s_p, s_c):
-
-    y_dict = comp.get_molar()
-    ydot = net.evaluate_ydots_arr(rho, T, comp, s_p, s_c)
-
-    bintable = BindingTable()
-
-    y = np.zeros(len(net.unique_nuclei), dtype=np.float64)
-    z = np.zeros(len(net.unique_nuclei), dtype=np.float64)
-    a = np.zeros(len(net.unique_nuclei), dtype=np.float64)
-    ebind = np.zeros(len(net.unique_nuclei), dtype=np.float64)
-    m = np.zeros(len(net.unique_nuclei), dtype=np.float64)
-
-    mass_neutron = 1.67492721184e-24
-    mass_proton = 1.67262163783e-24
-    c_light = 2.99792458e10
-
-    for i, n in enumerate(net.unique_nuclei):
-
-        y[i] = y_dict[n]
-        z[i] = n.Z
-        a[i] = n.A
-        try:
-            ebind[i] = bintable.get_binding_energy(n.N, n.Z)
-        except KeyError:
-            ebind[i] = 0.0
-        m[i] = mass_proton * n.Z + mass_neutron * n.N - ebind[i] / c_light**2
-
-    return NetInfo(y, ydot, z, a, ebind, m)
-
 def enuc_dot(net_info):
+    """Calculate the nuclear energy generation rate."""
 
     avo = 6.0221417930e23
     c_light = 2.99792458e10
@@ -92,6 +65,7 @@ def enuc_dot(net_info):
     return -np.sum(net_info.ydot * net_info.m) * avo * c_light**2
 
 def ye_dot(net_info):
+    """Calculate the time rate of change of electron fraction."""
 
     y, ydot, z, a, _, _ = net_info
 
@@ -99,11 +73,13 @@ def ye_dot(net_info):
     return np.sum(ydot * z) / norm_fac - np.sum(y * z) / norm_fac**2 * np.sum(ydot * a)
 
 def abar_dot(net_info):
+    """Calculate the time rate of change of mean molecular weight."""
 
     abar_inv = np.sum(net_info.y)
     return -1 / abar_inv**2 * np.sum(net_info.ydot)
     
 def map_comp(comp, net):
+    """Create new composition object with nuclei in net, and copy their mass fractions over."""
     
     comp_new = Composition(net.unique_nuclei)
 
@@ -113,10 +89,12 @@ def map_comp(comp, net):
     return comp_new
 
 def rel_err(x, x0):
+    """Compute the relative error between two NumPy arrays."""
 
     return np.abs((x - x0) / x0)
     
 def get_errfunc_enuc(net_old, conds):
+    """Function for computing error in nuclear energy generation."""
         
     enucdot_list = []
     
@@ -139,6 +117,7 @@ def get_errfunc_enuc(net_old, conds):
     return erf
     
 def add_dummy_nucleus(red_net, conds):
+    """Add a fake nucleus to the inert nucleus list of a net."""
     
     conds = _wrap_conds(conds)
     comps = (conds_i[2] for conds_i in conds)

@@ -7,6 +7,10 @@ from pynucastro.nucdata import Nucleus
 from pynucastro.networks import PythonNetwork
 
 def load_network(endpoint=Nucleus('te108'), library='rp-process-lib'):
+    """
+    Load a network from a library, filtering the library so only nuclei with Z and A less than
+    the endpoint's Z and A are included.
+    """
     
     def ff(rate):
         
