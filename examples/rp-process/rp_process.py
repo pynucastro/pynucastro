@@ -4,8 +4,8 @@ import sys
 import argparse
 from collections import deque
 
-from pynucastro.rates import Library, Nucleus, RateFilter
-from pynucastro.nucdata import BindingTable
+from pynucastro.rates import Library, RateFilter
+from pynucastro.nucdata import Nucleus, BindingTable
 from pynucastro.networks import PythonNetwork, Composition
 
 #################################################
@@ -19,12 +19,15 @@ endpoint_help = """The nucleus at which the network terminates. Should be provid
 library_help = """The library file to draw the rates from. This is supplied directly to the Library
         constructor."""
 write_network_help = """The name of the Python file to write the network to. No network will be
-written out if this is not supplied."""
+        written out if this is not supplied."""
+write_lib_help = """The name of the file in the library directory to write the constructed library
+        to. The library will not be written out if this is not supplied."""
 
 parser = argparse.ArgumentParser(description=description)
 parser.add_argument('endpoint', help=endpoint_help)
-parser.add_argument('-l', '--library', default="reaclib-2017-10-20", help=library_help)
+parser.add_argument('-l', '--library', default='reaclib_default2_20220329', help=library_help)
 parser.add_argument('-w', '--write_network', default='', help=write_network_help)
+parser.add_argument('--write_lib', default='', help=write_lib_help)
 args = parser.parse_args(sys.argv[1:])
 
 endpoint = Nucleus(args.endpoint)
@@ -74,11 +77,7 @@ beta_plus = RateFilter(filter_function=is_beta_plus)
 red_lib = full_lib.filter((p_gamma, alpha_gamma, alpha_p,
         gamma_p, gamma_alpha, p_alpha, beta_plus))
         
-# Make BindingTable a dict for easy containment checking
-# Perhaps we could modify the BindingTable class to use one?
-# That can be done without changing the interface
 bintable = BindingTable()
-nuclides = {(nuc.n, nuc.z): nuc for nuc in bintable.nuclides}
 
 def flatten(iterable):
     """ Take iterable of iterables, and flatten it to one dimension. """
@@ -115,7 +114,7 @@ def product_limiter():
             (Zlo <= p.Z <= Zhi and
             Alo <= p.A <= Ahi and
             Rlo <= p.A / p.Z <= Rhi and
-            (p.N, p.Z) in nuclides) or
+            (p.N, p.Z) in bintable.energies) or
             (p.Z, p.A) == (1, 1) or
             (p.Z, p.A) == (2, 4)
             for p in r.products
@@ -159,6 +158,9 @@ print()
 print(f"Number of Species: {len(encountered)}")
 print(f"Number of Rates: {len(rp_net.rates)}")
 print()
+
+if args.write_lib:
+    final_lib.write_to_file(args.write_lib, True)
 
 if args.write_network:
     print("Writing network...")
