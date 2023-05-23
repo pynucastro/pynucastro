@@ -54,6 +54,13 @@ _pynucastro_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 _pynucastro_rates_dir = os.path.join(_pynucastro_dir, 'library')
 _pynucastro_tabular_dir = os.path.join(_pynucastro_rates_dir, 'tabular')
 
+def get_rates_dir():
+    
+    return _pynucastro_rates_dir
+    
+def get_tabular_dir():
+    
+    return _pynucastro_tabular_dir
 
 class RateFileError(Exception):
     """An error occurred while trying to read a Rate from a file."""

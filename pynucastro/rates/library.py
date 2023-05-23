@@ -6,7 +6,7 @@ import re
 from pynucastro.nucdata import Nucleus, UnsupportedNucleus
 from pynucastro.rates.rate import (DerivedRate, Rate, RateFileError,
                                    ReacLibRate, TabularRate, _find_rate_file,
-                                   load_rate)
+                                   load_rate, get_rates_dir)
 
 
 def list_known_rates():
@@ -142,7 +142,7 @@ class Library:
         """
 
         if prepend_rates_dir:
-            filename = os.path.join(self.pynucastro_rates_dir, filename)
+            filename = os.path.join(get_rates_dir(), filename)
 
         with open(filename, 'w') as f:
             for rate in self.get_rates():
