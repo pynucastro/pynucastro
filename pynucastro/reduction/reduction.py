@@ -60,7 +60,6 @@ def get_net_info_arr(net, rho, T, comp, s_p, s_c):
     ydot = net.evaluate_ydots_arr(rho, T, comp, s_p, s_c)
 
     bintable = BindingTable()
-    bintable = {(nuc.n, nuc.z): nuc for nuc in bintable.nuclides}
 
     y = np.zeros(len(net.unique_nuclei), dtype=np.float64)
     z = np.zeros(len(net.unique_nuclei), dtype=np.float64)
@@ -78,7 +77,7 @@ def get_net_info_arr(net, rho, T, comp, s_p, s_c):
         z[i] = n.Z
         a[i] = n.A
         try:
-            ebind[i] = bintable[n.N, n.Z].nucbind
+            ebind[i] = bintable.get_binding_energy(n.N, n.Z)
         except KeyError:
             ebind[i] = 0.0
         m[i] = mass_proton * n.Z + mass_neutron * n.N - ebind[i] / c_light**2
@@ -273,7 +272,7 @@ if __name__ == "__main__":
     
     if args.use_mpi and MPI.COMM_WORLD.Get_rank() == 0:
         print(f"Commencing reduction with {MPI.COMM_WORLD.Get_size()} processes.")
-    else:
+    elif not args.use_mpi:
         print("Commencing reduction without MPI.")
     print()
     

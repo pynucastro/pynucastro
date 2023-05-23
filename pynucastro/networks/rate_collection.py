@@ -25,7 +25,8 @@ from scipy.optimize import fsolve
 # Import Rate
 from pynucastro.nucdata import Nucleus, PeriodicTable
 from pynucastro.rates import (ApproximateRate, DerivedRate, Library, Rate,
-                              RateFileError, RatePair, TabularRate, load_rate)
+                              RateFileError, RatePair, TabularRate, load_rate,
+                              Tfactors)
 from pynucastro.rates.library import _rate_name_to_nuc
 from pynucastro.screening import make_plasma_state, make_screen_factors
 from pynucastro.screening.screen import NseState
