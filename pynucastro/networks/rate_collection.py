@@ -147,6 +147,16 @@ class Composition:
         xvec = np.array(xvec)
         electron_frac = np.sum(zvec*xvec/avec)/np.sum(xvec)
         return electron_frac
+        
+    def eval_abar(self):
+        """ return the mean molecular weight """
+
+        avec = np.zeros(len(self.X), dtype=np.int32)
+        xvec = np.zeros(len(self.X), dtype=np.float64)
+        for i, n in enumerate(self.X):
+            avec[i] = n.A
+            xvec[i] = self.X[n]
+        return 1. / np.sum(xvec / avec)
 
     def __str__(self):
         ostr = ""
