@@ -165,7 +165,7 @@ class Composition:
         return ostr
 
     def plot(self, trace_threshold=0.1, hard_limit=None, size=(9, 5)):
-        """ Make a pie chart of Composition. group trace nuceli together and explode into bar chart
+        """ Make a pie chart of Composition. group trace nuclei together and explode into bar chart
 
         parameters
         ----------
