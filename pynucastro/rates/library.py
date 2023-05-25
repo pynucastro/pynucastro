@@ -6,7 +6,7 @@ import re
 from pynucastro.nucdata import Nucleus, UnsupportedNucleus
 from pynucastro.rates.rate import (DerivedRate, Rate, RateFileError,
                                    ReacLibRate, TabularRate, _find_rate_file,
-                                   load_rate)
+                                   get_rates_dir, load_rate)
 
 
 def list_known_rates():
@@ -204,6 +204,20 @@ class Library:
                     else:
                         self._rates[rid] = r
 
+    def write_to_file(self, filename, prepend_rates_dir=False):
+        """
+        Write the library out to a file of the given name in Reaclib format. Will be
+        automatically written to the pynucastro rate file directory if True is passed
+        in as the second argument.
+        """
+
+        if prepend_rates_dir:
+            filename = os.path.join(get_rates_dir(), filename)
+
+        with open(filename, 'w') as f:
+            for rate in self.get_rates():
+                rate.write_to_file(f)
+
     def __repr__(self):
         """ Return a string containing the rates IDs in this library. """
         rstrings = []
@@ -333,13 +347,15 @@ class Library:
         else:
             raise TypeError("invalid Rate object")
 
-    def linking_nuclei(self, nuclist, with_reverse=True):
+    def linking_nuclei(self, nuclist, with_reverse=True, print_warning=True):
         """
         Return a Library object containing the rates linking the
         nuclei provided in the list of Nucleus objects or nucleus abbreviations 'nuclist'.
 
         If with_reverse is True, then include reverse rates. Otherwise
         include only forward rates.
+
+        If print_warning is True, then print out a warning if one of the input nuclei is not linked.
         """
 
         if isinstance(nuclist, (Nucleus, str)):
@@ -374,10 +390,11 @@ class Library:
         new_lib = Library(rates=filtered_rates)
 
         # print out a warning if one of the input nuclei is not linked
-        lib_nuclei = new_lib.get_nuclei()
-        for nuc in nucleus_set:
-            if nuc not in lib_nuclei:
-                print(f"warning {nuc} was not able to be linked")
+        if print_warning:
+            lib_nuclei = new_lib.get_nuclei()
+            for nuc in nucleus_set:
+                if nuc not in lib_nuclei:
+                    print(f"warning: {nuc} was not able to be linked")
 
         return new_lib
 
