@@ -147,7 +147,7 @@ class Composition:
         xvec = np.array(xvec)
         electron_frac = np.sum(zvec*xvec/avec)/np.sum(xvec)
         return electron_frac
-        
+
     def eval_abar(self):
         """ return the mean molecular weight """
 
@@ -589,7 +589,7 @@ class RateCollection:
     def get_nuclei(self):
         """ get all the nuclei that are part of the network """
         return self.unique_nuclei
-        
+
     def linking_nuclei(self, nuclei, return_type=None, **kwargs):
         """
         Return a new RateCollection/Network object containing only rates linking the
@@ -599,7 +599,7 @@ class RateCollection:
         not take a 'libraries' keyword. See method of same name in Library class for valid
         keyword arguments.
         """
-        
+
         if return_type is None:
             return_type = self.__class__
         return return_type(libraries=self.library.linking_nuclei(nuclei, **kwargs))

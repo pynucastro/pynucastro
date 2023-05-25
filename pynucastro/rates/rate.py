@@ -54,13 +54,14 @@ _pynucastro_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 _pynucastro_rates_dir = os.path.join(_pynucastro_dir, 'library')
 _pynucastro_tabular_dir = os.path.join(_pynucastro_rates_dir, 'tabular')
 
+
 def get_rates_dir():
-    
     return _pynucastro_rates_dir
-    
+
+
 def get_tabular_dir():
-    
     return _pynucastro_tabular_dir
+
 
 class RateFileError(Exception):
     """An error occurred while trying to read a Rate from a file."""
@@ -907,7 +908,7 @@ class ReacLibRate(Rate):
         x = len(self.sets) == len(other.sets)
         if not x:
             return x
-        
+
         for si in self.sets:
             scomp = False
             for sj in other.sets:
@@ -1153,9 +1154,11 @@ class ReacLibRate(Rate):
         """ Given a file object, write rate data to the file. """
 
         if self.original_source is None:
-            raise NotImplementedError(f"Original source is not stored for this rate ({self})."
-                    + " At present, we cannot reconstruct the rate representation without"
-                    + " storing the original source.")
+            raise NotImplementedError(
+                f"Original source is not stored for this rate ({self})."
+                " At present, we cannot reconstruct the rate representation without"
+                " storing the original source."
+            )
 
         print(self.original_source, file=f)
 
