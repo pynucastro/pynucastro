@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.networks.rate_collection &mdash; pynucastro 2.0.3.post20+gb12fa49a documentation</title>
+  <title>pynucastro.networks.rate_collection &mdash; pynucastro 2.0.3.post21+g1e8d90f0 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
@@ -260,6 +260,16 @@
         <span class="n">electron_frac</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">zvec</span><span class="o">*</span><span class="n">xvec</span><span class="o">/</span><span class="n">avec</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">xvec</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">electron_frac</span></div>
 
+<div class="viewcode-block" id="Composition.eval_abar"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.Composition.eval_abar">[docs]</a>    <span class="k">def</span> <span class="nf">eval_abar</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; return the mean molecular weight &quot;&quot;&quot;</span>
+
+        <span class="n">avec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+        <span class="n">xvec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">):</span>
+            <span class="n">avec</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">n</span><span class="o">.</span><span class="n">A</span>
+            <span class="n">xvec</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">n</span><span class="p">]</span>
+        <span class="k">return</span> <span class="mf">1.</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">xvec</span> <span class="o">/</span> <span class="n">avec</span><span class="p">)</span></div>
+
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">ostr</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">:</span>
@@ -267,7 +277,7 @@
         <span class="k">return</span> <span class="n">ostr</span>
 
 <div class="viewcode-block" id="Composition.plot"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.Composition.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trace_threshold</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">hard_limit</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">5</span><span class="p">)):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; Make a pie chart of Composition. group trace nuceli together and explode into bar chart</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Make a pie chart of Composition. group trace nuclei together and explode into bar chart</span>
 
 <span class="sd">        parameters</span>
 <span class="sd">        ----------</span>
@@ -691,6 +701,20 @@
 <div class="viewcode-block" id="RateCollection.get_nuclei"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.get_nuclei">[docs]</a>    <span class="k">def</span> <span class="nf">get_nuclei</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; get all the nuclei that are part of the network &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span></div>
+
+<div class="viewcode-block" id="RateCollection.linking_nuclei"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.linking_nuclei">[docs]</a>    <span class="k">def</span> <span class="nf">linking_nuclei</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nuclei</span><span class="p">,</span> <span class="n">return_type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return a new RateCollection/Network object containing only rates linking the</span>
+<span class="sd">        given nuclei (parameter *nuclei*). Nuclei can be provided as an iterable of Nucleus</span>
+<span class="sd">        objects or a list of abbreviations. The *return_type* parameter allows the caller to</span>
+<span class="sd">        specify a different constructor (e.g. superclass constructor) if the current class does</span>
+<span class="sd">        not take a &#39;libraries&#39; keyword. See method of same name in Library class for valid</span>
+<span class="sd">        keyword arguments.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">return_type</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">return_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span>
+        <span class="k">return</span> <span class="n">return_type</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">library</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">(</span><span class="n">nuclei</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span></div>
 
 <div class="viewcode-block" id="RateCollection.get_rates"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.get_rates">[docs]</a>    <span class="k">def</span> <span class="nf">get_rates</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; get a list of the reaction rates in this network&quot;&quot;&quot;</span>

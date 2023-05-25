@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.rates.library &mdash; pynucastro 2.0.3.post20+gb12fa49a documentation</title>
+  <title>pynucastro.rates.library &mdash; pynucastro 2.0.3.post21+g1e8d90f0 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
@@ -118,7 +118,7 @@
 <span class="kn">from</span> <span class="nn">pynucastro.nucdata</span> <span class="kn">import</span> <span class="n">Nucleus</span><span class="p">,</span> <span class="n">UnsupportedNucleus</span>
 <span class="kn">from</span> <span class="nn">pynucastro.rates.rate</span> <span class="kn">import</span> <span class="p">(</span><span class="n">DerivedRate</span><span class="p">,</span> <span class="n">Rate</span><span class="p">,</span> <span class="n">RateFileError</span><span class="p">,</span>
                                    <span class="n">ReacLibRate</span><span class="p">,</span> <span class="n">TabularRate</span><span class="p">,</span> <span class="n">_find_rate_file</span><span class="p">,</span>
-                                   <span class="n">load_rate</span><span class="p">)</span>
+                                   <span class="n">get_rates_dir</span><span class="p">,</span> <span class="n">load_rate</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="list_known_rates"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.library.list_known_rates">[docs]</a><span class="k">def</span> <span class="nf">list_known_rates</span><span class="p">():</span>
@@ -316,6 +316,20 @@
                     <span class="k">else</span><span class="p">:</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">_rates</span><span class="p">[</span><span class="n">rid</span><span class="p">]</span> <span class="o">=</span> <span class="n">r</span>
 
+<div class="viewcode-block" id="Library.write_to_file"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.library.Library.write_to_file">[docs]</a>    <span class="k">def</span> <span class="nf">write_to_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">prepend_rates_dir</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Write the library out to a file of the given name in Reaclib format. Will be</span>
+<span class="sd">        automatically written to the pynucastro rate file directory if True is passed</span>
+<span class="sd">        in as the second argument.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">prepend_rates_dir</span><span class="p">:</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">get_rates_dir</span><span class="p">(),</span> <span class="n">filename</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">rate</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_rates</span><span class="p">():</span>
+                <span class="n">rate</span><span class="o">.</span><span class="n">write_to_file</span><span class="p">(</span><span class="n">f</span><span class="p">)</span></div>
+
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; Return a string containing the rates IDs in this library. &quot;&quot;&quot;</span>
         <span class="n">rstrings</span> <span class="o">=</span> <span class="p">[]</span>
@@ -445,13 +459,15 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;invalid Rate object&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Library.linking_nuclei"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.library.Library.linking_nuclei">[docs]</a>    <span class="k">def</span> <span class="nf">linking_nuclei</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nuclist</span><span class="p">,</span> <span class="n">with_reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="Library.linking_nuclei"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.library.Library.linking_nuclei">[docs]</a>    <span class="k">def</span> <span class="nf">linking_nuclei</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nuclist</span><span class="p">,</span> <span class="n">with_reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">print_warning</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return a Library object containing the rates linking the</span>
 <span class="sd">        nuclei provided in the list of Nucleus objects or nucleus abbreviations &#39;nuclist&#39;.</span>
 
 <span class="sd">        If with_reverse is True, then include reverse rates. Otherwise</span>
 <span class="sd">        include only forward rates.</span>
+
+<span class="sd">        If print_warning is True, then print out a warning if one of the input nuclei is not linked.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">nuclist</span><span class="p">,</span> <span class="p">(</span><span class="n">Nucleus</span><span class="p">,</span> <span class="nb">str</span><span class="p">)):</span>
@@ -486,10 +502,11 @@
         <span class="n">new_lib</span> <span class="o">=</span> <span class="n">Library</span><span class="p">(</span><span class="n">rates</span><span class="o">=</span><span class="n">filtered_rates</span><span class="p">)</span>
 
         <span class="c1"># print out a warning if one of the input nuclei is not linked</span>
-        <span class="n">lib_nuclei</span> <span class="o">=</span> <span class="n">new_lib</span><span class="o">.</span><span class="n">get_nuclei</span><span class="p">()</span>
-        <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="n">nucleus_set</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">nuc</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">lib_nuclei</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;warning </span><span class="si">{</span><span class="n">nuc</span><span class="si">}</span><span class="s2"> was not able to be linked&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">print_warning</span><span class="p">:</span>
+            <span class="n">lib_nuclei</span> <span class="o">=</span> <span class="n">new_lib</span><span class="o">.</span><span class="n">get_nuclei</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="n">nucleus_set</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">nuc</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">lib_nuclei</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;warning: </span><span class="si">{</span><span class="n">nuc</span><span class="si">}</span><span class="s2"> was not able to be linked&quot;</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">new_lib</span></div>
 

@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.networks package &mdash; pynucastro 2.0.3.post20+gb12fa49a documentation</title>
+  <title>pynucastro.networks package &mdash; pynucastro 2.0.3.post21+g1e8d90f0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
@@ -245,6 +245,12 @@ rates that together make up a network.</p>
 <p>a composition holds the mass fractions of the nuclei in a network
 – useful for evaluating the rates</p>
 <dl class="py method">
+<dt class="sig sig-object py" id="pynucastro.networks.rate_collection.Composition.eval_abar">
+<span class="sig-name descname"><span class="pre">eval_abar</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/rate_collection.html#Composition.eval_abar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.rate_collection.Composition.eval_abar" title="Permalink to this definition"></a></dt>
+<dd><p>return the mean molecular weight</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.networks.rate_collection.Composition.eval_ye">
 <span class="sig-name descname"><span class="pre">eval_ye</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/rate_collection.html#Composition.eval_ye"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.rate_collection.Composition.eval_ye" title="Permalink to this definition"></a></dt>
 <dd><p>return the electron fraction</p>
@@ -265,7 +271,7 @@ rates that together make up a network.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.networks.rate_collection.Composition.plot">
 <span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trace_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hard_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(9,</span> <span class="pre">5)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/rate_collection.html#Composition.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.rate_collection.Composition.plot" title="Permalink to this definition"></a></dt>
-<dd><p>Make a pie chart of Composition. group trace nuceli together and explode into bar chart</p>
+<dd><p>Make a pie chart of Composition. group trace nuclei together and explode into bar chart</p>
 <section id="parameters">
 <h3>parameters<a class="headerlink" href="#parameters" title="Permalink to this heading"></a></h3>
 <p>trace_threshold : the threshold to consider a component to be trace.</p>
@@ -513,6 +519,17 @@ by default.</p></li>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="pynucastro.networks.rate_collection.RateCollection.linking_nuclei">
+<span class="sig-name descname"><span class="pre">linking_nuclei</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nuclei</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/rate_collection.html#RateCollection.linking_nuclei"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.rate_collection.RateCollection.linking_nuclei" title="Permalink to this definition"></a></dt>
+<dd><p>Return a new RateCollection/Network object containing only rates linking the
+given nuclei (parameter <em>nuclei</em>). Nuclei can be provided as an iterable of Nucleus
+objects or a list of abbreviations. The <em>return_type</em> parameter allows the caller to
+specify a different constructor (e.g. superclass constructor) if the current class does
+not take a ‘libraries’ keyword. See method of same name in Library class for valid
+keyword arguments.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.networks.rate_collection.RateCollection.make_ap_pg_approx">
 <span class="sig-name descname"><span class="pre">make_ap_pg_approx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">intermediate_nuclei</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/rate_collection.html#RateCollection.make_ap_pg_approx"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.rate_collection.RateCollection.make_ap_pg_approx" title="Permalink to this definition"></a></dt>
 <dd><p>combine the rates A(a,g)B and A(a,p)X(p,g)B (and the reverse) into a single
@@ -585,7 +602,7 @@ object and returns true or false if it is to be shown as an edge.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pynucastro.networks.rate_collection.RateCollection.pynucastro_dir">
-<span class="sig-name descname"><span class="pre">pynucastro_dir</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/pynucastro-2.0.3.post20+gb12fa49a-py3.10.egg/pynucastro'</span></em><a class="headerlink" href="#pynucastro.networks.rate_collection.RateCollection.pynucastro_dir" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">pynucastro_dir</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/pynucastro-2.0.3.post21+g1e8d90f0-py3.10.egg/pynucastro'</span></em><a class="headerlink" href="#pynucastro.networks.rate_collection.RateCollection.pynucastro_dir" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">

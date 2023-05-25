@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.rates.rate &mdash; pynucastro 2.0.3.post20+gb12fa49a documentation</title>
+  <title>pynucastro.rates.rate &mdash; pynucastro 2.0.3.post21+g1e8d90f0 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
@@ -165,6 +165,14 @@
 <span class="n">_pynucastro_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)))</span>
 <span class="n">_pynucastro_rates_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_pynucastro_dir</span><span class="p">,</span> <span class="s1">&#39;library&#39;</span><span class="p">)</span>
 <span class="n">_pynucastro_tabular_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_pynucastro_rates_dir</span><span class="p">,</span> <span class="s1">&#39;tabular&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="get_rates_dir"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.get_rates_dir">[docs]</a><span class="k">def</span> <span class="nf">get_rates_dir</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">_pynucastro_rates_dir</span></div>
+
+
+<div class="viewcode-block" id="get_tabular_dir"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.get_tabular_dir">[docs]</a><span class="k">def</span> <span class="nf">get_tabular_dir</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">_pynucastro_tabular_dir</span></div>
 
 
 <div class="viewcode-block" id="RateFileError"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.RateFileError">[docs]</a><span class="k">class</span> <span class="nc">RateFileError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
@@ -1005,12 +1013,13 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">ReacLibRate</span><span class="p">):</span>
             <span class="k">return</span> <span class="kc">False</span>
 
-        <span class="n">x</span> <span class="o">=</span> <span class="kc">True</span>
-
-        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">chapter</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">chapter</span><span class="p">)</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">products</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">products</span><span class="p">)</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="ow">and</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sets</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">sets</span><span class="p">))</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">chapter</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">chapter</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">products</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">products</span><span class="p">)</span> <span class="ow">and</span> \
+                <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">x</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">x</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sets</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">sets</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">x</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">x</span>
 
         <span class="k">for</span> <span class="n">si</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sets</span><span class="p">:</span>
             <span class="n">scomp</span> <span class="o">=</span> <span class="kc">False</span>
@@ -1252,6 +1261,18 @@
             <span class="n">a</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">a</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">e</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">]</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">sets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">SingleSet</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">labelprops</span><span class="o">=</span><span class="n">labelprops</span><span class="p">))</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_set_label_properties</span><span class="p">(</span><span class="n">labelprops</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ReacLibRate.write_to_file"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.ReacLibRate.write_to_file">[docs]</a>    <span class="k">def</span> <span class="nf">write_to_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Given a file object, write rate data to the file. &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">original_source</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Original source is not stored for this rate (</span><span class="si">{</span><span class="bp">self</span><span class="si">}</span><span class="s2">).&quot;</span>
+                <span class="s2">&quot; At present, we cannot reconstruct the rate representation without&quot;</span>
+                <span class="s2">&quot; storing the original source.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">original_source</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">f</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="ReacLibRate.get_rate_id"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.ReacLibRate.get_rate_id">[docs]</a>    <span class="k">def</span> <span class="nf">get_rate_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; Get an identifying string for this rate.</span>
