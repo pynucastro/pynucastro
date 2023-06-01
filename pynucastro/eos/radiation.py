@@ -7,7 +7,7 @@ from pynucastro.nucdata.nucleus import Nucleus
 
 class Radiation():
 
-    def __init(self):
+    def __init__(self):
         pass
 
     def update(self, state):
