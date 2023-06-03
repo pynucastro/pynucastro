@@ -129,7 +129,7 @@ we can compute the reverse rate :math:`\langle \sigma v \rangle_{CD}` in terms o
 The Role of Partition Functions
 -------------------------------
 
-Until now, we have not discussed the role of :math:`g`, which encompasses the number of spin states that a particle may adopt. In reactions :math:`i(j,o)m`  the target :math:`i` and residual nucleus :math:`m` contributes significantly more in the calculation of the rates than the incident and outgoing particles due to their complexity and the number of quantum levels they may assume. Therefore we may consider :math:`\langle \sigma v \rangle_{ij} \rightarrow \langle \sigma v \rangle_i`  and  :math:`\langle \sigma v \rangle_{om} \rightarrow \langle \sigma v \rangle_m`, which symbolize the nucleous :math:`i`, or :math:`m`, and all the remaining particles in their channels. 
+Until now, we have not discussed the role of :math:`g`, which encompasses the number of spin states that a particle may adopt. In reactions :math:`i(j,o)m`  the target :math:`i` and residual nucleus :math:`m` contributes significantly more in the calculation of the rates than the incident and outgoing particles due to their complexity and the number of quantum levels they may assume. Therefore we may consider :math:`\langle \sigma v \rangle_{ij} \rightarrow \langle \sigma v \rangle_i`  and  :math:`\langle \sigma v \rangle_{om} \rightarrow \langle \sigma v \rangle_m`, which symbolize the nucleus :math:`i`, or :math:`m`, and all the remaining particles in their channels. 
 
 Using this notation, capture reactions rates of the type :math:`(p,\gamma)`, :math:`(n,\gamma)`, :math:`(\alpha,\gamma)`, and their reverse photodisintegration decay rates, are then related by:
 

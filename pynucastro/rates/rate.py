@@ -56,6 +56,14 @@ _pynucastro_tabular_dir = os.path.join(_pynucastro_rates_dir, 'tabular')
 _pynucastro_tabular_suzuki_dir = os.path.join(_pynucastro_tabular_dir, 'suzuki')
 _pynucastro_tabular_laganke_dir = os.path.join(_pynucastro_tabular_dir, 'laganke')
 
+def get_rates_dir():
+    return _pynucastro_rates_dir
+
+
+def get_tabular_dir():
+    return _pynucastro_tabular_dir
+
+
 class RateFileError(Exception):
     """An error occurred while trying to read a Rate from a file."""
 
@@ -576,6 +584,12 @@ class Rate:
         else:
             self.symmetric_screen = self.ion_screen
 
+    def cname(self):
+        """a C++-safe version of the rate name"""
+        # replace the "__" separating reactants and products with "_to_"
+        # and convert all other "__" to single "_"
+        return self.fname.replace("__", "_to_", 1).replace("__", "_")
+
     def get_rate_id(self):
         """ Get an identifying string for this rate."""
         return f'{self.rid} <{self.label.strip()}>'
@@ -656,7 +670,7 @@ class Rate:
         in a reaction network corresponding to this rate differentiated
         with respect to y_i
 
-        y_i is an objecs of the class ``Nucleus``.
+        y_i is an object of the class ``Nucleus``.
         """
         if y_i not in self.reactants:
             return ""
@@ -896,12 +910,13 @@ class ReacLibRate(Rate):
         if not isinstance(other, ReacLibRate):
             return False
 
-        x = True
-
-        x = x and (self.chapter == other.chapter)
-        x = x and (self.reactants == other.reactants)
-        x = x and (self.products == other.products)
-        x = x and (len(self.sets) == len(other.sets))
+        x = (self.chapter == other.chapter) and (self.products == other.products) and \
+                (self.reactants == other.reactants)
+        if not x:
+            return x
+        x = len(self.sets) == len(other.sets)
+        if not x:
+            return x
 
         for si in self.sets:
             scomp = False
@@ -1144,6 +1159,18 @@ class ReacLibRate(Rate):
             self.sets.append(SingleSet(a, labelprops=labelprops))
             self._set_label_properties(labelprops)
 
+    def write_to_file(self, f):
+        """ Given a file object, write rate data to the file. """
+
+        if self.original_source is None:
+            raise NotImplementedError(
+                f"Original source is not stored for this rate ({self})."
+                " At present, we cannot reconstruct the rate representation without"
+                " storing the original source."
+            )
+
+        print(self.original_source, file=f)
+
     def get_rate_id(self):
         """ Get an identifying string for this rate.
         Don't include resonance state since we combine resonant and
@@ -1192,7 +1219,7 @@ class ReacLibRate(Rate):
         fstring = ""
         fstring += "template <int do_T_derivatives>\n"
         fstring += f"{specifiers}\n"
-        fstring += f"void rate_{self.fname}(const tf_t& tfactors, {dtype}& rate, {dtype}& drate_dT) {{\n\n"
+        fstring += f"void rate_{self.cname()}(const tf_t& tfactors, {dtype}& rate, {dtype}& drate_dT) {{\n\n"
         fstring += f"    // {self.rid}\n\n"
         fstring += "    rate = 0.0;\n"
         fstring += "    drate_dT = 0.0;\n\n"
@@ -1998,42 +2025,42 @@ class ApproximateRate(ReacLibRate):
         fstring = ""
         fstring = "template <typename T>\n"
         fstring += f"{specifiers}\n"
-        fstring += f"void rate_{self.fname}(const T& rate_eval, {dtype}& rate, {dtype}& drate_dT) {{\n\n"
+        fstring += f"void rate_{self.cname()}(const T& rate_eval, {dtype}& rate, {dtype}& drate_dT) {{\n\n"
 
         if not self.is_reverse:
 
             # first we need to get all of the rates that make this up
-            fstring += f"    {dtype} r_ag = rate_eval.screened_rates(k_{self.primary_rate.fname});\n"
-            fstring += f"    {dtype} r_ap = rate_eval.screened_rates(k_{self.secondary_rates[0].fname});\n"
-            fstring += f"    {dtype} r_pg = rate_eval.screened_rates(k_{self.secondary_rates[1].fname});\n"
-            fstring += f"    {dtype} r_pa = rate_eval.screened_rates(k_{self.secondary_reverse[1].fname});\n"
+            fstring += f"    {dtype} r_ag = rate_eval.screened_rates(k_{self.primary_rate.cname()});\n"
+            fstring += f"    {dtype} r_ap = rate_eval.screened_rates(k_{self.secondary_rates[0].cname()});\n"
+            fstring += f"    {dtype} r_pg = rate_eval.screened_rates(k_{self.secondary_rates[1].cname()});\n"
+            fstring += f"    {dtype} r_pa = rate_eval.screened_rates(k_{self.secondary_reverse[1].cname()});\n"
 
             # now the approximation
             fstring += f"    {dtype} dd = 1.0_rt / (r_pg + r_pa);\n"
             fstring += "    rate = r_ag + r_ap * r_pg * dd;\n"
             fstring += "    if constexpr (std::is_same<T, rate_derivs_t>::value) {\n"
-            fstring += f"        {dtype} drdT_ag = rate_eval.dscreened_rates_dT(k_{self.primary_rate.fname});\n"
-            fstring += f"        {dtype} drdT_ap = rate_eval.dscreened_rates_dT(k_{self.secondary_rates[0].fname});\n"
-            fstring += f"        {dtype} drdT_pg = rate_eval.dscreened_rates_dT(k_{self.secondary_rates[1].fname});\n"
-            fstring += f"        {dtype} drdT_pa = rate_eval.dscreened_rates_dT(k_{self.secondary_reverse[1].fname});\n"
+            fstring += f"        {dtype} drdT_ag = rate_eval.dscreened_rates_dT(k_{self.primary_rate.cname()});\n"
+            fstring += f"        {dtype} drdT_ap = rate_eval.dscreened_rates_dT(k_{self.secondary_rates[0].cname()});\n"
+            fstring += f"        {dtype} drdT_pg = rate_eval.dscreened_rates_dT(k_{self.secondary_rates[1].cname()});\n"
+            fstring += f"        {dtype} drdT_pa = rate_eval.dscreened_rates_dT(k_{self.secondary_reverse[1].cname()});\n"
             fstring += "        drate_dT = drdT_ag + drdT_ap * r_pg * dd + r_ap * drdT_pg * dd - r_ap * r_pg * dd * dd * (drdT_pg + drdT_pa);\n"
             fstring += "    }\n"
         else:
 
             # first we need to get all of the rates that make this up
-            fstring += f"    {dtype} r_ga = rate_eval.screened_rates(k_{self.primary_reverse.fname});\n"
-            fstring += f"    {dtype} r_pa = rate_eval.screened_rates(k_{self.secondary_reverse[1].fname});\n"
-            fstring += f"    {dtype} r_gp = rate_eval.screened_rates(k_{self.secondary_reverse[0].fname});\n"
-            fstring += f"    {dtype} r_pg = rate_eval.screened_rates(k_{self.secondary_rates[1].fname});\n"
+            fstring += f"    {dtype} r_ga = rate_eval.screened_rates(k_{self.primary_reverse.cname()});\n"
+            fstring += f"    {dtype} r_pa = rate_eval.screened_rates(k_{self.secondary_reverse[1].cname()});\n"
+            fstring += f"    {dtype} r_gp = rate_eval.screened_rates(k_{self.secondary_reverse[0].cname()});\n"
+            fstring += f"    {dtype} r_pg = rate_eval.screened_rates(k_{self.secondary_rates[1].cname()});\n"
 
             # now the approximation
             fstring += f"    {dtype} dd = 1.0_rt / (r_pg + r_pa);\n"
             fstring += "    rate = r_ga + r_gp * r_pa * dd;\n"
             fstring += "    if constexpr (std::is_same<T, rate_derivs_t>::value) {\n"
-            fstring += f"        {dtype} drdT_ga = rate_eval.dscreened_rates_dT(k_{self.primary_reverse.fname});\n"
-            fstring += f"        {dtype} drdT_pa = rate_eval.dscreened_rates_dT(k_{self.secondary_reverse[1].fname});\n"
-            fstring += f"        {dtype} drdT_gp = rate_eval.dscreened_rates_dT(k_{self.secondary_reverse[0].fname});\n"
-            fstring += f"        {dtype} drdT_pg = rate_eval.dscreened_rates_dT(k_{self.secondary_rates[1].fname});\n"
+            fstring += f"        {dtype} drdT_ga = rate_eval.dscreened_rates_dT(k_{self.primary_reverse.cname()});\n"
+            fstring += f"        {dtype} drdT_pa = rate_eval.dscreened_rates_dT(k_{self.secondary_reverse[1].cname()});\n"
+            fstring += f"        {dtype} drdT_gp = rate_eval.dscreened_rates_dT(k_{self.secondary_reverse[0].cname()});\n"
+            fstring += f"        {dtype} drdT_pg = rate_eval.dscreened_rates_dT(k_{self.secondary_rates[1].cname()});\n"
             fstring += "        drate_dT = drdT_ga + drdT_gp * r_pa * dd + r_gp * drdT_pa * dd - r_gp * r_pa * dd * dd * (drdT_pg + drdT_pa);\n"
             fstring += "    }\n"
 
