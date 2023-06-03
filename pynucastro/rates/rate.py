@@ -56,6 +56,7 @@ _pynucastro_tabular_dir = os.path.join(_pynucastro_rates_dir, 'tabular')
 _pynucastro_tabular_suzuki_dir = os.path.join(_pynucastro_tabular_dir, 'suzuki')
 _pynucastro_tabular_laganke_dir = os.path.join(_pynucastro_tabular_dir, 'laganke')
 
+
 def get_rates_dir():
     return _pynucastro_rates_dir
 
