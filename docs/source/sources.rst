@@ -17,7 +17,7 @@ Tabulated weak nuclear reaction rates
 -------------------------------------
 
 The weak reaction rate tables `23Na-23Ne_electroncapture.dat
-<https://github.com/pynucastro/pynucastro/blob/main/pynucastro/library/tabular/23Na-23Ne_electroncapture.dat>`_
+<https://github.com/pynucastro/pynucastro/blob/main/pynucastro/library/tabular/suzuki/23Na-23Ne_electroncapture.dat>`_
 and `23Ne-23Na_betadecay.dat
 <https://github.com/pynucastro/pynucastro/blob/main/pynucastro/library/tabular/23Ne-23Na_betadecay.dat>`_
 were obtained from:

@@ -66,8 +66,8 @@ Tabular rates for reactions of the form :math:`\rm{A \rightarrow B}`
 are supported by the AMReX-Astro Microphysics network outputs.
 
 If you would like to include tabular rates, for now they must be in
-the form of, e.g. `23Na-23Ne_electroncapture.dat <https://github.com/pynucastro/pynucastro/blob/main/pynucastro/library/tabular/23Na-23Ne_electroncapture.dat>`_ in
-``pynucastro/library/tabular/``, indexed by the product of density and
+the form of, e.g. `23Na-23Ne_electroncapture.dat <https://github.com/pynucastro/pynucastro/blob/main/pynucastro/library/tabular/suzuki/23Na-23Ne_electroncapture.dat>`_ in
+``pynucastro/library/tabular/suzuki``, indexed by the product of density and
 electron fraction :math:`\rm{\rho Y_e}` and temperature
 :math:`\rm{T}`, with the same number and order of variables.
 
