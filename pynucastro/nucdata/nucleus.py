@@ -47,7 +47,7 @@ class Nucleus:
     :var N:               neutron number
     :var A:               atomic mass
     :var nucbind:         nuclear binding energy (MeV / nucleon)
-    :var short_spec_name: nucleus abbrevation (e.g. "he4")
+    :var short_spec_name: nucleus abbreviation (e.g. "he4")
     :var caps_name:       capitalized short species name (e.g. "He4")
     :var el:              element name (e.g. "he")
     :var pretty:          LaTeX formatted version of the nucleus name

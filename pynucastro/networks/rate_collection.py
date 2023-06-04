@@ -148,6 +148,16 @@ class Composition:
         electron_frac = np.sum(zvec*xvec/avec)/np.sum(xvec)
         return electron_frac
 
+    def eval_abar(self):
+        """ return the mean molecular weight """
+
+        avec = np.zeros(len(self.X), dtype=np.int32)
+        xvec = np.zeros(len(self.X), dtype=np.float64)
+        for i, n in enumerate(self.X):
+            avec[i] = n.A
+            xvec[i] = self.X[n]
+        return 1. / np.sum(xvec / avec)
+
     def __str__(self):
         ostr = ""
         for k in self.X:
@@ -155,7 +165,7 @@ class Composition:
         return ostr
 
     def plot(self, trace_threshold=0.1, hard_limit=None, size=(9, 5)):
-        """ Make a pie chart of Composition. group trace nuceli together and explode into bar chart
+        """ Make a pie chart of Composition. group trace nuclei together and explode into bar chart
 
         parameters
         ----------
@@ -580,6 +590,20 @@ class RateCollection:
         """ get all the nuclei that are part of the network """
         return self.unique_nuclei
 
+    def linking_nuclei(self, nuclei, return_type=None, **kwargs):
+        """
+        Return a new RateCollection/Network object containing only rates linking the
+        given nuclei (parameter *nuclei*). Nuclei can be provided as an iterable of Nucleus
+        objects or a list of abbreviations. The *return_type* parameter allows the caller to
+        specify a different constructor (e.g. superclass constructor) if the current class does
+        not take a 'libraries' keyword. See method of same name in Library class for valid
+        keyword arguments.
+        """
+
+        if return_type is None:
+            return_type = self.__class__
+        return return_type(libraries=self.library.linking_nuclei(nuclei, **kwargs))
+
     def get_rates(self):
         """ get a list of the reaction rates in this network"""
         return self.rates
@@ -970,7 +994,7 @@ class RateCollection:
         ye_max = max(nuc.Z/nuc.A for nuc in self.unique_nuclei)
         assert state.ye >= ye_low and state.ye <= ye_max, "input electron fraction goes outside of scope for current network"
 
-        # Seting up the constants needed to compute mu_c
+        # Setting up the constants needed to compute mu_c
         k = constants.value("Boltzmann constant") * 1.0e7          # boltzmann in erg/K
         Erg2MeV = 624151.0
 
@@ -1436,7 +1460,7 @@ class RateCollection:
         ydot_cutoff_value: rate threshold below which we do not show a
         line corresponding to a rate
 
-        show_small_ydot: if true, then show visibile lines for rates below
+        show_small_ydot: if true, then show visible lines for rates below
         ydot_cutoff_value
 
         node_size: size of a node
@@ -1633,7 +1657,7 @@ class RateCollection:
 
                         G.add_edges_from([(n, p)], weight=0, real=0, highlight=highlight)
 
-        # It seems that networkx broke backwards compatability, and 'zorder' is no longer a valid
+        # It seems that networkx broke backwards compatibility, and 'zorder' is no longer a valid
         # keyword argument. The 'linewidth' argument has also changed to 'linewidths'.
 
         nx.draw_networkx_nodes(G, G.position,      # plot the element at the correct position
