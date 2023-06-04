@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.rates.rate &mdash; pynucastro 2.0.3.post22+gfa76fd99 documentation</title>
+  <title>pynucastro.rates.rate &mdash; pynucastro 2.0.3.post23+g07d1f67d documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
@@ -165,6 +165,7 @@
 <span class="n">_pynucastro_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)))</span>
 <span class="n">_pynucastro_rates_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_pynucastro_dir</span><span class="p">,</span> <span class="s1">&#39;library&#39;</span><span class="p">)</span>
 <span class="n">_pynucastro_tabular_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_pynucastro_rates_dir</span><span class="p">,</span> <span class="s1">&#39;tabular&#39;</span><span class="p">)</span>
+<span class="n">_pynucastro_suzuki_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_pynucastro_tabular_dir</span><span class="p">,</span> <span class="s1">&#39;suzuki&#39;</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="get_rates_dir"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.get_rates_dir">[docs]</a><span class="k">def</span> <span class="nf">get_rates_dir</span><span class="p">():</span>
@@ -211,6 +212,11 @@
 
     <span class="c1"># check to see if the rate file is in pynucastro/library/tabular</span>
     <span class="n">x</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_pynucastro_tabular_dir</span><span class="p">,</span> <span class="n">ratename</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+    <span class="c1"># check to see if the rate file is in pynucastro/library/tabular/suzuki</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_pynucastro_suzuki_dir</span><span class="p">,</span> <span class="n">ratename</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 
