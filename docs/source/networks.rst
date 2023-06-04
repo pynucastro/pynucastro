@@ -74,7 +74,7 @@ electron fraction :math:`\rm{\rho Y_e}` and temperature
 To generate a network with a tabular rate, prepare a rate file to
 describe how to read the table as below and then list it as you would
 a Reaclib rate file in your network generation script. For example,
-`pynucastro/library/tabular/na23--ne23-toki <https://github.com/pynucastro/pynucastro/blob/main/pynucastro/library/tabular/na23--ne23-toki>`_ demonstrates the following
+`pynucastro/library/tabular/suzuki/na23--ne23-toki <https://github.com/pynucastro/pynucastro/blob/main/pynucastro/library/tabular/suzuki/na23--ne23-toki>`_ demonstrates the following
 format:
 
 .. code-block:: none
