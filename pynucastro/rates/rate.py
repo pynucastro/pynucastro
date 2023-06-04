@@ -53,6 +53,7 @@ N_a, _, _ = physical_constants['Avogadro constant']
 _pynucastro_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 _pynucastro_rates_dir = os.path.join(_pynucastro_dir, 'library')
 _pynucastro_tabular_dir = os.path.join(_pynucastro_rates_dir, 'tabular')
+_pynucastro_suzuki_dir = os.path.join(_pynucastro_tabular_dir, 'suzuki')
 
 
 class RateFileError(Exception):
@@ -91,6 +92,11 @@ def _find_rate_file(ratename):
 
     # check to see if the rate file is in pynucastro/library/tabular
     x = os.path.join(_pynucastro_tabular_dir, ratename)
+    if os.path.isfile(x):
+        return os.path.realpath(x)
+
+    # check to see if the rate file is in pynucastro/library/tabular/suzuki
+    x = os.path.join(_pynucastro_suzuki_dir, ratename)
     if os.path.isfile(x):
         return os.path.realpath(x)
 
