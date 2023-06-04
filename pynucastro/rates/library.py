@@ -664,7 +664,7 @@ class TabularLibrary(Library):
         # find all of the tabular rates that pynucastro knows about
         # we'll assume that these are of the form *-toki
 
-        lib_path = f"{os.path.dirname(__file__)}/../library/"
+        lib_path = f"{os.path.dirname(__file__)}/../library/tabular"
 
         trates = []
 
