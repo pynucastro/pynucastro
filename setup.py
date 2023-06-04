@@ -9,7 +9,7 @@ setup(name='pynucastro',
       author_email='michael.zingale@stonybrook.edu',
       license='BSD',
       packages=find_packages(),
-      package_data={"pynucastro": ["library/*", "library/tabular/*", "templates/*",
+      package_data={"pynucastro": ["library/*", "library/tabular/*", "templates/*", "library/suzuki/*,"
                                    "templates/amrexastro-cxx-microphysics/*", "nucdata/*",
                                    "nucdata/AtomicMassEvaluation/*", "nucdata/PartitionFunction/*"]},
 
