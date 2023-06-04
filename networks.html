@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Creating Networks &mdash; pynucastro 2.0.3.post23+g07d1f67d documentation</title>
+  <title>Creating Networks &mdash; pynucastro 2.0.3.post25+g2e07322f documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
@@ -175,14 +175,14 @@ all networks above.</p>
 <p>Tabular rates for reactions of the form <span class="math notranslate nohighlight">\(\rm{A \rightarrow B}\)</span>
 are supported by the AMReX-Astro Microphysics network outputs.</p>
 <p>If you would like to include tabular rates, for now they must be in
-the form of, e.g. <a class="reference external" href="https://github.com/pynucastro/pynucastro/blob/main/pynucastro/library/tabular/23Na-23Ne_electroncapture.dat">23Na-23Ne_electroncapture.dat</a> in
-<code class="docutils literal notranslate"><span class="pre">pynucastro/library/tabular/</span></code>, indexed by the product of density and
+the form of, e.g. <a class="reference external" href="https://github.com/pynucastro/pynucastro/blob/main/pynucastro/library/tabular/suzuki/23Na-23Ne_electroncapture.dat">23Na-23Ne_electroncapture.dat</a> in
+<code class="docutils literal notranslate"><span class="pre">pynucastro/library/tabular/suzuki</span></code>, indexed by the product of density and
 electron fraction <span class="math notranslate nohighlight">\(\rm{\rho Y_e}\)</span> and temperature
 <span class="math notranslate nohighlight">\(\rm{T}\)</span>, with the same number and order of variables.</p>
 <p>To generate a network with a tabular rate, prepare a rate file to
 describe how to read the table as below and then list it as you would
 a Reaclib rate file in your network generation script. For example,
-<a class="reference external" href="https://github.com/pynucastro/pynucastro/blob/main/pynucastro/library/tabular/na23--ne23-toki">pynucastro/library/tabular/na23–ne23-toki</a> demonstrates the following
+<a class="reference external" href="https://github.com/pynucastro/pynucastro/blob/main/pynucastro/library/tabular/suzuki/na23--ne23-toki">pynucastro/library/tabular/suzuki/na23–ne23-toki</a> demonstrates the following
 format:</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>t
 [parent nuclide]  [daughter nuclide]
