@@ -10,7 +10,7 @@ setup(name='pynucastro',
       license='BSD',
       packages=find_packages(),
       package_data={"pynucastro": ["library/*", "library/tabular/*", "templates/*", "library/tabular/suzuki/*",
-                                   "templates/amrexastro-cxx-microphysics/*", "nucdata/*",
+                                   "library/tabular/langanke/*", "templates/amrexastro-cxx-microphysics/*", "nucdata/*",
                                    "nucdata/AtomicMassEvaluation/*", "nucdata/PartitionFunction/*"]},
 
       install_requires=['networkx', 'numpy', 'sympy',
