@@ -15,7 +15,7 @@ The preferred way of importing pynucastro is as follows:
 
 The main classes are:
 
-* :func:`Nucleus <pynucastro.rates.rate.Nucleus>`: This is a single
+* :func:`Nucleus <pynucastro.nucdata.nucleus.Nucleus>`: This is a single
   nucleus.  It knows its proton number, ``Z``, neutron number, ``N``,
   weight, ``A``, and binding energy, ``nucbind``, as well as
   T-dependent partition function and ground state spin.
