@@ -132,10 +132,10 @@ class Tfactors:
     :param float T: input temperature (Kelvin)
     :var T9:    T / 1.e9 K
     :var T9i:   1.0 / T9
-    :var T913i  1.0 / T9 ** (1/3)
-    :var T913   T9 ** (1/3)
-    :var T953   T9 ** (5/3)
-    :var lnT9   log(T9)
+    :var T913i: 1.0 / T9 ** (1/3)
+    :var T913:  T9 ** (1/3)
+    :var T953:  T9 ** (5/3)
+    :var lnT9:  log(T9)
     """
 
     def __init__(self, T):
