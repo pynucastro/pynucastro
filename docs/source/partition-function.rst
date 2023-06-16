@@ -183,7 +183,7 @@ The partition function information is contained in three main classes:
 
 * :class:`PartitionFunctionCollection <pynucastro.nucdata.partition_function.PartitionFunctionCollection>` collects all the formatted table information, inside ``/nucdata/PartitionFunction/``. It allow us to include the high temperature tables in [2] and to select the model used to compute the partition functions, respectively. By default, we include high temperatures, and our partition function model to be the *finite range droplet model (FRDM)*. If a nucleus is not in the collection, we set the partition function values to 1.0 by default.
 
-Inside the :class:`Nucleus <pynucastro.nucdata.nucleus.Nucleus>` class, we have defined :func:`.set_partition_function()` which setup our partition function collection, our high temperatures consideration, and the model used to compute the partition function data. On the other hand, :func:`.get_partition_function()` assigns a partition function class object to the defined nucleus. Let us illustrate how it work:
+Inside the :class:`Nucleus <pynucastro.nucdata.nucleus.Nucleus>` class, we have defined ``set_partition_function()`` which setup our partition function collection, our high temperatures consideration, and the model used to compute the partition function data. On the other hand, ``get_partition_function()`` assigns a partition function class object to the defined nucleus. Let us illustrate how it work:
 
 .. code-block:: python
    
@@ -195,7 +195,7 @@ Inside the :class:`Nucleus <pynucastro.nucdata.nucleus.Nucleus>` class, we have 
    co46.set_partition_function(pCollection=pCollection, set_data='etfsiq', use_high_temperatures=True)
    pf_co46 = co46.get_partition_function()
 
-Now, from this point we define a method inside a :class:`Rate <pynucastro.rates.rate.Rate>` named :func:`.set_partition_function()` which reads a partition function collection
+Now, from this point we define a method inside a :class:`Rate <pynucastro.rates.rate.Rate>` named ``set_partition_function()`` which reads a partition function collection
 and setup all the nucleus inside the reaction rate. Let us illustrate now, how it works:
 
 .. code-block:: python
