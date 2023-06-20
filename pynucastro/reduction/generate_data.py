@@ -27,8 +27,8 @@ def dataset(network, n=10, permute=True, b_rho=None, b_T=None, b_Z=None):
     if b_Z is None:
         b_Z = (0.02, 0.2)  # metallicity
 
-    rho = np.logspace(*map(np.log10, b_rho), num=n[1])
-    T = np.logspace(*map(np.log10, b_T), num=n[2])
+    rho = np.geomspace(*b_rho, num=n[1])
+    T = np.geomspace(*b_T, num=n[2])
     comp_list = []
 
     for Z in np.linspace(*b_Z, num=n[0]):
