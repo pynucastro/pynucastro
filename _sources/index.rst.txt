@@ -49,6 +49,8 @@ codes.
    unimportant-rates.ipynb
    partition-function
    NSE-example.ipynb
+   Installing-Diffeqpy-Julia.ipynb
+   Example-Integrating-Network-diffeqpy.ipynb
 
 .. toctree::
    :maxdepth: 1

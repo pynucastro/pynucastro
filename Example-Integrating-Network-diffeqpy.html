@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Example of Integrating a Network &mdash; pynucastro 2.0.3.post31+g3205f8ed documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/nbsphinx-code-cells.css" type="text/css" />
+      <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+        <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Creating Networks" href="networks.html" />
+    <link rel="prev" title="Installation" href="Installing-Diffeqpy-Julia.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            pynucastro
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Overview of pynucastro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_sources.html">Data Sources and Rate Types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Exploring Networks in Python</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="pynucastro-examples.html">pynucastro usage examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plot-types.html">Plotting Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pynucastro-integration.html">Example of integrating a network</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Selecting Rates</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="library-examples.html">Selecting Rates from a Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="validate-example.html">Checking your network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="electron-captures.html">Combining ReacLib Rates with Electron Capture Tables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Advanced Usage</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="screening-examples.html">Screening Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modify-example.html">Modifying Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="approx-rates-examples.html">Approximate Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="unimportant-rates.html">Removing Unimportant Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="partition-function.html">Reverse Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="NSE-example.html">Nuclear Statistical Equilibrium</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Installing-Diffeqpy-Julia.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#"><strong>Example of Integrating a Network</strong></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#Creating-a-Network">Creating a Network</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Integrating-a-Network">Integrating a Network</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#Printing-and-Plotting">Printing and Plotting</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Writing Networks</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="networks.html">Creating Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cxx-networks.html">C++ Networks</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="citing.html">Citing pynucastro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sources.html">Third Party Data</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pynucastro</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><strong>Example of Integrating a Network</strong></li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/pynucastro/pynucastro/blob/main/docs/source/Example-Integrating-Network-diffeqpy.ipynb" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="Example-of-Integrating-a-Network">
+<h1><strong>Example of Integrating a Network</strong><a class="headerlink" href="#Example-of-Integrating-a-Network" title="Permalink to this heading"></a></h1>
+<section id="Creating-a-Network">
+<h2>Creating a Network<a class="headerlink" href="#Creating-a-Network" title="Permalink to this heading"></a></h2>
+<p>We will start by looking at the CNO network for simplicity. We will first need to import pynucastro, read through the ReacLib library, and pass in the names of the reaction rates we are interested in.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pynucastro</span> <span class="k">as</span> <span class="nn">pyna</span>
+<span class="n">rl</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">ReacLibLibrary</span><span class="p">()</span>
+<span class="n">rate_names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;c12(p,g)n13&quot;</span><span class="p">,</span>
+              <span class="s2">&quot;c13(p,g)n14&quot;</span><span class="p">,</span>
+              <span class="s2">&quot;n13(,)c13&quot;</span><span class="p">,</span>
+              <span class="s2">&quot;n13(p,g)o14&quot;</span><span class="p">,</span>
+              <span class="s2">&quot;n15(p,a)c12&quot;</span><span class="p">,</span>
+              <span class="s2">&quot;o14(,)n14&quot;</span><span class="p">,</span>
+              <span class="s2">&quot;o15(,)n15&quot;</span><span class="p">]</span>
+
+<span class="n">rates</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="n">rate_names</span><span class="p">)</span>
+<span class="n">rates</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[C12 + p ⟶ N13 + 𝛾,
+ C13 + p ⟶ N14 + 𝛾,
+ N13 ⟶ C13 + e⁺ + 𝜈,
+ N13 + p ⟶ O14 + 𝛾,
+ N15 + p ⟶ He4 + C12,
+ O14 ⟶ N14 + e⁺ + 𝜈,
+ O15 ⟶ N15 + e⁺ + 𝜈]
+</pre></div></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">PythonNetwork</span></code> has methods to write the RHS of the system of ODEs.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pynet</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">PythonNetwork</span><span class="p">(</span><span class="n">rates</span><span class="o">=</span><span class="n">rates</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">write_network()</span></code> method outputs the Python code that is used to define the RHS for integration to a file you choose.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pynet</span><span class="o">.</span><span class="n">write_network</span><span class="p">(</span><span class="s2">&quot;cno_test_integrate.py&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="Integrating-a-Network">
+<h2>Integrating a Network<a class="headerlink" href="#Integrating-a-Network" title="Permalink to this heading"></a></h2>
+<p>There are a wide variety of ODE integration solvers within the Julia DifferentialEquation package. They can be located at the <a class="reference external" href="https://docs.sciml.ai/DiffEqDocs/stable/solvers/ode_solve/">DifferentialEquation.jl docs</a> along with other useful information about the package.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numba</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">diffeqpy</span> <span class="kn">import</span> <span class="n">de</span>
+<span class="kn">import</span> <span class="nn">cno_test_integrate</span> <span class="k">as</span> <span class="nn">cno</span> <span class="c1">#importing network created</span>
+</pre></div>
+</div>
+</div>
+<p>After importing all the necessary libraries and modules, we can intialize the thermodynamic conditions, intial compositions, the time span, and the algorithm or method we will be using to solve with.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rho</span> <span class="o">=</span> <span class="mf">150.</span> <span class="c1">#g/cm^3</span>
+<span class="n">T</span> <span class="o">=</span> <span class="mf">1.5e7</span>  <span class="c1">#K</span>
+<span class="n">screen_func</span> <span class="o">=</span> <span class="kc">None</span>
+
+<span class="n">Y0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">cno</span><span class="o">.</span><span class="n">nnuc</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span> <span class="c1">#Intialize array of mass fractions</span>
+
+<span class="n">Y0</span><span class="p">[</span><span class="n">cno</span><span class="o">.</span><span class="n">jp</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.7</span> <span class="c1">#Solar mix of mass fractions</span>
+<span class="n">Y0</span><span class="p">[</span><span class="n">cno</span><span class="o">.</span><span class="n">jhe4</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.28</span>
+<span class="n">Y0</span><span class="p">[</span><span class="n">cno</span><span class="o">.</span><span class="n">jc12</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.02</span>
+
+<span class="n">Y0</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">Y0</span><span class="p">[:]</span><span class="o">/</span><span class="n">cno</span><span class="o">.</span><span class="n">A</span><span class="p">[:]</span> <span class="c1">#Converting to molar fractions</span>
+
+<span class="n">tspan</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.e20</span><span class="p">)</span>
+<span class="n">p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">])</span> <span class="c1">#Array of initial parameters</span>
+<span class="n">alg</span> <span class="o">=</span> <span class="n">de</span><span class="o">.</span><span class="n">FBDF</span><span class="p">()</span> <span class="c1">#Choosing integration method</span>
+</pre></div>
+</div>
+</div>
+<p>We can then write the functions to return the jacobian and the RHS of the Differential Equations. Numba can be used to do just-in-time compilation of the functions to speed up the code.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span> <span class="c1">#u = array of unknowns, p = array of parameters, t = array of time</span>
+   <span class="n">rho</span><span class="p">,</span> <span class="n">T</span> <span class="o">=</span> <span class="n">p</span>
+   <span class="n">Y</span> <span class="o">=</span> <span class="n">u</span>
+   <span class="k">return</span> <span class="n">cno</span><span class="o">.</span><span class="n">rhs_eq</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="c1">#calling RHS</span>
+
+<span class="k">def</span> <span class="nf">f_jac</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+   <span class="n">rho</span><span class="p">,</span> <span class="n">T</span> <span class="o">=</span> <span class="n">p</span>
+   <span class="n">Y</span> <span class="o">=</span> <span class="n">u</span>
+   <span class="k">return</span> <span class="n">cno</span><span class="o">.</span><span class="n">jacobian_eq</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="c1">#Calling Jacobian</span>
+
+<span class="n">numba_f</span> <span class="o">=</span> <span class="n">numba</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="c1">#Using Numba on functions</span>
+<span class="n">numba_jac</span> <span class="o">=</span> <span class="n">numba</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">f_jac</span><span class="p">)</span>
+
+<span class="n">ff</span> <span class="o">=</span> <span class="n">de</span><span class="o">.</span><span class="n">ODEFunction</span><span class="p">(</span><span class="n">numba_f</span><span class="p">,</span> <span class="n">jac</span><span class="o">=</span><span class="n">numba_jac</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>We combine the function <code class="docutils literal notranslate"><span class="pre">f(u,</span> <span class="pre">p,</span> <span class="pre">t)</span></code> and <code class="docutils literal notranslate"><span class="pre">f_jac(u,</span> <span class="pre">p,</span> <span class="pre">t)</span></code> into a single variable <code class="docutils literal notranslate"><span class="pre">ff</span></code>. The reason for this is because the first parameter in <code class="docutils literal notranslate"><span class="pre">de.ODEProblem()</span></code> must be a single variable calling the functions.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">prob</span> <span class="o">=</span> <span class="n">de</span><span class="o">.</span><span class="n">ODEProblem</span><span class="p">(</span><span class="n">ff</span><span class="p">,</span> <span class="n">Y0</span><span class="p">,</span> <span class="n">tspan</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
+<span class="n">sol</span> <span class="o">=</span> <span class="n">de</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">prob</span><span class="p">,</span> <span class="n">alg</span><span class="p">,</span> <span class="n">abstol</span><span class="o">=</span><span class="mf">1.e-9</span><span class="p">,</span> <span class="n">reltol</span><span class="o">=</span><span class="mf">1.e-9</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>For more information on ODE Problems visit <a class="reference external" href="https://docs.sciml.ai/DiffEqDocs/stable/types/ode_types/">DifferentialEquation.jl docs</a></p>
+</section>
+</section>
+<section id="Printing-and-Plotting">
+<h1>Printing and Plotting<a class="headerlink" href="#Printing-and-Plotting" title="Permalink to this heading"></a></h1>
+<p>It is useful to be able to print and plot certain things to gain a better understanding of what is going on with the solver method and the reactions. Below are useful print statements to help you understand what is going on behind the scenes.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">sol</span><span class="o">.</span><span class="n">retcode</span><span class="p">)</span> <span class="c1">#Tells you if it successfully solved</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;PyCall.jlwrap Success&gt;
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">sol</span><span class="o">.</span><span class="n">stats</span><span class="p">)</span> <span class="c1">#Gives statistics on what the solver did</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;PyCall.jlwrap DiffEqBase.Stats
+Number of function 1 evaluations:                  420
+Number of function 2 evaluations:                  0
+Number of W matrix evaluations:                    140
+Number of linear solves:                           277
+Number of Jacobians created:                       0
+Number of nonlinear solver iterations:             277
+Number of nonlinear solver convergence failures:   0
+Number of rootfind condition calls:                0
+Number of accepted steps:                          137
+Number of rejected steps:                          3&gt;
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Final Y =&quot;</span><span class="p">,</span> <span class="n">sol</span><span class="o">.</span><span class="n">u</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="c1">#prints out final molar fractions</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Final Y = [6.96666665e-01 6.99999984e-02 5.05923348e-34 2.21203706e-34
+ 1.63697507e-44 1.66666668e-03 0.00000000e+00 4.50258027e-58
+ 0.00000000e+00]
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
+
+<span class="n">t_dense</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">geomspace</span><span class="p">(</span><span class="mf">1e1</span><span class="p">,</span> <span class="n">tspan</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">num</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+<span class="n">species</span> <span class="o">=</span> <span class="n">sol</span><span class="p">(</span><span class="n">t_dense</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">cno</span><span class="o">.</span><span class="n">nnuc</span><span class="p">):</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">t_dense</span><span class="p">,</span> <span class="n">species</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;X(</span><span class="si">{</span><span class="n">cno</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+
+<span class="c1">#ax.set_xlim(1.e1, 1.e6)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mf">1.e-15</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="s2">&quot;small&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;t (s)&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;X&quot;</span><span class="p">)</span>
+
+<span class="n">fig</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">((</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/Example-Integrating-Network-diffeqpy_23_0.png" src="_images/Example-Integrating-Network-diffeqpy_23_0.png" />
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+</div>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="Installing-Diffeqpy-Julia.html" class="btn btn-neutral float-left" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="networks.html" class="btn btn-neutral float-right" title="Creating Networks" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, pynucastro development team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
