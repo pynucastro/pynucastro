@@ -43,7 +43,7 @@ jobs:
       - name: Build docs
         run: |
           cd docs/
-          make SPHINXOPTS=-v html
+          make SPHINXOPTS='-v -W --keep-going -n' html
 
       - name: Check links
         run: |

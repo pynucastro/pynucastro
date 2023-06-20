@@ -53,6 +53,7 @@ N_a, _, _ = physical_constants['Avogadro constant']
 _pynucastro_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 _pynucastro_rates_dir = os.path.join(_pynucastro_dir, 'library')
 _pynucastro_tabular_dir = os.path.join(_pynucastro_rates_dir, 'tabular')
+_pynucastro_suzuki_dir = os.path.join(_pynucastro_tabular_dir, 'suzuki')
 
 
 def get_rates_dir():
@@ -102,6 +103,11 @@ def _find_rate_file(ratename):
     if os.path.isfile(x):
         return os.path.realpath(x)
 
+    # check to see if the rate file is in pynucastro/library/tabular/suzuki
+    x = os.path.join(_pynucastro_suzuki_dir, ratename)
+    if os.path.isfile(x):
+        return os.path.realpath(x)
+
     # notify user we can't find the file
     raise RateFileError(f'File {ratename!r} not found in the working directory, {_pynucastro_rates_dir}, or {_pynucastro_tabular_dir}')
 
@@ -126,10 +132,10 @@ class Tfactors:
     :param float T: input temperature (Kelvin)
     :var T9:    T / 1.e9 K
     :var T9i:   1.0 / T9
-    :var T913i  1.0 / T9 ** (1/3)
-    :var T913   T9 ** (1/3)
-    :var T953   T9 ** (5/3)
-    :var lnT9   log(T9)
+    :var T913i: 1.0 / T9 ** (1/3)
+    :var T913:  T9 ** (1/3)
+    :var T953:  T9 ** (5/3)
+    :var lnT9:  log(T9)
     """
 
     def __init__(self, T):

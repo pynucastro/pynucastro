@@ -2,8 +2,8 @@
 !USDB    GT     Q(21F-21Ne) = 5.6841 MeV
 !Experimental data are used.
 !
-!Log(rhoY) Log(T) mu     dQ       Vs          decay-rate    nu-energy-loss  gamma-energy
-!                    (MeV)   (MeV)   (MeV)        (1/s)           (MeV/s)           (MeV/s)  
+!rhoY        T            mu           dQ           Vs           e-cap-rate   nu-energy-loss gamma-energy
+!g/cm^3      K            erg          erg          erg          1/s          erg/s        erg/s
 1.000000e+07 1.000000e+07 1.955461e-06 -4.471684e-08 1.235281e-08 1.623118e-01 6.990227e-07 1.378197e-07
 1.000000e+07 1.584893e+07 1.953538e-06 -4.446049e-08 1.235281e-08 1.624688e-01 7.001503e-07 1.380102e-07
 1.000000e+07 2.511886e+07 1.950814e-06 -4.412404e-08 1.235281e-08 1.625249e-01 7.005858e-07 1.380738e-07
