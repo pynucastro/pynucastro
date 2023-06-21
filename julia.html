@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro &mdash; pynucastro 2.0.3.post32+g7fcc4740 documentation</title>
+  <title>Integrating using DifferentialEquations.jl &mdash; pynucastro 2.0.3.post32+g7fcc4740 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
@@ -22,8 +22,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="pynucastro package" href="pynucastro.html" />
-    <link rel="prev" title="Citing pynucastro" href="citing.html" /> 
+    <link rel="next" title="Installation" href="Installing-Diffeqpy-Julia.html" />
+    <link rel="prev" title="Nuclear Statistical Equilibrium" href="NSE-example.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -68,14 +68,19 @@
 <li class="toctree-l1"><a class="reference internal" href="electron-captures.html">Combining ReacLib Rates with Electron Capture Tables</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Advanced Usage</span></p>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="screening-examples.html">Screening Rates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modify-example.html">Modifying Rates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="approx-rates-examples.html">Approximate Rates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="unimportant-rates.html">Removing Unimportant Rates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="partition-function.html">Reverse Rates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="NSE-example.html">Nuclear Statistical Equilibrium</a></li>
-<li class="toctree-l1"><a class="reference internal" href="julia.html">Integrating using DifferentialEquations.jl</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Integrating using DifferentialEquations.jl</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Installing-Diffeqpy-Julia.html"><strong>Installation</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="Example-Integrating-Network-diffeqpy.html"><strong>Example of Integrating a Network</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="Example-Integrating-Network-diffeqpy.html#Printing-and-Plotting">Printing and Plotting</a></li>
+</ul>
+</li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Writing Networks</span></p>
 <ul>
@@ -83,12 +88,9 @@
 <li class="toctree-l1"><a class="reference internal" href="cxx-networks.html">C++ Networks</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Reference</span></p>
-<ul class="current">
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="citing.html">Citing pynucastro</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">API</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="pynucastro.html">pynucastro package</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sources.html">Third Party Data</a></li>
 </ul>
 
@@ -106,9 +108,9 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">pynucastro</li>
+      <li class="breadcrumb-item active">Integrating using DifferentialEquations.jl</li>
       <li class="wy-breadcrumbs-aside">
-              <a href="https://github.com/pynucastro/pynucastro/blob/main/docs/source/modules.rst" class="fa fa-github"> Edit on GitHub</a>
+              <a href="https://github.com/pynucastro/pynucastro/blob/main/docs/source/julia.rst" class="fa fa-github"> Edit on GitHub</a>
       </li>
   </ul>
   <hr/>
@@ -116,52 +118,13 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="pynucastro">
-<h1>pynucastro<a class="headerlink" href="#pynucastro" title="Permalink to this heading"></a></h1>
+  <section id="integrating-using-differentialequations-jl">
+<h1>Integrating using DifferentialEquations.jl<a class="headerlink" href="#integrating-using-differentialequations-jl" title="Permalink to this heading"></a></h1>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="pynucastro.html">pynucastro package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="pynucastro.html#library">library</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pynucastro.html#nucdata">nucdata</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pynucastro.html#networks">networks</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pynucastro.html#rates">rates</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pynucastro.html#screening">screening</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pynucastro.html#templates">templates</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pynucastro.html#subpackages">Subpackages</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="pynucastro.networks.html">pynucastro.networks package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.html#module-pynucastro.networks.amrexastro_cxx_network">pynucastro.networks.amrexastro_cxx_network module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.html#module-pynucastro.networks.base_cxx_network">pynucastro.networks.base_cxx_network module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.html#module-pynucastro.networks.python_network">pynucastro.networks.python_network module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.html#module-pynucastro.networks.rate_collection">pynucastro.networks.rate_collection module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.html#module-pynucastro.networks.sympy_network_support">pynucastro.networks.sympy_network_support module</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="pynucastro.nucdata.html">pynucastro.nucdata package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.html#module-pynucastro.nucdata.binding_table">pynucastro.nucdata.binding_table module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.html#module-pynucastro.nucdata.elements">pynucastro.nucdata.elements module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.html#module-pynucastro.nucdata.mass_table">pynucastro.nucdata.mass_table module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.html#module-pynucastro.nucdata.nucleus">pynucastro.nucdata.nucleus module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.html#module-pynucastro.nucdata.partition_function">pynucastro.nucdata.partition_function module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.html#module-pynucastro.nucdata.spin_table">pynucastro.nucdata.spin_table module</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="pynucastro.rates.html">pynucastro.rates package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.html#module-pynucastro.rates.library">pynucastro.rates.library module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.html#module-pynucastro.rates.rate">pynucastro.rates.rate module</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="pynucastro.screening.html">pynucastro.screening package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.screening.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.screening.html#module-pynucastro.screening.screen">pynucastro.screening.screen module</a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="Installing-Diffeqpy-Julia.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="Example-Integrating-Network-diffeqpy.html"><strong>Example of Integrating a Network</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="Example-Integrating-Network-diffeqpy.html#Printing-and-Plotting">Printing and Plotting</a></li>
 </ul>
 </div>
 </section>
@@ -170,8 +133,8 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="citing.html" class="btn btn-neutral float-left" title="Citing pynucastro" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="pynucastro.html" class="btn btn-neutral float-right" title="pynucastro package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="NSE-example.html" class="btn btn-neutral float-left" title="Nuclear Statistical Equilibrium" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="Installing-Diffeqpy-Julia.html" class="btn btn-neutral float-right" title="Installation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
