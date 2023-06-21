@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Example of integrating a network &mdash; pynucastro 2.0.3.post32+g7fcc4740 documentation</title>
+  <title>Example of integrating a network &mdash; pynucastro 2.0.3.post33+g6da6c0a0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/nbsphinx-code-cells.css" type="text/css" />
@@ -330,6 +330,15 @@ names.append(&#34;n14&#34;)
 names.append(&#34;n15&#34;)
 names.append(&#34;o14&#34;)
 names.append(&#34;o15&#34;)
+
+def to_composition(Y):
+    &#34;&#34;&#34;Convert an array of molar fractions to a Composition object.&#34;&#34;&#34;
+    from pynucastro import Composition, Nucleus
+    nuclei = [Nucleus.from_cache(name) for name in names]
+    comp = Composition(nuclei)
+    for i, nuc in enumerate(nuclei):
+        comp.X[nuc] = Y[i] * A[i]
+    return comp
 
 @jitclass([
     (&#34;p_c12__n13&#34;, numba.float64),
