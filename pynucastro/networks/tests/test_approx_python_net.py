@@ -103,3 +103,17 @@ def he4_mg24__si28__removed(rate_eval, tf):
 
         for i in range(app.nnuc):
             assert answer[i] == approx(sol.y[i, -1])
+
+    def test_to_composition(self, pynet):
+        pynet.write_network("app.py")
+        app = importlib.import_module("app")
+
+        comp_orig = pyna.Composition(pynet.unique_nuclei)
+        comp_orig.set_solar_like()
+
+        Y = np.zeros(app.nnuc)
+        for nuc, molar_fraction in comp_orig.get_molar().items():
+            Y[app.names.index(nuc.short_spec_name)] = molar_fraction
+        comp_new = app.to_composition(Y)
+
+        assert comp_new.X == comp_orig.X

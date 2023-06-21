@@ -51,6 +51,15 @@ names.append("ne23")
 names.append("na23")
 names.append("mg23")
 
+def to_composition(Y):
+    """Convert an array of molar fractions to a Composition object."""
+    from pynucastro import Composition, Nucleus
+    nuclei = [Nucleus.from_cache(name) for name in names]
+    comp = Composition(nuclei)
+    for i, nuc in enumerate(nuclei):
+        comp.X[nuc] = Y[i] * A[i]
+    return comp
+
 @jitclass([
     ("c12_c12__he4_ne20", numba.float64),
     ("c12_c12__n_mg23", numba.float64),
