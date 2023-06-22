@@ -1,8 +1,8 @@
 !28Na (1+, 2+, 3+, 2+, 2+) -> 28Mg,   beta-decay,  with screening effects
 !USDB      Q=14..030 MeV
 !Experimental energies, B(GT),  1+(g.s.), 2+(0.055MeV), 3+(1.131 MeV), 2+(1.254 MeV)
-!Log(rhoY) Log(T) mu     dQ       Vs           decay-rate    nu-energy-loss  gamma-energy
-!                     (MeV)   (MeV)     (MeV)       (1/s)            (MeV/s)        (MeV/s)  
+!rhoY        T            mu           dQ           Vs           e-cap-rate   nu-energy-loss gamma-energy
+!g/cm^3      K            erg          erg          erg          1/s          erg/s        erg/s
 1.000000e+07 1.000000e+07 1.952897e-06 -5.094932e-08 1.483619e-08 2.476281e+01 2.554532e-04 6.362258e-05
 1.000000e+07 1.584893e+07 1.951135e-06 -5.072502e-08 1.483619e-08 2.476281e+01 2.554532e-04 6.362258e-05
 1.000000e+07 2.511886e+07 1.948411e-06 -5.040458e-08 1.483619e-08 2.475711e+01 2.553944e-04 6.360794e-05
