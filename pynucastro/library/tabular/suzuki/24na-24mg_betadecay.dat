@@ -1,8 +1,8 @@
 !24Na (4+, 1+, 2+, 2+, 1+, 3+, 5+, 3+, 2+) -> 24Mg,   beta-decay,  with screening effects
 !USDB                Q=5.5156 MeV
 !Experimental energies, exp. B(GT) for 4+(g.s.) -> 4+(4.12MeV), 3+(5.235MeV), FF 4+(g.s.)->2+(1.369MeV) included
-!Log(rhoY) Log(T) mu     dQ       Vs         decay-rate    nu-energy-loss  gamma-energy
-!                    (MeV)   (MeV)   (MeV)        (1/s)           (MeV/s)           (MeV/s)  
+!rhoY        T            mu           dQ           Vs           e-cap-rate   nu-energy-loss gamma-energy
+!g/cm^3      K            erg          erg          erg          1/s          erg/s        erg/s
 1.000000e+07 1.000000e+07 1.952897e-06 -5.094932e-08 1.483619e-08 4.903430e-06 4.041209e-12 3.235276e-11
 1.000000e+07 1.584893e+07 1.951135e-06 -5.072502e-08 1.483619e-08 4.924929e-06 4.066411e-12 3.249461e-11
 1.000000e+07 2.511886e+07 1.948411e-06 -5.040458e-08 1.483619e-08 4.929467e-06 4.072033e-12 3.252455e-11

@@ -159,6 +159,16 @@ class Composition:
             xvec[i] = self.X[n]
         return 1. / np.sum(xvec / avec)
 
+    def eval_abar(self):
+        """ return the mean molecular weight """
+
+        avec = np.zeros(len(self.X), dtype=np.int32)
+        xvec = np.zeros(len(self.X), dtype=np.float64)
+        for i, n in enumerate(self.X):
+            avec[i] = n.A
+            xvec[i] = self.X[n]
+        return 1. / np.sum(xvec / avec)
+
     def __str__(self):
         ostr = ""
         for k in self.X:
@@ -601,6 +611,20 @@ class RateCollection:
         keyword arguments.
         """
         
+        if return_type is None:
+            return_type = self.__class__
+        return return_type(libraries=self.library.linking_nuclei(nuclei, **kwargs))
+
+    def linking_nuclei(self, nuclei, return_type=None, **kwargs):
+        """
+        Return a new RateCollection/Network object containing only rates linking the
+        given nuclei (parameter *nuclei*). Nuclei can be provided as an iterable of Nucleus
+        objects or a list of abbreviations. The *return_type* parameter allows the caller to
+        specify a different constructor (e.g. superclass constructor) if the current class does
+        not take a 'libraries' keyword. See method of same name in Library class for valid
+        keyword arguments.
+        """
+
         if return_type is None:
             return_type = self.__class__
         return return_type(libraries=self.library.linking_nuclei(nuclei, **kwargs))
