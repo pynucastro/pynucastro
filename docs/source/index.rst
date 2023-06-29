@@ -49,6 +49,7 @@ codes.
    unimportant-rates.ipynb
    partition-function
    NSE-example.ipynb
+   julia
 
 .. toctree::
    :maxdepth: 1

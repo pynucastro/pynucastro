@@ -1,6 +1,5 @@
 # unit tests for rates
 import filecmp
-import io
 import os
 
 import pytest
@@ -9,7 +8,6 @@ import pynucastro as pyna
 
 
 class TestAmrexAstroCxxNetwork:
-    # pylint: disable=protected-access
     @pytest.fixture(scope="class")
     def fn(self, reaclib_library):
 
@@ -19,15 +17,6 @@ class TestAmrexAstroCxxNetwork:
         net.remove_nuclei(["al27", "p31"])
         fn = net
         return fn
-
-    def cromulent_ftag(self, ftag, answer, n_indent=1):
-        """ check to see if function ftag returns answer """
-
-        output = io.StringIO()
-        ftag(n_indent, output)
-        result = output.getvalue() == answer
-        output.close()
-        return result
 
     def test_write_network(self, fn):
         """ test the write_network function"""

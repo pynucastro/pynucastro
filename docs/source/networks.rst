@@ -66,15 +66,15 @@ Tabular rates for reactions of the form :math:`\rm{A \rightarrow B}`
 are supported by the AMReX-Astro Microphysics network outputs.
 
 If you would like to include tabular rates, for now they must be in
-the form of, e.g. `23Na-23Ne_electroncapture.dat <https://github.com/pynucastro/pynucastro/blob/main/pynucastro/library/tabular/23Na-23Ne_electroncapture.dat>`_ in
-``pynucastro/library/tabular/``, indexed by the product of density and
+the form of, e.g. `23Na-23Ne_electroncapture.dat <https://github.com/pynucastro/pynucastro/blob/main/pynucastro/library/tabular/suzuki/23Na-23Ne_electroncapture.dat>`_ in
+``pynucastro/library/tabular/suzuki``, indexed by the product of density and
 electron fraction :math:`\rm{\rho Y_e}` and temperature
 :math:`\rm{T}`, with the same number and order of variables.
 
 To generate a network with a tabular rate, prepare a rate file to
 describe how to read the table as below and then list it as you would
 a Reaclib rate file in your network generation script. For example,
-`pynucastro/library/tabular/na23--ne23-toki <https://github.com/pynucastro/pynucastro/blob/main/pynucastro/library/tabular/na23--ne23-toki>`_ demonstrates the following
+`pynucastro/library/tabular/suzuki/na23--ne23-toki <https://github.com/pynucastro/pynucastro/blob/main/pynucastro/library/tabular/suzuki/na23--ne23-toki>`_ demonstrates the following
 format:
 
 .. code-block:: none

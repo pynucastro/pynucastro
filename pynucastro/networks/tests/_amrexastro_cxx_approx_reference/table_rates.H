@@ -16,8 +16,8 @@ void init_tabular();
 // Table energy units are expected in terms of ergs
 
 // all tables are expected to have columns:
-// Log(rhoY) Log(T)  dQ     Vs      mu       e-cap-rate    nu-energy-loss  gamma-energy
-//                  (MeV)   (MeV)  (MeV)       (1/s)          (MeV/s)        (MeV/s)
+// rhoY     T   mu    dQ    Vs    e-cap-rate   nu-energy-loss  gamma-energy
+// g/cm^3   K   erg   erg   erg   1/s          erg/s           erg/s
 //
 
 const int num_tables = 0;
