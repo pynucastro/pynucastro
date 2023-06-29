@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.networks package &mdash; pynucastro 2.0.3.post35+gdfbb6e77 documentation</title>
+  <title>pynucastro.networks package &mdash; pynucastro 2.0.3.post36+g12c7fbc7 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
@@ -327,10 +327,41 @@ the remainder evenly distributed with Z</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="pynucastro.networks.rate_collection.RateCollection.calc_count_matrices">
+<span class="sig-name descname"><span class="pre">calc_count_matrices</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/rate_collection.html#RateCollection.calc_count_matrices"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.rate_collection.RateCollection.calc_count_matrices" title="Permalink to this definition"></a></dt>
+<dd><p>Compute and store 3 count matrices that can be used for vectorized rate calculations.
+Each matrix has shape <em>number_of_species × number_of_rates</em>. The first matrix (<em>nuc_prod_count</em>)
+stores the count of each nucleus in rates producing that nucleus. The second
+(<em>nuc_cons_count</em>) stores the count of each nucleus in rates consuming that nucleus. The
+third (<em>nuc_used</em>) stores a Boolean matrix of whether the nucleus is involved in the reaction
+or not.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pynucastro.networks.rate_collection.RateCollection.clear_arrays">
+<span class="sig-name descname"><span class="pre">clear_arrays</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/rate_collection.html#RateCollection.clear_arrays"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.rate_collection.RateCollection.clear_arrays" title="Permalink to this definition"></a></dt>
+<dd><p>Clear all temporary variables created/set by the <em>calc_count_matrices</em>, <em>update_rate_coef_arr</em>,
+<em>update_yfac_arr</em>, and <em>update_prefac_arr</em> member functions, freeing up memory.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.networks.rate_collection.RateCollection.evaluate_activity">
 <span class="sig-name descname"><span class="pre">evaluate_activity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rho</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">composition</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">screen_func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/rate_collection.html#RateCollection.evaluate_activity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.rate_collection.RateCollection.evaluate_activity" title="Permalink to this definition"></a></dt>
 <dd><p>sum over all of the terms contributing to ydot,
 neglecting sign</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pynucastro.networks.rate_collection.RateCollection.evaluate_activity_arr">
+<span class="sig-name descname"><span class="pre">evaluate_activity_arr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/rate_collection.html#RateCollection.evaluate_activity_arr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.rate_collection.RateCollection.evaluate_activity_arr" title="Permalink to this definition"></a></dt>
+<dd><p>sum over all of the terms contributing to dY/dt for a specific temperature, neglecting sign,
+assuming necessary precalculations have been carried out (calling the methods
+<em>calc_count_matrices</em>, <em>update_rate_coef_arr</em>, <em>update_yfac_arr</em>, and <em>update_prefac_arr</em>).
+The latter two set the composition and density.</p>
+<p>This performs a vectorized calculation, and returns an array ordered by the nuclei in the
+<em>unique_nuclei</em> member variable. This does not support tabular rates.</p>
+<p>See <em>evaluate_activity</em> method for non-vectorized version. Relative performance between the
+two varies based on the setup. See <em>clear_arrays</em> for freeing memory post calculation.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -354,6 +385,18 @@ composition, with optional screening</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="pynucastro.networks.rate_collection.RateCollection.evaluate_rates_arr">
+<span class="sig-name descname"><span class="pre">evaluate_rates_arr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/rate_collection.html#RateCollection.evaluate_rates_arr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.rate_collection.RateCollection.evaluate_rates_arr" title="Permalink to this definition"></a></dt>
+<dd><p>Evaluate the rates in the network for a specific temperature, assuming necessary precalculations
+have been carried out (calling the methods <em>calc_count_matrices</em>, <em>update_rate_coef_arr</em>,
+<em>update_yfac_arr</em>, and <em>update_prefac_arr</em>). The latter two set the composition and density.</p>
+<p>This performs a vectorized calculation, and returns an array ordered by the rates in the <em>rates</em>
+member variable. This does not support tabular rates.</p>
+<p>See <em>evaluate_rates</em> method for non-vectorized version. Relative performance between the
+two varies based on the setup. See <em>clear_arrays</em> for freeing memory post calculation.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.networks.rate_collection.RateCollection.evaluate_screening">
 <span class="sig-name descname"><span class="pre">evaluate_screening</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rho</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">composition</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">screen_func</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/rate_collection.html#RateCollection.evaluate_screening"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.rate_collection.RateCollection.evaluate_screening" title="Permalink to this definition"></a></dt>
 <dd><p>Evaluate the screening factors for each rate, using one of the
@@ -365,6 +408,19 @@ methods in <a class="reference internal" href="pynucastro.screening.html#module-
 <span class="sig-name descname"><span class="pre">evaluate_ydots</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rho</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">composition</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">screen_func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/rate_collection.html#RateCollection.evaluate_ydots"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.rate_collection.RateCollection.evaluate_ydots" title="Permalink to this definition"></a></dt>
 <dd><p>evaluate net rate of change of molar abundance for each nucleus
 for a specific density, temperature, and composition</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pynucastro.networks.rate_collection.RateCollection.evaluate_ydots_arr">
+<span class="sig-name descname"><span class="pre">evaluate_ydots_arr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/rate_collection.html#RateCollection.evaluate_ydots_arr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.rate_collection.RateCollection.evaluate_ydots_arr" title="Permalink to this definition"></a></dt>
+<dd><p>Evaluate net rate of change of molar abundance for each nucleus in the network for a
+specific temperature, assuming necessary precalculations have been carried out (calling the
+methods <em>calc_count_matrices</em>, <em>update_rate_coef_arr</em>, <em>update_yfac_arr</em>, and
+<em>update_prefac_arr</em>). The latter two set the composition and density.</p>
+<p>This performs a vectorized calculation, and returns an array ordered by the nuclei in the
+<em>unique_nuclei</em> member variable. This does not support tabular rates.</p>
+<p>See <em>evaluate_ydots</em> method for non-vectorized version. Relative performance between the
+two varies based on the setup. See <em>clear_arrays</em> for freeing memory post calculation.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -603,7 +659,7 @@ object and returns true or false if it is to be shown as an edge.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pynucastro.networks.rate_collection.RateCollection.pynucastro_dir">
-<span class="sig-name descname"><span class="pre">pynucastro_dir</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/pynucastro-2.0.3.post35+gdfbb6e77-py3.10.egg/pynucastro'</span></em><a class="headerlink" href="#pynucastro.networks.rate_collection.RateCollection.pynucastro_dir" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">pynucastro_dir</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/pynucastro-2.0.3.post36+g12c7fbc7-py3.10.egg/pynucastro'</span></em><a class="headerlink" href="#pynucastro.networks.rate_collection.RateCollection.pynucastro_dir" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -626,6 +682,31 @@ may have these nuclei as hidden intermediate links)</p>
 <dd><p>remove the Rate objects in rates from the network.  Note, if
 rate list is a dict, then the keys are assumed to be the rates
 to remove</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pynucastro.networks.rate_collection.RateCollection.update_prefac_arr">
+<span class="sig-name descname"><span class="pre">update_prefac_arr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rho</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">composition</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/rate_collection.html#RateCollection.update_prefac_arr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.rate_collection.RateCollection.update_prefac_arr" title="Permalink to this definition"></a></dt>
+<dd><p>Calculate and store rate prefactors, which include both statistical prefactors and
+mass density raised to the corresponding density exponents. The results are stored in
+an array called <em>prefac</em>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pynucastro.networks.rate_collection.RateCollection.update_rate_coef_arr">
+<span class="sig-name descname"><span class="pre">update_rate_coef_arr</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/rate_collection.html#RateCollection.update_rate_coef_arr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.rate_collection.RateCollection.update_rate_coef_arr" title="Permalink to this definition"></a></dt>
+<dd><p>Store Reaclib rate coefficient array, as well as a Boolean mask array determining
+how many sets to include in the final rate evaluation. The first array (<em>coef_arr</em>)
+has shape <em>number_of_rates × number_of_species × 7</em>, while the second has shape
+<em>number_of_rates × number_of_species</em>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pynucastro.networks.rate_collection.RateCollection.update_yfac_arr">
+<span class="sig-name descname"><span class="pre">update_yfac_arr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">composition</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/rate_collection.html#RateCollection.update_yfac_arr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.rate_collection.RateCollection.update_yfac_arr" title="Permalink to this definition"></a></dt>
+<dd><p>Calculate and store molar fraction component of each rate (Y of each reactant raised to
+the appropriate power). The results are stored in an array called <em>yfac</em>. The method
+<em>calc_count_matrices</em> needs to have been called with this net beforehand.</p>
 </dd></dl>
 
 <dl class="py method">
