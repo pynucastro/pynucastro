@@ -63,13 +63,6 @@ def get_rates_dir():
 def get_tabular_dir():
     return _pynucastro_tabular_dir
 
-def get_rates_dir():
-    
-    return _pynucastro_rates_dir
-    
-def get_tabular_dir():
-    
-    return _pynucastro_tabular_dir
 
 class RateFileError(Exception):
     """An error occurred while trying to read a Rate from a file."""
@@ -153,11 +146,6 @@ class Tfactors:
         self.T913 = self.T9**(1./3.)
         self.T953 = self.T9**(5./3.)
         self.lnT9 = np.log(self.T9)
-        
-    @property
-    def array(self):
-        """return t factors as array in order of lambda function"""
-        return np.array([1, self.T9i, self.T913i, self.T913, self.T9, self.T953, self.lnT9])
 
     @property
     def array(self):

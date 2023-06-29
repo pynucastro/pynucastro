@@ -203,20 +203,6 @@ class Library:
                         self._rates[rid] = self._rates[rid] + r
                     else:
                         self._rates[rid] = r
-                        
-    def write_to_file(self, filename, prepend_rates_dir=False):
-        """
-        Write the library out to a file of the given name in Reaclib format. Will be
-        automatically written to the pynucastro rate file directory if True is passed
-        in as the second argument.
-        """
-
-        if prepend_rates_dir:
-            filename = os.path.join(get_rates_dir(), filename)
-
-        with open(filename, 'w') as f:
-            for rate in self.get_rates():
-                rate.write_to_file(f)
 
     def write_to_file(self, filename, prepend_rates_dir=False):
         """
