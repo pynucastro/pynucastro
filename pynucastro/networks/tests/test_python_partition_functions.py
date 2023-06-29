@@ -28,8 +28,9 @@ class TestPythonPartitionNetwork:
     def test_partition_rates(self, fn):
         """test the rate evaluation with partition functions from the
         python network"""
+        del fn
 
-        import der_net
+        import der_net  # pylint: disable=import-outside-toplevel, import-error, useless-suppression
 
         T = 5.e9
         tf = pyna.Tfactors(T)

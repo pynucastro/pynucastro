@@ -39,6 +39,9 @@ defining-attr-methods = [
 [tool.pylint.FORMAT]
 max-line-length = 132
 
+[tool.pylint.SIMILARITIES]
+min-similarity-lines = 10
+
 [tool.pylint.TYPECHECK]
 generated-members = ["viridis", "bwr"]
 # see https://github.com/PyCQA/pylint/issues/2289 for the generated-members
