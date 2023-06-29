@@ -6,12 +6,10 @@ class TestSpin:
     @classmethod
     def setup_class(cls):
         """ this is run once for each class before any tests """
-        pass
 
     @classmethod
     def teardown_class(cls):
         """ this is run once for each class before any tests """
-        pass
 
     def setup_method(self):
         """ this is run once for each class before any tests """
@@ -24,7 +22,6 @@ class TestSpin:
 
     def teardown_method(self):
         """ this is run once for each class before any tests """
-        pass
 
     def test_spin_table(self):
 

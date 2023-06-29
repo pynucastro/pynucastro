@@ -23,11 +23,9 @@ class TestComposition:
     def test_solar(self, comp):
         comp.set_solar_like()
 
-        sum = 0.0
-        for k in comp.X:
-            sum += comp.X[k]
+        xsum = sum(comp.X.values())
 
-        assert sum == approx(1.0)
+        assert xsum == approx(1.0)
         assert comp.X[Nucleus("h1")] == approx(0.7)
 
     def test_set_all(self, nuclei, comp):
