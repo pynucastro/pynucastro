@@ -147,6 +147,11 @@ class Tfactors:
         self.T953 = self.T9**(5./3.)
         self.lnT9 = np.log(self.T9)
 
+    @property
+    def array(self):
+        """return t factors as array in order of lambda function"""
+        return np.array([1, self.T9i, self.T913i, self.T913, self.T9, self.T953, self.lnT9])
+
 
 class SingleSet:
     """ a set in Reaclib is one piece of a rate, in the form
