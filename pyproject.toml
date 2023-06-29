@@ -2,6 +2,9 @@
 [build-system]
 requires = ["setuptools>=45", "wheel", "setuptools_scm>=6.2"]
 
+[tool.pylint.MAIN]
+ignore = ['_python_reference']
+
 [tool.pylint."MESSAGES CONTROL"]
 disable = [
   "unspecified-encoding",
@@ -22,6 +25,16 @@ disable = [
   "missing-module-docstring",
 ]
 enable = ["useless-suppression"]
+
+[tool.pylint.CLASSES]
+defining-attr-methods = [
+  "__init__",
+  "__new__",
+  "setUp",
+  "asyncSetUp",
+  "__post_init__",
+  "setup_class", "setup_method",  # for tests
+]
 
 [tool.pylint.FORMAT]
 max-line-length = 132
