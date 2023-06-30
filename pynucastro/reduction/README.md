@@ -9,7 +9,7 @@ default library, one can navigate to `../../examples/rp-process/` and run the fo
 ```bash
 ./rp_process.py te108 --write_lib rp-process-lib
 ```
-The script takes a range of commmand line arguments -- run `./reduction.py --help` to see all of
+The script takes a range of command line arguments -- run `./reduction.py --help` to see all of
 them. To run with a smaller network (*ni56* endpoint), a small dataset (64 points), and no MPI, do:
 ```bash
 ./reduction.py -e ni56

@@ -1,27 +1,37 @@
 #!/usr/bin/env python3
 
+import argparse
+import sys
+import time
+from collections import namedtuple
+
 import numpy as np
 
-from collections import namedtuple
 from pynucastro import Composition, Nucleus
 from pynucastro.nucdata import BindingTable
-from reduction_utils import mpi_importer
+from pynucastro.reduction import drgep, mpi_importer, sens_analysis
+from pynucastro.reduction.generate_data import dataset
+from pynucastro.reduction.load_network import load_network
+
 MPI = mpi_importer()
+
 
 def _wrap_conds(conds):
     """Return [conds] if conds has 1 dimension, and give back conds otherwise."""
-    
+
     try:
-        conds[0]
+        _ = conds[0]
         try:
-            conds[0][0]
+            _ = conds[0][0]
             return conds
-        except:
+        except IndexError:
             return [conds]
-    except:
-        raise ValueError('Conditions must be non-empty subscriptable object')
+    except IndexError:
+        raise ValueError('Conditions must be non-empty subscriptable object') from None
+
 
 NetInfo = namedtuple("NetInfo", "y ydot z a ebind m")
+
 
 def get_net_info(net, comp, rho, T):
 
@@ -56,6 +66,7 @@ def get_net_info(net, comp, rho, T):
 
     return NetInfo(y, ydot, z, a, ebind, m)
 
+
 def enuc_dot(net_info):
     """Calculate the nuclear energy generation rate."""
 
@@ -63,6 +74,7 @@ def enuc_dot(net_info):
     c_light = 2.99792458e10
 
     return -np.sum(net_info.ydot * net_info.m) * avo * c_light**2
+
 
 def ye_dot(net_info):
     """Calculate the time rate of change of electron fraction."""
@@ -72,63 +84,61 @@ def ye_dot(net_info):
     norm_fac = np.sum(y * a)
     return np.sum(ydot * z) / norm_fac - np.sum(y * z) / norm_fac**2 * np.sum(ydot * a)
 
+
 def abar_dot(net_info):
     """Calculate the time rate of change of mean molecular weight."""
 
     abar_inv = np.sum(net_info.y)
     return -1 / abar_inv**2 * np.sum(net_info.ydot)
-    
+
+
 def map_comp(comp, net):
     """Create new composition object with nuclei in net, and copy their mass fractions over."""
-    
+
     comp_new = Composition(net.unique_nuclei)
 
     for nuc in comp_new.X:
         comp_new.X[nuc] = comp.X[nuc]
-        
+
     return comp_new
+
 
 def rel_err(x, x0):
     """Compute the relative error between two NumPy arrays."""
 
     return np.abs((x - x0) / x0)
-    
+
+
 def get_errfunc_enuc(net_old, conds):
     """Function for computing error in nuclear energy generation."""
-        
+
     enucdot_list = []
-    
+
     for comp, rho, T in conds:
         net_info_old = get_net_info(net_old, comp, rho, T)
         enucdot_list.append(enuc_dot(net_info_old))
-    
+
     def erf(net_new):
-        
+
         err = 0.0
-        
+
         for cond, enucdot_old in zip(conds, enucdot_list):
 
             net_info_new = get_net_info(net_new, *cond)
             enucdot_new = enuc_dot(net_info_new)
             err = max(err, rel_err(enucdot_new, enucdot_old))
-            
+
         return err
-        
+
     return erf
 
-if __name__ == "__main__":
-    
-    import time
-    import sys
-    import argparse
-    from load_network import load_network
-    from generate_data import dataset
-    from pynucastro.reduction import drgep, binary_search_trim, sens_analysis
-    
+
+def main():
+
     #-----------------------------------
     # Setup parser and process arguments
     #-----------------------------------
-    
+
     description = "Example/test script for running a selected reduction algorithm."
     algorithm_help = "The algorithm to use. Currently only supports 'drgep'."
     endpoint_help = "The nucleus to use as an endpoint in the unreduced network."
@@ -150,7 +160,7 @@ if __name__ == "__main__":
     use_numpy_help = """If the algorithm has a 'use_numpy' option, turn it on. Some algorithms always
             run as if use_numpy=True."""
     sa_help = "Error threshold to use when performing sensitivity analysis."
-    
+
     parser = argparse.ArgumentParser(description=description)
     parser.add_argument('-a', '--algorithm', default='drgep', help=algorithm_help)
     parser.add_argument('-e', '--endpoint', default=Nucleus('te108'), type=Nucleus,
@@ -169,25 +179,25 @@ if __name__ == "__main__":
     parser.add_argument('--use_numpy', action='store_true', help=use_numpy_help)
     parser.add_argument('-s', '--sens_analysis', default=0.05, type=float, help=sa_help)
     args = parser.parse_args(sys.argv[1:])
-    
+
     args.algorithm = args.algorithm.lower()
-    
+
     if args.algorithm == 'drgep':
         alg = drgep
-        permute = (not args.use_numpy)
+        permute = not args.use_numpy
     else:
         raise ValueError(f'Algorithm {args.algorithm} is not supported.')
-        
+
     if args.drho:
         args.datadim[0] = args.drho
     if args.dtemp:
         args.datadim[1] = args.dtemp
     if args.dmetal:
         args.datadim[2] = args.dmetal
-        
+
     if not args.targets:
         args.targets = [Nucleus('p'), args.endpoint]
-        
+
     if not args.tol:
         if args.algorithm == 'drgep':
             args.tol = [1e-3] + [1e-2] * (len(args.targets)-1)
@@ -196,20 +206,22 @@ if __name__ == "__main__":
             if len(args.tol) == 1:
                 args.tol = [args.tol] * len(args.targets)
             elif len(args.tol) != len(args.targets):
-                raise ValueError(f"For '{args.algorithm}', there should be one tolerance for each"
-                        + " target nucleus.")
-                
+                raise ValueError(
+                    f"For '{args.algorithm}', there should be one tolerance for"
+                    " each target nucleus."
+                )
+
     #-----------------------------
     # Load the network and dataset
     #-----------------------------
-    
-    net = load_network(args.endpoint, library=args.library)
+
+    net = load_network(args.endpoint, library_name=args.library)
     data = list(dataset(net, args.datadim, permute, args.brho, args.btemp, args.bmetal))
-    
+
     #-----------------------------
     # Prepare to run the algorithm
     #-----------------------------
-    
+
     alg_args = \
     {
         'net': net,
@@ -220,47 +232,50 @@ if __name__ == "__main__":
         'use_mpi': args.use_mpi,
         'use_numpy': args.use_numpy
     }
-    
+
     if args.algorithm == 'drgep':
         args.algorithm = args.algorithm.upper()
-    
+
     #------------------
     # Run the algorithm
     #------------------
-    
+
     if args.use_mpi and MPI.COMM_WORLD.Get_rank() == 0:
-        print(f"Commencing reduction with {MPI.COMM_WORLD.Get_size()} processes.")
+        print(f"Commencing reduction with {MPI.COMM_WORLD.Get_size()} processes.\n")
     elif not args.use_mpi:
-        print("Commencing reduction without MPI.")
-    print()
-    
+        print("Commencing reduction without MPI.\n")
+
     t0 = time.time()
     nuclei = alg(**alg_args)
     dt = time.time() - t0
-    
+
     red_net = net.linking_nuclei(nuclei)
     second_data = list(dataset(net, args.datadim, True, args.brho, args.btemp, args.bmetal))
     errfunc = get_errfunc_enuc(net, second_data)
-    
-    if (not args.use_mpi) or MPI.COMM_WORLD.Get_rank() == 0:
-        
+
+    if not args.use_mpi or MPI.COMM_WORLD.Get_rank() == 0:
+
         print()
         print(f"{args.algorithm} reduction took {dt:.3f} s.")
         print("Number of species in full network: ", len(net.unique_nuclei))
         print(f"Number of species in {args.algorithm} reduced network: ", len(nuclei))
         print("Reduced Network Error:", f"{errfunc(red_net)*100:.2f}%")
         print()
-    
+
     # Perform sensitivity analysis
     if args.use_mpi:
         MPI.COMM_WORLD.Barrier()
     t0 = time.time()
     red_net = sens_analysis(red_net, errfunc, args.sens_analysis, args.use_mpi)
     dt = time.time() - t0
-    
-    if (not args.use_mpi) or MPI.COMM_WORLD.Get_rank() == 0:
-    
-        print(f"Greedy sensativity analysis reduction took {dt:.3f} s.")
-        print(f"Number of species in {args.algorithm} + sensativity analysis reduced network: ",
+
+    if not args.use_mpi or MPI.COMM_WORLD.Get_rank() == 0:
+
+        print(f"Greedy sensitivity analysis reduction took {dt:.3f} s.")
+        print(f"Number of species in {args.algorithm} + sensitivity analysis reduced network: ",
                 len(red_net.unique_nuclei))
         print("Error: ", f"{errfunc(red_net)*100:.2f}%")
+
+
+if __name__ == "__main__":
+    main()
