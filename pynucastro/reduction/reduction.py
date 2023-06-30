@@ -8,7 +8,6 @@ from collections import namedtuple
 import numpy as np
 
 from pynucastro import Composition, Nucleus
-from pynucastro.nucdata import BindingTable
 from pynucastro.reduction import drgep, mpi_importer, sens_analysis
 from pynucastro.reduction.generate_data import dataset
 from pynucastro.reduction.load_network import load_network
@@ -39,8 +38,6 @@ def get_net_info(net, comp, rho, T):
     # Can alternatively use the NumPy-based method (evaluate_ydots_arr)
     ydots_dict = net.evaluate_ydots(rho, T, comp)
 
-    bintable = BindingTable()
-
     y = np.zeros(len(net.unique_nuclei), dtype=np.float64)
     ydot = np.zeros(len(net.unique_nuclei), dtype=np.float64)
     z = np.zeros(len(net.unique_nuclei), dtype=np.float64)
@@ -58,10 +55,7 @@ def get_net_info(net, comp, rho, T):
         ydot[i] = ydots_dict[n]
         z[i] = n.Z
         a[i] = n.A
-        try:
-            ebind[i] = bintable.get_binding_energy(n.N, n.Z)
-        except KeyError:
-            ebind[i] = 0.0
+        ebind[i] = n.nucbind or 0.0
         m[i] = mass_proton * n.Z + mass_neutron * n.N - ebind[i] / c_light**2
 
     return NetInfo(y, ydot, z, a, ebind, m)
