@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Example of integrating a network &mdash; pynucastro 2.0.3.post38+g72799eb4 documentation</title>
+  <title>Example of integrating a network &mdash; pynucastro 2.0.3.post39+g1c53bef3 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/nbsphinx-code-cells.css" type="text/css" />
@@ -148,6 +148,7 @@
               <span class="s2">&quot;c13(p,g)n14&quot;</span><span class="p">,</span>
               <span class="s2">&quot;n13(,)c13&quot;</span><span class="p">,</span>
               <span class="s2">&quot;n13(p,g)o14&quot;</span><span class="p">,</span>
+              <span class="s2">&quot;n14(p,g)o15&quot;</span><span class="p">,</span>
               <span class="s2">&quot;n15(p,a)c12&quot;</span><span class="p">,</span>
               <span class="s2">&quot;o14(,)n14&quot;</span><span class="p">,</span>
               <span class="s2">&quot;o15(,)n15&quot;</span><span class="p">]</span>
@@ -167,6 +168,7 @@
  C13 + p ⟶ N14 + 𝛾,
  N13 ⟶ C13 + e⁺ + 𝜈,
  N13 + p ⟶ O14 + 𝛾,
+ N14 + p ⟶ O15 + 𝛾,
  N15 + p ⟶ He4 + C12,
  O14 ⟶ N14 + e⁺ + 𝜈,
  O15 ⟶ N15 + e⁺ + 𝜈]
@@ -181,10 +183,25 @@
 </pre></div>
 </div>
 </div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">pynet</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/pynucastro-integration_7_0.png" src="_images/pynucastro-integration_7_0.png" />
+</div>
+</div>
 <p>For example, this network knows how to write the full term for a reaction that goes into the <span class="math notranslate nohighlight">\(dY/dt\)</span> equation of the ODE system.</p>
 <p>Here we pick one of the rates that is part of the network an explore it.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">r</span> <span class="o">=</span> <span class="n">pynet</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
@@ -202,7 +219,7 @@ C13 + p ⟶ N14 + 𝛾
 </div>
 <p>a rate also knows what its contribution is to the <span class="math notranslate nohighlight">\(dY/dt\)</span> equation is:</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">ydot_string_py</span><span class="p">())</span>
@@ -222,7 +239,7 @@ rho*Y[jp]*Y[jc13]*rate_eval.p_c13__n14
 </pre></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">function_string_py</span><span class="p">())</span>
@@ -258,7 +275,7 @@ def p_c13__n14(rate_eval, tf):
 <p>The <code class="docutils literal notranslate"><span class="pre">write_network()</span></code> method will output the python code needed to define the RHS of a network for integration with the SciPy integrators.</p>
 <p>Since python code can be slow, we use Numba to do just-in-time compilation of the functions to speed things up.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pynet</span><span class="o">.</span><span class="n">write_network</span><span class="p">(</span><span class="s2">&quot;cno_test_integrate.py&quot;</span><span class="p">)</span>
@@ -266,7 +283,7 @@ def p_c13__n14(rate_eval, tf):
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">cat</span> cno_test_integrate.py
@@ -345,6 +362,7 @@ def to_composition(Y):
     (&#34;p_c13__n14&#34;, numba.float64),
     (&#34;n13__c13__weak__wc12&#34;, numba.float64),
     (&#34;p_n13__o14&#34;, numba.float64),
+    (&#34;p_n14__o15&#34;, numba.float64),
     (&#34;p_n15__he4_c12&#34;, numba.float64),
     (&#34;o14__n14__weak__wc12&#34;, numba.float64),
     (&#34;o15__n15__weak__wc12&#34;, numba.float64),
@@ -355,6 +373,7 @@ class RateEval:
         self.p_c13__n14 = np.nan
         self.n13__c13__weak__wc12 = np.nan
         self.p_n13__o14 = np.nan
+        self.p_n14__o15 = np.nan
         self.p_n15__he4_c12 = np.nan
         self.o14__n14__weak__wc12 = np.nan
         self.o15__n15__weak__wc12 = np.nan
@@ -419,6 +438,26 @@ def p_n13__o14(rate_eval, tf):
     rate_eval.p_n13__o14 = rate
 
 @numba.njit()
+def p_n14__o15(rate_eval, tf):
+    # n14 + p --&gt; o15
+    rate = 0.0
+
+    # im05n
+    rate += np.exp(  17.01 + -15.193*tf.T913i + -0.161954*tf.T913
+                  + -7.52123*tf.T9 + -0.987565*tf.T953 + -0.666667*tf.lnT9)
+    # im05r
+    rate += np.exp(  6.73578 + -4.891*tf.T9i
+                  + 0.0682*tf.lnT9)
+    # im05r
+    rate += np.exp(  7.65444 + -2.998*tf.T9i
+                  + -1.5*tf.lnT9)
+    # im05n
+    rate += np.exp(  20.1169 + -15.193*tf.T913i + -4.63975*tf.T913
+                  + 9.73458*tf.T9 + -9.55051*tf.T953 + 0.333333*tf.lnT9)
+
+    rate_eval.p_n14__o15 = rate
+
+@numba.njit()
 def p_n15__he4_c12(rate_eval, tf):
     # n15 + p --&gt; he4 + c12
     rate = 0.0
@@ -472,6 +511,7 @@ def rhs_eq(t, Y, rho, T, screen_func):
     p_c13__n14(rate_eval, tf)
     n13__c13__weak__wc12(rate_eval, tf)
     p_n13__o14(rate_eval, tf)
+    p_n14__o15(rate_eval, tf)
     p_n15__he4_c12(rate_eval, tf)
     o14__n14__weak__wc12(rate_eval, tf)
     o15__n15__weak__wc12(rate_eval, tf)
@@ -491,6 +531,10 @@ def rhs_eq(t, Y, rho, T, screen_func):
         scor = screen_func(plasma_state, scn_fac)
         rate_eval.p_n13__o14 *= scor
 
+        scn_fac = ScreenFactors(1, 1, 7, 14)
+        scor = screen_func(plasma_state, scn_fac)
+        rate_eval.p_n14__o15 *= scor
+
         scn_fac = ScreenFactors(1, 1, 7, 15)
         scor = screen_func(plasma_state, scn_fac)
         rate_eval.p_n15__he4_c12 *= scor
@@ -501,6 +545,7 @@ def rhs_eq(t, Y, rho, T, screen_func):
        -rho*Y[jp]*Y[jc12]*rate_eval.p_c12__n13
        -rho*Y[jp]*Y[jc13]*rate_eval.p_c13__n14
        -rho*Y[jp]*Y[jn13]*rate_eval.p_n13__o14
+       -rho*Y[jp]*Y[jn14]*rate_eval.p_n14__o15
        -rho*Y[jp]*Y[jn15]*rate_eval.p_n15__he4_c12
        )
 
@@ -525,6 +570,7 @@ def rhs_eq(t, Y, rho, T, screen_func):
        )
 
     dYdt[jn14] = (
+       -rho*Y[jp]*Y[jn14]*rate_eval.p_n14__o15
        +rho*Y[jp]*Y[jc13]*rate_eval.p_c13__n14
        +Y[jo14]*rate_eval.o14__n14__weak__wc12
        )
@@ -541,6 +587,7 @@ def rhs_eq(t, Y, rho, T, screen_func):
 
     dYdt[jo15] = (
        -Y[jo15]*rate_eval.o15__n15__weak__wc12
+       +rho*Y[jp]*Y[jn14]*rate_eval.p_n14__o15
        )
 
     return dYdt
@@ -559,6 +606,7 @@ def jacobian_eq(t, Y, rho, T, screen_func):
     p_c13__n14(rate_eval, tf)
     n13__c13__weak__wc12(rate_eval, tf)
     p_n13__o14(rate_eval, tf)
+    p_n14__o15(rate_eval, tf)
     p_n15__he4_c12(rate_eval, tf)
     o14__n14__weak__wc12(rate_eval, tf)
     o15__n15__weak__wc12(rate_eval, tf)
@@ -578,6 +626,10 @@ def jacobian_eq(t, Y, rho, T, screen_func):
         scor = screen_func(plasma_state, scn_fac)
         rate_eval.p_n13__o14 *= scor
 
+        scn_fac = ScreenFactors(1, 1, 7, 14)
+        scor = screen_func(plasma_state, scn_fac)
+        rate_eval.p_n14__o15 *= scor
+
         scn_fac = ScreenFactors(1, 1, 7, 15)
         scor = screen_func(plasma_state, scn_fac)
         rate_eval.p_n15__he4_c12 *= scor
@@ -588,6 +640,7 @@ def jacobian_eq(t, Y, rho, T, screen_func):
        -rho*Y[jc12]*rate_eval.p_c12__n13
        -rho*Y[jc13]*rate_eval.p_c13__n14
        -rho*Y[jn13]*rate_eval.p_n13__o14
+       -rho*Y[jn14]*rate_eval.p_n14__o15
        -rho*Y[jn15]*rate_eval.p_n15__he4_c12
        )
 
@@ -601,6 +654,10 @@ def jacobian_eq(t, Y, rho, T, screen_func):
 
     jac[jp, jn13] = (
        -rho*Y[jp]*rate_eval.p_n13__o14
+       )
+
+    jac[jp, jn14] = (
+       -rho*Y[jp]*rate_eval.p_n14__o15
        )
 
     jac[jp, jn15] = (
@@ -655,11 +712,16 @@ def jacobian_eq(t, Y, rho, T, screen_func):
        )
 
     jac[jn14, jp] = (
+       -rho*Y[jn14]*rate_eval.p_n14__o15
        +rho*Y[jc13]*rate_eval.p_c13__n14
        )
 
     jac[jn14, jc13] = (
        +rho*Y[jp]*rate_eval.p_c13__n14
+       )
+
+    jac[jn14, jn14] = (
+       -rho*Y[jp]*rate_eval.p_n14__o15
        )
 
     jac[jn14, jo14] = (
@@ -690,6 +752,14 @@ def jacobian_eq(t, Y, rho, T, screen_func):
        -rate_eval.o14__n14__weak__wc12
        )
 
+    jac[jo15, jp] = (
+       +rho*Y[jn14]*rate_eval.p_n14__o15
+       )
+
+    jac[jo15, jn14] = (
+       +rho*Y[jp]*rate_eval.p_n14__o15
+       )
+
     jac[jo15, jo15] = (
        -rate_eval.o15__n15__weak__wc12
        )
@@ -699,7 +769,7 @@ def jacobian_eq(t, Y, rho, T, screen_func):
 </div>
 <p>We can now import the network that was just created and integrate it using the SciPy ODE solvers</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cno_test_integrate</span> <span class="k">as</span> <span class="nn">cno</span>
@@ -710,7 +780,7 @@ def jacobian_eq(t, Y, rho, T, screen_func):
 <h2>Integrating the network<a class="headerlink" href="#Integrating-the-network" title="Permalink to this heading"></a></h2>
 <p>We can use the stiff ODE integration solvers that are part of SciPy to integrate this system now</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">scipy.integrate</span> <span class="kn">import</span> <span class="n">solve_ivp</span>
@@ -720,7 +790,7 @@ def jacobian_eq(t, Y, rho, T, screen_func):
 </div>
 <p>Initialize the thermodynamic conditions and initial composition. We express the composition as molar fractions, <code class="docutils literal notranslate"><span class="pre">Y0</span></code>.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rho</span> <span class="o">=</span> <span class="mi">150</span>
@@ -737,7 +807,7 @@ def jacobian_eq(t, Y, rho, T, screen_func):
 </div>
 <p>Now we integrate. We use the <code class="docutils literal notranslate"><span class="pre">BDF</span></code> method, since reaction networks are in general stiff</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tmax</span> <span class="o">=</span> <span class="mf">1.e20</span>
@@ -751,7 +821,7 @@ def jacobian_eq(t, Y, rho, T, screen_func):
 <section id="Plotting-the-results">
 <h2>Plotting the results<a class="headerlink" href="#Plotting-the-results" title="Permalink to this heading"></a></h2>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
@@ -759,7 +829,7 @@ def jacobian_eq(t, Y, rho, T, screen_func):
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
@@ -782,15 +852,7 @@ def jacobian_eq(t, Y, rho, T, screen_func):
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/pynucastro-integration_27_0.png" src="_images/pynucastro-integration_27_0.png" />
-</div>
-</div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>
-</pre></div>
+<img alt="_images/pynucastro-integration_28_0.png" src="_images/pynucastro-integration_28_0.png" />
 </div>
 </div>
 <script type="application/vnd.jupyter.widget-state+json">
