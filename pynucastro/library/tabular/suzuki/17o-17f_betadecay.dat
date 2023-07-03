@@ -1,6 +1,6 @@
 !17O (5/2+, 1/2+) -> 17F    beta-decay   with screening effects
 !USDB ,    Q (17O-17F) = -2.7604 MeV
-! Experimental energies and B(GT) are used. 
+! Experimental energies and B(GT) are used.
 !
 !g/cm^3           K                 erg          erg          erg          Log(1/s)          erg/s            erg/s
 !Log(rhoY)        Log(T)            mu           dQ           Vs           Log(e-cap-rate)   nu-energy-loss   gamma-energy
