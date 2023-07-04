@@ -1480,10 +1480,10 @@ class TabularRate(Rate):
         fstring += f"    # {self.rid}\n"
 
         # find the nearest value of T and rhoY in the data table
-        fstring += f"    T_nearest = ({self.fname}_data[:, 1])[np.abs(({self.fname}_data[:, 1]) - T).argmin()]\n"
-        fstring += f"    rhoY_nearest = ({self.fname}_data[:, 0])[np.abs(({self.fname}_data[:, 0]) - rhoY).argmin()]\n"
+        fstring += f"    T_nearest = ({self.fname}_data[:, 1])[10.0**np.abs(({self.fname}_data[:, 1]) - T).argmin()]\n"
+        fstring += f"    rhoY_nearest = ({self.fname}_data[:, 0])[10.0**np.abs(({self.fname}_data[:, 0]) - rhoY).argmin()]\n"
         fstring += f"    inde = np.where(({self.fname}_data[:, 1] == T_nearest) & ({self.fname}_data[:, 0] == rhoY_nearest))[0][0]\n"
-        fstring += f"    rate_eval.{self.fname} = {self.fname}_data[inde][5]\n\n"
+        fstring += f"    rate_eval.{self.fname} = 10.0**({self.fname}_data[inde][5])\n\n"
 
         return fstring
 
