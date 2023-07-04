@@ -1513,11 +1513,11 @@ class TabularRate(Rate):
 
         data = self.tabular_data_table
         # find the nearest value of T and rhoY in the data table
-        T_nearest = (data[:, 1])[np.abs((data[:, 1]) - T).argmin()]
-        rhoY_nearest = (data[:, 0])[np.abs((data[:, 0]) - rhoY).argmin()]
+        T_nearest = (data[:, 1])[np.abs(10.0**(data[:, 1]) - T).argmin()]
+        rhoY_nearest = (data[:, 0])[np.abs(10.0**(data[:, 0]) - rhoY).argmin()]
         inde = np.where((data[:, 1] == T_nearest) & (data[:, 0] == rhoY_nearest))[0][0]
         r = data[inde][5]
-        return r
+        return 10.0**r
 
     def get_nu_loss(self, T, rhoY):
         """ get the neutrino loss rate for the reaction if tabulated"""
