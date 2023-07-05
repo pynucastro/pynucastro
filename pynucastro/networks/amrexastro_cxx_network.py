@@ -50,7 +50,7 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
                 if rr is not None:
                     of.write(f"{self.indent*n_indent}    rate_eval.screened_rates(k_{rr.cname()}) = 0.0;\n")
                     of.write(f"{self.indent*n_indent}    if constexpr (std::is_same<T, rate_derivs_t>::value) {{\n")
-                    of.write(f"{self.indent*n_indent}    rate_eval.dscreened_rates_dT(k_{rr.cname()}) = 0.0;\n")
+                    of.write(f"{self.indent*n_indent}        rate_eval.dscreened_rates_dT(k_{rr.cname()}) = 0.0;\n")
                     of.write(f"{self.indent*n_indent}    }}\n")
                 of.write(f"{self.indent*n_indent}}}\n\n")
 
