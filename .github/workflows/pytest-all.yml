@@ -45,4 +45,4 @@ jobs:
         run: python setup.py develop --user
 
       - name: Run tests with pytest
-        run: pytest -v -s --cov=pynucastro --nbval --ignore=docs --ignore-glob="pynucastro/library/tabular/*.ipynb" --ignore=examples/rxn-network-integration.ipynb --ignore=examples/o16o16_rates.ipynb --ignore-glob="examples/rp-process/*"
+        run: pytest -v -s --cov=pynucastro --nbval --ignore=docs --ignore-glob="pynucastro/library/tabular/*.ipynb" --ignore=examples/rxn-network-integration.ipynb --ignore=examples/o16o16_rates.ipynb
