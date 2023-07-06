@@ -16,7 +16,7 @@ import sympy
 
 from pynucastro.networks.rate_collection import RateCollection
 from pynucastro.networks.sympy_network_support import SympyRates
-
+from pynucastro.nucdata import Nucleus
 
 class BaseCxxNetwork(ABC, RateCollection):
     """Interpret the collection of rates and nuclei and produce the
@@ -74,6 +74,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.ftags['<part_fun_data>'] = self._fill_parition_function_data
         self.ftags['<part_fun_cases>'] = self._fill_parition_function_cases
         self.ftags['<spin_state_cases>'] = self._fill_spin_state_cases
+        self.ftags['<rate_indices>'] = self._fill_rate_indices
         self.indent = '    '
 
         self.num_screen_calls = None
@@ -567,3 +568,56 @@ class BaseCxxNetwork(ABC, RateCollection):
                 of.write(f"{self.indent*n_indent}case {n.cindex()}:\n")
                 of.write(f"{self.indent*2*n_indent}spin = {n.spin_states};\n")
                 of.write(f"{self.indent*2*n_indent}break;\n\n")
+
+    def _fill_rate_indices(self, n_indent, of):
+        # Writes indices needed for NSE_NET algorithm.
+
+        LIG = list(map(Nucleus, ["h1", "n", "he4"]))
+
+        for nuc in LIG:
+            if nuc in self.unique_nuclei:
+                of.write(f"{self.indent*n_indent}AMREX_GPU_MANAGED int {nuc.short_spec_name}_index = {self.unique_nuclei.index(nuc)};\n")
+            else:
+                of.write(f"{self.indent*n_indent}AMREX_GPU_MANAGED int {nuc.short_spec_name}_index = -1;\n")
+
+        of.write(f"\n")
+
+        # Fill in the rate indices
+        of.write(f"{self.indent*n_indent}AMREX_GPU_MANAGED amrex::Array2D<int, 1, Rates::NumRates, 1, 7> rate_indices {{\n")
+
+        for n, rate in enumerate(self.all_rates):
+
+            tmp = ','
+            if n == len(self.all_rates) - 1:
+                tmp = ''
+
+            # meaning it is removed.
+            if rate.removed is not None:
+                of.write(f"{self.indent*n_indent}    -1, -1, -1, -1, -1, -1, -1{tmp}\n")
+                continue
+
+            # Find the reactants and products indices
+            reactant_ind = [-1 for n in range(3 - len(rate.reactants))]
+            product_ind = [-1 for n in range(3 - len(rate.products))]
+
+            for nuc in rate.reactants:
+                reactant_ind.append(self.unique_nuclei.index(nuc))
+
+            for nuc in rate.products:
+                product_ind.append(self.unique_nuclei.index(nuc))
+
+            reactant_ind.sort()
+            product_ind.sort()
+
+            # Find the reverse rate index
+            rr_ind = -1
+            rr = self.find_reverse(rate)
+            if rr is not None:
+                rr_ind = self.all_rates.index(rr)
+
+            of.write(f"{self.indent*n_indent}    {reactant_ind[0]}, {reactant_ind[1]}, {reactant_ind[2]}, {product_ind[0]}, {product_ind[1]}, {product_ind[2]}, {rr_ind}{tmp}\n")
+
+        of.write(f"{self.indent*n_indent}}};\n")
+        
+
+        

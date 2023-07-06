@@ -7,6 +7,11 @@ namespace network
     AMREX_GPU_MANAGED amrex::Array1D<amrex::Real, 1, NumSpec> mion;
 }
 
+namespace NSE
+{
+    <rate_indices>(1)
+}
+
 void actual_network_init()
 {
     using namespace Species;
