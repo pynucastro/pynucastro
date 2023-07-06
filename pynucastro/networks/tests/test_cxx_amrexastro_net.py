@@ -85,8 +85,8 @@ class TestAmrexAstroCxxNetwork:
         # will need to be added to the reference directory or explicitly ignored
         files = os.listdir(test_path)
         skip_files = [
-            "23Na-23Ne_electroncapture.dat",
-            "23Ne-23Na_betadecay.dat",
+            "23na-23ne_electroncapture.dat",
+            "23ne-23na_betadecay.dat",
         ]
 
         errors = []
