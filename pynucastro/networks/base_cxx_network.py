@@ -583,7 +583,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         of.write(f"\n")
 
         # Fill in the rate indices
-        of.write(f"{self.indent*n_indent}AMREX_GPU_MANAGED amrex::Array2D<int, 1, Rates::NumRates, 1, 7> rate_indices {{\n")
+        of.write(f"{self.indent*n_indent}AMREX_GPU_MANAGED amrex::Array2D<int, 1, Rates::NumRates, 1, 7, Order::C> rate_indices {{\n")
 
         for n, rate in enumerate(self.all_rates):
 
