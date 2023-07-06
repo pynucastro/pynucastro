@@ -2,8 +2,8 @@
 !USDB   GT+Fermi     Q(21Mg-21Na) =13.0974 MeV
 !Experimental data are usded.
 !
-!g/cm^3           K                 erg          erg          erg          Log(1/s)          erg/s            erg/s
 !Log(rhoY)        Log(T)            mu           dQ           Vs           Log(e-cap-rate)   nu-energy-loss   gamma-energy
+!g/cm^3           K                 erg          erg          erg          Log(1/s)          erg/s            erg/s
 7.00              7.00              1.95289e-06  5.09492e-08  1.48362e-08  -3.68090e-01      4.54214e-06      4.74964e-06
 7.00              7.20              1.95113e-06  5.07249e-08  1.48362e-08  -3.70380e-01      4.51763e-06      4.72433e-06
 7.00              7.40              1.94841e-06  5.04045e-08  1.48362e-08  -3.71190e-01      4.50921e-06      4.71553e-06

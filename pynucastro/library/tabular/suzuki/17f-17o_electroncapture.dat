@@ -2,8 +2,8 @@
 !USDB ,    Q (17F-17O) =2.7604 MeV 
 ! Experimental energies and B(GT) are used.
 !
-!g/cm^3           K                 erg          erg          erg          Log(1/s)          erg/s            erg/s
 !Log(rhoY)        Log(T)            mu           dQ           Vs           Log(e-cap-rate)   nu-energy-loss   gamma-energy
+!g/cm^3           K                 erg          erg          erg          Log(1/s)          erg/s            erg/s
 7.00              7.00              1.95658e-06  4.14323e-08  1.11191e-08  -1.26090e+00      2.83453e-07      9.74340e-24
 7.00              7.20              1.95482e-06  4.11599e-08  1.11191e-08  -1.27220e+00      2.75709e-07      9.49971e-24
 7.00              7.40              1.95209e-06  4.08074e-08  1.11191e-08  -1.27960e+00      2.70739e-07      9.34782e-24

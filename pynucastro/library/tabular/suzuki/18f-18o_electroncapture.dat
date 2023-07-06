@@ -2,8 +2,8 @@
 !USDB ,   GT,    Q (18F-18O) = 1.6559 MeV 
 !Experimental data are used.
 !
-!g/cm^3           K                 erg          erg          erg          Log(1/s)          erg/s            erg/s
 !Log(rhoY)        Log(T)            mu           dQ           Vs           Log(e-cap-rate)   nu-energy-loss   gamma-energy
+!g/cm^3           K                 erg          erg          erg          Log(1/s)          erg/s            erg/s
 7.00              7.00              1.95658e-06  4.14323e-08  1.11191e-08  -1.83860e+00      4.95120e-08      1.29691e-13
 7.00              7.20              1.95482e-06  4.11599e-08  1.11191e-08  -1.85070e+00      4.80298e-08      1.20534e-13
 7.00              7.40              1.95209e-06  4.08074e-08  1.11191e-08  -1.85860e+00      4.70772e-08      1.14712e-13

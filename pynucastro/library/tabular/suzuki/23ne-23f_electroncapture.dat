@@ -3,8 +3,8 @@
 !Transitions from 5/2+, 1/2+, 7/2+, 3/2+ states of 23Ne are included.
 !Experimental data are used.
 !
-!g/cm^3           K                 erg          erg          erg          Log(1/s)          erg/s            erg/s
 !Log(rhoY)        Log(T)            mu           dQ           Vs           Log(e-cap-rate)   nu-energy-loss   gamma-energy
+!g/cm^3           K                 erg          erg          erg          Log(1/s)          erg/s            erg/s
 7.00              7.00              1.96779e-06  4.47007e-08  1.23368e-08  -5.00000e+02      0.00000e+00      0.00000e+00
 7.00              7.20              1.96587e-06  4.45405e-08  1.23368e-08  -5.00000e+02      0.00000e+00      0.00000e+00
 7.00              7.40              1.96315e-06  4.40599e-08  1.23368e-08  -5.00000e+02      0.00000e+00      0.00000e+00

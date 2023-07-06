@@ -2,8 +2,8 @@
 !USDB   GT      Q(22Na-22Ne) = 2.8432 MeV
 !Experimental data are used.
 !
-!g/cm^3           K                 erg          erg          erg          Log(1/s)          erg/s            erg/s
 !Log(rhoY)        Log(T)            mu           dQ           Vs           Log(e-cap-rate)   nu-energy-loss   gamma-energy
+!g/cm^3           K                 erg          erg          erg          Log(1/s)          erg/s            erg/s
 7.00              7.00              1.95417e-06  4.78891e-08  1.36025e-08  -5.70610e+00      6.40487e-12      4.01800e-12
 7.00              7.20              1.95225e-06  4.76487e-08  1.36025e-08  -5.71290e+00      6.29666e-12      3.95558e-12
 7.00              7.40              1.94953e-06  4.73123e-08  1.36025e-08  -5.71560e+00      6.25332e-12      3.93107e-12

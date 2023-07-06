@@ -2,8 +2,8 @@
 !USDB ,   GT,   Q (19F-19O) = -4.8209 MeV 
 !Experimental data are used.
 !
-!g/cm^3           K                 erg          erg          erg          Log(1/s)          erg/s            erg/s
 !Log(rhoY)        Log(T)            mu           dQ           Vs           Log(e-cap-rate)   nu-energy-loss   gamma-energy
+!g/cm^3           K                 erg          erg          erg          Log(1/s)          erg/s            erg/s
 7.00              7.00              1.96779e-06  4.14964e-08  1.10550e-08  -5.00000e+02      0.00000e+00      0.00000e+00
 7.00              7.20              1.96587e-06  4.11759e-08  1.10550e-08  -5.00000e+02      0.00000e+00      0.00000e+00
 7.00              7.40              1.96315e-06  4.08555e-08  1.10550e-08  -5.00000e+02      0.00000e+00      0.00000e+00

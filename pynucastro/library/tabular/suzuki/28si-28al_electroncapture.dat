@@ -2,8 +2,8 @@
 !USDB                 Q = -4.6423 MeV
 !Experimental data are used.
 !
-!g/cm^3           K                 erg          erg          erg          Log(1/s)          erg/s            erg/s
 !Log(rhoY)        Log(T)            mu           dQ           Vs           Log(e-cap-rate)   nu-energy-loss   gamma-energy
+!g/cm^3           K                 erg          erg          erg          Log(1/s)          erg/s            erg/s
 7.00              7.00              1.95049e-06  5.68292e-08  1.73035e-08  -5.00000e+02      0.00000e+00      0.00000e+00
 7.00              7.20              1.94857e-06  5.66049e-08  1.73035e-08  -5.00000e+02      0.00000e+00      0.00000e+00
 7.00              7.40              1.94584e-06  5.63005e-08  1.73035e-08  -5.00000e+02      0.00000e+00      0.00000e+00

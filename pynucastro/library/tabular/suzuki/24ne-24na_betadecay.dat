@@ -1,8 +1,8 @@
 !24Ne (0+, 2+) -> 24Na,  beta-decay,  with screening effects
 !USDB                          Q = 2.4663 MeV
 !Exp. energies and B(GT)  0+(g.s.) -> 1+(0.472, 1.3467 MeV)
-!g/cm^3           K                 erg          erg          erg          Log(1/s)          erg/s            erg/s
 !Log(rhoY)        Log(T)            mu           dQ           Vs           Log(e-cap-rate)   nu-energy-loss   gamma-energy
+!g/cm^3           K                 erg          erg          erg          Log(1/s)          erg/s            erg/s
 7.00              7.00              1.95417e-06 -4.78891e-08  1.36025e-08  -2.66760e+00      3.04096e-09      1.69907e-09
 7.00              7.20              1.95225e-06 -4.76487e-08  1.36025e-08  -2.66510e+00      3.06556e-09      1.70966e-09
 7.00              7.40              1.94953e-06 -4.73123e-08  1.36025e-08  -2.66430e+00      3.07405e-09      1.71360e-09

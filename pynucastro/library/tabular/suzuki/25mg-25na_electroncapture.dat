@@ -3,8 +3,8 @@
 !Transitions from 5/2+, 1/2+, 3/2+, 7/2+ and 5/2+(2nd) states of 25Mg are included.
 !Experimental data used.
 !
-!g/cm^3           K                 erg          erg          erg          Log(1/s)          erg/s            erg/s
 !Log(rhoY)        Log(T)            mu           dQ           Vs           Log(e-cap-rate)   nu-energy-loss   gamma-energy
+!g/cm^3           K                 erg          erg          erg          Log(1/s)          erg/s            erg/s
 7.00              7.00              1.96779e-06  5.09492e-08  1.48362e-08  -5.00000e+02      0.00000e+00      0.00000e+00
 7.00              7.20              1.96587e-06  5.07249e-08  1.48362e-08  -5.00000e+02      0.00000e+00      0.00000e+00
 7.00              7.40              1.96315e-06  5.04045e-08  1.48362e-08  -5.00000e+02      0.00000e+00      0.00000e+00

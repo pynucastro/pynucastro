@@ -2,8 +2,8 @@
 !USDB   GT    Q(21O-21F) = 8.1095 MeV
 !Experimental data are used.
 !
-!g/cm^3           K                 erg          erg          erg          Log(1/s)          erg/s            erg/s
 !Log(rhoY)        Log(T)            mu           dQ           Vs           Log(e-cap-rate)   nu-energy-loss   gamma-energy
+!g/cm^3           K                 erg          erg          erg          Log(1/s)          erg/s            erg/s
 7.00              7.00              1.95658e-06 -4.14323e-08  1.11191e-08  -7.65760e-01      7.63098e-07      7.59312e-07
 7.00              7.20              1.95482e-06 -4.11599e-08  1.11191e-08  -7.65150e-01      7.64505e-07      7.60870e-07
 7.00              7.40              1.95209e-06 -4.08074e-08  1.11191e-08  -7.64800e-01      7.65315e-07      7.61764e-07

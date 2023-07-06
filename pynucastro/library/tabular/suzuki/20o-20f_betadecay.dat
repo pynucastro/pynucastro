@@ -2,8 +2,8 @@
 !USDB   GT    Q(20O-20F) = 3.8135 MeV
 !Experimental data are taken into account
 !
-!g/cm^3           K                 erg          erg          erg          Log(1/s)          erg/s            erg/s
 !Log(rhoY)        Log(T)            mu           dQ           Vs           Log(e-cap-rate)   nu-energy-loss   gamma-energy
+!g/cm^3           K                 erg          erg          erg          Log(1/s)          erg/s            erg/s
 7.00              7.00              1.95658e-06 -4.14323e-08  1.11191e-08  -1.38090e+00      9.00348e-08      7.04385e-08
 7.00              7.20              1.95482e-06 -4.11599e-08  1.11191e-08  -1.37880e+00      9.07215e-08      7.07800e-08
 7.00              7.40              1.95209e-06 -4.08074e-08  1.11191e-08  -1.37760e+00      9.11403e-08      7.09922e-08

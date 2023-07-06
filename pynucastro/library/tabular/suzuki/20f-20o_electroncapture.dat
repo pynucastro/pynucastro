@@ -1,8 +1,8 @@
 !20F (2+, 3+, 4+, 1+, 5+) -> 20O,  e-capture,  with screening effects
 !USDB   GT    Q(20F-20O) = -3.8135 MeV
 !Experimental data are taken into account
-!g/cm^3           K                 erg          erg          erg          Log(1/s)          erg/s            erg/s
 !Log(rhoY)        Log(T)            mu           dQ           Vs           Log(e-cap-rate)   nu-energy-loss   gamma-energy
+!g/cm^3           K                 erg          erg          erg          Log(1/s)          erg/s            erg/s
 7.00              7.00              1.95658e-06  4.14323e-08  1.11191e-08  -5.00000e+02      0.00000e+00      0.00000e+00
 7.00              7.20              1.95482e-06  4.11599e-08  1.11191e-08  -5.00000e+02      0.00000e+00      0.00000e+00
 7.00              7.40              1.95209e-06  4.08074e-08  1.11191e-08  -5.00000e+02      0.00000e+00      0.00000e+00

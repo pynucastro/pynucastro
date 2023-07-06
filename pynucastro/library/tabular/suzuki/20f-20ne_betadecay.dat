@@ -3,8 +3,8 @@
 ! Experimental data are taken into account,  energies, GT
 !FF: 20F(2+) -> 20Ne(0+) included
 !
-!g/cm^3           K                 erg          erg          erg          Log(1/s)          erg/s            erg/s
 !Log(rhoY)        Log(T)            mu           dQ           Vs           Log(e-cap-rate)   nu-energy-loss   gamma-energy
+!g/cm^3           K                 erg          erg          erg          Log(1/s)          erg/s            erg/s
 7.00              7.00              1.95546e-06 -4.47007e-08  1.23368e-08  -1.21199e+00      2.76935e-07      1.60682e-07
 7.00              7.20              1.95353e-06 -4.45405e-08  1.23368e-08  -1.21164e+00      2.77326e-07      1.60812e-07
 7.00              7.40              1.95081e-06 -4.40599e-08  1.23368e-08  -1.21152e+00      2.77473e-07      1.60855e-07

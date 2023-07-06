@@ -1,8 +1,8 @@
 !23Ne (5/2+, 1.2+, 7/2+, 3/2+)  -> 23Na    beta-decay  USDB, with screening effects
 !Exp. data are used.             Q=4.37581 MeV
 !
-!g/cm^3           K                 erg          erg          erg          Log(1/s)          erg/s            erg/s
 !Log(rhoY)        Log(T)            mu           dQ           Vs           Log(e-cap-rate)   nu-energy-loss   gamma-energy
+!g/cm^3           K                 erg          erg          erg          Log(1/s)          erg/s            erg/s
 7.00              7.00              1.95417e-06 -4.79051e-08  1.36185e-08  -1.75600e+00      6.14059e-08      4.43415e-09
 7.00              7.20              1.95225e-06 -4.75846e-08  1.36185e-08  -1.75560e+00      6.15050e-08      4.44028e-09
 7.00              7.40              1.94953e-06 -4.72642e-08  1.36185e-08  -1.75560e+00      6.15333e-08      4.44233e-09
