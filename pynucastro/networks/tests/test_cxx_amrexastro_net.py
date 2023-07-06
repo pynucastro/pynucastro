@@ -1,11 +1,11 @@
 # unit tests for rates
-import filecmp
 import io
-import os
+import os.path
 
 import pytest
 
 from pynucastro import networks
+from pynucastro.networks.tests.helpers import compare_network_files
 
 
 class TestAmrexAstroCxxNetwork:
@@ -77,27 +77,16 @@ class TestAmrexAstroCxxNetwork:
         """ test the write_network function"""
         test_path = "_test_cxx/"
         reference_path = "_amrexastro_cxx_reference/"
-        base_path = os.path.relpath(os.path.dirname(__file__))
-
-        fn.write_network(odir=test_path)
-
-        # get the list of files from the generated directory, so any new files
-        # will need to be added to the reference directory or explicitly ignored
-        files = os.listdir(test_path)
+        # files that will be ignored if present in the generated directory
         skip_files = [
             "23Na-23Ne_electroncapture.dat",
             "23Ne-23Na_betadecay.dat",
         ]
 
-        errors = []
-        for test_file in files:
-            if test_file in skip_files:
-                continue
-            # note, _test is written under whatever directory pytest is run from,
-            # so it is not necessarily at the same place as _amrexastro_reference
-            if not filecmp.cmp(os.path.normpath(f"{test_path}/{test_file}"),
-                               os.path.normpath(f"{base_path}/{reference_path}/{test_file}"),
-                               shallow=False):
-                errors.append(test_file)
+        base_path = os.path.relpath(os.path.dirname(__file__))
+        reference_path = os.path.join(base_path, reference_path)
+
+        fn.write_network(odir=test_path)
+        errors = compare_network_files(test_path, reference_path, skip_files)
 
         assert not errors, f"files don't match: {' '.join(errors)}"
