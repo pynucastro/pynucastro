@@ -29,6 +29,4 @@ class TestAmrexAstroCxxNetwork:
         reference_path = os.path.join(base_path, reference_path)
 
         fn.write_network(odir=test_path)
-        errors = compare_network_files(test_path, reference_path, skip_files)
-
-        assert not errors, f"files don't match: {' '.join(errors)}"
+        compare_network_files(test_path, reference_path, skip_files)
