@@ -38,6 +38,37 @@ class TestRateCollection:
         T = 1e8
         assert rc.evaluate_energy_generation(rho, T, comp) == 32.24796008826701
 
+    def test_add_rates(self, rc, reaclib_library):
+        new_rate_names = ["o16(a,g)ne20",
+                          "ne20(a,g)mg24",
+                          "mg24(a,g)si28"]
+
+        new_rates = reaclib_library.get_rate_by_name(new_rate_names)
+
+        # test adding only a single rate
+        rc.add_rates(new_rates[0])
+
+        # check to see if the rate is added
+        assert new_rates[0] in rc.get_rates()
+
+        # now add them all -- and make sure we don't duplicate a rate
+        rc.add_rates(new_rates)
+
+        for r in new_rates:
+            assert r in rc.get_rates()
+
+        assert rc.get_rates().count(new_rates[0]) == 1
+
+        # note: this modifies the fixture rc so tests that follow
+        # will see the additional rates
+
+    def test_remove_rates(self, rc):
+        rate = rc.get_rates()[-1]
+        rc.remove_rates(rate)
+
+        assert rate not in rc.get_rates()
+        assert len(rc.get_rates()) == 6
+
 
 class TestUnimportantRates:
     @pytest.fixture(scope="class")

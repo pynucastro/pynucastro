@@ -343,7 +343,8 @@ class Library:
         """Manually add a rate by giving a Rate object"""
 
         if isinstance(rate, Rate):
-            self._rates[rate.get_rate_id()] = rate
+            if rate not in self._rates:
+                self._rates[rate.get_rate_id()] = rate
         else:
             raise TypeError("invalid Rate object")
 
