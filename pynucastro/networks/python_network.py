@@ -194,6 +194,15 @@ class PythonNetwork(RateCollection):
 
         of.write("\n")
 
+        of.write("def to_composition(Y):\n")
+        of.write(f'{indent}''"""Convert an array of molar fractions to a Composition object."""\n')
+        of.write(f'{indent}'"from pynucastro import Composition, Nucleus\n")
+        of.write(f'{indent}'"nuclei = [Nucleus.from_cache(name) for name in names]\n")
+        of.write(f'{indent}'"comp = Composition(nuclei)\n")
+        of.write(f'{indent}'"for i, nuc in enumerate(nuclei):\n")
+        of.write(f'{indent*2}'"comp.X[nuc] = Y[i] * A[i]\n")
+        of.write(f'{indent}'"return comp\n\n")
+
         # partition function data (if needed)
 
         nuclei_pfs = self.get_nuclei_needing_partition_functions()

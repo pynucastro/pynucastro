@@ -13,3 +13,6 @@ source_pkgs = pynucastro
 # don't include the test files themselves
 omit =
   */tests/*
+exclude_also =
+  def __repr__
+  raise NotImplementedError

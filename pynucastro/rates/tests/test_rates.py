@@ -27,12 +27,10 @@ class TestRate:
     @classmethod
     def setup_class(cls):
         """ this is run once for each class before any tests """
-        pass
 
     @classmethod
     def teardown_class(cls):
         """ this is run once for each class after all tests """
-        pass
 
     def setup_method(self):
         """ this is run before each test """
@@ -102,7 +100,6 @@ class TestRate:
 
     def teardown_method(self):
         """ this is run after each test """
-        pass
 
     def test_reactants(self):
 
@@ -190,7 +187,7 @@ class TestRate:
         assert self.rate8.get_rate_exponent(1.e8) == approx(40.9106396)
 
     def test_eval(self):
-        assert self.rate8.eval(1.e8) == approx(2.0403192412842946e-24)
+        assert self.rate8.eval(1.e8) == approx(2.0403192412842946e-24, abs=1.e-40)
 
     def test_eval_deriv(self):
         T0 = 1.e8
@@ -309,7 +306,7 @@ class TestWeakRates:
         assert len(rate1.reactants) == 1 and len(rate1.products) == 1
         assert rate1.products[0] == Nucleus("f18")
         assert rate1.reactants[0] == Nucleus("o18")
-        assert rate1.eval(1.e10, 1.e7) == approx(3.990249e-11)
+        assert rate1.eval(1.e10, 1.e7) == approx(3.990249e-11, abs=1.e-20)
 
         assert len(rate2.reactants) == 1 and len(rate2.products) == 1
         assert rate2.products[0] == Nucleus("ne22")
