@@ -1,6 +1,5 @@
 # unit tests for rates
 import io
-import os.path
 
 import pytest
 
