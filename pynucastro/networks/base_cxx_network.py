@@ -572,7 +572,7 @@ class BaseCxxNetwork(ABC, RateCollection):
     def _fill_rate_indices(self, n_indent, of):
         # Writes indices needed for NSE_NET algorithm.
 
-        LIG = list(map(Nucleus, ["p", "n", "he4"]))
+        LIG = list(map(Nucleus, ["h1", "n", "he4"]))
 
         for nuc in LIG:
             if nuc in self.unique_nuclei:
