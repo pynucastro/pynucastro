@@ -3,6 +3,9 @@ import os
 
 
 def compare_network_files(test_path, ref_path, skip_files=()):
+    base_path = os.path.relpath(os.path.dirname(__file__))
+    ref_path = os.path.join(base_path, ref_path)
+
     skip_files = set(skip_files)
     test_files = set(os.listdir(test_path)) - skip_files
     ref_files = set(os.listdir(ref_path)) - skip_files

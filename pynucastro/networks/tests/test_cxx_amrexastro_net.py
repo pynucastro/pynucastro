@@ -76,15 +76,13 @@ class TestAmrexAstroCxxNetwork:
     def test_write_network(self, fn):
         """ test the write_network function"""
         test_path = "_test_cxx/"
+        # subdirectory of pynucastro/networks/tests/
         reference_path = "_amrexastro_cxx_reference/"
         # files that will be ignored if present in the generated directory
         skip_files = [
             "23Na-23Ne_electroncapture.dat",
             "23Ne-23Na_betadecay.dat",
         ]
-
-        base_path = os.path.relpath(os.path.dirname(__file__))
-        reference_path = os.path.join(base_path, reference_path)
 
         fn.write_network(odir=test_path)
         compare_network_files(test_path, reference_path, skip_files)
