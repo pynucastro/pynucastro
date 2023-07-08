@@ -2,9 +2,10 @@
 import math
 
 import pytest
+from pytest import approx
+
 from pynucastro import rates
 from pynucastro.nucdata import Nucleus
-from pytest import approx
 
 
 class TestTfactors:
