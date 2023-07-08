@@ -586,7 +586,6 @@ class BaseCxxNetwork(ABC, RateCollection):
         of.write(f"{self.indent*n_indent}AMREX_GPU_MANAGED amrex::Array2D<int, 1, Rates::NumRates, 1, 7, Order::C> rate_indices {{\n")
 
         for n, rate in enumerate(self.all_rates):
-
             tmp = ','
             if n == len(self.all_rates) - 1:
                 tmp = ''
@@ -609,14 +608,13 @@ class BaseCxxNetwork(ABC, RateCollection):
             reactant_ind.sort()
             product_ind.sort()
 
-            # Find the pair rate index
-            pair_rate_index = -1
-
+            # Find the reverse rate index
+            rr_ind = -1
+            rr = self.find_reverse(rate)
+            
             # Note that rate index is 1-based
-            if self.find_reverse(rate) is not None:
-                pair_rate_index = self.all_rates.index(self.find_reverse(rate)) + 1
-            else if self.find_forward(rate) is not None:
-                pair_rate_index = self.all_rates.index(self.find_forward(rate)) + 1
+            if rr is not None:
+                rr_ind = self.all_rates.index(rr) + 1
 
             of.write(f"{self.indent*n_indent}    {reactant_ind[0]}, {reactant_ind[1]}, {reactant_ind[2]}, {product_ind[0]}, {product_ind[1]}, {product_ind[2]}, {rr_ind}{tmp}\n")
 
