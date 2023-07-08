@@ -4,6 +4,7 @@ requires = ["setuptools>=45", "wheel", "setuptools_scm>=6.2"]
 
 [tool.pylint.MAIN]
 ignore = ['_python_reference']
+extension-pkg-allow-list = ['mpi4py']
 
 [tool.pylint."MESSAGES CONTROL"]
 disable = [
@@ -48,3 +49,6 @@ generated-members = ["viridis", "bwr"]
 
 [tool.codespell]
 skip = ".git,*docs/build,*.bib"
+
+[tool.isort]
+known_first_party = ["pynucastro"]
