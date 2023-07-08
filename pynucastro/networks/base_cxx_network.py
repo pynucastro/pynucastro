@@ -59,13 +59,11 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.ftags['<declare_tables>'] = self._declare_tables
         self.ftags['<table_declare_meta>'] = self._table_declare_meta
         self.ftags['<table_init_meta>'] = self._table_init_meta
-        self.ftags['<table_term_meta>'] = self._table_term_meta
         self.ftags['<compute_tabular_rates>'] = self._compute_tabular_rates
         self.ftags['<ydot>'] = self._ydot
         self.ftags['<enuc_add_energy_rate>'] = self._enuc_add_energy_rate
         self.ftags['<jacnuc>'] = self._jacnuc
         self.ftags['<initial_mass_fractions>'] = self._initial_mass_fractions
-        self.ftags['<pynucastro_home>'] = self._pynucastro_home
         self.ftags['<reaclib_rate_functions>'] = self._reaclib_rate_functions
         self.ftags['<rate_struct>'] = self._rate_struct
         self.ftags['<fill_reaclib_rates>'] = self._fill_reaclib_rates
@@ -327,29 +325,6 @@ class BaseCxxNetwork(ABC, RateCollection):
 
             of.write('\n')
 
-    def _table_term_meta(self, n_indent, of):
-        for r in self.tabular_rates:
-
-            of.write('{}deallocate(num_temp_{})\n'.format(
-                self.indent*n_indent, r.table_index_name))
-
-            of.write('{}deallocate(num_rhoy_{})\n'.format(
-                self.indent*n_indent, r.table_index_name))
-
-            of.write('{}deallocate(num_vars_{})\n'.format(
-                self.indent*n_indent, r.table_index_name))
-
-            of.write('{}deallocate(rate_table_{})\n'.format(
-                self.indent*n_indent, r.table_index_name))
-
-            of.write('{}deallocate(rhoy_table_{})\n'.format(
-                self.indent*n_indent, r.table_index_name))
-
-            of.write('{}deallocate(temp_table_{})\n'.format(
-                self.indent*n_indent, r.table_index_name))
-
-            of.write('\n')
-
     def _compute_tabular_rates(self, n_indent, of):
         if len(self.tabular_rates) > 0:
 
@@ -446,10 +421,6 @@ class BaseCxxNetwork(ABC, RateCollection):
                 of.write(f"{self.indent*n_indent}unit_test.X{i+1} = 1.0\n")
             else:
                 of.write(f"{self.indent*n_indent}unit_test.X{i+1} = 0.0\n")
-
-    def _pynucastro_home(self, n_indent, of):
-        of.write('{}PYNUCASTRO_HOME := {}\n'.format(self.indent*n_indent,
-                                                    os.path.dirname(self.pynucastro_dir)))
 
     def _reaclib_rate_functions(self, n_indent, of):
         assert n_indent == 0, "function definitions must be at top level"

@@ -129,9 +129,6 @@ class PeriodicTable:
              'ts': Element('ts', 'tennessine', 117),
              'og': Element('og', 'oganesson', 118)}
 
-    def __init__(self):
-        return
-
     @classmethod
     def lookup_abbreviation(cls, abbrev):
         try:
