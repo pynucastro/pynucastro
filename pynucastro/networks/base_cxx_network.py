@@ -572,7 +572,7 @@ class BaseCxxNetwork(ABC, RateCollection):
     def _fill_rate_indices(self, n_indent, of):
         # Writes indices needed for NSE_NET algorithm.
 
-        LIG = list(map(Nucleus, ["h1", "n", "he4"]))
+        LIG = list(map(Nucleus, ["p", "n", "he4"]))
 
         for nuc in LIG:
             if nuc in self.unique_nuclei:
@@ -609,16 +609,16 @@ class BaseCxxNetwork(ABC, RateCollection):
             reactant_ind.sort()
             product_ind.sort()
 
-            # Find the reverse rate index
-            rr_ind = -1
-            rr = self.find_reverse(rate)
-            if rr is not None:
-                rr_ind = self.all_rates.index(rr)
+            # Find the pair rate index
+            pair_rate_index = -1
+
+            # Note that rate index is 1-based
+            if self.find_reverse(rate) is not None:
+                pair_rate_index = self.all_rates.index(self.find_reverse(rate)) + 1
+            else if self.find_forward(rate) is not None:
+                pair_rate_index = self.all_rates.index(self.find_forward(rate)) + 1
 
             of.write(f"{self.indent*n_indent}    {reactant_ind[0]}, {reactant_ind[1]}, {reactant_ind[2]}, {product_ind[0]}, {product_ind[1]}, {product_ind[2]}, {rr_ind}{tmp}\n")
 
         of.write(f"{self.indent*n_indent}}};\n")
-        of.write(f"{self.indent*n_indent}extern AMREX_GPU_MANAGED bool initialized = false;")
-        
-
-        
+        of.write(f"{self.indent*n_indent}AMREX_GPU_MANAGED bool initialized = false;\n")
