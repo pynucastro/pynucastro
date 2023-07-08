@@ -349,7 +349,7 @@ class RateCollection:
 
         self.files = []
         self.rates = []
-        combined_library = None
+        combined_library = Library()
 
         self.inert_nuclei = inert_nuclei
 
@@ -361,7 +361,7 @@ class RateCollection:
         if rate_files:
             if isinstance(rate_files, str):
                 rate_files = [rate_files]
-            combined_library = self._read_rate_files(rate_files)
+            combined_library += self._read_rate_files(rate_files)
 
         if rates:
             if isinstance(rates, Rate):
@@ -370,10 +370,7 @@ class RateCollection:
                 if not isinstance(r, Rate):
                     raise ValueError('Expected Rate object or list of Rate objects passed as the rates argument.')
             rlib = Library(rates=rates)
-            if not combined_library:
-                combined_library = rlib
-            else:
-                combined_library += rlib
+            combined_library += rlib
 
         if libraries:
             if isinstance(libraries, Library):
@@ -381,13 +378,10 @@ class RateCollection:
             for lib in libraries:
                 if not isinstance(lib, Library):
                     raise ValueError('Expected Library object or list of Library objects passed as the libraries argument.')
-            if not combined_library:
-                combined_library = libraries.pop(0)
             for lib in libraries:
                 combined_library += lib
 
-        if combined_library:
-            self.rates = self.rates + combined_library.get_rates()
+        self.rates = self.rates + combined_library.get_rates()
 
         if precedence:
             self._make_distinguishable(precedence)
@@ -512,7 +506,7 @@ class RateCollection:
     def _read_rate_files(self, rate_files):
         # get the rates
         self.files = rate_files
-        combined_library = None
+        combined_library = Library()
         for rf in self.files:
             # create the appropriate rate object first
             try:
@@ -522,11 +516,7 @@ class RateCollection:
 
             # now create a library:
             rflib = Library(rates=[rate])
-
-            if not combined_library:
-                combined_library = rflib
-            else:
-                combined_library += rflib
+            combined_library += rflib
         return combined_library
 
     def get_forward_rates(self):
