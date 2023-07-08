@@ -18,6 +18,7 @@ from pynucastro.networks.rate_collection import RateCollection
 from pynucastro.networks.sympy_network_support import SympyRates
 from pynucastro.nucdata import Nucleus
 
+
 class BaseCxxNetwork(ABC, RateCollection):
     """Interpret the collection of rates and nuclei and produce the
     C++ code needed to integrate the network.
