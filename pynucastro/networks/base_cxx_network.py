@@ -552,7 +552,7 @@ class BaseCxxNetwork(ABC, RateCollection):
             else:
                 of.write(f"{self.indent*n_indent}AMREX_GPU_MANAGED int {nuc.short_spec_name}_index = -1;\n")
 
-        of.write(f"\n")
+        of.write("\n")
 
         # Fill in the rate indices
         of.write(f"{self.indent*n_indent}AMREX_GPU_MANAGED amrex::Array2D<int, 1, Rates::NumRates, 1, 7, Order::C> rate_indices {{\n")
@@ -583,7 +583,7 @@ class BaseCxxNetwork(ABC, RateCollection):
             # Find the reverse rate index
             rr_ind = -1
             rr = self.find_reverse(rate)
-            
+
             # Note that rate index is 1-based
             if rr is not None:
                 rr_ind = self.all_rates.index(rr) + 1
