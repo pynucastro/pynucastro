@@ -48,3 +48,6 @@ generated-members = ["viridis", "bwr"]
 
 [tool.codespell]
 skip = ".git,*docs/build,*.bib"
+
+[tool.isort]
+known_first_party = ["pynucastro"]
