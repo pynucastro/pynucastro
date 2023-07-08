@@ -17,7 +17,7 @@ import sympy
 from pynucastro.networks.rate_collection import RateCollection
 from pynucastro.networks.sympy_network_support import SympyRates
 from pynucastro.nucdata import Nucleus
-
+from pynucastro.rates import ReacLibRate
 
 class BaseCxxNetwork(ABC, RateCollection):
     """Interpret the collection of rates and nuclei and produce the
@@ -563,7 +563,7 @@ class BaseCxxNetwork(ABC, RateCollection):
                 tmp = ''
 
             # meaning it is removed.
-            if rate.removed is not None:
+            if isinstance(rate, ReacLibRate) and rate.removed is not None:
                 of.write(f"{self.indent*n_indent}    -1, -1, -1, -1, -1, -1, -1{tmp}\n")
                 continue
 
