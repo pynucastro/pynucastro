@@ -1,5 +1,6 @@
 # unit tests for rates
 import io
+import shutil
 
 import pytest
 
@@ -83,5 +84,7 @@ class TestAmrexAstroCxxNetwork:
             "23Ne-23Na_betadecay.dat",
         ]
 
+        # remove any previously generated files
+        shutil.rmtree(test_path, ignore_errors=True)
         fn.write_network(odir=test_path)
         compare_network_files(test_path, reference_path, skip_files)
