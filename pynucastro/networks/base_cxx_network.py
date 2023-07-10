@@ -16,8 +16,6 @@ import sympy
 
 from pynucastro.networks.rate_collection import RateCollection
 from pynucastro.networks.sympy_network_support import SympyRates
-from pynucastro.nucdata import Nucleus
-from pynucastro.rates import ReacLibRate
 
 
 class BaseCxxNetwork(ABC, RateCollection):
@@ -74,7 +72,6 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.ftags['<part_fun_data>'] = self._fill_parition_function_data
         self.ftags['<part_fun_cases>'] = self._fill_parition_function_cases
         self.ftags['<spin_state_cases>'] = self._fill_spin_state_cases
-        self.ftags['<rate_indices>'] = self._fill_rate_indices
         self.indent = '    '
 
         self.num_screen_calls = None
@@ -541,66 +538,3 @@ class BaseCxxNetwork(ABC, RateCollection):
                 of.write(f"{self.indent*n_indent}case {n.cindex()}:\n")
                 of.write(f"{self.indent*2*n_indent}spin = {n.spin_states};\n")
                 of.write(f"{self.indent*2*n_indent}break;\n\n")
-
-    def _fill_rate_indices(self, n_indent, of):
-        """
-        Fills the index needed for the NSE_NET algorithm.
-        1) Get the index of h1, neutron, and helium-4 if they're present in the network.
-        2) Fill rate_indices: 2D array with 1-based index of shape of size (NumRates, 7).
-           - Each row represents a rate in self.all_rates.
-           - The first 3 elements of the row represents the index of reactants in self.unique_nuclei
-           - The next 3 elements of the row represents the index of the products in self.unique_nuclei.
-           - The 7th element of the row represents the index of the corresponding reverse rate
-             (set to -1 if no corresponding reverse rate). This is a 1-based instead of 0-based index.
-           - Set all elements of the current row to -1 if the rate has removed suffix
-             indicating its not directly in the network.        
-        """
-        
-        LIG = list(map(Nucleus, ["p", "n", "he4"]))
-
-        for nuc in LIG:
-            if nuc in self.unique_nuclei:
-                of.write(f"{self.indent*n_indent}AMREX_GPU_MANAGED int {nuc.short_spec_name}_index = {self.unique_nuclei.index(nuc)};\n")
-            else:
-                of.write(f"{self.indent*n_indent}AMREX_GPU_MANAGED int {nuc.short_spec_name}_index = -1;\n")
-
-        of.write("\n")
-
-        # Fill in the rate indices
-        of.write(f"{self.indent*n_indent}AMREX_GPU_MANAGED amrex::Array2D<int, 1, Rates::NumRates, 1, 7, Order::C> rate_indices {{\n")
-
-        for n, rate in enumerate(self.all_rates):
-            tmp = ','
-            if n == len(self.all_rates) - 1:
-                tmp = ''
-
-            # meaning it is removed.
-            if isinstance(rate, ReacLibRate) and rate.removed is not None:
-                of.write(f"{self.indent*n_indent}    -1, -1, -1, -1, -1, -1, -1{tmp}\n")
-                continue
-
-            # Find the reactants and products indices
-            reactant_ind = [-1 for n in range(3 - len(rate.reactants))]
-            product_ind = [-1 for n in range(3 - len(rate.products))]
-
-            for nuc in rate.reactants:
-                reactant_ind.append(self.unique_nuclei.index(nuc))
-
-            for nuc in rate.products:
-                product_ind.append(self.unique_nuclei.index(nuc))
-
-            reactant_ind.sort()
-            product_ind.sort()
-
-            # Find the reverse rate index
-            rr_ind = -1
-            rr = self.find_reverse(rate)
-
-            # Note that rate index is 1-based
-            if rr is not None:
-                rr_ind = self.all_rates.index(rr) + 1
-
-            of.write(f"{self.indent*n_indent}    {reactant_ind[0]}, {reactant_ind[1]}, {reactant_ind[2]}, {product_ind[0]}, {product_ind[1]}, {product_ind[2]}, {rr_ind}{tmp}\n")
-
-        of.write(f"{self.indent*n_indent}}};\n")
-        of.write(f"{self.indent*n_indent}AMREX_GPU_MANAGED bool initialized = false;\n")
