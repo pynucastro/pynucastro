@@ -25,6 +25,7 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
 
         self.ftags['<rate_param_tests>'] = self._rate_param_tests
         self.ftags['<rate_indices>'] = self._fill_rate_indices
+        self.ftags['<npa_index>'] = self._fill_npa_index
 
         self.disable_rate_params = disable_rate_params
         self.function_specifier = "AMREX_GPU_HOST_DEVICE AMREX_INLINE"
@@ -86,11 +87,22 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
                 for r in self.disable_rate_params:
                     of.write(f"disable_{r.cname()}    int     0\n")
 
+    def _fill_npa_index(self, n_indent, of):
+        #Get the index of h1, neutron, and helium-4 if they're present in the network.
+
+        LIG = list(map(Nucleus, ["p", "n", "he4"]))
+
+        for nuc in LIG:
+            if nuc in self.unique_nuclei:
+                of.write(f"{self.indent*n_indent}constexpr int {nuc.short_spec_name}_index = {self.unique_nuclei.index(nuc)};\n")
+            else:
+                of.write(f"{self.indent*n_indent}constexpr int {nuc.short_spec_name}_index = -1;\n")
+
     def _fill_rate_indices(self, n_indent, of):
         """
         Fills the index needed for the NSE_NET algorithm.
-        1) Get the index of h1, neutron, and helium-4 if they're present in the network.
-        2) Fill rate_indices: 2D array with 1-based index of shape of size (NumRates, 7).
+
+        Fill rate_indices: 2D array with 1-based index of shape of size (NumRates, 7).
            - Each row represents a rate in self.all_rates.
            - The first 3 elements of the row represents the index of reactants in self.unique_nuclei
            - The next 3 elements of the row represents the index of the products in self.unique_nuclei.
@@ -99,16 +111,6 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
            - Set all elements of the current row to -1 if the rate has removed suffix
              indicating its not directly in the network.
         """
-
-        LIG = list(map(Nucleus, ["p", "n", "he4"]))
-
-        for nuc in LIG:
-            if nuc in self.unique_nuclei:
-                of.write(f"{self.indent*n_indent}AMREX_GPU_MANAGED int {nuc.short_spec_name}_index = {self.unique_nuclei.index(nuc)};\n")
-            else:
-                of.write(f"{self.indent*n_indent}AMREX_GPU_MANAGED int {nuc.short_spec_name}_index = -1;\n")
-
-        of.write("\n")
 
         # Fill in the rate indices
         of.write(f"{self.indent*n_indent}AMREX_GPU_MANAGED amrex::Array2D<int, 1, Rates::NumRates, 1, 7, Order::C> rate_indices {{\n")
