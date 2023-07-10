@@ -543,8 +543,19 @@ class BaseCxxNetwork(ABC, RateCollection):
                 of.write(f"{self.indent*2*n_indent}break;\n\n")
 
     def _fill_rate_indices(self, n_indent, of):
-        # Writes indices needed for NSE_NET algorithm.
-
+        """
+        Fills the index needed for the NSE_NET algorithm.
+        1) Get the index of h1, neutron, and helium-4 if they're present in the network.
+        2) Fill rate_indices: 2D array with 1-based index of shape of size (NumRates, 7).
+           - Each row represents a rate in self.all_rates.
+           - The first 3 elements of the row represents the index of reactants in self.unique_nuclei
+           - The next 3 elements of the row represents the index of the products in self.unique_nuclei.
+           - The 7th element of the row represents the index of the corresponding reverse rate
+             (set to -1 if no corresponding reverse rate). This is a 1-based instead of 0-based index.
+           - Set all elements of the current row to -1 if the rate has removed suffix
+             indicating its not directly in the network.        
+        """
+        
         LIG = list(map(Nucleus, ["p", "n", "he4"]))
 
         for nuc in LIG:
