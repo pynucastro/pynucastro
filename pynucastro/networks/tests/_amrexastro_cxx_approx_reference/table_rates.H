@@ -83,16 +83,16 @@ void init_tab_info(const table_t& tf, const std::string& file, R& rhoy, T& temp,
             }
 
             if (j == 1) {
-                temp(i) = 10.0_rt ** ldata[1];
+                temp(i) = std::pow(10.0_rt, ldata[1]);
             }
             if (i == 1) {
-                rhoy(j) = 10.0_rt ** ldata[0];
+                rhoy(j) = std::pow(10.0_rt, ldata[0]);
             }
 
             for (int n = 0; n < tf.nvars; ++n) {
                 // 1-based indexing
                 if (n == jtab_rate) {
-                    data(i, j, n+1) = 10.0_rt ** ldata[2+n];
+                    data(i, j, n+1) = std::pow(10.0_rt, ldata[2+n]);
                 } else {
                     data(i, j, n+1) = ldata[2+n];
                 }
