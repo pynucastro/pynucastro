@@ -95,9 +95,6 @@ void init_tab_info(const table_t& tf, const std::string& file, R& rhoy, T& temp,
                 data(i, j, n+1) = ldata[2+n];
             }
         }
-
-        // skip a blank line
-        std::getline(table, line);
     }
 
     table.close();
