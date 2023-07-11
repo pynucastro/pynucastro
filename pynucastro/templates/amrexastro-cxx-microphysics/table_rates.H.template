@@ -84,15 +84,19 @@ void init_tab_info(const table_t& tf, const std::string& file, R& rhoy, T& temp,
             }
 
             if (j == 1) {
-                temp(i) = ldata[1];
+                temp(i) = 10.0_rt ** ldata[1];
             }
             if (i == 1) {
-                rhoy(j) = ldata[0];
+                rhoy(j) = 10.0_rt ** ldata[0];
             }
 
             for (int n = 0; n < tf.nvars; ++n) {
                 // 1-based indexing
-                data(i, j, n+1) = ldata[2+n];
+                if (n == jtab_rate) {
+                    data(i, j, n+1) = 10.0_rt ** ldata[2+n];
+                } else {
+                    data(i, j, n+1) = ldata[2+n];
+                }
             }
         }
     }
@@ -188,11 +192,6 @@ get_entries(const table_t& table_meta,
             const R& rhoy_table, const T& temp_table, const D& data,
             const Real rhoy, const Real temp, Array1D<Real, 1, num_vars+1>& entries)
 {
-    // First, we need to log10 our choices for temp and rho, before setting them inside
-    // the interpolation scheme:
-
-    const Real log_rhoy = std::log10(rhoy);
-    const Real log_temp = std::log10(temp);
 
     // The last element of entries is the derivative of rate with temperature
     // drate_dt, evaluated by central differencing at the box corners
@@ -202,8 +201,8 @@ get_entries(const table_t& table_meta,
     // Get box-corner points for interpolation
     // This deals with out-of-range inputs via linear extrapolation
 
-    int irhoy_lo = vector_index_lu(table_meta.nrhoy, rhoy_table, log_rhoy);
-    int itemp_lo = vector_index_lu(table_meta.ntemp, temp_table, log_temp);
+    int irhoy_lo = vector_index_lu(table_meta.nrhoy, rhoy_table, rhoy);
+    int itemp_lo = vector_index_lu(table_meta.ntemp, temp_table, temp);
 
     int irhoy_hi = irhoy_lo + 1;
     int itemp_hi = itemp_lo + 1;
@@ -229,14 +228,14 @@ get_entries(const table_t& table_meta,
         Real f_i = bl_extrap(temp_lo, temp_hi,
                              data(itemp_lo, irhoy_lo, ivar),
                              data(itemp_hi, irhoy_lo, ivar),
-                             log_temp);
+                             temp);
 
         Real f_ip1 = bl_extrap(temp_lo, temp_hi,
                                data(itemp_lo, irhoy_hi, ivar),
                                data(itemp_hi, irhoy_hi, ivar),
-                               log_temp);
+                               temp);
 
-        entries(ivar) = bl_extrap(rhoy_lo, rhoy_hi, f_i, f_ip1, log_rhoy);
+        entries(ivar) = bl_extrap(rhoy_lo, rhoy_hi, f_i, f_ip1, rhoy);
     }
 
     // Calculate the derivative of rate with temperature, d(rate)/d(t)
@@ -249,12 +248,12 @@ get_entries(const table_t& table_meta,
         Real f_i = bl_clamp(rhoy_lo, rhoy_hi,
                             data(itemp_lo, irhoy_lo, jtab_rate),
                             data(itemp_lo, irhoy_hi, jtab_rate),
-                            log_rhoy);
+                            rhoy);
 
         Real f_ip1 = bl_clamp(rhoy_lo, rhoy_hi,
                               data(itemp_hi, irhoy_lo, jtab_rate),
                               data(itemp_hi, irhoy_hi, jtab_rate),
-                              log_rhoy);
+                              rhoy);
 
         // Approximate d(rate)/d(t) via forward differencing
 
@@ -271,22 +270,22 @@ get_entries(const table_t& table_meta,
         Real f_im1 = bl_clamp(rhoy_lo, rhoy_hi,
                               data(itemp_lo-1, irhoy_lo, jtab_rate),
                               data(itemp_lo-1, irhoy_hi, jtab_rate),
-                              log_rhoy);
+                              rhoy);
 
         Real f_i = bl_clamp(rhoy_lo, rhoy_hi,
                             data(itemp_lo, irhoy_lo, jtab_rate),
                             data(itemp_lo, irhoy_hi, jtab_rate ),
-                            log_rhoy);
+                            rhoy);
 
         Real f_ip1 = bl_clamp(rhoy_lo, rhoy_hi,
                               data(itemp_hi, irhoy_lo, jtab_rate),
                               data(itemp_hi, irhoy_hi, jtab_rate ),
-                              log_rhoy);
+                              rhoy);
 
         Real f_ip2 = bl_clamp(rhoy_lo, rhoy_hi,
                               data(itemp_hi+1, irhoy_lo, jtab_rate ),
                               data(itemp_hi+1, irhoy_hi, jtab_rate ),
-                              log_rhoy);
+                              rhoy);
 
         // Get central difference derivatives at the box corners
 
@@ -296,7 +295,7 @@ get_entries(const table_t& table_meta,
         // Interpolate in temperature
         // (Since we're inside the table in temp, use bl_extrap, it's faster)
 
-        entries(k_drate_dt) = bl_extrap(t_i, t_ip1, drdt_i, drdt_ip1, log_temp);
+        entries(k_drate_dt) = bl_extrap(t_i, t_ip1, drdt_i, drdt_ip1, temp);
 
     }
 }
@@ -322,8 +321,8 @@ tabular_evaluate(const table_t& table_meta,
     // Fill outputs: rate, d(rate)/d(temperature), and
     // (negative) neutrino loss contribution to energy generation
 
-    rate       = std::pow(10.0, entries(jtab_rate));
-    drate_dt   = rate/temp * entries(k_drate_dt);
+    rate       = entries(jtab_rate);
+    drate_dt   = entries(k_drate_dt);
     edot_nu    = -entries(jtab_nuloss);
     edot_gamma = entries(jtab_gamma);
 }
