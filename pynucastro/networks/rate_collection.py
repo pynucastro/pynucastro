@@ -694,11 +694,13 @@ class RateCollection:
         """add the Rate objects in rates from the network."""
 
         if isinstance(rates, Rate):
-            self.rates.append(rates)
+            if rates not in self.rates:
+                self.rates.append(rates)
 
         else:
             for r in rates:
-                self.rates.append(r)
+                if r not in self.rates:
+                    self.rates.append(r)
 
         self._build_collection()
 

@@ -1,4 +1,6 @@
 # unit tests for rates
+import shutil
+
 import pytest
 
 import pynucastro as pyna
@@ -24,5 +26,7 @@ class TestAmrexAstroCxxNetwork:
         # files that will be ignored if present in the generated directory
         skip_files = []
 
+        # remove any previously generated files
+        shutil.rmtree(test_path, ignore_errors=True)
         fn.write_network(odir=test_path)
         compare_network_files(test_path, reference_path, skip_files)
