@@ -80,9 +80,9 @@ namespace Rates
 #ifdef NSE_NET
 namespace NSE_INDEX
 {
-    extern AMREX_GPU_MANAGED int h1_index;
-    extern AMREX_GPU_MANAGED int n_index;
-    extern AMREX_GPU_MANAGED int he4_index;
+    constexpr int h1_index = -1;
+    constexpr int n_index = -1;
+    constexpr int he4_index = 0;
 
     // Each row corresponds to the rate in NetworkRates enum
     // First 3 row indices for reactants, followed by 3 product indices
