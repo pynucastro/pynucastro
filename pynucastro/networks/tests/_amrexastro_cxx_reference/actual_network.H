@@ -59,4 +59,20 @@ namespace Rates
 
 }
 
+#ifdef NSE_NET
+namespace NSE_INDEX
+{
+    constexpr int h1_index = 1;
+    constexpr int n_index = 0;
+    constexpr int he4_index = 2;
+
+    // Each row corresponds to the rate in NetworkRates enum
+    // First 3 row indices for reactants, followed by 3 product indices
+    // last index is the corresponding reverse rate index.
+
+    extern AMREX_GPU_MANAGED amrex::Array2D<int, 1, Rates::NumRates, 1, 7, Order::C> rate_indices;
+    extern AMREX_GPU_MANAGED bool initialized;
+}
+#endif
+
 #endif
