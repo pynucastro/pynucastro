@@ -88,3 +88,6 @@ class TestAmrexAstroCxxNetwork:
         shutil.rmtree(test_path, ignore_errors=True)
         fn.write_network(odir=test_path)
         compare_network_files(test_path, reference_path, skip_files)
+
+        # clean up generated files if the test passed
+        shutil.rmtree(test_path)
