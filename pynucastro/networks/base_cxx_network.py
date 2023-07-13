@@ -69,8 +69,8 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.ftags['<fill_reaclib_rates>'] = self._fill_reaclib_rates
         self.ftags['<approx_rate_functions>'] = self._approx_rate_functions
         self.ftags['<fill_approx_rates>'] = self._fill_approx_rates
-        self.ftags['<part_fun_data>'] = self._fill_parition_function_data
-        self.ftags['<part_fun_cases>'] = self._fill_parition_function_cases
+        self.ftags['<part_fun_data>'] = self._fill_partition_function_data
+        self.ftags['<part_fun_cases>'] = self._fill_partition_function_cases
         self.ftags['<spin_state_cases>'] = self._fill_spin_state_cases
         self.indent = '    '
 
@@ -462,7 +462,7 @@ class BaseCxxNetwork(ABC, RateCollection):
             of.write(f"{self.indent*n_indent}    rate_eval.dscreened_rates_dT(k_{r.cname()}) = drate_dT;\n\n")
             of.write(f"{self.indent*n_indent}}}\n")
 
-    def _fill_parition_function_data(self, n_indent, of):
+    def _fill_partition_function_data(self, n_indent, of):
 
         nuclei_pfs = self.get_nuclei_needing_partition_functions()
 
@@ -515,7 +515,7 @@ class BaseCxxNetwork(ABC, RateCollection):
 
                 of.write("\n")
 
-    def _fill_parition_function_cases(self, n_indent, of):
+    def _fill_partition_function_cases(self, n_indent, of):
 
         nuclei_pfs = self.get_nuclei_needing_partition_functions()
 
