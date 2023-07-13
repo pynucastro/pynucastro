@@ -523,7 +523,7 @@ class BaseCxxNetwork(ABC, RateCollection):
             if n.partition_function:
 
                 of.write(f"{self.indent*n_indent}case {n.cindex()}:\n")
-                of.write(f"{self.indent*2*n_indent}part_fun::interpolate_pf(tfactors.T9, part_fun::{n}_npts, part_fun::{n}_temp_array, part_fun::{n}_pf_array, pf, dpf_dT);\n")
+                of.write(f"{self.indent*2*n_indent}part_fun::interpolate_pf<part_fun::{n}_npts>(tfactors.T9, part_fun::{n}_temp_array, part_fun::{n}_pf_array, pf, dpf_dT);\n")
                 of.write(f"{self.indent*2*n_indent}break;\n\n")
 
     def _fill_spin_state_cases(self, n_indent, of):

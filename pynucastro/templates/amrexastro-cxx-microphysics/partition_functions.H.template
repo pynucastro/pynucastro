@@ -18,8 +18,9 @@ namespace part_fun {
 
     // interpolation routine
 
+    template <int npts>
     AMREX_GPU_HOST_DEVICE AMREX_INLINE
-    void interpolate_pf(const Real t9, const int npts, const Real* temp_array, const Real* pf_array,
+    void interpolate_pf(const Real t9, const Real (&temp_array)[npts], const Real (&pf_array)[npts],
                         Real& pf, Real& dpf_dT) {
 
         // find the index of the first temperature element we are larger than
