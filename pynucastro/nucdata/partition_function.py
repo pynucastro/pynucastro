@@ -24,9 +24,9 @@ class PartitionFunction:
     :var nucleus:     a string composed by a lowercase element and the atomic
                       number, e.g. ``"ni56"``
     :var name:        the name of the table on which the nucleus is read
-    :var temperature: an array of all the temperatures involved
+    :var temperature: a sorted array of all the temperatures involved
     :var partition_function: an array with all the partition function values
-                             given in the same order as :attr:`temperature`
+                             given in the same order as ``temperature``
     :var interpolant: the interpolant function
     :var interpolant_order: the interpolation spline order
     """
