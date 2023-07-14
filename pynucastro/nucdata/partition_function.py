@@ -21,18 +21,17 @@ class PartitionFunction:
     returned PartitionFunction of order equal to the maximum order of the added
     PartitionFunction objects.
 
-    :var nucleus:     a string composed by a lowercase element and the atomic
-                      number, e.g. ``"ni56"``
-    :var name:        the name of the table on which the nucleus is read
-    :var temperature: a sorted array of all the temperatures involved
+    :var nucleus:            a string composed by a lowercase element and the
+                             atomic number, e.g. ``"ni56"``
+    :var name:               the name of the table on which the nucleus is read
+    :var temperature:        a sorted array of all the temperatures involved
     :var partition_function: an array with all the partition function values
                              given in the same order as ``temperature``
-    :var interpolant: the interpolant function
-    :var interpolant_order: the interpolation spline order
+    :var interpolant_order:  the interpolation spline order, must be between
+                             1 and 5, inclusive
     """
 
-    def __init__(self, nucleus, name, temperature, partition_function):
-
+    def __init__(self, nucleus, name, temperature, partition_function, interpolant_order=3):
         assert isinstance(nucleus, str)
 
         temperature = np.asarray(temperature)
@@ -45,16 +44,10 @@ class PartitionFunction:
         self.name = name
         self.temperature = temperature
         self.partition_function = partition_function
-        self.interpolant = None
-        self.interpolant_order = None
+        self.interpolant_order = interpolant_order
+        self._interpolant = None
 
-        if (isinstance(temperature, np.ndarray) and
-            isinstance(partition_function, np.ndarray) and
-            len(temperature) == len(partition_function)):
-            self.construct_spline_interpolant()
-        else:
-            self.interpolant_order = 0
-            self.interpolant = lambda x: 0.0
+        self.construct_spline_interpolant(self.interpolant_order)
 
     def lower_partition(self):
         """Return the partition function value for :meth:`lower_temperature`."""
@@ -90,20 +83,11 @@ class PartitionFunction:
 
         name = f'{lower.name}+{upper.name}'
 
+        order = max(self.interpolant_order, other.interpolant_order)
         newpf = PartitionFunction(nucleus=self.nucleus, name=name,
-                                  temperature=temperature, partition_function=partition_function)
-
-        if self.interpolant_order and other.interpolant_order:
-            order = max(self.interpolant_order, other.interpolant_order)
-        elif self.interpolant_order:
-            order = self.interpolant_order
-        elif other.interpolant_order:
-            order = other.interpolant_order
-        else:
-            order = None
-
-        if order:
-            newpf.construct_spline_interpolant(order=order)
+                                  temperature=temperature,
+                                  partition_function=partition_function,
+                                  interpolant_order=order)
 
         return newpf
 
@@ -121,24 +105,21 @@ class PartitionFunction:
         for temperature.
         """
 
-        self.interpolant = InterpolatedUnivariateSpline(self.temperature/1.0e9,
-                                                        np.log10(self.partition_function),
-                                                        k=order)
+        self._interpolant = InterpolatedUnivariateSpline(self.temperature/1.0e9,
+                                                         np.log10(self.partition_function),
+                                                         k=order)
 
         self.interpolant_order = order
 
     def __call__(self, T):
         """Return the interpolated partition function value for the temperature T."""
 
-        assert self.interpolant
         try:
             T = float(T)/1.0e9
         except ValueError:
             print("invalid temperature")
             raise
-        if self.interpolant_order == 0:
-            return 10**self.interpolant(T)
-        return 10**self.interpolant(T, ext='const')  # extrapolates keeping the boundaries fixed.
+        return 10**self._interpolant(T, ext='const')  # extrapolates keeping the boundaries fixed.
 
 
 class PartitionFunctionTable:
