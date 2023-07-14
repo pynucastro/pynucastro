@@ -71,26 +71,15 @@ void init_tab_info(const table_t& tf, const std::string& file, R& rhoy, T& temp,
 
     // now the data -- there are 2 extra columns, for temp and rhoy
 
-    Real ldata[tf.nvars+2];
     for (int j = 1; j <= tf.nrhoy; ++j) {
         for (int i = 1; i <= tf.ntemp; ++i) {
             std::getline(table, line);
             std::istringstream sdata(line);
 
-            for (int m = 0; m < tf.nvars+2; ++m) {
-                sdata >> ldata[m];
-            }
+            sdata >> rhoy(j) >> temp(i);
 
-            if (j == 1) {
-                temp(i) = ldata[1];
-            }
-            if (i == 1) {
-                rhoy(j) = ldata[0];
-            }
-
-            for (int n = 0; n < tf.nvars; ++n) {
-                // 1-based indexing
-                data(i, j, n+1) = ldata[2+n];
+            for (int n = 1; n <= tf.nvars; ++n) {
+                sdata >> data(i, j, n);
             }
         }
 
