@@ -228,7 +228,7 @@ get_entries(const table_t& table_meta,
     // Calculate the derivative of rate with temperature, d(rate)/d(t)
     // (Clamp interpolations in rhoy to avoid unphysical temperature derivatives)
 
-    if ((itemp_lo == 1) || (itemp_hi == table_meta.ntemp-1)) {
+    if ((itemp_lo - 1 < 1) || (itemp_hi + 1 > table_meta.ntemp)) {
         // We're at the first or last table cell (in temperature)
         // First do bilinear interpolation in rhoy for the table at tlo and thi
 
