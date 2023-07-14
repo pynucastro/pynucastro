@@ -2,7 +2,6 @@
 #define TABLE_RATES_H
 
 #include <iostream>
-#include <cmath>
 #include <sstream>
 #include <fstream>
 #include <string>
@@ -17,8 +16,8 @@ void init_tabular();
 // Table energy units are expected in terms of ergs
 
 // all tables are expected to have columns:
-// Log(rhoY)     Log(T)   mu    dQ    Vs    Log(e-cap-rate)   nu-energy-loss  gamma-energy
-// Log(g/cm^3)   Log(K)   erg   erg   erg   Log(1/s)          erg/s           erg/s
+// rhoY     T   mu    dQ    Vs    e-cap-rate   nu-energy-loss  gamma-energy
+// g/cm^3   K   erg   erg   erg   1/s          erg/s           erg/s
 //
 
 const int num_tables = 0;
@@ -98,6 +97,9 @@ void init_tab_info(const table_t& tf, const std::string& file, R& rhoy, T& temp,
                 }
             }
         }
+
+        // skip a blank line
+        std::getline(table, line);
     }
 
     table.close();
@@ -191,6 +193,7 @@ get_entries(const table_t& table_meta,
             const R& rhoy_table, const T& temp_table, const D& data,
             const Real rhoy, const Real temp, Array1D<Real, 1, num_vars+1>& entries)
 {
+
 
     // The last element of entries is the derivative of rate with temperature
     // drate_dt, evaluated by central differencing at the box corners
