@@ -72,11 +72,11 @@ void init_tab_info(const table_t& tf, const std::string& file, R& rhoy, T& temp,
 
     // now the data -- there are 2 extra columns, for temp and rhoy
 
-    Real ldata[tf.nvars+2];
     for (int j = 1; j <= tf.nrhoy; ++j) {
         for (int i = 1; i <= tf.ntemp; ++i) {
             std::getline(table, line);
             std::istringstream sdata(line);
+
 
             for (int m = 0; m < tf.nvars+2; ++m) {
                 sdata >> ldata[m];
@@ -240,7 +240,7 @@ get_entries(const table_t& table_meta,
     // Calculate the derivative of rate with temperature, d(rate)/d(t)
     // (Clamp interpolations in rhoy to avoid unphysical temperature derivatives)
 
-    if ((itemp_lo == 1) || (itemp_hi == table_meta.ntemp-1)) {
+    if ((itemp_lo - 1 < 1) || (itemp_hi + 1 > table_meta.ntemp)) {
         // We're at the first or last table cell (in temperature)
         // First do bilinear interpolation in rhoy for the table at tlo and thi
 
