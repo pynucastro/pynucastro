@@ -76,30 +76,21 @@ void init_tab_info(const table_t& tf, const std::string& file, R& rhoy, T& temp,
             std::getline(table, line);
             std::istringstream sdata(line);
 
+            sdata >> rhoy(j) >> temp(i);
 
-            for (int m = 0; m < tf.nvars+2; ++m) {
-                sdata >> ldata[m];
-            }
-
-            if (j == 1) {
-                temp(i) = std::pow(10.0_rt, ldata[1]);
-            }
-            if (i == 1) {
-                rhoy(j) = std::pow(10.0_rt, ldata[0]);
-            }
-
-            for (int n = 0; n < tf.nvars; ++n) {
-                // 1-based indexing
-                if (n == jtab_rate) {
-                    data(i, j, n+1) = std::pow(10.0_rt, ldata[2+n]);
-                } else {
-                    data(i, j, n+1) = ldata[2+n];
-                }
+            for (int n = 1; n <= tf.nvars; ++n) {
+                sdata >> data(i, j, n);
             }
         }
+    }
 
-        // skip a blank line
-        std::getline(table, line);
+    for (int j = 1; j <= tf.nrhoy; ++j) {
+        for (int i = 1; i <= tf.ntemp; ++i) {
+
+            rhoy(j) = std::pow(10.0_rt, rhoy(j));
+            temp(i) = std::pow(10.0_rt, temp(i));
+            data(i, j, jtab_rate) = std::pow(10.0_rt, data(i, j, jtab_rate));
+        }
     }
 
     table.close();
