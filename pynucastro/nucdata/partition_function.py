@@ -147,8 +147,8 @@ class PartitionFunctionTable:
         self._partition_function[nuc] = pfun
 
     def get_nuclei(self):
-        """Return a list of the nuclei this table supports."""
-        return list(self._partition_function)
+        """Return a set of the nuclei this table supports."""
+        return set(self._partition_function)
 
     def get_partition_function(self, nuc):
         """Return the :class:`PartitionFunction` object for a specific nucleus."""
