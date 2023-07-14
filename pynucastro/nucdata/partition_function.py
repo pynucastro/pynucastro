@@ -35,6 +35,12 @@ class PartitionFunction:
 
         assert isinstance(nucleus, str)
 
+        temperature = np.asarray(temperature)
+        partition_function = np.asarray(partition_function)
+
+        assert temperature.shape == partition_function.shape
+        assert np.all(temperature[:-1] <= temperature[1:]), "temperature array must be sorted"
+
         self.nucleus = nucleus
         self.name = name
         self.temperature = temperature
@@ -78,11 +84,9 @@ class PartitionFunction:
         if lower.upper_temperature() >= upper.lower_temperature():
             raise ValueError("temperature ranges cannot overlap")
 
-        temperature = np.array(list(lower.temperature) +
-                               list(upper.temperature))
-
-        partition_function = np.array(list(lower.partition_function) +
-                             list(upper.partition_function))
+        temperature = np.concatenate([lower.temperature, upper.temperature])
+        partition_function = np.concatenate([lower.partition_function,
+                                             upper.partition_function])
 
         name = f'{lower.name}+{upper.name}'
 
@@ -186,7 +190,7 @@ class PartitionFunctionTable:
             # Now, we want to read the lines of the file where
             # the temperatures are located
             temp_strings = fin.readline().strip().split()
-            self.temperatures = np.array([float(t) for t in temp_strings])
+            self.temperatures = np.array(temp_strings, dtype=np.float64)
 
             # Now, we append on the array lines = [] all the remaining file, the structure
             # 1. The nucleus
@@ -202,7 +206,7 @@ class PartitionFunctionTable:
         while lines:
             nuc = lines.pop(0)
             pfun_strings = lines.pop(0).split()
-            partitionfun = np.array([float(pf) for pf in pfun_strings])
+            partitionfun = np.array(pfun_strings, dtype=np.float64)
             pfun = PartitionFunction(nuc, self.name, self.temperatures, partitionfun)
             self._add_nuclide_pfun(nuc, pfun)
 
