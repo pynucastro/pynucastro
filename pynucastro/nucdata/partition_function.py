@@ -47,8 +47,6 @@ class PartitionFunction:
         self.interpolant_order = interpolant_order
         self._interpolant = None
 
-        self.construct_spline_interpolant(self.interpolant_order)
-
     def lower_partition(self):
         """Return the partition function value for :meth:`lower_temperature`."""
         return self.partition_function[0]
@@ -104,16 +102,19 @@ class PartitionFunction:
         Interpolate in log space for the partition function and in GK
         for temperature.
         """
-
-        self._interpolant = InterpolatedUnivariateSpline(self.temperature/1.0e9,
-                                                         np.log10(self.partition_function),
-                                                         k=order)
-
+        self._interpolant = None
         self.interpolant_order = order
 
     def eval(self, T):
         """Return the interpolated partition function value for the temperature T."""
 
+        # lazily construct the interpolant object, since it's pretty expensive
+        if not self._interpolant:
+            self._interpolant = InterpolatedUnivariateSpline(
+                self.temperature/1.0e9,
+                np.log10(self.partition_function),
+                k=self.interpolant_order
+            )
         try:
             T = float(T)/1.0e9
         except ValueError:
