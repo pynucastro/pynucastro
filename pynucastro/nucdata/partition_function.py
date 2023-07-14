@@ -111,7 +111,7 @@ class PartitionFunction:
 
         self.interpolant_order = order
 
-    def __call__(self, T):
+    def eval(self, T):
         """Return the interpolated partition function value for the temperature T."""
 
         try:

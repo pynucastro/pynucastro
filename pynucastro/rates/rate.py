@@ -1680,13 +1680,13 @@ class DerivedRate(ReacLibRate):
                 if not nucr.partition_function:
                     continue
                     #nucr.partition_function = lambda T: 1.0
-                z_r *= nucr.partition_function(T)
+                z_r *= nucr.partition_function.eval(T)
 
             for nucp in self.rate.products:
                 if not nucp.partition_function:
                     continue
                     #nucp.partition_function = lambda T: 1.0
-                z_p *= nucp.partition_function(T)
+                z_p *= nucp.partition_function.eval(T)
 
             return r*z_r/z_p
         return r
