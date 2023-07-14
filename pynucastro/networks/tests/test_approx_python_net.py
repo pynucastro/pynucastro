@@ -1,5 +1,7 @@
 # unit tests for rates
 import importlib
+import os
+import sys
 
 import numpy as np
 import pytest
@@ -104,6 +106,12 @@ def he4_mg24__si28__removed(rate_eval, tf):
         for i in range(app.nnuc):
             assert answer[i] == approx(sol.y[i, -1])
 
+        # clean up generated files if the test passed
+        os.remove("app.py")
+        # remove imported module from cache
+        del app
+        del sys.modules["app"]
+
     def test_to_composition(self, pynet):
         pynet.write_network("app.py")
         app = importlib.import_module("app")
@@ -117,3 +125,9 @@ def he4_mg24__si28__removed(rate_eval, tf):
         comp_new = app.to_composition(Y)
 
         assert comp_new.X == comp_orig.X
+
+        # clean up generated files if the test passed
+        os.remove("app.py")
+        # remove imported module from cache
+        del app
+        del sys.modules["app"]
