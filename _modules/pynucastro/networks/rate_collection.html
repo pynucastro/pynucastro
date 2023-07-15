@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.networks.rate_collection &mdash; pynucastro 2.0.3.post57+gce311a82 documentation</title>
+  <title>pynucastro.networks.rate_collection &mdash; pynucastro 2.0.3.post58+ga3529126 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
@@ -1148,7 +1148,7 @@
 
         <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">nuc</span><span class="o">.</span><span class="n">partition_function</span><span class="p">:</span>
-                <span class="n">pf</span> <span class="o">=</span> <span class="n">nuc</span><span class="o">.</span><span class="n">partition_function</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">temp</span><span class="p">)</span>
+                <span class="n">pf</span> <span class="o">=</span> <span class="n">nuc</span><span class="o">.</span><span class="n">partition_function</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">temp</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">pf</span> <span class="o">=</span> <span class="mf">1.0</span>
 
