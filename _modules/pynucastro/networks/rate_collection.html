@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.networks.rate_collection &mdash; pynucastro 2.0.3.post56+g55c35146 documentation</title>
+  <title>pynucastro.networks.rate_collection &mdash; pynucastro 2.0.3.post57+gce311a82 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
@@ -462,7 +462,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">files</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rates</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">library</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">combined_library</span> <span class="o">=</span> <span class="n">Library</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">inert_nuclei</span> <span class="o">=</span> <span class="n">inert_nuclei</span>
 
@@ -474,7 +474,7 @@
         <span class="k">if</span> <span class="n">rate_files</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rate_files</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
                 <span class="n">rate_files</span> <span class="o">=</span> <span class="p">[</span><span class="n">rate_files</span><span class="p">]</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_read_rate_files</span><span class="p">(</span><span class="n">rate_files</span><span class="p">)</span>
+            <span class="n">combined_library</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_rate_files</span><span class="p">(</span><span class="n">rate_files</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">rates</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rates</span><span class="p">,</span> <span class="n">Rate</span><span class="p">):</span>
@@ -483,10 +483,7 @@
                 <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">Rate</span><span class="p">):</span>
                     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Expected Rate object or list of Rate objects passed as the rates argument.&#39;</span><span class="p">)</span>
             <span class="n">rlib</span> <span class="o">=</span> <span class="n">Library</span><span class="p">(</span><span class="n">rates</span><span class="o">=</span><span class="n">rates</span><span class="p">)</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">library</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">library</span> <span class="o">=</span> <span class="n">rlib</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">library</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">library</span> <span class="o">+</span> <span class="n">rlib</span>
+            <span class="n">combined_library</span> <span class="o">+=</span> <span class="n">rlib</span>
 
         <span class="k">if</span> <span class="n">libraries</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">libraries</span><span class="p">,</span> <span class="n">Library</span><span class="p">):</span>
@@ -494,13 +491,10 @@
             <span class="k">for</span> <span class="n">lib</span> <span class="ow">in</span> <span class="n">libraries</span><span class="p">:</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lib</span><span class="p">,</span> <span class="n">Library</span><span class="p">):</span>
                     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Expected Library object or list of Library objects passed as the libraries argument.&#39;</span><span class="p">)</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">library</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">library</span> <span class="o">=</span> <span class="n">libraries</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">lib</span> <span class="ow">in</span> <span class="n">libraries</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">library</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">library</span> <span class="o">+</span> <span class="n">lib</span>
+                <span class="n">combined_library</span> <span class="o">+=</span> <span class="n">lib</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">library</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">rates</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">library</span><span class="o">.</span><span class="n">get_rates</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rates</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span> <span class="o">+</span> <span class="n">combined_library</span><span class="o">.</span><span class="n">get_rates</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="n">precedence</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_make_distinguishable</span><span class="p">(</span><span class="n">precedence</span><span class="p">)</span>
@@ -625,6 +619,7 @@
     <span class="k">def</span> <span class="nf">_read_rate_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rate_files</span><span class="p">):</span>
         <span class="c1"># get the rates</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">files</span> <span class="o">=</span> <span class="n">rate_files</span>
+        <span class="n">combined_library</span> <span class="o">=</span> <span class="n">Library</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">rf</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="p">:</span>
             <span class="c1"># create the appropriate rate object first</span>
             <span class="k">try</span><span class="p">:</span>
@@ -634,11 +629,8 @@
 
             <span class="c1"># now create a library:</span>
             <span class="n">rflib</span> <span class="o">=</span> <span class="n">Library</span><span class="p">(</span><span class="n">rates</span><span class="o">=</span><span class="p">[</span><span class="n">rate</span><span class="p">])</span>
-
-            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">library</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">library</span> <span class="o">=</span> <span class="n">rflib</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">library</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">library</span> <span class="o">+</span> <span class="n">rflib</span>
+            <span class="n">combined_library</span> <span class="o">+=</span> <span class="n">rflib</span>
+        <span class="k">return</span> <span class="n">combined_library</span>
 
 <div class="viewcode-block" id="RateCollection.get_forward_rates"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.get_forward_rates">[docs]</a>    <span class="k">def</span> <span class="nf">get_forward_rates</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;return a list of the forward (exothermic) rates&quot;&quot;&quot;</span>
@@ -725,7 +717,8 @@
 
         <span class="k">if</span> <span class="n">return_type</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">return_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span>
-        <span class="k">return</span> <span class="n">return_type</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">library</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">(</span><span class="n">nuclei</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span></div>
+        <span class="n">lib</span> <span class="o">=</span> <span class="n">Library</span><span class="p">(</span><span class="n">rates</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">return_type</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="n">lib</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">(</span><span class="n">nuclei</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span></div>
 
 <div class="viewcode-block" id="RateCollection.get_rates"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.get_rates">[docs]</a>    <span class="k">def</span> <span class="nf">get_rates</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; get a list of the reaction rates in this network&quot;&quot;&quot;</span>
