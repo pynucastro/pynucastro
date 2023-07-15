@@ -1035,7 +1035,7 @@ class RateCollection:
 
         for nuc in self.unique_nuclei:
             if nuc.partition_function:
-                pf = nuc.partition_function(state.temp)
+                pf = nuc.partition_function.eval(state.temp)
             else:
                 pf = 1.0
 
