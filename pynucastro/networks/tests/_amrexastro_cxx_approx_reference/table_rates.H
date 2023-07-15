@@ -87,13 +87,15 @@ void init_tab_info(const table_t& tf, const std::string& file, R& rhoy, T& temp,
     for (int j = 1; j <= tf.nrhoy; ++j) {
         for (int i = 1; i <= tf.ntemp; ++i) {
 
-            if (i == 1) {
-                rhoy(j) = std::pow(10.0_rt, rhoy(j));
+            if (1 == i) {
+                rhoy(j) = std::pow(10.0, rhoy(j));
             }
-            if (j == 1) {
-                temp(i) = std::pow(10.0_rt, temp(i));
+
+            if (1 == j) {
+                temp(i) = std::pow(10.0, temp(i));
             }
-            data(i, j, jtab_rate) = std::pow(10.0_rt, data(i, j, jtab_rate));
+
+            data(i, j, jtab_rate) = std::pow(10.0, data(i, j, jtab_rate));
         }
     }
 
