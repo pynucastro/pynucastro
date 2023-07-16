@@ -97,6 +97,8 @@ void init_tab_info(const table_t& tf, const std::string& file, R& rhoy, T& temp,
             }
 
             data(i, j, jtab_rate) = std::pow(10.0_rt, data(i, j, jtab_rate));
+            data(i, j, jtab_nuloss) = std::pow(10.0_rt, data(i, j, jtab_nuloss));
+            data(i, j, jtab_gamma) = std::pow(10.0_rt, data(i, j, jtab_gamma));
         }
     }
 
