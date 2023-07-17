@@ -168,7 +168,7 @@ namespace part_fun {
 
             // find the derivative (with respect to T, not T9)
 
-            Real dpf_dT9 = pf * std::log(10.0_rt) * slope;
+            Real dpf_dT9 = pf * M_LN10 * slope;
             dpf_dT = dpf_dT9 / 1.e9_rt;
 
         } else {
