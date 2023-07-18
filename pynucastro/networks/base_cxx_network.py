@@ -469,72 +469,73 @@ class BaseCxxNetwork(ABC, RateCollection):
         decl = "MICROPHYSICS_UNUSED HIP_CONSTEXPR static AMREX_GPU_MANAGED amrex::Real"
 
         for n in nuclei_pfs:
-            if n.partition_function:
-                npts = len(n.partition_function.temperature)
-                assert len(n.partition_function.temperature) == len(n.partition_function.partition_function)
+            npts = len(n.partition_function.temperature)
 
-                # write the data out, but for readability, split it to 5 values per line
+            # write the data out, but for readability, split it to 5 values per line
 
-                # number of points
+            # number of points
 
-                of.write(f"{self.indent*n_indent}constexpr int {n}_npts = {npts};\n\n")
+            of.write(f"{self.indent*n_indent}constexpr int {n}_npts = {npts};\n\n")
 
-                # first the temperature (in units of T9)
+            # first the temperature (in units of T9)
 
-                of.write(f"{self.indent*n_indent}{decl} {n}_temp_array[{n}_npts] = {{\n")
+            of.write(f"{self.indent*n_indent}{decl} {n}_temp_array[{n}_npts] = {{\n")
 
-                tdata = list(n.partition_function.temperature/1.0e9)
-                while tdata:
-                    if len(tdata) >= 5:
-                        tmp = ", ".join([str(tdata.pop(0)) for _ in range(0, 5)])
-                        if tdata:
-                            tmp += ","
-                    else:
-                        tmp = ", ".join([str(tdata.pop(0)) for _ in range(0, len(tdata))])
+            tdata = list(n.partition_function.temperature/1.0e9)
+            while tdata:
+                if len(tdata) >= 5:
+                    tmp = ", ".join([str(tdata.pop(0)) for _ in range(0, 5)])
+                    if tdata:
+                        tmp += ","
+                else:
+                    tmp = ", ".join([str(tdata.pop(0)) for _ in range(0, len(tdata))])
 
-                    of.write(f"{2*self.indent*n_indent}{tmp}\n")
-                of.write(f"{self.indent*n_indent}}};\n\n")
+                of.write(f"{self.indent*(n_indent+1)}{tmp}\n")
+            of.write(f"{self.indent*n_indent}}};\n\n")
 
-                # now the partition function itself -- this is log10
+            # now the partition function itself -- this is log10
 
-                of.write(f"{self.indent*n_indent}// this is log10(partition function)\n\n")
+            of.write(f"{self.indent*n_indent}// this is log10(partition function)\n\n")
 
-                of.write(f"{self.indent*n_indent}{decl} {n}_pf_array[{n}_npts] = {{\n")
+            of.write(f"{self.indent*n_indent}{decl} {n}_pf_array[{n}_npts] = {{\n")
 
-                tdata = list(n.partition_function.partition_function)
-                while tdata:
-                    if len(tdata) >= 5:
-                        tmp = ", ".join([str(np.log10(tdata.pop(0))) for _ in range(0, 5)])
-                        if tdata:
-                            tmp += ","
-                    else:
-                        tmp = ", ".join([str(np.log10(tdata.pop(0))) for _ in range(0, len(tdata))])
+            tdata = list(n.partition_function.partition_function)
+            while tdata:
+                if len(tdata) >= 5:
+                    tmp = ", ".join([str(np.log10(tdata.pop(0))) for _ in range(0, 5)])
+                    if tdata:
+                        tmp += ","
+                else:
+                    tmp = ", ".join([str(np.log10(tdata.pop(0))) for _ in range(0, len(tdata))])
 
-                    of.write(f"{2*self.indent*n_indent}{tmp}\n")
-                of.write(f"{self.indent*n_indent}}};\n\n")
+                of.write(f"{self.indent*(n_indent+1)}{tmp}\n")
+            of.write(f"{self.indent*n_indent}}};\n\n")
 
-                of.write("\n")
+            of.write("\n")
 
     def _fill_partition_function_cases(self, n_indent, of):
 
         nuclei_pfs = self.get_nuclei_needing_partition_functions()
 
         for n in nuclei_pfs:
-            if n.partition_function:
-
-                of.write(f"{self.indent*n_indent}case {n.cindex()}:\n")
-                of.write(f"{self.indent*2*n_indent}part_fun::interpolate_pf<part_fun::{n}_npts>(tfactors.T9, part_fun::{n}_temp_array, part_fun::{n}_pf_array, pf, dpf_dT);\n")
-                of.write(f"{self.indent*2*n_indent}break;\n\n")
+            of.write(f"{self.indent*n_indent}case {n.cindex()}:\n")
+            of.write(f"{self.indent*(n_indent+1)}part_fun::interpolate_pf<part_fun::{n}_npts>(tfactors.T9, part_fun::{n}_temp_array, part_fun::{n}_pf_array, pf, dpf_dT);\n")
+            of.write(f"{self.indent*(n_indent+1)}break;\n\n")
 
     def _fill_spin_state_cases(self, n_indent, of):
 
         for n in self.unique_nuclei:
-            if n.spin_states is not None:
-                of.write(f"{self.indent*n_indent}case {n.cindex()}:\n")
-                of.write(f"{self.indent*2*n_indent}spin = {n.spin_states};\n")
-                of.write(f"{self.indent*2*n_indent}break;\n\n")
+            if n.spin_states is None:
+                continue
+
+            of.write(f"{self.indent*n_indent}case {n.cindex()}:\n")
+            of.write(f"{self.indent*(n_indent+1)}spin = {n.spin_states};\n")
+            of.write(f"{self.indent*(n_indent+1)}break;\n\n")
+
         for n in self.approx_nuclei:
-            if n.spin_states is not None:
-                of.write(f"{self.indent*n_indent}case {n.cindex()}:\n")
-                of.write(f"{self.indent*2*n_indent}spin = {n.spin_states};\n")
-                of.write(f"{self.indent*2*n_indent}break;\n\n")
+            if n.spin_states is None:
+                continue
+
+            of.write(f"{self.indent*n_indent}case {n.cindex()}:\n")
+            of.write(f"{self.indent*(n_indent+1)}spin = {n.spin_states};\n")
+            of.write(f"{self.indent*(n_indent+1)}break;\n\n")

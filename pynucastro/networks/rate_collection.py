@@ -641,14 +641,16 @@ class RateCollection:
         return _r
 
     def get_nuclei_needing_partition_functions(self):
-        """return a set of Nuclei that require partition functions for one or
+        """return a list of Nuclei that require partition functions for one or
         more DerivedRates in the collection"""
 
         nuclei_pfs = set()
         for r in self.all_rates:
             if isinstance(r, DerivedRate) and r.use_pf:
-                nuclei_pfs.update(r.reactants + r.products)
-        return nuclei_pfs
+                for nuc in r.reactants + r.products:
+                    if nuc.partition_function is not None:
+                        nuclei_pfs.add(nuc)
+        return sorted(nuclei_pfs)
 
     def remove_nuclei(self, nuc_list):
         """remove the nuclei in nuc_list from the network along with any rates
