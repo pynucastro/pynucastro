@@ -79,10 +79,7 @@ class TestAmrexAstroCxxNetwork:
         # subdirectory of pynucastro/networks/tests/
         reference_path = "_amrexastro_cxx_reference/"
         # files that will be ignored if present in the generated directory
-        skip_files = [
-            "23Na-23Ne_electroncapture.dat",
-            "23Ne-23Na_betadecay.dat",
-        ]
+        skip_files = []
 
         # remove any previously generated files
         shutil.rmtree(test_path, ignore_errors=True)
