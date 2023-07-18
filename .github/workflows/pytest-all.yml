@@ -44,6 +44,13 @@ jobs:
       - name: Install pynucastro
         run: python setup.py develop --user
 
+      - name: Print system info
+        run: |
+          pip install threadpoolctl &>/dev/null
+          python -c "import sys, numpy; print(numpy.__version__); print(sys.version); print(numpy.show_runtime())"
+          echo
+          lscpu
+
       - name: Run tests with pytest
         run: |
           # Numpy 1.24 gets slightly diff output: https://github.com/numpy/numpy/issues/23523
