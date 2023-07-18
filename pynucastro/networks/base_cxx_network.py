@@ -5,6 +5,7 @@ comprised of the rates that are passed in.
 """
 
 
+import itertools
 import os
 import re
 import shutil
@@ -463,6 +464,15 @@ class BaseCxxNetwork(ABC, RateCollection):
             of.write(f"{self.indent*n_indent}}}\n")
 
     def _fill_partition_function_data(self, n_indent, of):
+        # itertools recipe
+        def batched(iterable, n):
+            "Batch data into tuples of length n. The last batch may be shorter."
+            # batched('ABCDEFG', 3) --> ABC DEF G
+            if n < 1:
+                raise ValueError('n must be at least one')
+            it = iter(iterable)
+            while batch := tuple(itertools.islice(it, n)):
+                yield batch
 
         nuclei_pfs = self.get_nuclei_needing_partition_functions()
 
@@ -481,15 +491,8 @@ class BaseCxxNetwork(ABC, RateCollection):
 
             of.write(f"{self.indent*n_indent}{decl} {n}_temp_array[{n}_npts] = {{\n")
 
-            tdata = list(n.partition_function.temperature/1.0e9)
-            while tdata:
-                if len(tdata) >= 5:
-                    tmp = ", ".join([str(tdata.pop(0)) for _ in range(0, 5)])
-                    if tdata:
-                        tmp += ","
-                else:
-                    tmp = ", ".join([str(tdata.pop(0)) for _ in range(0, len(tdata))])
-
+            for data in batched(n.partition_function.temperature/1.0e9, 5):
+                tmp = " ".join([f"{t}," for t in data])
                 of.write(f"{self.indent*(n_indent+1)}{tmp}\n")
             of.write(f"{self.indent*n_indent}}};\n\n")
 
@@ -499,15 +502,8 @@ class BaseCxxNetwork(ABC, RateCollection):
 
             of.write(f"{self.indent*n_indent}{decl} {n}_pf_array[{n}_npts] = {{\n")
 
-            tdata = list(n.partition_function.partition_function)
-            while tdata:
-                if len(tdata) >= 5:
-                    tmp = ", ".join([str(np.log10(tdata.pop(0))) for _ in range(0, 5)])
-                    if tdata:
-                        tmp += ","
-                else:
-                    tmp = ", ".join([str(np.log10(tdata.pop(0))) for _ in range(0, len(tdata))])
-
+            for data in batched(np.log10(n.partition_function.partition_function), 5):
+                tmp = " ".join([f"{t}," for t in data])
                 of.write(f"{self.indent*(n_indent+1)}{tmp}\n")
             of.write(f"{self.indent*n_indent}}};\n\n")
 
