@@ -149,4 +149,3 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
             of.write(f"{self.indent*n_indent}    {reactant_ind[0]}, {reactant_ind[1]}, {reactant_ind[2]}, {product_ind[0]}, {product_ind[1]}, {product_ind[2]}, {rr_ind}{tmp}\n")
 
         of.write(f"{self.indent*n_indent}}};\n")
-        of.write(f"{self.indent*n_indent}AMREX_GPU_MANAGED bool initialized = false;\n")

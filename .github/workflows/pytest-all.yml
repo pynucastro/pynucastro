@@ -44,5 +44,26 @@ jobs:
       - name: Install pynucastro
         run: python setup.py develop --user
 
+      - name: Print system info
+        run: |
+          pip install threadpoolctl &>/dev/null
+          python -c "import sys, numpy; print(numpy.__version__); print(sys.version); print(numpy.show_runtime())"
+          echo
+          lscpu
+
       - name: Run tests with pytest
-        run: pytest -v -s --cov=pynucastro --nbval --ignore=docs --ignore-glob="pynucastro/library/tabular/*.ipynb" --ignore=examples/rxn-network-integration.ipynb --ignore=examples/o16o16_rates.ipynb
+        run: |
+          # Numpy 1.24 gets slightly diff output: https://github.com/numpy/numpy/issues/23523
+          export NPY_DISABLE_CPU_FEATURES="AVX512F,AVX512CD,AVX512_SKX"
+          # ignore RuntimeWarning for unsupported CPU features, as it breaks nbval
+          export PYTHONWARNINGS="ignore:During parsing environment variable 'NPY_DISABLE_CPU_FEATURES':RuntimeWarning::"
+          pytest -v -s --nbval --cov=pynucastro --ignore=docs --ignore-glob="pynucastro/library/tabular/*.ipynb" --ignore=examples/rxn-network-integration.ipynb --ignore=examples/o16o16_rates.ipynb
+
+      - name: Upload output from failed write_network tests
+        uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: failed_networks_${{ matrix.python-version }}
+          path: _test_*/
+          if-no-files-found: ignore
+          retention-days: 5
