@@ -51,3 +51,12 @@ jobs:
           # ignore RuntimeWarning for unsupported CPU features, as it breaks nbval
           export PYTHONWARNINGS="ignore:During parsing environment variable 'NPY_DISABLE_CPU_FEATURES':RuntimeWarning::"
           pytest -v -s --nbval --cov=pynucastro --ignore=docs --ignore-glob="pynucastro/library/tabular/*.ipynb" --ignore=examples/rxn-network-integration.ipynb --ignore=examples/o16o16_rates.ipynb
+
+      - name: Upload output from failed write_network tests
+        uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: failed_networks_${{ matrix.python-version }}
+          path: _test_*/
+          if-no-files-found: ignore
+          retention-days: 5
