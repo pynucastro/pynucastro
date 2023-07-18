@@ -71,31 +71,38 @@ void init_tab_info(const table_t& tf, const std::string& file, R& rhoy, T& temp,
 
     // now the data -- there are 2 extra columns, for temp and rhoy
 
-    Real ldata[tf.nvars+2];
     for (int j = 1; j <= tf.nrhoy; ++j) {
         for (int i = 1; i <= tf.ntemp; ++i) {
             std::getline(table, line);
             std::istringstream sdata(line);
 
-            for (int m = 0; m < tf.nvars+2; ++m) {
-                sdata >> ldata[m];
-            }
+            sdata >> rhoy(j) >> temp(i);
 
-            if (j == 1) {
-                temp(i) = ldata[1];
-            }
-            if (i == 1) {
-                rhoy(j) = ldata[0];
-            }
-
-            for (int n = 0; n < tf.nvars; ++n) {
-                // 1-based indexing
-                data(i, j, n+1) = ldata[2+n];
+            for (int n = 1; n <= tf.nvars; ++n) {
+                sdata >> data(i, j, n);
             }
         }
+    }
 
-        // skip a blank line
-        std::getline(table, line);
+    for (int j = 1; j <= tf.nrhoy; ++j) {
+        for (int i = 1; i <= tf.ntemp; ++i) {
+
+            if (1 == i) {
+                rhoy(j) = std::pow(10.0_rt, rhoy(j));
+            }
+
+            if (1 == j) {
+                if (temp(i) > 33.0_rt){
+                    amrex::Error("init_tab_info: Table data needs to be updated");
+                }
+
+                temp(i) = std::pow(10.0_rt, temp(i));
+            }
+
+            data(i, j, jtab_rate) = std::pow(10.0_rt, data(i, j, jtab_rate));
+            data(i, j, jtab_nuloss) = std::pow(10.0_rt, data(i, j, jtab_nuloss));
+            data(i, j, jtab_gamma) = std::pow(10.0_rt, data(i, j, jtab_gamma));
+        }
     }
 
     table.close();
@@ -239,7 +246,7 @@ get_entries(const table_t& table_meta,
     // Calculate the derivative of rate with temperature, d(rate)/d(t)
     // (Clamp interpolations in rhoy to avoid unphysical temperature derivatives)
 
-    if ((itemp_lo == 1) || (itemp_hi == table_meta.ntemp-1)) {
+    if ((itemp_lo - 1 < 1) || (itemp_hi + 1 > table_meta.ntemp)) {
         // We're at the first or last table cell (in temperature)
         // First do bilinear interpolation in rhoy for the table at tlo and thi
 

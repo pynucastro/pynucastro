@@ -32,9 +32,9 @@ void init_tabular()
     j_na23_ne23_meta.ntemp = 39;
     j_na23_ne23_meta.nrhoy = 152;
     j_na23_ne23_meta.nvars = 6;
-    j_na23_ne23_meta.nheader = 6;
+    j_na23_ne23_meta.nheader = 7;
 
-    init_tab_info(j_na23_ne23_meta, "23Na-23Ne_electroncapture.dat", j_na23_ne23_rhoy, j_na23_ne23_temp, j_na23_ne23_data);
+    init_tab_info(j_na23_ne23_meta, "23na-23ne_electroncapture.dat", j_na23_ne23_rhoy, j_na23_ne23_temp, j_na23_ne23_data);
 
 
     j_ne23_na23_meta.ntemp = 39;
@@ -42,7 +42,7 @@ void init_tabular()
     j_ne23_na23_meta.nvars = 6;
     j_ne23_na23_meta.nheader = 5;
 
-    init_tab_info(j_ne23_na23_meta, "23Ne-23Na_betadecay.dat", j_ne23_na23_rhoy, j_ne23_na23_temp, j_ne23_na23_data);
+    init_tab_info(j_ne23_na23_meta, "23ne-23na_betadecay.dat", j_ne23_na23_rhoy, j_ne23_na23_temp, j_ne23_na23_data);
 
 
 
