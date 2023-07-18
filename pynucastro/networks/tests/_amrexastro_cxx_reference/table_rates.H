@@ -92,9 +92,27 @@ void init_tab_info(const table_t& tf, const std::string& file, R& rhoy, T& temp,
                 sdata >> data(i, j, n);
             }
         }
+    }
 
-        // skip a blank line
-        std::getline(table, line);
+    for (int j = 1; j <= tf.nrhoy; ++j) {
+        for (int i = 1; i <= tf.ntemp; ++i) {
+
+            if (1 == i) {
+                rhoy(j) = std::pow(10.0_rt, rhoy(j));
+            }
+
+            if (1 == j) {
+                if (temp(i) > 33.0_rt){
+                    amrex::Error("init_tab_info: Table data needs to be updated");
+                }
+
+                temp(i) = std::pow(10.0_rt, temp(i));
+            }
+
+            data(i, j, jtab_rate) = std::pow(10.0_rt, data(i, j, jtab_rate));
+            data(i, j, jtab_nuloss) = std::pow(10.0_rt, data(i, j, jtab_nuloss));
+            data(i, j, jtab_gamma) = std::pow(10.0_rt, data(i, j, jtab_gamma));
+        }
     }
 
     table.close();

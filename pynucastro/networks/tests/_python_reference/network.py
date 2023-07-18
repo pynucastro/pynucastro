@@ -82,11 +82,11 @@ class RateEval:
         self.ne23__na23 = np.nan
 
 # load data for na23 --> ne23
-na23__ne23_table_path = _find_rate_file('23Na-23Ne_electroncapture.dat')
+na23__ne23_table_path = _find_rate_file('23na-23ne_electroncapture.dat')
 t_data2d = []
 with open(na23__ne23_table_path) as tabular_file:
     for i, line in enumerate(tabular_file):
-        if i < 6:
+        if i < 7:
             continue
         line = line.strip()
         if not line:
@@ -95,7 +95,7 @@ with open(na23__ne23_table_path) as tabular_file:
 na23__ne23_data = np.array(t_data2d, dtype=float)
 
 # load data for ne23 --> na23
-ne23__na23_table_path = _find_rate_file('23Ne-23Na_betadecay.dat')
+ne23__na23_table_path = _find_rate_file('23ne-23na_betadecay.dat')
 t_data2d = []
 with open(ne23__na23_table_path) as tabular_file:
     for i, line in enumerate(tabular_file):
@@ -188,18 +188,18 @@ def he4_he4_he4__c12(rate_eval, tf):
 @numba.njit()
 def na23__ne23(rate_eval, T, rhoY):
     # na23 --> ne23
-    T_nearest = (na23__ne23_data[:, 1])[np.abs((na23__ne23_data[:, 1]) - T).argmin()]
-    rhoY_nearest = (na23__ne23_data[:, 0])[np.abs((na23__ne23_data[:, 0]) - rhoY).argmin()]
+    T_nearest = (na23__ne23_data[:, 1])[np.abs((10.0**na23__ne23_data[:, 1]) - T).argmin()]
+    rhoY_nearest = (na23__ne23_data[:, 0])[np.abs((10.0**na23__ne23_data[:, 0]) - rhoY).argmin()]
     inde = np.where((na23__ne23_data[:, 1] == T_nearest) & (na23__ne23_data[:, 0] == rhoY_nearest))[0][0]
-    rate_eval.na23__ne23 = na23__ne23_data[inde][5]
+    rate_eval.na23__ne23 = 10.0**(na23__ne23_data[inde][5])
 
 @numba.njit()
 def ne23__na23(rate_eval, T, rhoY):
     # ne23 --> na23
-    T_nearest = (ne23__na23_data[:, 1])[np.abs((ne23__na23_data[:, 1]) - T).argmin()]
-    rhoY_nearest = (ne23__na23_data[:, 0])[np.abs((ne23__na23_data[:, 0]) - rhoY).argmin()]
+    T_nearest = (ne23__na23_data[:, 1])[np.abs((10.0**ne23__na23_data[:, 1]) - T).argmin()]
+    rhoY_nearest = (ne23__na23_data[:, 0])[np.abs((10.0**ne23__na23_data[:, 0]) - rhoY).argmin()]
     inde = np.where((ne23__na23_data[:, 1] == T_nearest) & (ne23__na23_data[:, 0] == rhoY_nearest))[0][0]
-    rate_eval.ne23__na23 = ne23__na23_data[inde][5]
+    rate_eval.ne23__na23 = 10.0**(ne23__na23_data[inde][5])
 
 def rhs(t, Y, rho, T, screen_func=None):
     return rhs_eq(t, Y, rho, T, screen_func)
