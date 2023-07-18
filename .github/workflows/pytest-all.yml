@@ -45,4 +45,9 @@ jobs:
         run: python setup.py develop --user
 
       - name: Run tests with pytest
-        run: pytest -v -s --cov=pynucastro --nbval --ignore=docs --ignore-glob="pynucastro/library/tabular/*.ipynb" --ignore=examples/rxn-network-integration.ipynb --ignore=examples/o16o16_rates.ipynb
+        run: |
+          # Numpy 1.24 gets slightly diff output: https://github.com/numpy/numpy/issues/23523
+          export NPY_DISABLE_CPU_FEATURES="AVX512F,AVX512CD,AVX512_SKX"
+          # ignore RuntimeWarning for unsupported CPU features, as it breaks nbval
+          export PYTHONWARNINGS="ignore:During parsing environment variable 'NPY_DISABLE_CPU_FEATURES':RuntimeWarning::"
+          pytest -v -s --nbval --cov=pynucastro --ignore=docs --ignore-glob="pynucastro/library/tabular/*.ipynb" --ignore=examples/rxn-network-integration.ipynb --ignore=examples/o16o16_rates.ipynb
