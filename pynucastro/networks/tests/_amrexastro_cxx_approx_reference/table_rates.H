@@ -92,6 +92,10 @@ void init_tab_info(const table_t& tf, const std::string& file, R& rhoy, T& temp,
             }
 
             if (1 == j) {
+                if (temp(i) > 33.0_rt){
+                    amrex::Error("init_tab_info: Table data needs to be updated")
+                }
+
                 temp(i) = std::pow(10.0_rt, temp(i));
             }
 
