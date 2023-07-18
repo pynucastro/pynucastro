@@ -89,7 +89,6 @@ namespace NSE_INDEX
     // last index is the corresponding reverse rate index.
 
     extern AMREX_GPU_MANAGED amrex::Array2D<int, 1, Rates::NumRates, 1, 7, Order::C> rate_indices;
-    extern AMREX_GPU_MANAGED bool initialized;
 }
 #endif
 
