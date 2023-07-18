@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Combining ReacLib Rates with Electron Capture Tables &mdash; pynucastro 2.0.3.post60+g102cacbb documentation</title>
+  <title>Combining ReacLib Rates with Electron Capture Tables &mdash; pynucastro 2.0.3.post62+g06f8bec4 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/nbsphinx-code-cells.css" type="text/css" />
@@ -231,11 +231,22 @@ S32 ⟶ p + P31                  [Q =  -8.86 MeV] (s32 --&gt; p + p31 &lt;il10_r
 </pre></div>
 </div>
 </div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/pynucastro-2.0.3.post62+g06f8bec4-py3.10.egg/pynucastro/rates/rate.py:1582: UserWarning: Attempting to set identical low and high xlims makes transformation singular; automatically expanding.
+  im = ax.imshow(pivot_table, cmap=cmap)
+/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/pynucastro-2.0.3.post62+g06f8bec4-py3.10.egg/pynucastro/rates/rate.py:1582: UserWarning: Attempting to set identical low and high ylims makes transformation singular; automatically expanding.
+  im = ax.imshow(pivot_table, cmap=cmap)
+</pre></div></div>
+</div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/electron-captures_12_0.png" src="_images/electron-captures_12_0.png" />
+<img alt="_images/electron-captures_12_1.png" src="_images/electron-captures_12_1.png" />
 </div>
 </div>
 <p>Let’s create a rate collection from just the ReacLib rates and look to see which are actually important</p>
@@ -350,19 +361,19 @@ S32 ⟶ p + P31                  [Q =  -8.86 MeV] (s32 --&gt; p + p31 &lt;il10_r
  Ne20 + He4 ⟶ Mg24 + 𝛾: 470.4657166295948,
  Mg24 + He4 ⟶ Si28 + 𝛾: 65.33425925449087,
  Al27 + p ⟶ Si28 + 𝛾: 3786.5889540808494,
- Al27 + He4 ⟶ P31 + 𝛾: 0.057635811259143355,
+ Al27 + He4 ⟶ P31 + 𝛾: 0.05763581125914335,
  Si28 + He4 ⟶ S32 + 𝛾: 0.08322738610569617,
- P31 + p ⟶ S32 + 𝛾: 2375.130496403913,
+ P31 + p ⟶ S32 + 𝛾: 2375.1304964039136,
  O16 + O16 ⟶ p + P31: 7.154939895463953e-17,
- O16 + O16 ⟶ He4 + Si28: 2.5949312230335836e-17,
+ O16 + O16 ⟶ He4 + Si28: 2.5949312230335842e-17,
  Mg24 + He4 ⟶ p + Al27: 0.2543862399303774,
  Al27 + p ⟶ He4 + Mg24: 5920.818449985262,
  Si28 + He4 ⟶ p + P31: 0.00019528201299493395,
  P31 + p ⟶ He4 + Si28: 5491.96044267561,
- Ne20 + e⁻ ⟶ F20 + 𝜈: 3.580914286917256e-11,
- O20 ⟶ F20 + e⁻ + 𝜈: 3.4692267612601718e-28,
- F20 ⟶ Ne20 + e⁻ + 𝜈: 1.216193699146343e-14,
- F20 + e⁻ ⟶ O20 + 𝜈: 4.033041588160375e-09}
+ Ne20 + e⁻ ⟶ F20 + 𝜈: 3.5809143990195726e-11,
+ O20 ⟶ F20 + e⁻ + 𝜈: 3.4692267362310674e-28,
+ F20 ⟶ Ne20 + e⁻ + 𝜈: 1.2161935188308098e-14,
+ F20 + e⁻ ⟶ O20 + 𝜈: 4.033041442238242e-09}
 </pre></div></div>
 </div>
 <p>Additionally, we can see the specific energy generation rate for these conditions</p>
@@ -380,7 +391,7 @@ S32 ⟶ p + P31                  [Q =  -8.86 MeV] (s32 --&gt; p + p31 &lt;il10_r
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-9.667007169632398e+22
+1.1552835397960039e+23
 </pre></div></div>
 </div>
 <div class="nbinput nblast docutils container">
