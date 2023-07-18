@@ -28,7 +28,6 @@ namespace NSE_INDEX
         -1, 0, 2, -1, -1, 3, 16,
         -1, -1, 3, -1, 0, 2, -1
     };
-    AMREX_GPU_MANAGED bool initialized = false;
 }
 #endif
 
