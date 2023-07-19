@@ -13,9 +13,11 @@ using namespace Species;
 
 namespace part_fun {
 
-    constexpr int fe52_npts = 72;
+    constexpr int npts_1 = 72;
 
-    MICROPHYSICS_UNUSED HIP_CONSTEXPR static AMREX_GPU_MANAGED amrex::Real fe52_temp_array[fe52_npts] = {
+    // this is T9
+
+    MICROPHYSICS_UNUSED HIP_CONSTEXPR static AMREX_GPU_MANAGED amrex::Real temp_array_1[npts_1] = {
         0.01, 0.15, 0.2, 0.3, 0.4,
         0.5, 0.6, 0.7, 0.8, 0.9,
         1.0, 1.5, 2.0, 2.5, 3.0,
@@ -33,9 +35,10 @@ namespace part_fun {
         250.0, 275.0,
     };
 
+
     // this is log10(partition function)
 
-    MICROPHYSICS_UNUSED HIP_CONSTEXPR static AMREX_GPU_MANAGED amrex::Real fe52_pf_array[fe52_npts] = {
+    MICROPHYSICS_UNUSED HIP_CONSTEXPR static AMREX_GPU_MANAGED amrex::Real fe52_pf_array[npts_1] = {
         0.0, 0.0, 0.0, 0.0, 0.0,
         0.0, 0.0, 1.7371744532199383e-06, 9.554373504133797e-06, 3.778197643341552e-05,
         0.00011333607006293108, 0.0030242952161453874, 0.015422212189991184, 0.040215337130588114, 0.07478865660777631,
@@ -53,30 +56,9 @@ namespace part_fun {
         48.20682587603185, 53.02938377768521,
     };
 
-
-    constexpr int co55_npts = 72;
-
-    MICROPHYSICS_UNUSED HIP_CONSTEXPR static AMREX_GPU_MANAGED amrex::Real co55_temp_array[co55_npts] = {
-        0.01, 0.15, 0.2, 0.3, 0.4,
-        0.5, 0.6, 0.7, 0.8, 0.9,
-        1.0, 1.5, 2.0, 2.5, 3.0,
-        3.5, 4.0, 4.5, 5.0, 6.0,
-        7.0, 8.0, 9.0, 10.0, 12.0,
-        14.0, 16.0, 18.0, 20.0, 22.0,
-        24.0, 26.0, 28.0, 30.0, 35.0,
-        40.0, 45.0, 50.0, 55.0, 60.0,
-        65.0, 70.0, 75.0, 80.0, 85.0,
-        90.0, 95.0, 100.0, 105.0, 110.0,
-        115.0, 120.0, 125.0, 130.0, 135.0,
-        140.0, 145.0, 150.0, 155.0, 160.0,
-        165.0, 170.0, 175.0, 180.0, 190.0,
-        200.0, 210.0, 220.0, 230.0, 240.0,
-        250.0, 275.0,
-    };
-
     // this is log10(partition function)
 
-    MICROPHYSICS_UNUSED HIP_CONSTEXPR static AMREX_GPU_MANAGED amrex::Real co55_pf_array[co55_npts] = {
+    MICROPHYSICS_UNUSED HIP_CONSTEXPR static AMREX_GPU_MANAGED amrex::Real co55_pf_array[npts_1] = {
         0.0, 0.0, 0.0, 0.0, 0.0,
         0.0, 0.0, 0.0, 0.0, 0.0,
         0.0, 0.0, 8.685880952436747e-07, 1.4331481434642371e-05, 9.336327741651445e-05,
@@ -94,30 +76,9 @@ namespace part_fun {
         49.954242509439325, 55.05690485133647,
     };
 
-
-    constexpr int ni56_npts = 72;
-
-    MICROPHYSICS_UNUSED HIP_CONSTEXPR static AMREX_GPU_MANAGED amrex::Real ni56_temp_array[ni56_npts] = {
-        0.01, 0.15, 0.2, 0.3, 0.4,
-        0.5, 0.6, 0.7, 0.8, 0.9,
-        1.0, 1.5, 2.0, 2.5, 3.0,
-        3.5, 4.0, 4.5, 5.0, 6.0,
-        7.0, 8.0, 9.0, 10.0, 12.0,
-        14.0, 16.0, 18.0, 20.0, 22.0,
-        24.0, 26.0, 28.0, 30.0, 35.0,
-        40.0, 45.0, 50.0, 55.0, 60.0,
-        65.0, 70.0, 75.0, 80.0, 85.0,
-        90.0, 95.0, 100.0, 105.0, 110.0,
-        115.0, 120.0, 125.0, 130.0, 135.0,
-        140.0, 145.0, 150.0, 155.0, 160.0,
-        165.0, 170.0, 175.0, 180.0, 190.0,
-        200.0, 210.0, 220.0, 230.0, 240.0,
-        250.0, 275.0,
-    };
-
     // this is log10(partition function)
 
-    MICROPHYSICS_UNUSED HIP_CONSTEXPR static AMREX_GPU_MANAGED amrex::Real ni56_pf_array[ni56_npts] = {
+    MICROPHYSICS_UNUSED HIP_CONSTEXPR static AMREX_GPU_MANAGED amrex::Real ni56_pf_array[npts_1] = {
         0.0, 0.0, 0.0, 0.0, 0.0,
         0.0, 0.0, 0.0, 0.0, 0.0,
         0.0, 0.0, 4.342942647204277e-07, 7.817230319428646e-06, 6.42708273977769e-05,
@@ -134,7 +95,6 @@ namespace part_fun {
         41.77959649125783, 43.86981820797933, 45.959518376973, 48.04921802267018, 50.13987908640124,
         52.230448921378276, 57.462397997898954,
     };
-
 
 
 
@@ -194,15 +154,15 @@ void get_partition_function(const int inuc, [[maybe_unused]] const tf_t& tfactor
     switch (inuc) {
 
     case Fe52:
-        part_fun::interpolate_pf<part_fun::fe52_npts>(tfactors.T9, part_fun::fe52_temp_array, part_fun::fe52_pf_array, pf, dpf_dT);
+        part_fun::interpolate_pf<part_fun::npts_1>(tfactors.T9, part_fun::temp_array_1, part_fun::fe52_pf_array, pf, dpf_dT);
         break;
 
     case Co55:
-        part_fun::interpolate_pf<part_fun::co55_npts>(tfactors.T9, part_fun::co55_temp_array, part_fun::co55_pf_array, pf, dpf_dT);
+        part_fun::interpolate_pf<part_fun::npts_1>(tfactors.T9, part_fun::temp_array_1, part_fun::co55_pf_array, pf, dpf_dT);
         break;
 
     case Ni56:
-        part_fun::interpolate_pf<part_fun::ni56_npts>(tfactors.T9, part_fun::ni56_temp_array, part_fun::ni56_pf_array, pf, dpf_dT);
+        part_fun::interpolate_pf<part_fun::npts_1>(tfactors.T9, part_fun::temp_array_1, part_fun::ni56_pf_array, pf, dpf_dT);
         break;
 
 

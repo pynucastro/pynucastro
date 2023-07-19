@@ -474,48 +474,48 @@ class BaseCxxNetwork(ABC, RateCollection):
             while batch := tuple(itertools.islice(it, n)):
                 yield batch
 
-        nuclei_pfs = self.get_nuclei_needing_partition_functions()
+        temp_arrays, temp_indices = self.dedupe_partition_function_temperatures()
 
         decl = "MICROPHYSICS_UNUSED HIP_CONSTEXPR static AMREX_GPU_MANAGED amrex::Real"
 
-        for n in nuclei_pfs:
-            npts = len(n.partition_function.temperature)
-
-            # write the data out, but for readability, split it to 5 values per line
-
+        for i, temp in enumerate(temp_arrays):
             # number of points
+            of.write(f"{self.indent*n_indent}constexpr int npts_{i+1} = {len(temp)};\n\n")
 
-            of.write(f"{self.indent*n_indent}constexpr int {n}_npts = {npts};\n\n")
+            # write the temperature out, but for readability, split it to 5 values per line
 
-            # first the temperature (in units of T9)
+            of.write(f"{self.indent*n_indent}// this is T9\n\n")
 
-            of.write(f"{self.indent*n_indent}{decl} {n}_temp_array[{n}_npts] = {{\n")
+            of.write(f"{self.indent*n_indent}{decl} temp_array_{i+1}[npts_{i+1}] = {{\n")
 
-            for data in batched(n.partition_function.temperature/1.0e9, 5):
+            for data in batched(temp / 1.0e9, 5):
                 tmp = " ".join([f"{t}," for t in data])
                 of.write(f"{self.indent*(n_indent+1)}{tmp}\n")
             of.write(f"{self.indent*n_indent}}};\n\n")
 
-            # now the partition function itself -- this is log10
+            if i == len(temp_arrays) - 1:
+                of.write("\n")
+
+        for n, i in temp_indices.items():
+            # write the partition function data out, but for readability, split
+            # it to 5 values per line
 
             of.write(f"{self.indent*n_indent}// this is log10(partition function)\n\n")
 
-            of.write(f"{self.indent*n_indent}{decl} {n}_pf_array[{n}_npts] = {{\n")
+            of.write(f"{self.indent*n_indent}{decl} {n}_pf_array[npts_{i+1}] = {{\n")
 
             for data in batched(np.log10(n.partition_function.partition_function), 5):
-                tmp = " ".join([f"{t}," for t in data])
+                tmp = " ".join([f"{x}," for x in data])
                 of.write(f"{self.indent*(n_indent+1)}{tmp}\n")
             of.write(f"{self.indent*n_indent}}};\n\n")
 
-            of.write("\n")
-
     def _fill_partition_function_cases(self, n_indent, of):
 
-        nuclei_pfs = self.get_nuclei_needing_partition_functions()
+        _, temp_indices = self.dedupe_partition_function_temperatures()
 
-        for n in nuclei_pfs:
+        for n, i in temp_indices.items():
             of.write(f"{self.indent*n_indent}case {n.cindex()}:\n")
-            of.write(f"{self.indent*(n_indent+1)}part_fun::interpolate_pf<part_fun::{n}_npts>(tfactors.T9, part_fun::{n}_temp_array, part_fun::{n}_pf_array, pf, dpf_dT);\n")
+            of.write(f"{self.indent*(n_indent+1)}part_fun::interpolate_pf<part_fun::npts_{i+1}>(tfactors.T9, part_fun::temp_array_{i+1}, part_fun::{n}_pf_array, pf, dpf_dT);\n")
             of.write(f"{self.indent*(n_indent+1)}break;\n\n")
 
     def _fill_spin_state_cases(self, n_indent, of):

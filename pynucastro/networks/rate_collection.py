@@ -652,6 +652,29 @@ class RateCollection:
                         nuclei_pfs.add(nuc)
         return sorted(nuclei_pfs)
 
+    def dedupe_partition_function_temperatures(self):
+        """return a list of unique temperature arrays, along with a dictionary
+        mapping each Nucleus to the corresponding index into that list"""
+
+        nuclei = self.get_nuclei_needing_partition_functions()
+        temp_arrays = []
+        temp_indices = {}
+        # nuclei must be sorted, so the output is deterministic
+        for nuc in nuclei:
+            nuc_temp = nuc.partition_function.temperature
+            # do a sequential search on temp_arrays, since it should be short
+            for i, temp in enumerate(temp_arrays):
+                # np.array_equal handles comparing arrays of different shapes
+                if np.array_equal(nuc_temp, temp):
+                    temp_indices[nuc] = i
+                    break
+            else:
+                # no match found, add a new entry
+                temp_indices[nuc] = len(temp_arrays)
+                temp_arrays.append(nuc_temp)
+
+        return temp_arrays, temp_indices
+
     def remove_nuclei(self, nuc_list):
         """remove the nuclei in nuc_list from the network along with any rates
         that directly involve them (this doesn't affect approximate rates that
