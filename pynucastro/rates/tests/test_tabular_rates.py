@@ -21,7 +21,7 @@ class TestTabularRates:
         langanke_lib = pyna.LangankeLibrary()
 
         self.rc_su = pyna.RateCollection(libraries=[suzuki_lib])
-        self.rc_lan = pyna.RateCollection(libraries=[langanke_lib]])
+        self.rc_lan = pyna.RateCollection(libraries=[langanke_lib])
 
     def teardown_method(self):
         """ this is run after each test """

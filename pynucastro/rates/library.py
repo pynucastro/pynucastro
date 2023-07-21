@@ -676,6 +676,7 @@ class TabularLibrary(Library):
 
         Library.__init__(self, rates=trates)
 
+
 class SuzukiLibrary(Library):
     """
     Load all of the tabular rates inside /library/tabular/suzuki/
@@ -696,6 +697,7 @@ class SuzukiLibrary(Library):
                     trates.append(load_rate(f))
 
         Library.__init__(self, rates=trates)
+
 
 class LangankeLibrary(Library):
     """
