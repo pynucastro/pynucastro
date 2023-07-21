@@ -250,6 +250,7 @@ get_entries(const table_t& table_meta,
                                data(itemp_hi, irhoy_hi, ivar),
                                temp);
 
+        // NOLINTNEXTLINE(readability-suspicious-call-argument)
         entries(ivar) = bl_extrap(rhoy_lo, rhoy_hi, f_i, f_ip1, rhoy);
     }
 
