@@ -675,3 +675,45 @@ class TabularLibrary(Library):
                     trates.append(load_rate(f))
 
         Library.__init__(self, rates=trates)
+
+class SuzukiLibrary(Library):
+    """
+    Load all of the tabular rates inside /library/tabular/suzuki/
+    and return a Library.
+    """
+
+    def __init__(self):
+        # find all of the tabular rates that pynucastro knows about
+        # we'll assume that these are of the form *-toki
+
+        lib_path = f"{os.path.dirname(__file__)}/../library/tabular/suzuki"
+
+        trates = []
+
+        for _, _, filenames in os.walk(lib_path):
+            for f in filenames:
+                if f.endswith("-toki"):
+                    trates.append(load_rate(f))
+
+        Library.__init__(self, rates=trates)
+
+class LangankeLibrary(Library):
+    """
+    Load all of the tabular rates inside /library/tabular/suzuki/
+    and return a Library.
+    """
+
+    def __init__(self):
+        # find all of the tabular rates that pynucastro knows about
+        # we'll assume that these are of the form *-toki
+
+        lib_path = f"{os.path.dirname(__file__)}/../library/tabular/langanke"
+
+        trates = []
+
+        for _, _, filenames in os.walk(lib_path):
+            for f in filenames:
+                if f.endswith("-toki"):
+                    trates.append(load_rate(f))
+
+        Library.__init__(self, rates=trates)

@@ -123,5 +123,6 @@ from pynucastro.networks import (AmrexAstroCxxNetwork, BaseCxxNetwork,
 from pynucastro.nucdata import Nucleus
 from pynucastro.rates import (ApproximateRate, DerivedRate, Library, Rate,
                               RateFilter, ReacLibLibrary, TabularLibrary,
-                              Tfactors, list_known_rates, load_rate)
+                              SuzukiLibrary, LangankeLibrary, Tfactors,
+                              list_known_rates, load_rate)
 from pynucastro.screening import make_plasma_state, make_screen_factors
