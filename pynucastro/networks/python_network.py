@@ -208,10 +208,9 @@ class PythonNetwork(RateCollection):
         nuclei_pfs = self.get_nuclei_needing_partition_functions()
 
         for n in nuclei_pfs:
-            if n.partition_function:
-                of.write(f"{n}_temp_array = np.array({list(n.partition_function.temperature/1.0e9)})\n")
-                of.write(f"{n}_pf_array = np.array({list(n.partition_function.partition_function)})\n")
-                of.write("\n")
+            of.write(f"{n}_temp_array = np.array({list(n.partition_function.temperature/1.0e9)})\n")
+            of.write(f"{n}_pf_array = np.array({list(n.partition_function.partition_function)})\n")
+            of.write("\n")
 
         # rate_eval class
 
