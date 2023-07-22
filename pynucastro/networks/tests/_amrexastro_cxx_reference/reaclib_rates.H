@@ -183,6 +183,7 @@ void rate_n_to_p_weak_wc12(const tf_t& tfactors, Real& rate, Real& drate_dT) {
 
     // wc12w
     ln_set_rate =  -6.78161;
+    amrex::ignore_unused(tfactors);
 
     if constexpr (do_T_derivatives) {
         dln_set_rate_dT9 = 0.0;
@@ -248,9 +249,10 @@ void
 fill_approx_rates([[maybe_unused]] const tf_t& tfactors, T& rate_eval)
 {
 
-    Real rate;
-    Real drate_dT;
+    Real rate{};
+    Real drate_dT{};
 
+    amrex::ignore_unused(rate, drate_dT, rate_eval);
 
 }
 
