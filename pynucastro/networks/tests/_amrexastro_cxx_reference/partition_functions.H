@@ -89,40 +89,25 @@ constexpr Real get_spin_state(const int inuc) {
 
     switch (inuc) {
 
-    case N:
-        spin = 2;
-        break;
-
-    case H1:
-        spin = 2;
-        break;
-
     case He4:
-        spin = 1;
-        break;
-
     case C12:
-        spin = 1;
-        break;
-
     case O16:
-        spin = 1;
-        break;
-
     case Ne20:
         spin = 1;
         break;
 
-    case Ne23:
-        spin = 6;
+    case N:
+    case H1:
+        spin = 2;
         break;
 
     case Na23:
+    case Mg23:
         spin = 4;
         break;
 
-    case Mg23:
-        spin = 4;
+    case Ne23:
+        spin = 6;
         break;
 
 
