@@ -145,11 +145,11 @@ int vector_index_lu(const int vlen, const V& vector, const Real fvar)
             } else {
                 ndn = j;
             }
-          if (((nup - ndn) == 1)) {
-              index = ndn;
-              return index;
-          }
+            if ((nup - ndn) == 1) {
+                break;
+            }
         }
+        index = ndn;
     }
 
     return index;
