@@ -292,6 +292,8 @@ class SingleSet:
             string += ");"
         else:
             string += ";"
+        if all(q == 0.0 for q in self.a[1:]):
+            string += "\namrex::ignore_unused(tfactors);"
         return string
 
     def dln_set_string_dT9_cxx(self, prefix="dset_dT", plus_equal=False):

@@ -456,6 +456,8 @@ class BaseCxxNetwork(ABC, RateCollection):
             of.write(f"{self.indent*n_indent}}}\n")
 
     def _fill_approx_rates(self, n_indent, of):
+        if not self.approx_rates:
+            of.write(f"{self.indent*n_indent}amrex::ignore_unused(rate, drate_dT, rate_eval);\n")
         for r in self.approx_rates:
             of.write(f"{self.indent*n_indent}rate_{r.cname()}<T>(rate_eval, rate, drate_dT);\n")
             of.write(f"{self.indent*n_indent}rate_eval.screened_rates(k_{r.cname()}) = rate;\n")
@@ -520,18 +522,17 @@ class BaseCxxNetwork(ABC, RateCollection):
 
     def _fill_spin_state_cases(self, n_indent, of):
 
-        for n in self.unique_nuclei:
-            if n.spin_states is None:
+        def key_func(nuc):
+            if nuc.spin_states is None:
+                return -1
+            return nuc.spin_states
+
+        # group identical cases together to satisfy clang-tidy
+        nuclei = sorted(self.unique_nuclei + self.approx_nuclei, key=key_func)
+        for spin_state, group in itertools.groupby(nuclei, key=key_func):
+            if spin_state == -1:
                 continue
-
-            of.write(f"{self.indent*n_indent}case {n.cindex()}:\n")
-            of.write(f"{self.indent*(n_indent+1)}spin = {n.spin_states};\n")
-            of.write(f"{self.indent*(n_indent+1)}break;\n\n")
-
-        for n in self.approx_nuclei:
-            if n.spin_states is None:
-                continue
-
-            of.write(f"{self.indent*n_indent}case {n.cindex()}:\n")
-            of.write(f"{self.indent*(n_indent+1)}spin = {n.spin_states};\n")
+            for n in group:
+                of.write(f"{self.indent*n_indent}case {n.cindex()}:\n")
+            of.write(f"{self.indent*(n_indent+1)}spin = {spin_state};\n")
             of.write(f"{self.indent*(n_indent+1)}break;\n\n")

@@ -349,9 +349,10 @@ void
 fill_approx_rates([[maybe_unused]] const tf_t& tfactors, T& rate_eval)
 {
 
-    Real rate;
-    Real drate_dT;
+    Real rate{};
+    Real drate_dT{};
 
+    amrex::ignore_unused(rate, drate_dT, rate_eval);
 
 }
 
