@@ -23,17 +23,25 @@ namespace part_fun {
     void interpolate_pf(const Real t9, const Real (&temp_array)[npts], const Real (&pf_array)[npts],
                         Real& pf, Real& dpf_dT) {
 
-        // find the first temperature element larger than t9
-        auto upper = std::upper_bound(std::begin(temp_array), std::end(temp_array), t9);
+        if (t9 >= temp_array[0] && t9 < temp_array[npts-1]) {
 
-        int idx = -1;
-        if (upper != std::end(temp_array)) {
-            // base index is one before the upper element
-            // this will be -1 if t9 < smallest entry in the table
-            idx = std::distance(temp_array, upper) - 1;
-        }
+            // find the largest temperature element <= t9 using a binary search
 
-        if (idx >= 0) {
+            int left = 0;
+            int right = npts;
+
+            while (left < right) {
+                int mid = (left + right) / 2;
+                if (temp_array[mid] > t9) {
+                    right = mid;
+                } else {
+                    left = mid + 1;
+                }
+            }
+
+            const int idx = right - 1;
+
+            // now we have temp_array[idx] <= t9 < temp_array[idx+1]
 
             // construct the slope -- this is (log10(pf_{i+1}) - log10(pf_i)) / (T_{i+1} - T_i)
 
@@ -51,7 +59,7 @@ namespace part_fun {
 
         } else {
 
-            // T < the smallest T in the partition function table
+            // T < the smallest T or >= the largest T in the partition function table
             pf = 1.0;
             dpf_dT = 0.0;
 
