@@ -16,7 +16,7 @@ class TestPythonNetwork:
     @pytest.fixture(scope="class")
     def rate3(self):
         return rates.ReacLibRate("he4-npahe3-li7-mafo")
-    
+
     @pytest.fixture(scope="class")
     def rate4(self):
         return rates.ReacLibRate("p-p-d-ec")
@@ -28,7 +28,7 @@ class TestPythonNetwork:
 
         ydot2 = rate2.ydot_string_py()
         assert ydot2 == "5.00000000000000e-01*rho**2*Y[jp]**2*Y[jhe4]*rate_eval.p_p_he4__he3_he3"
-        
+
         ydot3 = rate3.ydot_string_py()
         assert ydot3 == "5.00000000000000e-01*rho**3*Y[jn]*Y[jp]*Y[jhe4]**2*rate_eval.n_p_he4_he4__he3_li7"
 
@@ -41,13 +41,13 @@ class TestPythonNetwork:
 
         jac2 = rate2.jacobian_string_py(rate2.reactants[0])
         assert jac2 == "5.00000000000000e-01*rho**2*2*Y[jp]*Y[jhe4]*rate_eval.p_p_he4__he3_he3"
-        
+
         jac3 = rate3.jacobian_string_py(rate3.reactants[0])
         assert jac3 == "5.00000000000000e-01*rho**3*Y[jp]*Y[jhe4]**2*rate_eval.n_p_he4_he4__he3_li7"
 
         jac4 = rate4.jacobian_string_py(rate4.reactants[0])
         assert jac4 == "5.00000000000000e-01*rho**2*ye(Y)*2*Y[jp]*rate_eval.p_p__d__weak__electron_capture"
-        
+
     def test_function_string(self, rate1, rate2, rate3, rate4):
 
         ostr1 = """
@@ -69,8 +69,6 @@ def p_c13__n14(rate_eval, tf):
     rate_eval.p_c13__n14 = rate
 """
 
-        assert rate1.function_string_py().strip() == ostr1.strip()
-
         ostr2 = """
 @numba.njit()
 def p_p_he4__he3_he3(rate_eval, tf):
@@ -84,8 +82,6 @@ def p_p_he4__he3_he3(rate_eval, tf):
     rate_eval.p_p_he4__he3_he3 = rate
 """
 
-        assert rate2.function_string_py().strip() == ostr2.strip()
-        
         ostr3 = """
 @numba.njit()
 def n_p_he4_he4__he3_li7(rate_eval, tf):
@@ -98,8 +94,6 @@ def n_p_he4_he4__he3_li7(rate_eval, tf):
 
     rate_eval.n_p_he4_he4__he3_li7 = rate
 """
-
-        assert rate3.function_string_py().strip() == ostr3.strip()
 
         ostr4 = """
 @numba.njit()
@@ -117,4 +111,7 @@ def p_p__d__weak__electron_capture(rate_eval, tf):
     rate_eval.p_p__d__weak__electron_capture = rate
 """
 
+        assert rate1.function_string_py().strip() == ostr1.strip()
+        assert rate2.function_string_py().strip() == ostr2.strip()
+        assert rate3.function_string_py().strip() == ostr3.strip()
         assert rate4.function_string_py().strip() == ostr4.strip()
