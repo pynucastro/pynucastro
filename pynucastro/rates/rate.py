@@ -637,11 +637,10 @@ class Rate:
             ydot_string_components.append(f"{self.prefactor:1.14e}")
 
         # density dependence
-        if self.dens_exp != 0:
-            if self.dens_exp == 1:
-                ydot_string_components.append("rho")
-            else:
-                ydot_string_components.append(f"rho**{self.dens_exp}")
+        if self.dens_exp == 1:
+            ydot_string_components.append("rho")
+        elif self.dens_exp != 0:
+            ydot_string_components.append(f"rho**{self.dens_exp}")
 
         # electron fraction dependence
         if self.weak_type == 'electron_capture' and not self.tabular:
@@ -681,11 +680,10 @@ class Rate:
             jac_string_components.append(f"{self.prefactor:1.14e}")
 
         # density dependence
-        if self.dens_exp != 0:
-            if self.dens_exp == 1:
-                jac_string_components.append("rho")
-            else:
-                jac_string_components.append(f"rho**{self.dens_exp}")
+        if self.dens_exp == 1:
+            jac_string_components.append("rho")
+        elif self.dens_exp != 0:
+            jac_string_components.append(f"rho**{self.dens_exp}")
 
         # electron fraction dependence
         if self.weak_type == 'electron_capture' and not self.tabular:
