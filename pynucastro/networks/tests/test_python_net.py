@@ -23,8 +23,7 @@ class TestPythonNetwork:
 
     def test_ydot_string(self, rate1, rate2, rate3, rate4):
         ydot1 = rate1.ydot_string_py()
-        assert ydot1 in ("rho*Y[jc13]*Y[jp]*rate_eval.p_c13__n14",
-                         "rho*Y[jp]*Y[jc13]*rate_eval.p_c13__n14")
+        assert ydot1 == "rho*Y[jp]*Y[jc13]*rate_eval.p_c13__n14"
 
         ydot2 = rate2.ydot_string_py()
         assert ydot2 == "5.00000000000000e-01*rho**2*Y[jp]**2*Y[jhe4]*rate_eval.p_p_he4__he3_he3"
