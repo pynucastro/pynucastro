@@ -630,34 +630,35 @@ class Rate:
         in a reaction network corresponding to this rate.
         """
 
-        ydot_string_component = []
+        ydot_string_components = []
 
         # prefactor
         if self.prefactor != 1.0:
-            ydot_string_component.append(f"{self.prefactor:1.14e}")
+            ydot_string_components.append(f"{self.prefactor:1.14e}")
 
         # density dependence
         if self.dens_exp != 0:
             if self.dens_exp == 1:
-                ydot_string_component.append("rho")
+                ydot_string_components.append("rho")
             else:
-                ydot_string_component.append(f"rho**{self.dens_exp}")
+                ydot_string_components.append(f"rho**{self.dens_exp}")
 
         # electron fraction dependence
         if self.weak_type == 'electron_capture' and not self.tabular:
-            ydot_string_component.append("ye(Y)")
+            ydot_string_components.append("ye(Y)")
 
         # composition dependence
-        for n, r in enumerate(sorted(set(self.reactants))):
+        for r in sorted(set(self.reactants)):
             c = self.reactants.count(r)
             if c > 1:
-                ydot_string_component.append(f"Y[j{r}]**{c}")
+                ydot_string_components.append(f"Y[j{r}]**{c}")
             else:
-                ydot_string_component.append(f"Y[j{r}]")
+                ydot_string_components.append(f"Y[j{r}]")
 
-        ydot_string_component.append(f"rate_eval.{self.fname}")
+        # rate_eval.{fname}
+        ydot_string_components.append(f"rate_eval.{self.fname}")
 
-        return "*".join(ydot_string_component)
+        return "*".join(ydot_string_components)
 
     def eval(self, T, rhoY=None):
         raise NotImplementedError("base Rate class does not know how to eval()")
@@ -673,46 +674,46 @@ class Rate:
         if y_i not in self.reactants:
             return ""
 
-        jac_string_component = []
+        jac_string_components = []
 
         # prefactor
         if self.prefactor != 1.0:
-            jac_string_component.append(f"{self.prefactor:1.14e}")
+            jac_string_components.append(f"{self.prefactor:1.14e}")
 
         # density dependence
         if self.dens_exp != 0:
             if self.dens_exp == 1:
-                jac_string_component.append("rho")
+                jac_string_components.append("rho")
             else:
-                jac_string_component.append(f"rho**{self.dens_exp}")
+                jac_string_components.append(f"rho**{self.dens_exp}")
 
         # electron fraction dependence
         if self.weak_type == 'electron_capture' and not self.tabular:
-            jac_string_component.append("ye(Y)")
+            jac_string_components.append("ye(Y)")
 
         # composition dependence
-        for n, r in enumerate(sorted(set(self.reactants))):
+        for r in sorted(set(self.reactants)):
             c = self.reactants.count(r)
             if y_i == r:
                 # take the derivative
                 if c == 1:
                     continue
                 if c > 2:
-                    jac_string_component.append(f"{c}*Y[j{r}]**{c-1}")
+                    jac_string_components.append(f"{c}*Y[j{r}]**{c-1}")
                 elif c == 2:
-                    jac_string_component.append(f"2*Y[j{r}]")
+                    jac_string_components.append(f"2*Y[j{r}]")
             else:
                 # this nucleus is in the rate form, but we are not
                 # differentiating with respect to it
                 if c > 1:
-                    jac_string_component.append(f"Y[j{r}]**{c}")
+                    jac_string_components.append(f"Y[j{r}]**{c}")
                 else:
-                    jac_string_component.append(f"Y[j{r}]")
+                    jac_string_components.append(f"Y[j{r}]")
 
-        # Get rate_eval.{fname}
-        jac_string_component.append(f"rate_eval.{self.fname}")
+        # rate_eval.{fname}
+        jac_string_components.append(f"rate_eval.{self.fname}")
 
-        return "*".join(jac_string_component)
+        return "*".join(jac_string_components)
 
     def eval_jacobian_term(self, T, rho, comp, y_i):
         """Evaluate drate/d(y_i), y_i is a Nucleus object.  This rate
