@@ -711,7 +711,7 @@ class Rate:
 
         # electron fraction dependence
         if self.weak_type == 'electron_capture' and not self.tabular:
-            y_e_string = 'ye(Y)*'
+            y_e_string = '*ye(Y)'
         else:
             y_e_string = ""
 
