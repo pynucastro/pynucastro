@@ -685,7 +685,7 @@ class Rate:
                 # take the derivative
                 if c == 1:
                     continue
-                if 0 < n < len(set(self.reactants))-1:
+                if n <= len(set(self.reactants))-1:
                     Y_string += "*"
                 if c > 2:
                     Y_string += f"{c}*Y[j{r}]**{c-1}"
@@ -694,7 +694,7 @@ class Rate:
             else:
                 # this nucleus is in the rate form, but we are not
                 # differentiating with respect to it
-                if 0 < n < len(set(self.reactants))-1:
+                if n <= len(set(self.reactants))-1:
                     Y_string += "*"
                 if c > 1:
                     Y_string += f"Y[j{r}]**{c}"
@@ -705,9 +705,9 @@ class Rate:
         if self.dens_exp == 0:
             dens_string = ""
         elif self.dens_exp == 1:
-            dens_string = "rho*"
+            dens_string = "rho"
         else:
-            dens_string = f"rho**{self.dens_exp}*"
+            dens_string = f"rho**{self.dens_exp}"
 
         # electron fraction dependence
         if self.weak_type == 'electron_capture' and not self.tabular:
