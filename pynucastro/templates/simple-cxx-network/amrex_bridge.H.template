@@ -29,10 +29,6 @@ inline namespace literals {
 } // namespace literals
 
 
-
-#endif
-
-
 // adapted from AMReX_Array.H
 
 template <class T, int XLO, int XHI>
@@ -104,17 +100,5 @@ struct Array2D
 
     T arr[(XHI-XLO+1)*(YHI-YLO+1)];
 };
-
-
-
-
-
-
-
-
-
-
-
-
 
 #endif
