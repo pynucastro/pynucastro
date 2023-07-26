@@ -5,8 +5,6 @@ import glob
 import os
 
 from pynucastro.networks.base_cxx_network import BaseCxxNetwork
-from pynucastro.nucdata import Nucleus
-from pynucastro.rates import ReacLibRate
 
 
 class SimpleCxxNetwork(BaseCxxNetwork):
