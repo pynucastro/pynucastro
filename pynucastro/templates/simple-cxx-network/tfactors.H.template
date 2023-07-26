@@ -13,7 +13,7 @@ struct tf_t {
     Real lnT9;
 };
 
-AMREX_GPU_HOST_DEVICE AMREX_INLINE
+inline
 tf_t evaluate_tfactors(const Real T)
 {
 
