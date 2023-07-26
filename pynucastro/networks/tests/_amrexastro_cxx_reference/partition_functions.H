@@ -17,19 +17,19 @@ namespace part_fun {
 
     // interpolation routine
 
+    template <int npts>
     AMREX_GPU_HOST_DEVICE AMREX_INLINE
-    void interpolate_pf(const Real t9, const int npts, const Real* temp_array, const Real* pf_array,
+    void interpolate_pf(const Real t9, const Real (&temp_array)[npts], const Real (&pf_array)[npts],
                         Real& pf, Real& dpf_dT) {
 
-        // find the index of the first temperature element we are larger than
+        // find the first temperature element larger than t9
+        auto upper = std::upper_bound(std::begin(temp_array), std::end(temp_array), t9);
 
         int idx = -1;
-
-        for (int i = 0; i < npts-1; ++i) {
-            if (t9 >= temp_array[i] && t9 < temp_array[i+1]) {
-                idx = i;
-                break;
-            }
+        if (upper != std::end(temp_array)) {
+            // base index is one before the upper element
+            // this will be -1 if t9 < smallest entry in the table
+            idx = std::distance(temp_array, upper) - 1;
         }
 
         if (idx >= 0) {
@@ -45,7 +45,7 @@ namespace part_fun {
 
             // find the derivative (with respect to T, not T9)
 
-            Real dpf_dT9 = pf * std::log(10.0_rt) * slope;
+            Real dpf_dT9 = pf * M_LN10 * slope;
             dpf_dT = dpf_dT9 / 1.e9_rt;
 
         } else {
@@ -89,40 +89,25 @@ constexpr Real get_spin_state(const int inuc) {
 
     switch (inuc) {
 
-    case N:
-        spin = 2;
-        break;
-
-    case H1:
-        spin = 2;
-        break;
-
     case He4:
-        spin = 1;
-        break;
-
     case C12:
-        spin = 1;
-        break;
-
     case O16:
-        spin = 1;
-        break;
-
     case Ne20:
         spin = 1;
         break;
 
-    case Ne23:
-        spin = 6;
+    case N:
+    case H1:
+        spin = 2;
         break;
 
     case Na23:
+    case Mg23:
         spin = 4;
         break;
 
-    case Mg23:
-        spin = 4;
+    case Ne23:
+        spin = 6;
         break;
 
 

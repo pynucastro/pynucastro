@@ -1,4 +1,5 @@
 import os
+import shutil
 
 import pytest
 
@@ -34,3 +35,6 @@ class TestFullPythonNetwork:
         with open(os.path.join(test_path, test_file), "r") as generated, \
              open(os.path.join(base_path, reference_path, test_file), "r") as reference:
             assert generated.readlines() == reference.readlines()
+
+        # clean up generated files if the test passed
+        shutil.rmtree(test_path)

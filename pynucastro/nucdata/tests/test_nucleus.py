@@ -72,17 +72,17 @@ class TestNucleus:
 
         assert not self.p.partition_function
         assert not self.h1.partition_function
-        assert self.ne41.partition_function(0.35e9) == approx(1.0121446711436666)
-        assert self.ni61.partition_function(0.35e9) == approx(1.160524742683722)
-        assert self.pb237.partition_function(0.35e9) == approx(1.4410114805045504)
+        assert self.ne41.partition_function.eval(0.35e9) == approx(1.0121446711436666)
+        assert self.ni61.partition_function.eval(0.35e9) == approx(1.160524742683722)
+        assert self.pb237.partition_function.eval(0.35e9) == approx(1.4410114805045504)
 
     def test_partition_high_temp(self):
 
         assert not self.p.partition_function
         assert not self.h1.partition_function
-        assert self.ne41.partition_function(32.0e9) == approx(4.901052000000001)
-        assert self.ni61.partition_function(32.0e9) == approx(1927800.437886083)
-        assert self.pb237.partition_function(32.0e9) == approx(5.05620611030359e+28)
+        assert self.ne41.partition_function.eval(32.0e9) == approx(4.901052000000001)
+        assert self.ni61.partition_function.eval(32.0e9) == approx(1927800.437886083)
+        assert self.pb237.partition_function.eval(32.0e9) == approx(5.05620611030359e+28)
 
     def test_mass(self):
 
