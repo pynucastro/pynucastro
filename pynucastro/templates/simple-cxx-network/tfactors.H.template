@@ -1,6 +1,9 @@
 #ifndef TFACTORS_H
 #define TFACTORS_H
 
+#include <cmath>
+#include <amrex_bridge.H>
+
 struct tf_t {
     Real T9;
     Real T9i;
