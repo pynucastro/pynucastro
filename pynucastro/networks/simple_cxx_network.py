@@ -39,8 +39,42 @@ class SimpleCxxNetwork(BaseCxxNetwork):
             odir = os.getcwd()
         # create a header file with the nuclei properties
         with open(os.path.join(odir, "network_properties.H"), "w") as of:
-            for nuc in self.unique_nuclei:
-                of.write(f"{nuc.spec_name:25} {nuc.short_spec_name:6} {nuc.A:6.1f} {nuc.Z:6.1f}\n")
+            of.write("#ifndef NETWORK_PROPERTIES_H\n")
+            of.write("#define NETWORK_PROPERTIES_H\n")
+            of.write("#include <vector>\n")
+            of.write("#include <string>\n")
+            of.write("#include <amrex_bridge.H>\n\n")
 
-            for nuc in self.approx_nuclei:
-                of.write(f"__extra_{nuc.spec_name:17} {nuc.short_spec_name:6} {nuc.A:6.1f} {nuc.Z:6.1f}\n")
+            of.write(f"constexpr int NumSpec = {len(self.unique_nuclei)};\n\n")
+
+            of.write("constexpr Real aion[NumSpec] = {\n")
+            for n, nuc in enumerate(self.unique_nuclei):
+                of.write(f"    {nuc.A:6.1f}, // {n}\n")
+            of.write(" };\n\n")
+
+            of.write("constexpr Real aion_inv[NumSpec] = {\n")
+            for n, nuc in enumerate(self.unique_nuclei):
+                of.write(f"    1.0/{nuc.A:6.1f}, // {n}\n")
+            of.write(" };\n\n")
+
+            of.write("constexpr Real zion[NumSpec] = {\n")
+            for n, nuc in enumerate(self.unique_nuclei):
+                of.write(f"    {nuc.Z:6.1f}, // {n}\n")
+            of.write(" };\n\n")
+
+            of.write("static const std::vector<std::string> spec_names = {\n")
+            for n, nuc in enumerate(self.unique_nuclei):
+                of.write(f"    \"{nuc.short_spec_name.capitalize()}\", // {n}\n")
+            of.write(" };\n\n")
+
+            of.write("namespace Species {\n")
+            of.write("  enum NetworkSpecies {\n")
+            for n, nuc in enumerate(self.unique_nuclei):
+                if n == 0:
+                    of.write(f"    {nuc.short_spec_name.capitalize()}=1,\n")
+                else:
+                    of.write(f"    {nuc.short_spec_name.capitalize()},\n")
+            of.write("  };\n")
+            of.write("}\n\n")
+
+            of.write("#endif\n")
