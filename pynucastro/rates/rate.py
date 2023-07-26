@@ -630,40 +630,34 @@ class Rate:
         in a reaction network corresponding to this rate.
         """
 
-        # composition dependence
-        Y_string = ""
-        for n, r in enumerate(sorted(set(self.reactants))):
-            c = self.reactants.count(r)
-            if c > 1:
-                Y_string += f"Y[j{r}]**{c}"
-            else:
-                Y_string += f"Y[j{r}]"
-
-            if n < len(set(self.reactants))-1:
-                Y_string += "*"
-
-        # density dependence
-        if self.dens_exp == 0:
-            dens_string = ""
-        elif self.dens_exp == 1:
-            dens_string = "rho*"
-        else:
-            dens_string = f"rho**{self.dens_exp}*"
-
-        # electron fraction dependence
-        if self.weak_type == 'electron_capture' and not self.tabular:
-            y_e_string = 'ye(Y)*'
-        else:
-            y_e_string = ''
+        ydot_string_components = []
 
         # prefactor
         if self.prefactor != 1.0:
-            prefactor_string = f"{self.prefactor:1.14e}*"
-        else:
-            prefactor_string = ""
+            ydot_string_components.append(f"{self.prefactor:1.14e}")
 
-        return "{}{}{}{}*rate_eval.{}".format(prefactor_string, dens_string,
-                                           y_e_string, Y_string, self.fname)
+        # density dependence
+        if self.dens_exp == 1:
+            ydot_string_components.append("rho")
+        elif self.dens_exp != 0:
+            ydot_string_components.append(f"rho**{self.dens_exp}")
+
+        # electron fraction dependence
+        if self.weak_type == 'electron_capture' and not self.tabular:
+            ydot_string_components.append("ye(Y)")
+
+        # composition dependence
+        for r in sorted(set(self.reactants)):
+            c = self.reactants.count(r)
+            if c > 1:
+                ydot_string_components.append(f"Y[j{r}]**{c}")
+            else:
+                ydot_string_components.append(f"Y[j{r}]")
+
+        # rate_eval.{fname}
+        ydot_string_components.append(f"rate_eval.{self.fname}")
+
+        return "*".join(ydot_string_components)
 
     def eval(self, T, rhoY=None):
         raise NotImplementedError("base Rate class does not know how to eval()")
@@ -679,56 +673,45 @@ class Rate:
         if y_i not in self.reactants:
             return ""
 
+        jac_string_components = []
+
+        # prefactor
+        if self.prefactor != 1.0:
+            jac_string_components.append(f"{self.prefactor:1.14e}")
+
+        # density dependence
+        if self.dens_exp == 1:
+            jac_string_components.append("rho")
+        elif self.dens_exp != 0:
+            jac_string_components.append(f"rho**{self.dens_exp}")
+
+        # electron fraction dependence
+        if self.weak_type == 'electron_capture' and not self.tabular:
+            jac_string_components.append("ye(Y)")
+
         # composition dependence
-        Y_string = ""
-        for n, r in enumerate(sorted(set(self.reactants))):
+        for r in sorted(set(self.reactants)):
             c = self.reactants.count(r)
             if y_i == r:
                 # take the derivative
                 if c == 1:
                     continue
-                if 0 < n < len(set(self.reactants))-1:
-                    Y_string += "*"
                 if c > 2:
-                    Y_string += f"{c}*Y[j{r}]**{c-1}"
+                    jac_string_components.append(f"{c}*Y[j{r}]**{c-1}")
                 elif c == 2:
-                    Y_string += f"2*Y[j{r}]"
+                    jac_string_components.append(f"2*Y[j{r}]")
             else:
                 # this nucleus is in the rate form, but we are not
                 # differentiating with respect to it
-                if 0 < n < len(set(self.reactants))-1:
-                    Y_string += "*"
                 if c > 1:
-                    Y_string += f"Y[j{r}]**{c}"
+                    jac_string_components.append(f"Y[j{r}]**{c}")
                 else:
-                    Y_string += f"Y[j{r}]"
+                    jac_string_components.append(f"Y[j{r}]")
 
-        # density dependence
-        if self.dens_exp == 0:
-            dens_string = ""
-        elif self.dens_exp == 1:
-            dens_string = "rho*"
-        else:
-            dens_string = f"rho**{self.dens_exp}*"
+        # rate_eval.{fname}
+        jac_string_components.append(f"rate_eval.{self.fname}")
 
-        # electron fraction dependence
-        if self.weak_type == 'electron_capture' and not self.tabular:
-            y_e_string = 'ye(Y)*'
-        else:
-            y_e_string = ""
-
-        # prefactor
-        if self.prefactor != 1.0:
-            prefactor_string = f"{self.prefactor:1.14e}*"
-        else:
-            prefactor_string = ""
-
-        if Y_string == "" and dens_string == "" and prefactor_string == "" and y_e_string == "":
-            rstring = "{}{}{}{}rate_eval.{}"
-        else:
-            rstring = "{}{}{}{}*rate_eval.{}"
-        return rstring.format(prefactor_string, dens_string,
-                              y_e_string, Y_string, self.fname)
+        return "*".join(jac_string_components)
 
     def eval_jacobian_term(self, T, rho, comp, y_i):
         """Evaluate drate/d(y_i), y_i is a Nucleus object.  This rate
