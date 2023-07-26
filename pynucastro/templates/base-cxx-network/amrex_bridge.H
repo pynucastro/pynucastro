@@ -1,0 +1,120 @@
+#ifndef AMREX_BRIDGE_H
+#define AMREX_BRIDGE_H
+
+#include <cassert>
+
+// this is a set of classes and data that allow us to use some
+// AMReX concepts in the base C++ network.  Note: many of these
+// are stripped down from their AMReX equivalents
+
+
+// adapted from AMReX_REAL.H
+
+using Real = double;
+
+inline namespace literals {
+
+    constexpr Real
+    operator"" _rt( long double x )
+    {
+        return Real( x );
+    }
+
+    constexpr Real
+    operator"" _rt( unsigned long long int x )
+    {
+        return Real( x );
+    }
+
+} // namespace literals
+
+
+
+#endif
+
+
+// adapted from AMReX_Array.H
+
+template <class T, int XLO, int XHI>
+struct Array1D
+{
+
+    // Returns the number of elements in the Array1D object as an unsigned
+    // integer.
+    [[nodiscard]] inline
+    static constexpr unsigned int size () noexcept { return (XHI-XLO+1); }
+
+    // Returns the number of elements in the Array1D object as an unsigned
+    // integer.
+    [[nodiscard]] inline
+    static constexpr unsigned int len () noexcept { return (XHI-XLO+1); }
+
+
+    // The elements of an Array1D object are accessed using parentheses,
+    // array(i), instead of using square brackets.
+    [[nodiscard]] inline
+    const T& operator() (int i) const noexcept {
+        assert (i >= XLO && i <= XHI);
+        return arr[i-XLO];
+    }
+
+    [[nodiscard]] inline
+    T& operator() (int i) noexcept {
+        assert(i >= XLO && i <= XHI);
+        return arr[i-XLO];
+    }
+
+    // Array1D is implemented as a fixed-size array.
+    T arr[(XHI-XLO+1)];
+};
+
+// a 2D array with column-major ordering
+template <class T, int XLO, int XHI, int YLO, int YHI>
+struct Array2D
+{
+
+    // Returns the total number of elements of the Array2D object as an
+    // unsigned integer.
+    [[nodiscard]] inline
+    static constexpr unsigned int size() noexcept { return (XHI-XLO+1)*(YHI-YLO+1); }
+
+    // Returns the number of elements of the Array2D object in the
+    // x direction as an unsigned integer.
+    [[nodiscard]] inline
+    static constexpr unsigned int xlen () noexcept { return (XHI-XLO+1); }
+
+    // Returns the number of elements of the Array2D object in the
+    // y direction as an unsigned integer.
+    [[nodiscard]] inline
+    static constexpr unsigned int ylen () noexcept { return (YHI-YLO+1); }
+
+    // The elements of an Array2D object are accessed using parentheses,
+    // e.g. array(i,j), instead of using square brackets.
+    [[nodiscard]] inline
+    const T& operator() (int i, int j) const noexcept {
+        assert(i >= XLO && i <= XHI && j >= YLO && j <= YHI);
+        return arr[i+j*(XHI-XLO+1)-(YLO*(XHI-XLO+1)+XLO)];
+    }
+
+    [[nodiscard]] inline
+    T& operator() (int i, int j) noexcept {
+        assert(i >= XLO && i <= XHI && j >= YLO && j <= YHI);
+        return arr[i+j*(XHI-XLO+1)-(YLO*(XHI-XLO+1)+XLO)];
+    }
+
+    T arr[(XHI-XLO+1)*(YHI-YLO+1)];
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+#endif
