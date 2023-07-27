@@ -13,7 +13,7 @@ support routines to generate a full, integrable network in python.
 the support routines to generate a standalone integrable network in
 pure C++.
 
-:meth:`anrexastro_cxx_network <pynucastro.networks.amrexastro_cxx_network>`:
+:meth:`amrexastro_cxx_network <pynucastro.networks.amrexastro_cxx_network>`:
 the support routines to generate a C++ network that can be incorporated
 into the AMReX-Astro Microphysics routines supported by astrophysical
 hydrodynamics codes.
