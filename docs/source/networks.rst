@@ -72,6 +72,16 @@ is intended to be used to interface with a hydrodynamics code.  That
 code will be responsible for providing the equation of state and
 adding any desired temperature / energy evolution to the network.
 
+.. note::
+
+   A C++17 compiler is required
+
+The test driver can be built by simply doing:
+
+.. prompt:: bash
+
+   make
+
 
 AMReX-Astro Microphysics network
 --------------------------------
