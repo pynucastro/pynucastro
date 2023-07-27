@@ -8,11 +8,11 @@ To create the python or C++ code for a network, you start by building
 the library representing the rates that you want and then you construct
 the appropriate network class:
 
-* :class:`PythonNetwork <pynucastro.networks.python_network/PythonNetwork>` for a pure python network.
+* :class:`PythonNetwork <pynucastro.networks.python_network.PythonNetwork>` for a pure python network.
 
-* :class:`SimpleCxxNetwork <pynucastro.networks.simple_cxx_network/SimpleCxxNetwork>` for a basic, pure C++ network.
+* :class:`SimpleCxxNetwork <pynucastro.networks.simple_cxx_network.SimpleCxxNetwork>` for a basic, pure C++ network.
 
-* :class:`AmrexAstroCxxNetwork <pynucastro.networks.amrexastro_cxx_network/AmrexAstroCxxNetwork>` for an AMReX-Astro C++ network.
+* :class:`AmrexAstroCxxNetwork <pynucastro.networks.amrexastro_cxx_network.AmrexAstroCxxNetwork>` for an AMReX-Astro C++ network.
 
 Usually the steps are something like:
 
