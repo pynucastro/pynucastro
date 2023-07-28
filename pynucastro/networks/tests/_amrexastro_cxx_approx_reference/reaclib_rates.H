@@ -872,11 +872,11 @@ fill_reaclib_rates(const tf_t& tfactors, T& rate_eval)
 template <int do_T_derivatives, typename T>
 AMREX_GPU_HOST_DEVICE AMREX_INLINE
 void
-fill_approx_rates([[maybe_unused]] const tf_t& tfactors, T& rate_eval)
+fill_approx_rates([[maybe_unused]] const tf_t& tfactors, [[maybe_unused]] T& rate_eval)
 {
 
-    Real rate{};
-    Real drate_dT{};
+    [[maybe_unused]] Real rate{};
+    [[maybe_unused]] Real drate_dT{};
 
     rate_mg24_he4_to_si28_approx<T>(rate_eval, rate, drate_dT);
     rate_eval.screened_rates(k_mg24_he4_to_si28_approx) = rate;
