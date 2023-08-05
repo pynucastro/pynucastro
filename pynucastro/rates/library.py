@@ -701,7 +701,7 @@ class SuzukiLibrary(Library):
 
 class LangankeLibrary(Library):
     """
-    Load all of the tabular rates inside /library/tabular/suzuki/
+    Load all of the tabular rates inside /library/tabular/langanke/
     and return a Library.
     """
 

@@ -109,7 +109,7 @@ def _find_rate_file(ratename):
     if os.path.isfile(x):
         return os.path.realpath(x)
 
-    # check to see if the rate file is in pynucastro/library/tabular/suzuki
+    # check to see if the rate file is in pynucastro/library/tabular/langanke
     x = os.path.join(_pynucastro_langanke_dir, ratename)
     if os.path.isfile(x):
         return os.path.realpath(x)
