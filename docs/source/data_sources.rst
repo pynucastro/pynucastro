@@ -176,15 +176,33 @@ Similarly, ``ReacLib.jacobian_string_py()`` outputs the contribution to the Jaco
 Tabulated Rates
 ---------------
 
-For electron captures and beta-decays, we used tabulated rates.  These are two-dimensional tables,
+For electron captures and beta-decays (which are of the form :math:`\rm{A \rightarrow B}`), we use tabulated rates.
+These are two-dimensional tables,
 in terms of :math:`T` and :math:`\rho Y_e`.
 
 A tabular rate is described by 2 files.  The first file mimics the
 ReacLib header, with a chapter indicated as ``t`` and gives the name
 of the table and the number of columns, density, and temperature
-points.
+points.  For example,
+`pynucastro/library/tabular/suzuki/na23--ne23-toki <https://github.com/pynucastro/pynucastro/blob/main/pynucastro/library/tabular/suzuki/na23--ne23-toki>`_ demonstrates the following
+format:
 
-The second file is the table itself.  The columns of the tables (and
+.. code-block:: none
+
+   t
+   [parent nuclide]  [daughter nuclide]
+   [rate table file name]
+   [number of header lines before the first line of data]
+   [number of density*ye values]
+   [number of temperature values]
+
+
+The second file is the table itself.  For now they must be in
+the form of, e.g. `23na-23ne_electroncapture.dat <https://github.com/pynucastro/pynucastro/blob/main/pynucastro/library/tabular/suzuki/23na-23ne_electroncapture.dat>`_ in
+``pynucastro/library/tabular/suzuki``, indexed by the product of density and
+electron fraction :math:`\rm{\rho Y_e}` and temperature
+:math:`\rm{T}`, with the same number and order of variables.
+The columns of the tables (and
 units) are:
 
 ::
