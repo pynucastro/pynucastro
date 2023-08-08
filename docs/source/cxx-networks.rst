@@ -1,8 +1,8 @@
-************
-C++ Networks
-************
+*********************************
+AMReX Astro Microphysics Networks
+*********************************
 
-Presently, pynucastro can generate a C++ network that works in the
+pynucastro can generate a C++ network that works in the
 AMReX-Astro `Microphysics
 <https://github.com/amrex-astro/Microphysics>`_.  This is done through
 the ``AmrexAstroCxxNetwork`` class.  A simple 
@@ -58,15 +58,18 @@ and source files.  These are:
 
 * ``reaclib_rates.H``
 
-  This controls the reaction rate data.  It reads in the data at initialization time
-  and has functions to evaluate the fits to the rates.  It has function tags to
-  initialize the screening factors and also store a "secret code" that is used to
-  ensure that the network matches the inputs file with the rate data.
+  This computes the ReacLib reaction rates, with a function provided
+  for each rate.
 
 * ``table_rates.H``
 
   This manages reading in tabular rates.  It has function tags to define how many tables
   there are as well as declare the memory for storing the tables.
+
+* ``tfactors.H``
+
+  This stores the ``struct`` that holds the different temperature factors
+  used in the reaction rates.
 
 There are 2 C++ files that are essentially used to define the global arrays.
 
@@ -80,13 +83,6 @@ Finally, there are a few meta-data files:
 
   This lists the nuclei in the network and their properties in a format that
   Microphysics requires.
-
-* ``reaclib_rate_metadata.dat``
-
-  This stores the data for the ReacLib rates -- the 7 coefficients for each
-  interpolant in each set for a rate.
-
-and some files related to the Microphysics build system
 
 * ``Make.package``
 
