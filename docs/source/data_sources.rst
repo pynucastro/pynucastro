@@ -176,7 +176,7 @@ Similarly, ``ReacLib.jacobian_string_py()`` outputs the contribution to the Jaco
 Tabulated Rates
 ---------------
 
-For electron captures and beta-decays, we used tabulated rates.  Tabular rates for reactions of the form :math:`\rm{A \rightarrow B}`.
+For electron captures and beta-decays (which are of the form :math:`\rm{A \rightarrow B}`), we use tabulated rates.
 These are two-dimensional tables,
 in terms of :math:`T` and :math:`\rho Y_e`.
 
