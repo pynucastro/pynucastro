@@ -16,3 +16,4 @@ setuptools_scm>=6.2
 jinja2==3.0.3
 sphinx-mdinclude
 sphinx-prompt
+sphinx-copybutton
