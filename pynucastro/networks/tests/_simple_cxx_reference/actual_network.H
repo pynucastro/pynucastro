@@ -26,9 +26,7 @@ namespace Rates
         k_c12_c12_to_p_na23 = 3,
         k_he4_c12_to_o16 = 4,
         k_n_to_p_weak_wc12 = 5,
-        k_na23_to_ne23 = 6,
-        k_ne23_to_na23 = 7,
-        NumRates = k_ne23_to_na23
+        NumRates = k_n_to_p_weak_wc12
     };
 
     // number of reaclib rates
@@ -45,9 +43,7 @@ namespace Rates
         "c12_c12_to_n_mg23",  // 2,
         "c12_c12_to_p_na23",  // 3,
         "he4_c12_to_o16",  // 4,
-        "n_to_p_weak_wc12",  // 5,
-        "na23_to_ne23",  // 6,
-        "ne23_to_na23"  // 7,
+        "n_to_p_weak_wc12"  // 5,
     };
 
 }
