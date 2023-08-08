@@ -71,6 +71,11 @@ rates, including:
   hydrodynamics codes Castro and MAESTROeX via the AMReX-Astro
   Microphysics repository.
 
+* SimpleCxxNetwork : this extends the RateCollection to enable
+  output of basic C++ code that can be as the starting point
+  for incorporating a pynucastro network into a non-AMReX
+  simulation code.
+
 
 rates
 -----
@@ -118,10 +123,11 @@ __version__ = version
 import pynucastro.screening
 from pynucastro.networks import (AmrexAstroCxxNetwork, BaseCxxNetwork,
                                  Composition, Explorer, PythonNetwork,
-                                 RateCollection, StarKillerCxxNetwork,
-                                 SympyRates)
+                                 RateCollection, SimpleCxxNetwork,
+                                 StarKillerCxxNetwork, SympyRates)
 from pynucastro.nucdata import Nucleus
-from pynucastro.rates import (ApproximateRate, DerivedRate, Library, Rate,
-                              RateFilter, ReacLibLibrary, TabularLibrary,
-                              Tfactors, list_known_rates, load_rate)
+from pynucastro.rates import (ApproximateRate, DerivedRate, LangankeLibrary,
+                              Library, Rate, RateFilter, ReacLibLibrary,
+                              SuzukiLibrary, TabularLibrary, Tfactors,
+                              list_known_rates, load_rate)
 from pynucastro.screening import make_plasma_state, make_screen_factors

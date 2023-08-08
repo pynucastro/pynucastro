@@ -21,6 +21,10 @@ class TestGetRatesByName:
 
         r4 = "f20(e,nu)o20"   # note found in ReacLib
         r5 = "f20(,e)ne20"
+        r6 = "ti45(e,nu)sc45"
+        r7 = "ti45(,e)v45"
 
         assert tabular_library.get_rate_by_name(r4).fname == "f20__o20"
         assert tabular_library.get_rate_by_name(r5).fname == "f20__ne20"
+        assert tabular_library.get_rate_by_name(r6).fname == "ti45__sc45"
+        assert tabular_library.get_rate_by_name(r7).fname == "ti45__v45"

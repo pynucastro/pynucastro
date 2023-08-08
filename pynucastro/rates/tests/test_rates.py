@@ -285,7 +285,23 @@ class TestWeakRates:
     def rate2(self):
         return rates.TabularRate("na22--ne22-toki")
 
-    def test_reactants(self, rate1, rate2):
+    @pytest.fixture(scope="class")
+    def rate3(self):
+        return rates.TabularRate("sc45--ca45-toki")
+
+    @pytest.fixture(scope="class")
+    def rate4(self):
+        return rates.TabularRate("ti45--sc45-toki")
+
+    @pytest.fixture(scope="class")
+    def rate5(self):
+        return rates.TabularRate("v45--ti45-toki")
+
+    @pytest.fixture(scope="class")
+    def rate6(self):
+        return rates.TabularRate("ca45--sc45-toki")
+
+    def test_reactants(self, rate1, rate2, rate3, rate4, rate5, rate6):
 
         assert len(rate1.reactants) == 1 and len(rate1.products) == 1
         assert rate1.products[0] == Nucleus("f18")
@@ -296,6 +312,26 @@ class TestWeakRates:
         assert rate2.products[0] == Nucleus("ne22")
         assert rate2.reactants[0] == Nucleus("na22")
         assert rate2.eval(1.e9, 1.e6) == approx(1.387075e-05)
+
+        assert len(rate3.reactants) == 1 and len(rate3.products) == 1
+        assert rate3.products[0] == Nucleus("ca45")
+        assert rate3.reactants[0] == Nucleus("sc45")
+        assert math.log10(rate3.eval(1.e9, 1.e11)) == approx(3.440)
+
+        assert len(rate4.reactants) == 1 and len(rate4.products) == 1
+        assert rate4.products[0] == Nucleus("sc45")
+        assert rate4.reactants[0] == Nucleus("ti45")
+        assert math.log10(rate4.eval(1.e9, 1.e11)) == approx(3.853)
+
+        assert len(rate5.reactants) == 1 and len(rate5.products) == 1
+        assert rate5.products[0] == Nucleus("ti45")
+        assert rate5.reactants[0] == Nucleus("v45")
+        assert math.log10(rate5.eval(1.e9, 1.e11)) == approx(4.715)
+
+        assert len(rate6.reactants) == 1 and len(rate6.products) == 1
+        assert rate6.products[0] == Nucleus("sc45")
+        assert rate6.reactants[0] == Nucleus("ca45")
+        assert math.log10(rate6.eval(1.e9, 1.e11)) == approx(-99.999)
 
 
 class TestModify:

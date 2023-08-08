@@ -40,8 +40,9 @@ extensions = ['sphinx.ext.autodoc',
     'sphinx.ext.intersphinx',
     'nbsphinx',
     'sphinx.ext.githubpages',
-    'sphinx_rtd_theme',
+    'sphinx_copybutton',
     'sphinx-prompt',
+    'sphinx_rtd_theme',
     'sphinx_mdinclude',
     'IPython.sphinxext.ipython_console_highlighting']
 
