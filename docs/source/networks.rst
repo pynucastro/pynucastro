@@ -96,3 +96,5 @@ example builds the right hand side, Jacobian, and helper C++ modules
 to copy into the ``networks/`` subdirectory of the AMReX-Astro
 Microphysics repository.
 
+No additional customization is required after running the steps for
+all networks above.
