@@ -31,6 +31,9 @@ class SimpleCxxNetwork(BaseCxxNetwork):
         this network describes, using the template files.
         """
 
+        # at the moment, we don't support TabularRates
+        assert len(self.tabular_rates) == 0, "SimpleCxxNetwork does not support tabular rates"
+
         super()._write_network(odir=odir)
 
         if odir is None:
