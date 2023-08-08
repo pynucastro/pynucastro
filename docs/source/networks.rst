@@ -33,7 +33,7 @@ Usually the steps are something like:
      net = pyna.PythonNetwork(libraries=[lib])
      net.write_network()
 
-  and we can replace ``PythonNetowrk`` with one of the other network types to get the 
+  and we can replace ``PythonNetwork`` with one of the other network types to get the 
   output in a different format.
 
 * Run your python script
