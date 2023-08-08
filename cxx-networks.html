@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>C++ Networks &mdash; pynucastro 2.0.3.post71+ge26a1355 documentation</title>
+  <title>AMReX Astro Microphysics Networks &mdash; pynucastro 2.0.3.post72+gffde972c documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
@@ -80,7 +80,7 @@
 <p class="caption" role="heading"><span class="caption-text">Writing Networks</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="networks.html">Creating Networks</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">C++ Networks</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">AMReX Astro Microphysics Networks</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Reference</span></p>
 <ul>
@@ -103,7 +103,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">C++ Networks</li>
+      <li class="breadcrumb-item active">AMReX Astro Microphysics Networks</li>
       <li class="wy-breadcrumbs-aside">
               <a href="https://github.com/pynucastro/pynucastro/blob/main/docs/source/cxx-networks.rst" class="fa fa-github"> Edit on GitHub</a>
       </li>
@@ -113,9 +113,9 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="c-networks">
-<h1>C++ Networks<a class="headerlink" href="#c-networks" title="Permalink to this heading"></a></h1>
-<p>Presently, pynucastro can generate a C++ network that works in the
+  <section id="amrex-astro-microphysics-networks">
+<h1>AMReX Astro Microphysics Networks<a class="headerlink" href="#amrex-astro-microphysics-networks" title="Permalink to this heading"></a></h1>
+<p>pynucastro can generate a C++ network that works in the
 AMReX-Astro <a class="reference external" href="https://github.com/amrex-astro/Microphysics">Microphysics</a>.  This is done through
 the <code class="docutils literal notranslate"><span class="pre">AmrexAstroCxxNetwork</span></code> class.  A simple
 C++ 3-alpha network that works with <code class="docutils literal notranslate"><span class="pre">Microphysics</span></code> can be created via:</p>
@@ -160,14 +160,16 @@ factors, compute the tabular rates, and build the ydot and Jacobian,
 and include any plasma neutrino losses.</p>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">reaclib_rates.H</span></code></p>
-<p>This controls the reaction rate data.  It reads in the data at initialization time
-and has functions to evaluate the fits to the rates.  It has function tags to
-initialize the screening factors and also store a “secret code” that is used to
-ensure that the network matches the inputs file with the rate data.</p>
+<p>This computes the ReacLib reaction rates, with a function provided
+for each rate.</p>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">table_rates.H</span></code></p>
 <p>This manages reading in tabular rates.  It has function tags to define how many tables
 there are as well as declare the memory for storing the tables.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tfactors.H</span></code></p>
+<p>This stores the <code class="docutils literal notranslate"><span class="pre">struct</span></code> that holds the different temperature factors
+used in the reaction rates.</p>
 </li>
 </ul>
 <p>There are 2 C++ files that are essentially used to define the global arrays.</p>
@@ -181,13 +183,6 @@ there are as well as declare the memory for storing the tables.</p>
 <p>This lists the nuclei in the network and their properties in a format that
 Microphysics requires.</p>
 </li>
-<li><p><code class="docutils literal notranslate"><span class="pre">reaclib_rate_metadata.dat</span></code></p>
-<p>This stores the data for the ReacLib rates – the 7 coefficients for each
-interpolant in each set for a rate.</p>
-</li>
-</ul>
-<p>and some files related to the Microphysics build system</p>
-<ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">Make.package</span></code></p>
 <p>This is a stub for the build system that list the files needed to build
 the network.</p>
