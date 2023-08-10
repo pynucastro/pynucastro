@@ -190,8 +190,8 @@ get_entries(const table_t& table_meta,
     // Get box-corner points for interpolation
     // This deals with out-of-range inputs via linear extrapolation
 
-    int irhoy_lo = vector_index_lu(table_meta.nrhoy, log_rhoy_table, rhoy);
-    int itemp_lo = vector_index_lu(table_meta.ntemp, log_temp_table, temp);
+    int irhoy_lo = vector_index_lu(table_meta.nrhoy, log_rhoy_table, log_rhoy);
+    int itemp_lo = vector_index_lu(table_meta.ntemp, log_temp_table, log_temp);
 
     int irhoy_hi = irhoy_lo + 1;
     int itemp_hi = itemp_lo + 1;
@@ -207,11 +207,11 @@ get_entries(const table_t& table_meta,
     //       |   A          D
     //       |___________________> Log(rho*Ye)
 
-    Real log_temp_lo = temp_table(itemp_lo);
-    Real log_temp_hi = temp_table(itemp_hi);
+    Real log_temp_lo = log_temp_table(itemp_lo);
+    Real log_temp_hi = log_temp_table(itemp_hi);
 
-    Real log_rhoy_lo = rhoy_table(irhoy_lo);
-    Real log_rhoy_hi = rhoy_table(irhoy_hi);
+    Real log_rhoy_lo = log_rhoy_table(irhoy_lo);
+    Real log_rhoy_hi = log_rhoy_table(irhoy_hi);
 
     // Interpolate for each table entry
 
@@ -254,10 +254,10 @@ get_entries(const table_t& table_meta,
     } else {
         // Approximate d(rate)/d(t) via bilinear interpolation on central differences
 
-        Real t_im1 = temp_table(itemp_lo-1);
-        Real t_i   = temp_table(itemp_lo);
-        Real t_ip1 = temp_table(itemp_hi);
-        Real t_ip2 = temp_table(itemp_hi+1);
+        Real t_im1 = log_temp_table(itemp_lo-1);
+        Real t_i   = log_temp_table(itemp_lo);
+        Real t_ip1 = log_temp_table(itemp_hi);
+        Real t_ip2 = log_temp_table(itemp_hi+1);
 
         Real f_im1 = bl_clamp(log_rhoy_lo, log_rhoy_hi,
                               data(itemp_lo-1, irhoy_lo, jtab_rate),
@@ -297,7 +297,7 @@ template <typename R, typename T, typename D>
 AMREX_INLINE AMREX_GPU_HOST_DEVICE
 void
 tabular_evaluate(const table_t& table_meta,
-                 const R& rhoy_table, const T& temp_table, const D& data,
+                 const R& log_rhoy_table, const T& log_temp_table, const D& data,
                  const Real rhoy, const Real temp,
                  Real& rate, Real& drate_dt, Real& edot_nu, Real& edot_gamma)
 {
