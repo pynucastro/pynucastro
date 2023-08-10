@@ -55,7 +55,7 @@ right hand side module you generated above.
 Simple C++ network
 ------------------
 
-A simple C++ network is a very basic C++ network.  Currently, the following features
+A ``SimpleCxxNetwork`` is a very basic C++ network.  Currently, the following features
 are not supported:
 
 * tabular rates
