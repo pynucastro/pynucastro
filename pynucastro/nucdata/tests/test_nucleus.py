@@ -93,17 +93,21 @@ class TestNucleus:
 
     def test_range(self):
 
-        nuc_list = get_nuclei_in_range(26, 26, 52, 62)
+        nuc_list = pyna.get_nuclei_in_range(6, 8, 12, 16)
 
-        assert len(nuc_list) == 11
-        assert nuc_list[0] == Nucleus("fe52")
-        assert nuc_list[1] == Nucleus("fe53")
-        assert nuc_list[2] == Nucleus("fe54")
-        assert nuc_list[3] == Nucleus("fe55")
-        assert nuc_list[4] == Nucleus("fe56")
-        assert nuc_list[5] == Nucleus("fe57")
-        assert nuc_list[6] == Nucleus("fe58")
-        assert nuc_list[7] == Nucleus("fe59")
-        assert nuc_list[8] == Nucleus("fe60")
-        assert nuc_list[9] == Nucleus("fe61")
-        assert nuc_list[10] == Nucleus("fe62")
+        assert len(nuc_list) == 15
+        assert nuc_list[0] == Nucleus("c12")
+        assert nuc_list[1] == Nucleus("c13")
+        assert nuc_list[2] == Nucleus("c14")
+        assert nuc_list[3] == Nucleus("c15")
+        assert nuc_list[4] == Nucleus("c16")
+        assert nuc_list[5] == Nucleus("n12")
+        assert nuc_list[6] == Nucleus("n13")
+        assert nuc_list[7] == Nucleus("n14")
+        assert nuc_list[8] == Nucleus("n15")
+        assert nuc_list[9] == Nucleus("n16")
+        assert nuc_list[10] == Nucleus("o12")
+        assert nuc_list[11] == Nucleus("o13")
+        assert nuc_list[12] == Nucleus("o14")
+        assert nuc_list[13] == Nucleus("o15")
+        assert nuc_list[14] == Nucleus("o16")
