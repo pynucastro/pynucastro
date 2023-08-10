@@ -93,7 +93,7 @@ class TestNucleus:
 
     def test_range(self):
 
-        nuc_list = pyna.get_nuclei_in_range(6, 8, 12, 16)
+        nuc_list = get_nuclei_in_range(6, 8, 12, 16)
 
         assert len(nuc_list) == 15
         assert nuc_list[0] == Nucleus("c12")
