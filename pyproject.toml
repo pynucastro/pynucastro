@@ -52,3 +52,4 @@ skip = ".git,*docs/build,*.bib"
 
 [tool.isort]
 known_first_party = ["pynucastro"]
+skip = ["pynucastro/networks/tests/_python_reference/network.py"]
