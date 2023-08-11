@@ -111,6 +111,20 @@ ne23__na23_data = np.array(t_data2d, dtype=float)
 def ye(Y):
     return np.sum(Z * Y)/np.sum(A * Y)
 
+
+from enum import Enum
+
+class TableIndex(Enum):
+    """a simple enum-like container for indexing the electron-capture tables"""
+    RHOY = 0
+    T = 1
+    MU = 2
+    DQ = 3
+    VS = 4
+    RATE = 5
+    NU = 6
+    GAMMA = 7
+
 @numba.njit()
 def c12_c12__he4_ne20(rate_eval, tf):
     # c12 + c12 --> he4 + ne20
@@ -188,18 +202,18 @@ def he4_he4_he4__c12(rate_eval, tf):
 @numba.njit()
 def na23__ne23(rate_eval, T, rhoY):
     # na23 --> ne23
-    T_nearest = (na23__ne23_data[:, 1])[np.abs((10.0**na23__ne23_data[:, 1]) - T).argmin()]
-    rhoY_nearest = (na23__ne23_data[:, 0])[np.abs((10.0**na23__ne23_data[:, 0]) - rhoY).argmin()]
-    inde = np.where((na23__ne23_data[:, 1] == T_nearest) & (na23__ne23_data[:, 0] == rhoY_nearest))[0][0]
-    rate_eval.na23__ne23 = 10.0**(na23__ne23_data[inde][5])
+    T_nearest = (na23__ne23_data[:, TableIndex.T.value])[np.abs((10.0**na23__ne23_data[:, TableIndex.T.value]) - T).argmin()]
+    rhoY_nearest = (na23__ne23_data[:, TableIndex.RHOY.value])[np.abs((10.0**na23__ne23_data[:, TableIndex.RHOY.value]) - rhoY).argmin()]
+    inde = np.where((na23__ne23_data[:, TableIndex.T.value] == T_nearest) & (na23__ne23_data[:, TableIndex.RHOY.value] == rhoY_nearest))[0][0]
+    rate_eval.na23__ne23 = 10.0**(na23__ne23_data[inde][TableIndex.RATE.value])
 
 @numba.njit()
 def ne23__na23(rate_eval, T, rhoY):
     # ne23 --> na23
-    T_nearest = (ne23__na23_data[:, 1])[np.abs((10.0**ne23__na23_data[:, 1]) - T).argmin()]
-    rhoY_nearest = (ne23__na23_data[:, 0])[np.abs((10.0**ne23__na23_data[:, 0]) - rhoY).argmin()]
-    inde = np.where((ne23__na23_data[:, 1] == T_nearest) & (ne23__na23_data[:, 0] == rhoY_nearest))[0][0]
-    rate_eval.ne23__na23 = 10.0**(ne23__na23_data[inde][5])
+    T_nearest = (ne23__na23_data[:, TableIndex.T.value])[np.abs((10.0**ne23__na23_data[:, TableIndex.T.value]) - T).argmin()]
+    rhoY_nearest = (ne23__na23_data[:, TableIndex.RHOY.value])[np.abs((10.0**ne23__na23_data[:, TableIndex.RHOY.value]) - rhoY).argmin()]
+    inde = np.where((ne23__na23_data[:, TableIndex.T.value] == T_nearest) & (ne23__na23_data[:, TableIndex.RHOY.value] == rhoY_nearest))[0][0]
+    rate_eval.ne23__na23 = 10.0**(ne23__na23_data[inde][TableIndex.RATE.value])
 
 def rhs(t, Y, rho, T, screen_func=None):
     return rhs_eq(t, Y, rho, T, screen_func)
