@@ -19,6 +19,7 @@ class TableIndex(Enum):
     RATE = 5
     NU = 6
     GAMMA = 7
+
 """
 
 
