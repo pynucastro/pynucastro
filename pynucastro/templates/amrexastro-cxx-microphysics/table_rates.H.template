@@ -221,7 +221,7 @@ get_entries(const table_t& table_meta,
                              data(itemp_hi, irhoy_lo, ivar),
                              log_temp);
 
-        Real f_ip1 = bl_extrap(temp_lo, temp_hi,
+        Real f_ip1 = bl_extrap(log_temp_lo, log_temp_hi,
                                data(itemp_lo, irhoy_hi, ivar),
                                data(itemp_hi, irhoy_hi, ivar),
                                log_temp);
