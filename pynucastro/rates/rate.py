@@ -1,6 +1,8 @@
 """
 Classes and methods to interface with files storing rate data.
 """
+
+from enum import Enum
 import io
 import os
 from collections import Counter
@@ -763,6 +765,18 @@ class Rate:
         return self.prefactor * dens_term * y_e_term * Y_term * rate_eval
 
 
+class TableIndex(Enum):
+    """a simple enum-like container for indexing the electron-capture tables"""
+    RHOY = 0
+    T = 1
+    MU = 2
+    DQ = 3
+    VS = 4
+    RATE = 5
+    NU = 6
+    GAMMA = 7
+
+
 class ReacLibRate(Rate):
     """A single reaction rate.  Currently, this is a ReacLib rate, which
     can be composed of multiple sets, or a tabulated electron capture
@@ -1370,6 +1384,10 @@ class TabularRate(Rate):
 
         self.get_tabular_rate()
 
+        # for easy indexing, store a 1-d array of T and rhoy
+        self.rhoy = self.tabular_data_table[::self.table_rhoy_lines, 0]
+        self.temp = self.tabular_data_table[0:self.table_temp_lines, 1]
+
     def __hash__(self):
         return hash(self.__repr__())
 
@@ -1471,10 +1489,10 @@ class TabularRate(Rate):
         fstring += f"    # {self.rid}\n"
 
         # find the nearest value of T and rhoY in the data table
-        fstring += f"    T_nearest = ({self.fname}_data[:, 1])[np.abs((10.0**{self.fname}_data[:, 1]) - T).argmin()]\n"
-        fstring += f"    rhoY_nearest = ({self.fname}_data[:, 0])[np.abs((10.0**{self.fname}_data[:, 0]) - rhoY).argmin()]\n"
-        fstring += f"    inde = np.where(({self.fname}_data[:, 1] == T_nearest) & ({self.fname}_data[:, 0] == rhoY_nearest))[0][0]\n"
-        fstring += f"    rate_eval.{self.fname} = 10.0**({self.fname}_data[inde][5])\n\n"
+        fstring += f"    T_nearest = ({self.fname}_data[:, TableIndex.T])[np.abs((10.0**{self.fname}_data[:, TableIndex.T]) - T).argmin()]\n"
+        fstring += f"    rhoY_nearest = ({self.fname}_data[:, TableIndex.RHOY])[np.abs((10.0**{self.fname}_data[:, TableIndex.RHOY]) - rhoY).argmin()]\n"
+        fstring += f"    inde = np.where(({self.fname}_data[:, TableIndex.T] == T_nearest) & ({self.fname}_data[:, TableIndex.RHOY] == rhoY_nearest))[0][0]\n"
+        fstring += f"    rate_eval.{self.fname} = 10.0**({self.fname}_data[inde][TableIndex.RATE])\n\n"
 
         return fstring
 
@@ -1504,10 +1522,10 @@ class TabularRate(Rate):
 
         data = self.tabular_data_table
         # find the nearest value of T and rhoY in the data table
-        T_nearest = (data[:, 1])[np.abs(10.0**(data[:, 1]) - T).argmin()]
-        rhoY_nearest = (data[:, 0])[np.abs(10.0**(data[:, 0]) - rhoY).argmin()]
-        inde = np.where((data[:, 1] == T_nearest) & (data[:, 0] == rhoY_nearest))[0][0]
-        r = data[inde][5]
+        T_nearest = (data[:, TableIndex.T])[np.abs(10.0**(data[:, TableIndex.T]) - T).argmin()]
+        rhoY_nearest = (data[:, TableIndex.RHOY])[np.abs(10.0**(data[:, TableIndex.RHOY]) - rhoY).argmin()]
+        inde = np.where((data[:, TableIndex.T] == T_nearest) & (data[:, TableIndex.RHOY] == rhoY_nearest))[0][0]
+        r = data[inde][TableIndex.RATE]
         return 10.0**r
 
     def get_nu_loss(self, T, rhoY):
@@ -1516,10 +1534,10 @@ class TabularRate(Rate):
         nu_loss = None
         data = self.tabular_data_table
         # find the nearest value of T and rhoY in the data table
-        T_nearest = (data[:, 1])[np.abs((data[:, 1]) - T).argmin()]
-        rhoY_nearest = (data[:, 0])[np.abs((data[:, 0]) - rhoY).argmin()]
-        inde = np.where((data[:, 1] == T_nearest) & (data[:, 0] == rhoY_nearest))[0][0]
-        nu_loss = data[inde][6]
+        T_nearest = (data[:, TableIndex.T])[np.abs((data[:, TableIndex.T]) - T).argmin()]
+        rhoY_nearest = (data[:, TableIndex.RHOY])[np.abs((data[:, TableIndex.RHOY]) - rhoY).argmin()]
+        inde = np.where((data[:, TableIndex.T] == T_nearest) & (data[:, TableIndex.RHOY] == rhoY_nearest))[0][0]
+        nu_loss = data[inde][TableIndex.NU]
 
         return nu_loss
 
@@ -1542,10 +1560,10 @@ class TabularRate(Rate):
 
         data = self.tabular_data_table
 
-        inde1 = data[:, 1] <= Tmax
-        inde2 = data[:, 1] >= Tmin
-        inde3 = data[:, 0] <= rhoYmax
-        inde4 = data[:, 0] >= rhoYmin
+        inde1 = data[:, TableIndex.T] <= Tmax
+        inde2 = data[:, TableIndex.T] >= Tmin
+        inde3 = data[:, TableIndex.RHOY] <= rhoYmax
+        inde4 = data[:, TableIndex.RHOY] >= rhoYmin
         data_heatmap = data[inde1 & inde2 & inde3 & inde4].copy()
 
         rows, row_pos = np.unique(data_heatmap[:, 0], return_inverse=True)

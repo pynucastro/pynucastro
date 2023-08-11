@@ -6,6 +6,20 @@ import sys
 from pynucastro.networks.rate_collection import RateCollection
 from pynucastro.rates.rate import ApproximateRate
 
+TABLEINDEX_DEF = """
+from enum import Enum
+
+class TableIndex(Enum):
+    """a simple enum-like container for indexing the electron-capture tables"""
+    RHOY = 0
+    T = 1
+    MU = 2
+    DQ = 3
+    VS = 4
+    RATE = 5
+    NU = 6
+    GAMMA = 7
+"""
 
 class PythonNetwork(RateCollection):
     """A pure python reaction network."""
@@ -245,6 +259,10 @@ class PythonNetwork(RateCollection):
 
         of.write("def ye(Y):\n")
         of.write(f"{indent}return np.sum(Z * Y)/np.sum(A * Y)\n\n")
+
+        if self.tabular_rates:
+            # write out the enum needed to understand the table indices
+            of.write(TABLEINDEX_DEF)
 
         # the functions to evaluate the temperature dependence of the rates
 
