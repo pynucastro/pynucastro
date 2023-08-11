@@ -1489,10 +1489,10 @@ class TabularRate(Rate):
         fstring += f"    # {self.rid}\n"
 
         # find the nearest value of T and rhoY in the data table
-        fstring += f"    T_nearest = ({self.fname}_data[:, TableIndex.T])[np.abs((10.0**{self.fname}_data[:, TableIndex.T]) - T).argmin()]\n"
-        fstring += f"    rhoY_nearest = ({self.fname}_data[:, TableIndex.RHOY])[np.abs((10.0**{self.fname}_data[:, TableIndex.RHOY]) - rhoY).argmin()]\n"
-        fstring += f"    inde = np.where(({self.fname}_data[:, TableIndex.T] == T_nearest) & ({self.fname}_data[:, TableIndex.RHOY] == rhoY_nearest))[0][0]\n"
-        fstring += f"    rate_eval.{self.fname} = 10.0**({self.fname}_data[inde][TableIndex.RATE])\n\n"
+        fstring += f"    T_nearest = ({self.fname}_data[:, TableIndex.T.value])[np.abs((10.0**{self.fname}_data[:, TableIndex.T.value]) - T).argmin()]\n"
+        fstring += f"    rhoY_nearest = ({self.fname}_data[:, TableIndex.RHOY.value])[np.abs((10.0**{self.fname}_data[:, TableIndex.RHOY.value]) - rhoY).argmin()]\n"
+        fstring += f"    inde = np.where(({self.fname}_data[:, TableIndex.T.value] == T_nearest) & ({self.fname}_data[:, TableIndex.RHOY.value] == rhoY_nearest))[0][0]\n"
+        fstring += f"    rate_eval.{self.fname} = 10.0**({self.fname}_data[inde][TableIndex.RATE.value])\n\n"
 
         return fstring
 
@@ -1522,10 +1522,10 @@ class TabularRate(Rate):
 
         data = self.tabular_data_table
         # find the nearest value of T and rhoY in the data table
-        T_nearest = (data[:, TableIndex.T])[np.abs(10.0**(data[:, TableIndex.T]) - T).argmin()]
-        rhoY_nearest = (data[:, TableIndex.RHOY])[np.abs(10.0**(data[:, TableIndex.RHOY]) - rhoY).argmin()]
-        inde = np.where((data[:, TableIndex.T] == T_nearest) & (data[:, TableIndex.RHOY] == rhoY_nearest))[0][0]
-        r = data[inde][TableIndex.RATE]
+        T_nearest = (data[:, TableIndex.T.value])[np.abs(10.0**(data[:, TableIndex.T.value]) - T).argmin()]
+        rhoY_nearest = (data[:, TableIndex.RHOY.value])[np.abs(10.0**(data[:, TableIndex.RHOY.value]) - rhoY).argmin()]
+        inde = np.where((data[:, TableIndex.T.value] == T_nearest) & (data[:, TableIndex.RHOY.value] == rhoY_nearest))[0][0]
+        r = data[inde][TableIndex.RATE.value]
         return 10.0**r
 
     def get_nu_loss(self, T, rhoY):
@@ -1534,10 +1534,10 @@ class TabularRate(Rate):
         nu_loss = None
         data = self.tabular_data_table
         # find the nearest value of T and rhoY in the data table
-        T_nearest = (data[:, TableIndex.T])[np.abs((data[:, TableIndex.T]) - T).argmin()]
-        rhoY_nearest = (data[:, TableIndex.RHOY])[np.abs((data[:, TableIndex.RHOY]) - rhoY).argmin()]
-        inde = np.where((data[:, TableIndex.T] == T_nearest) & (data[:, TableIndex.RHOY] == rhoY_nearest))[0][0]
-        nu_loss = data[inde][TableIndex.NU]
+        T_nearest = (data[:, TableIndex.T.value])[np.abs((data[:, TableIndex.T.value]) - T).argmin()]
+        rhoY_nearest = (data[:, TableIndex.RHOY.value])[np.abs((data[:, TableIndex.RHOY.value]) - rhoY).argmin()]
+        inde = np.where((data[:, TableIndex.T.value] == T_nearest) & (data[:, TableIndex.RHOY.value] == rhoY_nearest))[0][0]
+        nu_loss = data[inde][TableIndex.NU.value]
 
         return nu_loss
 
@@ -1560,10 +1560,10 @@ class TabularRate(Rate):
 
         data = self.tabular_data_table
 
-        inde1 = data[:, TableIndex.T] <= Tmax
-        inde2 = data[:, TableIndex.T] >= Tmin
-        inde3 = data[:, TableIndex.RHOY] <= rhoYmax
-        inde4 = data[:, TableIndex.RHOY] >= rhoYmin
+        inde1 = data[:, TableIndex.T.value] <= Tmax
+        inde2 = data[:, TableIndex.T.value] >= Tmin
+        inde3 = data[:, TableIndex.RHOY.value] <= rhoYmax
+        inde4 = data[:, TableIndex.RHOY.value] >= rhoYmin
         data_heatmap = data[inde1 & inde2 & inde3 & inde4].copy()
 
         rows, row_pos = np.unique(data_heatmap[:, 0], return_inverse=True)
@@ -1571,12 +1571,12 @@ class TabularRate(Rate):
         pivot_table = np.zeros((len(rows), len(cols)), dtype=data_heatmap.dtype)
 
         if color_field == 'rate':
-            icol = TableIndex.RATE
+            icol = TableIndex.RATE.value
             title = f"{self.weak_type} rate in log10(1/s)"
             cmap = 'magma'
 
         elif color_field == 'nu_loss':
-            icol = TableIndex.NU
+            icol = TableIndex.NU.value
             title = "neutrino energy loss rate in log10(erg/s)"
             cmap = 'viridis'
 
