@@ -115,7 +115,7 @@ def ye(Y):
 from enum import Enum
 
 class TableIndex(Enum):
-    """a simple enum-like container for indexing the electron-capture tables"""
+    '''a simple enum-like container for indexing the electron-capture tables'''
     RHOY = 0
     T = 1
     MU = 2
