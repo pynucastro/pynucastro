@@ -1446,19 +1446,19 @@ class TabularRate(Rate):
         elif "betadecay" in self.table_file:
             self.weak_type = "beta_decay"
 
-    def _get_T_idx(self, t0):
+    def _get_logT_idx(self, logt0):
         """return the index i into the temperatures such that
         T[i] < t0 <= T[i+1].  This returns len(T) if we are beyond
         the range"""
 
-        return np.searchsorted(self.temp, t0)
+        return np.searchsorted(self.temp, logt0)
 
-    def _get_rhoy_idx(self, rhoy0):
+    def _get_logrhoy_idx(self, logrhoy0):
         """return the index i into rho*Y such that
         rhoY[i] < rhoy0 <= rhoY[i+1].  This returns len(rhoY) if we
         are beyond the range"""
 
-        return np.searchsorted(self.rhoy, rhoy0)
+        return np.searchsorted(self.rhoy, logrhoy0)
 
     def _rhoy_T_to_idx(self, irhoy, jtemp):
         """given a pair (irhoy, jtemp) into the table, return the 1-d index
@@ -1542,10 +1542,11 @@ class TabularRate(Rate):
 
         data = self.tabular_data_table
         # find the nearest value of T and rhoY in the data table
-        T_nearest = (data[:, TableIndex.T.value])[np.abs(10.0**(data[:, TableIndex.T.value]) - T).argmin()]
-        rhoY_nearest = (data[:, TableIndex.RHOY.value])[np.abs(10.0**(data[:, TableIndex.RHOY.value]) - rhoY).argmin()]
-        inde = np.where((data[:, TableIndex.T.value] == T_nearest) & (data[:, TableIndex.RHOY.value] == rhoY_nearest))[0][0]
-        r = data[inde][TableIndex.RATE.value]
+        rhoy_index = self._get_logrhoy_idx(np.log10(rhoY))
+        t_index = self._get_logT_idx(np.log10(T))
+        idx = self._rhoy_T_to_idx(rhoy_index, t_index)
+
+        r = data[idx][TableIndex.RATE.value]
         return 10.0**r
 
     def get_nu_loss(self, T, rhoY):
@@ -1554,10 +1555,10 @@ class TabularRate(Rate):
         nu_loss = None
         data = self.tabular_data_table
         # find the nearest value of T and rhoY in the data table
-        T_nearest = (data[:, TableIndex.T.value])[np.abs((data[:, TableIndex.T.value]) - T).argmin()]
-        rhoY_nearest = (data[:, TableIndex.RHOY.value])[np.abs((data[:, TableIndex.RHOY.value]) - rhoY).argmin()]
-        inde = np.where((data[:, TableIndex.T.value] == T_nearest) & (data[:, TableIndex.RHOY.value] == rhoY_nearest))[0][0]
-        nu_loss = data[inde][TableIndex.NU.value]
+        rhoy_index = self._get_logrhoy_idx(np.log10(rhoY))
+        t_index = self._get_logT_idx(np.log10(T))
+        idx = self._rhoy_T_to_idx(rhoy_index, t_index)
+        nu_loss = data[idx][TableIndex.NU.value]
 
         return nu_loss
 
