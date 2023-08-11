@@ -2,10 +2,10 @@
 Classes and methods to interface with files storing rate data.
 """
 
-from enum import Enum
 import io
 import os
 from collections import Counter
+from enum import Enum
 
 import matplotlib.pyplot as plt
 import numpy as np
