@@ -1446,6 +1446,26 @@ class TabularRate(Rate):
         elif "betadecay" in self.table_file:
             self.weak_type = "beta_decay"
 
+    def _get_T_idx(self, t0):
+        """return the index i into the temperatures such that
+        T[i] < t0 <= T[i+1].  This returns len(T) if we are beyond
+        the range"""
+
+        return np.searchsorted(self.temp, t0)
+
+    def _get_rhoy_idx(self, rhoy0):
+        """return the index i into rho*Y such that
+        rhoY[i] < rhoy0 <= rhoY[i+1].  This returns len(rhoY) if we
+        are beyond the range"""
+
+        return np.searchsorted(self.rhoy, rhoy0)
+
+    def _rhoy_T_to_idx(self, irhoy, jtemp):
+        """given a pair (irhoy, jtemp) into the table, return the 1-d index
+        into the underlying data array assuming row-major ordering"""
+
+        return irhoy * self.table_temp_lines + jtemp
+
     def _set_rhs_properties(self):
         """ compute statistical prefactor and density exponent from the reactants. """
         self.prefactor = 1.0  # this is 1/2 for rates like a + a (double counting)
