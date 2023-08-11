@@ -1385,8 +1385,8 @@ class TabularRate(Rate):
         self.get_tabular_rate()
 
         # for easy indexing, store a 1-d array of T and rhoy
-        self.rhoy = self.tabular_data_table[::self.table_rhoy_lines, 0]
-        self.temp = self.tabular_data_table[0:self.table_temp_lines, 1]
+        self.rhoy = self.tabular_data_table[::self.table_rhoy_lines, TableIndex.RHOY.value]
+        self.temp = self.tabular_data_table[0:self.table_temp_lines, TableIndex.T.value]
 
     def __hash__(self):
         return hash(self.__repr__())
