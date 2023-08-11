@@ -1571,12 +1571,12 @@ class TabularRate(Rate):
         pivot_table = np.zeros((len(rows), len(cols)), dtype=data_heatmap.dtype)
 
         if color_field == 'rate':
-            icol = TabularIndex.RATE
+            icol = TableIndex.RATE
             title = f"{self.weak_type} rate in log10(1/s)"
             cmap = 'magma'
 
         elif color_field == 'nu_loss':
-            icol = TabularIndex.NU
+            icol = TableIndex.NU
             title = "neutrino energy loss rate in log10(erg/s)"
             cmap = 'viridis'
 
