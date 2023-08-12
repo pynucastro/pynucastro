@@ -1447,18 +1447,22 @@ class TabularRate(Rate):
             self.weak_type = "beta_decay"
 
     def _get_logT_idx(self, logt0):
-        """return the index i into the temperatures such that
-        T[i] < t0 <= T[i+1].  This returns len(T) if we are beyond
-        the range"""
+        """return the index into the temperatures such that
+        T[i-1] < t0 <= T[i].  We return i-1 here, corresponding to
+        the lower value.
 
-        return np.searchsorted(self.temp, logt0)
+        """
+
+        return max(0, np.searchsorted(self.temp, logt0) - 1)
 
     def _get_logrhoy_idx(self, logrhoy0):
-        """return the index i into rho*Y such that
-        rhoY[i] < rhoy0 <= rhoY[i+1].  This returns len(rhoY) if we
-        are beyond the range"""
+        """return the index into rho*Y such that
+        rhoY[i-1] < rhoy0 <= rhoY[i].  We return i-1 here,
+        corresponding to the lower value.
 
-        return np.searchsorted(self.rhoy, logrhoy0)
+        """
+
+        return max(0, np.searchsorted(self.rhoy, logrhoy0) - 1)
 
     def _rhoy_T_to_idx(self, irhoy, jtemp):
         """given a pair (irhoy, jtemp) into the table, return the 1-d index
