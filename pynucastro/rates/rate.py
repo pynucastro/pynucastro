@@ -1563,7 +1563,6 @@ class TabularRate(Rate):
         t_index = self._get_logT_idx(np.log10(T))
         idx = self._rhoy_T_to_idx(rhoy_index, t_index)
         nu_loss = data[idx][TableIndex.NU.value]
-
         return nu_loss
 
     def plot(self, Tmin=1.e8, Tmax=1.6e9, rhoYmin=3.9e8, rhoYmax=2.e9, color_field='rate',
