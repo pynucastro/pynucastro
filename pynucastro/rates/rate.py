@@ -1385,7 +1385,7 @@ class TabularRate(Rate):
         self.get_tabular_rate()
 
         # for easy indexing, store a 1-d array of T and rhoy
-        self.rhoy = self.tabular_data_table[::self.table_rhoy_lines, TableIndex.RHOY.value]
+        self.rhoy = self.tabular_data_table[::self.table_temp_lines, TableIndex.RHOY.value]
         self.temp = self.tabular_data_table[0:self.table_temp_lines, TableIndex.T.value]
 
     def __hash__(self):
@@ -1461,7 +1461,8 @@ class TabularRate(Rate):
 
         """
 
-        return np.abs(self.temp - logt0).argmin()
+        return np.abs(10**self.temp - 10**logt0).argmin()
+        #return np.abs(self.temp - logt0).argmin()
 
     def _get_logrhoy_idx(self, logrhoy0):
         """return the index into rho*Y such that
@@ -1479,7 +1480,8 @@ class TabularRate(Rate):
 
         """
 
-        return np.abs(self.rhoy - logrhoy0).argmin()
+        return np.abs(10**self.rhoy - 10**logrhoy0).argmin()
+        #return np.abs(self.rhoy - logrhoy0).argmin()
 
     def _rhoy_T_to_idx(self, irhoy, jtemp):
         """given a pair (irhoy, jtemp) into the table, return the 1-d index
