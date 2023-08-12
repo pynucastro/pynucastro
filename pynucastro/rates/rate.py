@@ -1450,19 +1450,36 @@ class TabularRate(Rate):
         """return the index into the temperatures such that
         T[i-1] < t0 <= T[i].  We return i-1 here, corresponding to
         the lower value.
-
+        Note: we work in terms of log10()
         """
 
         return max(0, np.searchsorted(self.temp, logt0) - 1)
+
+    def _get_logT_nearest_idx(self, logt0):
+        """return the index into the temperatures that is closest
+        to the input t0.  Note: we work in terms of log10()
+
+        """
+
+        return np.abs(self.temp - logt0).argmin()
 
     def _get_logrhoy_idx(self, logrhoy0):
         """return the index into rho*Y such that
         rhoY[i-1] < rhoy0 <= rhoY[i].  We return i-1 here,
         corresponding to the lower value.
+        Note: we work in terms of log10()
 
         """
 
         return max(0, np.searchsorted(self.rhoy, logrhoy0) - 1)
+
+    def _get_logrhoy_nearest_idx(self, logrhoy0):
+        """return the index into rho*Y that is the closest to
+        the input rhoy.  Note: we work in terms of log10()
+
+        """
+
+        return np.abs(self.rhoy - logrhoy0).argmin()
 
     def _rhoy_T_to_idx(self, irhoy, jtemp):
         """given a pair (irhoy, jtemp) into the table, return the 1-d index
@@ -1546,8 +1563,8 @@ class TabularRate(Rate):
 
         data = self.tabular_data_table
         # find the nearest value of T and rhoY in the data table
-        rhoy_index = self._get_logrhoy_idx(np.log10(rhoY))
-        t_index = self._get_logT_idx(np.log10(T))
+        rhoy_index = self._get_logrhoy_nearest_idx(np.log10(rhoY))
+        t_index = self._get_logT_nearest_idx(np.log10(T))
         idx = self._rhoy_T_to_idx(rhoy_index, t_index)
 
         r = data[idx][TableIndex.RATE.value]
@@ -1559,8 +1576,8 @@ class TabularRate(Rate):
         nu_loss = None
         data = self.tabular_data_table
         # find the nearest value of T and rhoY in the data table
-        rhoy_index = self._get_logrhoy_idx(np.log10(rhoY))
-        t_index = self._get_logT_idx(np.log10(T))
+        rhoy_index = self._get_logrhoy_nearest_idx(np.log10(rhoY))
+        t_index = self._get_logT_nearest_idx(np.log10(T))
         idx = self._rhoy_T_to_idx(rhoy_index, t_index)
         nu_loss = data[idx][TableIndex.NU.value]
         return nu_loss
