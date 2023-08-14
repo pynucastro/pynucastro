@@ -1,9 +1,11 @@
 """
 Classes and methods to interface with files storing rate data.
 """
+
 import io
 import os
 from collections import Counter
+from enum import Enum
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -54,6 +56,7 @@ _pynucastro_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 _pynucastro_rates_dir = os.path.join(_pynucastro_dir, 'library')
 _pynucastro_tabular_dir = os.path.join(_pynucastro_rates_dir, 'tabular')
 _pynucastro_suzuki_dir = os.path.join(_pynucastro_tabular_dir, 'suzuki')
+_pynucastro_langanke_dir = os.path.join(_pynucastro_tabular_dir, 'langanke')
 
 
 def get_rates_dir():
@@ -105,6 +108,11 @@ def _find_rate_file(ratename):
 
     # check to see if the rate file is in pynucastro/library/tabular/suzuki
     x = os.path.join(_pynucastro_suzuki_dir, ratename)
+    if os.path.isfile(x):
+        return os.path.realpath(x)
+
+    # check to see if the rate file is in pynucastro/library/tabular/langanke
+    x = os.path.join(_pynucastro_langanke_dir, ratename)
     if os.path.isfile(x):
         return os.path.realpath(x)
 
@@ -757,6 +765,18 @@ class Rate:
         return self.prefactor * dens_term * y_e_term * Y_term * rate_eval
 
 
+class TableIndex(Enum):
+    """a simple enum-like container for indexing the electron-capture tables"""
+    RHOY = 0
+    T = 1
+    MU = 2
+    DQ = 3
+    VS = 4
+    RATE = 5
+    NU = 6
+    GAMMA = 7
+
+
 class ReacLibRate(Rate):
     """A single reaction rate.  Currently, this is a ReacLib rate, which
     can be composed of multiple sets, or a tabulated electron capture
@@ -1364,6 +1384,10 @@ class TabularRate(Rate):
 
         self.get_tabular_rate()
 
+        # for easy indexing, store a 1-d array of T and rhoy
+        self.rhoy = self.tabular_data_table[::self.table_rhoy_lines, TableIndex.RHOY.value]
+        self.temp = self.tabular_data_table[0:self.table_temp_lines, TableIndex.T.value]
+
     def __hash__(self):
         return hash(self.__repr__())
 
@@ -1465,10 +1489,10 @@ class TabularRate(Rate):
         fstring += f"    # {self.rid}\n"
 
         # find the nearest value of T and rhoY in the data table
-        fstring += f"    T_nearest = ({self.fname}_data[:, 1])[np.abs((10.0**{self.fname}_data[:, 1]) - T).argmin()]\n"
-        fstring += f"    rhoY_nearest = ({self.fname}_data[:, 0])[np.abs((10.0**{self.fname}_data[:, 0]) - rhoY).argmin()]\n"
-        fstring += f"    inde = np.where(({self.fname}_data[:, 1] == T_nearest) & ({self.fname}_data[:, 0] == rhoY_nearest))[0][0]\n"
-        fstring += f"    rate_eval.{self.fname} = 10.0**({self.fname}_data[inde][5])\n\n"
+        fstring += f"    T_nearest = ({self.fname}_data[:, TableIndex.T.value])[np.abs((10.0**{self.fname}_data[:, TableIndex.T.value]) - T).argmin()]\n"
+        fstring += f"    rhoY_nearest = ({self.fname}_data[:, TableIndex.RHOY.value])[np.abs((10.0**{self.fname}_data[:, TableIndex.RHOY.value]) - rhoY).argmin()]\n"
+        fstring += f"    inde = np.where(({self.fname}_data[:, TableIndex.T.value] == T_nearest) & ({self.fname}_data[:, TableIndex.RHOY.value] == rhoY_nearest))[0][0]\n"
+        fstring += f"    rate_eval.{self.fname} = 10.0**({self.fname}_data[inde][TableIndex.RATE.value])\n\n"
 
         return fstring
 
@@ -1498,10 +1522,10 @@ class TabularRate(Rate):
 
         data = self.tabular_data_table
         # find the nearest value of T and rhoY in the data table
-        T_nearest = (data[:, 1])[np.abs(10.0**(data[:, 1]) - T).argmin()]
-        rhoY_nearest = (data[:, 0])[np.abs(10.0**(data[:, 0]) - rhoY).argmin()]
-        inde = np.where((data[:, 1] == T_nearest) & (data[:, 0] == rhoY_nearest))[0][0]
-        r = data[inde][5]
+        T_nearest = (data[:, TableIndex.T.value])[np.abs(10.0**(data[:, TableIndex.T.value]) - T).argmin()]
+        rhoY_nearest = (data[:, TableIndex.RHOY.value])[np.abs(10.0**(data[:, TableIndex.RHOY.value]) - rhoY).argmin()]
+        inde = np.where((data[:, TableIndex.T.value] == T_nearest) & (data[:, TableIndex.RHOY.value] == rhoY_nearest))[0][0]
+        r = data[inde][TableIndex.RATE.value]
         return 10.0**r
 
     def get_nu_loss(self, T, rhoY):
@@ -1510,10 +1534,10 @@ class TabularRate(Rate):
         nu_loss = None
         data = self.tabular_data_table
         # find the nearest value of T and rhoY in the data table
-        T_nearest = (data[:, 1])[np.abs((data[:, 1]) - T).argmin()]
-        rhoY_nearest = (data[:, 0])[np.abs((data[:, 0]) - rhoY).argmin()]
-        inde = np.where((data[:, 1] == T_nearest) & (data[:, 0] == rhoY_nearest))[0][0]
-        nu_loss = data[inde][6]
+        T_nearest = (data[:, TableIndex.T.value])[np.abs((data[:, TableIndex.T.value]) - T).argmin()]
+        rhoY_nearest = (data[:, TableIndex.RHOY.value])[np.abs((data[:, TableIndex.RHOY.value]) - rhoY).argmin()]
+        inde = np.where((data[:, TableIndex.T.value] == T_nearest) & (data[:, TableIndex.RHOY.value] == rhoY_nearest))[0][0]
+        nu_loss = data[inde][TableIndex.NU.value]
 
         return nu_loss
 
@@ -1536,10 +1560,10 @@ class TabularRate(Rate):
 
         data = self.tabular_data_table
 
-        inde1 = data[:, 1] <= Tmax
-        inde2 = data[:, 1] >= Tmin
-        inde3 = data[:, 0] <= rhoYmax
-        inde4 = data[:, 0] >= rhoYmin
+        inde1 = data[:, TableIndex.T.value] <= Tmax
+        inde2 = data[:, TableIndex.T.value] >= Tmin
+        inde3 = data[:, TableIndex.RHOY.value] <= rhoYmax
+        inde4 = data[:, TableIndex.RHOY.value] >= rhoYmin
         data_heatmap = data[inde1 & inde2 & inde3 & inde4].copy()
 
         rows, row_pos = np.unique(data_heatmap[:, 0], return_inverse=True)
@@ -1547,12 +1571,12 @@ class TabularRate(Rate):
         pivot_table = np.zeros((len(rows), len(cols)), dtype=data_heatmap.dtype)
 
         if color_field == 'rate':
-            icol = 5
+            icol = TableIndex.RATE.value
             title = f"{self.weak_type} rate in log10(1/s)"
             cmap = 'magma'
 
         elif color_field == 'nu_loss':
-            icol = 6
+            icol = TableIndex.NU.value
             title = "neutrino energy loss rate in log10(erg/s)"
             cmap = 'viridis'
 

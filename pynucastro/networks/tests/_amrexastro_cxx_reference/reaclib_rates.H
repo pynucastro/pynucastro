@@ -246,13 +246,12 @@ fill_reaclib_rates(const tf_t& tfactors, T& rate_eval)
 template <int do_T_derivatives, typename T>
 AMREX_GPU_HOST_DEVICE AMREX_INLINE
 void
-fill_approx_rates([[maybe_unused]] const tf_t& tfactors, T& rate_eval)
+fill_approx_rates([[maybe_unused]] const tf_t& tfactors, [[maybe_unused]] T& rate_eval)
 {
 
-    Real rate{};
-    Real drate_dT{};
+    [[maybe_unused]] Real rate{};
+    [[maybe_unused]] Real drate_dT{};
 
-    amrex::ignore_unused(rate, drate_dT, rate_eval);
 
 }
 
