@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.nucdata.nucleus &mdash; pynucastro 2.0.3.post77+gbd6993dc documentation</title>
+  <title>pynucastro.nucdata.nucleus &mdash; pynucastro 2.0.3.post78+g6f256d50 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
@@ -300,6 +300,23 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">Z</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">Z</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">Z</span> <span class="o">&lt;</span> <span class="n">other</span><span class="o">.</span><span class="n">Z</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">A</span> <span class="o">&lt;</span> <span class="n">other</span><span class="o">.</span><span class="n">A</span></div>
+
+
+<div class="viewcode-block" id="get_nuclei_in_range"><a class="viewcode-back" href="../../../pynucastro.nucdata.html#pynucastro.nucdata.nucleus.get_nuclei_in_range">[docs]</a><span class="k">def</span> <span class="nf">get_nuclei_in_range</span><span class="p">(</span><span class="n">zmin</span><span class="p">,</span> <span class="n">zmax</span><span class="p">,</span> <span class="n">amin</span><span class="p">,</span> <span class="n">amax</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;given a range of Z = [zmin, zmax], and A = [amin, amax],</span>
+<span class="sd">    return a list of Nucleus objects for all nuclei in this range&quot;&quot;&quot;</span>
+
+    <span class="n">nuc_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">assert</span> <span class="n">zmax</span> <span class="o">&gt;=</span> <span class="n">zmin</span><span class="p">,</span> <span class="s2">&quot;zmax must be &gt;= zmin&quot;</span>
+    <span class="k">assert</span> <span class="n">amax</span> <span class="o">&gt;=</span> <span class="n">amin</span><span class="p">,</span> <span class="s2">&quot;amax must be &gt;= amin&quot;</span>
+
+    <span class="k">for</span> <span class="n">z</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">zmin</span><span class="p">,</span> <span class="n">zmax</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+        <span class="n">element</span> <span class="o">=</span> <span class="n">PeriodicTable</span><span class="o">.</span><span class="n">lookup_Z</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">amin</span><span class="p">,</span> <span class="n">amax</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">element</span><span class="o">.</span><span class="n">abbreviation</span><span class="si">}{</span><span class="n">a</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">nuc_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Nucleus</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">nuc_list</span></div>
 </pre></div>
 
            </div>
