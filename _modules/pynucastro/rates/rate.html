@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.rates.rate &mdash; pynucastro 2.0.3.post78+g6f256d50 documentation</title>
+  <title>pynucastro.rates.rate &mdash; pynucastro 2.0.3.post79+g2834b3e4 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
@@ -1501,7 +1501,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">get_tabular_rate</span><span class="p">()</span>
 
         <span class="c1"># for easy indexing, store a 1-d array of T and rhoy</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">rhoy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabular_data_table</span><span class="p">[::</span><span class="bp">self</span><span class="o">.</span><span class="n">table_rhoy_lines</span><span class="p">,</span> <span class="n">TableIndex</span><span class="o">.</span><span class="n">RHOY</span><span class="o">.</span><span class="n">value</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rhoy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabular_data_table</span><span class="p">[::</span><span class="bp">self</span><span class="o">.</span><span class="n">table_temp_lines</span><span class="p">,</span> <span class="n">TableIndex</span><span class="o">.</span><span class="n">RHOY</span><span class="o">.</span><span class="n">value</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">temp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabular_data_table</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">table_temp_lines</span><span class="p">,</span> <span class="n">TableIndex</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">value</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1561,6 +1561,49 @@
 
         <span class="k">elif</span> <span class="s2">&quot;betadecay&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">table_file</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">weak_type</span> <span class="o">=</span> <span class="s2">&quot;beta_decay&quot;</span>
+
+    <span class="k">def</span> <span class="nf">_get_logT_idx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logt0</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;return the index into the temperatures such that</span>
+<span class="sd">        T[i-1] &lt; t0 &lt;= T[i].  We return i-1 here, corresponding to</span>
+<span class="sd">        the lower value.</span>
+<span class="sd">        Note: we work in terms of log10()</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">searchsorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">temp</span><span class="p">,</span> <span class="n">logt0</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get_logT_nearest_idx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logt0</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;return the index into the temperatures that is closest</span>
+<span class="sd">        to the input t0.  Note: we work in terms of log10()</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="mi">10</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">temp</span> <span class="o">-</span> <span class="mi">10</span><span class="o">**</span><span class="n">logt0</span><span class="p">)</span><span class="o">.</span><span class="n">argmin</span><span class="p">()</span>
+        <span class="c1">#return np.abs(self.temp - logt0).argmin()</span>
+
+    <span class="k">def</span> <span class="nf">_get_logrhoy_idx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logrhoy0</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;return the index into rho*Y such that</span>
+<span class="sd">        rhoY[i-1] &lt; rhoy0 &lt;= rhoY[i].  We return i-1 here,</span>
+<span class="sd">        corresponding to the lower value.</span>
+<span class="sd">        Note: we work in terms of log10()</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">searchsorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rhoy</span><span class="p">,</span> <span class="n">logrhoy0</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get_logrhoy_nearest_idx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logrhoy0</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;return the index into rho*Y that is the closest to</span>
+<span class="sd">        the input rhoy.  Note: we work in terms of log10()</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="mi">10</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">rhoy</span> <span class="o">-</span> <span class="mi">10</span><span class="o">**</span><span class="n">logrhoy0</span><span class="p">)</span><span class="o">.</span><span class="n">argmin</span><span class="p">()</span>
+        <span class="c1">#return np.abs(self.rhoy - logrhoy0).argmin()</span>
+
+    <span class="k">def</span> <span class="nf">_rhoy_T_to_idx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">irhoy</span><span class="p">,</span> <span class="n">jtemp</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;given a pair (irhoy, jtemp) into the table, return the 1-d index</span>
+<span class="sd">        into the underlying data array assuming row-major ordering&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="n">irhoy</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">table_temp_lines</span> <span class="o">+</span> <span class="n">jtemp</span>
 
     <span class="k">def</span> <span class="nf">_set_rhs_properties</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; compute statistical prefactor and density exponent from the reactants. &quot;&quot;&quot;</span>
@@ -1638,10 +1681,11 @@
 
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabular_data_table</span>
         <span class="c1"># find the nearest value of T and rhoY in the data table</span>
-        <span class="n">T_nearest</span> <span class="o">=</span> <span class="p">(</span><span class="n">data</span><span class="p">[:,</span> <span class="n">TableIndex</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">value</span><span class="p">])[</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="mf">10.0</span><span class="o">**</span><span class="p">(</span><span class="n">data</span><span class="p">[:,</span> <span class="n">TableIndex</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">value</span><span class="p">])</span> <span class="o">-</span> <span class="n">T</span><span class="p">)</span><span class="o">.</span><span class="n">argmin</span><span class="p">()]</span>
-        <span class="n">rhoY_nearest</span> <span class="o">=</span> <span class="p">(</span><span class="n">data</span><span class="p">[:,</span> <span class="n">TableIndex</span><span class="o">.</span><span class="n">RHOY</span><span class="o">.</span><span class="n">value</span><span class="p">])[</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="mf">10.0</span><span class="o">**</span><span class="p">(</span><span class="n">data</span><span class="p">[:,</span> <span class="n">TableIndex</span><span class="o">.</span><span class="n">RHOY</span><span class="o">.</span><span class="n">value</span><span class="p">])</span> <span class="o">-</span> <span class="n">rhoY</span><span class="p">)</span><span class="o">.</span><span class="n">argmin</span><span class="p">()]</span>
-        <span class="n">inde</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">data</span><span class="p">[:,</span> <span class="n">TableIndex</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">value</span><span class="p">]</span> <span class="o">==</span> <span class="n">T_nearest</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">data</span><span class="p">[:,</span> <span class="n">TableIndex</span><span class="o">.</span><span class="n">RHOY</span><span class="o">.</span><span class="n">value</span><span class="p">]</span> <span class="o">==</span> <span class="n">rhoY_nearest</span><span class="p">))[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-        <span class="n">r</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">inde</span><span class="p">][</span><span class="n">TableIndex</span><span class="o">.</span><span class="n">RATE</span><span class="o">.</span><span class="n">value</span><span class="p">]</span>
+        <span class="n">rhoy_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_logrhoy_nearest_idx</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">rhoY</span><span class="p">))</span>
+        <span class="n">t_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_logT_nearest_idx</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">T</span><span class="p">))</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rhoy_T_to_idx</span><span class="p">(</span><span class="n">rhoy_index</span><span class="p">,</span> <span class="n">t_index</span><span class="p">)</span>
+
+        <span class="n">r</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">idx</span><span class="p">][</span><span class="n">TableIndex</span><span class="o">.</span><span class="n">RATE</span><span class="o">.</span><span class="n">value</span><span class="p">]</span>
         <span class="k">return</span> <span class="mf">10.0</span><span class="o">**</span><span class="n">r</span></div>
 
 <div class="viewcode-block" id="TabularRate.get_nu_loss"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.TabularRate.get_nu_loss">[docs]</a>    <span class="k">def</span> <span class="nf">get_nu_loss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">rhoY</span><span class="p">):</span>
@@ -1650,11 +1694,10 @@
         <span class="n">nu_loss</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabular_data_table</span>
         <span class="c1"># find the nearest value of T and rhoY in the data table</span>
-        <span class="n">T_nearest</span> <span class="o">=</span> <span class="p">(</span><span class="n">data</span><span class="p">[:,</span> <span class="n">TableIndex</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">value</span><span class="p">])[</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">((</span><span class="n">data</span><span class="p">[:,</span> <span class="n">TableIndex</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">value</span><span class="p">])</span> <span class="o">-</span> <span class="n">T</span><span class="p">)</span><span class="o">.</span><span class="n">argmin</span><span class="p">()]</span>
-        <span class="n">rhoY_nearest</span> <span class="o">=</span> <span class="p">(</span><span class="n">data</span><span class="p">[:,</span> <span class="n">TableIndex</span><span class="o">.</span><span class="n">RHOY</span><span class="o">.</span><span class="n">value</span><span class="p">])[</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">((</span><span class="n">data</span><span class="p">[:,</span> <span class="n">TableIndex</span><span class="o">.</span><span class="n">RHOY</span><span class="o">.</span><span class="n">value</span><span class="p">])</span> <span class="o">-</span> <span class="n">rhoY</span><span class="p">)</span><span class="o">.</span><span class="n">argmin</span><span class="p">()]</span>
-        <span class="n">inde</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">data</span><span class="p">[:,</span> <span class="n">TableIndex</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">value</span><span class="p">]</span> <span class="o">==</span> <span class="n">T_nearest</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">data</span><span class="p">[:,</span> <span class="n">TableIndex</span><span class="o">.</span><span class="n">RHOY</span><span class="o">.</span><span class="n">value</span><span class="p">]</span> <span class="o">==</span> <span class="n">rhoY_nearest</span><span class="p">))[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-        <span class="n">nu_loss</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">inde</span><span class="p">][</span><span class="n">TableIndex</span><span class="o">.</span><span class="n">NU</span><span class="o">.</span><span class="n">value</span><span class="p">]</span>
-
+        <span class="n">rhoy_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_logrhoy_nearest_idx</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">rhoY</span><span class="p">))</span>
+        <span class="n">t_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_logT_nearest_idx</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">T</span><span class="p">))</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rhoy_T_to_idx</span><span class="p">(</span><span class="n">rhoy_index</span><span class="p">,</span> <span class="n">t_index</span><span class="p">)</span>
+        <span class="n">nu_loss</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">idx</span><span class="p">][</span><span class="n">TableIndex</span><span class="o">.</span><span class="n">NU</span><span class="o">.</span><span class="n">value</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">nu_loss</span></div>
 
 <div class="viewcode-block" id="TabularRate.plot"><a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.TabularRate.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Tmin</span><span class="o">=</span><span class="mf">1.e8</span><span class="p">,</span> <span class="n">Tmax</span><span class="o">=</span><span class="mf">1.6e9</span><span class="p">,</span> <span class="n">rhoYmin</span><span class="o">=</span><span class="mf">3.9e8</span><span class="p">,</span> <span class="n">rhoYmax</span><span class="o">=</span><span class="mf">2.e9</span><span class="p">,</span> <span class="n">color_field</span><span class="o">=</span><span class="s1">&#39;rate&#39;</span><span class="p">,</span>
