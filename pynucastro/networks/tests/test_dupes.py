@@ -1,6 +1,4 @@
 # unit tests for rates
-import io
-
 import pytest
 
 import pynucastro as pyna
