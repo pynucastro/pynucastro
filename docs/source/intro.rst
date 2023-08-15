@@ -73,12 +73,18 @@ The main classes are:
   reaction networks.  A ``RateCollection`` has methods to evaluate the
   rates and make a plot of the links between rates.
 
-  There are two important subclasses:
+  There are three important subclasses:
 
   * :func:`PythonNetwork
     <pynucastro.networks.python_network.PythonNetwork>`: This is a
     collection of rates with functions that know how to write python
     code to express the righthand side of the system of ODEs.
+
+  * :func:`SimpleCxxNetwork
+    <pynucastro.networks.simple_cxx_network.SimpleCxxNetwork>`:
+    This is a simple C++ network that provides functions for
+    computing the righthand side and Jacobian of a network.
+    Not all pynucastro features are supported in this network.
 
   * :func:`AmrexAstroCxxNetwork
     <pynucastro.networks.amrexastro_cxx_network.AmrexAstroCxxNetwork>`:

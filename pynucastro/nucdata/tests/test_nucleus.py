@@ -1,6 +1,6 @@
 from pytest import approx
 
-from pynucastro.nucdata import Nucleus
+from pynucastro.nucdata import Nucleus, get_nuclei_in_range
 
 
 class TestNucleus:
@@ -90,3 +90,24 @@ class TestNucleus:
         assert self.n.A_nuc == approx(1.0086649179839473)
         assert self.o16.A_nuc == approx(15.994914621587304)
         assert self.c12.A_nuc == 12.0
+
+    def test_range(self):
+
+        nuc_list = get_nuclei_in_range(6, 8, 12, 16)
+
+        assert len(nuc_list) == 15
+        assert nuc_list[0] == Nucleus("c12")
+        assert nuc_list[1] == Nucleus("c13")
+        assert nuc_list[2] == Nucleus("c14")
+        assert nuc_list[3] == Nucleus("c15")
+        assert nuc_list[4] == Nucleus("c16")
+        assert nuc_list[5] == Nucleus("n12")
+        assert nuc_list[6] == Nucleus("n13")
+        assert nuc_list[7] == Nucleus("n14")
+        assert nuc_list[8] == Nucleus("n15")
+        assert nuc_list[9] == Nucleus("n16")
+        assert nuc_list[10] == Nucleus("o12")
+        assert nuc_list[11] == Nucleus("o13")
+        assert nuc_list[12] == Nucleus("o14")
+        assert nuc_list[13] == Nucleus("o15")
+        assert nuc_list[14] == Nucleus("o16")

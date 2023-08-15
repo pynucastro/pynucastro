@@ -456,8 +456,6 @@ class BaseCxxNetwork(ABC, RateCollection):
             of.write(f"{self.indent*n_indent}}}\n")
 
     def _fill_approx_rates(self, n_indent, of):
-        if not self.approx_rates:
-            of.write(f"{self.indent*n_indent}amrex::ignore_unused(rate, drate_dT, rate_eval);\n")
         for r in self.approx_rates:
             of.write(f"{self.indent*n_indent}rate_{r.cname()}<T>(rate_eval, rate, drate_dT);\n")
             of.write(f"{self.indent*n_indent}rate_eval.screened_rates(k_{r.cname()}) = rate;\n")
