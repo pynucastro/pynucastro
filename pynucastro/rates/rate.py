@@ -1564,12 +1564,55 @@ class TabularRate(Rate):
         """ evauate the reaction rate for temperature T """
 
         data = self.tabular_data_table
-        # find the nearest value of T and rhoY in the data table
-        rhoy_index = self._get_logrhoy_nearest_idx(np.log10(rhoY))
-        t_index = self._get_logT_nearest_idx(np.log10(T))
-        idx = self._rhoy_T_to_idx(rhoy_index, t_index)
 
-        r = data[idx][TableIndex.RATE.value]
+        # We are going to do bilinear interpolation.  We create a
+        # polynomial of the form:
+        #
+        # f = A [log(rho) - log(rho_i)] [log(T) - log(T_j)] +
+        #     B [log(rho) - log(rho_i)] +
+        #     C [log(T) - log(T_j)] +
+        #     D
+        #
+        # we then find the i,j such that our point is in the
+        # box with corners (i,j) to (i+1,j+1), and solve for
+        # A, B, C, D
+
+        # find the T and rhoY in the data table corresponding to the
+        # lower left
+
+        irhoy = self._get_logrhoy_idx(np.log10(rhoY))
+        jT = self._get_logT_idx(np.log10(T))
+
+        # note: rhoy and T are already stored as log
+
+        dlogrho = self.rhoy[irhoy+1] - self.rhoy[irhoy]
+        dlogT = self.temp[jT+1] - self.temp[jT]
+
+        # get the data at the 4 points
+
+        idx = self._rhoy_T_to_idx(irhoy, jT)
+        f_ij = data[idx][TableIndex.RATE.value]
+
+        idx = self._rhoy_T_to_idx(irhoy+1, jT)
+        f_ip1j = data[idx][TableIndex.RATE.value]
+
+        idx = self._rhoy_T_to_idx(irhoy, jT+1)
+        f_ijp1 = data[idx][TableIndex.RATE.value]
+
+        idx = self._rhoy_T_to_idx(irhoy+1, jT+1)
+        f_ip1jp1 = data[idx][TableIndex.RATE.value]
+
+        D = f_ij
+        C = (f_ijp1 - f_ij) / dlogT
+        B = (f_ip1j - f_ij) / dlogrho
+        A = (f_ip1jp1 - B * dlogrho - C * dlogT - D) / (dlogrho * dlogT)
+
+        logrhoy = np.log10(rhoY)
+        logT = np.log10(T)
+
+        r = (A * (logrhoy - self.rhoy[irhoy]) * (logT - self.temp[jT]) +
+             B * (logrhoy - self.rhoy[irhoy]) + C * (logT - self.temp[jT]) + D)
+
         return 10.0**r
 
     def get_nu_loss(self, T, rhoY):
