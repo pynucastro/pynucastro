@@ -340,7 +340,11 @@ class PythonNetwork(RateCollection):
 
         # Copy any tables in the network to the current directory
         # if the table file cannot be found, print a warning and continue.
-        odir = os.path.dirname(outfile)
+        try:
+            odir = os.path.dirname(outfile)
+        except TypeError:
+            odir = None
+
         for tr in self.tabular_rates:
             tdir = os.path.dirname(tr.rfile_path)
             if tdir != os.getcwd():
