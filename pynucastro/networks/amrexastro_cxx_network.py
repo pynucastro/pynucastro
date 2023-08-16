@@ -76,10 +76,6 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
             for nuc in self.approx_nuclei:
                 of.write(f"__extra_{nuc.spec_name:17} {nuc.short_spec_name:6} {nuc.A:6.1f} {nuc.Z:6.1f}\n")
 
-        # write out some network properties
-        with open(os.path.join(odir, "NETWORK_PROPERTIES"), "w") as of:
-            of.write(f"NSCREEN := {self.num_screen_calls}\n")
-
         # write the _parameters file
         with open(os.path.join(odir, "_parameters"), "w") as of:
             of.write("@namespace: network\n\n")
