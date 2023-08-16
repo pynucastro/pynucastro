@@ -8,22 +8,6 @@ import sys
 from pynucastro.networks.rate_collection import RateCollection
 from pynucastro.rates.rate import ApproximateRate
 
-TABLEINDEX_DEF = """
-from enum import Enum
-
-class TableIndex(Enum):
-    '''a simple enum-like container for indexing the electron-capture tables'''
-    RHOY = 0
-    T = 1
-    MU = 2
-    DQ = 3
-    VS = 4
-    RATE = 5
-    NU = 6
-    GAMMA = 7
-
-"""
-
 
 class PythonNetwork(RateCollection):
     """A pure python reaction network."""
@@ -246,27 +230,15 @@ class PythonNetwork(RateCollection):
         # tabular rate data
         for r in self.tabular_rates:
 
-            of.write(f"# load data for {r.rid}\n")
-            of.write(f"{r.fname}_table_path = _find_rate_file('{r.table_file}')\n")
-            of.write("t_data2d = []\n")
-            of.write(f"with open({r.fname}_table_path) as tabular_file:\n")
-            of.write(f'{indent}'"for i, line in enumerate(tabular_file):\n")
-            of.write(f'{indent*2}'f"if i < {r.table_header_lines}:\n")
-            of.write(f'{indent*3}'"continue\n")
-            of.write(f'{indent*2}'"line = line.strip()\n")
-            of.write(f'{indent*2}'"if not line:\n")
-            of.write(f'{indent*3}'"continue\n")
-            of.write(f'{indent*2}'"t_data2d.append(line.split())\n")
-            of.write(f"{r.fname}_data = np.array(t_data2d, dtype=float)\n\n")
+            of.write(f"# create TabularRate object for {r.rid}\n")
+            of.write(f"{r.fname}_rate = TabularRate(rfile='{r.rfile}')\n")
+            of.write("")
 
         of.write("@numba.njit()\n")
 
         of.write("def ye(Y):\n")
         of.write(f"{indent}return np.sum(Z * Y)/np.sum(A * Y)\n\n")
 
-        if self.tabular_rates:
-            # write out the enum needed to understand the table indices
-            of.write(TABLEINDEX_DEF)
 
         # the functions to evaluate the temperature dependence of the rates
 

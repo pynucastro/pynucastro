@@ -1530,13 +1530,8 @@ class TabularRate(Rate):
         fstring += "@numba.njit()\n"
         fstring += f"def {self.fname}(rate_eval, T, rhoY):\n"
         fstring += f"    # {self.rid}\n"
-
-        # find the nearest value of T and rhoY in the data table
-        fstring += f"    T_nearest = ({self.fname}_data[:, TableIndex.T.value])[np.abs((10.0**{self.fname}_data[:, TableIndex.T.value]) - T).argmin()]\n"
-        fstring += f"    rhoY_nearest = ({self.fname}_data[:, TableIndex.RHOY.value])[np.abs((10.0**{self.fname}_data[:, TableIndex.RHOY.value]) - rhoY).argmin()]\n"
-        fstring += f"    inde = np.where(({self.fname}_data[:, TableIndex.T.value] == T_nearest) & ({self.fname}_data[:, TableIndex.RHOY.value] == rhoY_nearest))[0][0]\n"
-        fstring += f"    rate_eval.{self.fname} = 10.0**({self.fname}_data[inde][TableIndex.RATE.value])\n\n"
-
+        fstring += f"    rate_eval.{self.fname} = {self.fname}_rate.eval(T, rhoY)\n\n"
+        
         return fstring
 
     def get_tabular_rate(self):
