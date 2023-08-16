@@ -239,7 +239,6 @@ class PythonNetwork(RateCollection):
         of.write("def ye(Y):\n")
         of.write(f"{indent}return np.sum(Z * Y)/np.sum(A * Y)\n\n")
 
-
         # the functions to evaluate the temperature dependence of the rates
 
         _rate_func_written = []
