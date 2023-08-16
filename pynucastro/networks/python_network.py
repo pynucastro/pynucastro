@@ -340,16 +340,17 @@ class PythonNetwork(RateCollection):
 
         # Copy any tables in the network to the current directory
         # if the table file cannot be found, print a warning and continue.
+        odir = os.path.dirname(outfile)
         for tr in self.tabular_rates:
             tdir = os.path.dirname(tr.rfile_path)
             if tdir != os.getcwd():
                 tdat_file = os.path.join(tdir, tr.table_file)
                 if os.path.isfile(tdat_file):
-                    shutil.copy(tdat_file, os.getcwd())
+                    shutil.copy(tdat_file, odir or os.getcwd())
                 else:
                     print(f'WARNING: Table data file {tr.table_file} not found.')
                 rtoki_file = os.path.join(tdir, tr.rfile)
                 if os.path.isfile(rtoki_file):
-                    shutil.copy(rtoki_file, os.getcwd())
+                    shutil.copy(rtoki_file, odir or os.getcwd())
                 else:
                     print(f'WARNING: Table metadata file {tr.rfile} not found.')
