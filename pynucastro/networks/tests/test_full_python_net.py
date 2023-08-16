@@ -1,10 +1,9 @@
-import importlib
 import os
 import shutil
 
 import numpy as np
-from numpy.testing import assert_allclose
 import pytest
+from numpy.testing import assert_allclose
 
 from pynucastro import networks
 
