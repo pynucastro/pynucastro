@@ -71,7 +71,7 @@ class RateFileError(Exception):
     """An error occurred while trying to read a Rate from a file."""
 
 
-def load_rate(rfile=None, rfile_path=None):
+def load_rate(rfile=None):
     """Try to load a rate of any type.
 
     :raises: :class:`.RateFileError`, :class:`.UnsupportedNucleus`
@@ -79,9 +79,9 @@ def load_rate(rfile=None, rfile_path=None):
 
     rate: Rate
     try:
-        rate = TabularRate(rfile=rfile, rfile_path=rfile_path)
+        rate = TabularRate(rfile=rfile)
     except (RateFileError, UnsupportedNucleus):
-        rate = ReacLibRate(rfile=rfile, rfile_path=rfile_path)
+        rate = ReacLibRate(rfile=rfile)
 
     return rate
 
@@ -336,8 +336,8 @@ class Rate:
 
     """
     def __init__(self, reactants=None, products=None, Q=None, weak_type=""):
-        """ rfile can be either a string specifying the path to a rate file or
-        an io.StringIO object from which to read rate information. """
+        """a generic Rate class that acts as a base class for specific
+        sources.  Here we only specify the reactants and products and Q value"""
 
         self.fname = None
 
@@ -784,13 +784,13 @@ class ReacLibRate(Rate):
 
     :raises: :class:`.RateFileError`, :class:`.UnsupportedNucleus`
     """
-    def __init__(self, rfile=None, rfile_path=None, chapter=None, original_source=None,
+    def __init__(self, rfile=None, chapter=None, original_source=None,
                  reactants=None, products=None, sets=None, labelprops=None, Q=None):
         """ rfile can be either a string specifying the path to a rate file or
         an io.StringIO object from which to read rate information. """
         # pylint: disable=super-init-not-called
 
-        self.rfile_path = rfile_path
+        self.rfile_path = None
         self.rfile = None
 
         if isinstance(rfile, str):
@@ -1344,12 +1344,12 @@ class TabularRate(Rate):
 
     :raises: :class:`.RateFileError`, :class:`.UnsupportedNucleus`
     """
-    def __init__(self, rfile=None, rfile_path=None):
+    def __init__(self, rfile=None):
         """ rfile can be either a string specifying the path to a rate file or
         an io.StringIO object from which to read rate information. """
         super().__init__()
 
-        self.rfile_path = rfile_path
+        self.rfile_path = None
         self.rfile = None
 
         if isinstance(rfile, str):
@@ -1715,7 +1715,7 @@ class DerivedRate(ReacLibRate):
             sset_d = SingleSet(a=a_rev, labelprops=rate.labelprops)
             derived_sets.append(sset_d)
 
-        super().__init__(rfile=self.rate.rfile, rfile_path=self.rate.rfile_path, chapter=self.rate.chapter, original_source=self.rate.original_source,
+        super().__init__(rfile=self.rate.rfile, chapter=self.rate.chapter, original_source=self.rate.original_source,
                 reactants=self.rate.products, products=self.rate.reactants, sets=derived_sets, labelprops="derived", Q=-Q)
 
     def eval(self, T, rhoY=None):
