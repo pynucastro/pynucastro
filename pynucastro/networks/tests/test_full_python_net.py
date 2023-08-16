@@ -1,6 +1,9 @@
+import importlib
 import os
 import shutil
 
+import numpy as np
+from numpy.testing import assert_allclose
 import pytest
 
 from pynucastro import networks
@@ -38,3 +41,28 @@ class TestFullPythonNetwork:
 
         # clean up generated files if the test passed
         shutil.rmtree(test_path)
+
+    def test_ydots(self, fn):
+
+        test_path = "_test_python/"
+        test_file = "network.py"
+
+        os.makedirs(test_path, exist_ok=True)
+        fn.write_network(outfile=os.path.join(test_path, test_file))
+
+        import _test_python.network as net
+
+        X = np.zeros(net.nnuc)
+        X[:] = 1.0 / net.nnuc
+        Y = X * net.nnuc
+
+        rho = 1.e8
+        T = 1.e9
+
+        ydot = net.rhs(0.0, Y, rho, T)
+
+        ydot_benchmark = np.array([-1.129728e-03,  1.979093e-03, -1.702699e+06,  5.667057e+05,
+                                   6.454310e+02,  1.044892e-03, -1.745420e-02,  1.829885e-02,
+                                   4.718987e-06])
+
+        assert_allclose(ydot, ydot_benchmark, rtol=1.e-6)
