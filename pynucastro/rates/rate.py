@@ -1603,10 +1603,10 @@ class TabularRate(Rate):
 
         data = self.tabular_data_table
 
-        inde1 = data[:, TableIndex.T.value] <= Tmax
-        inde2 = data[:, TableIndex.T.value] >= Tmin
-        inde3 = data[:, TableIndex.RHOY.value] <= rhoYmax
-        inde4 = data[:, TableIndex.RHOY.value] >= rhoYmin
+        inde1 = data[:, TableIndex.T.value] <= np.log10(Tmax)
+        inde2 = data[:, TableIndex.T.value] >= np.log10(Tmin)
+        inde3 = data[:, TableIndex.RHOY.value] <= np.log10(rhoYmax)
+        inde4 = data[:, TableIndex.RHOY.value] >= np.log10(rhoYmin)
         data_heatmap = data[inde1 & inde2 & inde3 & inde4].copy()
 
         rows, row_pos = np.unique(data_heatmap[:, 0], return_inverse=True)
@@ -1627,7 +1627,7 @@ class TabularRate(Rate):
             raise ValueError("color_field must be either 'rate' or 'nu_loss'.")
 
         try:
-            pivot_table[row_pos, col_pos] = np.log10(data_heatmap[:, icol])
+            pivot_table[row_pos, col_pos] = data_heatmap[:, icol]
         except ValueError:
             print("Divide by zero encountered in log10\nChange the scale of T or rhoY")
 
@@ -1638,10 +1638,10 @@ class TabularRate(Rate):
         ax.set_ylabel(r"$\log(\rho Y_e)$ [g/cm$^3$]")
         ax.set_title(fr"{self.pretty_string}" + "\n" + title)
         ax.set_yticks(range(len(rows)))
-        ylabels = [f"{np.log10(q):4.2f}" for q in rows]
+        ylabels = [f"{q:4.2f}" for q in rows]
         ax.set_yticklabels(ylabels)
         ax.set_xticks(range(len(cols)))
-        xlabels = [f"{np.log10(q):4.2f}" for q in cols]
+        xlabels = [f"{q:4.2f}" for q in cols]
         ax.set_xticklabels(xlabels, rotation=90, ha="right", rotation_mode="anchor")
         ax.invert_yaxis()
 
