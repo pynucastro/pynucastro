@@ -1437,6 +1437,15 @@ class TableInterpolator:
 
         return r
 
+interpolator_spec = [
+    ('data', numba.float64[:, :]),
+    ('table_rhoy_lines', numba.int32),
+    ('table_temp_lines', numba.int32),
+    ('rhoy', numba.float64[:]),
+    ('temp', numba.float64[:])
+]
+
+
 class TabularRate(Rate):
     """A tabular rate.
 
@@ -1482,7 +1491,8 @@ class TabularRate(Rate):
 
         self.get_tabular_rate()
 
-        self.interpolator = TableInterpolator(self.table_rhoy_lines, self.table_temp_lines, self.tabular_data_table)
+        self.interpolator = TableInterpolator(self.table_rhoy_lines, self.table_temp_lines,
+                                              self.tabular_data_table)
 
     def __hash__(self):
         return hash(self.__repr__())
