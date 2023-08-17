@@ -1338,6 +1338,104 @@ class ReacLibRate(Rate):
 
         return fig
 
+interpolator_spec = [
+    ('data', numba.float64[:, :]),
+    ('table_rhoy_lines', numba.int32),
+    ('table_temp_lines', numba.int32),
+    ('rhoy', numba.float64[:]),
+    ('temp', numba.float64[:])
+]
+
+@jitclass(interpolator_spec)
+class TableInterpolator:
+    """A simple class that holds a pointer to the table data and
+    methods that allow us to interpolate a variable"""
+
+    def __init__(self, table_rhoy_lines, table_temp_lines, table_data):
+
+        self.data = table_data
+        self.table_rhoy_lines = table_rhoy_lines
+        self.table_temp_lines = table_temp_lines
+
+        # for easy indexing, store a 1-d array of T and rhoy
+        self.rhoy = self.data[::self.table_temp_lines, TableIndex.RHOY.value]
+        self.temp = self.data[0:self.table_temp_lines, TableIndex.T.value]
+
+    def _get_logT_idx(self, logt0):
+        """return the index into the temperatures such that
+        T[i-1] < t0 <= T[i].  We return i-1 here, corresponding to
+        the lower value.
+        Note: we work in terms of log10()
+        """
+
+        return max(0, np.searchsorted(self.temp, logt0) - 1)
+
+    def _get_logrhoy_idx(self, logrhoy0):
+        """return the index into rho*Y such that
+        rhoY[i-1] < rhoy0 <= rhoY[i].  We return i-1 here,
+        corresponding to the lower value.
+        Note: we work in terms of log10()
+
+        """
+
+        return max(0, np.searchsorted(self.rhoy, logrhoy0) - 1)
+
+    def _rhoy_T_to_idx(self, irhoy, jtemp):
+        """given a pair (irhoy, jtemp) into the table, return the 1-d index
+        into the underlying data array assuming row-major ordering"""
+
+        return irhoy * self.table_temp_lines + jtemp
+
+    def interpolate(self, logrhoy, logT, component):
+        """given logrhoy and logT, do bilinear interpolation to
+        find the value of the data component in the table"""
+
+        # We are going to do bilinear interpolation.  We create a
+        # polynomial of the form:
+        #
+        # f = A [log(rho) - log(rho_i)] [log(T) - log(T_j)] +
+        #     B [log(rho) - log(rho_i)] +
+        #     C [log(T) - log(T_j)] +
+        #     D
+        #
+        # we then find the i,j such that our point is in the
+        # box with corners (i,j) to (i+1,j+1), and solve for
+        # A, B, C, D
+
+        # find the T and rhoY in the data table corresponding to the
+        # lower left
+
+        irhoy = self._get_logrhoy_idx(logrhoy)
+        jT = self._get_logT_idx(logT)
+
+        # note: rhoy and T are already stored as log
+
+        dlogrho = self.rhoy[irhoy+1] - self.rhoy[irhoy]
+        dlogT = self.temp[jT+1] - self.temp[jT]
+
+        # get the data at the 4 points
+
+        idx = self._rhoy_T_to_idx(irhoy, jT)
+        f_ij = self.data[idx][component]
+
+        idx = self._rhoy_T_to_idx(irhoy+1, jT)
+        f_ip1j = self.data[idx][component]
+
+        idx = self._rhoy_T_to_idx(irhoy, jT+1)
+        f_ijp1 = self.data[idx][component]
+
+        idx = self._rhoy_T_to_idx(irhoy+1, jT+1)
+        f_ip1jp1 = self.data[idx][component]
+
+        D = f_ij
+        C = (f_ijp1 - f_ij) / dlogT
+        B = (f_ip1j - f_ij) / dlogrho
+        A = (f_ip1jp1 - B * dlogrho - C * dlogT - D) / (dlogrho * dlogT)
+
+        r = (A * (logrhoy - self.rhoy[irhoy]) * (logT - self.temp[jT]) +
+             B * (logrhoy - self.rhoy[irhoy]) + C * (logT - self.temp[jT]) + D)
+
+        return r
 
 class TabularRate(Rate):
     """A tabular rate.
@@ -1384,9 +1482,7 @@ class TabularRate(Rate):
 
         self.get_tabular_rate()
 
-        # for easy indexing, store a 1-d array of T and rhoy
-        self.rhoy = self.tabular_data_table[::self.table_temp_lines, TableIndex.RHOY.value]
-        self.temp = self.tabular_data_table[0:self.table_temp_lines, TableIndex.T.value]
+        self.interpolator = TableInterpolator(self.table_rhoy_lines, self.table_temp_lines, self.tabular_data_table)
 
     def __hash__(self):
         return hash(self.__repr__())
@@ -1445,49 +1541,6 @@ class TabularRate(Rate):
 
         elif "betadecay" in self.table_file:
             self.weak_type = "beta_decay"
-
-    def _get_logT_idx(self, logt0):
-        """return the index into the temperatures such that
-        T[i-1] < t0 <= T[i].  We return i-1 here, corresponding to
-        the lower value.
-        Note: we work in terms of log10()
-        """
-
-        return max(0, np.searchsorted(self.temp, logt0) - 1)
-
-    def _get_logT_nearest_idx(self, logt0):
-        """return the index into the temperatures that is closest
-        to the input t0.  Note: we work in terms of log10()
-
-        """
-
-        return np.abs(10**self.temp - 10**logt0).argmin()
-        #return np.abs(self.temp - logt0).argmin()
-
-    def _get_logrhoy_idx(self, logrhoy0):
-        """return the index into rho*Y such that
-        rhoY[i-1] < rhoy0 <= rhoY[i].  We return i-1 here,
-        corresponding to the lower value.
-        Note: we work in terms of log10()
-
-        """
-
-        return max(0, np.searchsorted(self.rhoy, logrhoy0) - 1)
-
-    def _get_logrhoy_nearest_idx(self, logrhoy0):
-        """return the index into rho*Y that is the closest to
-        the input rhoy.  Note: we work in terms of log10()
-
-        """
-
-        return np.abs(10**self.rhoy - 10**logrhoy0).argmin()
-        #return np.abs(self.rhoy - logrhoy0).argmin()
-
-    def _rhoy_T_to_idx(self, irhoy, jtemp):
-        """given a pair (irhoy, jtemp) into the table, return the 1-d index
-        into the underlying data array assuming row-major ordering"""
-
-        return irhoy * self.table_temp_lines + jtemp
 
     def _set_rhs_properties(self):
         """ compute statistical prefactor and density exponent from the reactants. """
@@ -1563,69 +1616,16 @@ class TabularRate(Rate):
     def eval(self, T, rhoY=None):
         """ evauate the reaction rate for temperature T """
 
-        data = self.tabular_data_table
-
-        # We are going to do bilinear interpolation.  We create a
-        # polynomial of the form:
-        #
-        # f = A [log(rho) - log(rho_i)] [log(T) - log(T_j)] +
-        #     B [log(rho) - log(rho_i)] +
-        #     C [log(T) - log(T_j)] +
-        #     D
-        #
-        # we then find the i,j such that our point is in the
-        # box with corners (i,j) to (i+1,j+1), and solve for
-        # A, B, C, D
-
-        # find the T and rhoY in the data table corresponding to the
-        # lower left
-
-        irhoy = self._get_logrhoy_idx(np.log10(rhoY))
-        jT = self._get_logT_idx(np.log10(T))
-
-        # note: rhoy and T are already stored as log
-
-        dlogrho = self.rhoy[irhoy+1] - self.rhoy[irhoy]
-        dlogT = self.temp[jT+1] - self.temp[jT]
-
-        # get the data at the 4 points
-
-        idx = self._rhoy_T_to_idx(irhoy, jT)
-        f_ij = data[idx][TableIndex.RATE.value]
-
-        idx = self._rhoy_T_to_idx(irhoy+1, jT)
-        f_ip1j = data[idx][TableIndex.RATE.value]
-
-        idx = self._rhoy_T_to_idx(irhoy, jT+1)
-        f_ijp1 = data[idx][TableIndex.RATE.value]
-
-        idx = self._rhoy_T_to_idx(irhoy+1, jT+1)
-        f_ip1jp1 = data[idx][TableIndex.RATE.value]
-
-        D = f_ij
-        C = (f_ijp1 - f_ij) / dlogT
-        B = (f_ip1j - f_ij) / dlogrho
-        A = (f_ip1jp1 - B * dlogrho - C * dlogT - D) / (dlogrho * dlogT)
-
-        logrhoy = np.log10(rhoY)
-        logT = np.log10(T)
-
-        r = (A * (logrhoy - self.rhoy[irhoy]) * (logT - self.temp[jT]) +
-             B * (logrhoy - self.rhoy[irhoy]) + C * (logT - self.temp[jT]) + D)
-
+        r = self.interpolator.interpolate(np.log10(rhoY), np.log10(T),
+                                          TableIndex.RATE.value)
         return 10.0**r
 
     def get_nu_loss(self, T, rhoY):
         """ get the neutrino loss rate for the reaction if tabulated"""
 
-        nu_loss = None
-        data = self.tabular_data_table
-        # find the nearest value of T and rhoY in the data table
-        rhoy_index = self._get_logrhoy_nearest_idx(np.log10(rhoY))
-        t_index = self._get_logT_nearest_idx(np.log10(T))
-        idx = self._rhoy_T_to_idx(rhoy_index, t_index)
-        nu_loss = data[idx][TableIndex.NU.value]
-        return nu_loss
+        r = self.interpolator.interpolate(np.log10(rhoY), np.log10(T),
+                                          TableIndex.NU.value)
+        return r
 
     def plot(self, Tmin=1.e8, Tmax=1.6e9, rhoYmin=3.9e8, rhoYmax=2.e9, color_field='rate',
              figsize=(10, 10)):
