@@ -1416,7 +1416,7 @@ class TableInterpolator:
         idx = self._rhoy_T_to_idx(rhoy_index, t_index)
 
         r = self.data[idx][component]
-        return 10.0**r
+        return r
 
 
 class TabularRate(Rate):
