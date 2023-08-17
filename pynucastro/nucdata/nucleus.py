@@ -184,3 +184,20 @@ class Nucleus:
         if not self.Z == other.Z:
             return self.Z < other.Z
         return self.A < other.A
+
+
+def get_nuclei_in_range(zmin, zmax, amin, amax):
+    """given a range of Z = [zmin, zmax], and A = [amin, amax],
+    return a list of Nucleus objects for all nuclei in this range"""
+
+    nuc_list = []
+    assert zmax >= zmin, "zmax must be >= zmin"
+    assert amax >= amin, "amax must be >= amin"
+
+    for z in range(zmin, zmax+1):
+        element = PeriodicTable.lookup_Z(z)
+        for a in range(amin, amax+1):
+            name = f"{element.abbreviation}{a}"
+            nuc_list.append(Nucleus(name))
+
+    return nuc_list

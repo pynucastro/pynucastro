@@ -1,10 +1,28 @@
 """Support modules to write a pure python reaction network ODE
 source"""
 
+import os
+import shutil
 import sys
 
 from pynucastro.networks.rate_collection import RateCollection
 from pynucastro.rates.rate import ApproximateRate
+
+TABLEINDEX_DEF = """
+from enum import Enum
+
+class TableIndex(Enum):
+    '''a simple enum-like container for indexing the electron-capture tables'''
+    RHOY = 0
+    T = 1
+    MU = 2
+    DQ = 3
+    VS = 4
+    RATE = 5
+    NU = 6
+    GAMMA = 7
+
+"""
 
 
 class PythonNetwork(RateCollection):
@@ -246,6 +264,10 @@ class PythonNetwork(RateCollection):
         of.write("def ye(Y):\n")
         of.write(f"{indent}return np.sum(Z * Y)/np.sum(A * Y)\n\n")
 
+        if self.tabular_rates:
+            # write out the enum needed to understand the table indices
+            of.write(TABLEINDEX_DEF)
+
         # the functions to evaluate the temperature dependence of the rates
 
         _rate_func_written = []
@@ -315,3 +337,24 @@ class PythonNetwork(RateCollection):
                 of.write(self.full_jacobian_element_string(n_i, n_j, indent=indent))
 
         of.write(f"{indent}return jac\n")
+
+        # Copy any tables in the network to the current directory
+        # if the table file cannot be found, print a warning and continue.
+        try:
+            odir = os.path.dirname(outfile)
+        except TypeError:
+            odir = None
+
+        for tr in self.tabular_rates:
+            tdir = os.path.dirname(tr.rfile_path)
+            if tdir != os.getcwd():
+                tdat_file = os.path.join(tdir, tr.table_file)
+                if os.path.isfile(tdat_file):
+                    shutil.copy(tdat_file, odir or os.getcwd())
+                else:
+                    print(f'WARNING: Table data file {tr.table_file} not found.')
+                rtoki_file = os.path.join(tdir, tr.rfile)
+                if os.path.isfile(rtoki_file):
+                    shutil.copy(rtoki_file, odir or os.getcwd())
+                else:
+                    print(f'WARNING: Table metadata file {tr.rfile} not found.')
