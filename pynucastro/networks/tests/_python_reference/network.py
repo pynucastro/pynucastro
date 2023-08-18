@@ -2,7 +2,7 @@ import numba
 import numpy as np
 from numba.experimental import jitclass
 
-from pynucastro.rates import Tfactors, _find_rate_file
+from pynucastro.rates import TableIndex, TableInterpolator, TabularRate, Tfactors, _find_rate_file
 from pynucastro.screening import PlasmaState, ScreenFactors
 
 jn = 0
@@ -81,49 +81,22 @@ class RateEval:
         self.na23__ne23 = np.nan
         self.ne23__na23 = np.nan
 
+# note: we cannot make the TableInterpolator global, since numba doesn't like global jitclass
 # load data for na23 --> ne23
-na23__ne23_table_path = _find_rate_file('23na-23ne_electroncapture.dat')
-t_data2d = []
-with open(na23__ne23_table_path) as tabular_file:
-    for i, line in enumerate(tabular_file):
-        if i < 7:
-            continue
-        line = line.strip()
-        if not line:
-            continue
-        t_data2d.append(line.split())
-na23__ne23_data = np.array(t_data2d, dtype=float)
+na23__ne23_rate = TabularRate(rfile='na23--ne23-toki')
+na23__ne23_info = (na23__ne23_rate.table_rhoy_lines,
+                  na23__ne23_rate.table_temp_lines,
+                  na23__ne23_rate.tabular_data_table)
 
 # load data for ne23 --> na23
-ne23__na23_table_path = _find_rate_file('23ne-23na_betadecay.dat')
-t_data2d = []
-with open(ne23__na23_table_path) as tabular_file:
-    for i, line in enumerate(tabular_file):
-        if i < 5:
-            continue
-        line = line.strip()
-        if not line:
-            continue
-        t_data2d.append(line.split())
-ne23__na23_data = np.array(t_data2d, dtype=float)
+ne23__na23_rate = TabularRate(rfile='ne23--na23-toki')
+ne23__na23_info = (ne23__na23_rate.table_rhoy_lines,
+                  ne23__na23_rate.table_temp_lines,
+                  ne23__na23_rate.tabular_data_table)
 
 @numba.njit()
 def ye(Y):
     return np.sum(Z * Y)/np.sum(A * Y)
-
-
-from enum import Enum
-
-class TableIndex(Enum):
-    '''a simple enum-like container for indexing the electron-capture tables'''
-    RHOY = 0
-    T = 1
-    MU = 2
-    DQ = 3
-    VS = 4
-    RATE = 5
-    NU = 6
-    GAMMA = 7
 
 @numba.njit()
 def c12_c12__he4_ne20(rate_eval, tf):
@@ -202,18 +175,20 @@ def he4_he4_he4__c12(rate_eval, tf):
 @numba.njit()
 def na23__ne23(rate_eval, T, rhoY):
     # na23 --> ne23
-    T_nearest = (na23__ne23_data[:, TableIndex.T.value])[np.abs((10.0**na23__ne23_data[:, TableIndex.T.value]) - T).argmin()]
-    rhoY_nearest = (na23__ne23_data[:, TableIndex.RHOY.value])[np.abs((10.0**na23__ne23_data[:, TableIndex.RHOY.value]) - rhoY).argmin()]
-    inde = np.where((na23__ne23_data[:, TableIndex.T.value] == T_nearest) & (na23__ne23_data[:, TableIndex.RHOY.value] == rhoY_nearest))[0][0]
-    rate_eval.na23__ne23 = 10.0**(na23__ne23_data[inde][TableIndex.RATE.value])
+    na23__ne23_interpolator = TableInterpolator(na23__ne23_info[0],
+                                                  na23__ne23_info[1],
+                                                  na23__ne23_info[2])
+    r = na23__ne23_interpolator.interpolate(np.log10(rhoY), np.log10(T), TableIndex.RATE.value)
+    rate_eval.na23__ne23 = 10.0**r
 
 @numba.njit()
 def ne23__na23(rate_eval, T, rhoY):
     # ne23 --> na23
-    T_nearest = (ne23__na23_data[:, TableIndex.T.value])[np.abs((10.0**ne23__na23_data[:, TableIndex.T.value]) - T).argmin()]
-    rhoY_nearest = (ne23__na23_data[:, TableIndex.RHOY.value])[np.abs((10.0**ne23__na23_data[:, TableIndex.RHOY.value]) - rhoY).argmin()]
-    inde = np.where((ne23__na23_data[:, TableIndex.T.value] == T_nearest) & (ne23__na23_data[:, TableIndex.RHOY.value] == rhoY_nearest))[0][0]
-    rate_eval.ne23__na23 = 10.0**(ne23__na23_data[inde][TableIndex.RATE.value])
+    ne23__na23_interpolator = TableInterpolator(ne23__na23_info[0],
+                                                  ne23__na23_info[1],
+                                                  ne23__na23_info[2])
+    r = ne23__na23_interpolator.interpolate(np.log10(rhoY), np.log10(T), TableIndex.RATE.value)
+    rate_eval.ne23__na23 = 10.0**r
 
 def rhs(t, Y, rho, T, screen_func=None):
     return rhs_eq(t, Y, rho, T, screen_func)
