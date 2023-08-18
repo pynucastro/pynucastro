@@ -8,6 +8,7 @@ import sys
 from pynucastro.networks.rate_collection import RateCollection
 from pynucastro.rates.rate import ApproximateRate
 
+
 class PythonNetwork(RateCollection):
     """A pure python reaction network."""
 

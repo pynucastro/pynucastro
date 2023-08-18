@@ -1359,8 +1359,8 @@ class TableInterpolator:
         self.table_temp_lines = table_temp_lines
 
         # for easy indexing, store a 1-d array of T and rhoy
-        self.rhoy = self.data[::self.table_temp_lines, 0] #TableIndex.RHOY.value]
-        self.temp = self.data[0:self.table_temp_lines, 1] #TableIndex.T.value]
+        self.rhoy = self.data[::self.table_temp_lines, TableIndex.RHOY.value]
+        self.temp = self.data[0:self.table_temp_lines, TableIndex.T.value]
 
     def _get_logT_idx(self, logt0):
         """return the index into the temperatures such that
