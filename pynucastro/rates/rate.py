@@ -371,8 +371,7 @@ class Rate:
 
     def __eq__(self, other):
         """ Determine whether two Rate objects are equal.
-        They are equal if they contain identical reactants and products and
-        if they contain the same SingleSet sets and if their chapters are equal."""
+        They are equal if they contain identical reactants and products"""
         x = True
 
         x = x and (self.reactants == other.reactants)
