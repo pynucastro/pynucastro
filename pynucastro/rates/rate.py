@@ -1360,8 +1360,8 @@ class TableInterpolator:
         self.table_temp_lines = table_temp_lines
 
         # for easy indexing, store a 1-d array of T and rhoy
-        self.rhoy = self.data[::self.table_temp_lines, TableIndex.RHOY.value]
-        self.temp = self.data[0:self.table_temp_lines, TableIndex.T.value]
+        self.rhoy = self.data[::self.table_temp_lines, 0] #TableIndex.RHOY.value]
+        self.temp = self.data[0:self.table_temp_lines, 1] #TableIndex.T.value]
 
     def _get_logT_idx(self, logt0):
         """return the index into the temperatures such that
@@ -1415,7 +1415,7 @@ class TableInterpolator:
         t_index = self._get_logT_nearest_idx(logT)
         idx = self._rhoy_T_to_idx(rhoy_index, t_index)
 
-        r = self.data[idx][component]
+        r = self.data[idx, component]
         return r
 
 
@@ -1566,6 +1566,10 @@ class TabularRate(Rate):
         fstring += "@numba.njit()\n"
         fstring += f"def {self.fname}(rate_eval, T, rhoY):\n"
         fstring += f"    # {self.rid}\n"
+
+        fstring += f"    {self.fname}_interpolator = TableInterpolator({self.fname}_info[0],\n"
+        fstring += f"                                                  {self.fname}_info[1],\n"
+        fstring += f"                                                  {self.fname}_info[2])\n"
 
         fstring += f"    r = {self.fname}_interpolator.interpolate(np.log10(rhoY), np.log10(T), TableIndex.RATE.value)\n"
         fstring += f"    rate_eval.{self.fname} = 10.0**r\n\n"

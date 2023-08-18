@@ -165,7 +165,7 @@ class PythonNetwork(RateCollection):
         of.write("import numba\n")
         of.write("import numpy as np\n")
         of.write("from numba.experimental import jitclass\n\n")
-        of.write("from pynucastro.rates import TableIndex, TabularRate, Tfactors, _find_rate_file\n")
+        of.write("from pynucastro.rates import TableIndex, TableInterpolator, TabularRate, Tfactors, _find_rate_file\n")
         of.write("from pynucastro.screening import PlasmaState, ScreenFactors\n\n")
 
         # integer keys
@@ -227,11 +227,16 @@ class PythonNetwork(RateCollection):
         of.write("\n")
 
         # tabular rate data
+        if self.tabular_rates:
+            of.write("# note: we cannot make the TableInterpolator global, since numba doesn't like global jitclass\n")
+
         for r in self.tabular_rates:
 
             of.write(f"# load data for {r.rid}\n")
             of.write(f"{r.fname}_rate = TabularRate(rfile='{r.rfile}')\n")
-            of.write(f"{r.fname}_interpolator = {r.fname}_rate.interpolator\n\n")
+            of.write(f"{r.fname}_info = ({r.fname}_rate.table_rhoy_lines,\n")
+            of.write(f"                  {r.fname}_rate.table_temp_lines,\n")
+            of.write(f"                  {r.fname}_rate.tabular_data_table)\n\n")
 
         of.write("@numba.njit()\n")
 
