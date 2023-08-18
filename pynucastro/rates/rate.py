@@ -1337,6 +1337,7 @@ class ReacLibRate(Rate):
 
         return fig
 
+
 interpolator_spec = [
     ('data', numba.float64[:, :]),
     ('table_rhoy_lines', numba.int32),
@@ -1344,6 +1345,7 @@ interpolator_spec = [
     ('rhoy', numba.float64[:]),
     ('temp', numba.float64[:])
 ]
+
 
 @jitclass(interpolator_spec)
 class TableInterpolator:
@@ -1434,94 +1436,6 @@ class TableInterpolator:
         r = (A * (logrhoy - self.rhoy[irhoy]) * (logT - self.temp[jT]) +
              B * (logrhoy - self.rhoy[irhoy]) + C * (logT - self.temp[jT]) + D)
 
-        return r
-
-interpolator_spec = [
-    ('data', numba.float64[:, :]),
-    ('table_rhoy_lines', numba.int32),
-    ('table_temp_lines', numba.int32),
-    ('rhoy', numba.float64[:]),
-    ('temp', numba.float64[:])
-]
-
-
-interpolator_spec = [
-    ('data', numba.float64[:, :]),
-    ('table_rhoy_lines', numba.int32),
-    ('table_temp_lines', numba.int32),
-    ('rhoy', numba.float64[:]),
-    ('temp', numba.float64[:])
-]
-
-
-@jitclass(interpolator_spec)
-class TableInterpolator:
-    """A simple class that holds a pointer to the table data and
-    methods that allow us to interpolate a variable"""
-
-    def __init__(self, table_rhoy_lines, table_temp_lines, table_data):
-
-        self.data = table_data
-        self.table_rhoy_lines = table_rhoy_lines
-        self.table_temp_lines = table_temp_lines
-
-        # for easy indexing, store a 1-d array of T and rhoy
-        self.rhoy = self.data[::self.table_temp_lines, TableIndex.RHOY.value]
-        self.temp = self.data[0:self.table_temp_lines, TableIndex.T.value]
-
-    def _get_logT_idx(self, logt0):
-        """return the index into the temperatures such that
-        T[i-1] < t0 <= T[i].  We return i-1 here, corresponding to
-        the lower value.
-        Note: we work in terms of log10()
-        """
-
-        return max(0, np.searchsorted(self.temp, logt0) - 1)
-
-    def _get_logT_nearest_idx(self, logt0):
-        """return the index into the temperatures that is closest
-        to the input t0.  Note: we work in terms of log10()
-
-        """
-
-        return np.abs(10**self.temp - 10**logt0).argmin()
-        #return np.abs(self.temp - logt0).argmin()
-
-    def _get_logrhoy_idx(self, logrhoy0):
-        """return the index into rho*Y such that
-        rhoY[i-1] < rhoy0 <= rhoY[i].  We return i-1 here,
-        corresponding to the lower value.
-        Note: we work in terms of log10()
-
-        """
-
-        return max(0, np.searchsorted(self.rhoy, logrhoy0) - 1)
-
-    def _get_logrhoy_nearest_idx(self, logrhoy0):
-        """return the index into rho*Y that is the closest to
-        the input rhoy.  Note: we work in terms of log10()
-
-        """
-
-        return np.abs(10**self.rhoy - 10**logrhoy0).argmin()
-        #return np.abs(self.rhoy - logrhoy0).argmin()
-
-    def _rhoy_T_to_idx(self, irhoy, jtemp):
-        """given a pair (irhoy, jtemp) into the table, return the 1-d index
-        into the underlying data array assuming row-major ordering"""
-
-        return irhoy * self.table_temp_lines + jtemp
-
-    def interpolate(self, logrhoy, logT, component):
-        """given logrhoy and logT, do nearest interpolation to
-        find the value of the data component in the table"""
-
-        # find the nearest value of T and rhoY in the data table
-        rhoy_index = self._get_logrhoy_nearest_idx(logrhoy)
-        t_index = self._get_logT_nearest_idx(logT)
-        idx = self._rhoy_T_to_idx(rhoy_index, t_index)
-
-        r = self.data[idx][component]
         return r
 
 
