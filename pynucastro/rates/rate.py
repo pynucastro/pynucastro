@@ -1566,9 +1566,7 @@ class TabularRate(Rate):
         fstring += f"def {self.fname}(rate_eval, T, rhoY):\n"
         fstring += f"    # {self.rid}\n"
 
-        fstring += f"    {self.fname}_interpolator = TableInterpolator({self.fname}_info[0],\n"
-        fstring += f"                                                  {self.fname}_info[1],\n"
-        fstring += f"                                                  {self.fname}_info[2])\n"
+        fstring += f"    {self.fname}_interpolator = TableInterpolator(*{self.fname}_info)\n"
 
         fstring += f"    r = {self.fname}_interpolator.interpolate(np.log10(rhoY), np.log10(T), TableIndex.RATE.value)\n"
         fstring += f"    rate_eval.{self.fname} = 10.0**r\n\n"
