@@ -371,8 +371,7 @@ class Rate:
 
     def __eq__(self, other):
         """ Determine whether two Rate objects are equal.
-        They are equal if they contain identical reactants and products and
-        if they contain the same SingleSet sets and if their chapters are equal."""
+        They are equal if they contain identical reactants and products"""
         x = True
 
         x = x and (self.reactants == other.reactants)
@@ -1339,6 +1338,86 @@ class ReacLibRate(Rate):
         return fig
 
 
+interpolator_spec = [
+    ('data', numba.float64[:, :]),
+    ('table_rhoy_lines', numba.int32),
+    ('table_temp_lines', numba.int32),
+    ('rhoy', numba.float64[:]),
+    ('temp', numba.float64[:])
+]
+
+
+@jitclass(interpolator_spec)
+class TableInterpolator:
+    """A simple class that holds a pointer to the table data and
+    methods that allow us to interpolate a variable"""
+
+    def __init__(self, table_rhoy_lines, table_temp_lines, table_data):
+
+        self.data = table_data
+        self.table_rhoy_lines = table_rhoy_lines
+        self.table_temp_lines = table_temp_lines
+
+        # for easy indexing, store a 1-d array of T and rhoy
+        self.rhoy = self.data[::self.table_temp_lines, TableIndex.RHOY.value]
+        self.temp = self.data[0:self.table_temp_lines, TableIndex.T.value]
+
+    def _get_logT_idx(self, logt0):
+        """return the index into the temperatures such that
+        T[i-1] < t0 <= T[i].  We return i-1 here, corresponding to
+        the lower value.
+        Note: we work in terms of log10()
+        """
+
+        return max(0, np.searchsorted(self.temp, logt0) - 1)
+
+    def _get_logT_nearest_idx(self, logt0):
+        """return the index into the temperatures that is closest
+        to the input t0.  Note: we work in terms of log10()
+
+        """
+
+        return np.abs(10**self.temp - 10**logt0).argmin()
+        #return np.abs(self.temp - logt0).argmin()
+
+    def _get_logrhoy_idx(self, logrhoy0):
+        """return the index into rho*Y such that
+        rhoY[i-1] < rhoy0 <= rhoY[i].  We return i-1 here,
+        corresponding to the lower value.
+        Note: we work in terms of log10()
+
+        """
+
+        return max(0, np.searchsorted(self.rhoy, logrhoy0) - 1)
+
+    def _get_logrhoy_nearest_idx(self, logrhoy0):
+        """return the index into rho*Y that is the closest to
+        the input rhoy.  Note: we work in terms of log10()
+
+        """
+
+        return np.abs(10**self.rhoy - 10**logrhoy0).argmin()
+        #return np.abs(self.rhoy - logrhoy0).argmin()
+
+    def _rhoy_T_to_idx(self, irhoy, jtemp):
+        """given a pair (irhoy, jtemp) into the table, return the 1-d index
+        into the underlying data array assuming row-major ordering"""
+
+        return irhoy * self.table_temp_lines + jtemp
+
+    def interpolate(self, logrhoy, logT, component):
+        """given logrhoy and logT, do nearest interpolation to
+        find the value of the data component in the table"""
+
+        # find the nearest value of T and rhoY in the data table
+        rhoy_index = self._get_logrhoy_nearest_idx(logrhoy)
+        t_index = self._get_logT_nearest_idx(logT)
+        idx = self._rhoy_T_to_idx(rhoy_index, t_index)
+
+        r = self.data[idx][component]
+        return r
+
+
 class TabularRate(Rate):
     """A tabular rate.
 
@@ -1384,9 +1463,8 @@ class TabularRate(Rate):
 
         self.get_tabular_rate()
 
-        # for easy indexing, store a 1-d array of T and rhoy
-        self.rhoy = self.tabular_data_table[::self.table_temp_lines, TableIndex.RHOY.value]
-        self.temp = self.tabular_data_table[0:self.table_temp_lines, TableIndex.T.value]
+        self.interpolator = TableInterpolator(self.table_rhoy_lines, self.table_temp_lines,
+                                              self.tabular_data_table)
 
     def __hash__(self):
         return hash(self.__repr__())
@@ -1445,49 +1523,6 @@ class TabularRate(Rate):
 
         elif "betadecay" in self.table_file:
             self.weak_type = "beta_decay"
-
-    def _get_logT_idx(self, logt0):
-        """return the index into the temperatures such that
-        T[i-1] < t0 <= T[i].  We return i-1 here, corresponding to
-        the lower value.
-        Note: we work in terms of log10()
-        """
-
-        return max(0, np.searchsorted(self.temp, logt0) - 1)
-
-    def _get_logT_nearest_idx(self, logt0):
-        """return the index into the temperatures that is closest
-        to the input t0.  Note: we work in terms of log10()
-
-        """
-
-        return np.abs(10**self.temp - 10**logt0).argmin()
-        #return np.abs(self.temp - logt0).argmin()
-
-    def _get_logrhoy_idx(self, logrhoy0):
-        """return the index into rho*Y such that
-        rhoY[i-1] < rhoy0 <= rhoY[i].  We return i-1 here,
-        corresponding to the lower value.
-        Note: we work in terms of log10()
-
-        """
-
-        return max(0, np.searchsorted(self.rhoy, logrhoy0) - 1)
-
-    def _get_logrhoy_nearest_idx(self, logrhoy0):
-        """return the index into rho*Y that is the closest to
-        the input rhoy.  Note: we work in terms of log10()
-
-        """
-
-        return np.abs(10**self.rhoy - 10**logrhoy0).argmin()
-        #return np.abs(self.rhoy - logrhoy0).argmin()
-
-    def _rhoy_T_to_idx(self, irhoy, jtemp):
-        """given a pair (irhoy, jtemp) into the table, return the 1-d index
-        into the underlying data array assuming row-major ordering"""
-
-        return irhoy * self.table_temp_lines + jtemp
 
     def _set_rhs_properties(self):
         """ compute statistical prefactor and density exponent from the reactants. """
@@ -1563,26 +1598,16 @@ class TabularRate(Rate):
     def eval(self, T, rhoY=None):
         """ evauate the reaction rate for temperature T """
 
-        data = self.tabular_data_table
-        # find the nearest value of T and rhoY in the data table
-        rhoy_index = self._get_logrhoy_nearest_idx(np.log10(rhoY))
-        t_index = self._get_logT_nearest_idx(np.log10(T))
-        idx = self._rhoy_T_to_idx(rhoy_index, t_index)
-
-        r = data[idx][TableIndex.RATE.value]
+        r = self.interpolator.interpolate(np.log10(rhoY), np.log10(T),
+                                          TableIndex.RATE.value)
         return 10.0**r
 
     def get_nu_loss(self, T, rhoY):
         """ get the neutrino loss rate for the reaction if tabulated"""
 
-        nu_loss = None
-        data = self.tabular_data_table
-        # find the nearest value of T and rhoY in the data table
-        rhoy_index = self._get_logrhoy_nearest_idx(np.log10(rhoY))
-        t_index = self._get_logT_nearest_idx(np.log10(T))
-        idx = self._rhoy_T_to_idx(rhoy_index, t_index)
-        nu_loss = data[idx][TableIndex.NU.value]
-        return nu_loss
+        r = self.interpolator.interpolate(np.log10(rhoY), np.log10(T),
+                                          TableIndex.NU.value)
+        return r
 
     def plot(self, Tmin=1.e8, Tmax=1.6e9, rhoYmin=3.9e8, rhoYmax=2.e9, color_field='rate',
              figsize=(10, 10)):
@@ -1603,10 +1628,10 @@ class TabularRate(Rate):
 
         data = self.tabular_data_table
 
-        inde1 = data[:, TableIndex.T.value] <= Tmax
-        inde2 = data[:, TableIndex.T.value] >= Tmin
-        inde3 = data[:, TableIndex.RHOY.value] <= rhoYmax
-        inde4 = data[:, TableIndex.RHOY.value] >= rhoYmin
+        inde1 = data[:, TableIndex.T.value] <= np.log10(Tmax)
+        inde2 = data[:, TableIndex.T.value] >= np.log10(Tmin)
+        inde3 = data[:, TableIndex.RHOY.value] <= np.log10(rhoYmax)
+        inde4 = data[:, TableIndex.RHOY.value] >= np.log10(rhoYmin)
         data_heatmap = data[inde1 & inde2 & inde3 & inde4].copy()
 
         rows, row_pos = np.unique(data_heatmap[:, 0], return_inverse=True)
@@ -1627,7 +1652,7 @@ class TabularRate(Rate):
             raise ValueError("color_field must be either 'rate' or 'nu_loss'.")
 
         try:
-            pivot_table[row_pos, col_pos] = np.log10(data_heatmap[:, icol])
+            pivot_table[row_pos, col_pos] = data_heatmap[:, icol]
         except ValueError:
             print("Divide by zero encountered in log10\nChange the scale of T or rhoY")
 
@@ -1638,10 +1663,10 @@ class TabularRate(Rate):
         ax.set_ylabel(r"$\log(\rho Y_e)$ [g/cm$^3$]")
         ax.set_title(fr"{self.pretty_string}" + "\n" + title)
         ax.set_yticks(range(len(rows)))
-        ylabels = [f"{np.log10(q):4.2f}" for q in rows]
+        ylabels = [f"{q:4.2f}" for q in rows]
         ax.set_yticklabels(ylabels)
         ax.set_xticks(range(len(cols)))
-        xlabels = [f"{np.log10(q):4.2f}" for q in cols]
+        xlabels = [f"{q:4.2f}" for q in cols]
         ax.set_xticklabels(xlabels, rotation=90, ha="right", rotation_mode="anchor")
         ax.invert_yaxis()
 
