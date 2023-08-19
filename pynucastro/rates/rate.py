@@ -1587,11 +1587,10 @@ class TabularRate(Rate):
         fstring += f"def {self.fname}(rate_eval, T, rhoY):\n"
         fstring += f"    # {self.rid}\n"
 
-        # find the nearest value of T and rhoY in the data table
-        fstring += f"    T_nearest = ({self.fname}_data[:, TableIndex.T.value])[np.abs((10.0**{self.fname}_data[:, TableIndex.T.value]) - T).argmin()]\n"
-        fstring += f"    rhoY_nearest = ({self.fname}_data[:, TableIndex.RHOY.value])[np.abs((10.0**{self.fname}_data[:, TableIndex.RHOY.value]) - rhoY).argmin()]\n"
-        fstring += f"    inde = np.where(({self.fname}_data[:, TableIndex.T.value] == T_nearest) & ({self.fname}_data[:, TableIndex.RHOY.value] == rhoY_nearest))[0][0]\n"
-        fstring += f"    rate_eval.{self.fname} = 10.0**({self.fname}_data[inde][TableIndex.RATE.value])\n\n"
+        fstring += f"    {self.fname}_interpolator = TableInterpolator(*{self.fname}_info)\n"
+
+        fstring += f"    r = {self.fname}_interpolator.interpolate(np.log10(rhoY), np.log10(T), TableIndex.RATE.value)\n"
+        fstring += f"    rate_eval.{self.fname} = 10.0**r\n\n"
 
         return fstring
 
@@ -1614,7 +1613,7 @@ class TabularRate(Rate):
                 t_data2d.append(line.split())
 
         # convert the nested list of string values into a numpy float array
-        self.tabular_data_table = np.array(t_data2d, dtype=float)
+        self.tabular_data_table = np.array(t_data2d, dtype=np.float64)
 
     def eval(self, T, rhoY=None):
         """ evauate the reaction rate for temperature T """
