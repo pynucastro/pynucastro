@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.networks.python_network &mdash; pynucastro 2.0.3.post85+g763264da documentation</title>
+  <title>pynucastro.networks.python_network &mdash; pynucastro 2.0.3.post86+g63f50b30 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
@@ -123,22 +123,6 @@
 
 <span class="kn">from</span> <span class="nn">pynucastro.networks.rate_collection</span> <span class="kn">import</span> <span class="n">RateCollection</span>
 <span class="kn">from</span> <span class="nn">pynucastro.rates.rate</span> <span class="kn">import</span> <span class="n">ApproximateRate</span>
-
-<span class="n">TABLEINDEX_DEF</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">from enum import Enum</span>
-
-<span class="s2">class TableIndex(Enum):</span>
-<span class="s2">    &#39;&#39;&#39;a simple enum-like container for indexing the electron-capture tables&#39;&#39;&#39;</span>
-<span class="s2">    RHOY = 0</span>
-<span class="s2">    T = 1</span>
-<span class="s2">    MU = 2</span>
-<span class="s2">    DQ = 3</span>
-<span class="s2">    VS = 4</span>
-<span class="s2">    RATE = 5</span>
-<span class="s2">    NU = 6</span>
-<span class="s2">    GAMMA = 7</span>
-
-<span class="s2">&quot;&quot;&quot;</span>
 
 
 <div class="viewcode-block" id="PythonNetwork"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.python_network.PythonNetwork">[docs]</a><span class="k">class</span> <span class="nc">PythonNetwork</span><span class="p">(</span><span class="n">RateCollection</span><span class="p">):</span>
@@ -298,7 +282,7 @@
         <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;import numba</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;import numpy as np</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;from numba.experimental import jitclass</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;from pynucastro.rates import Tfactors, _find_rate_file</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;from pynucastro.rates import TableIndex, TableInterpolator, TabularRate, Tfactors</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;from pynucastro.screening import PlasmaState, ScreenFactors</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="c1"># integer keys</span>
@@ -360,29 +344,21 @@
         <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="c1"># tabular rate data</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabular_rates</span><span class="p">:</span>
+            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;# note: we cannot make the TableInterpolator global, since numba doesn&#39;t like global jitclass</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
         <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabular_rates</span><span class="p">:</span>
 
             <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;# load data for </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">rid</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">_table_path = _find_rate_file(&#39;</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">table_file</span><span class="si">}</span><span class="s2">&#39;)</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;t_data2d = []</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;with open(</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">_table_path) as tabular_file:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s1">&#39;</span><span class="s2">&quot;for i, line in enumerate(tabular_file):</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">indent</span><span class="o">*</span><span class="mi">2</span><span class="si">}</span><span class="s1">&#39;</span><span class="sa">f</span><span class="s2">&quot;if i &lt; </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">table_header_lines</span><span class="si">}</span><span class="s2">:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">indent</span><span class="o">*</span><span class="mi">3</span><span class="si">}</span><span class="s1">&#39;</span><span class="s2">&quot;continue</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">indent</span><span class="o">*</span><span class="mi">2</span><span class="si">}</span><span class="s1">&#39;</span><span class="s2">&quot;line = line.strip()</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">indent</span><span class="o">*</span><span class="mi">2</span><span class="si">}</span><span class="s1">&#39;</span><span class="s2">&quot;if not line:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">indent</span><span class="o">*</span><span class="mi">3</span><span class="si">}</span><span class="s1">&#39;</span><span class="s2">&quot;continue</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">indent</span><span class="o">*</span><span class="mi">2</span><span class="si">}</span><span class="s1">&#39;</span><span class="s2">&quot;t_data2d.append(line.split())</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">_data = np.array(t_data2d, dtype=float)</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">_rate = TabularRate(rfile=&#39;</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">rfile</span><span class="si">}</span><span class="s2">&#39;)</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">_info = (</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">_rate.table_rhoy_lines,</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;                  </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">_rate.table_temp_lines,</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;                  </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">_rate.tabular_data_table)</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;@numba.njit()</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;def ye(Y):</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2">return np.sum(Z * Y)/np.sum(A * Y)</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabular_rates</span><span class="p">:</span>
-            <span class="c1"># write out the enum needed to understand the table indices</span>
-            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">TABLEINDEX_DEF</span><span class="p">)</span>
 
         <span class="c1"># the functions to evaluate the temperature dependence of the rates</span>
 
