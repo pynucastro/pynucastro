@@ -166,7 +166,7 @@ class PythonNetwork(RateCollection):
         of.write("import numba\n")
         of.write("import numpy as np\n")
         of.write("from numba.experimental import jitclass\n\n")
-        of.write("from pynucastro.rates import TableIndex, TableInterpolator, TabularRate, Tfactors, _find_rate_file\n")
+        of.write("from pynucastro.rates import TableIndex, TableInterpolator, TabularRate, Tfactors\n")
         of.write("from pynucastro.screening import PlasmaState, ScreenFactors\n\n")
 
         # integer keys
