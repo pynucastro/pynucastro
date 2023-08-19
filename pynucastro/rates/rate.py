@@ -1369,7 +1369,8 @@ class TableInterpolator:
         Note: we work in terms of log10()
         """
 
-        return max(0, np.searchsorted(self.temp, logt0) - 1)
+        max_idx = len(self.temp) - 1
+        return max(0, min(max_idx, np.searchsorted(self.temp, logt0)) - 1)
 
     def _get_logrhoy_idx(self, logrhoy0):
         """return the index into rho*Y such that
@@ -1379,7 +1380,8 @@ class TableInterpolator:
 
         """
 
-        return max(0, np.searchsorted(self.rhoy, logrhoy0) - 1)
+        max_idx = len(self.rhoy) - 1
+        return max(0, min(max_idx, np.searchsorted(self.rhoy, logrhoy0)) - 1)
 
     def _rhoy_T_to_idx(self, irhoy, jtemp):
         """given a pair (irhoy, jtemp) into the table, return the 1-d index
@@ -1408,25 +1410,28 @@ class TableInterpolator:
 
         irhoy = self._get_logrhoy_idx(logrhoy)
         jT = self._get_logT_idx(logT)
+        print(logrhoy, logT)
+        print(irhoy, jT)
 
         # note: rhoy and T are already stored as log
 
         dlogrho = self.rhoy[irhoy+1] - self.rhoy[irhoy]
         dlogT = self.temp[jT+1] - self.temp[jT]
+        print(dlogrho, dlogT)
 
         # get the data at the 4 points
 
         idx = self._rhoy_T_to_idx(irhoy, jT)
-        f_ij = self.data[idx][component]
+        f_ij = self.data[idx, component]
 
         idx = self._rhoy_T_to_idx(irhoy+1, jT)
-        f_ip1j = self.data[idx][component]
+        f_ip1j = self.data[idx, component]
 
         idx = self._rhoy_T_to_idx(irhoy, jT+1)
-        f_ijp1 = self.data[idx][component]
+        f_ijp1 = self.data[idx, component]
 
         idx = self._rhoy_T_to_idx(irhoy+1, jT+1)
-        f_ip1jp1 = self.data[idx][component]
+        f_ip1jp1 = self.data[idx, component]
 
         D = f_ij
         C = (f_ijp1 - f_ij) / dlogT
