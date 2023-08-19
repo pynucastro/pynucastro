@@ -2,7 +2,7 @@ import numba
 import numpy as np
 from numba.experimental import jitclass
 
-from pynucastro.rates import TableIndex, TableInterpolator, TabularRate, Tfactors, _find_rate_file
+from pynucastro.rates import TableIndex, TableInterpolator, TabularRate, Tfactors
 from pynucastro.screening import PlasmaState, ScreenFactors
 
 jn = 0
@@ -175,18 +175,14 @@ def he4_he4_he4__c12(rate_eval, tf):
 @numba.njit()
 def na23__ne23(rate_eval, T, rhoY):
     # na23 --> ne23
-    na23__ne23_interpolator = TableInterpolator(na23__ne23_info[0],
-                                                  na23__ne23_info[1],
-                                                  na23__ne23_info[2])
+    na23__ne23_interpolator = TableInterpolator(*na23__ne23_info)
     r = na23__ne23_interpolator.interpolate(np.log10(rhoY), np.log10(T), TableIndex.RATE.value)
     rate_eval.na23__ne23 = 10.0**r
 
 @numba.njit()
 def ne23__na23(rate_eval, T, rhoY):
     # ne23 --> na23
-    ne23__na23_interpolator = TableInterpolator(ne23__na23_info[0],
-                                                  ne23__na23_info[1],
-                                                  ne23__na23_info[2])
+    ne23__na23_interpolator = TableInterpolator(*ne23__na23_info)
     r = ne23__na23_interpolator.interpolate(np.log10(rhoY), np.log10(T), TableIndex.RATE.value)
     rate_eval.ne23__na23 = 10.0**r
 
