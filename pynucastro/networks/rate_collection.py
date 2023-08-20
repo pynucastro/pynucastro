@@ -947,6 +947,36 @@ class RateCollection:
 
         return passed_validation
 
+    def find_duplicate_links(self):
+        """report on an rates where another rate exists that has the
+        same reactants and products.  These may not be the same Rate
+        object (e.g., one could be tabular the other a simple decay),
+        but they will present themselves in the network as the same
+        link.
+
+        We return a list, where each entry is a list of all the rates
+        that share the same link"""
+
+        duplicates = []
+        for rate in self.get_rates():
+            same_links = [q for q in self.get_rates()
+                          if q != rate and
+                          sorted(q.reactants) == sorted(rate.reactants) and
+                          sorted(q.products) == sorted(rate.products)]
+
+            if same_links:
+                new_entry = [rate] + same_links
+                already_found = False
+                # we may have already found this pair
+                for dupe in duplicates:
+                    if new_entry[0] in dupe:
+                        already_found = True
+                        break
+                if not already_found:
+                    duplicates.append(new_entry)
+
+        return duplicates
+
     def find_unimportant_rates(self, states, cutoff_ratio, screen_func=None):
         """evaluate the rates at multiple thermodynamic states, and find the
         rates that are always less than `cutoff_ratio` times the fastest rate
