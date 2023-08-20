@@ -1410,14 +1410,11 @@ class TableInterpolator:
 
         irhoy = self._get_logrhoy_idx(logrhoy)
         jT = self._get_logT_idx(logT)
-        print(logrhoy, logT)
-        print(irhoy, jT)
 
         # note: rhoy and T are already stored as log
 
         dlogrho = self.rhoy[irhoy+1] - self.rhoy[irhoy]
         dlogT = self.temp[jT+1] - self.temp[jT]
-        print(dlogrho, dlogT)
 
         # get the data at the 4 points
 
