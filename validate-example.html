@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Checking your network &mdash; pynucastro 2.0.3.post86+g63f50b30 documentation</title>
+  <title>Checking your network &mdash; pynucastro 2.0.3.post87+g784fcac5 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
@@ -70,7 +70,11 @@
 <p class="caption" role="heading"><span class="caption-text">Selecting Rates</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="library-examples.html">Selecting Rates from a Library</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Checking your network</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Checking your network</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#RateCollection-validate-method"><code class="docutils literal notranslate"><span class="pre">RateCollection</span></code> validate method</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Finding-duplicate-links-in-a-RateCollection">Finding duplicate links in a <code class="docutils literal notranslate"><span class="pre">RateCollection</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="electron-captures.html">Combining ReacLib Rates with Electron Capture Tables</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Advanced Usage</span></p>
@@ -122,7 +126,6 @@
   <section id="Checking-your-network">
 <h1>Checking your network<a class="headerlink" href="#Checking-your-network" title="Permalink to this heading"></a></h1>
 <p>Selecting which rates to include and which to exclude from your network is a bit of an art. pynucastro has a few tools to help check what you might be missing.</p>
-<p>Let’s start by trying to create a network for carbon burning.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
@@ -139,6 +142,9 @@
 </pre></div>
 </div>
 </div>
+<section id="RateCollection-validate-method">
+<h2><code class="docutils literal notranslate"><span class="pre">RateCollection</span></code> validate method<a class="headerlink" href="#RateCollection-validate-method" title="Permalink to this heading"></a></h2>
+<p>Let’s start by trying to create a network for carbon burning.</p>
 <p>To start, let’s pick the nuclei <span class="math notranslate nohighlight">\(\alpha\)</span>, <span class="math notranslate nohighlight">\({}^{12}\mathrm{C}\)</span> and <span class="math notranslate nohighlight">\({}^{20}\mathrm{Ne}\)</span></p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
@@ -333,25 +339,204 @@ False
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rc</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">curved_edges</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">curved_edges</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
-</div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
-</pre></div>
-</div>
-<div class="output_area docutils container">
-<img alt="_images/validate-example_18_0.png" src="_images/validate-example_18_0.png" />
 </div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/validate-example_18_1.png" src="_images/validate-example_18_1.png" />
+<img alt="_images/validate-example_19_0.png" src="_images/validate-example_19_0.png" />
 </div>
 </div>
+</section>
+<section id="Finding-duplicate-links-in-a-RateCollection">
+<h2>Finding duplicate links in a <code class="docutils literal notranslate"><span class="pre">RateCollection</span></code><a class="headerlink" href="#Finding-duplicate-links-in-a-RateCollection" title="Permalink to this heading"></a></h2>
+<p>Sometimes we combine multiple sources of rates into a <code class="docutils literal notranslate"><span class="pre">RateCollection</span></code> or network, and we run the risk of having the same rate sequence duplicated, even though the rate itself may be different (i.e., a different source or tabulated vs. ReacLib).</p>
+<p>Here we see how to check a <code class="docutils literal notranslate"><span class="pre">RateCollection</span></code> for duplicates.</p>
+<p>We’ll start by recreating the electron-capture supernova network explored earlier.</p>
+<p>First we get rates from ReacLib</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">all_nuclei</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;p&quot;</span><span class="p">,</span> <span class="s2">&quot;he4&quot;</span><span class="p">,</span>
+              <span class="s2">&quot;ne20&quot;</span><span class="p">,</span> <span class="s2">&quot;o20&quot;</span><span class="p">,</span> <span class="s2">&quot;f20&quot;</span><span class="p">,</span>
+              <span class="s2">&quot;mg24&quot;</span><span class="p">,</span> <span class="s2">&quot;al27&quot;</span><span class="p">,</span> <span class="s2">&quot;o16&quot;</span><span class="p">,</span>
+              <span class="s2">&quot;si28&quot;</span><span class="p">,</span> <span class="s2">&quot;s32&quot;</span><span class="p">,</span> <span class="s2">&quot;p31&quot;</span><span class="p">]</span>
+<span class="n">ecsn_library</span> <span class="o">=</span> <span class="n">reaclib_library</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">(</span><span class="n">all_nuclei</span><span class="p">,</span><span class="n">with_reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>Next we get some tabulated rates</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tabular_lib</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">TabularLibrary</span><span class="p">()</span>
+<span class="n">ecsn_tabular</span> <span class="o">=</span> <span class="n">tabular_lib</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">([</span><span class="s2">&quot;f20&quot;</span><span class="p">,</span> <span class="s2">&quot;o20&quot;</span><span class="p">,</span> <span class="s2">&quot;ne20&quot;</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<p>Now we build a <code class="docutils literal notranslate"><span class="pre">RateCollection</span></code> using these two libraries</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rc</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">RateCollection</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="p">[</span><span class="n">ecsn_library</span><span class="p">,</span> <span class="n">ecsn_tabular</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<p>If we print out the rates, we see that there are duplicates involving beta decays</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rc</span><span class="o">.</span><span class="n">get_rates</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[O20 ⟶ F20 + e⁻ + 𝜈,
+ F20 ⟶ Ne20 + e⁻ + 𝜈,
+ Ne20 ⟶ He4 + O16,
+ Mg24 ⟶ He4 + Ne20,
+ Si28 ⟶ p + Al27,
+ Si28 ⟶ He4 + Mg24,
+ P31 ⟶ He4 + Al27,
+ S32 ⟶ p + P31,
+ S32 ⟶ He4 + Si28,
+ O16 + He4 ⟶ Ne20 + 𝛾,
+ Ne20 + He4 ⟶ Mg24 + 𝛾,
+ Mg24 + He4 ⟶ Si28 + 𝛾,
+ Al27 + p ⟶ Si28 + 𝛾,
+ Al27 + He4 ⟶ P31 + 𝛾,
+ Si28 + He4 ⟶ S32 + 𝛾,
+ P31 + p ⟶ S32 + 𝛾,
+ O16 + O16 ⟶ p + P31,
+ O16 + O16 ⟶ He4 + Si28,
+ Mg24 + He4 ⟶ p + Al27,
+ Al27 + p ⟶ He4 + Mg24,
+ Si28 + He4 ⟶ p + P31,
+ Si28 + He4 ⟶ O16 + O16,
+ P31 + p ⟶ He4 + Si28,
+ P31 + p ⟶ O16 + O16,
+ O20 ⟶ F20 + e⁻ + 𝜈,
+ F20 ⟶ Ne20 + e⁻ + 𝜈,
+ Ne20 + e⁻ ⟶ F20 + 𝜈,
+ F20 + e⁻ ⟶ O20 + 𝜈]
+</pre></div></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">find_duplicate_links()</span></code> method will find these</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dupes</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">find_duplicate_links</span><span class="p">()</span>
+<span class="n">dupes</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[[O20 ⟶ F20 + e⁻ + 𝜈, O20 ⟶ F20 + e⁻ + 𝜈],
+ [F20 ⟶ Ne20 + e⁻ + 𝜈, F20 ⟶ Ne20 + e⁻ + 𝜈]]
+</pre></div></div>
+</div>
+<p>Here we see 2 pairs of duplicates. Looking at the first</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">rate</span> <span class="ow">in</span> <span class="n">dupes</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">rate</span><span class="o">.</span><span class="n">fname</span><span class="si">:</span><span class="s2">20</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">rate</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+o20__f20__weak__wc12 &lt;class &#39;pynucastro.rates.rate.ReacLibRate&#39;&gt;
+o20__f20             &lt;class &#39;pynucastro.rates.rate.TabularRate&#39;&gt;
+</pre></div></div>
+</div>
+<p>We see that one is a <code class="docutils literal notranslate"><span class="pre">ReacLibRate</span></code> and the other is a <code class="docutils literal notranslate"><span class="pre">TabularRate</span></code>. In general, the <code class="docutils literal notranslate"><span class="pre">TabularRate</span></code> is preferred, since it has a density and temperature dependence and works at high densities.</p>
+<p>We can use this information to remove the undesired rate from the <code class="docutils literal notranslate"><span class="pre">RateCollection</span></code> using the <code class="docutils literal notranslate"><span class="pre">remove_rates()</span></code> method.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pynucastro.rates</span> <span class="kn">import</span> <span class="n">ReacLibRate</span>
+<span class="n">rates_to_remove</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dupes</span><span class="p">:</span>
+    <span class="n">rates_to_remove</span> <span class="o">+=</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">d</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">ReacLibRate</span><span class="p">)]</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rc</span><span class="o">.</span><span class="n">remove_rates</span><span class="p">(</span><span class="n">rates_to_remove</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>Now we see only a single instance of these links</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rc</span><span class="o">.</span><span class="n">get_rates</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[Ne20 ⟶ He4 + O16,
+ Mg24 ⟶ He4 + Ne20,
+ Si28 ⟶ p + Al27,
+ Si28 ⟶ He4 + Mg24,
+ P31 ⟶ He4 + Al27,
+ S32 ⟶ p + P31,
+ S32 ⟶ He4 + Si28,
+ O16 + He4 ⟶ Ne20 + 𝛾,
+ Ne20 + He4 ⟶ Mg24 + 𝛾,
+ Mg24 + He4 ⟶ Si28 + 𝛾,
+ Al27 + p ⟶ Si28 + 𝛾,
+ Al27 + He4 ⟶ P31 + 𝛾,
+ Si28 + He4 ⟶ S32 + 𝛾,
+ P31 + p ⟶ S32 + 𝛾,
+ O16 + O16 ⟶ p + P31,
+ O16 + O16 ⟶ He4 + Si28,
+ Mg24 + He4 ⟶ p + Al27,
+ Al27 + p ⟶ He4 + Mg24,
+ Si28 + He4 ⟶ p + P31,
+ Si28 + He4 ⟶ O16 + O16,
+ P31 + p ⟶ He4 + Si28,
+ P31 + p ⟶ O16 + O16,
+ O20 ⟶ F20 + e⁻ + 𝜈,
+ F20 ⟶ Ne20 + e⁻ + 𝜈,
+ Ne20 + e⁻ ⟶ F20 + 𝜈,
+ F20 + e⁻ ⟶ O20 + 𝜈]
+</pre></div></div>
+</div>
+</section>
 </section>
 
 

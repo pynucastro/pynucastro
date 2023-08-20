@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.networks package &mdash; pynucastro 2.0.3.post86+g63f50b30 documentation</title>
+  <title>pynucastro.networks package &mdash; pynucastro 2.0.3.post87+g784fcac5 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
@@ -437,6 +437,18 @@ two varies based on the setup. See <em>clear_arrays</em> for freeing memory post
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="pynucastro.networks.rate_collection.RateCollection.find_duplicate_links">
+<span class="sig-name descname"><span class="pre">find_duplicate_links</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/rate_collection.html#RateCollection.find_duplicate_links"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.rate_collection.RateCollection.find_duplicate_links" title="Permalink to this definition"></a></dt>
+<dd><p>report on an rates where another rate exists that has the
+same reactants and products.  These may not be the same Rate
+object (e.g., one could be tabular the other a simple decay),
+but they will present themselves in the network as the same
+link.</p>
+<p>We return a list, where each entry is a list of all the rates
+that share the same link</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.networks.rate_collection.RateCollection.find_reverse">
 <span class="sig-name descname"><span class="pre">find_reverse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">forward_rate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reverse_rates</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/rate_collection.html#RateCollection.find_reverse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.rate_collection.RateCollection.find_reverse" title="Permalink to this definition"></a></dt>
 <dd><p>given a forward rate, locate the rate that is its reverse</p>
@@ -672,7 +684,7 @@ object and returns true or false if it is to be shown as an edge.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pynucastro.networks.rate_collection.RateCollection.pynucastro_dir">
-<span class="sig-name descname"><span class="pre">pynucastro_dir</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/pynucastro-2.0.3.post86+g63f50b30-py3.10.egg/pynucastro'</span></em><a class="headerlink" href="#pynucastro.networks.rate_collection.RateCollection.pynucastro_dir" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">pynucastro_dir</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/pynucastro-2.0.3.post87+g784fcac5-py3.10.egg/pynucastro'</span></em><a class="headerlink" href="#pynucastro.networks.rate_collection.RateCollection.pynucastro_dir" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
