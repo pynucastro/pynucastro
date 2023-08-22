@@ -16,8 +16,8 @@ void init_tabular();
 // Table energy units are expected in terms of ergs
 
 // all tables are expected to have columns:
-// rhoY     T   mu    dQ    Vs    e-cap-rate   nu-energy-loss  gamma-energy
-// g/cm^3   K   erg   erg   erg   1/s          erg/s           erg/s
+// Log(rhoY)     Log(T)   mu    dQ    Vs    Log(e-cap-rate)   Log(nu-energy-loss)  Log(gamma-energy)
+// Log(g/cm^3)   Log(K)   erg   erg   erg   Log(1/s)          Log(erg/s)           Log(erg/s)
 //
 
 <table_num>(0)
@@ -57,7 +57,7 @@ namespace rate_tables
 }
 
 template <typename R, typename T, typename D>
-void init_tab_info(const table_t& tf, const std::string& file, R& rhoy, T& temp, D& data) {
+void init_tab_info(const table_t& tf, const std::string& file, R& log_rhoy, T& log_temp, D& data) {
 
     std::ifstream table;
     table.open(file);
@@ -70,39 +70,18 @@ void init_tab_info(const table_t& tf, const std::string& file, R& rhoy, T& temp,
         std::getline(table, line);
     }
 
-    // now the data -- there are 2 extra columns, for temp and rhoy
+    // now the data -- there are 2 extra columns, for log_temp and log_rhoy
 
     for (int j = 1; j <= tf.nrhoy; ++j) {
         for (int i = 1; i <= tf.ntemp; ++i) {
             std::getline(table, line);
             std::istringstream sdata(line);
 
-            sdata >> rhoy(j) >> temp(i);
+            sdata >> log_rhoy(j) >> log_temp(i);
 
             for (int n = 1; n <= tf.nvars; ++n) {
                 sdata >> data(i, j, n);
             }
-        }
-    }
-
-    for (int j = 1; j <= tf.nrhoy; ++j) {
-        for (int i = 1; i <= tf.ntemp; ++i) {
-
-            if (1 == i) {
-                rhoy(j) = std::pow(10.0_rt, rhoy(j));
-            }
-
-            if (1 == j) {
-                if (temp(i) > 33.0_rt){
-                    amrex::Error("init_tab_info: Table data needs to be updated");
-                }
-
-                temp(i) = std::pow(10.0_rt, temp(i));
-            }
-
-            data(i, j, jtab_rate) = std::pow(10.0_rt, data(i, j, jtab_rate));
-            data(i, j, jtab_nuloss) = std::pow(10.0_rt, data(i, j, jtab_nuloss));
-            data(i, j, jtab_gamma) = std::pow(10.0_rt, data(i, j, jtab_gamma));
         }
     }
 
@@ -146,10 +125,70 @@ int vector_index_lu(const int vlen, const V& vector, const Real fvar)
     return index;
 }
 
+template<typename R, typename T, typename V>
+AMREX_INLINE AMREX_GPU_HOST_DEVICE
+Real
+linear_interpolator(const table_t& table_meta, const R& log_rho_table, const T& log_temp_table, const D& data,
+                    const Real rhoy, const Real temp, const int component)
+{
+    const Real log_rhoy = std::log10(rhoy);
+    const Real log_temp = std::log10(temp);
+
+    int irhoy = vector_index_lu(table_meta.nrhoy, log_rho_table, log_rhoy);
+    int jtemp = vector_index_lu(table_meta.ntemp, log_temp_table, log_temp);
+
+    const Real dlog_rhoy = log_rho_table(irhoy+1) - log_rho_table(irhoy);
+    const Real dlog_temp = log_temp_table(jtemp+1) - log_temp_table(jtemp);
+
+    Real fij = data(irhoy, jtemp, component);
+    Real fip1j = data(irhoy+1, jtemp, component);
+    Real fijp1 = data(irhoy, jtemp+1, component);
+    Real fip1jp1 = data(irhoy+1, jtemp+1, component);
+
+
+    Real D =  fij;
+    Real C = (fijp1 - fij) / dlog_rhoy;
+    Real B = (fip1j - fij) / dlog_temp;
+    Real A = (fip1jp1 - B * dlog_rhoy - C * dlog_temp - D) / (dlog_rhoy * dlog_temp);
+
+    Real r =  A * (log_rhoy - log_rho_table(irhoy)) * (log_temp - log_temp_table(jtemp)) +
+              B * (log_rhoy - log_rho_table(irhoy)) +
+              C * (log_temp - log_temp_table(jtemp)) +
+              D;
+
+    return r;
+}
+
 
 AMREX_INLINE AMREX_GPU_HOST_DEVICE
 Real
-bl_clamp(const Real xlo, const Real xhi, const Real flo, const Real fhi, const Real x)
+evaluate_dr_dtemp(const table_t& table_meta, const R& log_rho_table, const T& log_temp_table, const D& data,
+                  const Real rhoy, const Real temp, const int component)
+{
+    //Now we compute dlogr_dlogT
+
+    const Real log_rhoy = std::log10(rhoy);
+    const Real log_temp = std::log10(temp);
+
+    int irhoy = vector_index_lu(table_meta.nrhoy, log_rho_table, log_rhoy);
+    int jtemp = vector_index_lu(table_meta.ntemp, log_temp_table, log_temp);
+
+    const Real dlog_rhoy = log_rho_table(irhoy+1) - log_rho_table(irhoy);
+    const Real dlog_temp = log_temp_table(jtemp+1) - log_temp_table(jtemp);
+
+    Real fi = data(irhoy, jtemp, jtab_rate);
+    Real fip1 = data(irhoy+1, jtemp, jtab_rate);
+
+    //Now we interpolate through the density
+
+    f = (fip1 - fi) / dlog_rhoy * (log_rhoy - log_rho_table(irhoy) ) + fi
+
+
+
+}
+
+
+(const Real xlo, const Real xhi, const Real flo, const Real fhi, const Real x)
 {
 
     // Perform bilinear interpolation within the interval [xlo, xhi]
