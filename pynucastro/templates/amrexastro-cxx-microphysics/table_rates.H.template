@@ -149,7 +149,7 @@ linear_interpolator(const table_t& table_meta, const R& log_rho_table, const T& 
     Real E =  fij;
     Real C = (fijp1 - fij) / dlog_rhoy;
     Real B = (fip1j - fij) / dlog_temp;
-    Real A = (fip1jp1 - B * dlog_rhoy - C * dlog_temp - D) / (dlog_rhoy * dlog_temp);
+    Real A = (fip1jp1 - B * dlog_rhoy - C * dlog_temp - E) / (dlog_rhoy * dlog_temp);
 
     Real r =  A * (log_rhoy - log_rho_table(irhoy)) * (log_temp - log_temp_table(jtemp)) +
               B * (log_rhoy - log_rho_table(irhoy)) +
@@ -195,7 +195,7 @@ evaluate_dr_dtemp(const table_t& table_meta, const R& log_rho_table, const T& lo
     //Now we compute the central differences within the boundaries
     //or the the forward differences on the boundaries
 
-    if ((jtemp - 1) < 1 || (jtemp + 2) > table_meta.ntemp) {
+    if ((jtemp - 1 < 1) || (jtemp + 2 > table_meta.ntemp)) {
 
         Real dr_dt_ij = (fijp1 - fij)/(t_jp1 - t_j);
         Real dr_dt_ijp1 = (fijp2 - fijp1)/(t_jp2 - t_jp1);
@@ -216,7 +216,7 @@ evaluate_dr_dtemp(const table_t& table_meta, const R& log_rho_table, const T& lo
     Real E = dr_dt_ij;
     Real C = (dr_dt_ijp1 - dr_dt_ij) / dlog_rhoy;
     Real B = (dr_dt_ip1j - dr_dt_ij) / dlog_temp;
-    Real A = (dr_dt_ip1jp1 - B * dlog_rhoy - C * dlog_temp - D) / (dlog_rhoy * dlog_temp);
+    Real A = (dr_dt_ip1jp1 - B * dlog_rhoy - C * dlog_temp - E) / (dlog_rhoy * dlog_temp);
 
     Real dlogr_dlogT =  A * (log_rhoy - log_rho_table(irhoy)) * (log_temp - log_temp_table(jtemp)) +
                         B * (log_rhoy - log_rho_table(irhoy)) +
