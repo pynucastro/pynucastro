@@ -126,7 +126,7 @@ int vector_index_lu(const int vlen, const V& vector, const Real fvar)
 }
 
 
-template<typename R, typename T, typename V>
+template<typename R, typename T, typename D>
 AMREX_INLINE AMREX_GPU_HOST_DEVICE
 Real
 linear_interpolator(const table_t& table_meta, const R& log_rho_table, const T& log_temp_table, const D& data,
@@ -160,6 +160,7 @@ linear_interpolator(const table_t& table_meta, const R& log_rho_table, const T& 
 }
 
 
+template<typename R, typename T, typename D>
 AMREX_INLINE AMREX_GPU_HOST_DEVICE
 Real
 evaluate_dr_dtemp(const table_t& table_meta, const R& log_rho_table, const T& log_temp_table, const D& data,
