@@ -349,10 +349,10 @@ tabular_evaluate(const table_t& table_meta,
     // Fill outputs: rate, d(rate)/d(temperature), and
     // (negative) neutrino loss contribution to energy generation
 
-    rate       = entries(jtab_rate);
-    drate_dt   = entries(k_drate_dt);
-    edot_nu    = -entries(jtab_nuloss);
-    edot_gamma = entries(jtab_gamma);
+    rate       = std::pow(10.0_rt, entries(jtab_rate));
+    drate_dt   = rate * entries(k_drate_dt) / temp;
+    edot_nu    = -std::pow(10.0_rt, entries(jtab_nuloss));
+    edot_gamma = std::pow(10.0_rt, entries(jtab_gamma));
 }
 
 #endif
