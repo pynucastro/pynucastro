@@ -146,7 +146,7 @@ linear_interpolator(const table_t& table_meta, const R& log_rho_table, const T& 
     Real fijp1 = data(jtemp+1, irhoy, component);
     Real fip1jp1 = data(jtemp+1, irhoy+1, component);
 
-    Real D =  fij;
+    Real E =  fij;
     Real C = (fijp1 - fij) / dlog_rhoy;
     Real B = (fip1j - fij) / dlog_temp;
     Real A = (fip1jp1 - B * dlog_rhoy - C * dlog_temp - D) / (dlog_rhoy * dlog_temp);
@@ -154,7 +154,7 @@ linear_interpolator(const table_t& table_meta, const R& log_rho_table, const T& 
     Real r =  A * (log_rhoy - log_rho_table(irhoy)) * (log_temp - log_temp_table(jtemp)) +
               B * (log_rhoy - log_rho_table(irhoy)) +
               C * (log_temp - log_temp_table(jtemp)) +
-              D;
+              E;
 
     return r;
 }
@@ -204,16 +204,16 @@ evaluate_dr_dtemp(const table_t& table_meta, const R& log_rho_table, const T& lo
 
     } else {
 
-        Real dr_dt_ij = (fijp1 - fijm1)/(t_ijp1 - t_ijm1);
-        Real dr_dt_ijp1 = (fijp2 - fij)/(t_ijp2 - t_ij);
-        Real dr_dt_ip1j = (fip1jp1 - fip1jm1)/(t_ijp1 - t_ijm1);
-        Real dr_dt_ip1jp1 = (fip1jp2 - fip1j)/(t_ijp2 - t_ij);
+        Real dr_dt_ij = (fijp1 - fijm1)/(t_jp1 - t_jm1);
+        Real dr_dt_ijp1 = (fijp2 - fij)/(t_jp2 - t_j);
+        Real dr_dt_ip1j = (fip1jp1 - fip1jm1)/(t_jp1 - t_jm1);
+        Real dr_dt_ip1jp1 = (fip1jp2 - fip1j)/(t_jp2 - t_j);
 
     }
 
     //And interpolate through all the derivatives:
 
-    Real D = dr_dt_ij;
+    Real E = dr_dt_ij;
     Real C = (dr_dt_ijp1 - dr_dt_ij) / dlog_rhoy;
     Real B = (dr_dt_ip1j - dr_dt_ij) / dlog_temp;
     Real A = (dr_dt_ip1jp1 - B * dlog_rhoy - C * dlog_temp - D) / (dlog_rhoy * dlog_temp);
@@ -221,7 +221,7 @@ evaluate_dr_dtemp(const table_t& table_meta, const R& log_rho_table, const T& lo
     Real dlogr_dlogT =  A * (log_rhoy - log_rho_table(irhoy)) * (log_temp - log_temp_table(jtemp)) +
                         B * (log_rhoy - log_rho_table(irhoy)) +
                         C * (log_temp - log_temp_table(jtemp)) +
-                        D;
+                        E;
 
     return dlogr_dlogT;
 }
