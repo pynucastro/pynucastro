@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.networks.sympy_network_support &mdash; pynucastro 2.0.3.post87+g784fcac5 documentation</title>
+  <title>pynucastro.networks.sympy_network_support &mdash; pynucastro 2.0.3.post88+gbad37947 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
@@ -12,13 +12,13 @@
     <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/sphinx_highlight.js"></script>
-        <script src="../../../_static/clipboard.min.js"></script>
-        <script src="../../../_static/copybutton.js"></script>
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=916ef0ef"></script>
+        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../../_static/copybutton.js?v=f281be69"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -124,7 +124,9 @@
 <span class="kn">from</span> <span class="nn">pynucastro.rates</span> <span class="kn">import</span> <span class="n">TabularRate</span>
 
 
-<div class="viewcode-block" id="SympyRates"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.sympy_network_support.SympyRates">[docs]</a><span class="k">class</span> <span class="nc">SympyRates</span><span class="p">:</span>
+<div class="viewcode-block" id="SympyRates">
+<a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.sympy_network_support.SympyRates">[docs]</a>
+<span class="k">class</span> <span class="nc">SympyRates</span><span class="p">:</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
@@ -146,7 +148,9 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">float_explicit_num_digits</span> <span class="o">=</span> <span class="mi">17</span>
 
-<div class="viewcode-block" id="SympyRates.ydot_term_symbol"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.sympy_network_support.SympyRates.ydot_term_symbol">[docs]</a>    <span class="k">def</span> <span class="nf">ydot_term_symbol</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rate</span><span class="p">,</span> <span class="n">y_i</span><span class="p">):</span>
+<div class="viewcode-block" id="SympyRates.ydot_term_symbol">
+<a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.sympy_network_support.SympyRates.ydot_term_symbol">[docs]</a>
+    <span class="k">def</span> <span class="nf">ydot_term_symbol</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rate</span><span class="p">,</span> <span class="n">y_i</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        return a sympy expression containing this rate&#39;s contribution to</span>
 <span class="sd">        the ydot term for nuclide y_i.</span>
@@ -169,7 +173,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_ydot_term_cache</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span>
         <span class="k">return</span> <span class="n">result</span></div>
 
-<div class="viewcode-block" id="SympyRates.specific_rate_symbol"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.sympy_network_support.SympyRates.specific_rate_symbol">[docs]</a>    <span class="k">def</span> <span class="nf">specific_rate_symbol</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rate</span><span class="p">):</span>
+
+<div class="viewcode-block" id="SympyRates.specific_rate_symbol">
+<a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.sympy_network_support.SympyRates.specific_rate_symbol">[docs]</a>
+    <span class="k">def</span> <span class="nf">specific_rate_symbol</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rate</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        return a sympy expression containing the term in a dY/dt equation</span>
 <span class="sd">        in a reaction network corresponding to this rate.</span>
@@ -207,7 +214,10 @@
         <span class="n">srate_sym</span> <span class="o">=</span> <span class="n">prefactor_sym</span> <span class="o">*</span> <span class="n">dens_sym</span> <span class="o">*</span> <span class="n">y_e_sym</span> <span class="o">*</span> <span class="n">Y_sym</span> <span class="o">*</span> <span class="n">screened_rate_sym</span>
         <span class="k">return</span> <span class="n">srate_sym</span></div>
 
-<div class="viewcode-block" id="SympyRates.jacobian_term_symbol"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.sympy_network_support.SympyRates.jacobian_term_symbol">[docs]</a>    <span class="k">def</span> <span class="nf">jacobian_term_symbol</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rate</span><span class="p">,</span> <span class="n">ydot_j</span><span class="p">,</span> <span class="n">y_i</span><span class="p">):</span>
+
+<div class="viewcode-block" id="SympyRates.jacobian_term_symbol">
+<a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.sympy_network_support.SympyRates.jacobian_term_symbol">[docs]</a>
+    <span class="k">def</span> <span class="nf">jacobian_term_symbol</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rate</span><span class="p">,</span> <span class="n">ydot_j</span><span class="p">,</span> <span class="n">y_i</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        return a sympy expression containing the term in a jacobian matrix</span>
 <span class="sd">        in a reaction network corresponding to this rate</span>
@@ -225,7 +235,10 @@
             <span class="n">symbol_is_null</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">return</span> <span class="p">(</span><span class="n">jac_sym</span><span class="o">.</span><span class="n">evalf</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">float_explicit_num_digits</span><span class="p">),</span> <span class="n">symbol_is_null</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="SympyRates.cxxify"><a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.sympy_network_support.SympyRates.cxxify">[docs]</a>    <span class="k">def</span> <span class="nf">cxxify</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="p">):</span>
+
+<div class="viewcode-block" id="SympyRates.cxxify">
+<a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.sympy_network_support.SympyRates.cxxify">[docs]</a>
+    <span class="k">def</span> <span class="nf">cxxify</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Given string s, will replace the symbols appearing as keys in</span>
 <span class="sd">        self.symbol_ludict with their corresponding entries.</span>
@@ -254,7 +267,9 @@
             <span class="n">old_num</span> <span class="o">=</span> <span class="n">ee</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
             <span class="n">s</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">old_num</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">old_num</span><span class="si">}{</span><span class="n">const_spec</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">s</span></div></div>
+        <span class="k">return</span> <span class="n">s</span></div>
+</div>
+
 </pre></div>
 
            </div>

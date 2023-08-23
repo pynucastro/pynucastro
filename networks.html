@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Creating Networks &mdash; pynucastro 2.0.3.post87+g784fcac5 documentation</title>
+  <title>Creating Networks &mdash; pynucastro 2.0.3.post88+gbad37947 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
@@ -13,13 +13,13 @@
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="_static/jquery.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/doctools.js"></script>
-        <script src="_static/sphinx_highlight.js"></script>
-        <script src="_static/clipboard.min.js"></script>
-        <script src="_static/copybutton.js"></script>
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=916ef0ef"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="_static/copybutton.js?v=f281be69"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
     <script src="_static/js/theme.js"></script>
@@ -122,7 +122,7 @@
            <div itemprop="articleBody">
              
   <section id="creating-networks">
-<h1>Creating Networks<a class="headerlink" href="#creating-networks" title="Permalink to this heading"></a></h1>
+<h1>Creating Networks<a class="headerlink" href="#creating-networks" title="Link to this heading"></a></h1>
 <p>pynucastro can output the righthand side functions for ODE integration
 in Python, pure C++, or in a form for the <a class="reference external" href="https://github.com/amrex-astro/Microphysics">AMReX-Astrophysics Microphysics</a> package in C++.</p>
 <p>To create the python or C++ code for a network, you start by building
@@ -161,7 +161,7 @@ span.prompt1:before {
 </pre></div></div></li>
 </ul>
 <section id="python-network">
-<h2>Python network<a class="headerlink" href="#python-network" title="Permalink to this heading"></a></h2>
+<h2>Python network<a class="headerlink" href="#python-network" title="Link to this heading"></a></h2>
 <p>A <code class="docutils literal notranslate"><span class="pre">PythonNetwork</span></code> will output a python module with all the data needed for constructing
 the righthand side and Jacobian of the ODE system.  To integrate a Python
 network using the SciPy integration routines, customize
@@ -169,7 +169,7 @@ network using the SciPy integration routines, customize
 right hand side module you generated above.</p>
 </section>
 <section id="simple-c-network">
-<h2>Simple C++ network<a class="headerlink" href="#simple-c-network" title="Permalink to this heading"></a></h2>
+<h2>Simple C++ network<a class="headerlink" href="#simple-c-network" title="Link to this heading"></a></h2>
 <p>A <code class="docutils literal notranslate"><span class="pre">SimpleCxxNetwork</span></code> is a very basic C++ network.  Currently, the following features
 are not supported:</p>
 <ul class="simple">
@@ -194,7 +194,7 @@ adding any desired temperature / energy evolution to the network.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1">make</span>
 </pre></div></div></section>
 <section id="amrex-astro-microphysics-network">
-<h2>AMReX-Astro Microphysics network<a class="headerlink" href="#amrex-astro-microphysics-network" title="Permalink to this heading"></a></h2>
+<h2>AMReX-Astro Microphysics network<a class="headerlink" href="#amrex-astro-microphysics-network" title="Link to this heading"></a></h2>
 <p>An <code class="docutils literal notranslate"><span class="pre">AmrexAstroCxxNetwork</span></code> is intended to be used with an AMReX-Astro
 code like <a class="reference external" href="https://github.com/amrex-astro/Castro">Castro</a> or <a class="reference external" href="https://github.com/amrex-astro/MAESTROeX">MAESTROeX</a>.
 All pynucastro features are supported and these networks can run on GPUs in the AMReX Astro framework.</p>

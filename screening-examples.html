@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Screening Rates &mdash; pynucastro 2.0.3.post87+g784fcac5 documentation</title>
+  <title>Screening Rates &mdash; pynucastro 2.0.3.post88+gbad37947 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
@@ -14,13 +14,13 @@
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="_static/jquery.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/doctools.js"></script>
-        <script src="_static/sphinx_highlight.js"></script>
-        <script src="_static/clipboard.min.js"></script>
-        <script src="_static/copybutton.js"></script>
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=916ef0ef"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="_static/copybutton.js?v=f281be69"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
         <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
@@ -126,7 +126,7 @@
            <div itemprop="articleBody">
              
   <section id="Screening-Rates">
-<h1>Screening Rates<a class="headerlink" href="#Screening-Rates" title="Permalink to this heading"></a></h1>
+<h1>Screening Rates<a class="headerlink" href="#Screening-Rates" title="Link to this heading"></a></h1>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
@@ -136,7 +136,7 @@
 </div>
 </div>
 <section id="Screening-Implementations">
-<h2>Screening Implementations<a class="headerlink" href="#Screening-Implementations" title="Permalink to this heading"></a></h2>
+<h2>Screening Implementations<a class="headerlink" href="#Screening-Implementations" title="Link to this heading"></a></h2>
 <p>pynucastro currently has 3 screening implementations:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">potekhin_1998</span></code> based on Potekhin (1998)</p></li>
@@ -146,7 +146,7 @@
 <p>Each of these use various approximations to account for the influence of the plasma on screening the electric charge of the nuclei that are fusing.</p>
 </section>
 <section id="Using-Screening">
-<h2>Using Screening<a class="headerlink" href="#Using-Screening" title="Permalink to this heading"></a></h2>
+<h2>Using Screening<a class="headerlink" href="#Using-Screening" title="Link to this heading"></a></h2>
 <p>To compute the screening factor for a rate, we need to know the entire composition (since the electron number density matters) as well as the two nuclei involved in the reaction. There are two special types that store this information:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">PlasmaState</span></code> : stores the aggregate information about the entire plasma</p></li>
@@ -234,7 +234,7 @@ C12 + He4 ⟶ O16 + 𝛾
 </div>
 </section>
 <section id="Screening-Map">
-<h2>Screening Map<a class="headerlink" href="#Screening-Map" title="Permalink to this heading"></a></h2>
+<h2>Screening Map<a class="headerlink" href="#Screening-Map" title="Link to this heading"></a></h2>
 <p>For a <code class="docutils literal notranslate"><span class="pre">RateCollection</span></code> or a network derived from it, there are a lot of rates that will need to be screened, and some might have the same nuclei that need to be screened. A “screening map” keeps track of all of the rates that need to be screened for the same set of reactants.</p>
 <p>Some networks (like the <code class="docutils literal notranslate"><span class="pre">aprox</span></code> networks in the literature) use the same screening factor for the forward and reverse rates. A <code class="docutils literal notranslate"><span class="pre">RateCollection</span></code> takes a keyword argument <code class="docutils literal notranslate"><span class="pre">symmetric_screening</span></code> that tells the network to use the same screening for forward and reverse. The screening map will then take this into account.</p>
 <p>The screening map returns a list of <code class="docutils literal notranslate"><span class="pre">ScreeningPair</span></code> objects which contain the pair of nuclei that need a screening factor computed as well as the list of all the rates that screening factor applies to.</p>
@@ -318,7 +318,7 @@ rates:
 <p>Here we see that the screening for some pairs of nuclei (like <span class="math notranslate nohighlight">\(p + {}^{23}\mathrm{Na}\)</span>) apply to several rates.</p>
 </section>
 <section id="Screening-and-a-Python-Network">
-<h2>Screening and a Python Network<a class="headerlink" href="#Screening-and-a-Python-Network" title="Permalink to this heading"></a></h2>
+<h2>Screening and a Python Network<a class="headerlink" href="#Screening-and-a-Python-Network" title="Link to this heading"></a></h2>
 <p>When we write out the module that defines a python network, it contains all of the information needed to define the righthand side and Jacobian, if screening is not used. But the <code class="docutils literal notranslate"><span class="pre">rhs</span></code> and <code class="docutils literal notranslate"><span class="pre">jacobian</span></code> functions can take an optional argument that is the name of the screening function to use, and if this is provided, then the rates will be screened. Here we demonstrate this.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:

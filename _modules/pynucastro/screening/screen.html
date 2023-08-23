@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.screening.screen &mdash; pynucastro 2.0.3.post87+g784fcac5 documentation</title>
+  <title>pynucastro.screening.screen &mdash; pynucastro 2.0.3.post88+gbad37947 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
@@ -12,13 +12,13 @@
     <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/sphinx_highlight.js"></script>
-        <script src="../../../_static/clipboard.min.js"></script>
-        <script src="../../../_static/copybutton.js"></script>
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=916ef0ef"></script>
+        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../../_static/copybutton.js?v=f281be69"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -139,7 +139,9 @@
 <span class="n">k_B</span> <span class="o">=</span> <span class="n">constants</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="s2">&quot;Boltzmann constant&quot;</span><span class="p">)</span> <span class="o">/</span> <span class="n">constants</span><span class="o">.</span><span class="n">erg</span>  <span class="c1"># J/K to erg/K</span>
 
 
-<div class="viewcode-block" id="PlasmaState"><a class="viewcode-back" href="../../../pynucastro.screening.html#pynucastro.screening.screen.PlasmaState">[docs]</a><span class="nd">@jitclass</span><span class="p">()</span>
+<div class="viewcode-block" id="PlasmaState">
+<a class="viewcode-back" href="../../../pynucastro.screening.html#pynucastro.screening.screen.PlasmaState">[docs]</a>
+<span class="nd">@jitclass</span><span class="p">()</span>
 <span class="k">class</span> <span class="nc">PlasmaState</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Stores precomputed values that are reused for all screening correction</span>
@@ -188,6 +190,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">gamma_e_fac</span> <span class="o">=</span> <span class="n">q_e</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="n">k_B</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">3</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_e</span><span class="p">)</span></div>
 
 
+
 <span class="nd">@jitclass</span><span class="p">()</span>
 <span class="k">class</span> <span class="nc">NseState</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -226,7 +229,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">gamma_e_fac</span> <span class="o">=</span> <span class="n">q_e</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="n">k_B</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">(</span><span class="mf">4.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">3.0</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="make_plasma_state"><a class="viewcode-back" href="../../../pynucastro.screening.html#pynucastro.screening.screen.make_plasma_state">[docs]</a><span class="k">def</span> <span class="nf">make_plasma_state</span><span class="p">(</span><span class="n">temp</span><span class="p">,</span> <span class="n">dens</span><span class="p">,</span> <span class="n">molar_fractions</span><span class="p">):</span>
+<div class="viewcode-block" id="make_plasma_state">
+<a class="viewcode-back" href="../../../pynucastro.screening.html#pynucastro.screening.screen.make_plasma_state">[docs]</a>
+<span class="k">def</span> <span class="nf">make_plasma_state</span><span class="p">(</span><span class="n">temp</span><span class="p">,</span> <span class="n">dens</span><span class="p">,</span> <span class="n">molar_fractions</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Construct a PlasmaState object from simulation data.</span>
 
@@ -241,7 +246,10 @@
     <span class="k">return</span> <span class="n">PlasmaState</span><span class="p">(</span><span class="n">temp</span><span class="p">,</span> <span class="n">dens</span><span class="p">,</span> <span class="n">Ys</span><span class="p">,</span> <span class="n">Zs</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="ScreenFactors"><a class="viewcode-back" href="../../../pynucastro.screening.html#pynucastro.screening.screen.ScreenFactors">[docs]</a><span class="nd">@jitclass</span><span class="p">()</span>
+
+<div class="viewcode-block" id="ScreenFactors">
+<a class="viewcode-back" href="../../../pynucastro.screening.html#pynucastro.screening.screen.ScreenFactors">[docs]</a>
+<span class="nd">@jitclass</span><span class="p">()</span>
 <span class="k">class</span> <span class="nc">ScreenFactors</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Stores values that will be used to calculate the screening correction factor</span>
@@ -270,7 +278,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">ztilde</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">(</span><span class="n">z1</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">(</span><span class="n">z2</span><span class="p">))</span></div>
 
 
-<div class="viewcode-block" id="make_screen_factors"><a class="viewcode-back" href="../../../pynucastro.screening.html#pynucastro.screening.screen.make_screen_factors">[docs]</a><span class="k">def</span> <span class="nf">make_screen_factors</span><span class="p">(</span><span class="n">n1</span><span class="p">,</span> <span class="n">n2</span><span class="p">):</span>
+
+<div class="viewcode-block" id="make_screen_factors">
+<a class="viewcode-back" href="../../../pynucastro.screening.html#pynucastro.screening.screen.make_screen_factors">[docs]</a>
+<span class="k">def</span> <span class="nf">make_screen_factors</span><span class="p">(</span><span class="n">n1</span><span class="p">,</span> <span class="n">n2</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Construct a ScreenFactors object from a pair of nuclei.</span>
 
@@ -278,6 +289,7 @@
 <span class="sd">    :param Nucleus n2: second nucleus</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">ScreenFactors</span><span class="p">(</span><span class="n">n1</span><span class="o">.</span><span class="n">Z</span><span class="p">,</span> <span class="n">n1</span><span class="o">.</span><span class="n">A</span><span class="p">,</span> <span class="n">n2</span><span class="o">.</span><span class="n">Z</span><span class="p">,</span> <span class="n">n2</span><span class="o">.</span><span class="n">A</span><span class="p">)</span></div>
+
 
 
 <span class="nd">@njit</span>
@@ -309,7 +321,9 @@
     <span class="k">return</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">f</span><span class="p">)</span> <span class="o">*</span> <span class="n">lower</span> <span class="o">+</span> <span class="n">f</span> <span class="o">*</span> <span class="n">upper</span>
 
 
-<div class="viewcode-block" id="chugunov_2007"><a class="viewcode-back" href="../../../pynucastro.screening.html#pynucastro.screening.screen.chugunov_2007">[docs]</a><span class="nd">@njit</span>
+<div class="viewcode-block" id="chugunov_2007">
+<a class="viewcode-back" href="../../../pynucastro.screening.html#pynucastro.screening.screen.chugunov_2007">[docs]</a>
+<span class="nd">@njit</span>
 <span class="k">def</span> <span class="nf">chugunov_2007</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">scn_fac</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculates screening factors based on Chugunov et al. 2007.</span>
 
@@ -411,6 +425,7 @@
     <span class="k">return</span> <span class="n">scor</span></div>
 
 
+
 <span class="nd">@njit</span>
 <span class="k">def</span> <span class="nf">f0</span><span class="p">(</span><span class="n">gamma</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Calculate the free energy per ion in a OCP from Chugunov &amp; DeWitt 2009 eq. 24</span>
@@ -441,7 +456,9 @@
     <span class="p">)</span>
 
 
-<div class="viewcode-block" id="chugunov_2009"><a class="viewcode-back" href="../../../pynucastro.screening.html#pynucastro.screening.screen.chugunov_2009">[docs]</a><span class="nd">@njit</span>
+<div class="viewcode-block" id="chugunov_2009">
+<a class="viewcode-back" href="../../../pynucastro.screening.html#pynucastro.screening.screen.chugunov_2009">[docs]</a>
+<span class="nd">@njit</span>
 <span class="k">def</span> <span class="nf">chugunov_2009</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">scn_fac</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculates screening factors based on Chugunov &amp; DeWitt 2009.</span>
 
@@ -509,7 +526,10 @@
     <span class="k">return</span> <span class="n">scor</span></div>
 
 
-<div class="viewcode-block" id="potekhin_1998"><a class="viewcode-back" href="../../../pynucastro.screening.html#pynucastro.screening.screen.potekhin_1998">[docs]</a><span class="nd">@njit</span>
+
+<div class="viewcode-block" id="potekhin_1998">
+<a class="viewcode-back" href="../../../pynucastro.screening.html#pynucastro.screening.screen.potekhin_1998">[docs]</a>
+<span class="nd">@njit</span>
 <span class="k">def</span> <span class="nf">potekhin_1998</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">scn_fac</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculates screening factors based on Chabrier &amp; Potekhin 1998.</span>
 
@@ -549,6 +569,7 @@
     <span class="n">scor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">h12</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">scor</span></div>
+
 </pre></div>
 
            </div>

@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.rates package &mdash; pynucastro 2.0.3.post87+g784fcac5 documentation</title>
+  <title>pynucastro.rates package &mdash; pynucastro 2.0.3.post88+gbad37947 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
@@ -13,13 +13,13 @@
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="_static/jquery.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/doctools.js"></script>
-        <script src="_static/sphinx_highlight.js"></script>
-        <script src="_static/clipboard.min.js"></script>
-        <script src="_static/copybutton.js"></script>
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=916ef0ef"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="_static/copybutton.js?v=f281be69"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
     <script src="_static/js/theme.js"></script>
@@ -136,17 +136,17 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="module-pynucastro.rates">
-<span id="pynucastro-rates-package"></span><h1>pynucastro.rates package<a class="headerlink" href="#module-pynucastro.rates" title="Permalink to this heading"></a></h1>
-<p>The core routines needed to read and interpret nuclear reaction rates</p>
+  <section id="pynucastro-rates-package">
+<h1>pynucastro.rates package<a class="headerlink" href="#pynucastro-rates-package" title="Link to this heading"></a></h1>
+<p id="module-pynucastro.rates">The core routines needed to read and interpret nuclear reaction rates</p>
 <section id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
 </section>
-<section id="module-pynucastro.rates.library">
-<span id="pynucastro-rates-library-module"></span><h2>pynucastro.rates.library module<a class="headerlink" href="#module-pynucastro.rates.library" title="Permalink to this heading"></a></h2>
-<dl class="py class">
+<section id="pynucastro-rates-library-module">
+<h2>pynucastro.rates.library module<a class="headerlink" href="#pynucastro-rates-library-module" title="Link to this heading"></a></h2>
+<dl class="py class" id="module-pynucastro.rates.library">
 <dt class="sig sig-object py" id="pynucastro.rates.library.LangankeLibrary">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.rates.library.</span></span><span class="sig-name descname"><span class="pre">LangankeLibrary</span></span><a class="reference internal" href="_modules/pynucastro/rates/library.html#LangankeLibrary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.LangankeLibrary" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.rates.library.</span></span><span class="sig-name descname"><span class="pre">LangankeLibrary</span></span><a class="reference internal" href="_modules/pynucastro/rates/library.html#LangankeLibrary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.LangankeLibrary" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pynucastro.rates.library.Library" title="pynucastro.rates.library.Library"><code class="xref py py-class docutils literal notranslate"><span class="pre">Library</span></code></a></p>
 <p>Load all of the tabular rates inside /library/tabular/langanke/
 and return a Library.</p>
@@ -154,7 +154,7 @@ and return a Library.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pynucastro.rates.library.Library">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.rates.library.</span></span><span class="sig-name descname"><span class="pre">Library</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">libfile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rates</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/library.html#Library"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.Library" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.rates.library.</span></span><span class="sig-name descname"><span class="pre">Library</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">libfile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rates</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/library.html#Library"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.Library" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>A Library is a Rate container that reads a single file
 containing one or many Reaclib rates, possibly containing multiple
@@ -163,26 +163,26 @@ sets per rate.</p>
 specified by RateFilter objects.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.library.Library.add_rate">
-<span class="sig-name descname"><span class="pre">add_rate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rate</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/library.html#Library.add_rate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.Library.add_rate" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">add_rate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rate</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/library.html#Library.add_rate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.Library.add_rate" title="Link to this definition"></a></dt>
 <dd><p>Manually add a rate by giving a Rate object</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.library.Library.backward">
-<span class="sig-name descname"><span class="pre">backward</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/library.html#Library.backward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.Library.backward" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">backward</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/library.html#Library.backward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.Library.backward" title="Link to this definition"></a></dt>
 <dd><p>Select only the reverse rates, obtained by detailed balance.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.library.Library.derived_backward">
-<span class="sig-name descname"><span class="pre">derived_backward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">compute_Q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_pf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/library.html#Library.derived_backward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.Library.derived_backward" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">derived_backward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">compute_Q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_pf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/library.html#Library.derived_backward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.Library.derived_backward" title="Link to this definition"></a></dt>
 <dd><p>This library contains the detailed balance reverse reactions over the selected .derived_forward(),
 computed by hand.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.library.Library.derived_forward">
-<span class="sig-name descname"><span class="pre">derived_forward</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/library.html#Library.derived_forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.Library.derived_forward" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">derived_forward</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/library.html#Library.derived_forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.Library.derived_forward" title="Link to this definition"></a></dt>
 <dd><p>In this library, we exclude the weak and tabular rates from the .forward() library which includes all
 the ReacLib forward reactions.</p>
 <p>In a future PR, we will classify forward reactions as exothermic (Q&gt;0), and reverse by endothermic (Q&lt;0).
@@ -197,14 +197,14 @@ in a unit test.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.library.Library.diff">
-<span class="sig-name descname"><span class="pre">diff</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other_library</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/library.html#Library.diff"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.Library.diff" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">diff</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other_library</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/library.html#Library.diff"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.Library.diff" title="Link to this definition"></a></dt>
 <dd><p>Return a Library containing the rates in this library that are not
 contained in other_library</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.library.Library.filter">
-<span class="sig-name descname"><span class="pre">filter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filter_spec</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/library.html#Library.filter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.Library.filter" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">filter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filter_spec</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/library.html#Library.filter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.Library.filter" title="Link to this definition"></a></dt>
 <dd><p>filter_specs should be an iterable of RateFilter objects or a
 single RateFilter object. Library.filter yields all rates
 matching any RateFilter in filter_specs.  If RateFilter.exact,
@@ -214,32 +214,32 @@ passed in as arguments.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.library.Library.forward">
-<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/library.html#Library.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.Library.forward" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/library.html#Library.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.Library.forward" title="Link to this definition"></a></dt>
 <dd><p>Select only the forward rates, discarding the inverse rates obtained
 by detailed balance.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.library.Library.get_nuclei">
-<span class="sig-name descname"><span class="pre">get_nuclei</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/library.html#Library.get_nuclei"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.Library.get_nuclei" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">get_nuclei</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/library.html#Library.get_nuclei"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.Library.get_nuclei" title="Link to this definition"></a></dt>
 <dd><p>get the list of unique nuclei</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.library.Library.get_num_rates">
-<span class="sig-name descname"><span class="pre">get_num_rates</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/library.html#Library.get_num_rates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.Library.get_num_rates" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">get_num_rates</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/library.html#Library.get_num_rates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.Library.get_num_rates" title="Link to this definition"></a></dt>
 <dd><p>Return the number of rates known to the library</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.library.Library.get_rate">
-<span class="sig-name descname"><span class="pre">get_rate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rid</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/library.html#Library.get_rate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.Library.get_rate" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">get_rate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rid</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/library.html#Library.get_rate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.Library.get_rate" title="Link to this definition"></a></dt>
 <dd><p>Return a rate matching the id provided.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.library.Library.get_rate_by_name">
-<span class="sig-name descname"><span class="pre">get_rate_by_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/library.html#Library.get_rate_by_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.Library.get_rate_by_name" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">get_rate_by_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/library.html#Library.get_rate_by_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.Library.get_rate_by_name" title="Link to this definition"></a></dt>
 <dd><p>Given a string representing a rate in the form ‘A(x,y)B’
 (or a list of strings for multiple rates) return the Rate
 objects that match from the Library.  If there are multiple
@@ -248,31 +248,31 @@ inputs, then a list of Rate objects is returned.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.library.Library.get_rate_by_nuclei">
-<span class="sig-name descname"><span class="pre">get_rate_by_nuclei</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reactants</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">products</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/library.html#Library.get_rate_by_nuclei"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.Library.get_rate_by_nuclei" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">get_rate_by_nuclei</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reactants</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">products</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/library.html#Library.get_rate_by_nuclei"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.Library.get_rate_by_nuclei" title="Link to this definition"></a></dt>
 <dd><p>given a list of reactants and products, return any matching rates</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.library.Library.get_rates">
-<span class="sig-name descname"><span class="pre">get_rates</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/library.html#Library.get_rates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.Library.get_rates" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">get_rates</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/library.html#Library.get_rates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.Library.get_rates" title="Link to this definition"></a></dt>
 <dd><p>Return a list of the rates in this library.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.library.Library.heaviest">
-<span class="sig-name descname"><span class="pre">heaviest</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/library.html#Library.heaviest"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.Library.heaviest" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">heaviest</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/library.html#Library.heaviest"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.Library.heaviest" title="Link to this definition"></a></dt>
 <dd><p>Return the heaviest nuclide in this library.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.library.Library.lightest">
-<span class="sig-name descname"><span class="pre">lightest</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/library.html#Library.lightest"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.Library.lightest" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">lightest</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/library.html#Library.lightest"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.Library.lightest" title="Link to this definition"></a></dt>
 <dd><p>Return the lightest nuclide in this library.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.library.Library.linking_nuclei">
-<span class="sig-name descname"><span class="pre">linking_nuclei</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nuclist</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">with_reverse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_warning</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/library.html#Library.linking_nuclei"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.Library.linking_nuclei" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">linking_nuclei</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nuclist</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">with_reverse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_warning</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/library.html#Library.linking_nuclei"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.Library.linking_nuclei" title="Link to this definition"></a></dt>
 <dd><p>Return a Library object containing the rates linking the
 nuclei provided in the list of Nucleus objects or nucleus abbreviations ‘nuclist’.</p>
 <p>If with_reverse is True, then include reverse rates. Otherwise
@@ -282,14 +282,14 @@ include only forward rates.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.library.Library.remove_rate">
-<span class="sig-name descname"><span class="pre">remove_rate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rate</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/library.html#Library.remove_rate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.Library.remove_rate" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">remove_rate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rate</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/library.html#Library.remove_rate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.Library.remove_rate" title="Link to this definition"></a></dt>
 <dd><p>Manually remove a rate from the library by supplying the
 short name “A(x,y)B, a Rate object, or the rate id</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.library.Library.write_to_file">
-<span class="sig-name descname"><span class="pre">write_to_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prepend_rates_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/library.html#Library.write_to_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.Library.write_to_file" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">write_to_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prepend_rates_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/library.html#Library.write_to_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.Library.write_to_file" title="Link to this definition"></a></dt>
 <dd><p>Write the library out to a file of the given name in Reaclib format. Will be
 automatically written to the pynucastro rate file directory if True is passed
 in as the second argument.</p>
@@ -299,20 +299,20 @@ in as the second argument.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pynucastro.rates.library.RateFilter">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.rates.library.</span></span><span class="sig-name descname"><span class="pre">RateFilter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reactants</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">products</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exact</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reverse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_reactants</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_reactants</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_products</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_products</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/library.html#RateFilter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.RateFilter" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.rates.library.</span></span><span class="sig-name descname"><span class="pre">RateFilter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reactants</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">products</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exact</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reverse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_reactants</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_reactants</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_products</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_products</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/library.html#RateFilter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.RateFilter" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>RateFilter filters out a specified rate or set of rates
 A RateFilter stores selection rules specifying a rate or group of
 rates to assist in searching for rates stored in a Library.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.library.RateFilter.invert">
-<span class="sig-name descname"><span class="pre">invert</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/library.html#RateFilter.invert"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.RateFilter.invert" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">invert</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/library.html#RateFilter.invert"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.RateFilter.invert" title="Link to this definition"></a></dt>
 <dd><p>Return a RateFilter matching the inverse rate.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.library.RateFilter.matches">
-<span class="sig-name descname"><span class="pre">matches</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">r</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/library.html#RateFilter.matches"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.RateFilter.matches" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">matches</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">r</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/library.html#RateFilter.matches"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.RateFilter.matches" title="Link to this definition"></a></dt>
 <dd><p>Given a Rate r, see if it matches this RateFilter.</p>
 </dd></dl>
 
@@ -320,7 +320,7 @@ rates to assist in searching for rates stored in a Library.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pynucastro.rates.library.ReacLibLibrary">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.rates.library.</span></span><span class="sig-name descname"><span class="pre">ReacLibLibrary</span></span><a class="reference internal" href="_modules/pynucastro/rates/library.html#ReacLibLibrary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.ReacLibLibrary" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.rates.library.</span></span><span class="sig-name descname"><span class="pre">ReacLibLibrary</span></span><a class="reference internal" href="_modules/pynucastro/rates/library.html#ReacLibLibrary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.ReacLibLibrary" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pynucastro.rates.library.Library" title="pynucastro.rates.library.Library"><code class="xref py py-class docutils literal notranslate"><span class="pre">Library</span></code></a></p>
 <p>Load the latest stored version of the ReacLib library and
 return a Library</p>
@@ -328,7 +328,7 @@ return a Library</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pynucastro.rates.library.SuzukiLibrary">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.rates.library.</span></span><span class="sig-name descname"><span class="pre">SuzukiLibrary</span></span><a class="reference internal" href="_modules/pynucastro/rates/library.html#SuzukiLibrary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.SuzukiLibrary" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.rates.library.</span></span><span class="sig-name descname"><span class="pre">SuzukiLibrary</span></span><a class="reference internal" href="_modules/pynucastro/rates/library.html#SuzukiLibrary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.SuzukiLibrary" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pynucastro.rates.library.Library" title="pynucastro.rates.library.Library"><code class="xref py py-class docutils literal notranslate"><span class="pre">Library</span></code></a></p>
 <p>Load all of the tabular rates inside /library/tabular/suzuki/
 and return a Library.</p>
@@ -336,48 +336,48 @@ and return a Library.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pynucastro.rates.library.TabularLibrary">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.rates.library.</span></span><span class="sig-name descname"><span class="pre">TabularLibrary</span></span><a class="reference internal" href="_modules/pynucastro/rates/library.html#TabularLibrary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.TabularLibrary" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.rates.library.</span></span><span class="sig-name descname"><span class="pre">TabularLibrary</span></span><a class="reference internal" href="_modules/pynucastro/rates/library.html#TabularLibrary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.TabularLibrary" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pynucastro.rates.library.Library" title="pynucastro.rates.library.Library"><code class="xref py py-class docutils literal notranslate"><span class="pre">Library</span></code></a></p>
 <p>Load all of the tabular rates known and return a Library</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pynucastro.rates.library.list_known_rates">
-<span class="sig-prename descclassname"><span class="pre">pynucastro.rates.library.</span></span><span class="sig-name descname"><span class="pre">list_known_rates</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/library.html#list_known_rates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.list_known_rates" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pynucastro.rates.library.</span></span><span class="sig-name descname"><span class="pre">list_known_rates</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/library.html#list_known_rates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.list_known_rates" title="Link to this definition"></a></dt>
 <dd><p>list the rates found in the library</p>
 </dd></dl>
 
 </section>
-<section id="module-pynucastro.rates.rate">
-<span id="pynucastro-rates-rate-module"></span><h2>pynucastro.rates.rate module<a class="headerlink" href="#module-pynucastro.rates.rate" title="Permalink to this heading"></a></h2>
-<p>Classes and methods to interface with files storing rate data.</p>
+<section id="pynucastro-rates-rate-module">
+<h2>pynucastro.rates.rate module<a class="headerlink" href="#pynucastro-rates-rate-module" title="Link to this heading"></a></h2>
+<p id="module-pynucastro.rates.rate">Classes and methods to interface with files storing rate data.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.ApproximateRate">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.rates.rate.</span></span><span class="sig-name descname"><span class="pre">ApproximateRate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">primary_rate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">secondary_rates</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">primary_reverse</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">secondary_reverse</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_reverse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">approx_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ap_pg'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#ApproximateRate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.ApproximateRate" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.rates.rate.</span></span><span class="sig-name descname"><span class="pre">ApproximateRate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">primary_rate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">secondary_rates</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">primary_reverse</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">secondary_reverse</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_reverse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">approx_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ap_pg'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#ApproximateRate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.ApproximateRate" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pynucastro.rates.rate.ReacLibRate" title="pynucastro.rates.rate.ReacLibRate"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReacLibRate</span></code></a></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.ApproximateRate.eval">
-<span class="sig-name descname"><span class="pre">eval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rhoY</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#ApproximateRate.eval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.ApproximateRate.eval" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">eval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rhoY</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#ApproximateRate.eval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.ApproximateRate.eval" title="Link to this definition"></a></dt>
 <dd><p>evaluate the approximate rate</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.ApproximateRate.function_string_cxx">
-<span class="sig-name descname"><span class="pre">function_string_cxx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'double'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">specifiers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'inline'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">leave_open</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#ApproximateRate.function_string_cxx"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.ApproximateRate.function_string_cxx" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">function_string_cxx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'double'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">specifiers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'inline'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">leave_open</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#ApproximateRate.function_string_cxx"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.ApproximateRate.function_string_cxx" title="Link to this definition"></a></dt>
 <dd><p>Return a string containing C++ function that computes the
 approximate rate</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.ApproximateRate.function_string_py">
-<span class="sig-name descname"><span class="pre">function_string_py</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#ApproximateRate.function_string_py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.ApproximateRate.function_string_py" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">function_string_py</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#ApproximateRate.function_string_py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.ApproximateRate.function_string_py" title="Link to this definition"></a></dt>
 <dd><p>Return a string containing python function that computes the
 approximate rate</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.ApproximateRate.get_child_rates">
-<span class="sig-name descname"><span class="pre">get_child_rates</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#ApproximateRate.get_child_rates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.ApproximateRate.get_child_rates" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">get_child_rates</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#ApproximateRate.get_child_rates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.ApproximateRate.get_child_rates" title="Link to this definition"></a></dt>
 <dd><p>return a list of all of the rates that are used in this approximation</p>
 </dd></dl>
 
@@ -385,13 +385,13 @@ approximate rate</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.DerivedRate">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.rates.rate.</span></span><span class="sig-name descname"><span class="pre">DerivedRate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compute_Q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_pf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#DerivedRate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.DerivedRate" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.rates.rate.</span></span><span class="sig-name descname"><span class="pre">DerivedRate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compute_Q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_pf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#DerivedRate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.DerivedRate" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pynucastro.rates.rate.ReacLibRate" title="pynucastro.rates.rate.ReacLibRate"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReacLibRate</span></code></a></p>
 <p>This class is a derived class from <cite>Rate</cite> with the purpose of computing the inverse rate
 by the application of detailed balance to the forward reactions.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.DerivedRate.counter_factors">
-<span class="sig-name descname"><span class="pre">counter_factors</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#DerivedRate.counter_factors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.DerivedRate.counter_factors" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">counter_factors</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#DerivedRate.counter_factors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.DerivedRate.counter_factors" title="Link to this definition"></a></dt>
 <dd><p>This function returns the nucr! = nucr_1! * … * nucr_r!
 for each repeated nucr reactant and nucp! = nucp_1! * … *
 nucp_p! for each reactant nucp product in a ordered pair
@@ -402,20 +402,20 @@ otherwise it will return 1.0.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.DerivedRate.eval">
-<span class="sig-name descname"><span class="pre">eval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rhoY</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#DerivedRate.eval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.DerivedRate.eval" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">eval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rhoY</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#DerivedRate.eval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.DerivedRate.eval" title="Link to this definition"></a></dt>
 <dd><p>evauate the reaction rate for temperature T</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.DerivedRate.function_string_cxx">
-<span class="sig-name descname"><span class="pre">function_string_cxx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'double'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">specifiers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'inline'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">leave_open</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#DerivedRate.function_string_cxx"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.DerivedRate.function_string_cxx" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">function_string_cxx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'double'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">specifiers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'inline'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">leave_open</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#DerivedRate.function_string_cxx"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.DerivedRate.function_string_cxx" title="Link to this definition"></a></dt>
 <dd><p>Return a string containing C++ function that computes the
 rate</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.DerivedRate.function_string_py">
-<span class="sig-name descname"><span class="pre">function_string_py</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#DerivedRate.function_string_py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.DerivedRate.function_string_py" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">function_string_py</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#DerivedRate.function_string_py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.DerivedRate.function_string_py" title="Link to this definition"></a></dt>
 <dd><p>Return a string containing python function that computes the
 rate</p>
 </dd></dl>
@@ -424,24 +424,24 @@ rate</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.Rate">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.rates.rate.</span></span><span class="sig-name descname"><span class="pre">Rate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reactants</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">products</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weak_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#Rate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.Rate" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.rates.rate.</span></span><span class="sig-name descname"><span class="pre">Rate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reactants</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">products</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weak_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#Rate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.Rate" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>The base reaction rate class.  Most rate types will subclass
 this and extend to their particular format.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.Rate.cname">
-<span class="sig-name descname"><span class="pre">cname</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#Rate.cname"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.Rate.cname" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">cname</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#Rate.cname"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.Rate.cname" title="Link to this definition"></a></dt>
 <dd><p>a C++-safe version of the rate name</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.Rate.eval">
-<span class="sig-name descname"><span class="pre">eval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rhoY</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#Rate.eval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.Rate.eval" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">eval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rhoY</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#Rate.eval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.Rate.eval" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.Rate.eval_jacobian_term">
-<span class="sig-name descname"><span class="pre">eval_jacobian_term</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rho</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_i</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#Rate.eval_jacobian_term"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.Rate.eval_jacobian_term" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">eval_jacobian_term</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rho</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_i</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#Rate.eval_jacobian_term"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.Rate.eval_jacobian_term" title="Link to this definition"></a></dt>
 <dd><p>Evaluate drate/d(y_i), y_i is a Nucleus object.  This rate
 term has the full composition and density dependence, i.e.:</p>
 <blockquote>
@@ -453,13 +453,13 @@ nucleus y_i.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.Rate.get_rate_id">
-<span class="sig-name descname"><span class="pre">get_rate_id</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#Rate.get_rate_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.Rate.get_rate_id" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">get_rate_id</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#Rate.get_rate_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.Rate.get_rate_id" title="Link to this definition"></a></dt>
 <dd><p>Get an identifying string for this rate.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.Rate.heaviest">
-<span class="sig-name descname"><span class="pre">heaviest</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#Rate.heaviest"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.Rate.heaviest" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">heaviest</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#Rate.heaviest"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.Rate.heaviest" title="Link to this definition"></a></dt>
 <dd><p>Return the heaviest nuclide in this Rate.</p>
 <p>If two nuclei are tied in mass number, return the one with the
 lowest atomic number.</p>
@@ -467,7 +467,7 @@ lowest atomic number.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.Rate.jacobian_string_py">
-<span class="sig-name descname"><span class="pre">jacobian_string_py</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y_i</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#Rate.jacobian_string_py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.Rate.jacobian_string_py" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">jacobian_string_py</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y_i</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#Rate.jacobian_string_py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.Rate.jacobian_string_py" title="Link to this definition"></a></dt>
 <dd><p>Return a string containing the term in a jacobian matrix
 in a reaction network corresponding to this rate differentiated
 with respect to y_i</p>
@@ -476,7 +476,7 @@ with respect to y_i</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.Rate.lightest">
-<span class="sig-name descname"><span class="pre">lightest</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#Rate.lightest"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.Rate.lightest" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">lightest</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#Rate.lightest"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.Rate.lightest" title="Link to this definition"></a></dt>
 <dd><p>Return the lightest nuclide in this Rate.</p>
 <p>If two nuclei are tied in mass number, return the one with the
 highest atomic number.</p>
@@ -484,7 +484,7 @@ highest atomic number.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.Rate.ydot_string_py">
-<span class="sig-name descname"><span class="pre">ydot_string_py</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#Rate.ydot_string_py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.Rate.ydot_string_py" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">ydot_string_py</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#Rate.ydot_string_py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.Rate.ydot_string_py" title="Link to this definition"></a></dt>
 <dd><p>Return a string containing the term in a dY/dt equation
 in a reaction network corresponding to this rate.</p>
 </dd></dl>
@@ -493,14 +493,14 @@ in a reaction network corresponding to this rate.</p>
 
 <dl class="py exception">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.RateFileError">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.rates.rate.</span></span><span class="sig-name descname"><span class="pre">RateFileError</span></span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#RateFileError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.RateFileError" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.rates.rate.</span></span><span class="sig-name descname"><span class="pre">RateFileError</span></span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#RateFileError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.RateFileError" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></a></p>
 <p>An error occurred while trying to read a Rate from a file.</p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.RatePair">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.rates.rate.</span></span><span class="sig-name descname"><span class="pre">RatePair</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">forward</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reverse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#RatePair"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.RatePair" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.rates.rate.</span></span><span class="sig-name descname"><span class="pre">RatePair</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">forward</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reverse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#RatePair"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.RatePair" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>the forward and reverse rates for a single reaction sequence.
 Forward rates are those with Q &gt;= 0.</p>
@@ -516,7 +516,7 @@ Forward rates are those with Q &gt;= 0.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.ReacLibRate">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.rates.rate.</span></span><span class="sig-name descname"><span class="pre">ReacLibRate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rfile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rfile_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chapter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">original_source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reactants</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">products</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sets</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labelprops</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#ReacLibRate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.ReacLibRate" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.rates.rate.</span></span><span class="sig-name descname"><span class="pre">ReacLibRate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rfile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chapter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">original_source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reactants</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">products</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sets</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labelprops</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#ReacLibRate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.ReacLibRate" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pynucastro.rates.rate.Rate" title="pynucastro.rates.rate.Rate"><code class="xref py py-class docutils literal notranslate"><span class="pre">Rate</span></code></a></p>
 <p>A single reaction rate.  Currently, this is a ReacLib rate, which
 can be composed of multiple sets, or a tabulated electron capture
@@ -528,40 +528,40 @@ rate.</p>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.ReacLibRate.eval">
-<span class="sig-name descname"><span class="pre">eval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rhoY</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#ReacLibRate.eval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.ReacLibRate.eval" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">eval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rhoY</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#ReacLibRate.eval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.ReacLibRate.eval" title="Link to this definition"></a></dt>
 <dd><p>evauate the reaction rate for temperature T</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.ReacLibRate.eval_deriv">
-<span class="sig-name descname"><span class="pre">eval_deriv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rhoY</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#ReacLibRate.eval_deriv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.ReacLibRate.eval_deriv" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">eval_deriv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rhoY</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#ReacLibRate.eval_deriv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.ReacLibRate.eval_deriv" title="Link to this definition"></a></dt>
 <dd><p>evauate the derivative of reaction rate with respect to T</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.ReacLibRate.function_string_cxx">
-<span class="sig-name descname"><span class="pre">function_string_cxx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'double'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">specifiers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'inline'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">leave_open</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#ReacLibRate.function_string_cxx"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.ReacLibRate.function_string_cxx" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">function_string_cxx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'double'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">specifiers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'inline'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">leave_open</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#ReacLibRate.function_string_cxx"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.ReacLibRate.function_string_cxx" title="Link to this definition"></a></dt>
 <dd><p>Return a string containing C++ function that computes the
 rate</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.ReacLibRate.function_string_py">
-<span class="sig-name descname"><span class="pre">function_string_py</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#ReacLibRate.function_string_py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.ReacLibRate.function_string_py" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">function_string_py</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#ReacLibRate.function_string_py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.ReacLibRate.function_string_py" title="Link to this definition"></a></dt>
 <dd><p>Return a string containing python function that computes the
 rate</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.ReacLibRate.get_rate_exponent">
-<span class="sig-name descname"><span class="pre">get_rate_exponent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#ReacLibRate.get_rate_exponent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.ReacLibRate.get_rate_exponent" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">get_rate_exponent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#ReacLibRate.get_rate_exponent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.ReacLibRate.get_rate_exponent" title="Link to this definition"></a></dt>
 <dd><p>for a rate written as a power law, r = r_0 (T/T0)**nu, return
 nu corresponding to T0</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.ReacLibRate.get_rate_id">
-<span class="sig-name descname"><span class="pre">get_rate_id</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#ReacLibRate.get_rate_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.ReacLibRate.get_rate_id" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">get_rate_id</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#ReacLibRate.get_rate_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.ReacLibRate.get_rate_id" title="Link to this definition"></a></dt>
 <dd><p>Get an identifying string for this rate.
 Don’t include resonance state since we combine resonant and
 non-resonant versions of reactions.</p>
@@ -569,12 +569,12 @@ non-resonant versions of reactions.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.ReacLibRate.modify_products">
-<span class="sig-name descname"><span class="pre">modify_products</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_products</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#ReacLibRate.modify_products"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.ReacLibRate.modify_products" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">modify_products</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_products</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#ReacLibRate.modify_products"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.ReacLibRate.modify_products" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.ReacLibRate.plot">
-<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Tmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Tmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1600000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rhoYmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">390000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rhoYmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2000000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(10,</span> <span class="pre">10)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#ReacLibRate.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.ReacLibRate.plot" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Tmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Tmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1600000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rhoYmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">390000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rhoYmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2000000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(10,</span> <span class="pre">10)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#ReacLibRate.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.ReacLibRate.plot" title="Link to this definition"></a></dt>
 <dd><p>plot the rate’s temperature sensitivity vs temperature</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -597,7 +597,7 @@ non-resonant versions of reactions.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.ReacLibRate.write_to_file">
-<span class="sig-name descname"><span class="pre">write_to_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#ReacLibRate.write_to_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.ReacLibRate.write_to_file" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">write_to_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#ReacLibRate.write_to_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.ReacLibRate.write_to_file" title="Link to this definition"></a></dt>
 <dd><p>Given a file object, write rate data to the file.</p>
 </dd></dl>
 
@@ -605,7 +605,7 @@ non-resonant versions of reactions.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.SingleSet">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.rates.rate.</span></span><span class="sig-name descname"><span class="pre">SingleSet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labelprops</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#SingleSet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.SingleSet" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.rates.rate.</span></span><span class="sig-name descname"><span class="pre">SingleSet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labelprops</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#SingleSet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.SingleSet" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>a set in Reaclib is one piece of a rate, in the form</p>
 <blockquote>
@@ -622,33 +622,33 @@ non-resonant versions of reactions.</p>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.SingleSet.dfdT">
-<span class="sig-name descname"><span class="pre">dfdT</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#SingleSet.dfdT"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.SingleSet.dfdT" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">dfdT</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#SingleSet.dfdT"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.SingleSet.dfdT" title="Link to this definition"></a></dt>
 <dd><p>return a function for this dratedT(tf), where tf is a
 Tfactors object</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.SingleSet.dln_set_string_dT9_cxx">
-<span class="sig-name descname"><span class="pre">dln_set_string_dT9_cxx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'dset_dT'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plus_equal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#SingleSet.dln_set_string_dT9_cxx"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.SingleSet.dln_set_string_dT9_cxx" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">dln_set_string_dT9_cxx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'dset_dT'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plus_equal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#SingleSet.dln_set_string_dT9_cxx"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.SingleSet.dln_set_string_dT9_cxx" title="Link to this definition"></a></dt>
 <dd><p>return a string containing the C++ code for d/dT9 ln(set)</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.SingleSet.f">
-<span class="sig-name descname"><span class="pre">f</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#SingleSet.f"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.SingleSet.f" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">f</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#SingleSet.f"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.SingleSet.f" title="Link to this definition"></a></dt>
 <dd><p>return a function for rate(tf) where tf is a Tfactors
 object</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.SingleSet.set_string_cxx">
-<span class="sig-name descname"><span class="pre">set_string_cxx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'set'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plus_equal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">with_exp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#SingleSet.set_string_cxx"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.SingleSet.set_string_cxx" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">set_string_cxx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'set'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plus_equal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">with_exp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#SingleSet.set_string_cxx"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.SingleSet.set_string_cxx" title="Link to this definition"></a></dt>
 <dd><p>return a string containing the C++ code for this set</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.SingleSet.set_string_py">
-<span class="sig-name descname"><span class="pre">set_string_py</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'set'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plus_equal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#SingleSet.set_string_py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.SingleSet.set_string_py" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">set_string_py</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'set'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plus_equal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#SingleSet.set_string_py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.SingleSet.set_string_py" title="Link to this definition"></a></dt>
 <dd><p>return a string containing the python code for this set</p>
 </dd></dl>
 
@@ -656,67 +656,67 @@ object</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.TableIndex">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.rates.rate.</span></span><span class="sig-name descname"><span class="pre">TableIndex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#TableIndex"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.TableIndex" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.rates.rate.</span></span><span class="sig-name descname"><span class="pre">TableIndex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#TableIndex"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.TableIndex" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/enum.html#enum.Enum" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></a></p>
 <p>a simple enum-like container for indexing the electron-capture tables</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.TableIndex.DQ">
-<span class="sig-name descname"><span class="pre">DQ</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></em><a class="headerlink" href="#pynucastro.rates.rate.TableIndex.DQ" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">DQ</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></em><a class="headerlink" href="#pynucastro.rates.rate.TableIndex.DQ" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.TableIndex.GAMMA">
-<span class="sig-name descname"><span class="pre">GAMMA</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">7</span></em><a class="headerlink" href="#pynucastro.rates.rate.TableIndex.GAMMA" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">GAMMA</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">7</span></em><a class="headerlink" href="#pynucastro.rates.rate.TableIndex.GAMMA" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.TableIndex.MU">
-<span class="sig-name descname"><span class="pre">MU</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#pynucastro.rates.rate.TableIndex.MU" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">MU</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#pynucastro.rates.rate.TableIndex.MU" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.TableIndex.NU">
-<span class="sig-name descname"><span class="pre">NU</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">6</span></em><a class="headerlink" href="#pynucastro.rates.rate.TableIndex.NU" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">NU</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">6</span></em><a class="headerlink" href="#pynucastro.rates.rate.TableIndex.NU" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.TableIndex.RATE">
-<span class="sig-name descname"><span class="pre">RATE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">5</span></em><a class="headerlink" href="#pynucastro.rates.rate.TableIndex.RATE" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">RATE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">5</span></em><a class="headerlink" href="#pynucastro.rates.rate.TableIndex.RATE" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.TableIndex.RHOY">
-<span class="sig-name descname"><span class="pre">RHOY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#pynucastro.rates.rate.TableIndex.RHOY" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">RHOY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#pynucastro.rates.rate.TableIndex.RHOY" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.TableIndex.T">
-<span class="sig-name descname"><span class="pre">T</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#pynucastro.rates.rate.TableIndex.T" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">T</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#pynucastro.rates.rate.TableIndex.T" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.TableIndex.VS">
-<span class="sig-name descname"><span class="pre">VS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">4</span></em><a class="headerlink" href="#pynucastro.rates.rate.TableIndex.VS" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">VS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">4</span></em><a class="headerlink" href="#pynucastro.rates.rate.TableIndex.VS" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.TableInterpolator">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.rates.rate.</span></span><span class="sig-name descname"><span class="pre">TableInterpolator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#TableInterpolator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.TableInterpolator" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.rates.rate.</span></span><span class="sig-name descname"><span class="pre">TableInterpolator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#TableInterpolator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.TableInterpolator" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pynucastro.rates.rate.TableInterpolator" title="pynucastro.rates.rate.TableInterpolator"><code class="xref py py-class docutils literal notranslate"><span class="pre">TableInterpolator</span></code></a></p>
 <p>A simple class that holds a pointer to the table data and
 methods that allow us to interpolate a variable</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.TableInterpolator.class_type">
-<span class="sig-name descname"><span class="pre">class_type</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">jitclass.TableInterpolator#7f8c84639d20&lt;data:array(float64,</span> <span class="pre">2d,</span> <span class="pre">A),table_rhoy_lines:int32,table_temp_lines:int32,rhoy:array(float64,</span> <span class="pre">1d,</span> <span class="pre">A),temp:array(float64,</span> <span class="pre">1d,</span> <span class="pre">A)&gt;</span></em><a class="headerlink" href="#pynucastro.rates.rate.TableInterpolator.class_type" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">class_type</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">jitclass.TableInterpolator#7f8801a77fd0&lt;data:array(float64,</span> <span class="pre">2d,</span> <span class="pre">A),table_rhoy_lines:int32,table_temp_lines:int32,rhoy:array(float64,</span> <span class="pre">1d,</span> <span class="pre">A),temp:array(float64,</span> <span class="pre">1d,</span> <span class="pre">A)&gt;</span></em><a class="headerlink" href="#pynucastro.rates.rate.TableInterpolator.class_type" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.TabularRate">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.rates.rate.</span></span><span class="sig-name descname"><span class="pre">TabularRate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rfile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rfile_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#TabularRate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.TabularRate" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.rates.rate.</span></span><span class="sig-name descname"><span class="pre">TabularRate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rfile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#TabularRate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.TabularRate" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pynucastro.rates.rate.Rate" title="pynucastro.rates.rate.Rate"><code class="xref py py-class docutils literal notranslate"><span class="pre">Rate</span></code></a></p>
 <p>A tabular rate.</p>
 <dl class="field-list simple">
@@ -726,26 +726,26 @@ methods that allow us to interpolate a variable</p>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.TabularRate.eval">
-<span class="sig-name descname"><span class="pre">eval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rhoY</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#TabularRate.eval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.TabularRate.eval" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">eval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rhoY</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#TabularRate.eval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.TabularRate.eval" title="Link to this definition"></a></dt>
 <dd><p>evauate the reaction rate for temperature T</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.TabularRate.function_string_py">
-<span class="sig-name descname"><span class="pre">function_string_py</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#TabularRate.function_string_py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.TabularRate.function_string_py" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">function_string_py</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#TabularRate.function_string_py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.TabularRate.function_string_py" title="Link to this definition"></a></dt>
 <dd><p>Return a string containing python function that computes the
 rate</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.TabularRate.get_nu_loss">
-<span class="sig-name descname"><span class="pre">get_nu_loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rhoY</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#TabularRate.get_nu_loss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.TabularRate.get_nu_loss" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">get_nu_loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rhoY</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#TabularRate.get_nu_loss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.TabularRate.get_nu_loss" title="Link to this definition"></a></dt>
 <dd><p>get the neutrino loss rate for the reaction if tabulated</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.TabularRate.get_rate_id">
-<span class="sig-name descname"><span class="pre">get_rate_id</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#TabularRate.get_rate_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.TabularRate.get_rate_id" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">get_rate_id</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#TabularRate.get_rate_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.TabularRate.get_rate_id" title="Link to this definition"></a></dt>
 <dd><p>Get an identifying string for this rate.
 Don’t include resonance state since we combine resonant and
 non-resonant versions of reactions.</p>
@@ -753,13 +753,13 @@ non-resonant versions of reactions.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.TabularRate.get_tabular_rate">
-<span class="sig-name descname"><span class="pre">get_tabular_rate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#TabularRate.get_tabular_rate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.TabularRate.get_tabular_rate" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">get_tabular_rate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#TabularRate.get_tabular_rate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.TabularRate.get_tabular_rate" title="Link to this definition"></a></dt>
 <dd><p>read the rate data from .dat file</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.TabularRate.plot">
-<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Tmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Tmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1600000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rhoYmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">390000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rhoYmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2000000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color_field</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'rate'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(10,</span> <span class="pre">10)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#TabularRate.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.TabularRate.plot" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Tmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Tmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1600000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rhoYmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">390000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rhoYmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2000000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color_field</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'rate'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(10,</span> <span class="pre">10)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#TabularRate.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.TabularRate.plot" title="Link to this definition"></a></dt>
 <dd><p>plot the rate’s temperature sensitivity vs temperature</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -784,7 +784,7 @@ non-resonant versions of reactions.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.Tfactors">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.rates.rate.</span></span><span class="sig-name descname"><span class="pre">Tfactors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#Tfactors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.Tfactors" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.rates.rate.</span></span><span class="sig-name descname"><span class="pre">Tfactors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#Tfactors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.Tfactors" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pynucastro.rates.rate.Tfactors" title="pynucastro.rates.rate.Tfactors"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tfactors</span></code></a></p>
 <p>precompute temperature factors for speed</p>
 <dl class="field-list simple">
@@ -804,24 +804,24 @@ non-resonant versions of reactions.</p>
 </dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.Tfactors.class_type">
-<span class="sig-name descname"><span class="pre">class_type</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">jitclass.Tfactors#7f8c846179a0&lt;T9:float64,T9i:float64,T913:float64,T913i:float64,T953:float64,lnT9:float64&gt;</span></em><a class="headerlink" href="#pynucastro.rates.rate.Tfactors.class_type" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">class_type</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">jitclass.Tfactors#7f8809b20490&lt;T9:float64,T9i:float64,T913:float64,T913i:float64,T953:float64,lnT9:float64&gt;</span></em><a class="headerlink" href="#pynucastro.rates.rate.Tfactors.class_type" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.get_rates_dir">
-<span class="sig-prename descclassname"><span class="pre">pynucastro.rates.rate.</span></span><span class="sig-name descname"><span class="pre">get_rates_dir</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#get_rates_dir"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.get_rates_dir" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pynucastro.rates.rate.</span></span><span class="sig-name descname"><span class="pre">get_rates_dir</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#get_rates_dir"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.get_rates_dir" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.get_tabular_dir">
-<span class="sig-prename descclassname"><span class="pre">pynucastro.rates.rate.</span></span><span class="sig-name descname"><span class="pre">get_tabular_dir</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#get_tabular_dir"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.get_tabular_dir" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pynucastro.rates.rate.</span></span><span class="sig-name descname"><span class="pre">get_tabular_dir</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#get_tabular_dir"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.get_tabular_dir" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.load_rate">
-<span class="sig-prename descclassname"><span class="pre">pynucastro.rates.rate.</span></span><span class="sig-name descname"><span class="pre">load_rate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rfile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rfile_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#load_rate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.load_rate" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pynucastro.rates.rate.</span></span><span class="sig-name descname"><span class="pre">load_rate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rfile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#load_rate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.load_rate" title="Link to this definition"></a></dt>
 <dd><p>Try to load a rate of any type.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Raises<span class="colon">:</span></dt>

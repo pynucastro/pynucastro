@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Selecting Rates from a Library &mdash; pynucastro 2.0.3.post87+g784fcac5 documentation</title>
+  <title>Selecting Rates from a Library &mdash; pynucastro 2.0.3.post88+gbad37947 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
@@ -14,13 +14,13 @@
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="_static/jquery.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/doctools.js"></script>
-        <script src="_static/sphinx_highlight.js"></script>
-        <script src="_static/clipboard.min.js"></script>
-        <script src="_static/copybutton.js"></script>
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=916ef0ef"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="_static/copybutton.js?v=f281be69"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
         <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
@@ -130,13 +130,13 @@
            <div itemprop="articleBody">
              
   <section id="Selecting-Rates-from-a-Library">
-<h1>Selecting Rates from a Library<a class="headerlink" href="#Selecting-Rates-from-a-Library" title="Permalink to this heading"></a></h1>
+<h1>Selecting Rates from a Library<a class="headerlink" href="#Selecting-Rates-from-a-Library" title="Link to this heading"></a></h1>
 <p>The <code class="docutils literal notranslate"><span class="pre">Library</span></code> class in <code class="docutils literal notranslate"><span class="pre">pynucastro</span></code> provides a high level interface for reading files containing one or more Reaclib rates and then filtering these rates based on user-specified criteria for the nuclei involved in the reactions. We can then use the resulting rates to build a network.</p>
 <p>This example uses a Reaclib snapshot (<code class="docutils literal notranslate"><span class="pre">20180319default2</span></code>) downloaded from:</p>
 <p><a class="reference external" href="https://reaclib.jinaweb.org/library.php?action=viewsnapshots">https://reaclib.jinaweb.org/library.php?action=viewsnapshots</a></p>
 <p>That snapshot is found in the library search path.</p>
 <section id="Reading-a-rate-snapshot">
-<h2>Reading a rate snapshot<a class="headerlink" href="#Reading-a-rate-snapshot" title="Permalink to this heading"></a></h2>
+<h2>Reading a rate snapshot<a class="headerlink" href="#Reading-a-rate-snapshot" title="Link to this heading"></a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">Library</span></code> class will look for the library file in the working directory or in the <code class="docutils literal notranslate"><span class="pre">pynucastro/library</span></code> subdirectory of the <code class="docutils literal notranslate"><span class="pre">pynucastro</span></code> package.</p>
 <p>When the constructor is supplied a file name, <code class="docutils literal notranslate"><span class="pre">pynucastro</span></code> will read the contents of this file and interpret them as Reaclib rates in either the Reaclib 1 or 2 formats. The <code class="docutils literal notranslate"><span class="pre">Library</span></code> then stores the rates from the file as <code class="docutils literal notranslate"><span class="pre">Rate</span></code> objects.</p>
 <div class="nbinput nblast docutils container">
@@ -157,7 +157,7 @@
 </div>
 </section>
 <section id="Specifying-Desired-Nuclei">
-<h2>Specifying Desired Nuclei<a class="headerlink" href="#Specifying-Desired-Nuclei" title="Permalink to this heading"></a></h2>
+<h2>Specifying Desired Nuclei<a class="headerlink" href="#Specifying-Desired-Nuclei" title="Link to this heading"></a></h2>
 <p>This example constructs a CNO network like the one constructed from a set of Reaclib rate files in the “pynucastro usage examples” section of this documentation.</p>
 <p>This time, however, we will specify the nuclei we want in the network and allow the <code class="docutils literal notranslate"><span class="pre">Library</span></code> class to find all the rates linking only nuclei in the set we specified.</p>
 <p>We can specify these nuclei by their abbreviations in the form, e.g. “he4”:</p>
@@ -218,10 +218,10 @@
 <p>And we could run this together with the burn driver program in <code class="docutils literal notranslate"><span class="pre">examples/burn.py</span></code></p>
 </section>
 <section id="Filtering-the-Library">
-<h2>Filtering the Library<a class="headerlink" href="#Filtering-the-Library" title="Permalink to this heading"></a></h2>
+<h2>Filtering the Library<a class="headerlink" href="#Filtering-the-Library" title="Link to this heading"></a></h2>
 <p>This example introduces the <code class="docutils literal notranslate"><span class="pre">RateFilter</span></code> class which allows us to define a set of reactants and products to search for in a <code class="docutils literal notranslate"><span class="pre">Library</span></code> object.</p>
 <section id="Inexact-Filtering">
-<h3>Inexact Filtering<a class="headerlink" href="#Inexact-Filtering" title="Permalink to this heading"></a></h3>
+<h3>Inexact Filtering<a class="headerlink" href="#Inexact-Filtering" title="Link to this heading"></a></h3>
 <p>Inexact filtering is like using wildcards: in the following example, the rate filter we define will match any rates in which <span class="math notranslate nohighlight">\(\mathrm{^{12}C}\)</span> is a reactant.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
@@ -295,7 +295,7 @@ O16 + C12 ⟶ n + Si27           [Q =  -0.42 MeV] (o16 + c12 --&gt; n + si27 &lt
 </div>
 </section>
 <section id="Exact-Filtering">
-<h3>Exact Filtering<a class="headerlink" href="#Exact-Filtering" title="Permalink to this heading"></a></h3>
+<h3>Exact Filtering<a class="headerlink" href="#Exact-Filtering" title="Link to this heading"></a></h3>
 <p>Exact filtering is useful when you have a specific rate in mind or a specific combination of reactants or products. In the following example, we look for all rates of the form <span class="math notranslate nohighlight">\(\mathrm{^{12}C + ^{12}C \rightarrow \ldots}\)</span></p>
 <p>To use exact filtering, omit the <code class="docutils literal notranslate"><span class="pre">exact</span></code> keyword to the <code class="docutils literal notranslate"><span class="pre">RateFilter</span></code> constructor, as it is turned on by default.</p>
 <p>Exact filtering does not mean all the nuclei involved in the rate must be specified, it means that all filtering options passed to the <code class="docutils literal notranslate"><span class="pre">RateFilter</span></code> constructor are strictly applied. In this case, the filter will return rates with exactly two reactants, both of which are <span class="math notranslate nohighlight">\(\mathrm{^{12}C}\)</span>. However, the filter places no constraint on the products or number of products in the rate.</p>
@@ -322,7 +322,7 @@ C12 + C12 ⟶ n + Mg23           [Q =  -2.60 MeV] (c12 + c12 --&gt; n + mg23 &lt
 </section>
 </section>
 <section id="Example:-Building-an-Alpha-Capture-Network">
-<h2>Example: Building an Alpha Capture Network<a class="headerlink" href="#Example:-Building-an-Alpha-Capture-Network" title="Permalink to this heading"></a></h2>
+<h2>Example: Building an Alpha Capture Network<a class="headerlink" href="#Example:-Building-an-Alpha-Capture-Network" title="Link to this heading"></a></h2>
 <p>In the next example, we use rate filtering to iteratively construct a <code class="docutils literal notranslate"><span class="pre">Library</span></code> containing the alpha capture rates linking <span class="math notranslate nohighlight">\(\mathrm{^{12}C}\)</span> to <span class="math notranslate nohighlight">\(\mathrm{^{56}Ni}\)</span>.</p>
 <p>After finding each successive link in the alpha capture chain, we call <code class="docutils literal notranslate"><span class="pre">Library.heaviest()</span></code> to find the heaviest nucleus in the filtered rates. This corresponds to the nucleus with the largest mass number, and in case of a tie between isobars, this returns the isobar with the smallest atomic number. We use this feature to find the reverse rate for each alpha capture reaction.</p>
 <p>In the example below, we add each filtered library to our alpha capture library <code class="docutils literal notranslate"><span class="pre">alpha_library</span></code>, initialized as an empty <code class="docutils literal notranslate"><span class="pre">Library</span></code>. The <code class="docutils literal notranslate"><span class="pre">Library</span></code> class supports the addition operator by returning a new library containing the rates in the two libraries we added together.</p>
