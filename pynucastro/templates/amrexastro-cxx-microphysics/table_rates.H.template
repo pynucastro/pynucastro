@@ -195,6 +195,11 @@ evaluate_dr_dtemp(const table_t& table_meta, const R& log_rho_table, const T& lo
     //Now we compute the central differences within the boundaries
     //or the the forward differences on the boundaries
 
+    Real dr_dt_ij
+    Real dr_dt_ip1j
+    Real dr_dt_ijp1
+    Real dr_dt_ip1jp1
+
     if ((jtemp - 1 < 1) || (jtemp + 2 > table_meta.ntemp)) {
 
         // In this case, we use the following stencil to reconstruct the
@@ -232,10 +237,10 @@ evaluate_dr_dtemp(const table_t& table_meta, const R& log_rho_table, const T& lo
         //                |                 |
         //            dr_dt_ij-----------dr_dt_ip1j
 
-        Real dr_dt_ij = (fijp1 - fij)/(t_jp1 - t_j);
-        Real dr_dt_ijp1 = (fijp2 - fijp1)/(t_jp2 - t_jp1);
-        Real dr_dt_ip1j = (fip1jp1 - fip1j)/(t_jp1 - t_j);
-        Real dr_dt_ip1jp1 = (fip1jp2 - fip1j)/(t_jp1 - t_j);
+        dr_dt_ij = (fijp1 - fij)/(t_jp1 - t_j);
+        dr_dt_ijp1 = (fijp2 - fijp1)/(t_jp2 - t_jp1);
+        dr_dt_ip1j = (fip1jp1 - fip1j)/(t_jp1 - t_j);
+        dr_dt_ip1jp1 = (fip1jp2 - fip1j)/(t_jp1 - t_j);
 
     } else {
 
@@ -282,10 +287,10 @@ evaluate_dr_dtemp(const table_t& table_meta, const R& log_rho_table, const T& lo
         //                |                 |
         //            dr_dt_ij-----------dr_dt_ip1j
 
-        Real dr_dt_ij = (fijp1 - fijm1)/(t_jp1 - t_jm1);
-        Real dr_dt_ijp1 = (fijp2 - fij)/(t_jp2 - t_j);
-        Real dr_dt_ip1j = (fip1jp1 - fip1jm1)/(t_jp1 - t_jm1);
-        Real dr_dt_ip1jp1 = (fip1jp2 - fip1j)/(t_jp2 - t_j);
+        dr_dt_ij = (fijp1 - fijm1)/(t_jp1 - t_jm1);
+        dr_dt_ijp1 = (fijp2 - fij)/(t_jp2 - t_j);
+        dr_dt_ip1j = (fip1jp1 - fip1jm1)/(t_jp1 - t_jm1);
+        dr_dt_ip1jp1 = (fip1jp2 - fip1j)/(t_jp2 - t_j);
 
     }
 
