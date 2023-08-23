@@ -197,12 +197,90 @@ evaluate_dr_dtemp(const table_t& table_meta, const R& log_rho_table, const T& lo
 
     if ((jtemp - 1 < 1) || (jtemp + 2 > table_meta.ntemp)) {
 
+        // In this case, we use the following stencil to reconstruct the
+        // temperature derivatives by using the forward difference numerical
+        // scheme over the following stencil:
+
+        //             fijp1 ----------fip1jp2
+        //              |                 |
+        //              |                 |
+        //              |                 |
+        //              |                 |
+        //              |                 |
+        //              |                 |
+        //              |                 |
+        //             fijp1-----------fip1jp1
+        //              |                 |
+        //              |                 |
+        //              |                 |
+        //              |                 |
+        //              |                 |
+        //              |                 |
+        //              |                 |
+        //             fij-------------fip1j
+
+        // After we perform the finite differences we obtain the following
+        // the following stencil of derivatives:
+
+        //            dr_dt_ijp1 --------dr_dt_ip1jp1
+        //                |                 |
+        //                |                 |
+        //                |                 |
+        //                |                 |
+        //                |                 |
+        //                |                 |
+        //                |                 |
+        //            dr_dt_ij-----------dr_dt_ip1j
+
         Real dr_dt_ij = (fijp1 - fij)/(t_jp1 - t_j);
         Real dr_dt_ijp1 = (fijp2 - fijp1)/(t_jp2 - t_jp1);
         Real dr_dt_ip1j = (fip1jp1 - fip1j)/(t_jp1 - t_j);
-        Real dr_dt_ip1jp1 = (fip1jp2 - fip1jp1)/(t_jp2 - t_jp1);
+        Real dr_dt_ip1jp1 = (fip1jp2 - fip1j)/(t_jp1 - t_j);
 
     } else {
+
+        // In this case, we use a bigger stencil to reconstruct the
+        // temperature derivatives by using the central finite difference
+        // numerical scheme:
+
+        //              fijp1 ----------fip1jp2
+        //                |                 |
+        //                |                 |
+        //                |                 |
+        //                |                 |
+        //                |                 |
+        //                |                 |
+        //                |                 |
+        //               fijp1------------fip1jp1
+        //                |                 |
+        //                |                 |
+        //                |                 |
+        //                |                 |
+        //                |                 |
+        //                |                 |
+        //                |                 |
+        //               fij------------- fip1j
+        //                |                 |
+        //                |                 |
+        //                |                 |
+        //                |                 |
+        //                |                 |
+        //                |                 |
+        //                |                 |
+        //               fijm1------------fip1jm1
+
+        // After we perform the finite differences we obtain the following
+        // the following stencil of derivatives:
+
+        //            dr_dt_ijp1 --------dr_dt_ip1jp1
+        //                |                 |
+        //                |                 |
+        //                |                 |
+        //                |                 |
+        //                |                 |
+        //                |                 |
+        //                |                 |
+        //            dr_dt_ij-----------dr_dt_ip1j
 
         Real dr_dt_ij = (fijp1 - fijm1)/(t_jp1 - t_jm1);
         Real dr_dt_ijp1 = (fijp2 - fij)/(t_jp2 - t_j);
@@ -211,7 +289,7 @@ evaluate_dr_dtemp(const table_t& table_meta, const R& log_rho_table, const T& lo
 
     }
 
-    //And interpolate through all the derivatives:
+    //Now we interpolate through all the derivative points:
 
     Real E = dr_dt_ij;
     Real C = (dr_dt_ijp1 - dr_dt_ij) / dlog_rhoy;
@@ -226,11 +304,12 @@ evaluate_dr_dtemp(const table_t& table_meta, const R& log_rho_table, const T& lo
     return dlogr_dlogT;
 }
 
+
 template <typename R, typename T, typename D>
 AMREX_INLINE AMREX_GPU_HOST_DEVICE
 void
 get_entries(const table_t& table_meta, const R& log_rho_table, const T& log_temp_table, const D& data,
-            const Real rhoy, const Real temp, Array1D<Real, 1, num_vars+1>& entries);
+            const Real rhoy, const Real temp, Array1D<Real, 1, num_vars+1>& entries)
 {
 
     entries(jtab_rate)   = linear_interpolator(table_meta, log_rho_table, log_temp_table, data,
