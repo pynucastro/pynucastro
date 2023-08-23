@@ -195,10 +195,10 @@ evaluate_dr_dtemp(const table_t& table_meta, const R& log_rho_table, const T& lo
     //Now we compute the central differences within the boundaries
     //or the the forward differences on the boundaries
 
-    Real dr_dt_ij
-    Real dr_dt_ip1j
-    Real dr_dt_ijp1
-    Real dr_dt_ip1jp1
+    Real dr_dt_ij;
+    Real dr_dt_ip1j;
+    Real dr_dt_ijp1;
+    Real dr_dt_ip1jp1;
 
     if ((jtemp - 1 < 1) || (jtemp + 2 > table_meta.ntemp)) {
 
