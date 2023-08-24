@@ -1338,13 +1338,16 @@ class ReacLibRate(Rate):
         return fig
 
 
-interpolator_spec = [
-    ('data', numba.float64[:, :]),
-    ('table_rhoy_lines', numba.int32),
-    ('table_temp_lines', numba.int32),
-    ('rhoy', numba.float64[:]),
-    ('temp', numba.float64[:])
-]
+if numba is not None:
+    interpolator_spec = [
+        ('data', numba.float64[:, :]),
+        ('table_rhoy_lines', numba.int32),
+        ('table_temp_lines', numba.int32),
+        ('rhoy', numba.float64[:]),
+        ('temp', numba.float64[:])
+    ]
+else:
+    interpolator_spec = []
 
 
 @jitclass(interpolator_spec)
