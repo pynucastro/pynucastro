@@ -128,7 +128,7 @@ int vector_index_lu(const int vlen, const V& vector, const Real fvar)
 
 AMREX_INLINE AMREX_GPU_HOST_DEVICE
 Real
-evaluate_linear_1d(Real fhi, Real flo, Real xhi, Real xlo, Real x)
+evaluate_linear_1d(const Real fhi, const Real flo, const Real xhi, const Real xlo, const Real x)
 {
     Real f;
 
@@ -145,9 +145,9 @@ evaluate_linear_1d(Real fhi, Real flo, Real xhi, Real xlo, Real x)
 
 AMREX_INLINE AMREX_GPU_HOST_DEVICE
 Real
-evaluate_linear_2d(Real fip1jp1, Real fip1j, Real fijp1, Real fij,
-          Real xhi, Real xlo, Real yhi, Real ylo,
-          Real x, Real y)
+evaluate_linear_2d(const Real fip1jp1, const Real fip1j, const Real fijp1, const Real fij,
+          const Real xhi, const Real xlo, const Real yhi, const Real ylo,
+          const Real x, const Real y)
 {
     Real f;
 
@@ -167,7 +167,7 @@ evaluate_linear_2d(Real fip1jp1, Real fip1j, Real fijp1, Real fij,
         Real E =  fij;
         Real C = (fijp1 - fij) / dx;
         Real B = (fip1j - fij) / dy;
-        Real A = (fip1jp1 - B * dx - C * dy - E)/ (dx * dy);
+        Real A = (fip1jp1 - B * dx - C * dy - E) / (dx * dy);
 
         f =  A * (x - xlo) * (y - ylo) +
              B * (x - xlo) +
@@ -232,7 +232,7 @@ evaluate_dr_dtemp(const table_t& table_meta, const R& log_rhoy_table, const T& l
 
     //Now we compute the forward finite difference on the boundary
 
-    if ((jtemp_lo -1  < 1) || (jtemp_hi + 1 > table_meta.ntemp)) {
+    if ((jtemp_lo - 1 < 1) || (jtemp_hi + 1 > table_meta.ntemp)) {
 
         // In this case we are in the boundaries of the table.
         // At the boundary, we compute the forward-j finite difference
@@ -379,7 +379,7 @@ template <typename R, typename T, typename D>
 AMREX_INLINE AMREX_GPU_HOST_DEVICE
 void
 tabular_evaluate(const table_t& table_meta,
-                 const R& rhoy_table, const T& temp_table, const D& data,
+                 const R& log_rhoy_table, const T& log_temp_table, const D& data,
                  const Real rhoy, const Real temp,
                  Real& rate, Real& drate_dt, Real& edot_nu, Real& edot_gamma)
 {
@@ -387,7 +387,7 @@ tabular_evaluate(const table_t& table_meta,
 
     // Get the table entries at this rhoy, temp
 
-    get_entries(table_meta, rhoy_table, temp_table, data,
+    get_entries(table_meta, log_rhoy_table, log_temp_table, data,
                 rhoy, temp, entries);
 
     // Fill outputs: rate, d(rate)/d(temperature), and
