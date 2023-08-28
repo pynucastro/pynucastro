@@ -12,7 +12,7 @@ using namespace amrex;
 
 void init_tabular();
 
-// Table is expected to be in terms of dens*ye and temp (non-logarithmic, cgs units)
+// Table is expected to be in terms of dens*ye and temp (logarithmic, cgs units)
 // Table energy units are expected in terms of ergs
 
 // all tables are expected to have columns:
@@ -57,7 +57,7 @@ namespace rate_tables
 }
 
 template <typename R, typename T, typename D>
-void init_tab_info(const table_t& tf, const std::string& file, R& log_rhoy, T& log_temp, D& data) {
+void init_tab_info(const table_t& tf, const std::string& file, R& log_rhoy_table, T& log_temp_table, D& data) {
 
     std::ifstream table;
     table.open(file);
@@ -77,7 +77,7 @@ void init_tab_info(const table_t& tf, const std::string& file, R& log_rhoy, T& l
             std::getline(table, line);
             std::istringstream sdata(line);
 
-            sdata >> log_rhoy(j) >> log_temp(i);
+            sdata >> log_rhoy_table(j) >> log_temp_table(i);
 
             for (int n = 1; n <= tf.nvars; ++n) {
                 sdata >> data(i, j, n);
@@ -126,35 +126,85 @@ int vector_index_lu(const int vlen, const V& vector, const Real fvar)
 }
 
 
+AMREX_GPU_HOST_DEVICE
+Real
+linear_1d(Real fhi, Real flo, Real xhi, Real xlo, Real x)
+{
+    Real f;
+
+    if (x <= xlo) {
+        f = flo;
+    } else if (x >= xhi) {
+        f = fhi;
+    } else {
+        f = flo + (fhi - flo)/(xhi - xlo) * (x - xlo);
+    }
+
+    return f;
+}
+
+AMREX_INLINE AMREX_GPU_HOST_DEVICE
+Real
+linear_2d(Real fip1jp1, Real fip1j, Real fijp1, Real fij,
+          Real xhi, Real xlo, Real yhi, Real ylo,
+          Real x, Real y)
+{
+    Real f;
+
+    if ((x <= xlo) && (y <= ylo)) {
+        f = fij;
+    } else if ((x <= xlo) && (y >= yhi)) {
+        f = fijp1;
+    } else if ((x >= xhi) && (y <= ylo)) {
+        f =fip1j;
+    } else if ((x >= xhi) && (y <= ylo)) {
+        f = fip1jp1;
+    } else {
+        Real dx = xhi - xlo
+        Real dy = yhi - ylo
+
+        Real E =  fij;
+        Real C = (fijp1 - fij) / dx;
+        Real B = (fip1j - fij) / dy;
+        Real A = (fip1jp1 - B * dx - C * dy - E)/ (dx * dy);
+
+        f =  A * (x - xlo) * (y - ylo) +
+             B * (x - xlo) +
+             C * (y - ylo) +
+             E;
+    }
+    return f;
+}
+
+
 template<typename R, typename T, typename D>
 AMREX_INLINE AMREX_GPU_HOST_DEVICE
 Real
-linear_interpolator(const table_t& table_meta, const R& log_rho_table, const T& log_temp_table, const D& data,
+linear_interpolator(const table_t& table_meta, const R& log_rhoy_table, const T& log_temp_table, const D& data,
                     const Real rhoy, const Real temp, const int component)
 {
     const Real log_rhoy = std::log10(rhoy);
     const Real log_temp = std::log10(temp);
 
-    int irhoy = vector_index_lu(table_meta.nrhoy, log_rho_table, log_rhoy);
-    int jtemp = vector_index_lu(table_meta.ntemp, log_temp_table, log_temp);
+    int jtemp_lo = vector_index_lu(table_meta.ntemp, log_temp_table, log_temp);
+    int jtemp_hi = jtemp_lo + 1;
 
-    const Real dlog_rhoy = log_rho_table(irhoy+1) - log_rho_table(irhoy);
-    const Real dlog_temp = log_temp_table(jtemp+1) - log_temp_table(jtemp);
+    int irhoy_lo = vector_index_lu(table_meta.nrhoy, log_rhoy_table, log_rhoy);
+    int irhoy_hi = irhoy_lo + 1;
 
-    Real fij = data(jtemp, irhoy, component);
-    Real fip1j = data(jtemp, irhoy+1, component);
-    Real fijp1 = data(jtemp+1, irhoy, component);
-    Real fip1jp1 = data(jtemp+1, irhoy+1, component);
+    Real rhoy_lo = log_rhoy_table(jtemp_lo);
+    Real rhoy_hi = log_rhoy_table(jtemp_hi)
 
-    Real E =  fij;
-    Real C = (fijp1 - fij) / dlog_rhoy;
-    Real B = (fip1j - fij) / dlog_temp;
-    Real A = (fip1jp1 - B * dlog_rhoy - C * dlog_temp + E)/ (dlog_rhoy * dlog_temp);
+    Real t_lo = log_temp_table(jtemp_lo);
+    Real t_hi = log_temp_table(jtemp_hi);
 
-    Real r =  A * (log_rhoy - log_rho_table(irhoy)) * (log_temp - log_temp_table(jtemp)) +
-              B * (log_rhoy - log_rho_table(irhoy)) +
-              C * (log_temp - log_temp_table(jtemp)) +
-              E;
+    Real fij = data(jtemp_lo, irhoy_lo, component);
+    Real fip1j = data(jtemp_lo, irhoy_hi, component);
+    Real fijp1 = data(jtemp_hi, irhoy_lo, component);
+    Real fip1jp1 = data(jtemp_hi, irhoy_hi, component);
+
+    Real r = linear_2d(fip1jp1, fip1j, fijp1, fij,
+                       rhoy_hi, rhoy_lo, t_hi, t_lo, log_rhoy, log_temp);
 
     return r;
 }
@@ -163,57 +213,32 @@ linear_interpolator(const table_t& table_meta, const R& log_rho_table, const T& 
 template<typename R, typename T, typename D>
 AMREX_INLINE AMREX_GPU_HOST_DEVICE
 Real
-evaluate_dr_dtemp(const table_t& table_meta, const R& log_rho_table, const T& log_temp_table, const D& data,
+evaluate_dr_dtemp(const table_t& table_meta, const R& log_rhoy_table, const T& log_temp_table, const D& data,
                   const Real rhoy, const Real temp)
 {
-    //Now we compute dlogr_dlogT
+    // The main objective of this function is compute dlogr_dlogt.
 
     const Real log_rhoy = std::log10(rhoy);
     const Real log_temp = std::log10(temp);
 
-    int irhoy = vector_index_lu(table_meta.nrhoy, log_rho_table, log_rhoy);
-    int jtemp = vector_index_lu(table_meta.ntemp, log_temp_table, log_temp);
+    int irhoy_lo = vector_index_lu(table_meta.nrhoy, log_rhoy_table, log_rhoy);
+    int irhoy_hi = irhoy_lo + 1;
 
-    const Real dlog_rhoy = log_rho_table(irhoy+1) - log_rho_table(irhoy);
-    const Real dlog_temp = log_temp_table(jtemp+1) - log_temp_table(jtemp);
+    int jtemp_lo = vector_index_lu(table_meta.ntemp, log_temp_table, log_temp);
+    int jtemp_hi = jtemp_lo + 1;
 
-    Real t_jm1 = log_temp_table(jtemp-1);
-    Real t_j = log_temp_table(jtemp);
-    Real t_jp1 = log_temp_table(jtemp+1);
-    Real t_jp2 = log_temp_table(jtemp+2);
+    Real dlogr_dlogt;
 
-    Real fijm1 = data(jtemp-1, irhoy, jtab_rate);
-    Real fij = data(jtemp, irhoy, jtab_rate);
-    Real fijp1 = data(jtemp+1, irhoy, jtab_rate);
-    Real fijp2 = data(jtemp+2, irhoy, jtab_rate);
+    //Now we compute the forward finite difference on the boundary
 
-    Real fip1jm1 = data(jtemp-1, irhoy+1, jtab_rate);
-    Real fip1j = data(jtemp, irhoy+1, jtab_rate);
-    Real fip1jp1 = data(jtemp+1, irhoy+1, jtab_rate);
-    Real fip1jp2 = data(jtemp+2, irhoy+1, jtab_rate);
+    if ((jtemp_lo -1  < 1) || (jtemp_hi + 1 > table_meta.ntemp)) {
 
-    //Now we compute the central differences within the boundaries
-    //or the the forward differences on the boundaries
-
-    Real dr_dt_ij;
-    Real dr_dt_ip1j;
-    Real dr_dt_ijp1;
-    Real dr_dt_ip1jp1;
-
-    if ((jtemp - 1 < 1) || (jtemp + 2 > table_meta.ntemp)) {
-
-        // In this case, we use the following stencil to reconstruct the
-        // temperature derivatives by using the forward difference numerical
-        // scheme over the following stencil:
-
-        //             fijp1 ----------fip1jp2
-        //              |                 |
-        //              |                 |
-        //              |                 |
-        //              |                 |
-        //              |                 |
-        //              |                 |
-        //              |                 |
+        // In this case we are in the boundaries of the table.
+        // At the boundary, we compute the forward-j finite difference
+        // to compute dlogr_dlogt_i and dlogr_dlogt_ip1, using the
+        // following stencil:
+        //
+        //
         //             fijp1-----------fip1jp1
         //              |                 |
         //              |                 |
@@ -223,32 +248,37 @@ evaluate_dr_dtemp(const table_t& table_meta, const R& log_rho_table, const T& lo
         //              |                 |
         //              |                 |
         //             fij-------------fip1j
+        //
+        // with the following result:
+        //
+        //            dlogr_dlogt_i --------dlogr_dlogt_ip1
+        //
+        // Finally, we perform a 1d-linear interpolation between dlogr_dlogt_ip1
+        // and dlogr_dlogt_i to compute dlogr_dlogt
 
-        // After we perform the finite differences we obtain the following
-        // the following stencil of derivatives:
+        Real rhoy_lo = log_temp_table(irhoy_lo);
+        Real rhoy_hi = log_temp_table(irhoy_hi);
 
-        //            dr_dt_ijp1 --------dr_dt_ip1jp1
-        //                |                 |
-        //                |                 |
-        //                |                 |
-        //                |                 |
-        //                |                 |
-        //                |                 |
-        //                |                 |
-        //            dr_dt_ij-----------dr_dt_ip1j
+        Real t_lo = log_temp_table(jtemp_lo);
+        Real t_hi = log_temp_table(jtemp_hi);
 
-        dr_dt_ij = (fijp1 - fij)/(t_jp1 - t_j);
-        dr_dt_ijp1 = (fijp2 - fijp1)/(t_jp2 - t_jp1);
-        dr_dt_ip1j = (fip1jp1 - fip1j)/(t_jp1 - t_j);
-        dr_dt_ip1jp1 = (fip1jp2 - fip1j)/(t_jp1 - t_j);
+        Real fij     = data(jtemp_lo, irhoy_lo, jtab_rate);
+        Real fip1j   = data(jtemp_lo, irhoy_hi, jtab_rate);
+        Real fijp1   = data(jtemp_hi, irhoy_lo, jtab_rate);
+        Real fip1jp1 = data(jtemp_hi, irhoy_hi, jtab_rate);
+
+        Real dlogr_dlogt_i   = (fijp1 - fij) / (thi - tlo);
+        Real dlogr_dlogt_ip1 = (fip1jp1 - fip1j) / (thi - tlo);
+
+        dlogr_dlogt = linear_1d(df_dt_ip1j, df_dt_ij, rhoy_hi, rhoy_lo, log_rhoy);
 
     } else {
 
         // In this case, we use a bigger stencil to reconstruct the
-        // temperature derivatives by using the central finite difference
-        // numerical scheme:
+        // temperature derivatives in the j and j+1 temperature positions,
+        // using the cetral-j finite differences:
 
-        //              fijp1 ----------fip1jp2
+        //              fijp2 ------------fip1jp2
         //                |                 |
         //                |                 |
         //                |                 |
@@ -273,10 +303,10 @@ evaluate_dr_dtemp(const table_t& table_meta, const R& log_rho_table, const T& lo
         //                |                 |
         //                |                 |
         //               fijm1------------fip1jm1
-
-        // After we perform the finite differences we obtain the following
-        // the following stencil of derivatives:
-
+        //
+        // with the following result:
+        //
+        //
         //            dr_dt_ijp1 --------dr_dt_ip1jp1
         //                |                 |
         //                |                 |
@@ -286,47 +316,60 @@ evaluate_dr_dtemp(const table_t& table_meta, const R& log_rho_table, const T& lo
         //                |                 |
         //                |                 |
         //            dr_dt_ij-----------dr_dt_ip1j
+        //
+        // Finally, we perform a 2d-linear interpolation to
+        // compute dlogr_dlogt.
 
-        dr_dt_ij = (fijp1 - fijm1)/(t_jp1 - t_jm1);
-        dr_dt_ijp1 = (fijp2 - fij)/(t_jp2 - t_j);
-        dr_dt_ip1j = (fip1jp1 - fip1jm1)/(t_jp1 - t_jm1);
-        dr_dt_ip1jp1 = (fip1jp2 - fip1j)/(t_jp2 - t_j);
+        Real t_jm1  = log_temp_table(jtemp_lo-1);
+        Real t_j    = log_temp_table(jtemp_lo);
+        Real t_jp1  = log_temp_table(jtemp_hi);
+        Real t_jp2  = log_temp_table(jtemp_hi+1);
+
+        Real rhoy_lo = log_rhoy_table(irhoy_lo)
+        Real rhoy_hi = log_rhoy_table(irhoy_hi)
+
+        Real fijm1   = data(jtemp_lo-1, irhoy_lo, jtab_rate);
+        Real fij     = data(jtemp_lo, irhoy_lo, jtab_rate);
+        Real fijp1   = data(jtemp_hi, irhoy_lo, jtab_rate);
+        Real fijp2   = data(jtemp_hi+1, irhoy_lo, jtab_rate);
+
+        Real fip1jm1 = data(jtemp_lo-1, irhoy_hi, jtab_rate);
+        Real fip1j   = data(jtemp_lo, irhoy_hi, jtab_rate);
+        Real fip1jp1 = data(jtemp_hi, irhoy_hi, jtab_rate);
+        Real fip1jp2 = data(jtemp_hi+1, irhoy_hi, jtab_rate);
+
+        Real dlogr_dlogt_ij     = (fijp1 - fijm1)/(t_jp1 - t_jm1);
+        Real dlogr_dlogt_ijp1   = (fijp2 - fij)/(t_jp2 - t_j);
+        Real dlogr_dlogt_ip1j   = (fip1jp1 - fip1jm1)/(t_jp1 - t_jm1);
+        Real dlogr_dlogt_ip1jp1 = (fip1jp2 - fip1j)/(t_jp2 - t_j);
+
+        dlogr_dlogt = linear_2d(dlogr_dlogt_ip1jp1,  dlogr_dlogt_ip1j, dlogr_dlogt_ijp1, dlogr_dlogt_ij,
+                                rhoy_hi, rhoy_lo, t_hi, t_lo,
+                                Real log_rhoy, Real log_temp)
 
     }
 
-    //Now we interpolate through all the derivative points:
-
-    Real E = dr_dt_ij;
-    Real C = (dr_dt_ijp1 - dr_dt_ij) / dlog_rhoy;
-    Real B = (dr_dt_ip1j - dr_dt_ij) / dlog_temp;
-    Real A = (dr_dt_ip1jp1 - B * dlog_rhoy - C * dlog_temp + E) / (dlog_rhoy * dlog_temp);
-
-    Real dlogr_dlogT =  A * (log_rhoy - log_rho_table(irhoy)) * (log_temp - log_temp_table(jtemp)) +
-                        B * (log_rhoy - log_rho_table(irhoy)) +
-                        C * (log_temp - log_temp_table(jtemp)) +
-                        E;
-
-    return dlogr_dlogT;
+    return dlogr_dlogt;
 }
 
 
 template <typename R, typename T, typename D>
 AMREX_INLINE AMREX_GPU_HOST_DEVICE
 void
-get_entries(const table_t& table_meta, const R& log_rho_table, const T& log_temp_table, const D& data,
+get_entries(const table_t& table_meta, const R& log_rhoy_table, const T& log_temp_table, const D& data,
             const Real rhoy, const Real temp, Array1D<Real, 1, num_vars+1>& entries)
 {
 
-    entries(jtab_rate)   = linear_interpolator(table_meta, log_rho_table, log_temp_table, data,
+    entries(jtab_rate)   = linear_interpolator(table_meta, log_rhoy_table, log_temp_table, data,
                                             rhoy, temp, jtab_rate);
 
-    entries(k_drate_dt)  = evaluate_dr_dtemp(table_meta, log_rho_table, log_temp_table, data,
+    entries(k_drate_dt)  = evaluate_dr_dtemp(table_meta, log_rhoy_table, log_temp_table, data,
                                             rhoy, temp);
 
-    entries(jtab_nuloss) = linear_interpolator(table_meta, log_rho_table, log_temp_table, data,
+    entries(jtab_nuloss) = linear_interpolator(table_meta, log_rhoy_table, log_temp_table, data,
                                             rhoy, temp, jtab_nuloss);
 
-    entries(jtab_gamma)  = linear_interpolator(table_meta, log_rho_table, log_temp_table, data,
+    entries(jtab_gamma)  = linear_interpolator(table_meta, log_rhoy_table, log_temp_table, data,
                                             rhoy, temp, jtab_gamma);
 
 }
