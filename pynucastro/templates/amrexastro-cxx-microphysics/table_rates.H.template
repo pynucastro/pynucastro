@@ -131,7 +131,6 @@ Real
 evaluate_linear_1d(const Real fhi, const Real flo, const Real xhi, const Real xlo, const Real x)
 {
     Real f;
-
     if (x <= xlo) {
         f = flo;
     } else if (x >= xhi) {
@@ -139,7 +138,6 @@ evaluate_linear_1d(const Real fhi, const Real flo, const Real xhi, const Real xl
     } else {
         f = flo + (fhi - flo) * (x - xlo) / (xhi - xlo);
     }
-
     return f;
 }
 
@@ -165,8 +163,8 @@ evaluate_linear_2d(const Real fip1jp1, const Real fip1j, const Real fijp1, const
         Real dy = yhi - ylo;
 
         Real E =  fij;
-        Real C = (fijp1 - fij) / dx;
-        Real B = (fip1j - fij) / dy;
+        Real C = (fijp1 - fij) / dy;
+        Real B = (fip1j - fij) / dx;
         Real A = (fip1jp1 - B * dx - C * dy - E) / (dx * dy);
 
         f =  A * (x - xlo) * (y - ylo) +
