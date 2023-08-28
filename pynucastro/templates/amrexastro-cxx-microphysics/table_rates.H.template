@@ -90,7 +90,7 @@ void init_tab_info(const table_t& tf, const std::string& file, R& log_rhoy_table
 
 
 template <typename V>
-AMREX_GPU_HOST_DEVICE AMREX_INLINE
+AMREX_INLINE AMREX_GPU_HOST_DEVICE
 int vector_index_lu(const int vlen, const V& vector, const Real fvar)
 {
 
@@ -126,7 +126,7 @@ int vector_index_lu(const int vlen, const V& vector, const Real fvar)
 }
 
 
-AMREX_GPU_HOST_DEVICE
+AMREX_INLINE AMREX_GPU_HOST_DEVICE
 Real
 evaluate_linear_1d(Real fhi, Real flo, Real xhi, Real xlo, Real x)
 {
@@ -137,7 +137,7 @@ evaluate_linear_1d(Real fhi, Real flo, Real xhi, Real xlo, Real x)
     } else if (x >= xhi) {
         f = fhi;
     } else {
-        f = flo + (fhi - flo)/(xhi - xlo) * (x - xlo);
+        f = flo + (fhi - flo) * (x - xlo) / (xhi - xlo);
     }
 
     return f;
@@ -205,7 +205,7 @@ linear_interpolator(const table_t& table_meta, const R& log_rhoy_table, const T&
     Real fip1jp1 = data(jtemp_hi, irhoy_hi, component);
 
     Real r = evaluate_linear_2d(fip1jp1, fip1j, fijp1, fij,
-                       rhoy_hi, rhoy_lo, t_hi, t_lo, log_rhoy, log_temp);
+                                rhoy_hi, rhoy_lo, t_hi, t_lo, log_rhoy, log_temp);
 
     return r;
 }
