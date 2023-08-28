@@ -344,8 +344,8 @@ evaluate_dr_dtemp(const table_t& table_meta, const R& log_rhoy_table, const T& l
         Real dlogr_dlogt_ip1jp1 = (fip1jp2 - fip1j)/(t_jp2 - t_j);
 
         dlogr_dlogt = linear_2d(dlogr_dlogt_ip1jp1,  dlogr_dlogt_ip1j, dlogr_dlogt_ijp1, dlogr_dlogt_ij,
-                                rhoy_hi, rhoy_lo, t_hi, t_lo,
-                                Real log_rhoy, Real log_temp)
+                                rhoy_hi, rhoy_lo, t_jp1, t_j,
+                                log_rhoy, log_temp);
 
     }
 
