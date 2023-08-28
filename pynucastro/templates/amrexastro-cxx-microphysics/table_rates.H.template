@@ -180,8 +180,8 @@ linear_interpolator(const table_t& table_meta, const R& log_rhoy_table, const T&
     int irhoy_lo = vector_index_lu(table_meta.nrhoy, log_rhoy_table, log_rhoy);
     int irhoy_hi = irhoy_lo + 1;
 
-    Real rhoy_lo = log_rhoy_table(jtemp_lo);
-    Real rhoy_hi = log_rhoy_table(jtemp_hi);
+    Real rhoy_lo = log_rhoy_table(irhoy_lo);
+    Real rhoy_hi = log_rhoy_table(irhoy_hi);
 
     Real t_lo = log_temp_table(jtemp_lo);
     Real t_hi = log_temp_table(jtemp_hi);
