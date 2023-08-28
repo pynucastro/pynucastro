@@ -128,7 +128,7 @@ int vector_index_lu(const int vlen, const V& vector, const Real fvar)
 
 AMREX_GPU_HOST_DEVICE
 Real
-linear_1d(Real fhi, Real flo, Real xhi, Real xlo, Real x)
+evaluate_linear_1d(Real fhi, Real flo, Real xhi, Real xlo, Real x)
 {
     Real f;
 
@@ -145,7 +145,7 @@ linear_1d(Real fhi, Real flo, Real xhi, Real xlo, Real x)
 
 AMREX_INLINE AMREX_GPU_HOST_DEVICE
 Real
-linear_2d(Real fip1jp1, Real fip1j, Real fijp1, Real fij,
+evaluate_linear_2d(Real fip1jp1, Real fip1j, Real fijp1, Real fij,
           Real xhi, Real xlo, Real yhi, Real ylo,
           Real x, Real y)
 {
@@ -160,6 +160,7 @@ linear_2d(Real fip1jp1, Real fip1j, Real fijp1, Real fij,
     } else if ((x >= xhi) && (y <= ylo)) {
         f = fip1jp1;
     } else {
+
         Real dx = xhi - xlo;
         Real dy = yhi - ylo;
 
