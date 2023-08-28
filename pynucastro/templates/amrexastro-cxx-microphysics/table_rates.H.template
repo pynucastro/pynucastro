@@ -204,7 +204,7 @@ linear_interpolator(const table_t& table_meta, const R& log_rhoy_table, const T&
     Real fijp1 = data(jtemp_hi, irhoy_lo, component);
     Real fip1jp1 = data(jtemp_hi, irhoy_hi, component);
 
-    Real r = linear_2d(fip1jp1, fip1j, fijp1, fij,
+    Real r = evaluate_linear_2d(fip1jp1, fip1j, fijp1, fij,
                        rhoy_hi, rhoy_lo, t_hi, t_lo, log_rhoy, log_temp);
 
     return r;
@@ -271,7 +271,7 @@ evaluate_dr_dtemp(const table_t& table_meta, const R& log_rhoy_table, const T& l
         Real dlogr_dlogt_i   = (fijp1 - fij) / (t_hi - t_lo);
         Real dlogr_dlogt_ip1 = (fip1jp1 - fip1j) / (t_hi - t_lo);
 
-        dlogr_dlogt = linear_1d(dlogr_dlogt_ip1, dlogr_dlogt_i, rhoy_hi, rhoy_lo, log_rhoy);
+        dlogr_dlogt = evaluate_linear_1d(dlogr_dlogt_ip1, dlogr_dlogt_i, rhoy_hi, rhoy_lo, log_rhoy);
 
     } else {
 
@@ -344,7 +344,7 @@ evaluate_dr_dtemp(const table_t& table_meta, const R& log_rhoy_table, const T& l
         Real dlogr_dlogt_ip1j   = (fip1jp1 - fip1jm1)/(t_jp1 - t_jm1);
         Real dlogr_dlogt_ip1jp1 = (fip1jp2 - fip1j)/(t_jp2 - t_j);
 
-        dlogr_dlogt = linear_2d(dlogr_dlogt_ip1jp1,  dlogr_dlogt_ip1j, dlogr_dlogt_ijp1, dlogr_dlogt_ij,
+        dlogr_dlogt = evaluate_linear_2d(dlogr_dlogt_ip1jp1,  dlogr_dlogt_ip1j, dlogr_dlogt_ijp1, dlogr_dlogt_ij,
                                 rhoy_hi, rhoy_lo, t_jp1, t_j,
                                 log_rhoy, log_temp);
 
