@@ -160,8 +160,8 @@ linear_2d(Real fip1jp1, Real fip1j, Real fijp1, Real fij,
     } else if ((x >= xhi) && (y <= ylo)) {
         f = fip1jp1;
     } else {
-        Real dx = xhi - xlo
-        Real dy = yhi - ylo
+        Real dx = xhi - xlo;
+        Real dy = yhi - ylo;
 
         Real E =  fij;
         Real C = (fijp1 - fij) / dx;
@@ -193,7 +193,7 @@ linear_interpolator(const table_t& table_meta, const R& log_rhoy_table, const T&
     int irhoy_hi = irhoy_lo + 1;
 
     Real rhoy_lo = log_rhoy_table(jtemp_lo);
-    Real rhoy_hi = log_rhoy_table(jtemp_hi)
+    Real rhoy_hi = log_rhoy_table(jtemp_hi);
 
     Real t_lo = log_temp_table(jtemp_lo);
     Real t_hi = log_temp_table(jtemp_hi);
@@ -267,17 +267,17 @@ evaluate_dr_dtemp(const table_t& table_meta, const R& log_rhoy_table, const T& l
         Real fijp1   = data(jtemp_hi, irhoy_lo, jtab_rate);
         Real fip1jp1 = data(jtemp_hi, irhoy_hi, jtab_rate);
 
-        Real dlogr_dlogt_i   = (fijp1 - fij) / (thi - tlo);
-        Real dlogr_dlogt_ip1 = (fip1jp1 - fip1j) / (thi - tlo);
+        Real dlogr_dlogt_i   = (fijp1 - fij) / (t_hi - t_lo);
+        Real dlogr_dlogt_ip1 = (fip1jp1 - fip1j) / (t_hi - t_lo);
 
-        dlogr_dlogt = linear_1d(df_dt_ip1j, df_dt_ij, rhoy_hi, rhoy_lo, log_rhoy);
+        dlogr_dlogt = linear_1d(dlogr_dlogt_ip1, dlogr_dlogt_i, rhoy_hi, rhoy_lo, log_rhoy);
 
     } else {
 
         // In this case, we use a bigger stencil to reconstruct the
         // temperature derivatives in the j and j+1 temperature positions,
         // using the cetral-j finite differences:
-
+        //
         //              fijp2 ------------fip1jp2
         //                |                 |
         //                |                 |
@@ -325,8 +325,8 @@ evaluate_dr_dtemp(const table_t& table_meta, const R& log_rhoy_table, const T& l
         Real t_jp1  = log_temp_table(jtemp_hi);
         Real t_jp2  = log_temp_table(jtemp_hi+1);
 
-        Real rhoy_lo = log_rhoy_table(irhoy_lo)
-        Real rhoy_hi = log_rhoy_table(irhoy_hi)
+        Real rhoy_lo = log_rhoy_table(irhoy_lo);
+        Real rhoy_hi = log_rhoy_table(irhoy_hi);
 
         Real fijm1   = data(jtemp_lo-1, irhoy_lo, jtab_rate);
         Real fij     = data(jtemp_lo, irhoy_lo, jtab_rate);
