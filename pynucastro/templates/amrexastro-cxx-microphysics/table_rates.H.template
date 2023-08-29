@@ -325,7 +325,7 @@ evaluate_dr_dtemp(const table_t& table_meta, const R& log_rhoy_table, const T& l
 
         if (log_rhoy <= rhoy_lo) {
             dlogr_dlogt = dlogr_dlogt_ij;
-        } else if (log_rhoy >= rhoy_lo) {
+        } else if (log_rhoy >= rhoy_hi) {
             dlogr_dlogt = dlogr_dlogt_ip1j;
         } else {
             dlogr_dlogt = evaluate_linear_2d(dlogr_dlogt_ip1jp1,  dlogr_dlogt_ip1j, dlogr_dlogt_ijp1, dlogr_dlogt_ij,
