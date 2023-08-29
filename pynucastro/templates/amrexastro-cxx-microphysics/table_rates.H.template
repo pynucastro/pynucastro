@@ -166,7 +166,7 @@ evaluate_linear_2d(const Real fip1jp1, const Real fip1j, const Real fijp1, const
 template<typename R, typename T, typename D>
 AMREX_INLINE AMREX_GPU_HOST_DEVICE
 Real
-linear_interpolator(const table_t& table_meta, const R& log_rhoy_table, const T& log_temp_table, const D& data,
+evaluate_vars(const table_t& table_meta, const R& log_rhoy_table, const T& log_temp_table, const D& data,
                     const Real log_rhoy, const Real log_temp, const int component)
 {
     int jtemp_lo = vector_index_lu(table_meta.ntemp, log_temp_table, log_temp);
@@ -181,9 +181,9 @@ linear_interpolator(const table_t& table_meta, const R& log_rhoy_table, const T&
     Real t_lo = log_temp_table(jtemp_lo);
     Real t_hi = log_temp_table(jtemp_hi);
 
-    Real fij = data(jtemp_lo, irhoy_lo, component);
-    Real fip1j = data(jtemp_lo, irhoy_hi, component);
-    Real fijp1 = data(jtemp_hi, irhoy_lo, component);
+    Real fij     = data(jtemp_lo, irhoy_lo, component);
+    Real fip1j   = data(jtemp_lo, irhoy_hi, component);
+    Real fijp1   = data(jtemp_hi, irhoy_lo, component);
     Real fip1jp1 = data(jtemp_hi, irhoy_hi, component);
 
     Real r = evaluate_linear_2d(fip1jp1, fip1j, fijp1, fij,
@@ -344,7 +344,7 @@ get_entries(const table_t& table_meta, const R& log_rhoy_table, const T& log_tem
             const Real log_rhoy, const Real log_temp, Array1D<Real, 1, num_vars+1>& entries)
 {
     for (int ivar = 1; ivar <= num_vars; ivar++) {
-        entries(ivar) = linear_interpolator(table_meta, log_rhoy_table, log_temp_table, data,
+        entries(ivar) = evaluate_vars(table_meta, log_rhoy_table, log_temp_table, data,
                                          log_rhoy, log_temp, ivar);
     }
 
