@@ -450,6 +450,7 @@ class RateCollection:
 
         self.tabular_rates = []
         self.reaclib_rates = []
+        self.custom_rates = []
         self.approx_rates = []
         self.derived_rates = []
 
@@ -492,6 +493,8 @@ class RateCollection:
 
             elif r.chapter == 't':
                 self.tabular_rates.append(r)
+            elif r.chapter == "custom":
+                self.custom_rates.append(r)
             elif isinstance(r, DerivedRate):
                 if r not in self.derived_rates:
                     self.derived_rates.append(r)
@@ -501,7 +504,8 @@ class RateCollection:
             else:
                 raise NotImplementedError(f"Chapter type unknown for rate chapter {r.chapter}")
 
-        self.all_rates = self.reaclib_rates + self.tabular_rates + self.approx_rates + self.derived_rates
+        self.all_rates = (self.reaclib_rates + self.custom_rates +
+                          self.tabular_rates + self.approx_rates + self.derived_rates)
 
     def _read_rate_files(self, rate_files):
         # get the rates

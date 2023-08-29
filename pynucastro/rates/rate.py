@@ -335,11 +335,9 @@ class Rate:
     this and extend to their particular format.
 
     """
-    def __init__(self, reactants=None, products=None, Q=None, weak_type=""):
+    def __init__(self, reactants=None, products=None, Q=None, weak_type="", label="generic"):
         """ rfile can be either a string specifying the path to a rate file or
         an io.StringIO object from which to read rate information. """
-
-        self.fname = None
 
         if reactants:
             self.reactants = reactants
@@ -351,9 +349,18 @@ class Rate:
         else:
             self.products = []
 
-        self.label = "generic"
+        self.label = label
 
-        self.Q = Q
+        # the fname is used when writing the code to evaluate the rate
+        reactants_str = '_'.join([repr(nuc) for nuc in self.reactants])
+        products_str = '_'.join([repr(nuc) for nuc in self.products])
+        self.fname = f'{reactants_str}__{products_str}__{label}'
+
+
+        if Q is None:
+            self._set_q()
+        else:
+            self.Q = Q
 
         self.weak_type = weak_type
 
@@ -867,23 +874,23 @@ class ReacLibRate(Rate):
 
         super()._set_print_representation()
 
-        if not self.fname:
-            # This is used to determine which rates to detect as the same reaction
-            # from multiple sources in a Library file, so it should not be unique
-            # to a given source, e.g. wc12, but only unique to the reaction.
-            reactants_str = '_'.join([repr(nuc) for nuc in self.reactants])
-            products_str = '_'.join([repr(nuc) for nuc in self.products])
-            self.fname = f'{reactants_str}__{products_str}'
-            if self.weak:
-                self.fname += f'__weak__{self.weak_type}'
-            if self.modified:
-                self.fname += "__modified"
-            if self.approx:
-                self.fname += "__approx"
-            if self.derived:
-                self.fname += "__derived"
-            if self.removed:
-                self.fname += "__removed"
+        # This is used to determine which rates to detect as the same reaction
+        # from multiple sources in a Library file, so it should not be unique
+        # to a given source, e.g. wc12, but only unique to the reaction.
+        reactants_str = '_'.join([repr(nuc) for nuc in self.reactants])
+        products_str = '_'.join([repr(nuc) for nuc in self.products])
+        self.fname = f'{reactants_str}__{products_str}'
+
+        if self.weak:
+            self.fname += f'__weak__{self.weak_type}'
+        if self.modified:
+            self.fname += "__modified"
+        if self.approx:
+            self.fname += "__approx"
+        if self.derived:
+            self.fname += "__derived"
+        if self.removed:
+            self.fname += "__removed"
 
     def modify_products(self, new_products):
         if not isinstance(new_products, (set, list, tuple)):
