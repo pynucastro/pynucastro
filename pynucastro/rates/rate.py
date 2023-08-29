@@ -356,7 +356,6 @@ class Rate:
         products_str = '_'.join([repr(nuc) for nuc in self.products])
         self.fname = f'{reactants_str}__{products_str}__{label}'
 
-
         if Q is None:
             self._set_q()
         else:
