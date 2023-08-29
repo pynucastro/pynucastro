@@ -190,9 +190,9 @@ class Library:
                 #print(sio.getvalue())
                 try:
                     if rate_type == "reaclib":
-                        r = ReacLibRate(rfile=sio, rfile_path=self._library_file)
+                        r = ReacLibRate(rfile=sio)
                     elif rate_type == "tabular":
-                        r = TabularRate(rfile=sio, rfile_path=self._library_file)
+                        r = TabularRate(rfile=sio)
                     else:
                         raise NotImplementedError("rate not implemented")
                 except UnsupportedNucleus:
