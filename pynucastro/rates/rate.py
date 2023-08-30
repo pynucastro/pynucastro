@@ -353,7 +353,10 @@ class Rate:
 
         self.label = "generic"
 
-        self.Q = Q
+        if Q is None:
+            self._set_q()
+        else:
+            self.Q = Q
 
         self.weak_type = weak_type
 

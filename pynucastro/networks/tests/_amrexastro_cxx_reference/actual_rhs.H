@@ -185,11 +185,13 @@ void rhs_nuc(const burn_t& state,
         0.5*screened_rates(k_c12_c12_to_he4_ne20)*std::pow(Y(C12), 2)*state.rho;
 
     ydot_nuc(Ne23) =
-        (-screened_rates(k_ne23_to_na23)*Y(Ne23) + screened_rates(k_na23_to_ne23)*Y(Na23));
+        screened_rates(k_na23_to_ne23)*Y(Na23) +
+        -screened_rates(k_ne23_to_na23)*Y(Ne23);
 
     ydot_nuc(Na23) =
         0.5*screened_rates(k_c12_c12_to_p_na23)*std::pow(Y(C12), 2)*state.rho +
-        (screened_rates(k_ne23_to_na23)*Y(Ne23) + -screened_rates(k_na23_to_ne23)*Y(Na23));
+        -screened_rates(k_na23_to_ne23)*Y(Na23) +
+        screened_rates(k_ne23_to_na23)*Y(Ne23);
 
     ydot_nuc(Mg23) =
         0.5*screened_rates(k_c12_c12_to_n_mg23)*std::pow(Y(C12), 2)*state.rho;
