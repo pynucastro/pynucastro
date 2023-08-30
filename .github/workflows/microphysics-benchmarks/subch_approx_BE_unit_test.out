@@ -1,0 +1,109 @@
+AMReX (22.11-30-ged095ca21072) initialized
+starting the single zone burn...
+reading in network electron-capture / beta-decay tables...
+Maximum Time (s): 1e-05
+State Density (g/cm^3): 1000000
+State Temperature (K): 3000000000
+Mass Fraction (h1): 0.1
+Mass Fraction (he4): 0.5
+Mass Fraction (c12): 0.1
+Mass Fraction (n13): 0.1
+Mass Fraction (n14): 0.1
+Mass Fraction (o16): 0.1
+Mass Fraction (f18): 0
+Mass Fraction (ne20): 0
+Mass Fraction (ne21): 0
+Mass Fraction (na22): 0
+Mass Fraction (na23): 0
+Mass Fraction (mg24): 0
+Mass Fraction (al27): 0
+Mass Fraction (si28): 0
+Mass Fraction (p31): 0
+Mass Fraction (s32): 0
+Mass Fraction (ar36): 0
+Mass Fraction (ca40): 0
+Mass Fraction (ti44): 0
+Mass Fraction (cr48): 0
+Mass Fraction (fe52): 0
+Mass Fraction (ni56): 0
+RHS at t = 0
+    h1 895110670.6
+   he4 -116892540.4
+   c12 778320111
+   n13 -895110656.2
+   n14 -100544.9692
+   o16 116788941.3
+   f18 100544.9692
+  ne20 1553.501095
+  ne21 5.679440901e-23
+  na22 9.495207168e-23
+  na23 14.2963137
+  mg24 1.933938048
+  al27 0.08700012543
+  si28 0.0160176069
+   p31 3.723541443e-05
+   s32 7.325504904e-06
+  ar36 -5.715330804e-28
+  ca40 1.369315623e-26
+  ti44 -5.98426919e-28
+  cr48 6.465178867e-28
+  fe52 1.086815162e-28
+  ni56 2.574225196e-29
+------------------------------------
+successful? 1
+ - Hnuc = 7.242769111e+22
+ - added e = 7.242769111e+17
+ - final T = 3332749634
+------------------------------------
+e initial = 1.396711859e+18
+e final =   2.12098877e+18
+------------------------------------
+new mass fractions: 
+h1 0.1076931361
+he4 0.08267201555
+c12 1.78524719e-05
+n13 3.393590165e-08
+n14 3.304045126e-07
+o16 0.1086086904
+f18 1.418025583e-07
+ne20 0.007001757674
+ne21 5.733676716e-06
+na22 0.1571361579
+na23 4.819437609e-07
+mg24 0.004453897399
+al27 6.192300093e-06
+si28 0.0614675563
+p31 9.538998065e-06
+s32 0.1152074078
+ar36 0.09902731773
+ca40 0.2507582723
+ti44 0.005256238334
+cr48 0.0006643598898
+fe52 1.284019674e-05
+ni56 4.684206046e-08
+------------------------------------
+species creation rates: 
+omegadot(h1): 769.3136122
+omegadot(he4): -41732.79844
+omegadot(c12): -9998.214753
+omegadot(n13): -9999.996606
+omegadot(n14): -9999.96696
+omegadot(o16): 860.8690421
+omegadot(f18): 0.01418025583
+omegadot(ne20): 700.1757674
+omegadot(ne21): 0.5733676716
+omegadot(na22): 15713.61579
+omegadot(na23): 0.04819437609
+omegadot(mg24): 445.3897399
+omegadot(al27): 0.6192300093
+omegadot(si28): 6146.75563
+omegadot(p31): 0.9538998065
+omegadot(s32): 11520.74078
+omegadot(ar36): 9902.731773
+omegadot(ca40): 25075.82723
+omegadot(ti44): 525.6238334
+omegadot(cr48): 66.43598898
+omegadot(fe52): 1.284019674
+omegadot(ni56): 0.004684206046
+number of steps taken: 9600
+AMReX (22.11-30-ged095ca21072) finalized
