@@ -1530,6 +1530,10 @@ class TabularRate(Rate):
         elif "betadecay" in self.table_file:
             self.weak_type = "beta_decay"
 
+        # since the reactants were only now set, we need to
+        # recompute Q
+        self._set_q()
+
     def _set_rhs_properties(self):
         """ compute statistical prefactor and density exponent from the reactants. """
         self.prefactor = 1.0  # this is 1/2 for rates like a + a (double counting)
