@@ -65,11 +65,11 @@ void rate_c12_c12_to_n_mg23(const tf_t& tfactors, Real& rate, Real& drate_dT) {
     Real set_rate{0.0};
 
     // cf88r
-    ln_set_rate =  -12.8056 + -30.1485 * tfactors.T9i + 11.4826 * tfactors.T913
+    ln_set_rate =  -12.8056 + -30.1498 * tfactors.T9i + 11.4826 * tfactors.T913
                          + 1.82849 * tfactors.T9 + -0.34844 * tfactors.T953;
 
     if constexpr (do_T_derivatives) {
-        dln_set_rate_dT9 =  30.1485 * tfactors.T9i * tfactors.T9i + (1.0/3.0) * 11.4826 * tfactors.T923i
+        dln_set_rate_dT9 =  30.1498 * tfactors.T9i * tfactors.T9i + (1.0/3.0) * 11.4826 * tfactors.T923i
                                   + 1.82849 + (5.0/3.0) * -0.34844 * tfactors.T923;
     }
 

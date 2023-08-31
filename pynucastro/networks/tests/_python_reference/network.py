@@ -115,7 +115,7 @@ def c12_c12__n_mg23(rate_eval, tf):
     rate = 0.0
 
     # cf88r
-    rate += np.exp(  -12.8056 + -30.1485*tf.T9i + 11.4826*tf.T913
+    rate += np.exp(  -12.8056 + -30.1498*tf.T9i + 11.4826*tf.T913
                   + 1.82849*tf.T9 + -0.34844*tf.T953)
 
     rate_eval.c12_c12__n_mg23 = rate
