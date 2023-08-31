@@ -227,7 +227,7 @@ get_entries(const table_t& table_meta,
                               log_rhoy);
 
         // Approximate d(rate)/d(t) via forward differencing
-        if (log_temp < log_temp_lo) || (log_temp > log_temp_hi) {
+        if ((log_temp < log_temp_lo) || (log_temp > log_temp_hi)) {
             entries(k_drate_dt) = 0.0_rt;
         } else {
             entries(k_drate_dt) = (f_ip1 - f_i) / (log_temp_hi - log_temp_lo);
