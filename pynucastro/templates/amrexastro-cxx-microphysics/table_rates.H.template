@@ -155,13 +155,13 @@ evaluate_linear_2d(const Real fip1jp1, const Real fip1j, const Real fijp1, const
     Real A = (fip1jp1 - B * dx - C * dy - E) / (dx * dy);
 
     if ((x <= xlo) && (y <= ylo)) {
-        f = fij
+        f = fij;
     } else if ((x <= xlo) && (y >= yhi)) {
-        f=fijp1
+        f=fijp1;
     } else if ((x >= xhi) && (y <= ylo)) {
-        f=fip1j
+        f=fip1j;
     } else if ((x >= xhi) && (y >= yhi)) {
-        f=fip1jp1
+        f=fip1jp1;
     } else {
         f =  A * (x - xlo) * (y - ylo) +
                 B * (x - xlo) +
