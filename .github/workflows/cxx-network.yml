@@ -75,7 +75,7 @@ jobs:
       - name: Compare to stored output (subch_approx)
         run: |
           cd external/Microphysics/unit_test/burn_cell
-          diff -I "^AMReX" -I "^reading in reaclib rates" test.out ci-benchmarks/subch_approx_unit_test.out
+          diff -I "^AMReX" -I "^reading in reaclib rates" test.out ${GITHUB_WORKSPACE}/.github/workflows/microphysics-benchmarks/subch_approx_unit_test.out
 
       - name: Regenerate ECSN network
         run: |
@@ -96,7 +96,7 @@ jobs:
       - name: Compare to stored output (ECSN)
         run: |
           cd external/Microphysics/unit_test/burn_cell
-          diff -I "^AMReX" -I "^reading in reaclib rates" test.out ci-benchmarks/ecsn_unit_test.out
+          diff -I "^AMReX" -I "^reading in reaclib rates" test.out ${GITHUB_WORKSPACE}/.github/workflows/microphysics-benchmarks/ecsn_unit_test.out
 
       - name: Regenerate ase network
         run: |
@@ -117,4 +117,4 @@ jobs:
       - name: Compare to stored output (NSE_NET, ase)
         run: |
           cd external/Microphysics/unit_test/test_ase
-          diff -I "^AMReX" -I "^reading in reaclib rates" test.out ci-benchmarks/ase_nse_net_unit_test.out
+          diff -I "^AMReX" -I "^reading in reaclib rates" test.out ${GITHUB_WORKSPACE}/.github/workflows/microphysics-benchmarks/ase_nse_net_unit_test.out
