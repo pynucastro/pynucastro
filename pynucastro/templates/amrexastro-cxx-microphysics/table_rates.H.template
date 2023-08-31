@@ -57,7 +57,10 @@ namespace rate_tables
 }
 
 template <typename R, typename T, typename D>
-void init_tab_info(const table_t& tf, const std::string& file, R& log_rhoy_table, T& log_temp_table, D& data) {
+void init_tab_info(const table_t& tf, const std::string& file, R& log_rhoy_table, T& log_temp_table, D& data)
+{
+    // This function initializes the selected tabular-rate tables. From the tables we are interested
+    // on the rate, neutrino-energy-loss and the gamma-energy entries.
 
     std::ifstream table;
     table.open(file);
@@ -128,14 +131,12 @@ AMREX_INLINE AMREX_GPU_HOST_DEVICE
 Real
 evaluate_linear_1d(const Real fhi, const Real flo, const Real xhi, const Real xlo, const Real x)
 {
-    Real f;
-    if (x <= xlo) {
-        f = flo;
-    } else if (x >= xhi) {
-        f = fhi;
-    } else {
-        f = flo + (fhi - flo) * (x - xlo) / (xhi - xlo);
-    }
+    // This function is a 1-D linear interpolator, that keeps x constant to xlo or xhi, based
+    // on the side, if x is outside [xlo, xhi] respectively.
+
+    Real xx = Clamp(x, xlo, xhi);
+    Real f = flo + (fhi - flo) * (xx - xlo) / (xhi - xlo);
+
     return f;
 }
 
@@ -145,6 +146,8 @@ evaluate_linear_2d(const Real fip1jp1, const Real fip1j, const Real fijp1, const
           const Real xhi, const Real xlo, const Real yhi, const Real ylo,
           const Real x, const Real y)
 {
+    // This is the 2-D linear interpolator, as an extension of evaluate_linear_1d.
+
     Real f;
     Real dx = xhi - xlo;
     Real dy = yhi - ylo;
@@ -172,6 +175,8 @@ Real
 evaluate_vars(const table_t& table_meta, const R& log_rhoy_table, const T& log_temp_table, const D& data,
                     const Real log_rhoy, const Real log_temp, const int component)
 {
+    // This function evaluates the 2-D interpolator, for several pairs of rho_ye and temperature.
+
     int jtemp_lo = vector_index_lu(table_meta.ntemp, log_temp_table, log_temp);
     int jtemp_hi = jtemp_lo + 1;
 
@@ -239,21 +244,25 @@ evaluate_dr_dtemp(const table_t& table_meta, const R& log_rhoy_table, const T& l
         // Finally, we perform a 1d-linear interpolation between dlogr_dlogt_ip1
         // and dlogr_dlogt_i to compute dlogr_dlogt
 
-        Real rhoy_lo = log_temp_table(irhoy_lo);
-        Real rhoy_hi = log_temp_table(irhoy_hi);
+        Real log_rhoy_lo = log_temp_table(irhoy_lo);
+        Real log_rhoy_hi = log_temp_table(irhoy_hi);
 
-        Real t_lo = log_temp_table(jtemp_lo);
-        Real t_hi = log_temp_table(jtemp_hi);
+        Real log_temp_lo = log_temp_table(jtemp_lo);
+        Real log_temp_hi = log_temp_table(jtemp_hi);
 
         Real fij     = data(jtemp_lo, irhoy_lo, jtab_rate);
         Real fip1j   = data(jtemp_lo, irhoy_hi, jtab_rate);
         Real fijp1   = data(jtemp_hi, irhoy_lo, jtab_rate);
         Real fip1jp1 = data(jtemp_hi, irhoy_hi, jtab_rate);
 
-        Real dlogr_dlogt_i   = (fijp1 - fij) / (t_hi - t_lo);
-        Real dlogr_dlogt_ip1 = (fip1jp1 - fip1j) / (t_hi - t_lo);
+        Real dlogr_dlogt_i   = (fijp1 - fij) / (log_temp_hi - log_temp_lo);
+        Real dlogr_dlogt_ip1 = (fip1jp1 - fip1j) / (log_temp_hi - log_temp_lo);
 
-        dlogr_dlogt = evaluate_linear_1d(dlogr_dlogt_ip1, dlogr_dlogt_i, rhoy_hi, rhoy_lo, log_rhoy);
+        if ((log_temp < log_temp_lo) || (log_temp > log_temp_hi)) {
+            dlogr_dlogt = 0.0_rt;
+        } else {
+            dlogr_dlogt = evaluate_linear_1d(dlogr_dlogt_ip1, dlogr_dlogt_i, log_rhoy_hi, log_rhoy_lo, log_rhoy);
+        }
 
     } else {
 
@@ -303,13 +312,13 @@ evaluate_dr_dtemp(const table_t& table_meta, const R& log_rhoy_table, const T& l
         // Finally, we perform a 2d-linear interpolation to
         // compute dlogr_dlogt.
 
-        Real t_jm1  = log_temp_table(jtemp_lo-1);
-        Real t_j    = log_temp_table(jtemp_lo);
-        Real t_jp1  = log_temp_table(jtemp_hi);
-        Real t_jp2  = log_temp_table(jtemp_hi+1);
+        Real log_temp_jm1  = log_temp_table(jtemp_lo-1);
+        Real log_temp_j    = log_temp_table(jtemp_lo);
+        Real log_temp_jp1  = log_temp_table(jtemp_hi);
+        Real log_temp_jp2  = log_temp_table(jtemp_hi+1);
 
-        Real rhoy_lo = log_rhoy_table(irhoy_lo);
-        Real rhoy_hi = log_rhoy_table(irhoy_hi);
+        Real log_rhoy_lo = log_rhoy_table(irhoy_lo);
+        Real log_rhoy_hi = log_rhoy_table(irhoy_hi);
 
         Real fijm1   = data(jtemp_lo-1, irhoy_lo, jtab_rate);
         Real fij     = data(jtemp_lo, irhoy_lo, jtab_rate);
@@ -321,13 +330,13 @@ evaluate_dr_dtemp(const table_t& table_meta, const R& log_rhoy_table, const T& l
         Real fip1jp1 = data(jtemp_hi, irhoy_hi, jtab_rate);
         Real fip1jp2 = data(jtemp_hi+1, irhoy_hi, jtab_rate);
 
-        Real dlogr_dlogt_ij     = (fijp1 - fijm1)/(t_jp1 - t_jm1);
-        Real dlogr_dlogt_ijp1   = (fijp2 - fij)/(t_jp2 - t_j);
-        Real dlogr_dlogt_ip1j   = (fip1jp1 - fip1jm1)/(t_jp1 - t_jm1);
-        Real dlogr_dlogt_ip1jp1 = (fip1jp2 - fip1j)/(t_jp2 - t_j);
+        Real dlogr_dlogt_ij     = (fijp1 - fijm1)/(log_temp_jp1 - log_temp_jm1);
+        Real dlogr_dlogt_ijp1   = (fijp2 - fij)/(log_temp_jp2 - log_temp_j);
+        Real dlogr_dlogt_ip1j   = (fip1jp1 - fip1jm1)/(log_temp_jp1 - log_temp_jm1);
+        Real dlogr_dlogt_ip1jp1 = (fip1jp2 - fip1j)/(log_temp_jp2 - log_temp_j);
 
         dlogr_dlogt = evaluate_linear_2d(dlogr_dlogt_ip1jp1,  dlogr_dlogt_ip1j, dlogr_dlogt_ijp1, dlogr_dlogt_ij,
-                                         rhoy_hi, rhoy_lo, t_jp1, t_j,
+                                         log_rhoy_hi, log_rhoy_lo, log_temp_jp1, log_temp_j,
                                          log_rhoy, log_temp);
 
     }
