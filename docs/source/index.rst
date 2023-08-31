@@ -46,6 +46,7 @@ codes.
    screening-examples
    modify-example.ipynb
    approx-rates-examples.ipynb
+   custom-rates.ipynb
    unimportant-rates.ipynb
    partition-function
    NSE-example.ipynb
