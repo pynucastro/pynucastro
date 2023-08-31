@@ -55,15 +55,15 @@ def p_c13__n14(rate_eval, tf):
     # c13 + p --> n14
     rate = 0.0
 
+    # nacrr
+    rate += np.exp(  15.1825 + -13.5543*tf.T9i
+                  + -1.5*tf.lnT9)
     # nacrn
     rate += np.exp(  18.5155 + -13.72*tf.T913i + -0.450018*tf.T913
                   + 3.70823*tf.T9 + -1.70545*tf.T953 + -0.666667*tf.lnT9)
     # nacrr
     rate += np.exp(  13.9637 + -5.78147*tf.T9i + -0.196703*tf.T913
                   + 0.142126*tf.T9 + -0.0238912*tf.T953 + -1.5*tf.lnT9)
-    # nacrr
-    rate += np.exp(  15.1825 + -13.5543*tf.T9i
-                  + -1.5*tf.lnT9)
 
     rate_eval.p_c13__n14 = rate
 """
