@@ -161,7 +161,10 @@ bl_extrap(const Real xlo, const Real xhi, const Real flo, const Real fhi, const 
     // flo = f(xlo)
     // fhi = f(xhi)
     // Returns f(x), the values flo and fhi interpolated at x
-    // If x <= xlo or x >= xhi, f(x) is extrapolated at x
+    // If x <= xlo or x >= xhi, f(x) is reset
+
+    x = Clamp(x, xlo, xhi);
+    y = Clamp(y, ylo, yhi);
 
     Real f = (flo * (xhi - x) + fhi * (x - xlo) ) / (xhi - xlo);
 
