@@ -59,6 +59,9 @@ namespace rate_tables
 template <typename R, typename T, typename D>
 void init_tab_info(const table_t& tf, const std::string& file, R& log_rhoy, T& log_temp, D& data) {
 
+    // This function initializes the selected tabular-rate tables. From the tables we are interested
+    // on the rate, neutrino-energy-loss and the gamma-energy entries.
+
     std::ifstream table;
     table.open(file);
 
@@ -226,7 +229,9 @@ get_entries(const table_t& table_meta,
                               data(itemp_hi, irhoy_hi, jtab_rate),
                               log_rhoy);
 
-        // Approximate d(rate)/d(t) via forward differencing
+        // Approximate d(rate)/d(t) via forward differencing on the boundary
+        // index position and by zero outside the domain.
+
         if ((log_temp < log_temp_lo) || (log_temp > log_temp_hi)) {
             entries(k_drate_dt) = 0.0_rt;
         } else {

@@ -12,12 +12,12 @@ using namespace amrex;
 
 void init_tabular();
 
-// Table is expected to be in terms of dens*ye and temp (non-logarithmic, cgs units)
+// Table is expected to be in terms of dens*ye and temp (logarithmic, cgs units)
 // Table energy units are expected in terms of ergs
 
 // all tables are expected to have columns:
-// rhoY     T   mu    dQ    Vs    e-cap-rate   nu-energy-loss  gamma-energy
-// g/cm^3   K   erg   erg   erg   1/s          erg/s           erg/s
+// Log(rhoY)     Log(T)   Log(mu)    Log(dQ)    Log(Vs)    Log(e-cap-rate)   Log(nu-energy-loss)  Log(gamma-energy)
+// Log(g/cm^3)   Log(K)   Log(erg)   Log(erg)   Log(erg)   Log(1/s)          Log(erg/s)           Log(erg/s)
 //
 
 const int num_tables = 2;
@@ -67,6 +67,9 @@ namespace rate_tables
 
 template <typename R, typename T, typename D>
 void init_tab_info(const table_t& tf, const std::string& file, R& log_rhoy, T& log_temp, D& data) {
+
+    // This function initializes the selected tabular-rate tables. From the tables we are interested
+    // on the rate, neutrino-energy-loss and the gamma-energy entries.
 
     std::ifstream table;
     table.open(file);
@@ -149,30 +152,9 @@ bl_clamp(const Real xlo, const Real xhi, const Real flo, const Real fhi, const R
     // f(x) = fhi if x >= xhi
 
     Real f;
-    if (x <= xlo) {
-        f = flo;
-    } else if (x >= xhi ) {
-        f = fhi;
-    } else {
-        f = (flo * (xhi - x) + fhi * (x - xlo) ) / (xhi - xlo);
-    }
+    Real xx = Clamp(x, xlo, xhi);
 
-    return f;
-}
-
-AMREX_INLINE AMREX_GPU_HOST_DEVICE
-Real
-bl_extrap(const Real xlo, const Real xhi, const Real flo, const Real fhi, const Real x)
-{
-
-    // Perform bilinear interpolation within the interval [xlo, xhi]
-    // where the function values at the endpoints are defined by:
-    // flo = f(xlo)
-    // fhi = f(xhi)
-    // Returns f(x), the values flo and fhi interpolated at x
-    // If x <= xlo or x >= xhi, f(x) is extrapolated at x
-
-    Real f = (flo * (xhi - x) + fhi * (x - xlo) ) / (xhi - xlo);
+    f = (flo * (xhi - xx) + fhi * (xx - xlo) ) / (xhi - xlo);
 
     return f;
 }
@@ -225,18 +207,18 @@ get_entries(const table_t& table_meta,
     // Interpolate for each table entry
 
     for (int ivar = 1; ivar <= num_vars; ivar++) {
-        Real f_i = bl_extrap(log_temp_lo, log_temp_hi,
+        Real f_i = bl_clamp(log_temp_lo, log_temp_hi,
                              data(itemp_lo, irhoy_lo, ivar),
                              data(itemp_hi, irhoy_lo, ivar),
                              log_temp);
 
-        Real f_ip1 = bl_extrap(log_temp_lo, log_temp_hi,
+        Real f_ip1 = bl_clamp(log_temp_lo, log_temp_hi,
                                data(itemp_lo, irhoy_hi, ivar),
                                data(itemp_hi, irhoy_hi, ivar),
                                log_temp);
 
         // NOLINTNEXTLINE(readability-suspicious-call-argument)
-        entries(ivar) = bl_extrap(log_rhoy_lo, log_rhoy_hi, f_i, f_ip1, log_rhoy);
+        entries(ivar) = bl_clamp(log_rhoy_lo, log_rhoy_hi, f_i, f_ip1, log_rhoy);
     }
 
     // Calculate the derivative of rate with temperature, d(rate)/d(t)
@@ -256,9 +238,14 @@ get_entries(const table_t& table_meta,
                               data(itemp_hi, irhoy_hi, jtab_rate),
                               log_rhoy);
 
-        // Approximate d(rate)/d(t) via forward differencing
+        // Approximate d(rate)/d(t) via forward differencing on the boundary
+        // index position and by zero outside the domain.
 
-        entries(k_drate_dt) = (f_ip1 - f_i) / (log_temp_hi - log_temp_lo);
+        if ((log_temp < log_temp_lo) || (log_temp > log_temp_hi)) {
+            entries(k_drate_dt) = 0.0_rt;
+        } else {
+            entries(k_drate_dt) = (f_ip1 - f_i) / (log_temp_hi - log_temp_lo);
+        }
 
     } else {
         // Approximate d(rate)/d(t) via bilinear interpolation on central differences
@@ -294,9 +281,8 @@ get_entries(const table_t& table_meta,
         Real drdt_ip1 = (f_ip2 - f_i)   / (t_ip2 - t_i);
 
         // Interpolate in temperature
-        // (Since we're inside the table in temp, use bl_extrap, it's faster)
 
-        entries(k_drate_dt) = bl_extrap(t_i, t_ip1, drdt_i, drdt_ip1, log_temp);
+        entries(k_drate_dt) = bl_clamp(t_i, t_ip1, drdt_i, drdt_ip1, log_temp);
 
     }
 }
