@@ -523,10 +523,7 @@ class RateCollection:
         """return a list of the forward (exothermic) rates"""
 
         # first handle the ones that have Q defined
-        forward_rates = [r for r in self.rates if r.Q is not None and r.Q >= 0.0]
-
-        # e-capture tabular rates don't have a Q defined, so just go off of the binding energy
-        forward_rates += [r for r in self.rates if r.Q is None and r.reactants[0].nucbind <= r.products[0].nucbind]
+        forward_rates = [r for r in self.rates if r.Q >= 0.0]
 
         return forward_rates
 
@@ -534,10 +531,7 @@ class RateCollection:
         """return a list of the reverse (endothermic) rates)"""
 
         # first handle the ones that have Q defined
-        reverse_rates = [r for r in self.rates if r.Q is not None and r.Q < 0.0]
-
-        # e-capture tabular rates don't have a Q defined, so just go off of the binding energy
-        reverse_rates += [r for r in self.rates if r.Q is None and r.reactants[0].nucbind > r.products[0].nucbind]
+        reverse_rates = [r for r in self.rates if r.Q < 0.0]
 
         return reverse_rates
 
