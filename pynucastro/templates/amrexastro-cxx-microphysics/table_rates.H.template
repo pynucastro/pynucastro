@@ -151,23 +151,6 @@ bl_clamp(const Real xlo, const Real xhi, const Real flo, const Real fhi, const R
     return f;
 }
 
-AMREX_INLINE AMREX_GPU_HOST_DEVICE
-Real
-bl_extrap(const Real xlo, const Real xhi, const Real flo, const Real fhi, const Real x)
-{
-
-    // Perform bilinear interpolation within the interval [xlo, xhi]
-    // where the function values at the endpoints are defined by:
-    // flo = f(xlo)
-    // fhi = f(xhi)
-    // Returns f(x), the values flo and fhi interpolated at x
-    // If x <= xlo or x >= xhi, f(x) is extrapolated at x
-
-    Real f = (flo * (xhi - x) + fhi * (x - xlo) ) / (xhi - xlo);
-
-    return f;
-}
-
 
 template <typename R, typename T, typename D>
 AMREX_INLINE AMREX_GPU_HOST_DEVICE
@@ -216,18 +199,18 @@ get_entries(const table_t& table_meta,
     // Interpolate for each table entry
 
     for (int ivar = 1; ivar <= num_vars; ivar++) {
-        Real f_i = bl_extrap(log_temp_lo, log_temp_hi,
+        Real f_i = bl_clamp(log_temp_lo, log_temp_hi,
                              data(itemp_lo, irhoy_lo, ivar),
                              data(itemp_hi, irhoy_lo, ivar),
                              log_temp);
 
-        Real f_ip1 = bl_extrap(log_temp_lo, log_temp_hi,
+        Real f_ip1 = bl_clamp(log_temp_lo, log_temp_hi,
                                data(itemp_lo, irhoy_hi, ivar),
                                data(itemp_hi, irhoy_hi, ivar),
                                log_temp);
 
         // NOLINTNEXTLINE(readability-suspicious-call-argument)
-        entries(ivar) = bl_extrap(log_rhoy_lo, log_rhoy_hi, f_i, f_ip1, log_rhoy);
+        entries(ivar) = bl_clamp(log_rhoy_lo, log_rhoy_hi, f_i, f_ip1, log_rhoy);
     }
 
     // Calculate the derivative of rate with temperature, d(rate)/d(t)
@@ -287,7 +270,7 @@ get_entries(const table_t& table_meta,
         // Interpolate in temperature
         // (Since we're inside the table in temp, use bl_extrap, it's faster)
 
-        entries(k_drate_dt) = bl_extrap(t_i, t_ip1, drdt_i, drdt_ip1, log_temp);
+        entries(k_drate_dt) = bl_clamp(t_i, t_ip1, drdt_i, drdt_ip1, log_temp);
 
     }
 }
