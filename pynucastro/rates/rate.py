@@ -356,7 +356,10 @@ class Rate:
         products_str = '_'.join([repr(nuc) for nuc in self.products])
         self.fname = f'{reactants_str}__{products_str}__{label}'
 
-        self.Q = Q
+        if Q is None:
+            self._set_q()
+        else:
+            self.Q = Q
 
         self.weak_type = weak_type
 
@@ -1529,6 +1532,10 @@ class TabularRate(Rate):
 
         elif "betadecay" in self.table_file:
             self.weak_type = "beta_decay"
+
+        # since the reactants and products were only now set, we need
+        # to recompute Q -- this is used for finding rate pairs
+        self._set_q()
 
     def _set_rhs_properties(self):
         """ compute statistical prefactor and density exponent from the reactants. """
