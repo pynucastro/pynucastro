@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Nuclear Statistical Equilibrium &mdash; pynucastro 2.0.3.post91+g60029c75 documentation</title>
+  <title>Nuclear Statistical Equilibrium &mdash; pynucastro 2.0.3.post92+g47e236bd documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
@@ -16,7 +16,7 @@
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=374ec3dc"></script>
+        <script src="_static/documentation_options.js?v=cef0b12a"></script>
         <script src="_static/doctools.js?v=888ff710"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
         <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -125,7 +125,7 @@
 <p>The constrained equations are setup following: * Calder et al. (2007): <a class="reference external" href="https://iopscience.iop.org/article/10.1086/510709/pdf">https://iopscience.iop.org/article/10.1086/510709/pdf</a> * Seitenzahl et al. (2009): <a class="reference external" href="https://www.sciencedirect.com/science/article/pii/S0092640X0800051X">https://www.sciencedirect.com/science/article/pii/S0092640X0800051X</a></p>
 <p>and solved using <code class="docutils literal notranslate"><span class="pre">scipy.optimize.fsolve()</span></code></p>
 <p>Here we show how to find the NSE state of a set of nuclei.</p>
-<div class="nbinput docutils container">
+<div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
@@ -134,14 +134,6 @@
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 </pre></div>
 </div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-Matplotlib is building the font cache; this may take a moment.
-</pre></div></div>
 </div>
 <p>We start by creating a <code class="docutils literal notranslate"><span class="pre">Library</span></code> object that reads all the ReacLib rates and link different nuclei of choice. Then initialize <code class="docutils literal notranslate"><span class="pre">RateCollection</span></code> by using the the rates created by the <code class="docutils literal notranslate"><span class="pre">Library</span></code> object.</p>
 <div class="nbinput nblast docutils container">
@@ -198,36 +190,36 @@ Matplotlib is building the font cache; this may take a moment.
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-  X(p) : 0.009350257557755745
-  X(he4) : 0.4336432648337397
-  X(c12) : 7.728730855863679e-06
-  X(n13) : 2.592044572072426e-10
-  X(n14) : 1.366332980043754e-09
-  X(o16) : 1.5697551606923965e-05
-  X(f18) : 2.411406340623987e-11
-  X(ne20) : 3.018748620023282e-07
-  X(ne21) : 3.956328637888796e-09
+  X(p) : 0.009350257557755646
+  X(he4) : 0.43364326483374666
+  X(c12) : 7.728730855864089e-06
+  X(n13) : 2.5920445720725907e-10
+  X(n14) : 1.3663329800438218e-09
+  X(o16) : 1.5697551606924802e-05
+  X(f18) : 2.4114063406242442e-11
+  X(ne20) : 3.018748620023454e-07
+  X(ne21) : 3.956328637889247e-09
   X(na22) : 9.687083066114455e-10
-  X(na23) : 7.296922766617077e-08
-  X(mg24) : 3.4701773454356374e-05
-  X(al27) : 3.3526418310423996e-05
-  X(si28) : 0.01043957131530905
+  X(na23) : 7.29692276661749e-08
+  X(mg24) : 3.470177345436031e-05
+  X(al27) : 3.352641831042769e-05
+  X(si28) : 0.010439571315309643
   X(p31) : 0.00213499350058423
-  X(s32) : 0.009160645411758385
-  X(cl35) : 0.004000874822061756
-  X(ar36) : 0.004879636200528169
-  X(k39) : 0.005552717409027393
-  X(ca40) : 0.0047698633574799545
-  X(sc43) : 0.0003726846903449166
-  X(ti44) : 0.00022925810669629146
-  X(v47) : 0.004900622959185997
-  X(cr48) : 0.0011488659730385128
-  X(mn51) : 0.06904761336409458
-  X(fe52) : 0.00574686874545434
-  X(co55) : 0.41561537762309186
-  X(ni56) : 0.018914848236755235
+  X(s32) : 0.009160645411759392
+  X(cl35) : 0.004000874822062623
+  X(ar36) : 0.004879636200529764
+  X(k39) : 0.005552717409028616
+  X(ca40) : 0.004769863357480988
+  X(sc43) : 0.000372684690344959
+  X(ti44) : 0.00022925810669629148
+  X(v47) : 0.004900622959186554
+  X(cr48) : 0.001148865973038766
+  X(mn51) : 0.0690476133641174
+  X(fe52) : 0.005746868745454951
+  X(co55) : 0.4156153776231819
+  X(ni56) : 0.018914848236757317
 
-After solving, the chemical potential for proton and neutron are -7.738610218875145 and -9.999064522280317
+After solving, the chemical potential for proton and neutron are -7.738610218875152 and -9.999064522280307
 </pre></div></div>
 </div>
 <p>For <span class="math notranslate nohighlight">\(\rho = 10^7~\mathrm{g~cm^{-3}}\)</span> and electron fraction, <span class="math notranslate nohighlight">\(Y_e = 0.5\)</span>, we can explore how the NSE state changes with temperature.</p>

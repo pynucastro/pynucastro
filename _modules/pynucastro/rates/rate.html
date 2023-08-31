@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.rates.rate &mdash; pynucastro 2.0.3.post91+g60029c75 documentation</title>
+  <title>pynucastro.rates.rate &mdash; pynucastro 2.0.3.post92+g47e236bd documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
@@ -14,7 +14,7 @@
   
         <script src="../../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../_static/documentation_options.js?v=374ec3dc"></script>
+        <script src="../../../_static/documentation_options.js?v=cef0b12a"></script>
         <script src="../../../_static/doctools.js?v=888ff710"></script>
         <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
         <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -504,7 +504,10 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;generic&quot;</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">Q</span> <span class="o">=</span> <span class="n">Q</span>
+        <span class="k">if</span> <span class="n">Q</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_set_q</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">Q</span> <span class="o">=</span> <span class="n">Q</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">weak_type</span> <span class="o">=</span> <span class="n">weak_type</span>
 
@@ -1740,6 +1743,10 @@
 
         <span class="k">elif</span> <span class="s2">&quot;betadecay&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">table_file</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">weak_type</span> <span class="o">=</span> <span class="s2">&quot;beta_decay&quot;</span>
+
+        <span class="c1"># since the reactants and products were only now set, we need</span>
+        <span class="c1"># to recompute Q -- this is used for finding rate pairs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_q</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">_set_rhs_properties</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; compute statistical prefactor and density exponent from the reactants. &quot;&quot;&quot;</span>
