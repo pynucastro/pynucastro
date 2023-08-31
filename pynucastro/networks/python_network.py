@@ -1,6 +1,8 @@
 """Support modules to write a pure python reaction network ODE
 source"""
 
+import os
+import shutil
 import sys
 
 from pynucastro.networks.rate_collection import RateCollection
@@ -164,7 +166,7 @@ class PythonNetwork(RateCollection):
         of.write("import numba\n")
         of.write("import numpy as np\n")
         of.write("from numba.experimental import jitclass\n\n")
-        of.write("from pynucastro.rates import Tfactors, _find_rate_file\n")
+        of.write("from pynucastro.rates import TableIndex, TableInterpolator, TabularRate, Tfactors\n")
         of.write("from pynucastro.screening import PlasmaState, ScreenFactors\n\n")
 
         # integer keys
@@ -226,20 +228,16 @@ class PythonNetwork(RateCollection):
         of.write("\n")
 
         # tabular rate data
+        if self.tabular_rates:
+            of.write("# note: we cannot make the TableInterpolator global, since numba doesn't like global jitclass\n")
+
         for r in self.tabular_rates:
 
             of.write(f"# load data for {r.rid}\n")
-            of.write(f"{r.fname}_table_path = _find_rate_file('{r.table_file}')\n")
-            of.write("t_data2d = []\n")
-            of.write(f"with open({r.fname}_table_path) as tabular_file:\n")
-            of.write(f'{indent}'"for i, line in enumerate(tabular_file):\n")
-            of.write(f'{indent*2}'f"if i < {r.table_header_lines}:\n")
-            of.write(f'{indent*3}'"continue\n")
-            of.write(f'{indent*2}'"line = line.strip()\n")
-            of.write(f'{indent*2}'"if not line:\n")
-            of.write(f'{indent*3}'"continue\n")
-            of.write(f'{indent*2}'"t_data2d.append(line.split())\n")
-            of.write(f"{r.fname}_data = np.array(t_data2d, dtype=float)\n\n")
+            of.write(f"{r.fname}_rate = TabularRate(rfile='{r.rfile}')\n")
+            of.write(f"{r.fname}_info = ({r.fname}_rate.table_rhoy_lines,\n")
+            of.write(f"                  {r.fname}_rate.table_temp_lines,\n")
+            of.write(f"                  {r.fname}_rate.tabular_data_table)\n\n")
 
         of.write("@numba.njit()\n")
 
@@ -315,3 +313,24 @@ class PythonNetwork(RateCollection):
                 of.write(self.full_jacobian_element_string(n_i, n_j, indent=indent))
 
         of.write(f"{indent}return jac\n")
+
+        # Copy any tables in the network to the current directory
+        # if the table file cannot be found, print a warning and continue.
+        try:
+            odir = os.path.dirname(outfile)
+        except TypeError:
+            odir = None
+
+        for tr in self.tabular_rates:
+            tdir = os.path.dirname(tr.rfile_path)
+            if tdir != os.getcwd():
+                tdat_file = os.path.join(tdir, tr.table_file)
+                if os.path.isfile(tdat_file):
+                    shutil.copy(tdat_file, odir or os.getcwd())
+                else:
+                    print(f'WARNING: Table data file {tr.table_file} not found.')
+                rtoki_file = os.path.join(tdir, tr.rfile)
+                if os.path.isfile(rtoki_file):
+                    shutil.copy(rtoki_file, odir or os.getcwd())
+                else:
+                    print(f'WARNING: Table metadata file {tr.rfile} not found.')

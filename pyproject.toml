@@ -3,7 +3,7 @@
 requires = ["setuptools>=45", "wheel", "setuptools_scm>=6.2"]
 
 [tool.pylint.MAIN]
-ignore = ['_python_reference']
+ignore = ['_python_reference', 'test_full_python_net.py']
 extension-pkg-allow-list = ['mpi4py']
 
 [tool.pylint."MESSAGES CONTROL"]
@@ -52,3 +52,4 @@ skip = ".git,*docs/build,*.bib"
 
 [tool.isort]
 known_first_party = ["pynucastro"]
+skip = ["pynucastro/networks/tests/_python_reference/network.py"]

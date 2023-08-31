@@ -1,9 +1,11 @@
 """
 Classes and methods to interface with files storing rate data.
 """
+
 import io
 import os
 from collections import Counter
+from enum import Enum
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -69,7 +71,7 @@ class RateFileError(Exception):
     """An error occurred while trying to read a Rate from a file."""
 
 
-def load_rate(rfile=None, rfile_path=None):
+def load_rate(rfile=None):
     """Try to load a rate of any type.
 
     :raises: :class:`.RateFileError`, :class:`.UnsupportedNucleus`
@@ -77,9 +79,9 @@ def load_rate(rfile=None, rfile_path=None):
 
     rate: Rate
     try:
-        rate = TabularRate(rfile=rfile, rfile_path=rfile_path)
+        rate = TabularRate(rfile=rfile)
     except (RateFileError, UnsupportedNucleus):
-        rate = ReacLibRate(rfile=rfile, rfile_path=rfile_path)
+        rate = ReacLibRate(rfile=rfile)
 
     return rate
 
@@ -334,8 +336,8 @@ class Rate:
 
     """
     def __init__(self, reactants=None, products=None, Q=None, weak_type=""):
-        """ rfile can be either a string specifying the path to a rate file or
-        an io.StringIO object from which to read rate information. """
+        """a generic Rate class that acts as a base class for specific
+        sources.  Here we only specify the reactants and products and Q value"""
 
         self.fname = None
 
@@ -369,8 +371,7 @@ class Rate:
 
     def __eq__(self, other):
         """ Determine whether two Rate objects are equal.
-        They are equal if they contain identical reactants and products and
-        if they contain the same SingleSet sets and if their chapters are equal."""
+        They are equal if they contain identical reactants and products"""
         x = True
 
         x = x and (self.reactants == other.reactants)
@@ -763,6 +764,18 @@ class Rate:
         return self.prefactor * dens_term * y_e_term * Y_term * rate_eval
 
 
+class TableIndex(Enum):
+    """a simple enum-like container for indexing the electron-capture tables"""
+    RHOY = 0
+    T = 1
+    MU = 2
+    DQ = 3
+    VS = 4
+    RATE = 5
+    NU = 6
+    GAMMA = 7
+
+
 class ReacLibRate(Rate):
     """A single reaction rate.  Currently, this is a ReacLib rate, which
     can be composed of multiple sets, or a tabulated electron capture
@@ -770,13 +783,13 @@ class ReacLibRate(Rate):
 
     :raises: :class:`.RateFileError`, :class:`.UnsupportedNucleus`
     """
-    def __init__(self, rfile=None, rfile_path=None, chapter=None, original_source=None,
+    def __init__(self, rfile=None, chapter=None, original_source=None,
                  reactants=None, products=None, sets=None, labelprops=None, Q=None):
         """ rfile can be either a string specifying the path to a rate file or
         an io.StringIO object from which to read rate information. """
         # pylint: disable=super-init-not-called
 
-        self.rfile_path = rfile_path
+        self.rfile_path = None
         self.rfile = None
 
         if isinstance(rfile, str):
@@ -1325,17 +1338,100 @@ class ReacLibRate(Rate):
         return fig
 
 
+if numba is not None:
+    interpolator_spec = [
+        ('data', numba.float64[:, :]),
+        ('table_rhoy_lines', numba.int32),
+        ('table_temp_lines', numba.int32),
+        ('rhoy', numba.float64[:]),
+        ('temp', numba.float64[:])
+    ]
+else:
+    interpolator_spec = []
+
+
+@jitclass(interpolator_spec)
+class TableInterpolator:
+    """A simple class that holds a pointer to the table data and
+    methods that allow us to interpolate a variable"""
+
+    def __init__(self, table_rhoy_lines, table_temp_lines, table_data):
+
+        self.data = table_data
+        self.table_rhoy_lines = table_rhoy_lines
+        self.table_temp_lines = table_temp_lines
+
+        # for easy indexing, store a 1-d array of T and rhoy
+        self.rhoy = self.data[::self.table_temp_lines, TableIndex.RHOY.value]
+        self.temp = self.data[0:self.table_temp_lines, TableIndex.T.value]
+
+    def _get_logT_idx(self, logt0):
+        """return the index into the temperatures such that
+        T[i-1] < t0 <= T[i].  We return i-1 here, corresponding to
+        the lower value.
+        Note: we work in terms of log10()
+        """
+
+        return max(0, np.searchsorted(self.temp, logt0) - 1)
+
+    def _get_logT_nearest_idx(self, logt0):
+        """return the index into the temperatures that is closest
+        to the input t0.  Note: we work in terms of log10()
+
+        """
+
+        return np.abs(10**self.temp - 10**logt0).argmin()
+        #return np.abs(self.temp - logt0).argmin()
+
+    def _get_logrhoy_idx(self, logrhoy0):
+        """return the index into rho*Y such that
+        rhoY[i-1] < rhoy0 <= rhoY[i].  We return i-1 here,
+        corresponding to the lower value.
+        Note: we work in terms of log10()
+
+        """
+
+        return max(0, np.searchsorted(self.rhoy, logrhoy0) - 1)
+
+    def _get_logrhoy_nearest_idx(self, logrhoy0):
+        """return the index into rho*Y that is the closest to
+        the input rhoy.  Note: we work in terms of log10()
+
+        """
+
+        return np.abs(10**self.rhoy - 10**logrhoy0).argmin()
+        #return np.abs(self.rhoy - logrhoy0).argmin()
+
+    def _rhoy_T_to_idx(self, irhoy, jtemp):
+        """given a pair (irhoy, jtemp) into the table, return the 1-d index
+        into the underlying data array assuming row-major ordering"""
+
+        return irhoy * self.table_temp_lines + jtemp
+
+    def interpolate(self, logrhoy, logT, component):
+        """given logrhoy and logT, do nearest interpolation to
+        find the value of the data component in the table"""
+
+        # find the nearest value of T and rhoY in the data table
+        rhoy_index = self._get_logrhoy_nearest_idx(logrhoy)
+        t_index = self._get_logT_nearest_idx(logT)
+        idx = self._rhoy_T_to_idx(rhoy_index, t_index)
+
+        r = self.data[idx, component]
+        return r
+
+
 class TabularRate(Rate):
     """A tabular rate.
 
     :raises: :class:`.RateFileError`, :class:`.UnsupportedNucleus`
     """
-    def __init__(self, rfile=None, rfile_path=None):
+    def __init__(self, rfile=None):
         """ rfile can be either a string specifying the path to a rate file or
         an io.StringIO object from which to read rate information. """
         super().__init__()
 
-        self.rfile_path = rfile_path
+        self.rfile_path = None
         self.rfile = None
 
         if isinstance(rfile, str):
@@ -1369,6 +1465,9 @@ class TabularRate(Rate):
         self._set_print_representation()
 
         self.get_tabular_rate()
+
+        self.interpolator = TableInterpolator(self.table_rhoy_lines, self.table_temp_lines,
+                                              self.tabular_data_table)
 
     def __hash__(self):
         return hash(self.__repr__())
@@ -1470,11 +1569,10 @@ class TabularRate(Rate):
         fstring += f"def {self.fname}(rate_eval, T, rhoY):\n"
         fstring += f"    # {self.rid}\n"
 
-        # find the nearest value of T and rhoY in the data table
-        fstring += f"    T_nearest = ({self.fname}_data[:, 1])[np.abs((10.0**{self.fname}_data[:, 1]) - T).argmin()]\n"
-        fstring += f"    rhoY_nearest = ({self.fname}_data[:, 0])[np.abs((10.0**{self.fname}_data[:, 0]) - rhoY).argmin()]\n"
-        fstring += f"    inde = np.where(({self.fname}_data[:, 1] == T_nearest) & ({self.fname}_data[:, 0] == rhoY_nearest))[0][0]\n"
-        fstring += f"    rate_eval.{self.fname} = 10.0**({self.fname}_data[inde][5])\n\n"
+        fstring += f"    {self.fname}_interpolator = TableInterpolator(*{self.fname}_info)\n"
+
+        fstring += f"    r = {self.fname}_interpolator.interpolate(np.log10(rhoY), np.log10(T), TableIndex.RATE.value)\n"
+        fstring += f"    rate_eval.{self.fname} = 10.0**r\n\n"
 
         return fstring
 
@@ -1497,31 +1595,21 @@ class TabularRate(Rate):
                 t_data2d.append(line.split())
 
         # convert the nested list of string values into a numpy float array
-        self.tabular_data_table = np.array(t_data2d, dtype=float)
+        self.tabular_data_table = np.array(t_data2d, dtype=np.float64)
 
     def eval(self, T, rhoY=None):
         """ evauate the reaction rate for temperature T """
 
-        data = self.tabular_data_table
-        # find the nearest value of T and rhoY in the data table
-        T_nearest = (data[:, 1])[np.abs(10.0**(data[:, 1]) - T).argmin()]
-        rhoY_nearest = (data[:, 0])[np.abs(10.0**(data[:, 0]) - rhoY).argmin()]
-        inde = np.where((data[:, 1] == T_nearest) & (data[:, 0] == rhoY_nearest))[0][0]
-        r = data[inde][5]
+        r = self.interpolator.interpolate(np.log10(rhoY), np.log10(T),
+                                          TableIndex.RATE.value)
         return 10.0**r
 
     def get_nu_loss(self, T, rhoY):
         """ get the neutrino loss rate for the reaction if tabulated"""
 
-        nu_loss = None
-        data = self.tabular_data_table
-        # find the nearest value of T and rhoY in the data table
-        T_nearest = (data[:, 1])[np.abs((data[:, 1]) - T).argmin()]
-        rhoY_nearest = (data[:, 0])[np.abs((data[:, 0]) - rhoY).argmin()]
-        inde = np.where((data[:, 1] == T_nearest) & (data[:, 0] == rhoY_nearest))[0][0]
-        nu_loss = data[inde][6]
-
-        return nu_loss
+        r = self.interpolator.interpolate(np.log10(rhoY), np.log10(T),
+                                          TableIndex.NU.value)
+        return r
 
     def plot(self, Tmin=1.e8, Tmax=1.6e9, rhoYmin=3.9e8, rhoYmax=2.e9, color_field='rate',
              figsize=(10, 10)):
@@ -1542,10 +1630,10 @@ class TabularRate(Rate):
 
         data = self.tabular_data_table
 
-        inde1 = data[:, 1] <= Tmax
-        inde2 = data[:, 1] >= Tmin
-        inde3 = data[:, 0] <= rhoYmax
-        inde4 = data[:, 0] >= rhoYmin
+        inde1 = data[:, TableIndex.T.value] <= np.log10(Tmax)
+        inde2 = data[:, TableIndex.T.value] >= np.log10(Tmin)
+        inde3 = data[:, TableIndex.RHOY.value] <= np.log10(rhoYmax)
+        inde4 = data[:, TableIndex.RHOY.value] >= np.log10(rhoYmin)
         data_heatmap = data[inde1 & inde2 & inde3 & inde4].copy()
 
         rows, row_pos = np.unique(data_heatmap[:, 0], return_inverse=True)
@@ -1553,12 +1641,12 @@ class TabularRate(Rate):
         pivot_table = np.zeros((len(rows), len(cols)), dtype=data_heatmap.dtype)
 
         if color_field == 'rate':
-            icol = 5
+            icol = TableIndex.RATE.value
             title = f"{self.weak_type} rate in log10(1/s)"
             cmap = 'magma'
 
         elif color_field == 'nu_loss':
-            icol = 6
+            icol = TableIndex.NU.value
             title = "neutrino energy loss rate in log10(erg/s)"
             cmap = 'viridis'
 
@@ -1566,7 +1654,7 @@ class TabularRate(Rate):
             raise ValueError("color_field must be either 'rate' or 'nu_loss'.")
 
         try:
-            pivot_table[row_pos, col_pos] = np.log10(data_heatmap[:, icol])
+            pivot_table[row_pos, col_pos] = data_heatmap[:, icol]
         except ValueError:
             print("Divide by zero encountered in log10\nChange the scale of T or rhoY")
 
@@ -1577,10 +1665,10 @@ class TabularRate(Rate):
         ax.set_ylabel(r"$\log(\rho Y_e)$ [g/cm$^3$]")
         ax.set_title(fr"{self.pretty_string}" + "\n" + title)
         ax.set_yticks(range(len(rows)))
-        ylabels = [f"{np.log10(q):4.2f}" for q in rows]
+        ylabels = [f"{q:4.2f}" for q in rows]
         ax.set_yticklabels(ylabels)
         ax.set_xticks(range(len(cols)))
-        xlabels = [f"{np.log10(q):4.2f}" for q in cols]
+        xlabels = [f"{q:4.2f}" for q in cols]
         ax.set_xticklabels(xlabels, rotation=90, ha="right", rotation_mode="anchor")
         ax.invert_yaxis()
 
@@ -1654,7 +1742,7 @@ class DerivedRate(ReacLibRate):
             sset_d = SingleSet(a=a_rev, labelprops=rate.labelprops)
             derived_sets.append(sset_d)
 
-        super().__init__(rfile=self.rate.rfile, rfile_path=self.rate.rfile_path, chapter=self.rate.chapter, original_source=self.rate.original_source,
+        super().__init__(rfile=self.rate.rfile, chapter=self.rate.chapter, original_source=self.rate.original_source,
                 reactants=self.rate.products, products=self.rate.reactants, sets=derived_sets, labelprops="derived", Q=-Q)
 
     def eval(self, T, rhoY=None):

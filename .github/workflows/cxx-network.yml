@@ -98,3 +98,23 @@ jobs:
           cd external/Microphysics/unit_test/burn_cell
           diff -I "^AMReX" -I "^reading in reaclib rates" test.out ci-benchmarks/ecsn_unit_test.out
 
+      - name: Regenerate ase network
+        run: |
+          cd external/Microphysics/networks/ase
+          python ase.py
+
+      - name: Compile test_ase (NSE_NET, ase)
+        run: |
+          cd external/Microphysics/unit_test/test_ase
+          make realclean
+          make -j 4
+
+      - name: Run test_ase (NSE_NET, ase)
+        run: |
+          cd external/Microphysics/unit_test/test_ase
+          ./main3d.gnu.ex inputs_ase > test.out
+
+      - name: Compare to stored output (NSE_NET, ase)
+        run: |
+          cd external/Microphysics/unit_test/test_ase
+          diff -I "^AMReX" -I "^reading in reaclib rates" test.out ci-benchmarks/ase_nse_net_unit_test.out
