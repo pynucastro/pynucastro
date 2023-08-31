@@ -154,10 +154,20 @@ evaluate_linear_2d(const Real fip1jp1, const Real fip1j, const Real fijp1, const
     Real B = (fip1j - fij) / dx;
     Real A = (fip1jp1 - B * dx - C * dy - E) / (dx * dy);
 
-    f =  A * (x - xlo) * (y - ylo) +
-            B * (x - xlo) +
-            C * (y - ylo) +
-            E;
+    if ((x <= xlo) && (y <= ylo)) {
+        f = fij
+    } else if ((x <= xlo) && (y >= yhi)) {
+        f=fijp1
+    } else if ((x >= xhi) && (y <= ylo)) {
+        f=fip1j
+    } else if ((x >= xhi) && (y >= yhi)) {
+        f=fip1jp1
+    } else {
+        f =  A * (x - xlo) * (y - ylo) +
+                B * (x - xlo) +
+                C * (y - ylo) +
+                E;
+    }
 
     return f;
 }
@@ -323,15 +333,10 @@ evaluate_dr_dtemp(const table_t& table_meta, const R& log_rhoy_table, const T& l
         Real dlogr_dlogt_ip1j   = (fip1jp1 - fip1jm1)/(t_jp1 - t_jm1);
         Real dlogr_dlogt_ip1jp1 = (fip1jp2 - fip1j)/(t_jp2 - t_j);
 
-        if (log_rhoy <= rhoy_lo) {
-            dlogr_dlogt = dlogr_dlogt_ij;
-        } else if (log_rhoy >= rhoy_hi) {
-            dlogr_dlogt = dlogr_dlogt_ip1j;
-        } else {
-            dlogr_dlogt = evaluate_linear_2d(dlogr_dlogt_ip1jp1,  dlogr_dlogt_ip1j, dlogr_dlogt_ijp1, dlogr_dlogt_ij,
-                                             rhoy_hi, rhoy_lo, t_jp1, t_j,
-                                             log_rhoy, log_temp);
-        }
+        dlogr_dlogt = evaluate_linear_2d(dlogr_dlogt_ip1jp1,  dlogr_dlogt_ip1j, dlogr_dlogt_ijp1, dlogr_dlogt_ij,
+                                         rhoy_hi, rhoy_lo, t_jp1, t_j,
+                                         log_rhoy, log_temp);
+
     }
     return dlogr_dlogt;
 }
