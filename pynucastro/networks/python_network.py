@@ -140,7 +140,7 @@ class PythonNetwork(RateCollection):
         if self.custom_rates:
             ostr += f"\n{indent}# custom rates\n"
         for r in self.custom_rates:
-            ostr += f"{indent}{r.fname}(rate_eval, T)\n"
+            ostr += f"{indent}{r.fname}(rate_eval, tf)\n"
 
         ostr += "\n"
 
