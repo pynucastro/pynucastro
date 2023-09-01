@@ -306,12 +306,12 @@ class TestWeakRates:
         assert len(rate1.reactants) == 1 and len(rate1.products) == 1
         assert rate1.products[0] == Nucleus("f18")
         assert rate1.reactants[0] == Nucleus("o18")
-        assert rate1.eval(1.e10, 1.e7) == approx(1.020939483e-08, rel=1.e-6, abs=1.e-20)
+        assert rate1.eval(2.5e9, 1.e8) == approx(8.032467196099662e-16, rel=1.e-6, abs=1.e-20)
 
         assert len(rate2.reactants) == 1 and len(rate2.products) == 1
         assert rate2.products[0] == Nucleus("ne22")
         assert rate2.reactants[0] == Nucleus("na22")
-        assert rate2.eval(1.e9, 1.e6) == approx(8.344493870e-07, rel=1.e-6, abs=1.e-20)
+        assert rate2.eval(1.e9, 2.e7) == approx(3.232714235735518e-05, rel=1.e-6, abs=1.e-20)
 
         assert len(rate3.reactants) == 1 and len(rate3.products) == 1
         assert rate3.products[0] == Nucleus("ca45")
