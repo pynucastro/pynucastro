@@ -25,7 +25,7 @@ class MyRate(pyna.Rate):
         fstring = ""
         fstring += "@numba.njit()\n"
         fstring += f"def {self.fname}(rate_eval, tf):\n"
-        fstring += f"    rate_eval.{self.fname} = {self.r0} * (tfactors.T9 * 1.e9 / {self.T0} )**({self.nu})\n\n"
+        fstring += f"    rate_eval.{self.fname} = {self.r0} * (tf.T9 * 1.e9 / {self.T0} )**({self.nu})\n\n"
         return fstring
 
     def eval(self, T, rhoY=None):
@@ -85,7 +85,7 @@ class TestPythonCustomNetwork:
         func = \
 """@numba.njit()
 def n14_p__o15__generic(rate_eval, tf):
-    rate_eval.n14_p__o15__generic = 1.416655077954945e-13 * (tfactors.T9 * 1.e9 / 30000000.0 )**(15.601859314950396)
+    rate_eval.n14_p__o15__generic = 1.416655077954945e-13 * (tf.T9 * 1.e9 / 30000000.0 )**(15.601859314950396)
 
 """
 
