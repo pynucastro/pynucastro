@@ -1408,6 +1408,12 @@ class TableInterpolator:
         # find the T and rhoY in the data table corresponding to the
         # lower left
 
+        if logT < self.temp.min() or logT > self.temp.max():
+            raise ValueError("temperature out of table bounds")
+
+        if logrhoy < self.rhoy.min() or logrhoy > self.rhoy.max():
+            raise ValueError("rhoy out of table bounds")
+
         irhoy = self._get_logrhoy_idx(logrhoy)
         jT = self._get_logT_idx(logT)
 

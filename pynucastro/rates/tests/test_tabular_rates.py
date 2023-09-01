@@ -1,6 +1,6 @@
 # unit tests for rates
 
-from pytest import approx
+from pytest import approx, raises
 
 import pynucastro as pyna
 
@@ -355,3 +355,18 @@ class TestTabularRates:
                 assert rr == approx(stored_rates_la[r.fname], rel=1.e-6, abs=1.e-100), f"rate: {r} does not agree"
             else:
                 print(f"WARNING: missing Langanke tests for tabular rate {r}")
+
+    def test_bounds(self):
+
+        r = self.rc_su.get_rates()[0]
+
+        T = 1.e11
+        rhoy = 1.e7
+
+        with raises(ValueError):
+            r.eval(T, rhoy)
+
+        rhoy = 1.e2
+
+        with raises(ValueError):
+            r.eval(T, rhoy)
