@@ -132,7 +132,7 @@
     "        fstring = \"\"\n",
     "        fstring += \"@numba.njit()\\n\"\n",
     "        fstring += f\"def {self.fname}(rate_eval, tf):\\n\"\n",
-    "        fstring += f\"    rate_eval.{self.fname} = {self.r0} * (tfactors.T9 * 1.e9 / {self.T0} )**({self.nu})\\n\\n\"\n",
+    "        fstring += f\"    rate_eval.{self.fname} = {self.r0} * (tf.T9 * 1.e9 / {self.T0} )**({self.nu})\\n\\n\"\n",
     "        return fstring\n",
     "\n",
     "    def eval(self, T, rhoY=None):\n",
@@ -200,7 +200,7 @@
      "text": [
       "@numba.njit()\n",
       "def n14_p__o15__generic(rate_eval, tf):\n",
-      "    rate_eval.n14_p__o15__generic = 1.416655077954945e-13 * (tfactors.T9 * 1.e9 / 30000000.0 )**(15.601859314950396)\n",
+      "    rate_eval.n14_p__o15__generic = 1.416655077954945e-13 * (tf.T9 * 1.e9 / 30000000.0 )**(15.601859314950396)\n",
       "\n",
       "\n"
      ]
