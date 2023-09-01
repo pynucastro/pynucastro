@@ -1,4 +1,9 @@
 # unit tests for rates
+import importlib
+import os
+import sys
+
+import numpy as np
 import pytest
 from pytest import approx
 
@@ -90,3 +95,28 @@ def n14_p__o15__generic(rate_eval, tf):
 """
 
         assert r_custom.function_string_py() == func
+
+    def test_import(self, pynet):
+        pynet.write_network("custom.py")
+        custom = importlib.import_module("custom")
+
+        rho = 1.e4
+        T = 4e7
+
+        X0 = np.ones(custom.nnuc) / custom.nnuc
+        Y0 = X0 / custom.A
+
+        ydots = custom.rhs(0.0, Y0, rho, T)
+
+        ydot_save = np.array([-4.89131088e-06, 4.84655620e-06,
+                              4.83556908e-06, 9.87368448e-06,
+                              -9.89635377e-06, 7.79536222e-05,
+                              3.72390497e-05, -7.79200769e-05,
+                              -4.20854947e-05])
+
+        for n in range(custom.nnuc):
+            assert ydots[n] == approx(ydot_save[n])
+
+        os.remove("custom.py")
+        del custom
+        del sys.modules["custom"]
