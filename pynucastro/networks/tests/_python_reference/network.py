@@ -115,7 +115,7 @@ def c12_c12__n_mg23(rate_eval, tf):
     rate = 0.0
 
     # cf88r
-    rate += np.exp(  -12.8056 + -30.1485*tf.T9i + 11.4826*tf.T913
+    rate += np.exp(  -12.8056 + -30.1498*tf.T9i + 11.4826*tf.T913
                   + 1.82849*tf.T9 + -0.34844*tf.T953)
 
     rate_eval.c12_c12__n_mg23 = rate
@@ -137,11 +137,11 @@ def he4_c12__o16(rate_eval, tf):
     rate = 0.0
 
     # nac2 
-    rate += np.exp(  69.6526 + -1.39254*tf.T9i + 58.9128*tf.T913i + -148.273*tf.T913
-                  + 9.08324*tf.T9 + -0.541041*tf.T953 + 70.3554*tf.lnT9)
-    # nac2 
     rate += np.exp(  254.634 + -1.84097*tf.T9i + 103.411*tf.T913i + -420.567*tf.T913
                   + 64.0874*tf.T9 + -12.4624*tf.T953 + 137.303*tf.lnT9)
+    # nac2 
+    rate += np.exp(  69.6526 + -1.39254*tf.T9i + 58.9128*tf.T913i + -148.273*tf.T913
+                  + 9.08324*tf.T9 + -0.541041*tf.T953 + 70.3554*tf.lnT9)
 
     rate_eval.he4_c12__o16 = rate
 
@@ -160,15 +160,15 @@ def he4_he4_he4__c12(rate_eval, tf):
     # he4 + he4 + he4 --> c12
     rate = 0.0
 
-    # fy05n
-    rate += np.exp(  -0.971052 + -37.06*tf.T913i + 29.3493*tf.T913
-                  + -115.507*tf.T9 + -10.0*tf.T953 + -1.33333*tf.lnT9)
     # fy05r
     rate += np.exp(  -24.3505 + -4.12656*tf.T9i + -13.49*tf.T913i + 21.4259*tf.T913
                   + -1.34769*tf.T9 + 0.0879816*tf.T953 + -13.1653*tf.lnT9)
     # fy05r
     rate += np.exp(  -11.7884 + -1.02446*tf.T9i + -23.57*tf.T913i + 20.4886*tf.T913
                   + -12.9882*tf.T9 + -20.0*tf.T953 + -2.16667*tf.lnT9)
+    # fy05n
+    rate += np.exp(  -0.971052 + -37.06*tf.T913i + 29.3493*tf.T913
+                  + -115.507*tf.T9 + -10.0*tf.T953 + -1.33333*tf.lnT9)
 
     rate_eval.he4_he4_he4__c12 = rate
 

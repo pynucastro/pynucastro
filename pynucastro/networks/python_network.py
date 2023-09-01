@@ -137,6 +137,11 @@ class PythonNetwork(RateCollection):
         for r in self.tabular_rates:
             ostr += f"{indent}{r.fname}(rate_eval, T, rho*ye(Y))\n"
 
+        if self.custom_rates:
+            ostr += f"\n{indent}# custom rates\n"
+        for r in self.custom_rates:
+            ostr += f"{indent}{r.fname}(rate_eval, tf)\n"
+
         ostr += "\n"
 
         # apply screening factors, if we're given a screening function
