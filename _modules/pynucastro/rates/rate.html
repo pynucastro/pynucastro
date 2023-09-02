@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.rates.rate &mdash; pynucastro 2.0.3.post96+gf595d742 documentation</title>
+  <title>pynucastro.rates.rate &mdash; pynucastro 2.0.3.post97+g315b8abc documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
@@ -14,7 +14,7 @@
   
         <script src="../../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../_static/documentation_options.js?v=8bbb1a5b"></script>
+        <script src="../../../_static/documentation_options.js?v=bc1d4195"></script>
         <script src="../../../_static/doctools.js?v=888ff710"></script>
         <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
         <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -1590,16 +1590,8 @@
 <span class="sd">        Note: we work in terms of log10()</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">searchsorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">temp</span><span class="p">,</span> <span class="n">logt0</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">_get_logT_nearest_idx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logt0</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;return the index into the temperatures that is closest</span>
-<span class="sd">        to the input t0.  Note: we work in terms of log10()</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="mi">10</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">temp</span> <span class="o">-</span> <span class="mi">10</span><span class="o">**</span><span class="n">logt0</span><span class="p">)</span><span class="o">.</span><span class="n">argmin</span><span class="p">()</span>
-        <span class="c1">#return np.abs(self.temp - logt0).argmin()</span>
+        <span class="n">max_idx</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">temp</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">max_idx</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">searchsorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">temp</span><span class="p">,</span> <span class="n">logt0</span><span class="p">))</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_get_logrhoy_idx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logrhoy0</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;return the index into rho*Y such that</span>
@@ -1609,16 +1601,8 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">searchsorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rhoy</span><span class="p">,</span> <span class="n">logrhoy0</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">_get_logrhoy_nearest_idx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logrhoy0</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;return the index into rho*Y that is the closest to</span>
-<span class="sd">        the input rhoy.  Note: we work in terms of log10()</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="mi">10</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">rhoy</span> <span class="o">-</span> <span class="mi">10</span><span class="o">**</span><span class="n">logrhoy0</span><span class="p">)</span><span class="o">.</span><span class="n">argmin</span><span class="p">()</span>
-        <span class="c1">#return np.abs(self.rhoy - logrhoy0).argmin()</span>
+        <span class="n">max_idx</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rhoy</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">max_idx</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">searchsorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rhoy</span><span class="p">,</span> <span class="n">logrhoy0</span><span class="p">))</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_rhoy_T_to_idx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">irhoy</span><span class="p">,</span> <span class="n">jtemp</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;given a pair (irhoy, jtemp) into the table, return the 1-d index</span>
@@ -1627,15 +1611,60 @@
         <span class="k">return</span> <span class="n">irhoy</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">table_temp_lines</span> <span class="o">+</span> <span class="n">jtemp</span>
 
     <span class="k">def</span> <span class="nf">interpolate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logrhoy</span><span class="p">,</span> <span class="n">logT</span><span class="p">,</span> <span class="n">component</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;given logrhoy and logT, do nearest interpolation to</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;given logrhoy and logT, do bilinear interpolation to</span>
 <span class="sd">        find the value of the data component in the table&quot;&quot;&quot;</span>
 
-        <span class="c1"># find the nearest value of T and rhoY in the data table</span>
-        <span class="n">rhoy_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_logrhoy_nearest_idx</span><span class="p">(</span><span class="n">logrhoy</span><span class="p">)</span>
-        <span class="n">t_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_logT_nearest_idx</span><span class="p">(</span><span class="n">logT</span><span class="p">)</span>
-        <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rhoy_T_to_idx</span><span class="p">(</span><span class="n">rhoy_index</span><span class="p">,</span> <span class="n">t_index</span><span class="p">)</span>
+        <span class="c1"># We are going to do bilinear interpolation.  We create a</span>
+        <span class="c1"># polynomial of the form:</span>
+        <span class="c1">#</span>
+        <span class="c1"># f = A [log(rho) - log(rho_i)] [log(T) - log(T_j)] +</span>
+        <span class="c1">#     B [log(rho) - log(rho_i)] +</span>
+        <span class="c1">#     C [log(T) - log(T_j)] +</span>
+        <span class="c1">#     D</span>
+        <span class="c1">#</span>
+        <span class="c1"># we then find the i,j such that our point is in the</span>
+        <span class="c1"># box with corners (i,j) to (i+1,j+1), and solve for</span>
+        <span class="c1"># A, B, C, D</span>
 
-        <span class="n">r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="n">component</span><span class="p">]</span>
+        <span class="c1"># find the T and rhoY in the data table corresponding to the</span>
+        <span class="c1"># lower left</span>
+
+        <span class="k">if</span> <span class="n">logT</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">temp</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="ow">or</span> <span class="n">logT</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">temp</span><span class="o">.</span><span class="n">max</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;temperature out of table bounds&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">logrhoy</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">rhoy</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="ow">or</span> <span class="n">logrhoy</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">rhoy</span><span class="o">.</span><span class="n">max</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;rhoy out of table bounds&quot;</span><span class="p">)</span>
+
+        <span class="n">irhoy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_logrhoy_idx</span><span class="p">(</span><span class="n">logrhoy</span><span class="p">)</span>
+        <span class="n">jT</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_logT_idx</span><span class="p">(</span><span class="n">logT</span><span class="p">)</span>
+
+        <span class="c1"># note: rhoy and T are already stored as log</span>
+
+        <span class="n">dlogrho</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rhoy</span><span class="p">[</span><span class="n">irhoy</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">rhoy</span><span class="p">[</span><span class="n">irhoy</span><span class="p">]</span>
+        <span class="n">dlogT</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">temp</span><span class="p">[</span><span class="n">jT</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">temp</span><span class="p">[</span><span class="n">jT</span><span class="p">]</span>
+
+        <span class="c1"># get the data at the 4 points</span>
+
+        <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rhoy_T_to_idx</span><span class="p">(</span><span class="n">irhoy</span><span class="p">,</span> <span class="n">jT</span><span class="p">)</span>
+        <span class="n">f_ij</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="n">component</span><span class="p">]</span>
+
+        <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rhoy_T_to_idx</span><span class="p">(</span><span class="n">irhoy</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">jT</span><span class="p">)</span>
+        <span class="n">f_ip1j</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="n">component</span><span class="p">]</span>
+
+        <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rhoy_T_to_idx</span><span class="p">(</span><span class="n">irhoy</span><span class="p">,</span> <span class="n">jT</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">f_ijp1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="n">component</span><span class="p">]</span>
+
+        <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rhoy_T_to_idx</span><span class="p">(</span><span class="n">irhoy</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">jT</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">f_ip1jp1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="n">component</span><span class="p">]</span>
+
+        <span class="n">D</span> <span class="o">=</span> <span class="n">f_ij</span>
+        <span class="n">C</span> <span class="o">=</span> <span class="p">(</span><span class="n">f_ijp1</span> <span class="o">-</span> <span class="n">f_ij</span><span class="p">)</span> <span class="o">/</span> <span class="n">dlogT</span>
+        <span class="n">B</span> <span class="o">=</span> <span class="p">(</span><span class="n">f_ip1j</span> <span class="o">-</span> <span class="n">f_ij</span><span class="p">)</span> <span class="o">/</span> <span class="n">dlogrho</span>
+        <span class="n">A</span> <span class="o">=</span> <span class="p">(</span><span class="n">f_ip1jp1</span> <span class="o">-</span> <span class="n">B</span> <span class="o">*</span> <span class="n">dlogrho</span> <span class="o">-</span> <span class="n">C</span> <span class="o">*</span> <span class="n">dlogT</span> <span class="o">-</span> <span class="n">D</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">dlogrho</span> <span class="o">*</span> <span class="n">dlogT</span><span class="p">)</span>
+
+        <span class="n">r</span> <span class="o">=</span> <span class="p">(</span><span class="n">A</span> <span class="o">*</span> <span class="p">(</span><span class="n">logrhoy</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">rhoy</span><span class="p">[</span><span class="n">irhoy</span><span class="p">])</span> <span class="o">*</span> <span class="p">(</span><span class="n">logT</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">temp</span><span class="p">[</span><span class="n">jT</span><span class="p">])</span> <span class="o">+</span>
+             <span class="n">B</span> <span class="o">*</span> <span class="p">(</span><span class="n">logrhoy</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">rhoy</span><span class="p">[</span><span class="n">irhoy</span><span class="p">])</span> <span class="o">+</span> <span class="n">C</span> <span class="o">*</span> <span class="p">(</span><span class="n">logT</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">temp</span><span class="p">[</span><span class="n">jT</span><span class="p">])</span> <span class="o">+</span> <span class="n">D</span><span class="p">)</span>
+
         <span class="k">return</span> <span class="n">r</span></div>
 
 
