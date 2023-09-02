@@ -275,7 +275,8 @@ get_entries(const table_t& table_meta,
 
         // Interpolate in temperature
 
-        entries(k_index_dlogr_dlogt) = bl_clamp(logt_i, logt_ip1, dlogr_dlogt_i, drdt_ip1, log_temp);
+        entries(k_index_dlogr_dlogt) = bl_clamp(log_temp_i, log_temp_ip1,
+                                                dlogr_dlogt_i, dlogr_dlogt_ip1, log_temp);
 
     }
 }
