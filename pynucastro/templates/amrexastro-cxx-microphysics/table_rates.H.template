@@ -245,7 +245,7 @@ get_entries(const table_t& table_meta,
 
         Real log_temp_im1 = log_temp_table(itemp_lo-1);
         Real log_temp_i   = log_temp_table(itemp_lo);
-        Real log_tem_ip1 = log_temp_table(itemp_hi);
+        Real log_temp_ip1 = log_temp_table(itemp_hi);
         Real log_temp_ip2 = log_temp_table(itemp_hi+1);
 
         Real f_im1 = bl_clamp(log_rhoy_lo, log_rhoy_hi,
