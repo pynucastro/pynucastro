@@ -53,10 +53,16 @@ def _rate_name_to_nuc(name):
             if nuc.lower() in ["e", "nu", "_", "g", "gamma"]:
                 # first electrons and neutrins, and nothing
                 continue
+            if nuc.lower() == "pp":
+                reactants.append(Nucleus("p"))
+                reactants.append(Nucleus("p"))
+                continue
             if nuc.lower() == "aa":
                 reactants.append(Nucleus("he4"))
                 reactants.append(Nucleus("he4"))
+                continue
             else:
+                print(f"couldn't deal with {nuc}")
                 raise
 
     products = []
@@ -67,14 +73,21 @@ def _rate_name_to_nuc(name):
             n = Nucleus(nuc)
             products.append(n)
         except (ValueError, AssertionError):
+            print(nuc)
             # we need to interpret some things specially
             if nuc.lower() in ["e", "nu", "_", "g", "gamma"]:
                 # first electrons and neutrinos, gammas, and nothing
                 continue
+            if nuc.lower() == "pp":
+                products.append(Nucleus("p"))
+                products.append(Nucleus("p"))
+                continue
             if nuc.lower() == "aa":
                 products.append(Nucleus("he4"))
                 products.append(Nucleus("he4"))
+                continue
             else:
+                print(f"couldn't deal with {nuc}")
                 raise
 
     return reactants, products
