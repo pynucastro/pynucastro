@@ -1,11 +1,11 @@
 # unit tests for rates
-import filecmp
 import io
-import os
+import shutil
 
 import pytest
 
 from pynucastro import networks
+from pynucastro.networks.tests.helpers import compare_network_files
 
 
 class TestAmrexAstroCxxNetwork:
@@ -35,7 +35,7 @@ class TestAmrexAstroCxxNetwork:
     def test_nrat_reaclib(self, fn):
         """ test the _nrat_reaclib function """
 
-        answer = ('    const int NrateReaclib = 5;\n')
+        answer = '    const int NrateReaclib = 5;\n'
 
         assert self.cromulent_ftag(fn._nrat_reaclib, answer, n_indent=1)
 
@@ -49,14 +49,14 @@ class TestAmrexAstroCxxNetwork:
     def test_nrxn(self, fn):
         """ test the _nrxn function """
 
-        answer = ('    k_c12_c12__he4_ne20 = 1,\n' +
-                  '    k_c12_c12__n_mg23 = 2,\n' +
-                  '    k_c12_c12__p_na23 = 3,\n' +
-                  '    k_he4_c12__o16 = 4,\n' +
-                  '    k_n__p__weak__wc12 = 5,\n' +
-                  '    k_na23__ne23 = 6,\n' +
-                  '    k_ne23__na23 = 7,\n' +
-                  '    NumRates = k_ne23__na23\n')
+        answer = ('    k_c12_c12_to_he4_ne20 = 1,\n' +
+                  '    k_c12_c12_to_n_mg23 = 2,\n' +
+                  '    k_c12_c12_to_p_na23 = 3,\n' +
+                  '    k_he4_c12_to_o16 = 4,\n' +
+                  '    k_n_to_p_weak_wc12 = 5,\n' +
+                  '    k_na23_to_ne23 = 6,\n' +
+                  '    k_ne23_to_na23 = 7,\n' +
+                  '    NumRates = k_ne23_to_na23\n')
         assert self.cromulent_ftag(fn._nrxn, answer, n_indent=1)
 
     def test_ebind(self, fn):
@@ -76,28 +76,15 @@ class TestAmrexAstroCxxNetwork:
     def test_write_network(self, fn):
         """ test the write_network function"""
         test_path = "_test_cxx/"
+        # subdirectory of pynucastro/networks/tests/
         reference_path = "_amrexastro_cxx_reference/"
-        base_path = os.path.relpath(os.path.dirname(__file__))
+        # files that will be ignored if present in the generated directory
+        skip_files = []
 
+        # remove any previously generated files
+        shutil.rmtree(test_path, ignore_errors=True)
         fn.write_network(odir=test_path)
+        compare_network_files(test_path, reference_path, skip_files)
 
-        # get the list of files from the generated directory, so any new files
-        # will need to be added to the reference directory or explicitly ignored
-        files = os.listdir(test_path)
-        skip_files = [
-            "23Na-23Ne_electroncapture.dat",
-            "23Ne-23Na_betadecay.dat",
-        ]
-
-        errors = []
-        for test_file in files:
-            if test_file in skip_files:
-                continue
-            # note, _test is written under whatever directory pytest is run from,
-            # so it is not necessarily at the same place as _amrexastro_reference
-            if not filecmp.cmp(os.path.normpath(f"{test_path}/{test_file}"),
-                               os.path.normpath(f"{base_path}/{reference_path}/{test_file}"),
-                               shallow=False):
-                errors.append(test_file)
-
-        assert not errors, f"files don't match: {' '.join(errors)}"
+        # clean up generated files if the test passed
+        shutil.rmtree(test_path)

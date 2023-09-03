@@ -1,18 +1,16 @@
 from pytest import approx
 
-from pynucastro.nucdata import Nucleus
+from pynucastro.nucdata import Nucleus, get_nuclei_in_range
 
 
 class TestNucleus:
     @classmethod
     def setup_class(cls):
         """ this is run once for each class before any tests """
-        pass
 
     @classmethod
     def teardown_class(cls):
         """ this is run once for each class after all tests """
-        pass
 
     def setup_method(self):
         """ this is run before each test """
@@ -33,7 +31,6 @@ class TestNucleus:
 
     def teardown_method(self):
         """ this is run after each test """
-        pass
 
     def test_atomic_weights(self):
         assert self.d.A == 2
@@ -75,17 +72,17 @@ class TestNucleus:
 
         assert not self.p.partition_function
         assert not self.h1.partition_function
-        assert self.ne41.partition_function(0.35e9) == approx(1.0121446711436666)
-        assert self.ni61.partition_function(0.35e9) == approx(1.160524742683722)
-        assert self.pb237.partition_function(0.35e9) == approx(1.4410114805045504)
+        assert self.ne41.partition_function.eval(0.35e9) == approx(1.0121446711436666)
+        assert self.ni61.partition_function.eval(0.35e9) == approx(1.160524742683722)
+        assert self.pb237.partition_function.eval(0.35e9) == approx(1.4410114805045504)
 
     def test_partition_high_temp(self):
 
         assert not self.p.partition_function
         assert not self.h1.partition_function
-        assert self.ne41.partition_function(32.0e9) == approx(4.901052000000001)
-        assert self.ni61.partition_function(32.0e9) == approx(1927800.437886083)
-        assert self.pb237.partition_function(32.0e9) == approx(5.05620611030359e+28)
+        assert self.ne41.partition_function.eval(32.0e9) == approx(4.901052000000001)
+        assert self.ni61.partition_function.eval(32.0e9) == approx(1927800.437886083)
+        assert self.pb237.partition_function.eval(32.0e9) == approx(5.05620611030359e+28)
 
     def test_mass(self):
 
@@ -93,3 +90,24 @@ class TestNucleus:
         assert self.n.A_nuc == approx(1.0086649179839473)
         assert self.o16.A_nuc == approx(15.994914621587304)
         assert self.c12.A_nuc == 12.0
+
+    def test_range(self):
+
+        nuc_list = get_nuclei_in_range(6, 8, 12, 16)
+
+        assert len(nuc_list) == 15
+        assert nuc_list[0] == Nucleus("c12")
+        assert nuc_list[1] == Nucleus("c13")
+        assert nuc_list[2] == Nucleus("c14")
+        assert nuc_list[3] == Nucleus("c15")
+        assert nuc_list[4] == Nucleus("c16")
+        assert nuc_list[5] == Nucleus("n12")
+        assert nuc_list[6] == Nucleus("n13")
+        assert nuc_list[7] == Nucleus("n14")
+        assert nuc_list[8] == Nucleus("n15")
+        assert nuc_list[9] == Nucleus("n16")
+        assert nuc_list[10] == Nucleus("o12")
+        assert nuc_list[11] == Nucleus("o13")
+        assert nuc_list[12] == Nucleus("o14")
+        assert nuc_list[13] == Nucleus("o15")
+        assert nuc_list[14] == Nucleus("o16")

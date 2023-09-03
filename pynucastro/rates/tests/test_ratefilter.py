@@ -34,8 +34,8 @@ class TestRateFilter:
         return pyna.Library(rates=rates)
 
     def test_inexact_filter(self, library):
-        filter = pyna.RateFilter(reactants=['c12'], exact=False)
-        newlib = library.filter(filter)
+        filt = pyna.RateFilter(reactants=['c12'], exact=False)
+        newlib = library.filter(filt)
 
         rates = newlib.get_rates()
 
@@ -46,15 +46,15 @@ class TestRateFilter:
 
         # filter out all the rates with fluorine
 
-        filter = pyna.RateFilter(filter_function=lambda r: len([q for q in r.reactants + r.products if q.Z == 9]))
-        newlib = library.filter(filter)
+        filt = pyna.RateFilter(filter_function=lambda r: len([q for q in r.reactants + r.products if q.Z == 9]))
+        newlib = library.filter(filt)
 
         assert len(newlib.get_rates()) == 8
 
     def test_exact(self, library):
 
-        filter = pyna.RateFilter(reactants=["n15", "p"])
-        newlib = library.filter(filter)
+        filt = pyna.RateFilter(reactants=["n15", "p"])
+        newlib = library.filter(filt)
 
         rates = newlib.get_rates()
 

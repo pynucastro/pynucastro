@@ -2,7 +2,7 @@ import numba
 import numpy as np
 from numba.experimental import jitclass
 
-from pynucastro.rates import Tfactors, _find_rate_file
+from pynucastro.rates import TableIndex, TableInterpolator, TabularRate, Tfactors
 from pynucastro.screening import PlasmaState, ScreenFactors
 
 jn = 0
@@ -51,6 +51,15 @@ names.append("ne23")
 names.append("na23")
 names.append("mg23")
 
+def to_composition(Y):
+    """Convert an array of molar fractions to a Composition object."""
+    from pynucastro import Composition, Nucleus
+    nuclei = [Nucleus.from_cache(name) for name in names]
+    comp = Composition(nuclei)
+    for i, nuc in enumerate(nuclei):
+        comp.X[nuc] = Y[i] * A[i]
+    return comp
+
 @jitclass([
     ("c12_c12__he4_ne20", numba.float64),
     ("c12_c12__n_mg23", numba.float64),
@@ -72,31 +81,18 @@ class RateEval:
         self.na23__ne23 = np.nan
         self.ne23__na23 = np.nan
 
+# note: we cannot make the TableInterpolator global, since numba doesn't like global jitclass
 # load data for na23 --> ne23
-na23__ne23_table_path = _find_rate_file('23Na-23Ne_electroncapture.dat')
-t_data2d = []
-with open(na23__ne23_table_path) as tabular_file:
-    for i, line in enumerate(tabular_file):
-        if i < 6:
-            continue
-        line = line.strip()
-        if not line:
-            continue
-        t_data2d.append(line.split())
-na23__ne23_data = np.array(t_data2d, dtype=float)
+na23__ne23_rate = TabularRate(rfile='na23--ne23-toki')
+na23__ne23_info = (na23__ne23_rate.table_rhoy_lines,
+                  na23__ne23_rate.table_temp_lines,
+                  na23__ne23_rate.tabular_data_table)
 
 # load data for ne23 --> na23
-ne23__na23_table_path = _find_rate_file('23Ne-23Na_betadecay.dat')
-t_data2d = []
-with open(ne23__na23_table_path) as tabular_file:
-    for i, line in enumerate(tabular_file):
-        if i < 5:
-            continue
-        line = line.strip()
-        if not line:
-            continue
-        t_data2d.append(line.split())
-ne23__na23_data = np.array(t_data2d, dtype=float)
+ne23__na23_rate = TabularRate(rfile='ne23--na23-toki')
+ne23__na23_info = (ne23__na23_rate.table_rhoy_lines,
+                  ne23__na23_rate.table_temp_lines,
+                  ne23__na23_rate.tabular_data_table)
 
 @numba.njit()
 def ye(Y):
@@ -119,7 +115,7 @@ def c12_c12__n_mg23(rate_eval, tf):
     rate = 0.0
 
     # cf88r
-    rate += np.exp(  -12.8056 + -30.1485*tf.T9i + 11.4826*tf.T913
+    rate += np.exp(  -12.8056 + -30.1498*tf.T9i + 11.4826*tf.T913
                   + 1.82849*tf.T9 + -0.34844*tf.T953)
 
     rate_eval.c12_c12__n_mg23 = rate
@@ -141,11 +137,11 @@ def he4_c12__o16(rate_eval, tf):
     rate = 0.0
 
     # nac2 
-    rate += np.exp(  69.6526 + -1.39254*tf.T9i + 58.9128*tf.T913i + -148.273*tf.T913
-                  + 9.08324*tf.T9 + -0.541041*tf.T953 + 70.3554*tf.lnT9)
-    # nac2 
     rate += np.exp(  254.634 + -1.84097*tf.T9i + 103.411*tf.T913i + -420.567*tf.T913
                   + 64.0874*tf.T9 + -12.4624*tf.T953 + 137.303*tf.lnT9)
+    # nac2 
+    rate += np.exp(  69.6526 + -1.39254*tf.T9i + 58.9128*tf.T913i + -148.273*tf.T913
+                  + 9.08324*tf.T9 + -0.541041*tf.T953 + 70.3554*tf.lnT9)
 
     rate_eval.he4_c12__o16 = rate
 
@@ -164,33 +160,31 @@ def he4_he4_he4__c12(rate_eval, tf):
     # he4 + he4 + he4 --> c12
     rate = 0.0
 
-    # fy05n
-    rate += np.exp(  -0.971052 + -37.06*tf.T913i + 29.3493*tf.T913
-                  + -115.507*tf.T9 + -10.0*tf.T953 + -1.33333*tf.lnT9)
     # fy05r
     rate += np.exp(  -24.3505 + -4.12656*tf.T9i + -13.49*tf.T913i + 21.4259*tf.T913
                   + -1.34769*tf.T9 + 0.0879816*tf.T953 + -13.1653*tf.lnT9)
     # fy05r
     rate += np.exp(  -11.7884 + -1.02446*tf.T9i + -23.57*tf.T913i + 20.4886*tf.T913
                   + -12.9882*tf.T9 + -20.0*tf.T953 + -2.16667*tf.lnT9)
+    # fy05n
+    rate += np.exp(  -0.971052 + -37.06*tf.T913i + 29.3493*tf.T913
+                  + -115.507*tf.T9 + -10.0*tf.T953 + -1.33333*tf.lnT9)
 
     rate_eval.he4_he4_he4__c12 = rate
 
 @numba.njit()
 def na23__ne23(rate_eval, T, rhoY):
     # na23 --> ne23
-    T_nearest = (na23__ne23_data[:, 1])[np.abs((na23__ne23_data[:, 1]) - T).argmin()]
-    rhoY_nearest = (na23__ne23_data[:, 0])[np.abs((na23__ne23_data[:, 0]) - rhoY).argmin()]
-    inde = np.where((na23__ne23_data[:, 1] == T_nearest) & (na23__ne23_data[:, 0] == rhoY_nearest))[0][0]
-    rate_eval.na23__ne23 = na23__ne23_data[inde][5]
+    na23__ne23_interpolator = TableInterpolator(*na23__ne23_info)
+    r = na23__ne23_interpolator.interpolate(np.log10(rhoY), np.log10(T), TableIndex.RATE.value)
+    rate_eval.na23__ne23 = 10.0**r
 
 @numba.njit()
 def ne23__na23(rate_eval, T, rhoY):
     # ne23 --> na23
-    T_nearest = (ne23__na23_data[:, 1])[np.abs((ne23__na23_data[:, 1]) - T).argmin()]
-    rhoY_nearest = (ne23__na23_data[:, 0])[np.abs((ne23__na23_data[:, 0]) - rhoY).argmin()]
-    inde = np.where((ne23__na23_data[:, 1] == T_nearest) & (ne23__na23_data[:, 0] == rhoY_nearest))[0][0]
-    rate_eval.ne23__na23 = ne23__na23_data[inde][5]
+    ne23__na23_interpolator = TableInterpolator(*ne23__na23_info)
+    r = ne23__na23_interpolator.interpolate(np.log10(rhoY), np.log10(T), TableIndex.RATE.value)
+    rate_eval.ne23__na23 = 10.0**r
 
 def rhs(t, Y, rho, T, screen_func=None):
     return rhs_eq(t, Y, rho, T, screen_func)

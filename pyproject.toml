@@ -2,6 +2,10 @@
 [build-system]
 requires = ["setuptools>=45", "wheel", "setuptools_scm>=6.2"]
 
+[tool.pylint.MAIN]
+ignore = ['_python_reference', 'test_full_python_net.py']
+extension-pkg-allow-list = ['mpi4py']
+
 [tool.pylint."MESSAGES CONTROL"]
 disable = [
   "unspecified-encoding",
@@ -23,8 +27,21 @@ disable = [
 ]
 enable = ["useless-suppression"]
 
+[tool.pylint.CLASSES]
+defining-attr-methods = [
+  "__init__",
+  "__new__",
+  "setUp",
+  "asyncSetUp",
+  "__post_init__",
+  "setup_class", "setup_method",  # for tests
+]
+
 [tool.pylint.FORMAT]
 max-line-length = 132
+
+[tool.pylint.SIMILARITIES]
+min-similarity-lines = 10
 
 [tool.pylint.TYPECHECK]
 generated-members = ["viridis", "bwr"]
@@ -32,3 +49,7 @@ generated-members = ["viridis", "bwr"]
 
 [tool.codespell]
 skip = ".git,*docs/build,*.bib"
+
+[tool.isort]
+known_first_party = ["pynucastro"]
+skip = ["pynucastro/networks/tests/_python_reference/network.py"]

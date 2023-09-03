@@ -1,15 +1,13 @@
 # unit tests for rates
-import filecmp
-import io
-import os
+import shutil
 
 import pytest
 
 import pynucastro as pyna
+from pynucastro.networks.tests.helpers import compare_network_files
 
 
 class TestAmrexAstroCxxNetwork:
-    # pylint: disable=protected-access
     @pytest.fixture(scope="class")
     def fn(self, reaclib_library):
 
@@ -20,37 +18,18 @@ class TestAmrexAstroCxxNetwork:
         fn = net
         return fn
 
-    def cromulent_ftag(self, ftag, answer, n_indent=1):
-        """ check to see if function ftag returns answer """
-
-        output = io.StringIO()
-        ftag(n_indent, output)
-        result = output.getvalue() == answer
-        output.close()
-        return result
-
     def test_write_network(self, fn):
         """ test the write_network function"""
         test_path = "_test_cxx_approx/"
+        # subdirectory of pynucastro/networks/tests/
         reference_path = "_amrexastro_cxx_approx_reference/"
-        base_path = os.path.relpath(os.path.dirname(__file__))
-
-        fn.write_network(odir=test_path)
-
-        # get the list of files from the generated directory, so any new files
-        # will need to be added to the reference directory or explicitly ignored
-        files = os.listdir(test_path)
+        # files that will be ignored if present in the generated directory
         skip_files = []
 
-        errors = []
-        for test_file in files:
-            if test_file in skip_files:
-                continue
-            # note, _test is written under whatever directory pytest is run from,
-            # so it is not necessarily at the same place as _amrexastro_reference
-            if not filecmp.cmp(os.path.normpath(f"{test_path}/{test_file}"),
-                               os.path.normpath(f"{base_path}/{reference_path}/{test_file}"),
-                               shallow=False):
-                errors.append(test_file)
+        # remove any previously generated files
+        shutil.rmtree(test_path, ignore_errors=True)
+        fn.write_network(odir=test_path)
+        compare_network_files(test_path, reference_path, skip_files)
 
-        assert not errors, f"files don't match: {' '.join(errors)}"
+        # clean up generated files if the test passed
+        shutil.rmtree(test_path)

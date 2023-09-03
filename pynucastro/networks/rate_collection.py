@@ -25,7 +25,8 @@ from scipy.optimize import fsolve
 # Import Rate
 from pynucastro.nucdata import Nucleus, PeriodicTable
 from pynucastro.rates import (ApproximateRate, DerivedRate, Library, Rate,
-                              RateFileError, RatePair, TabularRate, load_rate)
+                              RateFileError, RatePair, TabularRate, Tfactors,
+                              load_rate)
 from pynucastro.rates.library import _rate_name_to_nuc
 from pynucastro.screening import make_plasma_state, make_screen_factors
 from pynucastro.screening.screen import NseState
@@ -161,6 +162,16 @@ class Composition:
         electron_frac = np.sum(zvec*xvec/avec)/np.sum(xvec)
         return electron_frac
 
+    def eval_abar(self):
+        """ return the mean molecular weight """
+
+        avec = np.zeros(len(self.X), dtype=np.int32)
+        xvec = np.zeros(len(self.X), dtype=np.float64)
+        for i, n in enumerate(self.X):
+            avec[i] = n.A
+            xvec[i] = self.X[n]
+        return 1. / np.sum(xvec / avec)
+
     def __str__(self):
         ostr = ""
         for k in self.X:
@@ -168,7 +179,7 @@ class Composition:
         return ostr
 
     def plot(self, trace_threshold=0.1, hard_limit=None, size=(9, 5)):
-        """ Make a pie chart of Composition. group trace nuceli together and explode into bar chart
+        """ Make a pie chart of Composition. group trace nuclei together and explode into bar chart
 
         parameters
         ----------
@@ -351,7 +362,7 @@ class RateCollection:
 
         self.files = []
         self.rates = []
-        self.library = None
+        combined_library = Library()
 
         self.inert_nuclei = inert_nuclei
 
@@ -363,7 +374,7 @@ class RateCollection:
         if rate_files:
             if isinstance(rate_files, str):
                 rate_files = [rate_files]
-            self._read_rate_files(rate_files)
+            combined_library += self._read_rate_files(rate_files)
 
         if rates:
             if isinstance(rates, Rate):
@@ -372,10 +383,7 @@ class RateCollection:
                 if not isinstance(r, Rate):
                     raise ValueError('Expected Rate object or list of Rate objects passed as the rates argument.')
             rlib = Library(rates=rates)
-            if not self.library:
-                self.library = rlib
-            else:
-                self.library = self.library + rlib
+            combined_library += rlib
 
         if libraries:
             if isinstance(libraries, Library):
@@ -383,18 +391,24 @@ class RateCollection:
             for lib in libraries:
                 if not isinstance(lib, Library):
                     raise ValueError('Expected Library object or list of Library objects passed as the libraries argument.')
-            if not self.library:
-                self.library = libraries.pop(0)
             for lib in libraries:
-                self.library = self.library + lib
+                combined_library += lib
 
-        if self.library:
-            self.rates = self.rates + self.library.get_rates()
+        self.rates = self.rates + combined_library.get_rates()
 
         if precedence:
             self._make_distinguishable(precedence)
 
         self._build_collection()
+
+        # cached values for vectorized evaluation
+        self.nuc_prod_count = None
+        self.nuc_cons_count = None
+        self.nuc_used = None
+        self.coef_arr = None
+        self.coef_mask = None
+        self.prefac = None
+        self.yfac = None
 
     def _build_collection(self):
 
@@ -449,6 +463,7 @@ class RateCollection:
 
         self.tabular_rates = []
         self.reaclib_rates = []
+        self.custom_rates = []
         self.approx_rates = []
         self.derived_rates = []
 
@@ -491,6 +506,8 @@ class RateCollection:
 
             elif r.chapter == 't':
                 self.tabular_rates.append(r)
+            elif r.chapter == "custom":
+                self.custom_rates.append(r)
             elif isinstance(r, DerivedRate):
                 if r not in self.derived_rates:
                     self.derived_rates.append(r)
@@ -500,11 +517,13 @@ class RateCollection:
             else:
                 raise NotImplementedError(f"Chapter type unknown for rate chapter {r.chapter}")
 
-        self.all_rates = self.reaclib_rates + self.tabular_rates + self.approx_rates + self.derived_rates
+        self.all_rates = (self.reaclib_rates + self.custom_rates +
+                          self.tabular_rates + self.approx_rates + self.derived_rates)
 
     def _read_rate_files(self, rate_files):
         # get the rates
         self.files = rate_files
+        combined_library = Library()
         for rf in self.files:
             # create the appropriate rate object first
             try:
@@ -514,20 +533,14 @@ class RateCollection:
 
             # now create a library:
             rflib = Library(rates=[rate])
-
-            if not self.library:
-                self.library = rflib
-            else:
-                self.library = self.library + rflib
+            combined_library += rflib
+        return combined_library
 
     def get_forward_rates(self):
         """return a list of the forward (exothermic) rates"""
 
         # first handle the ones that have Q defined
-        forward_rates = [r for r in self.rates if r.Q is not None and r.Q >= 0.0]
-
-        # e-capture tabular rates don't have a Q defined, so just go off of the binding energy
-        forward_rates += [r for r in self.rates if r.Q is None and r.reactants[0].nucbind <= r.products[0].nucbind]
+        forward_rates = [r for r in self.rates if r.Q >= 0.0]
 
         return forward_rates
 
@@ -535,10 +548,7 @@ class RateCollection:
         """return a list of the reverse (endothermic) rates)"""
 
         # first handle the ones that have Q defined
-        reverse_rates = [r for r in self.rates if r.Q is not None and r.Q < 0.0]
-
-        # e-capture tabular rates don't have a Q defined, so just go off of the binding energy
-        reverse_rates += [r for r in self.rates if r.Q is None and r.reactants[0].nucbind > r.products[0].nucbind]
+        reverse_rates = [r for r in self.rates if r.Q < 0.0]
 
         return reverse_rates
 
@@ -593,6 +603,21 @@ class RateCollection:
         """ get all the nuclei that are part of the network """
         return self.unique_nuclei
 
+    def linking_nuclei(self, nuclei, return_type=None, **kwargs):
+        """
+        Return a new RateCollection/Network object containing only rates linking the
+        given nuclei (parameter *nuclei*). Nuclei can be provided as an iterable of Nucleus
+        objects or a list of abbreviations. The *return_type* parameter allows the caller to
+        specify a different constructor (e.g. superclass constructor) if the current class does
+        not take a 'libraries' keyword. See method of same name in Library class for valid
+        keyword arguments.
+        """
+
+        if return_type is None:
+            return_type = self.__class__
+        lib = Library(rates=self.rates)
+        return return_type(libraries=lib.linking_nuclei(nuclei, **kwargs))
+
     def get_rates(self):
         """ get a list of the reaction rates in this network"""
         return self.rates
@@ -627,14 +652,39 @@ class RateCollection:
         return _r
 
     def get_nuclei_needing_partition_functions(self):
-        """return a set of Nuclei that require partition functions for one or
+        """return a list of Nuclei that require partition functions for one or
         more DerivedRates in the collection"""
 
         nuclei_pfs = set()
         for r in self.all_rates:
             if isinstance(r, DerivedRate) and r.use_pf:
-                nuclei_pfs.update(r.reactants + r.products)
-        return nuclei_pfs
+                for nuc in r.reactants + r.products:
+                    if nuc.partition_function is not None:
+                        nuclei_pfs.add(nuc)
+        return sorted(nuclei_pfs)
+
+    def dedupe_partition_function_temperatures(self):
+        """return a list of unique temperature arrays, along with a dictionary
+        mapping each Nucleus to the corresponding index into that list"""
+
+        nuclei = self.get_nuclei_needing_partition_functions()
+        temp_arrays = []
+        temp_indices = {}
+        # nuclei must be sorted, so the output is deterministic
+        for nuc in nuclei:
+            nuc_temp = nuc.partition_function.temperature
+            # do a sequential search on temp_arrays, since it should be short
+            for i, temp in enumerate(temp_arrays):
+                # np.array_equal handles comparing arrays of different shapes
+                if np.array_equal(nuc_temp, temp):
+                    temp_indices[nuc] = i
+                    break
+            else:
+                # no match found, add a new entry
+                temp_indices[nuc] = len(temp_arrays)
+                temp_arrays.append(nuc_temp)
+
+        return temp_arrays, temp_indices
 
     def remove_nuclei(self, nuc_list):
         """remove the nuclei in nuc_list from the network along with any rates
@@ -673,11 +723,13 @@ class RateCollection:
         """add the Rate objects in rates from the network."""
 
         if isinstance(rates, Rate):
-            self.rates.append(rates)
+            if rates not in self.rates:
+                self.rates.append(rates)
 
         else:
             for r in rates:
-                self.rates.append(r)
+                if r not in self.rates:
+                    self.rates.append(r)
 
         self._build_collection()
 
@@ -906,6 +958,36 @@ class RateCollection:
 
         return passed_validation
 
+    def find_duplicate_links(self):
+        """report on an rates where another rate exists that has the
+        same reactants and products.  These may not be the same Rate
+        object (e.g., one could be tabular the other a simple decay),
+        but they will present themselves in the network as the same
+        link.
+
+        We return a list, where each entry is a list of all the rates
+        that share the same link"""
+
+        duplicates = []
+        for rate in self.get_rates():
+            same_links = [q for q in self.get_rates()
+                          if q != rate and
+                          sorted(q.reactants) == sorted(rate.reactants) and
+                          sorted(q.products) == sorted(rate.products)]
+
+            if same_links:
+                new_entry = [rate] + same_links
+                already_found = False
+                # we may have already found this pair
+                for dupe in duplicates:
+                    if new_entry[0] in dupe:
+                        already_found = True
+                        break
+                if not already_found:
+                    duplicates.append(new_entry)
+
+        return duplicates
+
     def find_unimportant_rates(self, states, cutoff_ratio, screen_func=None):
         """evaluate the rates at multiple thermodynamic states, and find the
         rates that are always less than `cutoff_ratio` times the fastest rate
@@ -1019,7 +1101,7 @@ class RateCollection:
 
         for nuc in self.unique_nuclei:
             if nuc.partition_function:
-                pf = nuc.partition_function(state.temp)
+                pf = nuc.partition_function.eval(state.temp)
             else:
                 pf = 1.0
 
@@ -1211,6 +1293,198 @@ class RateCollection:
             act[nuc] = sum(produced) + sum(consumed)
 
         return act
+
+    def calc_count_matrices(self):
+        """
+        Compute and store 3 count matrices that can be used for vectorized rate calculations.
+        Each matrix has shape *number_of_species × number_of_rates*. The first matrix (*nuc_prod_count*)
+        stores the count of each nucleus in rates producing that nucleus. The second
+        (*nuc_cons_count*) stores the count of each nucleus in rates consuming that nucleus. The
+        third (*nuc_used*) stores a Boolean matrix of whether the nucleus is involved in the reaction
+        or not.
+        """
+
+        # Rate -> index mapping
+        r_map = {}
+        for i, r in enumerate(self.rates):
+            r_map[r] = i
+
+        N_species = len(self.unique_nuclei)
+        N_rates = len(self.rates)
+
+        # Counts for reactions producing nucleus
+        self.nuc_prod_count = np.zeros((N_species, N_rates), dtype=np.int32)
+        # Counts for reactions consuming nucleus
+        self.nuc_cons_count = np.zeros((N_species, N_rates), dtype=np.int32)
+
+        for i, n in enumerate(self.unique_nuclei):
+
+            for r in self.nuclei_produced[n]:
+                self.nuc_prod_count[i, r_map[r]] = r.products.count(n)
+
+            for r in self.nuclei_consumed[n]:
+                self.nuc_cons_count[i, r_map[r]] = r.reactants.count(n)
+
+        # Whether the nucleus is involved in the reaction or not
+        self.nuc_used = np.logical_or(self.nuc_prod_count, self.nuc_cons_count).T
+
+    def update_rate_coef_arr(self):
+        """
+        Store Reaclib rate coefficient array, as well as a Boolean mask array determining
+        how many sets to include in the final rate evaluation. The first array (*coef_arr*)
+        has shape *number_of_rates × number_of_species × 7*, while the second has shape
+        *number_of_rates × number_of_species*.
+        """
+
+        # coef arr can be precomputed if evaluate_rates_arr is called multiple times
+        N_sets = max(len(r.sets) for r in self.rates)
+
+        coef_arr = np.zeros((len(self.rates), N_sets, 7), dtype=np.float64)
+        coef_mask = np.zeros((len(self.rates), N_sets), dtype=np.bool_)
+
+        for i, r in enumerate(self.rates):
+            for j, s in enumerate(r.sets):
+                coef_arr[i, j, :] = s.a
+                coef_mask[i, j] = True
+
+        self.coef_arr = coef_arr
+        self.coef_mask = coef_mask
+
+    def update_yfac_arr(self, composition):
+        """
+        Calculate and store molar fraction component of each rate (Y of each reactant raised to
+        the appropriate power). The results are stored in an array called *yfac*. The method
+        *calc_count_matrices* needs to have been called with this net beforehand.
+        """
+
+        # yfac must be evaluated each time composition changes, probably pretty cheap
+        yfac = np.ones((len(self.rates), len(self.unique_nuclei)), dtype=np.float64)
+        ys = np.array(list(composition.get_molar().values()), dtype=np.float64)
+
+        yfac *= ys**self.nuc_cons_count.T
+        yfac = np.prod(yfac, axis=1)
+        self.yfac = yfac
+
+    def update_prefac_arr(self, rho, composition):
+        """
+        Calculate and store rate prefactors, which include both statistical prefactors and
+        mass density raised to the corresponding density exponents. The results are stored in
+        an array called *prefac*.
+        """
+
+        y_e = composition.eval_ye()
+        prefac = np.zeros(len(self.rates))
+        for i, r in enumerate(self.rates):
+            if r.label == "tabular":
+                raise ValueError('Tabular rates are not supported in vectorized rate calculations.')
+            prefac[i] = r.prefactor * rho**r.dens_exp
+            if r.weak_type == 'electron_capture':
+                prefac[i] *= y_e
+
+        self.prefac = prefac
+
+    def evaluate_rates_arr(self, T):
+        """
+        Evaluate the rates in the network for a specific temperature, assuming necessary precalculations
+        have been carried out (calling the methods *calc_count_matrices*, *update_rate_coef_arr*,
+        *update_yfac_arr*, and *update_prefac_arr*). The latter two set the composition and density.
+
+        This performs a vectorized calculation, and returns an array ordered by the rates in the *rates*
+        member variable. This does not support tabular rates.
+
+        See *evaluate_rates* method for non-vectorized version. Relative performance between the
+        two varies based on the setup. See *clear_arrays* for freeing memory post calculation.
+        """
+
+        # T9 arr only needs to be evaluated when T changes
+        T9_arr = Tfactors(T).array[None, None, :]
+
+        rvals = self.prefac*self.yfac*np.sum(np.exp(np.sum(self.coef_arr*T9_arr, axis=2))*self.coef_mask, axis=1)
+
+        return rvals
+
+    def evaluate_ydots_arr(self, T):
+        """
+        Evaluate net rate of change of molar abundance for each nucleus in the network for a
+        specific temperature, assuming necessary precalculations have been carried out (calling the
+        methods *calc_count_matrices*, *update_rate_coef_arr*, *update_yfac_arr*, and
+        *update_prefac_arr*). The latter two set the composition and density.
+
+        This performs a vectorized calculation, and returns an array ordered by the nuclei in the
+        *unique_nuclei* member variable. This does not support tabular rates.
+
+        See *evaluate_ydots* method for non-vectorized version. Relative performance between the
+        two varies based on the setup. See *clear_arrays* for freeing memory post calculation.
+        """
+
+        rvals_arr = self.evaluate_rates_arr(T)
+
+        p_A = np.sum(self.nuc_prod_count*rvals_arr, axis=1)
+        c_A = np.sum(self.nuc_cons_count*rvals_arr, axis=1)
+
+        return p_A - c_A
+
+    def evaluate_activity_arr(self, T):
+        """
+        sum over all of the terms contributing to dY/dt for a specific temperature, neglecting sign,
+        assuming necessary precalculations have been carried out (calling the methods
+        *calc_count_matrices*, *update_rate_coef_arr*, *update_yfac_arr*, and *update_prefac_arr*).
+        The latter two set the composition and density.
+
+        This performs a vectorized calculation, and returns an array ordered by the nuclei in the
+        *unique_nuclei* member variable. This does not support tabular rates.
+
+        See *evaluate_activity* method for non-vectorized version. Relative performance between the
+        two varies based on the setup. See *clear_arrays* for freeing memory post calculation.
+        """
+
+        rvals_arr = self.evaluate_rates_arr(T)
+
+        p_A = np.sum(self.nuc_prod_count*rvals_arr, axis=1)
+        c_A = np.sum(self.nuc_cons_count*rvals_arr, axis=1)
+
+        return p_A + c_A
+
+    def clear_arrays(self):
+        """
+        Clear all temporary variables created/set by the *calc_count_matrices*, *update_rate_coef_arr*,
+        *update_yfac_arr*, and *update_prefac_arr* member functions, freeing up memory.
+        """
+
+        try:
+            del self.nuc_prod_count
+        except AttributeError:
+            pass
+
+        try:
+            del self.nuc_cons_count
+        except AttributeError:
+            pass
+
+        try:
+            del self.nuc_used
+        except AttributeError:
+            pass
+
+        try:
+            del self.coef_arr
+        except AttributeError:
+            pass
+
+        try:
+            del self.coef_mask
+        except AttributeError:
+            pass
+
+        try:
+            del self.prefac
+        except AttributeError:
+            pass
+
+        try:
+            del self.yfac
+        except AttributeError:
+            pass
 
     def _get_network_chart(self, rho, T, composition):
         """a network chart is a dict, keyed by rate that holds a list of tuples (Nucleus, ydot)"""

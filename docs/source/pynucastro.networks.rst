@@ -41,6 +41,14 @@ pynucastro.networks.rate\_collection module
    :undoc-members:
    :show-inheritance:
 
+pynucastro.networks.simple\_cxx\_network module
+-----------------------------------------------
+
+.. automodule:: pynucastro.networks.simple_cxx_network
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 pynucastro.networks.sympy\_network\_support module
 --------------------------------------------------
 

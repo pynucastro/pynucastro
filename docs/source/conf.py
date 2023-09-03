@@ -37,10 +37,12 @@ extensions = ['sphinx.ext.autodoc',
     'sphinx.ext.mathjax',
     'sphinx.ext.ifconfig',
     'sphinx.ext.viewcode',
+    'sphinx.ext.intersphinx',
     'nbsphinx',
     'sphinx.ext.githubpages',
-    'sphinx_rtd_theme',
+    'sphinx_copybutton',
     'sphinx-prompt',
+    'sphinx_rtd_theme',
     'sphinx_mdinclude',
     'IPython.sphinxext.ipython_console_highlighting']
 
@@ -93,6 +95,12 @@ pygments_style = 'sphinx'
 
 # If true, `todo` and `todoList` produce output, else they produce nothing.
 todo_include_todos = False
+
+# Enable linking references to other projects' documentation.
+intersphinx_mapping = {
+    'python': ('https://docs.python.org/3', None),
+    'matplotlib': ('https://matplotlib.org/stable', None),
+}
 
 
 # -- Options for HTML output ----------------------------------------------

@@ -2,53 +2,93 @@ Creating Networks
 =================
 
 pynucastro can output the righthand side functions for ODE integration
-in Python or in a form for the AMReX-Astrophysics Microphysics package in C++
+in Python, pure C++, or in a form for the `AMReX-Astrophysics Microphysics <https://github.com/amrex-astro/Microphysics>`_ package in C++.
 
+To create the python or C++ code for a network, you start by building
+the library representing the rates that you want and then you construct
+the appropriate network class:
 
-All networks
-------------
+* :class:`PythonNetwork <pynucastro.networks.python_network.PythonNetwork>` for a pure python network.
 
-The first few steps to setting up any of the available network options
-are as follows. See the following section for details about the
-particular kind of network you are interested in creating.
+* :class:`SimpleCxxNetwork <pynucastro.networks.simple_cxx_network.SimpleCxxNetwork>` for a basic, pure C++ network.
+
+* :class:`AmrexAstroCxxNetwork <pynucastro.networks.amrexastro_cxx_network.AmrexAstroCxxNetwork>` for an AMReX-Astro C++ network.
+
+Usually the steps are something like:
 
 * Create a working directory for your network (this does not have to
   be in the ``pynucastro/`` directory tree).
 
-* Obtain Reaclib rate files (in Reaclib 1 or 2 format) for your problem and
-  either place them in your working directory or ``pynucastro/library``.
-
-  You can find the rates that are already provided in the library by
-  doing:
-
-  .. code-block:: python
-
-     pynucastro.list_known_rates()
-
-
 * Write a short python script to generate your network,
-  e.g. ``mynet.py``, based on the following example scripts:
+  e.g. ``mynet.py``.  As an example, for a network
+  with just He4, C12, and O16, we would do:
 
-  - For Python networks, `examples/CNO/cno.py <https://github.com/pynucastro/pynucastro/blob/main/examples/CNO/cno.py>`_
-  - For AMReX-Astro Microphysics networks, `examples/triple-alpha/triple-alpha-cxx.py <https://github.com/pynucastro/pynucastro/blob/main/examples/triple-alpha/triple-alpha-cxx.py>`_
+  .. code:: python
+
+     import pynucastro as pyna
+
+     rl = pyna.ReacLibLibrary()
+     lib = rl.linking_nuclei(["he4", "c12", "o16"])
+
+     net = pyna.PythonNetwork(libraries=[lib])
+     net.write_network()
+
+  and we can replace ``PythonNetwork`` with one of the other network types to get the 
+  output in a different format.
 
 * Run your python script
 
-  .. code-block:: bash
+  .. prompt:: bash
 
-     $ python mynet.py
+     python mynet.py
 
 Python network
 --------------
 
-First follow the steps above for all networks. To integrate a Python
+A ``PythonNetwork`` will output a python module with all the data needed for constructing
+the righthand side and Jacobian of the ODE system.  To integrate a Python
 network using the SciPy integration routines, customize
 `examples/CNO/burn.py <https://github.com/pynucastro/pynucastro/blob/main/examples/CNO/burn.py>`_ to initialize and run your network using the
 right hand side module you generated above.
 
 
+Simple C++ network
+------------------
+
+A ``SimpleCxxNetwork`` is a very basic C++ network.  Currently, the following features
+are not supported:
+
+* tabular rates
+* screening
+* partition functions
+* NSE
+* temperature evolution
+* plasma neutrino losses
+
+A simple driver, ``main.cpp`` and a ``GNUmakefile`` will be generated
+that will simply evaluate the righthand side and Jacobian, and the
+energy release for a single thermodynamic state.  The generated code
+is intended to be used to interface with a hydrodynamics code.  That
+code will be responsible for providing the equation of state and
+adding any desired temperature / energy evolution to the network.
+
+.. note::
+
+   A C++17 compiler is required
+
+The test driver can be built by simply doing:
+
+.. prompt:: bash
+
+   make
+
+
 AMReX-Astro Microphysics network
 --------------------------------
+
+An ``AmrexAstroCxxNetwork`` is intended to be used with an AMReX-Astro
+code like `Castro <https://github.com/amrex-astro/Castro>`_ or `MAESTROeX <https://github.com/amrex-astro/MAESTROeX>`_.
+All pynucastro features are supported and these networks can run on GPUs in the AMReX Astro framework.
 
 The `examples/triple-alpha/triple-alpha-cxx.py
 <https://github.com/pynucastro/pynucastro/blob/main/examples/triple-alpha/triple-alpha-cxx.py>`_
@@ -58,30 +98,3 @@ Microphysics repository.
 
 No additional customization is required after running the steps for
 all networks above.
-
-Tabular Rates
--------------
-
-Tabular rates for reactions of the form :math:`\rm{A \rightarrow B}`
-are supported by the AMReX-Astro Microphysics network outputs.
-
-If you would like to include tabular rates, for now they must be in
-the form of, e.g. `23Na-23Ne_electroncapture.dat <https://github.com/pynucastro/pynucastro/blob/main/pynucastro/library/tabular/23Na-23Ne_electroncapture.dat>`_ in
-``pynucastro/library/tabular/``, indexed by the product of density and
-electron fraction :math:`\rm{\rho Y_e}` and temperature
-:math:`\rm{T}`, with the same number and order of variables.
-
-To generate a network with a tabular rate, prepare a rate file to
-describe how to read the table as below and then list it as you would
-a Reaclib rate file in your network generation script. For example,
-`pynucastro/library/tabular/na23--ne23-toki <https://github.com/pynucastro/pynucastro/blob/main/pynucastro/library/tabular/na23--ne23-toki>`_ demonstrates the following
-format:
-
-.. code-block:: none
-
-   t
-   [parent nuclide]  [daughter nuclide]
-   [rate table file name]
-   [number of header lines before the first line of data]
-   [number of density*ye values]
-   [number of temperature values]

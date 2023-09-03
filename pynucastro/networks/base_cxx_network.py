@@ -5,6 +5,7 @@ comprised of the rates that are passed in.
 """
 
 
+import itertools
 import os
 import re
 import shutil
@@ -59,20 +60,18 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.ftags['<declare_tables>'] = self._declare_tables
         self.ftags['<table_declare_meta>'] = self._table_declare_meta
         self.ftags['<table_init_meta>'] = self._table_init_meta
-        self.ftags['<table_term_meta>'] = self._table_term_meta
         self.ftags['<compute_tabular_rates>'] = self._compute_tabular_rates
         self.ftags['<ydot>'] = self._ydot
         self.ftags['<enuc_add_energy_rate>'] = self._enuc_add_energy_rate
         self.ftags['<jacnuc>'] = self._jacnuc
         self.ftags['<initial_mass_fractions>'] = self._initial_mass_fractions
-        self.ftags['<pynucastro_home>'] = self._pynucastro_home
         self.ftags['<reaclib_rate_functions>'] = self._reaclib_rate_functions
         self.ftags['<rate_struct>'] = self._rate_struct
         self.ftags['<fill_reaclib_rates>'] = self._fill_reaclib_rates
         self.ftags['<approx_rate_functions>'] = self._approx_rate_functions
         self.ftags['<fill_approx_rates>'] = self._fill_approx_rates
-        self.ftags['<part_fun_data>'] = self._fill_parition_function_data
-        self.ftags['<part_fun_cases>'] = self._fill_parition_function_cases
+        self.ftags['<part_fun_data>'] = self._fill_partition_function_data
+        self.ftags['<part_fun_cases>'] = self._fill_partition_function_cases
         self.ftags['<spin_state_cases>'] = self._fill_spin_state_cases
         self.indent = '    '
 
@@ -237,11 +236,11 @@ class BaseCxxNetwork(ABC, RateCollection):
 
                 for rr in scr.rates:
                     of.write('\n')
-                    of.write(f'{self.indent*n_indent}ratraw = rate_eval.screened_rates(k_{rr.fname});\n')
-                    of.write(f'{self.indent*n_indent}rate_eval.screened_rates(k_{rr.fname}) *= scor * scor2;\n')
+                    of.write(f'{self.indent*n_indent}ratraw = rate_eval.screened_rates(k_{rr.cname()});\n')
+                    of.write(f'{self.indent*n_indent}rate_eval.screened_rates(k_{rr.cname()}) *= scor * scor2;\n')
                     of.write(f'{self.indent*n_indent}if constexpr (std::is_same<T, rate_derivs_t>::value) {{\n')
-                    of.write(f'{self.indent*n_indent}    dratraw_dT = rate_eval.dscreened_rates_dT(k_{rr.fname});\n')
-                    of.write(f'{self.indent*n_indent}    rate_eval.dscreened_rates_dT(k_{rr.fname}) = ratraw * (scor * dscor2_dt + dscor_dt * scor2) + dratraw_dT * scor * scor2;\n')
+                    of.write(f'{self.indent*n_indent}    dratraw_dT = rate_eval.dscreened_rates_dT(k_{rr.cname()});\n')
+                    of.write(f'{self.indent*n_indent}    rate_eval.dscreened_rates_dT(k_{rr.cname()}) = ratraw * (scor * dscor2_dt + dscor_dt * scor2) + dratraw_dT * scor * scor2;\n')
                     of.write(f'{self.indent*n_indent}}}\n')
             else:
                 # there might be several rates that have the same
@@ -250,11 +249,11 @@ class BaseCxxNetwork(ABC, RateCollection):
 
                 for rr in scr.rates:
                     of.write('\n')
-                    of.write(f'{self.indent*n_indent}ratraw = rate_eval.screened_rates(k_{rr.fname});\n')
-                    of.write(f'{self.indent*n_indent}rate_eval.screened_rates(k_{rr.fname}) *= scor;\n')
+                    of.write(f'{self.indent*n_indent}ratraw = rate_eval.screened_rates(k_{rr.cname()});\n')
+                    of.write(f'{self.indent*n_indent}rate_eval.screened_rates(k_{rr.cname()}) *= scor;\n')
                     of.write(f'{self.indent*n_indent}if constexpr (std::is_same<T, rate_derivs_t>::value) {{\n')
-                    of.write(f'{self.indent*n_indent}    dratraw_dT = rate_eval.dscreened_rates_dT(k_{rr.fname});\n')
-                    of.write(f'{self.indent*n_indent}    rate_eval.dscreened_rates_dT(k_{rr.fname}) = ratraw * dscor_dt + dratraw_dT * scor;\n')
+                    of.write(f'{self.indent*n_indent}    dratraw_dT = rate_eval.dscreened_rates_dT(k_{rr.cname()});\n')
+                    of.write(f'{self.indent*n_indent}    rate_eval.dscreened_rates_dT(k_{rr.cname()}) = ratraw * dscor_dt + dratraw_dT * scor;\n')
                     of.write(f'{self.indent*n_indent}}}\n')
 
             of.write('\n')
@@ -275,8 +274,8 @@ class BaseCxxNetwork(ABC, RateCollection):
 
     def _nrxn(self, n_indent, of):
         for i, r in enumerate(self.all_rates):
-            of.write(f'{self.indent*n_indent}k_{r.fname} = {i+1},\n')
-        of.write(f'{self.indent*n_indent}NumRates = k_{self.all_rates[-1].fname}\n')
+            of.write(f'{self.indent*n_indent}k_{r.cname()} = {i+1},\n')
+        of.write(f'{self.indent*n_indent}NumRates = k_{self.all_rates[-1].cname()}\n')
 
     def _rate_names(self, n_indent, of):
         for i, r in enumerate(self.all_rates):
@@ -284,7 +283,7 @@ class BaseCxxNetwork(ABC, RateCollection):
                 cont = ","
             else:
                 cont = ""
-            of.write(f'{self.indent*n_indent}"{r.fname}"{cont}  // {i+1},\n')
+            of.write(f'{self.indent*n_indent}"{r.cname()}"{cont}  // {i+1},\n')
 
     def _ebind(self, n_indent, of):
         for nuc in self.unique_nuclei:
@@ -326,29 +325,6 @@ class BaseCxxNetwork(ABC, RateCollection):
 
             of.write('\n')
 
-    def _table_term_meta(self, n_indent, of):
-        for r in self.tabular_rates:
-
-            of.write('{}deallocate(num_temp_{})\n'.format(
-                self.indent*n_indent, r.table_index_name))
-
-            of.write('{}deallocate(num_rhoy_{})\n'.format(
-                self.indent*n_indent, r.table_index_name))
-
-            of.write('{}deallocate(num_vars_{})\n'.format(
-                self.indent*n_indent, r.table_index_name))
-
-            of.write('{}deallocate(rate_table_{})\n'.format(
-                self.indent*n_indent, r.table_index_name))
-
-            of.write('{}deallocate(rhoy_table_{})\n'.format(
-                self.indent*n_indent, r.table_index_name))
-
-            of.write('{}deallocate(temp_table_{})\n'.format(
-                self.indent*n_indent, r.table_index_name))
-
-            of.write('\n')
-
     def _compute_tabular_rates(self, n_indent, of):
         if len(self.tabular_rates) > 0:
 
@@ -359,13 +335,13 @@ class BaseCxxNetwork(ABC, RateCollection):
                 of.write(f'{idnt}tabular_evaluate({r.table_index_name}_meta, {r.table_index_name}_rhoy, {r.table_index_name}_temp, {r.table_index_name}_data,\n')
                 of.write(f'{idnt}                 rhoy, state.T, rate, drate_dt, edot_nu, edot_gamma);\n')
 
-                of.write(f'{idnt}rate_eval.screened_rates(k_{r.fname}) = rate;\n')
+                of.write(f'{idnt}rate_eval.screened_rates(k_{r.cname()}) = rate;\n')
 
                 of.write(f'{idnt}if constexpr (std::is_same<T, rate_derivs_t>::value) {{\n')
-                of.write(f'{idnt}    rate_eval.dscreened_rates_dT(k_{r.fname}) = drate_dt;\n')
+                of.write(f'{idnt}    rate_eval.dscreened_rates_dT(k_{r.cname()}) = drate_dt;\n')
                 of.write(f'{idnt}}}\n')
 
-                of.write(f'{idnt}rate_eval.add_energy_rate(k_{r.fname}) = edot_nu + edot_gamma;\n')
+                of.write(f'{idnt}rate_eval.add_energy_rate(k_{r.cname()}) = edot_nu + edot_gamma;\n')
                 of.write('\n')
 
     def _ydot(self, n_indent, of):
@@ -425,7 +401,7 @@ class BaseCxxNetwork(ABC, RateCollection):
                 sys.exit('ERROR: Unknown energy rate corrections for a reaction where the number of reactants is not 1.')
             else:
                 reactant = r.reactants[0]
-                of.write(f'{idnt}enuc += C::Legacy::n_A * {self.symbol_rates.name_y}({reactant.cindex()}) * rate_eval.add_energy_rate(k_{r.fname});\n')
+                of.write(f'{idnt}enuc += C::Legacy::n_A * {self.symbol_rates.name_y}({reactant.cindex()}) * rate_eval.add_energy_rate(k_{r.cname()});\n')
 
     def _jacnuc(self, n_indent, of):
         # now make the Jacobian
@@ -445,10 +421,6 @@ class BaseCxxNetwork(ABC, RateCollection):
                 of.write(f"{self.indent*n_indent}unit_test.X{i+1} = 1.0\n")
             else:
                 of.write(f"{self.indent*n_indent}unit_test.X{i+1} = 0.0\n")
-
-    def _pynucastro_home(self, n_indent, of):
-        of.write('{}PYNUCASTRO_HOME := {}\n'.format(self.indent*n_indent,
-                                                    os.path.dirname(self.pynucastro_dir)))
 
     def _reaclib_rate_functions(self, n_indent, of):
         assert n_indent == 0, "function definitions must be at top level"
@@ -477,93 +449,88 @@ class BaseCxxNetwork(ABC, RateCollection):
 
     def _fill_reaclib_rates(self, n_indent, of):
         for r in self.reaclib_rates + self.derived_rates:
-            of.write(f"{self.indent*n_indent}rate_{r.fname}<do_T_derivatives>(tfactors, rate, drate_dT);\n")
-            of.write(f"{self.indent*n_indent}rate_eval.screened_rates(k_{r.fname}) = rate;\n")
+            of.write(f"{self.indent*n_indent}rate_{r.cname()}<do_T_derivatives>(tfactors, rate, drate_dT);\n")
+            of.write(f"{self.indent*n_indent}rate_eval.screened_rates(k_{r.cname()}) = rate;\n")
             of.write(f"{self.indent*n_indent}if constexpr (std::is_same<T, rate_derivs_t>::value) {{\n")
-            of.write(f"{self.indent*n_indent}    rate_eval.dscreened_rates_dT(k_{r.fname}) = drate_dT;\n\n")
+            of.write(f"{self.indent*n_indent}    rate_eval.dscreened_rates_dT(k_{r.cname()}) = drate_dT;\n\n")
             of.write(f"{self.indent*n_indent}}}\n")
 
     def _fill_approx_rates(self, n_indent, of):
         for r in self.approx_rates:
-            of.write(f"{self.indent*n_indent}rate_{r.fname}<T>(rate_eval, rate, drate_dT);\n")
-            of.write(f"{self.indent*n_indent}rate_eval.screened_rates(k_{r.fname}) = rate;\n")
+            of.write(f"{self.indent*n_indent}rate_{r.cname()}<T>(rate_eval, rate, drate_dT);\n")
+            of.write(f"{self.indent*n_indent}rate_eval.screened_rates(k_{r.cname()}) = rate;\n")
             of.write(f"{self.indent*n_indent}if constexpr (std::is_same<T, rate_derivs_t>::value) {{\n")
-            of.write(f"{self.indent*n_indent}    rate_eval.dscreened_rates_dT(k_{r.fname}) = drate_dT;\n\n")
+            of.write(f"{self.indent*n_indent}    rate_eval.dscreened_rates_dT(k_{r.cname()}) = drate_dT;\n\n")
             of.write(f"{self.indent*n_indent}}}\n")
 
-    def _fill_parition_function_data(self, n_indent, of):
+    def _fill_partition_function_data(self, n_indent, of):
+        # itertools recipe
+        def batched(iterable, n):
+            "Batch data into tuples of length n. The last batch may be shorter."
+            # batched('ABCDEFG', 3) --> ABC DEF G
+            if n < 1:
+                raise ValueError('n must be at least one')
+            it = iter(iterable)
+            while batch := tuple(itertools.islice(it, n)):
+                yield batch
 
-        nuclei_pfs = self.get_nuclei_needing_partition_functions()
+        temp_arrays, temp_indices = self.dedupe_partition_function_temperatures()
 
         decl = "MICROPHYSICS_UNUSED HIP_CONSTEXPR static AMREX_GPU_MANAGED amrex::Real"
 
-        for n in nuclei_pfs:
-            if n.partition_function:
-                npts = len(n.partition_function.temperature)
-                assert len(n.partition_function.temperature) == len(n.partition_function.partition_function)
+        for i, temp in enumerate(temp_arrays):
+            # number of points
+            of.write(f"{self.indent*n_indent}constexpr int npts_{i+1} = {len(temp)};\n\n")
 
-                # write the data out, but for readability, split it to 5 values per line
+            # write the temperature out, but for readability, split it to 5 values per line
 
-                # number of points
+            of.write(f"{self.indent*n_indent}// this is T9\n\n")
 
-                of.write(f"{self.indent*n_indent}constexpr int {n}_npts = {npts};\n\n")
+            of.write(f"{self.indent*n_indent}{decl} temp_array_{i+1}[npts_{i+1}] = {{\n")
 
-                # first the temperature (in units of T9)
+            for data in batched(temp / 1.0e9, 5):
+                tmp = " ".join([f"{t}," for t in data])
+                of.write(f"{self.indent*(n_indent+1)}{tmp}\n")
+            of.write(f"{self.indent*n_indent}}};\n\n")
 
-                of.write(f"{self.indent*n_indent}{decl} {n}_temp_array[{n}_npts] = {{\n")
-
-                tdata = list(n.partition_function.temperature/1.0e9)
-                while tdata:
-                    if len(tdata) >= 5:
-                        tmp = ", ".join([str(tdata.pop(0)) for _ in range(0, 5)])
-                        if tdata:
-                            tmp += ","
-                    else:
-                        tmp = ", ".join([str(tdata.pop(0)) for _ in range(0, len(tdata))])
-
-                    of.write(f"{2*self.indent*n_indent}{tmp}\n")
-                of.write(f"{self.indent*n_indent}}};\n\n")
-
-                # now the partition function itself -- this is log10
-
-                of.write(f"{self.indent*n_indent}// this is log10(partition function)\n\n")
-
-                of.write(f"{self.indent*n_indent}{decl} {n}_pf_array[{n}_npts] = {{\n")
-
-                tdata = list(n.partition_function.partition_function)
-                while tdata:
-                    if len(tdata) >= 5:
-                        tmp = ", ".join([str(np.log10(tdata.pop(0))) for _ in range(0, 5)])
-                        if tdata:
-                            tmp += ","
-                    else:
-                        tmp = ", ".join([str(np.log10(tdata.pop(0))) for _ in range(0, len(tdata))])
-
-                    of.write(f"{2*self.indent*n_indent}{tmp}\n")
-                of.write(f"{self.indent*n_indent}}};\n\n")
-
+            if i == len(temp_arrays) - 1:
                 of.write("\n")
 
-    def _fill_parition_function_cases(self, n_indent, of):
+        for n, i in temp_indices.items():
+            # write the partition function data out, but for readability, split
+            # it to 5 values per line
 
-        nuclei_pfs = self.get_nuclei_needing_partition_functions()
+            of.write(f"{self.indent*n_indent}// this is log10(partition function)\n\n")
 
-        for n in nuclei_pfs:
-            if n.partition_function:
+            of.write(f"{self.indent*n_indent}{decl} {n}_pf_array[npts_{i+1}] = {{\n")
 
-                of.write(f"{self.indent*n_indent}case {n.cindex()}:\n")
-                of.write(f"{self.indent*2*n_indent}part_fun::interpolate_pf(tfactors.T9, part_fun::{n}_npts, part_fun::{n}_temp_array, part_fun::{n}_pf_array, pf, dpf_dT);\n")
-                of.write(f"{self.indent*2*n_indent}break;\n\n")
+            for data in batched(np.log10(n.partition_function.partition_function), 5):
+                tmp = " ".join([f"{x}," for x in data])
+                of.write(f"{self.indent*(n_indent+1)}{tmp}\n")
+            of.write(f"{self.indent*n_indent}}};\n\n")
+
+    def _fill_partition_function_cases(self, n_indent, of):
+
+        _, temp_indices = self.dedupe_partition_function_temperatures()
+
+        for n, i in temp_indices.items():
+            of.write(f"{self.indent*n_indent}case {n.cindex()}:\n")
+            of.write(f"{self.indent*(n_indent+1)}part_fun::interpolate_pf<part_fun::npts_{i+1}>(tfactors.T9, part_fun::temp_array_{i+1}, part_fun::{n}_pf_array, pf, dpf_dT);\n")
+            of.write(f"{self.indent*(n_indent+1)}break;\n\n")
 
     def _fill_spin_state_cases(self, n_indent, of):
 
-        for n in self.unique_nuclei:
-            if n.spin_states is not None:
+        def key_func(nuc):
+            if nuc.spin_states is None:
+                return -1
+            return nuc.spin_states
+
+        # group identical cases together to satisfy clang-tidy
+        nuclei = sorted(self.unique_nuclei + self.approx_nuclei, key=key_func)
+        for spin_state, group in itertools.groupby(nuclei, key=key_func):
+            if spin_state == -1:
+                continue
+            for n in group:
                 of.write(f"{self.indent*n_indent}case {n.cindex()}:\n")
-                of.write(f"{self.indent*2*n_indent}spin = {n.spin_states};\n")
-                of.write(f"{self.indent*2*n_indent}break;\n\n")
-        for n in self.approx_nuclei:
-            if n.spin_states is not None:
-                of.write(f"{self.indent*n_indent}case {n.cindex()}:\n")
-                of.write(f"{self.indent*2*n_indent}spin = {n.spin_states};\n")
-                of.write(f"{self.indent*2*n_indent}break;\n\n")
+            of.write(f"{self.indent*(n_indent+1)}spin = {spin_state};\n")
+            of.write(f"{self.indent*(n_indent+1)}break;\n\n")
