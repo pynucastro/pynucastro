@@ -73,7 +73,6 @@ def _rate_name_to_nuc(name):
             n = Nucleus(nuc)
             products.append(n)
         except (ValueError, AssertionError):
-            print(nuc)
             # we need to interpret some things specially
             if nuc.lower() in ["e", "nu", "_", "g", "gamma"]:
                 # first electrons and neutrinos, gammas, and nothing
