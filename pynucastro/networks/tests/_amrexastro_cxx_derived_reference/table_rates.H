@@ -42,13 +42,15 @@ struct table_t
     int nheader;
 };
 
-// we add a 7th quantity dr/dT
-// k_drate_dt is used only for calculating the derivative
-// of rate with temperature from the table, it isn't an index
-// into the table but into the 'entries' array in, eg. get_entries.
+// we add a 7th index, k_index_dlogr_dlogt used for computing the derivative
+// of Log(rate) with respect of Log(temperature) by using the table
+// values. It isn't an index into the table but into the 'entries'
+// array. Is important to mention that although we compute dlogr/dlogT is
+// the computed quantity in 'entries', we pursue ultimately
+// dr/dt as the final desired quantity to be computed for this index.
 
-const int k_drate_dt   = 7;
-const int add_vars     = 1;  // 1 Additional Var in entries
+const int  k_index_dlogr_dlogt  = 7;
+const int add_vars              = 1;  // 1 Additional Var in entries
 
 
 namespace rate_tables
@@ -354,7 +356,7 @@ get_entries(const table_t& table_meta, const R& log_rhoy_table, const T& log_tem
                                          log_rhoy, log_temp, ivar);
     }
 
-    entries(k_drate_dt)  = evaluate_dr_dtemp(table_meta, log_rhoy_table, log_temp_table, data,
+    entries(k_index_dlogr_dlogt)  = evaluate_dr_dtemp(table_meta, log_rhoy_table, log_temp_table, data,
                                              log_rhoy, log_temp);
 }
 
@@ -380,7 +382,7 @@ tabular_evaluate(const table_t& table_meta,
     // (negative) neutrino loss contribution to energy generation
 
     rate       = std::pow(10.0_rt, entries(jtab_rate));
-    drate_dt   = rate * entries(k_drate_dt) / temp;
+    drate_dt   = rate * entries(k_index_dlogr_dlogt) / temp;
     edot_nu    = -std::pow(10.0_rt, entries(jtab_nuloss));
     edot_gamma = std::pow(10.0_rt, entries(jtab_gamma));
 }
