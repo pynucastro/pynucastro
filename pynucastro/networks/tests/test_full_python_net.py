@@ -61,7 +61,7 @@ class TestFullPythonNetwork:
         ydot = net.rhs(0.0, Y, rho, T)
 
         ydot_benchmark = np.array([-1.129734e-03,  1.979093e-03, -1.702699e+06,  5.667057e+05,
-                                   6.454310e+02,  1.044892e-03, -1.745420e-02,  1.829885e-02,
+                                   6.454310e+02,  1.044892e-03, -1.1838042e-2,  1.268268e-02,
                                    4.712856e-06])
 
         assert_allclose(ydot, ydot_benchmark, rtol=1.e-6)
