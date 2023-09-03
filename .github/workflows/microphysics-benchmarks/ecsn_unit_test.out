@@ -36,7 +36,7 @@ successful? 1
 e initial = 5.995956082e+17
 e final =   1.071220449e+18
 ------------------------------------
-new mass fractions:
+new mass fractions: 
 h1 0.009032124504
 he4 4.003293528e-13
 o16 5.888714278e-07
@@ -49,7 +49,7 @@ si28 0.26794899
 p31 8.245884489e-14
 s32 0.7033060765
 ------------------------------------
-species creation rates:
+species creation rates: 
 omegadot(h1): -0.0967875496
 omegadot(he4): -3
 omegadot(o16): -49.99994111
