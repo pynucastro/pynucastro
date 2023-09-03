@@ -61,9 +61,8 @@ def _rate_name_to_nuc(name):
                 reactants.append(Nucleus("he4"))
                 reactants.append(Nucleus("he4"))
                 continue
-            else:
-                print(f"couldn't deal with {nuc}")
-                raise
+            print(f"couldn't deal with {nuc}")
+            raise
 
     products = []
     for nuc in _p:
@@ -85,9 +84,8 @@ def _rate_name_to_nuc(name):
                 products.append(Nucleus("he4"))
                 products.append(Nucleus("he4"))
                 continue
-            else:
-                print(f"couldn't deal with {nuc}")
-                raise
+            print(f"couldn't deal with {nuc}")
+            raise
 
     return reactants, products
 
