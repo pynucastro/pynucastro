@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.rates.library &mdash; pynucastro 2.0.3.post98+ge093eca7 documentation</title>
+  <title>pynucastro.rates.library &mdash; pynucastro 2.0.3.post99+g3822f7b2 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
@@ -14,7 +14,7 @@
   
         <script src="../../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../_static/documentation_options.js?v=db4bbdf6"></script>
+        <script src="../../../_static/documentation_options.js?v=fd2c8038"></script>
         <script src="../../../_static/doctools.js?v=888ff710"></script>
         <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
         <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -173,11 +173,16 @@
             <span class="k">if</span> <span class="n">nuc</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;e&quot;</span><span class="p">,</span> <span class="s2">&quot;nu&quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="s2">&quot;g&quot;</span><span class="p">,</span> <span class="s2">&quot;gamma&quot;</span><span class="p">]:</span>
                 <span class="c1"># first electrons and neutrins, and nothing</span>
                 <span class="k">continue</span>
+            <span class="k">if</span> <span class="n">nuc</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;pp&quot;</span><span class="p">:</span>
+                <span class="n">reactants</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">))</span>
+                <span class="n">reactants</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">))</span>
+                <span class="k">continue</span>
             <span class="k">if</span> <span class="n">nuc</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;aa&quot;</span><span class="p">:</span>
                 <span class="n">reactants</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">))</span>
                 <span class="n">reactants</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">))</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span>
+                <span class="k">continue</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;couldn&#39;t deal with </span><span class="si">{</span><span class="n">nuc</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span>
 
     <span class="n">products</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="n">_p</span><span class="p">:</span>
@@ -191,11 +196,16 @@
             <span class="k">if</span> <span class="n">nuc</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;e&quot;</span><span class="p">,</span> <span class="s2">&quot;nu&quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="s2">&quot;g&quot;</span><span class="p">,</span> <span class="s2">&quot;gamma&quot;</span><span class="p">]:</span>
                 <span class="c1"># first electrons and neutrinos, gammas, and nothing</span>
                 <span class="k">continue</span>
+            <span class="k">if</span> <span class="n">nuc</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;pp&quot;</span><span class="p">:</span>
+                <span class="n">products</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">))</span>
+                <span class="n">products</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">))</span>
+                <span class="k">continue</span>
             <span class="k">if</span> <span class="n">nuc</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;aa&quot;</span><span class="p">:</span>
                 <span class="n">products</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">))</span>
                 <span class="n">products</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">))</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span>
+                <span class="k">continue</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;couldn&#39;t deal with </span><span class="si">{</span><span class="n">nuc</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span>
 
     <span class="k">return</span> <span class="n">reactants</span><span class="p">,</span> <span class="n">products</span>
 
