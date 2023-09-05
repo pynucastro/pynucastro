@@ -179,7 +179,7 @@ class Composition:
             xvec[i] = self.X[n]
         return 1. / np.sum(xvec / avec)
 
-    def bin_as(self, nuclei):
+    def bin_as(self, nuclei, *, verbose=False):
         """given a list of nuclei, return a new Composition object with the
         current composition mass fractions binned into the new nuclei."""
 
@@ -209,6 +209,8 @@ class Composition:
                 else:
                     match_nuc = match_A[0]
 
+            if verbose:
+                print(f"storing {old_n} as {match_nuc}")
             new_comp.X[match_nuc] += v
 
         return new_comp
