@@ -103,12 +103,11 @@ class Composition:
 
     def get_nuclei(self):
         """return a list of Nuclei objects that make up this composition"""
-        nucs = [k for k in self.X]
-        return nucs
+        return list(self.X)
 
     def get_sum_X(self):
         """return the sum of the mass fractions"""
-        return sum([self.X[q] for q in self.X])
+        return sum(self.X[q] for q in self.X)
 
     def set_solar_like(self, Z=0.02):
         """ approximate a solar abundance, setting p to 0.7, He4 to 0.3 - Z and
@@ -201,7 +200,7 @@ class Composition:
             if not candidates:
                 match_nuc = nuclei[0]
             else:
-                max_A = max([q.A for q in candidates])
+                max_A = max(q.A for q in candidates)
                 match_A = [q for q in candidates if q.A == max_A]
                 if len(match_A) > 1:
                     match_Z = [q for q in match_A.sort(lambda p: p.Z) if old_n.Z >= q]
