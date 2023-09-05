@@ -71,8 +71,21 @@ class TestCompBinning:
 
     def test_bin_as(self, nuclei, comp):
 
-        new_nuclei = [Nucleus("he4"), Nucleus("c12"), Nucleus("ni56")]
-
+        new_nuclei = [Nucleus("he4"), Nucleus("c12"), Nucleus("ti44"), Nucleus("ni56")]
         c_new = comp.bin_as(new_nuclei)
 
         assert c_new.get_sum_X() == approx(comp.get_sum_X())
+
+        orig_X = 1.0 / len(nuclei)
+
+        # we should have placed p and He4 into He4
+        assert c_new.X[Nucleus("he4")] == approx(2.0 * orig_X)
+
+        # we should have placed C12, C13, N14, O14 into C12
+        assert c_new.X[Nucleus("c12")] == approx(4.0 * orig_X)
+
+        # we should have placed Cr48 and Fe52 into Ti44
+        assert c_new.X[Nucleus("ti44")] == approx(2.0 * orig_X)
+
+        # we should have placed Cr56 and Fe56 into Ni56
+        assert c_new.X[Nucleus("ni56")] == approx(2.0 * orig_X)
