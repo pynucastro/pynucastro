@@ -47,3 +47,32 @@ class TestComposition:
     def test_set_equal(self, nuclei, comp):
         comp.set_equal()
         assert comp.X[nuclei[0]] == approx(1.0 / len(nuclei))
+
+
+class TestCompBinning:
+    @pytest.fixture(scope="class")
+    def nuclei(self):
+        return [Nucleus("p"),
+                Nucleus("c12"),
+                Nucleus("c13"),
+                Nucleus("he4"),
+                Nucleus("o14"),
+                Nucleus("n14"),
+                Nucleus("cr48"),
+                Nucleus("fe52"),
+                Nucleus("fe56"),
+                Nucleus("cr56")]
+
+    @pytest.fixture(scope="class")
+    def comp(self, nuclei):
+        c = networks.Composition(nuclei)
+        c.set_equal()
+        return c
+
+    def test_bin_as(self, nuclei, comp):
+
+        new_nuclei = [Nucleus("he4"), Nucleus("c12"), Nucleus("ni56")]
+
+        c_new = comp.bin_as(new_nuclei)
+
+        assert c_new.get_sum_X() == approx(comp.get_sum_X())
