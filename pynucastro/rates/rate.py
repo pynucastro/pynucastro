@@ -1378,16 +1378,8 @@ class TableInterpolator:
         Note: we work in terms of log10()
         """
 
-        return max(0, np.searchsorted(self.temp, logt0) - 1)
-
-    def _get_logT_nearest_idx(self, logt0):
-        """return the index into the temperatures that is closest
-        to the input t0.  Note: we work in terms of log10()
-
-        """
-
-        return np.abs(10**self.temp - 10**logt0).argmin()
-        #return np.abs(self.temp - logt0).argmin()
+        max_idx = len(self.temp) - 1
+        return max(0, min(max_idx, np.searchsorted(self.temp, logt0)) - 1)
 
     def _get_logrhoy_idx(self, logrhoy0):
         """return the index into rho*Y such that
@@ -1397,16 +1389,8 @@ class TableInterpolator:
 
         """
 
-        return max(0, np.searchsorted(self.rhoy, logrhoy0) - 1)
-
-    def _get_logrhoy_nearest_idx(self, logrhoy0):
-        """return the index into rho*Y that is the closest to
-        the input rhoy.  Note: we work in terms of log10()
-
-        """
-
-        return np.abs(10**self.rhoy - 10**logrhoy0).argmin()
-        #return np.abs(self.rhoy - logrhoy0).argmin()
+        max_idx = len(self.rhoy) - 1
+        return max(0, min(max_idx, np.searchsorted(self.rhoy, logrhoy0)) - 1)
 
     def _rhoy_T_to_idx(self, irhoy, jtemp):
         """given a pair (irhoy, jtemp) into the table, return the 1-d index
@@ -1415,15 +1399,60 @@ class TableInterpolator:
         return irhoy * self.table_temp_lines + jtemp
 
     def interpolate(self, logrhoy, logT, component):
-        """given logrhoy and logT, do nearest interpolation to
+        """given logrhoy and logT, do bilinear interpolation to
         find the value of the data component in the table"""
 
-        # find the nearest value of T and rhoY in the data table
-        rhoy_index = self._get_logrhoy_nearest_idx(logrhoy)
-        t_index = self._get_logT_nearest_idx(logT)
-        idx = self._rhoy_T_to_idx(rhoy_index, t_index)
+        # We are going to do bilinear interpolation.  We create a
+        # polynomial of the form:
+        #
+        # f = A [log(rho) - log(rho_i)] [log(T) - log(T_j)] +
+        #     B [log(rho) - log(rho_i)] +
+        #     C [log(T) - log(T_j)] +
+        #     D
+        #
+        # we then find the i,j such that our point is in the
+        # box with corners (i,j) to (i+1,j+1), and solve for
+        # A, B, C, D
 
-        r = self.data[idx, component]
+        # find the T and rhoY in the data table corresponding to the
+        # lower left
+
+        if logT < self.temp.min() or logT > self.temp.max():
+            raise ValueError("temperature out of table bounds")
+
+        if logrhoy < self.rhoy.min() or logrhoy > self.rhoy.max():
+            raise ValueError("rhoy out of table bounds")
+
+        irhoy = self._get_logrhoy_idx(logrhoy)
+        jT = self._get_logT_idx(logT)
+
+        # note: rhoy and T are already stored as log
+
+        dlogrho = self.rhoy[irhoy+1] - self.rhoy[irhoy]
+        dlogT = self.temp[jT+1] - self.temp[jT]
+
+        # get the data at the 4 points
+
+        idx = self._rhoy_T_to_idx(irhoy, jT)
+        f_ij = self.data[idx, component]
+
+        idx = self._rhoy_T_to_idx(irhoy+1, jT)
+        f_ip1j = self.data[idx, component]
+
+        idx = self._rhoy_T_to_idx(irhoy, jT+1)
+        f_ijp1 = self.data[idx, component]
+
+        idx = self._rhoy_T_to_idx(irhoy+1, jT+1)
+        f_ip1jp1 = self.data[idx, component]
+
+        D = f_ij
+        C = (f_ijp1 - f_ij) / dlogT
+        B = (f_ip1j - f_ij) / dlogrho
+        A = (f_ip1jp1 - B * dlogrho - C * dlogT - D) / (dlogrho * dlogT)
+
+        r = (A * (logrhoy - self.rhoy[irhoy]) * (logT - self.temp[jT]) +
+             B * (logrhoy - self.rhoy[irhoy]) + C * (logT - self.temp[jT]) + D)
+
         return r
 
 
