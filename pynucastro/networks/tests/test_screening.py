@@ -7,14 +7,15 @@ from pynucastro.screening import chugunov_2007, chugunov_2009
 
 class TestScreening:
     @pytest.fixture(scope="class")
-    def rc(self):
-        files = ["c12-ag-o16-nac2",
-                 "c12-c12a-ne20-cf88",
-                 "c12-c12n-mg23-cf88",
-                 "c12-c12p-na23-cf88",
-                 "he4-aag-c12-fy05"]
+    def rc(self, reaclib_library):
+        rate_names = ["c12(a,g)o16",
+                      "c12(c12,a)ne20",
+                      "c12(c12,n)mg23",
+                      "c12(c12,p)na23",
+                      "he4(aa,g)c12"]
+        rates = reaclib_library.get_rate_by_name(rate_names)
 
-        return networks.RateCollection(files)
+        return networks.RateCollection(rates=rates)
 
     def test_screening_map(self, rc):
 
