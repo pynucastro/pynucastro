@@ -89,3 +89,45 @@ class TestCompBinning:
 
         # we should have placed Cr56 and Fe56 into Ni56
         assert c_new.X[Nucleus("ni56")] == approx(2.0 * orig_X)
+
+
+class TestCompBinning2:
+    """a more extreme example -- we'll be into a composition where
+    none of the original nuclei are present"""
+    @pytest.fixture(scope="class")
+    def nuclei(self):
+        return [Nucleus("d"),
+                Nucleus("he3"),
+                Nucleus("he4"),
+                Nucleus("he5"),
+                Nucleus("c12"),
+                Nucleus("o14"),
+                Nucleus("o15"),
+                Nucleus("o16"),
+                Nucleus("o17"),
+                Nucleus("o18")]
+
+    @pytest.fixture(scope="class")
+    def comp(self, nuclei):
+        c = networks.Composition(nuclei)
+        c.set_equal()
+        return c
+
+    def test_bin_as(self, nuclei, comp):
+
+        new_nuclei = [Nucleus("p"), Nucleus("n14"), Nucleus("f18")]
+        c_new = comp.bin_as(new_nuclei)
+
+        assert c_new.get_sum_X() == approx(comp.get_sum_X())
+
+        orig_X = 1.0 / len(nuclei)
+
+        # we should have placed d, He3. He4. He5, and C12 into p
+        assert c_new.X[Nucleus("p")] == approx(5.0 * orig_X)
+
+        # we should have placed O14, O15, O16, and O17 into N14
+        assert c_new.X[Nucleus("n14")] == approx(4.0 * orig_X)
+
+        # we should have placed O18 into F18
+        assert c_new.X[Nucleus("f18")] == approx(orig_X)
+
