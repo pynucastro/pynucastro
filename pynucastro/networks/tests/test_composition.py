@@ -130,4 +130,3 @@ class TestCompBinning2:
 
         # we should have placed O18 into F18
         assert c_new.X[Nucleus("f18")] == approx(orig_X)
-
