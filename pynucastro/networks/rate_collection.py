@@ -203,7 +203,7 @@ class Composition:
                 max_A = max(q.A for q in candidates)
                 match_A = [q for q in candidates if q.A == max_A]
                 if len(match_A) > 1:
-                    match_Z = [q for q in match_A.sort(lambda p: p.Z) if old_n.Z >= q]
+                    match_Z = [q for q in sorted(match_A, key=lambda p: p.Z) if old_n.Z >= q]
                     match_nuc = match_Z[0]
                 else:
                     match_nuc = match_A[0]
