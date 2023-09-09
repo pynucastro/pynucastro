@@ -86,7 +86,7 @@ class TestCompBinning:
 
         captured = capsys.readouterr()
 
-        output="""storing p as he4
+        output = """storing p as he4
 storing c12 as c12
 storing c13 as c12
 storing he4 as he4
@@ -120,6 +120,7 @@ storing zn60 as ni56
 
         # we should have placed Zn60 into Ni56
         assert c_new.X[Nucleus("ni56")] == approx(orig_X)
+
 
 class TestCompBinning2:
     """a more extreme example -- we'll be into a composition where
