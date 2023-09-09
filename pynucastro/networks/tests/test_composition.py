@@ -50,6 +50,9 @@ class TestComposition:
 
 
 class TestCompBinning:
+    """this example has several cases where there are multiple matches
+    with the same A, so we exercise the secondary check on Z"""
+
     @pytest.fixture(scope="class")
     def nuclei(self):
         return [Nucleus("p"),
@@ -61,7 +64,9 @@ class TestCompBinning:
                 Nucleus("cr48"),
                 Nucleus("fe52"),
                 Nucleus("fe56"),
-                Nucleus("cr56")]
+                Nucleus("cr56"),
+                Nucleus("co56"),
+                Nucleus("zn60")]
 
     @pytest.fixture(scope="class")
     def comp(self, nuclei):
@@ -69,10 +74,33 @@ class TestCompBinning:
         c.set_equal()
         return c
 
-    def test_bin_as(self, nuclei, comp):
+    def test_bin_as(self, nuclei, comp, capsys):
 
-        new_nuclei = [Nucleus("he4"), Nucleus("c12"), Nucleus("ti44"), Nucleus("ni56")]
-        c_new = comp.bin_as(new_nuclei)
+        new_nuclei = [Nucleus("he4"),
+                      Nucleus("c12"),
+                      Nucleus("ti44"),
+                      Nucleus("ni56"),
+                      Nucleus("fe56")]
+
+        c_new = comp.bin_as(new_nuclei, verbose=True)
+
+        captured = capsys.readouterr()
+
+        output="""storing p as he4
+storing c12 as c12
+storing c13 as c12
+storing he4 as he4
+storing o14 as c12
+storing n14 as c12
+storing cr48 as ti44
+storing fe52 as ti44
+storing fe56 as fe56
+storing cr56 as fe56
+storing co56 as fe56
+storing zn60 as ni56
+"""
+
+        assert captured.out == output
 
         assert c_new.get_sum_X() == approx(comp.get_sum_X())
 
@@ -87,9 +115,11 @@ class TestCompBinning:
         # we should have placed Cr48 and Fe52 into Ti44
         assert c_new.X[Nucleus("ti44")] == approx(2.0 * orig_X)
 
-        # we should have placed Cr56 and Fe56 into Ni56
-        assert c_new.X[Nucleus("ni56")] == approx(2.0 * orig_X)
+        # we should have placed Cr56, Co56, and Fe56 into Fe56
+        assert c_new.X[Nucleus("fe56")] == approx(3.0 * orig_X)
 
+        # we should have placed Zn60 into Ni56
+        assert c_new.X[Nucleus("ni56")] == approx(orig_X)
 
 class TestCompBinning2:
     """a more extreme example -- we'll be into a composition where

@@ -203,8 +203,16 @@ class Composition:
                 max_A = max(q.A for q in candidates)
                 match_A = [q for q in candidates if q.A == max_A]
                 if len(match_A) > 1:
-                    match_Z = [q for q in sorted(match_A, key=lambda p: p.Z) if old_n.Z >= q]
-                    match_nuc = match_Z[0]
+                    match_Z = [q for q in sorted(match_A, key=lambda p: p.Z) if old_n.Z >= q.Z]
+                    if not match_Z:
+                        # our nucleus has a Z less than any of the Z's in match_A
+                        match_nuc = match_A[0]
+                    else:
+                        # always take the last entry -- this way if
+                        # match_Z has multiple nuclei, we are taking
+                        # the one with the highest Z (since we
+                        # initially sorted by A and Z)
+                        match_nuc = match_Z[-1]
                 else:
                     match_nuc = match_A[0]
 
