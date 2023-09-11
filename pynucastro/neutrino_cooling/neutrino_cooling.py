@@ -1,5 +1,16 @@
 import numpy as np
 
+class NeutrinoComponents:
+    def __init__(self):
+        self.splas = None
+        self.spair = None
+        self.sphot = None
+        self.sbrem = None
+        self.sreco = None
+
+    def __str__(self):
+        return f"splas: {self.splas}; spair: {self.spair}; sphot: {self.sphot}; sbrem: {self.sbrem}; sreco: {self.sreco}"
+
 
 def ifermi12(f):
     """apply a rational function expansion to get the inverse
@@ -186,7 +197,8 @@ def zfermim12(x):
     return zfermim12r
 
 
-def sneut5(temp, den, comp):
+def sneut5(temp, den, comp, *, abar=None, zbar=None,
+           full_output=False):
     """compute thermal neutrino losses from the analytic fits of
     Itoh et al. ApJS 102, 411, 1996"""
 
@@ -199,8 +211,9 @@ def sneut5(temp, den, comp):
     # output:
     # snu    = total neutrino loss rate in erg/g/sec
 
-    abar = comp.eval_abar()
-    zbar = comp.eval_zbar()
+    if abar is None or zbar is None:
+        abar = comp.eval_abar()
+        zbar = comp.eval_zbar()
 
     # numerical constants
 
@@ -340,7 +353,7 @@ def sneut5(temp, den, comp):
     # equation 4.6
 
     a1 = 1.019e-6 * rm
-
+    a2 = a1**twoth
     b1 = np.sqrt(1.0 + a2)
 
     c00 = 1.0 / (temp * temp * b1)
@@ -357,7 +370,6 @@ def sneut5(temp, den, comp):
 
     ft = 2.4 + 0.6 * gl12 + 0.51 * gl + 1.25 * gl32
     gum = 1.0 / gl2
-    a1 = (0.25 * 0.6 * gl12 + 0.5 * 0.51 * gl + 0.75 * 1.25 * gl32) * gum
 
     # equation 4.8
 
@@ -383,7 +395,7 @@ def sneut5(temp, den, comp):
     else:
         a1 = 0.39 - 1.25 * xnum - 0.35 * np.sin(4.5 * xnum)
 
-        b1 = 0.3 * np.exp((4.5 * xnum + 0.9) ** 2)
+        b1 = 0.3 * np.exp(-(4.5 * xnum + 0.9)**2)
 
         c = min(0.0, xden - 1.6 + 1.25 * xnum)
 
@@ -665,7 +677,7 @@ def sneut5(temp, den, comp):
     t8m3 = t8m2 * t8m1
     t8m5 = t8m3 * t8m2
 
-    tfermi = 5.9302e9 * (np.sqrt(1.0 + 1.018 * (den6 * ye) ** twoth) - 1.0)
+    tfermi = 5.9302e9 * (np.sqrt(1.0 + 1.018 * (den6 * ye)**twoth) - 1.0)
 
     # "weak" degenerate electrons only
 
@@ -785,7 +797,7 @@ def sneut5(temp, den, comp):
               0.00031 * cos4 - 0.00018 * sin4 +
               0.00069 * cos5)
 
-        dum = 2.275e-1 * zbar * zbar * t8m1 * (den6 * abari) ** oneth
+        dum = 2.275e-1 * zbar * zbar * t8m1 * (den6 * abari)**oneth
 
         gm1 = 1.0 / dum
         gm2 = gm1 * gm1
@@ -858,6 +870,8 @@ def sneut5(temp, den, comp):
 
     # equation 6.7, 6.13 and 6.14
 
+    sreco = 0.0
+
     if -20.0 <= nu <= 10.0:
 
         zeta = 1.579e5 * zbar * zbar * tempi
@@ -900,5 +914,15 @@ def sneut5(temp, den, comp):
 
     # the total neutrino loss rate
     snu = splas + spair + sphot + sbrem + sreco
+
+    if full_output:
+        comps = NeutrinoComponents()
+        comps.splas = splas
+        comps.spair = spair
+        comps.sphot = sphot
+        comps.sbrem = sbrem
+        comps.sreco = sreco
+
+        return snu, comps
 
     return snu
