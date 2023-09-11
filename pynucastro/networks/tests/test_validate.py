@@ -98,7 +98,6 @@ class TestValidate:
         return reaclib_library.linking_nuclei(all_reactants)
 
     def test_validate(self, reduced_library, reaclib_library, capsys):
-        output = io.StringIO()
         rc = pyna.RateCollection(libraries=[reduced_library])
         rc.validate(reaclib_library)
         captured = capsys.readouterr()
