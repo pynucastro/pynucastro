@@ -186,7 +186,7 @@ def zfermim12(x):
     return zfermim12r
 
 
-def sneut5(temp, den, abar, zbar):
+def sneut5(temp, den, comp):
     """compute thermal neutrino losses from the analytic fits of
     Itoh et al. ApJS 102, 411, 1996"""
 
@@ -198,6 +198,9 @@ def sneut5(temp, den, abar, zbar):
 
     # output:
     # snu    = total neutrino loss rate in erg/g/sec
+
+    abar = comp.eval_abar()
+    zbar = comp.eval_zbar()
 
     # numerical constants
 
