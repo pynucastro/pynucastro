@@ -1,5 +1,6 @@
 import numpy as np
 
+
 class NeutrinoComponents:
     def __init__(self):
         self.splas = None
