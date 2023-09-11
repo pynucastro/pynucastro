@@ -48,6 +48,7 @@ class TestComposition:
         comp.set_equal()
         assert comp.X[nuclei[0]] == approx(1.0 / len(nuclei))
 
+
 class TestCompositionVars:
     @pytest.fixture(scope="class")
     def nuclei(self):
@@ -80,6 +81,7 @@ class TestCompositionVars:
         # Ye = sum_k Z_k X_k / A_k
         Ye = sum(comp.X[n] * n.Z / n.A for n in comp.X)
         assert Ye == approx(comp.eval_ye())
+
 
 class TestCompBinning:
     """this example has several cases where there are multiple matches
