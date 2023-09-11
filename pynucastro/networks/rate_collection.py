@@ -178,6 +178,10 @@ class Composition:
             xvec[i] = self.X[n]
         return 1. / np.sum(xvec / avec)
 
+    def eval_zbar(self):
+        """ return the mean charge, Zbar """
+        return self.eval_abar() * self.eval_ye()
+
     def bin_as(self, nuclei, *, verbose=False):
         """given a list of nuclei, return a new Composition object with the
         current composition mass fractions binned into the new nuclei."""
