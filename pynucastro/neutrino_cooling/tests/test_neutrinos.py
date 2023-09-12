@@ -32,6 +32,7 @@ class TestNeutrinos:
         assert comps.sphot == approx(sphot, rel=1.e-7, abs=1.e-100)
         assert comps.sbrem == approx(sbrem, rel=1.e-7, abs=1.e-100)
         assert comps.sreco == approx(sreco, rel=1.e-7, abs=1.e-100)
+        assert snu == approx(spair + splas + sphot + sbrem + sreco)
 
         # second state
 
@@ -53,6 +54,7 @@ class TestNeutrinos:
         assert comps.sphot == approx(sphot, rel=1.e-7, abs=1.e-100)
         assert comps.sbrem == approx(sbrem, rel=1.e-7, abs=1.e-100)
         assert comps.sreco == approx(sreco, rel=1.e-7, abs=1.e-100)
+        assert snu == approx(spair + splas + sphot + sbrem + sreco)
 
         # third state
 
@@ -74,6 +76,7 @@ class TestNeutrinos:
         assert comps.sphot == approx(sphot, rel=1.e-7, abs=1.e-100)
         assert comps.sbrem == approx(sbrem, rel=1.e-7, abs=1.e-100)
         assert comps.sreco == approx(sreco, rel=1.e-7, abs=1.e-100)
+        assert snu == approx(spair + splas + sphot + sbrem + sreco)
 
         # fourth state
 
@@ -95,6 +98,7 @@ class TestNeutrinos:
         assert comps.sphot == approx(sphot, rel=1.e-7, abs=1.e-100)
         assert comps.sbrem == approx(sbrem, rel=1.e-7, abs=1.e-100)
         assert comps.sreco == approx(sreco, rel=1.e-7, abs=1.e-100)
+        assert snu == approx(spair + splas + sphot + sbrem + sreco)
 
         # fifth state
 
@@ -116,6 +120,7 @@ class TestNeutrinos:
         assert comps.sphot == approx(sphot, rel=1.e-7, abs=1.e-100)
         assert comps.sbrem == approx(sbrem, rel=1.e-7, abs=1.e-100)
         assert comps.sreco == approx(sreco, rel=1.e-7, abs=1.e-100)
+        assert snu == approx(spair + splas + sphot + sbrem + sreco)
 
         # sixth state
 
@@ -137,6 +142,7 @@ class TestNeutrinos:
         assert comps.sphot == approx(sphot, rel=1.e-7, abs=1.e-100)
         assert comps.sbrem == approx(sbrem, rel=1.e-7, abs=1.e-100)
         assert comps.sreco == approx(sreco, rel=1.e-7, abs=1.e-100)
+        assert snu == approx(spair + splas + sphot + sbrem + sreco)
 
         # seventh state
 
@@ -158,3 +164,4 @@ class TestNeutrinos:
         assert comps.sphot == approx(sphot, rel=1.e-7, abs=1.e-100)
         assert comps.sbrem == approx(sbrem, rel=1.e-7, abs=1.e-100)
         assert comps.sreco == approx(sreco, rel=1.e-7, abs=1.e-100)
+        assert snu == approx(spair + splas + sphot + sbrem + sreco)
