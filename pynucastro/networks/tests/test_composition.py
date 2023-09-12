@@ -49,6 +49,40 @@ class TestComposition:
         assert comp.X[nuclei[0]] == approx(1.0 / len(nuclei))
 
 
+class TestCompositionVars:
+    @pytest.fixture(scope="class")
+    def nuclei(self):
+        return [Nucleus("h1"),
+                Nucleus("he4"),
+                Nucleus("c12"),
+                Nucleus("fe56")]
+
+    @pytest.fixture(scope="class")
+    def comp(self, nuclei):
+        c = networks.Composition(nuclei)
+        c.set_equal()
+        return c
+
+    def test_abar(self, comp):
+
+        # 1/Abar = sum_k X_k / A_k
+        Abar_inv = sum(comp.X[n] / n.A for n in comp.X)
+        assert 1.0 / Abar_inv == approx(comp.eval_abar())
+
+    def test_zbar(self, comp):
+
+        # Zbar = Abar sum_k Z_k X_k / A_k
+        Abar_inv = sum(comp.X[n] / n.A for n in comp.X)
+        Zbar = 1.0 / Abar_inv * sum(comp.X[n] * n.Z / n.A for n in comp.X)
+        assert Zbar == approx(comp.eval_zbar())
+
+    def test_ye(self, comp):
+
+        # Ye = sum_k Z_k X_k / A_k
+        Ye = sum(comp.X[n] * n.Z / n.A for n in comp.X)
+        assert Ye == approx(comp.eval_ye())
+
+
 class TestCompBinning:
     """this example has several cases where there are multiple matches
     with the same A, so we exercise the secondary check on Z"""
