@@ -1,6 +1,5 @@
-"""Screening routines"""
+"""Neutrino cooling routines"""
 
-__all__ = ["neutrino_cooling"]
+__all__ = ["neutrino_cooling", "sneut5"]
 
-from .neutrino_cooling import sneut5
-
+from .sneut5 import sneut5
