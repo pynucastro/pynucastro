@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.networks.rate_collection &mdash; pynucastro 2.0.3.post102+g65fea8bf documentation</title>
+  <title>pynucastro.networks.rate_collection &mdash; pynucastro 2.0.3.post103+g9bb15469 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
@@ -14,7 +14,7 @@
   
         <script src="../../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../_static/documentation_options.js?v=0aea4da4"></script>
+        <script src="../../../_static/documentation_options.js?v=a52e91bf"></script>
         <script src="../../../_static/doctools.js?v=888ff710"></script>
         <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
         <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -1155,17 +1155,12 @@
 
 <div class="viewcode-block" id="RateCollection.validate">
 <a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.validate">[docs]</a>
-    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other_library</span><span class="p">,</span> <span class="n">forward_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">ostream</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other_library</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">forward_only</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;perform various checks on the library, comparing to other_library,</span>
 <span class="sd">        to ensure that we are not missing important rates.  The idea</span>
 <span class="sd">        is that self should be a reduced library where we filtered out</span>
 <span class="sd">        a few rates and then we want to compare to the larger</span>
 <span class="sd">        other_library to see if we missed something important.</span>
-
-<span class="sd">        ostream is the I/O stream to send output to (for instance, a</span>
-<span class="sd">        file object or StringIO object).  If it is None, then output</span>
-<span class="sd">        is to stdout.</span>
-
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">current_rates</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_rates</span><span class="p">())</span>
@@ -1191,10 +1186,7 @@
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">found</span><span class="p">:</span>
                     <span class="n">passed_validation</span> <span class="o">=</span> <span class="kc">False</span>
                     <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;validation: </span><span class="si">{</span><span class="n">p</span><span class="si">}</span><span class="s2"> produced in </span><span class="si">{</span><span class="n">rate</span><span class="si">}</span><span class="s2"> never consumed.&quot;</span>
-                    <span class="k">if</span> <span class="n">ostream</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                        <span class="nb">print</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="n">ostream</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">msg</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
         <span class="c1"># now check if we are missing any rates from other_library with the exact same reactants</span>
 
@@ -1215,10 +1207,7 @@
 
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">found</span><span class="p">:</span>
                     <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;validation: missing </span><span class="si">{</span><span class="n">other_rate</span><span class="si">}</span><span class="s2"> as alternative to </span><span class="si">{</span><span class="n">rate</span><span class="si">}</span><span class="s2"> (Q = </span><span class="si">{</span><span class="n">other_rate</span><span class="o">.</span><span class="n">Q</span><span class="si">}</span><span class="s2"> MeV).&quot;</span>
-                    <span class="k">if</span> <span class="n">ostream</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                        <span class="nb">print</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="n">ostream</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">msg</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">passed_validation</span></div>
 
