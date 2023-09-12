@@ -95,6 +95,20 @@ class Composition:
             raise ValueError("must supply an iterable of Nucleus objects")
         self.X = {k: small for k in nuclei}
 
+    def __str__(self):
+        ostr = ""
+        for k in self.X:
+            ostr += f"  X({k}) : {self.X[k]}\n"
+        return ostr
+
+    def get_nuclei(self):
+        """return a list of Nuclei objects that make up this composition"""
+        return list(self.X)
+
+    def get_sum_X(self):
+        """return the sum of the mass fractions"""
+        return sum(self.X[q] for q in self.X)
+
     def set_solar_like(self, Z=0.02):
         """ approximate a solar abundance, setting p to 0.7, He4 to 0.3 - Z and
         the remainder evenly distributed with Z """
@@ -114,6 +128,11 @@ class Composition:
         """ set all species to a particular value """
         for k in self.X:
             self.X[k] = xval
+
+    def set_equal(self):
+        """ set all species to be equal"""
+        for k in self.X:
+            self.X[k] = 1.0 / len(self.X)
 
     def set_nuc(self, name, xval):
         """ set nuclei name to the mass fraction xval """
@@ -159,11 +178,49 @@ class Composition:
             xvec[i] = self.X[n]
         return 1. / np.sum(xvec / avec)
 
-    def __str__(self):
-        ostr = ""
-        for k in self.X:
-            ostr += f"  X({k}) : {self.X[k]}\n"
-        return ostr
+    def bin_as(self, nuclei, *, verbose=False):
+        """given a list of nuclei, return a new Composition object with the
+        current composition mass fractions binned into the new nuclei."""
+
+        # sort the input nuclei by A, then Z
+        nuclei.sort(key=lambda n: (n.A, n.Z))
+
+        # create the new composition
+        new_comp = Composition(nuclei)
+
+        # loop over our original nuclei.  Find the new nucleus such
+        # that n_orig.A >= n_new.A.  If there are multiple, then do
+        # the same for Z
+        for old_n, v in self.X.items():
+
+            candidates = [q for q in nuclei if old_n.A >= q.A]
+            # if candidates is empty, then all of the nuclei are heavier than
+            # old_n, so just put its composition in the first new nucleus
+            # (which will be the lightest)
+            if not candidates:
+                match_nuc = nuclei[0]
+            else:
+                max_A = max(q.A for q in candidates)
+                match_A = [q for q in candidates if q.A == max_A]
+                if len(match_A) > 1:
+                    match_Z = [q for q in sorted(match_A, key=lambda p: p.Z) if old_n.Z >= q.Z]
+                    if not match_Z:
+                        # our nucleus has a Z less than any of the Z's in match_A
+                        match_nuc = match_A[0]
+                    else:
+                        # always take the last entry -- this way if
+                        # match_Z has multiple nuclei, we are taking
+                        # the one with the highest Z (since we
+                        # initially sorted by A and Z)
+                        match_nuc = match_Z[-1]
+                else:
+                    match_nuc = match_A[0]
+
+            if verbose:
+                print(f"storing {old_n} as {match_nuc}")
+            new_comp.X[match_nuc] += v
+
+        return new_comp
 
     def plot(self, trace_threshold=0.1, hard_limit=None, size=(9, 5)):
         """ Make a pie chart of Composition. group trace nuclei together and explode into bar chart
