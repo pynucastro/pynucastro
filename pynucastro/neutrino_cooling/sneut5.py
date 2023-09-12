@@ -188,14 +188,17 @@ def zfermim12(x):
     return zfermim12r
 
 
-def sneut5(temp, den, comp, *, abar=None, zbar=None,
+def sneut5(rho, T, comp=None, *, abar=None, zbar=None,
            full_output=False):
-    """compute thermal neutrino losses from the analytic fits of
-    Itoh et al. ApJS 102, 411, 1996"""
+    """compute thermal neutrino losses from the analytic fits of Itoh
+    et al. ApJS 102, 411, 1996.  Note that either a Composition object
+    of abar/zbar need to be provided.
+
+    """
 
     # input:
-    # temp = temperature
-    # den  = density
+    # T = temperature
+    # rho  = density
     # abar = mean atomic weight
     # zbar = mean charge
 
@@ -237,13 +240,13 @@ def sneut5(temp, den, comp, *, abar=None, zbar=None,
 
     snu = 0.0
 
-    if temp < 1.0e7:
+    if T < 1.0e7:
         return snu
 
     # to avoid lots of divisions
 
-    deni = 1.0 / den
-    tempi = 1.0 / temp
+    deni = 1.0 / rho
+    tempi = 1.0 / T
     abari = 1.0 / abar
 
     # some composition variables
@@ -252,7 +255,7 @@ def sneut5(temp, den, comp, *, abar=None, zbar=None,
 
     # some frequent factors
 
-    t9 = temp * 1.0e-9
+    t9 = T * 1.0e-9
     xl = t9 * con1
     xlp5 = np.sqrt(xl)
     xl2 = xl * xl
@@ -267,7 +270,7 @@ def sneut5(temp, den, comp, *, abar=None, zbar=None,
     xlm2 = xlm1 * xlm1
     xlm3 = xlm1 * xlm2
 
-    rm = den * ye
+    rm = rho * ye
     rmi = 1.0 / rm
 
     a0 = rm * 1.0e-9
@@ -347,7 +350,7 @@ def sneut5(temp, den, comp, *, abar=None, zbar=None,
     a2 = a1**twoth
     b1 = np.sqrt(1.0 + a2)
 
-    c00 = 1.0 / (temp * temp * b1)
+    c00 = 1.0 / (T * T * b1)
 
     gl2 = 1.1095e11 * rm * c00
 
@@ -374,7 +377,7 @@ def sneut5(temp, den, comp, *, abar=None, zbar=None,
     # equation 4.9 and 4.10
 
     cc = np.log10(2.0 * rm)
-    xlnt = np.log10(temp)
+    xlnt = np.log10(T)
 
     xnum = sixth * (17.5 + cc - 3.0 * xlnt)
     xden = sixth * (-24.5 + cc + 3.0 * xlnt)
@@ -421,12 +424,12 @@ def sneut5(temp, den, comp, *, abar=None, zbar=None,
     # 3.8 for tau, equation 3.6 for cc, and table 2 written out for
     # speed
 
-    if temp < 1.0e8:
+    if T < 1.0e8:
 
         # note: we already bailed above for T < 1.e7, so this is
         # really 1.e7 <= T < 1.e8
 
-        tau = np.log10(temp * 1.0e-7)
+        tau = np.log10(T * 1.0e-7)
         cc = 0.5654 + tau
         c00 = 1.008e11
         c01 = 0.0
@@ -465,9 +468,9 @@ def sneut5(temp, den, comp, *, abar=None, zbar=None,
         dd24 = -4.222e9
         dd25 = -1.560e9
 
-    elif 1.0e8 <= temp < 1.0e9:
+    elif 1.0e8 <= T < 1.0e9:
 
-        tau = np.log10(temp * 1.0e-8)
+        tau = np.log10(T * 1.0e-8)
         cc = 1.5654
         c00 = 9.889e10
         c01 = -4.524e8
@@ -655,8 +658,8 @@ def sneut5(temp, den, comp, *, abar=None, zbar=None,
     #                    n  + p     => n + p + nu + nubar
     # equation 4.3
 
-    den6 = den * 1.0e-6
-    t8 = temp * 1.0e-8
+    den6 = rho * 1.0e-6
+    t8 = T * 1.0e-8
     t812 = np.sqrt(t8)
     t832 = t8 * t812
     t82 = t8 * t8
@@ -672,7 +675,7 @@ def sneut5(temp, den, comp, *, abar=None, zbar=None,
 
     # "weak" degenerate electrons only
 
-    if temp > 0.3 * tfermi:
+    if T > 0.3 * tfermi:
 
         # equation 5.3
 
@@ -716,7 +719,7 @@ def sneut5(temp, den, comp, *, abar=None, zbar=None,
         c01 = 4.07 + 0.0240 * t8**1.4
         c02 = 4.59e-5 * t8**-0.110
 
-        z = den**0.656
+        z = rho**0.656
         dum = c00 * rmi + c01 + c02 * z
         z = -c00 * rmi * rmi
 
@@ -726,7 +729,7 @@ def sneut5(temp, den, comp, *, abar=None, zbar=None,
         gbrem = xnum + xden
 
         # equation 5.1
-        dum = 0.5738 * zbar * ye * t86 * den
+        dum = 0.5738 * zbar * ye * t86 * rho
 
         z = tfac4 * fbrem - tfac5 * gbrem
         sbrem = dum * z
@@ -736,7 +739,7 @@ def sneut5(temp, den, comp, *, abar=None, zbar=None,
 
     else:
 
-        u = fac3 * (np.log10(den) - 3.0)
+        u = fac3 * (np.log10(rho) - 3.0)
         # a0    = iln10*fac3*deni;
 
         # compute the expensive trig functions of equation 5.21 only once
@@ -813,7 +816,7 @@ def sneut5(temp, den, comp, *, abar=None, zbar=None,
 
         # equation 5.17
 
-        dum = 0.5738 * zbar * ye * t86 * den
+        dum = 0.5738 * zbar * ye * t86 * rho
 
         z = tfac4 * fliq - tfac5 * gliq
         sbrem = dum * z
@@ -822,7 +825,7 @@ def sneut5(temp, den, comp, *, abar=None, zbar=None,
     # for reactions like e- (continuum) => e- (bound) + nu_e + nubar_e
     # equation 6.11 solved for nu
 
-    xnum = 1.10520e8 * den * ye / (temp * np.sqrt(temp))
+    xnum = 1.10520e8 * rho * ye / (T * np.sqrt(T))
 
     # the chemical potential
 
@@ -892,7 +895,7 @@ def sneut5(temp, den, comp, *, abar=None, zbar=None,
         a1 = 1.0 / dum
         a2 = 1.0 / bigj
 
-        sreco = tfac6 * 2.649e-18 * ye * zbar**13.0 * den * bigj * a1
+        sreco = tfac6 * 2.649e-18 * ye * zbar**13.0 * rho * bigj * a1
 
     # convert from erg/cm^3/s to erg/g/s
     # comment these out to duplicate the itoh et al plots
