@@ -7,29 +7,26 @@ import pynucastro as pyna
 
 class TestRateFilter:
     @pytest.fixture(scope="class")
-    def library(self):
+    def library(self, reaclib_library):
         """ this is run before each test """
 
-        files = ["c12-pg-n13-ls09",
-                 "c13-pg-n14-nacr",
-                 "n13-pg-o14-lg06",
-                 "n14-pg-o15-im05",
-                 "n15-pa-c12-nacr",
-                 "o14--n14-wc12",
-                 "o15--n15-wc12",
-                 "o14-ap-f17-Ha96c",
-                 "f17--o17-wc12",
-                 "f17-pg-ne18-cb09",
-                 "ne18--f18-wc12",
-                 "f18--o18-wc12",
-                 "n15-pg-o16-li10",
-                 "o16-pg-f17-ia08",
-                 "o17-pg-f18-il10",
-                 "f18-pa-o15-il10"]
-
-        rates = []
-        for f in files:
-            rates.append(pyna.load_rate(f))
+        rate_names = ["c12(p,g)n13",
+                      "c13(p,g)n14",
+                      "n13(p,g)o14",
+                      "n14(p,g)o15",
+                      "n15(p,a)c12",
+                      "o14(,)n14",
+                      "o15(,)n15",
+                      "o14(a,p)f17",
+                      "f17(,)o17",
+                      "f17(p,g)ne18",
+                      "ne18(,)f18",
+                      "f18(,)o18",
+                      "n15(p,g)o16",
+                      "o16(p,g)f17",
+                      "o17(p,g)f18",
+                      "f18(p,a)o15"]
+        rates = reaclib_library.get_rate_by_name(rate_names)
 
         return pyna.Library(rates=rates)
 
