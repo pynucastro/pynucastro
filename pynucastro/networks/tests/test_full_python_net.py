@@ -6,21 +6,27 @@ import pytest
 from numpy.testing import assert_allclose
 
 from pynucastro import networks
+from pynucastro.rates import SuzukiLibrary
 
 
 class TestFullPythonNetwork:
     @pytest.fixture(scope="class")
-    def fn(self):
-        files = ["c12-c12a-ne20-cf88",
-                 "c12-c12n-mg23-cf88",
-                 "c12-c12p-na23-cf88",
-                 "c12-ag-o16-nac2",
-                 "na23--ne23-toki",
-                 "ne23--na23-toki",
-                 "n--p-wc12",
-                 "he4-aag-c12-fy05"]
+    def fn(self, reaclib_library):
+        rate_names = ["c12(c12,a)ne20",
+                      "c12(c12,n)mg23",
+                      "c12(c12,p)na23",
+                      "c12(a,g)o16",
+                      "n(,)p",
+                      "he4(aa,g)c12"]
+        rates = reaclib_library.get_rate_by_name(rate_names)
 
-        return networks.PythonNetwork(files)
+        suzuki_library = SuzukiLibrary()
+        tabular_rate_names = ["na23(,)ne23",
+                              "ne23(,)na23"]
+        tabular_rates = suzuki_library.get_rate_by_name(tabular_rate_names)
+
+        fn = networks.PythonNetwork(rates=rates+tabular_rates)
+        return fn
 
     def test_write_network(self, fn):
         """test the write_network function"""

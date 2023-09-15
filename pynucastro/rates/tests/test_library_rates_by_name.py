@@ -10,16 +10,18 @@ class TestGetRatesByName:
         r3 = "a(aa,g)c12"
         r4 = "f20(e,nu)o20"   # not found in ReacLib
         r5 = "f20(,e)ne20"
+        r6 = "he3(he3,pp)he4"
 
         assert reaclib_library.get_rate_by_name(r1).fname == "he4_c12__o16"
         assert reaclib_library.get_rate_by_name(r2).fname == "c12_c12__he4_ne20"
         assert reaclib_library.get_rate_by_name(r3).fname == "he4_he4_he4__c12"
         assert reaclib_library.get_rate_by_name(r4) is None
         assert reaclib_library.get_rate_by_name(r5).fname == "f20__ne20__weak__wc12"
+        assert reaclib_library.get_rate_by_name(r6).fname == "he3_he3__p_p_he4"
 
     def test_tabular_rates(self, tabular_library):
 
-        r4 = "f20(e,nu)o20"   # note found in ReacLib
+        r4 = "f20(e,nu)o20"
         r5 = "f20(,e)ne20"
         r6 = "ti45(e,nu)sc45"
         r7 = "ti45(,e)v45"
