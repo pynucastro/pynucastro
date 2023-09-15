@@ -1,5 +1,9 @@
 # 2.1.0
 
+  * created a method to reduce a Composition from one set
+    of nuclei to another based on the nuclei masses and
+    charge number (#625)
+
   * switch AmrexAstroCxxNetwork to do bilinear interpolation
     in terms of log(T) and log(rhoY) (#592)
 
