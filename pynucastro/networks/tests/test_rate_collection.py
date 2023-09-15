@@ -72,16 +72,17 @@ class TestRateCollection:
 
 class TestUnimportantRates:
     @pytest.fixture(scope="class")
-    def rc(self):
-        files = ["c12-pg-n13-ls09",
-                 "c13-pg-n14-nacr",
-                 "n13--c13-wc12",
-                 "n13-pg-o14-lg06",
-                 "n14-pg-o15-im05",
-                 "n15-pa-c12-nacr",
-                 "o14--n14-wc12",
-                 "o15--n15-wc12"]
-        return pyna.RateCollection(files)
+    def rc(self, reaclib_library):
+        rate_names = ["c12(p,g)n13",
+                      "c13(p,g)n14",
+                      "n13(,)c13",
+                      "n13(p,g)o14",
+                      "n14(p,g)o15",
+                      "n15(p,a)c12",
+                      "o14(,)n14",
+                      "o15(,)n15"]
+        rates = reaclib_library.get_rate_by_name(rate_names)
+        return pyna.RateCollection(rates=rates)
 
     @pytest.fixture(scope="class")
     def comp(self, rc):
