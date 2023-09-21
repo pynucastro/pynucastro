@@ -178,6 +178,10 @@ class Composition:
             xvec[i] = self.X[n]
         return 1. / np.sum(xvec / avec)
 
+    def eval_zbar(self):
+        """ return the mean charge, Zbar """
+        return self.eval_abar() * self.eval_ye()
+
     def bin_as(self, nuclei, *, verbose=False):
         """given a list of nuclei, return a new Composition object with the
         current composition mass fractions binned into the new nuclei."""
@@ -935,17 +939,12 @@ class RateCollection:
 
         return jac
 
-    def validate(self, other_library, forward_only=True, ostream=None):
+    def validate(self, other_library, *, forward_only=True):
         """perform various checks on the library, comparing to other_library,
         to ensure that we are not missing important rates.  The idea
         is that self should be a reduced library where we filtered out
         a few rates and then we want to compare to the larger
         other_library to see if we missed something important.
-
-        ostream is the I/O stream to send output to (for instance, a
-        file object or StringIO object).  If it is None, then output
-        is to stdout.
-
         """
 
         current_rates = sorted(self.get_rates())
@@ -971,10 +970,7 @@ class RateCollection:
                 if not found:
                     passed_validation = False
                     msg = f"validation: {p} produced in {rate} never consumed."
-                    if ostream is None:
-                        print(msg)
-                    else:
-                        ostream.write(msg + "\n")
+                    print(msg)
 
         # now check if we are missing any rates from other_library with the exact same reactants
 
@@ -995,10 +991,7 @@ class RateCollection:
 
                 if not found:
                     msg = f"validation: missing {other_rate} as alternative to {rate} (Q = {other_rate.Q} MeV)."
-                    if ostream is None:
-                        print(msg)
-                    else:
-                        ostream.write(msg + "\n")
+                    print(msg)
 
         return passed_validation
 
@@ -2023,7 +2016,7 @@ class RateCollection:
         highlight_edges = [(u, v) for u, v, e in G.edges(data=True) if e["highlight"]]
 
         _ = nx.draw_networkx_edges(G, G.position, width=5,
-                                   edgelist=highlight_edges, edge_color="C0", alpha="0.25",
+                                   edgelist=highlight_edges, edge_color="C0", alpha=0.25,
                                    connectionstyle=connectionstyle,
                                    node_size=node_size, ax=ax)
 
