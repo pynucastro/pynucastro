@@ -2016,7 +2016,7 @@ class RateCollection:
         highlight_edges = [(u, v) for u, v, e in G.edges(data=True) if e["highlight"]]
 
         _ = nx.draw_networkx_edges(G, G.position, width=5,
-                                   edgelist=highlight_edges, edge_color="C0", alpha="0.25",
+                                   edgelist=highlight_edges, edge_color="C0", alpha=0.25,
                                    connectionstyle=connectionstyle,
                                    node_size=node_size, ax=ax)
 
