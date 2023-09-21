@@ -6,57 +6,19 @@ from pynucastro import networks
 from pynucastro.nucdata import Nucleus
 
 
-class TestComposition:
-    @pytest.fixture(scope="class")
-    def nuclei(self):
-        return [Nucleus("h1"),
-                Nucleus("he4"),
-                Nucleus("c12"),
-                Nucleus("o16"),
-                Nucleus("n14"),
-                Nucleus("ca40")]
-
-    @pytest.fixture(scope="class")
-    def comp(self, nuclei):
-        return networks.Composition(nuclei)
-
-    def test_solar(self, comp):
-        comp.set_solar_like()
-
-        xsum = sum(comp.X.values())
-
-        assert xsum == approx(1.0)
-        assert comp.X[Nucleus("h1")] == approx(0.7)
-
-    def test_set_all(self, nuclei, comp):
-        val = 1.0/len(nuclei)
-        comp.set_all(1.0/len(nuclei))
-        for n in nuclei:
-            assert comp.X[n] == val
-
-    def test_set_nuc(self, nuclei, comp):
-        n = nuclei[0]
-        comp.set_nuc(n.raw, 0.55)
-        assert comp.X[n] == 0.55
-
-    def test_get_molar(self, comp):
-        comp.set_solar_like(Z=0.02)
-        molar = comp.get_molar()
-        assert molar[Nucleus("he4")] == approx((0.3-0.02)/4.0)
-
-
 class TestRateCollection:
     @pytest.fixture(scope="class")
-    def rc(self):
-        files = ["c12-pg-n13-ls09",
-                 "c13-pg-n14-nacr",
-                 "n13--c13-wc12",
-                 "n13-pg-o14-lg06",
-                 "n14-pg-o15-im05",
-                 "n15-pa-c12-nacr",
-                 "o14--n14-wc12",
-                 "o15--n15-wc12"]
-        return networks.RateCollection(files)
+    def rc(self, reaclib_library):
+        rate_names = ["c12(p,g)n13",
+                      "c13(p,g)n14",
+                      "n13(,)c13",
+                      "n13(p,g)o14",
+                      "n14(p,g)o15",
+                      "n15(p,a)c12",
+                      "o14(,)n14",
+                      "o15(,)n15"]
+        rates = reaclib_library.get_rate_by_name(rate_names)
+        return networks.RateCollection(rates=rates)
 
     def test_nuclei(self, rc):
         nuc = rc.get_nuclei()

@@ -369,6 +369,8 @@ class Rate:
 
         self.tabular = False
 
+        self.reverse = None
+
     def __repr__(self):
         return self.string
 

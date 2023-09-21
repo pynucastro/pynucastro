@@ -10,14 +10,15 @@ from pynucastro.networks.tests.helpers import compare_network_files
 class TestSimpleCxxNetwork:
     # pylint: disable=protected-access
     @pytest.fixture(scope="class")
-    def fn(self):
-        files = ["c12-c12a-ne20-cf88",
-                 "c12-c12n-mg23-cf88",
-                 "c12-c12p-na23-cf88",
-                 "c12-ag-o16-nac2",
-                 "n--p-wc12"]
+    def fn(self, reaclib_library):
+        rate_names = ["c12(c12,a)ne20",
+                      "c12(c12,n)mg23",
+                      "c12(c12,p)na23",
+                      "c12(a,g)o16",
+                      "n(,)p"]
+        rates = reaclib_library.get_rate_by_name(rate_names)
 
-        fn = networks.SimpleCxxNetwork(files)
+        fn = networks.SimpleCxxNetwork(rates=rates)
         return fn
 
     def test_write_network(self, fn):
