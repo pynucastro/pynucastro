@@ -1650,7 +1650,7 @@ class TabularRate(Rate):
 
         r = self.interpolator.interpolate(np.log10(rhoY), np.log10(T),
                                           TableIndex.NU.value)
-        return r
+        return 10**r
 
     def plot(self, Tmin=1.e8, Tmax=1.6e9, rhoYmin=3.9e8, rhoYmax=2.e9, color_field='rate',
              figsize=(10, 10)):
