@@ -1,3 +1,62 @@
+# 2.1.0
+
+  * add `eval_zbar()` to Composition (#632)
+  
+  * fix `get_rate_by_name` to work with "pp" reactions (#632)
+  
+  * created a method to reduce a Composition from one set
+    of nuclei to another based on the nuclei masses and
+    charge number (#625)
+
+  * switch AmrexAstroCxxNetwork to do bilinear interpolation
+    in terms of log(T) and log(rhoY) (#592, #611)
+
+  * tabular rates in python now do linear interpolation (#602)
+
+  * added an example of creating a custom rate (#615)
+
+  * Rate now calls `_set_q()` to set the Q value if it is not
+    passed in (#617)
+
+  * added a TableInterpolator that works both for interactive
+    python and PythonNetwork (#612, 610, 609)
+
+  * added a RateCollection method to find duplicate links (#601)
+
+  * python networks with tabular rates now copy the table files (#605)
+
+  * added a `get_nuclei_in_range` method to return a range of
+    nuclei (#593)
+
+  * we now do a binary search in the C++ partition function
+    interpolation (#581)
+
+  * added a simple C++ network (SimpleCxxNetwork) (#591, #585)
+
+  * added the weak rates from Langanke 2001 (#536)
+
+  * cleaned up partition functions in C++ (#578, 573, 569, 565)
+
+  * converted the Suzuki tabular rates to be in terms of log (#550)
+
+  * fixed a bounds issue in C++ table interpolation (#566)
+
+  * eliminated a variable length array in the C++ table interpolation
+    (#567)
+
+  * added rate indices to the C++ networks (#563)
+
+  * added a network reduction algorithm (#529, #528, #527, #526, #525,
+    #523)
+
+  * added a molar fraction method to Composition (#546)
+
+  * added examples of interfacing with Julia (#539)
+
+  * added a code of conduct (#504)
+
+  * added gamma heating to tabular weak rates (#502)
+
 # 2.0.3
 
   * add functions to numerically evaluate the Jacobian (#467)
