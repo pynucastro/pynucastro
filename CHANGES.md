@@ -1,17 +1,21 @@
 # 2.1.0
 
+  * add `eval_zbar()` to Composition (#632)
+  
+  * fix `get_rate_by_name` to work with "pp" reactions (#632)
+  
   * created a method to reduce a Composition from one set
     of nuclei to another based on the nuclei masses and
     charge number (#625)
 
   * switch AmrexAstroCxxNetwork to do bilinear interpolation
-    in terms of log(T) and log(rhoY) (#592)
+    in terms of log(T) and log(rhoY) (#592, #611)
 
   * tabular rates in python now do linear interpolation (#602)
 
   * added an example of creating a custom rate (#615)
 
-  * Rate now calls _set_q() to set the Q value if it is not
+  * Rate now calls `_set_q()` to set the Q value if it is not
     passed in (#617)
 
   * added a TableInterpolator that works both for interactive
@@ -21,7 +25,7 @@
 
   * python networks with tabular rates now copy the table files (#605)
 
-  * added a get_nuclei_in_range method to return a range of
+  * added a `get_nuclei_in_range` method to return a range of
     nuclei (#593)
 
   * we now do a binary search in the C++ partition function
