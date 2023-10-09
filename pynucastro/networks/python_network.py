@@ -5,6 +5,8 @@ import os
 import shutil
 import sys
 
+from scipy import constants
+
 from pynucastro.networks.rate_collection import RateCollection
 from pynucastro.rates.rate import ApproximateRate
 
@@ -170,6 +172,7 @@ class PythonNetwork(RateCollection):
 
         of.write("import numba\n")
         of.write("import numpy as np\n")
+        of.write("from scipy import constants\n")
         of.write("from numba.experimental import jitclass\n\n")
         of.write("from pynucastro.rates import TableIndex, TableInterpolator, TabularRate, Tfactors\n")
         of.write("from pynucastro.screening import PlasmaState, ScreenFactors\n\n")
@@ -193,6 +196,21 @@ class PythonNetwork(RateCollection):
         for n in self.unique_nuclei:
             of.write(f"Z[j{n}] = {n.Z}\n")
 
+        # we'll compute the masses here in erg
+
+        m_n_MeV = constants.value('neutron mass energy equivalent in MeV')
+        m_p_MeV = constants.value('proton mass energy equivalent in MeV')
+        m_e_MeV = constants.value('electron mass energy equivalent in MeV')
+        MeV2erg = (constants.eV * constants.mega) / constants.erg
+
+        of.write("\n")
+
+        of.write("# masses in ergs\n")
+        of.write("mass = np.zeros((nnuc), dtype=np.float64)\n\n")
+        for n in self.unique_nuclei:
+            mass = ((n.A - n.Z) * m_n_MeV + n.Z * (m_p_MeV + m_e_MeV) - n.A * n.nucbind) * MeV2erg
+            of.write(f"mass[j{n}] = {mass}\n")
+
         of.write("\n")
 
         of.write("names = []\n")
@@ -209,6 +227,17 @@ class PythonNetwork(RateCollection):
         of.write(f'{indent}'"for i, nuc in enumerate(nuclei):\n")
         of.write(f'{indent*2}'"comp.X[nuc] = Y[i] * A[i]\n")
         of.write(f'{indent}'"return comp\n\n")
+
+        of.write("\n")
+
+        of.write("def energy_release(dY):\n")
+        of.write(f'{indent}''"""return the energy release in erg/g (/s if dY is actually dY/dt)"""\n')
+        of.write(f'{indent}'"enuc = 0.0\n")
+        of.write(f'{indent}'"for i, y in enumerate(dY):\n")
+        of.write(f'{indent*2}'"enuc += y * mass[i]\n")
+        of.write(f'{indent}'"enuc *= -1*constants.Avogadro\n")
+        of.write(f'{indent}'"return enuc\n\n")
+
 
         # partition function data (if needed)
 
