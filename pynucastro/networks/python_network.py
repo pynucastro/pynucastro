@@ -238,7 +238,6 @@ class PythonNetwork(RateCollection):
         of.write(f'{indent}'"enuc *= -1*constants.Avogadro\n")
         of.write(f'{indent}'"return enuc\n\n")
 
-
         # partition function data (if needed)
 
         nuclei_pfs = self.get_nuclei_needing_partition_functions()
