@@ -232,8 +232,8 @@ void actual_rhs (burn_t& state, Array1D<Real, 1, neqs>& ydot)
     // Get the thermal neutrino losses
 
     Real sneut, dsneutdt, dsneutdd, dsnuda, dsnudz;
-
-    sneut5(state.T, state.rho, state.abar, state.zbar, sneut, dsneutdt, dsneutdd, dsnuda, dsnudz);
+    constexpr int do_derivatives{0};
+    sneut5<do_derivatives>(state.T, state.rho, state.abar, state.zbar, sneut, dsneutdt, dsneutdd, dsnuda, dsnudz);
 
     // Append the energy equation (this is erg/g/s)
 
@@ -341,7 +341,8 @@ void actual_jac(const burn_t& state, MatrixType& jac)
     // Account for the thermal neutrino losses
 
     Real sneut, dsneutdt, dsneutdd, dsnuda, dsnudz;
-    sneut5(state.T, state.rho, state.abar, state.zbar, sneut, dsneutdt, dsneutdd, dsnuda, dsnudz);
+    constexpr int do_derivatives{1};
+    sneut5<do_derivatives>(state.T, state.rho, state.abar, state.zbar, sneut, dsneutdt, dsneutdd, dsnuda, dsnudz);
 
     for (int j = 1; j <= NumSpec; ++j) {
        Real b1 = (-state.abar * state.abar * dsnuda + (zion[j-1] - state.zbar) * state.abar * dsnudz);
