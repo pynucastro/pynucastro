@@ -198,9 +198,7 @@ class PythonNetwork(RateCollection):
 
         # we'll compute the masses here in erg
 
-        m_n_MeV = constants.value('neutron mass energy equivalent in MeV')
-        m_p_MeV = constants.value('proton mass energy equivalent in MeV')
-        m_e_MeV = constants.value('electron mass energy equivalent in MeV')
+        m_u = constants.value('atomic mass constant energy equivalent in MeV')
         MeV2erg = (constants.eV * constants.mega) / constants.erg
 
         of.write("\n")
@@ -208,7 +206,7 @@ class PythonNetwork(RateCollection):
         of.write("# masses in ergs\n")
         of.write("mass = np.zeros((nnuc), dtype=np.float64)\n\n")
         for n in self.unique_nuclei:
-            mass = ((n.A - n.Z) * m_n_MeV + n.Z * (m_p_MeV + m_e_MeV) - n.A * n.nucbind) * MeV2erg
+            mass = n.A_nuc * m_u * MeV2erg
             of.write(f"mass[j{n}] = {mass}\n")
 
         of.write("\n")
