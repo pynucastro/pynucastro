@@ -1,9 +1,4 @@
-import os
-import shutil
-
-import numpy as np
 import pytest
-from numpy.testing import assert_allclose
 
 import pynucastro as pyna
 
@@ -40,10 +35,10 @@ class TestFullPythonNetwork:
         full_ydots = fn.evaluate_ydots(rho, T, comp)
 
         rl_ydots = fn.evaluate_ydots(rho, T, comp,
-                                     rate_filter = lambda r: isinstance(r, pyna.rates.ReacLibRate))
+                                     rate_filter=lambda r: isinstance(r, pyna.rates.ReacLibRate))
 
         tl_ydots = fn.evaluate_ydots(rho, T, comp,
-                                     rate_filter = lambda r: isinstance(r, pyna.rates.TabularRate))
+                                     rate_filter=lambda r: isinstance(r, pyna.rates.TabularRate))
 
         print(full_ydots)
 
@@ -60,4 +55,3 @@ class TestFullPythonNetwork:
 
         # this has both
         assert rl_ydots[pyna.Nucleus("na23")] + tl_ydots[pyna.Nucleus("na23")] == full_ydots[pyna.Nucleus("na23")]
-
