@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.networks.rate_collection &mdash; pynucastro 2.0.3.post110+g2493b170 documentation</title>
+  <title>pynucastro.networks.rate_collection &mdash; pynucastro 2.1.0.post1+g785fbf77 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
@@ -14,7 +14,7 @@
   
         <script src="../../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../_static/documentation_options.js?v=aa5da7b4"></script>
+        <script src="../../../_static/documentation_options.js?v=525c0a4b"></script>
         <script src="../../../_static/doctools.js?v=888ff710"></script>
         <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
         <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -39,7 +39,7 @@
               <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                2.0
+                2.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -1488,9 +1488,25 @@
 
 <div class="viewcode-block" id="RateCollection.evaluate_ydots">
 <a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.evaluate_ydots">[docs]</a>
-    <span class="k">def</span> <span class="nf">evaluate_ydots</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">composition</span><span class="p">,</span> <span class="n">screen_func</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">evaluate_ydots</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">composition</span><span class="p">,</span> <span class="n">screen_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rate_filter</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;evaluate net rate of change of molar abundance for each nucleus</span>
-<span class="sd">        for a specific density, temperature, and composition&quot;&quot;&quot;</span>
+<span class="sd">        for a specific density, temperature, and composition</span>
+
+<span class="sd">        rho: the density (g/cm^3)</span>
+
+<span class="sd">        T: the temperature (K)</span>
+
+<span class="sd">        composition: a Composition object holding the mass fractions</span>
+<span class="sd">        of the nuclei</span>
+
+<span class="sd">        screen_func: (optional) the name of a screening function to call</span>
+<span class="sd">        to add electron screening to the rates</span>
+
+<span class="sd">        rate_filter_funcion: (optional) a function that takes a Rate</span>
+<span class="sd">        object and returns true or false if it is to be shown</span>
+<span class="sd">        as an edge.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">rvals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_rates</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">composition</span><span class="p">,</span> <span class="n">screen_func</span><span class="p">)</span>
         <span class="n">ydots</span> <span class="o">=</span> <span class="p">{}</span>
@@ -1498,14 +1514,21 @@
         <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">:</span>
 
             <span class="c1"># Rates that consume / produce nuc</span>
-            <span class="n">consuming_rates</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nuclei_consumed</span><span class="p">[</span><span class="n">nuc</span><span class="p">]</span>
-            <span class="n">producing_rates</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nuclei_produced</span><span class="p">[</span><span class="n">nuc</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">rate_filter</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">consuming_rates</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nuclei_consumed</span><span class="p">[</span><span class="n">nuc</span><span class="p">]</span>
+                <span class="n">producing_rates</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nuclei_produced</span><span class="p">[</span><span class="n">nuc</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">consuming_rates</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nuclei_consumed</span><span class="p">[</span><span class="n">nuc</span><span class="p">]</span> <span class="k">if</span> <span class="n">rate_filter</span><span class="p">(</span><span class="n">r</span><span class="p">)]</span>
+                <span class="n">producing_rates</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nuclei_produced</span><span class="p">[</span><span class="n">nuc</span><span class="p">]</span> <span class="k">if</span> <span class="n">rate_filter</span><span class="p">(</span><span class="n">r</span><span class="p">)]</span>
+
             <span class="c1"># Number of nuclei consumed / produced</span>
             <span class="n">nconsumed</span> <span class="o">=</span> <span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">nuc</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">consuming_rates</span><span class="p">)</span>
             <span class="n">nproduced</span> <span class="o">=</span> <span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">products</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">nuc</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">producing_rates</span><span class="p">)</span>
+
             <span class="c1"># Multiply each rate by the count</span>
             <span class="n">consumed</span> <span class="o">=</span> <span class="p">(</span><span class="n">c</span> <span class="o">*</span> <span class="n">rvals</span><span class="p">[</span><span class="n">r</span><span class="p">]</span> <span class="k">for</span> <span class="n">c</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">nconsumed</span><span class="p">,</span> <span class="n">consuming_rates</span><span class="p">))</span>
             <span class="n">produced</span> <span class="o">=</span> <span class="p">(</span><span class="n">c</span> <span class="o">*</span> <span class="n">rvals</span><span class="p">[</span><span class="n">r</span><span class="p">]</span> <span class="k">for</span> <span class="n">c</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">nproduced</span><span class="p">,</span> <span class="n">producing_rates</span><span class="p">))</span>
+
             <span class="c1"># Net change is difference between produced and consumed</span>
             <span class="n">ydots</span><span class="p">[</span><span class="n">nuc</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">produced</span><span class="p">)</span> <span class="o">-</span> <span class="nb">sum</span><span class="p">(</span><span class="n">consumed</span><span class="p">)</span>
 
@@ -2089,8 +2112,8 @@
 <span class="sd">        Nucleus object and returns true or false if it is to be shown</span>
 <span class="sd">        as a node.</span>
 
-<span class="sd">        rate_filter_funcion: name of a custom function that takes a Rate</span>
-<span class="sd">        object and returns true or false if it is to be shown as an edge.</span>
+<span class="sd">        rate_filter_funcion: a function that takes a Rate object</span>
+<span class="sd">        and returns true or false if it is to be shown as an edge.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
