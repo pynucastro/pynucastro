@@ -1264,8 +1264,8 @@ class RateCollection:
         screen_func: (optional) the name of a screening function to call
         to add electron screening to the rates
 
-        rate_filter_funcion: (optional) name of a custom function that
-        takes a Rate object and returns true or false if it is to be shown
+        rate_filter_funcion: (optional) a function that takes a Rate
+        object and returns true or false if it is to be shown
         as an edge.
 
         """
@@ -1823,8 +1823,8 @@ class RateCollection:
         Nucleus object and returns true or false if it is to be shown
         as a node.
 
-        rate_filter_funcion: name of a custom function that takes a Rate
-        object and returns true or false if it is to be shown as an edge.
+        rate_filter_funcion: a function that takes a Rate object
+        and returns true or false if it is to be shown as an edge.
 
         """
 
