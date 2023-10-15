@@ -1250,9 +1250,25 @@ class RateCollection:
 
         raise ValueError("Unable to find a solution, try to adjust initial guess manually")
 
-    def evaluate_ydots(self, rho, T, composition, screen_func=None):
+    def evaluate_ydots(self, rho, T, composition, screen_func=None, rate_filter=None):
         """evaluate net rate of change of molar abundance for each nucleus
-        for a specific density, temperature, and composition"""
+        for a specific density, temperature, and composition
+
+        rho: the density (g/cm^3)
+
+        T: the temperature (K)
+
+        composition: a Composition object holding the mass fractions
+        of the nuclei
+
+        screen_func: (optional) the name of a screening function to call
+        to add electron screening to the rates
+
+        rate_filter_funcion: (optional) a function that takes a Rate
+        object and returns true or false if it is to be shown
+        as an edge.
+
+        """
 
         rvals = self.evaluate_rates(rho, T, composition, screen_func)
         ydots = {}
@@ -1260,14 +1276,21 @@ class RateCollection:
         for nuc in self.unique_nuclei:
 
             # Rates that consume / produce nuc
-            consuming_rates = self.nuclei_consumed[nuc]
-            producing_rates = self.nuclei_produced[nuc]
+            if rate_filter is None:
+                consuming_rates = self.nuclei_consumed[nuc]
+                producing_rates = self.nuclei_produced[nuc]
+            else:
+                consuming_rates = [r for r in self.nuclei_consumed[nuc] if rate_filter(r)]
+                producing_rates = [r for r in self.nuclei_produced[nuc] if rate_filter(r)]
+
             # Number of nuclei consumed / produced
             nconsumed = (r.reactants.count(nuc) for r in consuming_rates)
             nproduced = (r.products.count(nuc) for r in producing_rates)
+
             # Multiply each rate by the count
             consumed = (c * rvals[r] for c, r in zip(nconsumed, consuming_rates))
             produced = (c * rvals[r] for c, r in zip(nproduced, producing_rates))
+
             # Net change is difference between produced and consumed
             ydots[nuc] = sum(produced) - sum(consumed)
 
@@ -1800,8 +1823,8 @@ class RateCollection:
         Nucleus object and returns true or false if it is to be shown
         as a node.
 
-        rate_filter_funcion: name of a custom function that takes a Rate
-        object and returns true or false if it is to be shown as an edge.
+        rate_filter_funcion: a function that takes a Rate object
+        and returns true or false if it is to be shown as an edge.
 
         """
 
