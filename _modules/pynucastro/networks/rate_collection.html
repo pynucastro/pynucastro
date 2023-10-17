@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.networks.rate_collection &mdash; pynucastro 2.1.0.post1+g785fbf77 documentation</title>
+  <title>pynucastro.networks.rate_collection &mdash; pynucastro 2.1.0.post2+geb520776 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
@@ -14,7 +14,7 @@
   
         <script src="../../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../_static/documentation_options.js?v=525c0a4b"></script>
+        <script src="../../../_static/documentation_options.js?v=5997a531"></script>
         <script src="../../../_static/doctools.js?v=888ff710"></script>
         <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
         <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -336,9 +336,13 @@
 
 <div class="viewcode-block" id="Composition.bin_as">
 <a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.Composition.bin_as">[docs]</a>
-    <span class="k">def</span> <span class="nf">bin_as</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nuclei</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">bin_as</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nuclei</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;given a list of nuclei, return a new Composition object with the</span>
-<span class="sd">        current composition mass fractions binned into the new nuclei.&quot;&quot;&quot;</span>
+<span class="sd">        current composition mass fractions binned into the new nuclei.</span>
+
+<span class="sd">        if a list of nuclei is provided by exclude, then only exact</span>
+<span class="sd">        matches will be binned into the nuclei in that list</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># sort the input nuclei by A, then Z</span>
         <span class="n">nuclei</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">n</span><span class="p">:</span> <span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">A</span><span class="p">,</span> <span class="n">n</span><span class="o">.</span><span class="n">Z</span><span class="p">))</span>
@@ -346,10 +350,33 @@
         <span class="c1"># create the new composition</span>
         <span class="n">new_comp</span> <span class="o">=</span> <span class="n">Composition</span><span class="p">(</span><span class="n">nuclei</span><span class="p">)</span>
 
+        <span class="c1"># first do any exact matches if we provided an exclude list</span>
+        <span class="k">if</span> <span class="n">exclude</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">exclude</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">ex_nuc</span> <span class="ow">in</span> <span class="n">exclude</span><span class="p">:</span>
+            <span class="c1"># if the exclude nucleus is in both our original</span>
+            <span class="c1"># composition and the reduced composition, then set</span>
+            <span class="c1"># the abundance in the new, reduced composition and</span>
+            <span class="c1"># remove the nucleus from consideration for the other</span>
+            <span class="c1"># original nuclei</span>
+            <span class="k">if</span> <span class="n">ex_nuc</span> <span class="ow">in</span> <span class="n">nuclei</span> <span class="ow">and</span> <span class="n">ex_nuc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">:</span>
+                <span class="n">nuclei</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">ex_nuc</span><span class="p">)</span>
+                <span class="n">new_comp</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">ex_nuc</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">ex_nuc</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;storing </span><span class="si">{</span><span class="n">ex_nuc</span><span class="si">}</span><span class="s2"> as </span><span class="si">{</span><span class="n">ex_nuc</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;cannot use exclude if nucleus is not present in both the original and new compostion&quot;</span><span class="p">)</span>
+
         <span class="c1"># loop over our original nuclei.  Find the new nucleus such</span>
         <span class="c1"># that n_orig.A &gt;= n_new.A.  If there are multiple, then do</span>
         <span class="c1"># the same for Z</span>
         <span class="k">for</span> <span class="n">old_n</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+            <span class="k">if</span> <span class="n">old_n</span> <span class="ow">in</span> <span class="n">exclude</span><span class="p">:</span>
+                <span class="c1"># we should have already dealt with this above</span>
+                <span class="k">continue</span>
 
             <span class="n">candidates</span> <span class="o">=</span> <span class="p">[</span><span class="n">q</span> <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="n">nuclei</span> <span class="k">if</span> <span class="n">old_n</span><span class="o">.</span><span class="n">A</span> <span class="o">&gt;=</span> <span class="n">q</span><span class="o">.</span><span class="n">A</span><span class="p">]</span>
             <span class="c1"># if candidates is empty, then all of the nuclei are heavier than</span>
