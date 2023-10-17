@@ -197,21 +197,23 @@ class Composition:
         new_comp = Composition(nuclei)
 
         # first do any exact matches if we provided an exclude list
-        if exclude:
-            for ex_nuc in exclude:
-                # if the exclude nucleus is in both our original
-                # composition and the reduced composition, then set
-                # the abundance in the new, reduced composition and
-                # remove the nucleus from consideration for the other
-                # original nuclei
-                if ex_nuc in nuclei and ex_nuc in self.X:
-                    nuclei.remove(ex_nuc)
-                    new_comp.X[ex_nuc] = self.X[ex_nuc]
-                    if verbose:
-                        print(f"storing {ex_nuc} as {ex_nuc}")
+        if exclude is None:
+            exclude = []
 
-                else:
-                    raise ValueError("cannot use exclude if nucleus is not present in both the original and new compostion")
+        for ex_nuc in exclude:
+            # if the exclude nucleus is in both our original
+            # composition and the reduced composition, then set
+            # the abundance in the new, reduced composition and
+            # remove the nucleus from consideration for the other
+            # original nuclei
+            if ex_nuc in nuclei and ex_nuc in self.X:
+                nuclei.remove(ex_nuc)
+                new_comp.X[ex_nuc] = self.X[ex_nuc]
+                if verbose:
+                    print(f"storing {ex_nuc} as {ex_nuc}")
+
+            else:
+                raise ValueError("cannot use exclude if nucleus is not present in both the original and new compostion")
 
         # loop over our original nuclei.  Find the new nucleus such
         # that n_orig.A >= n_new.A.  If there are multiple, then do
