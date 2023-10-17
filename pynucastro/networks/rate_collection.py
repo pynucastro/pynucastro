@@ -220,10 +220,9 @@ class Composition:
         # the same for Z
         for old_n, v in self.X.items():
 
-            if exclude:
-                if old_n in exclude:
-                    # we should have already dealt with this above
-                    continue
+            if old_n in exclude:
+                # we should have already dealt with this above
+                continue
 
             candidates = [q for q in nuclei if old_n.A >= q.A]
             # if candidates is empty, then all of the nuclei are heavier than
