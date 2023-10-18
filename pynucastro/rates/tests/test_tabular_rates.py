@@ -343,7 +343,7 @@ class TestTabularRates:
             'sc46__ca46': 2.0409046852200486e-09,
             'v48__cr48': 8.677545859282911e-21,
             'ga65__zn65': 6.37651584721512e-06
-            }
+        }
 
         ye_la = comp_la.eval_ye()
         ys_la = comp_la.get_molar()
