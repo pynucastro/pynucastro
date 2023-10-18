@@ -182,9 +182,13 @@ class Composition:
         """ return the mean charge, Zbar """
         return self.eval_abar() * self.eval_ye()
 
-    def bin_as(self, nuclei, *, verbose=False):
+    def bin_as(self, nuclei, *, verbose=False, exclude=None):
         """given a list of nuclei, return a new Composition object with the
-        current composition mass fractions binned into the new nuclei."""
+        current composition mass fractions binned into the new nuclei.
+
+        if a list of nuclei is provided by exclude, then only exact
+        matches will be binned into the nuclei in that list
+        """
 
         # sort the input nuclei by A, then Z
         nuclei.sort(key=lambda n: (n.A, n.Z))
@@ -192,10 +196,33 @@ class Composition:
         # create the new composition
         new_comp = Composition(nuclei)
 
+        # first do any exact matches if we provided an exclude list
+        if exclude is None:
+            exclude = []
+
+        for ex_nuc in exclude:
+            # if the exclude nucleus is in both our original
+            # composition and the reduced composition, then set
+            # the abundance in the new, reduced composition and
+            # remove the nucleus from consideration for the other
+            # original nuclei
+            if ex_nuc in nuclei and ex_nuc in self.X:
+                nuclei.remove(ex_nuc)
+                new_comp.X[ex_nuc] = self.X[ex_nuc]
+                if verbose:
+                    print(f"storing {ex_nuc} as {ex_nuc}")
+
+            else:
+                raise ValueError("cannot use exclude if nucleus is not present in both the original and new compostion")
+
         # loop over our original nuclei.  Find the new nucleus such
         # that n_orig.A >= n_new.A.  If there are multiple, then do
         # the same for Z
         for old_n, v in self.X.items():
+
+            if old_n in exclude:
+                # we should have already dealt with this above
+                continue
 
             candidates = [q for q in nuclei if old_n.A >= q.A]
             # if candidates is empty, then all of the nuclei are heavier than
