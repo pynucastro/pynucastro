@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.networks.rate_collection &mdash; pynucastro 2.1.0.post3+g89e19774 documentation</title>
+  <title>pynucastro.networks.rate_collection &mdash; pynucastro 2.1.0.post4+g07c9c459 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
@@ -14,7 +14,7 @@
   
         <script src="../../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../_static/documentation_options.js?v=c5d0590d"></script>
+        <script src="../../../_static/documentation_options.js?v=ce0eccb7"></script>
         <script src="../../../_static/doctools.js?v=888ff710"></script>
         <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
         <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -1366,17 +1366,17 @@
         <span class="n">k</span> <span class="o">=</span> <span class="n">constants</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="s2">&quot;Boltzmann constant&quot;</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1.0e7</span>          <span class="c1"># boltzmann in erg/K</span>
         <span class="n">Erg2MeV</span> <span class="o">=</span> <span class="mf">624151.0</span>
 
-        <span class="c1"># These are three constants for calculating coulomb corrections of chemical energy, see Calders paper: iopscience 510709, appendix</span>
-        <span class="k">if</span> <span class="n">use_coulomb_corr</span><span class="p">:</span>
-            <span class="n">A_1</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.9052</span>
-            <span class="n">A_2</span> <span class="o">=</span> <span class="mf">0.6322</span>
-            <span class="n">A_3</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">3.0</span><span class="p">)</span> <span class="o">-</span> <span class="n">A_1</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">A_2</span><span class="p">)</span>
-
         <span class="c1"># u_c is the coulomb correction term for NSE</span>
         <span class="c1"># Calculate the composition at NSE, equations found in appendix of Calder paper</span>
         <span class="n">u_c</span> <span class="o">=</span> <span class="p">{}</span>
+
         <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">)</span> <span class="o">+</span> <span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">)]):</span>
             <span class="k">if</span> <span class="n">use_coulomb_corr</span><span class="p">:</span>
+                <span class="c1"># These are three constants for calculating coulomb corrections of chemical energy, see Calders paper: iopscience 510709, appendix</span>
+                <span class="n">A_1</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.9052</span>
+                <span class="n">A_2</span> <span class="o">=</span> <span class="mf">0.6322</span>
+                <span class="n">A_3</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">3.0</span><span class="p">)</span> <span class="o">-</span> <span class="n">A_1</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">A_2</span><span class="p">)</span>
+
                 <span class="n">Gamma</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">gamma_e_fac</span> <span class="o">*</span> <span class="n">n_e</span> <span class="o">**</span> <span class="p">(</span><span class="mf">1.0</span><span class="o">/</span><span class="mf">3.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">nuc</span><span class="o">.</span><span class="n">Z</span> <span class="o">**</span> <span class="p">(</span><span class="mf">5.0</span> <span class="o">/</span> <span class="mf">3.0</span><span class="p">)</span> <span class="o">/</span> <span class="n">state</span><span class="o">.</span><span class="n">temp</span>
                 <span class="n">u_c</span><span class="p">[</span><span class="n">nuc</span><span class="p">]</span> <span class="o">=</span> <span class="n">Erg2MeV</span> <span class="o">*</span> <span class="n">k</span> <span class="o">*</span> <span class="n">state</span><span class="o">.</span><span class="n">temp</span> <span class="o">*</span> <span class="p">(</span><span class="n">A_1</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">Gamma</span> <span class="o">*</span> <span class="p">(</span><span class="n">A_2</span> <span class="o">+</span> <span class="n">Gamma</span><span class="p">))</span> <span class="o">-</span> <span class="n">A_2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">Gamma</span> <span class="o">/</span> <span class="n">A_2</span><span class="p">)</span> <span class="o">+</span>
                                       <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">Gamma</span> <span class="o">/</span> <span class="n">A_2</span><span class="p">)))</span> <span class="o">+</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">A_3</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">Gamma</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">Gamma</span><span class="p">))))</span>
@@ -1420,23 +1420,16 @@
         <span class="c1"># Don&#39;t use eval_ye() since it does automatic mass fraction normalization.</span>
         <span class="c1"># However, we should force normalization through constraint eq1.</span>
 
-        <span class="c1"># m_u = constants.value(&quot;unified atomic mass unit&quot;) * 1.0e3  # atomic unit mass in g</span>
-
         <span class="n">Xs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nucleon_fraction_nse</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">u_c</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span>
 
-        <span class="n">eq1</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">eq1</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.0</span>
         <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">:</span>
             <span class="n">eq1</span> <span class="o">+=</span> <span class="n">Xs</span><span class="p">[</span><span class="n">nuc</span><span class="p">]</span>
 
-        <span class="n">eq1</span> <span class="o">+=</span> <span class="o">-</span> <span class="mf">1.0</span>
-
-        <span class="n">eq2</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">eq2</span> <span class="o">=</span> <span class="o">-</span><span class="n">state</span><span class="o">.</span><span class="n">ye</span>
         <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">:</span>
             <span class="n">eq2</span> <span class="o">+=</span> <span class="n">Xs</span><span class="p">[</span><span class="n">nuc</span><span class="p">]</span> <span class="o">*</span> <span class="n">nuc</span><span class="o">.</span><span class="n">Z</span> <span class="o">/</span> <span class="n">nuc</span><span class="o">.</span><span class="n">A</span>
-        <span class="c1"># for nuc in self.unique_nuclei:</span>
-        <span class="c1">#     eq2 += ((state.ye - 1.0) * nuc.Z + state.ye * nuc.N ) * Xs[nuc] / (nuc.A_nuc * m_u)</span>
 
-        <span class="n">eq2</span> <span class="o">+=</span> <span class="o">-</span> <span class="n">state</span><span class="o">.</span><span class="n">ye</span>
         <span class="k">return</span> <span class="p">[</span><span class="n">eq1</span><span class="p">,</span> <span class="n">eq2</span><span class="p">]</span>
 
 <div class="viewcode-block" id="RateCollection.get_comp_nse">
@@ -1444,11 +1437,23 @@
     <span class="k">def</span> <span class="nf">get_comp_nse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">ye</span><span class="p">,</span> <span class="n">init_guess</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mf">3.5</span><span class="p">,</span> <span class="o">-</span><span class="mi">15</span><span class="p">),</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1.0e-11</span><span class="p">,</span> <span class="n">use_coulomb_corr</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">return_sol</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the NSE composition given density, temperature and prescribed electron fraction</span>
-<span class="sd">        using scipy.fsolve, `tol` is an optional parameter for the tolerance of scipy.fsolve.</span>
-<span class="sd">        init_guess is optional, however one should change init_guess accordingly if unable or</span>
-<span class="sd">        taking long time to find solution.</span>
-<span class="sd">        One can enable printing the actual guess that found the solution after fine-tuning, which is useful</span>
-<span class="sd">        when calling this method multiple times such as making a plot.</span>
+<span class="sd">        using scipy.fsolve.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        -------------------------------------</span>
+<span class="sd">        rho: NSE state density</span>
+
+<span class="sd">        T: NSE state Temperature</span>
+
+<span class="sd">        ye: prescribed electron fraction</span>
+
+<span class="sd">        init_guess: optional, initial guess of chemical potential of proton and neutron, [mu_p, mu_n]</span>
+
+<span class="sd">        tol: optional, sets the tolerance of scipy.fsolve</span>
+
+<span class="sd">        use_coulomb_corr: Whether to include coulomb correction terms</span>
+
+<span class="sd">        return_sol: Whether to return the solution of the proton and neutron chemical potential.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1">#From here we convert the init_guess list into a np.array object:</span>
