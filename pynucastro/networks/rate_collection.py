@@ -182,9 +182,13 @@ class Composition:
         """ return the mean charge, Zbar """
         return self.eval_abar() * self.eval_ye()
 
-    def bin_as(self, nuclei, *, verbose=False):
+    def bin_as(self, nuclei, *, verbose=False, exclude=None):
         """given a list of nuclei, return a new Composition object with the
-        current composition mass fractions binned into the new nuclei."""
+        current composition mass fractions binned into the new nuclei.
+
+        if a list of nuclei is provided by exclude, then only exact
+        matches will be binned into the nuclei in that list
+        """
 
         # sort the input nuclei by A, then Z
         nuclei.sort(key=lambda n: (n.A, n.Z))
@@ -192,10 +196,33 @@ class Composition:
         # create the new composition
         new_comp = Composition(nuclei)
 
+        # first do any exact matches if we provided an exclude list
+        if exclude is None:
+            exclude = []
+
+        for ex_nuc in exclude:
+            # if the exclude nucleus is in both our original
+            # composition and the reduced composition, then set
+            # the abundance in the new, reduced composition and
+            # remove the nucleus from consideration for the other
+            # original nuclei
+            if ex_nuc in nuclei and ex_nuc in self.X:
+                nuclei.remove(ex_nuc)
+                new_comp.X[ex_nuc] = self.X[ex_nuc]
+                if verbose:
+                    print(f"storing {ex_nuc} as {ex_nuc}")
+
+            else:
+                raise ValueError("cannot use exclude if nucleus is not present in both the original and new compostion")
+
         # loop over our original nuclei.  Find the new nucleus such
         # that n_orig.A >= n_new.A.  If there are multiple, then do
         # the same for Z
         for old_n, v in self.X.items():
+
+            if old_n in exclude:
+                # we should have already dealt with this above
+                continue
 
             candidates = [q for q in nuclei if old_n.A >= q.A]
             # if candidates is empty, then all of the nuclei are heavier than
@@ -1255,9 +1282,25 @@ class RateCollection:
 
         raise ValueError("Unable to find a solution, try to adjust initial guess manually")
 
-    def evaluate_ydots(self, rho, T, composition, screen_func=None):
+    def evaluate_ydots(self, rho, T, composition, screen_func=None, rate_filter=None):
         """evaluate net rate of change of molar abundance for each nucleus
-        for a specific density, temperature, and composition"""
+        for a specific density, temperature, and composition
+
+        rho: the density (g/cm^3)
+
+        T: the temperature (K)
+
+        composition: a Composition object holding the mass fractions
+        of the nuclei
+
+        screen_func: (optional) the name of a screening function to call
+        to add electron screening to the rates
+
+        rate_filter_funcion: (optional) a function that takes a Rate
+        object and returns true or false if it is to be shown
+        as an edge.
+
+        """
 
         rvals = self.evaluate_rates(rho, T, composition, screen_func)
         ydots = {}
@@ -1265,14 +1308,21 @@ class RateCollection:
         for nuc in self.unique_nuclei:
 
             # Rates that consume / produce nuc
-            consuming_rates = self.nuclei_consumed[nuc]
-            producing_rates = self.nuclei_produced[nuc]
+            if rate_filter is None:
+                consuming_rates = self.nuclei_consumed[nuc]
+                producing_rates = self.nuclei_produced[nuc]
+            else:
+                consuming_rates = [r for r in self.nuclei_consumed[nuc] if rate_filter(r)]
+                producing_rates = [r for r in self.nuclei_produced[nuc] if rate_filter(r)]
+
             # Number of nuclei consumed / produced
             nconsumed = (r.reactants.count(nuc) for r in consuming_rates)
             nproduced = (r.products.count(nuc) for r in producing_rates)
+
             # Multiply each rate by the count
             consumed = (c * rvals[r] for c, r in zip(nconsumed, consuming_rates))
             produced = (c * rvals[r] for c, r in zip(nproduced, producing_rates))
+
             # Net change is difference between produced and consumed
             ydots[nuc] = sum(produced) - sum(consumed)
 
@@ -1805,8 +1855,8 @@ class RateCollection:
         Nucleus object and returns true or false if it is to be shown
         as a node.
 
-        rate_filter_funcion: name of a custom function that takes a Rate
-        object and returns true or false if it is to be shown as an edge.
+        rate_filter_funcion: a function that takes a Rate object
+        and returns true or false if it is to be shown as an edge.
 
         """
 
