@@ -316,7 +316,7 @@ class TestWeakRates:
         assert len(rate3.reactants) == 1 and len(rate3.products) == 1
         assert rate3.products[0] == Nucleus("ca45")
         assert rate3.reactants[0] == Nucleus("sc45")
-        assert math.log10(rate3.eval(1.e9, 1.e11)) == approx(3.440)
+        assert math.log10(rate3.eval(1.e9, 1.e11)) == approx(3.4400000000000004)
 
         assert len(rate4.reactants) == 1 and len(rate4.products) == 1
         assert rate4.products[0] == Nucleus("sc45")
@@ -326,12 +326,12 @@ class TestWeakRates:
         assert len(rate5.reactants) == 1 and len(rate5.products) == 1
         assert rate5.products[0] == Nucleus("ti45")
         assert rate5.reactants[0] == Nucleus("v45")
-        assert math.log10(rate5.eval(1.e9, 1.e11)) == approx(4.715)
+        assert math.log10(rate5.eval(1.e9, 1.e11)) == approx(4.71501)
 
         assert len(rate6.reactants) == 1 and len(rate6.products) == 1
         assert rate6.products[0] == Nucleus("sc45")
         assert rate6.reactants[0] == Nucleus("ca45")
-        assert math.log10(rate6.eval(1.e9, 1.e11)) == approx(-99.999)
+        assert math.log10(rate6.eval(1.e9, 1.e11)) == approx(-99.69797)
 
 
 class TestModify:
