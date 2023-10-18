@@ -1120,7 +1120,6 @@ class RateCollection:
                 Gamma = state.gamma_e_fac * n_e ** (1.0/3.0) * nuc.Z ** (5.0 / 3.0) / state.temp
                 u_c[nuc] = Erg2MeV * k * state.temp * (A_1 * (np.sqrt(Gamma * (A_2 + Gamma)) - A_2 * np.log(np.sqrt(Gamma / A_2) +
                                       np.sqrt(1.0 + Gamma / A_2))) + 2.0 * A_3 * (np.sqrt(Gamma) - np.arctan(np.sqrt(Gamma))))
-
             else:
                 u_c[nuc] = 0.0
 
@@ -1180,9 +1179,9 @@ class RateCollection:
 
         Parameters:
         -------------------------------------
-        rho: density
+        rho: NSE state density
 
-        T: Temperature
+        T: NSE state Temperature
 
         ye: prescribed electron fraction
 
@@ -1190,9 +1189,9 @@ class RateCollection:
 
         tol: optional, sets the tolerance of scipy.fsolve
 
-        use_coulomb_corr: To include coulomb correction terms
+        use_coulomb_corr: Whether to include coulomb correction terms
 
-        return_sol: To return the solution of the proton and neutron chemical potential.
+        return_sol: Whether to return the solution of the proton and neutron chemical potential.
         """
 
         #From here we convert the init_guess list into a np.array object:
