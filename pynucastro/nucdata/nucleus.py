@@ -159,7 +159,7 @@ class Nucleus:
         return cls._cache[key]
 
     def __repr__(self):
-        return self.raw
+        return self.caps_name
 
     def __hash__(self):
         return hash((self.Z, self.A))
