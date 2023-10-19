@@ -25,17 +25,14 @@ from scipy.optimize import fsolve
 # Import Rate
 from pynucastro.nucdata import Nucleus, PeriodicTable
 from pynucastro.rates import (ApproximateRate, DerivedRate, Library, Rate,
-                              RateFileError, RatePair, TabularRate, Tfactors,
+                              RateDuplicationError, RateFileError, RatePair,
+                              TabularRate, Tfactors, is_allowed_dupe,
                               load_rate)
 from pynucastro.rates.library import _rate_name_to_nuc
 from pynucastro.screening import make_plasma_state, make_screen_factors
 from pynucastro.screening.screen import NseState
 
 mpl.rcParams['figure.dpi'] = 100
-
-
-class RateDuplicationError(Exception):
-    """An error of multiple rates linking the same nuclei occurred"""
 
 
 def _skip_xalpha(n, p, r):
@@ -1058,6 +1055,16 @@ class RateCollection:
                         break
                 if not already_found:
                     duplicates.append(new_entry)
+
+        # there are some allowed duplicates for special cases.  We
+        # will now check for those
+        dupe_to_remove = []
+        for dupe in duplicates:
+            if is_allowed_dupe(dupe):
+                dupe_to_remove.append(dupe)
+
+        for dupe in dupe_to_remove:
+            duplicates.remove(dupe)
 
         return duplicates
 
