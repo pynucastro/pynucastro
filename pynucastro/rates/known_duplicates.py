@@ -6,6 +6,31 @@ ALLOWED_DUPLICATES = [
 ]
 
 
+def find_duplicate_rates(rate_list):
+    """given a list of rates, return a list of groups of duplicate
+    rates"""
+
+    duplicates = []
+    for rate in rate_list:
+        same_links = [q for q in rate_list
+                      if q != rate and
+                      sorted(q.reactants) == sorted(rate.reactants) and
+                      sorted(q.products) == sorted(rate.products)]
+
+        if same_links:
+            new_entry = [rate] + same_links
+            already_found = False
+            # we may have already found this pair
+            for dupe in duplicates:
+                if new_entry[0] in dupe:
+                    already_found = True
+                    break
+            if not already_found:
+                duplicates.append(new_entry)
+
+    return duplicates
+
+
 def is_allowed_dupe(rate_list):
     """rate_list is a list of rates that provide the same connection
     in a network.  Return True if this is an allowed duplicate"""
