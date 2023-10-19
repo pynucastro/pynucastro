@@ -1133,17 +1133,17 @@ class RateCollection:
         k = constants.value("Boltzmann constant") * 1.0e7          # boltzmann in erg/K
         Erg2MeV = 624151.0
 
-        # These are three constants for calculating coulomb corrections of chemical energy, see Calders paper: iopscience 510709, appendix
-        if use_coulomb_corr:
-            A_1 = -0.9052
-            A_2 = 0.6322
-            A_3 = -0.5 * np.sqrt(3.0) - A_1 / np.sqrt(A_2)
-
         # u_c is the coulomb correction term for NSE
         # Calculate the composition at NSE, equations found in appendix of Calder paper
         u_c = {}
+
         for nuc in set(list(self.unique_nuclei) + [Nucleus("p")]):
             if use_coulomb_corr:
+                # These are three constants for calculating coulomb corrections of chemical energy, see Calders paper: iopscience 510709, appendix
+                A_1 = -0.9052
+                A_2 = 0.6322
+                A_3 = -0.5 * np.sqrt(3.0) - A_1 / np.sqrt(A_2)
+
                 Gamma = state.gamma_e_fac * n_e ** (1.0/3.0) * nuc.Z ** (5.0 / 3.0) / state.temp
                 u_c[nuc] = Erg2MeV * k * state.temp * (A_1 * (np.sqrt(Gamma * (A_2 + Gamma)) - A_2 * np.log(np.sqrt(Gamma / A_2) +
                                       np.sqrt(1.0 + Gamma / A_2))) + 2.0 * A_3 * (np.sqrt(Gamma) - np.arctan(np.sqrt(Gamma))))
@@ -1187,33 +1187,38 @@ class RateCollection:
         # Don't use eval_ye() since it does automatic mass fraction normalization.
         # However, we should force normalization through constraint eq1.
 
-        # m_u = constants.value("unified atomic mass unit") * 1.0e3  # atomic unit mass in g
-
         Xs = self._nucleon_fraction_nse(u, u_c, state)
 
-        eq1 = 0.0
+        eq1 = -1.0
         for nuc in self.unique_nuclei:
             eq1 += Xs[nuc]
 
-        eq1 += - 1.0
-
-        eq2 = 0.0
+        eq2 = -state.ye
         for nuc in self.unique_nuclei:
             eq2 += Xs[nuc] * nuc.Z / nuc.A
-        # for nuc in self.unique_nuclei:
-        #     eq2 += ((state.ye - 1.0) * nuc.Z + state.ye * nuc.N ) * Xs[nuc] / (nuc.A_nuc * m_u)
 
-        eq2 += - state.ye
         return [eq1, eq2]
 
     def get_comp_nse(self, rho, T, ye, init_guess=(-3.5, -15), tol=1.0e-11, use_coulomb_corr=False, return_sol=False):
         """
         Returns the NSE composition given density, temperature and prescribed electron fraction
-        using scipy.fsolve, `tol` is an optional parameter for the tolerance of scipy.fsolve.
-        init_guess is optional, however one should change init_guess accordingly if unable or
-        taking long time to find solution.
-        One can enable printing the actual guess that found the solution after fine-tuning, which is useful
-        when calling this method multiple times such as making a plot.
+        using scipy.fsolve.
+
+        Parameters:
+        -------------------------------------
+        rho: NSE state density
+
+        T: NSE state Temperature
+
+        ye: prescribed electron fraction
+
+        init_guess: optional, initial guess of chemical potential of proton and neutron, [mu_p, mu_n]
+
+        tol: optional, sets the tolerance of scipy.fsolve
+
+        use_coulomb_corr: Whether to include coulomb correction terms
+
+        return_sol: Whether to return the solution of the proton and neutron chemical potential.
         """
 
         #From here we convert the init_guess list into a np.array object:
