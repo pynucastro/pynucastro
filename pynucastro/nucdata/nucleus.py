@@ -69,7 +69,7 @@ class Nucleus:
             self.el = "h"
             self.A = 1
             self.short_spec_name = "h1"
-            self.caps_name = "p"
+            self.caps_name = "H1"
         elif name == "d":
             self.el = "h"
             self.A = 2
