@@ -7,7 +7,7 @@ import pynucastro as pyna
 class TestDuplicates:
 
     @pytest.fixture(scope="class")
-    def ecsn_rc(self, reaclib_library):
+    def ecsn_lib(self, reaclib_library):
         all_nuclei = ["p", "he4",
                       "ne20", "o20", "f20",
                       "mg24", "al27", "o16",
@@ -17,17 +17,9 @@ class TestDuplicates:
         tabular_lib = pyna.TabularLibrary()
         ecsn_tabular_lib = tabular_lib.linking_nuclei(["f20", "o20", "ne20"])
 
-        return pyna.RateCollection(libraries=[ecsn_rl_lib, ecsn_tabular_lib])
+        return ecsn_rl_lib + ecsn_tabular_lib
 
-    def test_validate(self, ecsn_rc):
-        dupes = ecsn_rc.find_duplicate_links()
+    def test_validate(self, ecsn_lib):
 
-        assert len(dupes) == 2
-
-        d1 = dupes[0][0]
-        assert d1.reactants == [pyna.Nucleus("o20")]
-        assert d1.products == [pyna.Nucleus("f20")]
-
-        d2 = dupes[1][0]
-        assert d2.reactants == [pyna.Nucleus("f20")]
-        assert d2.products == [pyna.Nucleus("ne20")]
+        with pytest.raises(pyna.networks.RateDuplicationError):
+            rc = pyna.RateCollection(libraries=[ecsn_lib])

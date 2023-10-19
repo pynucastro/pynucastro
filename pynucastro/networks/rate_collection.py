@@ -34,6 +34,10 @@ from pynucastro.screening.screen import NseState
 mpl.rcParams['figure.dpi'] = 100
 
 
+class RateDuplicationError(Exception):
+    """An error of multiple rates linking the same nuclei occurred"""
+
+
 def _skip_xalpha(n, p, r):
     """utility function to consider if we show an (a, x) or (x, a) rate.  Here, p is the
     product we want to link to"""
@@ -594,6 +598,11 @@ class RateCollection:
 
         self.all_rates = (self.reaclib_rates + self.custom_rates +
                           self.tabular_rates + self.approx_rates + self.derived_rates)
+
+        # finally check for duplicate rates -- these are not
+        # allowed
+        if self.find_duplicate_links():
+            raise RateDuplicationError("Duplicate rates found")
 
     def _read_rate_files(self, rate_files):
         # get the rates
