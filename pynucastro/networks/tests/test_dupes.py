@@ -19,7 +19,21 @@ class TestDuplicates:
 
         return ecsn_rl_lib + ecsn_tabular_lib
 
-    def test_validate(self, ecsn_lib):
+    def test_rate_collection(self, ecsn_lib):
 
         with pytest.raises(pyna.networks.RateDuplicationError):
             pyna.RateCollection(libraries=[ecsn_lib])
+
+    def test_library_find_duplicate_links(self, ecsn_lib):
+
+        dupes = ecsn_lib.find_duplicate_links()
+
+        assert len(dupes) == 2
+
+        d1 = dupes[0][0]
+        assert d1.reactants == [pyna.Nucleus("o20")]
+        assert d1.products == [pyna.Nucleus("f20")]
+
+        d2 = dupes[1][0]
+        assert d2.reactants == [pyna.Nucleus("f20")]
+        assert d2.products == [pyna.Nucleus("ne20")]
