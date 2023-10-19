@@ -65,16 +65,16 @@ class SimpleCxxNetwork(BaseCxxNetwork):
 
             of.write("static const std::vector<std::string> spec_names = {\n")
             for n, nuc in enumerate(self.unique_nuclei):
-                of.write(f"    \"{nuc.short_spec_name.capitalize()}\", // {n}\n")
+                of.write(f"    \"{nuc.caps_name.capitalize()}\", // {n}\n")
             of.write(" };\n\n")
 
             of.write("namespace Species {\n")
             of.write("  enum NetworkSpecies {\n")
             for n, nuc in enumerate(self.unique_nuclei):
                 if n == 0:
-                    of.write(f"    {nuc.short_spec_name.capitalize()}=1,\n")
+                    of.write(f"    {nuc.caps_name.capitalize()}=1,\n")
                 else:
-                    of.write(f"    {nuc.short_spec_name.capitalize()},\n")
+                    of.write(f"    {nuc.caps_name.capitalize()},\n")
             of.write("  };\n")
             of.write("}\n\n")
 
