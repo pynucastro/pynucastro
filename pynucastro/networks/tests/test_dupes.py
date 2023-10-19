@@ -22,4 +22,4 @@ class TestDuplicates:
     def test_validate(self, ecsn_lib):
 
         with pytest.raises(pyna.networks.RateDuplicationError):
-            rc = pyna.RateCollection(libraries=[ecsn_lib])
+            pyna.RateCollection(libraries=[ecsn_lib])
