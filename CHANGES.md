@@ -1,3 +1,10 @@
+# recent
+
+  * a RateCollection now enforces that there are no duplicate rates.  A
+    `find_duplicate_links()` method has been added to `Library` to allow
+    one to construct a `Library` without duplicates and then create a
+    `RateCollection` or other network from that. (#651)
+
 # 2.1.0
 
   * add `eval_zbar()` to Composition (#632)
