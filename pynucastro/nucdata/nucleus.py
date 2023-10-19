@@ -69,7 +69,7 @@ class Nucleus:
             self.el = "h"
             self.A = 1
             self.short_spec_name = "h1"
-            self.caps_name = "H1"
+            self.caps_name = "p"
         elif name == "d":
             self.el = "h"
             self.A = 2
@@ -170,7 +170,7 @@ class Nucleus:
 
     def cindex(self):
         """return the name for C++ indexing"""
-        return self.short_spec_name.capitalize()
+        return self.caps_name.capitalize()
 
     def __eq__(self, other):
         if isinstance(other, Nucleus):

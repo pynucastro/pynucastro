@@ -272,14 +272,37 @@ class Library:
     def get_rate(self, rid):
         """ Return a rate matching the id provided. """
         try:
-            return self._rates[rid]
+            rid_nucs = rid.split()
+            rid_mod = []
+            do_capitalization = True
+            for n in rid_nucs:
+                if n == "weak" or n == "approx" or n == "derived":
+                    do_capitalization = False
+                if do_capitalization:
+                    if n != "n" and n != "p":
+                        n = n.capitalize()
+                rid_mod.append(n)
+
+            rid_mod = " ".join(rid_mod)
+            return self._rates[rid_mod]
         except KeyError:
             pass
 
         # fallback to the rate fname
         try:
-            r = [q for q in self.get_rates() if q.fname == rid][0]
-            return r
+            rid_nucs = rid.split("_")
+            rid_mod = []
+            do_capitalization = True
+            for n in rid_nucs:
+                if n == "weak" or n == "approx" or n == "derived":
+                    do_capitalization = False
+                if do_capitalization:
+                    if n != "n" and n != "p":
+                        n = n.capitalize()
+                rid_mod.append(n)
+
+            rid_mod = "_".join(rid_mod)
+            return [q for q in self.get_rates() if q.fname == rid_mod][0]
         except IndexError:
             raise LookupError(f"rate identifier {rid!r} does not match a rate in this library.") from None
 

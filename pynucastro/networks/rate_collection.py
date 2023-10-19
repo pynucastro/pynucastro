@@ -701,7 +701,19 @@ class RateCollection:
         """ Return a rate matching the id provided.  Here rid should be
         the string return by Rate.fname"""
         try:
-            return [r for r in self.rates if r.fname == rid][0]
+            rid_nucs = rid.split("_")
+            rid_mod = []
+            do_capitalization = True
+            for n in rid_nucs:
+                if n == "weak" or n == "approx" or n == "derived":
+                    do_capitalization = False
+                if do_capitalization:
+                    if n != "n" and n != "p":
+                        n = n.capitalize()
+                rid_mod.append(n)
+
+            rid_mod = "_".join(rid_mod)
+            return [r for r in self.rates if r.fname == rid_mod][0]
         except IndexError:
             raise LookupError(f"rate identifier {rid!r} does not match a rate in this network.") from None
 
