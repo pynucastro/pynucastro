@@ -72,13 +72,13 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
         with open(os.path.join(odir, "pynucastro.net"), "w") as of:
             for nuc in self.unique_nuclei:
                 short_spec_name = nuc.short_spec_name
-                if nuc.short_spec_name != "n":                    
+                if nuc.short_spec_name != "n":
                     short_spec_name = nuc.short_spec_name.capitalize()
                 of.write(f"{nuc.spec_name:25} {short_spec_name:6} {nuc.A:6.1f} {nuc.Z:6.1f}\n")
 
             for nuc in self.approx_nuclei:
                 short_spec_name = nuc.short_spec_name
-                if nuc.short_spec_name != "n":                    
+                if nuc.short_spec_name != "n":
                     short_spec_name = nuc.short_spec_name.capitalize()
                 of.write(f"__extra_{nuc.spec_name:17} {short_spec_name:6} {nuc.A:6.1f} {nuc.Z:6.1f}\n")
 
