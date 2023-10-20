@@ -13,15 +13,15 @@ class TestPythonNetwork2:
     def test_full_ydot_string(self, pynet):
 
         dyodt = \
-"""dYdt[jo16] = (
-   -Y[jo16]*rate_eval.o16__he4_c12
-   +rho*Y[jhe4]*Y[jc12]*rate_eval.he4_c12__o16
+"""dYdt[jO16] = (
+   -Y[jO16]*rate_eval.O16__He4_C12
+   +rho*Y[jHe4]*Y[jC12]*rate_eval.He4_C12__O16
    )
 
 """
 
         dynedt = \
-"""dYdt[jne20] = 0.0
+"""dYdt[jNe20] = 0.0
 
 """
 
