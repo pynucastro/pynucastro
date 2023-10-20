@@ -276,10 +276,10 @@ class Library:
             rid_mod = []
             do_capitalization = True
             for n in rid_nucs:
-                if n == "weak" or n == "approx" or n == "derived":
+                if n in ("weak", "approx", "derived"):
                     do_capitalization = False
                 if do_capitalization:
-                    if n != "n" and n != "p":
+                    if n not in ("n", "p"):
                         n = n.capitalize()
                 rid_mod.append(n)
 
@@ -294,10 +294,10 @@ class Library:
             rid_mod = []
             do_capitalization = True
             for n in rid_nucs:
-                if n == "weak" or n == "approx" or n == "derived":
+                if n in ("weak", "approx", "derived"):
                     do_capitalization = False
                 if do_capitalization:
-                    if n != "n" and n != "p":
+                    if n not in ("n", "p"):
                         n = n.capitalize()
                 rid_mod.append(n)
 

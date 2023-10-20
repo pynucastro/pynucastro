@@ -23,26 +23,26 @@ class TestPythonNetwork:
 
     def test_ydot_string(self, rate1, rate2, rate3, rate4):
         ydot1 = rate1.ydot_string_py()
-        assert ydot1 == "rho*Y[jp]*Y[jc13]*rate_eval.p_c13__n14"
+        assert ydot1 == "rho*Y[jp]*Y[jC13]*rate_eval.p_C13__N14"
 
         ydot2 = rate2.ydot_string_py()
-        assert ydot2 == "5.00000000000000e-01*rho**2*Y[jp]**2*Y[jhe4]*rate_eval.p_p_he4__he3_he3"
+        assert ydot2 == "5.00000000000000e-01*rho**2*Y[jp]**2*Y[jHe4]*rate_eval.p_p_He4__He3_He3"
 
         ydot3 = rate3.ydot_string_py()
-        assert ydot3 == "5.00000000000000e-01*rho**3*Y[jn]*Y[jp]*Y[jhe4]**2*rate_eval.n_p_he4_he4__he3_li7"
+        assert ydot3 == "5.00000000000000e-01*rho**3*Y[jn]*Y[jp]*Y[jHe4]**2*rate_eval.n_p_He4_He4__He3_Li7"
 
         ydot4 = rate4.ydot_string_py()
         assert ydot4 == "5.00000000000000e-01*rho**2*ye(Y)*Y[jp]**2*rate_eval.p_p__d__weak__electron_capture"
 
     def test_jacobian_string(self, rate1, rate2, rate3, rate4):
         jac1 = rate1.jacobian_string_py(rate1.reactants[0])
-        assert jac1 == "rho*Y[jc13]*rate_eval.p_c13__n14"
+        assert jac1 == "rho*Y[jc13]*rate_eval.p_C13__N14"
 
         jac2 = rate2.jacobian_string_py(rate2.reactants[0])
-        assert jac2 == "5.00000000000000e-01*rho**2*2*Y[jp]*Y[jhe4]*rate_eval.p_p_he4__he3_he3"
+        assert jac2 == "5.00000000000000e-01*rho**2*2*Y[jp]*Y[jHe4]*rate_eval.p_p_He4__He3_He3"
 
         jac3 = rate3.jacobian_string_py(rate3.reactants[0])
-        assert jac3 == "5.00000000000000e-01*rho**3*Y[jp]*Y[jhe4]**2*rate_eval.n_p_he4_he4__he3_li7"
+        assert jac3 == "5.00000000000000e-01*rho**3*Y[jp]*Y[jHe4]**2*rate_eval.n_p_He4_He4__He3_Li7"
 
         jac4 = rate4.jacobian_string_py(rate4.reactants[0])
         assert jac4 == "5.00000000000000e-01*rho**2*ye(Y)*2*Y[jp]*rate_eval.p_p__d__weak__electron_capture"
