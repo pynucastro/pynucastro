@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Checking your network &mdash; pynucastro 2.1.0.post6+g36b33942 documentation</title>
+  <title>Checking your network &mdash; pynucastro 2.1.0.post7+gf48e5fd4 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
@@ -16,7 +16,7 @@
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=83898e09"></script>
+        <script src="_static/documentation_options.js?v=e0203685"></script>
         <script src="_static/doctools.js?v=888ff710"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
         <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -367,7 +367,7 @@ False
               <span class="s2">&quot;ne20&quot;</span><span class="p">,</span> <span class="s2">&quot;o20&quot;</span><span class="p">,</span> <span class="s2">&quot;f20&quot;</span><span class="p">,</span>
               <span class="s2">&quot;mg24&quot;</span><span class="p">,</span> <span class="s2">&quot;al27&quot;</span><span class="p">,</span> <span class="s2">&quot;o16&quot;</span><span class="p">,</span>
               <span class="s2">&quot;si28&quot;</span><span class="p">,</span> <span class="s2">&quot;s32&quot;</span><span class="p">,</span> <span class="s2">&quot;p31&quot;</span><span class="p">]</span>
-<span class="n">ecsn_library</span> <span class="o">=</span> <span class="n">reaclib_library</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">(</span><span class="n">all_nuclei</span><span class="p">,</span><span class="n">with_reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">ecsn_rl_library</span> <span class="o">=</span> <span class="n">reaclib_library</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">(</span><span class="n">all_nuclei</span><span class="p">,</span><span class="n">with_reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -376,17 +376,17 @@ False
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tabular_lib</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">TabularLibrary</span><span class="p">()</span>
-<span class="n">ecsn_tabular</span> <span class="o">=</span> <span class="n">tabular_lib</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">([</span><span class="s2">&quot;f20&quot;</span><span class="p">,</span> <span class="s2">&quot;o20&quot;</span><span class="p">,</span> <span class="s2">&quot;ne20&quot;</span><span class="p">])</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tl</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">TabularLibrary</span><span class="p">()</span>
+<span class="n">ecsn_tabular_library</span> <span class="o">=</span> <span class="n">tl</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">([</span><span class="s2">&quot;f20&quot;</span><span class="p">,</span> <span class="s2">&quot;o20&quot;</span><span class="p">,</span> <span class="s2">&quot;ne20&quot;</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
-<p>Now we build a <code class="docutils literal notranslate"><span class="pre">RateCollection</span></code> using these two libraries</p>
+<p>Now we build a single <code class="docutils literal notranslate"><span class="pre">Library</span></code> using these two libraries</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rc</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">RateCollection</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="p">[</span><span class="n">ecsn_library</span><span class="p">,</span> <span class="n">ecsn_tabular</span><span class="p">])</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">complete_library</span> <span class="o">=</span> <span class="n">ecsn_rl_library</span> <span class="o">+</span> <span class="n">ecsn_tabular_library</span>
 </pre></div>
 </div>
 </div>
@@ -395,7 +395,7 @@ False
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rc</span><span class="o">.</span><span class="n">get_rates</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">complete_library</span><span class="o">.</span><span class="n">get_rates</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -440,7 +440,7 @@ False
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dupes</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">find_duplicate_links</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dupes</span> <span class="o">=</span> <span class="n">complete_library</span><span class="o">.</span><span class="n">find_duplicate_links</span><span class="p">()</span>
 <span class="n">dupes</span>
 </pre></div>
 </div>
@@ -491,7 +491,8 @@ o20__f20             &lt;class &#39;pynucastro.rates.rate.TabularRate&#39;&gt;
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rc</span><span class="o">.</span><span class="n">remove_rates</span><span class="p">(</span><span class="n">rates_to_remove</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">rates_to_remove</span><span class="p">:</span>
+    <span class="n">complete_library</span><span class="o">.</span><span class="n">remove_rate</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -500,7 +501,7 @@ o20__f20             &lt;class &#39;pynucastro.rates.rate.TabularRate&#39;&gt;
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rc</span><span class="o">.</span><span class="n">get_rates</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">complete_library</span><span class="o">.</span><span class="n">get_rates</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -537,6 +538,15 @@ o20__f20             &lt;class &#39;pynucastro.rates.rate.TabularRate&#39;&gt;
  F20 + e⁻ ⟶ O20 + 𝜈,
  Ne20 + e⁻ ⟶ F20 + 𝜈]
 </pre></div></div>
+</div>
+<p>and we can make a <code class="docutils literal notranslate"><span class="pre">RateCollection</span></code> now</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rc</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">RateCollection</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="p">[</span><span class="n">complete_library</span><span class="p">])</span>
+</pre></div>
+</div>
 </div>
 </section>
 </section>

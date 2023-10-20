@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.rates.library &mdash; pynucastro 2.1.0.post6+g36b33942 documentation</title>
+  <title>pynucastro.rates.library &mdash; pynucastro 2.1.0.post7+gf48e5fd4 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
@@ -14,7 +14,7 @@
   
         <script src="../../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../_static/documentation_options.js?v=83898e09"></script>
+        <script src="../../../_static/documentation_options.js?v=e0203685"></script>
         <script src="../../../_static/doctools.js?v=888ff710"></script>
         <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
         <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -122,6 +122,8 @@
 <span class="kn">import</span> <span class="nn">re</span>
 
 <span class="kn">from</span> <span class="nn">pynucastro.nucdata</span> <span class="kn">import</span> <span class="n">Nucleus</span><span class="p">,</span> <span class="n">UnsupportedNucleus</span>
+<span class="kn">from</span> <span class="nn">pynucastro.rates.known_duplicates</span> <span class="kn">import</span> <span class="p">(</span><span class="n">find_duplicate_rates</span><span class="p">,</span>
+                                               <span class="n">is_allowed_dupe</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">pynucastro.rates.rate</span> <span class="kn">import</span> <span class="p">(</span><span class="n">DerivedRate</span><span class="p">,</span> <span class="n">Rate</span><span class="p">,</span> <span class="n">RateFileError</span><span class="p">,</span>
                                    <span class="n">ReacLibRate</span><span class="p">,</span> <span class="n">TabularRate</span><span class="p">,</span> <span class="n">_find_rate_file</span><span class="p">,</span>
                                    <span class="n">get_rates_dir</span><span class="p">,</span> <span class="n">load_rate</span><span class="p">)</span>
@@ -468,6 +470,33 @@
         <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rates_out</span><span class="p">))</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">rates_out</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">rates_out</span></div>
+
+
+<div class="viewcode-block" id="Library.find_duplicate_links">
+<a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.library.Library.find_duplicate_links">[docs]</a>
+    <span class="k">def</span> <span class="nf">find_duplicate_links</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;report on an rates where another rate exists that has the</span>
+<span class="sd">        same reactants and products.  These may not be the same Rate</span>
+<span class="sd">        object (e.g., one could be tabular the other a simple decay),</span>
+<span class="sd">        but they will present themselves in the network as the same</span>
+<span class="sd">        link.</span>
+
+<span class="sd">        We return a list, where each entry is a list of all the rates</span>
+<span class="sd">        that share the same link&quot;&quot;&quot;</span>
+
+        <span class="n">duplicates</span> <span class="o">=</span> <span class="n">find_duplicate_rates</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_rates</span><span class="p">())</span>
+
+        <span class="c1"># there are some allowed duplicates for special cases.  We</span>
+        <span class="c1"># will now check for those</span>
+        <span class="n">dupe_to_remove</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">dupe</span> <span class="ow">in</span> <span class="n">duplicates</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">is_allowed_dupe</span><span class="p">(</span><span class="n">dupe</span><span class="p">):</span>
+                <span class="n">dupe_to_remove</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dupe</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">dupe</span> <span class="ow">in</span> <span class="n">dupe_to_remove</span><span class="p">:</span>
+            <span class="n">duplicates</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">dupe</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">duplicates</span></div>
 
 
 <div class="viewcode-block" id="Library.get_nuclei">
