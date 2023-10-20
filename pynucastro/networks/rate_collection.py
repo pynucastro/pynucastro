@@ -35,6 +35,10 @@ from pynucastro.screening.screen import NseState
 mpl.rcParams['figure.dpi'] = 100
 
 
+class RateDuplicationError(Exception):
+    """An error of multiple rates linking the same nuclei occurred"""
+
+
 def _skip_xalpha(n, p, r):
     """utility function to consider if we show an (a, x) or (x, a) rate.  Here, p is the
     product we want to link to"""

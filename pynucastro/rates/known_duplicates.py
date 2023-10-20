@@ -49,7 +49,3 @@ def is_allowed_dupe(rate_list):
                 return True
 
     return False
-
-
-class RateDuplicationError(Exception):
-    """An error of multiple rates linking the same nuclei occurred"""
