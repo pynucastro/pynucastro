@@ -197,7 +197,7 @@ class PythonNetwork(RateCollection):
 
         of.write("names = []\n")
         for n in self.unique_nuclei:
-            of.write(f"names.append(\"{n.caps_name}\")\n")
+            of.write(f"names.append(\"{n.short_spec_name.capitalize()}\")\n")
 
         of.write("\n")
 

@@ -90,6 +90,25 @@ def _rate_name_to_nuc(name):
     return reactants, products
 
 
+def capitalize_rid(rid, delimiter):
+    # Used to capitalize rid or fname given the delimiter
+    # delimiter is usually either "_" or " "
+
+    rid_nucs = rid.split(delimiter)
+    rid_mod = []
+    do_capitalization = True
+    for n in rid_nucs:
+        if n in ("weak", "approx", "derived"):
+            do_capitalization = False
+        if do_capitalization:
+            if n not in ("n", "p"):
+                n = n.capitalize()
+        rid_mod.append(n)
+
+    rid_mod = delimiter.join(rid_mod)
+    return rid_mod
+
+
 class Library:
     """
     A Library is a Rate container that reads a single file
@@ -272,36 +291,14 @@ class Library:
     def get_rate(self, rid):
         """ Return a rate matching the id provided. """
         try:
-            rid_nucs = rid.split()
-            rid_mod = []
-            do_capitalization = True
-            for n in rid_nucs:
-                if n in ("weak", "approx", "derived"):
-                    do_capitalization = False
-                if do_capitalization:
-                    if n not in ("n", "p"):
-                        n = n.capitalize()
-                rid_mod.append(n)
-
-            rid_mod = " ".join(rid_mod)
+            rid_mod = capitalize_rid(rid, " ")
             return self._rates[rid_mod]
         except KeyError:
             pass
 
         # fallback to the rate fname
         try:
-            rid_nucs = rid.split("_")
-            rid_mod = []
-            do_capitalization = True
-            for n in rid_nucs:
-                if n in ("weak", "approx", "derived"):
-                    do_capitalization = False
-                if do_capitalization:
-                    if n not in ("n", "p"):
-                        n = n.capitalize()
-                rid_mod.append(n)
-
-            rid_mod = "_".join(rid_mod)
+            rid_mod = capitalize_rid(rid, "_")
             return [q for q in self.get_rates() if q.fname == rid_mod][0]
         except IndexError:
             raise LookupError(f"rate identifier {rid!r} does not match a rate in this library.") from None

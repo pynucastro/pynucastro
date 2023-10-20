@@ -32,7 +32,7 @@ class TestPythonNetwork:
         assert ydot3 == "5.00000000000000e-01*rho**3*Y[jn]*Y[jp]*Y[jHe4]**2*rate_eval.n_p_He4_He4__He3_Li7"
 
         ydot4 = rate4.ydot_string_py()
-        assert ydot4 == "5.00000000000000e-01*rho**2*ye(Y)*Y[jp]**2*rate_eval.p_p__H2__weak__electron_capture"
+        assert ydot4 == "5.00000000000000e-01*rho**2*ye(Y)*Y[jp]**2*rate_eval.p_p__d__weak__electron_capture"
 
     def test_jacobian_string(self, rate1, rate2, rate3, rate4):
         jac1 = rate1.jacobian_string_py(rate1.reactants[0])
@@ -45,7 +45,7 @@ class TestPythonNetwork:
         assert jac3 == "5.00000000000000e-01*rho**3*Y[jp]*Y[jHe4]**2*rate_eval.n_p_He4_He4__He3_Li7"
 
         jac4 = rate4.jacobian_string_py(rate4.reactants[0])
-        assert jac4 == "5.00000000000000e-01*rho**2*ye(Y)*2*Y[jp]*rate_eval.p_p__H2__weak__electron_capture"
+        assert jac4 == "5.00000000000000e-01*rho**2*ye(Y)*2*Y[jp]*rate_eval.p_p__d__weak__electron_capture"
 
     def test_function_string(self, rate1, rate2, rate3, rate4):
 
@@ -96,8 +96,8 @@ def n_p_He4_He4__He3_Li7(rate_eval, tf):
 
         ostr4 = """
 @numba.njit()
-def p_p__H2__weak__electron_capture(rate_eval, tf):
-    # p + p --> H2
+def p_p__d__weak__electron_capture(rate_eval, tf):
+    # p + p --> d
     rate = 0.0
 
     # bet+w
@@ -107,7 +107,7 @@ def p_p__H2__weak__electron_capture(rate_eval, tf):
     rate += np.exp(  -43.6499 + -0.00246064*tf.T9i + -2.7507*tf.T913i + -0.424877*tf.T913
                   + 0.015987*tf.T9 + -0.000690875*tf.T953 + -0.207625*tf.lnT9)
 
-    rate_eval.p_p__H2__weak__electron_capture = rate
+    rate_eval.p_p__d__weak__electron_capture = rate
 """
 
         assert rate1.function_string_py().strip() == ostr1.strip()

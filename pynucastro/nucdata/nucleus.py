@@ -159,7 +159,9 @@ class Nucleus:
         return cls._cache[key]
 
     def __repr__(self):
-        return self.caps_name
+        if self.raw not in ("p", "d", "t", "n"):
+            return self.raw.capitalize()
+        return self.raw
 
     def __hash__(self):
         return hash((self.Z, self.A))
@@ -170,7 +172,7 @@ class Nucleus:
 
     def cindex(self):
         """return the name for C++ indexing"""
-        return self.caps_name.capitalize()
+        return self.short_spec_name.capitalize()
 
     def __eq__(self, other):
         if isinstance(other, Nucleus):

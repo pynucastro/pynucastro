@@ -27,7 +27,7 @@ from pynucastro.nucdata import Nucleus, PeriodicTable
 from pynucastro.rates import (ApproximateRate, DerivedRate, Library, Rate,
                               RateFileError, RatePair, TabularRate, Tfactors,
                               load_rate)
-from pynucastro.rates.library import _rate_name_to_nuc
+from pynucastro.rates.library import _rate_name_to_nuc, capitalize_rid
 from pynucastro.screening import make_plasma_state, make_screen_factors
 from pynucastro.screening.screen import NseState
 
@@ -701,18 +701,7 @@ class RateCollection:
         """ Return a rate matching the id provided.  Here rid should be
         the string return by Rate.fname"""
         try:
-            rid_nucs = rid.split("_")
-            rid_mod = []
-            do_capitalization = True
-            for n in rid_nucs:
-                if n in ("weak", "approx", "derived"):
-                    do_capitalization = False
-                if do_capitalization:
-                    if n not in ("n", "p"):
-                        n = n.capitalize()
-                rid_mod.append(n)
-
-            rid_mod = "_".join(rid_mod)
+            rid_mod = capitalize_rid(rid, "_")
             return [r for r in self.rates if r.fname == rid_mod][0]
         except IndexError:
             raise LookupError(f"rate identifier {rid!r} does not match a rate in this network.") from None
