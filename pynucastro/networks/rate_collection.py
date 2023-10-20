@@ -26,12 +26,16 @@ from scipy.optimize import fsolve
 from pynucastro.nucdata import Nucleus, PeriodicTable
 from pynucastro.rates import (ApproximateRate, DerivedRate, Library, Rate,
                               RateFileError, RatePair, TabularRate, Tfactors,
-                              load_rate)
+                              find_duplicate_rates, is_allowed_dupe, load_rate)
 from pynucastro.rates.library import _rate_name_to_nuc
 from pynucastro.screening import make_plasma_state, make_screen_factors
 from pynucastro.screening.screen import NseState
 
 mpl.rcParams['figure.dpi'] = 100
+
+
+class RateDuplicationError(Exception):
+    """An error of multiple rates linking the same nuclei occurred"""
 
 
 def _skip_xalpha(n, p, r):
@@ -595,6 +599,11 @@ class RateCollection:
         self.all_rates = (self.reaclib_rates + self.custom_rates +
                           self.tabular_rates + self.approx_rates + self.derived_rates)
 
+        # finally check for duplicate rates -- these are not
+        # allowed
+        if self.find_duplicate_links():
+            raise RateDuplicationError("Duplicate rates found")
+
     def _read_rate_files(self, rate_files):
         # get the rates
         self.files = rate_files
@@ -1032,23 +1041,17 @@ class RateCollection:
         We return a list, where each entry is a list of all the rates
         that share the same link"""
 
-        duplicates = []
-        for rate in self.get_rates():
-            same_links = [q for q in self.get_rates()
-                          if q != rate and
-                          sorted(q.reactants) == sorted(rate.reactants) and
-                          sorted(q.products) == sorted(rate.products)]
+        duplicates = find_duplicate_rates(self.get_rates())
 
-            if same_links:
-                new_entry = [rate] + same_links
-                already_found = False
-                # we may have already found this pair
-                for dupe in duplicates:
-                    if new_entry[0] in dupe:
-                        already_found = True
-                        break
-                if not already_found:
-                    duplicates.append(new_entry)
+        # there are some allowed duplicates for special cases.  We
+        # will now check for those
+        dupe_to_remove = []
+        for dupe in duplicates:
+            if is_allowed_dupe(dupe):
+                dupe_to_remove.append(dupe)
+
+        for dupe in dupe_to_remove:
+            duplicates.remove(dupe)
 
         return duplicates
 

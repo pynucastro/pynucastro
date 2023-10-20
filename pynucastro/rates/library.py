@@ -4,6 +4,8 @@ import os
 import re
 
 from pynucastro.nucdata import Nucleus, UnsupportedNucleus
+from pynucastro.rates.known_duplicates import (find_duplicate_rates,
+                                               is_allowed_dupe)
 from pynucastro.rates.rate import (DerivedRate, Rate, RateFileError,
                                    ReacLibRate, TabularRate, _find_rate_file,
                                    get_rates_dir, load_rate)
@@ -322,6 +324,30 @@ class Library:
         if (len(rates_out)) == 1:
             return rates_out[0]
         return rates_out
+
+    def find_duplicate_links(self):
+        """report on an rates where another rate exists that has the
+        same reactants and products.  These may not be the same Rate
+        object (e.g., one could be tabular the other a simple decay),
+        but they will present themselves in the network as the same
+        link.
+
+        We return a list, where each entry is a list of all the rates
+        that share the same link"""
+
+        duplicates = find_duplicate_rates(self.get_rates())
+
+        # there are some allowed duplicates for special cases.  We
+        # will now check for those
+        dupe_to_remove = []
+        for dupe in duplicates:
+            if is_allowed_dupe(dupe):
+                dupe_to_remove.append(dupe)
+
+        for dupe in dupe_to_remove:
+            duplicates.remove(dupe)
+
+        return duplicates
 
     def get_nuclei(self):
         """get the list of unique nuclei"""
