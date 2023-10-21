@@ -255,8 +255,8 @@ evaluate_dr_dtemp(const table_t& table_meta, const R& log_rhoy_table, const T& l
         // Finally, we perform a 1d-linear interpolation between dlogr_dlogt_ip1
         // and dlogr_dlogt_i to compute dlogr_dlogt
 
-        Real log_rhoy_lo = log_temp_table(irhoy_lo);
-        Real log_rhoy_hi = log_temp_table(irhoy_hi);
+        Real log_rhoy_lo = log_rhoy_table(irhoy_lo);
+        Real log_rhoy_hi = log_rhoy_table(irhoy_hi);
 
         Real log_temp_lo = log_temp_table(jtemp_lo);
         Real log_temp_hi = log_temp_table(jtemp_hi);
