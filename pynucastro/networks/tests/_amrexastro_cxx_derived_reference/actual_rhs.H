@@ -135,6 +135,7 @@ void evaluate_rates(const burn_t& state, T& rate_eval) {
 
     rate_eval.enuc_weak = 0.0;
 
+
 }
 
 AMREX_GPU_HOST_DEVICE AMREX_INLINE
