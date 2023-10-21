@@ -53,3 +53,11 @@ skip = ".git,*docs/build,*.bib"
 [tool.isort]
 known_first_party = ["pynucastro"]
 skip = ["pynucastro/networks/tests/_python_reference/network.py"]
+
+[tool.pytest.ini_options]
+addopts = """\
+  --ignore=docs \
+  --ignore-glob=pynucastro/library/tabular/*.ipynb \
+  --ignore=examples/rxn-network-integration.ipynb \
+  --ignore=examples/o16o16_rates.ipynb \
+  """
