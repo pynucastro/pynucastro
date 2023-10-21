@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.networks.base_cxx_network &mdash; pynucastro 2.1.0.post10+g555271cc documentation</title>
+  <title>pynucastro.networks.base_cxx_network &mdash; pynucastro 2.1.0.post11+gdaa40416 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
@@ -14,7 +14,7 @@
   
         <script src="../../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../_static/documentation_options.js?v=71130452"></script>
+        <script src="../../../_static/documentation_options.js?v=7aaf4885"></script>
         <script src="../../../_static/doctools.js?v=888ff710"></script>
         <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
         <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -470,7 +470,8 @@
                 <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">idnt</span><span class="si">}</span><span class="s1">    rate_eval.dscreened_rates_dT(k_</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">cname</span><span class="p">()</span><span class="si">}</span><span class="s1">) = drate_dt;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
                 <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">idnt</span><span class="si">}</span><span class="se">}}\n</span><span class="s1">&#39;</span><span class="p">)</span>
 
-                <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">idnt</span><span class="si">}</span><span class="s1">rate_eval.add_energy_rate(k_</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">cname</span><span class="p">()</span><span class="si">}</span><span class="s1">) = edot_nu + edot_gamma;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">idnt</span><span class="si">}</span><span class="s1">rate_eval.enuc_weak += C::Legacy::n_A * </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">symbol_rates</span><span class="o">.</span><span class="n">name_y</span><span class="si">}</span><span class="s1">(</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">cindex</span><span class="p">()</span><span class="si">}</span><span class="s1">) * (edot_nu + edot_gamma);</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
                 <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_ydot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
@@ -561,14 +562,12 @@
 
         <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;struct rate_t {</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;    Array1D&lt;Real, 1, NumRates&gt;  screened_rates;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tabular_rates</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;    Array1D&lt;Real, NrateReaclib+1, NrateReaclib+NrateTabular&gt; add_energy_rate;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;    Real enuc_weak;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;};</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;struct rate_derivs_t {</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;    Array1D&lt;Real, 1, NumRates&gt;  screened_rates;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;    Array1D&lt;Real, 1, NumRates&gt;  dscreened_rates_dT;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tabular_rates</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;    Array1D&lt;Real, NrateReaclib+1, NrateReaclib+NrateTabular&gt; add_energy_rate;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;    Real enuc_weak;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;};</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_approx_rate_functions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
