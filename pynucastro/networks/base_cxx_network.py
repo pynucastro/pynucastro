@@ -341,7 +341,8 @@ class BaseCxxNetwork(ABC, RateCollection):
                 of.write(f'{idnt}    rate_eval.dscreened_rates_dT(k_{r.cname()}) = drate_dt;\n')
                 of.write(f'{idnt}}}\n')
 
-                of.write(f'{idnt}rate_eval.add_energy_rate(k_{r.cname()}) = edot_nu + edot_gamma;\n')
+                of.write(f'{idnt}enuc_weak += C::Legacy::n_A * {self.symbol_rates.name_y}({r.reactants[0].cindex()}) * (edot_nu + edot_gamma);\n')
+
                 of.write('\n')
 
     def _ydot(self, n_indent, of):
@@ -432,14 +433,10 @@ class BaseCxxNetwork(ABC, RateCollection):
 
         of.write("struct rate_t {\n")
         of.write("    Array1D<Real, 1, NumRates>  screened_rates;\n")
-        if len(self.tabular_rates) > 0:
-            of.write("    Array1D<Real, NrateReaclib+1, NrateReaclib+NrateTabular> add_energy_rate;\n")
         of.write("};\n\n")
         of.write("struct rate_derivs_t {\n")
         of.write("    Array1D<Real, 1, NumRates>  screened_rates;\n")
         of.write("    Array1D<Real, 1, NumRates>  dscreened_rates_dT;\n")
-        if len(self.tabular_rates) > 0:
-            of.write("    Array1D<Real, NrateReaclib+1, NrateReaclib+NrateTabular> add_energy_rate;\n")
         of.write("};\n\n")
 
     def _approx_rate_functions(self, n_indent, of):
