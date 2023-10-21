@@ -43,7 +43,7 @@ void ener_gener_rate(T const& dydt, Real& enuc)
 
 template <int do_T_derivatives, typename T>
 AMREX_GPU_HOST_DEVICE AMREX_INLINE
-void evaluate_rates(const burn_t& state, T& rate_eval) {
+void evaluate_rates(const burn_t& state, T& rate_eval, Real& enuc_weak) {
 
 
     // create molar fractions
@@ -186,7 +186,10 @@ void actual_rhs (burn_t& state, Array1D<Real, 1, neqs>& ydot)
     rate_t rate_eval;
 
     constexpr int do_T_derivatives = 0;
-    evaluate_rates<do_T_derivatives, rate_t>(state, rate_eval);
+
+    Real enuc_weak{0.0};
+
+    evaluate_rates<do_T_derivatives, rate_t>(state, rate_eval, enuc_weak);
 
     rhs_nuc(state, ydot, Y, rate_eval.screened_rates);
 
@@ -195,7 +198,8 @@ void actual_rhs (burn_t& state, Array1D<Real, 1, neqs>& ydot)
     Real enuc;
     ener_gener_rate(ydot, enuc);
 
-    // include reaction neutrino losses (non-thermal) and gamma heating
+    // include any weak rate neutrino losses
+    enuc += enuc_weak;
 
     // Get the thermal neutrino losses
 
@@ -317,7 +321,9 @@ void actual_jac(const burn_t& state, MatrixType& jac)
     rate_derivs_t rate_eval;
 
     constexpr int do_T_derivatives = 1;
-    evaluate_rates<do_T_derivatives, rate_derivs_t>(state, rate_eval);
+    Real enuc_weak{0.0};
+
+    evaluate_rates<do_T_derivatives, rate_derivs_t>(state, rate_eval, enuc_weak);
 
     // Species Jacobian elements with respect to other species
 
