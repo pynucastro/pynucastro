@@ -133,6 +133,7 @@ void evaluate_rates(const burn_t& state, T& rate_eval) {
 
     [[maybe_unused]] Real rate, drate_dt, edot_nu, edot_gamma;
 
+    rate_eval.enuc_weak = 0.0;
 
 }
 

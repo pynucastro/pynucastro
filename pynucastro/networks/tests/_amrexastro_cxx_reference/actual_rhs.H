@@ -133,6 +133,8 @@ void evaluate_rates(const burn_t& state, T& rate_eval) {
 
     [[maybe_unused]] Real rate, drate_dt, edot_nu, edot_gamma;
 
+    rate_eval.enuc_weak = 0.0;
+
     tabular_evaluate(j_na23_ne23_meta, j_na23_ne23_rhoy, j_na23_ne23_temp, j_na23_ne23_data,
                      rhoy, state.T, rate, drate_dt, edot_nu, edot_gamma);
     rate_eval.screened_rates(k_na23_to_ne23) = rate;
