@@ -13,11 +13,13 @@ using namespace Species;
 
 struct rate_t {
     Array1D<Real, 1, NumRates>  screened_rates;
+    Real enuc_weak;
 };
 
 struct rate_derivs_t {
     Array1D<Real, 1, NumRates>  screened_rates;
     Array1D<Real, 1, NumRates>  dscreened_rates_dT;
+    Real enuc_weak;
 };
 
 

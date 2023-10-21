@@ -133,13 +133,15 @@ void evaluate_rates(const burn_t& state, T& rate_eval) {
 
     [[maybe_unused]] Real rate, drate_dt, edot_nu, edot_gamma;
 
+    rate_eval.enuc_weak = 0.0;
+
     tabular_evaluate(j_na23_ne23_meta, j_na23_ne23_rhoy, j_na23_ne23_temp, j_na23_ne23_data,
                      rhoy, state.T, rate, drate_dt, edot_nu, edot_gamma);
     rate_eval.screened_rates(k_na23_to_ne23) = rate;
     if constexpr (std::is_same<T, rate_derivs_t>::value) {
         rate_eval.dscreened_rates_dT(k_na23_to_ne23) = drate_dt;
     }
-    rate_eval.add_energy_rate(k_na23_to_ne23) = edot_nu + edot_gamma;
+    rate_eval.enuc_weak += C::Legacy::n_A * Y(Na23) * (edot_nu + edot_gamma);
 
     tabular_evaluate(j_ne23_na23_meta, j_ne23_na23_rhoy, j_ne23_na23_temp, j_ne23_na23_data,
                      rhoy, state.T, rate, drate_dt, edot_nu, edot_gamma);
@@ -147,7 +149,7 @@ void evaluate_rates(const burn_t& state, T& rate_eval) {
     if constexpr (std::is_same<T, rate_derivs_t>::value) {
         rate_eval.dscreened_rates_dT(k_ne23_to_na23) = drate_dt;
     }
-    rate_eval.add_energy_rate(k_ne23_to_na23) = edot_nu + edot_gamma;
+    rate_eval.enuc_weak += C::Legacy::n_A * Y(Ne23) * (edot_nu + edot_gamma);
 
 
 }
@@ -216,6 +218,7 @@ void actual_rhs (burn_t& state, Array1D<Real, 1, neqs>& ydot)
     rate_t rate_eval;
 
     constexpr int do_T_derivatives = 0;
+
     evaluate_rates<do_T_derivatives, rate_t>(state, rate_eval);
 
     rhs_nuc(state, ydot, Y, rate_eval.screened_rates);
@@ -225,9 +228,8 @@ void actual_rhs (burn_t& state, Array1D<Real, 1, neqs>& ydot)
     Real enuc;
     ener_gener_rate(ydot, enuc);
 
-    // include reaction neutrino losses (non-thermal) and gamma heating
-    enuc += C::Legacy::n_A * Y(Na23) * rate_eval.add_energy_rate(k_na23_to_ne23);
-    enuc += C::Legacy::n_A * Y(Ne23) * rate_eval.add_energy_rate(k_ne23_to_na23);
+    // include any weak rate neutrino losses
+    enuc += rate_eval.enuc_weak;
 
     // Get the thermal neutrino losses
 
@@ -325,6 +327,7 @@ void actual_jac(const burn_t& state, MatrixType& jac)
     rate_derivs_t rate_eval;
 
     constexpr int do_T_derivatives = 1;
+
     evaluate_rates<do_T_derivatives, rate_derivs_t>(state, rate_eval);
 
     // Species Jacobian elements with respect to other species
