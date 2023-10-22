@@ -9,15 +9,35 @@ def compare_network_files(test_path, ref_path, skip_files=()):
     skip_files = set(skip_files)
     test_files = set(os.listdir(test_path)) - skip_files
     ref_files = set(os.listdir(ref_path)) - skip_files
-    assert test_files == ref_files, "missing/extra files"
+    # files that are missing from test_path
+    missing_files = ref_files - test_files
+    # files that are present in test_path but not in ref_path
+    extra_files = test_files - ref_files
 
-    errors = []
-    for file in sorted(test_files):
+    modified_files = set()
+    # only compare files that exist in both directories, to avoid errors
+    for file in test_files & ref_files:
         # note, _test is written under whatever directory pytest is run from,
         # so it is not necessarily at the same place as _amrexastro_reference
         if not filecmp.cmp(os.path.normpath(os.path.join(test_path, file)),
                            os.path.normpath(os.path.join(ref_path, file)),
                            shallow=False):
-            errors.append(file)
+            modified_files.add(file)
 
-    assert not errors, f"files don't match: {' '.join(errors)}"
+    # record which files make the test fail
+    if missing_files:
+        print("\nmissing files:")
+        for file in sorted(missing_files):
+            print("  " + file)
+    if extra_files:
+        print("\nextra files:")
+        for file in sorted(extra_files):
+            print("  " + file)
+    if modified_files:
+        print("\nmodified files:")
+        for file in sorted(modified_files):
+            print("  " + file)
+
+    assert not (
+        missing_files | extra_files | modified_files
+    ), "written network files don't match the stored reference"
