@@ -5,7 +5,6 @@ import shutil
 import pytest
 
 from pynucastro import networks
-from pynucastro.networks.tests.helpers import compare_network_files
 from pynucastro.rates import SuzukiLibrary
 
 
@@ -78,7 +77,7 @@ class TestAmrexAstroCxxNetwork:
                   '        ebind_per_nucleon(Mg23) = 7.901115_rt;\n')
         assert self.cromulent_ftag(fn._ebind, answer, n_indent=2)
 
-    def test_write_network(self, fn):
+    def test_write_network(self, fn, compare_network_files):
         """ test the write_network function"""
         test_path = "_test_cxx/"
         # subdirectory of pynucastro/networks/tests/
