@@ -1,5 +1,7 @@
 import filecmp
 import os
+import shutil
+import warnings
 
 import pytest
 
@@ -17,7 +19,11 @@ def tabular_library():
 
 
 @pytest.fixture(scope="package")
-def compare_network_files():
+def compare_network_files(request):
+    # this fixture returns a closure so we don't have to get the pytest config
+    # in each test function and pass it through
+    update_networks = request.config.getoption("--update-networks")
+
     def _compare_network_files(test_path, ref_path, skip_files=()):
         base_path = os.path.relpath(os.path.dirname(__file__))
         ref_path = os.path.join(base_path, ref_path)
@@ -54,8 +60,18 @@ def compare_network_files():
             for file in sorted(modified_files):
                 print("  " + file)
 
-        assert not (
-            missing_files | extra_files | modified_files
-        ), "written network files don't match the stored reference"
+        errors = missing_files | extra_files | modified_files
+        if update_networks and errors:
+            # remove files that are no longer present in test_path
+            for file in missing_files:
+                os.unlink(os.path.normpath(os.path.join(ref_path, file)))
+            # copy new and modified files to ref_path
+            for file in extra_files | modified_files:
+                shutil.copy(os.path.normpath(os.path.join(test_path, file)),
+                            os.path.normpath(os.path.join(ref_path, file)))
+            # raise a warning to let the user know which tests were updated
+            warnings.warn(UserWarning(f"updated reference files in {ref_path}"))
+        else:
+            assert not errors, "written network files don't match the stored reference"
 
     return _compare_network_files
