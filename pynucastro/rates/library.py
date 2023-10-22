@@ -322,7 +322,9 @@ class Library:
                 continue
             rates_out += _lib.get_rates()
 
-        if (len(rates_out)) == 1:
+        if len(rates_out) == 0:
+            return None
+        elif len(rates_out) == 1:
             return rates_out[0]
         return rates_out
 
