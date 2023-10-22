@@ -318,7 +318,8 @@ class Library:
             rf = RateFilter(reactants=reactants, products=products)
             _lib = self.filter(rf)
             if _lib is None:
-                return None
+                print(f"rate {rname} not found")
+                continue
             rates_out += _lib.get_rates()
 
         if (len(rates_out)) == 1:
