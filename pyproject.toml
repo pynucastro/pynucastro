@@ -1,6 +1,10 @@
 # pyproject.toml
 [build-system]
-requires = ["setuptools>=45", "wheel", "setuptools_scm>=6.2"]
+requires = ["setuptools>=64", "setuptools_scm>=8"]
+
+[tool.setuptools_scm]
+version_scheme = "post-release"
+version_file = "pynucastro/_version.py"
 
 [tool.pylint.MAIN]
 ignore = ['_python_reference', 'test_full_python_net.py']
