@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.rates.library &mdash; pynucastro 2.1.0.post14+g97f4a745 documentation</title>
+  <title>pynucastro.rates.library &mdash; pynucastro 2.1.0.post15+g18b94688 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
@@ -14,7 +14,7 @@
   
         <script src="../../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../_static/documentation_options.js?v=b39d0299"></script>
+        <script src="../../../_static/documentation_options.js?v=02cdf38d"></script>
         <script src="../../../_static/doctools.js?v=888ff710"></script>
         <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
         <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -211,6 +211,28 @@
             <span class="k">raise</span>
 
     <span class="k">return</span> <span class="n">reactants</span><span class="p">,</span> <span class="n">products</span>
+
+
+<div class="viewcode-block" id="capitalize_rid">
+<a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.library.capitalize_rid">[docs]</a>
+<span class="k">def</span> <span class="nf">capitalize_rid</span><span class="p">(</span><span class="n">rid</span><span class="p">,</span> <span class="n">delimiter</span><span class="p">):</span>
+    <span class="c1"># Used to capitalize rid or fname given the delimiter</span>
+    <span class="c1"># delimiter is usually either &quot;_&quot; or &quot; &quot;</span>
+
+    <span class="n">rid_nucs</span> <span class="o">=</span> <span class="n">rid</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">delimiter</span><span class="p">)</span>
+    <span class="n">rid_mod</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">do_capitalization</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">rid_nucs</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">n</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;weak&quot;</span><span class="p">,</span> <span class="s2">&quot;approx&quot;</span><span class="p">,</span> <span class="s2">&quot;derived&quot;</span><span class="p">):</span>
+            <span class="n">do_capitalization</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="n">do_capitalization</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">n</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;n&quot;</span><span class="p">,</span> <span class="s2">&quot;p&quot;</span><span class="p">):</span>
+                <span class="n">n</span> <span class="o">=</span> <span class="n">n</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span>
+        <span class="n">rid_mod</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+
+    <span class="n">rid_mod</span> <span class="o">=</span> <span class="n">delimiter</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">rid_mod</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">rid_mod</span></div>
+
 
 
 <div class="viewcode-block" id="Library">
@@ -414,14 +436,15 @@
     <span class="k">def</span> <span class="nf">get_rate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rid</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; Return a rate matching the id provided. &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rates</span><span class="p">[</span><span class="n">rid</span><span class="p">]</span>
+            <span class="n">rid_mod</span> <span class="o">=</span> <span class="n">capitalize_rid</span><span class="p">(</span><span class="n">rid</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rates</span><span class="p">[</span><span class="n">rid_mod</span><span class="p">]</span>
         <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
             <span class="k">pass</span>
 
         <span class="c1"># fallback to the rate fname</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">r</span> <span class="o">=</span> <span class="p">[</span><span class="n">q</span> <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_rates</span><span class="p">()</span> <span class="k">if</span> <span class="n">q</span><span class="o">.</span><span class="n">fname</span> <span class="o">==</span> <span class="n">rid</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-            <span class="k">return</span> <span class="n">r</span>
+            <span class="n">rid_mod</span> <span class="o">=</span> <span class="n">capitalize_rid</span><span class="p">(</span><span class="n">rid</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">q</span> <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_rates</span><span class="p">()</span> <span class="k">if</span> <span class="n">q</span><span class="o">.</span><span class="n">fname</span> <span class="o">==</span> <span class="n">rid_mod</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">LookupError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;rate identifier </span><span class="si">{</span><span class="n">rid</span><span class="si">!r}</span><span class="s2"> does not match a rate in this library.&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="kc">None</span></div>
 

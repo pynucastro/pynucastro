@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Checking your network &mdash; pynucastro 2.1.0.post14+g97f4a745 documentation</title>
+  <title>Checking your network &mdash; pynucastro 2.1.0.post15+g18b94688 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
@@ -16,7 +16,7 @@
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=b39d0299"></script>
+        <script src="_static/documentation_options.js?v=02cdf38d"></script>
         <script src="_static/doctools.js?v=888ff710"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
         <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -193,7 +193,7 @@ He4 + He4 + He4 ⟶ C12 + 𝛾
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-validation: ne20 produced in C12 + C12 ⟶ He4 + Ne20 never consumed.
+validation: Ne20 produced in C12 + C12 ⟶ He4 + Ne20 never consumed.
 validation: missing He4 + He4 + He4 ⟶ p + B11 as alternative to He4 + He4 + He4 ⟶ C12 + 𝛾 (Q = -8.682 MeV).
 validation: missing He4 + He4 + He4 ⟶ n + C11 as alternative to He4 + He4 + He4 ⟶ C12 + 𝛾 (Q = -11.4466 MeV).
 validation: missing C12 + C12 ⟶ p + Na23 as alternative to C12 + C12 ⟶ He4 + Ne20 (Q = 2.242 MeV).
@@ -252,8 +252,8 @@ He4 + He4 + He4 ⟶ C12 + 𝛾
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-validation: ne20 produced in C12 + C12 ⟶ He4 + Ne20 never consumed.
-validation: ne20 produced in Na23 + p ⟶ He4 + Ne20 never consumed.
+validation: Ne20 produced in C12 + C12 ⟶ He4 + Ne20 never consumed.
+validation: Ne20 produced in Na23 + p ⟶ He4 + Ne20 never consumed.
 validation: missing He4 + He4 + He4 ⟶ p + B11 as alternative to He4 + He4 + He4 ⟶ C12 + 𝛾 (Q = -8.682 MeV).
 validation: missing He4 + He4 + He4 ⟶ n + C11 as alternative to He4 + He4 + He4 ⟶ C12 + 𝛾 (Q = -11.4466 MeV).
 validation: missing C12 + C12 ⟶ n + Mg23 as alternative to C12 + C12 ⟶ He4 + Ne20 (Q = -2.598 MeV).
@@ -316,8 +316,8 @@ He4 + He4 + He4 ⟶ C12 + 𝛾
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-validation: mg24 produced in Ne20 + He4 ⟶ Mg24 + 𝛾 never consumed.
-validation: mg24 produced in Na23 + p ⟶ Mg24 + 𝛾 never consumed.
+validation: Mg24 produced in Ne20 + He4 ⟶ Mg24 + 𝛾 never consumed.
+validation: Mg24 produced in Na23 + p ⟶ Mg24 + 𝛾 never consumed.
 validation: missing He4 + He4 + He4 ⟶ p + B11 as alternative to He4 + He4 + He4 ⟶ C12 + 𝛾 (Q = -8.682 MeV).
 validation: missing He4 + He4 + He4 ⟶ n + C11 as alternative to He4 + He4 + He4 ⟶ C12 + 𝛾 (Q = -11.4466 MeV).
 validation: missing C12 + C12 ⟶ n + Mg23 as alternative to C12 + C12 ⟶ He4 + Ne20 (Q = -2.598 MeV).
@@ -470,8 +470,8 @@ False
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-o20__f20__weak__wc12 &lt;class &#39;pynucastro.rates.rate.ReacLibRate&#39;&gt;
-o20__f20             &lt;class &#39;pynucastro.rates.rate.TabularRate&#39;&gt;
+O20__F20__weak__wc12 &lt;class &#39;pynucastro.rates.rate.ReacLibRate&#39;&gt;
+O20__F20             &lt;class &#39;pynucastro.rates.rate.TabularRate&#39;&gt;
 </pre></div></div>
 </div>
 <p>We see that one is a <code class="docutils literal notranslate"><span class="pre">ReacLibRate</span></code> and the other is a <code class="docutils literal notranslate"><span class="pre">TabularRate</span></code>. In general, the <code class="docutils literal notranslate"><span class="pre">TabularRate</span></code> is preferred, since it has a density and temperature dependence and works at high densities.</p>

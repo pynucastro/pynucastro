@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Approximate Rates &mdash; pynucastro 2.1.0.post14+g97f4a745 documentation</title>
+  <title>Approximate Rates &mdash; pynucastro 2.1.0.post15+g18b94688 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
@@ -16,7 +16,7 @@
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=b39d0299"></script>
+        <script src="_static/documentation_options.js?v=02cdf38d"></script>
         <script src="_static/doctools.js?v=888ff710"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
         <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -329,7 +329,7 @@ looking to remove Al27 + He4 ⟶ P31 + 𝛾
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-he4
+He4
   consumed by:
      Mg24 + He4 ⟶ Si28 + 𝛾
      Si28 + He4 ⟶ S32 + 𝛾
@@ -337,13 +337,13 @@ he4
      Si28 ⟶ Mg24 + He4
      S32 ⟶ Si28 + He4
 
-mg24
+Mg24
   consumed by:
      Mg24 + He4 ⟶ Si28 + 𝛾
   produced by:
      Si28 ⟶ Mg24 + He4
 
-si28
+Si28
   consumed by:
      Si28 ⟶ Mg24 + He4
      Si28 + He4 ⟶ S32 + 𝛾
@@ -351,7 +351,7 @@ si28
      Mg24 + He4 ⟶ Si28 + 𝛾
      S32 ⟶ Si28 + He4
 
-s32
+S32
   consumed by:
      S32 ⟶ Si28 + He4
   produced by:
@@ -407,10 +407,10 @@ s32
 <div class="output_area docutils container">
 <div class="highlight"><pre>
 dYdt[jhe4] = (
-   -rho*Y[jhe4]*Y[jmg24]*rate_eval.mg24_he4__si28__approx
-   -rho*Y[jhe4]*Y[jsi28]*rate_eval.si28_he4__s32__approx
-   +Y[jsi28]*rate_eval.si28__mg24_he4__approx
-   +Y[js32]*rate_eval.s32__si28_he4__approx
+   -rho*Y[jhe4]*Y[jmg24]*rate_eval.Mg24_He4__Si28__approx
+   -rho*Y[jhe4]*Y[jsi28]*rate_eval.Si28_He4__S32__approx
+   +Y[jsi28]*rate_eval.Si28__Mg24_He4__approx
+   +Y[js32]*rate_eval.S32__Si28_He4__approx
    )
 
 
@@ -432,13 +432,13 @@ dYdt[jhe4] = (
 <div class="output_area docutils container">
 <div class="highlight"><pre>
 @numba.njit()
-def mg24_he4__si28__approx(rate_eval, tf):
-    r_ag = rate_eval.he4_mg24__si28__removed
-    r_ap = rate_eval.he4_mg24__p_al27__removed
-    r_pg = rate_eval.p_al27__si28__removed
-    r_pa = rate_eval.p_al27__he4_mg24__removed
+def Mg24_He4__Si28__approx(rate_eval, tf):
+    r_ag = rate_eval.He4_Mg24__Si28__removed
+    r_ap = rate_eval.He4_Mg24__p_Al27__removed
+    r_pg = rate_eval.p_Al27__Si28__removed
+    r_pa = rate_eval.p_Al27__He4_Mg24__removed
     rate = r_ag + r_ap * r_pg / (r_pg + r_pa)
-    rate_eval.mg24_he4__si28__approx = rate
+    rate_eval.Mg24_He4__Si28__approx = rate
 
 
 </pre></div></div>
