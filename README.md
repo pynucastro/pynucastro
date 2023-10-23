@@ -99,11 +99,11 @@ pip install pynucastro
 
 Alternately, to install via source, you can do:
 ```
-python setup.py install
+pip install .
 ```
 for a systemwide install, or
 ```
-python setup.py install --user
+pip install --user .
 ```
 for a single-user install.  This will put the pynucastro modules and library in
 the default location python searches for packages.

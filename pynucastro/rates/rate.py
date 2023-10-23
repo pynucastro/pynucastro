@@ -665,9 +665,9 @@ class Rate:
         for r in sorted(set(self.reactants)):
             c = self.reactants.count(r)
             if c > 1:
-                ydot_string_components.append(f"Y[j{r}]**{c}")
+                ydot_string_components.append(f"Y[j{r.raw}]**{c}")
             else:
-                ydot_string_components.append(f"Y[j{r}]")
+                ydot_string_components.append(f"Y[j{r.raw}]")
 
         # rate_eval.{fname}
         ydot_string_components.append(f"rate_eval.{self.fname}")
@@ -712,16 +712,16 @@ class Rate:
                 if c == 1:
                     continue
                 if c > 2:
-                    jac_string_components.append(f"{c}*Y[j{r}]**{c-1}")
+                    jac_string_components.append(f"{c}*Y[j{r.raw}]**{c-1}")
                 elif c == 2:
-                    jac_string_components.append(f"2*Y[j{r}]")
+                    jac_string_components.append(f"2*Y[j{r.raw}]")
             else:
                 # this nucleus is in the rate form, but we are not
                 # differentiating with respect to it
                 if c > 1:
-                    jac_string_components.append(f"Y[j{r}]**{c}")
+                    jac_string_components.append(f"Y[j{r.raw}]**{c}")
                 else:
-                    jac_string_components.append(f"Y[j{r}]")
+                    jac_string_components.append(f"Y[j{r.raw}]")
 
         # rate_eval.{fname}
         jac_string_components.append(f"rate_eval.{self.fname}")

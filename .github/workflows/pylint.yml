@@ -38,7 +38,7 @@ jobs:
           pip install pylint
 
       - name: Install pynucastro
-        run: python setup.py install --user
+        run: pip install .
 
       - name: Validate
         run: pylint pynucastro pynucastro/**/tests

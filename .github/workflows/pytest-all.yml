@@ -42,7 +42,7 @@ jobs:
           pip install -r requirements.txt
 
       - name: Install pynucastro
-        run: python setup.py develop --user
+        run: pip install --editable .
 
       - name: Print system info
         run: |
@@ -52,7 +52,7 @@ jobs:
           lscpu
 
       - name: Run tests with pytest
-        run: pytest -v -s --nbval --cov=pynucastro --ignore=docs --ignore-glob="pynucastro/library/tabular/*.ipynb" --ignore=examples/rxn-network-integration.ipynb --ignore=examples/o16o16_rates.ipynb
+        run: pytest -v -s --nbval --cov=pynucastro
 
       - name: Upload output from failed write_network tests
         uses: actions/upload-artifact@v3

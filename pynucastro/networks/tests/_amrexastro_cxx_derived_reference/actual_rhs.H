@@ -84,18 +84,18 @@ void evaluate_rates(const burn_t& state, T& rate_eval) {
     }
 
 
-    ratraw = rate_eval.screened_rates(k_he4_fe52_to_ni56);
-    rate_eval.screened_rates(k_he4_fe52_to_ni56) *= scor;
+    ratraw = rate_eval.screened_rates(k_He4_Fe52_to_Ni56);
+    rate_eval.screened_rates(k_He4_Fe52_to_Ni56) *= scor;
     if constexpr (std::is_same<T, rate_derivs_t>::value) {
-        dratraw_dT = rate_eval.dscreened_rates_dT(k_he4_fe52_to_ni56);
-        rate_eval.dscreened_rates_dT(k_he4_fe52_to_ni56) = ratraw * dscor_dt + dratraw_dT * scor;
+        dratraw_dT = rate_eval.dscreened_rates_dT(k_He4_Fe52_to_Ni56);
+        rate_eval.dscreened_rates_dT(k_He4_Fe52_to_Ni56) = ratraw * dscor_dt + dratraw_dT * scor;
     }
 
-    ratraw = rate_eval.screened_rates(k_he4_fe52_to_p_co55);
-    rate_eval.screened_rates(k_he4_fe52_to_p_co55) *= scor;
+    ratraw = rate_eval.screened_rates(k_He4_Fe52_to_p_Co55);
+    rate_eval.screened_rates(k_He4_Fe52_to_p_Co55) *= scor;
     if constexpr (std::is_same<T, rate_derivs_t>::value) {
-        dratraw_dT = rate_eval.dscreened_rates_dT(k_he4_fe52_to_p_co55);
-        rate_eval.dscreened_rates_dT(k_he4_fe52_to_p_co55) = ratraw * dscor_dt + dratraw_dT * scor;
+        dratraw_dT = rate_eval.dscreened_rates_dT(k_He4_Fe52_to_p_Co55);
+        rate_eval.dscreened_rates_dT(k_He4_Fe52_to_p_Co55) = ratraw * dscor_dt + dratraw_dT * scor;
     }
 
 
@@ -110,18 +110,18 @@ void evaluate_rates(const burn_t& state, T& rate_eval) {
     }
 
 
-    ratraw = rate_eval.screened_rates(k_p_co55_to_ni56);
-    rate_eval.screened_rates(k_p_co55_to_ni56) *= scor;
+    ratraw = rate_eval.screened_rates(k_p_Co55_to_Ni56);
+    rate_eval.screened_rates(k_p_Co55_to_Ni56) *= scor;
     if constexpr (std::is_same<T, rate_derivs_t>::value) {
-        dratraw_dT = rate_eval.dscreened_rates_dT(k_p_co55_to_ni56);
-        rate_eval.dscreened_rates_dT(k_p_co55_to_ni56) = ratraw * dscor_dt + dratraw_dT * scor;
+        dratraw_dT = rate_eval.dscreened_rates_dT(k_p_Co55_to_Ni56);
+        rate_eval.dscreened_rates_dT(k_p_Co55_to_Ni56) = ratraw * dscor_dt + dratraw_dT * scor;
     }
 
-    ratraw = rate_eval.screened_rates(k_p_co55_to_he4_fe52_derived);
-    rate_eval.screened_rates(k_p_co55_to_he4_fe52_derived) *= scor;
+    ratraw = rate_eval.screened_rates(k_p_Co55_to_He4_Fe52_derived);
+    rate_eval.screened_rates(k_p_Co55_to_He4_Fe52_derived) *= scor;
     if constexpr (std::is_same<T, rate_derivs_t>::value) {
-        dratraw_dT = rate_eval.dscreened_rates_dT(k_p_co55_to_he4_fe52_derived);
-        rate_eval.dscreened_rates_dT(k_p_co55_to_he4_fe52_derived) = ratraw * dscor_dt + dratraw_dT * scor;
+        dratraw_dT = rate_eval.dscreened_rates_dT(k_p_Co55_to_He4_Fe52_derived);
+        rate_eval.dscreened_rates_dT(k_p_Co55_to_He4_Fe52_derived) = ratraw * dscor_dt + dratraw_dT * scor;
     }
 
 
@@ -132,6 +132,8 @@ void evaluate_rates(const burn_t& state, T& rate_eval) {
     // Calculate tabular rates
 
     [[maybe_unused]] Real rate, drate_dt, edot_nu, edot_gamma;
+
+    rate_eval.enuc_weak = 0.0;
 
 
 }
@@ -145,24 +147,24 @@ void rhs_nuc(const burn_t& state,
     using namespace Rates;
 
     ydot_nuc(H1) =
-        (-screened_rates(k_p_co55_to_ni56)*Y(Co55)*Y(H1)*state.rho + screened_rates(k_ni56_to_p_co55_derived)*Y(Ni56)) +
-        (screened_rates(k_he4_fe52_to_p_co55)*Y(Fe52)*Y(He4)*state.rho + -screened_rates(k_p_co55_to_he4_fe52_derived)*Y(Co55)*Y(H1)*state.rho);
+        (-screened_rates(k_p_Co55_to_Ni56)*Y(Co55)*Y(H1)*state.rho + screened_rates(k_Ni56_to_p_Co55_derived)*Y(Ni56)) +
+        (screened_rates(k_He4_Fe52_to_p_Co55)*Y(Fe52)*Y(He4)*state.rho + -screened_rates(k_p_Co55_to_He4_Fe52_derived)*Y(Co55)*Y(H1)*state.rho);
 
     ydot_nuc(He4) =
-        (-screened_rates(k_he4_fe52_to_ni56)*Y(Fe52)*Y(He4)*state.rho + screened_rates(k_ni56_to_he4_fe52_derived)*Y(Ni56)) +
-        (-screened_rates(k_he4_fe52_to_p_co55)*Y(Fe52)*Y(He4)*state.rho + screened_rates(k_p_co55_to_he4_fe52_derived)*Y(Co55)*Y(H1)*state.rho);
+        (-screened_rates(k_He4_Fe52_to_Ni56)*Y(Fe52)*Y(He4)*state.rho + screened_rates(k_Ni56_to_He4_Fe52_derived)*Y(Ni56)) +
+        (-screened_rates(k_He4_Fe52_to_p_Co55)*Y(Fe52)*Y(He4)*state.rho + screened_rates(k_p_Co55_to_He4_Fe52_derived)*Y(Co55)*Y(H1)*state.rho);
 
     ydot_nuc(Fe52) =
-        (-screened_rates(k_he4_fe52_to_ni56)*Y(Fe52)*Y(He4)*state.rho + screened_rates(k_ni56_to_he4_fe52_derived)*Y(Ni56)) +
-        (-screened_rates(k_he4_fe52_to_p_co55)*Y(Fe52)*Y(He4)*state.rho + screened_rates(k_p_co55_to_he4_fe52_derived)*Y(Co55)*Y(H1)*state.rho);
+        (-screened_rates(k_He4_Fe52_to_Ni56)*Y(Fe52)*Y(He4)*state.rho + screened_rates(k_Ni56_to_He4_Fe52_derived)*Y(Ni56)) +
+        (-screened_rates(k_He4_Fe52_to_p_Co55)*Y(Fe52)*Y(He4)*state.rho + screened_rates(k_p_Co55_to_He4_Fe52_derived)*Y(Co55)*Y(H1)*state.rho);
 
     ydot_nuc(Co55) =
-        (-screened_rates(k_p_co55_to_ni56)*Y(Co55)*Y(H1)*state.rho + screened_rates(k_ni56_to_p_co55_derived)*Y(Ni56)) +
-        (screened_rates(k_he4_fe52_to_p_co55)*Y(Fe52)*Y(He4)*state.rho + -screened_rates(k_p_co55_to_he4_fe52_derived)*Y(Co55)*Y(H1)*state.rho);
+        (-screened_rates(k_p_Co55_to_Ni56)*Y(Co55)*Y(H1)*state.rho + screened_rates(k_Ni56_to_p_Co55_derived)*Y(Ni56)) +
+        (screened_rates(k_He4_Fe52_to_p_Co55)*Y(Fe52)*Y(He4)*state.rho + -screened_rates(k_p_Co55_to_He4_Fe52_derived)*Y(Co55)*Y(H1)*state.rho);
 
     ydot_nuc(Ni56) =
-        (screened_rates(k_he4_fe52_to_ni56)*Y(Fe52)*Y(He4)*state.rho + -screened_rates(k_ni56_to_he4_fe52_derived)*Y(Ni56)) +
-        (screened_rates(k_p_co55_to_ni56)*Y(Co55)*Y(H1)*state.rho + -screened_rates(k_ni56_to_p_co55_derived)*Y(Ni56));
+        (screened_rates(k_He4_Fe52_to_Ni56)*Y(Fe52)*Y(He4)*state.rho + -screened_rates(k_Ni56_to_He4_Fe52_derived)*Y(Ni56)) +
+        (screened_rates(k_p_Co55_to_Ni56)*Y(Co55)*Y(H1)*state.rho + -screened_rates(k_Ni56_to_p_Co55_derived)*Y(Ni56));
 
 }
 
@@ -186,6 +188,7 @@ void actual_rhs (burn_t& state, Array1D<Real, 1, neqs>& ydot)
     rate_t rate_eval;
 
     constexpr int do_T_derivatives = 0;
+
     evaluate_rates<do_T_derivatives, rate_t>(state, rate_eval);
 
     rhs_nuc(state, ydot, Y, rate_eval.screened_rates);
@@ -195,7 +198,8 @@ void actual_rhs (burn_t& state, Array1D<Real, 1, neqs>& ydot)
     Real enuc;
     ener_gener_rate(ydot, enuc);
 
-    // include reaction neutrino losses (non-thermal) and gamma heating
+    // include any weak rate neutrino losses
+    enuc += rate_eval.enuc_weak;
 
     // Get the thermal neutrino losses
 
@@ -220,79 +224,79 @@ void jac_nuc(const burn_t& state,
 
     Real scratch;
 
-    scratch = -screened_rates(k_p_co55_to_he4_fe52_derived)*Y(Co55)*state.rho - screened_rates(k_p_co55_to_ni56)*Y(Co55)*state.rho;
+    scratch = -screened_rates(k_p_Co55_to_He4_Fe52_derived)*Y(Co55)*state.rho - screened_rates(k_p_Co55_to_Ni56)*Y(Co55)*state.rho;
     jac.set(H1, H1, scratch);
 
-    scratch = screened_rates(k_he4_fe52_to_p_co55)*Y(Fe52)*state.rho;
+    scratch = screened_rates(k_He4_Fe52_to_p_Co55)*Y(Fe52)*state.rho;
     jac.set(H1, He4, scratch);
 
-    scratch = screened_rates(k_he4_fe52_to_p_co55)*Y(He4)*state.rho;
+    scratch = screened_rates(k_He4_Fe52_to_p_Co55)*Y(He4)*state.rho;
     jac.set(H1, Fe52, scratch);
 
-    scratch = -screened_rates(k_p_co55_to_he4_fe52_derived)*Y(H1)*state.rho - screened_rates(k_p_co55_to_ni56)*Y(H1)*state.rho;
+    scratch = -screened_rates(k_p_Co55_to_He4_Fe52_derived)*Y(H1)*state.rho - screened_rates(k_p_Co55_to_Ni56)*Y(H1)*state.rho;
     jac.set(H1, Co55, scratch);
 
-    scratch = screened_rates(k_ni56_to_p_co55_derived);
+    scratch = screened_rates(k_Ni56_to_p_Co55_derived);
     jac.set(H1, Ni56, scratch);
 
-    scratch = screened_rates(k_p_co55_to_he4_fe52_derived)*Y(Co55)*state.rho;
+    scratch = screened_rates(k_p_Co55_to_He4_Fe52_derived)*Y(Co55)*state.rho;
     jac.set(He4, H1, scratch);
 
-    scratch = -screened_rates(k_he4_fe52_to_ni56)*Y(Fe52)*state.rho - screened_rates(k_he4_fe52_to_p_co55)*Y(Fe52)*state.rho;
+    scratch = -screened_rates(k_He4_Fe52_to_Ni56)*Y(Fe52)*state.rho - screened_rates(k_He4_Fe52_to_p_Co55)*Y(Fe52)*state.rho;
     jac.set(He4, He4, scratch);
 
-    scratch = -screened_rates(k_he4_fe52_to_ni56)*Y(He4)*state.rho - screened_rates(k_he4_fe52_to_p_co55)*Y(He4)*state.rho;
+    scratch = -screened_rates(k_He4_Fe52_to_Ni56)*Y(He4)*state.rho - screened_rates(k_He4_Fe52_to_p_Co55)*Y(He4)*state.rho;
     jac.set(He4, Fe52, scratch);
 
-    scratch = screened_rates(k_p_co55_to_he4_fe52_derived)*Y(H1)*state.rho;
+    scratch = screened_rates(k_p_Co55_to_He4_Fe52_derived)*Y(H1)*state.rho;
     jac.set(He4, Co55, scratch);
 
-    scratch = screened_rates(k_ni56_to_he4_fe52_derived);
+    scratch = screened_rates(k_Ni56_to_He4_Fe52_derived);
     jac.set(He4, Ni56, scratch);
 
-    scratch = screened_rates(k_p_co55_to_he4_fe52_derived)*Y(Co55)*state.rho;
+    scratch = screened_rates(k_p_Co55_to_He4_Fe52_derived)*Y(Co55)*state.rho;
     jac.set(Fe52, H1, scratch);
 
-    scratch = -screened_rates(k_he4_fe52_to_ni56)*Y(Fe52)*state.rho - screened_rates(k_he4_fe52_to_p_co55)*Y(Fe52)*state.rho;
+    scratch = -screened_rates(k_He4_Fe52_to_Ni56)*Y(Fe52)*state.rho - screened_rates(k_He4_Fe52_to_p_Co55)*Y(Fe52)*state.rho;
     jac.set(Fe52, He4, scratch);
 
-    scratch = -screened_rates(k_he4_fe52_to_ni56)*Y(He4)*state.rho - screened_rates(k_he4_fe52_to_p_co55)*Y(He4)*state.rho;
+    scratch = -screened_rates(k_He4_Fe52_to_Ni56)*Y(He4)*state.rho - screened_rates(k_He4_Fe52_to_p_Co55)*Y(He4)*state.rho;
     jac.set(Fe52, Fe52, scratch);
 
-    scratch = screened_rates(k_p_co55_to_he4_fe52_derived)*Y(H1)*state.rho;
+    scratch = screened_rates(k_p_Co55_to_He4_Fe52_derived)*Y(H1)*state.rho;
     jac.set(Fe52, Co55, scratch);
 
-    scratch = screened_rates(k_ni56_to_he4_fe52_derived);
+    scratch = screened_rates(k_Ni56_to_He4_Fe52_derived);
     jac.set(Fe52, Ni56, scratch);
 
-    scratch = -screened_rates(k_p_co55_to_he4_fe52_derived)*Y(Co55)*state.rho - screened_rates(k_p_co55_to_ni56)*Y(Co55)*state.rho;
+    scratch = -screened_rates(k_p_Co55_to_He4_Fe52_derived)*Y(Co55)*state.rho - screened_rates(k_p_Co55_to_Ni56)*Y(Co55)*state.rho;
     jac.set(Co55, H1, scratch);
 
-    scratch = screened_rates(k_he4_fe52_to_p_co55)*Y(Fe52)*state.rho;
+    scratch = screened_rates(k_He4_Fe52_to_p_Co55)*Y(Fe52)*state.rho;
     jac.set(Co55, He4, scratch);
 
-    scratch = screened_rates(k_he4_fe52_to_p_co55)*Y(He4)*state.rho;
+    scratch = screened_rates(k_He4_Fe52_to_p_Co55)*Y(He4)*state.rho;
     jac.set(Co55, Fe52, scratch);
 
-    scratch = -screened_rates(k_p_co55_to_he4_fe52_derived)*Y(H1)*state.rho - screened_rates(k_p_co55_to_ni56)*Y(H1)*state.rho;
+    scratch = -screened_rates(k_p_Co55_to_He4_Fe52_derived)*Y(H1)*state.rho - screened_rates(k_p_Co55_to_Ni56)*Y(H1)*state.rho;
     jac.set(Co55, Co55, scratch);
 
-    scratch = screened_rates(k_ni56_to_p_co55_derived);
+    scratch = screened_rates(k_Ni56_to_p_Co55_derived);
     jac.set(Co55, Ni56, scratch);
 
-    scratch = screened_rates(k_p_co55_to_ni56)*Y(Co55)*state.rho;
+    scratch = screened_rates(k_p_Co55_to_Ni56)*Y(Co55)*state.rho;
     jac.set(Ni56, H1, scratch);
 
-    scratch = screened_rates(k_he4_fe52_to_ni56)*Y(Fe52)*state.rho;
+    scratch = screened_rates(k_He4_Fe52_to_Ni56)*Y(Fe52)*state.rho;
     jac.set(Ni56, He4, scratch);
 
-    scratch = screened_rates(k_he4_fe52_to_ni56)*Y(He4)*state.rho;
+    scratch = screened_rates(k_He4_Fe52_to_Ni56)*Y(He4)*state.rho;
     jac.set(Ni56, Fe52, scratch);
 
-    scratch = screened_rates(k_p_co55_to_ni56)*Y(H1)*state.rho;
+    scratch = screened_rates(k_p_Co55_to_Ni56)*Y(H1)*state.rho;
     jac.set(Ni56, Co55, scratch);
 
-    scratch = -screened_rates(k_ni56_to_he4_fe52_derived) - screened_rates(k_ni56_to_p_co55_derived);
+    scratch = -screened_rates(k_Ni56_to_He4_Fe52_derived) - screened_rates(k_Ni56_to_p_Co55_derived);
     jac.set(Ni56, Ni56, scratch);
 
 
@@ -317,6 +321,7 @@ void actual_jac(const burn_t& state, MatrixType& jac)
     rate_derivs_t rate_eval;
 
     constexpr int do_T_derivatives = 1;
+
     evaluate_rates<do_T_derivatives, rate_derivs_t>(state, rate_eval);
 
     // Species Jacobian elements with respect to other species
