@@ -27,6 +27,10 @@ dependencies = [
 ]
 optional-dependencies.numba = ["numba"]
 
+[project.urls]
+Homepage = "https://github.com/pynucastro/pynucastro"
+Documentation = "https://pynucastro.github.io/pynucastro/"
+
 
 # packaging
 
