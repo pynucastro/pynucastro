@@ -159,6 +159,8 @@ class Nucleus:
         return cls._cache[key]
 
     def __repr__(self):
+        if self.raw not in ("p", "d", "t", "n"):
+            return self.raw.capitalize()
         return self.raw
 
     def __hash__(self):

@@ -121,18 +121,18 @@ class TestCompBinning:
 
         captured = capsys.readouterr()
 
-        output = """storing p as he4
-storing c12 as c12
-storing c13 as c12
-storing he4 as he4
-storing o14 as c12
-storing n14 as c12
-storing cr48 as ti44
-storing fe52 as ti44
-storing fe56 as fe56
-storing cr56 as fe56
-storing co56 as fe56
-storing zn60 as ni56
+        output = """storing p as He4
+storing C12 as C12
+storing C13 as C12
+storing He4 as He4
+storing O14 as C12
+storing N14 as C12
+storing Cr48 as Ti44
+storing Fe52 as Ti44
+storing Fe56 as Fe56
+storing Cr56 as Fe56
+storing Co56 as Fe56
+storing Zn60 as Ni56
 """
 
         assert captured.out == output

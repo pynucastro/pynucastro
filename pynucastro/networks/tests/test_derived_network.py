@@ -43,10 +43,10 @@ class TestPythonDerivedNetwork:
 
         ostr = \
 """dYdt[jcr48] = (
-   -rho*Y[jhe4]*Y[jcr48]*rate_eval.he4_cr48__fe52
-   -rho*Y[jhe4]*Y[jcr48]*rate_eval.he4_cr48__p_mn51
-   +Y[jfe52]*rate_eval.fe52__he4_cr48__derived
-   +rho*Y[jp]*Y[jmn51]*rate_eval.p_mn51__he4_cr48__derived
+   -rho*Y[jhe4]*Y[jcr48]*rate_eval.He4_Cr48__Fe52
+   -rho*Y[jhe4]*Y[jcr48]*rate_eval.He4_Cr48__p_Mn51
+   +Y[jfe52]*rate_eval.Fe52__He4_Cr48__derived
+   +rho*Y[jp]*Y[jmn51]*rate_eval.p_Mn51__He4_Cr48__derived
    )
 
 """
@@ -60,31 +60,31 @@ class TestPythonDerivedNetwork:
         for i in range(2):
             ostr[i] = \
 """@numba.njit()
-def fe52__p_mn51__derived(rate_eval, tf):
-    # fe52 --> p + mn51
+def Fe52__p_Mn51__derived(rate_eval, tf):
+    # Fe52 --> p + Mn51
     rate = 0.0
 
     # ths8r
     rate += np.exp(  {:.14f} + -85.6326403498911*tf.T9i + -36.1825*tf.T913i + 0.873042*tf.T913
                   + -2.89731*tf.T9 + 0.364394*tf.T953 + 0.833333*tf.lnT9)
 
-    rate_eval.fe52__p_mn51__derived = rate
+    rate_eval.Fe52__p_Mn51__derived = rate
 
 
-    # interpolating mn51 partition function
-    mn51_pf_exponent = np.interp(tf.T9, xp=mn51_temp_array, fp=np.log10(mn51_pf_array))
-    mn51_pf = 10.0**mn51_pf_exponent
+    # interpolating Mn51 partition function
+    Mn51_pf_exponent = np.interp(tf.T9, xp=Mn51_temp_array, fp=np.log10(Mn51_pf_array))
+    Mn51_pf = 10.0**Mn51_pf_exponent
 
     # setting p partition function to 1.0 by default, independent of T
     p_pf = 1.0
 
-    # interpolating fe52 partition function
-    fe52_pf_exponent = np.interp(tf.T9, xp=fe52_temp_array, fp=np.log10(fe52_pf_array))
-    fe52_pf = 10.0**fe52_pf_exponent
+    # interpolating Fe52 partition function
+    Fe52_pf_exponent = np.interp(tf.T9, xp=Fe52_temp_array, fp=np.log10(Fe52_pf_array))
+    Fe52_pf = 10.0**Fe52_pf_exponent
 
-    z_r = p_pf*mn51_pf
-    z_p = fe52_pf
-    rate_eval.fe52__p_mn51__derived *= z_r/z_p
+    z_r = p_pf*Mn51_pf
+    z_p = Fe52_pf
+    rate_eval.Fe52__p_Mn51__derived *= z_r/z_p
 """.format(dispute_values[i])
 
         r = pynet.get_rate("fe52__p_mn51__derived")

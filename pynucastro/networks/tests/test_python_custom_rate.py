@@ -73,11 +73,11 @@ class TestPythonCustomNetwork:
 
         dpdt = \
 """dYdt[jp] = (
-   -rho*Y[jp]*Y[jc12]*rate_eval.p_c12__n13
-   -rho*Y[jp]*Y[jc13]*rate_eval.p_c13__n14
-   -rho*Y[jp]*Y[jn13]*rate_eval.p_n13__o14
-   -rho*Y[jp]*Y[jn15]*rate_eval.p_n15__he4_c12
-   -rho*Y[jp]*Y[jn14]*rate_eval.n14_p__o15__generic
+   -rho*Y[jp]*Y[jc12]*rate_eval.p_C12__N13
+   -rho*Y[jp]*Y[jc13]*rate_eval.p_C13__N14
+   -rho*Y[jp]*Y[jn13]*rate_eval.p_N13__O14
+   -rho*Y[jp]*Y[jn15]*rate_eval.p_N15__He4_C12
+   -rho*Y[jp]*Y[jn14]*rate_eval.N14_p__O15__generic
    )
 
 """
@@ -89,8 +89,8 @@ class TestPythonCustomNetwork:
 
         func = \
 """@numba.njit()
-def n14_p__o15__generic(rate_eval, tf):
-    rate_eval.n14_p__o15__generic = 1.416655077954945e-13 * (tf.T9 * 1.e9 / 30000000.0 )**(15.601859314950396)
+def N14_p__O15__generic(rate_eval, tf):
+    rate_eval.N14_p__O15__generic = 1.416655077954945e-13 * (tf.T9 * 1.e9 / 30000000.0 )**(15.601859314950396)
 
 """
 

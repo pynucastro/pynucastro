@@ -27,7 +27,7 @@ from pynucastro.nucdata import Nucleus, PeriodicTable
 from pynucastro.rates import (ApproximateRate, DerivedRate, Library, Rate,
                               RateFileError, RatePair, TabularRate, Tfactors,
                               find_duplicate_rates, is_allowed_dupe, load_rate)
-from pynucastro.rates.library import _rate_name_to_nuc
+from pynucastro.rates.library import _rate_name_to_nuc, capitalize_rid
 from pynucastro.screening import make_plasma_state, make_screen_factors
 from pynucastro.screening.screen import NseState
 
@@ -710,7 +710,8 @@ class RateCollection:
         """ Return a rate matching the id provided.  Here rid should be
         the string return by Rate.fname"""
         try:
-            return [r for r in self.rates if r.fname == rid][0]
+            rid_mod = capitalize_rid(rid, "_")
+            return [r for r in self.rates if r.fname == rid_mod][0]
         except IndexError:
             raise LookupError(f"rate identifier {rid!r} does not match a rate in this network.") from None
 
@@ -1084,13 +1085,13 @@ class RateCollection:
             if not (scr.n1.dummy or scr.n2.dummy):
                 scn_fac = make_screen_factors(scr.n1, scr.n2)
                 scor = screen_func(plasma_state, scn_fac)
-            if scr.name == "he4_he4_he4":
+            if scr.name == "He4_He4_He4":
                 # we don't need to do anything here, but we want to avoid
                 # immediately applying the screening
                 pass
-            elif scr.name == "he4_he4_he4_dummy":
+            elif scr.name == "He4_He4_He4_dummy":
                 # make sure the previous iteration was the first part of 3-alpha
-                assert screening_map[i - 1].name == "he4_he4_he4"
+                assert screening_map[i - 1].name == "He4_He4_He4"
                 # handle the second part of the screening for 3-alpha
                 scn_fac2 = make_screen_factors(scr.n1, scr.n2)
                 scor2 = screen_func(plasma_state, scn_fac2)
@@ -1695,10 +1696,10 @@ class RateCollection:
 
                 scr[0].add_rate(r)
 
-                # if we got here because nuc == "he4_he4_he4",
-                # then we also have to add to "he4_he4_he4_dummy"
+                # if we got here because nuc == "He4_He4_He4",
+                # then we also have to add to "He4_He4_He4_dummy"
 
-                if nucs == "he4_he4_he4":
+                if nucs == "He4_He4_He4":
                     scr2 = [q for q in screening_map if q.name == nucs + "_dummy"]
                     assert len(scr2) == 1
 
@@ -1709,7 +1710,7 @@ class RateCollection:
                 # we handle 3-alpha specially -- we actually need
                 # 2 screening factors for it
 
-                if nucs == "he4_he4_he4":
+                if nucs == "He4_He4_He4":
                     # he4 + he4
                     scr1 = ScreeningPair(nucs, screen_nuclei[0], screen_nuclei[1], r)
 
