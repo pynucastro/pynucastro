@@ -66,6 +66,11 @@ void init_tab_info(const table_t& tf, const std::string& file, R& log_rhoy_table
     std::ifstream table;
     table.open(file);
 
+    if (!table.is_open()) {
+        // the table was not present or we could not open it; abort
+        amrex::Error("table could not be opened");
+    }
+
     std::string line;
 
     // read and skip over the header
@@ -79,6 +84,10 @@ void init_tab_info(const table_t& tf, const std::string& file, R& log_rhoy_table
     for (int j = 1; j <= tf.nrhoy; ++j) {
         for (int i = 1; i <= tf.ntemp; ++i) {
             std::getline(table, line);
+            if (line.empty()) {
+                amrex::Error("Error reading table data");
+            }
+
             std::istringstream sdata(line);
 
             sdata >> log_rhoy_table(j) >> log_temp_table(i);
@@ -245,8 +254,8 @@ evaluate_dr_dtemp(const table_t& table_meta, const R& log_rhoy_table, const T& l
         // Finally, we perform a 1d-linear interpolation between dlogr_dlogt_ip1
         // and dlogr_dlogt_i to compute dlogr_dlogt
 
-        Real log_rhoy_lo = log_temp_table(irhoy_lo);
-        Real log_rhoy_hi = log_temp_table(irhoy_hi);
+        Real log_rhoy_lo = log_rhoy_table(irhoy_lo);
+        Real log_rhoy_hi = log_rhoy_table(irhoy_hi);
 
         Real log_temp_lo = log_temp_table(jtemp_lo);
         Real log_temp_hi = log_temp_table(jtemp_hi);

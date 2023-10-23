@@ -185,6 +185,8 @@ void evaluate_rates(const burn_t& state, T& rate_eval) {
 
     [[maybe_unused]] Real rate, drate_dt, edot_nu, edot_gamma;
 
+    rate_eval.enuc_weak = 0.0;
+
 
 }
 
@@ -232,6 +234,7 @@ void actual_rhs (burn_t& state, Array1D<Real, 1, neqs>& ydot)
     rate_t rate_eval;
 
     constexpr int do_T_derivatives = 0;
+
     evaluate_rates<do_T_derivatives, rate_t>(state, rate_eval);
 
     rhs_nuc(state, ydot, Y, rate_eval.screened_rates);
@@ -241,7 +244,8 @@ void actual_rhs (burn_t& state, Array1D<Real, 1, neqs>& ydot)
     Real enuc;
     ener_gener_rate(ydot, enuc);
 
-    // include reaction neutrino losses (non-thermal) and gamma heating
+    // include any weak rate neutrino losses
+    enuc += rate_eval.enuc_weak;
 
     // Get the thermal neutrino losses
 
@@ -330,6 +334,7 @@ void actual_jac(const burn_t& state, MatrixType& jac)
     rate_derivs_t rate_eval;
 
     constexpr int do_T_derivatives = 1;
+
     evaluate_rates<do_T_derivatives, rate_derivs_t>(state, rate_eval);
 
     // Species Jacobian elements with respect to other species
