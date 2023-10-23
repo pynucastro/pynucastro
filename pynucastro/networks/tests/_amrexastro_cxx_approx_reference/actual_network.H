@@ -24,23 +24,23 @@ namespace Rates
 
     enum NetworkRates
     {
-        k_he4_mg24_to_si28_removed = 1,
-        k_he4_mg24_to_p_al27_removed = 2,
-        k_p_al27_to_si28_removed = 3,
-        k_si28_to_he4_mg24_removed = 4,
-        k_si28_to_p_al27_removed = 5,
-        k_p_al27_to_he4_mg24_removed = 6,
-        k_he4_si28_to_s32_removed = 7,
-        k_he4_si28_to_p_p31_removed = 8,
-        k_p_p31_to_s32_removed = 9,
-        k_s32_to_he4_si28_removed = 10,
-        k_s32_to_p_p31_removed = 11,
-        k_p_p31_to_he4_si28_removed = 12,
-        k_mg24_he4_to_si28_approx = 13,
-        k_si28_to_mg24_he4_approx = 14,
-        k_si28_he4_to_s32_approx = 15,
-        k_s32_to_si28_he4_approx = 16,
-        NumRates = k_s32_to_si28_he4_approx
+        k_He4_Mg24_to_Si28_removed = 1,
+        k_He4_Mg24_to_p_Al27_removed = 2,
+        k_p_Al27_to_Si28_removed = 3,
+        k_Si28_to_He4_Mg24_removed = 4,
+        k_Si28_to_p_Al27_removed = 5,
+        k_p_Al27_to_He4_Mg24_removed = 6,
+        k_He4_Si28_to_S32_removed = 7,
+        k_He4_Si28_to_p_P31_removed = 8,
+        k_p_P31_to_S32_removed = 9,
+        k_S32_to_He4_Si28_removed = 10,
+        k_S32_to_p_P31_removed = 11,
+        k_p_P31_to_He4_Si28_removed = 12,
+        k_Mg24_He4_to_Si28_approx = 13,
+        k_Si28_to_Mg24_He4_approx = 14,
+        k_Si28_He4_to_S32_approx = 15,
+        k_S32_to_Si28_He4_approx = 16,
+        NumRates = k_S32_to_Si28_He4_approx
     };
 
     // number of reaclib rates
@@ -57,22 +57,22 @@ namespace Rates
 
     static const std::vector<std::string> rate_names = {
         "",   // 0
-        "he4_mg24_to_si28_removed",  // 1,
-        "he4_mg24_to_p_al27_removed",  // 2,
-        "p_al27_to_si28_removed",  // 3,
-        "si28_to_he4_mg24_removed",  // 4,
-        "si28_to_p_al27_removed",  // 5,
-        "p_al27_to_he4_mg24_removed",  // 6,
-        "he4_si28_to_s32_removed",  // 7,
-        "he4_si28_to_p_p31_removed",  // 8,
-        "p_p31_to_s32_removed",  // 9,
-        "s32_to_he4_si28_removed",  // 10,
-        "s32_to_p_p31_removed",  // 11,
-        "p_p31_to_he4_si28_removed",  // 12,
-        "mg24_he4_to_si28_approx",  // 13,
-        "si28_to_mg24_he4_approx",  // 14,
-        "si28_he4_to_s32_approx",  // 15,
-        "s32_to_si28_he4_approx"  // 16,
+        "He4_Mg24_to_Si28_removed",  // 1,
+        "He4_Mg24_to_p_Al27_removed",  // 2,
+        "p_Al27_to_Si28_removed",  // 3,
+        "Si28_to_He4_Mg24_removed",  // 4,
+        "Si28_to_p_Al27_removed",  // 5,
+        "p_Al27_to_He4_Mg24_removed",  // 6,
+        "He4_Si28_to_S32_removed",  // 7,
+        "He4_Si28_to_p_P31_removed",  // 8,
+        "p_P31_to_S32_removed",  // 9,
+        "S32_to_He4_Si28_removed",  // 10,
+        "S32_to_p_P31_removed",  // 11,
+        "p_P31_to_He4_Si28_removed",  // 12,
+        "Mg24_He4_to_Si28_approx",  // 13,
+        "Si28_to_Mg24_He4_approx",  // 14,
+        "Si28_He4_to_S32_approx",  // 15,
+        "S32_to_Si28_He4_approx"  // 16,
     };
 
 }
@@ -80,9 +80,9 @@ namespace Rates
 #ifdef NSE_NET
 namespace NSE_INDEX
 {
-    constexpr int h1_index = -1;
-    constexpr int n_index = -1;
-    constexpr int he4_index = 0;
+    constexpr int H1_index = -1;
+    constexpr int N_index = -1;
+    constexpr int He4_index = 0;
 
     // Each row corresponds to the rate in NetworkRates enum
     // First 3 row indices for reactants, followed by 3 product indices

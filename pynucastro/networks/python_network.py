@@ -18,9 +18,9 @@ class PythonNetwork(RateCollection):
         ostr = ""
         if not self.nuclei_consumed[nucleus] + self.nuclei_produced[nucleus]:
             # this captures an inert nucleus
-            ostr += f"{indent}dYdt[j{nucleus}] = 0.0\n\n"
+            ostr += f"{indent}dYdt[j{nucleus.raw}] = 0.0\n\n"
         else:
-            ostr += f"{indent}dYdt[j{nucleus}] = (\n"
+            ostr += f"{indent}dYdt[j{nucleus.raw}] = (\n"
             for r in self.nuclei_consumed[nucleus]:
                 c = r.reactants.count(nucleus)
                 if c == 1:
@@ -41,7 +41,7 @@ class PythonNetwork(RateCollection):
         """return the Jacobian element dYdot(ydot_i_nucleus)/dY(y_j_nucleus)"""
 
         # this is the jac(i,j) string
-        idx_str = f"jac[j{ydot_i_nucleus}, j{y_j_nucleus}]"
+        idx_str = f"jac[j{ydot_i_nucleus.raw}, j{y_j_nucleus.raw}]"
 
         ostr = ""
         if not self.nuclei_consumed[ydot_i_nucleus] + self.nuclei_produced[ydot_i_nucleus]:
@@ -93,13 +93,13 @@ class PythonNetwork(RateCollection):
                 ostr += f"\n{indent}scn_fac = ScreenFactors({scr.n1.Z}, {scr.n1.A}, {scr.n2.Z}, {scr.n2.A})\n"
                 ostr += f"{indent}scor = screen_func(plasma_state, scn_fac)\n"
 
-            if scr.name == "he4_he4_he4":
+            if scr.name == "He4_He4_He4":
                 # we don't need to do anything here, but we want to avoid immediately applying the screening
                 pass
 
-            elif scr.name == "he4_he4_he4_dummy":
+            elif scr.name == "He4_He4_He4_dummy":
                 # make sure the previous iteration was the first part of 3-alpha
-                assert screening_map[i - 1].name == "he4_he4_he4"
+                assert screening_map[i - 1].name == "He4_He4_He4"
                 # handle the second part of the screening for 3-alpha
                 ostr += f"{indent}scn_fac2 = ScreenFactors({scr.n1.Z}, {scr.n1.A}, {scr.n2.Z}, {scr.n2.A})\n"
                 ostr += f"{indent}scor2 = screen_func(plasma_state, scn_fac2)\n"
@@ -177,7 +177,7 @@ class PythonNetwork(RateCollection):
         # integer keys
 
         for i, n in enumerate(self.unique_nuclei):
-            of.write(f"j{n} = {i}\n")
+            of.write(f"j{n.raw} = {i}\n")
 
         of.write(f"nnuc = {len(self.unique_nuclei)}\n\n")
 
@@ -185,19 +185,22 @@ class PythonNetwork(RateCollection):
 
         of.write("A = np.zeros((nnuc), dtype=np.int32)\n\n")
         for n in self.unique_nuclei:
-            of.write(f"A[j{n}] = {n.A}\n")
+            of.write(f"A[j{n.raw}] = {n.A}\n")
 
         of.write("\n")
 
         of.write("Z = np.zeros((nnuc), dtype=np.int32)\n\n")
         for n in self.unique_nuclei:
-            of.write(f"Z[j{n}] = {n.Z}\n")
+            of.write(f"Z[j{n.raw}] = {n.Z}\n")
 
         of.write("\n")
 
         of.write("names = []\n")
         for n in self.unique_nuclei:
-            of.write(f"names.append(\"{n.short_spec_name}\")\n")
+            name = n.short_spec_name
+            if name != "n":
+                name = name.capitalize()
+            of.write(f"names.append(\"{name}\")\n")
 
         of.write("\n")
 
