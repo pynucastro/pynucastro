@@ -7,10 +7,10 @@ The easiest way to install pynucastro is via pip:
 
    pip install pynucastro
 
-Alternately, you can clone the source and install it locally using the ``setup.py`` via:
+Alternately, you can clone the source and install it locally via:
 
 .. prompt:: bash
 
    git clone https://github.com/pynucastro/pynucastro.git
    cd pynucastro
-   python setup.py install --user
+   pip install --user .
