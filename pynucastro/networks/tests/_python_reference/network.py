@@ -7,41 +7,41 @@ from pynucastro.screening import PlasmaState, ScreenFactors
 
 jn = 0
 jp = 1
-jHe4 = 2
-jC12 = 3
-jO16 = 4
-jNe20 = 5
-jNe23 = 6
-jNa23 = 7
-jMg23 = 8
+jhe4 = 2
+jc12 = 3
+jo16 = 4
+jne20 = 5
+jne23 = 6
+jna23 = 7
+jmg23 = 8
 nnuc = 9
 
 A = np.zeros((nnuc), dtype=np.int32)
 
 A[jn] = 1
 A[jp] = 1
-A[jHe4] = 4
-A[jC12] = 12
-A[jO16] = 16
-A[jNe20] = 20
-A[jNe23] = 23
-A[jNa23] = 23
-A[jMg23] = 23
+A[jhe4] = 4
+A[jc12] = 12
+A[jo16] = 16
+A[jne20] = 20
+A[jne23] = 23
+A[jna23] = 23
+A[jmg23] = 23
 
 Z = np.zeros((nnuc), dtype=np.int32)
 
 Z[jn] = 0
 Z[jp] = 1
-Z[jHe4] = 2
-Z[jC12] = 6
-Z[jO16] = 8
-Z[jNe20] = 10
-Z[jNe23] = 10
-Z[jNa23] = 11
-Z[jMg23] = 12
+Z[jhe4] = 2
+Z[jc12] = 6
+Z[jo16] = 8
+Z[jne20] = 10
+Z[jne23] = 10
+Z[jna23] = 11
+Z[jmg23] = 12
 
 names = []
-names.append("N")
+names.append("n")
 names.append("H1")
 names.append("He4")
 names.append("C12")
@@ -230,49 +230,49 @@ def rhs_eq(t, Y, rho, T, screen_func):
 
     dYdt[jn] = (
        -Y[jn]*rate_eval.n__p__weak__wc12
-       +5.00000000000000e-01*rho*Y[jC12]**2*rate_eval.C12_C12__n_Mg23
+       +5.00000000000000e-01*rho*Y[jc12]**2*rate_eval.C12_C12__n_Mg23
        )
 
     dYdt[jp] = (
-       +5.00000000000000e-01*rho*Y[jC12]**2*rate_eval.C12_C12__p_Na23
+       +5.00000000000000e-01*rho*Y[jc12]**2*rate_eval.C12_C12__p_Na23
        +Y[jn]*rate_eval.n__p__weak__wc12
        )
 
-    dYdt[jHe4] = (
-       -rho*Y[jHe4]*Y[jC12]*rate_eval.He4_C12__O16
-       -3*1.66666666666667e-01*rho**2*Y[jHe4]**3*rate_eval.He4_He4_He4__C12
-       +5.00000000000000e-01*rho*Y[jC12]**2*rate_eval.C12_C12__He4_Ne20
+    dYdt[jhe4] = (
+       -rho*Y[jhe4]*Y[jc12]*rate_eval.He4_C12__O16
+       -3*1.66666666666667e-01*rho**2*Y[jhe4]**3*rate_eval.He4_He4_He4__C12
+       +5.00000000000000e-01*rho*Y[jc12]**2*rate_eval.C12_C12__He4_Ne20
        )
 
-    dYdt[jC12] = (
-       -2*5.00000000000000e-01*rho*Y[jC12]**2*rate_eval.C12_C12__He4_Ne20
-       -2*5.00000000000000e-01*rho*Y[jC12]**2*rate_eval.C12_C12__n_Mg23
-       -2*5.00000000000000e-01*rho*Y[jC12]**2*rate_eval.C12_C12__p_Na23
-       -rho*Y[jHe4]*Y[jC12]*rate_eval.He4_C12__O16
-       +1.66666666666667e-01*rho**2*Y[jHe4]**3*rate_eval.He4_He4_He4__C12
+    dYdt[jc12] = (
+       -2*5.00000000000000e-01*rho*Y[jc12]**2*rate_eval.C12_C12__He4_Ne20
+       -2*5.00000000000000e-01*rho*Y[jc12]**2*rate_eval.C12_C12__n_Mg23
+       -2*5.00000000000000e-01*rho*Y[jc12]**2*rate_eval.C12_C12__p_Na23
+       -rho*Y[jhe4]*Y[jc12]*rate_eval.He4_C12__O16
+       +1.66666666666667e-01*rho**2*Y[jhe4]**3*rate_eval.He4_He4_He4__C12
        )
 
-    dYdt[jO16] = (
-       +rho*Y[jHe4]*Y[jC12]*rate_eval.He4_C12__O16
+    dYdt[jo16] = (
+       +rho*Y[jhe4]*Y[jc12]*rate_eval.He4_C12__O16
        )
 
-    dYdt[jNe20] = (
-       +5.00000000000000e-01*rho*Y[jC12]**2*rate_eval.C12_C12__He4_Ne20
+    dYdt[jne20] = (
+       +5.00000000000000e-01*rho*Y[jc12]**2*rate_eval.C12_C12__He4_Ne20
        )
 
-    dYdt[jNe23] = (
-       -Y[jNe23]*rate_eval.Ne23__Na23
-       +Y[jNa23]*rate_eval.Na23__Ne23
+    dYdt[jne23] = (
+       -Y[jne23]*rate_eval.Ne23__Na23
+       +Y[jna23]*rate_eval.Na23__Ne23
        )
 
-    dYdt[jNa23] = (
-       -Y[jNa23]*rate_eval.Na23__Ne23
-       +5.00000000000000e-01*rho*Y[jC12]**2*rate_eval.C12_C12__p_Na23
-       +Y[jNe23]*rate_eval.Ne23__Na23
+    dYdt[jna23] = (
+       -Y[jna23]*rate_eval.Na23__Ne23
+       +5.00000000000000e-01*rho*Y[jc12]**2*rate_eval.C12_C12__p_Na23
+       +Y[jne23]*rate_eval.Ne23__Na23
        )
 
-    dYdt[jMg23] = (
-       +5.00000000000000e-01*rho*Y[jC12]**2*rate_eval.C12_C12__n_Mg23
+    dYdt[jmg23] = (
+       +5.00000000000000e-01*rho*Y[jc12]**2*rate_eval.C12_C12__n_Mg23
        )
 
     return dYdt
@@ -323,74 +323,74 @@ def jacobian_eq(t, Y, rho, T, screen_func):
        -rate_eval.n__p__weak__wc12
        )
 
-    jac[jn, jC12] = (
-       +5.00000000000000e-01*rho*2*Y[jC12]*rate_eval.C12_C12__n_Mg23
+    jac[jn, jc12] = (
+       +5.00000000000000e-01*rho*2*Y[jc12]*rate_eval.C12_C12__n_Mg23
        )
 
     jac[jp, jn] = (
        +rate_eval.n__p__weak__wc12
        )
 
-    jac[jp, jC12] = (
-       +5.00000000000000e-01*rho*2*Y[jC12]*rate_eval.C12_C12__p_Na23
+    jac[jp, jc12] = (
+       +5.00000000000000e-01*rho*2*Y[jc12]*rate_eval.C12_C12__p_Na23
        )
 
-    jac[jHe4, jHe4] = (
-       -rho*Y[jC12]*rate_eval.He4_C12__O16
-       -3*1.66666666666667e-01*rho**2*3*Y[jHe4]**2*rate_eval.He4_He4_He4__C12
+    jac[jhe4, jhe4] = (
+       -rho*Y[jc12]*rate_eval.He4_C12__O16
+       -3*1.66666666666667e-01*rho**2*3*Y[jhe4]**2*rate_eval.He4_He4_He4__C12
        )
 
-    jac[jHe4, jC12] = (
-       -rho*Y[jHe4]*rate_eval.He4_C12__O16
-       +5.00000000000000e-01*rho*2*Y[jC12]*rate_eval.C12_C12__He4_Ne20
+    jac[jhe4, jc12] = (
+       -rho*Y[jhe4]*rate_eval.He4_C12__O16
+       +5.00000000000000e-01*rho*2*Y[jc12]*rate_eval.C12_C12__He4_Ne20
        )
 
-    jac[jC12, jHe4] = (
-       -rho*Y[jC12]*rate_eval.He4_C12__O16
-       +1.66666666666667e-01*rho**2*3*Y[jHe4]**2*rate_eval.He4_He4_He4__C12
+    jac[jc12, jhe4] = (
+       -rho*Y[jc12]*rate_eval.He4_C12__O16
+       +1.66666666666667e-01*rho**2*3*Y[jhe4]**2*rate_eval.He4_He4_He4__C12
        )
 
-    jac[jC12, jC12] = (
-       -2*5.00000000000000e-01*rho*2*Y[jC12]*rate_eval.C12_C12__He4_Ne20
-       -2*5.00000000000000e-01*rho*2*Y[jC12]*rate_eval.C12_C12__n_Mg23
-       -2*5.00000000000000e-01*rho*2*Y[jC12]*rate_eval.C12_C12__p_Na23
-       -rho*Y[jHe4]*rate_eval.He4_C12__O16
+    jac[jc12, jc12] = (
+       -2*5.00000000000000e-01*rho*2*Y[jc12]*rate_eval.C12_C12__He4_Ne20
+       -2*5.00000000000000e-01*rho*2*Y[jc12]*rate_eval.C12_C12__n_Mg23
+       -2*5.00000000000000e-01*rho*2*Y[jc12]*rate_eval.C12_C12__p_Na23
+       -rho*Y[jhe4]*rate_eval.He4_C12__O16
        )
 
-    jac[jO16, jHe4] = (
-       +rho*Y[jC12]*rate_eval.He4_C12__O16
+    jac[jo16, jhe4] = (
+       +rho*Y[jc12]*rate_eval.He4_C12__O16
        )
 
-    jac[jO16, jC12] = (
-       +rho*Y[jHe4]*rate_eval.He4_C12__O16
+    jac[jo16, jc12] = (
+       +rho*Y[jhe4]*rate_eval.He4_C12__O16
        )
 
-    jac[jNe20, jC12] = (
-       +5.00000000000000e-01*rho*2*Y[jC12]*rate_eval.C12_C12__He4_Ne20
+    jac[jne20, jc12] = (
+       +5.00000000000000e-01*rho*2*Y[jc12]*rate_eval.C12_C12__He4_Ne20
        )
 
-    jac[jNe23, jNe23] = (
+    jac[jne23, jne23] = (
        -rate_eval.Ne23__Na23
        )
 
-    jac[jNe23, jNa23] = (
+    jac[jne23, jna23] = (
        +rate_eval.Na23__Ne23
        )
 
-    jac[jNa23, jC12] = (
-       +5.00000000000000e-01*rho*2*Y[jC12]*rate_eval.C12_C12__p_Na23
+    jac[jna23, jc12] = (
+       +5.00000000000000e-01*rho*2*Y[jc12]*rate_eval.C12_C12__p_Na23
        )
 
-    jac[jNa23, jNe23] = (
+    jac[jna23, jne23] = (
        +rate_eval.Ne23__Na23
        )
 
-    jac[jNa23, jNa23] = (
+    jac[jna23, jna23] = (
        -rate_eval.Na23__Ne23
        )
 
-    jac[jMg23, jC12] = (
-       +5.00000000000000e-01*rho*2*Y[jC12]*rate_eval.C12_C12__n_Mg23
+    jac[jmg23, jc12] = (
+       +5.00000000000000e-01*rho*2*Y[jc12]*rate_eval.C12_C12__n_Mg23
        )
 
     return jac
