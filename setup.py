@@ -1,4 +1,4 @@
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 setup(name='pynucastro',
       description='A python library for nuclear astrophysics',
@@ -22,7 +22,5 @@ setup(name='pynucastro',
       install_requires=['networkx', 'numpy', 'sympy',
                         'scipy', 'matplotlib', 'ipywidgets'],
       extras_require={"numba": ["numba"]},
-      use_scm_version={"version_scheme": "post-release",
-                       "write_to": "pynucastro/_version.py"},
       setup_requires=["setuptools_scm"],
       zip_safe=False)
