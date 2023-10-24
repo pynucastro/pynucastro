@@ -2,8 +2,8 @@
   * `AmrexAstroCxxNetwork` now capitalizes the species names to be
     consistent with other AMReX-Astro Microphysics networks (#652)
 
-  * The pynucastro configuration was updated and reorganized to
-    pyproject.toml (#657, #660, #661)
+  * The pynucastro project configuration was updated and reorganized
+    to pyproject.toml (#657, #660, #661)
 
   * `Library.get_rate_by_name` no longer returns None if one of
     the input rate names is not found (#659)
