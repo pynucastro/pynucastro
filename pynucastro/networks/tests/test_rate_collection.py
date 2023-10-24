@@ -13,18 +13,18 @@ class TestRateCollection:
         rr = rc.get_rates()
 
         assert len(rr) == 4
-        assert rr[0].fname == "o16__he4_c12"
-        assert rr[1].fname == "c12__he4_he4_he4"
-        assert rr[2].fname == "he4_c12__o16"
-        assert rr[3].fname == "he4_he4_he4__c12"
+        assert rr[0].fname == "O16__He4_C12"
+        assert rr[1].fname == "C12__He4_He4_He4"
+        assert rr[2].fname == "He4_C12__O16"
+        assert rr[3].fname == "He4_He4_He4__C12"
 
     def test_get_rate(self, rc):
-        r = rc.get_rate("he4_he4_he4__c12")
-        assert r.fname == "he4_he4_he4__c12"
+        r = rc.get_rate("He4_He4_He4__C12")
+        assert r.fname == "He4_He4_He4__C12"
 
     def test_find_reverse(self, rc):
-        rr = rc.find_reverse(rc.get_rate("he4_c12__o16"))
-        assert rr.fname == "o16__he4_c12"
+        rr = rc.find_reverse(rc.get_rate("He4_C12__O16"))
+        assert rr.fname == "O16__He4_C12"
 
     def test_evaluate_energy_gen(self, rc):
         # define a composition

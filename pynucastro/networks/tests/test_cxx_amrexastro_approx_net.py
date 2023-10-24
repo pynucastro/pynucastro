@@ -4,7 +4,6 @@ import shutil
 import pytest
 
 import pynucastro as pyna
-from pynucastro.networks.tests.helpers import compare_network_files
 
 
 class TestAmrexAstroCxxNetwork:
@@ -18,7 +17,7 @@ class TestAmrexAstroCxxNetwork:
         fn = net
         return fn
 
-    def test_write_network(self, fn):
+    def test_write_network(self, fn, compare_network_files):
         """ test the write_network function"""
         test_path = "_test_cxx_approx/"
         # subdirectory of pynucastro/networks/tests/

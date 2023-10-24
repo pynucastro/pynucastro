@@ -24,13 +24,13 @@ namespace Rates
 
     enum NetworkRates
     {
-        k_he4_fe52_to_ni56 = 1,
-        k_p_co55_to_ni56 = 2,
-        k_he4_fe52_to_p_co55 = 3,
-        k_ni56_to_he4_fe52_derived = 4,
-        k_ni56_to_p_co55_derived = 5,
-        k_p_co55_to_he4_fe52_derived = 6,
-        NumRates = k_p_co55_to_he4_fe52_derived
+        k_He4_Fe52_to_Ni56 = 1,
+        k_p_Co55_to_Ni56 = 2,
+        k_He4_Fe52_to_p_Co55 = 3,
+        k_Ni56_to_He4_Fe52_derived = 4,
+        k_Ni56_to_p_Co55_derived = 5,
+        k_p_Co55_to_He4_Fe52_derived = 6,
+        NumRates = k_p_Co55_to_He4_Fe52_derived
     };
 
     // number of reaclib rates
@@ -47,12 +47,12 @@ namespace Rates
 
     static const std::vector<std::string> rate_names = {
         "",   // 0
-        "he4_fe52_to_ni56",  // 1,
-        "p_co55_to_ni56",  // 2,
-        "he4_fe52_to_p_co55",  // 3,
-        "ni56_to_he4_fe52_derived",  // 4,
-        "ni56_to_p_co55_derived",  // 5,
-        "p_co55_to_he4_fe52_derived"  // 6,
+        "He4_Fe52_to_Ni56",  // 1,
+        "p_Co55_to_Ni56",  // 2,
+        "He4_Fe52_to_p_Co55",  // 3,
+        "Ni56_to_He4_Fe52_derived",  // 4,
+        "Ni56_to_p_Co55_derived",  // 5,
+        "p_Co55_to_He4_Fe52_derived"  // 6,
     };
 
 }
@@ -60,9 +60,9 @@ namespace Rates
 #ifdef NSE_NET
 namespace NSE_INDEX
 {
-    constexpr int h1_index = 0;
-    constexpr int n_index = -1;
-    constexpr int he4_index = 1;
+    constexpr int H1_index = 0;
+    constexpr int N_index = -1;
+    constexpr int He4_index = 1;
 
     // Each row corresponds to the rate in NetworkRates enum
     // First 3 row indices for reactants, followed by 3 product indices

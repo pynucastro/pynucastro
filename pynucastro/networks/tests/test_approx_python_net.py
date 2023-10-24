@@ -34,10 +34,10 @@ class TestPythonNetwork:
     def test_full_ydot_string(self, pynet):
         ostr = \
 """dYdt[jhe4] = (
-   -rho*Y[jhe4]*Y[jmg24]*rate_eval.mg24_he4__si28__approx
-   -rho*Y[jhe4]*Y[jsi28]*rate_eval.si28_he4__s32__approx
-   +Y[jsi28]*rate_eval.si28__mg24_he4__approx
-   +Y[js32]*rate_eval.s32__si28_he4__approx
+   -rho*Y[jhe4]*Y[jmg24]*rate_eval.Mg24_He4__Si28__approx
+   -rho*Y[jhe4]*Y[jsi28]*rate_eval.Si28_He4__S32__approx
+   +Y[jsi28]*rate_eval.Si28__Mg24_He4__approx
+   +Y[js32]*rate_eval.S32__Si28_He4__approx
    )
 
 """
@@ -48,13 +48,13 @@ class TestPythonNetwork:
 
         ostr = \
 """@numba.njit()
-def mg24_he4__si28__approx(rate_eval, tf):
-    r_ag = rate_eval.he4_mg24__si28__removed
-    r_ap = rate_eval.he4_mg24__p_al27__removed
-    r_pg = rate_eval.p_al27__si28__removed
-    r_pa = rate_eval.p_al27__he4_mg24__removed
+def Mg24_He4__Si28__approx(rate_eval, tf):
+    r_ag = rate_eval.He4_Mg24__Si28__removed
+    r_ap = rate_eval.He4_Mg24__p_Al27__removed
+    r_pg = rate_eval.p_Al27__Si28__removed
+    r_pa = rate_eval.p_Al27__He4_Mg24__removed
     rate = r_ag + r_ap * r_pg / (r_pg + r_pa)
-    rate_eval.mg24_he4__si28__approx = rate
+    rate_eval.Mg24_He4__Si28__approx = rate
 
 """
         r = pynet.get_rate("mg24_he4__si28__approx")
@@ -64,8 +64,8 @@ def mg24_he4__si28__approx(rate_eval, tf):
 
         ostr = \
 """@numba.njit()
-def he4_mg24__si28__removed(rate_eval, tf):
-    # mg24 + he4 --> si28
+def He4_Mg24__Si28__removed(rate_eval, tf):
+    # Mg24 + He4 --> Si28
     rate = 0.0
 
     # st08r
@@ -75,11 +75,12 @@ def he4_mg24__si28__removed(rate_eval, tf):
     rate += np.exp(  8.03977 + -15.629*tf.T9i
                   + -1.5*tf.lnT9)
 
-    rate_eval.he4_mg24__si28__removed = rate
+    rate_eval.He4_Mg24__Si28__removed = rate
 
 """
 
         r = pynet.get_rate("mg24_he4__si28__approx")
+        print(r)
         assert r.get_child_rates()[0].function_string_py().strip() == ostr.strip()
 
     def test_integrating(self, pynet):
@@ -121,7 +122,7 @@ def he4_mg24__si28__removed(rate_eval, tf):
 
         Y = np.zeros(app.nnuc)
         for nuc, molar_fraction in comp_orig.get_molar().items():
-            Y[app.names.index(nuc.short_spec_name)] = molar_fraction
+            Y[app.names.index(nuc.caps_name)] = molar_fraction
         comp_new = app.to_composition(Y)
 
         assert comp_new.X == comp_orig.X
