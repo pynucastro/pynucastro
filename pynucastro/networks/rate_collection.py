@@ -1159,10 +1159,10 @@ class RateCollection:
     def _nucleon_fraction_nse(self, u, u_c, state):
 
         # Define constants: amu, boltzmann, planck, and electron charge
-        m_u = constants.value("unified atomic mass unit") * 1.0e3  # atomic unit mass in g
-        k = constants.value("Boltzmann constant") * 1.0e7          # boltzmann in erg/K
-        h = constants.value("Planck constant") * 1.0e7             # in cgs
-        Erg2MeV = 624151.0
+        m_u = constants.value("unified atomic mass unit") * constants.kilo  # atomic unit mass in g
+        k = constants.value("Boltzmann constant") / constants.erg           # boltzmann in erg/K
+        h = constants.value("Planck constant") / constants.erg              # in cgs
+        Erg2MeV = constants.erg / (constants.eV * constants.mega)
 
         Xs = {}
         up_c = u_c[Nucleus("p")]
@@ -1176,10 +1176,10 @@ class RateCollection:
             if not nuc.spin_states:
                 raise ValueError(f"The spin of {nuc} is not implemented for now.")
 
-            nse_exponent = (nuc.Z * u[0] + nuc.N * u[1] - u_c[nuc] + nuc.Z * up_c + nuc.nucbind * nuc.A) / k / state.temp / Erg2MeV
+            nse_exponent = (nuc.Z * u[0] + nuc.N * u[1] - u_c[nuc] + nuc.Z * up_c + nuc.nucbind * nuc.A) / (k * state.temp * Erg2MeV)
             nse_exponent = min(500.0, nse_exponent)
 
-            Xs[nuc] = m_u * nuc.A_nuc * pf * nuc.spin_states / state.dens * (2.0 * np.pi * m_u * nuc.A_nuc * k * state.temp / h**2) ** (3. / 2.) \
+            Xs[nuc] = m_u * nuc.A_nuc * pf * nuc.spin_states / state.dens * (2.0 * np.pi * m_u * nuc.A_nuc * k * state.temp / h**2) ** 1.5 \
                     * np.exp(nse_exponent)
 
         return Xs
@@ -1193,13 +1193,8 @@ class RateCollection:
 
         Xs = self._nucleon_fraction_nse(u, u_c, state)
 
-        eq1 = -1.0
-        for nuc in self.unique_nuclei:
-            eq1 += Xs[nuc]
-
-        eq2 = -state.ye
-        for nuc in self.unique_nuclei:
-            eq2 += Xs[nuc] * nuc.Z / nuc.A
+        eq1 = sum(Xs[nuc] for nuc in self.unique_nuclei) - 1.0
+        eq2 = sum(Xs[nuc] * nuc.Z / nuc.A for nuc in self.unique_nuclei) - state.ye
 
         return [eq1, eq2]
 
