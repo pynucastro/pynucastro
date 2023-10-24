@@ -28,8 +28,8 @@ from pynucastro.rates import (ApproximateRate, DerivedRate, Library, Rate,
                               RateFileError, RatePair, TabularRate, Tfactors,
                               find_duplicate_rates, is_allowed_dupe, load_rate)
 from pynucastro.rates.library import _rate_name_to_nuc, capitalize_rid
-from pynucastro.screening import make_plasma_state, make_screen_factors
-from pynucastro.screening import NseState, get_screening_map
+from pynucastro.screening import (NseState, get_screening_map,
+                                  make_plasma_state, make_screen_factors)
 
 mpl.rcParams['figure.dpi'] = 100
 
