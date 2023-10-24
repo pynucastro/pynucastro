@@ -29,7 +29,7 @@ from pynucastro.rates import (ApproximateRate, DerivedRate, Library, Rate,
                               find_duplicate_rates, is_allowed_dupe, load_rate)
 from pynucastro.rates.library import _rate_name_to_nuc, capitalize_rid
 from pynucastro.screening import make_plasma_state, make_screen_factors
-from pynucastro.screening.screen import NseState, get_screening_map
+from pynucastro.screening import NseState, get_screening_map
 
 mpl.rcParams['figure.dpi'] = 100
 
@@ -1050,7 +1050,8 @@ class RateCollection:
         if not self.do_screening:
             screening_map = []
         else:
-            screening_map = get_screening_map(self.get_rates())
+            screening_map = get_screening_map(self.get_rates(),
+                                              symmetric_screening=self.symmetric_screening)
 
         for i, scr in enumerate(screening_map):
             if not (scr.n1.dummy or scr.n2.dummy):

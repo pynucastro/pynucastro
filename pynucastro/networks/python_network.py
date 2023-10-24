@@ -7,7 +7,7 @@ import sys
 
 from pynucastro.networks.rate_collection import RateCollection
 from pynucastro.rates.rate import ApproximateRate
-
+from pynucastro.screening import get_screening_map
 
 class PythonNetwork(RateCollection):
     """A pure python reaction network."""
@@ -86,7 +86,12 @@ class PythonNetwork(RateCollection):
         ostr = ""
         ostr += f"{indent}plasma_state = PlasmaState(T, rho, Y, Z)\n"
 
-        screening_map = self.get_screening_map()
+        if not self.do_screening:
+            screening_map = []
+        else:
+            screening_map = get_screening_map(self.get_rates(),
+                                              symmetric_screening=self.symmetric_screening)
+
         for i, scr in enumerate(screening_map):
             if not (scr.n1.dummy or scr.n2.dummy):
                 # calculate the screening factor
