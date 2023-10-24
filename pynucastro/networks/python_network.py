@@ -9,6 +9,7 @@ from pynucastro.networks.rate_collection import RateCollection
 from pynucastro.rates.rate import ApproximateRate
 from pynucastro.screening import get_screening_map
 
+
 class PythonNetwork(RateCollection):
     """A pure python reaction network."""
 

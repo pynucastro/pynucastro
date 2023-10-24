@@ -6,6 +6,7 @@ import pytest
 import pynucastro as pyna
 from pynucastro.screening import get_screening_map
 
+
 class TestApproxScreening:
     @pytest.fixture(scope="class")
     def mynet(self, reaclib_library):
