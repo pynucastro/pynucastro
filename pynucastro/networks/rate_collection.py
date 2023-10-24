@@ -1332,9 +1332,16 @@ class RateCollection:
 
         return ydots
 
-    def evaluate_energy_generation(self, rho, T, composition, screen_func=None):
+    def evaluate_energy_generation(self, rho, T, composition,
+                                   screen_func=None, return_enu=False):
         """evaluate the specific energy generation rate of the network for a specific
-        density, temperature and composition"""
+        density, temperature and composition
+
+        screen_func: (optional) a function object to call to apply screening
+
+        return_enu: (optional) return both enuc and enu -- the energy loss
+        from neutrinos from weak reactions
+        """
 
         ydots = self.evaluate_ydots(rho, T, composition, screen_func)
         enuc = 0.
@@ -1351,10 +1358,11 @@ class RateCollection:
             mass = ((nuc.A - nuc.Z) * m_n_MeV + nuc.Z * (m_p_MeV + m_e_MeV) - nuc.A * nuc.nucbind) * MeV2erg
             enuc += ydots[nuc] * mass
 
-        #convert from molar value to erg/g/s
+        # convert from molar value to erg/g/s
         enuc *= -1*constants.Avogadro
 
-        #subtract neutrino losses for tabular weak reactions
+        # subtract neutrino losses for tabular weak reactions
+        enu = 0.0
         for r in self.rates:
             if isinstance(r, TabularRate):
                 # get composition
@@ -1363,8 +1371,11 @@ class RateCollection:
 
                 # need to get reactant nucleus
                 nuc = r.reactants[0]
-                enuc -= constants.Avogadro * ys[nuc] * r.get_nu_loss(T, rho * y_e)
+                enu += constants.Avogadro * ys[nuc] * r.get_nu_loss(T, rho * y_e)
 
+        enuc -= enu
+        if return_enu:
+            return enuc, enu
         return enuc
 
     def evaluate_activity(self, rho, T, composition, screen_func=None):
