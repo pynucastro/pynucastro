@@ -29,6 +29,13 @@ directory, run:
 py.test-3 -v .
 ```
 
+To regenerate the reference network output files used in the unit
+tests, run:
+
+```
+pytest -v --update-networks -k write_network
+```
+
 Once you have run the unit tests and submitted the PR, one of the
 pynucastro developers will review the PR and if needed, suggest
 modifications prior to merging the PR.
