@@ -1,5 +1,6 @@
 """Some helper functions for determining which rates need screening"""
 
+from pynucastro.nucdata import Nucleus
 from pynucastro.rates import ApproximateRate
 
 
