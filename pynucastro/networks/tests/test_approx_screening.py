@@ -4,6 +4,7 @@
 import pytest
 
 import pynucastro as pyna
+from pynucastro.screening import get_screening_map
 
 
 class TestApproxScreening:
@@ -27,7 +28,8 @@ class TestApproxScreening:
         return pynet
 
     def test_symmetric_screening(self, pynet_symmetric):
-        screening_map = pynet_symmetric.get_screening_map()
+        screening_map = get_screening_map(pynet_symmetric.get_rates(),
+                                          symmetric_screening=pynet_symmetric.symmetric_screening)
 
         # all of the reaclib rates that are 2 body (and not "n") should have
         # be in the screening map
@@ -49,7 +51,8 @@ class TestApproxScreening:
                 assert len(r_scn) == 1
 
     def test_screening(self, pynet):
-        screening_map = pynet.get_screening_map()
+        screening_map = get_screening_map(pynet.get_rates(),
+                                          symmetric_screening=pynet.symmetric_screening)
 
         # all of the reaclib rates that are 2 body (and not "n") should have
         # be in the screening map
