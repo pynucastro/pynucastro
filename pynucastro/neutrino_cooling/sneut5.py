@@ -218,7 +218,6 @@ def sneut5(rho, T, comp=None, *, abar=None, zbar=None,
     twoth = 2.0 / 3.0
     con1 = 1.0 / 5.9302e0
     sixth = 1.0 / 6.0
-    iln10 = 4.342944819032518e-1
 
     # theta is sin**2(theta_weinberg) = 0.2319 plus/minus 0.00005 (1996)
     # xnufam is the number of neutrino flavors = 3.02 plus/minus 0.005 (1998)
@@ -560,7 +559,6 @@ def sneut5(rho, T, comp=None, *, abar=None, zbar=None,
     sin3 = np.sin(fac1 * 3.0 * tau)
     sin4 = np.sin(fac1 * 4.0 * tau)
     sin5 = np.sin(fac1 * 5.0 * tau)
-    xast = np.sin(fac2 * tau)
 
     a0 = (0.5 * c00 +
           c01 * cos1 + dd01 * sin1 +
@@ -716,7 +714,6 @@ def sneut5(rho, T, comp=None, *, abar=None, zbar=None,
     else:
 
         u = fac3 * (np.log10(rho) - 3.0)
-        # a0    = iln10*fac3*deni;
 
         # compute the expensive trig functions of equation 5.21 only once
         cos1 = np.cos(u)
