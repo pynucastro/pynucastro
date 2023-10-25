@@ -1,4 +1,8 @@
 # 2.1.1
+
+  * `RateCollection.evaluate_energy_generation()` can now return the
+    neutrino losses from weak rates separately. (#665)
+
   * `AmrexAstroCxxNetwork` now capitalizes the species names to be
     consistent with other AMReX-Astro Microphysics networks (#652)
 
