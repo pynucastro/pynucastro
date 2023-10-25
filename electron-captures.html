@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Combining ReacLib Rates with Electron Capture Tables &mdash; pynucastro 2.1.0.post17+ge1b2d56e documentation</title>
+  <title>Combining ReacLib Rates with Electron Capture Tables &mdash; pynucastro 2.1.0.post18+gd06a6490 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
@@ -16,7 +16,7 @@
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=179b4385"></script>
+        <script src="_static/documentation_options.js?v=01e870bc"></script>
         <script src="_static/doctools.js?v=888ff710"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
         <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -221,10 +221,10 @@ S32 ⟶ p + P31                  [Q =  -8.86 MeV] (S32 --&gt; p + P31 &lt;il10_r
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-[O20 ⟶ F20 + e⁻ + 𝜈,
- F20 ⟶ Ne20 + e⁻ + 𝜈,
+[F20 ⟶ Ne20 + e⁻ + 𝜈,
  F20 + e⁻ ⟶ O20 + 𝜈,
- Ne20 + e⁻ ⟶ F20 + 𝜈]
+ Ne20 + e⁻ ⟶ F20 + 𝜈,
+ O20 ⟶ F20 + e⁻ + 𝜈]
 </pre></div></div>
 </div>
 <p>These tables are in terms of <span class="math notranslate nohighlight">\(T\)</span> and <span class="math notranslate nohighlight">\(\rho Y_e\)</span>. We can easily plot the tabulated electron capture rates just like ReacLib rates:</p>
@@ -364,10 +364,10 @@ S32 ⟶ p + P31                  [Q =  -8.86 MeV] (S32 --&gt; p + P31 &lt;il10_r
  Al27 + p ⟶ He4 + Mg24: 5920.818449985262,
  Si28 + He4 ⟶ p + P31: 0.00019528201299493395,
  P31 + p ⟶ He4 + Si28: 5491.96044267561,
- O20 ⟶ F20 + e⁻ + 𝜈: 2.688308786951096e-28,
  F20 ⟶ Ne20 + e⁻ + 𝜈: 1.1430498548238452e-14,
  F20 + e⁻ ⟶ O20 + 𝜈: 4.212096660029043e-09,
- Ne20 + e⁻ ⟶ F20 + 𝜈: 4.310025562780197e-11}
+ Ne20 + e⁻ ⟶ F20 + 𝜈: 4.310025562780197e-11,
+ O20 ⟶ F20 + e⁻ + 𝜈: 2.688308786951096e-28}
 </pre></div></div>
 </div>
 <p>Additionally, we can see the specific energy generation rate for these conditions</p>
@@ -385,7 +385,7 @@ S32 ⟶ p + P31                  [Q =  -8.86 MeV] (S32 --&gt; p + P31 &lt;il10_r
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-9.667007169634936e+22
+9.667007169634938e+22
 </pre></div></div>
 </div>
 <div class="nbinput nblast docutils container">
