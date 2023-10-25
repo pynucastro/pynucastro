@@ -1,16 +1,49 @@
-# recent
+# 2.1.1
+
+  * `RateCollection.evaluate_energy_generation()` can now return the
+    neutrino losses from weak rates separately. (#665)
+
+  * `AmrexAstroCxxNetwork` now capitalizes the species names to be
+    consistent with other AMReX-Astro Microphysics networks (#652)
+
+  * The pynucastro project configuration was updated and reorganized
+    to pyproject.toml (#657, #660, #661)
+
+  * `Library.get_rate_by_name` no longer returns None if one of
+    the input rate names is not found (#659)
+
+  * A C++ indexing error at the boundary of a weak rate table was
+    fixed. (#654)
+
+  * The C++ AmrexAstroCxxNetwork for evaluating weak rate neutrino
+    losses was cleaned up to fix a bounds error (#655)
+
+  * We now explicitly check in the C++ code if a weak rate table
+    if found and contains data (#654)
 
   * a RateCollection now enforces that there are no duplicate rates.  A
     `find_duplicate_links()` method has been added to `Library` to allow
     one to construct a `Library` without duplicates and then create a
     `RateCollection` or other network from that. (#651)
 
+  * Some documentation updates (#643, #650)
+
+  * The positron rates in the Langanke weak rate tables have been
+    merged with the corresponding electron rates and the n <-> p rate
+    was added (#648)
+
+  * The `Composition.bin_as()` method now takes a list of nuclei
+    to exclude from being binned into (#642)
+
+  * `RateCollection.evaluate_ydots()` now can take a filter to
+    only evaluate a subset of the rates. (#641)
+
 # 2.1.0
 
   * add `eval_zbar()` to Composition (#632)
-  
+
   * fix `get_rate_by_name` to work with "pp" reactions (#632)
-  
+
   * created a method to reduce a Composition from one set
     of nuclei to another based on the nuclei masses and
     charge number (#625)
