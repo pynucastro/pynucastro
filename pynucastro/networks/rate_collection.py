@@ -159,28 +159,13 @@ class Composition:
 
     def eval_ye(self):
         """ return the electron fraction """
-        zvec = []
-        avec = []
-        xvec = []
-        for n in self.X:
-            zvec.append(n.Z)
-            avec.append(n.A)
-            xvec.append(self.X[n])
-        zvec = np.array(zvec)
-        avec = np.array(avec)
-        xvec = np.array(xvec)
-        electron_frac = np.sum(zvec*xvec/avec)/np.sum(xvec)
+        electron_frac = sum(self.X[n] * n.Z / n.A for n in self.X) / sum(self.X[n] for n in self.X)
         return electron_frac
 
     def eval_abar(self):
         """ return the mean molecular weight """
-
-        avec = np.zeros(len(self.X), dtype=np.int32)
-        xvec = np.zeros(len(self.X), dtype=np.float64)
-        for i, n in enumerate(self.X):
-            avec[i] = n.A
-            xvec[i] = self.X[n]
-        return 1. / np.sum(xvec / avec)
+        abar = sum(self.X[n] / n.A for n in self.X)
+        return 1. / abar
 
     def eval_zbar(self):
         """ return the mean charge, Zbar """
