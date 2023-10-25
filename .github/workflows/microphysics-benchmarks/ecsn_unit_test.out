@@ -1,65 +1,65 @@
-AMReX (23.07-106-gde7c6189623b-dirty) initialized
+AMReX (23.05-4-ga393d7ff7e32) initialized
 starting the single zone burn...
 reading in network electron-capture / beta-decay tables...
 Maximum Time (s): 0.01
 State Density (g/cm^3): 100000000
 State Temperature (K): 3000000000
-Mass Fraction (h1): 0.01
-Mass Fraction (he4): 0.03
-Mass Fraction (o16): 0.5
-Mass Fraction (o20): 0.01
-Mass Fraction (f20): 0.01
-Mass Fraction (ne20): 0.3
-Mass Fraction (mg24): 0.1
-Mass Fraction (al27): 0.01
-Mass Fraction (si28): 0.01
-Mass Fraction (p31): 0.01
-Mass Fraction (s32): 0.01
+Mass Fraction (H1): 0.01
+Mass Fraction (He4): 0.03
+Mass Fraction (O16): 0.5
+Mass Fraction (O20): 0.01
+Mass Fraction (F20): 0.01
+Mass Fraction (Ne20): 0.3
+Mass Fraction (Mg24): 0.1
+Mass Fraction (Al27): 0.01
+Mass Fraction (Si28): 0.01
+Mass Fraction (P31): 0.01
+Mass Fraction (S32): 0.01
 RHS at t = 0
-    h1 -171061600.5
-   he4 164121259.9
-   o16 -67273.73352
-   o20 -8.667258977e-06
-   f20 -1.789563135e-05
-  ne20 -447648.0568
-  mg24 68871335.21
-  al27 -73391041.15
-  si28 101381667.7
-   p31 -97670559.38
-   s32 1323519.174
+    H1 -171061600.5
+   He4 164121259.9
+   O16 -67273.73352
+   O20 -8.667258977e-06
+   F20 -1.789563135e-05
+  Ne20 -447648.0568
+  Mg24 68871335.21
+  Al27 -73391041.15
+  Si28 101381667.7
+   P31 -97670559.38
+   S32 1323519.174
 ------------------------------------
 successful? 1
- - Hnuc = 4.716248406e+19
- - added e = 4.716248406e+17
- - final T = 6804058463
+ - Hnuc = 4.4691188e+19
+ - added e = 4.4691188e+17
+ - final T = 6711517341
 ------------------------------------
 e initial = 5.995956082e+17
-e final =   1.071220449e+18
+e final =   1.046507488e+18
 ------------------------------------
 new mass fractions: 
-h1 0.009032124504
-he4 4.003293528e-13
-o16 5.888714278e-07
-o20 0.00985678636
-f20 0.009855432543
-ne20 7.501479981e-14
-mg24 1.21710929e-09
-al27 1.951815457e-21
-si28 0.26794899
-p31 8.245884489e-14
-s32 0.7033060765
+H1 0.007036728874
+He4 4.569221711e-13
+O16 6.11671909e-07
+O20 0.009363850335
+F20 0.009362566168
+Ne20 8.595667728e-14
+Mg24 8.576669062e-06
+Al27 9.999999996e-31
+Si28 0.2286832772
+P31 9.999999996e-31
+S32 0.745544389
 ------------------------------------
 species creation rates: 
-omegadot(h1): -0.0967875496
-omegadot(he4): -3
-omegadot(o16): -49.99994111
-omegadot(o20): -0.01432136399
-omegadot(f20): -0.0144567457
-omegadot(ne20): -30
-omegadot(mg24): -9.999999878
-omegadot(al27): -1
-omegadot(si28): 25.794899
-omegadot(p31): -1
-omegadot(s32): 69.33060765
-number of steps taken: 31502
-AMReX (23.07-106-gde7c6189623b-dirty) finalized
+omegadot(H1): -0.2963271126
+omegadot(He4): -3
+omegadot(O16): -49.99993883
+omegadot(O20): -0.0636149665
+omegadot(F20): -0.06374338321
+omegadot(Ne20): -30
+omegadot(Mg24): -9.999142333
+omegadot(Al27): -1
+omegadot(Si28): 21.86832772
+omegadot(P31): -1
+omegadot(S32): 73.5544389
+number of steps taken: 14714
+AMReX (23.05-4-ga393d7ff7e32) finalized

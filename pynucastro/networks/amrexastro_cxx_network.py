@@ -71,10 +71,16 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
         # create a .net file with the nuclei properties
         with open(os.path.join(odir, "pynucastro.net"), "w") as of:
             for nuc in self.unique_nuclei:
-                of.write(f"{nuc.spec_name:25} {nuc.short_spec_name:6} {nuc.A:6.1f} {nuc.Z:6.1f}\n")
+                short_spec_name = nuc.short_spec_name
+                if nuc.short_spec_name != "n":
+                    short_spec_name = nuc.short_spec_name.capitalize()
+                of.write(f"{nuc.spec_name:25} {short_spec_name:6} {nuc.A:6.1f} {nuc.Z:6.1f}\n")
 
             for nuc in self.approx_nuclei:
-                of.write(f"__extra_{nuc.spec_name:17} {nuc.short_spec_name:6} {nuc.A:6.1f} {nuc.Z:6.1f}\n")
+                short_spec_name = nuc.short_spec_name
+                if nuc.short_spec_name != "n":
+                    short_spec_name = nuc.short_spec_name.capitalize()
+                of.write(f"__extra_{nuc.spec_name:17} {short_spec_name:6} {nuc.A:6.1f} {nuc.Z:6.1f}\n")
 
         # write the _parameters file
         with open(os.path.join(odir, "_parameters"), "w") as of:
@@ -90,9 +96,9 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
 
         for nuc in LIG:
             if nuc in self.unique_nuclei:
-                of.write(f"{self.indent*n_indent}constexpr int {nuc.short_spec_name}_index = {self.unique_nuclei.index(nuc)};\n")
+                of.write(f"{self.indent*n_indent}constexpr int {nuc.short_spec_name.capitalize()}_index = {self.unique_nuclei.index(nuc)};\n")
             else:
-                of.write(f"{self.indent*n_indent}constexpr int {nuc.short_spec_name}_index = -1;\n")
+                of.write(f"{self.indent*n_indent}constexpr int {nuc.short_spec_name.capitalize()}_index = -1;\n")
 
     def _fill_rate_indices(self, n_indent, of):
         """

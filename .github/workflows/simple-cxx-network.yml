@@ -31,7 +31,7 @@ jobs:
           pip install -r requirements.txt
 
       - name: Install pynucastro
-        run: python setup.py develop --user
+        run: pip install .
 
       - name: Build the network
         run: |

@@ -37,6 +37,7 @@ codes.
 
    library-examples.ipynb
    validate-example.ipynb
+   electron-capture-example.ipynb
    electron-captures.ipynb
 
 .. toctree::

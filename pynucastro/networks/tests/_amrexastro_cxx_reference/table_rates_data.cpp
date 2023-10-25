@@ -8,15 +8,15 @@ using namespace amrex;
 namespace rate_tables
 {
 
-    AMREX_GPU_MANAGED table_t j_na23_ne23_meta;
-    AMREX_GPU_MANAGED Array3D<Real, 1, 39, 1, 152, 1, 6> j_na23_ne23_data;
-    AMREX_GPU_MANAGED Array1D<Real, 1, 152> j_na23_ne23_rhoy;
-    AMREX_GPU_MANAGED Array1D<Real, 1, 39> j_na23_ne23_temp;
+    AMREX_GPU_MANAGED table_t j_Na23_Ne23_meta;
+    AMREX_GPU_MANAGED Array3D<Real, 1, 39, 1, 152, 1, 6> j_Na23_Ne23_data;
+    AMREX_GPU_MANAGED Array1D<Real, 1, 152> j_Na23_Ne23_rhoy;
+    AMREX_GPU_MANAGED Array1D<Real, 1, 39> j_Na23_Ne23_temp;
 
-    AMREX_GPU_MANAGED table_t j_ne23_na23_meta;
-    AMREX_GPU_MANAGED Array3D<Real, 1, 39, 1, 152, 1, 6> j_ne23_na23_data;
-    AMREX_GPU_MANAGED Array1D<Real, 1, 152> j_ne23_na23_rhoy;
-    AMREX_GPU_MANAGED Array1D<Real, 1, 39> j_ne23_na23_temp;
+    AMREX_GPU_MANAGED table_t j_Ne23_Na23_meta;
+    AMREX_GPU_MANAGED Array3D<Real, 1, 39, 1, 152, 1, 6> j_Ne23_Na23_data;
+    AMREX_GPU_MANAGED Array1D<Real, 1, 152> j_Ne23_Na23_rhoy;
+    AMREX_GPU_MANAGED Array1D<Real, 1, 39> j_Ne23_Na23_temp;
 
 
 }
@@ -29,20 +29,20 @@ void init_tabular()
 
     using namespace rate_tables;
 
-    j_na23_ne23_meta.ntemp = 39;
-    j_na23_ne23_meta.nrhoy = 152;
-    j_na23_ne23_meta.nvars = 6;
-    j_na23_ne23_meta.nheader = 7;
+    j_Na23_Ne23_meta.ntemp = 39;
+    j_Na23_Ne23_meta.nrhoy = 152;
+    j_Na23_Ne23_meta.nvars = 6;
+    j_Na23_Ne23_meta.nheader = 7;
 
-    init_tab_info(j_na23_ne23_meta, "23na-23ne_electroncapture.dat", j_na23_ne23_rhoy, j_na23_ne23_temp, j_na23_ne23_data);
+    init_tab_info(j_Na23_Ne23_meta, "23na-23ne_electroncapture.dat", j_Na23_Ne23_rhoy, j_Na23_Ne23_temp, j_Na23_Ne23_data);
 
 
-    j_ne23_na23_meta.ntemp = 39;
-    j_ne23_na23_meta.nrhoy = 152;
-    j_ne23_na23_meta.nvars = 6;
-    j_ne23_na23_meta.nheader = 5;
+    j_Ne23_Na23_meta.ntemp = 39;
+    j_Ne23_Na23_meta.nrhoy = 152;
+    j_Ne23_Na23_meta.nvars = 6;
+    j_Ne23_Na23_meta.nheader = 5;
 
-    init_tab_info(j_ne23_na23_meta, "23ne-23na_betadecay.dat", j_ne23_na23_rhoy, j_ne23_na23_temp, j_ne23_na23_data);
+    init_tab_info(j_Ne23_Na23_meta, "23ne-23na_betadecay.dat", j_Ne23_Na23_rhoy, j_Ne23_Na23_temp, j_Ne23_Na23_data);
 
 
 

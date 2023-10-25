@@ -4,7 +4,6 @@ import shutil
 import pytest
 
 from pynucastro import networks
-from pynucastro.networks.tests.helpers import compare_network_files
 
 
 class TestSimpleCxxNetwork:
@@ -21,7 +20,7 @@ class TestSimpleCxxNetwork:
         fn = networks.SimpleCxxNetwork(rates=rates)
         return fn
 
-    def test_write_network(self, fn):
+    def test_write_network(self, fn, compare_network_files):
         """ test the write_network function"""
         test_path = "_test_simple_cxx/"
         # subdirectory of pynucastro/networks/tests/

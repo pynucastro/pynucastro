@@ -37,3 +37,11 @@ with warnings.catch_warnings():
         category=RuntimeWarning
     )
     import numpy  # noqa[F401]  # pylint: disable=unused-import
+
+
+def pytest_addoption(parser):
+    parser.addoption(
+        "--update-networks",
+        action="store_true",
+        help="Update the reference outputs for all failing write_network tests",
+    )

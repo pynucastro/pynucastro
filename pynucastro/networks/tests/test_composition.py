@@ -2,6 +2,7 @@
 import pytest
 from pytest import approx
 
+import pynucastro as pyna
 from pynucastro import networks
 from pynucastro.nucdata import Nucleus
 
@@ -120,18 +121,18 @@ class TestCompBinning:
 
         captured = capsys.readouterr()
 
-        output = """storing p as he4
-storing c12 as c12
-storing c13 as c12
-storing he4 as he4
-storing o14 as c12
-storing n14 as c12
-storing cr48 as ti44
-storing fe52 as ti44
-storing fe56 as fe56
-storing cr56 as fe56
-storing co56 as fe56
-storing zn60 as ni56
+        output = """storing p as He4
+storing C12 as C12
+storing C13 as C12
+storing He4 as He4
+storing O14 as C12
+storing N14 as C12
+storing Cr48 as Ti44
+storing Fe52 as Ti44
+storing Fe56 as Fe56
+storing Cr56 as Fe56
+storing Co56 as Fe56
+storing Zn60 as Ni56
 """
 
         assert captured.out == output
@@ -195,3 +196,58 @@ class TestCompBinning2:
 
         # we should have placed O18 into F18
         assert c_new.X[Nucleus("f18")] == approx(orig_X)
+
+
+class TestCompBinning3:
+    """an example where we exclude Ni56 from the binning."""
+    @pytest.fixture(scope="class")
+    def nuclei(self):
+        nuc_list = pyna.get_nuclei_in_range(26, 26, 52, 58)
+        nuc_list += pyna.get_nuclei_in_range(28, 28, 56, 58)
+        return nuc_list
+
+    @pytest.fixture(scope="class")
+    def comp(self, nuclei):
+        c = networks.Composition(nuclei)
+        c.set_equal()
+        return c
+
+    def test_bin_as(self, nuclei, comp):
+        """first bin without exclusion"""
+
+        new_nuclei = [Nucleus("fe52"), Nucleus("fe54"), Nucleus("ni56")]
+
+        c_new = comp.bin_as(new_nuclei)
+
+        assert c_new.get_sum_X() == approx(comp.get_sum_X())
+
+        orig_X = 1.0 / len(nuclei)
+
+        # we should have placed fe52, fe53 into fe52
+        assert c_new.X[Nucleus("fe52")] == approx(2.0 * orig_X)
+
+        # we should have placed fe54, fe55 into fe54
+        assert c_new.X[Nucleus("fe54")] == approx(2.0 * orig_X)
+
+        # everything else should be ni56
+        assert c_new.X[Nucleus("ni56")] == approx(6.0 * orig_X)
+
+    def test_bin_as_exclude(self, nuclei, comp):
+        """exclude Ni56"""
+
+        new_nuclei = [Nucleus("fe52"), Nucleus("fe54"), Nucleus("ni56")]
+
+        c_new = comp.bin_as(new_nuclei, exclude=[Nucleus("ni56")])
+
+        assert c_new.get_sum_X() == approx(comp.get_sum_X())
+
+        orig_X = 1.0 / len(nuclei)
+
+        # we should have placed fe52, fe53 into fe52
+        assert c_new.X[Nucleus("fe52")] == approx(2.0 * orig_X)
+
+        # we should have placed fe54, fe55, fe56, fe57, fe58, ni57, ni58 into fe54
+        assert c_new.X[Nucleus("fe54")] == approx(7.0 * orig_X)
+
+        # only ni56 should be ni56
+        assert c_new.X[Nucleus("ni56")] == approx(orig_X)
