@@ -2,7 +2,8 @@ import pytest
 from pytest import approx
 
 from pynucastro import networks
-from pynucastro.screening import chugunov_2007, chugunov_2009
+from pynucastro.screening import (chugunov_2007, chugunov_2009,
+                                  get_screening_map)
 
 
 class TestScreening:
@@ -19,7 +20,8 @@ class TestScreening:
 
     def test_screening_map(self, rc):
 
-        screening_map = rc.get_screening_map()
+        screening_map = get_screening_map(rc.get_rates(),
+                                          symmetric_screening=rc.symmetric_screening)
 
         assert len(screening_map) == 4
         assert len(screening_map[0].rates) == 1

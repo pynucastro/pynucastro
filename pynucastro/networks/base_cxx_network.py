@@ -17,6 +17,7 @@ import sympy
 
 from pynucastro.networks.rate_collection import RateCollection
 from pynucastro.networks.sympy_network_support import SympyRates
+from pynucastro.screening import get_screening_map
 
 
 class BaseCxxNetwork(ABC, RateCollection):
@@ -193,7 +194,11 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.solved_jacobian = True
 
     def _compute_screening_factors(self, n_indent, of):
-        screening_map = self.get_screening_map()
+        if not self.do_screening:
+            screening_map = []
+        else:
+            screening_map = get_screening_map(self.get_rates(),
+                                              symmetric_screening=self.symmetric_screening)
         for i, scr in enumerate(screening_map):
 
             nuc1_info = f'{float(scr.n1.Z)}_rt, {float(scr.n1.A)}_rt'
