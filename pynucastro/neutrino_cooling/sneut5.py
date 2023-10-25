@@ -357,7 +357,6 @@ def sneut5(rho, T, comp=None, *, abar=None, zbar=None,
     # equation 4.7
 
     ft = 2.4 + 0.6 * gl12 + 0.51 * gl + 1.25 * gl32
-    gum = 1.0 / gl2
 
     # equation 4.8
 
@@ -767,16 +766,12 @@ def sneut5(rho, T, comp=None, *, abar=None, zbar=None,
         dum = 2.275e-1 * zbar * zbar * t8m1 * (den6 * abari)**oneth
 
         gm1 = 1.0 / dum
-        gm2 = gm1 * gm1
         gm13 = gm1**oneth
         gm23 = gm13 * gm13
-        gm43 = gm13 * gm1
-        gm53 = gm23 * gm1
 
         # equation 5.25 and 5.26
 
         v = -0.05483 - 0.01946 * gm13 + 1.86310 * gm23 - 0.78873 * gm1
-        a0 = oneth * 0.01946 * gm43 - twoth * 1.86310 * gm53 + 0.78873 * gm2
 
         w = -0.06711 + 0.06859 * gm13 + 1.74360 * gm23 - 0.74498 * gm1
 
