@@ -928,7 +928,7 @@ class RateCollection:
         Note: this returns that rate as dY/dt, where Y is the molar fraction.
         For a 2 body reaction, a + b, this will be of the form:
 
-           rho Y_a Y_b N_A <sigma v> / (1 + delta_{ab}
+        rho Y_a Y_b N_A <sigma v> / (1 + delta_{ab}
 
         where delta is the Kronecker delta that accounts for a = b.
 
