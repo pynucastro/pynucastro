@@ -20,9 +20,10 @@ from matplotlib.scale import SymmetricalLogTransform
 from matplotlib.ticker import MaxNLocator
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from scipy import constants
-from scipy.optimize import fsolve
+from scipy.optimize import brentq, fsolve
 
 # Import Rate
+from pynucastro.neutrino_cooling import sneut5
 from pynucastro.nucdata import Nucleus, PeriodicTable
 from pynucastro.rates import (ApproximateRate, DerivedRate, Library, Rate,
                               RateFileError, RatePair, TabularRate, Tfactors,
@@ -876,7 +877,7 @@ class RateCollection:
 
     def evaluate_rates(self, rho, T, composition, screen_func=None):
         """evaluate the rates for a specific density, temperature, and
-        composition, with optional screening"""
+        composition, with optional screening."""
         rvals = {}
         ys = composition.get_molar()
         y_e = composition.eval_ye()
@@ -2402,6 +2403,46 @@ class RateCollection:
             plt.savefig(outfile, dpi=dpi)
 
         return fig
+
+    def ignition_curve(self, comp, rate, *,
+                       screen_func=None,
+                       Q_override=None,
+                       rho_min=10.0, rho_max=1000.0, npts=20):
+        """return the curve T(rho) as T, rho arrays corresponding
+        to the ignition of Rate rate.  This is computed by
+        finding the curve enuc(rho, T, comp) - e_nu(rho, T, comp) = 0,
+        where e_nu is the neutrino loss rate"""
+
+        T_min = 1.e7
+        T_max = 1.e10
+
+        rhos = []
+        Ts = []
+        _rhos = np.logspace(np.log10(rho_min), np.log10(rho_max), npts, endpoint=True)
+
+        # for some curves, we might be using the rate as an effective
+        # rate for a sequence, in which case we should provide the Q
+        # (in MeV) for the entire sequence.
+        if Q_override:
+            Q_erg = Q_override * (constants.eV * constants.mega) / constants.erg
+        else:
+            Q_erg = rate.Q * (constants.eV * constants.mega) / constants.erg
+
+        for rho in _rhos:
+            try:
+                # now that evaluate_rates() returns dY/dt, so to get a rate
+                # of the form r = n_A n_B <sigma v>, we need to multiply by rho N_A
+                # then to get eps, we do eps = r Q / rho, so the extra rho cancels
+                r = brentq(lambda T:
+                           Q_erg * constants.N_A * self.evaluate_rates(rho, T, comp, screen_func=screen_func)[rate] -
+                           sneut5(rho, T, comp), T_min, T_max)
+                rhos.append(rho)
+                Ts.append(r)
+            except ValueError:
+                # no root in our bounds, so move on
+                continue
+
+        return np.array(Ts), np.array(rhos)
 
     def __repr__(self):
         string = ""
