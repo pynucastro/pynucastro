@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.networks.rate_collection &mdash; pynucastro 2.1.1.post4+gad75123b documentation</title>
+  <title>pynucastro.networks.rate_collection &mdash; pynucastro 2.1.1.post5+ga1a973af documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
@@ -14,7 +14,7 @@
   
         <script src="../../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../_static/documentation_options.js?v=3d6ee632"></script>
+        <script src="../../../_static/documentation_options.js?v=7a889fce"></script>
         <script src="../../../_static/doctools.js?v=888ff710"></script>
         <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
         <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -1091,7 +1091,19 @@
 <a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.evaluate_rates">[docs]</a>
     <span class="k">def</span> <span class="nf">evaluate_rates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">composition</span><span class="p">,</span> <span class="n">screen_func</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;evaluate the rates for a specific density, temperature, and</span>
-<span class="sd">        composition, with optional screening&quot;&quot;&quot;</span>
+<span class="sd">        composition, with optional screening</span>
+
+<span class="sd">        Note: this returns that rate as dY/dt, where Y is the molar fraction.</span>
+<span class="sd">        For a 2 body reaction, a + b, this will be of the form:</span>
+
+<span class="sd">        rho Y_a Y_b N_A &lt;sigma v&gt; / (1 + delta_{ab}</span>
+
+<span class="sd">        where delta is the Kronecker delta that accounts for a = b.</span>
+
+<span class="sd">        If you want dn/dt, where n is the number density (so you get</span>
+<span class="sd">        n_a n_b &lt;sigma v&gt;), then you need to multiply the results here</span>
+<span class="sd">        by rho N_A (where N_A is Avogadro&#39;s number).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">rvals</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">ys</span> <span class="o">=</span> <span class="n">composition</span><span class="o">.</span><span class="n">get_molar</span><span class="p">()</span>
         <span class="n">y_e</span> <span class="o">=</span> <span class="n">composition</span><span class="o">.</span><span class="n">eval_ye</span><span class="p">()</span>
