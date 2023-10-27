@@ -1,6 +1,7 @@
 # unit tests for a rate collection
-import pynucastro as pyna
 import pytest
+
+import pynucastro as pyna
 
 
 class TestRateCollection:
