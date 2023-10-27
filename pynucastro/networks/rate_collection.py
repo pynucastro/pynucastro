@@ -876,7 +876,19 @@ class RateCollection:
 
     def evaluate_rates(self, rho, T, composition, screen_func=None):
         """evaluate the rates for a specific density, temperature, and
-        composition, with optional screening"""
+        composition, with optional screening
+
+        Note: this returns that rate as dY/dt, where Y is the molar fraction.
+        For a 2 body reaction, a + b, this will be of the form:
+
+        rho Y_a Y_b N_A <sigma v> / (1 + delta_{ab}
+
+        where delta is the Kronecker delta that accounts for a = b.
+
+        If you want dn/dt, where n is the number density (so you get
+        n_a n_b <sigma v>), then you need to multiply the results here
+        by rho N_A (where N_A is Avogadro's number).
+        """
         rvals = {}
         ys = composition.get_molar()
         y_e = composition.eval_ye()
