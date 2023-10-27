@@ -148,6 +148,21 @@ while seeds:
     encountered.update(prod)
     
 encountered = sorted(encountered)
+
+# remove duplicate rates
+dupes = final_lib.find_duplicate_links()
+for d in dupes:
+    # if wc17 is present, then remove all other duplicate rates
+    labels = {r.label: r for r in d}
+    if len(labels) == len(d) and "wc17" in labels:
+        for r in d:
+            if r.label == "wc17":
+                continue
+            final_lib.remove_rate(r)
+        r = labels["wc17"]
+        print(f"Found rate {r} named {r.fname} with {len(d)} entries in the Library.")
+        print(f"Kept only entry with label {r.label} out of {list(labels.keys())}.")
+
 rp_net = PythonNetwork(libraries=[final_lib])
 
 print("Network constructed.")
