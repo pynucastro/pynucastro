@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 
-import sys
 import argparse
+import sys
 from collections import deque
 
+from pynucastro.networks import Composition, PythonNetwork
+from pynucastro.nucdata import BindingTable, Nucleus
 from pynucastro.rates import Library, RateFilter
-from pynucastro.nucdata import Nucleus, BindingTable
-from pynucastro.networks import PythonNetwork, Composition
 
 #################################################
 #  Set up argument parser and process arguments #
@@ -148,7 +148,7 @@ while seeds:
     encountered.update(prod)
     
 encountered = sorted(encountered)
-rp_net = PythonNetwork(libraries=[final_lib], precedence=["wc17", "ths8"])
+rp_net = PythonNetwork(libraries=[final_lib])
 
 print("Network constructed.")
 print()

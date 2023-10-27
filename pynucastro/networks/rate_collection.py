@@ -359,7 +359,7 @@ class RateCollection:
 
     pynucastro_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 
-    def __init__(self, rate_files=None, libraries=None, rates=None, precedence=(),
+    def __init__(self, rate_files=None, libraries=None, rates=None,
                  inert_nuclei=None,
                  symmetric_screening=False, do_screening=True):
         """rate_files are the files that together define the network.  This
@@ -372,13 +372,6 @@ class RateCollection:
 
         If rates is supplied, initialize a RateCollection using the
         Rate objects in the list 'rates'.
-
-        Precedence should be sequence of rate labels (e.g. wc17) to be used to
-        resolve name conflicts. If a nonempty sequence is provided, the rate
-        collection will automatically be scanned for multiple rates with the
-        same name. If all of their labels were given a ranking, the rate with
-        the label that comes first in the sequence will be retained and the
-        rest discarded.
 
         inert_nuclei is a list of nuclei (as Nucleus objects) that
         should be part of the collection but are not linked via reactions
@@ -427,9 +420,6 @@ class RateCollection:
                 combined_library += lib
 
         self.rates = self.rates + combined_library.get_rates()
-
-        if precedence:
-            self._make_distinguishable(precedence)
 
         self._build_collection()
 
@@ -1643,38 +1633,6 @@ class RateCollection:
                 print(f'Rate {r} has the original source:\n{r.original_source}')
                 print(f'Rate {r} is in chapter {r.chapter}')
         return len(set(names)) == len(self.rates)
-
-    def _make_distinguishable(self, precedence):
-        """If multiple rates have the same name, eliminate the extraneous ones according to their
-        labels' positions in the precedence list. Only do this if all of the labels have
-        rankings in the list."""
-
-        nameset = {r.fname for r in self.rates}
-        precedence = {lab: i for i, lab in enumerate(precedence)}
-
-        def sorting_key(i):
-            return precedence[self.rates[i].label]
-
-        for n in nameset:
-
-            # Count instances of name, and cycle if there is only one
-            ind = [i for i, r in enumerate(self.rates) if r.fname == n]
-            k = len(ind)
-            if k <= 1:
-                continue
-
-            # If there were multiple instances, use the precedence settings to delete extraneous
-            # rates
-            labels = [self.rates[i].label for i in ind]
-
-            if all(lab in precedence for lab in labels):
-
-                sorted_ind = sorted(ind, key=sorting_key)
-                r = self.rates[sorted_ind[0]]
-                for i in sorted(sorted_ind[1:], reverse=True):
-                    del self.rates[i]
-                print(f'Found rate {r} named {n} with {k} entries in the RateCollection.')
-                print(f'Kept only entry with label {r.label} out of {labels}.')
 
     def _write_network(self, *args, **kwargs):
         """A stub for function to output the network -- this is implementation
