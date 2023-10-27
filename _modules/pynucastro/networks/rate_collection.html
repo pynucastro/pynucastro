@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.networks.rate_collection &mdash; pynucastro 2.1.1.post5+ga1a973af documentation</title>
+  <title>pynucastro.networks.rate_collection &mdash; pynucastro 2.1.1.post6+g2a0e1e95 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
@@ -14,7 +14,7 @@
   
         <script src="../../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../_static/documentation_options.js?v=7a889fce"></script>
+        <script src="../../../_static/documentation_options.js?v=580a6200"></script>
         <script src="../../../_static/doctools.js?v=888ff710"></script>
         <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
         <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -524,7 +524,7 @@
 
     <span class="n">pynucastro_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)))</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rate_files</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">libraries</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rates</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">precedence</span><span class="o">=</span><span class="p">(),</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rate_files</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">libraries</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rates</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">inert_nuclei</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">symmetric_screening</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">do_screening</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;rate_files are the files that together define the network.  This</span>
@@ -537,13 +537,6 @@
 
 <span class="sd">        If rates is supplied, initialize a RateCollection using the</span>
 <span class="sd">        Rate objects in the list &#39;rates&#39;.</span>
-
-<span class="sd">        Precedence should be sequence of rate labels (e.g. wc17) to be used to</span>
-<span class="sd">        resolve name conflicts. If a nonempty sequence is provided, the rate</span>
-<span class="sd">        collection will automatically be scanned for multiple rates with the</span>
-<span class="sd">        same name. If all of their labels were given a ranking, the rate with</span>
-<span class="sd">        the label that comes first in the sequence will be retained and the</span>
-<span class="sd">        rest discarded.</span>
 
 <span class="sd">        inert_nuclei is a list of nuclei (as Nucleus objects) that</span>
 <span class="sd">        should be part of the collection but are not linked via reactions</span>
@@ -592,9 +585,6 @@
                 <span class="n">combined_library</span> <span class="o">+=</span> <span class="n">lib</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">rates</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span> <span class="o">+</span> <span class="n">combined_library</span><span class="o">.</span><span class="n">get_rates</span><span class="p">()</span>
-
-        <span class="k">if</span> <span class="n">precedence</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_make_distinguishable</span><span class="p">(</span><span class="n">precedence</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_build_collection</span><span class="p">()</span>
 
@@ -1925,38 +1915,6 @@
                 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Rate </span><span class="si">{</span><span class="n">r</span><span class="si">}</span><span class="s1"> has the original source:</span><span class="se">\n</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">original_source</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
                 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Rate </span><span class="si">{</span><span class="n">r</span><span class="si">}</span><span class="s1"> is in chapter </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">chapter</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">names</span><span class="p">))</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">_make_distinguishable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">precedence</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;If multiple rates have the same name, eliminate the extraneous ones according to their</span>
-<span class="sd">        labels&#39; positions in the precedence list. Only do this if all of the labels have</span>
-<span class="sd">        rankings in the list.&quot;&quot;&quot;</span>
-
-        <span class="n">nameset</span> <span class="o">=</span> <span class="p">{</span><span class="n">r</span><span class="o">.</span><span class="n">fname</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">}</span>
-        <span class="n">precedence</span> <span class="o">=</span> <span class="p">{</span><span class="n">lab</span><span class="p">:</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">lab</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">precedence</span><span class="p">)}</span>
-
-        <span class="k">def</span> <span class="nf">sorting_key</span><span class="p">(</span><span class="n">i</span><span class="p">):</span>
-            <span class="k">return</span> <span class="n">precedence</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">label</span><span class="p">]</span>
-
-        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">nameset</span><span class="p">:</span>
-
-            <span class="c1"># Count instances of name, and cycle if there is only one</span>
-            <span class="n">ind</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">)</span> <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">fname</span> <span class="o">==</span> <span class="n">n</span><span class="p">]</span>
-            <span class="n">k</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ind</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">k</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="k">continue</span>
-
-            <span class="c1"># If there were multiple instances, use the precedence settings to delete extraneous</span>
-            <span class="c1"># rates</span>
-            <span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">label</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">ind</span><span class="p">]</span>
-
-            <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="n">lab</span> <span class="ow">in</span> <span class="n">precedence</span> <span class="k">for</span> <span class="n">lab</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">):</span>
-
-                <span class="n">sorted_ind</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">ind</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">sorting_key</span><span class="p">)</span>
-                <span class="n">r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="n">sorted_ind</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
-                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">sorted_ind</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-                    <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Found rate </span><span class="si">{</span><span class="n">r</span><span class="si">}</span><span class="s1"> named </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s1"> with </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s1"> entries in the RateCollection.&#39;</span><span class="p">)</span>
-                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Kept only entry with label </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">label</span><span class="si">}</span><span class="s1"> out of </span><span class="si">{</span><span class="n">labels</span><span class="si">}</span><span class="s1">.&#39;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_write_network</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;A stub for function to output the network -- this is implementation</span>
