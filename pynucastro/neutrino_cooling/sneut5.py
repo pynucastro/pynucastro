@@ -188,8 +188,6 @@ def sneut5(rho, T, comp=None, *, abar=None, zbar=None,
     a0 = rm * 1.0e-9
     a1 = a0**oneth
     zeta = a1 * xlm1
-    a2 = oneth * a1 * rmi * xlm1
-
     zeta2 = zeta * zeta
     zeta3 = zeta2 * zeta
 
@@ -521,7 +519,6 @@ def sneut5(rho, T, comp=None, *, abar=None, zbar=None,
 
     z = 1.0 / xden
     qphot = xnum * z
-    dum = -qphot * z
 
     # equation 3.2
 
@@ -531,8 +528,6 @@ def sneut5(rho, T, comp=None, *, abar=None, zbar=None,
     sphot = rm * a1
 
     a1 = tfac4 * (1.0 - tfac3 * qphot)
-    a2 = -tfac4 * tfac3
-
     a3 = sphot
     sphot = a1 * a3
 
@@ -572,7 +567,6 @@ def sneut5(rho, T, comp=None, *, abar=None, zbar=None,
 
         etam1 = 1.0 / eta
         etam2 = etam1 * etam1
-        etam3 = etam2 * etam1
 
         # equation 5.2
 
@@ -580,7 +574,6 @@ def sneut5(rho, T, comp=None, *, abar=None, zbar=None,
         xnum = 1.0 / a0
 
         dum = 1.0 + 1.47 * etam1 + 3.29e-2 * etam2
-        z = -1.47 * etam2 - 2.0 * 3.29e-2 * etam3
 
         c00 = 1.26 * (1.0 + etam1)
         z = -1.26 * etam2
@@ -599,7 +592,6 @@ def sneut5(rho, T, comp=None, *, abar=None, zbar=None,
         z = a0 * 1.0e-9
 
         xnum = 1.0 / dum
-        z = -xnum * xnum
 
         c00 = 7.75e5 * t832 + 247.0 * t8**3.85
         c01 = 4.07 + 0.0240 * t8**1.4
@@ -607,10 +599,8 @@ def sneut5(rho, T, comp=None, *, abar=None, zbar=None,
 
         z = rho**0.656
         dum = c00 * rmi + c01 + c02 * z
-        z = -c00 * rmi * rmi
 
         xden = 1.0 / dum
-        z = -xden * xden
 
         gbrem = xnum + xden
 
