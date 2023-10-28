@@ -110,7 +110,7 @@ def product_limiter():
     return limit_products
 
 
-limiter = product_limiter()
+red_lib = red_lib.filter(RateFilter(filter_function=product_limiter()))
 final_lib = Library(rates=core_lib.get_rates())
 
 seeds = [nuc for nuc in core_nuclei if nuc.A >= 12]
@@ -121,7 +121,7 @@ while seeds:
 
     # Get the new rates with seed as a reactant
     seed = seeds.popleft()
-    filt = RateFilter(reactants=seed, filter_function=limiter, exact=False)
+    filt = RateFilter(reactants=seed, exact=False)
     new_lib = red_lib.filter(filt)
     if new_lib is None:
         continue
