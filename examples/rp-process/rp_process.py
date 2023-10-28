@@ -13,7 +13,7 @@ from pynucastro.rates import Library, RateFilter
 #################################################
 description = """Script for generating a reaction network modeling the rp-process with a given
         nucleus as the endpoint."""
-        
+
 endpoint_help = """The nucleus at which the network terminates. Should be provided as the string
         abbreviation of the nuclide (e.g. Ni56, case insensitive)."""
 library_help = """The library file to draw the rates from. This is supplied directly to the Library
@@ -48,18 +48,20 @@ core_nuclei = ["p", "d", "he3", "he4", "li7", "be7", "be8", "b8", "c12",
 core_nuclei = list(map(Nucleus, core_nuclei))
 core_lib = full_lib.linking_nuclei(core_nuclei)
 
+
 def is_beta_plus(rate):
     """ Filter for beta+ decays (and electron captures). """
-    
+
     if len(rate.products) != len(rate.reactants):
         return False
     if len(rate.reactants) != 1:
         return False
-    
+
     react, = rate.reactants
     prod, = rate.products
     return prod.Z < react.Z
-    
+
+
 # Restrict the library to these 7 reaction types
 
 # Forward rates
@@ -76,39 +78,42 @@ beta_plus = RateFilter(filter_function=is_beta_plus)
 # Compute reduced library
 red_lib = full_lib.filter((p_gamma, alpha_gamma, alpha_p,
         gamma_p, gamma_alpha, p_alpha, beta_plus))
-        
+
 bintable = BindingTable()
+
 
 def flatten(iterable):
     """ Take iterable of iterables, and flatten it to one dimension. """
-    
+
     for col in iterable:
-        
+
         for item in col:
-            
+
             yield item
-            
+
+
 def append_all(q, iterable):
     """ Append all items in the iterable to the queue. """
-    
+
     for item in iterable: q.append(item)
-        
+
+
 def product_limiter():
     """
     This helps trim the library a bit by excluding rates with
     products with more protons than the endpoint, heavier than the
-    endpoint, or with relatively high or low neutron percentages. 
+    endpoint, or with relatively high or low neutron percentages.
     """
-    
+
     # Proton number bounds
     Zlo, Zhi = 6, endpoint.Z
     # Nucleon number bounds
     Alo, Ahi = 12, endpoint.A
     # Bounds on A / Z ratio to drop peripheral nuclei
     Rlo, Rhi = 1.69, 2.2
-    
+
     def limit_products(r):
-        
+
         meet_conds = \
         (
             (Zlo <= p.Z <= Zhi and
@@ -120,9 +125,10 @@ def product_limiter():
             for p in r.products
         )
         return all(meet_conds)
-    
+
     return limit_products
-    
+
+
 limiter = product_limiter()
 final_lib = Library(rates=core_lib.get_rates())
 
@@ -131,14 +137,14 @@ encountered = set(seeds) | {Nucleus("p"), Nucleus("he4")}
 seeds = deque(seeds)
 
 while seeds:
-    
+
     # Get the new rates with seed as a reactant
     seed = seeds.popleft()
     filt = RateFilter(reactants=seed, filter_function=limiter, exact=False)
     new_lib = red_lib.filter(filt)
     if new_lib is None: continue
     final_lib += new_lib
-    
+
     # Append all unseen nuclei to the queue
     prod = (r.products for r in new_lib.get_rates())
     prod = flatten(prod)
@@ -146,7 +152,7 @@ while seeds:
     prod = sorted(set(prod))
     append_all(seeds, prod)
     encountered.update(prod)
-    
+
 encountered = sorted(encountered)
 
 # remove duplicate rates
