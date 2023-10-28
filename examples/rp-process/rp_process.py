@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
 
 import argparse
-import sys
 from collections import deque
 
-from pynucastro.networks import Composition, PythonNetwork
-from pynucastro.nucdata import BindingTable, Nucleus
+from pynucastro.networks import PythonNetwork
+from pynucastro.nucdata import Nucleus
 from pynucastro.rates import Library, RateFilter
 
 #################################################
@@ -28,7 +27,7 @@ parser.add_argument('endpoint', help=endpoint_help)
 parser.add_argument('-l', '--library', default='reaclib_default2_20220329', help=library_help)
 parser.add_argument('-w', '--write_network', default='', help=write_network_help)
 parser.add_argument('--write_lib', default='', help=write_lib_help)
-args = parser.parse_args(sys.argv[1:])
+args = parser.parse_args()
 
 endpoint = Nucleus(args.endpoint)
 
@@ -79,24 +78,6 @@ beta_plus = RateFilter(filter_function=is_beta_plus)
 red_lib = full_lib.filter((p_gamma, alpha_gamma, alpha_p,
         gamma_p, gamma_alpha, p_alpha, beta_plus))
 
-bintable = BindingTable()
-
-
-def flatten(iterable):
-    """ Take iterable of iterables, and flatten it to one dimension. """
-
-    for col in iterable:
-
-        for item in col:
-
-            yield item
-
-
-def append_all(q, iterable):
-    """ Append all items in the iterable to the queue. """
-
-    for item in iterable: q.append(item)
-
 
 def product_limiter():
     """
@@ -117,9 +98,9 @@ def product_limiter():
         meet_conds = \
         (
             (Zlo <= p.Z <= Zhi and
-            Alo <= p.A <= Ahi and
-            Rlo <= p.A / p.Z <= Rhi and
-            (p.N, p.Z) in bintable.energies) or
+             Alo <= p.A <= Ahi and
+             Rlo <= p.A / p.Z <= Rhi and
+             p.nucbind is not None) or
             (p.Z, p.A) == (1, 1) or
             (p.Z, p.A) == (2, 4)
             for p in r.products
@@ -142,16 +123,15 @@ while seeds:
     seed = seeds.popleft()
     filt = RateFilter(reactants=seed, filter_function=limiter, exact=False)
     new_lib = red_lib.filter(filt)
-    if new_lib is None: continue
+    if new_lib is None:
+        continue
     final_lib += new_lib
 
     # Append all unseen nuclei to the queue
-    prod = (r.products for r in new_lib.get_rates())
-    prod = flatten(prod)
-    prod = filter(lambda p: p not in encountered, prod)
-    prod = sorted(set(prod))
-    append_all(seeds, prod)
-    encountered.update(prod)
+    prod_set = set(p for r in new_lib.get_rates() for p in r.products)
+    prod = sorted(prod_set - encountered)
+    seeds.extend(prod)
+    encountered.update(prod_set)
 
 encountered = sorted(encountered)
 
@@ -173,7 +153,7 @@ rp_net = PythonNetwork(libraries=[final_lib])
 
 print("Network constructed.")
 print()
-print(f"Species Encountered:")
+print("Species Encountered:")
 print(encountered)
 print()
 print(f"Number of Species: {len(encountered)}")
