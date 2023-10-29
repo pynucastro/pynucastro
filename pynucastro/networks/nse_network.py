@@ -7,7 +7,44 @@ from scipy.optimize import fsolve
 
 from pynucastro.networks.rate_collection import Composition, RateCollection
 from pynucastro.nucdata import Nucleus
-from pynucastro.screening import NseState
+from pynucastro.rates import TabularRate
+from pynucastro.screening import NseState, potekhin_1998
+
+
+class NSETableEntry:
+    def __init__(self, rho, T, Ye, *,
+                 comp=None, ydots=None, enu=None,
+                 comp_reduction_func=None):
+        """a simple container to hold a single entry in the NSE table"""
+
+        self.rho = rho
+        self.T = T
+        self.Ye = Ye
+
+        self.comp = comp
+        self.ydots = ydots
+        self.enu = enu
+
+        # compute the bits we need for the table
+
+        # mean molecular weight of the full NSE state
+        self.abar = comp.eval_abar()
+
+        # average binding energy / nucleon for the full NSE state
+        self.bea = sum(q.nucbind * self.comp.X[q] for q in self.comp.X)
+
+        # evolution of the electron fraction from weak rates alone
+        self.dYedt = sum(q.Z * self.ydots[q] for q in self.comp.X)
+
+        # evolution of Abar from weak rates alone
+        self.dabardt = -self.abar**2 * sum(self.ydots[q] for q in self.comp.X)
+
+        self.X = None
+        if comp_reduction_func:
+            self.X = comp_reduction_func(self.comp)
+
+    def __str__(self):
+        return f"({self.rho:12.6g}, {self.T:12.6g}, {self.Ye:6.4f}): {self.abar:6.4f}  {self.bea:6.4f}  {self.dYedt:12.6g}  {self.enu:12.6g}"
 
 
 class NSENetwork(RateCollection):
@@ -102,7 +139,8 @@ class NSENetwork(RateCollection):
 
         return [eq1, eq2]
 
-    def get_comp_nse(self, rho, T, ye, init_guess=(-3.5, -15), tol=1.0e-11, use_coulomb_corr=False, return_sol=False):
+    def get_comp_nse(self, rho, T, ye, init_guess=(-3.5, -15),
+                     tol=1.0e-11, use_coulomb_corr=False, return_sol=False):
         """
         Returns the NSE composition given density, temperature and prescribed electron fraction
         using scipy.fsolve.
@@ -124,7 +162,7 @@ class NSENetwork(RateCollection):
         return_sol: Whether to return the solution of the proton and neutron chemical potential.
         """
 
-        #From here we convert the init_guess list into a np.array object:
+        # From here we convert the init_guess list into a np.array object:
 
         init_guess = np.array(init_guess)
         state = NseState(T, rho, ye)
@@ -184,3 +222,48 @@ class NSENetwork(RateCollection):
             init_guess[0] -= 0.5
 
         raise ValueError("Unable to find a solution, try to adjust initial guess manually")
+
+    def generate_table(self, rho_values=None, T_values=None, Ye_values=None,
+                       comp_reduction_func=None,
+                       verbose=False, outfile="nse.tbl"):
+
+        # initial guess
+        mu_p0 = -3.5
+        mu_n0 = -15.0
+
+        # arrays to cache the chemical potentials as mu_p(rho, Ye)
+        mu_p = np.ones((len(rho_values), len(Ye_values)), dtype=np.float64) * mu_p0
+        mu_n = np.ones((len(rho_values), len(Ye_values)), dtype=np.float64) * mu_n0
+
+        nse_states = []
+        for T in reversed(T_values):
+            for irho, rho in enumerate(reversed(rho_values)):
+                for iye, ye in enumerate(reversed(Ye_values)):
+                    initial_guess = (mu_p[irho, iye], mu_n[irho, iye])
+                    try:
+                        comp, sol = self.get_comp_nse(rho, T, ye, use_coulomb_corr=True,
+                                                      init_guess=initial_guess,
+                                                      return_sol=True)
+                    except ValueError:
+                        initial_guess = (-3.5, -15)
+                        comp, sol = self.get_comp_nse(rho, T, ye, use_coulomb_corr=True,
+                                                      init_guess=initial_guess,
+                                                      return_sol=True)
+
+                    mu_p[irho, iye] = sol[0]
+                    mu_n[irho, iye] = sol[1]
+
+                    # get the dY/dt for just the weak rates
+                    ydots = self.evaluate_ydots(rho, T, comp,
+                                                screen_func=potekhin_1998,
+                                                rate_filter=lambda r: isinstance(r, TabularRate))
+
+                    _, enu = self.evaluate_energy_generation(rho, T, comp,
+                                                             screen_func=potekhin_1998,
+                                                             return_enu=True)
+
+                    nse_states.append(NSETableEntry(rho, T, ye,
+                                                    comp=comp, ydots=ydots, enu=enu,
+                                                    comp_reduction_func=comp_reduction_func))
+                    if verbose:
+                        print(nse_states[-1])
