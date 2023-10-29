@@ -287,7 +287,6 @@ class NSENetwork(RateCollection):
                                                     comp_reduction_func=comp_reduction_func))
                     if verbose:
                         print(nse_states[-1])
-                        print(nse_states[-1].X)
 
         with open(outfile, "w") as of:
 
