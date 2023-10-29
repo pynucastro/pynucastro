@@ -5,11 +5,12 @@ import numpy as np
 from scipy import constants
 from scipy.optimize import fsolve
 
+from pynucastro._version import version
 from pynucastro.networks.rate_collection import Composition, RateCollection
 from pynucastro.nucdata import Nucleus
 from pynucastro.rates import TabularRate
 from pynucastro.screening import NseState, potekhin_1998
-from pynucastro._version import version
+
 
 class NSETableEntry:
     def __init__(self, rho, T, Ye, *,
@@ -19,7 +20,7 @@ class NSETableEntry:
 
         Here, comp_reduction_func(comp) is a function that converts
         the NSE composition into a smaller set of nuclei.  It takes a
-        Composition object and returns a dictionary with the nucleus 
+        Composition object and returns a dictionary with the nucleus
         name (like "Ni56") as the key and the corresponding mass fraction
         as the value.  It should be ordered in the way you want the nuclei
         output into the NSE table file.
@@ -64,6 +65,7 @@ class NSETableEntry:
 
     def __lt__(self, other):
         return self.value() < other.value()
+
 
 class NSENetwork(RateCollection):
     """a network for solving for the NSE composition and outputting
