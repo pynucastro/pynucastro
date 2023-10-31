@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Nuclear Statistical Equilibrium &mdash; pynucastro 2.1.1.post9+gd311c72f documentation</title>
+  <title>Nuclear Statistical Equilibrium &mdash; pynucastro 2.1.1.post10+gf7c3f43c documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
@@ -16,7 +16,7 @@
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=d2b7ca51"></script>
+        <script src="_static/documentation_options.js?v=23b414b6"></script>
         <script src="_static/doctools.js?v=888ff710"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
         <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -28,7 +28,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Integrating using DifferentialEquations.jl" href="julia.html" />
+    <link rel="next" title="Creating Networks" href="networks.html" />
     <link rel="prev" title="Reverse Rates" href="partition-function.html" /> 
 </head>
 
@@ -75,20 +75,23 @@
 <li class="toctree-l1"><a class="reference internal" href="electron-captures.html">Combining ReacLib Rates with Electron Capture Tables</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Advanced Usage</span></p>
-<ul class="current">
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="screening-examples.html">Screening Rates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modify-example.html">Modifying Rates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="approx-rates-examples.html">Approximate Rates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="custom-rates.html">Creating a Custom Rate</a></li>
 <li class="toctree-l1"><a class="reference internal" href="unimportant-rates.html">Removing Unimportant Rates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="partition-function.html">Reverse Rates</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Nuclear Statistical Equilibrium</a></li>
-<li class="toctree-l1"><a class="reference internal" href="julia.html">Integrating using DifferentialEquations.jl</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Writing Networks</span></p>
+<p class="caption" role="heading"><span class="caption-text">Nuclear Statistical Equilibrium</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Nuclear Statistical Equilibrium</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Writing and Integrating Networks</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="networks.html">Creating Networks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cxx-networks.html">AMReX Astro Microphysics Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="julia.html">Integrating using DifferentialEquations.jl</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Reference</span></p>
 <ul>
@@ -194,36 +197,36 @@
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-  X(p) : 0.009350266606321987
-  X(He4) : 0.4336426124072652
+  X(p) : 0.009350266606321954
+  X(He4) : 0.43364261240726515
   X(C12) : 7.728712120083253e-06
-  X(N13) : 2.5920422459580476e-10
+  X(N13) : 2.592042245957974e-10
   X(N14) : 1.3663279951560348e-09
   X(O16) : 1.5697522234025456e-05
-  X(F18) : 2.411396978583035e-11
+  X(F18) : 2.4113969785829148e-11
   X(Ne20) : 3.0187425395498953e-07
-  X(Ne21) : 3.95630548228597e-09
+  X(Ne21) : 3.956305482285969e-09
   X(Na22) : 9.687054496002747e-10
-  X(Na23) : 7.296885077955646e-08
+  X(Na23) : 7.296885077955647e-08
   X(Mg24) : 3.47017442936467e-05
-  X(Al27) : 3.352629198402033e-05
+  X(Al27) : 3.3526291984020326e-05
   X(Si28) : 0.010439576812452963
-  X(P31) : 0.002134988182673321
+  X(P31) : 0.0021349881826733205
   X(S32) : 0.00916065479301666
-  X(Cl35) : 0.004000866907686167
-  X(Ar36) : 0.004879643203384295
-  X(K39) : 0.0055527096312054875
+  X(Cl35) : 0.004000866907686168
+  X(Ar36) : 0.004879643203383757
+  X(K39) : 0.005552709631206099
   X(Ca40) : 0.004769872715909166
   X(Sc43) : 0.00037268412616923876
   X(Ti44) : 0.00022925855185852205
   X(V47) : 0.004900619824856364
   X(Cr48) : 0.0011488690294424347
   X(Mn51) : 0.06904763795458473
-  X(Fe52) : 0.0057468885591274435
+  X(Fe52) : 0.005746888559127446
   X(Co55) : 0.41561588626344037
   X(Ni56) : 0.018914928742153777
 
-After solving, the chemical potential for proton and neutron are -7.738608570977177 and -9.999066026839861
+After solving, the chemical potential for proton and neutron are -7.738608570977179 and -9.99906602683986
 </pre></div></div>
 </div>
 <p>For <span class="math notranslate nohighlight">\(\rho = 10^7~\mathrm{g~cm^{-3}}\)</span> and electron fraction, <span class="math notranslate nohighlight">\(Y_e = 0.5\)</span>, we can explore how the NSE state changes with temperature.</p>
@@ -361,7 +364,7 @@ Text(0.5, 1.0, &#39;$\\rho =  1e+07$ and $T= 6e+09$&#39;)
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="partition-function.html" class="btn btn-neutral float-left" title="Reverse Rates" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="julia.html" class="btn btn-neutral float-right" title="Integrating using DifferentialEquations.jl" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="networks.html" class="btn btn-neutral float-right" title="Creating Networks" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
