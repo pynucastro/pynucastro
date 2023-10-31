@@ -71,4 +71,3 @@ class TestNSETable:
                 if new.startswith("#"):
                     continue
                 assert new == ref
-
