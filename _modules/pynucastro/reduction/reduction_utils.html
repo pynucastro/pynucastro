@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pynucastro.reduction.reduction_utils &mdash; pynucastro 2.1.1.post8+g4e285d60 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=6c960866"></script>
+        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../../_static/copybutton.js?v=f281be69"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            pynucastro
+              <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2.1
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Overview of pynucastro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../data_sources.html">Data Sources and Rate Types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Exploring Networks in Python</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../pynucastro-examples.html">pynucastro usage examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../plot-types.html">Plotting Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pynucastro-integration.html">Example of integrating a network</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Selecting Rates</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../library-examples.html">Selecting Rates from a Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../validate-example.html">Checking your network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../electron-capture-example.html">Tabulated Weak Rate Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../electron-captures.html">Combining ReacLib Rates with Electron Capture Tables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Advanced Usage</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../screening-examples.html">Screening Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modify-example.html">Modifying Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../approx-rates-examples.html">Approximate Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../custom-rates.html">Creating a Custom Rate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../unimportant-rates.html">Removing Unimportant Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../partition-function.html">Reverse Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../NSE-example.html">Nuclear Statistical Equilibrium</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../julia.html">Integrating using DifferentialEquations.jl</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Writing Networks</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../networks.html">Creating Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cxx-networks.html">AMReX Astro Microphysics Networks</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../citing.html">Citing pynucastro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../sources.html">Third Party Data</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">pynucastro</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">pynucastro.reduction.reduction_utils</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pynucastro.reduction.reduction_utils</h1><div class="highlight"><pre>
+<div class="viewcode-block" id="MPIImportError">
+<a class="viewcode-back" href="../../../pynucastro.reduction.html#pynucastro.reduction.reduction_utils.MPIImportError">[docs]</a>
+<span></span><span class="k">class</span> <span class="nc">MPIImportError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+
+<div class="viewcode-block" id="FailedMPIImport">
+<a class="viewcode-back" href="../../../pynucastro.reduction.html#pynucastro.reduction.reduction_utils.FailedMPIImport">[docs]</a>
+<span class="k">class</span> <span class="nc">FailedMPIImport</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class that can replace an mpi4py.MPI import and will throw an error if used.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">error_obj</span> <span class="o">=</span> <span class="n">error</span>
+
+        <span class="k">if</span> <span class="n">msg</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Failed to import MPI from mpi4py. Check your mpi4py installation if you&quot;</span>
+                   <span class="s2">&quot; want to run with MPI.&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">msg</span> <span class="o">=</span> <span class="n">msg</span>
+
+    <span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">error_obj</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">MPIImportError</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">self.error_obj</span>
+        <span class="k">raise</span> <span class="n">MPIImportError</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">msg</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="mpi_importer">
+<a class="viewcode-back" href="../../../pynucastro.reduction.html#pynucastro.reduction.reduction_utils.mpi_importer">[docs]</a>
+<span class="k">def</span> <span class="nf">mpi_importer</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Lazy MPI import, where we only throw an error if the import failed and then we attempt to use</span>
+<span class="sd">    the object.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">from</span> <span class="nn">mpi4py</span> <span class="kn">import</span> <span class="n">MPI</span>  <span class="c1"># pylint: disable=import-outside-toplevel</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">ModuleNotFoundError</span><span class="p">,</span> <span class="ne">ImportError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">MPI</span> <span class="o">=</span> <span class="n">FailedMPIImport</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">MPI</span></div>
+
+
+
+<div class="viewcode-block" id="mpi_numpy_decomp">
+<a class="viewcode-back" href="../../../pynucastro.reduction.html#pynucastro.reduction.reduction_utils.mpi_numpy_decomp">[docs]</a>
+<span class="k">def</span> <span class="nf">mpi_numpy_decomp</span><span class="p">(</span><span class="n">MPI_N</span><span class="p">,</span> <span class="n">MPI_rank</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Decompose a set of conditions for *MPI_N* MPI processes, where the conditions are a sequence of</span>
+<span class="sd">    3 sequences with ordering (composition_sequence, density_sequence, temperature_sequence). This</span>
+<span class="sd">    structure for the dataset is necessary for the vectorized reduction algorithms.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">MPI_N</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+
+        <span class="n">comp_idx</span> <span class="o">=</span> <span class="n">MPI_rank</span>
+        <span class="n">comp_step</span> <span class="o">=</span> <span class="n">MPI_N</span>
+        <span class="n">rho_idx</span> <span class="o">=</span> <span class="n">T_idx</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">rho_step</span> <span class="o">=</span> <span class="n">T_step</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="k">elif</span> <span class="n">MPI_N</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">n</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+
+        <span class="n">m</span> <span class="o">=</span> <span class="n">MPI_N</span> <span class="o">//</span> <span class="n">n</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">MPI_rank</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">m</span><span class="p">:</span>
+            <span class="n">comp_idx</span> <span class="o">=</span> <span class="n">MPI_rank</span> <span class="o">%</span> <span class="n">n</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">comp_step</span> <span class="o">=</span> <span class="n">n</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">rho_idx</span> <span class="o">=</span> <span class="n">MPI_rank</span> <span class="o">//</span> <span class="n">n</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">rho_step</span> <span class="o">=</span> <span class="n">m</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">comp_idx</span> <span class="o">=</span> <span class="n">n</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">comp_step</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="n">rho_idx</span> <span class="o">=</span> <span class="n">n</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">rho_step</span> <span class="o">=</span> <span class="mi">1</span>
+
+        <span class="n">T_idx</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">T_step</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="k">elif</span> <span class="n">MPI_N</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">n</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">n</span><span class="p">[</span><span class="mi">2</span><span class="p">]:</span>
+
+        <span class="n">m</span> <span class="o">=</span> <span class="n">MPI_N</span> <span class="o">//</span> <span class="p">(</span><span class="n">n</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">n</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="n">MPI_rank</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">n</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">m</span><span class="p">:</span>
+            <span class="n">comp_idx</span> <span class="o">=</span> <span class="n">MPI_rank</span> <span class="o">%</span> <span class="n">n</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">comp_step</span> <span class="o">=</span> <span class="n">n</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">rho_idx</span> <span class="o">=</span> <span class="p">(</span><span class="n">MPI_rank</span> <span class="o">//</span> <span class="n">n</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">%</span> <span class="n">n</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">rho_step</span> <span class="o">=</span> <span class="n">n</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">T_idx</span> <span class="o">=</span> <span class="n">MPI_rank</span> <span class="o">//</span> <span class="p">(</span><span class="n">n</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">n</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">T_step</span> <span class="o">=</span> <span class="n">m</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">comp_idx</span> <span class="o">=</span> <span class="n">n</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">comp_step</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="n">rho_idx</span> <span class="o">=</span> <span class="n">n</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">rho_step</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="n">T_idx</span> <span class="o">=</span> <span class="n">n</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+            <span class="n">T_step</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="k">else</span><span class="p">:</span>
+
+        <span class="n">m</span> <span class="o">=</span> <span class="n">MPI_N</span> <span class="o">//</span> <span class="p">(</span><span class="n">n</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">n</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="n">MPI_rank</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">n</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">n</span><span class="p">[</span><span class="mi">2</span><span class="p">]:</span>
+            <span class="n">comp_idx</span> <span class="o">=</span> <span class="n">MPI_rank</span> <span class="o">%</span> <span class="n">n</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">comp_step</span> <span class="o">=</span> <span class="n">n</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">rho_idx</span> <span class="o">=</span> <span class="p">(</span><span class="n">MPI_rank</span> <span class="o">//</span> <span class="n">n</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">%</span> <span class="n">n</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">rho_step</span> <span class="o">=</span> <span class="n">n</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">T_idx</span> <span class="o">=</span> <span class="n">MPI_rank</span> <span class="o">//</span> <span class="p">(</span><span class="n">n</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">n</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">T_step</span> <span class="o">=</span> <span class="n">n</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">comp_idx</span> <span class="o">=</span> <span class="n">n</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">comp_step</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="n">rho_idx</span> <span class="o">=</span> <span class="n">n</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">rho_step</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="n">T_idx</span> <span class="o">=</span> <span class="n">n</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+            <span class="n">T_step</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="n">comp_idx</span><span class="p">,</span> <span class="n">comp_step</span><span class="p">,</span> <span class="n">rho_idx</span><span class="p">,</span> <span class="n">rho_step</span><span class="p">,</span> <span class="n">T_idx</span><span class="p">,</span> <span class="n">T_step</span></div>
+
+
+
+<div class="viewcode-block" id="to_list">
+<a class="viewcode-back" href="../../../pynucastro.reduction.html#pynucastro.reduction.reduction_utils.to_list">[docs]</a>
+<span class="k">def</span> <span class="nf">to_list</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert a sequence or non-iterable to a list. In the non-iterable case, the supplied object will</span>
+<span class="sd">    be repeated *n* times (default 1).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">*</span> <span class="n">n</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, pynucastro development team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

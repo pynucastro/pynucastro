@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pynucastro.reduction.load_network &mdash; pynucastro 2.1.1.post8+g4e285d60 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=6c960866"></script>
+        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../../_static/copybutton.js?v=f281be69"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            pynucastro
+              <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2.1
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Overview of pynucastro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../data_sources.html">Data Sources and Rate Types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Exploring Networks in Python</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../pynucastro-examples.html">pynucastro usage examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../plot-types.html">Plotting Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pynucastro-integration.html">Example of integrating a network</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Selecting Rates</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../library-examples.html">Selecting Rates from a Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../validate-example.html">Checking your network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../electron-capture-example.html">Tabulated Weak Rate Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../electron-captures.html">Combining ReacLib Rates with Electron Capture Tables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Advanced Usage</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../screening-examples.html">Screening Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modify-example.html">Modifying Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../approx-rates-examples.html">Approximate Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../custom-rates.html">Creating a Custom Rate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../unimportant-rates.html">Removing Unimportant Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../partition-function.html">Reverse Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../NSE-example.html">Nuclear Statistical Equilibrium</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../julia.html">Integrating using DifferentialEquations.jl</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Writing Networks</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../networks.html">Creating Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cxx-networks.html">AMReX Astro Microphysics Networks</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../citing.html">Citing pynucastro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../sources.html">Third Party Data</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">pynucastro</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">pynucastro.reduction.load_network</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pynucastro.reduction.load_network</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="kn">from</span> <span class="nn">pynucastro.networks</span> <span class="kn">import</span> <span class="n">PythonNetwork</span>
+<span class="kn">from</span> <span class="nn">pynucastro.nucdata</span> <span class="kn">import</span> <span class="n">Nucleus</span>
+<span class="kn">from</span> <span class="nn">pynucastro.rates</span> <span class="kn">import</span> <span class="n">Library</span><span class="p">,</span> <span class="n">RateFilter</span>
+
+
+<div class="viewcode-block" id="load_network">
+<a class="viewcode-back" href="../../../pynucastro.reduction.html#pynucastro.reduction.load_network.load_network">[docs]</a>
+<span class="k">def</span> <span class="nf">load_network</span><span class="p">(</span><span class="n">endpoint</span><span class="o">=</span><span class="n">Nucleus</span><span class="p">(</span><span class="s1">&#39;te108&#39;</span><span class="p">),</span> <span class="n">library_name</span><span class="o">=</span><span class="s1">&#39;rp-process-lib&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Load a network from a library, filtering the library so only nuclei with Z and A less than</span>
+<span class="sd">    the endpoint&#39;s Z and A are included.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">ff</span><span class="p">(</span><span class="n">rate</span><span class="p">):</span>
+
+        <span class="n">react_meet_conds</span> <span class="o">=</span> \
+        <span class="p">(</span>
+            <span class="n">r</span><span class="o">.</span><span class="n">Z</span> <span class="o">&lt;=</span> <span class="n">endpoint</span><span class="o">.</span><span class="n">Z</span> <span class="ow">and</span>
+            <span class="n">r</span><span class="o">.</span><span class="n">A</span> <span class="o">&lt;=</span> <span class="n">endpoint</span><span class="o">.</span><span class="n">A</span>
+            <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">rate</span><span class="o">.</span><span class="n">reactants</span>
+        <span class="p">)</span>
+
+        <span class="n">prod_meet_conds</span> <span class="o">=</span> \
+        <span class="p">(</span>
+            <span class="n">p</span><span class="o">.</span><span class="n">Z</span> <span class="o">&lt;=</span> <span class="n">endpoint</span><span class="o">.</span><span class="n">Z</span> <span class="ow">and</span>
+            <span class="n">p</span><span class="o">.</span><span class="n">A</span> <span class="o">&lt;=</span> <span class="n">endpoint</span><span class="o">.</span><span class="n">A</span>
+            <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">rate</span><span class="o">.</span><span class="n">products</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="nb">all</span><span class="p">(</span><span class="n">react_meet_conds</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span><span class="n">prod_meet_conds</span><span class="p">)</span>
+
+    <span class="n">filt</span> <span class="o">=</span> <span class="n">RateFilter</span><span class="p">(</span><span class="n">filter_function</span><span class="o">=</span><span class="n">ff</span><span class="p">)</span>
+    <span class="n">lib</span> <span class="o">=</span> <span class="n">Library</span><span class="p">(</span><span class="n">library_name</span><span class="p">)</span>
+    <span class="n">lib</span> <span class="o">=</span> <span class="n">lib</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">filt</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">PythonNetwork</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="p">[</span><span class="n">lib</span><span class="p">])</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+
+    <span class="n">args</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;endpoint&quot;</span><span class="p">:</span> <span class="n">Nucleus</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="s2">&quot;library_name&quot;</span><span class="p">:</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">]}</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;endpoint&quot;</span><span class="p">:</span> <span class="n">Nucleus</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">])}</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Usage: ./load_network.py [endpoint] [library_name]&quot;</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">net</span> <span class="o">=</span> <span class="n">load_network</span><span class="p">(</span><span class="o">**</span><span class="n">args</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Network loaded!&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Number of species: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">net</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Number of rates: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">net</span><span class="o">.</span><span class="n">rates</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, pynucastro development team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
