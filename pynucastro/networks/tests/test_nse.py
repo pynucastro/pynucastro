@@ -9,7 +9,7 @@ class TestNSE:
 
         lib = reaclib_library.linking_nuclei(["p", "he4", "fe52",
                                               "co55", "ni56"])
-        return pyna.RateCollection(libraries=lib)
+        return pyna.NSENetwork(libraries=lib)
 
     def test_nse_coul(self, pynet):
 
