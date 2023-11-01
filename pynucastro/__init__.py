@@ -59,6 +59,10 @@ rates, including:
   and produces an interactive visualization that can be explored
   in Jupyter notebooks.
 
+* NSENetwork : this extends the RateCollection to allow for solving
+  for the nuclear statistical equilibrium state of a collection of
+  nuclei.
+
 * PythonNetwork : this extends the RateCollection to enable output
   of python code that can be used with ODE integrators to solve
   a network.
@@ -122,9 +126,10 @@ __version__ = version
 
 import pynucastro.screening
 from pynucastro.networks import (AmrexAstroCxxNetwork, BaseCxxNetwork,
-                                 Composition, Explorer, PythonNetwork,
-                                 RateCollection, SimpleCxxNetwork,
-                                 StarKillerCxxNetwork, SympyRates)
+                                 Composition, Explorer, NSENetwork,
+                                 PythonNetwork, RateCollection,
+                                 SimpleCxxNetwork, StarKillerCxxNetwork,
+                                 SympyRates)
 from pynucastro.nucdata import Nucleus, get_nuclei_in_range
 from pynucastro.rates import (ApproximateRate, DerivedRate, LangankeLibrary,
                               Library, Rate, RateFilter, ReacLibLibrary,

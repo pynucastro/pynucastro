@@ -1,36 +1,27 @@
 # unit tests for rates
 
+import pytest
 from pytest import approx, raises
 
 import pynucastro as pyna
 
 
 class TestTabularRates:
-    @classmethod
-    def setup_class(cls):
-        """ this is run once for each class before any tests """
 
-    @classmethod
-    def teardown_class(cls):
-        """ this is run once for each class after all tests """
+    @pytest.fixture(scope="class")
+    def rc_su(self, suzuki_library):
+        return pyna.RateCollection(libraries=[suzuki_library])
 
-    def setup_method(self):
-        """ this is run before each test """
+    @pytest.fixture(scope="class")
+    def rc_la(self, langanke_library):
+        return pyna.RateCollection(libraries=[langanke_library])
 
-        lib_su = pyna.SuzukiLibrary()
-        lib_la = pyna.LangankeLibrary()
-        self.rc_su = pyna.RateCollection(libraries=[lib_su])
-        self.rc_la = pyna.RateCollection(libraries=[lib_la])
-
-    def teardown_method(self):
-        """ this is run after each test """
-
-    def test_rate_values_suzuki(self):
+    def test_rate_values_suzuki(self, rc_su):
 
         rho = 1.2e8
         T = 1.5e9
 
-        comp_su = pyna.Composition(self.rc_su.get_nuclei())
+        comp_su = pyna.Composition(rc_su.get_nuclei())
         comp_su.set_all(1)
         comp_su.normalize()
 
@@ -109,19 +100,19 @@ class TestTabularRates:
         # the individual rate is
         # r = Y(reactant) * table_value
 
-        for r in self.rc_su.get_rates():
+        for r in rc_su.get_rates():
             rr = ys_su[r.reactants[0]] * r.eval(T, rhoY=rho*ye_su)
             if r.fname in stored_rates_su:
                 assert rr == approx(stored_rates_su[r.fname], rel=1.e-6, abs=1.e-100), f"rate: {r} does not agree"
             else:
                 print(f"WARNING: missing Suzuki tests for tabular rate {r}")
 
-    def test_rate_values_langanke(self):
+    def test_rate_values_langanke(self, rc_la):
 
         rho = 1.2e8
         T = 1.5e9
 
-        comp_la = pyna.Composition(self.rc_la.get_nuclei())
+        comp_la = pyna.Composition(rc_la.get_nuclei())
         comp_la.set_all(1)
         comp_la.normalize()
 
@@ -351,19 +342,19 @@ class TestTabularRates:
         # the individual rate is
         # r = Y(reactant) * table_value
 
-        for r in self.rc_la.get_rates():
+        for r in rc_la.get_rates():
             rr = ys_la[r.reactants[0]] * r.eval(T, rhoY=rho*ye_la)
             if r.fname in stored_rates_la:
                 assert rr == approx(stored_rates_la[r.fname], rel=1.e-6, abs=1.e-100), f"rate: {r} does not agree"
             else:
                 print(f"WARNING: missing Langanke tests for tabular rate {r}")
 
-    def test_nu_loss_values_suzuki(self):
+    def test_nu_loss_values_suzuki(self, rc_su):
 
         rho = 1.2e9
         T = 1.5e9
 
-        comp_su = pyna.Composition(self.rc_su.get_nuclei())
+        comp_su = pyna.Composition(rc_su.get_nuclei())
         comp_su.set_all(1)
         comp_su.normalize()
 
@@ -440,16 +431,16 @@ class TestTabularRates:
 
         ye_su = comp_su.eval_ye()
 
-        for r in self.rc_su.get_rates():
+        for r in rc_su.get_rates():
             nu_loss = r.get_nu_loss(T, rhoY=rho*ye_su)
             if r.fname in stored_nu_loss_su:
                 assert nu_loss == approx(stored_nu_loss_su[r.fname], rel=1.e-6, abs=1.e-100), f"rate: {r} does not agree"
             else:
                 print(f"WARNING: missing Suzuki tests for tabular nu loss rate {r}")
 
-    def test_bounds(self):
+    def test_bounds(self, rc_su):
 
-        r = self.rc_su.get_rates()[0]
+        r = rc_su.get_rates()[0]
 
         T = 1.e11
         rhoy = 1.e7

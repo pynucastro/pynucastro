@@ -19,6 +19,16 @@ def tabular_library():
 
 
 @pytest.fixture(scope="package")
+def suzuki_library():
+    return pyna.SuzukiLibrary()
+
+
+@pytest.fixture(scope="package")
+def langanke_library():
+    return pyna.LangankeLibrary()
+
+
+@pytest.fixture(scope="package")
 def compare_network_files(request):
     # this fixture returns a closure so we don't have to get the pytest config
     # in each test function and pass it through

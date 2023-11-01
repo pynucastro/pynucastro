@@ -53,10 +53,17 @@ codes.
 
 .. toctree::
    :maxdepth: 1
-   :caption: Writing Networks
+   :caption: Nuclear Statistical Equilibrium
+
+   NSE-example.ipynb
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Writing and Integrating Networks
 
    networks
    cxx-networks
+   julia
 
 .. toctree::
    :maxdepth: 1
