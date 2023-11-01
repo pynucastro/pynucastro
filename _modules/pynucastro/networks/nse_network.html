@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.networks.nse_network &mdash; pynucastro 2.1.1.post10+gf7c3f43c documentation</title>
+  <title>pynucastro.networks.nse_network &mdash; pynucastro 2.1.1.post11+gbdd09093 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
@@ -14,7 +14,7 @@
   
         <script src="../../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../_static/documentation_options.js?v=23b414b6"></script>
+        <script src="../../../_static/documentation_options.js?v=06de0691"></script>
         <script src="../../../_static/doctools.js?v=888ff710"></script>
         <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
         <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -119,8 +119,7 @@
            <div itemprop="articleBody">
              
   <h1>Source code for pynucastro.networks.nse_network</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">copy</span>
-<span class="kn">import</span> <span class="nn">warnings</span>
+<span></span><span class="kn">import</span> <span class="nn">warnings</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">constants</span>
@@ -139,7 +138,7 @@
 
     <span class="k">def</span> <span class="nf">_evaluate_n_e</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">Xs</span><span class="p">):</span>
 
-        <span class="n">m_u</span> <span class="o">=</span> <span class="n">constants</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="s2">&quot;unified atomic mass unit&quot;</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1.0e3</span>  <span class="c1"># atomic unit mass in g</span>
+        <span class="n">m_u</span> <span class="o">=</span> <span class="n">constants</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="s2">&quot;unified atomic mass unit&quot;</span><span class="p">)</span> <span class="o">*</span> <span class="n">constants</span><span class="o">.</span><span class="n">kilo</span>  <span class="c1"># atomic unit mass in g</span>
 
         <span class="n">n_e</span> <span class="o">=</span> <span class="mf">0.0</span>
         <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">:</span>
@@ -161,8 +160,8 @@
         <span class="k">assert</span> <span class="n">state</span><span class="o">.</span><span class="n">ye</span> <span class="o">&gt;=</span> <span class="n">ye_low</span> <span class="ow">and</span> <span class="n">state</span><span class="o">.</span><span class="n">ye</span> <span class="o">&lt;=</span> <span class="n">ye_max</span><span class="p">,</span> <span class="s2">&quot;input electron fraction goes outside of scope for current network&quot;</span>
 
         <span class="c1"># Setting up the constants needed to compute mu_c</span>
-        <span class="n">k</span> <span class="o">=</span> <span class="n">constants</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="s2">&quot;Boltzmann constant&quot;</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1.0e7</span>          <span class="c1"># boltzmann in erg/K</span>
-        <span class="n">Erg2MeV</span> <span class="o">=</span> <span class="mf">624151.0</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="n">constants</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="s2">&quot;Boltzmann constant&quot;</span><span class="p">)</span> <span class="o">/</span> <span class="n">constants</span><span class="o">.</span><span class="n">erg</span>           <span class="c1"># boltzmann in erg/K</span>
+        <span class="n">Erg2MeV</span> <span class="o">=</span> <span class="n">constants</span><span class="o">.</span><span class="n">erg</span> <span class="o">/</span> <span class="p">(</span><span class="n">constants</span><span class="o">.</span><span class="n">eV</span> <span class="o">*</span> <span class="n">constants</span><span class="o">.</span><span class="n">mega</span><span class="p">)</span>
 
         <span class="c1"># u_c is the coulomb correction term for NSE</span>
         <span class="c1"># Calculate the composition at NSE, equations found in appendix of Calder paper</span>
@@ -261,21 +260,20 @@
         <span class="n">Xs</span> <span class="o">=</span> <span class="p">{}</span>
 
         <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="n">init_guess</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">init_guess</span><span class="p">)</span>
         <span class="n">is_pos_old</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="n">found_sol</span> <span class="o">=</span> <span class="kc">False</span>
-
-        <span class="c1"># Filter out runtimewarnings from fsolve, here we check convergence by np.isclose</span>
-        <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="ne">RuntimeWarning</span><span class="p">)</span>
 
         <span class="c1"># This nested loops should fine-tune the initial guess if fsolve is unable to find a solution</span>
         <span class="k">while</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="mi">20</span><span class="p">:</span>
             <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
-            <span class="n">guess</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">init_guess</span><span class="p">)</span>
+            <span class="n">guess</span> <span class="o">=</span> <span class="n">init_guess</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
             <span class="n">init_dx</span> <span class="o">=</span> <span class="mf">0.5</span>
 
             <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">20</span><span class="p">:</span>
-                <span class="n">u</span> <span class="o">=</span> <span class="n">fsolve</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_constraint_eq</span><span class="p">,</span> <span class="n">guess</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">u_c</span><span class="p">,</span> <span class="n">state</span><span class="p">),</span> <span class="n">xtol</span><span class="o">=</span><span class="n">tol</span><span class="p">,</span> <span class="n">maxfev</span><span class="o">=</span><span class="mi">800</span><span class="p">)</span>
+                <span class="c1"># Filter out runtimewarnings from fsolve, here we check convergence by np.isclose</span>
+                <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
+                    <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="ne">RuntimeWarning</span><span class="p">)</span>
+                    <span class="n">u</span> <span class="o">=</span> <span class="n">fsolve</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_constraint_eq</span><span class="p">,</span> <span class="n">guess</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">u_c</span><span class="p">,</span> <span class="n">state</span><span class="p">),</span> <span class="n">xtol</span><span class="o">=</span><span class="n">tol</span><span class="p">,</span> <span class="n">maxfev</span><span class="o">=</span><span class="mi">800</span><span class="p">)</span>
                 <span class="n">Xs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nucleon_fraction_nse</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">u_c</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span>
                 <span class="n">n_e</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_evaluate_n_e</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">Xs</span><span class="p">)</span>
                 <span class="n">u_c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_evaluate_mu_c</span><span class="p">(</span><span class="n">n_e</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">use_coulomb_corr</span><span class="p">)</span>
