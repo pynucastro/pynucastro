@@ -20,7 +20,7 @@ codes.
    :caption: Introduction
 
    intro
-   data_sources
+   rate_types
    install
 
 .. toctree::

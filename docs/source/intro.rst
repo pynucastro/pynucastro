@@ -127,12 +127,3 @@ There are two modes of usage for pynucastro.
   <https://amrex-astro.github.io/Castro/>`_ codes.
 
 
-Data sources
-------------
-
-pynucastro can currently read rates from:
-
-* `JINA Reaclib <https://reaclib.jinaweb.org/>`_
-
-* Electron-capture / :math:`\beta`-decay rates from Suzuki et al. 2016
-
