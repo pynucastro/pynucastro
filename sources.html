@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Third Party Data &mdash; pynucastro 2.1.1.post11+gbdd09093 documentation</title>
+  <title>Third Party Data &mdash; pynucastro 2.1.1.post12+ga7874a07 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
@@ -15,13 +15,15 @@
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=06de0691"></script>
+        <script src="_static/documentation_options.js?v=33a84d30"></script>
         <script src="_static/doctools.js?v=888ff710"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
         <script src="_static/clipboard.min.js?v=a7894cd8"></script>
         <script src="_static/copybutton.js?v=f281be69"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+        <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -54,7 +56,7 @@
               <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="intro.html">Overview of pynucastro</a></li>
-<li class="toctree-l1"><a class="reference internal" href="data_sources.html">Data Sources and Rate Types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rate_types.html">Reaction Rate Types</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Exploring Networks in Python</span></p>
@@ -94,10 +96,14 @@
 <li class="toctree-l1"><a class="reference internal" href="citing.html">Citing pynucastro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modules.html">API</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Third Party Data</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#nuclear-reaction-rates-from-jina-reaclib">Nuclear reaction rates from JINA Reaclib</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#tabulated-weak-nuclear-reaction-rates">Tabulated weak nuclear reaction rates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#reaction-rates">Reaction rates</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#nuclear-reaction-rates-from-jina-reaclib">Nuclear reaction rates from JINA Reaclib</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#tabulated-weak-nuclear-reaction-rates">Tabulated weak nuclear reaction rates</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#physical-constants-from-codata">Physical constants from CODATA</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#nuclear-binding-energies-from-the-atomic-mass-data-center">Nuclear binding energies from the Atomic Mass Data Center</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#masses-binding-energies-and-spins-from-the-atomic-mass-data-center">Masses, binding energies, and spins from the Atomic Mass Data Center</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#partition-functions">Partition functions</a></li>
 </ul>
 </li>
 </ul>
@@ -131,18 +137,25 @@
 <p>pynucastro incorporates the following publicly-available
 third-party data. Links to this data as well as citations to the
 relevant publications are as follows.</p>
+<section id="reaction-rates">
+<h2>Reaction rates<a class="headerlink" href="#reaction-rates" title="Link to this heading"></a></h2>
 <section id="nuclear-reaction-rates-from-jina-reaclib">
-<h2>Nuclear reaction rates from JINA Reaclib<a class="headerlink" href="#nuclear-reaction-rates-from-jina-reaclib" title="Link to this heading"></a></h2>
+<h3>Nuclear reaction rates from JINA Reaclib<a class="headerlink" href="#nuclear-reaction-rates-from-jina-reaclib" title="Link to this heading"></a></h3>
 <p>The reaction rate parameterizations in <a class="reference external" href="https://github.com/pynucastro/pynucastro/tree/main/pynucastro/library">pynucastro/library</a>
 were obtained from the <a class="reference external" href="https://reaclib.jinaweb.org/">JINA Reaclib database</a>.</p>
 <p><a class="reference external" href="https://iopscience.iop.org/article/10.1088/0067-0049/189/1/240">Cyburt et al., ApJS 189 (2010) 240</a></p>
 </section>
 <section id="tabulated-weak-nuclear-reaction-rates">
-<h2>Tabulated weak nuclear reaction rates<a class="headerlink" href="#tabulated-weak-nuclear-reaction-rates" title="Link to this heading"></a></h2>
-<p>The weak reaction rate tables in <a class="reference external" href="https://github.com/pynucastro/pynucastro/tree/main/pynucastro/library/tabular/suzuki">pynucastro/library/tabular/suzuki</a>
-were obtained from:</p>
-<p><a class="reference external" href="https://www.phys.chs.nihon-u.ac.jp/suzuki/data2/link.html">https://www.phys.chs.nihon-u.ac.jp/suzuki/data2/link.html</a></p>
-<p><a class="reference external" href="https://iopscience.iop.org/article/10.3847/0004-637X/817/2/163">Suzuki et al., ApJ 817 (2016) 163</a></p>
+<h3>Tabulated weak nuclear reaction rates<a class="headerlink" href="#tabulated-weak-nuclear-reaction-rates" title="Link to this heading"></a></h3>
+<ul>
+<li><p>For nuclei with <span class="math notranslate nohighlight">\(A = 17\)</span> to <span class="math notranslate nohighlight">\(28\)</span> we use the weak rates from:
+<a class="reference external" href="https://iopscience.iop.org/article/10.3847/0004-637X/817/2/163">Suzuki et al. (2016)</a></p>
+<p>The data tables were obtained from <a class="reference external" href="https://www.phys.chs.nihon-u.ac.jp/suzuki/data2/link.html">https://www.phys.chs.nihon-u.ac.jp/suzuki/data2/link.html</a></p>
+</li>
+<li><p>For nuclei with <span class="math notranslate nohighlight">\(A = 45\)</span> to <span class="math notranslate nohighlight">\(65\)</span> we use the weak rates from
+<a class="reference external" href="https://doi.org/10.1006/adnd.2001.0865">Langanke and Martinez-Pinedo (2001)</a></p></li>
+</ul>
+</section>
 </section>
 <section id="physical-constants-from-codata">
 <h2>Physical constants from CODATA<a class="headerlink" href="#physical-constants-from-codata" title="Link to this heading"></a></h2>
@@ -152,13 +165,10 @@ recommended values.</p>
 <p><a class="reference external" href="https://physics.nist.gov/cuu/Constants/index.html">P.J. Mohr, D.B. Newell, and B.N. Taylor (2016), “The 2014 CODATA Recommended Values of the Fundamental Physical Constants”</a></p>
 <p><a class="reference external" href="https://journals.aps.org/rmp/abstract/10.1103/RevModPhys.88.035009">Mohr et al., Rev. Mod. Phys. 88, 035009</a></p>
 </section>
-<section id="nuclear-binding-energies-from-the-atomic-mass-data-center">
-<h2>Nuclear binding energies from the Atomic Mass Data Center<a class="headerlink" href="#nuclear-binding-energies-from-the-atomic-mass-data-center" title="Link to this heading"></a></h2>
-<p>The standalone AMReX-Astro Microphysics
-networks rely on binding energy per nucleon sourced from the Atomic
-Mass Evaluation 2016 (default) and 2012 of the Atomic Mass Data
-Center.</p>
-<p>The Atomic Mass Evaluation 2016 and 2012 are available <a class="reference external" href="https://www-nds.iaea.org/amdc/">online</a>.</p>
+<section id="masses-binding-energies-and-spins-from-the-atomic-mass-data-center">
+<h2>Masses, binding energies, and spins from the Atomic Mass Data Center<a class="headerlink" href="#masses-binding-energies-and-spins-from-the-atomic-mass-data-center" title="Link to this heading"></a></h2>
+<p>We get the basic nuclear properties from the AME2016 evaluation.  This
+is available online at: <a class="reference external" href="https://www-nds.iaea.org/amdc/">Nuclear Data Services</a>.</p>
 <p>Atomic Mass Evaluation 2016:</p>
 <ul class="simple">
 <li><p><a class="reference external" href="https://iopscience.iop.org/article/10.1088/1674-1137/41/3/030002">Huang et al., Chinese Physics C 41, 030002</a></p></li>
@@ -168,6 +178,14 @@ Center.</p>
 <ul class="simple">
 <li><p><a class="reference external" href="https://iopscience.iop.org/article/10.1088/1674-1137/36/12/002">Audi et al., Chinese Physics C 36, 1287-1602</a></p></li>
 <li><p><a class="reference external" href="https://iopscience.iop.org/article/10.1088/1674-1137/36/12/003">Wang et al., Chinese Physics C 36, 1603-2014</a></p></li>
+</ul>
+</section>
+<section id="partition-functions">
+<h2>Partition functions<a class="headerlink" href="#partition-functions" title="Link to this heading"></a></h2>
+<p>We use the tabulated partition functions from the following sources:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://journals.aps.org/prc/abstract/10.1103/PhysRevC.56.1613">Rauscher et al. 1997</a></p></li>
+<li><p><a class="reference external" href="https://iopscience.iop.org/article/10.1086/375733">Rauscher 2003</a></p></li>
 </ul>
 </section>
 </section>
