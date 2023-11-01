@@ -576,7 +576,6 @@ def sneut5(rho, T, comp=None, *, abar=None, zbar=None,
         dum = 1.0 + 1.47 * etam1 + 3.29e-2 * etam2
 
         c00 = 1.26 * (1.0 + etam1)
-        z = -1.26 * etam2
 
         z = 1.0 / dum
         xden = c00 * z
@@ -589,7 +588,6 @@ def sneut5(rho, T, comp=None, *, abar=None, zbar=None,
 
         z = 1.0 + rm * 1.0e-9
         dum = a0 * z
-        z = a0 * 1.0e-9
 
         xnum = 1.0 / dum
 
