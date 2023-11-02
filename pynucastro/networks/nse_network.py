@@ -49,6 +49,9 @@ class NSETableEntry:
             # evolution of Abar from weak rates alone
             self.dabardt = -self.abar**2 * sum(self.ydots[q] for q in self.comp.X)
 
+            # evolution of B/A from weak rates alone
+            self.dbeadt = sum(self.ydots[q] * q.nucbind for q in self.comp.X)
+
             self.X = None
             if comp_reduction_func:
                 self.X = comp_reduction_func(self.comp)
@@ -293,7 +296,7 @@ class NSENetwork(RateCollection):
             of.write(f"# original NSENetwork had {len(self.unique_nuclei)} nuclei\n")
             of.write("#\n")
             of.write(f"# {'log10(rho)':^15} {'log10(T)':^15} {'Ye':^15} ")
-            of.write(f"{'Abar':^15} {'<B/A>':^15} {'dYe/dt':^15} {'dAbar/dt':^15} {'e_nu':^15} ")
+            of.write(f"{'Abar':^15} {'<B/A>':^15} {'dYe/dt':^15} {'dAbar/dt':^15} {'d<B/A>/dt':^15} {'e_nu':^15} ")
 
             if nse_states[0].X:
                 for nuc, _ in nse_states[0].X:
@@ -304,7 +307,7 @@ class NSENetwork(RateCollection):
 
             for entry in sorted(nse_states):
                 of.write(f"{np.log10(entry.rho):15.10f} {np.log10(entry.T):15.10f} {entry.Ye:15.10f} ")
-                of.write(f"{entry.abar:15.10f} {entry.bea:15.10f} {entry.dYedt:15.8g} {entry.dabardt:15.8g} {entry.enu:15.8g} ")
+                of.write(f"{entry.abar:15.10f} {entry.bea:15.10f} {entry.dYedt:15.8g} {entry.dabardt:15.8g} {entry.dBEAdt:15.8g} {entry.enu:15.8g} ")
 
                 if entry.X:
                     for _, val in entry.X:
