@@ -1,4 +1,3 @@
-import copy
 import warnings
 
 import numpy as np
@@ -73,7 +72,7 @@ class NSENetwork(RateCollection):
 
     def _evaluate_n_e(self, state, Xs):
 
-        m_u = constants.value("unified atomic mass unit") * 1.0e3  # atomic unit mass in g
+        m_u = constants.value("unified atomic mass unit") * constants.kilo  # atomic unit mass in g
 
         n_e = 0.0
         for nuc in self.unique_nuclei:
@@ -95,8 +94,8 @@ class NSENetwork(RateCollection):
         assert state.ye >= ye_low and state.ye <= ye_max, "input electron fraction goes outside of scope for current network"
 
         # Setting up the constants needed to compute mu_c
-        k = constants.value("Boltzmann constant") * 1.0e7          # boltzmann in erg/K
-        Erg2MeV = 624151.0
+        k = constants.value("Boltzmann constant") / constants.erg           # boltzmann in erg/K
+        Erg2MeV = constants.erg / (constants.eV * constants.mega)
 
         # u_c is the coulomb correction term for NSE
         # Calculate the composition at NSE, equations found in appendix of Calder paper
@@ -194,21 +193,20 @@ class NSENetwork(RateCollection):
         Xs = {}
 
         j = 0
-        init_guess = np.array(init_guess)
         is_pos_old = False
         found_sol = False
-
-        # Filter out runtimewarnings from fsolve, here we check convergence by np.isclose
-        warnings.filterwarnings("ignore", category=RuntimeWarning)
 
         # This nested loops should fine-tune the initial guess if fsolve is unable to find a solution
         while j < 20:
             i = 0
-            guess = copy.deepcopy(init_guess)
+            guess = init_guess.copy()
             init_dx = 0.5
 
             while i < 20:
-                u = fsolve(self._constraint_eq, guess, args=(u_c, state), xtol=tol, maxfev=800)
+                # Filter out runtimewarnings from fsolve, here we check convergence by np.isclose
+                with warnings.catch_warnings():
+                    warnings.filterwarnings("ignore", category=RuntimeWarning)
+                    u = fsolve(self._constraint_eq, guess, args=(u_c, state), xtol=tol, maxfev=800)
                 Xs = self._nucleon_fraction_nse(u, u_c, state)
                 n_e = self._evaluate_n_e(state, Xs)
                 u_c = self._evaluate_mu_c(n_e, state, use_coulomb_corr)
