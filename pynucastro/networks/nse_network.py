@@ -307,7 +307,7 @@ class NSENetwork(RateCollection):
 
             for entry in sorted(nse_states):
                 of.write(f"{np.log10(entry.rho):15.10f} {np.log10(entry.T):15.10f} {entry.Ye:15.10f} ")
-                of.write(f"{entry.abar:15.10f} {entry.bea:15.10f} {entry.dYedt:15.8g} {entry.dabardt:15.8g} {entry.dBEAdt:15.8g} {entry.enu:15.8g} ")
+                of.write(f"{entry.abar:15.10f} {entry.bea:15.10f} {entry.dYedt:15.8g} {entry.dabardt:15.8g} {entry.dbeadt:15.8g} {entry.enu:15.8g} ")
 
                 if entry.X:
                     for _, val in entry.X:
