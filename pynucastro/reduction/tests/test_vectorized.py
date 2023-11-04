@@ -48,7 +48,6 @@ class TestVectorizedEvaluation:
             net.update_yfac_arr(comp)
         net.calc_count_matrices()
         net.update_yfac_arr(comp)
-        print(list(net.yfac))
 
         assert_allclose(net.yfac, expected, rtol=1e-10, atol=1e-100)
 
@@ -57,7 +56,6 @@ class TestVectorizedEvaluation:
 
         net.clear_arrays()
         net.update_prefac_arr(rho, comp)
-        print(list(net.prefac))
 
         assert_allclose(net.prefac, expected, rtol=1e-10, atol=1e-100)
 
