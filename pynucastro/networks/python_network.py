@@ -5,8 +5,11 @@ import os
 import shutil
 import sys
 
+from scipy import constants
+
 from pynucastro.networks.rate_collection import RateCollection
 from pynucastro.rates.rate import ApproximateRate
+from pynucastro.screening import get_screening_map
 
 
 class PythonNetwork(RateCollection):
@@ -18,9 +21,9 @@ class PythonNetwork(RateCollection):
         ostr = ""
         if not self.nuclei_consumed[nucleus] + self.nuclei_produced[nucleus]:
             # this captures an inert nucleus
-            ostr += f"{indent}dYdt[j{nucleus}] = 0.0\n\n"
+            ostr += f"{indent}dYdt[j{nucleus.raw}] = 0.0\n\n"
         else:
-            ostr += f"{indent}dYdt[j{nucleus}] = (\n"
+            ostr += f"{indent}dYdt[j{nucleus.raw}] = (\n"
             for r in self.nuclei_consumed[nucleus]:
                 c = r.reactants.count(nucleus)
                 if c == 1:
@@ -41,7 +44,7 @@ class PythonNetwork(RateCollection):
         """return the Jacobian element dYdot(ydot_i_nucleus)/dY(y_j_nucleus)"""
 
         # this is the jac(i,j) string
-        idx_str = f"jac[j{ydot_i_nucleus}, j{y_j_nucleus}]"
+        idx_str = f"jac[j{ydot_i_nucleus.raw}, j{y_j_nucleus.raw}]"
 
         ostr = ""
         if not self.nuclei_consumed[ydot_i_nucleus] + self.nuclei_produced[ydot_i_nucleus]:
@@ -86,20 +89,25 @@ class PythonNetwork(RateCollection):
         ostr = ""
         ostr += f"{indent}plasma_state = PlasmaState(T, rho, Y, Z)\n"
 
-        screening_map = self.get_screening_map()
+        if not self.do_screening:
+            screening_map = []
+        else:
+            screening_map = get_screening_map(self.get_rates(),
+                                              symmetric_screening=self.symmetric_screening)
+
         for i, scr in enumerate(screening_map):
             if not (scr.n1.dummy or scr.n2.dummy):
                 # calculate the screening factor
                 ostr += f"\n{indent}scn_fac = ScreenFactors({scr.n1.Z}, {scr.n1.A}, {scr.n2.Z}, {scr.n2.A})\n"
                 ostr += f"{indent}scor = screen_func(plasma_state, scn_fac)\n"
 
-            if scr.name == "he4_he4_he4":
+            if scr.name == "He4_He4_He4":
                 # we don't need to do anything here, but we want to avoid immediately applying the screening
                 pass
 
-            elif scr.name == "he4_he4_he4_dummy":
+            elif scr.name == "He4_He4_He4_dummy":
                 # make sure the previous iteration was the first part of 3-alpha
-                assert screening_map[i - 1].name == "he4_he4_he4"
+                assert screening_map[i - 1].name == "He4_He4_He4"
                 # handle the second part of the screening for 3-alpha
                 ostr += f"{indent}scn_fac2 = ScreenFactors({scr.n1.Z}, {scr.n1.A}, {scr.n2.Z}, {scr.n2.A})\n"
                 ostr += f"{indent}scor2 = screen_func(plasma_state, scn_fac2)\n"
@@ -170,6 +178,7 @@ class PythonNetwork(RateCollection):
 
         of.write("import numba\n")
         of.write("import numpy as np\n")
+        of.write("from scipy import constants\n")
         of.write("from numba.experimental import jitclass\n\n")
         of.write("from pynucastro.rates import TableIndex, TableInterpolator, TabularRate, Tfactors\n")
         of.write("from pynucastro.screening import PlasmaState, ScreenFactors\n\n")
@@ -177,7 +186,7 @@ class PythonNetwork(RateCollection):
         # integer keys
 
         for i, n in enumerate(self.unique_nuclei):
-            of.write(f"j{n} = {i}\n")
+            of.write(f"j{n.raw} = {i}\n")
 
         of.write(f"nnuc = {len(self.unique_nuclei)}\n\n")
 
@@ -185,19 +194,35 @@ class PythonNetwork(RateCollection):
 
         of.write("A = np.zeros((nnuc), dtype=np.int32)\n\n")
         for n in self.unique_nuclei:
-            of.write(f"A[j{n}] = {n.A}\n")
+            of.write(f"A[j{n.raw}] = {n.A}\n")
 
         of.write("\n")
 
         of.write("Z = np.zeros((nnuc), dtype=np.int32)\n\n")
         for n in self.unique_nuclei:
-            of.write(f"Z[j{n}] = {n.Z}\n")
+            of.write(f"Z[j{n.raw}] = {n.Z}\n")
+
+        # we'll compute the masses here in erg
+
+        m_u = constants.value('atomic mass constant energy equivalent in MeV')
+        MeV2erg = (constants.eV * constants.mega) / constants.erg
+
+        of.write("\n")
+
+        of.write("# masses in ergs\n")
+        of.write("mass = np.zeros((nnuc), dtype=np.float64)\n\n")
+        for n in self.unique_nuclei:
+            mass = n.A_nuc * m_u * MeV2erg
+            of.write(f"mass[j{n.raw}] = {mass}\n")
 
         of.write("\n")
 
         of.write("names = []\n")
         for n in self.unique_nuclei:
-            of.write(f"names.append(\"{n.short_spec_name}\")\n")
+            name = n.short_spec_name
+            if name != "n":
+                name = name.capitalize()
+            of.write(f"names.append(\"{name}\")\n")
 
         of.write("\n")
 
@@ -209,6 +234,16 @@ class PythonNetwork(RateCollection):
         of.write(f'{indent}'"for i, nuc in enumerate(nuclei):\n")
         of.write(f'{indent*2}'"comp.X[nuc] = Y[i] * A[i]\n")
         of.write(f'{indent}'"return comp\n\n")
+
+        of.write("\n")
+
+        of.write("def energy_release(dY):\n")
+        of.write(f'{indent}''"""return the energy release in erg/g (/s if dY is actually dY/dt)"""\n')
+        of.write(f'{indent}'"enuc = 0.0\n")
+        of.write(f'{indent}'"for i, y in enumerate(dY):\n")
+        of.write(f'{indent*2}'"enuc += y * mass[i]\n")
+        of.write(f'{indent}'"enuc *= -1*constants.Avogadro\n")
+        of.write(f'{indent}'"return enuc\n\n")
 
         # partition function data (if needed)
 

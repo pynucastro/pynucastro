@@ -73,7 +73,12 @@ The main classes are:
   reaction networks.  A ``RateCollection`` has methods to evaluate the
   rates and make a plot of the links between rates.
 
-  There are three important subclasses:
+  There are a few important subclasses:
+
+  * :func:`NSENetwork
+    <pynucastro.networks.nse_network.NSENetwork>`: This allows
+    a user to find the nuclear statistical equilibrium state
+    of a collection of nuclei.
 
   * :func:`PythonNetwork
     <pynucastro.networks.python_network.PythonNetwork>`: This is a
@@ -121,13 +126,4 @@ There are two modes of usage for pynucastro.
   `MAESTROeX <https://amrex-astro.github.io/MAESTROeX/>`_ and `Castro
   <https://amrex-astro.github.io/Castro/>`_ codes.
 
-
-Data sources
-------------
-
-pynucastro can currently read rates from:
-
-* `JINA Reaclib <https://reaclib.jinaweb.org/>`_
-
-* Electron-capture / :math:`\beta`-decay rates from Suzuki et al. 2016
 

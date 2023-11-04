@@ -2,7 +2,8 @@ import pytest
 from pytest import approx
 
 from pynucastro import networks
-from pynucastro.screening import chugunov_2007, chugunov_2009
+from pynucastro.screening import (chugunov_2007, chugunov_2009,
+                                  get_screening_map)
 
 
 class TestScreening:
@@ -19,7 +20,8 @@ class TestScreening:
 
     def test_screening_map(self, rc):
 
-        screening_map = rc.get_screening_map()
+        screening_map = get_screening_map(rc.get_rates(),
+                                          symmetric_screening=rc.symmetric_screening)
 
         assert len(screening_map) == 4
         assert len(screening_map[0].rates) == 1
@@ -33,11 +35,11 @@ class TestScreening:
         c = networks.Composition(rc.unique_nuclei)
         c.set_solar_like()
 
-        rates = {"c12 + he4 --> o16 <nac2_reaclib__>": 5.794539791829924,
-                 "c12 + c12 --> he4 + ne20 <cf88_reaclib__>": 103.21274049093526,
-                 "c12 + c12 --> n + mg23 <cf88_reaclib__reverse>": 103.21274049093526,
-                 "c12 + c12 --> p + na23 <cf88_reaclib__>": 103.21274049093526,
-                 "he4 + he4 + he4 --> c12 <fy05_reaclib__>": 6.502599619793744}
+        rates = {"C12 + He4 --> O16 <nac2_reaclib__>": 5.794539791829924,
+                 "C12 + C12 --> He4 + Ne20 <cf88_reaclib__>": 103.21274049093526,
+                 "C12 + C12 --> n + Mg23 <cf88_reaclib__reverse>": 103.21274049093526,
+                 "C12 + C12 --> p + Na23 <cf88_reaclib__>": 103.21274049093526,
+                 "He4 + He4 + He4 --> C12 <fy05_reaclib__>": 6.502599619793744}
 
         factors = rc.evaluate_screening(1.e6, 1.e8, c, screen_func=chugunov_2007)
 
@@ -48,11 +50,11 @@ class TestScreening:
         c = networks.Composition(rc.unique_nuclei)
         c.set_solar_like()
 
-        rates = {"c12 + he4 --> o16 <nac2_reaclib__>": 4.405674333522246,
-                 "c12 + c12 --> he4 + ne20 <cf88_reaclib__>": 89.6640543016441,
-                 "c12 + c12 --> n + mg23 <cf88_reaclib__reverse>": 89.6640543016441,
-                 "c12 + c12 --> p + na23 <cf88_reaclib__>": 89.6640543016441,
-                 "he4 + he4 + he4 --> c12 <fy05_reaclib__>": 4.380701422122169}
+        rates = {"C12 + He4 --> O16 <nac2_reaclib__>": 4.405674333522246,
+                 "C12 + C12 --> He4 + Ne20 <cf88_reaclib__>": 89.6640543016441,
+                 "C12 + C12 --> n + Mg23 <cf88_reaclib__reverse>": 89.6640543016441,
+                 "C12 + C12 --> p + Na23 <cf88_reaclib__>": 89.6640543016441,
+                 "He4 + He4 + He4 --> C12 <fy05_reaclib__>": 4.380701422122169}
 
         factors = rc.evaluate_screening(1.e6, 1.e8, c, screen_func=chugunov_2009)
 

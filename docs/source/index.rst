@@ -20,7 +20,7 @@ codes.
    :caption: Introduction
 
    intro
-   data_sources
+   rate_types
    install
 
 .. toctree::
@@ -37,6 +37,7 @@ codes.
 
    library-examples.ipynb
    validate-example.ipynb
+   electron-capture-example.ipynb
    electron-captures.ipynb
 
 .. toctree::
@@ -49,15 +50,20 @@ codes.
    custom-rates.ipynb
    unimportant-rates.ipynb
    partition-function
-   NSE-example.ipynb
-   julia
 
 .. toctree::
    :maxdepth: 1
-   :caption: Writing Networks
+   :caption: Nuclear Statistical Equilibrium
+
+   NSE-example.ipynb
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Writing and Integrating Networks
 
    networks
    cxx-networks
+   julia
 
 .. toctree::
    :maxdepth: 1

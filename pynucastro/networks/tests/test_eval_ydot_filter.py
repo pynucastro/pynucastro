@@ -5,7 +5,7 @@ import pynucastro as pyna
 
 class TestFullPythonNetwork:
     @pytest.fixture(scope="class")
-    def fn(self, reaclib_library):
+    def fn(self, reaclib_library, tabular_library):
         rate_names = ["c12(c12,a)ne20",
                       "c12(c12,n)mg23",
                       "c12(c12,p)na23",
@@ -14,10 +14,9 @@ class TestFullPythonNetwork:
                       "he4(aa,g)c12"]
         rates = reaclib_library.get_rate_by_name(rate_names)
 
-        tl = pyna.TabularLibrary()
         tabular_rate_names = ["na23(,)ne23",
                               "ne23(,)na23"]
-        tabular_rates = tl.get_rate_by_name(tabular_rate_names)
+        tabular_rates = tabular_library.get_rate_by_name(tabular_rate_names)
 
         fn = pyna.PythonNetwork(rates=rates+tabular_rates)
         return fn

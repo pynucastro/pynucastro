@@ -6,12 +6,11 @@ import pytest
 from numpy.testing import assert_allclose
 
 from pynucastro import networks
-from pynucastro.rates import SuzukiLibrary
 
 
 class TestFullPythonNetwork:
     @pytest.fixture(scope="class")
-    def fn(self, reaclib_library):
+    def fn(self, reaclib_library, suzuki_library):
         rate_names = ["c12(c12,a)ne20",
                       "c12(c12,n)mg23",
                       "c12(c12,p)na23",
@@ -20,7 +19,6 @@ class TestFullPythonNetwork:
                       "he4(aa,g)c12"]
         rates = reaclib_library.get_rate_by_name(rate_names)
 
-        suzuki_library = SuzukiLibrary()
         tabular_rate_names = ["na23(,)ne23",
                               "ne23(,)na23"]
         tabular_rates = suzuki_library.get_rate_by_name(tabular_rate_names)
@@ -28,21 +26,21 @@ class TestFullPythonNetwork:
         fn = networks.PythonNetwork(rates=rates+tabular_rates)
         return fn
 
-    def test_write_network(self, fn):
+    def test_write_network(self, fn, compare_network_files):
         """test the write_network function"""
         test_path = "_test_python/"
+        # subdirectory of pynucastro/networks/tests/
         reference_path = "_python_reference/"
-        base_path = os.path.relpath(os.path.dirname(__file__))
+        # files that will be ignored if present in the generated directory
+        skip_files = []
 
         test_file = "network.py"
 
+        # remove any previously generated files
+        shutil.rmtree(test_path, ignore_errors=True)
         os.makedirs(test_path, exist_ok=True)
         fn.write_network(outfile=os.path.join(test_path, test_file))
-
-        # compare contents of files
-        with open(os.path.join(test_path, test_file), "r") as generated, \
-             open(os.path.join(base_path, reference_path, test_file), "r") as reference:
-            assert generated.readlines() == reference.readlines()
+        compare_network_files(test_path, reference_path, skip_files)
 
         # clean up generated files if the test passed
         shutil.rmtree(test_path)

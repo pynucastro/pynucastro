@@ -5,14 +5,12 @@ import shutil
 import pytest
 
 from pynucastro import networks
-from pynucastro.networks.tests.helpers import compare_network_files
-from pynucastro.rates import SuzukiLibrary
 
 
 class TestAmrexAstroCxxNetwork:
     # pylint: disable=protected-access
     @pytest.fixture(scope="class")
-    def fn(self, reaclib_library):
+    def fn(self, reaclib_library, suzuki_library):
         rate_names = ["c12(c12,a)ne20",
                       "c12(c12,n)mg23",
                       "c12(c12,p)na23",
@@ -20,7 +18,6 @@ class TestAmrexAstroCxxNetwork:
                       "n(,)p"]
         rates = reaclib_library.get_rate_by_name(rate_names)
 
-        suzuki_library = SuzukiLibrary()
         tabular_rate_names = ["na23(,)ne23",
                               "ne23(,)na23"]
         tabular_rates = suzuki_library.get_rate_by_name(tabular_rate_names)
@@ -54,14 +51,14 @@ class TestAmrexAstroCxxNetwork:
     def test_nrxn(self, fn):
         """ test the _nrxn function """
 
-        answer = ('    k_c12_c12_to_he4_ne20 = 1,\n' +
-                  '    k_c12_c12_to_n_mg23 = 2,\n' +
-                  '    k_c12_c12_to_p_na23 = 3,\n' +
-                  '    k_he4_c12_to_o16 = 4,\n' +
+        answer = ('    k_C12_C12_to_He4_Ne20 = 1,\n' +
+                  '    k_C12_C12_to_n_Mg23 = 2,\n' +
+                  '    k_C12_C12_to_p_Na23 = 3,\n' +
+                  '    k_He4_C12_to_O16 = 4,\n' +
                   '    k_n_to_p_weak_wc12 = 5,\n' +
-                  '    k_na23_to_ne23 = 6,\n' +
-                  '    k_ne23_to_na23 = 7,\n' +
-                  '    NumRates = k_ne23_to_na23\n')
+                  '    k_Na23_to_Ne23 = 6,\n' +
+                  '    k_Ne23_to_Na23 = 7,\n' +
+                  '    NumRates = k_Ne23_to_Na23\n')
         assert self.cromulent_ftag(fn._nrxn, answer, n_indent=1)
 
     def test_ebind(self, fn):
@@ -78,7 +75,7 @@ class TestAmrexAstroCxxNetwork:
                   '        ebind_per_nucleon(Mg23) = 7.901115_rt;\n')
         assert self.cromulent_ftag(fn._ebind, answer, n_indent=2)
 
-    def test_write_network(self, fn):
+    def test_write_network(self, fn, compare_network_files):
         """ test the write_network function"""
         test_path = "_test_cxx/"
         # subdirectory of pynucastro/networks/tests/

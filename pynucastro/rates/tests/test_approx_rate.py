@@ -31,7 +31,7 @@ class TestTfactors:
                                     primary_reverse=rp_reverse, secondary_reverse=rs_reverse)
 
     def test_label(self, ar):
-        assert ar.fname == "mg24_he4__si28__approx"
+        assert ar.fname == "Mg24_He4__Si28__approx"
 
     def test_low_temp(self, ar, rp, rs):
         # at low temperatures, the approximate (a,g) should be ~ (a,g) + (a,p)
@@ -45,11 +45,11 @@ class TestTfactors:
     def test_child_rates(self, ar):
 
         cr = ar.get_child_rates()
-        assert cr[0].fname == "he4_mg24__si28"
-        assert cr[1].fname == "he4_mg24__p_al27"
-        assert cr[2].fname == "p_al27__si28"
-        assert cr[3].fname == "si28__he4_mg24"
-        assert cr[4].fname == "si28__p_al27"
-        assert cr[5].fname == "p_al27__he4_mg24"
+        assert cr[0].fname == "He4_Mg24__Si28"
+        assert cr[1].fname == "He4_Mg24__p_Al27"
+        assert cr[2].fname == "p_Al27__Si28"
+        assert cr[3].fname == "Si28__He4_Mg24"
+        assert cr[4].fname == "Si28__p_Al27"
+        assert cr[5].fname == "p_Al27__He4_Mg24"
 
         assert len(cr) == 6
