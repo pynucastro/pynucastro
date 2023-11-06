@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.networks.nse_network &mdash; pynucastro 2.1.1.post13+g784cd777 documentation</title>
+  <title>pynucastro.networks.nse_network &mdash; pynucastro 2.1.1.post14+g41ae368f documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
@@ -14,7 +14,7 @@
   
         <script src="../../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../_static/documentation_options.js?v=d786e697"></script>
+        <script src="../../../_static/documentation_options.js?v=b9e431d5"></script>
         <script src="../../../_static/doctools.js?v=888ff710"></script>
         <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
         <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -125,9 +125,75 @@
 <span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">constants</span>
 <span class="kn">from</span> <span class="nn">scipy.optimize</span> <span class="kn">import</span> <span class="n">fsolve</span>
 
+<span class="kn">from</span> <span class="nn">pynucastro._version</span> <span class="kn">import</span> <span class="n">version</span>
 <span class="kn">from</span> <span class="nn">pynucastro.networks.rate_collection</span> <span class="kn">import</span> <span class="n">Composition</span><span class="p">,</span> <span class="n">RateCollection</span>
 <span class="kn">from</span> <span class="nn">pynucastro.nucdata</span> <span class="kn">import</span> <span class="n">Nucleus</span>
-<span class="kn">from</span> <span class="nn">pynucastro.screening</span> <span class="kn">import</span> <span class="n">NseState</span>
+<span class="kn">from</span> <span class="nn">pynucastro.rates</span> <span class="kn">import</span> <span class="n">TabularRate</span>
+<span class="kn">from</span> <span class="nn">pynucastro.screening</span> <span class="kn">import</span> <span class="n">NseState</span><span class="p">,</span> <span class="n">potekhin_1998</span>
+
+
+<div class="viewcode-block" id="NSETableEntry">
+<a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.nse_network.NSETableEntry">[docs]</a>
+<span class="k">class</span> <span class="nc">NSETableEntry</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">Ye</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+                 <span class="n">comp</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ydots</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">enu</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">comp_reduction_func</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;a simple container to hold a single entry in the NSE table.</span>
+
+<span class="sd">        Here, comp_reduction_func(comp) is a function that converts</span>
+<span class="sd">        the NSE composition into a smaller set of nuclei.  It takes a</span>
+<span class="sd">        Composition object and returns a dictionary with the nucleus</span>
+<span class="sd">        name (like &quot;Ni56&quot;) as the key and the corresponding mass fraction</span>
+<span class="sd">        as the value.  It should be ordered in the way you want the nuclei</span>
+<span class="sd">        output into the NSE table file.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">rho</span> <span class="o">=</span> <span class="n">rho</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">T</span> <span class="o">=</span> <span class="n">T</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Ye</span> <span class="o">=</span> <span class="n">Ye</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">comp</span> <span class="o">=</span> <span class="n">comp</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ydots</span> <span class="o">=</span> <span class="n">ydots</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">enu</span> <span class="o">=</span> <span class="n">enu</span>
+
+        <span class="c1"># compute the bits we need for the table</span>
+
+        <span class="k">if</span> <span class="n">comp</span><span class="p">:</span>
+            <span class="c1"># mean molecular weight of the full NSE state</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">abar</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">eval_abar</span><span class="p">()</span>
+
+            <span class="c1"># average binding energy / nucleon for the full NSE state</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bea</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">nucbind</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">comp</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">q</span><span class="p">]</span> <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">comp</span><span class="o">.</span><span class="n">X</span><span class="p">)</span>
+
+            <span class="c1"># evolution of the electron fraction from weak rates alone</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dYedt</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">Z</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">ydots</span><span class="p">[</span><span class="n">q</span><span class="p">]</span> <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">comp</span><span class="o">.</span><span class="n">X</span><span class="p">)</span>
+
+            <span class="c1"># evolution of Abar from weak rates alone</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dabardt</span> <span class="o">=</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">abar</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ydots</span><span class="p">[</span><span class="n">q</span><span class="p">]</span> <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">comp</span><span class="o">.</span><span class="n">X</span><span class="p">)</span>
+
+            <span class="c1"># evolution of B/A from weak rates alone</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dbeadt</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ydots</span><span class="p">[</span><span class="n">q</span><span class="p">]</span> <span class="o">*</span> <span class="n">q</span><span class="o">.</span><span class="n">nucbind</span> <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">comp</span><span class="o">.</span><span class="n">X</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">X</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">if</span> <span class="n">comp_reduction_func</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">X</span> <span class="o">=</span> <span class="n">comp_reduction_func</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">comp</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rho</span><span class="si">:</span><span class="s2">12.6g</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">T</span><span class="si">:</span><span class="s2">12.6g</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">Ye</span><span class="si">:</span><span class="s2">6.4f</span><span class="si">}</span><span class="s2">): </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">abar</span><span class="si">:</span><span class="s2">6.4f</span><span class="si">}</span><span class="s2">  </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">bea</span><span class="si">:</span><span class="s2">6.4f</span><span class="si">}</span><span class="s2">  </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dYedt</span><span class="si">:</span><span class="s2">12.6g</span><span class="si">}</span><span class="s2">  </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">enu</span><span class="si">:</span><span class="s2">12.6g</span><span class="si">}</span><span class="s2">&quot;</span>
+
+<div class="viewcode-block" id="NSETableEntry.value">
+<a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.nse_network.NSETableEntry.value">[docs]</a>
+    <span class="k">def</span> <span class="nf">value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;a simple integer used for sorting.  This has the format</span>
+<span class="sd">        (logrho)(logT)(1-Ye)&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rho</span><span class="p">)</span><span class="si">:</span><span class="s2">08.5f</span><span class="si">}{</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="si">:</span><span class="s2">08.5f</span><span class="si">}{</span><span class="mi">1</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">Ye</span><span class="si">:</span><span class="s2">08.5f</span><span class="si">}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span></div>
+
+
+    <span class="k">def</span> <span class="fm">__lt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">other</span><span class="o">.</span><span class="n">value</span><span class="p">()</span></div>
+
 
 
 <div class="viewcode-block" id="NSENetwork">
@@ -226,7 +292,8 @@
 
 <div class="viewcode-block" id="NSENetwork.get_comp_nse">
 <a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.nse_network.NSENetwork.get_comp_nse">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_comp_nse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">ye</span><span class="p">,</span> <span class="n">init_guess</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mf">3.5</span><span class="p">,</span> <span class="o">-</span><span class="mi">15</span><span class="p">),</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1.0e-11</span><span class="p">,</span> <span class="n">use_coulomb_corr</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">return_sol</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_comp_nse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">ye</span><span class="p">,</span> <span class="n">init_guess</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mf">3.5</span><span class="p">,</span> <span class="o">-</span><span class="mi">15</span><span class="p">),</span>
+                     <span class="n">tol</span><span class="o">=</span><span class="mf">1.0e-11</span><span class="p">,</span> <span class="n">use_coulomb_corr</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">return_sol</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the NSE composition given density, temperature and prescribed electron fraction</span>
 <span class="sd">        using scipy.fsolve.</span>
@@ -248,7 +315,7 @@
 <span class="sd">        return_sol: Whether to return the solution of the proton and neutron chemical potential.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="c1">#From here we convert the init_guess list into a np.array object:</span>
+        <span class="c1"># From here we convert the init_guess list into a np.array object:</span>
 
         <span class="n">init_guess</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">init_guess</span><span class="p">)</span>
         <span class="n">state</span> <span class="o">=</span> <span class="n">NseState</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">ye</span><span class="p">)</span>
@@ -307,6 +374,79 @@
             <span class="n">init_guess</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-=</span> <span class="mf">0.5</span>
 
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unable to find a solution, try to adjust initial guess manually&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="NSENetwork.generate_table">
+<a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.nse_network.NSENetwork.generate_table">[docs]</a>
+    <span class="k">def</span> <span class="nf">generate_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho_values</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">T_values</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">Ye_values</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                       <span class="n">comp_reduction_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                       <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">outfile</span><span class="o">=</span><span class="s2">&quot;nse.tbl&quot;</span><span class="p">):</span>
+
+        <span class="c1"># initial guess</span>
+        <span class="n">mu_p0</span> <span class="o">=</span> <span class="o">-</span><span class="mf">3.5</span>
+        <span class="n">mu_n0</span> <span class="o">=</span> <span class="o">-</span><span class="mf">15.0</span>
+
+        <span class="c1"># arrays to cache the chemical potentials as mu_p(rho, Ye)</span>
+        <span class="n">mu_p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">rho_values</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">Ye_values</span><span class="p">)),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span> <span class="o">*</span> <span class="n">mu_p0</span>
+        <span class="n">mu_n</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">rho_values</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">Ye_values</span><span class="p">)),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span> <span class="o">*</span> <span class="n">mu_n0</span>
+
+        <span class="n">nse_states</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">T</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="n">T_values</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">irho</span><span class="p">,</span> <span class="n">rho</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">reversed</span><span class="p">(</span><span class="n">rho_values</span><span class="p">)):</span>
+                <span class="k">for</span> <span class="n">iye</span><span class="p">,</span> <span class="n">ye</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">reversed</span><span class="p">(</span><span class="n">Ye_values</span><span class="p">)):</span>
+                    <span class="n">initial_guess</span> <span class="o">=</span> <span class="p">(</span><span class="n">mu_p</span><span class="p">[</span><span class="n">irho</span><span class="p">,</span> <span class="n">iye</span><span class="p">],</span> <span class="n">mu_n</span><span class="p">[</span><span class="n">irho</span><span class="p">,</span> <span class="n">iye</span><span class="p">])</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">comp</span><span class="p">,</span> <span class="n">sol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_comp_nse</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">ye</span><span class="p">,</span> <span class="n">use_coulomb_corr</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                                      <span class="n">init_guess</span><span class="o">=</span><span class="n">initial_guess</span><span class="p">,</span>
+                                                      <span class="n">return_sol</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                        <span class="n">initial_guess</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mf">3.5</span><span class="p">,</span> <span class="o">-</span><span class="mi">15</span><span class="p">)</span>
+                        <span class="n">comp</span><span class="p">,</span> <span class="n">sol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_comp_nse</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">ye</span><span class="p">,</span> <span class="n">use_coulomb_corr</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                                      <span class="n">init_guess</span><span class="o">=</span><span class="n">initial_guess</span><span class="p">,</span>
+                                                      <span class="n">return_sol</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+                    <span class="n">mu_p</span><span class="p">[</span><span class="n">irho</span><span class="p">,</span> <span class="n">iye</span><span class="p">]</span> <span class="o">=</span> <span class="n">sol</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="n">mu_n</span><span class="p">[</span><span class="n">irho</span><span class="p">,</span> <span class="n">iye</span><span class="p">]</span> <span class="o">=</span> <span class="n">sol</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+                    <span class="c1"># get the dY/dt for just the weak rates</span>
+                    <span class="n">ydots</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_ydots</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span>
+                                                <span class="n">screen_func</span><span class="o">=</span><span class="n">potekhin_1998</span><span class="p">,</span>
+                                                <span class="n">rate_filter</span><span class="o">=</span><span class="k">lambda</span> <span class="n">r</span><span class="p">:</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">TabularRate</span><span class="p">))</span>
+
+                    <span class="n">_</span><span class="p">,</span> <span class="n">enu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_energy_generation</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span>
+                                                             <span class="n">screen_func</span><span class="o">=</span><span class="n">potekhin_1998</span><span class="p">,</span>
+                                                             <span class="n">return_enu</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+                    <span class="n">nse_states</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">NSETableEntry</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">ye</span><span class="p">,</span>
+                                                    <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">,</span> <span class="n">ydots</span><span class="o">=</span><span class="n">ydots</span><span class="p">,</span> <span class="n">enu</span><span class="o">=</span><span class="n">enu</span><span class="p">,</span>
+                                                    <span class="n">comp_reduction_func</span><span class="o">=</span><span class="n">comp_reduction_func</span><span class="p">))</span>
+                    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="n">nse_states</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">outfile</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">of</span><span class="p">:</span>
+
+            <span class="c1"># write the header</span>
+            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;# NSE table generated by pynucastro </span><span class="si">{</span><span class="n">version</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;# original NSENetwork had </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">)</span><span class="si">}</span><span class="s2"> nuclei</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;#</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;# </span><span class="si">{</span><span class="s1">&#39;log10(rho)&#39;</span><span class="si">:</span><span class="s2">^15</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="s1">&#39;log10(T)&#39;</span><span class="si">:</span><span class="s2">^15</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="s1">&#39;Ye&#39;</span><span class="si">:</span><span class="s2">^15</span><span class="si">}</span><span class="s2"> &quot;</span><span class="p">)</span>
+            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;Abar&#39;</span><span class="si">:</span><span class="s2">^15</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="s1">&#39;&lt;B/A&gt;&#39;</span><span class="si">:</span><span class="s2">^15</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="s1">&#39;dYe/dt&#39;</span><span class="si">:</span><span class="s2">^15</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="s1">&#39;dAbar/dt&#39;</span><span class="si">:</span><span class="s2">^15</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="s1">&#39;d&lt;B/A&gt;/dt&#39;</span><span class="si">:</span><span class="s2">^15</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="s1">&#39;e_nu&#39;</span><span class="si">:</span><span class="s2">^15</span><span class="si">}</span><span class="s2"> &quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">nse_states</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">X</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">nuc</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">nse_states</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">X</span><span class="p">:</span>
+                    <span class="n">_tmp</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;X(</span><span class="si">{</span><span class="n">nuc</span><span class="si">}</span><span class="s2">)&quot;</span>
+                    <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_tmp</span><span class="si">:</span><span class="s2">^15</span><span class="si">}</span><span class="s2"> &quot;</span><span class="p">)</span>
+
+            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">nse_states</span><span class="p">):</span>
+                <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">rho</span><span class="p">)</span><span class="si">:</span><span class="s2">15.10f</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="si">:</span><span class="s2">15.10f</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">entry</span><span class="o">.</span><span class="n">Ye</span><span class="si">:</span><span class="s2">15.10f</span><span class="si">}</span><span class="s2"> &quot;</span><span class="p">)</span>
+                <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">entry</span><span class="o">.</span><span class="n">abar</span><span class="si">:</span><span class="s2">15.10f</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">entry</span><span class="o">.</span><span class="n">bea</span><span class="si">:</span><span class="s2">15.10f</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">entry</span><span class="o">.</span><span class="n">dYedt</span><span class="si">:</span><span class="s2">15.8g</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">entry</span><span class="o">.</span><span class="n">dabardt</span><span class="si">:</span><span class="s2">15.8g</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">entry</span><span class="o">.</span><span class="n">dbeadt</span><span class="si">:</span><span class="s2">15.8g</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">entry</span><span class="o">.</span><span class="n">enu</span><span class="si">:</span><span class="s2">15.8g</span><span class="si">}</span><span class="s2"> &quot;</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">entry</span><span class="o">.</span><span class="n">X</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">entry</span><span class="o">.</span><span class="n">X</span><span class="p">:</span>
+                        <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">val</span><span class="si">:</span><span class="s2">15.10g</span><span class="si">}</span><span class="s2"> &quot;</span><span class="p">)</span>
+                <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span></div>
 </div>
 
 </pre></div>

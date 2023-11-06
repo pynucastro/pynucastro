@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.networks package &mdash; pynucastro 2.1.1.post13+g784cd777 documentation</title>
+  <title>pynucastro.networks package &mdash; pynucastro 2.1.1.post14+g41ae368f documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
@@ -15,7 +15,7 @@
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=d786e697"></script>
+        <script src="_static/documentation_options.js?v=b9e431d5"></script>
         <script src="_static/doctools.js?v=888ff710"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
         <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -221,6 +221,11 @@ value is a list of tuples, with the forward-reverse pairs of a rate</p>
 <p>a network for solving for the NSE composition and outputting
 tabulated NSE quantities</p>
 <dl class="py method">
+<dt class="sig sig-object py" id="pynucastro.networks.nse_network.NSENetwork.generate_table">
+<span class="sig-name descname"><span class="pre">generate_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rho_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Ye_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comp_reduction_func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outfile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'nse.tbl'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/nse_network.html#NSENetwork.generate_table"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.nse_network.NSENetwork.generate_table" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.networks.nse_network.NSENetwork.get_comp_nse">
 <span class="sig-name descname"><span class="pre">get_comp_nse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rho</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ye</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_guess</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(-3.5,</span> <span class="pre">-15)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-11</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_coulomb_corr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_sol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/nse_network.html#NSENetwork.get_comp_nse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.nse_network.NSENetwork.get_comp_nse" title="Link to this definition"></a></dt>
 <dd><p>Returns the NSE composition given density, temperature and prescribed electron fraction
@@ -235,6 +240,19 @@ using scipy.fsolve.</p>
 <p>use_coulomb_corr: Whether to include coulomb correction terms</p>
 <p>return_sol: Whether to return the solution of the proton and neutron chemical potential.</p>
 </section>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pynucastro.networks.nse_network.NSETableEntry">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.networks.nse_network.</span></span><span class="sig-name descname"><span class="pre">NSETableEntry</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rho</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Ye</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ydots</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comp_reduction_func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/nse_network.html#NSETableEntry"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.nse_network.NSETableEntry" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pynucastro.networks.nse_network.NSETableEntry.value">
+<span class="sig-name descname"><span class="pre">value</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/nse_network.html#NSETableEntry.value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.nse_network.NSETableEntry.value" title="Link to this definition"></a></dt>
+<dd><p>a simple integer used for sorting.  This has the format
+(logrho)(logT)(1-Ye)</p>
 </dd></dl>
 
 </dd></dl>
