@@ -1,9 +1,12 @@
-Data Sources and Rate Types
-===========================
+Reaction Rate Types
+===================
 
-pynucastro makes use of data sources from several different nuclear
-physics compilations.  Here we explain how these are used in
-pynucastro.
+pynucastro can understand reaction rates in a variety of formats.
+The basic :func:`Rate <pynucastro.rates.rate.Rate>` class serves
+as the base class for all the different rate types and provides
+the core functionality.
+
+Here we describe the most commonly used rates.
 
 ReacLib
 -------
@@ -176,9 +179,15 @@ Similarly, ``ReacLib.jacobian_string_py()`` outputs the contribution to the Jaco
 Tabulated Rates
 ---------------
 
-For electron captures and beta-decays (which are of the form :math:`\rm{A \rightarrow B}`), we use tabulated rates.
-These are two-dimensional tables,
-in terms of :math:`T` and :math:`\rho Y_e`.
+For electron captures and beta-decays (which are of the form
+:math:`\rm{A \rightarrow B}`), we use tabulated rates.  These are
+two-dimensional tables, in terms of :math:`T` and :math:`\rho Y_e`.
+
+.. note::
+
+   If positron captures and decays are available, then these are
+   included with the appropriate electron counterpart into a single
+   rate.
 
 A tabular rate is described by 2 files.  The first file mimics the
 ReacLib header, with a chapter indicated as ``t`` and gives the name
@@ -205,10 +214,22 @@ electron fraction :math:`\rm{\rho Y_e}` and temperature
 The columns of the tables (and
 units) are:
 
-::
+* $\log_{10} (\rho Y_e)$: electron density in $\mathrm{g~cm^{-3}}$
 
-   !rhoY        T            mu           dQ           Vs           e-cap-rate   nu-energy-loss gamma-energy
-   !g/cm^3      K            erg          erg          erg          1/s          erg/s        erg/s
+* $\log_{10} T$: temperature in $\mathrm{K}$
+
+* $\mu$: chemical potential in erg
+
+* $\Delta Q$: threshold energy in erg
+
+* $V_s$: Coulomb potential at the origin in erg
+
+* $\log_{10} (\lambda)$: electron capture or $\beta$-decay rate in $\mathrm{s^{-1}}$.
+  For some rates, this is ($e^-$-capture and $e^+$-decay) or ($\beta$-decay + $e^+$-capture)
+
+* $\log_{10} (\epsilon_\nu)$: neutrino energy loss in $\mathrm{erg~s^{-1}}$
+
+* $\log_{10} (\epsilon_\gamma)$: gamma energy loss in $\mathrm{erg~s^{-1}}$
 
 and the data is ordered with ``rhoY`` varying the slowest (i.e., for a
 given ``rhoY`` we loop over all of the temperatures).
@@ -220,7 +241,7 @@ The form of the reaction :math:`A \rightarrow B`
 
 .. math::
 
-   \dot{Y} = Y(A) \lambda
+   \dot{Y}_A = -Y(A) \lambda
 
 where :math:`\lambda` is the rate returned from the table.
 

@@ -5,8 +5,11 @@ pynucastro incorporates the following publicly-available
 third-party data. Links to this data as well as citations to the
 relevant publications are as follows.
 
+Reaction rates
+--------------
+
 Nuclear reaction rates from JINA Reaclib
-----------------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The reaction rate parameterizations in `pynucastro/library <https://github.com/pynucastro/pynucastro/tree/main/pynucastro/library>`_
 were obtained from the `JINA Reaclib database <https://reaclib.jinaweb.org/>`_.
@@ -14,14 +17,16 @@ were obtained from the `JINA Reaclib database <https://reaclib.jinaweb.org/>`_.
 `Cyburt et al., ApJS 189 (2010) 240 <https://iopscience.iop.org/article/10.1088/0067-0049/189/1/240>`_
 
 Tabulated weak nuclear reaction rates
--------------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The weak reaction rate tables in `pynucastro/library/tabular/suzuki <https://github.com/pynucastro/pynucastro/tree/main/pynucastro/library/tabular/suzuki>`_
-were obtained from:
+* For nuclei with $A = 17$ to $28$ we use the weak rates from:
+  `Suzuki et al. (2016) <https://iopscience.iop.org/article/10.3847/0004-637X/817/2/163>`_
 
-`<https://www.phys.chs.nihon-u.ac.jp/suzuki/data2/link.html>`_
+  The data tables were obtained from `<https://www.phys.chs.nihon-u.ac.jp/suzuki/data2/link.html>`_
 
-`Suzuki et al., ApJ 817 (2016) 163 <https://iopscience.iop.org/article/10.3847/0004-637X/817/2/163>`_
+* For nuclei with $A = 45$ to $65$ we use the weak rates from
+  `Langanke and Martinez-Pinedo (2001) <https://doi.org/10.1006/adnd.2001.0865>`_
+
 
 Physical constants from CODATA
 ------------------------------
@@ -34,15 +39,11 @@ recommended values.
 
 `Mohr et al., Rev. Mod. Phys. 88, 035009 <https://journals.aps.org/rmp/abstract/10.1103/RevModPhys.88.035009>`_
 
-Nuclear binding energies from the Atomic Mass Data Center
----------------------------------------------------------
+Masses, binding energies, and spins from the Atomic Mass Data Center
+---------------------------------------------------------------------
 
-The standalone AMReX-Astro Microphysics
-networks rely on binding energy per nucleon sourced from the Atomic
-Mass Evaluation 2016 (default) and 2012 of the Atomic Mass Data
-Center.
-
-The Atomic Mass Evaluation 2016 and 2012 are available `online <https://www-nds.iaea.org/amdc/>`_.
+We get the basic nuclear properties from the AME2016 evaluation.  This
+is available online at: `Nuclear Data Services <https://www-nds.iaea.org/amdc/>`_.
 
 Atomic Mass Evaluation 2016:
 
@@ -53,3 +54,13 @@ Atomic Mass Evaluation 2012:
 
 * `Audi et al., Chinese Physics C 36, 1287-1602 <https://iopscience.iop.org/article/10.1088/1674-1137/36/12/002>`_
 * `Wang et al., Chinese Physics C 36, 1603-2014 <https://iopscience.iop.org/article/10.1088/1674-1137/36/12/003>`_
+
+
+Partition functions
+-------------------
+
+We use the tabulated partition functions from the following sources:
+
+* `Rauscher et al. 1997 <https://journals.aps.org/prc/abstract/10.1103/PhysRevC.56.1613>`_
+
+* `Rauscher 2003 <https://iopscience.iop.org/article/10.1086/375733>`_
