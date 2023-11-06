@@ -42,7 +42,7 @@ codes.
 
 .. toctree::
    :maxdepth: 1
-   :caption: Advanced Usage
+   :caption: Advanced Rate Operations
 
    screening-examples
    modify-example.ipynb
@@ -63,6 +63,24 @@ codes.
 
    networks
    cxx-networks
+   julia
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Nuclear Statistical Equilibrium
+
+   NSE-example.ipynb
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Plasma Neutrinos
+
+   neutrino-cooling.ipynb
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Interfacing With Other Languages
+
    julia
 
 .. toctree::
