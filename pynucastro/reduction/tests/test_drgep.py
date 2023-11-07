@@ -19,7 +19,7 @@ class TestHelpers:
                       "o14(,)n14",
                       "o15(,)n15"]
         rates = reaclib_library.get_rate_by_name(rate_names)
-        return pyna.RateCollection(rates=rates)
+        return pyna.NumpyNetwork(rates=rates)
 
     @pytest.fixture(scope="class")
     def comp(self, net):

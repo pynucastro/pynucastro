@@ -4,8 +4,8 @@ from numpy.testing import assert_allclose
 import pynucastro as pyna
 
 
-class TestVectorizedEvaluation:
-    """Make sure the vectorized numpy methods give the same results."""
+class TestNumpyNetwork:
+    """Make sure the vectorized methods give the same results."""
 
     @pytest.fixture(scope="class")
     def net(self, reaclib_library):
@@ -19,7 +19,7 @@ class TestVectorizedEvaluation:
                       "o15(,)n15",
                       "he4(aa,g)c12"]
         rates = reaclib_library.get_rate_by_name(rate_names)
-        net = pyna.RateCollection(rates=rates)
+        net = pyna.NumpyNetwork(rates=rates)
         return net
 
     @pytest.fixture(scope="class")
