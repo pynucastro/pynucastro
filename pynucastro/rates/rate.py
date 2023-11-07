@@ -3,6 +3,7 @@ Classes and methods to interface with files storing rate data.
 """
 
 import io
+import math
 import os
 from collections import Counter
 from enum import Enum
@@ -562,7 +563,7 @@ class Rate:
         self.prefactor = 1.0  # this is 1/2 for rates like a + a (double counting)
         self.inv_prefactor = 1
         for r in set(self.reactants):
-            self.inv_prefactor = self.inv_prefactor * np.math.factorial(self.reactants.count(r))
+            self.inv_prefactor = self.inv_prefactor * math.factorial(self.reactants.count(r))
         self.prefactor = self.prefactor/float(self.inv_prefactor)
         self.dens_exp = len(self.reactants)-1
         if self.weak_type == 'electron_capture':
@@ -1573,7 +1574,7 @@ class TabularRate(Rate):
         self.prefactor = 1.0  # this is 1/2 for rates like a + a (double counting)
         self.inv_prefactor = 1
         for r in set(self.reactants):
-            self.inv_prefactor = self.inv_prefactor * np.math.factorial(self.reactants.count(r))
+            self.inv_prefactor = self.inv_prefactor * math.factorial(self.reactants.count(r))
         self.prefactor = self.prefactor/float(self.inv_prefactor)
         self.dens_exp = len(self.reactants)-1
 
@@ -1932,11 +1933,11 @@ class DerivedRate(ReacLibRate):
 
         reactant_factor = 1.0
         for nuc in set(self.rate.reactants):
-            reactant_factor *= np.math.factorial(react_counts[nuc])
+            reactant_factor *= math.factorial(react_counts[nuc])
 
         product_factor = 1.0
         for nuc in set(self.rate.products):
-            product_factor *= np.math.factorial(prod_counts[nuc])
+            product_factor *= math.factorial(prod_counts[nuc])
 
         return (reactant_factor, product_factor)
 
