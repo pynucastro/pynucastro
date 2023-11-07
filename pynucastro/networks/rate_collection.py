@@ -421,15 +421,6 @@ class RateCollection:
 
         self._build_collection()
 
-        # cached values for vectorized evaluation
-        self.nuc_prod_count = None
-        self.nuc_cons_count = None
-        self.nuc_used = None
-        self.coef_arr = None
-        self.coef_mask = None
-        self.prefac = None
-        self.yfac = None
-
     def _build_collection(self):
 
         # get the unique nuclei
