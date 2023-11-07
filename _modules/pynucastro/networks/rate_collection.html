@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.networks.rate_collection &mdash; pynucastro 2.1.1.post17+g7fe6f824 documentation</title>
+  <title>pynucastro.networks.rate_collection &mdash; pynucastro 2.1.1.post18+gf2ac3201 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
@@ -14,7 +14,7 @@
   
         <script src="../../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../_static/documentation_options.js?v=97b1b4db"></script>
+        <script src="../../../_static/documentation_options.js?v=95fa3e29"></script>
         <script src="../../../_static/doctools.js?v=888ff710"></script>
         <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
         <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -152,7 +152,7 @@
 <span class="c1"># Import Rate</span>
 <span class="kn">from</span> <span class="nn">pynucastro.nucdata</span> <span class="kn">import</span> <span class="n">Nucleus</span><span class="p">,</span> <span class="n">PeriodicTable</span>
 <span class="kn">from</span> <span class="nn">pynucastro.rates</span> <span class="kn">import</span> <span class="p">(</span><span class="n">ApproximateRate</span><span class="p">,</span> <span class="n">DerivedRate</span><span class="p">,</span> <span class="n">Library</span><span class="p">,</span> <span class="n">Rate</span><span class="p">,</span>
-                              <span class="n">RateFileError</span><span class="p">,</span> <span class="n">RatePair</span><span class="p">,</span> <span class="n">TabularRate</span><span class="p">,</span> <span class="n">Tfactors</span><span class="p">,</span>
+                              <span class="n">RateFileError</span><span class="p">,</span> <span class="n">RatePair</span><span class="p">,</span> <span class="n">TabularRate</span><span class="p">,</span>
                               <span class="n">find_duplicate_rates</span><span class="p">,</span> <span class="n">is_allowed_dupe</span><span class="p">,</span> <span class="n">load_rate</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">pynucastro.rates.library</span> <span class="kn">import</span> <span class="n">_rate_name_to_nuc</span><span class="p">,</span> <span class="n">capitalize_rid</span>
 <span class="kn">from</span> <span class="nn">pynucastro.screening</span> <span class="kn">import</span> <span class="p">(</span><span class="n">get_screening_map</span><span class="p">,</span> <span class="n">make_plasma_state</span><span class="p">,</span>
@@ -596,15 +596,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">rates</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span> <span class="o">+</span> <span class="n">combined_library</span><span class="o">.</span><span class="n">get_rates</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_build_collection</span><span class="p">()</span>
-
-        <span class="c1"># cached values for vectorized evaluation</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">nuc_prod_count</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">nuc_cons_count</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">nuc_used</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">coef_arr</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">coef_mask</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">prefac</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">yfac</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="nf">_build_collection</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
@@ -1431,222 +1422,6 @@
             <span class="n">act</span><span class="p">[</span><span class="n">nuc</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">produced</span><span class="p">)</span> <span class="o">+</span> <span class="nb">sum</span><span class="p">(</span><span class="n">consumed</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">act</span></div>
-
-
-<div class="viewcode-block" id="RateCollection.calc_count_matrices">
-<a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.calc_count_matrices">[docs]</a>
-    <span class="k">def</span> <span class="nf">calc_count_matrices</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Compute and store 3 count matrices that can be used for vectorized rate calculations.</span>
-<span class="sd">        Each matrix has shape *number_of_species × number_of_rates*. The first matrix (*nuc_prod_count*)</span>
-<span class="sd">        stores the count of each nucleus in rates producing that nucleus. The second</span>
-<span class="sd">        (*nuc_cons_count*) stores the count of each nucleus in rates consuming that nucleus. The</span>
-<span class="sd">        third (*nuc_used*) stores a Boolean matrix of whether the nucleus is involved in the reaction</span>
-<span class="sd">        or not.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="c1"># Rate -&gt; index mapping</span>
-        <span class="n">r_map</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">):</span>
-            <span class="n">r_map</span><span class="p">[</span><span class="n">r</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span>
-
-        <span class="n">N_species</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">)</span>
-        <span class="n">N_rates</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">)</span>
-
-        <span class="c1"># Counts for reactions producing nucleus</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">nuc_prod_count</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">N_species</span><span class="p">,</span> <span class="n">N_rates</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
-        <span class="c1"># Counts for reactions consuming nucleus</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">nuc_cons_count</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">N_species</span><span class="p">,</span> <span class="n">N_rates</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
-
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">):</span>
-
-            <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nuclei_produced</span><span class="p">[</span><span class="n">n</span><span class="p">]:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">nuc_prod_count</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">r_map</span><span class="p">[</span><span class="n">r</span><span class="p">]]</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">products</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
-
-            <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nuclei_consumed</span><span class="p">[</span><span class="n">n</span><span class="p">]:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">nuc_cons_count</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">r_map</span><span class="p">[</span><span class="n">r</span><span class="p">]]</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
-
-        <span class="c1"># Whether the nucleus is involved in the reaction or not</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">nuc_used</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_or</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nuc_prod_count</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nuc_cons_count</span><span class="p">)</span><span class="o">.</span><span class="n">T</span></div>
-
-
-<div class="viewcode-block" id="RateCollection.update_rate_coef_arr">
-<a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.update_rate_coef_arr">[docs]</a>
-    <span class="k">def</span> <span class="nf">update_rate_coef_arr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Store Reaclib rate coefficient array, as well as a Boolean mask array determining</span>
-<span class="sd">        how many sets to include in the final rate evaluation. The first array (*coef_arr*)</span>
-<span class="sd">        has shape *number_of_rates × number_of_species × 7*, while the second has shape</span>
-<span class="sd">        *number_of_rates × number_of_species*.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="c1"># coef arr can be precomputed if evaluate_rates_arr is called multiple times</span>
-        <span class="n">N_sets</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">sets</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">)</span>
-
-        <span class="n">coef_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">),</span> <span class="n">N_sets</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
-        <span class="n">coef_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">),</span> <span class="n">N_sets</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">)</span>
-
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">):</span>
-            <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">sets</span><span class="p">):</span>
-                <span class="n">coef_arr</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">a</span>
-                <span class="n">coef_mask</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">coef_arr</span> <span class="o">=</span> <span class="n">coef_arr</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">coef_mask</span> <span class="o">=</span> <span class="n">coef_mask</span></div>
-
-
-<div class="viewcode-block" id="RateCollection.update_yfac_arr">
-<a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.update_yfac_arr">[docs]</a>
-    <span class="k">def</span> <span class="nf">update_yfac_arr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">composition</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Calculate and store molar fraction component of each rate (Y of each reactant raised to</span>
-<span class="sd">        the appropriate power). The results are stored in an array called *yfac*. The method</span>
-<span class="sd">        *calc_count_matrices* needs to have been called with this net beforehand.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="c1"># yfac must be evaluated each time composition changes, probably pretty cheap</span>
-        <span class="n">yfac</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">)),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
-        <span class="n">ys</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">composition</span><span class="o">.</span><span class="n">get_molar</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">()),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
-
-        <span class="n">yfac</span> <span class="o">*=</span> <span class="n">ys</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">nuc_cons_count</span><span class="o">.</span><span class="n">T</span>
-        <span class="n">yfac</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">yfac</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">yfac</span> <span class="o">=</span> <span class="n">yfac</span></div>
-
-
-<div class="viewcode-block" id="RateCollection.update_prefac_arr">
-<a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.update_prefac_arr">[docs]</a>
-    <span class="k">def</span> <span class="nf">update_prefac_arr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">composition</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Calculate and store rate prefactors, which include both statistical prefactors and</span>
-<span class="sd">        mass density raised to the corresponding density exponents. The results are stored in</span>
-<span class="sd">        an array called *prefac*.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="n">y_e</span> <span class="o">=</span> <span class="n">composition</span><span class="o">.</span><span class="n">eval_ye</span><span class="p">()</span>
-        <span class="n">prefac</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">))</span>
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">label</span> <span class="o">==</span> <span class="s2">&quot;tabular&quot;</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Tabular rates are not supported in vectorized rate calculations.&#39;</span><span class="p">)</span>
-            <span class="n">prefac</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">prefactor</span> <span class="o">*</span> <span class="n">rho</span><span class="o">**</span><span class="n">r</span><span class="o">.</span><span class="n">dens_exp</span>
-            <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">weak_type</span> <span class="o">==</span> <span class="s1">&#39;electron_capture&#39;</span><span class="p">:</span>
-                <span class="n">prefac</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*=</span> <span class="n">y_e</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">prefac</span> <span class="o">=</span> <span class="n">prefac</span></div>
-
-
-<div class="viewcode-block" id="RateCollection.evaluate_rates_arr">
-<a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.evaluate_rates_arr">[docs]</a>
-    <span class="k">def</span> <span class="nf">evaluate_rates_arr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Evaluate the rates in the network for a specific temperature, assuming necessary precalculations</span>
-<span class="sd">        have been carried out (calling the methods *calc_count_matrices*, *update_rate_coef_arr*,</span>
-<span class="sd">        *update_yfac_arr*, and *update_prefac_arr*). The latter two set the composition and density.</span>
-
-<span class="sd">        This performs a vectorized calculation, and returns an array ordered by the rates in the *rates*</span>
-<span class="sd">        member variable. This does not support tabular rates.</span>
-
-<span class="sd">        See *evaluate_rates* method for non-vectorized version. Relative performance between the</span>
-<span class="sd">        two varies based on the setup. See *clear_arrays* for freeing memory post calculation.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="c1"># T9 arr only needs to be evaluated when T changes</span>
-        <span class="n">T9_arr</span> <span class="o">=</span> <span class="n">Tfactors</span><span class="p">(</span><span class="n">T</span><span class="p">)</span><span class="o">.</span><span class="n">array</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">:]</span>
-
-        <span class="n">rvals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefac</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">yfac</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">coef_arr</span><span class="o">*</span><span class="n">T9_arr</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">coef_mask</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">rvals</span></div>
-
-
-<div class="viewcode-block" id="RateCollection.evaluate_ydots_arr">
-<a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.evaluate_ydots_arr">[docs]</a>
-    <span class="k">def</span> <span class="nf">evaluate_ydots_arr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Evaluate net rate of change of molar abundance for each nucleus in the network for a</span>
-<span class="sd">        specific temperature, assuming necessary precalculations have been carried out (calling the</span>
-<span class="sd">        methods *calc_count_matrices*, *update_rate_coef_arr*, *update_yfac_arr*, and</span>
-<span class="sd">        *update_prefac_arr*). The latter two set the composition and density.</span>
-
-<span class="sd">        This performs a vectorized calculation, and returns an array ordered by the nuclei in the</span>
-<span class="sd">        *unique_nuclei* member variable. This does not support tabular rates.</span>
-
-<span class="sd">        See *evaluate_ydots* method for non-vectorized version. Relative performance between the</span>
-<span class="sd">        two varies based on the setup. See *clear_arrays* for freeing memory post calculation.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="n">rvals_arr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_rates_arr</span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
-
-        <span class="n">p_A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nuc_prod_count</span><span class="o">*</span><span class="n">rvals_arr</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-        <span class="n">c_A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nuc_cons_count</span><span class="o">*</span><span class="n">rvals_arr</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">p_A</span> <span class="o">-</span> <span class="n">c_A</span></div>
-
-
-<div class="viewcode-block" id="RateCollection.evaluate_activity_arr">
-<a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.evaluate_activity_arr">[docs]</a>
-    <span class="k">def</span> <span class="nf">evaluate_activity_arr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        sum over all of the terms contributing to dY/dt for a specific temperature, neglecting sign,</span>
-<span class="sd">        assuming necessary precalculations have been carried out (calling the methods</span>
-<span class="sd">        *calc_count_matrices*, *update_rate_coef_arr*, *update_yfac_arr*, and *update_prefac_arr*).</span>
-<span class="sd">        The latter two set the composition and density.</span>
-
-<span class="sd">        This performs a vectorized calculation, and returns an array ordered by the nuclei in the</span>
-<span class="sd">        *unique_nuclei* member variable. This does not support tabular rates.</span>
-
-<span class="sd">        See *evaluate_activity* method for non-vectorized version. Relative performance between the</span>
-<span class="sd">        two varies based on the setup. See *clear_arrays* for freeing memory post calculation.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="n">rvals_arr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_rates_arr</span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
-
-        <span class="n">p_A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nuc_prod_count</span><span class="o">*</span><span class="n">rvals_arr</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-        <span class="n">c_A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nuc_cons_count</span><span class="o">*</span><span class="n">rvals_arr</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">p_A</span> <span class="o">+</span> <span class="n">c_A</span></div>
-
-
-<div class="viewcode-block" id="RateCollection.clear_arrays">
-<a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.clear_arrays">[docs]</a>
-    <span class="k">def</span> <span class="nf">clear_arrays</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Clear all temporary variables created/set by the *calc_count_matrices*, *update_rate_coef_arr*,</span>
-<span class="sd">        *update_yfac_arr*, and *update_prefac_arr* member functions, freeing up memory.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="k">try</span><span class="p">:</span>
-            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">nuc_prod_count</span>
-        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
-            <span class="k">pass</span>
-
-        <span class="k">try</span><span class="p">:</span>
-            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">nuc_cons_count</span>
-        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
-            <span class="k">pass</span>
-
-        <span class="k">try</span><span class="p">:</span>
-            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">nuc_used</span>
-        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
-            <span class="k">pass</span>
-
-        <span class="k">try</span><span class="p">:</span>
-            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">coef_arr</span>
-        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
-            <span class="k">pass</span>
-
-        <span class="k">try</span><span class="p">:</span>
-            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">coef_mask</span>
-        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
-            <span class="k">pass</span>
-
-        <span class="k">try</span><span class="p">:</span>
-            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefac</span>
-        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
-            <span class="k">pass</span>
-
-        <span class="k">try</span><span class="p">:</span>
-            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">yfac</span>
-        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
-            <span class="k">pass</span></div>
 
 
     <span class="k">def</span> <span class="nf">_get_network_chart</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">composition</span><span class="p">):</span>
