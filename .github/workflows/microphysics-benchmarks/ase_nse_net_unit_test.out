@@ -1,4 +1,5 @@
-AMReX (23.08-120-g579df318ce0d) initialized
+Initializing AMReX (23.11-4-ga7afcba3cffd)...
+AMReX (23.11-4-ga7afcba3cffd) initialized
 starting the single zone burn...
 reading in network electron-capture / beta-decay tables...
 chemical potential of proton is -3
@@ -31,4 +32,4 @@ Cr48 : 0.009959852831
 Fe52 : 0.05964589202
 Ni56 : 0.2350269888
 We're in NSE. 
-AMReX (23.08-120-g579df318ce0d) finalized
+AMReX (23.11-4-ga7afcba3cffd) finalized
