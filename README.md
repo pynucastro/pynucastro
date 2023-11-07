@@ -143,19 +143,19 @@ repeated.
 
 # unit tests
 
-We use py.test to do unit tests.  In `pynucastro/`, do:
+We use pytest to do unit tests.  In the repository root, do:
 ```
-pytest -v .
+pytest -v
 ```
 
 to see coverage, do:
 ```
-pytest --cov=pynucastro .
+pytest --cov=pynucastro
 ```
 
 to test the notebooks, do:
 ```
-py.test --nbval examples
+pytest --nbval examples
 ```
 
 
