@@ -2,7 +2,7 @@
 
 import sys
 
-from pynucastro.networks import PythonNetwork
+from pynucastro.networks import NumpyNetwork
 from pynucastro.nucdata import Nucleus
 from pynucastro.rates import Library, RateFilter
 
@@ -34,7 +34,7 @@ def load_network(endpoint=Nucleus('te108'), library_name='rp-process-lib'):
     filt = RateFilter(filter_function=ff)
     lib = Library(library_name)
     lib = lib.filter(filt)
-    return PythonNetwork(libraries=[lib])
+    return NumpyNetwork(libraries=[lib])
 
 
 if __name__ == "__main__":

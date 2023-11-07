@@ -29,6 +29,7 @@ hydrodynamics codes.
 from .amrexastro_cxx_network import AmrexAstroCxxNetwork
 from .base_cxx_network import BaseCxxNetwork
 from .nse_network import NSENetwork
+from .numpy_network import NumpyNetwork
 from .python_network import PythonNetwork
 from .rate_collection import (Composition, Explorer, RateCollection,
                               RateDuplicationError)
