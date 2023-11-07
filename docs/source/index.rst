@@ -59,23 +59,17 @@ codes.
 
 .. toctree::
    :maxdepth: 1
+   :caption: Plasma Neutrinos
+
+   neutrino-cooling.ipynb
+
+.. toctree::
+   :maxdepth: 1
    :caption: Writing and Integrating Networks
 
    networks
    cxx-networks
    julia
-
-.. toctree::
-   :maxdepth: 1
-   :caption: Nuclear Statistical Equilibrium
-
-   NSE-example.ipynb
-
-.. toctree::
-   :maxdepth: 1
-   :caption: Plasma Neutrinos
-
-   neutrino-cooling.ipynb
 
 .. toctree::
    :maxdepth: 1
