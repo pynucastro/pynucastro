@@ -7,8 +7,11 @@ from pynucastro.rates import Tfactors
 class NumpyNetwork(RateCollection):
     """A network that uses numpy arrays to evaluate rates more efficiently."""
 
-    def _build_collection(self):
-        super()._build_collection()
+    def __init__(self, rate_files=None, libraries=None, rates=None,
+                 inert_nuclei=None,
+                 symmetric_screening=False, do_screening=True):
+        super().__init__(rate_files, libraries, rates, inert_nuclei,
+                         symmetric_screening, do_screening)
 
         # cached values for vectorized evaluation
         self.nuc_prod_count = None
