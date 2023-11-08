@@ -1787,15 +1787,20 @@ class DerivedRate(ReacLibRate):
         super().__init__(rfile=self.rate.rfile, chapter=self.rate.chapter, original_source=self.rate.original_source,
                 reactants=self.rate.products, products=self.rate.reactants, sets=derived_sets, labelprops="derived", Q=-Q)
 
+    def _warn_about_missing_pf_tables(self):
+        skip_nuclei = {Nucleus("h1"), Nucleus("n"), Nucleus("he4")}
+        for nuc in set(self.rate.reactants + self.rate.products) - skip_nuclei:
+            if not nuc.partition_function:
+                print(f'WARNING: {nuc} partition function is not supported by tables: set pf = 1.0 by default')
+                # warnings.warn(UserWarning(f'{nuc} partition function is not supported by tables: set pf = 1.0 by default'))
+
     def eval(self, T, rhoY=None):
 
         r = super().eval(T=T, rhoY=rhoY)
         z_r = 1.0
         z_p = 1.0
         if self.use_pf:
-            for nuc in set(self.rate.reactants + self.rate.products):
-                if not nuc.partition_function and str(nuc) != 'h1' and str(nuc) != 'n' and str(nuc) != 'he4' and str(nuc) != 'p':
-                    print(f'WARNING: {nuc} partition function is not supported by tables: set pf = 1.0 by default')
+            self._warn_about_missing_pf_tables()
 
             for nucr in self.rate.reactants:
                 if not nucr.partition_function:
@@ -1818,9 +1823,7 @@ class DerivedRate(ReacLibRate):
         rate
         """
 
-        for nuc in set(self.rate.reactants + self.rate.products):
-            if not nuc.partition_function and str(nuc) not in ['h1', 'n', 'he4', 'p']:
-                print(f'WARNING: {nuc} partition function is not supported by tables: set pf = 1.0 by default')
+        self._warn_about_missing_pf_tables()
 
         fstring = super().function_string_py()
 
@@ -1857,9 +1860,7 @@ class DerivedRate(ReacLibRate):
         rate
         """
 
-        for nuc in set(self.rate.reactants + self.rate.products):
-            if not nuc.partition_function and str(nuc) not in ['h1', 'n', 'he4', 'p']:
-                print(f'WARNING: {nuc} partition function is not supported by tables: set pf = 1.0 by default')
+        self._warn_about_missing_pf_tables()
 
         fstring = super().function_string_cxx(dtype=dtype, specifiers=specifiers, leave_open=True)
 
