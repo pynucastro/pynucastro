@@ -17,7 +17,7 @@ class TestNSETable:
                 Nucleus("co54"), Nucleus("co55"), Nucleus("co56"),
                 Nucleus("ni56"), Nucleus("ni57")]
 
-        tlib = tabular_library.linking_nuclei(nucs)
+        tlib = tabular_library.linking_nuclei(nucs, print_warning=False)
         rlib = reaclib_library.linking_nuclei(nucs)
 
         all_lib = rlib + tlib
