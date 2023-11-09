@@ -355,6 +355,9 @@ class PythonNetwork(RateCollection):
 
         of.write(f"{indent}return jac\n")
 
+        if outfile is not None:
+            of.close()
+
         # Copy any tables in the network to the current directory
         # if the table file cannot be found, print a warning and continue.
         try:
