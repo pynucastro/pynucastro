@@ -126,3 +126,6 @@ addopts = """\
   --ignore=examples/rxn-network-integration.ipynb \
   --ignore=examples/o16o16_rates.ipynb \
   """
+filterwarnings = [
+  "error",
+]
