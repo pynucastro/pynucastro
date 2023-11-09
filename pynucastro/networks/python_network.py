@@ -4,6 +4,7 @@ source"""
 import os
 import shutil
 import sys
+import warnings
 
 from scipy import constants
 
@@ -368,9 +369,9 @@ class PythonNetwork(RateCollection):
                 if os.path.isfile(tdat_file):
                     shutil.copy(tdat_file, odir or os.getcwd())
                 else:
-                    print(f'WARNING: Table data file {tr.table_file} not found.')
+                    warnings.warn(UserWarning(f'Table data file {tr.table_file} not found.'))
                 rtoki_file = os.path.join(tdir, tr.rfile)
                 if os.path.isfile(rtoki_file):
                     shutil.copy(rtoki_file, odir or os.getcwd())
                 else:
-                    print(f'WARNING: Table metadata file {tr.rfile} not found.')
+                    warnings.warn(UserWarning(f'Table metadata file {tr.rfile} not found.'))

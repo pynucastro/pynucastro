@@ -10,6 +10,7 @@ import os
 import re
 import shutil
 import sys
+import warnings
 from abc import ABC, abstractmethod
 
 import numpy as np
@@ -136,7 +137,7 @@ class BaseCxxNetwork(ABC, RateCollection):
                 if os.path.isfile(tdat_file):
                     shutil.copy(tdat_file, odir or os.getcwd())
                 else:
-                    print(f'WARNING: Table data file {tr.table_file} not found.')
+                    warnings.warn(UserWarning(f'Table data file {tr.table_file} not found.'))
 
     def compose_ydot(self):
         """create the expressions for dYdt for the nuclei, where Y is the

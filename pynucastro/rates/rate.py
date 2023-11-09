@@ -5,6 +5,7 @@ Classes and methods to interface with files storing rate data.
 import io
 import math
 import os
+import warnings
 from collections import Counter
 from enum import Enum
 
@@ -1791,8 +1792,7 @@ class DerivedRate(ReacLibRate):
         skip_nuclei = {Nucleus("h1"), Nucleus("n"), Nucleus("he4")}
         for nuc in set(self.rate.reactants + self.rate.products) - skip_nuclei:
             if not nuc.partition_function:
-                print(f'WARNING: {nuc} partition function is not supported by tables: set pf = 1.0 by default')
-                # warnings.warn(UserWarning(f'{nuc} partition function is not supported by tables: set pf = 1.0 by default'))
+                warnings.warn(UserWarning(f'{nuc} partition function is not supported by tables: set pf = 1.0 by default'))
 
     def eval(self, T, rhoY=None):
 
