@@ -5,8 +5,7 @@ import os
 import shutil
 import sys
 
-from scipy import constants
-
+from pynucastro.constants import constants
 from pynucastro.networks.rate_collection import RateCollection
 from pynucastro.rates.rate import ApproximateRate
 from pynucastro.screening import get_screening_map
@@ -204,15 +203,12 @@ class PythonNetwork(RateCollection):
 
         # we'll compute the masses here in erg
 
-        m_u = constants.value('atomic mass constant energy equivalent in MeV')
-        MeV2erg = (constants.eV * constants.mega) / constants.erg
-
         of.write("\n")
 
         of.write("# masses in ergs\n")
         of.write("mass = np.zeros((nnuc), dtype=np.float64)\n\n")
         for n in self.unique_nuclei:
-            mass = n.A_nuc * m_u * MeV2erg
+            mass = n.A_nuc * constants.m_u_MeV * constants.MeV2erg
             of.write(f"mass[j{n.raw}] = {mass}\n")
 
         of.write("\n")
