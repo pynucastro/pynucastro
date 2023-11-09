@@ -9,6 +9,9 @@ h = physical_constants.value("Planck constant") / physical_constants.erg
 hbar = physical_constants.value("reduced Planck constant") / physical_constants.erg
 N_A = physical_constants.value("Avogadro constant")
 q_e = physical_constants.value("elementary charge") * (physical_constants.c * 100) / 10  # C to statC (esu)
+c_light = physical_constants.value("speed of light in vacuum") / physical_constants.centi
+m_p = physical_constants.value("proton mass") * physical_constants.kilo
+m_n = physical_constants.value("neutron mass") * physical_constants.kilo
 
 erg2MeV = physical_constants.erg / (physical_constants.eV * physical_constants.mega)
 MeV2erg = (physical_constants.eV * physical_constants.mega) / physical_constants.erg

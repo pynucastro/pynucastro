@@ -8,6 +8,7 @@ from collections import namedtuple
 import numpy as np
 
 from pynucastro import Composition, Nucleus
+from pynucastro.constants import constants
 from pynucastro.reduction import drgep, mpi_importer, sens_analysis
 from pynucastro.reduction.generate_data import dataset
 from pynucastro.reduction.load_network import load_network
@@ -45,10 +46,6 @@ def get_net_info(net, comp, rho, T):
     ebind = np.zeros(len(net.unique_nuclei), dtype=np.float64)
     m = np.zeros(len(net.unique_nuclei), dtype=np.float64)
 
-    mass_neutron = 1.67492721184e-24
-    mass_proton = 1.67262163783e-24
-    c_light = 2.99792458e10
-
     for i, n in enumerate(net.unique_nuclei):
 
         y[i] = y_dict[n]
@@ -56,7 +53,7 @@ def get_net_info(net, comp, rho, T):
         z[i] = n.Z
         a[i] = n.A
         ebind[i] = n.nucbind or 0.0
-        m[i] = mass_proton * n.Z + mass_neutron * n.N - ebind[i] / c_light**2
+        m[i] = constants.m_p * n.Z + constants.m_n * n.N - ebind[i] / constants.c_light**2
 
     return NetInfo(y, ydot, z, a, ebind, m)
 
@@ -64,10 +61,7 @@ def get_net_info(net, comp, rho, T):
 def enuc_dot(net_info):
     """Calculate the nuclear energy generation rate."""
 
-    avo = 6.0221417930e23
-    c_light = 2.99792458e10
-
-    return -np.sum(net_info.ydot * net_info.m) * avo * c_light**2
+    return -np.sum(net_info.ydot * net_info.m) * constants.N_A * constants.c_light**2
 
 
 def ye_dot(net_info):
