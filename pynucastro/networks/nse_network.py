@@ -1,10 +1,10 @@
 import warnings
 
 import numpy as np
-from scipy import constants
 from scipy.optimize import fsolve
 
 from pynucastro._version import version
+from pynucastro.constants import constants
 from pynucastro.networks.rate_collection import Composition, RateCollection
 from pynucastro.nucdata import Nucleus
 from pynucastro.rates import TabularRate
@@ -75,11 +75,9 @@ class NSENetwork(RateCollection):
 
     def _evaluate_n_e(self, state, Xs):
 
-        m_u = constants.value("unified atomic mass unit") * constants.kilo  # atomic unit mass in g
-
         n_e = 0.0
         for nuc in self.unique_nuclei:
-            n_e += nuc.Z * state.dens * Xs[nuc] / (nuc.A * m_u)
+            n_e += nuc.Z * state.dens * Xs[nuc] / (nuc.A * constants.m_u)
 
         return n_e
 
@@ -96,10 +94,6 @@ class NSENetwork(RateCollection):
         ye_max = max(nuc.Z/nuc.A for nuc in self.unique_nuclei)
         assert state.ye >= ye_low and state.ye <= ye_max, "input electron fraction goes outside of scope for current network"
 
-        # Setting up the constants needed to compute mu_c
-        k = constants.value("Boltzmann constant") / constants.erg           # boltzmann in erg/K
-        Erg2MeV = constants.erg / (constants.eV * constants.mega)
-
         # u_c is the coulomb correction term for NSE
         # Calculate the composition at NSE, equations found in appendix of Calder paper
         u_c = {}
@@ -112,7 +106,7 @@ class NSENetwork(RateCollection):
                 A_3 = -0.5 * np.sqrt(3.0) - A_1 / np.sqrt(A_2)
 
                 Gamma = state.gamma_e_fac * n_e ** (1.0/3.0) * nuc.Z ** (5.0 / 3.0) / state.temp
-                u_c[nuc] = Erg2MeV * k * state.temp * (A_1 * (np.sqrt(Gamma * (A_2 + Gamma)) - A_2 * np.log(np.sqrt(Gamma / A_2) +
+                u_c[nuc] = constants.erg2MeV * constants.k * state.temp * (A_1 * (np.sqrt(Gamma * (A_2 + Gamma)) - A_2 * np.log(np.sqrt(Gamma / A_2) +
                                       np.sqrt(1.0 + Gamma / A_2))) + 2.0 * A_3 * (np.sqrt(Gamma) - np.arctan(np.sqrt(Gamma))))
             else:
                 u_c[nuc] = 0.0
@@ -120,12 +114,6 @@ class NSENetwork(RateCollection):
         return u_c
 
     def _nucleon_fraction_nse(self, u, u_c, state):
-
-        # Define constants: amu, boltzmann, planck, and electron charge
-        m_u = constants.value("unified atomic mass unit") * constants.kilo  # atomic unit mass in g
-        k = constants.value("Boltzmann constant") / constants.erg           # boltzmann in erg/K
-        h = constants.value("Planck constant") / constants.erg              # in cgs
-        Erg2MeV = constants.erg / (constants.eV * constants.mega)
 
         Xs = {}
         up_c = u_c[Nucleus("p")]
@@ -139,10 +127,10 @@ class NSENetwork(RateCollection):
             if not nuc.spin_states:
                 raise ValueError(f"The spin of {nuc} is not implemented for now.")
 
-            nse_exponent = (nuc.Z * u[0] + nuc.N * u[1] - u_c[nuc] + nuc.Z * up_c + nuc.nucbind * nuc.A) / (k * state.temp * Erg2MeV)
+            nse_exponent = (nuc.Z * u[0] + nuc.N * u[1] - u_c[nuc] + nuc.Z * up_c + nuc.nucbind * nuc.A) / (constants.k * state.temp * constants.erg2MeV)
             nse_exponent = min(500.0, nse_exponent)
 
-            Xs[nuc] = m_u * nuc.A_nuc * pf * nuc.spin_states / state.dens * (2.0 * np.pi * m_u * nuc.A_nuc * k * state.temp / h**2) ** 1.5 \
+            Xs[nuc] = constants.m_u * nuc.A_nuc * pf * nuc.spin_states / state.dens * (2.0 * np.pi * constants.m_u * nuc.A_nuc * constants.k * state.temp / constants.h**2) ** 1.5 \
                     * np.exp(nse_exponent)
 
         return Xs

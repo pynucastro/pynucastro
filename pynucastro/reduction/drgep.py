@@ -219,8 +219,6 @@ def _drgep_numpy(net, conds, targets, tols):
 
     comp_L, rho_L, T_L = conds
 
-    net.calc_count_matrices()
-    net.update_rate_coef_arr()
     adj_nuc = get_adj_nuc(net)
 
     #------------------------------------------------
@@ -250,8 +248,6 @@ def _drgep_mpi_numpy(net, conds, targets, tols):
     n = tuple(map(len, conds))
     comp_L, rho_L, T_L = conds
 
-    net.calc_count_matrices()
-    net.update_rate_coef_arr()
     adj_nuc = get_adj_nuc(net)
 
     #-----------------------------------
