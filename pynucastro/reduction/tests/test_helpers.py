@@ -1,11 +1,14 @@
+"""Test the various helper functions in the reduction module."""
+
 import pytest
 from numpy.testing import assert_allclose
+from pytest import approx
 
 import pynucastro as pyna
-from pynucastro.reduction import drgep
+from pynucastro.reduction import drgep, reduction
 
 
-class TestHelpers:
+class TestDrgepHelpers:
     @pytest.fixture(scope="class")
     def net(self, reaclib_library):
         rate_names = ["c12(p,g)n13",
@@ -94,3 +97,50 @@ class TestHelpers:
 
         adj_nuc = drgep.get_adj_nuc(net)
         assert adj_nuc == expected
+
+
+class TestReductionHelpers:
+    @pytest.fixture(scope="class")
+    def net(self, reaclib_library):
+        mylib = reaclib_library.linking_nuclei(["p", "he4", "c12", "n13", "o16"])
+        return pyna.RateCollection(libraries=[mylib])
+
+    @pytest.fixture(scope="class")
+    def thermo_state(self, net):
+        rho = 1e5
+        T = 1e8
+        comp = pyna.Composition(net.unique_nuclei)
+        comp.set_equal()
+        return (rho, T, comp)
+
+    @pytest.fixture(scope="class")
+    def net_info(self, net, thermo_state):
+        rho, T, comp = thermo_state
+        return reduction.get_net_info(net, comp, rho, T)
+
+    def test_enuc_dot(self, net_info, net, thermo_state):
+        enuc_dot = net.evaluate_energy_generation(*thermo_state)
+        assert reduction.enuc_dot(net_info) == approx(enuc_dot)
+
+    def test_ye_dot(self, net_info, net, thermo_state):
+        comp = thermo_state[2]
+        y_e = comp.eval_ye()
+
+        Y_dot = net.evaluate_ydots(*thermo_state)
+        nuc = net.unique_nuclei
+        Y = comp.get_molar()
+        ye_dot = y_e * (
+            sum(Y_dot[n] * n.Z for n in nuc) / sum(Y[n] * n.Z for n in nuc) -
+            sum(Y_dot[n] * n.A for n in nuc) / sum(comp.X[n] for n in nuc)
+        )
+
+        assert reduction.ye_dot(net_info) == approx(ye_dot, rel=1e-6, abs=0)
+
+    def test_abar_dot(self, net_info, net, thermo_state):
+        comp = thermo_state[2]
+        abar = comp.eval_abar()
+
+        ydots = net.evaluate_ydots(*thermo_state)
+        abar_dot = -abar**2 * sum(Y for Y in ydots.values())
+
+        assert reduction.abar_dot(net_info) == approx(abar_dot)
