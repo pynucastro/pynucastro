@@ -53,7 +53,7 @@ def get_net_info(net, comp, rho, T):
         z[i] = n.Z
         a[i] = n.A
         ebind[i] = n.nucbind or 0.0
-        m[i] = constants.m_p * n.Z + constants.m_n * n.N - ebind[i] / constants.c_light**2
+        m[i] = n.A_nuc * constants.m_u
 
     return NetInfo(y, ydot, z, a, ebind, m)
 
