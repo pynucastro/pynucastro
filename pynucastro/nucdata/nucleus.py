@@ -5,8 +5,7 @@ Classes and methods to interface with files storing rate data.
 import os
 import re
 
-from scipy.constants import physical_constants
-
+from pynucastro.constants import constants
 from pynucastro.nucdata.binding_table import BindingTable
 from pynucastro.nucdata.elements import PeriodicTable
 from pynucastro.nucdata.mass_table import MassTable
@@ -16,9 +15,6 @@ from pynucastro.nucdata.spin_table import SpinTable
 _pynucastro_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 _pynucastro_rates_dir = os.path.join(_pynucastro_dir, 'library')
 _pynucastro_tabular_dir = os.path.join(_pynucastro_rates_dir, 'tabular')
-
-#set the atomic mass unit constant in MeV
-m_u, _, _ = physical_constants['atomic mass constant energy equivalent in MeV']
 
 #read the mass excess table once and store it at the module-level
 _mass_table = MassTable()
@@ -147,7 +143,7 @@ class Nucleus:
 
         # Now we will define the Nuclear Mass,
         try:
-            self.A_nuc = float(self.A) + _mass_table.get_mass_diff(a=self.A, z=self.Z) / m_u
+            self.A_nuc = float(self.A) + _mass_table.get_mass_diff(a=self.A, z=self.Z) / constants.m_u_MeV
         except NotImplementedError:
             self.A_nuc = None
 

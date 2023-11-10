@@ -2,8 +2,8 @@
 Python implementations of screening routines.
 """
 import numpy as np
-from scipy import constants
 
+from pynucastro.constants import constants
 # use the jitclass placeholder from rate.py
 from pynucastro.rates.rate import jitclass, numba
 
@@ -15,12 +15,6 @@ else:
 
 __all__ = ["PlasmaState", "ScreenFactors", "chugunov_2007", "chugunov_2009",
            "make_plasma_state", "make_screen_factors", "potekhin_1998"]
-
-
-amu = constants.value("atomic mass constant") / constants.gram  # kg to g
-q_e = constants.value("elementary charge") * (constants.c * 100) / 10  # C to statC (esu)
-hbar = constants.value("reduced Planck constant") / constants.erg  # J*s to erg*s
-k_B = constants.value("Boltzmann constant") / constants.erg  # J/K to erg/K
 
 
 @jitclass()
@@ -62,14 +56,14 @@ class PlasmaState:
         self.z2bar = np.sum(Zs ** 2 * Ys) / ytot
 
         # Average mass and total number density
-        mbar = self.abar * amu
+        mbar = self.abar * constants.m_u
         ntot = self.dens / mbar
         # Electron number density
         # zbar * ntot works out to sum(z[i] * n[i]), after cancelling terms
         self.n_e = self.zbar * ntot
 
         # temperature-independent part of Gamma_e, from Chugunov 2009 eq. 6
-        self.gamma_e_fac = q_e ** 2 / k_B * np.cbrt(4 * np.pi / 3) * np.cbrt(self.n_e)
+        self.gamma_e_fac = constants.q_e ** 2 / constants.k * np.cbrt(4 * np.pi / 3) * np.cbrt(self.n_e)
 
 
 @jitclass()
@@ -107,7 +101,7 @@ class NseState:
         self.temp = temp
         self.dens = dens
         self.ye = ye
-        self.gamma_e_fac = q_e ** 2 / k_B * np.cbrt(4.0 * np.pi / 3.0)
+        self.gamma_e_fac = constants.q_e ** 2 / constants.k * np.cbrt(4.0 * np.pi / 3.0)
 
 
 def make_plasma_state(temp, dens, molar_fractions):
@@ -231,9 +225,9 @@ def chugunov_2007(state, scn_fac):
     mu12 = scn_fac.a1 * scn_fac.a2 / (scn_fac.a1 + scn_fac.a2)
     z_factor = scn_fac.z1 * scn_fac.z2
     n_i = state.n_e / scn_fac.ztilde ** 3
-    m_i = 2 * mu12 * amu
+    m_i = 2 * mu12 * constants.m_u
 
-    T_p = hbar / k_B * q_e * np.sqrt(4 * np.pi * z_factor * n_i / m_i)
+    T_p = constants.hbar / constants.k * constants.q_e * np.sqrt(4 * np.pi * z_factor * n_i / m_i)
 
     # Normalized temperature
     T_norm = state.temp / T_p
@@ -350,7 +344,7 @@ def chugunov_2009(state, scn_fac):
     Gamma_12 = Gamma_e * z1z2 / scn_fac.ztilde
 
     # Coulomb barrier penetrability, eq. 10
-    tau_factor = np.cbrt(27 / 2 * (np.pi * q_e ** 2 / hbar) ** 2 * amu / k_B)
+    tau_factor = np.cbrt(27 / 2 * (np.pi * constants.q_e ** 2 / constants.hbar) ** 2 * constants.m_u / constants.k)
     tau_12 = tau_factor * scn_fac.aznut / np.cbrt(state.temp)
 
     # eq. 12
