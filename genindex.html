@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Index &mdash; pynucastro 2.1.1.post21+g75bc7331 documentation</title>
+  <title>Index &mdash; pynucastro 2.1.1.post22+g9acfb16a documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
@@ -14,7 +14,7 @@
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=49a5ee1b"></script>
+        <script src="_static/documentation_options.js?v=42c23305"></script>
         <script src="_static/doctools.js?v=888ff710"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
         <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -201,8 +201,6 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pynucastro.nucdata.html#pynucastro.nucdata.nucleus.Nucleus.c">c() (pynucastro.nucdata.nucleus.Nucleus method)</a>
 </li>
-      <li><a href="pynucastro.networks.html#pynucastro.networks.numpy_network.NumpyNetwork.calc_count_matrices">calc_count_matrices() (pynucastro.networks.numpy_network.NumpyNetwork method)</a>
-</li>
       <li><a href="pynucastro.reduction.html#pynucastro.reduction.drgep.calc_interaction_matrix">calc_interaction_matrix() (in module pynucastro.reduction.drgep)</a>
 </li>
       <li><a href="pynucastro.reduction.html#pynucastro.reduction.drgep.calc_interaction_matrix_numpy">calc_interaction_matrix_numpy() (in module pynucastro.reduction.drgep)</a>
@@ -230,6 +228,10 @@
       <li><a href="pynucastro.networks.html#pynucastro.networks.numpy_network.NumpyNetwork.clear_arrays">clear_arrays() (pynucastro.networks.numpy_network.NumpyNetwork method)</a>
 </li>
       <li><a href="pynucastro.rates.html#pynucastro.rates.rate.Rate.cname">cname() (pynucastro.rates.rate.Rate method)</a>
+</li>
+      <li><a href="pynucastro.networks.html#pynucastro.networks.numpy_network.NumpyNetwork.coef_arr">coef_arr (pynucastro.networks.numpy_network.NumpyNetwork attribute)</a>
+</li>
+      <li><a href="pynucastro.networks.html#pynucastro.networks.numpy_network.NumpyNetwork.coef_mask">coef_mask (pynucastro.networks.numpy_network.NumpyNetwork attribute)</a>
 </li>
       <li><a href="pynucastro.networks.html#pynucastro.networks.base_cxx_network.BaseCxxNetwork.compose_jacobian">compose_jacobian() (pynucastro.networks.base_cxx_network.BaseCxxNetwork method)</a>
 </li>
@@ -696,11 +698,17 @@
 </li>
       <li><a href="pynucastro.networks.html#pynucastro.networks.nse_network.NSENetwork">NSENetwork (class in pynucastro.networks.nse_network)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pynucastro.networks.html#pynucastro.networks.nse_network.NSETableEntry">NSETableEntry (class in pynucastro.networks.nse_network)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pynucastro.rates.html#pynucastro.rates.rate.TableIndex.NU">NU (pynucastro.rates.rate.TableIndex attribute)</a>
+</li>
+      <li><a href="pynucastro.networks.html#pynucastro.networks.numpy_network.NumpyNetwork.nuc_cons_count">nuc_cons_count (pynucastro.networks.numpy_network.NumpyNetwork attribute)</a>
+</li>
+      <li><a href="pynucastro.networks.html#pynucastro.networks.numpy_network.NumpyNetwork.nuc_prod_count">nuc_prod_count (pynucastro.networks.numpy_network.NumpyNetwork attribute)</a>
+</li>
+      <li><a href="pynucastro.networks.html#pynucastro.networks.numpy_network.NumpyNetwork.nuc_used">nuc_used (pynucastro.networks.numpy_network.NumpyNetwork attribute)</a>
 </li>
       <li><a href="pynucastro.nucdata.html#pynucastro.nucdata.nucleus.Nucleus">Nucleus (class in pynucastro.nucdata.nucleus)</a>
 </li>
@@ -737,6 +745,8 @@
       <li><a href="pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.plot_network_chart">plot_network_chart() (pynucastro.networks.rate_collection.RateCollection method)</a>
 </li>
       <li><a href="pynucastro.screening.html#pynucastro.screening.screen.potekhin_1998">potekhin_1998() (in module pynucastro.screening.screen)</a>
+</li>
+      <li><a href="pynucastro.networks.html#pynucastro.networks.numpy_network.NumpyNetwork.prefac">prefac (pynucastro.networks.numpy_network.NumpyNetwork attribute)</a>
 </li>
       <li>
     pynucastro
@@ -1081,8 +1091,6 @@
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pynucastro.networks.html#pynucastro.networks.numpy_network.NumpyNetwork.update_rate_coef_arr">update_rate_coef_arr() (pynucastro.networks.numpy_network.NumpyNetwork method)</a>
-</li>
       <li><a href="pynucastro.networks.html#pynucastro.networks.numpy_network.NumpyNetwork.update_yfac_arr">update_yfac_arr() (pynucastro.networks.numpy_network.NumpyNetwork method)</a>
 </li>
       <li><a href="pynucastro.nucdata.html#pynucastro.nucdata.partition_function.PartitionFunction.upper_partition">upper_partition() (pynucastro.nucdata.partition_function.PartitionFunction method)</a>
@@ -1129,13 +1137,15 @@
 </li>
       <li><a href="pynucastro.reduction.html#pynucastro.reduction.reduction.NetInfo.ydot">ydot (pynucastro.reduction.reduction.NetInfo attribute)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pynucastro.rates.html#pynucastro.rates.rate.Rate.ydot_string_py">ydot_string_py() (pynucastro.rates.rate.Rate method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pynucastro.networks.html#pynucastro.networks.sympy_network_support.SympyRates.ydot_term_symbol">ydot_term_symbol() (pynucastro.networks.sympy_network_support.SympyRates method)</a>
 </li>
       <li><a href="pynucastro.reduction.html#pynucastro.reduction.reduction.ye_dot">ye_dot() (in module pynucastro.reduction.reduction)</a>
+</li>
+      <li><a href="pynucastro.networks.html#pynucastro.networks.numpy_network.NumpyNetwork.yfac">yfac (pynucastro.networks.numpy_network.NumpyNetwork attribute)</a>
 </li>
   </ul></td>
 </tr></table>
