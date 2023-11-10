@@ -10,6 +10,7 @@ on:
     branches:
       - main
       - development
+  workflow_dispatch:
 
 jobs:
   test:
