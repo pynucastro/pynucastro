@@ -23,7 +23,7 @@ class TestConstants:
         assert constants.k_MeV == approx(constants.k * constants.erg2MeV)
 
         assert constants.h == approx(6.62607e-27)
-        assert constants.h == approx(6.62607e-27 / 2 / math.pi)
+        assert constants.hbar == approx(6.62607e-27 / 2 / math.pi)
 
         assert constants.q_e == approx(4.802e-10, rel=1.e-4)
         assert constants.c_light == approx(2.997924e10)
