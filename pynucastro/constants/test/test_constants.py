@@ -1,4 +1,5 @@
 import math
+
 from pytest import approx
 
 from pynucastro.constants import constants
