@@ -68,7 +68,6 @@ class TestHelpers:
         expected = calc_interaction_matrix(net, rvals)
 
         net.clear_arrays()
-        net.calc_count_matrices()
         r_AB = calc_interaction_matrix_numpy(net, rvals_arr)
 
         assert_allclose(r_AB, expected, rtol=1e-10, atol=1e-100)
