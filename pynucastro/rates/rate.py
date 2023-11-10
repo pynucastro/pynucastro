@@ -11,7 +11,6 @@ from enum import Enum
 
 import matplotlib.pyplot as plt
 import numpy as np
-from scipy.constants import physical_constants
 
 try:
     import numba
@@ -44,15 +43,8 @@ except ImportError:
         return wrap(cls_or_spec)
 
 
+from pynucastro.constants import constants
 from pynucastro.nucdata import Nucleus, UnsupportedNucleus
-
-amu_mev, _, _ = physical_constants['atomic mass constant energy equivalent in MeV']
-hbar, _, _ = physical_constants['reduced Planck constant']
-amu, _, _ = physical_constants['atomic mass constant']
-k_B_mev_k, _, _ = physical_constants['Boltzmann constant in eV/K']
-k_B_mev_k /= 1.0e6
-k_B, _, _ = physical_constants['Boltzmann constant']
-N_a, _, _ = physical_constants['Avogadro constant']
 
 _pynucastro_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 _pynucastro_rates_dir = os.path.join(_pynucastro_dir, 'library')
@@ -1752,7 +1744,7 @@ class DerivedRate(ReacLibRate):
             a = ssets.a
             prefactor = 0.0
             Q = 0.0
-            prefactor += -np.log(N_a) * (len(self.rate.reactants) - len(self.rate.products))
+            prefactor += -np.log(constants.N_A) * (len(self.rate.reactants) - len(self.rate.products))
 
             for nucr in self.rate.reactants:
                 prefactor += 1.5*np.log(nucr.A) + np.log(nucr.spin_states)
@@ -1762,7 +1754,7 @@ class DerivedRate(ReacLibRate):
                 Q -= nucp.A_nuc
 
             if self.compute_Q:
-                Q = Q * amu_mev
+                Q = Q * constants.m_u_MeV
             else:
                 Q = self.rate.Q
 
@@ -1771,12 +1763,12 @@ class DerivedRate(ReacLibRate):
             if len(self.rate.reactants) == len(self.rate.products):
                 prefactor += 0.0
             else:
-                F = (amu * k_B * 1.0e5 / (2.0*np.pi*hbar**2))**(1.5*(len(self.rate.reactants) - len(self.rate.products)))
+                F = (constants.m_u * constants.k * 1.0e9 / (2.0*np.pi*constants.hbar**2))**(1.5*(len(self.rate.reactants) - len(self.rate.products)))
                 prefactor += np.log(F)
 
             a_rev = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
             a_rev[0] = prefactor + a[0]
-            a_rev[1] = a[1] - Q / (1.0e9 * k_B_mev_k)
+            a_rev[1] = a[1] - Q / (1.0e9 * constants.k_MeV)
             a_rev[2] = a[2]
             a_rev[3] = a[3]
             a_rev[4] = a[4]
