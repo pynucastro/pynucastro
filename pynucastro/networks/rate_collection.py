@@ -1264,7 +1264,8 @@ class RateCollection:
         # pylint: disable=unused-argument
         print('To create network integration source code, use a class that implements a specific network type.')
 
-    def plot(self, outfile=None, rho=None, T=None, comp=None,
+    def plot(self, rho=None, T=None, comp=None, *,
+             outfile=None,
              size=(800, 600), dpi=100, title=None,
              ydot_cutoff_value=None, show_small_ydot=False,
              node_size=1000, node_font_size=13, node_color="#A0CBE2", node_shape="o",
@@ -1618,16 +1619,20 @@ class RateCollection:
 
         return fig
 
-    def plot_jacobian(self, outfile=None, rho=None, T=None, comp=None,
-                      screen_func=None,
+    def plot_jacobian(self, rho, T, comp, *,
+                      outfile=None, screen_func=None,
+                      rate_scaling=1.e10,
                       size=(800, 800), dpi=100):
+        """plot the Jacobian matrix of the system.  Here, rate_scaling is used
+        to set the cutoff of values that we show, relative to the peak.  Any
+        Jacobian element smaller than this will not be shown."""
 
         jac = self.evaluate_jacobian(rho, T, comp, screen_func=screen_func)
 
         valid_max = np.abs(jac).max()
 
         # pylint: disable-next=redundant-keyword-arg
-        norm = SymLogNorm(valid_max/1.e10, vmin=-valid_max, vmax=valid_max)
+        norm = SymLogNorm(valid_max/rate_scaling, vmin=-valid_max, vmax=valid_max)
 
         fig, ax = plt.subplots()
         fig.set_size_inches(size[0]/dpi, size[1]/dpi)
@@ -1657,7 +1662,8 @@ class RateCollection:
 
         return fig
 
-    def plot_network_chart(self, outfile=None, rho=None, T=None, comp=None,
+    def plot_network_chart(self, rho=None, T=None, comp=None, *,
+                           outfile=None,
                            size=(800, 800), dpi=100, force_one_column=False):
 
         nc = self._get_network_chart(rho, T, comp)
