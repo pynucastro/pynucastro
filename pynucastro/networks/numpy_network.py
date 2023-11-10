@@ -14,15 +14,38 @@ class NumpyNetwork(RateCollection):
                          symmetric_screening, do_screening)
 
         # cached values for vectorized evaluation
-        self.nuc_prod_count = None
-        self.nuc_cons_count = None
-        self.nuc_used = None
-        self.coef_arr = None
-        self.coef_mask = None
+        self._nuc_prod_count = None
+        self._nuc_cons_count = None
+        self._nuc_used = None
+        self._coef_arr = None
+        self._coef_mask = None
         self.prefac = None
         self.yfac = None
 
-    def calc_count_matrices(self):
+    def _build_collection(self):
+        super()._build_collection()
+        # clear the cached arrays after changing any of the rates
+        self.clear_arrays()
+
+    @property
+    def nuc_prod_count(self):
+        if self._nuc_prod_count is None:
+            self._calc_count_matrices()
+        return self._nuc_prod_count
+
+    @property
+    def nuc_cons_count(self):
+        if self._nuc_cons_count is None:
+            self._calc_count_matrices()
+        return self._nuc_cons_count
+
+    @property
+    def nuc_used(self):
+        if self._nuc_used is None:
+            self._calc_count_matrices()
+        return self._nuc_used
+
+    def _calc_count_matrices(self):
         """
         Compute and store 3 count matrices that can be used for vectorized rate calculations.
         Each matrix has shape *number_of_species × number_of_rates*. The first matrix (*nuc_prod_count*)
@@ -41,27 +64,39 @@ class NumpyNetwork(RateCollection):
         N_rates = len(self.rates)
 
         # Counts for reactions producing nucleus
-        self.nuc_prod_count = np.zeros((N_species, N_rates), dtype=np.int32)
+        self._nuc_prod_count = np.zeros((N_species, N_rates), dtype=np.int32)
         # Counts for reactions consuming nucleus
-        self.nuc_cons_count = np.zeros((N_species, N_rates), dtype=np.int32)
+        self._nuc_cons_count = np.zeros((N_species, N_rates), dtype=np.int32)
 
         for i, n in enumerate(self.unique_nuclei):
 
             for r in self.nuclei_produced[n]:
-                self.nuc_prod_count[i, r_map[r]] = r.products.count(n)
+                self._nuc_prod_count[i, r_map[r]] = r.products.count(n)
 
             for r in self.nuclei_consumed[n]:
-                self.nuc_cons_count[i, r_map[r]] = r.reactants.count(n)
+                self._nuc_cons_count[i, r_map[r]] = r.reactants.count(n)
 
         # Whether the nucleus is involved in the reaction or not
-        self.nuc_used = np.logical_or(self.nuc_prod_count, self.nuc_cons_count).T
+        self._nuc_used = np.logical_or(self._nuc_prod_count, self._nuc_cons_count).T
 
-    def update_rate_coef_arr(self):
+    @property
+    def coef_arr(self):
+        if self._coef_arr is None:
+            self._update_rate_coef_arr()
+        return self._coef_arr
+
+    @property
+    def coef_mask(self):
+        if self._coef_mask is None:
+            self._update_rate_coef_arr()
+        return self._coef_mask
+
+    def _update_rate_coef_arr(self):
         """
         Store Reaclib rate coefficient array, as well as a Boolean mask array determining
         how many sets to include in the final rate evaluation. The first array (*coef_arr*)
-        has shape *number_of_rates × number_of_species × 7*, while the second has shape
-        *number_of_rates × number_of_species*.
+        has shape *number_of_rates × number_of_sets × 7*, while the second has shape
+        *number_of_rates × number_of_sets*.
         """
 
         # coef arr can be precomputed if evaluate_rates_arr is called multiple times
@@ -75,14 +110,13 @@ class NumpyNetwork(RateCollection):
                 coef_arr[i, j, :] = s.a
                 coef_mask[i, j] = True
 
-        self.coef_arr = coef_arr
-        self.coef_mask = coef_mask
+        self._coef_arr = coef_arr
+        self._coef_mask = coef_mask
 
     def update_yfac_arr(self, composition):
         """
         Calculate and store molar fraction component of each rate (Y of each reactant raised to
-        the appropriate power). The results are stored in an array called *yfac*. The method
-        *calc_count_matrices* needs to have been called with this net beforehand.
+        the appropriate power). The results are stored in an array called *yfac*.
         """
 
         # yfac must be evaluated each time composition changes, probably pretty cheap
@@ -114,8 +148,8 @@ class NumpyNetwork(RateCollection):
     def evaluate_rates_arr(self, T):
         """
         Evaluate the rates in the network for a specific temperature, assuming necessary precalculations
-        have been carried out (calling the methods *calc_count_matrices*, *update_rate_coef_arr*,
-        *update_yfac_arr*, and *update_prefac_arr*). The latter two set the composition and density.
+        have been carried out (calling the methods *update_yfac_arr* and *update_prefac_arr*). These
+        methods set the composition and density.
 
         This performs a vectorized calculation, and returns an array ordered by the rates in the *rates*
         member variable. This does not support tabular rates.
@@ -135,8 +169,8 @@ class NumpyNetwork(RateCollection):
         """
         Evaluate net rate of change of molar abundance for each nucleus in the network for a
         specific temperature, assuming necessary precalculations have been carried out (calling the
-        methods *calc_count_matrices*, *update_rate_coef_arr*, *update_yfac_arr*, and
-        *update_prefac_arr*). The latter two set the composition and density.
+        methods *update_yfac_arr* and *update_prefac_arr*). These methods set the composition and
+        density.
 
         This performs a vectorized calculation, and returns an array ordered by the nuclei in the
         *unique_nuclei* member variable. This does not support tabular rates.
@@ -156,8 +190,7 @@ class NumpyNetwork(RateCollection):
         """
         sum over all of the terms contributing to dY/dt for a specific temperature, neglecting sign,
         assuming necessary precalculations have been carried out (calling the methods
-        *calc_count_matrices*, *update_rate_coef_arr*, *update_yfac_arr*, and *update_prefac_arr*).
-        The latter two set the composition and density.
+        *update_yfac_arr* and *update_prefac_arr*). These methods set the composition and density.
 
         This performs a vectorized calculation, and returns an array ordered by the nuclei in the
         *unique_nuclei* member variable. This does not support tabular rates.
@@ -175,41 +208,13 @@ class NumpyNetwork(RateCollection):
 
     def clear_arrays(self):
         """
-        Clear all temporary variables created/set by the *calc_count_matrices*, *update_rate_coef_arr*,
-        *update_yfac_arr*, and *update_prefac_arr* member functions, freeing up memory.
+        Clear all temporary variables created/set by the *update_yfac_arr* and
+        *update_prefac_arr* member functions, freeing up memory.
         """
-
-        try:
-            del self.nuc_prod_count
-        except AttributeError:
-            pass
-
-        try:
-            del self.nuc_cons_count
-        except AttributeError:
-            pass
-
-        try:
-            del self.nuc_used
-        except AttributeError:
-            pass
-
-        try:
-            del self.coef_arr
-        except AttributeError:
-            pass
-
-        try:
-            del self.coef_mask
-        except AttributeError:
-            pass
-
-        try:
-            del self.prefac
-        except AttributeError:
-            pass
-
-        try:
-            del self.yfac
-        except AttributeError:
-            pass
+        self._nuc_prod_count = None
+        self._nuc_cons_count = None
+        self._nuc_used = None
+        self._coef_arr = None
+        self._coef_mask = None
+        self.prefac = None
+        self.yfac = None
