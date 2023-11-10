@@ -18,9 +18,9 @@ from matplotlib.patches import ConnectionPatch
 from matplotlib.scale import SymmetricalLogTransform
 from matplotlib.ticker import MaxNLocator
 from mpl_toolkits.axes_grid1 import make_axes_locatable
-from scipy import constants
 
 # Import Rate
+from pynucastro.constants import constants
 from pynucastro.nucdata import Nucleus, PeriodicTable
 from pynucastro.rates import (ApproximateRate, DerivedRate, Library, Rate,
                               RateFileError, RatePair, TabularRate,
@@ -1119,19 +1119,17 @@ class RateCollection:
         enuc = 0.
 
         # compute constants and units
-        m_n_MeV = constants.value('neutron mass energy equivalent in MeV')
-        m_p_MeV = constants.value('proton mass energy equivalent in MeV')
-        m_e_MeV = constants.value('electron mass energy equivalent in MeV')
-        MeV2erg = (constants.eV * constants.mega) / constants.erg
 
         # ion binding energy contributions. basically e=mc^2
         for nuc in self.unique_nuclei:
             # add up mass in MeV then convert to erg
-            mass = ((nuc.A - nuc.Z) * m_n_MeV + nuc.Z * (m_p_MeV + m_e_MeV) - nuc.A * nuc.nucbind) * MeV2erg
+            mass = ((nuc.A - nuc.Z) * constants.m_n_MeV +
+                    nuc.Z * (constants.m_p_MeV + constants.m_e_MeV) -
+                    nuc.A * nuc.nucbind) * constants.MeV2erg
             enuc += ydots[nuc] * mass
 
         # convert from molar value to erg/g/s
-        enuc *= -1*constants.Avogadro
+        enuc *= -1*constants.N_A
 
         # subtract neutrino losses for tabular weak reactions
         enu = 0.0
@@ -1143,7 +1141,7 @@ class RateCollection:
 
                 # need to get reactant nucleus
                 nuc = r.reactants[0]
-                enu += constants.Avogadro * ys[nuc] * r.get_nu_loss(T, rho * y_e)
+                enu += constants.N_A * ys[nuc] * r.get_nu_loss(T, rho * y_e)
 
         enuc -= enu
         if return_enu:
