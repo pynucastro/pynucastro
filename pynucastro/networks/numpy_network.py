@@ -5,7 +5,54 @@ from pynucastro.rates import Tfactors
 
 
 class NumpyNetwork(RateCollection):
-    """A network that uses numpy arrays to evaluate rates more efficiently."""
+    """A network that uses numpy arrays to evaluate rates more efficiently.
+
+    Cached arrays
+    -------------
+
+    .. py:attribute:: coef_arr
+
+       Reaclib rate coefficient array, with shape ``(number_of_rates,
+       number_of_sets, 7)``.
+
+    .. py:attribute:: coef_mask
+
+       Boolean mask array determining how many sets to include in the final
+       rate evaluation, with shape ``(number_of_rates, number_of_sets)``.
+
+    .. py:attribute:: nuc_prod_count
+
+       Array storing the count of each nucleus in rates producing that nucleus,
+       with shape ``(number_of_species, number_of_rates)``.
+
+    .. py:attribute:: nuc_cons_count
+
+       Array storing the count of each nucleus in rates consuming that nucleus,
+       with shape ``(number_of_species, number_of_rates)``.
+
+    .. py:attribute:: nuc_used
+
+       A boolean matrix of whether the nucleus is involved in the reaction
+       or not, with shape ``(number_of_species, number_of_rates)``.
+
+    .. py:attribute:: yfac
+
+       Array storing the molar fraction component of each rate (Y of each
+       reactant raised to the appropriate power).
+
+       Depends on composition only.
+
+    .. py:attribute:: prefac
+
+       Array storing the prefactor for each rate, which includes both the
+       statistical prefactor and mass density raised to the corresponding
+       density exponent.
+
+       Depends on composition and density.
+
+    Methods
+    -------
+    """
 
     def __init__(self, rate_files=None, libraries=None, rates=None,
                  inert_nuclei=None,
@@ -47,12 +94,8 @@ class NumpyNetwork(RateCollection):
 
     def _calc_count_matrices(self):
         """
-        Compute and store 3 count matrices that can be used for vectorized rate calculations.
-        Each matrix has shape *number_of_species × number_of_rates*. The first matrix (*nuc_prod_count*)
-        stores the count of each nucleus in rates producing that nucleus. The second
-        (*nuc_cons_count*) stores the count of each nucleus in rates consuming that nucleus. The
-        third (*nuc_used*) stores a Boolean matrix of whether the nucleus is involved in the reaction
-        or not.
+        Compute and store 3 count matrices that can be used for vectorized rate
+        calculations.
         """
 
         # Rate -> index mapping
@@ -93,10 +136,7 @@ class NumpyNetwork(RateCollection):
 
     def _update_rate_coef_arr(self):
         """
-        Store Reaclib rate coefficient array, as well as a Boolean mask array determining
-        how many sets to include in the final rate evaluation. The first array (*coef_arr*)
-        has shape *number_of_rates × number_of_sets × 7*, while the second has shape
-        *number_of_rates × number_of_sets*.
+        Update the :attr:`.coef_arr` and :attr:`.coef_mask` arrays.
         """
 
         # coef arr can be precomputed if evaluate_rates_arr is called multiple times
@@ -115,8 +155,9 @@ class NumpyNetwork(RateCollection):
 
     def update_yfac_arr(self, composition):
         """
-        Calculate and store molar fraction component of each rate (Y of each reactant raised to
-        the appropriate power). The results are stored in an array called *yfac*.
+        Calculate and store molar fraction component of each rate (Y of each
+        reactant raised to the appropriate power). The results are stored in
+        the :attr:`.yfac` array.
         """
 
         # yfac must be evaluated each time composition changes, probably pretty cheap
@@ -129,9 +170,9 @@ class NumpyNetwork(RateCollection):
 
     def update_prefac_arr(self, rho, composition):
         """
-        Calculate and store rate prefactors, which include both statistical prefactors and
-        mass density raised to the corresponding density exponents. The results are stored in
-        an array called *prefac*.
+        Calculate and store rate prefactors, which include both statistical
+        prefactors and mass density raised to the corresponding density
+        exponents. The results are stored in the :attr:`.prefac` array.
         """
 
         y_e = composition.eval_ye()
@@ -147,15 +188,18 @@ class NumpyNetwork(RateCollection):
 
     def evaluate_rates_arr(self, T):
         """
-        Evaluate the rates in the network for a specific temperature, assuming necessary precalculations
-        have been carried out (calling the methods *update_yfac_arr* and *update_prefac_arr*). These
-        methods set the composition and density.
+        Evaluate the rates in the network for a specific temperature, assuming
+        necessary precalculations have been carried out (calling the methods
+        :meth:`.update_yfac_arr` and :meth:`.update_prefac_arr` to set the
+        composition and density).
 
-        This performs a vectorized calculation, and returns an array ordered by the rates in the *rates*
-        member variable. This does not support tabular rates.
+        This performs a vectorized calculation, and returns an array ordered by
+        the rates in the ``rates`` member variable. This does not support
+        tabular rates.
 
-        See *evaluate_rates* method for non-vectorized version. Relative performance between the
-        two varies based on the setup. See *clear_arrays* for freeing memory post calculation.
+        See :meth:`.evaluate_rates` for the non-vectorized version. Relative
+        performance between the two varies based on the setup. See
+        :meth:`clear_arrays` for freeing memory post calculation.
         """
 
         # T9 arr only needs to be evaluated when T changes
@@ -167,16 +211,18 @@ class NumpyNetwork(RateCollection):
 
     def evaluate_ydots_arr(self, T):
         """
-        Evaluate net rate of change of molar abundance for each nucleus in the network for a
-        specific temperature, assuming necessary precalculations have been carried out (calling the
-        methods *update_yfac_arr* and *update_prefac_arr*). These methods set the composition and
-        density.
+        Evaluate net rate of change of molar abundance for each nucleus in the
+        network for a specific temperature, assuming necessary precalculations
+        have been carried out (calling the methods :meth:`.update_yfac_arr` and
+        :meth:`.update_prefac_arr` to set the composition and density).
 
-        This performs a vectorized calculation, and returns an array ordered by the nuclei in the
-        *unique_nuclei* member variable. This does not support tabular rates.
+        This performs a vectorized calculation, and returns an array ordered by
+        the nuclei in the ``unique_nuclei`` member variable. This does not
+        support tabular rates.
 
-        See *evaluate_ydots* method for non-vectorized version. Relative performance between the
-        two varies based on the setup. See *clear_arrays* for freeing memory post calculation.
+        See :meth:`.evaluate_ydots` for the non-vectorized version. Relative
+        performance between the two varies based on the setup. See
+        :meth:`.clear_arrays` for freeing memory post calculation.
         """
 
         rvals_arr = self.evaluate_rates_arr(T)
@@ -188,15 +234,18 @@ class NumpyNetwork(RateCollection):
 
     def evaluate_activity_arr(self, T):
         """
-        sum over all of the terms contributing to dY/dt for a specific temperature, neglecting sign,
-        assuming necessary precalculations have been carried out (calling the methods
-        *update_yfac_arr* and *update_prefac_arr*). These methods set the composition and density.
+        Sum over all of the terms contributing to dY/dt for a specific
+        temperature, neglecting sign, assuming necessary precalculations have
+        been carried out (calling the methods :meth:`.update_yfac_arr` and
+        :meth:`.update_prefac_arr` to set the composition and density).
 
-        This performs a vectorized calculation, and returns an array ordered by the nuclei in the
-        *unique_nuclei* member variable. This does not support tabular rates.
+        This performs a vectorized calculation, and returns an array ordered by
+        the nuclei in the ``unique_nuclei`` member variable. This does not
+        support tabular rates.
 
-        See *evaluate_activity* method for non-vectorized version. Relative performance between the
-        two varies based on the setup. See *clear_arrays* for freeing memory post calculation.
+        See :meth:`.evaluate_activity` for the non-vectorized version. Relative
+        performance between the two varies based on the setup. See
+        :meth:`.clear_arrays` for freeing memory post calculation.
         """
 
         rvals_arr = self.evaluate_rates_arr(T)
@@ -208,8 +257,8 @@ class NumpyNetwork(RateCollection):
 
     def clear_arrays(self):
         """
-        Clear all temporary variables created/set by the *update_yfac_arr* and
-        *update_prefac_arr* member functions, freeing up memory.
+        Clear all cached arrays stored by the :meth:`.update_yfac_arr` and
+        :meth:`.update_prefac_arr` member functions, freeing up memory.
         """
         self._nuc_prod_count = None
         self._nuc_cons_count = None
