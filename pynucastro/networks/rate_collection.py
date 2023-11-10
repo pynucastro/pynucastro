@@ -1623,6 +1623,9 @@ class RateCollection:
                       outfile=None, screen_func=None,
                       rate_scaling=1.e10,
                       size=(800, 800), dpi=100):
+        """plot the Jacobian matrix of the system.  Here, rate_scaling is used
+        to set the cutoff of values that we show, relative to the peak.  Any
+        Jacobian element smaller than this will not be shown."""
 
         jac = self.evaluate_jacobian(rho, T, comp, screen_func=screen_func)
 
