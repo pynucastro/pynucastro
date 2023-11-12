@@ -1,5 +1,7 @@
 # unit tests for rates
 
+import warnings
+
 import pytest
 from pytest import approx, raises
 
@@ -105,7 +107,7 @@ class TestTabularRates:
             if r.fname in stored_rates_su:
                 assert rr == approx(stored_rates_su[r.fname], rel=1.e-6, abs=1.e-100), f"rate: {r} does not agree"
             else:
-                print(f"WARNING: missing Suzuki tests for tabular rate {r}")
+                warnings.warn(UserWarning(f"missing Suzuki tests for tabular rate {r}"))
 
     def test_rate_values_langanke(self, rc_la):
 
@@ -347,7 +349,7 @@ class TestTabularRates:
             if r.fname in stored_rates_la:
                 assert rr == approx(stored_rates_la[r.fname], rel=1.e-6, abs=1.e-100), f"rate: {r} does not agree"
             else:
-                print(f"WARNING: missing Langanke tests for tabular rate {r}")
+                warnings.warn(UserWarning(f"missing Langanke tests for tabular rate {r}"))
 
     def test_nu_loss_values_suzuki(self, rc_su):
 
@@ -435,7 +437,7 @@ class TestTabularRates:
             if r.fname in stored_nu_loss_su:
                 assert nu_loss == approx(stored_nu_loss_su[r.fname], rel=1.e-6, abs=1.e-100), f"rate: {r} does not agree"
             else:
-                print(f"WARNING: missing Suzuki tests for tabular nu loss rate {r}")
+                warnings.warn(UserWarning(f"missing Suzuki tests for tabular nu loss rate {r}"))
 
     def test_bounds(self, rc_su):
 

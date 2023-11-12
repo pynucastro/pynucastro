@@ -1,7 +1,6 @@
 import filecmp
 import os
 import shutil
-import warnings
 
 import pytest
 
@@ -79,8 +78,6 @@ def compare_network_files(request):
             for file in extra_files | modified_files:
                 shutil.copy(os.path.normpath(os.path.join(test_path, file)),
                             os.path.normpath(os.path.join(ref_path, file)))
-            # raise a warning to let the user know which tests were updated
-            warnings.warn(UserWarning(f"updated reference files in {ref_path}"))
         else:
             assert not errors, "written network files don't match the stored reference"
 

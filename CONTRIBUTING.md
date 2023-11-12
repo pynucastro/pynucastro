@@ -33,7 +33,7 @@ To regenerate the reference network output files used in the unit
 tests, run:
 
 ```
-pytest -v --update-networks -k write_network
+pytest -v -s --update-networks -k write_network
 ```
 
 Once you have run the unit tests and submitted the PR, one of the

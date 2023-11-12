@@ -4,6 +4,7 @@ source"""
 import os
 import shutil
 import sys
+import warnings
 
 from pynucastro.constants import constants
 from pynucastro.networks.rate_collection import RateCollection
@@ -350,6 +351,9 @@ class PythonNetwork(RateCollection):
 
         of.write(f"{indent}return jac\n")
 
+        if outfile is not None:
+            of.close()
+
         # Copy any tables in the network to the current directory
         # if the table file cannot be found, print a warning and continue.
         try:
@@ -364,9 +368,9 @@ class PythonNetwork(RateCollection):
                 if os.path.isfile(tdat_file):
                     shutil.copy(tdat_file, odir or os.getcwd())
                 else:
-                    print(f'WARNING: Table data file {tr.table_file} not found.')
+                    warnings.warn(UserWarning(f'Table data file {tr.table_file} not found.'))
                 rtoki_file = os.path.join(tdir, tr.rfile)
                 if os.path.isfile(rtoki_file):
                     shutil.copy(rtoki_file, odir or os.getcwd())
                 else:
-                    print(f'WARNING: Table metadata file {tr.rfile} not found.')
+                    warnings.warn(UserWarning(f'Table metadata file {tr.rfile} not found.'))
