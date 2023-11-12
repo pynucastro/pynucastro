@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Plotting Examples &mdash; pynucastro 2.1.1.post25+ge54ed8ff documentation</title>
+  <title>Plotting Examples &mdash; pynucastro 2.1.1.post26+g601b1c05 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
@@ -16,7 +16,7 @@
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=8c005bd6"></script>
+        <script src="_static/documentation_options.js?v=e0d3cd8b"></script>
         <script src="_static/doctools.js?v=888ff710"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
         <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -68,6 +68,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#Standard-view">Standard view</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#Rotated-view">Rotated view</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#Filters">Filters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Plotting-the-Jacobian">Plotting the Jacobian</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#Plot-nuclides-on-a-grid">Plot nuclides on a grid</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#Network-Chart">Network Chart</a></li>
 </ul>
@@ -292,27 +293,54 @@
 </div>
 </div>
 </section>
+<section id="Plotting-the-Jacobian">
+<h2>Plotting the Jacobian<a class="headerlink" href="#Plotting-the-Jacobian" title="Link to this heading"></a></h2>
+<p>For implicit integration, we solve:</p>
+<div class="math notranslate nohighlight">
+\[\dot{\bf Y} = {\bf f}({\bf Y})\]</div>
+<p>and the Jacobian, <span class="math notranslate nohighlight">\({\bf J} = \partial {\bf f} / \partial {\bf Y}\)</span> plays an important role in solving for the update.</p>
+<p>We can visualize the Jacobian of our network easily. By default, we will show all elements where</p>
+<div class="math notranslate nohighlight">
+\[\frac{\mathrm{max}_{i,j} (|J_{ij}|)}{|J_{ij}|} &gt; 10^{10}\]</div>
+<p>but this ratio can be set via the <code class="docutils literal notranslate"><span class="pre">rate_scaling</span></code> keyword argument.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">plot_jacobian</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span> <span class="n">rate_scaling</span><span class="o">=</span><span class="mf">1.e50</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/plot-types_19_0.png" src="_images/plot-types_19_0.png" />
+</div>
+</div>
+</section>
 <section id="Plot-nuclides-on-a-grid">
 <h2>Plot nuclides on a grid<a class="headerlink" href="#Plot-nuclides-on-a-grid" title="Link to this heading"></a></h2>
 <p>Nuclides in a network may also be visualized as cells on a grid of Z vs. N, colored by some quantity. This can be more interpretable for large networks. Calling <code class="docutils literal notranslate"><span class="pre">gridplot</span></code> without any arguments will just plot the grid - to see anything interesting we need to supply some conditions. Here is a plot of nuclide mass fraction on a log scale, with a 36 square inch figure:</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">files</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;c12-pg-n13-ls09&quot;</span><span class="p">,</span>
-         <span class="s2">&quot;c13-pg-n14-nacr&quot;</span><span class="p">,</span>
-         <span class="s2">&quot;n13--c13-wc12&quot;</span><span class="p">,</span>
-         <span class="s2">&quot;n13-pg-o14-lg06&quot;</span><span class="p">,</span>
-         <span class="s2">&quot;n14-pg-o15-im05&quot;</span><span class="p">,</span>
-         <span class="s2">&quot;n15-pa-c12-nacr&quot;</span><span class="p">,</span>
-         <span class="s2">&quot;o14--n14-wc12&quot;</span><span class="p">,</span>
-         <span class="s2">&quot;o15--n15-wc12&quot;</span><span class="p">]</span>
-<span class="n">rc</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">RateCollection</span><span class="p">(</span><span class="n">files</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rate_names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;c12(p,g)n13&quot;</span><span class="p">,</span>
+              <span class="s2">&quot;c13(p,g)n14&quot;</span><span class="p">,</span>
+              <span class="s2">&quot;n13(,)c13&quot;</span><span class="p">,</span>
+              <span class="s2">&quot;n13(p,g)o14&quot;</span><span class="p">,</span>
+              <span class="s2">&quot;n14(p,g)o15&quot;</span><span class="p">,</span>
+              <span class="s2">&quot;n15(p,a)c12&quot;</span><span class="p">,</span>
+              <span class="s2">&quot;o14(,)n14&quot;</span><span class="p">,</span>
+              <span class="s2">&quot;o15(,)n15&quot;</span><span class="p">]</span>
+<span class="n">rates</span> <span class="o">=</span> <span class="n">library</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="n">rate_names</span><span class="p">)</span>
+<span class="n">rc</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">RateCollection</span><span class="p">(</span><span class="n">rates</span><span class="o">=</span><span class="n">rates</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rho</span> <span class="o">=</span> <span class="mf">1.e4</span>
@@ -323,7 +351,7 @@
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">gridplot</span><span class="p">(</span><span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">,</span> <span class="n">color_field</span><span class="o">=</span><span class="s2">&quot;X&quot;</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">,</span> <span class="n">area</span><span class="o">=</span><span class="mi">36</span><span class="p">)</span>
@@ -334,12 +362,12 @@
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/plot-types_22_0.png" src="_images/plot-types_22_0.png" />
+<img alt="_images/plot-types_24_0.png" src="_images/plot-types_24_0.png" />
 </div>
 </div>
 <p>The plot is configurable through a large number of keyword arguments. Here we want to look at the rates at which nuclides are being created or destroyed, so we color by <span class="math notranslate nohighlight">\(\dot{Y}\)</span>, the rate of change of molar abundance. Density and temperature need to be supplied to evaluate the rates. A full list of valid keyword arguments can be found in the API documentation.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">gridplot</span><span class="p">(</span><span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="n">T</span><span class="p">,</span> <span class="n">color_field</span><span class="o">=</span><span class="s2">&quot;ydot&quot;</span><span class="p">,</span> <span class="n">area</span><span class="o">=</span><span class="mi">36</span><span class="p">,</span>
@@ -351,12 +379,12 @@
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/plot-types_24_0.png" src="_images/plot-types_24_0.png" />
+<img alt="_images/plot-types_26_0.png" src="_images/plot-types_26_0.png" />
 </div>
 </div>
 <p>Unlike the network plot, this won’t omit hydrogen and helium by default. To just look at the heavier nuclides, we can define a function to filter by proton number. Here we also plot <em>activity</em>, which is the sum of all rates contributions to Ydot ignoring the sign.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ff</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">nuc</span><span class="p">:</span> <span class="n">nuc</span><span class="o">.</span><span class="n">Z</span> <span class="o">&gt;</span> <span class="mi">2</span>
@@ -369,7 +397,7 @@
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/plot-types_26_0.png" src="_images/plot-types_26_0.png" />
+<img alt="_images/plot-types_28_0.png" src="_images/plot-types_28_0.png" />
 </div>
 </div>
 </section>
@@ -377,7 +405,7 @@
 <h2>Network Chart<a class="headerlink" href="#Network-Chart" title="Link to this heading"></a></h2>
 <p>A network chart shows how each rate affects each nucleus</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">plot_network_chart</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">)</span>
@@ -388,7 +416,7 @@
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/plot-types_29_0.png" src="_images/plot-types_29_0.png" />
+<img alt="_images/plot-types_31_0.png" src="_images/plot-types_31_0.png" />
 </div>
 </div>
 </section>

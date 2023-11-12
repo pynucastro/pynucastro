@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Creating a Custom Rate &mdash; pynucastro 2.1.1.post25+ge54ed8ff documentation</title>
+  <title>Creating a Custom Rate &mdash; pynucastro 2.1.1.post26+g601b1c05 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
@@ -16,7 +16,7 @@
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=8c005bd6"></script>
+        <script src="_static/documentation_options.js?v=e0d3cd8b"></script>
         <script src="_static/doctools.js?v=888ff710"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
         <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -183,7 +183,7 @@
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-1.416655077954945e-13 15.601859332769518
+1.416655077954945e-13 15.601859314950396
 </pre></div></div>
 </div>
 <p>Now we can write our custom rate. A few bits are needed in the initialization:</p>
@@ -272,7 +272,7 @@
 <div class="highlight"><pre>
 @numba.njit()
 def N14_p__O15__generic(rate_eval, tf):
-    rate_eval.N14_p__O15__generic = 1.416655077954945e-13 * (tf.T9 * 1.e9 / 30000000.0 )**(15.601859332769518)
+    rate_eval.N14_p__O15__generic = 1.416655077954945e-13 * (tf.T9 * 1.e9 / 30000000.0 )**(15.601859314950396)
 
 
 </pre></div></div>
@@ -371,15 +371,15 @@ def N14_p__O15__generic(rate_eval, tf):
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-{p: -140.3157901245312,
- He4: 124.10404295119409,
- C12: 124.09500217697232,
+{p: -140.31578946054753,
+ He4: 124.1040429511941,
+ C12: 124.09500217697233,
  C13: -0.017818574032238355,
- N13: 0.007017945387409764,
- N14: -16.165044163797166,
- N15: -124.1040418689928,
+ N13: 0.007017945387409766,
+ N14: -16.165043499813503,
+ N15: -124.10404186899281,
  O14: 0.0020205704150533152,
- O15: 16.182863914047424}
+ O15: 16.18286325006376}
 </pre></div></div>
 </div>
 <p>Finally, we can see that when the network constructs the <code class="docutils literal notranslate"><span class="pre">dYdt</span></code> term, when writing out the network (via <code class="docutils literal notranslate"><span class="pre">pynet.write_network()</span></code>), our rate is included. For example, for the protons:</p>
