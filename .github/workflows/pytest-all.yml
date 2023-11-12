@@ -19,6 +19,7 @@ jobs:
     strategy:
       matrix:
         python-version: ["3.9", "3.10", "3.11"]
+        path: [pynucastro, examples, docs]
 
     steps:
       - uses: actions/checkout@v3
@@ -53,11 +54,11 @@ jobs:
           lscpu
 
       - name: Run tests with pytest
-        run: pytest -v -s --nbval --cov=pynucastro
+        run: pytest -v -s --nbval --cov=pynucastro ${{ matrix.path }}
 
       - name: Upload output from failed write_network tests
         uses: actions/upload-artifact@v3
-        if: failure()
+        if: ${{ matrix.path == 'pynucastro' && failure() }}
         with:
           name: failed_networks_${{ matrix.python-version }}
           path: _test_*/
