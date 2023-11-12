@@ -728,8 +728,8 @@ class TabularLibrary(Library):
 
         trates = []
 
-        for _, _, filenames in os.walk(lib_path):
-            for f in filenames:
+        for _, _, filenames in sorted(os.walk(lib_path)):
+            for f in sorted(filenames):
                 if f.endswith("-toki"):
                     trates.append(load_rate(f))
 
@@ -750,8 +750,8 @@ class SuzukiLibrary(Library):
 
         trates = []
 
-        for _, _, filenames in os.walk(lib_path):
-            for f in filenames:
+        for _, _, filenames in sorted(os.walk(lib_path)):
+            for f in sorted(filenames):
                 if f.endswith("-toki"):
                     trates.append(load_rate(f))
 
@@ -772,8 +772,8 @@ class LangankeLibrary(Library):
 
         trates = []
 
-        for _, _, filenames in os.walk(lib_path):
-            for f in filenames:
+        for _, _, filenames in sorted(os.walk(lib_path)):
+            for f in sorted(filenames):
                 if f.endswith("-toki"):
                     trates.append(load_rate(f))
 
