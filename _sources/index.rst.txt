@@ -69,7 +69,6 @@ codes.
 
    networks
    cxx-networks
-   julia
 
 .. toctree::
    :maxdepth: 1
