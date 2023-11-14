@@ -1,5 +1,7 @@
 # unit tests for rates
 
+import pytest
+
 import pynucastro as pyna
 
 
@@ -49,7 +51,43 @@ class TestLibrary:
         assert self.library.get_num_rates() == 8
 
     def test_get_rate(self):
+        # get by rate id
         assert self.library.get_rate("c12 + p --> n13 <ls09_reaclib__>") == pyna.load_rate("c12-pg-n13-ls09")
+
+        # get by fname
+        assert self.library.get_rate("p_N14__O15") == pyna.load_rate("n14-pg-o15-im05")
+
+        # get by fname, lowercase
+        assert self.library.get_rate("p_n15__he4_c12") == pyna.load_rate("n15-pa-c12-nacr")
+
+    def test_get_rate_failure(self):
+        # missing rate id
+        with pytest.raises(LookupError):
+            self.library.get_rate("N15 + p --> O16 <li10_reaclib__>")
+
+        # missing fname
+        with pytest.raises(LookupError):
+            self.library.get_rate("F18__He4_N14")
+
+        # invalid rate
+        with pytest.raises(LookupError):
+            self.library.get_rate("this is not a rate")
+
+    def test_get_rate_by_nuclei(self):
+        assert self.library.get_rate_by_nuclei(
+            [pyna.Nucleus("p"), pyna.Nucleus("c13")], [pyna.Nucleus("n14")]
+        ) == pyna.load_rate("c13-pg-n14-nacr")
+
+        assert self.library.get_rate_by_nuclei(
+            [pyna.Nucleus("p")], [pyna.Nucleus("n14")]
+        ) is None
+
+        dup_rates = [pyna.load_rate("f17--o17-wc12"), pyna.load_rate("f17--o17-toki")]
+        dup_lib = self.library + pyna.Library(rates=dup_rates)
+
+        assert dup_lib.get_rate_by_nuclei(
+            [pyna.Nucleus("f17")], [pyna.Nucleus("o17")]
+        ) == dup_rates
 
     def test_diff(self):
         diff_lib = self.library - self.smaller_lib

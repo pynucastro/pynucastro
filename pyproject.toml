@@ -128,4 +128,8 @@ addopts = """\
   --ignore-glob=pynucastro/library/tabular/*.ipynb \
   --ignore=examples/rxn-network-integration.ipynb \
   --ignore=examples/o16o16_rates.ipynb \
+  --nbval-sanitize-with .github/workflows/nbval_sanitize.cfg \
   """
+filterwarnings = [
+  "error",
+]
