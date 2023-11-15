@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Creating and NSE table &mdash; pynucastro 2.1.1.post30+gf5bd3c5d documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="_static/nbsphinx-code-cells.css" type="text/css" />
+      <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=eadaea78"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="_static/copybutton.js?v=f281be69"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+        <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Neutrino Cooling" href="neutrino-cooling.html" />
+    <link rel="prev" title="Solving for nuclear statistical equilibrium" href="NSE-example.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            pynucastro
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2.1
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Overview of pynucastro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rate_types.html">Reaction Rate Types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Exploring Networks in Python</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="pynucastro-examples.html">pynucastro usage examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plot-types.html">Plotting Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pynucastro-integration.html">Example of integrating a network</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Selecting Rates</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="library-examples.html">Selecting Rates from a Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="validate-example.html">Checking your network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="electron-capture-example.html">Tabulated Weak Rate Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="electron-captures.html">Combining ReacLib Rates with Electron Capture Tables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Advanced Rate Operations</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="screening-examples.html">Screening Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modify-example.html">Modifying Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="approx-rates-examples.html">Approximate Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom-rates.html">Creating a Custom Rate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="unimportant-rates.html">Removing Unimportant Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="partition-function.html">Reverse Rates</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Nuclear Statistical Equilibrium</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="NSE-example.html">Solving for nuclear statistical equilibrium</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Creating and NSE table</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Plasma Neutrinos</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="neutrino-cooling.html">Neutrino Cooling</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Writing and Integrating Networks</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="networks.html">Creating Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cxx-networks.html">AMReX Astro Microphysics Networks</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Interfacing With Other Languages</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="julia.html">Integrating using DifferentialEquations.jl</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="citing.html">Citing pynucastro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sources.html">Third Party Data</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pynucastro</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Creating and NSE table</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/pynucastro/pynucastro/blob/main/docs/source/nse_table.ipynb" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="Creating-and-NSE-table">
+<h1>Creating and NSE table<a class="headerlink" href="#Creating-and-NSE-table" title="Link to this heading"></a></h1>
+<p>We can tabulate the NSE state on a grid <span class="math notranslate nohighlight">\((\rho, T, Y_e)\)</span>, giving:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\bar{A}\)</span> : the mean molecular weight</p></li>
+<li><p><span class="math notranslate nohighlight">\(\langle B/A \rangle\)</span> : the average binding energy per nucleon of the NSE state [MeV]</p></li>
+<li><p><span class="math notranslate nohighlight">\(dY_e/dt\)</span> : the time-evolution of <span class="math notranslate nohighlight">\(Y_e\)</span> due to weak reactions [1/s]</p></li>
+<li><p><span class="math notranslate nohighlight">\(d\bar{A}/dt\)</span> : the time-evolution of <span class="math notranslate nohighlight">\(\bar{A}\)</span> due to weak reactions [1/s]</p></li>
+<li><p><span class="math notranslate nohighlight">\(d\langle B/A\rangle/dt\)</span> : the time-evolution of the binding energy per nucleon due to weak reactions [MeV/s]</p></li>
+<li><p><span class="math notranslate nohighlight">\(\epsilon_\nu\)</span> : the energy loss due to neutrinos [erg / g / s]</p></li>
+</ul>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pynucastro</span> <span class="k">as</span> <span class="nn">pyna</span>
+<span class="kn">from</span> <span class="nn">pynucastro</span> <span class="kn">import</span> <span class="n">Nucleus</span>
+</pre></div>
+</div>
+</div>
+<p>First we’ll create a simple NSE network with a few nuclei. We’ll include tabulated weak rates so we can compute the change in the state due to electron/positron captures and decays.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">nucs</span> <span class="o">=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;n&quot;</span><span class="p">),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">),</span>
+        <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;fe52&quot;</span><span class="p">),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;fe53&quot;</span><span class="p">),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;fe54&quot;</span><span class="p">),</span>
+        <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;fe55&quot;</span><span class="p">),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;fe56&quot;</span><span class="p">),</span>
+        <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;co54&quot;</span><span class="p">),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;co55&quot;</span><span class="p">),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;co56&quot;</span><span class="p">),</span>
+        <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;ni56&quot;</span><span class="p">),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;ni57&quot;</span><span class="p">)]</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tl</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">TabularLibrary</span><span class="p">()</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">(</span><span class="n">nucs</span><span class="p">)</span>
+<span class="n">rl</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">ReacLibLibrary</span><span class="p">()</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">(</span><span class="n">nucs</span><span class="p">)</span>
+<span class="n">all_lib</span> <span class="o">=</span> <span class="n">tl</span> <span class="o">+</span> <span class="n">rl</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+warning: He4 was not able to be linked
+warning: Fe53 was not able to be linked
+warning: Fe52 was not able to be linked
+warning: Ni57 was not able to be linked
+</pre></div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dupes</span> <span class="o">=</span> <span class="n">all_lib</span><span class="o">.</span><span class="n">find_duplicate_links</span><span class="p">()</span>
+<span class="n">rates_to_remove</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dupes</span><span class="p">:</span>
+    <span class="n">rates_to_remove</span> <span class="o">+=</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">d</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">pyna</span><span class="o">.</span><span class="n">rates</span><span class="o">.</span><span class="n">ReacLibRate</span><span class="p">)]</span>
+
+<span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">rates_to_remove</span><span class="p">:</span>
+    <span class="n">all_lib</span><span class="o">.</span><span class="n">remove_rate</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">nse</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">NSENetwork</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="p">[</span><span class="n">all_lib</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<p>Now we’ll create a grid of temperature, density, and <span class="math notranslate nohighlight">\(Y_e\)</span> where we want to compute the NSE state</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Ts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="mf">9.6</span><span class="p">,</span> <span class="mf">10.4</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="n">rhos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="n">yes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.43</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>Finally we can generate the table. This will compute the NSE state at each combination of <span class="math notranslate nohighlight">\((\rho, T, Y_e)\)</span>. To help accelerate the convergence, it will start at the highest temperature and loop over <span class="math notranslate nohighlight">\(\rho\)</span> and <span class="math notranslate nohighlight">\(Y_e\)</span> and cache the values of the proton and neutron chemical potentials for the next temperature.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">nse</span><span class="o">.</span><span class="n">generate_table</span><span class="p">(</span><span class="n">rho_values</span><span class="o">=</span><span class="n">rhos</span><span class="p">,</span>
+                   <span class="n">T_values</span><span class="o">=</span><span class="n">Ts</span><span class="p">,</span>
+                   <span class="n">Ye_values</span><span class="o">=</span><span class="n">yes</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>The table is stored as <code class="docutils literal notranslate"><span class="pre">nse.tbl</span></code></p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">cat</span> nse.tbl
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+# NSE table generated by pynucastro 2.1.1.post30+gf5bd3c5d
+# original NSENetwork had 13 nuclei
+#
+#   log10(rho)       log10(T)           Ye             Abar            &lt;B/A&gt;          dYe/dt         dAbar/dt        d&lt;B/A&gt;/dt         e_nu
+   7.0000000000    9.6000000000    0.5000000000   50.2057480859    8.6280577146  -4.3803693e-05   1.7080366e-17   2.3287883e-06   7.4773253e+13
+   7.0000000000    9.6000000000    0.4650000000   55.7461136880    8.7870609269  -5.5255921e-09  -1.8576389e-21   3.9319171e-10     1.39808e+10
+   7.0000000000    9.6000000000    0.4300000000   11.0637644849    8.1412160175   0.00017699678  -2.9553491e-26  -1.8453762e-12   2.7707299e+14
+   7.0000000000   10.0000000000    0.5000000000    1.2148718034    1.6681978229     0.084056626  -4.1382279e-56   5.7341747e-41   7.8635859e+17
+   7.0000000000   10.0000000000    0.4650000000    1.2129151675    1.6556736890      0.10066497  -2.9530597e-56    3.521478e-41   8.3544486e+17
+   7.0000000000   10.0000000000    0.4300000000    1.2071212811    1.6183497719      0.11786424  -1.1606804e-56   5.9185559e-42   8.8944373e+17
+   7.0000000000   10.4000000000    0.5000000000    1.0000000000    0.0000000002       5.7463273  2.7835262e-218  6.7437141e-203   2.3050257e+20
+   7.0000000000   10.4000000000    0.4650000000    1.0000000000    0.0000000002       7.2542055 -3.8299905e-219  5.8186031e-203    2.360043e+20
+   7.0000000000   10.4000000000    0.4300000000    1.0000000000    0.0000000002       8.7650901  2.0886837e-218  3.8274857e-203   2.4155562e+20
+   8.0000000000    9.6000000000    0.5000000000   54.3195129673    8.6383992184  -0.00084875851              -0   4.3700394e-05   1.4743336e+15
+   8.0000000000    9.6000000000    0.4650000000   55.8970081563    8.7873915908  -4.9040515e-08  -2.5845056e-21   4.1959348e-09   1.2982252e+11
+   8.0000000000    9.6000000000    0.4300000000   11.0638264093    8.1412199515   9.2047376e-06  -3.3885784e-29  -5.6069156e-13   1.1254068e+13
+   8.0000000000   10.0000000000    0.5000000000    2.5712542408    5.7636820538    -0.019589298  -1.8701585e-33   1.7211947e-19      1.6311e+17
+   8.0000000000   10.0000000000    0.4650000000    2.5124362034    5.6778066014   -0.0041256975   5.0812947e-34   2.1065809e-19   1.5065038e+17
+   8.0000000000   10.0000000000    0.4300000000    2.3664067080    5.4461446407    0.0093041487  -6.5089027e-34   1.1442051e-19   1.6169818e+17
+   8.0000000000   10.4000000000    0.5000000000    1.0000000214    0.0000002024        1.213841  7.2035365e-165  9.8460077e-150   2.1894106e+20
+   8.0000000000   10.4000000000    0.4650000000    1.0000000212    0.0000002004       2.8346072  1.8145634e-165  8.4158915e-150   2.2127881e+20
+   8.0000000000   10.4000000000    0.4300000000    1.0000000206    0.0000001945       4.4726034  2.4538451e-165   5.481869e-150   2.2397331e+20
+   9.0000000000    9.6000000000    0.5000000000   55.5136288840    8.6413421175    -0.060154436              -0    0.0031211006   1.5552556e+17
+   9.0000000000    9.6000000000    0.4650000000   55.9133553598    8.7874247178  -3.9839589e-06   7.6546118e-19   3.6046977e-07   1.0369536e+13
+   9.0000000000    9.6000000000    0.4300000000   11.0638296395    8.1412201568   1.0225013e-08  -9.8142004e-34  -5.2463937e-15   1.1664591e+10
+   9.0000000000   10.0000000000    0.5000000000    4.3121615772    7.1515898299     -0.10742116  -7.8751776e-19   2.9757777e-05   4.7264232e+17
+   9.0000000000   10.0000000000    0.4650000000    5.1247240232    7.3995844381    -0.019430675   -5.218123e-20   3.3567416e-06   8.7381876e+16
+   9.0000000000   10.0000000000    0.4300000000    4.4162729378    7.0777579412   -0.0059568824   1.4777727e-20   5.1854108e-07   3.2607638e+16
+   9.0000000000   10.4000000000    0.5000000000    1.0000214391    0.0002025494      -17.715252  1.5106478e-112   3.7266649e-96   2.7735801e+20
+   9.0000000000   10.4000000000    0.4650000000    1.0000212298    0.0002005604      -15.005795 -5.5593438e-112   3.0826278e-96   2.5962747e+20
+   9.0000000000   10.4000000000    0.4300000000    1.0000206076    0.0001946699      -12.327315 -6.3674509e-112   1.9400005e-96   2.4324142e+20
+  10.0000000000    9.6000000000    0.5000000000   55.8692197296    8.6423237057      -5.2276094              -0       0.2720124   2.9376254e+19
+  10.0000000000    9.6000000000    0.4650000000   55.9152992729    8.7874226105  -0.00092940692   -2.648266e-16   8.5387004e-05   4.3026908e+15
+  10.0000000000    9.6000000000    0.4300000000   11.0638297827    8.1412201659   5.0971987e-15  -9.3107493e-42  -6.8646484e-21       5801.4456
+  10.0000000000   10.0000000000    0.5000000000   13.9370868136    8.2743459363      -5.5785841   1.0782619e-14      0.10961074   3.9381535e+19
+  10.0000000000   10.0000000000    0.4650000000   28.2438967467    8.6492551831    -0.075078082   2.0321472e-16   0.00050736054   5.2201774e+17
+  10.0000000000   10.0000000000    0.4300000000   10.2419420841    8.0844779277   -0.0025107223  -1.1694167e-19   1.1073417e-06   1.7236419e+16
+  10.0000000000   10.4000000000    0.5000000000    1.0197762456    0.1829100336       -196.6445   -4.638832e-57     3.90578e-42   2.3555844e+21
+  10.0000000000   10.4000000000    0.4650000000    1.0195858994    0.1811833443      -167.54221   3.2294093e-57   3.0442073e-42   1.9968628e+21
+  10.0000000000   10.4000000000    0.4300000000    1.0190251146    0.1760925439      -140.99607  -1.1373217e-57   1.8183284e-42   1.6720803e+21
+</pre></div></div>
+</div>
+<p>There are other options to the NSE table writing, including storing the mass fractions or a reduced composition constructed by binning the nuclei into the closest nuclei in a smaller set.</p>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="NSE-example.html" class="btn btn-neutral float-left" title="Solving for nuclear statistical equilibrium" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="neutrino-cooling.html" class="btn btn-neutral float-right" title="Neutrino Cooling" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, pynucastro development team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

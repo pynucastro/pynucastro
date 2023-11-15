@@ -4,7 +4,7 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "# Nuclear Statistical Equilibrium\n",
+    "# Solving for  nuclear statistical equilibrium\n",
     "\n",
     "pynucastro is able to calculate the abundances at nuclear statistical equilibrium of a given reaction network.\n",
     "\n",
@@ -229,7 +229,7 @@
     "ax.set_ylabel('Mass Fraction')\n",
     "ax.set_yscale('log')\n",
     "ax.set_ylim([low_limit,1.1])\n",
-    "ax.set_title(rf\"$Y_e = {ye}$, $\\rho = {rho:6.3g}$\")\n"
+    "ax.set_title(rf\"$Y_e = {ye}$, $\\rho = {rho:6.3g}$\")"
    ]
   },
   {
