@@ -1329,7 +1329,7 @@ class ReacLibRate(Rate):
         ax.set_xlabel(r"$T$")
 
         if self.dens_exp == 0:
-            ax.set_ylabel(r"\tau")
+            ax.set_ylabel(r"$\tau$")
         elif self.dens_exp == 1:
             ax.set_ylabel(r"$N_A <\sigma v>$")
         elif self.dens_exp == 2:
