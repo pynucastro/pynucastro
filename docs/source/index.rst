@@ -55,7 +55,8 @@ codes.
    :maxdepth: 1
    :caption: Nuclear Statistical Equilibrium
 
-   NSE-example.ipynb
+   NSE-example
+   nse_table
 
 .. toctree::
    :maxdepth: 1
