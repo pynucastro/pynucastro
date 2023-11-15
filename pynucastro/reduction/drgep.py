@@ -1,5 +1,6 @@
 import numpy as np
 
+from pynucastro.nucdata import Nucleus
 from pynucastro.reduction.reduction_utils import (mpi_importer,
                                                   mpi_numpy_decomp, to_list)
 
@@ -297,7 +298,7 @@ def drgep(net, conds, targets, tols, returnobj='net', use_mpi=False, use_numpy=F
         latter case, the sequences will be permuted to create the dataset. The compositions should
         be pynucastro Composition objects.
     :param targets: A collection of target nuclei (or a single target nucleus) to run the
-        graph search algorithm from. Should be supplied as pynucastro Nucleus objects.
+        graph search algorithm from. Should be supplied as pynucastro Nucleus objects or strings.
     :param tols: Tolerance(s) or cutoff threshold(s) to use for paths from each of the target nuclei.
         Nuclei whose interaction coefficients do not meet the specified tolerance will have their
         interaction coefficients set to 0.0. Can be a single number (will be the same for all targets)
@@ -320,7 +321,7 @@ def drgep(net, conds, targets, tols, returnobj='net', use_mpi=False, use_numpy=F
 
     if returnobj not in {'net', 'nuclei', 'coeff'}:
         raise ValueError(f"Invalid 'returnobj' argument: '{returnobj}'.")
-    targets = to_list(targets)
+    targets = Nucleus.cast_list(targets)
     tols = to_list(tols, len(targets))
 
     #-------------------------------------------------------

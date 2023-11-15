@@ -183,6 +183,24 @@ class Nucleus:
             return self.Z < other.Z
         return self.A < other.A
 
+    @classmethod
+    def cast(cls, obj):
+        if isinstance(obj, cls):
+            return obj
+        if isinstance(obj, str):
+            return cls.from_cache(obj)
+        raise TypeError("Invalid type passed to Nucleus.cast() (expected str or Nucleus)")
+
+    @classmethod
+    def cast_list(cls, lst, *, allow_None=False, allow_single=False):
+        if allow_None and lst is None:
+            return lst
+        if isinstance(lst, (str, cls)):
+            if allow_single:
+                return [cls.cast(lst)]
+            raise ValueError("Single object passed to Nucleus.cast_list() instead of list")
+        return [cls.cast(obj) for obj in lst]
+
 
 def get_nuclei_in_range(zmin, zmax, amin, amax):
     """given a range of Z = [zmin, zmax], and A = [amin, amax],

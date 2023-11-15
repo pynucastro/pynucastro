@@ -334,12 +334,12 @@ class Rate:
         sources.  Here we only specify the reactants and products and Q value"""
 
         if reactants:
-            self.reactants = reactants
+            self.reactants = Nucleus.cast_list(reactants)
         else:
             self.reactants = []
 
         if products:
-            self.products = products
+            self.products = Nucleus.cast_list(products)
         else:
             self.products = []
 
@@ -803,12 +803,12 @@ class ReacLibRate(Rate):
         self.fname = None
 
         if reactants:
-            self.reactants = reactants
+            self.reactants = Nucleus.cast_list(reactants)
         else:
             self.reactants = []
 
         if products:
-            self.products = products
+            self.products = Nucleus.cast_list(products)
         else:
             self.products = []
 
@@ -888,16 +888,7 @@ class ReacLibRate(Rate):
             self.fname += "__removed"
 
     def modify_products(self, new_products):
-        if not isinstance(new_products, (set, list, tuple)):
-            new_products = [new_products]
-
-        self.products = []
-        for p in new_products:
-            if isinstance(p, Nucleus):
-                self.products.append(p)
-            else:
-                self.products.append(Nucleus(p))
-
+        self.products = Nucleus.cast_list(new_products, allow_single=True)
         self.modified = True
 
         # we need to update the Q value and the print string for the rate
