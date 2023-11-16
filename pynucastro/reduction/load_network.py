@@ -13,6 +13,8 @@ def load_network(endpoint=Nucleus('te108'), library_name='rp-process-lib'):
     the endpoint's Z and A are included.
     """
 
+    endpoint = Nucleus.cast(endpoint)
+
     def ff(rate):
 
         react_meet_conds = \

@@ -1,5 +1,6 @@
 import numpy as np
 
+from pynucastro.nucdata import Nucleus
 from pynucastro.reduction.reduction_utils import mpi_importer
 
 MPI = mpi_importer()
@@ -24,6 +25,8 @@ def binary_search_trim(network, nuclei, errfunc, thresh=0.05):
     :return: A reduced reaction network with an evaluated error approximately equal to the supplied
         threshold.
     """
+
+    nuclei = Nucleus.cast_list(nuclei)
 
     start_idx = 0
     seg_size = len(nuclei) / 2

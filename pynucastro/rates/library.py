@@ -307,9 +307,11 @@ class Library:
 
     def get_rate_by_nuclei(self, reactants, products):
         """given a list of reactants and products, return any matching rates"""
+        reactants = sorted(Nucleus.cast_list(reactants))
+        products = sorted(Nucleus.cast_list(products))
         _tmp = [r for r in self.get_rates() if
-                sorted(r.reactants) == sorted(reactants) and
-                sorted(r.products) == sorted(products)]
+                sorted(r.reactants) == reactants and
+                sorted(r.products) == products]
 
         if not _tmp:
             return None
@@ -418,16 +420,7 @@ class Library:
         If print_warning is True, then print out a warning if one of the input nuclei is not linked.
         """
 
-        if isinstance(nuclist, (Nucleus, str)):
-            nuclist = [nuclist]
-
-        nucleus_set = set()
-        for nuc in nuclist:
-            if isinstance(nuc, Nucleus):
-                nucleus_set.add(nuc)
-            else:
-                anuc = Nucleus(nuc)
-                nucleus_set.add(anuc)
+        nucleus_set = set(Nucleus.cast_list(nuclist))
 
         # Discard rates with nuclei that are not in nucleus_set
         filtered_rates = []
@@ -617,21 +610,9 @@ class RateFilter:
         self.filter_function = filter_function
 
         if reactants:
-            if isinstance(reactants, (Nucleus, str)):
-                reactants = [reactants]
-            self.reactants = [self._cast_nucleus(r) for r in reactants]
+            self.reactants = Nucleus.cast_list(reactants, allow_single=True)
         if products:
-            if isinstance(products, (Nucleus, str)):
-                products = [products]
-            self.products = [self._cast_nucleus(r) for r in products]
-
-    @staticmethod
-    def _cast_nucleus(r):
-        """ Make sure r is of type Nucleus. """
-        if not isinstance(r, Nucleus):
-            rnuc = Nucleus(r)
-            return rnuc
-        return r
+            self.products = Nucleus.cast_list(products, allow_single=True)
 
     @staticmethod
     def _contents_equal(a, b):

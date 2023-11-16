@@ -4,6 +4,7 @@ Python implementations of screening routines.
 import numpy as np
 
 from pynucastro.constants import constants
+from pynucastro.nucdata import Nucleus
 # use the jitclass placeholder from rate.py
 from pynucastro.rates.rate import jitclass, numba
 
@@ -155,6 +156,8 @@ def make_screen_factors(n1, n2):
     :param Nucleus n1: first nucleus
     :param Nucleus n2: second nucleus
     """
+    n1 = Nucleus.cast(n1)
+    n2 = Nucleus.cast(n2)
     return ScreenFactors(n1.Z, n1.A, n2.Z, n2.A)
 
 

@@ -92,10 +92,11 @@ class Composition:
 
     """
     def __init__(self, nuclei, small=1.e-16):
-        """nuclei is an iterable of the nuclei (Nucleus objects) in the network"""
-        if not isinstance(nuclei[0], Nucleus):
-            raise ValueError("must supply an iterable of Nucleus objects")
-        self.X = {k: small for k in nuclei}
+        """nuclei is an iterable of the nuclei in the network"""
+        try:
+            self.X = {Nucleus.cast(k): small for k in nuclei}
+        except TypeError:
+            raise ValueError("must supply an iterable of Nucleus objects or strings") from None
 
     def __str__(self):
         ostr = ""
@@ -138,10 +139,8 @@ class Composition:
 
     def set_nuc(self, name, xval):
         """ set nuclei name to the mass fraction xval """
-        for k in self.X:
-            if k.raw == name:
-                self.X[k] = xval
-                break
+        nuc = Nucleus.cast(name)
+        self.X[nuc] = xval
 
     def normalize(self):
         """ normalize the mass fractions to sum to 1 """
@@ -176,6 +175,9 @@ class Composition:
         if a list of nuclei is provided by exclude, then only exact
         matches will be binned into the nuclei in that list
         """
+
+        nuclei = Nucleus.cast_list(nuclei)
+        exclude = Nucleus.cast_list(exclude, allow_None=True)
 
         # sort the input nuclei by A, then Z
         nuclei.sort(key=lambda n: (n.A, n.Z))
@@ -371,9 +373,9 @@ class RateCollection:
         If rates is supplied, initialize a RateCollection using the
         Rate objects in the list 'rates'.
 
-        inert_nuclei is a list of nuclei (as Nucleus objects) that
-        should be part of the collection but are not linked via reactions
-        to the other nuclei in the network.
+        inert_nuclei is a list of nuclei that should be part of the
+        collection but are not linked via reactions to the other nuclei
+        in the network.
 
         symmetric_screening means that we screen the reverse rates
         using the same factor as the forward rates, for rates computed
@@ -387,12 +389,10 @@ class RateCollection:
         self.rates = []
         combined_library = Library()
 
-        self.inert_nuclei = inert_nuclei
+        self.inert_nuclei = Nucleus.cast_list(inert_nuclei, allow_None=True)
 
         self.symmetric_screening = symmetric_screening
         self.do_screening = do_screening
-
-        self.inert_nuclei = inert_nuclei
 
         if rate_files:
             if isinstance(rate_files, str):
@@ -438,12 +438,8 @@ class RateCollection:
                 if r.intermediate_nucleus not in self.unique_nuclei + self.approx_nuclei:
                     self.approx_nuclei.append(r.intermediate_nucleus)
 
-        if self.inert_nuclei:
-            for n in self.inert_nuclei:
-                if isinstance(n, Nucleus):
-                    nuc = n
-                else:
-                    nuc = Nucleus(n)
+        if self.inert_nuclei is not None:
+            for nuc in self.inert_nuclei:
                 if nuc not in self.unique_nuclei:
                     self.unique_nuclei.append(nuc)
 
@@ -649,9 +645,11 @@ class RateCollection:
 
     def get_rate_by_nuclei(self, reactants, products):
         """given a list of reactants and products, return any matching rates"""
+        reactants = sorted(Nucleus.cast_list(reactants))
+        products = sorted(Nucleus.cast_list(products))
         _tmp = [r for r in self.rates if
-                sorted(r.reactants) == sorted(reactants) and
-                sorted(r.products) == sorted(products)]
+                sorted(r.reactants) == reactants and
+                sorted(r.products) == products]
 
         if not _tmp:
             return None
@@ -708,13 +706,11 @@ class RateCollection:
         that directly involve them (this doesn't affect approximate rates that
         may have these nuclei as hidden intermediate links)"""
 
+        nuc_list = Nucleus.cast_list(nuc_list)
         rates_to_delete = []
         for nuc in nuc_list:
-            nn = nuc
-            if not isinstance(nuc, Nucleus):
-                nn = Nucleus(nuc)
             for rate in self.rates:
-                if nn in rate.reactants + rate.products:
+                if nuc in rate.reactants + rate.products:
                     print(f"looking to remove {rate}")
                     rates_to_delete.append(rate)
 
@@ -755,13 +751,7 @@ class RateCollection:
         effective approximate rate."""
 
         # make sure that the intermediate_nuclei list are Nuclei objects
-        _inter_nuclei_remove = []
-        if intermediate_nuclei is not None:
-            for nn in intermediate_nuclei:
-                if isinstance(nn, Nucleus):
-                    _inter_nuclei_remove.append(nn)
-                else:
-                    _inter_nuclei_remove.append(Nucleus(nn))
+        intermediate_nuclei = Nucleus.cast_list(intermediate_nuclei, allow_None=True)
 
         # find all of the (a,g) rates
         ag_rates = []
@@ -784,7 +774,7 @@ class RateCollection:
 
             inter_nuc = Nucleus(f"{element.abbreviation}{inter_nuc_A}")
 
-            if intermediate_nuclei and inter_nuc not in _inter_nuclei_remove:
+            if intermediate_nuclei and inter_nuc not in intermediate_nuclei:
                 continue
 
             # look for A(a,p)X
