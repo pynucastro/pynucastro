@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.reduction.drgep &mdash; pynucastro 2.1.1.post33+g33948ee5 documentation</title>
+  <title>pynucastro.reduction.drgep &mdash; pynucastro 2.1.1.post34+gd808b6b8 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
@@ -14,7 +14,7 @@
   
         <script src="../../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../_static/documentation_options.js?v=c9a7b8ad"></script>
+        <script src="../../../_static/documentation_options.js?v=6b03fd08"></script>
         <script src="../../../_static/doctools.js?v=888ff710"></script>
         <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
         <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -129,6 +129,7 @@
   <h1>Source code for pynucastro.reduction.drgep</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
+<span class="kn">from</span> <span class="nn">pynucastro.nucdata</span> <span class="kn">import</span> <span class="n">Nucleus</span>
 <span class="kn">from</span> <span class="nn">pynucastro.reduction.reduction_utils</span> <span class="kn">import</span> <span class="p">(</span><span class="n">mpi_importer</span><span class="p">,</span>
                                                   <span class="n">mpi_numpy_decomp</span><span class="p">,</span> <span class="n">to_list</span><span class="p">)</span>
 
@@ -440,7 +441,7 @@
 <span class="sd">        latter case, the sequences will be permuted to create the dataset. The compositions should</span>
 <span class="sd">        be pynucastro Composition objects.</span>
 <span class="sd">    :param targets: A collection of target nuclei (or a single target nucleus) to run the</span>
-<span class="sd">        graph search algorithm from. Should be supplied as pynucastro Nucleus objects.</span>
+<span class="sd">        graph search algorithm from. Should be supplied as pynucastro Nucleus objects or strings.</span>
 <span class="sd">    :param tols: Tolerance(s) or cutoff threshold(s) to use for paths from each of the target nuclei.</span>
 <span class="sd">        Nuclei whose interaction coefficients do not meet the specified tolerance will have their</span>
 <span class="sd">        interaction coefficients set to 0.0. Can be a single number (will be the same for all targets)</span>
@@ -463,7 +464,7 @@
 
     <span class="k">if</span> <span class="n">returnobj</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">{</span><span class="s1">&#39;net&#39;</span><span class="p">,</span> <span class="s1">&#39;nuclei&#39;</span><span class="p">,</span> <span class="s1">&#39;coeff&#39;</span><span class="p">}:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid &#39;returnobj&#39; argument: &#39;</span><span class="si">{</span><span class="n">returnobj</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
-    <span class="n">targets</span> <span class="o">=</span> <span class="n">to_list</span><span class="p">(</span><span class="n">targets</span><span class="p">)</span>
+    <span class="n">targets</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="o">.</span><span class="n">cast_list</span><span class="p">(</span><span class="n">targets</span><span class="p">)</span>
     <span class="n">tols</span> <span class="o">=</span> <span class="n">to_list</span><span class="p">(</span><span class="n">tols</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">targets</span><span class="p">))</span>
 
     <span class="c1">#-------------------------------------------------------</span>

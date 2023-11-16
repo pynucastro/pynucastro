@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.reduction package &mdash; pynucastro 2.1.1.post33+g33948ee5 documentation</title>
+  <title>pynucastro.reduction package &mdash; pynucastro 2.1.1.post34+gd808b6b8 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
@@ -15,7 +15,7 @@
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=c9a7b8ad"></script>
+        <script src="_static/documentation_options.js?v=6b03fd08"></script>
         <script src="_static/doctools.js?v=888ff710"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
         <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -186,7 +186,7 @@ sequences ((composition, density, temperature) ordering) if running in NumPy mod
 latter case, the sequences will be permuted to create the dataset. The compositions should
 be pynucastro Composition objects.</p></li>
 <li><p><strong>targets</strong> – A collection of target nuclei (or a single target nucleus) to run the
-graph search algorithm from. Should be supplied as pynucastro Nucleus objects.</p></li>
+graph search algorithm from. Should be supplied as pynucastro Nucleus objects or strings.</p></li>
 <li><p><strong>tols</strong> – Tolerance(s) or cutoff threshold(s) to use for paths from each of the target nuclei.
 Nuclei whose interaction coefficients do not meet the specified tolerance will have their
 interaction coefficients set to 0.0. Can be a single number (will be the same for all targets)

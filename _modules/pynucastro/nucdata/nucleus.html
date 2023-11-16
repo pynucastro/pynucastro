@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.nucdata.nucleus &mdash; pynucastro 2.1.1.post33+g33948ee5 documentation</title>
+  <title>pynucastro.nucdata.nucleus &mdash; pynucastro 2.1.1.post34+gd808b6b8 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
@@ -14,7 +14,7 @@
   
         <script src="../../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../_static/documentation_options.js?v=c9a7b8ad"></script>
+        <script src="../../../_static/documentation_options.js?v=6b03fd08"></script>
         <script src="../../../_static/doctools.js?v=888ff710"></script>
         <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
         <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -324,7 +324,31 @@
     <span class="k">def</span> <span class="fm">__lt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">Z</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">Z</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">Z</span> <span class="o">&lt;</span> <span class="n">other</span><span class="o">.</span><span class="n">Z</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">A</span> <span class="o">&lt;</span> <span class="n">other</span><span class="o">.</span><span class="n">A</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">A</span> <span class="o">&lt;</span> <span class="n">other</span><span class="o">.</span><span class="n">A</span>
+
+<div class="viewcode-block" id="Nucleus.cast">
+<a class="viewcode-back" href="../../../pynucastro.nucdata.html#pynucastro.nucdata.nucleus.Nucleus.cast">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">cast</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="bp">cls</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">obj</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_cache</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Invalid type passed to Nucleus.cast() (expected str or Nucleus)&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Nucleus.cast_list">
+<a class="viewcode-back" href="../../../pynucastro.nucdata.html#pynucastro.nucdata.nucleus.Nucleus.cast_list">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">cast_list</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">lst</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">allow_None</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">allow_single</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">allow_None</span> <span class="ow">and</span> <span class="n">lst</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">lst</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lst</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="bp">cls</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">allow_single</span><span class="p">:</span>
+                <span class="k">return</span> <span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">lst</span><span class="p">)]</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Single object passed to Nucleus.cast_list() instead of list&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">lst</span><span class="p">]</span></div>
+</div>
 
 
 

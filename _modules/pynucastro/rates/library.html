@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.rates.library &mdash; pynucastro 2.1.1.post33+g33948ee5 documentation</title>
+  <title>pynucastro.rates.library &mdash; pynucastro 2.1.1.post34+gd808b6b8 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
@@ -14,7 +14,7 @@
   
         <script src="../../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../_static/documentation_options.js?v=c9a7b8ad"></script>
+        <script src="../../../_static/documentation_options.js?v=6b03fd08"></script>
         <script src="../../../_static/doctools.js?v=888ff710"></script>
         <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
         <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -464,9 +464,11 @@
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.library.Library.get_rate_by_nuclei">[docs]</a>
     <span class="k">def</span> <span class="nf">get_rate_by_nuclei</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reactants</span><span class="p">,</span> <span class="n">products</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;given a list of reactants and products, return any matching rates&quot;&quot;&quot;</span>
+        <span class="n">reactants</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">Nucleus</span><span class="o">.</span><span class="n">cast_list</span><span class="p">(</span><span class="n">reactants</span><span class="p">))</span>
+        <span class="n">products</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">Nucleus</span><span class="o">.</span><span class="n">cast_list</span><span class="p">(</span><span class="n">products</span><span class="p">))</span>
         <span class="n">_tmp</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_rates</span><span class="p">()</span> <span class="k">if</span>
-                <span class="nb">sorted</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span> <span class="o">==</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">reactants</span><span class="p">)</span> <span class="ow">and</span>
-                <span class="nb">sorted</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">products</span><span class="p">)</span> <span class="o">==</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">products</span><span class="p">)]</span>
+                <span class="nb">sorted</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span> <span class="o">==</span> <span class="n">reactants</span> <span class="ow">and</span>
+                <span class="nb">sorted</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">products</span><span class="p">)</span> <span class="o">==</span> <span class="n">products</span><span class="p">]</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">_tmp</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
@@ -596,16 +598,7 @@
 <span class="sd">        If print_warning is True, then print out a warning if one of the input nuclei is not linked.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">nuclist</span><span class="p">,</span> <span class="p">(</span><span class="n">Nucleus</span><span class="p">,</span> <span class="nb">str</span><span class="p">)):</span>
-            <span class="n">nuclist</span> <span class="o">=</span> <span class="p">[</span><span class="n">nuclist</span><span class="p">]</span>
-
-        <span class="n">nucleus_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
-        <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="n">nuclist</span><span class="p">:</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">nuc</span><span class="p">,</span> <span class="n">Nucleus</span><span class="p">):</span>
-                <span class="n">nucleus_set</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">nuc</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">anuc</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="p">(</span><span class="n">nuc</span><span class="p">)</span>
-                <span class="n">nucleus_set</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">anuc</span><span class="p">)</span>
+        <span class="n">nucleus_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">Nucleus</span><span class="o">.</span><span class="n">cast_list</span><span class="p">(</span><span class="n">nuclist</span><span class="p">))</span>
 
         <span class="c1"># Discard rates with nuclei that are not in nucleus_set</span>
         <span class="n">filtered_rates</span> <span class="o">=</span> <span class="p">[]</span>
@@ -814,21 +807,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">filter_function</span> <span class="o">=</span> <span class="n">filter_function</span>
 
         <span class="k">if</span> <span class="n">reactants</span><span class="p">:</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">reactants</span><span class="p">,</span> <span class="p">(</span><span class="n">Nucleus</span><span class="p">,</span> <span class="nb">str</span><span class="p">)):</span>
-                <span class="n">reactants</span> <span class="o">=</span> <span class="p">[</span><span class="n">reactants</span><span class="p">]</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_cast_nucleus</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">reactants</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="o">.</span><span class="n">cast_list</span><span class="p">(</span><span class="n">reactants</span><span class="p">,</span> <span class="n">allow_single</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">products</span><span class="p">:</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">products</span><span class="p">,</span> <span class="p">(</span><span class="n">Nucleus</span><span class="p">,</span> <span class="nb">str</span><span class="p">)):</span>
-                <span class="n">products</span> <span class="o">=</span> <span class="p">[</span><span class="n">products</span><span class="p">]</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">products</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_cast_nucleus</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">products</span><span class="p">]</span>
-
-    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_cast_nucleus</span><span class="p">(</span><span class="n">r</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; Make sure r is of type Nucleus. &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">Nucleus</span><span class="p">):</span>
-            <span class="n">rnuc</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">rnuc</span>
-        <span class="k">return</span> <span class="n">r</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">products</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="o">.</span><span class="n">cast_list</span><span class="p">(</span><span class="n">products</span><span class="p">,</span> <span class="n">allow_single</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_contents_equal</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
