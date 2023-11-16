@@ -439,11 +439,7 @@ class RateCollection:
                     self.approx_nuclei.append(r.intermediate_nucleus)
 
         if self.inert_nuclei is not None:
-            for n in self.inert_nuclei:
-                if isinstance(n, Nucleus):
-                    nuc = n
-                else:
-                    nuc = Nucleus(n)
+            for nuc in self.inert_nuclei:
                 if nuc not in self.unique_nuclei:
                     self.unique_nuclei.append(nuc)
 
