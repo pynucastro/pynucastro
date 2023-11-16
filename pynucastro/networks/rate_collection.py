@@ -93,8 +93,14 @@ class Composition:
     """
     def __init__(self, nuclei, small=1.e-16):
         """nuclei is an iterable of the nuclei (Nucleus objects) in the network"""
-        if not isinstance(nuclei[0], Nucleus):
-            raise ValueError("must supply an iterable of Nucleus objects")
+
+        num = len(nuclei)
+        for i in range(0, num):
+            if not isinstance(nuclei[i], Nucleus):
+                try:
+                    nuclei[i] = Nucleus(nuclei[i])
+                except:
+                    raise ValueError("must supply an iterable of valid Nucleus objects")
         self.X = {k: small for k in nuclei}
 
     def __str__(self):
@@ -154,6 +160,13 @@ class Composition:
         """ return a dictionary of molar fractions"""
         molar_frac = {k: v/k.A for k, v in self.X.items()}
         return molar_frac
+
+    def eval_abar(self):
+        """ return the ions mean molecular weight"""
+        y0 = list(self.get_molar().values())
+        abar_i = np.sum(y0)
+        abar = 1.0 / abar_i
+        return abar
 
     def eval_ye(self):
         """ return the electron fraction """
