@@ -141,22 +141,15 @@ Is important to stress out that all the dependencies should be
 installed before `pynucastro`, otherwise the installation should be 
 repeated.
 
-# unit tests
 
-We use pytest to do unit tests.  In the repository root, do:
-```
-pytest -v
-```
+# Contributing
 
-to see coverage, do:
-```
-pytest --cov=pynucastro
-```
+We welcome contributions from anyone, including posting issues or
+submitting pull requests to the [pynucastro github][1]. For more details
+on how to contribute to pynucastro, please see [CONTRIBUTING.md][2].
 
-to test the notebooks, do:
-```
-pytest --nbval examples
-```
+[1]: https://github.com/pynucastro/pynucastro
+[2]: https://github.com/pynucastro/pynucastro/blob/main/CONTRIBUTING.md
 
 
 # Core Developers
