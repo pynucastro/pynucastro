@@ -127,8 +127,6 @@ This package requires Python 3 (release 3.6 or later) and the following Python p
 
 * `numba`
 
-* `setuptools_scm`
-
 To build the documentation or run the unit tests, `sphinx` and
 `pytest` are additionally required along with some supporting
 packages. See the included `requirements.txt` file for a list of these
