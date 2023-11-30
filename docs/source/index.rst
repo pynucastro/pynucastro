@@ -22,6 +22,7 @@ codes.
    intro
    rate_types
    install
+   contributing
 
 .. toctree::
    :maxdepth: 1
