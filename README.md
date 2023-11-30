@@ -173,3 +173,10 @@ Core developers will be recognized in the following ways:
 If a core developer is inactive for 3 years, we may reassess their
 status as a core developer.
 
+
+## Getting Help
+
+We use our [Github Discussions][3] page for requesting help and
+interacting with the community.
+
+[3]: https://github.com/pynucastro/pynucastro/discussions
