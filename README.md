@@ -17,7 +17,7 @@
 pynucastro is a python library for interactively creating and
 exploring nuclear reaction networks.  It provides interfaces to
 nuclear reaction rate databases, including the JINA Reaclib nuclear
-reactions database.  
+reactions database.
 
 The main features are:
 
@@ -41,14 +41,14 @@ The main features are:
     functions, spins, masses, etc.
 
 
-# documentation
+## Documentation
 
 Documentation for pynucastro is available here:
 
-http://pynucastro.github.io/pynucastro/
+https://pynucastro.github.io/pynucastro/
 
 
-# example
+## Examples
 
 The following example reads in the ReacLib rate database and
 gets the rate for C13(p,g)N14 and evaluates it at a
@@ -90,7 +90,7 @@ then the breakout of hot-CNO when the alpha capture on O14 becomes
 faster than its decay.
 
 
-# install
+## Installation
 
 pynucastro is available on PyPI and can be installed via:
 ```
@@ -109,7 +109,7 @@ for a single-user install.  This will put the pynucastro modules and library in
 the default location python searches for packages.
 
 
-# requirements
+### Requirements
 
 This package requires Python 3 (release 3.6 or later) and the following Python packages:
 
@@ -142,7 +142,7 @@ installed before `pynucastro`, otherwise the installation should be
 repeated.
 
 
-# Contributing
+## Contributing
 
 We welcome contributions from anyone, including posting issues or
 submitting pull requests to the [pynucastro github][1]. For more details
@@ -152,7 +152,7 @@ on how to contribute to pynucastro, please see [CONTRIBUTING.md][2].
 [2]: https://github.com/pynucastro/pynucastro/blob/main/CONTRIBUTING.md
 
 
-# Core Developers
+### Core Developers
 
 People who make a number of substantive contributions (new features,
 bug fixes, etc.) will be named "core developers" of pynucastro.
