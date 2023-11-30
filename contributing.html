@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro &mdash; pynucastro 2.1.1.post35+g1e6349ae documentation</title>
+  <title>Contributing &mdash; pynucastro 2.1.1.post35+g1e6349ae documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
       <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
@@ -27,8 +27,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="pynucastro package" href="pynucastro.html" />
-    <link rel="prev" title="Citing pynucastro" href="citing.html" /> 
+    <link rel="next" title="pynucastro usage examples" href="pynucastro-examples.html" />
+    <link rel="prev" title="Installation" href="install.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -55,11 +55,16 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="intro.html">Overview of pynucastro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rate_types.html">Reaction Rate Types</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#issues">Issues</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pull-requests">Pull Requests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#testing">Testing</a></li>
+</ul>
+</li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Exploring Networks in Python</span></p>
 <ul>
@@ -102,12 +107,9 @@
 <li class="toctree-l1"><a class="reference internal" href="julia.html">Integrating using DifferentialEquations.jl</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Reference</span></p>
-<ul class="current">
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="citing.html">Citing pynucastro</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">API</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="pynucastro.html">pynucastro package</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sources.html">Third Party Data</a></li>
 </ul>
 
@@ -125,9 +127,9 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">pynucastro</li>
+      <li class="breadcrumb-item active">Contributing</li>
       <li class="wy-breadcrumbs-aside">
-              <a href="https://github.com/pynucastro/pynucastro/blob/main/docs/source/modules.rst" class="fa fa-github"> Edit on GitHub</a>
+              <a href="https://github.com/pynucastro/pynucastro/blob/main/docs/source/contributing.rst" class="fa fa-github"> Edit on GitHub</a>
       </li>
   </ul>
   <hr/>
@@ -135,77 +137,89 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="pynucastro">
-<h1>pynucastro<a class="headerlink" href="#pynucastro" title="Link to this heading"></a></h1>
-<div class="toctree-wrapper compound">
+  <section id="contributing">
+<h1>Contributing<a class="headerlink" href="#contributing" title="Link to this heading"></a></h1>
+<p>Contributions are welcomed from anyone, including posting issues or
+submitting pull requests to the <a class="reference external" href="https://github.com/pynucastro/pynucastro">pynucastro github</a>.</p>
+<section id="issues">
+<h2>Issues<a class="headerlink" href="#issues" title="Link to this heading"></a></h2>
+<p>Creating an issue on github is a good way to request new features,
+file a bug report, or notify us of any difficulties that arise using
+pynucastro.</p>
+<p>To request support using pynucastro, please create an issue on the
+pynucastro github and the developers will be happy to assist you.</p>
+<p>If you are reporting a bug, please indicate any information necessary to
+reproduce the bug including your version of python.</p>
+</section>
+<section id="pull-requests">
+<h2>Pull Requests<a class="headerlink" href="#pull-requests" title="Link to this heading"></a></h2>
+<p><em>Any contributions that have the potential to change answers should be
+done via pull requests.</em> A pull request should be generated from a
+feature branch in your fork of pynucastro and target the <code class="docutils literal notranslate"><span class="pre">main</span></code> branch.</p>
+<p>You should run the test suite on your changes, if possible, before
+issuing the PR. See the section below for detailed instructions.</p>
+<p>Once you have run the tests and submitted the PR, one of the
+pynucastro developers will review the PR and if needed, suggest
+modifications prior to merging the PR.</p>
+<p>If there are a number of small commits making up the PR, we may wish
+to squash commits upon merge to have a clean history.  <em>Please ensure
+that your PR title and first post are descriptive, since these will be
+used for a squashed commit message.</em></p>
+</section>
+<section id="testing">
+<h2>Testing<a class="headerlink" href="#testing" title="Link to this heading"></a></h2>
+<p>We use pytest to do unit and regression tests. All commands should be
+run from the repository root.</p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="pynucastro.html">pynucastro package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="pynucastro.html#library">library</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pynucastro.html#nucdata">nucdata</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pynucastro.html#networks">networks</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pynucastro.html#rates">rates</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pynucastro.html#screening">screening</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pynucastro.html#templates">templates</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pynucastro.html#subpackages">Subpackages</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="pynucastro.networks.html">pynucastro.networks package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.html#module-pynucastro.networks.amrexastro_cxx_network">pynucastro.networks.amrexastro_cxx_network module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.html#module-pynucastro.networks.base_cxx_network">pynucastro.networks.base_cxx_network module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.html#module-pynucastro.networks.nse_network">pynucastro.networks.nse_network module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.html#module-pynucastro.networks.numpy_network">pynucastro.networks.numpy_network module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.html#module-pynucastro.networks.python_network">pynucastro.networks.python_network module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.html#module-pynucastro.networks.rate_collection">pynucastro.networks.rate_collection module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.html#module-pynucastro.networks.simple_cxx_network">pynucastro.networks.simple_cxx_network module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.html#module-pynucastro.networks.sympy_network_support">pynucastro.networks.sympy_network_support module</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="pynucastro.nucdata.html">pynucastro.nucdata package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.html#module-pynucastro.nucdata.binding_table">pynucastro.nucdata.binding_table module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.html#module-pynucastro.nucdata.elements">pynucastro.nucdata.elements module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.html#module-pynucastro.nucdata.mass_table">pynucastro.nucdata.mass_table module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.html#module-pynucastro.nucdata.nucleus">pynucastro.nucdata.nucleus module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.html#module-pynucastro.nucdata.partition_function">pynucastro.nucdata.partition_function module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.html#module-pynucastro.nucdata.spin_table">pynucastro.nucdata.spin_table module</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="pynucastro.rates.html">pynucastro.rates package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.html#module-pynucastro.rates.known_duplicates">pynucastro.rates.known_duplicates module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.html#module-pynucastro.rates.library">pynucastro.rates.library module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.html#module-pynucastro.rates.rate">pynucastro.rates.rate module</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="pynucastro.reduction.html">pynucastro.reduction package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.reduction.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.reduction.html#module-pynucastro.reduction.drgep">pynucastro.reduction.drgep module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.reduction.html#module-pynucastro.reduction.generate_data">pynucastro.reduction.generate_data module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.reduction.html#module-pynucastro.reduction.load_network">pynucastro.reduction.load_network module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.reduction.html#module-pynucastro.reduction.reduction">pynucastro.reduction.reduction module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.reduction.html#module-pynucastro.reduction.reduction_utils">pynucastro.reduction.reduction_utils module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.reduction.html#module-pynucastro.reduction.sensitivity_analysis">pynucastro.reduction.sensitivity_analysis module</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="pynucastro.screening.html">pynucastro.screening package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.screening.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.screening.html#module-pynucastro.screening.screen">pynucastro.screening.screen module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.screening.html#module-pynucastro.screening.screening_util">pynucastro.screening.screening_util module</a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
+<li><p>To run all the tests:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pytest</span> <span class="o">-</span><span class="n">v</span> <span class="o">--</span><span class="n">nbval</span>
+</pre></div>
 </div>
+</li>
+<li><p>To run just the unit tests (this is faster, but may not catch all bugs):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pytest</span> <span class="o">-</span><span class="n">v</span>
+</pre></div>
+</div>
+</li>
+<li><p>To run just the jupyter notebook regression tests:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pytest</span> <span class="o">-</span><span class="n">v</span> <span class="o">--</span><span class="n">nbval</span> <span class="o">-</span><span class="n">p</span> <span class="n">no</span><span class="p">:</span><span class="n">python</span>
+</pre></div>
+</div>
+<p>This executes each of the notebooks under <code class="docutils literal notranslate"><span class="pre">examples/</span></code> and <code class="docutils literal notranslate"><span class="pre">docs/source/</span></code>
+and compares against the stored outputs from each cell.</p>
+</li>
+<li><p>To check code coverage:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pytest</span> <span class="o">--</span><span class="n">cov</span><span class="o">=</span><span class="n">pynucastro</span> <span class="o">--</span><span class="n">nbval</span>
+</pre></div>
+</div>
+<p>The results can be inspected in more detail by running <code class="docutils literal notranslate"><span class="pre">coverage</span> <span class="pre">html</span></code>
+and opening the generated <code class="docutils literal notranslate"><span class="pre">htmlcov/index.html</span></code> in a web browser.</p>
+<p>Note that numba-accelerated routines (most notably the screening
+functions) do not support coverage reporting, and will always show up
+as missed.</p>
+</li>
+<li><p>To regenerate the reference network output files used in the unit tests:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pytest</span> <span class="o">-</span><span class="n">v</span> <span class="o">-</span><span class="n">s</span> <span class="o">--</span><span class="n">update</span><span class="o">-</span><span class="n">networks</span> <span class="o">-</span><span class="n">k</span> <span class="n">write_network</span>
+</pre></div>
+</div>
+<p>This will be needed if any of the network generation code or C++
+network templates are changed.</p>
+</li>
+<li><p>To re-run notebooks whose outputs have changed:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">docs</span><span class="o">/</span><span class="n">regen_notebook</span><span class="o">.</span><span class="n">sh</span> <span class="o">&lt;</span><span class="n">path</span> <span class="n">to</span> <span class="n">notebook</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</section>
 </section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="citing.html" class="btn btn-neutral float-left" title="Citing pynucastro" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="pynucastro.html" class="btn btn-neutral float-right" title="pynucastro package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="install.html" class="btn btn-neutral float-left" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="pynucastro-examples.html" class="btn btn-neutral float-right" title="pynucastro usage examples" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
