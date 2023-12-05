@@ -85,6 +85,7 @@ codes.
    citing
    API <modules>
    sources
+   zreferences
 
 Indices and tables
 ==================

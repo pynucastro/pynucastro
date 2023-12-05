@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.screening.screen &mdash; pynucastro 2.1.1.post35+g1e6349ae documentation</title>
+  <title>pynucastro.screening.screen &mdash; pynucastro 2.1.1.post36+g64e9674f documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
       <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -16,7 +16,7 @@
   
         <script src="../../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../_static/documentation_options.js?v=21bbb501"></script>
+        <script src="../../../_static/documentation_options.js?v=ec0ccd81"></script>
         <script src="../../../_static/doctools.js?v=888ff710"></script>
         <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
         <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -103,6 +103,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../citing.html">Citing pynucastro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../modules.html">API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../sources.html">Third Party Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../zreferences.html">References</a></li>
 </ul>
 
         </div>
@@ -338,18 +339,14 @@
 <a class="viewcode-back" href="../../../pynucastro.screening.html#pynucastro.screening.screen.chugunov_2007">[docs]</a>
 <span class="nd">@njit</span>
 <span class="k">def</span> <span class="nf">chugunov_2007</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">scn_fac</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculates screening factors based on Chugunov et al. 2007.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculates screening factors based on :cite:t:`chugunov:2007`.</span>
 
-<span class="sd">    Follows the approach in Yakovlev 2006 to extend to a multi-component plasma.</span>
+<span class="sd">    Follows the approach in :cite:t:`yakovlev:2006` to extend to a</span>
+<span class="sd">    multi-component plasma.</span>
 
 <span class="sd">    :param PlasmaState state:     the precomputed plasma state factors</span>
 <span class="sd">    :param ScreenFactors scn_fac: the precomputed ion pair factors</span>
 <span class="sd">    :returns: screening correction factor</span>
-
-<span class="sd">    References:</span>
-<span class="sd">        | Chugunov, DeWitt, and Yakovlev 2007, PhRvD, 76, 025028</span>
-<span class="sd">        | Yakovlev, Gasques, Afanasjev, Beard, and Wiescher 2006, PhRvC, 74, 035803</span>
-<span class="sd">        | Chugunov and DeWitt 2009, PhRvC, 80, 014611</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Plasma temperature T_p</span>
     <span class="c1"># This formula comes from working backwards from zeta_ij (Chugunov 2009 eq. 12)</span>
@@ -441,7 +438,7 @@
 
 <span class="nd">@njit</span>
 <span class="k">def</span> <span class="nf">f0</span><span class="p">(</span><span class="n">gamma</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Calculate the free energy per ion in a OCP from Chugunov &amp; DeWitt 2009 eq. 24</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Calculate the free energy per ion in a OCP from :cite:t:`chugunov:2009` eq. 24</span>
 
 <span class="sd">    :param gamma: Coulomb coupling parameter</span>
 <span class="sd">    :returns: free energy</span>
@@ -473,14 +470,11 @@
 <a class="viewcode-back" href="../../../pynucastro.screening.html#pynucastro.screening.screen.chugunov_2009">[docs]</a>
 <span class="nd">@njit</span>
 <span class="k">def</span> <span class="nf">chugunov_2009</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">scn_fac</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculates screening factors based on Chugunov &amp; DeWitt 2009.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculates screening factors based on :cite:t:`chugunov:2009`.</span>
 
 <span class="sd">    :param PlasmaState state:     the precomputed plasma state factors</span>
 <span class="sd">    :param ScreenFactors scn_fac: the precomputed ion pair factors</span>
 <span class="sd">    :returns: screening correction factor</span>
-
-<span class="sd">    References:</span>
-<span class="sd">        | Chugunov and DeWitt 2009, PhRvC, 80, 014611</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">z1z2</span> <span class="o">=</span> <span class="n">scn_fac</span><span class="o">.</span><span class="n">z1</span> <span class="o">*</span> <span class="n">scn_fac</span><span class="o">.</span><span class="n">z2</span>
     <span class="n">zcomp</span> <span class="o">=</span> <span class="n">scn_fac</span><span class="o">.</span><span class="n">z1</span> <span class="o">+</span> <span class="n">scn_fac</span><span class="o">.</span><span class="n">z2</span>
@@ -544,14 +538,11 @@
 <a class="viewcode-back" href="../../../pynucastro.screening.html#pynucastro.screening.screen.potekhin_1998">[docs]</a>
 <span class="nd">@njit</span>
 <span class="k">def</span> <span class="nf">potekhin_1998</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">scn_fac</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculates screening factors based on Chabrier &amp; Potekhin 1998.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculates screening factors based on :cite:t:`chabrier_potekhin:1998`.</span>
 
 <span class="sd">    :param PlasmaState state:     the precomputed plasma state factors</span>
 <span class="sd">    :param ScreenFactors scn_fac: the precomputed ion pair factors</span>
 <span class="sd">    :returns: screening correction factor</span>
-
-<span class="sd">    References:</span>
-<span class="sd">        Chabrier and Potekhin 1998, PhRvE, 58, 4941</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">Gamma_e</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">gamma_e_fac</span> <span class="o">/</span> <span class="n">state</span><span class="o">.</span><span class="n">temp</span>

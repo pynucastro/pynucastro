@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Installation &mdash; pynucastro 2.1.1.post35+g1e6349ae documentation</title>
+  <title>Installation &mdash; pynucastro 2.1.1.post36+g64e9674f documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
       <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
@@ -17,7 +17,7 @@
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=21bbb501"></script>
+        <script src="_static/documentation_options.js?v=ec0ccd81"></script>
         <script src="_static/doctools.js?v=888ff710"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
         <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -102,8 +102,8 @@
 <p class="caption" role="heading"><span class="caption-text">Interfacing With Other Languages</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="julia.html">Integrating using DifferentialEquations.jl</a><ul class="current">
-<li class="toctree-l2 current"><a class="current reference internal" href="#"><strong>Installation</strong></a></li>
-<li class="toctree-l2"><a class="reference internal" href="Example-Integrating-Network-diffeqpy.html"><strong>Example of Integrating a Network</strong></a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Example-Integrating-Network-diffeqpy.html">Example of Integrating a Network</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Example-Integrating-Network-diffeqpy.html#Printing-and-Plotting">Printing and Plotting</a></li>
 </ul>
 </li>
@@ -113,6 +113,7 @@
 <li class="toctree-l1"><a class="reference internal" href="citing.html">Citing pynucastro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modules.html">API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sources.html">Third Party Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="zreferences.html">References</a></li>
 </ul>
 
         </div>
@@ -130,7 +131,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="julia.html">Integrating using DifferentialEquations.jl</a></li>
-      <li class="breadcrumb-item active"><strong>Installation</strong></li>
+      <li class="breadcrumb-item active">Installation</li>
       <li class="wy-breadcrumbs-aside">
               <a href="https://github.com/pynucastro/pynucastro/blob/main/docs/source/Installing-Diffeqpy-Julia.ipynb" class="fa fa-github"> Edit on GitHub</a>
       </li>
@@ -141,7 +142,7 @@
            <div itemprop="articleBody">
              
   <section id="Installation">
-<h1><strong>Installation</strong><a class="headerlink" href="#Installation" title="Link to this heading"></a></h1>
+<h1>Installation<a class="headerlink" href="#Installation" title="Link to this heading"></a></h1>
 <p>In order to use diffeqpy, Julia must be installed and in the path, along with DifferentialEquations.jl and PyCall.jl</p>
 <p>To install Julia, visit <a class="reference external" href="https://julialang.org/downloads/">the JuliaLang website</a> and download the appropriate version.</p>
 <p>Once downloaded, use the following command inside the Julia REPL to install the necessary packages:</p>
@@ -149,9 +150,9 @@
 <p><code class="docutils literal notranslate"><span class="pre">julia&gt;</span> <span class="pre">Pkg.add(&quot;DifferentialEquations&quot;)</span></code></p>
 <p><code class="docutils literal notranslate"><span class="pre">julia&gt;</span> <span class="pre">Pkg.add(&quot;PyCall&quot;)</span></code></p>
 <p>To install diffeqpy, use pip:</p>
-<p><code class="docutils literal notranslate"><span class="pre">$pip</span> <span class="pre">install</span> <span class="pre">diffeqpy</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">$</span> <span class="pre">pip</span> <span class="pre">install</span> <span class="pre">diffeqpy</span></code></p>
 <p>To improve the performance of your code, it is recommended that you use Numba to JIT compile your functions. To install Numba, use pip:</p>
-<p><code class="docutils literal notranslate"><span class="pre">$pip</span> <span class="pre">install</span> <span class="pre">numba</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">$</span> <span class="pre">pip</span> <span class="pre">install</span> <span class="pre">numba</span></code></p>
 </section>
 
 

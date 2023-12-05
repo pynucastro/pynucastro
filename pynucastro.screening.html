@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.screening package &mdash; pynucastro 2.1.1.post35+g1e6349ae documentation</title>
+  <title>pynucastro.screening package &mdash; pynucastro 2.1.1.post36+g64e9674f documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
       <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
@@ -17,7 +17,7 @@
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=21bbb501"></script>
+        <script src="_static/documentation_options.js?v=ec0ccd81"></script>
         <script src="_static/doctools.js?v=888ff710"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
         <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -125,6 +125,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="sources.html">Third Party Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="zreferences.html">References</a></li>
 </ul>
 
         </div>
@@ -183,7 +184,7 @@ factor calculations.</p>
 </dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pynucastro.screening.screen.PlasmaState.class_type">
-<span class="sig-name descname"><span class="pre">class_type</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">jitclass.PlasmaState#7f3fe0e1a440&lt;temp:float64,dens:float64,abar:float64,zbar:float64,z2bar:float64,n_e:float64,gamma_e_fac:float64&gt;</span></em><a class="headerlink" href="#pynucastro.screening.screen.PlasmaState.class_type" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">class_type</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">jitclass.PlasmaState#7fab2d13efe0&lt;temp:float64,dens:float64,abar:float64,zbar:float64,z2bar:float64,n_e:float64,gamma_e_fac:float64&gt;</span></em><a class="headerlink" href="#pynucastro.screening.screen.PlasmaState.class_type" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -208,7 +209,7 @@ for a specific pair of nuclei.</p>
 </dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pynucastro.screening.screen.ScreenFactors.class_type">
-<span class="sig-name descname"><span class="pre">class_type</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">jitclass.ScreenFactors#7f3faf387af0&lt;z1:int64,z2:int64,a1:int64,a2:int64,aznut:float64,ztilde:float64&gt;</span></em><a class="headerlink" href="#pynucastro.screening.screen.ScreenFactors.class_type" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">class_type</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">jitclass.ScreenFactors#7faafba01450&lt;z1:int64,z2:int64,a1:int64,a2:int64,aznut:float64,ztilde:float64&gt;</span></em><a class="headerlink" href="#pynucastro.screening.screen.ScreenFactors.class_type" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -216,8 +217,9 @@ for a specific pair of nuclei.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="pynucastro.screening.screen.chugunov_2007">
 <span class="sig-prename descclassname"><span class="pre">pynucastro.screening.screen.</span></span><span class="sig-name descname"><span class="pre">chugunov_2007</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scn_fac</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/screening/screen.html#chugunov_2007"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.screening.screen.chugunov_2007" title="Link to this definition"></a></dt>
-<dd><p>Calculates screening factors based on Chugunov et al. 2007.</p>
-<p>Follows the approach in Yakovlev 2006 to extend to a multi-component plasma.</p>
+<dd><p>Calculates screening factors based on <span id="id1">Chugunov <em>et al.</em> [<a class="reference internal" href="zreferences.html#id4" title="A. I. Chugunov, H. E. DeWitt, and D. G. Yakovlev. Coulomb tunneling for fusion reactions in dense matter: Path integral Monte Carlo versus mean field. Physical Review D, 76(2):025028, July 2007. arXiv:0707.3500, doi:10.1103/PhysRevD.76.025028.">2007</a>]</span>.</p>
+<p>Follows the approach in <span id="id2">Yakovlev <em>et al.</em> [<a class="reference internal" href="zreferences.html#id5" title="D. G. Yakovlev, L. R. Gasques, A. V. Afanasjev, M. Beard, and M. Wiescher. Fusion reactions in multicomponent dense matter. Physical Review C, 74(3):035803, September 2006. arXiv:astro-ph/0608488, doi:10.1103/PhysRevC.74.035803.">2006</a>]</span> to extend to a
+multi-component plasma.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -227,14 +229,6 @@ for a specific pair of nuclei.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>screening correction factor</p>
-</dd>
-</dl>
-<dl>
-<dt>References:</dt><dd><div class="line-block">
-<div class="line">Chugunov, DeWitt, and Yakovlev 2007, PhRvD, 76, 025028</div>
-<div class="line">Yakovlev, Gasques, Afanasjev, Beard, and Wiescher 2006, PhRvC, 74, 035803</div>
-<div class="line">Chugunov and DeWitt 2009, PhRvC, 80, 014611</div>
-</div>
 </dd>
 </dl>
 </dd></dl>
@@ -242,7 +236,7 @@ for a specific pair of nuclei.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="pynucastro.screening.screen.chugunov_2009">
 <span class="sig-prename descclassname"><span class="pre">pynucastro.screening.screen.</span></span><span class="sig-name descname"><span class="pre">chugunov_2009</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scn_fac</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/screening/screen.html#chugunov_2009"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.screening.screen.chugunov_2009" title="Link to this definition"></a></dt>
-<dd><p>Calculates screening factors based on Chugunov &amp; DeWitt 2009.</p>
+<dd><p>Calculates screening factors based on <span id="id3">Chugunov and DeWitt [<a class="reference internal" href="zreferences.html#id6" title="A. I. Chugunov and H. E. DeWitt. Nuclear fusion reaction rates for strongly coupled ionic mixtures. Physical Review C, 80(1):014611, July 2009. arXiv:0905.3844, doi:10.1103/PhysRevC.80.014611.">2009</a>]</span>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -252,12 +246,6 @@ for a specific pair of nuclei.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>screening correction factor</p>
-</dd>
-</dl>
-<dl>
-<dt>References:</dt><dd><div class="line-block">
-<div class="line">Chugunov and DeWitt 2009, PhRvC, 80, 014611</div>
-</div>
 </dd>
 </dl>
 </dd></dl>
@@ -295,7 +283,7 @@ as returned by <a class="reference internal" href="pynucastro.networks.html#pynu
 <dl class="py function">
 <dt class="sig sig-object py" id="pynucastro.screening.screen.potekhin_1998">
 <span class="sig-prename descclassname"><span class="pre">pynucastro.screening.screen.</span></span><span class="sig-name descname"><span class="pre">potekhin_1998</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scn_fac</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/screening/screen.html#potekhin_1998"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.screening.screen.potekhin_1998" title="Link to this definition"></a></dt>
-<dd><p>Calculates screening factors based on Chabrier &amp; Potekhin 1998.</p>
+<dd><p>Calculates screening factors based on <span id="id4">Chabrier and Potekhin [<a class="reference internal" href="zreferences.html#id8" title="Gilles Chabrier and Alexander Y. Potekhin. Equation of state of fully ionized electron-ion plasmas. Physical Review E, 58(4):4941–4949, October 1998. doi:10.1103/PhysRevE.58.4941.">1998</a>]</span>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -305,10 +293,6 @@ as returned by <a class="reference internal" href="pynucastro.networks.html#pynu
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>screening correction factor</p>
-</dd>
-</dl>
-<dl class="simple">
-<dt>References:</dt><dd><p>Chabrier and Potekhin 1998, PhRvE, 58, 4941</p>
 </dd>
 </dl>
 </dd></dl>
