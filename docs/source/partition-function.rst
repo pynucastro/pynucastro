@@ -1,12 +1,8 @@
 Reverse Rates
 =============
 
-In this section we will implement the partition functions discussed in:
-
-- [1] T.Rauscher and F.-K.Thielemann, ADNDT 75, 1-2 (2000) 
-
-- [2] T.Rauscher, ApJS 147, 403 (2003)
-
+In this section we will implement the partition functions discussed in
+:cite:t:`rauscher:2000` and :cite:t:`rauscher:2003`
 with the purpose to compute inverse rates at extreme temperatures and heavy nuclide conditions.
 
 The Semi-Relativistic Ideal Gas Model
@@ -56,13 +52,13 @@ or equivalently,
 
 .. math:: \mu = kT \log \left[\dfrac{n}{g}\left( \dfrac{2\pi \hbar^2}{mkT} \right)^{3/2} \right] + mc^2
 
-as summarized in [1].
+as summarized in :cite:`rauscher:2000`.
 
 The Reverse Rates Definition
 ----------------------------
 
 The forward and reverse reactions are entangled due to thermodynamical and nuclear equilibrium aspects. In this section we will see how this connection is introduced
-and explore its consequences in the nuclear rates computation, as discussed in [1]. Starting with the reaction:
+and explore its consequences in the nuclear rates computation, as discussed in :cite:`rauscher:2000`. Starting with the reaction:
 
 .. math:: A + B \rightarrow C
 
@@ -140,7 +136,7 @@ otherwise, the forward and reaction rates are related by:
 .. math:: \dfrac{N_a\langle \sigma v \rangle_m}{N_a\langle \sigma v \rangle_i} = \left(\dfrac{A_iA_j}{A_oA_m} \right)^{3/2}\dfrac{g_ig_j}{g_og_m}  \times e^{-Q/(kT)}
 
 Now, the ingoing and outgoing are far apart in comparison with the nucleus size before the collision takes place; this allow us to assume that particles like :math:`j` and :math:`o` are in their ground state as they approach. Hence,
-:math:`g_j = (2J_j+1)` and :math:`g_o = (2J_o + 1)` where :math:`J_j` and :math:`J_o` are the :math:`j` and :math:`o` particle spin in their respective ground state. However, the target and residual nucleus :math:`i` and :math:`m` particle spin, may be in a superposition of states due to excitation of upper levels caused by an steady increase of the temperature. As pointed out in [1], we have to replace :math:`g_i\rightarrow (2J_i+1)G_i` and :math:`g_m\rightarrow (2J_m+1)G_m`, where
+:math:`g_j = (2J_j+1)` and :math:`g_o = (2J_o + 1)` where :math:`J_j` and :math:`J_o` are the :math:`j` and :math:`o` particle spin in their respective ground state. However, the target and residual nucleus :math:`i` and :math:`m` particle spin, may be in a superposition of states due to excitation of upper levels caused by an steady increase of the temperature. As pointed out in :cite:`rauscher:2000`, we have to replace :math:`g_i\rightarrow (2J_i+1)G_i` and :math:`g_m\rightarrow (2J_m+1)G_m`, where
 
 .. math::
    :nowrap:
@@ -181,7 +177,7 @@ The partition function information is contained in three main classes:
 
 * :class:`PartitionFunctionTable <pynucastro.nucdata.partition_function.PartitionFunctionTable>`  reads a table and construct a dictionary between each nucleus and their partition function class object.
 
-* :class:`PartitionFunctionCollection <pynucastro.nucdata.partition_function.PartitionFunctionCollection>` collects all the formatted table information, inside ``/nucdata/PartitionFunction/``. It allow us to include the high temperature tables in [2] and to select the model used to compute the partition functions, respectively. By default, we include high temperatures, and our partition function model to be the *finite range droplet model (FRDM)*. If a nucleus is not in the collection, we set the partition function values to 1.0 by default.
+* :class:`PartitionFunctionCollection <pynucastro.nucdata.partition_function.PartitionFunctionCollection>` collects all the formatted table information, inside ``/nucdata/PartitionFunction/``. It allow us to include the high temperature tables in :cite:`rauscher:2003` and to select the model used to compute the partition functions, respectively. By default, we include high temperatures, and our partition function model to be the *finite range droplet model (FRDM)*. If a nucleus is not in the collection, we set the partition function values to 1.0 by default.
 
 Inside the :class:`Nucleus <pynucastro.nucdata.nucleus.Nucleus>` class, we have defined ``set_partition_function()`` which setup our partition function collection, our high temperatures consideration, and the model used to compute the partition function data. On the other hand, ``get_partition_function()`` assigns a partition function class object to the defined nucleus. Let us illustrate how it work:
 

@@ -288,8 +288,7 @@ def _drgep_mpi_numpy(net, conds, targets, tols):
 def drgep(net, conds, targets, tols, returnobj='net', use_mpi=False, use_numpy=False):
     """
     Implementation of Directed Relation Graph with Error Propagation (DRGEP) reduction
-    method described in Pepiot-Desjardins and Pitch 2008 (doi:10.1016/j.combustflame.2007.10.020)
-    and Niemeyer and Sung 2011 (doi:10.1016/j.combustflame.2010.12.010).
+    method described in :cite:t:`pepiot-desjardins:2008` and :cite:t:`niemeyer:2011`.
 
     :param net: The network (RateCollection) to reduce.
     :param conds: A set of conditions to reduce over. Should either be a sequence of (composition,

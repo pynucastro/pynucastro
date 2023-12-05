@@ -118,8 +118,7 @@ There are two modes of usage for pynucastro.
 
   where the :math:`\lambda`'s are the rates of destruction and creation
   of species i, represented by the molar fraction :math:`Y_i` (see,
-  e.g., `Timmes 1999
-  <https://ui.adsabs.harvard.edu/abs/1999ApJS..124..241T>`_).  pynucastro
+  e.g., :cite:t:`timmes:1999`).  pynucastro
   will create the righthand sides of this system of ODEs (as python or
   C++ code) from the list of rates you provide. One can use this to
   add reaction networks to existing simulation codes, for example, the
