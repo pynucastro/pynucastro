@@ -192,18 +192,14 @@ def smooth_clip(x, limit, start):
 
 @njit
 def chugunov_2007(state, scn_fac):
-    """Calculates screening factors based on Chugunov et al. 2007.
+    """Calculates screening factors based on :cite:t:`chugunov:2007`.
 
-    Follows the approach in Yakovlev 2006 to extend to a multi-component plasma.
+    Follows the approach in :cite:t:`yakovlev:2006` to extend to a
+    multi-component plasma.
 
     :param PlasmaState state:     the precomputed plasma state factors
     :param ScreenFactors scn_fac: the precomputed ion pair factors
     :returns: screening correction factor
-
-    References:
-        | Chugunov, DeWitt, and Yakovlev 2007, PhRvD, 76, 025028
-        | Yakovlev, Gasques, Afanasjev, Beard, and Wiescher 2006, PhRvC, 74, 035803
-        | Chugunov and DeWitt 2009, PhRvC, 80, 014611
     """
     # Plasma temperature T_p
     # This formula comes from working backwards from zeta_ij (Chugunov 2009 eq. 12)
@@ -294,7 +290,7 @@ def chugunov_2007(state, scn_fac):
 
 @njit
 def f0(gamma):
-    r"""Calculate the free energy per ion in a OCP from Chugunov & DeWitt 2009 eq. 24
+    r"""Calculate the free energy per ion in a OCP from :cite:t:`chugunov:2009` eq. 24
 
     :param gamma: Coulomb coupling parameter
     :returns: free energy
@@ -324,14 +320,11 @@ def f0(gamma):
 
 @njit
 def chugunov_2009(state, scn_fac):
-    """Calculates screening factors based on Chugunov & DeWitt 2009.
+    """Calculates screening factors based on :cite:t:`chugunov:2009`.
 
     :param PlasmaState state:     the precomputed plasma state factors
     :param ScreenFactors scn_fac: the precomputed ion pair factors
     :returns: screening correction factor
-
-    References:
-        | Chugunov and DeWitt 2009, PhRvC, 80, 014611
     """
     z1z2 = scn_fac.z1 * scn_fac.z2
     zcomp = scn_fac.z1 + scn_fac.z2
@@ -392,14 +385,11 @@ def chugunov_2009(state, scn_fac):
 
 @njit
 def potekhin_1998(state, scn_fac):
-    """Calculates screening factors based on Chabrier & Potekhin 1998.
+    """Calculates screening factors based on :cite:t:`chabrier_potekhin:1998`.
 
     :param PlasmaState state:     the precomputed plasma state factors
     :param ScreenFactors scn_fac: the precomputed ion pair factors
     :returns: screening correction factor
-
-    References:
-        Chabrier and Potekhin 1998, PhRvE, 58, 4941
     """
 
     Gamma_e = state.gamma_e_fac / state.temp

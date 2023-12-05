@@ -38,6 +38,7 @@ extensions = ['sphinx.ext.autodoc',
     'sphinx.ext.ifconfig',
     'sphinx.ext.viewcode',
     'sphinx.ext.intersphinx',
+    'sphinxcontrib.bibtex',
     'nbsphinx',
     'sphinx.ext.githubpages',
     'sphinx_copybutton',
@@ -46,6 +47,10 @@ extensions = ['sphinx.ext.autodoc',
     'sphinx_rtd_theme',
     'sphinx_mdinclude',
     'IPython.sphinxext.ipython_console_highlighting']
+
+# bibtex
+bibtex_bibfiles = ['refs.bib']
+bibtex_reference_style = 'author_year'
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
