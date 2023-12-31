@@ -5,6 +5,7 @@ codes"""
 
 import glob
 import os
+import re
 
 from pynucastro.networks.base_cxx_network import BaseCxxNetwork
 from pynucastro.nucdata import Nucleus
@@ -57,6 +58,14 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
                     of.write(f"{self.indent*n_indent}        rate_eval.dscreened_rates_dT(k_{rr.cname()}) = 0.0;\n")
                     of.write(f"{self.indent*n_indent}    }}\n")
                 of.write(f"{self.indent*n_indent}}}\n\n")
+
+    def _cxxify(self, s):
+        # Replace std::pow(x, n) with amrex::Math::powi<n>(x) for amrexastro_cxx_network
+
+        cxx_code = super()._cxxify(s)
+        std_pow_pattern = r"std::pow\(([^,]+),\s*(\d+)\)"
+        amrex_powi_replacement = r"amrex::Math::powi<\2>(\1)"
+        return re.sub(std_pow_pattern, amrex_powi_replacement, cxx_code)
 
     def _write_network(self, odir=None):
         """
