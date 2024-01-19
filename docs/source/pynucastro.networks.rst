@@ -33,6 +33,13 @@ pynucastro.networks.nse\_network module
    :undoc-members:
    :show-inheritance:
 
+pynucastro.networks.numpy\_network module
+-----------------------------------------
+
+.. automodule:: pynucastro.networks.numpy_network
+   :members:
+   :show-inheritance:
+
 pynucastro.networks.python\_network module
 ------------------------------------------
 

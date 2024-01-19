@@ -10,6 +10,7 @@ import os
 import re
 import shutil
 import sys
+import warnings
 from abc import ABC, abstractmethod
 
 import numpy as np
@@ -136,7 +137,7 @@ class BaseCxxNetwork(ABC, RateCollection):
                 if os.path.isfile(tdat_file):
                     shutil.copy(tdat_file, odir or os.getcwd())
                 else:
-                    print(f'WARNING: Table data file {tr.table_file} not found.')
+                    warnings.warn(UserWarning(f'Table data file {tr.table_file} not found.'))
 
     def compose_ydot(self):
         """create the expressions for dYdt for the nuclei, where Y is the
@@ -350,6 +351,10 @@ class BaseCxxNetwork(ABC, RateCollection):
 
                 of.write('\n')
 
+    def _cxxify(self, s):
+        # This is a helper function that converts sympy cxxcode to the actual c++ code we use.
+        return self.symbol_rates.cxxify(s)
+
     def _ydot(self, n_indent, of):
         # Write YDOT
         for n in self.unique_nuclei:
@@ -374,7 +379,7 @@ class BaseCxxNetwork(ABC, RateCollection):
                     of.write("(")
 
                 if pair[0] is not None:
-                    sol_value = self.symbol_rates.cxxify(sympy.cxxcode(pair[0], precision=15,
+                    sol_value = self._cxxify(sympy.cxxcode(pair[0], precision=15,
                                                                        standard="c++11"))
 
                     of.write(f"{sol_value}")
@@ -383,7 +388,7 @@ class BaseCxxNetwork(ABC, RateCollection):
                     of.write(" + ")
 
                 if pair[1] is not None:
-                    sol_value = self.symbol_rates.cxxify(sympy.cxxcode(pair[1], precision=15,
+                    sol_value = self._cxxify(sympy.cxxcode(pair[1], precision=15,
                                                                        standard="c++11"))
 
                     of.write(f"{sol_value}")
@@ -416,7 +421,7 @@ class BaseCxxNetwork(ABC, RateCollection):
             for ini, ni in enumerate(self.unique_nuclei):
                 jac_idx = n_unique_nuclei*jnj + ini
                 if not self.jac_null_entries[jac_idx]:
-                    jvalue = self.symbol_rates.cxxify(sympy.cxxcode(self.jac_out_result[jac_idx], precision=15,
+                    jvalue = self._cxxify(sympy.cxxcode(self.jac_out_result[jac_idx], precision=15,
                                                                      standard="c++11"))
                     of.write(f"{self.indent*(n_indent)}scratch = {jvalue};\n")
                     of.write(f"{self.indent*n_indent}jac.set({nj.cindex()}, {ni.cindex()}, scratch);\n\n")

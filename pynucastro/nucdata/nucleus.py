@@ -5,8 +5,7 @@ Classes and methods to interface with files storing rate data.
 import os
 import re
 
-from scipy.constants import physical_constants
-
+from pynucastro.constants import constants
 from pynucastro.nucdata.binding_table import BindingTable
 from pynucastro.nucdata.elements import PeriodicTable
 from pynucastro.nucdata.mass_table import MassTable
@@ -16,9 +15,6 @@ from pynucastro.nucdata.spin_table import SpinTable
 _pynucastro_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 _pynucastro_rates_dir = os.path.join(_pynucastro_dir, 'library')
 _pynucastro_tabular_dir = os.path.join(_pynucastro_rates_dir, 'tabular')
-
-#set the atomic mass unit constant in MeV
-m_u, _, _ = physical_constants['atomic mass constant energy equivalent in MeV']
 
 #read the mass excess table once and store it at the module-level
 _mass_table = MassTable()
@@ -147,7 +143,7 @@ class Nucleus:
 
         # Now we will define the Nuclear Mass,
         try:
-            self.A_nuc = float(self.A) + _mass_table.get_mass_diff(a=self.A, z=self.Z) / m_u
+            self.A_nuc = float(self.A) + _mass_table.get_mass_diff(a=self.A, z=self.Z) / constants.m_u_MeV
         except NotImplementedError:
             self.A_nuc = None
 
@@ -186,6 +182,24 @@ class Nucleus:
         if not self.Z == other.Z:
             return self.Z < other.Z
         return self.A < other.A
+
+    @classmethod
+    def cast(cls, obj):
+        if isinstance(obj, cls):
+            return obj
+        if isinstance(obj, str):
+            return cls.from_cache(obj)
+        raise TypeError("Invalid type passed to Nucleus.cast() (expected str or Nucleus)")
+
+    @classmethod
+    def cast_list(cls, lst, *, allow_None=False, allow_single=False):
+        if allow_None and lst is None:
+            return lst
+        if isinstance(lst, (str, cls)):
+            if allow_single:
+                return [cls.cast(lst)]
+            raise ValueError("Single object passed to Nucleus.cast_list() instead of list")
+        return [cls.cast(obj) for obj in lst]
 
 
 def get_nuclei_in_range(zmin, zmax, amin, amax):

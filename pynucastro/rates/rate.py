@@ -3,13 +3,14 @@ Classes and methods to interface with files storing rate data.
 """
 
 import io
+import math
 import os
+import warnings
 from collections import Counter
 from enum import Enum
 
 import matplotlib.pyplot as plt
 import numpy as np
-from scipy.constants import physical_constants
 
 try:
     import numba
@@ -42,15 +43,8 @@ except ImportError:
         return wrap(cls_or_spec)
 
 
+from pynucastro.constants import constants
 from pynucastro.nucdata import Nucleus, UnsupportedNucleus
-
-amu_mev, _, _ = physical_constants['atomic mass constant energy equivalent in MeV']
-hbar, _, _ = physical_constants['reduced Planck constant']
-amu, _, _ = physical_constants['atomic mass constant']
-k_B_mev_k, _, _ = physical_constants['Boltzmann constant in eV/K']
-k_B_mev_k /= 1.0e6
-k_B, _, _ = physical_constants['Boltzmann constant']
-N_a, _, _ = physical_constants['Avogadro constant']
 
 _pynucastro_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 _pynucastro_rates_dir = os.path.join(_pynucastro_dir, 'library')
@@ -340,12 +334,12 @@ class Rate:
         sources.  Here we only specify the reactants and products and Q value"""
 
         if reactants:
-            self.reactants = reactants
+            self.reactants = Nucleus.cast_list(reactants)
         else:
             self.reactants = []
 
         if products:
-            self.products = products
+            self.products = Nucleus.cast_list(products)
         else:
             self.products = []
 
@@ -562,7 +556,7 @@ class Rate:
         self.prefactor = 1.0  # this is 1/2 for rates like a + a (double counting)
         self.inv_prefactor = 1
         for r in set(self.reactants):
-            self.inv_prefactor = self.inv_prefactor * np.math.factorial(self.reactants.count(r))
+            self.inv_prefactor = self.inv_prefactor * math.factorial(self.reactants.count(r))
         self.prefactor = self.prefactor/float(self.inv_prefactor)
         self.dens_exp = len(self.reactants)-1
         if self.weak_type == 'electron_capture':
@@ -809,12 +803,12 @@ class ReacLibRate(Rate):
         self.fname = None
 
         if reactants:
-            self.reactants = reactants
+            self.reactants = Nucleus.cast_list(reactants)
         else:
             self.reactants = []
 
         if products:
-            self.products = products
+            self.products = Nucleus.cast_list(products)
         else:
             self.products = []
 
@@ -894,16 +888,7 @@ class ReacLibRate(Rate):
             self.fname += "__removed"
 
     def modify_products(self, new_products):
-        if not isinstance(new_products, (set, list, tuple)):
-            new_products = [new_products]
-
-        self.products = []
-        for p in new_products:
-            if isinstance(p, Nucleus):
-                self.products.append(p)
-            else:
-                self.products.append(Nucleus(p))
-
+        self.products = Nucleus.cast_list(new_products, allow_single=True)
         self.modified = True
 
         # we need to update the Q value and the print string for the rate
@@ -1335,7 +1320,7 @@ class ReacLibRate(Rate):
         ax.set_xlabel(r"$T$")
 
         if self.dens_exp == 0:
-            ax.set_ylabel(r"\tau")
+            ax.set_ylabel(r"$\tau$")
         elif self.dens_exp == 1:
             ax.set_ylabel(r"$N_A <\sigma v>$")
         elif self.dens_exp == 2:
@@ -1573,7 +1558,7 @@ class TabularRate(Rate):
         self.prefactor = 1.0  # this is 1/2 for rates like a + a (double counting)
         self.inv_prefactor = 1
         for r in set(self.reactants):
-            self.inv_prefactor = self.inv_prefactor * np.math.factorial(self.reactants.count(r))
+            self.inv_prefactor = self.inv_prefactor * math.factorial(self.reactants.count(r))
         self.prefactor = self.prefactor/float(self.inv_prefactor)
         self.dens_exp = len(self.reactants)-1
 
@@ -1750,7 +1735,7 @@ class DerivedRate(ReacLibRate):
             a = ssets.a
             prefactor = 0.0
             Q = 0.0
-            prefactor += -np.log(N_a) * (len(self.rate.reactants) - len(self.rate.products))
+            prefactor += -np.log(constants.N_A) * (len(self.rate.reactants) - len(self.rate.products))
 
             for nucr in self.rate.reactants:
                 prefactor += 1.5*np.log(nucr.A) + np.log(nucr.spin_states)
@@ -1760,7 +1745,7 @@ class DerivedRate(ReacLibRate):
                 Q -= nucp.A_nuc
 
             if self.compute_Q:
-                Q = Q * amu_mev
+                Q = Q * constants.m_u_MeV
             else:
                 Q = self.rate.Q
 
@@ -1769,12 +1754,12 @@ class DerivedRate(ReacLibRate):
             if len(self.rate.reactants) == len(self.rate.products):
                 prefactor += 0.0
             else:
-                F = (amu * k_B * 1.0e5 / (2.0*np.pi*hbar**2))**(1.5*(len(self.rate.reactants) - len(self.rate.products)))
+                F = (constants.m_u * constants.k * 1.0e9 / (2.0*np.pi*constants.hbar**2))**(1.5*(len(self.rate.reactants) - len(self.rate.products)))
                 prefactor += np.log(F)
 
             a_rev = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
             a_rev[0] = prefactor + a[0]
-            a_rev[1] = a[1] - Q / (1.0e9 * k_B_mev_k)
+            a_rev[1] = a[1] - Q / (1.0e9 * constants.k_MeV)
             a_rev[2] = a[2]
             a_rev[3] = a[3]
             a_rev[4] = a[4]
@@ -1786,15 +1771,19 @@ class DerivedRate(ReacLibRate):
         super().__init__(rfile=self.rate.rfile, chapter=self.rate.chapter, original_source=self.rate.original_source,
                 reactants=self.rate.products, products=self.rate.reactants, sets=derived_sets, labelprops="derived", Q=-Q)
 
+    def _warn_about_missing_pf_tables(self):
+        skip_nuclei = {Nucleus("h1"), Nucleus("n"), Nucleus("he4")}
+        for nuc in set(self.rate.reactants + self.rate.products) - skip_nuclei:
+            if not nuc.partition_function:
+                warnings.warn(UserWarning(f'{nuc} partition function is not supported by tables: set pf = 1.0 by default'))
+
     def eval(self, T, rhoY=None):
 
         r = super().eval(T=T, rhoY=rhoY)
         z_r = 1.0
         z_p = 1.0
         if self.use_pf:
-            for nuc in set(self.rate.reactants + self.rate.products):
-                if not nuc.partition_function and str(nuc) != 'h1' and str(nuc) != 'n' and str(nuc) != 'he4' and str(nuc) != 'p':
-                    print(f'WARNING: {nuc} partition function is not supported by tables: set pf = 1.0 by default')
+            self._warn_about_missing_pf_tables()
 
             for nucr in self.rate.reactants:
                 if not nucr.partition_function:
@@ -1817,9 +1806,7 @@ class DerivedRate(ReacLibRate):
         rate
         """
 
-        for nuc in set(self.rate.reactants + self.rate.products):
-            if not nuc.partition_function and str(nuc) not in ['h1', 'n', 'he4', 'p']:
-                print(f'WARNING: {nuc} partition function is not supported by tables: set pf = 1.0 by default')
+        self._warn_about_missing_pf_tables()
 
         fstring = super().function_string_py()
 
@@ -1856,9 +1843,7 @@ class DerivedRate(ReacLibRate):
         rate
         """
 
-        for nuc in set(self.rate.reactants + self.rate.products):
-            if not nuc.partition_function and str(nuc) not in ['h1', 'n', 'he4', 'p']:
-                print(f'WARNING: {nuc} partition function is not supported by tables: set pf = 1.0 by default')
+        self._warn_about_missing_pf_tables()
 
         fstring = super().function_string_cxx(dtype=dtype, specifiers=specifiers, leave_open=True)
 
@@ -1932,11 +1917,11 @@ class DerivedRate(ReacLibRate):
 
         reactant_factor = 1.0
         for nuc in set(self.rate.reactants):
-            reactant_factor *= np.math.factorial(react_counts[nuc])
+            reactant_factor *= math.factorial(react_counts[nuc])
 
         product_factor = 1.0
         for nuc in set(self.rate.products):
-            product_factor *= np.math.factorial(prod_counts[nuc])
+            product_factor *= math.factorial(prod_counts[nuc])
 
         return (reactant_factor, product_factor)
 

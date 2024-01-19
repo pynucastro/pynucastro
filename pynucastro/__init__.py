@@ -63,6 +63,10 @@ rates, including:
   for the nuclear statistical equilibrium state of a collection of
   nuclei.
 
+* NumpyNetwork : this extends the RateCollection to allow evaluating
+  reaction rates using vectorized NumPy arrays, which may be
+  more efficient for some applications.
+
 * PythonNetwork : this extends the RateCollection to enable output
   of python code that can be used with ODE integrators to solve
   a network.
@@ -127,7 +131,7 @@ __version__ = version
 import pynucastro.screening
 from pynucastro.networks import (AmrexAstroCxxNetwork, BaseCxxNetwork,
                                  Composition, Explorer, NSENetwork,
-                                 PythonNetwork, RateCollection,
+                                 NumpyNetwork, PythonNetwork, RateCollection,
                                  SimpleCxxNetwork, StarKillerCxxNetwork,
                                  SympyRates)
 from pynucastro.nucdata import Nucleus, get_nuclei_in_range

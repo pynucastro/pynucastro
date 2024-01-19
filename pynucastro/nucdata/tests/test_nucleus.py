@@ -1,4 +1,4 @@
-from pytest import approx
+from pytest import approx, raises
 
 from pynucastro.nucdata import Nucleus, get_nuclei_in_range
 
@@ -111,3 +111,32 @@ class TestNucleus:
         assert nuc_list[12] == Nucleus("o14")
         assert nuc_list[13] == Nucleus("o15")
         assert nuc_list[14] == Nucleus("o16")
+
+    def test_cast(self):
+        assert Nucleus.cast("c12") == self.c12
+        assert Nucleus.cast("C12") == self.c12
+        assert Nucleus.cast(self.c12) == self.c12
+        assert Nucleus.cast("n") == Nucleus("n")
+
+    def test_cast_list(self):
+        expected = [self.p, self.n, self.he4, self.c12, self.pb237]
+        assert Nucleus.cast_list(["p", self.n, "a", "c12", self.pb237]) == expected
+        assert Nucleus.cast_list(["p", "n", "he4", "c12", "pb237"]) == expected
+        assert Nucleus.cast_list(expected) == expected
+        assert Nucleus.cast_list([self.p, "n", "he4", self.c12, self.pb237], allow_single=True) == expected
+        assert Nucleus.cast_list(expected, allow_None=True, allow_single=True) == expected
+        assert Nucleus.cast_list(expected, allow_None=True, allow_single=True) == expected
+
+        with raises(ValueError):
+            Nucleus.cast_list("he4")
+        with raises(ValueError):
+            Nucleus.cast_list(self.he4)
+        assert Nucleus.cast_list(self.he4, allow_single=True) == [self.he4]
+        assert Nucleus.cast_list("he4", allow_single=True) == [self.he4]
+        assert Nucleus.cast_list([self.he4], allow_single=True) == [self.he4]
+        assert Nucleus.cast_list(["he4"]) == [self.he4]
+
+        with raises(TypeError):
+            Nucleus.cast_list(None)
+        assert Nucleus.cast_list(None, allow_None=True) is None
+        assert Nucleus.cast_list([]) == []

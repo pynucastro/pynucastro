@@ -64,15 +64,34 @@ class TestAmrexAstroCxxNetwork:
     def test_ebind(self, fn):
         """ test the _ebind function """
 
-        answer = ('        ebind_per_nucleon(N) = 0.0_rt;\n' +
-                  '        ebind_per_nucleon(H1) = 0.0_rt;\n' +
-                  '        ebind_per_nucleon(He4) = 7.073915_rt;\n' +
-                  '        ebind_per_nucleon(C12) = 7.680144_rt;\n' +
-                  '        ebind_per_nucleon(O16) = 7.976206_rt;\n' +
-                  '        ebind_per_nucleon(Ne20) = 8.03224_rt;\n' +
-                  '        ebind_per_nucleon(Ne23) = 7.955256_rt;\n' +
-                  '        ebind_per_nucleon(Na23) = 8.111493000000001_rt;\n' +
-                  '        ebind_per_nucleon(Mg23) = 7.901115_rt;\n')
+        answer = ('        if constexpr (spec == N) {\n' +
+                  '            return 0.0_rt;\n' +
+                  '        }\n' +
+                  '        else if constexpr (spec == H1) {\n' +
+                  '            return 0.0_rt;\n' +
+                  '        }\n' +
+                  '        else if constexpr (spec == He4) {\n' +
+                  '            return 28.29566_rt;\n' +
+                  '        }\n' +
+                  '        else if constexpr (spec == C12) {\n' +
+                  '            return 92.16172800000001_rt;\n' +
+                  '        }\n' +
+                  '        else if constexpr (spec == O16) {\n' +
+                  '            return 127.619296_rt;\n' +
+                  '        }\n' +
+                  '        else if constexpr (spec == Ne20) {\n' +
+                  '            return 160.6448_rt;\n' +
+                  '        }\n' +
+                  '        else if constexpr (spec == Ne23) {\n' +
+                  '            return 182.970888_rt;\n' +
+                  '        }\n' +
+                  '        else if constexpr (spec == Na23) {\n' +
+                  '            return 186.56433900000002_rt;\n' +
+                  '        }\n' +
+                  '        else if constexpr (spec == Mg23) {\n' +
+                  '            return 181.725645_rt;\n' +
+                  '        }\n')
+
         assert self.cromulent_ftag(fn._ebind, answer, n_indent=2)
 
     def test_write_network(self, fn, compare_network_files):

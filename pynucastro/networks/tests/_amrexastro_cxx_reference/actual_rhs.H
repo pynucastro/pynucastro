@@ -164,37 +164,37 @@ void rhs_nuc(const burn_t& state,
 
     ydot_nuc(N) =
         -screened_rates(k_n_to_p_weak_wc12)*Y(N) +
-        0.5*screened_rates(k_C12_C12_to_n_Mg23)*std::pow(Y(C12), 2)*state.rho;
+        0.5*screened_rates(k_C12_C12_to_n_Mg23)*amrex::Math::powi<2>(Y(C12))*state.rho;
 
     ydot_nuc(H1) =
-        0.5*screened_rates(k_C12_C12_to_p_Na23)*std::pow(Y(C12), 2)*state.rho +
+        0.5*screened_rates(k_C12_C12_to_p_Na23)*amrex::Math::powi<2>(Y(C12))*state.rho +
         screened_rates(k_n_to_p_weak_wc12)*Y(N);
 
     ydot_nuc(He4) =
-        0.5*screened_rates(k_C12_C12_to_He4_Ne20)*std::pow(Y(C12), 2)*state.rho +
+        0.5*screened_rates(k_C12_C12_to_He4_Ne20)*amrex::Math::powi<2>(Y(C12))*state.rho +
         -screened_rates(k_He4_C12_to_O16)*Y(C12)*Y(He4)*state.rho;
 
     ydot_nuc(C12) =
-        -screened_rates(k_C12_C12_to_He4_Ne20)*std::pow(Y(C12), 2)*state.rho +
-        -screened_rates(k_C12_C12_to_p_Na23)*std::pow(Y(C12), 2)*state.rho +
+        -screened_rates(k_C12_C12_to_He4_Ne20)*amrex::Math::powi<2>(Y(C12))*state.rho +
+        -screened_rates(k_C12_C12_to_p_Na23)*amrex::Math::powi<2>(Y(C12))*state.rho +
         -screened_rates(k_He4_C12_to_O16)*Y(C12)*Y(He4)*state.rho +
-        -screened_rates(k_C12_C12_to_n_Mg23)*std::pow(Y(C12), 2)*state.rho;
+        -screened_rates(k_C12_C12_to_n_Mg23)*amrex::Math::powi<2>(Y(C12))*state.rho;
 
     ydot_nuc(O16) =
         screened_rates(k_He4_C12_to_O16)*Y(C12)*Y(He4)*state.rho;
 
     ydot_nuc(Ne20) =
-        0.5*screened_rates(k_C12_C12_to_He4_Ne20)*std::pow(Y(C12), 2)*state.rho;
+        0.5*screened_rates(k_C12_C12_to_He4_Ne20)*amrex::Math::powi<2>(Y(C12))*state.rho;
 
     ydot_nuc(Ne23) =
         (-screened_rates(k_Ne23_to_Na23)*Y(Ne23) + screened_rates(k_Na23_to_Ne23)*Y(Na23));
 
     ydot_nuc(Na23) =
-        0.5*screened_rates(k_C12_C12_to_p_Na23)*std::pow(Y(C12), 2)*state.rho +
+        0.5*screened_rates(k_C12_C12_to_p_Na23)*amrex::Math::powi<2>(Y(C12))*state.rho +
         (screened_rates(k_Ne23_to_Na23)*Y(Ne23) + -screened_rates(k_Na23_to_Ne23)*Y(Na23));
 
     ydot_nuc(Mg23) =
-        0.5*screened_rates(k_C12_C12_to_n_Mg23)*std::pow(Y(C12), 2)*state.rho;
+        0.5*screened_rates(k_C12_C12_to_n_Mg23)*amrex::Math::powi<2>(Y(C12))*state.rho;
 
 }
 

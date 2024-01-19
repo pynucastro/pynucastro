@@ -22,6 +22,7 @@ codes.
    intro
    rate_types
    install
+   contributing
 
 .. toctree::
    :maxdepth: 1
@@ -42,7 +43,7 @@ codes.
 
 .. toctree::
    :maxdepth: 1
-   :caption: Advanced Usage
+   :caption: Advanced Rate Operations
 
    screening-examples
    modify-example.ipynb
@@ -55,7 +56,14 @@ codes.
    :maxdepth: 1
    :caption: Nuclear Statistical Equilibrium
 
-   NSE-example.ipynb
+   NSE-example
+   nse_table
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Plasma Neutrinos
+
+   neutrino-cooling.ipynb
 
 .. toctree::
    :maxdepth: 1
@@ -63,6 +71,11 @@ codes.
 
    networks
    cxx-networks
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Interfacing With Other Languages
+
    julia
 
 .. toctree::
@@ -72,6 +85,7 @@ codes.
    citing
    API <modules>
    sources
+   zreferences
 
 Indices and tables
 ==================

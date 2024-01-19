@@ -2,8 +2,9 @@
 Python implementations of screening routines.
 """
 import numpy as np
-from scipy import constants
 
+from pynucastro.constants import constants
+from pynucastro.nucdata import Nucleus
 # use the jitclass placeholder from rate.py
 from pynucastro.rates.rate import jitclass, numba
 
@@ -15,12 +16,6 @@ else:
 
 __all__ = ["PlasmaState", "ScreenFactors", "chugunov_2007", "chugunov_2009",
            "make_plasma_state", "make_screen_factors", "potekhin_1998"]
-
-
-amu = constants.value("atomic mass constant") / constants.gram  # kg to g
-q_e = constants.value("elementary charge") * (constants.c * 100) / 10  # C to statC (esu)
-hbar = constants.value("reduced Planck constant") / constants.erg  # J*s to erg*s
-k_B = constants.value("Boltzmann constant") / constants.erg  # J/K to erg/K
 
 
 @jitclass()
@@ -62,14 +57,14 @@ class PlasmaState:
         self.z2bar = np.sum(Zs ** 2 * Ys) / ytot
 
         # Average mass and total number density
-        mbar = self.abar * amu
+        mbar = self.abar * constants.m_u
         ntot = self.dens / mbar
         # Electron number density
         # zbar * ntot works out to sum(z[i] * n[i]), after cancelling terms
         self.n_e = self.zbar * ntot
 
         # temperature-independent part of Gamma_e, from Chugunov 2009 eq. 6
-        self.gamma_e_fac = q_e ** 2 / k_B * np.cbrt(4 * np.pi / 3) * np.cbrt(self.n_e)
+        self.gamma_e_fac = constants.q_e ** 2 / constants.k * np.cbrt(4 * np.pi / 3) * np.cbrt(self.n_e)
 
 
 @jitclass()
@@ -107,7 +102,7 @@ class NseState:
         self.temp = temp
         self.dens = dens
         self.ye = ye
-        self.gamma_e_fac = q_e ** 2 / k_B * np.cbrt(4.0 * np.pi / 3.0)
+        self.gamma_e_fac = constants.q_e ** 2 / constants.k * np.cbrt(4.0 * np.pi / 3.0)
 
 
 def make_plasma_state(temp, dens, molar_fractions):
@@ -161,6 +156,8 @@ def make_screen_factors(n1, n2):
     :param Nucleus n1: first nucleus
     :param Nucleus n2: second nucleus
     """
+    n1 = Nucleus.cast(n1)
+    n2 = Nucleus.cast(n2)
     return ScreenFactors(n1.Z, n1.A, n2.Z, n2.A)
 
 
@@ -195,18 +192,14 @@ def smooth_clip(x, limit, start):
 
 @njit
 def chugunov_2007(state, scn_fac):
-    """Calculates screening factors based on Chugunov et al. 2007.
+    """Calculates screening factors based on :cite:t:`chugunov:2007`.
 
-    Follows the approach in Yakovlev 2006 to extend to a multi-component plasma.
+    Follows the approach in :cite:t:`yakovlev:2006` to extend to a
+    multi-component plasma.
 
     :param PlasmaState state:     the precomputed plasma state factors
     :param ScreenFactors scn_fac: the precomputed ion pair factors
     :returns: screening correction factor
-
-    References:
-        | Chugunov, DeWitt, and Yakovlev 2007, PhRvD, 76, 025028
-        | Yakovlev, Gasques, Afanasjev, Beard, and Wiescher 2006, PhRvC, 74, 035803
-        | Chugunov and DeWitt 2009, PhRvC, 80, 014611
     """
     # Plasma temperature T_p
     # This formula comes from working backwards from zeta_ij (Chugunov 2009 eq. 12)
@@ -231,9 +224,9 @@ def chugunov_2007(state, scn_fac):
     mu12 = scn_fac.a1 * scn_fac.a2 / (scn_fac.a1 + scn_fac.a2)
     z_factor = scn_fac.z1 * scn_fac.z2
     n_i = state.n_e / scn_fac.ztilde ** 3
-    m_i = 2 * mu12 * amu
+    m_i = 2 * mu12 * constants.m_u
 
-    T_p = hbar / k_B * q_e * np.sqrt(4 * np.pi * z_factor * n_i / m_i)
+    T_p = constants.hbar / constants.k * constants.q_e * np.sqrt(4 * np.pi * z_factor * n_i / m_i)
 
     # Normalized temperature
     T_norm = state.temp / T_p
@@ -297,7 +290,7 @@ def chugunov_2007(state, scn_fac):
 
 @njit
 def f0(gamma):
-    r"""Calculate the free energy per ion in a OCP from Chugunov & DeWitt 2009 eq. 24
+    r"""Calculate the free energy per ion in a OCP from :cite:t:`chugunov:2009` eq. 24
 
     :param gamma: Coulomb coupling parameter
     :returns: free energy
@@ -327,14 +320,11 @@ def f0(gamma):
 
 @njit
 def chugunov_2009(state, scn_fac):
-    """Calculates screening factors based on Chugunov & DeWitt 2009.
+    """Calculates screening factors based on :cite:t:`chugunov:2009`.
 
     :param PlasmaState state:     the precomputed plasma state factors
     :param ScreenFactors scn_fac: the precomputed ion pair factors
     :returns: screening correction factor
-
-    References:
-        | Chugunov and DeWitt 2009, PhRvC, 80, 014611
     """
     z1z2 = scn_fac.z1 * scn_fac.z2
     zcomp = scn_fac.z1 + scn_fac.z2
@@ -350,7 +340,7 @@ def chugunov_2009(state, scn_fac):
     Gamma_12 = Gamma_e * z1z2 / scn_fac.ztilde
 
     # Coulomb barrier penetrability, eq. 10
-    tau_factor = np.cbrt(27 / 2 * (np.pi * q_e ** 2 / hbar) ** 2 * amu / k_B)
+    tau_factor = np.cbrt(27 / 2 * (np.pi * constants.q_e ** 2 / constants.hbar) ** 2 * constants.m_u / constants.k)
     tau_12 = tau_factor * scn_fac.aznut / np.cbrt(state.temp)
 
     # eq. 12
@@ -395,14 +385,11 @@ def chugunov_2009(state, scn_fac):
 
 @njit
 def potekhin_1998(state, scn_fac):
-    """Calculates screening factors based on Chabrier & Potekhin 1998.
+    """Calculates screening factors based on :cite:t:`chabrier_potekhin:1998`.
 
     :param PlasmaState state:     the precomputed plasma state factors
     :param ScreenFactors scn_fac: the precomputed ion pair factors
     :returns: screening correction factor
-
-    References:
-        Chabrier and Potekhin 1998, PhRvE, 58, 4941
     """
 
     Gamma_e = state.gamma_e_fac / state.temp

@@ -121,8 +121,15 @@ skip = ["pynucastro/networks/tests/_python_reference/network.py"]
 
 [tool.pytest.ini_options]
 addopts = """\
-  --ignore=docs \
+  --ignore=docs/source/Example-Integrating-Network-diffeqpy.ipynb \
+  --ignore=docs/source/library-examples.ipynb \
+  --ignore=docs/source/pynucastro-examples.ipynb \
+  --ignore=docs/source/pynucastro-integration.ipynb \
   --ignore-glob=pynucastro/library/tabular/*.ipynb \
   --ignore=examples/rxn-network-integration.ipynb \
   --ignore=examples/o16o16_rates.ipynb \
+  --nbval-sanitize-with .github/workflows/nbval_sanitize.cfg \
   """
+filterwarnings = [
+  "error",
+]

@@ -261,7 +261,9 @@ class TestDerivedRate:
         a_a_ag_c12 = reaclib_library.get_rate('he4 + he4 + he4 --> c12 <fy05_reaclib__>')
         c12_ga_a_a_derived = rates.DerivedRate(rate=a_a_ag_c12, compute_Q=False, use_pf=True)
 
-        assert c12_ga_a_a_derived.eval(T=2.0e9) == approx(2.8953989705969484e-07)
+        with pytest.warns(UserWarning, match="C12 partition function is not supported by tables"):
+            rval = c12_ga_a_a_derived.eval(T=2.0e9)
+        assert rval == approx(2.8953989705969484e-07)
 
     def test_a_a_ag_c12_with_Q(self, reaclib_library):
         """

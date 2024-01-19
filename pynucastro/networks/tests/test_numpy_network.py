@@ -4,8 +4,8 @@ from numpy.testing import assert_allclose
 import pynucastro as pyna
 
 
-class TestVectorizedEvaluation:
-    """Make sure the vectorized numpy methods give the same results."""
+class TestNumpyNetwork:
+    """Make sure the vectorized methods give the same results."""
 
     @pytest.fixture(scope="class")
     def net(self, reaclib_library):
@@ -19,7 +19,7 @@ class TestVectorizedEvaluation:
                       "o15(,)n15",
                       "he4(aa,g)c12"]
         rates = reaclib_library.get_rate_by_name(rate_names)
-        net = pyna.RateCollection(rates=rates)
+        net = pyna.NumpyNetwork(rates=rates)
         return net
 
     @pytest.fixture(scope="class")
@@ -44,9 +44,6 @@ class TestVectorizedEvaluation:
                     0.00034299999999999966]
 
         net.clear_arrays()
-        with pytest.raises(AttributeError):
-            net.update_yfac_arr(comp)
-        net.calc_count_matrices()
         net.update_yfac_arr(comp)
 
         assert_allclose(net.yfac, expected, rtol=1e-10, atol=1e-100)
@@ -65,12 +62,8 @@ class TestVectorizedEvaluation:
         expected = [rv[r] for r in net.rates]
 
         net.clear_arrays()
-        with pytest.raises(AttributeError):
-            net.evaluate_rates_arr(temp)
-        net.calc_count_matrices()
-        net.update_rate_coef_arr()
         net.update_yfac_arr(comp)
-        with pytest.raises(AttributeError):
+        with pytest.raises(Exception):
             net.evaluate_rates_arr(temp)
         net.update_prefac_arr(rho, comp)
         rates_arr = net.evaluate_rates_arr(temp)
@@ -82,10 +75,8 @@ class TestVectorizedEvaluation:
         expected = [ydots[nuc] for nuc in net.unique_nuclei]
 
         net.clear_arrays()
-        with pytest.raises(AttributeError):
+        with pytest.raises(Exception):
             net.evaluate_ydots_arr(temp)
-        net.calc_count_matrices()
-        net.update_rate_coef_arr()
         net.update_yfac_arr(comp)
         net.update_prefac_arr(rho, comp)
         ydots_arr = net.evaluate_ydots_arr(temp)
@@ -97,10 +88,8 @@ class TestVectorizedEvaluation:
         expected = [activity[nuc] for nuc in net.unique_nuclei]
 
         net.clear_arrays()
-        with pytest.raises(AttributeError):
+        with pytest.raises(Exception):
             net.evaluate_activity_arr(temp)
-        net.calc_count_matrices()
-        net.update_rate_coef_arr()
         net.update_yfac_arr(comp)
         net.update_prefac_arr(rho, comp)
         activity_arr = net.evaluate_activity_arr(temp)
