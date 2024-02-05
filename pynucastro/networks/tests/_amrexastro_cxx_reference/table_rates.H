@@ -56,14 +56,14 @@ const int add_vars              = 1;  // 1 Additional Var in entries
 namespace rate_tables
 {
     extern AMREX_GPU_MANAGED table_t j_Na23_Ne23_meta;
-    extern AMREX_GPU_MANAGED Array3D<amrex::Real, 1, 39, 1, 152, 1, 6> j_Na23_Ne23_data;
-    extern AMREX_GPU_MANAGED Array1D<amrex::Real, 1, 152> j_Na23_Ne23_rhoy;
-    extern AMREX_GPU_MANAGED Array1D<amrex::Real, 1, 39> j_Na23_Ne23_temp;
+    extern AMREX_GPU_MANAGED amrex::Array3D<amrex::Real, 1, 39, 1, 152, 1, 6> j_Na23_Ne23_data;
+    extern AMREX_GPU_MANAGED amrex::Array1D<amrex::Real, 1, 152> j_Na23_Ne23_rhoy;
+    extern AMREX_GPU_MANAGED amrex::Array1D<amrex::Real, 1, 39> j_Na23_Ne23_temp;
 
     extern AMREX_GPU_MANAGED table_t j_Ne23_Na23_meta;
-    extern AMREX_GPU_MANAGED Array3D<amrex::Real, 1, 39, 1, 152, 1, 6> j_Ne23_Na23_data;
-    extern AMREX_GPU_MANAGED Array1D<amrex::Real, 1, 152> j_Ne23_Na23_rhoy;
-    extern AMREX_GPU_MANAGED Array1D<amrex::Real, 1, 39> j_Ne23_Na23_temp;
+    extern AMREX_GPU_MANAGED amrex::Array3D<amrex::Real, 1, 39, 1, 152, 1, 6> j_Ne23_Na23_data;
+    extern AMREX_GPU_MANAGED amrex::Array1D<amrex::Real, 1, 152> j_Ne23_Na23_rhoy;
+    extern AMREX_GPU_MANAGED amrex::Array1D<amrex::Real, 1, 39> j_Ne23_Na23_temp;
 
 }
 
@@ -368,7 +368,7 @@ template <typename R, typename T, typename D>
 AMREX_INLINE AMREX_GPU_HOST_DEVICE
 void
 get_entries(const table_t& table_meta, const R& log_rhoy_table, const T& log_temp_table, const D& data,
-            const amrex::Real log_rhoy, const amrex::Real log_temp, Array1D<amrex::Real, 1, num_vars+1>& entries)
+            const amrex::Real log_rhoy, const amrex::Real log_temp, amrex::Array1D<amrex::Real, 1, num_vars+1>& entries)
 {
     for (int ivar = 1; ivar <= num_vars; ivar++) {
         entries(ivar) = evaluate_vars(table_meta, log_rhoy_table, log_temp_table, data,
@@ -387,7 +387,7 @@ tabular_evaluate(const table_t& table_meta,
                  const amrex::Real rhoy, const amrex::Real temp,
                  amrex::Real& rate, amrex::Real& drate_dt, amrex::Real& edot_nu, amrex::Real& edot_gamma)
 {
-    Array1D<amrex::Real, 1, num_vars+1> entries;
+    amrex::Array1D<amrex::Real, 1, num_vars+1> entries;
 
     // Get the table entries at this rhoy, temp
 

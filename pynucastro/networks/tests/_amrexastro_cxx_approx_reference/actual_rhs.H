@@ -48,7 +48,7 @@ void evaluate_rates(const burn_t& state, T& rate_eval) {
 
     // create molar fractions
 
-    Array1D<amrex::Real, 1, NumSpec> Y;
+    amrex::Array1D<amrex::Real, 1, NumSpec> Y;
     for (int n = 1; n <= NumSpec; ++n) {
         Y(n) = state.xn[n-1] * aion_inv[n-1];
     }
@@ -192,9 +192,9 @@ void evaluate_rates(const burn_t& state, T& rate_eval) {
 
 AMREX_GPU_HOST_DEVICE AMREX_INLINE
 void rhs_nuc(const burn_t& state,
-             Array1D<amrex::Real, 1, neqs>& ydot_nuc,
-             const Array1D<amrex::Real, 1, NumSpec>& Y,
-             const Array1D<amrex::Real, 1, NumRates>& screened_rates) {
+             amrex::Array1D<amrex::Real, 1, neqs>& ydot_nuc,
+             const amrex::Array1D<amrex::Real, 1, NumSpec>& Y,
+             const amrex::Array1D<amrex::Real, 1, NumRates>& screened_rates) {
 
     using namespace Rates;
 
@@ -216,7 +216,7 @@ void rhs_nuc(const burn_t& state,
 
 
 AMREX_GPU_HOST_DEVICE AMREX_INLINE
-void actual_rhs (burn_t& state, Array1D<amrex::Real, 1, neqs>& ydot)
+void actual_rhs (burn_t& state, amrex::Array1D<amrex::Real, 1, neqs>& ydot)
 {
     for (int i = 1; i <= neqs; ++i) {
         ydot(i) = 0.0_rt;
@@ -224,7 +224,7 @@ void actual_rhs (burn_t& state, Array1D<amrex::Real, 1, neqs>& ydot)
 
 
     // Set molar abundances
-    Array1D<amrex::Real, 1, NumSpec> Y;
+    amrex::Array1D<amrex::Real, 1, NumSpec> Y;
     for (int i = 1; i <= NumSpec; ++i) {
         Y(i) = state.xn[i-1] * aion_inv[i-1];
     }
@@ -264,8 +264,8 @@ template<class MatrixType>
 AMREX_GPU_HOST_DEVICE AMREX_INLINE
 void jac_nuc(const burn_t& state,
              MatrixType& jac,
-             const Array1D<amrex::Real, 1, NumSpec>& Y,
-             const Array1D<amrex::Real, 1, NumRates>& screened_rates)
+             const amrex::Array1D<amrex::Real, 1, NumSpec>& Y,
+             const amrex::Array1D<amrex::Real, 1, NumRates>& screened_rates)
 {
 
     amrex::Real scratch;
@@ -323,7 +323,7 @@ void actual_jac(const burn_t& state, MatrixType& jac)
 {
 
     // Set molar abundances
-    Array1D<amrex::Real, 1, NumSpec> Y;
+    amrex::Array1D<amrex::Real, 1, NumSpec> Y;
     for (int i = 1; i <= NumSpec; ++i) {
         Y(i) = state.xn[i-1] * aion_inv[i-1];
     }
@@ -364,7 +364,7 @@ void actual_jac(const burn_t& state, MatrixType& jac)
     // calling the RHS using d(rate) / dT and then transform them
     // to our energy integration variable.
 
-    Array1D<amrex::Real, 1, neqs>  yderivs;
+    amrex::Array1D<amrex::Real, 1, neqs>  yderivs;
 
     rhs_nuc(state, yderivs, Y, rate_eval.dscreened_rates_dT);
 

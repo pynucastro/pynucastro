@@ -37,7 +37,7 @@ void evaluate_rates(const burn_t& state, T& rate_eval) {
 
     // create molar fractions
 
-    Array1D<amrex::Real, 1, NumSpec> Y;
+    amrex::Array1D<amrex::Real, 1, NumSpec> Y;
     for (int n = 1; n <= NumSpec; ++n) {
         Y(n) = state.xn[n-1] * aion_inv[n-1];
     }
@@ -56,9 +56,9 @@ void evaluate_rates(const burn_t& state, T& rate_eval) {
 
 inline
 void rhs_nuc(const burn_t& state,
-             Array1D<amrex::Real, 1, NumSpec>& ydot_nuc,
-             const Array1D<amrex::Real, 1, NumSpec>& Y,
-             const Array1D<amrex::Real, 1, NumRates>& screened_rates) {
+             amrex::Array1D<amrex::Real, 1, NumSpec>& ydot_nuc,
+             const amrex::Array1D<amrex::Real, 1, NumSpec>& Y,
+             const amrex::Array1D<amrex::Real, 1, NumRates>& screened_rates) {
 
     using namespace Rates;
 
@@ -96,7 +96,7 @@ void rhs_nuc(const burn_t& state,
 
 
 inline
-void actual_rhs (burn_t& state, Array1D<amrex::Real, 1, NumSpec>& ydot)
+void actual_rhs (burn_t& state, amrex::Array1D<amrex::Real, 1, NumSpec>& ydot)
 {
     for (int i = 1; i <= NumSpec; ++i) {
         ydot(i) = 0.0_rt;
@@ -104,7 +104,7 @@ void actual_rhs (burn_t& state, Array1D<amrex::Real, 1, NumSpec>& ydot)
 
 
     // Set molar abundances
-    Array1D<amrex::Real, 1, NumSpec> Y;
+    amrex::Array1D<amrex::Real, 1, NumSpec> Y;
     for (int i = 1; i <= NumSpec; ++i) {
         Y(i) = state.xn[i-1] * aion_inv[i-1];
     }
@@ -125,8 +125,8 @@ template<class MatrixType>
 inline
 void jac_nuc(const burn_t& state,
              MatrixType& jac,
-             const Array1D<amrex::Real, 1, NumSpec>& Y,
-             const Array1D<amrex::Real, 1, NumRates>& screened_rates)
+             const amrex::Array1D<amrex::Real, 1, NumSpec>& Y,
+             const amrex::Array1D<amrex::Real, 1, NumRates>& screened_rates)
 {
 
     amrex::Real scratch;
@@ -181,7 +181,7 @@ void actual_jac(const burn_t& state, MatrixType& jac)
 {
 
     // Set molar abundances
-    Array1D<amrex::Real, 1, NumSpec> Y;
+    amrex::Array1D<amrex::Real, 1, NumSpec> Y;
     for (int i = 1; i <= NumSpec; ++i) {
         Y(i) = state.xn[i-1] * aion_inv[i-1];
     }

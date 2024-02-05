@@ -3,8 +3,8 @@
 
 namespace network
 {
-    Array1D<amrex::Real, 1, NumSpec> bion;
-    Array1D<amrex::Real, 1, NumSpec> mion;
+    amrex::Array1D<amrex::Real, 1, NumSpec> bion;
+    amrex::Array1D<amrex::Real, 1, NumSpec> mion;
 }
 
 void actual_network_init()
@@ -13,7 +13,7 @@ void actual_network_init()
     using namespace network;
 
     // binding energies per nucleon in MeV
-    Array1D<amrex::Real, 1, NumSpec> ebind_per_nucleon;
+    amrex::Array1D<amrex::Real, 1, NumSpec> ebind_per_nucleon;
 
     ebind_per_nucleon(N) = 0.0_rt;
     ebind_per_nucleon(H1) = 0.0_rt;

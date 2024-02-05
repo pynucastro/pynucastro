@@ -12,13 +12,13 @@ using namespace Rates;
 using namespace Species;
 
 struct rate_t {
-    Array1D<amrex::Real, 1, NumRates>  screened_rates;
+    amrex::Array1D<amrex::Real, 1, NumRates>  screened_rates;
     amrex::Real enuc_weak;
 };
 
 struct rate_derivs_t {
-    Array1D<amrex::Real, 1, NumRates>  screened_rates;
-    Array1D<amrex::Real, 1, NumRates>  dscreened_rates_dT;
+    amrex::Array1D<amrex::Real, 1, NumRates>  screened_rates;
+    amrex::Array1D<amrex::Real, 1, NumRates>  dscreened_rates_dT;
     amrex::Real enuc_weak;
 };
 
