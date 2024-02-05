@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.rates.rate &mdash; pynucastro 2.1.1.post41+g8636a2ce documentation</title>
+  <title>pynucastro.rates.rate &mdash; pynucastro 2.1.1.post42+g096325ce documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
       <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -16,7 +16,7 @@
   
         <script src="../../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../_static/documentation_options.js?v=49d384df"></script>
+        <script src="../../../_static/documentation_options.js?v=8b71599e"></script>
         <script src="../../../_static/doctools.js?v=888ff710"></script>
         <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
         <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -2426,7 +2426,7 @@
             <span class="c1"># now the approximation</span>
             <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> dd = 1.0_rt / (r_pg + r_pa);</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    rate = r_ag + r_ap * r_pg * dd;</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    if constexpr (std::is_same&lt;T, rate_derivs_t&gt;::value) {</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    if constexpr (std::is_same_v&lt;T, rate_derivs_t&gt;) {</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;        </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> drdT_ag = rate_eval.dscreened_rates_dT(k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">primary_rate</span><span class="o">.</span><span class="n">cname</span><span class="p">()</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;        </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> drdT_ap = rate_eval.dscreened_rates_dT(k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">secondary_rates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">cname</span><span class="p">()</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;        </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> drdT_pg = rate_eval.dscreened_rates_dT(k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">secondary_rates</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">cname</span><span class="p">()</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span>
@@ -2444,7 +2444,7 @@
             <span class="c1"># now the approximation</span>
             <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> dd = 1.0_rt / (r_pg + r_pa);</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    rate = r_ga + r_gp * r_pa * dd;</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    if constexpr (std::is_same&lt;T, rate_derivs_t&gt;::value) {</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    if constexpr (std::is_same_v&lt;T, rate_derivs_t&gt;) {</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;        </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> drdT_ga = rate_eval.dscreened_rates_dT(k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">primary_reverse</span><span class="o">.</span><span class="n">cname</span><span class="p">()</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;        </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> drdT_pa = rate_eval.dscreened_rates_dT(k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">secondary_reverse</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">cname</span><span class="p">()</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;        </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> drdT_gp = rate_eval.dscreened_rates_dT(k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">secondary_reverse</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">cname</span><span class="p">()</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span>
