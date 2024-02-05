@@ -84,5 +84,5 @@ run from the repository root.
 * To re-run notebooks whose outputs have changed:
 
   ```
-  docs/regen_notebook.sh <path to notebook>
+  docs/regen_notebook.sh <paths to notebooks>
   ```
