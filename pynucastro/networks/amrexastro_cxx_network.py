@@ -5,6 +5,7 @@ codes"""
 
 import glob
 import os
+import re
 
 from pynucastro.networks.base_cxx_network import BaseCxxNetwork
 from pynucastro.nucdata import Nucleus
@@ -46,17 +47,34 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
             if r in self.disable_rate_params:
                 of.write(f"{self.indent*n_indent}if (disable_{r.cname()}) {{\n")
                 of.write(f"{self.indent*n_indent}    rate_eval.screened_rates(k_{r.cname()}) = 0.0;\n")
-                of.write(f"{self.indent*n_indent}    if constexpr (std::is_same<T, rate_derivs_t>::value) {{\n")
+                of.write(f"{self.indent*n_indent}    if constexpr (std::is_same_v<T, rate_derivs_t>) {{\n")
                 of.write(f"{self.indent*n_indent}        rate_eval.dscreened_rates_dT(k_{r.cname()}) = 0.0;\n")
                 of.write(f"{self.indent*n_indent}    }}\n")
                 # check for the reverse too -- we disable it with the same parameter
                 rr = self.find_reverse(r)
                 if rr is not None:
                     of.write(f"{self.indent*n_indent}    rate_eval.screened_rates(k_{rr.cname()}) = 0.0;\n")
-                    of.write(f"{self.indent*n_indent}    if constexpr (std::is_same<T, rate_derivs_t>::value) {{\n")
+                    of.write(f"{self.indent*n_indent}    if constexpr (std::is_same_v<T, rate_derivs_t>) {{\n")
                     of.write(f"{self.indent*n_indent}        rate_eval.dscreened_rates_dT(k_{rr.cname()}) = 0.0;\n")
                     of.write(f"{self.indent*n_indent}    }}\n")
                 of.write(f"{self.indent*n_indent}}}\n\n")
+
+    def _ebind(self, n_indent, of):
+        for n, nuc in enumerate(self.unique_nuclei):
+            if n == 0:
+                of.write(f"{self.indent*n_indent}if constexpr (spec == {nuc.cindex()}) {{\n")
+            else:
+                of.write(f"{self.indent*n_indent}else if constexpr (spec == {nuc.cindex()}) {{\n")
+            of.write(f"{self.indent*(n_indent+1)}return {nuc.nucbind * nuc.A}_rt;\n")
+            of.write(f"{self.indent*(n_indent)}}}\n")
+
+    def _cxxify(self, s):
+        # Replace std::pow(x, n) with amrex::Math::powi<n>(x) for amrexastro_cxx_network
+
+        cxx_code = super()._cxxify(s)
+        std_pow_pattern = r"std::pow\(([^,]+),\s*(\d+)\)"
+        amrex_powi_replacement = r"amrex::Math::powi<\2>(\1)"
+        return re.sub(std_pow_pattern, amrex_powi_replacement, cxx_code)
 
     def _write_network(self, odir=None):
         """

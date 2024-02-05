@@ -308,37 +308,37 @@ fill_reaclib_rates(const tf_t& tfactors, T& rate_eval)
 
     rate_He4_Fe52_to_Ni56<do_T_derivatives>(tfactors, rate, drate_dT);
     rate_eval.screened_rates(k_He4_Fe52_to_Ni56) = rate;
-    if constexpr (std::is_same<T, rate_derivs_t>::value) {
+    if constexpr (std::is_same_v<T, rate_derivs_t>) {
         rate_eval.dscreened_rates_dT(k_He4_Fe52_to_Ni56) = drate_dT;
 
     }
     rate_p_Co55_to_Ni56<do_T_derivatives>(tfactors, rate, drate_dT);
     rate_eval.screened_rates(k_p_Co55_to_Ni56) = rate;
-    if constexpr (std::is_same<T, rate_derivs_t>::value) {
+    if constexpr (std::is_same_v<T, rate_derivs_t>) {
         rate_eval.dscreened_rates_dT(k_p_Co55_to_Ni56) = drate_dT;
 
     }
     rate_He4_Fe52_to_p_Co55<do_T_derivatives>(tfactors, rate, drate_dT);
     rate_eval.screened_rates(k_He4_Fe52_to_p_Co55) = rate;
-    if constexpr (std::is_same<T, rate_derivs_t>::value) {
+    if constexpr (std::is_same_v<T, rate_derivs_t>) {
         rate_eval.dscreened_rates_dT(k_He4_Fe52_to_p_Co55) = drate_dT;
 
     }
     rate_Ni56_to_He4_Fe52_derived<do_T_derivatives>(tfactors, rate, drate_dT);
     rate_eval.screened_rates(k_Ni56_to_He4_Fe52_derived) = rate;
-    if constexpr (std::is_same<T, rate_derivs_t>::value) {
+    if constexpr (std::is_same_v<T, rate_derivs_t>) {
         rate_eval.dscreened_rates_dT(k_Ni56_to_He4_Fe52_derived) = drate_dT;
 
     }
     rate_Ni56_to_p_Co55_derived<do_T_derivatives>(tfactors, rate, drate_dT);
     rate_eval.screened_rates(k_Ni56_to_p_Co55_derived) = rate;
-    if constexpr (std::is_same<T, rate_derivs_t>::value) {
+    if constexpr (std::is_same_v<T, rate_derivs_t>) {
         rate_eval.dscreened_rates_dT(k_Ni56_to_p_Co55_derived) = drate_dT;
 
     }
     rate_p_Co55_to_He4_Fe52_derived<do_T_derivatives>(tfactors, rate, drate_dT);
     rate_eval.screened_rates(k_p_Co55_to_He4_Fe52_derived) = rate;
-    if constexpr (std::is_same<T, rate_derivs_t>::value) {
+    if constexpr (std::is_same_v<T, rate_derivs_t>) {
         rate_eval.dscreened_rates_dT(k_p_Co55_to_He4_Fe52_derived) = drate_dT;
 
     }
