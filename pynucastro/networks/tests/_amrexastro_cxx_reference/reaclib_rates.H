@@ -212,31 +212,31 @@ fill_reaclib_rates(const tf_t& tfactors, T& rate_eval)
 
     rate_C12_C12_to_He4_Ne20<do_T_derivatives>(tfactors, rate, drate_dT);
     rate_eval.screened_rates(k_C12_C12_to_He4_Ne20) = rate;
-    if constexpr (std::is_same<T, rate_derivs_t>::value) {
+    if constexpr (std::is_same_v<T, rate_derivs_t>) {
         rate_eval.dscreened_rates_dT(k_C12_C12_to_He4_Ne20) = drate_dT;
 
     }
     rate_C12_C12_to_n_Mg23<do_T_derivatives>(tfactors, rate, drate_dT);
     rate_eval.screened_rates(k_C12_C12_to_n_Mg23) = rate;
-    if constexpr (std::is_same<T, rate_derivs_t>::value) {
+    if constexpr (std::is_same_v<T, rate_derivs_t>) {
         rate_eval.dscreened_rates_dT(k_C12_C12_to_n_Mg23) = drate_dT;
 
     }
     rate_C12_C12_to_p_Na23<do_T_derivatives>(tfactors, rate, drate_dT);
     rate_eval.screened_rates(k_C12_C12_to_p_Na23) = rate;
-    if constexpr (std::is_same<T, rate_derivs_t>::value) {
+    if constexpr (std::is_same_v<T, rate_derivs_t>) {
         rate_eval.dscreened_rates_dT(k_C12_C12_to_p_Na23) = drate_dT;
 
     }
     rate_He4_C12_to_O16<do_T_derivatives>(tfactors, rate, drate_dT);
     rate_eval.screened_rates(k_He4_C12_to_O16) = rate;
-    if constexpr (std::is_same<T, rate_derivs_t>::value) {
+    if constexpr (std::is_same_v<T, rate_derivs_t>) {
         rate_eval.dscreened_rates_dT(k_He4_C12_to_O16) = drate_dT;
 
     }
     rate_n_to_p_weak_wc12<do_T_derivatives>(tfactors, rate, drate_dT);
     rate_eval.screened_rates(k_n_to_p_weak_wc12) = rate;
-    if constexpr (std::is_same<T, rate_derivs_t>::value) {
+    if constexpr (std::is_same_v<T, rate_derivs_t>) {
         rate_eval.dscreened_rates_dT(k_n_to_p_weak_wc12) = drate_dT;
 
     }
