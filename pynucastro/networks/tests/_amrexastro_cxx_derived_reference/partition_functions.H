@@ -17,7 +17,7 @@ namespace part_fun {
 
     // this is T9
 
-    MICROPHYSICS_UNUSED HIP_CONSTEXPR static AMREX_GPU_MANAGED amrex::Real temp_array_1[npts_1] = {
+    MICROPHYSICS_UNUSED HIP_CONSTEXPR static AMREX_GPU_MANAGED amrex::amrex::Real temp_array_1[npts_1] = {
         0.01, 0.15, 0.2, 0.3, 0.4,
         0.5, 0.6, 0.7, 0.8, 0.9,
         1.0, 1.5, 2.0, 2.5, 3.0,
@@ -38,7 +38,7 @@ namespace part_fun {
 
     // this is log10(partition function)
 
-    MICROPHYSICS_UNUSED HIP_CONSTEXPR static AMREX_GPU_MANAGED amrex::Real Fe52_pf_array[npts_1] = {
+    MICROPHYSICS_UNUSED HIP_CONSTEXPR static AMREX_GPU_MANAGED amrex::amrex::Real Fe52_pf_array[npts_1] = {
         0.0, 0.0, 0.0, 0.0, 0.0,
         0.0, 0.0, 1.7371744532199383e-06, 9.554373504133797e-06, 3.778197643341552e-05,
         0.00011333607006293108, 0.0030242952161453874, 0.015422212189991184, 0.040215337130588114, 0.07478865660777631,
@@ -58,7 +58,7 @@ namespace part_fun {
 
     // this is log10(partition function)
 
-    MICROPHYSICS_UNUSED HIP_CONSTEXPR static AMREX_GPU_MANAGED amrex::Real Co55_pf_array[npts_1] = {
+    MICROPHYSICS_UNUSED HIP_CONSTEXPR static AMREX_GPU_MANAGED amrex::amrex::Real Co55_pf_array[npts_1] = {
         0.0, 0.0, 0.0, 0.0, 0.0,
         0.0, 0.0, 0.0, 0.0, 0.0,
         0.0, 0.0, 8.685880952436747e-07, 1.4331481434642371e-05, 9.336327741651445e-05,
@@ -78,7 +78,7 @@ namespace part_fun {
 
     // this is log10(partition function)
 
-    MICROPHYSICS_UNUSED HIP_CONSTEXPR static AMREX_GPU_MANAGED amrex::Real Ni56_pf_array[npts_1] = {
+    MICROPHYSICS_UNUSED HIP_CONSTEXPR static AMREX_GPU_MANAGED amrex::amrex::Real Ni56_pf_array[npts_1] = {
         0.0, 0.0, 0.0, 0.0, 0.0,
         0.0, 0.0, 0.0, 0.0, 0.0,
         0.0, 0.0, 4.342942647204277e-07, 7.817230319428646e-06, 6.42708273977769e-05,
@@ -102,8 +102,8 @@ namespace part_fun {
 
     template <int npts>
     AMREX_GPU_HOST_DEVICE AMREX_INLINE
-    void interpolate_pf(const Real t9, const Real (&temp_array)[npts], const Real (&pf_array)[npts],
-                        Real& pf, Real& dpf_dT) {
+    void interpolate_pf(const amrex::Real t9, const amrex::Real (&temp_array)[npts], const amrex::Real (&pf_array)[npts],
+                        amrex::Real& pf, amrex::Real& dpf_dT) {
 
         if (t9 >= temp_array[0] && t9 < temp_array[npts-1]) {
 
@@ -127,16 +127,16 @@ namespace part_fun {
 
             // construct the slope -- this is (log10(pf_{i+1}) - log10(pf_i)) / (T_{i+1} - T_i)
 
-            Real slope = (pf_array[idx+1] - pf_array[idx]) / (temp_array[idx+1] - temp_array[idx]);
+            amrex::Real slope = (pf_array[idx+1] - pf_array[idx]) / (temp_array[idx+1] - temp_array[idx]);
 
             // find the PF
 
-            Real log10_pf = pf_array[idx] + slope * (t9 - temp_array[idx]);
+            amrex::Real log10_pf = pf_array[idx] + slope * (t9 - temp_array[idx]);
             pf = std::pow(10.0_rt, log10_pf);
 
             // find the derivative (with respect to T, not T9)
 
-            Real dpf_dT9 = pf * M_LN10 * slope;
+            amrex::Real dpf_dT9 = pf * M_LN10 * slope;
             dpf_dT = dpf_dT9 / 1.e9_rt;
 
         } else {
@@ -155,7 +155,7 @@ namespace part_fun {
 
 AMREX_GPU_HOST_DEVICE AMREX_INLINE
 void get_partition_function(const int inuc, [[maybe_unused]] const tf_t& tfactors,
-                            Real& pf, Real& dpf_dT) {
+                            amrex::Real& pf, amrex::Real& dpf_dT) {
 
     // inuc is the 1-based index for the species
 
@@ -186,9 +186,9 @@ void get_partition_function(const int inuc, [[maybe_unused]] const tf_t& tfactor
 // spins
 
 AMREX_GPU_HOST_DEVICE AMREX_INLINE
-constexpr Real get_spin_state(const int inuc) {
+constexpr amrex::Real get_spin_state(const int inuc) {
 
-    Real spin = -1.0;
+    amrex::Real spin = -1.0;
 
     switch (inuc) {
 

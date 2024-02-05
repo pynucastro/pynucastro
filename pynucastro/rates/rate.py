@@ -1854,7 +1854,7 @@ class DerivedRate(ReacLibRate):
 
             fstring += "\n"
             for nuc in set(self.rate.reactants + self.rate.products):
-                fstring += f"    Real {nuc}_pf, d{nuc}_pf_dT;\n"
+                fstring += f"    amrex::Real {nuc}_pf, d{nuc}_pf_dT;\n"
 
                 if nuc.partition_function:
                     fstring += f"    // interpolating {nuc} partition function\n"
@@ -1865,11 +1865,11 @@ class DerivedRate(ReacLibRate):
                     fstring += f"    d{nuc}_pf_dT = 0.0_rt;\n"
                 fstring += "\n"
 
-            fstring += "    Real z_r = "
+            fstring += "    amrex::Real z_r = "
             fstring += " * ".join([f"{nucr}_pf" for nucr in self.rate.reactants])
             fstring += ";\n"
 
-            fstring += "    Real z_p = "
+            fstring += "    amrex::Real z_p = "
             fstring += " * ".join([f"{nucp}_pf" for nucp in self.rate.products])
             fstring += ";\n\n"
 
@@ -1878,7 +1878,7 @@ class DerivedRate(ReacLibRate):
             for n in self.rate.reactants:
                 chain_terms.append(" * ".join([f"{nucr}_pf" for nucr in self.rate.reactants if nucr != n] + [f"d{n}_pf_dT"]))
 
-            fstring += "    Real dz_r_dT = "
+            fstring += "    amrex::Real dz_r_dT = "
             fstring += " + ".join(chain_terms)
             fstring += ";\n"
 
@@ -1886,11 +1886,11 @@ class DerivedRate(ReacLibRate):
             for n in self.rate.products:
                 chain_terms.append(" * ".join([f"{nucp}_pf" for nucp in self.rate.products if nucp != n] + [f"d{n}_pf_dT"]))
 
-            fstring += "    Real dz_p_dT = "
+            fstring += "    amrex::Real dz_p_dT = "
             fstring += " + ".join(chain_terms)
             fstring += ";\n\n"
 
-            fstring += "    Real dzterm_dT = (z_p * dz_r_dT - z_r * dz_p_dT) / (z_p * z_p);\n\n"
+            fstring += "    amrex::Real dzterm_dT = (z_p * dz_r_dT - z_r * dz_p_dT) / (z_p * z_p);\n\n"
 
             # final terms
 

@@ -12,8 +12,8 @@ const std::string network_name = "pynucastro-cxx";
 
 namespace network
 {
-    extern Array1D<Real, 1, NumSpec> bion;
-    extern Array1D<Real, 1, NumSpec> mion;
+    extern Array1D<amrex::Real, 1, NumSpec> bion;
+    extern Array1D<amrex::Real, 1, NumSpec> mion;
 }
 
 namespace Rates
