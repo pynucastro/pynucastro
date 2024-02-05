@@ -85,6 +85,7 @@ def _skip_xp(n, p, r):
 
     return False
 
+
 class Composition:
     """a composition holds the mass fractions of the nuclei in a network
     -- useful for evaluating the rates
