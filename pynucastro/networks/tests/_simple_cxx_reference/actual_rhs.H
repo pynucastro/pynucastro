@@ -14,7 +14,7 @@ using namespace Rates;
 
 template<class T>
 inline
-void ener_gener_rate(T const& dydt, amrex::Real& enuc)
+void ener_gener_rate(T const& dydt, Real& enuc)
 {
 
     // Computes the instantaneous energy generation rate (from the nuclei)
@@ -37,7 +37,7 @@ void evaluate_rates(const burn_t& state, T& rate_eval) {
 
     // create molar fractions
 
-    amrex::Array1D<amrex::Real, 1, NumSpec> Y;
+    Array1D<Real, 1, NumSpec> Y;
     for (int n = 1; n <= NumSpec; ++n) {
         Y(n) = state.xn[n-1] * aion_inv[n-1];
     }
@@ -56,9 +56,9 @@ void evaluate_rates(const burn_t& state, T& rate_eval) {
 
 inline
 void rhs_nuc(const burn_t& state,
-             amrex::Array1D<amrex::Real, 1, NumSpec>& ydot_nuc,
-             const amrex::Array1D<amrex::Real, 1, NumSpec>& Y,
-             const amrex::Array1D<amrex::Real, 1, NumRates>& screened_rates) {
+             Array1D<Real, 1, NumSpec>& ydot_nuc,
+             const Array1D<Real, 1, NumSpec>& Y,
+             const Array1D<Real, 1, NumRates>& screened_rates) {
 
     using namespace Rates;
 
@@ -96,7 +96,7 @@ void rhs_nuc(const burn_t& state,
 
 
 inline
-void actual_rhs (burn_t& state, amrex::Array1D<amrex::Real, 1, NumSpec>& ydot)
+void actual_rhs (burn_t& state, Array1D<Real, 1, NumSpec>& ydot)
 {
     for (int i = 1; i <= NumSpec; ++i) {
         ydot(i) = 0.0_rt;
@@ -104,7 +104,7 @@ void actual_rhs (burn_t& state, amrex::Array1D<amrex::Real, 1, NumSpec>& ydot)
 
 
     // Set molar abundances
-    amrex::Array1D<amrex::Real, 1, NumSpec> Y;
+    Array1D<Real, 1, NumSpec> Y;
     for (int i = 1; i <= NumSpec; ++i) {
         Y(i) = state.xn[i-1] * aion_inv[i-1];
     }
@@ -125,11 +125,11 @@ template<class MatrixType>
 inline
 void jac_nuc(const burn_t& state,
              MatrixType& jac,
-             const amrex::Array1D<amrex::Real, 1, NumSpec>& Y,
-             const amrex::Array1D<amrex::Real, 1, NumRates>& screened_rates)
+             const Array1D<Real, 1, NumSpec>& Y,
+             const Array1D<Real, 1, NumRates>& screened_rates)
 {
 
-    amrex::Real scratch;
+    Real scratch;
 
     scratch = -screened_rates(k_n_to_p_weak_wc12);
     jac.set(N, N, scratch);
@@ -181,7 +181,7 @@ void actual_jac(const burn_t& state, MatrixType& jac)
 {
 
     // Set molar abundances
-    amrex::Array1D<amrex::Real, 1, NumSpec> Y;
+    Array1D<Real, 1, NumSpec> Y;
     for (int i = 1; i <= NumSpec; ++i) {
         Y(i) = state.xn[i-1] * aion_inv[i-1];
     }
