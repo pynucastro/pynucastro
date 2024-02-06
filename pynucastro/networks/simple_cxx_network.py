@@ -15,6 +15,7 @@ class SimpleCxxNetwork(BaseCxxNetwork):
 
         self.function_specifier = "inline"
         self.dtype = "Real"
+        self.array_namespace = ""
 
     def _get_template_files(self):
 
