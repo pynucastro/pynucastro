@@ -30,7 +30,8 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
 
         self.disable_rate_params = disable_rate_params
         self.function_specifier = "AMREX_GPU_HOST_DEVICE AMREX_INLINE"
-        self.dtype = "Real"
+        self.dtype = "amrex::Real"
+        self.array_namespace = "amrex::"
 
     def _get_template_files(self):
 
