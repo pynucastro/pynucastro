@@ -86,14 +86,14 @@ void evaluate_rates(const burn_t& state, T& rate_eval) {
 
     ratraw = rate_eval.screened_rates(k_He4_Mg24_to_Si28_removed);
     rate_eval.screened_rates(k_He4_Mg24_to_Si28_removed) *= scor;
-    if constexpr (std::is_same<T, rate_derivs_t>::value) {
+    if constexpr (std::is_same_v<T, rate_derivs_t>) {
         dratraw_dT = rate_eval.dscreened_rates_dT(k_He4_Mg24_to_Si28_removed);
         rate_eval.dscreened_rates_dT(k_He4_Mg24_to_Si28_removed) = ratraw * dscor_dt + dratraw_dT * scor;
     }
 
     ratraw = rate_eval.screened_rates(k_He4_Mg24_to_p_Al27_removed);
     rate_eval.screened_rates(k_He4_Mg24_to_p_Al27_removed) *= scor;
-    if constexpr (std::is_same<T, rate_derivs_t>::value) {
+    if constexpr (std::is_same_v<T, rate_derivs_t>) {
         dratraw_dT = rate_eval.dscreened_rates_dT(k_He4_Mg24_to_p_Al27_removed);
         rate_eval.dscreened_rates_dT(k_He4_Mg24_to_p_Al27_removed) = ratraw * dscor_dt + dratraw_dT * scor;
     }
@@ -112,14 +112,14 @@ void evaluate_rates(const burn_t& state, T& rate_eval) {
 
     ratraw = rate_eval.screened_rates(k_p_Al27_to_Si28_removed);
     rate_eval.screened_rates(k_p_Al27_to_Si28_removed) *= scor;
-    if constexpr (std::is_same<T, rate_derivs_t>::value) {
+    if constexpr (std::is_same_v<T, rate_derivs_t>) {
         dratraw_dT = rate_eval.dscreened_rates_dT(k_p_Al27_to_Si28_removed);
         rate_eval.dscreened_rates_dT(k_p_Al27_to_Si28_removed) = ratraw * dscor_dt + dratraw_dT * scor;
     }
 
     ratraw = rate_eval.screened_rates(k_p_Al27_to_He4_Mg24_removed);
     rate_eval.screened_rates(k_p_Al27_to_He4_Mg24_removed) *= scor;
-    if constexpr (std::is_same<T, rate_derivs_t>::value) {
+    if constexpr (std::is_same_v<T, rate_derivs_t>) {
         dratraw_dT = rate_eval.dscreened_rates_dT(k_p_Al27_to_He4_Mg24_removed);
         rate_eval.dscreened_rates_dT(k_p_Al27_to_He4_Mg24_removed) = ratraw * dscor_dt + dratraw_dT * scor;
     }
@@ -138,14 +138,14 @@ void evaluate_rates(const burn_t& state, T& rate_eval) {
 
     ratraw = rate_eval.screened_rates(k_He4_Si28_to_S32_removed);
     rate_eval.screened_rates(k_He4_Si28_to_S32_removed) *= scor;
-    if constexpr (std::is_same<T, rate_derivs_t>::value) {
+    if constexpr (std::is_same_v<T, rate_derivs_t>) {
         dratraw_dT = rate_eval.dscreened_rates_dT(k_He4_Si28_to_S32_removed);
         rate_eval.dscreened_rates_dT(k_He4_Si28_to_S32_removed) = ratraw * dscor_dt + dratraw_dT * scor;
     }
 
     ratraw = rate_eval.screened_rates(k_He4_Si28_to_p_P31_removed);
     rate_eval.screened_rates(k_He4_Si28_to_p_P31_removed) *= scor;
-    if constexpr (std::is_same<T, rate_derivs_t>::value) {
+    if constexpr (std::is_same_v<T, rate_derivs_t>) {
         dratraw_dT = rate_eval.dscreened_rates_dT(k_He4_Si28_to_p_P31_removed);
         rate_eval.dscreened_rates_dT(k_He4_Si28_to_p_P31_removed) = ratraw * dscor_dt + dratraw_dT * scor;
     }
@@ -164,14 +164,14 @@ void evaluate_rates(const burn_t& state, T& rate_eval) {
 
     ratraw = rate_eval.screened_rates(k_p_P31_to_S32_removed);
     rate_eval.screened_rates(k_p_P31_to_S32_removed) *= scor;
-    if constexpr (std::is_same<T, rate_derivs_t>::value) {
+    if constexpr (std::is_same_v<T, rate_derivs_t>) {
         dratraw_dT = rate_eval.dscreened_rates_dT(k_p_P31_to_S32_removed);
         rate_eval.dscreened_rates_dT(k_p_P31_to_S32_removed) = ratraw * dscor_dt + dratraw_dT * scor;
     }
 
     ratraw = rate_eval.screened_rates(k_p_P31_to_He4_Si28_removed);
     rate_eval.screened_rates(k_p_P31_to_He4_Si28_removed) *= scor;
-    if constexpr (std::is_same<T, rate_derivs_t>::value) {
+    if constexpr (std::is_same_v<T, rate_derivs_t>) {
         dratraw_dT = rate_eval.dscreened_rates_dT(k_p_P31_to_He4_Si28_removed);
         rate_eval.dscreened_rates_dT(k_p_P31_to_He4_Si28_removed) = ratraw * dscor_dt + dratraw_dT * scor;
     }
