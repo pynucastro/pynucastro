@@ -86,14 +86,14 @@ void evaluate_rates(const burn_t& state, T& rate_eval) {
 
     ratraw = rate_eval.screened_rates(k_He4_Fe52_to_Ni56);
     rate_eval.screened_rates(k_He4_Fe52_to_Ni56) *= scor;
-    if constexpr (std::is_same<T, rate_derivs_t>::value) {
+    if constexpr (std::is_same_v<T, rate_derivs_t>) {
         dratraw_dT = rate_eval.dscreened_rates_dT(k_He4_Fe52_to_Ni56);
         rate_eval.dscreened_rates_dT(k_He4_Fe52_to_Ni56) = ratraw * dscor_dt + dratraw_dT * scor;
     }
 
     ratraw = rate_eval.screened_rates(k_He4_Fe52_to_p_Co55);
     rate_eval.screened_rates(k_He4_Fe52_to_p_Co55) *= scor;
-    if constexpr (std::is_same<T, rate_derivs_t>::value) {
+    if constexpr (std::is_same_v<T, rate_derivs_t>) {
         dratraw_dT = rate_eval.dscreened_rates_dT(k_He4_Fe52_to_p_Co55);
         rate_eval.dscreened_rates_dT(k_He4_Fe52_to_p_Co55) = ratraw * dscor_dt + dratraw_dT * scor;
     }
@@ -112,14 +112,14 @@ void evaluate_rates(const burn_t& state, T& rate_eval) {
 
     ratraw = rate_eval.screened_rates(k_p_Co55_to_Ni56);
     rate_eval.screened_rates(k_p_Co55_to_Ni56) *= scor;
-    if constexpr (std::is_same<T, rate_derivs_t>::value) {
+    if constexpr (std::is_same_v<T, rate_derivs_t>) {
         dratraw_dT = rate_eval.dscreened_rates_dT(k_p_Co55_to_Ni56);
         rate_eval.dscreened_rates_dT(k_p_Co55_to_Ni56) = ratraw * dscor_dt + dratraw_dT * scor;
     }
 
     ratraw = rate_eval.screened_rates(k_p_Co55_to_He4_Fe52_derived);
     rate_eval.screened_rates(k_p_Co55_to_He4_Fe52_derived) *= scor;
-    if constexpr (std::is_same<T, rate_derivs_t>::value) {
+    if constexpr (std::is_same_v<T, rate_derivs_t>) {
         dratraw_dT = rate_eval.dscreened_rates_dT(k_p_Co55_to_He4_Fe52_derived);
         rate_eval.dscreened_rates_dT(k_p_Co55_to_He4_Fe52_derived) = ratraw * dscor_dt + dratraw_dT * scor;
     }
