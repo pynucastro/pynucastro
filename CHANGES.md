@@ -9,6 +9,9 @@
   * Documentation improvements, including references and contributing
     instructions, and NSE table (#669, #679, #695, #697, #706, #707)
 
+  * Clean-up up some plot interfaces to always take rho, T, comp in
+    that order (#693)
+
   * Performance improvements (#680, #685, #692)
 
   * A new constants module was added to provide fundamental constants
@@ -24,6 +27,8 @@
 
   * A new NSENetwork class was added for dealing with NSE (#675)
 
+  * Moved some screening utilities out of RateCollection (#666)
+  
   * A PythonNetwork now write out a function to compute the energy
     release (#640)
 
