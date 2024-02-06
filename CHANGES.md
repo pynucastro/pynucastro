@@ -1,3 +1,32 @@
+# 2.2.0
+
+  * Switch to using math.fsum() instead of sum() for better python
+    3.12 compatibility (#720)
+
+  * Some modernization of the AMReX-Astro C++ code output (#709, #714,
+    #717)
+
+  * Documentation improvements, including references and contributing
+    instructions, and NSE table (#669, #679, #695, #697, #706, #707)
+
+  * Performance improvements (#680, #685, #692)
+
+  * A new constants module was added to provide fundamental constants
+    (#688)
+
+  * A new NumpyNetwork was added for use with the rate reduction
+    algorithm (#684)
+
+  * Neutrino cooling routines based on Itoh et al. 1996 were added
+    (#628)
+
+  * A new method for generating an NSE table was added (#676)
+
+  * A new NSENetwork class was added for dealing with NSE (#675)
+
+  * A PythonNetwork now write out a function to compute the energy
+    release (#640)
+
 # 2.1.1
 
   * `RateCollection.evaluate_energy_generation()` can now return the
