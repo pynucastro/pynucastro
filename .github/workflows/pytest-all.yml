@@ -45,7 +45,7 @@ jobs:
           lscpu
 
       - name: Run tests with pytest
-        run: pytest -v -s --nbval --cov=pynucastro
+        run: pytest -v -s --nbval --cov=pynucastro --color=yes
 
       - name: Upload output from failed write_network tests
         uses: actions/upload-artifact@v4
