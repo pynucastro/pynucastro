@@ -110,7 +110,7 @@ class Composition:
 
     def get_sum_X(self):
         """return the sum of the mass fractions"""
-        return sum(self.X[q] for q in self.X)
+        return math.fsum(self.X[q] for q in self.X)
 
     def set_solar_like(self, Z=0.02):
         """ approximate a solar abundance, setting p to 0.7, He4 to 0.3 - Z and
@@ -144,7 +144,7 @@ class Composition:
 
     def normalize(self):
         """ normalize the mass fractions to sum to 1 """
-        X_sum = sum(self.X[k] for k in self.X)
+        X_sum = self.get_sum_X()
 
         for k in self.X:
             self.X[k] /= X_sum
@@ -156,12 +156,12 @@ class Composition:
 
     def eval_ye(self):
         """ return the electron fraction """
-        electron_frac = sum(self.X[n] * n.Z / n.A for n in self.X) / sum(self.X[n] for n in self.X)
+        electron_frac = math.fsum(self.X[n] * n.Z / n.A for n in self.X) / math.fsum(self.X[n] for n in self.X)
         return electron_frac
 
     def eval_abar(self):
         """ return the mean molecular weight """
-        abar = sum(self.X[n] / n.A for n in self.X)
+        abar = math.fsum(self.X[n] / n.A for n in self.X)
         return 1. / abar
 
     def eval_zbar(self):
