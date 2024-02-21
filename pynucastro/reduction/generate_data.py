@@ -21,7 +21,7 @@ def dataset(network, n=10, permute=True, b_rho=None, b_T=None, b_Z=None):
 
     # Bounds on each variable
     if b_rho is None:
-        b_rho = (1e2, 1e6)  # density (g/cm^3)
+        b_rho = (1e2, 1e4)  # density (g/cm^3)
     if b_T is None:
         b_T = (8e6, 1.5e9)  # temperature (K)
     if b_Z is None:
