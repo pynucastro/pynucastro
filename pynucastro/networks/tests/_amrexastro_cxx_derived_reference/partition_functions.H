@@ -190,7 +190,7 @@ constexpr amrex::Real get_spin_state(const int inuc) {
 
     amrex::Real spin = -1.0;
 
-    switch (inuc) {
+    switch (inuc) {  // NOLINT(bugprone-switch-missing-default-case)
 
     case He4:
     case Fe52:
