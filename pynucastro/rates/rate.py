@@ -1209,16 +1209,17 @@ class ReacLibRate(Rate):
         fstring += f"    rate_eval.{self.fname} = rate\n\n"
         return fstring
 
-    def function_string_cxx(self, dtype="double", specifiers="inline", leave_open=False):
+    def function_string_cxx(self, dtype="double", specifiers="inline", leave_open=False, extra_args=()):
         """
         Return a string containing C++ function that computes the
         rate
         """
 
+        args = ["const tf_t& tfactors", f"{dtype}& rate", f"{dtype}& drate_dT", *extra_args]
         fstring = ""
         fstring += "template <int do_T_derivatives>\n"
         fstring += f"{specifiers}\n"
-        fstring += f"void rate_{self.cname()}(const tf_t& tfactors, {dtype}& rate, {dtype}& drate_dT) {{\n\n"
+        fstring += f"void rate_{self.cname()}({', '.join(args)}) {{\n\n"
         fstring += f"    // {self.rid}\n\n"
         fstring += "    rate = 0.0;\n"
         fstring += "    drate_dT = 0.0;\n\n"
@@ -1845,7 +1846,8 @@ class DerivedRate(ReacLibRate):
 
         self._warn_about_missing_pf_tables()
 
-        fstring = super().function_string_cxx(dtype=dtype, specifiers=specifiers, leave_open=True)
+        extra_args = ["[[maybe_unused]] part_fun::pf_cache_t& pf_cache"]
+        fstring = super().function_string_cxx(dtype=dtype, specifiers=specifiers, leave_open=True, extra_args=extra_args)
 
         # right now we have rate and drate_dT without the partition function
         # now the partition function corrections
@@ -1858,7 +1860,7 @@ class DerivedRate(ReacLibRate):
 
                 if nuc.partition_function:
                     fstring += f"    // interpolating {nuc} partition function\n"
-                    fstring += f"    get_partition_function({nuc.cindex()}, tfactors, {nuc}_pf, d{nuc}_pf_dT);\n"
+                    fstring += f"    get_partition_function_cached({nuc.cindex()}, tfactors, pf_cache, {nuc}_pf, d{nuc}_pf_dT);\n"
                 else:
                     fstring += f"    // setting {nuc} partition function to 1.0 by default, independent of T\n"
                     fstring += f"    {nuc}_pf = 1.0_rt;\n"
