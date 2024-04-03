@@ -1838,7 +1838,7 @@ class DerivedRate(ReacLibRate):
 
         return fstring
 
-    def function_string_cxx(self, dtype="double", specifiers="inline", leave_open=False):
+    def function_string_cxx(self, dtype="double", specifiers="inline", leave_open=False, extra_args=()):
         """
         Return a string containing C++ function that computes the
         rate
@@ -1846,7 +1846,7 @@ class DerivedRate(ReacLibRate):
 
         self._warn_about_missing_pf_tables()
 
-        extra_args = ["[[maybe_unused]] part_fun::pf_cache_t& pf_cache"]
+        extra_args = ["[[maybe_unused]] part_fun::pf_cache_t& pf_cache", *extra_args]
         fstring = super().function_string_cxx(dtype=dtype, specifiers=specifiers, leave_open=True, extra_args=extra_args)
 
         # right now we have rate and drate_dT without the partition function
@@ -2122,7 +2122,7 @@ class ApproximateRate(ReacLibRate):
         string += f"    rate_eval.{self.fname} = rate\n\n"
         return string
 
-    def function_string_cxx(self, dtype="double", specifiers="inline", leave_open=False):
+    def function_string_cxx(self, dtype="double", specifiers="inline", leave_open=False, extra_args=()):
         """
         Return a string containing C++ function that computes the
         approximate rate
@@ -2131,10 +2131,11 @@ class ApproximateRate(ReacLibRate):
         if self.approx_type != "ap_pg":
             raise NotImplementedError("don't know how to work with this approximation")
 
+        args = ["const T& rate_eval", f"{dtype}& rate", f"{dtype}& drate_dT", *extra_args]
         fstring = ""
         fstring = "template <typename T>\n"
         fstring += f"{specifiers}\n"
-        fstring += f"void rate_{self.cname()}(const T& rate_eval, {dtype}& rate, {dtype}& drate_dT) {{\n\n"
+        fstring += f"void rate_{self.cname()}({', '.join(args)}) {{\n\n"
 
         if not self.is_reverse:
 
