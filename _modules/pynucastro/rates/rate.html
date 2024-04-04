@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.rates.rate &mdash; pynucastro 2.2.0.post1+gec812693 documentation</title>
+  <title>pynucastro.rates.rate &mdash; pynucastro 2.2.0.post2+g7a258783 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
       <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -16,7 +16,7 @@
   
         <script src="../../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../_static/documentation_options.js?v=88f39ef7"></script>
+        <script src="../../../_static/documentation_options.js?v=4cf02199"></script>
         <script src="../../../_static/doctools.js?v=888ff710"></script>
         <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
         <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -1421,16 +1421,17 @@
 
 <div class="viewcode-block" id="ReacLibRate.function_string_cxx">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.ReacLibRate.function_string_cxx">[docs]</a>
-    <span class="k">def</span> <span class="nf">function_string_cxx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;double&quot;</span><span class="p">,</span> <span class="n">specifiers</span><span class="o">=</span><span class="s2">&quot;inline&quot;</span><span class="p">,</span> <span class="n">leave_open</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">function_string_cxx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;double&quot;</span><span class="p">,</span> <span class="n">specifiers</span><span class="o">=</span><span class="s2">&quot;inline&quot;</span><span class="p">,</span> <span class="n">leave_open</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">extra_args</span><span class="o">=</span><span class="p">()):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return a string containing C++ function that computes the</span>
 <span class="sd">        rate</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
+        <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;const tf_t&amp; tfactors&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2">&amp; rate&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2">&amp; drate_dT&quot;</span><span class="p">,</span> <span class="o">*</span><span class="n">extra_args</span><span class="p">]</span>
         <span class="n">fstring</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;template &lt;int do_T_derivatives&gt;</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">specifiers</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;void rate_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">cname</span><span class="p">()</span><span class="si">}</span><span class="s2">(const tf_t&amp; tfactors, </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2">&amp; rate, </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2">&amp; drate_dT) </span><span class="se">{{\n\n</span><span class="s2">&quot;</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;void rate_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">cname</span><span class="p">()</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">args</span><span class="p">)</span><span class="si">}</span><span class="s2">) </span><span class="se">{{\n\n</span><span class="s2">&quot;</span>
         <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    // </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rid</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">&quot;</span>
         <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    rate = 0.0;</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    drate_dT = 0.0;</span><span class="se">\n\n</span><span class="s2">&quot;</span>
@@ -2097,7 +2098,7 @@
 
 <div class="viewcode-block" id="DerivedRate.function_string_cxx">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.DerivedRate.function_string_cxx">[docs]</a>
-    <span class="k">def</span> <span class="nf">function_string_cxx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;double&quot;</span><span class="p">,</span> <span class="n">specifiers</span><span class="o">=</span><span class="s2">&quot;inline&quot;</span><span class="p">,</span> <span class="n">leave_open</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">function_string_cxx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;double&quot;</span><span class="p">,</span> <span class="n">specifiers</span><span class="o">=</span><span class="s2">&quot;inline&quot;</span><span class="p">,</span> <span class="n">leave_open</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">extra_args</span><span class="o">=</span><span class="p">()):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return a string containing C++ function that computes the</span>
 <span class="sd">        rate</span>
@@ -2105,7 +2106,8 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_warn_about_missing_pf_tables</span><span class="p">()</span>
 
-        <span class="n">fstring</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">function_string_cxx</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span> <span class="n">specifiers</span><span class="o">=</span><span class="n">specifiers</span><span class="p">,</span> <span class="n">leave_open</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">extra_args</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;[[maybe_unused]] part_fun::pf_cache_t&amp; pf_cache&quot;</span><span class="p">,</span> <span class="o">*</span><span class="n">extra_args</span><span class="p">]</span>
+        <span class="n">fstring</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">function_string_cxx</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span> <span class="n">specifiers</span><span class="o">=</span><span class="n">specifiers</span><span class="p">,</span> <span class="n">leave_open</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">extra_args</span><span class="o">=</span><span class="n">extra_args</span><span class="p">)</span>
 
         <span class="c1"># right now we have rate and drate_dT without the partition function</span>
         <span class="c1"># now the partition function corrections</span>
@@ -2118,7 +2120,7 @@
 
                 <span class="k">if</span> <span class="n">nuc</span><span class="o">.</span><span class="n">partition_function</span><span class="p">:</span>
                     <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    // interpolating </span><span class="si">{</span><span class="n">nuc</span><span class="si">}</span><span class="s2"> partition function</span><span class="se">\n</span><span class="s2">&quot;</span>
-                    <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    get_partition_function(</span><span class="si">{</span><span class="n">nuc</span><span class="o">.</span><span class="n">cindex</span><span class="p">()</span><span class="si">}</span><span class="s2">, tfactors, </span><span class="si">{</span><span class="n">nuc</span><span class="si">}</span><span class="s2">_pf, d</span><span class="si">{</span><span class="n">nuc</span><span class="si">}</span><span class="s2">_pf_dT);</span><span class="se">\n</span><span class="s2">&quot;</span>
+                    <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    get_partition_function_cached(</span><span class="si">{</span><span class="n">nuc</span><span class="o">.</span><span class="n">cindex</span><span class="p">()</span><span class="si">}</span><span class="s2">, tfactors, pf_cache, </span><span class="si">{</span><span class="n">nuc</span><span class="si">}</span><span class="s2">_pf, d</span><span class="si">{</span><span class="n">nuc</span><span class="si">}</span><span class="s2">_pf_dT);</span><span class="se">\n</span><span class="s2">&quot;</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    // setting </span><span class="si">{</span><span class="n">nuc</span><span class="si">}</span><span class="s2"> partition function to 1.0 by default, independent of T</span><span class="se">\n</span><span class="s2">&quot;</span>
                     <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">nuc</span><span class="si">}</span><span class="s2">_pf = 1.0_rt;</span><span class="se">\n</span><span class="s2">&quot;</span>
@@ -2401,7 +2403,7 @@
 
 <div class="viewcode-block" id="ApproximateRate.function_string_cxx">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.ApproximateRate.function_string_cxx">[docs]</a>
-    <span class="k">def</span> <span class="nf">function_string_cxx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;double&quot;</span><span class="p">,</span> <span class="n">specifiers</span><span class="o">=</span><span class="s2">&quot;inline&quot;</span><span class="p">,</span> <span class="n">leave_open</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">function_string_cxx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;double&quot;</span><span class="p">,</span> <span class="n">specifiers</span><span class="o">=</span><span class="s2">&quot;inline&quot;</span><span class="p">,</span> <span class="n">leave_open</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">extra_args</span><span class="o">=</span><span class="p">()):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return a string containing C++ function that computes the</span>
 <span class="sd">        approximate rate</span>
@@ -2410,10 +2412,11 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">approx_type</span> <span class="o">!=</span> <span class="s2">&quot;ap_pg&quot;</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;don&#39;t know how to work with this approximation&quot;</span><span class="p">)</span>
 
+        <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;const T&amp; rate_eval&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2">&amp; rate&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2">&amp; drate_dT&quot;</span><span class="p">,</span> <span class="o">*</span><span class="n">extra_args</span><span class="p">]</span>
         <span class="n">fstring</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="n">fstring</span> <span class="o">=</span> <span class="s2">&quot;template &lt;typename T&gt;</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">specifiers</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;void rate_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">cname</span><span class="p">()</span><span class="si">}</span><span class="s2">(const T&amp; rate_eval, </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2">&amp; rate, </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2">&amp; drate_dT) </span><span class="se">{{\n\n</span><span class="s2">&quot;</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;void rate_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">cname</span><span class="p">()</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">args</span><span class="p">)</span><span class="si">}</span><span class="s2">) </span><span class="se">{{\n\n</span><span class="s2">&quot;</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_reverse</span><span class="p">:</span>
 
