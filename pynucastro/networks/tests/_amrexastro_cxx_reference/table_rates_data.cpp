@@ -9,14 +9,14 @@ namespace rate_tables
 {
 
     AMREX_GPU_MANAGED table_t j_Na23_Ne23_meta;
-    AMREX_GPU_MANAGED Array3D<Real, 1, 39, 1, 152, 1, 6> j_Na23_Ne23_data;
-    AMREX_GPU_MANAGED Array1D<Real, 1, 152> j_Na23_Ne23_rhoy;
-    AMREX_GPU_MANAGED Array1D<Real, 1, 39> j_Na23_Ne23_temp;
+    AMREX_GPU_MANAGED amrex::Array3D<amrex::Real, 1, 39, 1, 152, 1, 6> j_Na23_Ne23_data;
+    AMREX_GPU_MANAGED amrex::Array1D<amrex::Real, 1, 152> j_Na23_Ne23_rhoy;
+    AMREX_GPU_MANAGED amrex::Array1D<amrex::Real, 1, 39> j_Na23_Ne23_temp;
 
     AMREX_GPU_MANAGED table_t j_Ne23_Na23_meta;
-    AMREX_GPU_MANAGED Array3D<Real, 1, 39, 1, 152, 1, 6> j_Ne23_Na23_data;
-    AMREX_GPU_MANAGED Array1D<Real, 1, 152> j_Ne23_Na23_rhoy;
-    AMREX_GPU_MANAGED Array1D<Real, 1, 39> j_Ne23_Na23_temp;
+    AMREX_GPU_MANAGED amrex::Array3D<amrex::Real, 1, 39, 1, 152, 1, 6> j_Ne23_Na23_data;
+    AMREX_GPU_MANAGED amrex::Array1D<amrex::Real, 1, 152> j_Ne23_Na23_rhoy;
+    AMREX_GPU_MANAGED amrex::Array1D<amrex::Real, 1, 39> j_Ne23_Na23_temp;
 
 
 }

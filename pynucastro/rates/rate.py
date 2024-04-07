@@ -1209,16 +1209,17 @@ class ReacLibRate(Rate):
         fstring += f"    rate_eval.{self.fname} = rate\n\n"
         return fstring
 
-    def function_string_cxx(self, dtype="double", specifiers="inline", leave_open=False):
+    def function_string_cxx(self, dtype="double", specifiers="inline", leave_open=False, extra_args=()):
         """
         Return a string containing C++ function that computes the
         rate
         """
 
+        args = ["const tf_t& tfactors", f"{dtype}& rate", f"{dtype}& drate_dT", *extra_args]
         fstring = ""
         fstring += "template <int do_T_derivatives>\n"
         fstring += f"{specifiers}\n"
-        fstring += f"void rate_{self.cname()}(const tf_t& tfactors, {dtype}& rate, {dtype}& drate_dT) {{\n\n"
+        fstring += f"void rate_{self.cname()}({', '.join(args)}) {{\n\n"
         fstring += f"    // {self.rid}\n\n"
         fstring += "    rate = 0.0;\n"
         fstring += "    drate_dT = 0.0;\n\n"
@@ -1837,7 +1838,7 @@ class DerivedRate(ReacLibRate):
 
         return fstring
 
-    def function_string_cxx(self, dtype="double", specifiers="inline", leave_open=False):
+    def function_string_cxx(self, dtype="double", specifiers="inline", leave_open=False, extra_args=()):
         """
         Return a string containing C++ function that computes the
         rate
@@ -1845,7 +1846,8 @@ class DerivedRate(ReacLibRate):
 
         self._warn_about_missing_pf_tables()
 
-        fstring = super().function_string_cxx(dtype=dtype, specifiers=specifiers, leave_open=True)
+        extra_args = ["[[maybe_unused]] part_fun::pf_cache_t& pf_cache", *extra_args]
+        fstring = super().function_string_cxx(dtype=dtype, specifiers=specifiers, leave_open=True, extra_args=extra_args)
 
         # right now we have rate and drate_dT without the partition function
         # now the partition function corrections
@@ -1854,22 +1856,22 @@ class DerivedRate(ReacLibRate):
 
             fstring += "\n"
             for nuc in set(self.rate.reactants + self.rate.products):
-                fstring += f"    Real {nuc}_pf, d{nuc}_pf_dT;\n"
+                fstring += f"    {dtype} {nuc}_pf, d{nuc}_pf_dT;\n"
 
                 if nuc.partition_function:
                     fstring += f"    // interpolating {nuc} partition function\n"
-                    fstring += f"    get_partition_function({nuc.cindex()}, tfactors, {nuc}_pf, d{nuc}_pf_dT);\n"
+                    fstring += f"    get_partition_function_cached({nuc.cindex()}, tfactors, pf_cache, {nuc}_pf, d{nuc}_pf_dT);\n"
                 else:
                     fstring += f"    // setting {nuc} partition function to 1.0 by default, independent of T\n"
                     fstring += f"    {nuc}_pf = 1.0_rt;\n"
                     fstring += f"    d{nuc}_pf_dT = 0.0_rt;\n"
                 fstring += "\n"
 
-            fstring += "    Real z_r = "
+            fstring += f"    {dtype} z_r = "
             fstring += " * ".join([f"{nucr}_pf" for nucr in self.rate.reactants])
             fstring += ";\n"
 
-            fstring += "    Real z_p = "
+            fstring += f"    {dtype} z_p = "
             fstring += " * ".join([f"{nucp}_pf" for nucp in self.rate.products])
             fstring += ";\n\n"
 
@@ -1878,7 +1880,7 @@ class DerivedRate(ReacLibRate):
             for n in self.rate.reactants:
                 chain_terms.append(" * ".join([f"{nucr}_pf" for nucr in self.rate.reactants if nucr != n] + [f"d{n}_pf_dT"]))
 
-            fstring += "    Real dz_r_dT = "
+            fstring += f"    {dtype} dz_r_dT = "
             fstring += " + ".join(chain_terms)
             fstring += ";\n"
 
@@ -1886,11 +1888,11 @@ class DerivedRate(ReacLibRate):
             for n in self.rate.products:
                 chain_terms.append(" * ".join([f"{nucp}_pf" for nucp in self.rate.products if nucp != n] + [f"d{n}_pf_dT"]))
 
-            fstring += "    Real dz_p_dT = "
+            fstring += f"    {dtype} dz_p_dT = "
             fstring += " + ".join(chain_terms)
             fstring += ";\n\n"
 
-            fstring += "    Real dzterm_dT = (z_p * dz_r_dT - z_r * dz_p_dT) / (z_p * z_p);\n\n"
+            fstring += f"    {dtype} dzterm_dT = (z_p * dz_r_dT - z_r * dz_p_dT) / (z_p * z_p);\n\n"
 
             # final terms
 
@@ -2120,7 +2122,7 @@ class ApproximateRate(ReacLibRate):
         string += f"    rate_eval.{self.fname} = rate\n\n"
         return string
 
-    def function_string_cxx(self, dtype="double", specifiers="inline", leave_open=False):
+    def function_string_cxx(self, dtype="double", specifiers="inline", leave_open=False, extra_args=()):
         """
         Return a string containing C++ function that computes the
         approximate rate
@@ -2129,10 +2131,11 @@ class ApproximateRate(ReacLibRate):
         if self.approx_type != "ap_pg":
             raise NotImplementedError("don't know how to work with this approximation")
 
+        args = ["const T& rate_eval", f"{dtype}& rate", f"{dtype}& drate_dT", *extra_args]
         fstring = ""
         fstring = "template <typename T>\n"
         fstring += f"{specifiers}\n"
-        fstring += f"void rate_{self.cname()}(const T& rate_eval, {dtype}& rate, {dtype}& drate_dT) {{\n\n"
+        fstring += f"void rate_{self.cname()}({', '.join(args)}) {{\n\n"
 
         if not self.is_reverse:
 
@@ -2145,7 +2148,7 @@ class ApproximateRate(ReacLibRate):
             # now the approximation
             fstring += f"    {dtype} dd = 1.0_rt / (r_pg + r_pa);\n"
             fstring += "    rate = r_ag + r_ap * r_pg * dd;\n"
-            fstring += "    if constexpr (std::is_same<T, rate_derivs_t>::value) {\n"
+            fstring += "    if constexpr (std::is_same_v<T, rate_derivs_t>) {\n"
             fstring += f"        {dtype} drdT_ag = rate_eval.dscreened_rates_dT(k_{self.primary_rate.cname()});\n"
             fstring += f"        {dtype} drdT_ap = rate_eval.dscreened_rates_dT(k_{self.secondary_rates[0].cname()});\n"
             fstring += f"        {dtype} drdT_pg = rate_eval.dscreened_rates_dT(k_{self.secondary_rates[1].cname()});\n"
@@ -2163,7 +2166,7 @@ class ApproximateRate(ReacLibRate):
             # now the approximation
             fstring += f"    {dtype} dd = 1.0_rt / (r_pg + r_pa);\n"
             fstring += "    rate = r_ga + r_gp * r_pa * dd;\n"
-            fstring += "    if constexpr (std::is_same<T, rate_derivs_t>::value) {\n"
+            fstring += "    if constexpr (std::is_same_v<T, rate_derivs_t>) {\n"
             fstring += f"        {dtype} drdT_ga = rate_eval.dscreened_rates_dT(k_{self.primary_reverse.cname()});\n"
             fstring += f"        {dtype} drdT_pa = rate_eval.dscreened_rates_dT(k_{self.secondary_reverse[1].cname()});\n"
             fstring += f"        {dtype} drdT_gp = rate_eval.dscreened_rates_dT(k_{self.secondary_reverse[0].cname()});\n"
