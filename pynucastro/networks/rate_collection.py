@@ -137,6 +137,13 @@ class Composition:
         for k in self.X:
             self.X[k] = 1.0 / len(self.X)
 
+    def set_random(self):
+        """ set all species to random normalized values"""
+        for k in self.X:
+            self.X[k] = np.random.rand()
+    
+        self.normalize()
+
     def set_nuc(self, name, xval):
         """ set nuclei name to the mass fraction xval """
         nuc = Nucleus.cast(name)
