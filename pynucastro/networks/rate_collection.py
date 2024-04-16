@@ -127,6 +127,11 @@ class Composition:
 
         self.normalize()
 
+    def set_array(self, arr):
+        """ set all species from an iterable (in no particular order)"""
+        for i, k in enumerate(self.X):
+            self.X[k] = arr[i]
+
     def set_all(self, xval):
         """ set all species to a particular value """
         for k in self.X:
@@ -137,11 +142,16 @@ class Composition:
         for k in self.X:
             self.X[k] = 1.0 / len(self.X)
 
-    def set_random(self):
-        """ set all species to random normalized values"""
-        for k in self.X:
-            self.X[k] = np.random.rand()
-    
+    def set_random(self, alpha = None):
+        """ set all species using a Dirichlet distribution with parameters alpha"""
+        # default is a flat Dirichlet distribution
+        if alpha == None:
+            alpha = np.ones(len(self.X))
+
+        fracs = np.random.dirichlet(alpha)
+        self.set_array(fracs)
+
+        # ensures exact normalization
         self.normalize()
 
     def set_nuc(self, name, xval):
