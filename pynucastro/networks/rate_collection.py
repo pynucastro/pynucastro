@@ -143,13 +143,17 @@ class Composition:
         for k in self.X:
             self.X[k] = 1.0 / len(self.X)
 
-    def set_random(self, alpha=None):
-        """ set all species using a Dirichlet distribution with parameters alpha"""
+    def set_random(self, alpha=None, seed=None):
+        """ set all species using a Dirichlet distribution with
+        parameters alpha and specified rng seed """
+        # initializes random seed
+        rng = np.random.default_rng(seed)
+
         # default is a flat Dirichlet distribution
         if alpha is None:
             alpha = np.ones(len(self.X))
 
-        fracs = np.random.dirichlet(alpha)
+        fracs = rng.dirichlet(alpha)
         self.set_array(fracs)
 
         # ensures exact normalization
