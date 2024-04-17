@@ -49,7 +49,7 @@ class TestComposition:
         comp.set_equal()
         assert comp.X[nuclei[0]] == approx(1.0 / len(nuclei))
 
-    def test_set_random(self, nuclei, comp):
+    def test_set_random(self, comp):
         comp.set_random(seed=0)
         assert comp.X[Nucleus("C12")] == approx(0.005076173651329372)
 
