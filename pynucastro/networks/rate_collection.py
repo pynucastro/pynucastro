@@ -142,10 +142,10 @@ class Composition:
         for k in self.X:
             self.X[k] = 1.0 / len(self.X)
 
-    def set_random(self, alpha = None):
+    def set_random(self, alpha=None):
         """ set all species using a Dirichlet distribution with parameters alpha"""
         # default is a flat Dirichlet distribution
-        if alpha == None:
+        if alpha is None:
             alpha = np.ones(len(self.X))
 
         fracs = np.random.dirichlet(alpha)
