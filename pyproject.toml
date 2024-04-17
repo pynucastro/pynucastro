@@ -120,14 +120,17 @@ skip = ["pynucastro/networks/tests/_python_reference/network.py"]
 
 
 [tool.pytest.ini_options]
+# Example-Integrating-Network-diffeqpy.ipynb: needs Julia
+# docs/source/*.ipynb: symlinks to notebooks we're already testing
+# pynucastro/library/tabular/*/generate_*.ipynb: tabular rate file generation
+# examples/rxn-network-integration.ipynb: very slow integration
 addopts = """\
   --ignore=docs/source/Example-Integrating-Network-diffeqpy.ipynb \
   --ignore=docs/source/library-examples.ipynb \
   --ignore=docs/source/pynucastro-examples.ipynb \
   --ignore=docs/source/pynucastro-integration.ipynb \
-  --ignore-glob=pynucastro/library/tabular/*.ipynb \
+  --ignore-glob=pynucastro/library/tabular/*/generate_*.ipynb \
   --ignore=examples/rxn-network-integration.ipynb \
-  --ignore=examples/o16o16_rates.ipynb \
   --nbval-sanitize-with .github/workflows/nbval_sanitize.cfg \
   """
 filterwarnings = [
