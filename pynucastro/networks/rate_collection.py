@@ -127,6 +127,12 @@ class Composition:
 
         self.normalize()
 
+    def set_array(self, arr):
+        """ set all species from a sequence of mass fractions, in the same
+        order as returned by get_nuclei() """
+        for i, k in enumerate(self.X):
+            self.X[k] = arr[i]
+
     def set_all(self, xval):
         """ set all species to a particular value """
         for k in self.X:
@@ -136,6 +142,22 @@ class Composition:
         """ set all species to be equal"""
         for k in self.X:
             self.X[k] = 1.0 / len(self.X)
+
+    def set_random(self, alpha=None, seed=None):
+        """ set all species using a Dirichlet distribution with
+        parameters alpha and specified rng seed """
+        # initializes random seed
+        rng = np.random.default_rng(seed)
+
+        # default is a flat Dirichlet distribution
+        if alpha is None:
+            alpha = np.ones(len(self.X))
+
+        fracs = rng.dirichlet(alpha)
+        self.set_array(fracs)
+
+        # ensures exact normalization
+        self.normalize()
 
     def set_nuc(self, name, xval):
         """ set nuclei name to the mass fraction xval """
