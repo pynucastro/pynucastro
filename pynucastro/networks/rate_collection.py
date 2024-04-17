@@ -128,7 +128,8 @@ class Composition:
         self.normalize()
 
     def set_array(self, arr):
-        """ set all species from an iterable (in no particular order)"""
+        """ set all species from a sequence of mass fractions, in the same
+        order as returned by get_nuclei() """
         for i, k in enumerate(self.X):
             self.X[k] = arr[i]
 
