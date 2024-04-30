@@ -209,8 +209,7 @@ def screen5(state: PlasmaState, scn_fac):
     :cite:t:`alastuey:1978` with plasma parameters from :cite:t:`itoh:1979`,
     for strong screening.
     """
-    # fact = 2^(1/3)
-    fact = 1.25992104989487e0
+    fact = np.cbrt(2)
     gamefx = 0.3e0  # lower gamma limit for intermediate screening
     gamefs = 0.8e0  # upper gamma limit for intermediate screening
     h12_max = 300.e0
