@@ -237,11 +237,9 @@ def screen5(state: PlasmaState, scn_fac):
 
     tau12 = state.taufac * scn_fac.aznut
 
-    qq = 1.0/tau12
-
     # alph12 = 3*gamma_ij/tau_ij
 
-    alph12 = gamef * qq
+    alph12 = gamef / tau12
 
     # limit alph12 to 1.6 to prevent unphysical behavior.
     # See Introduction in Alastuey:1978
@@ -254,8 +252,7 @@ def screen5(state: PlasmaState, scn_fac):
 
         gamef = 1.6e0 * tau12
 
-        qq = scn_fac.zs13/(fact * bb)
-        gamp = gamef * qq
+        gamp = gamef * scn_fac.zs13/(fact * bb)
 
     # weak screening regime
     # Full version of Eq. 19 in Graboske:1973 by considering weak regime
@@ -271,8 +268,6 @@ def screen5(state: PlasmaState, scn_fac):
 
         # gamma_ij^(1/4)
         gamp14 = gamp ** 0.25
-        rr = 1.0/gamp
-        qq = 0.25 * gamp14 * rr
 
         # Here we follow Eq. A9 in Wallace:1982
         # See Eq. 25 Alastuey:1978, Eq. 16 and 17 in Jancovici:1977 for reference
@@ -311,14 +306,10 @@ def screen5(state: PlasmaState, scn_fac):
         rr = 1.0 - 0.0562e0*a3
 
         # In extreme case, rr is 0.77, see conclusion in Alastuey:1978
-        if rr >= 0.77e0:
-            xlgfac = rr
-        else:
-            xlgfac = 0.77e0
+        xlgfac = max(0.77, rr)
 
         # Include the extra factor that accounts for quantum effects
-        h12 = np.log(xlgfac) + h12
-        rr = 1.0/xlgfac
+        h12 += np.log(xlgfac)
 
         # If gamma_ij < upper limit of intermediate regime
         # then it is in the intermediate regime, else strong screening.
@@ -329,11 +320,9 @@ def screen5(state: PlasmaState, scn_fac):
 
             ss = dgamma*(gamef - gamefx)
 
-            vv = h12
-
             # Then the screening factor is a combination
             # of the strong and weak screening factor.
-            h12 = h12w*rr + vv*ss
+            h12 = h12w*rr + h12*ss
 
         # end of intermediate and strong screening
 
