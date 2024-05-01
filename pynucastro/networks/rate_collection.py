@@ -98,11 +98,22 @@ class Composition:
         except TypeError:
             raise ValueError("must supply an iterable of Nucleus objects or strings") from None
 
-    def __delitem__(self, nucleus):
-        del self.X[nucleus]
+    def __delitem__(self, key):
+        if isinstance(key, str):
+            key = Nucleus.cast(key)
+        elif isinstance(key, int):
+            key = self.get_nuclei()[key]
+        del self.X[key]
 
-    def __getitem__(self, nucleus):
-        return self.X[nucleus]
+    def __eq__(self, other):
+        return self.X == other.X
+
+    def __getitem__(self, key):
+        if isinstance(key, str):
+            key = Nucleus.cast(key)
+        elif isinstance(key, int):
+            key = self.get_nuclei()[key]
+        return self.X[key]
 
     def __iter__(self):
         yield from self.X
@@ -111,6 +122,10 @@ class Composition:
         return len(self.X)
 
     def __setitem__(self, key, value):
+        if isinstance(key, str):
+            key = Nucleus.cast(key)
+        elif isinstance(key, int):
+            key = self.get_nuclei()[key]
         self.X[key] = value
 
     def __str__(self):
@@ -124,11 +139,16 @@ class Composition:
         return list(self.X)
 
     def items(self):
-        return self.X.items()
+        """return a list of (key, value) pairs in the composition"""
+        return list(self.X.items())
+
+    def values(self):
+        """return a list of mass fractions in the composition"""
+        return list(self.X.values())
 
     def get_sum_X(self):
         """return the sum of the mass fractions"""
-        return math.fsum(self.X.values())
+        return math.fsum(self.values())
 
     def set_solar_like(self, Z=0.02):
         """ approximate a solar abundance, setting p to 0.7, He4 to 0.3 - Z and
@@ -177,8 +197,7 @@ class Composition:
 
     def set_nuc(self, name, xval):
         """ set nuclei name to the mass fraction xval """
-        nuc = Nucleus.cast(name)
-        self[nuc] = xval
+        self[name] = xval
 
     def normalize(self):
         """ normalize the mass fractions to sum to 1 """
@@ -235,7 +254,7 @@ class Composition:
             # original nuclei
             if ex_nuc in nuclei and ex_nuc in self:
                 nuclei.remove(ex_nuc)
-                new_comp.X[ex_nuc] = self[ex_nuc]
+                new_comp[ex_nuc] = self[ex_nuc]
                 if verbose:
                     print(f"storing {ex_nuc} as {ex_nuc}")
 
@@ -276,7 +295,7 @@ class Composition:
 
             if verbose:
                 print(f"storing {old_n} as {match_nuc}")
-            new_comp.X[match_nuc] += v
+            new_comp[match_nuc] += v
 
         return new_comp
 
@@ -312,7 +331,7 @@ class Composition:
 
             fig, ax = plt.subplots(1, 1, figsize=size)
 
-            ax.pie(self.X.values(), labels=self.X.keys(), autopct=lambda p: f"{p/100:0.3f}")
+            ax.pie(self.values(), labels=self.X.keys(), autopct=lambda p: f"{p/100:0.3f}")
 
         else:
             # find trace nuclei which contribute little to trace proportion
@@ -1905,7 +1924,7 @@ class RateCollection:
 
         elif color_field == "x":
 
-            values = np.array([comp.X[nuc] for nuc in nuclei])
+            values = np.array([comp[nuc] for nuc in nuclei])
 
         elif color_field == "y":
 

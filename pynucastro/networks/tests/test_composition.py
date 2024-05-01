@@ -27,13 +27,13 @@ class TestComposition:
         xsum = sum(comp.X.values())
 
         assert xsum == approx(1.0)
-        assert comp.X[Nucleus("h1")] == approx(0.7)
+        assert comp[Nucleus("h1")] == approx(0.7)
 
     def test_set_all(self, nuclei, comp):
         val = 1.0/len(nuclei)
         comp.set_all(1.0/len(nuclei))
         for n in nuclei:
-            assert comp.X[n] == val
+            assert comp[n] == val
 
     def test_set_nuc(self, nuclei, comp):
         n = nuclei[0]
@@ -47,11 +47,11 @@ class TestComposition:
 
     def test_set_equal(self, nuclei, comp):
         comp.set_equal()
-        assert comp.X[nuclei[0]] == approx(1.0 / len(nuclei))
+        assert comp[0] == approx(1.0 / len(nuclei))
 
     def test_set_random(self, comp):
         comp.set_random(seed=0)
-        assert comp.X[Nucleus("C12")] == approx(0.005076173651329372)
+        assert comp["C12"] == approx(0.005076173651329372)
 
 
 class TestCompositionVars:
