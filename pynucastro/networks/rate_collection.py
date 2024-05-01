@@ -105,8 +105,7 @@ class Composition:
         return self.X[nucleus]
 
     def __iter__(self):
-        for nucleus in self.X:
-            yield nucleus
+        yield from self.X
 
     def __len__(self):
         return len(self.X)
