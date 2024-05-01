@@ -134,7 +134,7 @@ class Composition:
     def set_solar_like(self, Z=0.02):
         """ approximate a solar abundance, setting p to 0.7, He4 to 0.3 - Z and
         the remainder evenly distributed with Z """
-        rem = Z/(self.len()-2)
+        rem = Z/(len(self)-2)
         for k in self:
             if k == Nucleus("p"):
                 self[k] = 0.7
@@ -158,7 +158,7 @@ class Composition:
 
     def set_equal(self):
         """ set all species to be equal"""
-        self.set_all(1.0 / self.len())
+        self.set_all(1.0 / len(self))
 
     def set_random(self, alpha=None, seed=None):
         """ set all species using a Dirichlet distribution with
