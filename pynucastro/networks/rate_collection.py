@@ -98,6 +98,9 @@ class Composition:
         except TypeError:
             raise ValueError("must supply an iterable of Nucleus objects or strings") from None
 
+    def __len__(self):
+        return len(self.X)
+
     def __str__(self):
         ostr = ""
         for k in self.X:
@@ -108,10 +111,6 @@ class Composition:
         """return a list of Nuclei objects that make up this composition"""
         return list(self.X)
 
-    def len(self):
-        """return the number of Nuclei objects that make up this composition"""
-        return len(self.X)
-
     def get_sum_X(self):
         """return the sum of the mass fractions"""
         return math.fsum(self.X.values())
@@ -119,7 +118,7 @@ class Composition:
     def set_solar_like(self, Z=0.02):
         """ approximate a solar abundance, setting p to 0.7, He4 to 0.3 - Z and
         the remainder evenly distributed with Z """
-        rem = Z/(self.len()-2)
+        rem = Z/(len(self)-2)
         for k in self.X:
             if k == Nucleus("p"):
                 self.X[k] = 0.7
@@ -143,7 +142,7 @@ class Composition:
 
     def set_equal(self):
         """ set all species to be equal"""
-        self.set_all(1.0 / self.len())
+        self.set_all(1.0 / len(self))
 
     def set_random(self, alpha=None, seed=None):
         """ set all species using a Dirichlet distribution with
