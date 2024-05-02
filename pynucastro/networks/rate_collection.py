@@ -120,6 +120,9 @@ class Composition(collections.UserDict):
     def __repr__(self):
         return "Composition(" + super().__repr__() + ")"
 
+    def __str__(self):
+        return "".join(f"  X({k}) : {v}\n" for k, v in self.items())
+
     @property
     def A(self):
         """ return nuclei: molar mass pairs for elements in composition"""
