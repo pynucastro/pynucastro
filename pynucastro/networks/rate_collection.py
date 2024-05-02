@@ -112,14 +112,13 @@ class Composition(collections.UserDict):
         super().__delitem__(Nucleus.cast(key))
 
     def __getitem__(self, key):
-        super().__getitem__(Nucleus.cast(key))
+        return super().__getitem__(Nucleus.cast(key))
 
     def __setitem__(self, key, value):
         super().__setitem__(Nucleus.cast(key), value)
 
     def __repr__(self):
-        ostr = ", ".join(f"X({k})={self[k]}" for k in self)
-        return "Composition(" + ostr + ")"
+        return "Composition(" + super().__repr__() + ")"
 
     @property
     def A(self):
@@ -130,7 +129,7 @@ class Composition(collections.UserDict):
     def Z(self):
         """ return nuclei: charge pairs for elements in composition"""
         return {n: n.Z for n in self}
-    
+
     def get_nuclei(self):
         """return a list of Nuclei objects that make up this composition"""
         return list(self)
