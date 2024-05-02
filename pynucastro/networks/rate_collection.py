@@ -86,7 +86,7 @@ def _skip_xp(n, p, r):
     return False
 
 
-class Composition:
+class Composition(collections.UserDict):
     """a composition holds the mass fractions of the nuclei in a network
     -- useful for evaluating the rates
 
@@ -94,57 +94,50 @@ class Composition:
     def __init__(self, nuclei, small=1.e-16):
         """nuclei is an iterable of the nuclei in the network"""
         try:
-            self.X = {Nucleus.cast(k): small for k in nuclei}
+            super().__init__({Nucleus.cast(k): small for k in nuclei})
         except TypeError:
             raise ValueError("must supply an iterable of Nucleus objects or strings") from None
 
-    def __delitem__(self, key):
-        if isinstance(key, str):
-            key = Nucleus.cast(key)
-        elif isinstance(key, int):
-            key = self.get_nuclei()[key]
-        del self.X[key]
+    @property
+    def X(self):
+        """backwards-compatible getter for self.X"""
+        return self.data
 
-    def __eq__(self, other):
-        return self.X == other.X
+    @X.setter
+    def X(self, new_value):
+        """backwards-compatible setter for self.X"""
+        self.data = new_value
+
+    def __delitem__(self, key):
+        super().__delitem__(Nucleus.cast(key))
 
     def __getitem__(self, key):
-        if isinstance(key, str):
-            key = Nucleus.cast(key)
-        elif isinstance(key, int):
-            key = self.get_nuclei()[key]
-        return self.X[key]
-
-    def __iter__(self):
-        yield from self.X
-
-    def __len__(self):
-        return len(self.X)
+        super().__getitem__(Nucleus.cast(key))
 
     def __setitem__(self, key, value):
-        if isinstance(key, str):
-            key = Nucleus.cast(key)
-        elif isinstance(key, int):
-            key = self.get_nuclei()[key]
-        self.X[key] = value
+        super().__setitem__(Nucleus.cast(key), value)
 
-    def __str__(self):
-        ostr = ""
-        for k in self:
-            ostr += f"  X({k}) : {self[k]}\n"
-        return ostr
+    def __repr__(self):
+        ostr = ", ".join(f"X({k})={self[k]}" for k in self)
+        return "Composition(" + ostr + ")"
 
+    @property
+    def A(self):
+        """ return nuclei: molar mass pairs for elements in composition"""
+        return {n: n.A for n in self}
+
+    @property
+    def Z(self):
+        """ return nuclei: charge pairs for elements in composition"""
+        return {n: n.Z for n in self}
+    
     def get_nuclei(self):
         """return a list of Nuclei objects that make up this composition"""
-        return list(self.X)
+        return list(self)
 
-    def items(self):
-        """return a list of (key, value) pairs in the composition"""
-        return list(self.X.items())
-
-    def values(self):
-        """return a list of mass fractions in the composition"""
-        return list(self.X.values())
+    def get_molar(self):
+        """ return a dictionary of molar fractions"""
+        return {k: v/k.A for k, v in self.items()}
 
     def get_sum_X(self):
         """return the sum of the mass fractions"""
@@ -167,7 +160,7 @@ class Composition:
     def set_array(self, arr):
         """ set all species from a sequence of mass fractions, in the same
         order as returned by get_nuclei() """
-        for i, k in enumerate(self.X):
+        for i, k in enumerate(self):
             self[k] = arr[i]
 
     def set_all(self, xval):
@@ -205,11 +198,6 @@ class Composition:
 
         for k in self:
             self[k] /= X_sum
-
-    def get_molar(self):
-        """ return a dictionary of molar fractions"""
-        molar_frac = {k: v/k.A for k, v in self.items()}
-        return molar_frac
 
     def eval_ye(self):
         """ return the electron fraction """
@@ -331,7 +319,7 @@ class Composition:
 
             fig, ax = plt.subplots(1, 1, figsize=size)
 
-            ax.pie(self.values(), labels=self.X.keys(), autopct=lambda p: f"{p/100:0.3f}")
+            ax.pie(self.values(), labels=self.keys(), autopct=lambda p: f"{p/100:0.3f}")
 
         else:
             # find trace nuclei which contribute little to trace proportion
