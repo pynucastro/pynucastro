@@ -21,19 +21,23 @@ class TestComposition:
     def comp(self, nuclei):
         return networks.Composition(nuclei)
 
+    def test_getitem(self, comp):
+        n = Nucleus("he4")
+        assert comp["he4"] == comp[n] == comp.X[n]
+
     def test_solar(self, comp):
         comp.set_solar_like()
 
         xsum = sum(comp.values())
 
         assert xsum == approx(1.0)
-        assert comp[Nucleus("h1")] == approx(0.7)
+        assert comp["h1"] == approx(0.7)
 
     def test_set_all(self, nuclei, comp):
         val = 1.0/len(nuclei)
         comp.set_all(1.0/len(nuclei))
-        for n in nuclei:
-            assert comp[n] == val
+        for x in comp.values():
+            assert x == val
 
     def test_set_nuc(self, nuclei, comp):
         n = nuclei[0]
