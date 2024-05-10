@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.screening.screen &mdash; pynucastro 2.2.0.post6+g61063aaa documentation</title>
+  <title>pynucastro.screening.screen &mdash; pynucastro 2.2.0.post7+gc07e7ef0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
       <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -16,7 +16,7 @@
   
         <script src="../../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../_static/documentation_options.js?v=d8ecd366"></script>
+        <script src="../../../_static/documentation_options.js?v=e67bebaa"></script>
         <script src="../../../_static/doctools.js?v=9a2dae69"></script>
         <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
         <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -148,7 +148,8 @@
         <span class="k">return</span> <span class="n">func</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;PlasmaState&quot;</span><span class="p">,</span> <span class="s2">&quot;ScreenFactors&quot;</span><span class="p">,</span> <span class="s2">&quot;chugunov_2007&quot;</span><span class="p">,</span> <span class="s2">&quot;chugunov_2009&quot;</span><span class="p">,</span>
-           <span class="s2">&quot;make_plasma_state&quot;</span><span class="p">,</span> <span class="s2">&quot;make_screen_factors&quot;</span><span class="p">,</span> <span class="s2">&quot;potekhin_1998&quot;</span><span class="p">]</span>
+           <span class="s2">&quot;make_plasma_state&quot;</span><span class="p">,</span> <span class="s2">&quot;make_screen_factors&quot;</span><span class="p">,</span> <span class="s2">&quot;potekhin_1998&quot;</span><span class="p">,</span>
+           <span class="s2">&quot;screen5&quot;</span><span class="p">]</span>
 
 
 <div class="viewcode-block" id="PlasmaState">
@@ -161,6 +162,9 @@
 
 <span class="sd">    :var temp:        temperature in K</span>
 <span class="sd">    :var dens:        density in g/cm^3</span>
+<span class="sd">    :var qlam0z:      TODO: from screen5</span>
+<span class="sd">    :var taufac:      TODO: from screen5</span>
+<span class="sd">    :var aa:          TODO: from screen5</span>
 <span class="sd">    :var abar:        average atomic mass</span>
 <span class="sd">    :var zbar:        average ion charge</span>
 <span class="sd">    :var z2bar:       average (ion charge)^2</span>
@@ -169,6 +173,9 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">temp</span><span class="p">:</span> <span class="nb">float</span>
     <span class="n">dens</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">qlam0z</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">taufac</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">aa</span><span class="p">:</span> <span class="nb">float</span>
     <span class="n">abar</span><span class="p">:</span> <span class="nb">float</span>
     <span class="n">zbar</span><span class="p">:</span> <span class="nb">float</span>
     <span class="n">z2bar</span><span class="p">:</span> <span class="nb">float</span>
@@ -190,6 +197,27 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">abar</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">ytot</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">zbar</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">Zs</span> <span class="o">*</span> <span class="n">Ys</span><span class="p">)</span> <span class="o">/</span> <span class="n">ytot</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">z2bar</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">Zs</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">Ys</span><span class="p">)</span> <span class="o">/</span> <span class="n">ytot</span>
+
+        <span class="c1"># ntot</span>
+        <span class="n">rr</span> <span class="o">=</span> <span class="n">dens</span> <span class="o">*</span> <span class="n">ytot</span>
+
+        <span class="c1"># Part version of Eq. 19 in Graboske:1973</span>
+        <span class="c1"># pp = sqrt( \tilde{z}*(rho/u_I/T) )</span>
+        <span class="n">pp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">rr</span><span class="o">/</span><span class="n">temp</span><span class="o">*</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">z2bar</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">zbar</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">qlam0z</span> <span class="o">=</span> <span class="mf">1.88e8</span> <span class="o">/</span> <span class="n">temp</span> <span class="o">*</span> <span class="n">pp</span>
+
+        <span class="c1"># Part of Eq.6 in Itoh:1979</span>
+        <span class="c1"># 4.248719e3 = (27*pi^2*e^4*m_u/(2*k_B*hbar^2))^(1/3)</span>
+        <span class="c1"># the extra (1/3) to make tau -&gt; tau/3</span>
+        <span class="n">co2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">(</span><span class="mi">27</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">**</span><span class="mi">2</span><span class="o">*</span><span class="n">constants</span><span class="o">.</span><span class="n">q_e</span><span class="o">**</span><span class="mi">4</span><span class="o">*</span><span class="n">constants</span><span class="o">.</span><span class="n">m_u</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">constants</span><span class="o">.</span><span class="n">k</span><span class="o">*</span><span class="n">constants</span><span class="o">.</span><span class="n">hbar</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span> <span class="o">/</span> <span class="mi">3</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">taufac</span> <span class="o">=</span> <span class="n">co2</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">(</span><span class="n">temp</span><span class="p">)</span>
+
+        <span class="n">xni</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">(</span><span class="n">rr</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">zbar</span><span class="p">)</span>
+
+        <span class="c1"># Part of Eq.4 in Itoh:1979</span>
+        <span class="c1"># 2.27493e5 = e^2 / ( (3*m_u/(4pi))^(1/3) *k_B )</span>
+        <span class="n">aa_factor</span> <span class="o">=</span> <span class="n">constants</span><span class="o">.</span><span class="n">q_e</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">(</span><span class="mi">3</span><span class="o">*</span><span class="n">constants</span><span class="o">.</span><span class="n">m_u</span><span class="o">/</span><span class="p">(</span><span class="mi">4</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span> <span class="o">*</span> <span class="n">constants</span><span class="o">.</span><span class="n">k</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">aa</span> <span class="o">=</span> <span class="n">aa_factor</span> <span class="o">/</span> <span class="n">temp</span> <span class="o">*</span> <span class="n">xni</span>
 
         <span class="c1"># Average mass and total number density</span>
         <span class="n">mbar</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">abar</span> <span class="o">*</span> <span class="n">constants</span><span class="o">.</span><span class="n">m_u</span>
@@ -271,6 +299,10 @@
 <span class="sd">    :var z2: atomic number of second nucleus</span>
 <span class="sd">    :var a1: atomic mass of first nucleus</span>
 <span class="sd">    :var a2: atomic mass of second nucleus</span>
+<span class="sd">    :var zs13: (z1+z2)**(1/3)</span>
+<span class="sd">    :var zhat: combination of z1 and z2 raised to the 5/3 power</span>
+<span class="sd">    :var zhat2: combination of z1 and z2 raised to the 5/12 power</span>
+<span class="sd">    :var lzav: log of effective charge</span>
 <span class="sd">    :var aznut: combination of a1, z1, a2, z2 raised to 1/3 power</span>
 <span class="sd">    :var ztilde: effective ion radius factor for a MCP</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -278,6 +310,10 @@
     <span class="n">z2</span><span class="p">:</span> <span class="nb">int</span>
     <span class="n">a1</span><span class="p">:</span> <span class="nb">int</span>
     <span class="n">a2</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">zs13</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">zhat</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">zhat2</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">lzav</span><span class="p">:</span> <span class="nb">float</span>
     <span class="n">aznut</span><span class="p">:</span> <span class="nb">float</span>
     <span class="n">ztilde</span><span class="p">:</span> <span class="nb">float</span>
 
@@ -286,6 +322,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">z2</span> <span class="o">=</span> <span class="n">z2</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">a1</span> <span class="o">=</span> <span class="n">a1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">a2</span> <span class="o">=</span> <span class="n">a2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">zs13</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">(</span><span class="n">z1</span> <span class="o">+</span> <span class="n">z2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">zhat</span> <span class="o">=</span> <span class="p">(</span><span class="n">z1</span> <span class="o">+</span> <span class="n">z2</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="mi">5</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span> <span class="o">-</span> <span class="n">z1</span> <span class="o">**</span> <span class="p">(</span><span class="mi">5</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span> <span class="o">-</span> <span class="n">z2</span> <span class="o">**</span> <span class="p">(</span><span class="mi">5</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">zhat2</span> <span class="o">=</span> <span class="p">(</span><span class="n">z1</span> <span class="o">+</span> <span class="n">z2</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="mi">5</span><span class="o">/</span><span class="mi">12</span><span class="p">)</span> <span class="o">-</span> <span class="n">z1</span> <span class="o">**</span> <span class="p">(</span><span class="mi">5</span><span class="o">/</span><span class="mi">12</span><span class="p">)</span> <span class="o">-</span> <span class="n">z2</span> <span class="o">**</span> <span class="p">(</span><span class="mi">5</span><span class="o">/</span><span class="mi">12</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lzav</span> <span class="o">=</span> <span class="p">(</span><span class="mi">5</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">z1</span> <span class="o">*</span> <span class="n">z2</span> <span class="o">/</span> <span class="p">(</span><span class="n">z1</span> <span class="o">+</span> <span class="n">z2</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">aznut</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">(</span><span class="n">z1</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">z2</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">a1</span> <span class="o">*</span> <span class="n">a2</span> <span class="o">/</span> <span class="p">(</span><span class="n">a1</span> <span class="o">+</span> <span class="n">a2</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ztilde</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">(</span><span class="n">z1</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">(</span><span class="n">z2</span><span class="p">))</span></div>
 
@@ -303,6 +343,142 @@
     <span class="n">n1</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">n1</span><span class="p">)</span>
     <span class="n">n2</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">n2</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">ScreenFactors</span><span class="p">(</span><span class="n">n1</span><span class="o">.</span><span class="n">Z</span><span class="p">,</span> <span class="n">n1</span><span class="o">.</span><span class="n">A</span><span class="p">,</span> <span class="n">n2</span><span class="o">.</span><span class="n">Z</span><span class="p">,</span> <span class="n">n2</span><span class="o">.</span><span class="n">A</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="screen5">
+<a class="viewcode-back" href="../../../pynucastro.screening.html#pynucastro.screening.screen.screen5">[docs]</a>
+<span class="nd">@njit</span>
+<span class="k">def</span> <span class="nf">screen5</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="n">PlasmaState</span><span class="p">,</span> <span class="n">scn_fac</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculates screening factors following the appendix of :cite:t:`Wallace:1982`.</span>
+
+<span class="sd">    Based on :cite:t:`graboske:1973` for weak screening. Based on</span>
+<span class="sd">    :cite:t:`alastuey:1978` with plasma parameters from :cite:t:`itoh:1979`,</span>
+<span class="sd">    for strong screening.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">fact</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">gamefx</span> <span class="o">=</span> <span class="mf">0.3e0</span>  <span class="c1"># lower gamma limit for intermediate screening</span>
+    <span class="n">gamefs</span> <span class="o">=</span> <span class="mf">0.8e0</span>  <span class="c1"># upper gamma limit for intermediate screening</span>
+    <span class="n">h12_max</span> <span class="o">=</span> <span class="mf">300.e0</span>
+
+    <span class="c1"># Get the ion data based on the input index</span>
+    <span class="n">z1</span> <span class="o">=</span> <span class="n">scn_fac</span><span class="o">.</span><span class="n">z1</span>
+    <span class="n">z2</span> <span class="o">=</span> <span class="n">scn_fac</span><span class="o">.</span><span class="n">z2</span>
+
+    <span class="c1"># calculate individual screening factors</span>
+    <span class="n">bb</span> <span class="o">=</span> <span class="n">z1</span> <span class="o">*</span> <span class="n">z2</span>
+    <span class="n">gamp</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">aa</span>
+
+    <span class="c1"># In Eq.4 in Itoh:1979, this term is 2*Z_1*Z_2/(Z_1^(1/3) + Z_2^(1/3))</span>
+    <span class="c1"># However here we follow Wallace:1982 Eq. A13, which is Z_1*Z_2*(2/(Z_1+Z_2))^(1/3)</span>
+
+    <span class="n">qq</span> <span class="o">=</span> <span class="n">fact</span> <span class="o">*</span> <span class="n">bb</span> <span class="o">/</span> <span class="n">scn_fac</span><span class="o">.</span><span class="n">zs13</span>
+
+    <span class="c1"># Full Equation of Wallace:1982 Eq. A13</span>
+
+    <span class="n">gamef</span> <span class="o">=</span> <span class="n">qq</span> <span class="o">*</span> <span class="n">gamp</span>
+
+    <span class="c1"># Full version of Eq.6 in Itoh:1979 with extra 1/3 factor</span>
+    <span class="c1"># the extra 1/3 factor is there for convenience.</span>
+    <span class="c1"># tau12 = Eq.6 / 3</span>
+
+    <span class="n">tau12</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">taufac</span> <span class="o">*</span> <span class="n">scn_fac</span><span class="o">.</span><span class="n">aznut</span>
+
+    <span class="c1"># alph12 = 3*gamma_ij/tau_ij</span>
+
+    <span class="n">alph12</span> <span class="o">=</span> <span class="n">gamef</span> <span class="o">/</span> <span class="n">tau12</span>
+
+    <span class="c1"># limit alph12 to 1.6 to prevent unphysical behavior.</span>
+    <span class="c1"># See Introduction in Alastuey:1978</span>
+
+    <span class="c1"># this should really be replaced by a pycnonuclear reaction rate formula</span>
+    <span class="k">if</span> <span class="n">alph12</span> <span class="o">&gt;</span> <span class="mf">1.6</span><span class="p">:</span>
+        <span class="n">alph12</span> <span class="o">=</span> <span class="mf">1.6e0</span>
+
+        <span class="c1"># redetermine previous factors if 3*gamma_ij/tau_ij &gt; 1.6</span>
+
+        <span class="n">gamef</span> <span class="o">=</span> <span class="mf">1.6e0</span> <span class="o">*</span> <span class="n">tau12</span>
+
+        <span class="n">gamp</span> <span class="o">=</span> <span class="n">gamef</span> <span class="o">*</span> <span class="n">scn_fac</span><span class="o">.</span><span class="n">zs13</span><span class="o">/</span><span class="p">(</span><span class="n">fact</span> <span class="o">*</span> <span class="n">bb</span><span class="p">)</span>
+
+    <span class="c1"># weak screening regime</span>
+    <span class="c1"># Full version of Eq. 19 in Graboske:1973 by considering weak regime</span>
+    <span class="c1"># and Wallace:1982 Eq. A14. Here the degeneracy factor is assumed to be 1.</span>
+
+    <span class="n">h12w</span> <span class="o">=</span> <span class="n">bb</span> <span class="o">*</span> <span class="n">state</span><span class="o">.</span><span class="n">qlam0z</span>
+
+    <span class="n">h12</span> <span class="o">=</span> <span class="n">h12w</span>
+
+    <span class="c1"># intermediate and strong sceening regime</span>
+
+    <span class="k">if</span> <span class="n">gamef</span> <span class="o">&gt;</span> <span class="n">gamefx</span><span class="p">:</span>
+
+        <span class="c1"># gamma_ij^(1/4)</span>
+        <span class="n">gamp14</span> <span class="o">=</span> <span class="n">gamp</span> <span class="o">**</span> <span class="mf">0.25</span>
+
+        <span class="c1"># Here we follow Eq. A9 in Wallace:1982</span>
+        <span class="c1"># See Eq. 25 Alastuey:1978, Eq. 16 and 17 in Jancovici:1977 for reference</span>
+        <span class="n">cc</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.896434e0</span> <span class="o">*</span> <span class="n">gamp</span> <span class="o">*</span> <span class="n">scn_fac</span><span class="o">.</span><span class="n">zhat</span> <span class="o">+</span>
+              <span class="o">-</span><span class="mf">3.44740e0</span> <span class="o">*</span> <span class="n">gamp14</span> <span class="o">*</span> <span class="n">scn_fac</span><span class="o">.</span><span class="n">zhat2</span> <span class="o">+</span>
+              <span class="o">-</span><span class="mf">0.5551e0</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">gamp</span><span class="p">)</span> <span class="o">+</span> <span class="n">scn_fac</span><span class="o">.</span><span class="n">lzav</span><span class="p">)</span> <span class="o">+</span>
+              <span class="o">-</span><span class="mf">2.996e0</span><span class="p">)</span>
+
+        <span class="c1"># (3gamma_ij/tau_ij)^3</span>
+        <span class="n">a3</span> <span class="o">=</span> <span class="n">alph12</span> <span class="o">*</span> <span class="n">alph12</span> <span class="o">*</span> <span class="n">alph12</span>
+
+        <span class="c1"># Part of Eq. 28 in Alastuey:1978</span>
+        <span class="n">qq</span> <span class="o">=</span> <span class="mf">0.014e0</span> <span class="o">+</span> <span class="mf">0.0128e0</span><span class="o">*</span><span class="n">alph12</span>
+
+        <span class="c1"># Part of Eq. 28 in Alastuey:1978</span>
+        <span class="n">rr</span> <span class="o">=</span> <span class="p">(</span><span class="mf">5.0</span><span class="o">/</span><span class="mf">32.0</span><span class="p">)</span> <span class="o">-</span> <span class="n">alph12</span><span class="o">*</span><span class="n">qq</span>
+
+        <span class="c1"># Part of Eq. 28 in Alastuey:1978</span>
+        <span class="n">ss</span> <span class="o">=</span> <span class="n">tau12</span><span class="o">*</span><span class="n">rr</span>
+
+        <span class="c1"># Part of Eq. 31 in Alastuey:1978</span>
+        <span class="n">tt</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.0098e0</span> <span class="o">+</span> <span class="mf">0.0048e0</span><span class="o">*</span><span class="n">alph12</span>
+
+        <span class="c1"># Part of Eq. 31 in Alastuey:1978</span>
+        <span class="n">uu</span> <span class="o">=</span> <span class="mf">0.0055e0</span> <span class="o">+</span> <span class="n">alph12</span><span class="o">*</span><span class="n">tt</span>
+
+        <span class="c1"># Part of Eq. 31 in Alastuey:1978</span>
+        <span class="n">vv</span> <span class="o">=</span> <span class="n">gamef</span> <span class="o">*</span> <span class="n">alph12</span> <span class="o">*</span> <span class="n">uu</span>
+
+        <span class="c1"># Exponent of Eq. 32 in Alastuey:1978, which uses Eq.28 and Eq.31</span>
+        <span class="c1"># Strong screening factor</span>
+        <span class="n">h12</span> <span class="o">=</span> <span class="n">cc</span> <span class="o">-</span> <span class="n">a3</span> <span class="o">*</span> <span class="p">(</span><span class="n">ss</span> <span class="o">+</span> <span class="n">vv</span><span class="p">)</span>
+
+        <span class="c1"># See conclusion and Eq. 34 in Alastuey:1978</span>
+        <span class="c1"># This is an extra factor to account for quantum effects</span>
+        <span class="n">rr</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="mf">0.0562e0</span><span class="o">*</span><span class="n">a3</span>
+
+        <span class="c1"># In extreme case, rr is 0.77, see conclusion in Alastuey:1978</span>
+        <span class="n">xlgfac</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mf">0.77</span><span class="p">,</span> <span class="n">rr</span><span class="p">)</span>
+
+        <span class="c1"># Include the extra factor that accounts for quantum effects</span>
+        <span class="n">h12</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">xlgfac</span><span class="p">)</span>
+
+        <span class="c1"># If gamma_ij &lt; upper limit of intermediate regime</span>
+        <span class="c1"># then it is in the intermediate regime, else strong screening.</span>
+        <span class="k">if</span> <span class="n">gamef</span> <span class="o">&lt;=</span> <span class="n">gamefs</span><span class="p">:</span>
+            <span class="n">dgamma</span> <span class="o">=</span> <span class="mf">1.0e0</span><span class="o">/</span><span class="p">(</span><span class="n">gamefs</span> <span class="o">-</span> <span class="n">gamefx</span><span class="p">)</span>
+
+            <span class="n">rr</span> <span class="o">=</span> <span class="n">dgamma</span><span class="o">*</span><span class="p">(</span><span class="n">gamefs</span> <span class="o">-</span> <span class="n">gamef</span><span class="p">)</span>
+
+            <span class="n">ss</span> <span class="o">=</span> <span class="n">dgamma</span><span class="o">*</span><span class="p">(</span><span class="n">gamef</span> <span class="o">-</span> <span class="n">gamefx</span><span class="p">)</span>
+
+            <span class="c1"># Then the screening factor is a combination</span>
+            <span class="c1"># of the strong and weak screening factor.</span>
+            <span class="n">h12</span> <span class="o">=</span> <span class="n">h12w</span><span class="o">*</span><span class="n">rr</span> <span class="o">+</span> <span class="n">h12</span><span class="o">*</span><span class="n">ss</span>
+
+        <span class="c1"># end of intermediate and strong screening</span>
+
+    <span class="c1"># machine limit the output</span>
+    <span class="c1"># further limit to avoid the pycnonuclear regime</span>
+    <span class="n">h12</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">h12</span><span class="p">,</span> <span class="n">h12_max</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">)</span>
+    <span class="n">scor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">h12</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">scor</span></div>
 
 
 
