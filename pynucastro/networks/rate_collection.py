@@ -1085,6 +1085,7 @@ class RateCollection:
                 # if we are doing symmetric screening
                 for r in scr.rates:
                     # use scor from the previous loop iteration
+                    # pylint: disable-next=possibly-used-before-assignment
                     factors[r] = scor * scor2
             else:
                 # there might be several rates that have the same
@@ -1668,7 +1669,6 @@ class RateCollection:
 
         valid_max = np.abs(jac).max()
 
-        # pylint: disable-next=redundant-keyword-arg
         norm = SymLogNorm(valid_max/rate_scaling, vmin=-valid_max, vmax=valid_max)
 
         fig, ax = plt.subplots()
@@ -1714,7 +1714,6 @@ class RateCollection:
         _ydot = np.asarray(_ydot)
         valid_max = np.abs(_ydot[_ydot != 0]).max()
 
-        # pylint: disable-next=redundant-keyword-arg
         norm = SymLogNorm(valid_max/1.e15, vmin=-valid_max, vmax=valid_max)
 
         # if there are a lot of rates, we split the network chart into
@@ -1893,7 +1892,7 @@ class RateCollection:
 
         # Get figure, colormap
         fig, ax = plt.subplots()
-        cmap = mpl.cm.get_cmap(cmap)
+        cmap = mpl.colormaps.get_cmap(cmap)  # pylint: disable=no-member
 
         # Get nuclei and all 3 numbers
         nuclei = self.unique_nuclei
