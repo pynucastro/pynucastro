@@ -1060,6 +1060,7 @@ class RateCollection:
                 # if we are doing symmetric screening
                 for r in scr.rates:
                     # use scor from the previous loop iteration
+                    # pylint: disable-next=possibly-used-before-assignment
                     factors[r] = scor * scor2
             else:
                 # there might be several rates that have the same
