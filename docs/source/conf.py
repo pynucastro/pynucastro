@@ -108,6 +108,10 @@ intersphinx_mapping = {
     'matplotlib': ('https://matplotlib.org/stable', None),
 }
 
+# Skip checking the validity of #anchors in links, as it requires downloading
+# the whole document with a GET request instead of a simple HEAD request.
+linkcheck_anchors = False
+
 
 # -- Options for HTML output ----------------------------------------------
 
