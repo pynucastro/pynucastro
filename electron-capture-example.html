@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tabulated Weak Rate Example &mdash; pynucastro 2.2.0.post10+g87f5e93d documentation</title>
+  <title>Tabulated Weak Rate Example &mdash; pynucastro 2.2.0.post11+g712922dd documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
       <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
@@ -18,7 +18,7 @@
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=50a78477"></script>
+        <script src="_static/documentation_options.js?v=aece93aa"></script>
         <script src="_static/doctools.js?v=9a2dae69"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
         <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -146,7 +146,7 @@
 \end{align*}</span></p>
 <p>where <span class="math notranslate nohighlight">\(Y_\mathrm{Ni}\)</span> and <span class="math notranslate nohighlight">\(Y_\mathrm{Co}\)</span> are the molar fractions of the nuclei.</p>
 <p>Let’s create a network with these rates.</p>
-<p>pynucastro will use the tabulated rates from <span id="id1">Langanke and Martínez-Pinedo [<a class="reference internal" href="zreferences.html#id9" title="K. Langanke and G. Martínez-Pinedo. Rate tables for the weak processes of pf-shell nuclei in stellar environments. Atomic Data and Nuclear Data Tables, 79(1):1-46, 2001. URL: https://www.sciencedirect.com/science/article/pii/S0092640X01908654, doi:10.1006/adnd.2001.0865.">2001</a>]</span>.</p>
+<p>pynucastro will use the tabulated rates from <span id="id1">Langanke and Martínez-Pinedo [<a class="reference internal" href="zreferences.html#id9" title="K. Langanke and G. Martínez-Pinedo. Rate tables for the weak processes of pf-shell nuclei in stellar environments. Atomic Data and Nuclear Data Tables, 79(1):1-46, 2001. doi:10.1006/adnd.2001.0865.">2001</a>]</span>.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
@@ -287,7 +287,7 @@ Co56 ⟶ Ni56 + e⁻ + 𝜈           [Q =  -2.92 MeV] (Co56 --&gt; Ni56 &lt;tab
 {Co56: 7.240723730837853e-06, Ni56: -7.240723730837853e-06}
 </pre></div></div>
 </div>
-<p>If we look at the original tables from <span id="id2">Langanke and Martínez-Pinedo [<a class="reference internal" href="zreferences.html#id9" title="K. Langanke and G. Martínez-Pinedo. Rate tables for the weak processes of pf-shell nuclei in stellar environments. Atomic Data and Nuclear Data Tables, 79(1):1-46, 2001. URL: https://www.sciencedirect.com/science/article/pii/S0092640X01908654, doi:10.1006/adnd.2001.0865.">2001</a>]</span>, they tabulate (for the conditions we selected above):</p>
+<p>If we look at the original tables from <span id="id2">Langanke and Martínez-Pinedo [<a class="reference internal" href="zreferences.html#id9" title="K. Langanke and G. Martínez-Pinedo. Rate tables for the weak processes of pf-shell nuclei in stellar environments. Atomic Data and Nuclear Data Tables, 79(1):1-46, 2001. doi:10.1006/adnd.2001.0865.">2001</a>]</span>, they tabulate (for the conditions we selected above):</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span> neg. daughter Ni56 z=28 n=28 a=56 Q= -1.6240
  pos. daughter Co56 z=27 n=29 a=56 Q=  1.6240
                       +++ Ni56 --&gt; Co56 +++      --- Co56 --&gt; Ni56 ---

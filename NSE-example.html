@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Solving for nuclear statistical equilibrium &mdash; pynucastro 2.2.0.post10+g87f5e93d documentation</title>
+  <title>Solving for nuclear statistical equilibrium &mdash; pynucastro 2.2.0.post11+g712922dd documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
       <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
@@ -18,7 +18,7 @@
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=50a78477"></script>
+        <script src="_static/documentation_options.js?v=aece93aa"></script>
         <script src="_static/doctools.js?v=9a2dae69"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
         <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -139,7 +139,7 @@
   <section id="Solving-for-nuclear-statistical-equilibrium">
 <h1>Solving for nuclear statistical equilibrium<a class="headerlink" href="#Solving-for-nuclear-statistical-equilibrium" title="Link to this heading"></a></h1>
 <p>pynucastro is able to calculate the abundances at nuclear statistical equilibrium of a given reaction network.</p>
-<p>The constrained equations are setup following <span id="id1">Calder <em>et al.</em> [<a class="reference internal" href="zreferences.html#id7" title="A. C. Calder, D. M. Townsley, I. R. Seitenzahl, F. Peng, O. E. B. Messer, N. Vladimirova, E. F. Brown, J. W. Truran, and D. Q. Lamb. Capturing the fire: flame energetics and neutronization for type ia supernova simulations. The Astrophysical Journal, 656(1):313–332, February 2007. doi:10.1086/510709.">2007</a>]</span> and <span id="id2">Seitenzahl <em>et al.</em> [<a class="reference internal" href="zreferences.html#id11" title="Ivo R. Seitenzahl, Dean M. Townsley, Fang Peng, and James W. Truran. Nuclear statistical equilibrium for type ia supernova simulations. Atomic Data and Nuclear Data Tables, 95(1):96-114, 2009. URL: https://www.sciencedirect.com/science/article/pii/S0092640X0800051X, doi:10.1016/j.adt.2008.08.001.">2009</a>]</span> and solved using <code class="docutils literal notranslate"><span class="pre">scipy.optimize.fsolve()</span></code>.</p>
+<p>The constrained equations are setup following <span id="id1">Calder <em>et al.</em> [<a class="reference internal" href="zreferences.html#id7" title="A. C. Calder, D. M. Townsley, I. R. Seitenzahl, F. Peng, O. E. B. Messer, N. Vladimirova, E. F. Brown, J. W. Truran, and D. Q. Lamb. Capturing the fire: flame energetics and neutronization for type ia supernova simulations. The Astrophysical Journal, 656(1):313–332, February 2007. doi:10.1086/510709.">2007</a>]</span> and <span id="id2">Seitenzahl <em>et al.</em> [<a class="reference internal" href="zreferences.html#id11" title="Ivo R. Seitenzahl, Dean M. Townsley, Fang Peng, and James W. Truran. Nuclear statistical equilibrium for type ia supernova simulations. Atomic Data and Nuclear Data Tables, 95(1):96-114, 2009. doi:10.1016/j.adt.2008.08.001.">2009</a>]</span> and solved using <code class="docutils literal notranslate"><span class="pre">scipy.optimize.fsolve()</span></code>.</p>
 <p>Here we show how to find the NSE state of a set of nuclei.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
