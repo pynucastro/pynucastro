@@ -1669,6 +1669,7 @@ class RateCollection:
 
         valid_max = np.abs(jac).max()
 
+        # pylint: disable-next=redundant-keyword-arg
         norm = SymLogNorm(valid_max/rate_scaling, vmin=-valid_max, vmax=valid_max)
 
         fig, ax = plt.subplots()
@@ -1714,6 +1715,7 @@ class RateCollection:
         _ydot = np.asarray(_ydot)
         valid_max = np.abs(_ydot[_ydot != 0]).max()
 
+        # pylint: disable-next=redundant-keyword-arg
         norm = SymLogNorm(valid_max/1.e15, vmin=-valid_max, vmax=valid_max)
 
         # if there are a lot of rates, we split the network chart into
@@ -1892,7 +1894,7 @@ class RateCollection:
 
         # Get figure, colormap
         fig, ax = plt.subplots()
-        cmap = mpl.colormaps.get_cmap(cmap)  # pylint: disable=no-member
+        cmap = mpl.colormaps.get_cmap(cmap)
 
         # Get nuclei and all 3 numbers
         nuclei = self.unique_nuclei
