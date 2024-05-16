@@ -1867,7 +1867,7 @@ class RateCollection:
 
         # Get figure, colormap
         fig, ax = plt.subplots()
-        cmap = mpl.cm.get_cmap(cmap)
+        cmap = mpl.colormaps.get_cmap(cmap)  # pylint: disable=no-member
 
         # Get nuclei and all 3 numbers
         nuclei = self.unique_nuclei
