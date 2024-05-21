@@ -173,7 +173,7 @@
 
   * Change how tabular rate tables are stored and read (#450)
 
-  * Support historial ReacLib format (#449)
+  * Support historical ReacLib format (#449)
 
 # 2.0.0
 
@@ -270,7 +270,7 @@
 
   * weak rate table units in the header were fixed (#297)
 
-  * python nuclei variable indicies now begin with 'j' (#296)
+  * python nuclei variable indices now begin with 'j' (#296)
 
   * python implementations of screening were added (#281)
 
