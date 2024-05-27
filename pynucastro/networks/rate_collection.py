@@ -86,7 +86,7 @@ def _skip_xp(n, p, r):
     return False
 
 
-class Composition:
+class Composition(collections.UserDict):
     """a composition holds the mass fractions of the nuclei in a network
     -- useful for evaluating the rates
 
@@ -94,54 +94,85 @@ class Composition:
     def __init__(self, nuclei, small=1.e-16):
         """nuclei is an iterable of the nuclei in the network"""
         try:
-            self.X = {Nucleus.cast(k): small for k in nuclei}
+            super().__init__({Nucleus.cast(k): small for k in nuclei})
         except TypeError:
             raise ValueError("must supply an iterable of Nucleus objects or strings") from None
 
+    @property
+    def X(self):
+        """backwards-compatible getter for self.X"""
+        return self.data
+
+    @X.setter
+    def X(self, new_value):
+        """backwards-compatible setter for self.X"""
+        self.data = new_value
+
+    def __delitem__(self, key):
+        super().__delitem__(Nucleus.cast(key))
+
+    def __getitem__(self, key):
+        return super().__getitem__(Nucleus.cast(key))
+
+    def __setitem__(self, key, value):
+        super().__setitem__(Nucleus.cast(key), value)
+
+    def __repr__(self):
+        return "Composition(" + super().__repr__() + ")"
+
     def __str__(self):
-        ostr = ""
-        for k in self.X:
-            ostr += f"  X({k}) : {self.X[k]}\n"
-        return ostr
+        return "".join(f"  X({k}) : {v}\n" for k, v in self.items())
+
+    @property
+    def A(self):
+        """ return nuclei: molar mass pairs for elements in composition"""
+        return {n: n.A for n in self}
+
+    @property
+    def Z(self):
+        """ return nuclei: charge pairs for elements in composition"""
+        return {n: n.Z for n in self}
 
     def get_nuclei(self):
         """return a list of Nuclei objects that make up this composition"""
-        return list(self.X)
+        return list(self)
+
+    def get_molar(self):
+        """ return a dictionary of molar fractions"""
+        return {k: v/k.A for k, v in self.items()}
 
     def get_sum_X(self):
         """return the sum of the mass fractions"""
-        return math.fsum(self.X[q] for q in self.X)
+        return math.fsum(self.values())
 
     def set_solar_like(self, Z=0.02):
         """ approximate a solar abundance, setting p to 0.7, He4 to 0.3 - Z and
         the remainder evenly distributed with Z """
-        num = len(self.X)
-        rem = Z/(num-2)
-        for k in self.X:
+        rem = Z/(len(self)-2)
+        for k in self:
             if k == Nucleus("p"):
-                self.X[k] = 0.7
+                self[k] = 0.7
             elif k.raw == "he4":
-                self.X[k] = 0.3 - Z
+                self[k] = 0.3 - Z
             else:
-                self.X[k] = rem
+                self[k] = rem
 
         self.normalize()
 
     def set_array(self, arr):
         """ set all species from a sequence of mass fractions, in the same
         order as returned by get_nuclei() """
-        for i, k in enumerate(self.X):
-            self.X[k] = arr[i]
+        for i, k in enumerate(self):
+            self[k] = arr[i]
 
     def set_all(self, xval):
         """ set all species to a particular value """
-        for k in self.X:
-            self.X[k] = xval
+        for k in self:
+            self[k] = xval
 
     def set_equal(self):
         """ set all species to be equal"""
-        for k in self.X:
-            self.X[k] = 1.0 / len(self.X)
+        self.set_all(1.0 / len(self))
 
     def set_random(self, alpha=None, seed=None):
         """ set all species using a Dirichlet distribution with
@@ -151,7 +182,7 @@ class Composition:
 
         # default is a flat Dirichlet distribution
         if alpha is None:
-            alpha = np.ones(len(self.X))
+            alpha = np.ones(len(self))
 
         fracs = rng.dirichlet(alpha)
         self.set_array(fracs)
@@ -161,29 +192,23 @@ class Composition:
 
     def set_nuc(self, name, xval):
         """ set nuclei name to the mass fraction xval """
-        nuc = Nucleus.cast(name)
-        self.X[nuc] = xval
+        self[name] = xval
 
     def normalize(self):
         """ normalize the mass fractions to sum to 1 """
         X_sum = self.get_sum_X()
 
-        for k in self.X:
-            self.X[k] /= X_sum
-
-    def get_molar(self):
-        """ return a dictionary of molar fractions"""
-        molar_frac = {k: v/k.A for k, v in self.X.items()}
-        return molar_frac
+        for k in self:
+            self[k] /= X_sum
 
     def eval_ye(self):
         """ return the electron fraction """
-        electron_frac = math.fsum(self.X[n] * n.Z / n.A for n in self.X) / math.fsum(self.X[n] for n in self.X)
+        electron_frac = math.fsum(self[n] * n.Z / n.A for n in self) / self.get_sum_X()
         return electron_frac
 
     def eval_abar(self):
         """ return the mean molecular weight """
-        abar = math.fsum(self.X[n] / n.A for n in self.X)
+        abar = math.fsum(self[n] / n.A for n in self)
         return 1. / abar
 
     def eval_zbar(self):
@@ -217,9 +242,9 @@ class Composition:
             # the abundance in the new, reduced composition and
             # remove the nucleus from consideration for the other
             # original nuclei
-            if ex_nuc in nuclei and ex_nuc in self.X:
+            if ex_nuc in nuclei and ex_nuc in self:
                 nuclei.remove(ex_nuc)
-                new_comp.X[ex_nuc] = self.X[ex_nuc]
+                new_comp[ex_nuc] = self[ex_nuc]
                 if verbose:
                     print(f"storing {ex_nuc} as {ex_nuc}")
 
@@ -229,7 +254,7 @@ class Composition:
         # loop over our original nuclei.  Find the new nucleus such
         # that n_orig.A >= n_new.A.  If there are multiple, then do
         # the same for Z
-        for old_n, v in self.X.items():
+        for old_n, v in self.items():
 
             if old_n in exclude:
                 # we should have already dealt with this above
@@ -260,7 +285,7 @@ class Composition:
 
             if verbose:
                 print(f"storing {old_n} as {match_nuc}")
-            new_comp.X[match_nuc] += v
+            new_comp[match_nuc] += v
 
         return new_comp
 
@@ -282,11 +307,11 @@ class Composition:
         trace_keys = []
         trace_tot = 0.
         main_keys = []
-        for k in self.X:
+        for k in self:
             # if below threshold, count as trace element
-            if self.X[k] < trace_threshold:
+            if self[k] < trace_threshold:
                 trace_keys.append(k)
-                trace_tot += self.X[k]
+                trace_tot += self[k]
             else:
                 main_keys.append(k)
 
@@ -296,7 +321,7 @@ class Composition:
 
             fig, ax = plt.subplots(1, 1, figsize=size)
 
-            ax.pie(self.X.values(), labels=self.X.keys(), autopct=lambda p: f"{p/100:0.3f}")
+            ax.pie(self.values(), labels=self.keys(), autopct=lambda p: f"{p/100:0.3f}")
 
         else:
             # find trace nuclei which contribute little to trace proportion
@@ -307,8 +332,8 @@ class Composition:
             limited_trace_keys = []
             other_trace_tot = 0.
             for k in trace_keys:
-                if self.X[k] < hard_limit:
-                    other_trace_tot += self.X[k]
+                if self[k] < hard_limit:
+                    other_trace_tot += self[k]
                 else:
                     limited_trace_keys.append(k)
 
@@ -317,7 +342,7 @@ class Composition:
             fig.subplots_adjust(wspace=0)
 
             # pie chart parameters
-            main_values = [trace_tot] + [self.X[k] for k in main_keys]
+            main_values = [trace_tot] + [self[k] for k in main_keys]
             main_labels = ['trace'] + main_keys
             explode = [0.2] + [0. for i in range(len(main_keys))]
 
@@ -327,7 +352,7 @@ class Composition:
                                 labels=main_labels, explode=explode)
 
             # bar chart parameters
-            trace_values = [self.X[k] for k in limited_trace_keys] + [other_trace_tot]
+            trace_values = [self[k] for k in limited_trace_keys] + [other_trace_tot]
             trace_labels = [k.short_spec_name for k in limited_trace_keys] + ['other']
             bottom = 1
             width = 0.1
@@ -1060,6 +1085,7 @@ class RateCollection:
                 # if we are doing symmetric screening
                 for r in scr.rates:
                     # use scor from the previous loop iteration
+                    # pylint: disable-next=possibly-used-before-assignment
                     factors[r] = scor * scor2
             else:
                 # there might be several rates that have the same
@@ -1868,7 +1894,7 @@ class RateCollection:
 
         # Get figure, colormap
         fig, ax = plt.subplots()
-        cmap = mpl.cm.get_cmap(cmap)
+        cmap = mpl.colormaps.get_cmap(cmap)
 
         # Get nuclei and all 3 numbers
         nuclei = self.unique_nuclei
@@ -1889,7 +1915,7 @@ class RateCollection:
 
         elif color_field == "x":
 
-            values = np.array([comp.X[nuc] for nuc in nuclei])
+            values = np.array([comp[nuc] for nuc in nuclei])
 
         elif color_field == "y":
 
