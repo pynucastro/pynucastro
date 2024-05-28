@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Example of Integrating a Network &mdash; pynucastro 2.2.0.post12+g1ca08db7 documentation</title>
+  <title>Example of Integrating a Network &mdash; pynucastro 2.2.0.post13+g18f4f623 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
       <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
@@ -18,7 +18,7 @@
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=bc554a1b"></script>
+        <script src="_static/documentation_options.js?v=a84bfc11"></script>
         <script src="_static/doctools.js?v=9a2dae69"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
         <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -218,7 +218,7 @@
 </pre></div>
 </div>
 </div>
-<p>After importing all the necessary libraries and modules, we can intialize the thermodynamic conditions, intial compositions, the time span, and the algorithm or method we will be using to solve with.</p>
+<p>After importing all the necessary libraries and modules, we can initialize the thermodynamic conditions, initial compositions, the time span, and the algorithm or method we will be using to solve with.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
@@ -227,7 +227,7 @@
 <span class="n">T</span> <span class="o">=</span> <span class="mf">1.5e7</span>  <span class="c1">#K</span>
 <span class="n">screen_func</span> <span class="o">=</span> <span class="kc">None</span>
 
-<span class="n">Y0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">cno</span><span class="o">.</span><span class="n">nnuc</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span> <span class="c1">#Intialize array of mass fractions</span>
+<span class="n">Y0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">cno</span><span class="o">.</span><span class="n">nnuc</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span> <span class="c1"># Initialize array of mass fractions</span>
 
 <span class="n">Y0</span><span class="p">[</span><span class="n">cno</span><span class="o">.</span><span class="n">jp</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.7</span> <span class="c1">#Solar mix of mass fractions</span>
 <span class="n">Y0</span><span class="p">[</span><span class="n">cno</span><span class="o">.</span><span class="n">jhe4</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.28</span>
