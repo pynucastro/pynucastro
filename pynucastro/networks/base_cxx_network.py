@@ -429,6 +429,9 @@ class BaseCxxNetwork(ABC, RateCollection):
 
                 of.write('\n')
 
+        of.write(f'{idnt}auto screened_rates = rate_eval.screened_rates;\n')
+        of.write('\n')
+
         # Compose and write ydot weak
 
         for n in self.unique_nuclei:
