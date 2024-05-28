@@ -414,10 +414,9 @@ class BaseCxxNetwork(ABC, RateCollection):
         # Writes ydot for tabular weak reactions only
 
         # Get the tabular weak rates first.
+        idnt = self.indent*n_indent
+
         if len(self.tabular_rates) > 0:
-
-            idnt = self.indent*n_indent
-
             for r in self.tabular_rates:
 
                 of.write(f'{idnt}tabular_evaluate({r.table_index_name}_meta, {r.table_index_name}_rhoy, {r.table_index_name}_temp, {r.table_index_name}_data,\n')
@@ -430,6 +429,7 @@ class BaseCxxNetwork(ABC, RateCollection):
                 of.write('\n')
 
         of.write(f'{idnt}auto screened_rates = rate_eval.screened_rates;\n')
+
         of.write('\n')
 
         # Compose and write ydot weak
