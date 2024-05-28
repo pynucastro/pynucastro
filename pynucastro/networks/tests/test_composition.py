@@ -21,24 +21,28 @@ class TestComposition:
     def comp(self, nuclei):
         return networks.Composition(nuclei)
 
+    def test_getitem(self, comp):
+        n = Nucleus("he4")
+        assert comp["he4"] == comp[n] == comp.X[n]
+
     def test_solar(self, comp):
         comp.set_solar_like()
 
-        xsum = sum(comp.X.values())
+        xsum = sum(comp.values())
 
         assert xsum == approx(1.0)
-        assert comp.X[Nucleus("h1")] == approx(0.7)
+        assert comp["h1"] == approx(0.7)
 
     def test_set_all(self, nuclei, comp):
         val = 1.0/len(nuclei)
         comp.set_all(1.0/len(nuclei))
-        for n in nuclei:
-            assert comp.X[n] == val
+        for x in comp.values():
+            assert x == val
 
     def test_set_nuc(self, nuclei, comp):
         n = nuclei[0]
         comp.set_nuc(n.raw, 0.55)
-        assert comp.X[n] == 0.55
+        assert comp[n] == 0.55
 
     def test_get_molar(self, comp):
         comp.set_solar_like(Z=0.02)
@@ -47,7 +51,11 @@ class TestComposition:
 
     def test_set_equal(self, nuclei, comp):
         comp.set_equal()
-        assert comp.X[nuclei[0]] == approx(1.0 / len(nuclei))
+        assert comp["o16"] == approx(1.0 / len(nuclei))
+
+    def test_set_random(self, comp):
+        comp.set_random(seed=0)
+        assert comp["C12"] == approx(0.005076173651329372)
 
 
 class TestCompositionVars:
@@ -67,20 +75,20 @@ class TestCompositionVars:
     def test_abar(self, comp):
 
         # 1/Abar = sum_k X_k / A_k
-        Abar_inv = sum(comp.X[n] / n.A for n in comp.X)
+        Abar_inv = sum(comp[n] / n.A for n in comp)
         assert 1.0 / Abar_inv == approx(comp.eval_abar())
 
     def test_zbar(self, comp):
 
         # Zbar = Abar sum_k Z_k X_k / A_k
-        Abar_inv = sum(comp.X[n] / n.A for n in comp.X)
-        Zbar = 1.0 / Abar_inv * sum(comp.X[n] * n.Z / n.A for n in comp.X)
+        Abar_inv = sum(comp[n] / n.A for n in comp)
+        Zbar = 1.0 / Abar_inv * sum(comp[n] * n.Z / n.A for n in comp)
         assert Zbar == approx(comp.eval_zbar())
 
     def test_ye(self, comp):
 
         # Ye = sum_k Z_k X_k / A_k
-        Ye = sum(comp.X[n] * n.Z / n.A for n in comp.X)
+        Ye = sum(comp[n] * n.Z / n.A for n in comp)
         assert Ye == approx(comp.eval_ye())
 
 
@@ -142,19 +150,19 @@ storing Zn60 as Ni56
         orig_X = 1.0 / len(nuclei)
 
         # we should have placed p and He4 into He4
-        assert c_new.X[Nucleus("he4")] == approx(2.0 * orig_X)
+        assert c_new[Nucleus("he4")] == approx(2.0 * orig_X)
 
         # we should have placed C12, C13, N14, O14 into C12
-        assert c_new.X[Nucleus("c12")] == approx(4.0 * orig_X)
+        assert c_new[Nucleus("c12")] == approx(4.0 * orig_X)
 
         # we should have placed Cr48 and Fe52 into Ti44
-        assert c_new.X[Nucleus("ti44")] == approx(2.0 * orig_X)
+        assert c_new[Nucleus("ti44")] == approx(2.0 * orig_X)
 
         # we should have placed Cr56, Co56, and Fe56 into Fe56
-        assert c_new.X[Nucleus("fe56")] == approx(3.0 * orig_X)
+        assert c_new[Nucleus("fe56")] == approx(3.0 * orig_X)
 
         # we should have placed Zn60 into Ni56
-        assert c_new.X[Nucleus("ni56")] == approx(orig_X)
+        assert c_new[Nucleus("ni56")] == approx(orig_X)
 
 
 class TestCompBinning2:
@@ -189,13 +197,13 @@ class TestCompBinning2:
         orig_X = 1.0 / len(nuclei)
 
         # we should have placed d, He3. He4. He5, and C12 into p
-        assert c_new.X[Nucleus("p")] == approx(5.0 * orig_X)
+        assert c_new["p"] == approx(5.0 * orig_X)
 
         # we should have placed O14, O15, O16, and O17 into N14
-        assert c_new.X[Nucleus("n14")] == approx(4.0 * orig_X)
+        assert c_new["n14"] == approx(4.0 * orig_X)
 
         # we should have placed O18 into F18
-        assert c_new.X[Nucleus("f18")] == approx(orig_X)
+        assert c_new["f18"] == approx(orig_X)
 
 
 class TestCompBinning3:
@@ -224,13 +232,13 @@ class TestCompBinning3:
         orig_X = 1.0 / len(nuclei)
 
         # we should have placed fe52, fe53 into fe52
-        assert c_new.X[Nucleus("fe52")] == approx(2.0 * orig_X)
+        assert c_new[Nucleus("fe52")] == approx(2.0 * orig_X)
 
         # we should have placed fe54, fe55 into fe54
-        assert c_new.X[Nucleus("fe54")] == approx(2.0 * orig_X)
+        assert c_new[Nucleus("fe54")] == approx(2.0 * orig_X)
 
         # everything else should be ni56
-        assert c_new.X[Nucleus("ni56")] == approx(6.0 * orig_X)
+        assert c_new[Nucleus("ni56")] == approx(6.0 * orig_X)
 
     def test_bin_as_exclude(self, nuclei, comp):
         """exclude Ni56"""
@@ -244,10 +252,10 @@ class TestCompBinning3:
         orig_X = 1.0 / len(nuclei)
 
         # we should have placed fe52, fe53 into fe52
-        assert c_new.X[Nucleus("fe52")] == approx(2.0 * orig_X)
+        assert c_new["fe52"] == approx(2.0 * orig_X)
 
         # we should have placed fe54, fe55, fe56, fe57, fe58, ni57, ni58 into fe54
-        assert c_new.X[Nucleus("fe54")] == approx(7.0 * orig_X)
+        assert c_new["fe54"] == approx(7.0 * orig_X)
 
         # only ni56 should be ni56
-        assert c_new.X[Nucleus("ni56")] == approx(orig_X)
+        assert c_new["ni56"] == approx(orig_X)
