@@ -46,7 +46,9 @@ ax[0].set_aspect("equal", adjustable="datalim")
 
 fig.set_size_inches(5, 4.5)
 
+ax[0].margins(0.0)
 fig.tight_layout()
+
 fig.savefig("logo.pdf", bbox_inches="tight")
 fig.savefig("logo.svg", bbox_inches="tight")
-fig.savefig("logo.png", bbox_inches="tight")
+fig.savefig("logo.png", bbox_inches="tight", pad_inches=0)
