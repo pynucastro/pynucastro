@@ -50,6 +50,6 @@ fig.set_size_inches(4.5, 4.0)
 ax[0].margins(0.0)
 fig.tight_layout()
 
-fig.savefig("logo.pdf", bbox_inches="tight")
-fig.savefig("logo.svg", bbox_inches="tight")
+fig.savefig("logo.pdf", bbox_inches="tight", pad_inches=0)
+fig.savefig("logo.svg", bbox_inches="tight", pad_inches=0)
 fig.savefig("logo.png", bbox_inches="tight", pad_inches=0)
