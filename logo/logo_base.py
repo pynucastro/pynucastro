@@ -39,7 +39,7 @@ ax[0].set_axis_off()
 ax[1].remove()
 
 fig.text(0.4, 0.1, "pynucastro", horizontalalignment="center",
-         color="#444444", 
+         color="#444444",
          fontsize="40", fontstyle="italic", fontfamily="Fira Sans")
 
 ax[0].set_aspect("equal", adjustable="datalim")
