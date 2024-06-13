@@ -16,6 +16,9 @@
 
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/pynucastro/pynucastro/main?filepath=examples%2Fpynucastro-examples.ipynb)
 
+
+![logo](logo/logo.png)
+
 pynucastro is a python library for interactively creating and
 exploring nuclear reaction networks.  It provides interfaces to
 nuclear reaction rate databases, including the JINA Reaclib nuclear
