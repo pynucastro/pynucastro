@@ -2,7 +2,7 @@
 
    * numpy 2.0 support added (#748)
 
-   * new logo! (#746)
+   * new logo! (#744, #746)
 
    * pynucastro can now be installed by conda (#741, #743)
 
