@@ -1,3 +1,24 @@
+# 2.2.1
+
+   * numpy 2.0 support added (#748)
+
+   * new logo! (#744, #746)
+
+   * pynucastro can now be installed by conda (#741, #743)
+
+   * minor test fixes (#729, #735, #740, #745)
+
+   * doc fixes (#737)
+
+   * pylint fixes (#733)
+
+   * Composition now allows for direct key-value indexing (#731),
+     and has a new set_random() method (#728)
+
+   * The screen5 screening routine has been added (#730)
+
+   * C++ partition function interpolation is now cached (#726)
+
 # 2.2.0
 
   * Switch to using math.fsum() instead of sum() for better python
@@ -28,7 +49,7 @@
   * A new NSENetwork class was added for dealing with NSE (#675)
 
   * Moved some screening utilities out of RateCollection (#666)
-  
+
   * A PythonNetwork now write out a function to compute the energy
     release (#640)
 
