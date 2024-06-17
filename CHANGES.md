@@ -17,7 +17,7 @@
 
    * The screen5 screening routine has been added (#730)
 
-   * C++ partition function interpolation is now cached (#725)
+   * C++ partition function interpolation is now cached (#726)
 
 # 2.2.0
 
