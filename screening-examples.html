@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Screening Rates &mdash; pynucastro 2.2.0.post21+gdac82427 documentation</title>
+  <title>Screening Rates &mdash; pynucastro 2.2.0.post22+gaf03ea58 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
       <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
@@ -18,7 +18,7 @@
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=095cc0f8"></script>
+        <script src="_static/documentation_options.js?v=00d0ce21"></script>
         <script src="_static/doctools.js?v=9a2dae69"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
         <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -154,11 +154,12 @@
 </div>
 <section id="Screening-Implementations">
 <h2>Screening Implementations<a class="headerlink" href="#Screening-Implementations" title="Link to this heading"></a></h2>
-<p>pynucastro currently has 3 screening implementations:</p>
+<p>pynucastro currently has 4 screening implementations:</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">potekhin_1998</span></code> based on <span id="id1">Chabrier and Potekhin [<a class="reference internal" href="zreferences.html#id8" title="Gilles Chabrier and Alexander Y. Potekhin. Equation of state of fully ionized electron-ion plasmas. Physical Review E, 58(4):4941–4949, October 1998. doi:10.1103/PhysRevE.58.4941.">1998</a>]</span></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">chugunov_2007</span></code> based on <span id="id2">Chugunov <em>et al.</em> [<a class="reference internal" href="zreferences.html#id4" title="A. I. Chugunov, H. E. DeWitt, and D. G. Yakovlev. Coulomb tunneling for fusion reactions in dense matter: Path integral Monte Carlo versus mean field. Physical Review D, 76(2):025028, July 2007. arXiv:0707.3500, doi:10.1103/PhysRevD.76.025028.">2007</a>]</span></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">chugunov_2009</span></code> based on <span id="id3">Chugunov and DeWitt [<a class="reference internal" href="zreferences.html#id6" title="A. I. Chugunov and H. E. DeWitt. Nuclear fusion reaction rates for strongly coupled ionic mixtures. Physical Review C, 80(1):014611, July 2009. arXiv:0905.3844, doi:10.1103/PhysRevC.80.014611.">2009</a>]</span></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">screen5</span></code> based on <span id="id1">Wallace <em>et al.</em> [<a class="reference internal" href="zreferences.html#id26" title="R. K. Wallace, S. E. Woosley, and T. A. Weaver. The thermonuclear model for X-ray transients. \apj , 258:696-715, July 1982. doi:10.1086/160119.">1982</a>]</span></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">potekhin_1998</span></code> based on <span id="id2">Chabrier and Potekhin [<a class="reference internal" href="zreferences.html#id8" title="Gilles Chabrier and Alexander Y. Potekhin. Equation of state of fully ionized electron-ion plasmas. Physical Review E, 58(4):4941–4949, October 1998. doi:10.1103/PhysRevE.58.4941.">1998</a>]</span></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">chugunov_2007</span></code> based on <span id="id3">Chugunov <em>et al.</em> [<a class="reference internal" href="zreferences.html#id4" title="A. I. Chugunov, H. E. DeWitt, and D. G. Yakovlev. Coulomb tunneling for fusion reactions in dense matter: Path integral Monte Carlo versus mean field. Physical Review D, 76(2):025028, July 2007. arXiv:0707.3500, doi:10.1103/PhysRevD.76.025028.">2007</a>]</span></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">chugunov_2009</span></code> based on <span id="id4">Chugunov and DeWitt [<a class="reference internal" href="zreferences.html#id6" title="A. I. Chugunov and H. E. DeWitt. Nuclear fusion reaction rates for strongly coupled ionic mixtures. Physical Review C, 80(1):014611, July 2009. arXiv:0905.3844, doi:10.1103/PhysRevC.80.014611.">2009</a>]</span></p></li>
 </ul>
 <p>Each of these use various approximations to account for the influence of the plasma on screening the electric charge of the nuclei that are fusing.</p>
 </section>
