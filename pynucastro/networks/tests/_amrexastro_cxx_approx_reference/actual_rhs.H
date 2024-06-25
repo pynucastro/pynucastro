@@ -62,7 +62,7 @@ void evaluate_rates(const burn_t& state, T& rate_eval) {
     dual_t temp = state.T;
     if constexpr (do_T_derivatives) {
         // seed the dual number for temperature before calculating anything with it
-        autodiff::seed<1>(temp, 1.0_rt);
+        autodiff::seed(temp);
     }
     plasma_state_t<dual_t> pstate{};
     fill_plasma_state(pstate, temp, state.rho, Y);
