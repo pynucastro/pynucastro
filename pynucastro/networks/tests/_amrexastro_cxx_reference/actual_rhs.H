@@ -176,6 +176,7 @@ void get_ydot_weak(const burn_t& state,
     rate_t rate_eval;
 
     [[maybe_unused]] amrex::Real rate, drate_dt, edot_nu, edot_gamma;
+    [[maybe_unused]] amrex::Real rhoy = state.rho * state.y_e;
 
     rate_eval.enuc_weak = 0.0_rt;
 
@@ -190,6 +191,8 @@ void get_ydot_weak(const burn_t& state,
                      rhoy, state.T, rate, drate_dt, edot_nu, edot_gamma);
     rate_eval.screened_rates(k_Ne23_to_Na23) = rate;
     rate_eval.enuc_weak += C::Legacy::n_A * Y(Ne23) * (edot_nu + edot_gamma);
+
+    auto screened_rates = rate_eval.screened_rates;
 
     ydot_nuc(N) = 0.0_rt;
 

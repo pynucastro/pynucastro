@@ -160,10 +160,13 @@ void get_ydot_weak(const burn_t& state,
     rate_t rate_eval;
 
     [[maybe_unused]] amrex::Real rate, drate_dt, edot_nu, edot_gamma;
+    [[maybe_unused]] amrex::Real rhoy = state.rho * state.y_e;
 
     rate_eval.enuc_weak = 0.0_rt;
 
     // Calculate tabular rates and get ydot_weak
+
+    auto screened_rates = rate_eval.screened_rates;
 
     ydot_nuc(H1) = 0.0_rt;
 
