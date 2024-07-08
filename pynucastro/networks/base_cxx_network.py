@@ -218,7 +218,7 @@ class BaseCxxNetwork(ABC, RateCollection):
                 # compiler to evaluate the screen factor at compile time.
                 of.write(f'\n{self.indent*(n_indent+1)}static_assert(scn_fac.z1 == {float(scr.n1.Z)}_rt);\n\n')
 
-                of.write(f'\n{self.indent*(n_indent+1)}actual_screen<do_T_derivatives>(pstate, scn_fac, scor, dscor_dt);\n')
+                of.write(f'\n{self.indent*(n_indent+1)}actual_screen(pstate, scn_fac, scor, dscor_dt);\n')
 
                 of.write(f'{self.indent*n_indent}' + '}\n\n')
 
@@ -236,7 +236,7 @@ class BaseCxxNetwork(ABC, RateCollection):
 
                 of.write(f'\n{self.indent*(n_indent+1)}static_assert(scn_fac2.z1 == {float(scr.n1.Z)}_rt);\n\n')
 
-                of.write(f'\n{self.indent*(n_indent+1)}actual_screen<do_T_derivatives>(pstate, scn_fac2, scor2, dscor2_dt);\n')
+                of.write(f'\n{self.indent*(n_indent+1)}actual_screen(pstate, scn_fac2, scor2, dscor2_dt);\n')
 
                 of.write(f'\n{self.indent*n_indent}' + '}\n\n')
 
