@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.networks.base_cxx_network &mdash; pynucastro 2.2.1.post2+ga40215ac documentation</title>
+  <title>pynucastro.networks.base_cxx_network &mdash; pynucastro 2.2.1.post3+ge99affa9 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
       <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -16,7 +16,7 @@
   
         <script src="../../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../_static/documentation_options.js?v=a8d7d39d"></script>
+        <script src="../../../_static/documentation_options.js?v=09357983"></script>
         <script src="../../../_static/doctools.js?v=9a2dae69"></script>
         <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
         <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -201,6 +201,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">&#39;&lt;table_init_meta&gt;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_table_init_meta</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">&#39;&lt;compute_tabular_rates&gt;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_tabular_rates</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">&#39;&lt;ydot&gt;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ydot</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">&#39;&lt;ydot_weak&gt;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ydot_weak</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">&#39;&lt;enuc_add_energy_rate&gt;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_enuc_add_energy_rate</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">&#39;&lt;jacnuc&gt;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_jacnuc</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">&#39;&lt;initial_mass_fractions&gt;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_initial_mass_fractions</span>
@@ -501,51 +502,108 @@
         <span class="c1"># This is a helper function that converts sympy cxxcode to the actual c++ code we use.</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">symbol_rates</span><span class="o">.</span><span class="n">cxxify</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
 
+    <span class="k">def</span> <span class="nf">_write_ydot_nuc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">,</span> <span class="n">ydot_nuc</span><span class="p">):</span>
+        <span class="c1"># Helper function to write out ydot of a specific nuclei</span>
+
+        <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">pair</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ydot_nuc</span><span class="p">):</span>
+            <span class="c1"># pair here is the forward, reverse pair for a single rate as it affects</span>
+            <span class="c1"># nucleus n</span>
+
+            <span class="k">if</span> <span class="n">pair</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">num</span> <span class="o">=</span> <span class="mi">2</span>
+            <span class="k">elif</span> <span class="n">pair</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">num</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;a rate pair must contain at least one rate&quot;</span><span class="p">)</span>
+
+            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="mi">2</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">num</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;(&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">pair</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">sol_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cxxify</span><span class="p">(</span><span class="n">sympy</span><span class="o">.</span><span class="n">cxxcode</span><span class="p">(</span><span class="n">pair</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">precision</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span>
+                                                       <span class="n">standard</span><span class="o">=</span><span class="s2">&quot;c++11&quot;</span><span class="p">))</span>
+
+                <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">sol_value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">num</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot; + &quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">pair</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">sol_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cxxify</span><span class="p">(</span><span class="n">sympy</span><span class="o">.</span><span class="n">cxxcode</span><span class="p">(</span><span class="n">pair</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">precision</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span>
+                                                       <span class="n">standard</span><span class="o">=</span><span class="s2">&quot;c++11&quot;</span><span class="p">))</span>
+
+                <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">sol_value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">num</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;)&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">j</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">ydot_nuc</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot; +</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
     <span class="k">def</span> <span class="nf">_ydot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
         <span class="c1"># Write YDOT</span>
         <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ydot_out_result</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">symbol_rates</span><span class="o">.</span><span class="n">name_ydot_nuc</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="n">n</span><span class="o">.</span><span class="n">cindex</span><span class="p">()</span><span class="si">}</span><span class="s2">) = 0.0;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">symbol_rates</span><span class="o">.</span><span class="n">name_ydot_nuc</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="n">n</span><span class="o">.</span><span class="n">cindex</span><span class="p">()</span><span class="si">}</span><span class="s2">) = 0.0_rt;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
                 <span class="k">continue</span>
 
             <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">symbol_rates</span><span class="o">.</span><span class="n">name_ydot_nuc</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="n">n</span><span class="o">.</span><span class="n">cindex</span><span class="p">()</span><span class="si">}</span><span class="s2">) =</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">pair</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ydot_out_result</span><span class="p">[</span><span class="n">n</span><span class="p">]):</span>
-                <span class="c1"># pair here is the forward, reverse pair for a single rate as it affects</span>
-                <span class="c1"># nucleus n</span>
 
-                <span class="k">if</span> <span class="n">pair</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                    <span class="n">num</span> <span class="o">=</span> <span class="mi">2</span>
-                <span class="k">elif</span> <span class="n">pair</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                    <span class="n">num</span> <span class="o">=</span> <span class="mi">1</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;a rate pair must contain at least one rate&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_write_ydot_nuc</span><span class="p">(</span><span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ydot_out_result</span><span class="p">[</span><span class="n">n</span><span class="p">])</span>
 
-                <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="mi">2</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">num</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-                    <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;(&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">_ydot_weak</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+        <span class="c1"># Writes ydot for tabular weak reactions only</span>
 
-                <span class="k">if</span> <span class="n">pair</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="n">sol_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cxxify</span><span class="p">(</span><span class="n">sympy</span><span class="o">.</span><span class="n">cxxcode</span><span class="p">(</span><span class="n">pair</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">precision</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span>
-                                                                       <span class="n">standard</span><span class="o">=</span><span class="s2">&quot;c++11&quot;</span><span class="p">))</span>
+        <span class="c1"># Get the tabular weak rates first.</span>
+        <span class="n">idnt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span>
 
-                    <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">sol_value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tabular_rates</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabular_rates</span><span class="p">:</span>
 
-                <span class="k">if</span> <span class="n">num</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-                    <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot; + &quot;</span><span class="p">)</span>
+                <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">idnt</span><span class="si">}</span><span class="s1">tabular_evaluate(</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">table_index_name</span><span class="si">}</span><span class="s1">_meta, </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">table_index_name</span><span class="si">}</span><span class="s1">_rhoy, </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">table_index_name</span><span class="si">}</span><span class="s1">_temp, </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">table_index_name</span><span class="si">}</span><span class="s1">_data,</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">idnt</span><span class="si">}</span><span class="s1">                 rhoy, state.T, rate, drate_dt, edot_nu, edot_gamma);</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
 
-                <span class="k">if</span> <span class="n">pair</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="n">sol_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cxxify</span><span class="p">(</span><span class="n">sympy</span><span class="o">.</span><span class="n">cxxcode</span><span class="p">(</span><span class="n">pair</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">precision</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span>
-                                                                       <span class="n">standard</span><span class="o">=</span><span class="s2">&quot;c++11&quot;</span><span class="p">))</span>
+                <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">idnt</span><span class="si">}</span><span class="s1">rate_eval.screened_rates(k_</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">cname</span><span class="p">()</span><span class="si">}</span><span class="s1">) = rate;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
 
-                    <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">sol_value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">idnt</span><span class="si">}</span><span class="s1">rate_eval.enuc_weak += C::Legacy::n_A * </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">symbol_rates</span><span class="o">.</span><span class="n">name_y</span><span class="si">}</span><span class="s1">(</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">cindex</span><span class="p">()</span><span class="si">}</span><span class="s1">) * (edot_nu + edot_gamma);</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
 
-                <span class="k">if</span> <span class="n">num</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-                    <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;)&quot;</span><span class="p">)</span>
+                <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">idnt</span><span class="si">}</span><span class="s1">auto screened_rates = rate_eval.screened_rates;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
 
-                <span class="k">if</span> <span class="n">j</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ydot_out_result</span><span class="p">[</span><span class="n">n</span><span class="p">])</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
-                    <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot; +</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="c1"># Compose and write ydot weak</span>
+
+        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">:</span>
+
+            <span class="n">has_weak_rates</span> <span class="o">=</span> <span class="nb">any</span><span class="p">(</span>
+                <span class="p">(</span><span class="n">rp</span><span class="o">.</span><span class="n">forward</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">rp</span><span class="o">.</span><span class="n">forward</span><span class="o">.</span><span class="n">tabular</span><span class="p">)</span> <span class="ow">or</span>
+                <span class="p">(</span><span class="n">rp</span><span class="o">.</span><span class="n">reverse</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">rp</span><span class="o">.</span><span class="n">reverse</span><span class="o">.</span><span class="n">tabular</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">rp</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nuclei_rate_pairs</span><span class="p">[</span><span class="n">n</span><span class="p">]</span>
+            <span class="p">)</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">nuclei_rate_pairs</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">has_weak_rates</span><span class="p">:</span>
+                <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">symbol_rates</span><span class="o">.</span><span class="n">name_ydot_nuc</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="n">n</span><span class="o">.</span><span class="n">cindex</span><span class="p">()</span><span class="si">}</span><span class="s2">) = 0.0_rt;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">continue</span>
+
+            <span class="n">ydot_sym_terms</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">rp</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nuclei_rate_pairs</span><span class="p">[</span><span class="n">n</span><span class="p">]:</span>
+                <span class="n">fwd</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="k">if</span> <span class="n">rp</span><span class="o">.</span><span class="n">forward</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">rp</span><span class="o">.</span><span class="n">forward</span><span class="o">.</span><span class="n">tabular</span><span class="p">:</span>
+                    <span class="n">fwd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">symbol_rates</span><span class="o">.</span><span class="n">ydot_term_symbol</span><span class="p">(</span><span class="n">rp</span><span class="o">.</span><span class="n">forward</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+
+                <span class="n">rvs</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="k">if</span> <span class="n">rp</span><span class="o">.</span><span class="n">reverse</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">rp</span><span class="o">.</span><span class="n">reverse</span><span class="o">.</span><span class="n">tabular</span><span class="p">:</span>
+                    <span class="n">rvs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">symbol_rates</span><span class="o">.</span><span class="n">ydot_term_symbol</span><span class="p">(</span><span class="n">rp</span><span class="o">.</span><span class="n">reverse</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="n">fwd</span><span class="p">,</span> <span class="n">rvs</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+                    <span class="n">ydot_sym_terms</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">fwd</span><span class="p">,</span> <span class="n">rvs</span><span class="p">))</span>
+
+            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">symbol_rates</span><span class="o">.</span><span class="n">name_ydot_nuc</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="n">n</span><span class="o">.</span><span class="n">cindex</span><span class="p">()</span><span class="si">}</span><span class="s2">) =</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_write_ydot_nuc</span><span class="p">(</span><span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">,</span> <span class="n">ydot_sym_terms</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_enuc_add_energy_rate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
         <span class="c1"># Add tabular per-reaction neutrino energy generation rates to the energy generation rate</span>
