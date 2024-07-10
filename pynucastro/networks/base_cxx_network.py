@@ -428,7 +428,7 @@ class BaseCxxNetwork(ABC, RateCollection):
 
                 of.write('\n')
 
-        of.write(f'{idnt}auto screened_rates = rate_eval.screened_rates;\n')
+        of.write(f'{idnt}[[maybe_unused]] auto screened_rates = rate_eval.screened_rates;\n')
 
         of.write('\n')
 
