@@ -202,7 +202,7 @@ AMREX_GPU_HOST_DEVICE AMREX_INLINE
 void get_ydot_weak(const burn_t& state,
              amrex::Array1D<amrex::Real, 1, neqs>& ydot_nuc,
              amrex::Real& enuc_weak,
-             const amrex::Array1D<amrex::Real, 1, NumSpec>& Y) {
+             [[maybe_unused]] const amrex::Array1D<amrex::Real, 1, NumSpec>& Y) {
     ///
     /// Calculate Ydots contribute only from weak reactions.
     /// This is used to calculate dyedt and energy generation from
@@ -225,7 +225,6 @@ void get_ydot_weak(const burn_t& state,
 
     // Calculate tabular rates and get ydot_weak
 
-    auto screened_rates = rate_eval.screened_rates;
 
     ydot_nuc(He4) = 0.0_rt;
 

@@ -427,9 +427,7 @@ class BaseCxxNetwork(ABC, RateCollection):
                 of.write(f'{idnt}rate_eval.enuc_weak += C::Legacy::n_A * {self.symbol_rates.name_y}({r.reactants[0].cindex()}) * (edot_nu + edot_gamma);\n')
 
                 of.write('\n')
-
-        of.write(f'{idnt}[[maybe_unused]] auto screened_rates = rate_eval.screened_rates;\n')
-
+            of.write(f'{idnt}auto screened_rates = rate_eval.screened_rates;\n')
         of.write('\n')
 
         # Compose and write ydot weak
