@@ -95,18 +95,18 @@ jobs:
           cd external/Microphysics/networks/ase
           python ase.py
 
-      - name: Compile test_ase (NSE_NET, ase)
+      - name: Compile test_nse_net (NSE_NET, ase)
         run: |
-          cd external/Microphysics/unit_test/test_ase
+          cd external/Microphysics/unit_test/test_nse_net
           make realclean
           make -j 4
 
-      - name: Run test_ase (NSE_NET, ase)
+      - name: Run test_nse_net (NSE_NET, ase)
         run: |
-          cd external/Microphysics/unit_test/test_ase
+          cd external/Microphysics/unit_test/test_nse_net
           ./main3d.gnu.ex inputs_ase > test.out
 
       - name: Compare to stored output (NSE_NET, ase)
         run: |
-          cd external/Microphysics/unit_test/test_ase
-          diff -I "^Initializing AMReX" -I "^AMReX" -I "^reading in reaclib rates" test.out ${GITHUB_WORKSPACE}/.github/workflows/microphysics-benchmarks/ase_nse_net_unit_test.out
+          cd external/Microphysics/unit_test/test_nse_net
+          diff -I "^Initializing AMReX" -I "^AMReX" -I "^reading in reaclib rates" test.out ${GITHUB_WORKSPACE}/.github/workflows/microphysics-benchmarks/nse_net_unit_test.out
