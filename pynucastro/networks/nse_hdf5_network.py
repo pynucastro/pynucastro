@@ -286,9 +286,9 @@ class NSENetwork(RateCollection):
             header.attrs["original_NSENetwork_nuclei_count"] = len(self.unique_nuclei)
         
             # prepare data arrays
-            rho_data = np.array([np.log10(entry.rho) for entry in sorted(nse_states)])
-            T_data = np.array([np.log10(entry.T) for entry in sorted(nse_states)])
-            Ye_data = np.array([entry.Ye for entry in sorted(nse_states)])
+            rho_data = np.log10(rho_values)
+            T_data = np.log10(T_values)
+            Ye_data = Ye_values
             abar_data = np.array([entry.abar for entry in sorted(nse_states)])
             bea_data = np.array([entry.bea for entry in sorted(nse_states)])
             dYedt_data = np.array([entry.dYedt for entry in sorted(nse_states)])
@@ -297,15 +297,15 @@ class NSENetwork(RateCollection):
             enu_data = np.array([entry.enu for entry in sorted(nse_states)])
         
             # create datasets for the main data
-            hf.create_dataset("log10(rho)", data=rho_data, dtype=np.float64)
-            hf.create_dataset("log10(T)", data=T_data, dtype=np.float64)
-            hf.create_dataset("Ye", data=Ye_data, dtype=np.float64)
-            hf.create_dataset("Abar", data=abar_data, dtype=np.float64)
-            hf.create_dataset("<B/A>", data=bea_data, dtype=np.float64)
-            hf.create_dataset("<dYe/dt>", data=dYedt_data, dtype=np.float64)
-            hf.create_dataset("<dAbar/dt>", data=dabardt_data, dtype=np.float64)
-            hf.create_dataset("d<B/A>/dt", data=dbeadt_data, dtype=np.float64)
-            hf.create_dataset("e_nu", data=enu_data, dtype=np.float64)
+            hf.create_dataset("log10(rho)", data=rho_data, dtype=np.float64, compression='gzip')
+            hf.create_dataset("log10(T)", data=T_data, dtype=np.float64, compression='gzip')
+            hf.create_dataset("Ye", data=Ye_data, dtype=np.float64, compression='gzip')
+            hf.create_dataset("Abar", data=abar_data, dtype=np.float64, compression='gzip')
+            hf.create_dataset("<B_A>", data=bea_data, dtype=np.float64, compression='gzip')
+            hf.create_dataset("<dYe_dt>", data=dYedt_data, dtype=np.float64, compression='gzip')
+            hf.create_dataset("<dAbar_dt>", data=dabardt_data, dtype=np.float64, compression='gzip')
+            hf.create_dataset("d<B_A>_dt", data=dbeadt_data, dtype=np.float64, compression='gzip')
+            hf.create_dataset("e_nu", data=enu_data, dtype=np.float64, compression='gzip')
         
             # store nuclei names in a list
             nuc_list = []
@@ -321,4 +321,4 @@ class NSENetwork(RateCollection):
                             data_list.append(data)
 
                 X_data = np.array(data_list)
-                hf.create_dataset(f"X({nuc_list[i]})", data=X_data, dtype=np.float64)
+                hf.create_dataset(f"X({nuc_list[i]})", data=X_data, dtype=np.float64, compression='gzip')
