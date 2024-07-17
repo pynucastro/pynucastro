@@ -4,7 +4,7 @@ import numpy as np
 import nse_network as net
 import nse_hdf5_network as net_hd
 
-nucs = nucs = [Nucleus("p"), Nucleus("n"), Nucleus("he4"),
+nucs = [Nucleus("p"), Nucleus("n"), Nucleus("he4"),
                 Nucleus("fe52"), Nucleus("fe53"), Nucleus("fe54"),
                 Nucleus("fe55"), Nucleus("fe56"),
                 Nucleus("co54"), Nucleus("co55"), Nucleus("co56"),

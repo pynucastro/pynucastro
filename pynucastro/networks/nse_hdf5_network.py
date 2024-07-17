@@ -235,7 +235,7 @@ class NSENetwork(RateCollection):
         raise ValueError("Unable to find a solution, try to adjust initial guess manually")
 
     def generate_table_hdf5(self, rho_values=None, T_values=None, Ye_values=None,
-                       comp_reduction_func=None, num_nucs=None,
+                       comp_reduction_func=None,
                        verbose=False, outfile="nse.hdf5"):
 
         # initial guess
