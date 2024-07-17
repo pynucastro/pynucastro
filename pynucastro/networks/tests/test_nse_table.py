@@ -1,11 +1,9 @@
 import os
-import sys
 
 import numpy as np
 import pytest
 
 import pynucastro as pyna
-from nse_network import generate_table_hdf5
 from pynucastro import Nucleus
 
 
@@ -53,7 +51,7 @@ class TestNSETable:
         rhos = np.logspace(7, 10, 4)
         yes = np.linspace(0.43, 0.5, 3)
 
-        nse_net.generate_table_hdf5(rho_values=rhos,
+        nse_net.generate_table(rho_values=rhos,
                                T_values=Ts,
                                Ye_values=yes,
                                comp_reduction_func=self.get_reduced_comp)
