@@ -116,7 +116,7 @@ the default location python searches for packages.
 
 ### Requirements
 
-This package requires Python 3 (release 3.6 or later) and the following Python packages:
+pynucastro requires Python 3.8 or later and the following libraries:
 
 * `numpy`
 
