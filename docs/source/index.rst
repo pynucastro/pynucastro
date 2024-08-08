@@ -80,6 +80,14 @@ codes.
 
 .. toctree::
    :maxdepth: 1
+   :caption: Examples in Nuclear Astrophysics
+
+   examples/pp-cno.ipynb
+   examples/hot-CNO-breakout-example.ipynb
+   examples/triple_alpha_eval.ipynb
+
+.. toctree::
+   :maxdepth: 1
    :caption: Reference
 
    citing

@@ -58,13 +58,13 @@ void evaluate_rates(const burn_t& state, T& rate_eval) {
 
     // Calculate Reaclib rates
 
-    using dual_t = std::conditional_t<do_T_derivatives, autodiff::dual, amrex::Real>;
-    dual_t temp = state.T;
+    using number_t = std::conditional_t<do_T_derivatives, autodiff::dual, amrex::Real>;
+    number_t temp = state.T;
     if constexpr (do_T_derivatives) {
         // seed the dual number for temperature before calculating anything with it
         autodiff::seed(temp);
     }
-    plasma_state_t<dual_t> pstate{};
+    plasma_state_t<number_t> pstate{};
     fill_plasma_state(pstate, temp, state.rho, Y);
 
     tf_t tfactors = evaluate_tfactors(state.T);
