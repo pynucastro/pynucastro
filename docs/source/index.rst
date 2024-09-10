@@ -107,9 +107,10 @@ codes.
    sources
    zreferences
 
-Indices and tables
-==================
+.. toctree::
+   :maxdepth: 1
+   :caption: Index
+   :hidden:
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+   genindex
+   modindex
