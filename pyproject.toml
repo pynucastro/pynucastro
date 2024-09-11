@@ -129,6 +129,7 @@ addopts = """\
   --ignore=docs/source/library-examples.ipynb \
   --ignore=docs/source/pynucastro-examples.ipynb \
   --ignore=docs/source/pynucastro-integration.ipynb \
+  --ignore=docs/source/duplicate_rates.ipynb \
   --ignore-glob=pynucastro/library/tabular/*/generate_*.ipynb \
   --ignore=examples/rxn-network-integration.ipynb \
   --nbval-sanitize-with .github/workflows/nbval_sanitize.cfg \
