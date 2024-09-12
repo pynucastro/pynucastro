@@ -1,81 +1,189 @@
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="./">
-<head>
-  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pynucastro.reduction package &mdash; pynucastro 2.2.1.post11+g64169508 documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
-      <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
-      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=2e394b92" />
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>pynucastro.reduction package &#8212; pynucastro 2.2.1.post12+gf656795f documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
 
   
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
+  <link href="_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=a3416100" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/myfile.css?v=15ab05d9" />
   
-        <script src="_static/jquery.js?v=5d32c60e"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=1dee06bd"></script>
-        <script src="_static/doctools.js?v=9a2dae69"></script>
-        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
-        <script src="_static/clipboard.min.js?v=a7894cd8"></script>
-        <script src="_static/copybutton.js?v=f281be69"></script>
-        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
-    <script src="_static/js/theme.js"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="_static/documentation_options.js?v=05f7f30b"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'pynucastro.reduction';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="pynucastro.screening package" href="pynucastro.screening.html" />
-    <link rel="prev" title="pynucastro.rates package" href="pynucastro.rates.html" /> 
-</head>
+    <link rel="prev" title="pynucastro.rates package" href="pynucastro.rates.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
 
-<body class="wy-body-for-nav"> 
-  <div class="wy-grid-for-nav">
-    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
-      <div class="wy-side-scroll">
-        <div class="wy-side-nav-search" >
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
 
-          
-          
-          <a href="index.html" class="icon icon-home">
-            pynucastro
-              <img src="_static/logo.png" class="logo" alt="Logo"/>
-          </a>
-              <div class="version">
-                2.2
-              </div>
-<div role="search">
-  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
-    <input type="hidden" name="check_keywords" value="yes" />
-    <input type="hidden" name="area" value="default" />
-  </form>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
 </div>
-        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
-<ul>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/logo.png" class="logo__image only-light" alt=""/>
+    <script>document.write(`<img src="_static/logo.png" class="logo__image only-dark" alt=""/>`);</script>
+  
+  
+    <p class="title logo__title">pynucastro 2.2</p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="intro.html">Overview of pynucastro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rate_types.html">Reaction Rate Types</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Exploring Networks in Python</span></p>
-<ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Exploring Networks in Python</span></p>
+<ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="pynucastro-examples.html">pynucastro usage examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="plot-types.html">Plotting Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pynucastro-integration.html">Example of integrating a network</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Selecting Rates</span></p>
-<ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Selecting Rates</span></p>
+<ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="library-examples.html">Selecting Rates from a Library</a></li>
 <li class="toctree-l1"><a class="reference internal" href="validate-example.html">Checking your network</a></li>
 <li class="toctree-l1"><a class="reference internal" href="electron-capture-example.html">Tabulated Weak Rate Example</a></li>
 <li class="toctree-l1"><a class="reference internal" href="electron-captures.html">Combining ReacLib Rates with Electron Capture Tables</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Advanced Rate Operations</span></p>
-<ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Advanced Rate Operations</span></p>
+<ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="screening-examples.html">Screening Rates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modify-example.html">Modifying Rates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="approx-rates-examples.html">Approximate Rates</a></li>
@@ -83,106 +191,370 @@
 <li class="toctree-l1"><a class="reference internal" href="unimportant-rates.html">Removing Unimportant Rates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="partition-function.html">Reverse Rates</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Nuclear Statistical Equilibrium</span></p>
-<ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Nuclear Statistical Equilibrium</span></p>
+<ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="NSE-example.html">Solving for nuclear statistical equilibrium</a></li>
 <li class="toctree-l1"><a class="reference internal" href="nse_table.html">Creating an NSE table</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Plasma Neutrinos</span></p>
-<ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Plasma Neutrinos</span></p>
+<ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="neutrino-cooling.html">Neutrino Cooling</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Writing and Integrating Networks</span></p>
-<ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Writing and Integrating Networks</span></p>
+<ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="networks.html">Creating Networks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cxx-networks.html">AMReX Astro Microphysics Networks</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Interfacing With Other Languages</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="julia.html">Integrating using DifferentialEquations.jl</a></li>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Interfacing With Other Languages</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="julia.html">Integrating using DifferentialEquations.jl</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="Installing-Diffeqpy-Julia.html">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Example-Integrating-Network-diffeqpy.html">Example of Integrating a Network</a></li>
+
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Examples in Nuclear Astrophysics</span></p>
-<ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples in Nuclear Astrophysics</span></p>
+<ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="examples/pp-cno.html">p-p chain vs. CNO</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples/hot-CNO-breakout-example.html">hot-CNO and breakout</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples/triple_alpha_eval.html">Computing the Screened Triple-alpha rate</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
-<ul class="current">
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="citing.html">Citing pynucastro</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="modules.html">API</a><ul class="current">
-<li class="toctree-l2 current"><a class="reference internal" href="pynucastro.html">pynucastro package</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="pynucastro.html#library">library</a></li>
-<li class="toctree-l3"><a class="reference internal" href="pynucastro.html#nucdata">nucdata</a></li>
-<li class="toctree-l3"><a class="reference internal" href="pynucastro.html#networks">networks</a></li>
-<li class="toctree-l3"><a class="reference internal" href="pynucastro.html#rates">rates</a></li>
-<li class="toctree-l3"><a class="reference internal" href="pynucastro.html#screening">screening</a></li>
-<li class="toctree-l3"><a class="reference internal" href="pynucastro.html#templates">templates</a></li>
-<li class="toctree-l3 current"><a class="reference internal" href="pynucastro.html#subpackages">Subpackages</a><ul class="current">
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.html">pynucastro.networks package</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.html">pynucastro.nucdata package</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.html">pynucastro.rates package</a></li>
-<li class="toctree-l4 current"><a class="current reference internal" href="#">pynucastro.reduction package</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.screening.html">pynucastro.screening package</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="modules.html">API</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="pynucastro.html">pynucastro package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="pynucastro.networks.html">pynucastro.networks package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pynucastro.nucdata.html">pynucastro.nucdata package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pynucastro.rates.html">pynucastro.rates package</a></li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">pynucastro.reduction package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pynucastro.screening.html">pynucastro.screening package</a></li>
 </ul>
-</li>
+</details></li>
 </ul>
-</li>
-</ul>
-</li>
+</details></li>
 <li class="toctree-l1"><a class="reference internal" href="sources.html">Third Party Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="zreferences.html">References</a></li>
 </ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Index</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="genindex.html">Index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="py-modindex.html">Module Index</a></li>
+</ul>
 
-        </div>
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
       </div>
-    </nav>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
-          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">pynucastro</a>
-      </nav>
+<div class="sbt-scroll-pixel-helper"></div>
 
-      <div class="wy-nav-content">
-        <div class="rst-content">
-          <div role="navigation" aria-label="Page navigation">
-  <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="modules.html">pynucastro</a></li>
-          <li class="breadcrumb-item"><a href="pynucastro.html">pynucastro package</a></li>
-      <li class="breadcrumb-item active">pynucastro.reduction package</li>
-      <li class="wy-breadcrumbs-aside">
-              <a href="https://github.com/pynucastro/pynucastro/blob/main/docs/source/pynucastro.reduction.rst" class="fa fa-github"> Edit on GitHub</a>
-      </li>
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/pynucastro/pynucastro" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/pynucastro/pynucastro/blob/main/docs/source/pynucastro.reduction.rst?plain=1" target="_blank"
+   class="btn btn-sm btn-source-file-button dropdown-item"
+   title="Show source"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-code"></i>
+  </span>
+<span class="btn__text-container">Show source</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/pynucastro/pynucastro/edit/main/docs/source/pynucastro.reduction.rst" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/pynucastro/pynucastro/issues/new?title=Issue%20on%20page%20%2Fpynucastro.reduction.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
   </ul>
-  <hr/>
 </div>
-          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
-           <div itemprop="articleBody">
-             
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/pynucastro.reduction.rst" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.rst</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>pynucastro.reduction package</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#submodules">Submodules</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-pynucastro.reduction.drgep">pynucastro.reduction.drgep module</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.reduction.drgep.calc_interaction_matrix"><code class="docutils literal notranslate"><span class="pre">calc_interaction_matrix()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.reduction.drgep.calc_interaction_matrix_numpy"><code class="docutils literal notranslate"><span class="pre">calc_interaction_matrix_numpy()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.reduction.drgep.drgep"><code class="docutils literal notranslate"><span class="pre">drgep()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.reduction.drgep.drgep_dijkstras"><code class="docutils literal notranslate"><span class="pre">drgep_dijkstras()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.reduction.drgep.get_adj_nuc"><code class="docutils literal notranslate"><span class="pre">get_adj_nuc()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-pynucastro.reduction.generate_data">pynucastro.reduction.generate_data module</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.reduction.generate_data.dataset"><code class="docutils literal notranslate"><span class="pre">dataset()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.reduction.generate_data.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-pynucastro.reduction.load_network">pynucastro.reduction.load_network module</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.reduction.load_network.load_network"><code class="docutils literal notranslate"><span class="pre">load_network()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-pynucastro.reduction.reduction">pynucastro.reduction.reduction module</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.reduction.reduction.NetInfo"><code class="docutils literal notranslate"><span class="pre">NetInfo</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.reduction.reduction.NetInfo.a"><code class="docutils literal notranslate"><span class="pre">NetInfo.a</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.reduction.reduction.NetInfo.ebind"><code class="docutils literal notranslate"><span class="pre">NetInfo.ebind</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.reduction.reduction.NetInfo.m"><code class="docutils literal notranslate"><span class="pre">NetInfo.m</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.reduction.reduction.NetInfo.y"><code class="docutils literal notranslate"><span class="pre">NetInfo.y</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.reduction.reduction.NetInfo.ydot"><code class="docutils literal notranslate"><span class="pre">NetInfo.ydot</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.reduction.reduction.NetInfo.z"><code class="docutils literal notranslate"><span class="pre">NetInfo.z</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.reduction.reduction.abar_dot"><code class="docutils literal notranslate"><span class="pre">abar_dot()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.reduction.reduction.enuc_dot"><code class="docutils literal notranslate"><span class="pre">enuc_dot()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.reduction.reduction.get_errfunc_enuc"><code class="docutils literal notranslate"><span class="pre">get_errfunc_enuc()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.reduction.reduction.get_net_info"><code class="docutils literal notranslate"><span class="pre">get_net_info()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.reduction.reduction.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.reduction.reduction.map_comp"><code class="docutils literal notranslate"><span class="pre">map_comp()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.reduction.reduction.rel_err"><code class="docutils literal notranslate"><span class="pre">rel_err()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.reduction.reduction.ye_dot"><code class="docutils literal notranslate"><span class="pre">ye_dot()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-pynucastro.reduction.reduction_utils">pynucastro.reduction.reduction_utils module</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.reduction.reduction_utils.FailedMPIImport"><code class="docutils literal notranslate"><span class="pre">FailedMPIImport</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.reduction.reduction_utils.MPIImportError"><code class="docutils literal notranslate"><span class="pre">MPIImportError</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.reduction.reduction_utils.mpi_importer"><code class="docutils literal notranslate"><span class="pre">mpi_importer()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.reduction.reduction_utils.mpi_numpy_decomp"><code class="docutils literal notranslate"><span class="pre">mpi_numpy_decomp()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.reduction.reduction_utils.to_list"><code class="docutils literal notranslate"><span class="pre">to_list()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-pynucastro.reduction.sensitivity_analysis">pynucastro.reduction.sensitivity_analysis module</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.reduction.sensitivity_analysis.binary_search_trim"><code class="docutils literal notranslate"><span class="pre">binary_search_trim()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.reduction.sensitivity_analysis.sens_analysis"><code class="docutils literal notranslate"><span class="pre">sens_analysis()</span></code></a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
   <section id="module-pynucastro.reduction">
-<span id="pynucastro-reduction-package"></span><h1>pynucastro.reduction package<a class="headerlink" href="#module-pynucastro.reduction" title="Link to this heading"></a></h1>
+<span id="pynucastro-reduction-package"></span><h1>pynucastro.reduction package<a class="headerlink" href="#module-pynucastro.reduction" title="Link to this heading">#</a></h1>
 <p>Routines for nuclear reaction network reduction.</p>
 <section id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">#</a></h2>
 </section>
 <section id="module-pynucastro.reduction.drgep">
-<span id="pynucastro-reduction-drgep-module"></span><h2>pynucastro.reduction.drgep module<a class="headerlink" href="#module-pynucastro.reduction.drgep" title="Link to this heading"></a></h2>
+<span id="pynucastro-reduction-drgep-module"></span><h2>pynucastro.reduction.drgep module<a class="headerlink" href="#module-pynucastro.reduction.drgep" title="Link to this heading">#</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="pynucastro.reduction.drgep.calc_interaction_matrix">
-<span class="sig-prename descclassname"><span class="pre">pynucastro.reduction.drgep.</span></span><span class="sig-name descname"><span class="pre">calc_interaction_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">net</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rvals</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/reduction/drgep.html#calc_interaction_matrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.reduction.drgep.calc_interaction_matrix" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pynucastro.reduction.drgep.</span></span><span class="sig-name descname"><span class="pre">calc_interaction_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">net</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rvals</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/reduction/drgep.html#calc_interaction_matrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.reduction.drgep.calc_interaction_matrix" title="Link to this definition">#</a></dt>
 <dd><p>Calculate direct interaction coefficients.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pynucastro.reduction.drgep.calc_interaction_matrix_numpy">
-<span class="sig-prename descclassname"><span class="pre">pynucastro.reduction.drgep.</span></span><span class="sig-name descname"><span class="pre">calc_interaction_matrix_numpy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">net</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rvals_arr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/reduction/drgep.html#calc_interaction_matrix_numpy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.reduction.drgep.calc_interaction_matrix_numpy" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pynucastro.reduction.drgep.</span></span><span class="sig-name descname"><span class="pre">calc_interaction_matrix_numpy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">net</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rvals_arr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/reduction/drgep.html#calc_interaction_matrix_numpy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.reduction.drgep.calc_interaction_matrix_numpy" title="Link to this definition">#</a></dt>
 <dd><p>Calculate direct interaction coefficients using NumPy.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pynucastro.reduction.drgep.drgep">
-<span class="sig-prename descclassname"><span class="pre">pynucastro.reduction.drgep.</span></span><span class="sig-name descname"><span class="pre">drgep</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">net</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">targets</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tols</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">returnobj</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'net'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_mpi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_numpy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/reduction/drgep.html#drgep"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.reduction.drgep.drgep" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pynucastro.reduction.drgep.</span></span><span class="sig-name descname"><span class="pre">drgep</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">net</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">targets</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tols</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">returnobj</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'net'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_mpi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_numpy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/reduction/drgep.html#drgep"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.reduction.drgep.drgep" title="Link to this definition">#</a></dt>
 <dd><p>Implementation of Directed Relation Graph with Error Propagation (DRGEP) reduction
 method described in <span id="id1">Pepiot-Desjardins and Pitsch [<a class="reference internal" href="zreferences.html#id21" title="P. Pepiot-Desjardins and H. Pitsch. An efficient error-propagation-based reduction method for large chemical kinetic mechanisms. Combustion and Flame, 154(1):67-81, 2008. doi:10.1016/j.combustflame.2007.10.020.">2008</a>]</span> and <span id="id2">Niemeyer and Sung [<a class="reference internal" href="zreferences.html#id22" title="Kyle E. Niemeyer and Chih-Jen Sung. On the importance of graph search algorithms for DRGEP-based mechanism reduction methods. Combustion and Flame, 158(8):1439-1443, 2011. doi:10.1016/j.combustflame.2010.12.010.">2011</a>]</span>.</p>
 <dl class="field-list simple">
@@ -217,24 +589,24 @@ Conditions should be supplied as 3 lists that will be permuted to form the datas
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pynucastro.reduction.drgep.drgep_dijkstras">
-<span class="sig-prename descclassname"><span class="pre">pynucastro.reduction.drgep.</span></span><span class="sig-name descname"><span class="pre">drgep_dijkstras</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">net</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_AB</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adj_nuc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/reduction/drgep.html#drgep_dijkstras"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.reduction.drgep.drgep_dijkstras" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pynucastro.reduction.drgep.</span></span><span class="sig-name descname"><span class="pre">drgep_dijkstras</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">net</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_AB</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adj_nuc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/reduction/drgep.html#drgep_dijkstras"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.reduction.drgep.drgep_dijkstras" title="Link to this definition">#</a></dt>
 <dd><p>Modified Dijkstra’s algorithm to find paths that maximize the overall interaction coefficient
 between the target and each other nucleus in the net.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pynucastro.reduction.drgep.get_adj_nuc">
-<span class="sig-prename descclassname"><span class="pre">pynucastro.reduction.drgep.</span></span><span class="sig-name descname"><span class="pre">get_adj_nuc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">net</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/reduction/drgep.html#get_adj_nuc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.reduction.drgep.get_adj_nuc" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pynucastro.reduction.drgep.</span></span><span class="sig-name descname"><span class="pre">get_adj_nuc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">net</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/reduction/drgep.html#get_adj_nuc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.reduction.drgep.get_adj_nuc" title="Link to this definition">#</a></dt>
 <dd><p>Get set of adjacent nuclei for each nucleus in the net. Returns dictionary keyed by
 nuclei.</p>
 </dd></dl>
 
 </section>
 <section id="module-pynucastro.reduction.generate_data">
-<span id="pynucastro-reduction-generate-data-module"></span><h2>pynucastro.reduction.generate_data module<a class="headerlink" href="#module-pynucastro.reduction.generate_data" title="Link to this heading"></a></h2>
+<span id="pynucastro-reduction-generate-data-module"></span><h2>pynucastro.reduction.generate_data module<a class="headerlink" href="#module-pynucastro.reduction.generate_data" title="Link to this heading">#</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="pynucastro.reduction.generate_data.dataset">
-<span class="sig-prename descclassname"><span class="pre">pynucastro.reduction.generate_data.</span></span><span class="sig-name descname"><span class="pre">dataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">network</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">permute</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b_rho</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b_T</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b_Z</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/reduction/generate_data.html#dataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.reduction.generate_data.dataset" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pynucastro.reduction.generate_data.</span></span><span class="sig-name descname"><span class="pre">dataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">network</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">permute</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b_rho</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b_T</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b_Z</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/reduction/generate_data.html#dataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.reduction.generate_data.dataset" title="Link to this definition">#</a></dt>
 <dd><p>Generate a dataset with <em>n</em> datapoints. Will either be returned as a sequence of tuples,
 each with order (composition, density, temperature) if <em>permute</em> is <em>True</em> (default),
 or the transpose of that if <em>permute</em> is <em>False</em>. The parameters <em>b_rho</em>, <em>b_T</em>, and
@@ -243,59 +615,59 @@ or the transpose of that if <em>permute</em> is <em>False</em>. The parameters <
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pynucastro.reduction.generate_data.main">
-<span class="sig-prename descclassname"><span class="pre">pynucastro.reduction.generate_data.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/reduction/generate_data.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.reduction.generate_data.main" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pynucastro.reduction.generate_data.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/reduction/generate_data.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.reduction.generate_data.main" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 </section>
 <section id="module-pynucastro.reduction.load_network">
-<span id="pynucastro-reduction-load-network-module"></span><h2>pynucastro.reduction.load_network module<a class="headerlink" href="#module-pynucastro.reduction.load_network" title="Link to this heading"></a></h2>
+<span id="pynucastro-reduction-load-network-module"></span><h2>pynucastro.reduction.load_network module<a class="headerlink" href="#module-pynucastro.reduction.load_network" title="Link to this heading">#</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="pynucastro.reduction.load_network.load_network">
-<span class="sig-prename descclassname"><span class="pre">pynucastro.reduction.load_network.</span></span><span class="sig-name descname"><span class="pre">load_network</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">endpoint</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Te108</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">library_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'rp-process-lib'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/reduction/load_network.html#load_network"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.reduction.load_network.load_network" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pynucastro.reduction.load_network.</span></span><span class="sig-name descname"><span class="pre">load_network</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">endpoint</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Te108</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">library_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'rp-process-lib'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/reduction/load_network.html#load_network"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.reduction.load_network.load_network" title="Link to this definition">#</a></dt>
 <dd><p>Load a network from a library, filtering the library so only nuclei with Z and A less than
 the endpoint’s Z and A are included.</p>
 </dd></dl>
 
 </section>
 <section id="module-pynucastro.reduction.reduction">
-<span id="pynucastro-reduction-reduction-module"></span><h2>pynucastro.reduction.reduction module<a class="headerlink" href="#module-pynucastro.reduction.reduction" title="Link to this heading"></a></h2>
+<span id="pynucastro-reduction-reduction-module"></span><h2>pynucastro.reduction.reduction module<a class="headerlink" href="#module-pynucastro.reduction.reduction" title="Link to this heading">#</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="pynucastro.reduction.reduction.NetInfo">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.reduction.reduction.</span></span><span class="sig-name descname"><span class="pre">NetInfo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ydot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ebind</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pynucastro.reduction.reduction.NetInfo" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.reduction.reduction.</span></span><span class="sig-name descname"><span class="pre">NetInfo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ydot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ebind</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pynucastro.reduction.reduction.NetInfo" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a></p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pynucastro.reduction.reduction.NetInfo.a">
-<span class="sig-name descname"><span class="pre">a</span></span><a class="headerlink" href="#pynucastro.reduction.reduction.NetInfo.a" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">a</span></span><a class="headerlink" href="#pynucastro.reduction.reduction.NetInfo.a" title="Link to this definition">#</a></dt>
 <dd><p>Alias for field number 3</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pynucastro.reduction.reduction.NetInfo.ebind">
-<span class="sig-name descname"><span class="pre">ebind</span></span><a class="headerlink" href="#pynucastro.reduction.reduction.NetInfo.ebind" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">ebind</span></span><a class="headerlink" href="#pynucastro.reduction.reduction.NetInfo.ebind" title="Link to this definition">#</a></dt>
 <dd><p>Alias for field number 4</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pynucastro.reduction.reduction.NetInfo.m">
-<span class="sig-name descname"><span class="pre">m</span></span><a class="headerlink" href="#pynucastro.reduction.reduction.NetInfo.m" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">m</span></span><a class="headerlink" href="#pynucastro.reduction.reduction.NetInfo.m" title="Link to this definition">#</a></dt>
 <dd><p>Alias for field number 5</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pynucastro.reduction.reduction.NetInfo.y">
-<span class="sig-name descname"><span class="pre">y</span></span><a class="headerlink" href="#pynucastro.reduction.reduction.NetInfo.y" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">y</span></span><a class="headerlink" href="#pynucastro.reduction.reduction.NetInfo.y" title="Link to this definition">#</a></dt>
 <dd><p>Alias for field number 0</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pynucastro.reduction.reduction.NetInfo.ydot">
-<span class="sig-name descname"><span class="pre">ydot</span></span><a class="headerlink" href="#pynucastro.reduction.reduction.NetInfo.ydot" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">ydot</span></span><a class="headerlink" href="#pynucastro.reduction.reduction.NetInfo.ydot" title="Link to this definition">#</a></dt>
 <dd><p>Alias for field number 1</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pynucastro.reduction.reduction.NetInfo.z">
-<span class="sig-name descname"><span class="pre">z</span></span><a class="headerlink" href="#pynucastro.reduction.reduction.NetInfo.z" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">z</span></span><a class="headerlink" href="#pynucastro.reduction.reduction.NetInfo.z" title="Link to this definition">#</a></dt>
 <dd><p>Alias for field number 2</p>
 </dd></dl>
 
@@ -303,76 +675,76 @@ the endpoint’s Z and A are included.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pynucastro.reduction.reduction.abar_dot">
-<span class="sig-prename descclassname"><span class="pre">pynucastro.reduction.reduction.</span></span><span class="sig-name descname"><span class="pre">abar_dot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">net_info</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/reduction/reduction.html#abar_dot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.reduction.reduction.abar_dot" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pynucastro.reduction.reduction.</span></span><span class="sig-name descname"><span class="pre">abar_dot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">net_info</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/reduction/reduction.html#abar_dot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.reduction.reduction.abar_dot" title="Link to this definition">#</a></dt>
 <dd><p>Calculate the time rate of change of mean molecular weight.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pynucastro.reduction.reduction.enuc_dot">
-<span class="sig-prename descclassname"><span class="pre">pynucastro.reduction.reduction.</span></span><span class="sig-name descname"><span class="pre">enuc_dot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">net_info</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/reduction/reduction.html#enuc_dot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.reduction.reduction.enuc_dot" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pynucastro.reduction.reduction.</span></span><span class="sig-name descname"><span class="pre">enuc_dot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">net_info</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/reduction/reduction.html#enuc_dot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.reduction.reduction.enuc_dot" title="Link to this definition">#</a></dt>
 <dd><p>Calculate the nuclear energy generation rate.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pynucastro.reduction.reduction.get_errfunc_enuc">
-<span class="sig-prename descclassname"><span class="pre">pynucastro.reduction.reduction.</span></span><span class="sig-name descname"><span class="pre">get_errfunc_enuc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">net_old</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conds</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/reduction/reduction.html#get_errfunc_enuc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.reduction.reduction.get_errfunc_enuc" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pynucastro.reduction.reduction.</span></span><span class="sig-name descname"><span class="pre">get_errfunc_enuc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">net_old</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conds</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/reduction/reduction.html#get_errfunc_enuc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.reduction.reduction.get_errfunc_enuc" title="Link to this definition">#</a></dt>
 <dd><p>Function for computing error in nuclear energy generation.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pynucastro.reduction.reduction.get_net_info">
-<span class="sig-prename descclassname"><span class="pre">pynucastro.reduction.reduction.</span></span><span class="sig-name descname"><span class="pre">get_net_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">net</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rho</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/reduction/reduction.html#get_net_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.reduction.reduction.get_net_info" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pynucastro.reduction.reduction.</span></span><span class="sig-name descname"><span class="pre">get_net_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">net</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rho</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/reduction/reduction.html#get_net_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.reduction.reduction.get_net_info" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pynucastro.reduction.reduction.main">
-<span class="sig-prename descclassname"><span class="pre">pynucastro.reduction.reduction.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/reduction/reduction.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.reduction.reduction.main" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pynucastro.reduction.reduction.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/reduction/reduction.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.reduction.reduction.main" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pynucastro.reduction.reduction.map_comp">
-<span class="sig-prename descclassname"><span class="pre">pynucastro.reduction.reduction.</span></span><span class="sig-name descname"><span class="pre">map_comp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">comp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">net</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/reduction/reduction.html#map_comp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.reduction.reduction.map_comp" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pynucastro.reduction.reduction.</span></span><span class="sig-name descname"><span class="pre">map_comp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">comp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">net</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/reduction/reduction.html#map_comp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.reduction.reduction.map_comp" title="Link to this definition">#</a></dt>
 <dd><p>Create new composition object with nuclei in net, and copy their mass fractions over.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pynucastro.reduction.reduction.rel_err">
-<span class="sig-prename descclassname"><span class="pre">pynucastro.reduction.reduction.</span></span><span class="sig-name descname"><span class="pre">rel_err</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/reduction/reduction.html#rel_err"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.reduction.reduction.rel_err" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pynucastro.reduction.reduction.</span></span><span class="sig-name descname"><span class="pre">rel_err</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/reduction/reduction.html#rel_err"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.reduction.reduction.rel_err" title="Link to this definition">#</a></dt>
 <dd><p>Compute the relative error between two NumPy arrays.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pynucastro.reduction.reduction.ye_dot">
-<span class="sig-prename descclassname"><span class="pre">pynucastro.reduction.reduction.</span></span><span class="sig-name descname"><span class="pre">ye_dot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">net_info</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/reduction/reduction.html#ye_dot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.reduction.reduction.ye_dot" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pynucastro.reduction.reduction.</span></span><span class="sig-name descname"><span class="pre">ye_dot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">net_info</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/reduction/reduction.html#ye_dot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.reduction.reduction.ye_dot" title="Link to this definition">#</a></dt>
 <dd><p>Calculate the time rate of change of electron fraction.</p>
 </dd></dl>
 
 </section>
 <section id="module-pynucastro.reduction.reduction_utils">
-<span id="pynucastro-reduction-reduction-utils-module"></span><h2>pynucastro.reduction.reduction_utils module<a class="headerlink" href="#module-pynucastro.reduction.reduction_utils" title="Link to this heading"></a></h2>
+<span id="pynucastro-reduction-reduction-utils-module"></span><h2>pynucastro.reduction.reduction_utils module<a class="headerlink" href="#module-pynucastro.reduction.reduction_utils" title="Link to this heading">#</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="pynucastro.reduction.reduction_utils.FailedMPIImport">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.reduction.reduction_utils.</span></span><span class="sig-name descname"><span class="pre">FailedMPIImport</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">error</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/reduction/reduction_utils.html#FailedMPIImport"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.reduction.reduction_utils.FailedMPIImport" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.reduction.reduction_utils.</span></span><span class="sig-name descname"><span class="pre">FailedMPIImport</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">error</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/reduction/reduction_utils.html#FailedMPIImport"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.reduction.reduction_utils.FailedMPIImport" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Class that can replace an mpi4py.MPI import and will throw an error if used.</p>
 </dd></dl>
 
 <dl class="py exception">
 <dt class="sig sig-object py" id="pynucastro.reduction.reduction_utils.MPIImportError">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.reduction.reduction_utils.</span></span><span class="sig-name descname"><span class="pre">MPIImportError</span></span><a class="reference internal" href="_modules/pynucastro/reduction/reduction_utils.html#MPIImportError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.reduction.reduction_utils.MPIImportError" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.reduction.reduction_utils.</span></span><span class="sig-name descname"><span class="pre">MPIImportError</span></span><a class="reference internal" href="_modules/pynucastro/reduction/reduction_utils.html#MPIImportError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.reduction.reduction_utils.MPIImportError" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></a></p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pynucastro.reduction.reduction_utils.mpi_importer">
-<span class="sig-prename descclassname"><span class="pre">pynucastro.reduction.reduction_utils.</span></span><span class="sig-name descname"><span class="pre">mpi_importer</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/reduction/reduction_utils.html#mpi_importer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.reduction.reduction_utils.mpi_importer" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pynucastro.reduction.reduction_utils.</span></span><span class="sig-name descname"><span class="pre">mpi_importer</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/reduction/reduction_utils.html#mpi_importer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.reduction.reduction_utils.mpi_importer" title="Link to this definition">#</a></dt>
 <dd><p>Lazy MPI import, where we only throw an error if the import failed and then we attempt to use
 the object.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pynucastro.reduction.reduction_utils.mpi_numpy_decomp">
-<span class="sig-prename descclassname"><span class="pre">pynucastro.reduction.reduction_utils.</span></span><span class="sig-name descname"><span class="pre">mpi_numpy_decomp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">MPI_N</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">MPI_rank</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/reduction/reduction_utils.html#mpi_numpy_decomp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.reduction.reduction_utils.mpi_numpy_decomp" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pynucastro.reduction.reduction_utils.</span></span><span class="sig-name descname"><span class="pre">mpi_numpy_decomp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">MPI_N</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">MPI_rank</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/reduction/reduction_utils.html#mpi_numpy_decomp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.reduction.reduction_utils.mpi_numpy_decomp" title="Link to this definition">#</a></dt>
 <dd><p>Decompose a set of conditions for <em>MPI_N</em> MPI processes, where the conditions are a sequence of
 3 sequences with ordering (composition_sequence, density_sequence, temperature_sequence). This
 structure for the dataset is necessary for the vectorized reduction algorithms.</p>
@@ -380,17 +752,17 @@ structure for the dataset is necessary for the vectorized reduction algorithms.<
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pynucastro.reduction.reduction_utils.to_list">
-<span class="sig-prename descclassname"><span class="pre">pynucastro.reduction.reduction_utils.</span></span><span class="sig-name descname"><span class="pre">to_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/reduction/reduction_utils.html#to_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.reduction.reduction_utils.to_list" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pynucastro.reduction.reduction_utils.</span></span><span class="sig-name descname"><span class="pre">to_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/reduction/reduction_utils.html#to_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.reduction.reduction_utils.to_list" title="Link to this definition">#</a></dt>
 <dd><p>Convert a sequence or non-iterable to a list. In the non-iterable case, the supplied object will
 be repeated <em>n</em> times (default 1).</p>
 </dd></dl>
 
 </section>
 <section id="module-pynucastro.reduction.sensitivity_analysis">
-<span id="pynucastro-reduction-sensitivity-analysis-module"></span><h2>pynucastro.reduction.sensitivity_analysis module<a class="headerlink" href="#module-pynucastro.reduction.sensitivity_analysis" title="Link to this heading"></a></h2>
+<span id="pynucastro-reduction-sensitivity-analysis-module"></span><h2>pynucastro.reduction.sensitivity_analysis module<a class="headerlink" href="#module-pynucastro.reduction.sensitivity_analysis" title="Link to this heading">#</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="pynucastro.reduction.sensitivity_analysis.binary_search_trim">
-<span class="sig-prename descclassname"><span class="pre">pynucastro.reduction.sensitivity_analysis.</span></span><span class="sig-name descname"><span class="pre">binary_search_trim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">network</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nuclei</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">errfunc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thresh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/reduction/sensitivity_analysis.html#binary_search_trim"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.reduction.sensitivity_analysis.binary_search_trim" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pynucastro.reduction.sensitivity_analysis.</span></span><span class="sig-name descname"><span class="pre">binary_search_trim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">network</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nuclei</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">errfunc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thresh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/reduction/sensitivity_analysis.html#binary_search_trim"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.reduction.sensitivity_analysis.binary_search_trim" title="Link to this definition">#</a></dt>
 <dd><p>Given an array of nuclei sorted roughly by relative importance, perform a binary search to trim
 out nuclei from the network until the error is as close as possible to the given threshold
 without exceeding it. Nuclei whose removal will result in only a small increase in error need to
@@ -417,7 +789,7 @@ threshold.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pynucastro.reduction.sensitivity_analysis.sens_analysis">
-<span class="sig-prename descclassname"><span class="pre">pynucastro.reduction.sensitivity_analysis.</span></span><span class="sig-name descname"><span class="pre">sens_analysis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">network</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">errfunc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thresh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_mpi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_prog</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/reduction/sensitivity_analysis.html#sens_analysis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.reduction.sensitivity_analysis.sens_analysis" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pynucastro.reduction.sensitivity_analysis.</span></span><span class="sig-name descname"><span class="pre">sens_analysis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">network</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">errfunc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thresh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_mpi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_prog</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/reduction/sensitivity_analysis.html#sens_analysis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.reduction.sensitivity_analysis.sens_analysis" title="Link to this definition">#</a></dt>
 <dd><p>Given a reaction network, remove nuclei from the network one-by-one until the induced error is
 as close to the given threshold as possible without exceeding it. This will test nuclei for
 removal individually and remove the one that induces the smallest error on each pass. Since
@@ -451,34 +823,153 @@ threshold.</p>
 </section>
 
 
-           </div>
-          </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="pynucastro.rates.html" class="btn btn-neutral float-left" title="pynucastro.rates package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="pynucastro.screening.html" class="btn btn-neutral float-right" title="pynucastro.screening package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-    </div>
+                </article>
+              
 
-  <hr/>
-
-  <div role="contentinfo">
-    <p>&#169; Copyright 2023, pynucastro development team.</p>
-  </div>
-
-  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    provided by <a href="https://readthedocs.org">Read the Docs</a>.
-   
-
-</footer>
-        </div>
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="pynucastro.rates.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">pynucastro.rates package</p>
       </div>
-    </section>
-  </div>
-  <script>
-      jQuery(function () {
-          SphinxRtdTheme.Navigation.enable(true);
-      });
-  </script> 
+    </a>
+    <a class="right-next"
+       href="pynucastro.screening.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">pynucastro.screening package</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
-</body>
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#submodules">Submodules</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-pynucastro.reduction.drgep">pynucastro.reduction.drgep module</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.reduction.drgep.calc_interaction_matrix"><code class="docutils literal notranslate"><span class="pre">calc_interaction_matrix()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.reduction.drgep.calc_interaction_matrix_numpy"><code class="docutils literal notranslate"><span class="pre">calc_interaction_matrix_numpy()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.reduction.drgep.drgep"><code class="docutils literal notranslate"><span class="pre">drgep()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.reduction.drgep.drgep_dijkstras"><code class="docutils literal notranslate"><span class="pre">drgep_dijkstras()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.reduction.drgep.get_adj_nuc"><code class="docutils literal notranslate"><span class="pre">get_adj_nuc()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-pynucastro.reduction.generate_data">pynucastro.reduction.generate_data module</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.reduction.generate_data.dataset"><code class="docutils literal notranslate"><span class="pre">dataset()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.reduction.generate_data.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-pynucastro.reduction.load_network">pynucastro.reduction.load_network module</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.reduction.load_network.load_network"><code class="docutils literal notranslate"><span class="pre">load_network()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-pynucastro.reduction.reduction">pynucastro.reduction.reduction module</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.reduction.reduction.NetInfo"><code class="docutils literal notranslate"><span class="pre">NetInfo</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.reduction.reduction.NetInfo.a"><code class="docutils literal notranslate"><span class="pre">NetInfo.a</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.reduction.reduction.NetInfo.ebind"><code class="docutils literal notranslate"><span class="pre">NetInfo.ebind</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.reduction.reduction.NetInfo.m"><code class="docutils literal notranslate"><span class="pre">NetInfo.m</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.reduction.reduction.NetInfo.y"><code class="docutils literal notranslate"><span class="pre">NetInfo.y</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.reduction.reduction.NetInfo.ydot"><code class="docutils literal notranslate"><span class="pre">NetInfo.ydot</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.reduction.reduction.NetInfo.z"><code class="docutils literal notranslate"><span class="pre">NetInfo.z</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.reduction.reduction.abar_dot"><code class="docutils literal notranslate"><span class="pre">abar_dot()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.reduction.reduction.enuc_dot"><code class="docutils literal notranslate"><span class="pre">enuc_dot()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.reduction.reduction.get_errfunc_enuc"><code class="docutils literal notranslate"><span class="pre">get_errfunc_enuc()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.reduction.reduction.get_net_info"><code class="docutils literal notranslate"><span class="pre">get_net_info()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.reduction.reduction.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.reduction.reduction.map_comp"><code class="docutils literal notranslate"><span class="pre">map_comp()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.reduction.reduction.rel_err"><code class="docutils literal notranslate"><span class="pre">rel_err()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.reduction.reduction.ye_dot"><code class="docutils literal notranslate"><span class="pre">ye_dot()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-pynucastro.reduction.reduction_utils">pynucastro.reduction.reduction_utils module</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.reduction.reduction_utils.FailedMPIImport"><code class="docutils literal notranslate"><span class="pre">FailedMPIImport</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.reduction.reduction_utils.MPIImportError"><code class="docutils literal notranslate"><span class="pre">MPIImportError</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.reduction.reduction_utils.mpi_importer"><code class="docutils literal notranslate"><span class="pre">mpi_importer()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.reduction.reduction_utils.mpi_numpy_decomp"><code class="docutils literal notranslate"><span class="pre">mpi_numpy_decomp()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.reduction.reduction_utils.to_list"><code class="docutils literal notranslate"><span class="pre">to_list()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-pynucastro.reduction.sensitivity_analysis">pynucastro.reduction.sensitivity_analysis module</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.reduction.sensitivity_analysis.binary_search_trim"><code class="docutils literal notranslate"><span class="pre">binary_search_trim()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.reduction.sensitivity_analysis.sens_analysis"><code class="docutils literal notranslate"><span class="pre">sens_analysis()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By pynucastro development team
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2024, pynucastro development team.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
 </html>
