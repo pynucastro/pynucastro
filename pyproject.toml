@@ -135,4 +135,5 @@ addopts = """\
   """
 filterwarnings = [
   "error",
+  "ignore: ReacLib neutron decay rate",
 ]
