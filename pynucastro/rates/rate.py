@@ -1703,19 +1703,12 @@ class TabularRate(Rate):
         except ValueError:
             print("Divide by zero encountered in log10\nChange the scale of T or rhoY")
 
-        im = ax.imshow(pivot_table, cmap=cmap)
+        im = ax.imshow(pivot_table, cmap=cmap, origin="lower",
+                       extent=[np.log10(Tmin), np.log10(Tmax), np.log10(rhoYmin), np.log10(rhoYmax)])
         fig.colorbar(im, ax=ax)
 
         ax.set_xlabel(r"$\log(T)$ [K]")
         ax.set_ylabel(r"$\log(\rho Y_e)$ [g/cm$^3$]")
-        ax.set_title(fr"{self.pretty_string}" + "\n" + title)
-        ax.set_yticks(range(len(rows)))
-        ylabels = [f"{q:4.2f}" for q in rows]
-        ax.set_yticklabels(ylabels)
-        ax.set_xticks(range(len(cols)))
-        xlabels = [f"{q:4.2f}" for q in cols]
-        ax.set_xticklabels(xlabels, rotation=90, ha="right", rotation_mode="anchor")
-        ax.invert_yaxis()
 
         return fig
 
