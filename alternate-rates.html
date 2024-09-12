@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Neutrino Cooling &#8212; pynucastro 2.2.1.post13+g0854a7cc documentation</title>
+    <title>alternate_rates &#8212; pynucastro 2.2.1.post13+g0854a7cc documentation</title>
   
   
   
@@ -49,11 +49,11 @@
     <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
     <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'neutrino-cooling';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'alternate-rates';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Creating Networks" href="networks.html" />
-    <link rel="prev" title="Creating an NSE table" href="nse_table.html" />
+    <link rel="next" title="Screening Rates" href="screening-examples.html" />
+    <link rel="prev" title="Combining ReacLib Rates with Electron Capture Tables" href="electron-captures.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -179,12 +179,12 @@
 <li class="toctree-l1"><a class="reference internal" href="pynucastro-integration.html">Example of integrating a network</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Selecting Rates</span></p>
-<ul class="nav bd-sidenav">
+<ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="library-examples.html">Selecting Rates from a Library</a></li>
 <li class="toctree-l1"><a class="reference internal" href="validate-example.html">Checking your network</a></li>
 <li class="toctree-l1"><a class="reference internal" href="electron-capture-example.html">Tabulated Weak Rate Example</a></li>
 <li class="toctree-l1"><a class="reference internal" href="electron-captures.html">Combining ReacLib Rates with Electron Capture Tables</a></li>
-<li class="toctree-l1"><a class="reference internal" href="alternate-rates.html"><code class="docutils literal notranslate"><span class="pre">alternate_rates</span></code></a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#"><code class="docutils literal notranslate"><span class="pre">alternate_rates</span></code></a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Advanced Rate Operations</span></p>
 <ul class="nav bd-sidenav">
@@ -201,8 +201,8 @@
 <li class="toctree-l1"><a class="reference internal" href="nse_table.html">Creating an NSE table</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Plasma Neutrinos</span></p>
-<ul class="current nav bd-sidenav">
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Neutrino Cooling</a></li>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="neutrino-cooling.html">Neutrino Cooling</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Writing and Integrating Networks</span></p>
 <ul class="nav bd-sidenav">
@@ -316,7 +316,7 @@
       
       
       
-      <li><a href="https://github.com/pynucastro/pynucastro/blob/main/docs/source/neutrino-cooling.ipynb?plain=1" target="_blank"
+      <li><a href="https://github.com/pynucastro/pynucastro/blob/main/docs/source/alternate-rates.ipynb?plain=1" target="_blank"
    class="btn btn-sm btn-source-file-button dropdown-item"
    title="Show source"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -333,7 +333,7 @@
       
       
       
-      <li><a href="https://github.com/pynucastro/pynucastro/edit/main/docs/source/neutrino-cooling.ipynb" target="_blank"
+      <li><a href="https://github.com/pynucastro/pynucastro/edit/main/docs/source/alternate-rates.ipynb" target="_blank"
    class="btn btn-sm btn-source-edit-button dropdown-item"
    title="Suggest edit"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -350,7 +350,7 @@
       
       
       
-      <li><a href="https://github.com/pynucastro/pynucastro/issues/new?title=Issue%20on%20page%20%2Fneutrino-cooling.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/pynucastro/pynucastro/issues/new?title=Issue%20on%20page%20%2Falternate-rates.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -380,7 +380,7 @@
       
       
       
-      <li><a href="_sources/neutrino-cooling.ipynb" target="_blank"
+      <li><a href="_sources/alternate-rates.ipynb" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -464,7 +464,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Neutrino Cooling</h1>
+    <h1>alternate_rates</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -474,8 +474,12 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Evaluating-\epsilon_\nu-for-a-thermodynamic-state">Evaluating <span class="math notranslate nohighlight">\(\epsilon_\nu\)</span> for a thermodynamic state</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Plotting-\epsilon_\nu-in-the-\rho-T-plane">Plotting <span class="math notranslate nohighlight">\(\epsilon_\nu\)</span> in the <span class="math notranslate nohighlight">\(\rho\)</span>-<span class="math notranslate nohighlight">\(T\)</span> plane</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Comparison-of-{}^{12}\mathrm{C}(\alpha,-\gamma){}^{16}\mathrm{O}">Comparison of <span class="math notranslate nohighlight">\({}^{12}\mathrm{C}(\alpha, \gamma){}^{16}\mathrm{O}\)</span></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Using-alternate-rates-in-a-network">Using alternate rates in a network</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Pure-ReacLib">Pure ReacLib</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Swapping-in-DeBoer-rate">Swapping in DeBoer rate</a></li>
+</ul>
+</li>
 </ul>
             </nav>
         </div>
@@ -487,58 +491,165 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="Neutrino-Cooling">
-<h1>Neutrino Cooling<a class="headerlink" href="#Neutrino-Cooling" title="Link to this heading">#</a></h1>
-<p>At high temperatures, pair, plasma, Bremmstrahlung, and photo neutrinos become important. These are often treated as a source term to an energy equation when integrating the temperature evolution due to reactions.</p>
-<p>pynucastro implements the functions of <span id="id1">Itoh <em>et al.</em> [<a class="reference internal" href="zreferences.html#id12" title="Naoki Itoh, Hiroshi Hayashi, Akinori Nishikawa, and Yasuharu Kohyama. Neutrino Energy Loss in Stellar Interiors. VII. Pair, Photo-, Plasma, Bremsstrahlung, and Recombination Neutrino Processes. The Astrophysical Journal Supplement Series, 102:411, February 1996. doi:10.1086/192264.">1996</a>]</span> to incorporate these effects. In many codes, a routine called <code class="docutils literal notranslate"><span class="pre">sneut5</span></code> was used for this implementation. pynucastro contains a port of that routine.</p>
+  <section id="alternate_rates">
+<h1><code class="docutils literal notranslate"><span class="pre">alternate_rates</span></code><a class="headerlink" href="#alternate_rates" title="Link to this heading">#</a></h1>
+<p>Sometimes papers provide new measurements of rates that may be better than the current ReacLib library. An example of this is the <a class="reference external" href="https://ui.adsabs.harvard.edu/abs/2017RvMP...89c5007D/abstract">DeBoer et al. 2012</a> <span class="math notranslate nohighlight">\({}^{12}\mathrm{C}(\alpha, \gamma){}^{16}\mathrm{O}\)</span> rate.</p>
+<p>These rates can be added individually to the <code class="docutils literal notranslate"><span class="pre">alternate_rates</span></code> module.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pynucastro.neutrino_cooling</span> <span class="kn">import</span> <span class="n">sneut5</span><span class="p">,</span> <span class="n">NeutrinoCooling</span>
-<span class="kn">from</span> <span class="nn">pynucastro</span> <span class="kn">import</span> <span class="n">Composition</span><span class="p">,</span> <span class="n">Nucleus</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pynucastro</span> <span class="k">as</span> <span class="nn">pyna</span>
 </pre></div>
 </div>
 </div>
-<section id="Evaluating-\epsilon_\nu-for-a-thermodynamic-state">
-<h2>Evaluating <span class="math notranslate nohighlight">\(\epsilon_\nu\)</span> for a thermodynamic state<a class="headerlink" href="#Evaluating-\epsilon_\nu-for-a-thermodynamic-state" title="Link to this heading">#</a></h2>
-<p>We can evaluate the cooling term given a density, temperature and composition.</p>
+<section id="Comparison-of-{}^{12}\mathrm{C}(\alpha,-\gamma){}^{16}\mathrm{O}">
+<h2>Comparison of <span class="math notranslate nohighlight">\({}^{12}\mathrm{C}(\alpha, \gamma){}^{16}\mathrm{O}\)</span><a class="headerlink" href="#Comparison-of-{}^{12}\mathrm{C}(\alpha,-\gamma){}^{16}\mathrm{O}" title="Link to this heading">#</a></h2>
+<p>Here we compare the ReacLib and deBoer versions of <span class="math notranslate nohighlight">\({}^{12}\mathrm{C}(\alpha, \gamma){}^{16}\mathrm{O}\)</span>.</p>
+<p>First get the ReacLib version</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rho</span> <span class="o">=</span> <span class="mf">1.e8</span>
-<span class="n">T</span> <span class="o">=</span> <span class="mf">2.e9</span>
-<span class="n">c</span> <span class="o">=</span> <span class="n">Composition</span><span class="p">([</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;a&quot;</span><span class="p">),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;fe56&quot;</span><span class="p">)])</span>
-<span class="n">c</span><span class="o">.</span><span class="n">set_equal</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rl</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">ReacLibLibrary</span><span class="p">()</span>
+<span class="n">c12_rl</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="s2">&quot;c12(a,g)o16&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-<div class="nbinput docutils container">
+<p>Now the DeBoer version:</p>
+<div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">snu</span> <span class="o">=</span> <span class="n">sneut5</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">snu</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pynucastro.rates.alternate_rates</span> <span class="kn">import</span> <span class="n">DeBoerC12agO16</span>
+<span class="n">c12_deboer</span> <span class="o">=</span> <span class="n">DeBoerC12agO16</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-773682819.5195054
-</pre></div></div>
-</div>
-<p>This is the value in CGS units (erg/g/s)</p>
-<p>If we want to see the breakdown of the different contributions, we pass <code class="docutils literal notranslate"><span class="pre">full_output=True</span></code></p>
+<p>Note that since DeBoer et al. 2012 give the new rate as a parameterization in the ReacLib form, this new rate just subclasses <code class="docutils literal notranslate"><span class="pre">ReacLibRate</span></code></p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">snu</span><span class="p">,</span> <span class="n">scomps</span> <span class="o">=</span> <span class="n">sneut5</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">full_output</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">scomps</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">DeBoerC12agO16</span><span class="o">.</span><span class="n">__base__</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+pynucastro.rates.rate.ReacLibRate
+</pre></div></div>
+</div>
+<p>Let’s plot a comparison of the rates</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Ts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="mf">7.5</span><span class="p">,</span> <span class="mf">9.5</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+
+<span class="n">r_rl</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">c12_rl</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">T</span><span class="p">)</span> <span class="k">for</span> <span class="n">T</span> <span class="ow">in</span> <span class="n">Ts</span><span class="p">])</span>
+<span class="n">r_deboer</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">c12_deboer</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">T</span><span class="p">)</span> <span class="k">for</span> <span class="n">T</span> <span class="ow">in</span> <span class="n">Ts</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">Ts</span><span class="p">,</span> <span class="n">r_rl</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;ReacLib&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">Ts</span><span class="p">,</span> <span class="n">r_deboer</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;deBoer&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$N_A\langle \sigma v\rangle$&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;matplotlib.legend.Legend at 0x7f08fb848b10&gt;
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/alternate-rates_14_1.png" src="_images/alternate-rates_14_1.png" />
+</div>
+</div>
+<p>Here’s the relative difference</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">Ts</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">((</span><span class="n">r_rl</span> <span class="o">-</span> <span class="n">r_deboer</span><span class="p">)</span> <span class="o">/</span> <span class="n">r_rl</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;relative difference&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">ls</span><span class="o">=</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/alternate-rates_16_0.png" src="_images/alternate-rates_16_0.png" />
+</div>
+</div>
+</section>
+<section id="Using-alternate-rates-in-a-network">
+<h2>Using alternate rates in a network<a class="headerlink" href="#Using-alternate-rates-in-a-network" title="Link to this heading">#</a></h2>
+<p>To create a network with this rate, we can swap it in for the ReacLib version when we create a library. Here’s a simple He-burning network.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">nuclei</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;p&quot;</span><span class="p">,</span> <span class="s2">&quot;he4&quot;</span><span class="p">,</span> <span class="s2">&quot;c12&quot;</span><span class="p">,</span> <span class="s2">&quot;o16&quot;</span><span class="p">,</span> <span class="s2">&quot;ne20&quot;</span><span class="p">,</span> <span class="s2">&quot;na23&quot;</span><span class="p">,</span> <span class="s2">&quot;mg24&quot;</span><span class="p">]</span>
+
+<span class="n">comp</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Composition</span><span class="p">(</span><span class="n">nuclei</span><span class="p">)</span>
+<span class="n">comp</span><span class="o">.</span><span class="n">set_equal</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rho</span> <span class="o">=</span> <span class="mf">1.e6</span>
+<span class="n">T</span> <span class="o">=</span> <span class="mf">1.e9</span>
+</pre></div>
+</div>
+</div>
+<section id="Pure-ReacLib">
+<h3>Pure ReacLib<a class="headerlink" href="#Pure-ReacLib" title="Link to this heading">#</a></h3>
+<p>First we’ll create a <code class="docutils literal notranslate"><span class="pre">RateCollection</span></code> with just the ReacLib rates</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">lib</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">(</span><span class="n">nuclei</span><span class="p">,</span> <span class="n">with_reverse</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">rc</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">RateCollection</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="p">[</span><span class="n">lib</span><span class="p">])</span>
+<span class="n">rates</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">evaluate_rates</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">rr</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">rates</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">rr</span><span class="p">)</span><span class="si">:</span><span class="s2">25</span><span class="si">}</span><span class="s2"> : </span><span class="si">{</span><span class="n">val</span><span class="si">:</span><span class="s2">12.7e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -547,20 +658,39 @@ document.write(`
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-splas: 537968613.1923463; spair: 131726610.15324067; sphot: 92135106.99413596; sbrem: 11852489.17978244; sreco: 0.0
+C12 + He4 ⟶ O16 + 𝛾       : 2.7441793e-03
+O16 + He4 ⟶ Ne20 + 𝛾      : 1.1385847e+00
+Ne20 + He4 ⟶ Mg24 + 𝛾     : 4.1265513e-01
+Na23 + p ⟶ Mg24 + 𝛾       : 6.9202360e+05
+C12 + C12 ⟶ p + Na23      : 1.1970613e-09
+C12 + C12 ⟶ He4 + Ne20    : 1.4808559e-09
+O16 + C12 ⟶ He4 + Mg24    : 5.5470507e-15
+Na23 + p ⟶ He4 + Ne20     : 8.9374939e+06
+He4 + He4 + He4 ⟶ C12 + 𝛾 : 2.5845076e-03
 </pre></div></div>
 </div>
 </section>
-<section id="Plotting-\epsilon_\nu-in-the-\rho-T-plane">
-<h2>Plotting <span class="math notranslate nohighlight">\(\epsilon_\nu\)</span> in the <span class="math notranslate nohighlight">\(\rho\)</span>-<span class="math notranslate nohighlight">\(T\)</span> plane<a class="headerlink" href="#Plotting-\epsilon_\nu-in-the-\rho-T-plane" title="Link to this heading">#</a></h2>
-<p>We can see the trend with thermodynamics state by using the <code class="docutils literal notranslate"><span class="pre">NeutrinoCooling</span></code> class</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+<section id="Swapping-in-DeBoer-rate">
+<h3>Swapping in DeBoer rate<a class="headerlink" href="#Swapping-in-DeBoer-rate" title="Link to this heading">#</a></h3>
+<p>Now we’ll swap in the deBoer rate.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">nc</span> <span class="o">=</span> <span class="n">NeutrinoCooling</span><span class="p">()</span>
-<span class="n">fig</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">Tmin</span><span class="o">=</span><span class="mf">1.e7</span><span class="p">,</span> <span class="n">Tmax</span><span class="o">=</span><span class="mf">1.e10</span><span class="p">,</span> <span class="n">rhomin</span><span class="o">=</span><span class="mf">1.e3</span><span class="p">,</span> <span class="n">rhomax</span><span class="o">=</span><span class="mf">1.e10</span><span class="p">,</span>
-              <span class="n">abar</span><span class="o">=</span><span class="n">c</span><span class="o">.</span><span class="n">eval_abar</span><span class="p">(),</span> <span class="n">zbar</span><span class="o">=</span><span class="n">c</span><span class="o">.</span><span class="n">eval_zbar</span><span class="p">())</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">lib</span><span class="o">.</span><span class="n">remove_rate</span><span class="p">(</span><span class="n">c12_rl</span><span class="p">)</span>
+<span class="n">lib</span><span class="o">.</span><span class="n">add_rate</span><span class="p">(</span><span class="n">c12_deboer</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>and recreate the new <code class="docutils literal notranslate"><span class="pre">RateCollection</span></code></p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rc2</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">RateCollection</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="p">[</span><span class="n">lib</span><span class="p">])</span>
+<span class="n">rates</span> <span class="o">=</span> <span class="n">rc2</span><span class="o">.</span><span class="n">evaluate_rates</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">rr</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">rates</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">rr</span><span class="p">)</span><span class="si">:</span><span class="s2">25</span><span class="si">}</span><span class="s2"> : </span><span class="si">{</span><span class="n">val</span><span class="si">:</span><span class="s2">12.7e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -568,9 +698,20 @@ splas: 537968613.1923463; spair: 131726610.15324067; sphot: 92135106.99413596; s
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/neutrino-cooling_12_0.png" src="_images/neutrino-cooling_12_0.png" />
+<div class="highlight"><pre>
+O16 + He4 ⟶ Ne20 + 𝛾      : 1.1385847e+00
+Ne20 + He4 ⟶ Mg24 + 𝛾     : 4.1265513e-01
+Na23 + p ⟶ Mg24 + 𝛾       : 6.9202360e+05
+C12 + C12 ⟶ p + Na23      : 1.1970613e-09
+C12 + C12 ⟶ He4 + Ne20    : 1.4808559e-09
+O16 + C12 ⟶ He4 + Mg24    : 5.5470507e-15
+Na23 + p ⟶ He4 + Ne20     : 8.9374939e+06
+He4 + He4 + He4 ⟶ C12 + 𝛾 : 2.5845076e-03
+C12 + He4 ⟶ O16 + 𝛾       : 2.2040004e-03
+</pre></div></div>
 </div>
-</div>
+<p>Comparing to the pure ReacLib version, we see the only difference in the evaluation of the rates is in <span class="math notranslate nohighlight">\({}^{12}\mathrm{C}(\alpha, \gamma){}^{16}\mathrm{O}\)</span></p>
+</section>
 </section>
 </section>
 
@@ -586,20 +727,20 @@ splas: 537968613.1923463; spair: 131726610.15324067; sphot: 92135106.99413596; s
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="nse_table.html"
+       href="electron-captures.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Creating an NSE table</p>
+        <p class="prev-next-title">Combining ReacLib Rates with Electron Capture Tables</p>
       </div>
     </a>
     <a class="right-next"
-       href="networks.html"
+       href="screening-examples.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Creating Networks</p>
+        <p class="prev-next-title">Screening Rates</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -619,8 +760,12 @@ splas: 537968613.1923463; spair: 131726610.15324067; sphot: 92135106.99413596; s
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Evaluating-\epsilon_\nu-for-a-thermodynamic-state">Evaluating <span class="math notranslate nohighlight">\(\epsilon_\nu\)</span> for a thermodynamic state</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Plotting-\epsilon_\nu-in-the-\rho-T-plane">Plotting <span class="math notranslate nohighlight">\(\epsilon_\nu\)</span> in the <span class="math notranslate nohighlight">\(\rho\)</span>-<span class="math notranslate nohighlight">\(T\)</span> plane</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Comparison-of-{}^{12}\mathrm{C}(\alpha,-\gamma){}^{16}\mathrm{O}">Comparison of <span class="math notranslate nohighlight">\({}^{12}\mathrm{C}(\alpha, \gamma){}^{16}\mathrm{O}\)</span></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Using-alternate-rates-in-a-network">Using alternate rates in a network</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Pure-ReacLib">Pure ReacLib</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Swapping-in-DeBoer-rate">Swapping in DeBoer rate</a></li>
+</ul>
+</li>
 </ul>
   </nav></div>
 

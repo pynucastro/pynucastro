@@ -45,6 +45,7 @@ codes.
    validate-example.ipynb
    electron-capture-example.ipynb
    electron-captures.ipynb
+   alternate-rates.ipynb
 
 .. toctree::
    :maxdepth: 1
