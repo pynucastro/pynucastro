@@ -17,7 +17,11 @@ class DeBoerC12agO16(ReacLibRate):
         for n in products:
             Q += n.A * n.nucbind
 
-        super().__init__(reactants=reactants, products=products, Q=Q,
+        # we'll use the same chapter notation as ReacLib
+        chapter = 4
+
+        super().__init__(reactants=reactants, products=products,
+                         chapter=chapter, Q=Q,
                          labelprops=labelprops)
 
         # from DeBoer et al. 2017
