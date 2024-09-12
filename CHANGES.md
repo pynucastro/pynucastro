@@ -1,27 +1,47 @@
+# 2.3.0
+
+  * doc updates, including an example of dealing with duplicate rates
+    (#777), new theme (#775), axis label fixes (#774), some examples
+    of nuclear astrophysics concepts (#762, #766)
+
+  * fix the limits for `TabularRate` plots (#779)
+
+  * created a new `alternate_rates` module and added the de Boer et
+    al. 2017 C12(a,g)O16 rate (#769)
+
+  * the minimum version of python supported is now 3.8 (#768)
+
+  * some test fixes (#755, #757, #760, #763)
+
+  * C++ autodiff changes / cleanups (#752, #759)
+
+  * `AmrexAstroCxxNetwork` now create a ydot_weak function that
+    evaluates the weak rate contributions to compute dYe/dt (#739)
+
 # 2.2.1
 
-   * numpy 2.0 support added (#748)
+  * numpy 2.0 support added (#748)
 
-   * new logo! (#744, #746)
+  * new logo! (#744, #746)
 
-   * pynucastro can now be installed by conda (#741, #743)
+  * pynucastro can now be installed by conda (#741, #743)
 
-   * minor test fixes (#729, #735, #740, #745)
+  * minor test fixes (#729, #735, #740, #745)
 
-   * doc fixes (#737)
+  * doc fixes (#737)
 
-   * pylint fixes (#733)
+  * pylint fixes (#733)
 
-   * Composition now allows for direct key-value indexing (#731),
-     and has a new set_random() method (#728)
+  * Composition now allows for direct key-value indexing (#731),
+    and has a new set_random() method (#728)
 
-   * The screen5 screening routine has been added (#730)
+  * The `screen5` screening routine has been added (#730)
 
-   * C++ partition function interpolation is now cached (#726)
+  * C++ partition function interpolation is now cached (#726)
 
 # 2.2.0
 
-  * Switch to using math.fsum() instead of sum() for better python
+  * Switch to using `math.fsum()` instead of `sum()` for better python
     3.12 compatibility (#720)
 
   * Some modernization of the AMReX-Astro C++ code output (#709, #714,
@@ -38,7 +58,7 @@
   * A new constants module was added to provide fundamental constants
     (#688)
 
-  * A new NumpyNetwork was added for use with the rate reduction
+  * A new `NumpyNetwork` was added for use with the rate reduction
     algorithm (#684)
 
   * Neutrino cooling routines based on Itoh et al. 1996 were added
@@ -46,11 +66,11 @@
 
   * A new method for generating an NSE table was added (#676)
 
-  * A new NSENetwork class was added for dealing with NSE (#675)
+  * A new `NSENetwork` class was added for dealing with NSE (#675)
 
-  * Moved some screening utilities out of RateCollection (#666)
+  * Moved some screening utilities out of `RateCollection` (#666)
 
-  * A PythonNetwork now write out a function to compute the energy
+  * A `PythonNetwork` now write out a function to compute the energy
     release (#640)
 
 # 2.1.1
@@ -70,13 +90,13 @@
   * A C++ indexing error at the boundary of a weak rate table was
     fixed. (#654)
 
-  * The C++ AmrexAstroCxxNetwork for evaluating weak rate neutrino
+  * The C++ `AmrexAstroCxxNetwork` for evaluating weak rate neutrino
     losses was cleaned up to fix a bounds error (#655)
 
   * We now explicitly check in the C++ code if a weak rate table
     if found and contains data (#654)
 
-  * a RateCollection now enforces that there are no duplicate rates.  A
+  * a `RateCollection` now enforces that there are no duplicate rates.  A
     `find_duplicate_links()` method has been added to `Library` to allow
     one to construct a `Library` without duplicates and then create a
     `RateCollection` or other network from that. (#651)
@@ -99,11 +119,11 @@
 
   * fix `get_rate_by_name` to work with "pp" reactions (#632)
 
-  * created a method to reduce a Composition from one set
+  * created a method to reduce a `Composition` from one set
     of nuclei to another based on the nuclei masses and
     charge number (#625)
 
-  * switch AmrexAstroCxxNetwork to do bilinear interpolation
+  * switch `AmrexAstroCxxNetwork` to do bilinear interpolation
     in terms of log(T) and log(rhoY) (#592, #611)
 
   * tabular rates in python now do linear interpolation (#602)
@@ -113,10 +133,10 @@
   * Rate now calls `_set_q()` to set the Q value if it is not
     passed in (#617)
 
-  * added a TableInterpolator that works both for interactive
-    python and PythonNetwork (#612, 610, 609)
+  * added a `TableInterpolator` that works both for interactive
+    python and `PythonNetwork` (#612, 610, 609)
 
-  * added a RateCollection method to find duplicate links (#601)
+  * added a `RateCollection` method to find duplicate links (#601)
 
   * python networks with tabular rates now copy the table files (#605)
 
@@ -126,7 +146,7 @@
   * we now do a binary search in the C++ partition function
     interpolation (#581)
 
-  * added a simple C++ network (SimpleCxxNetwork) (#591, #585)
+  * added a simple C++ network (`SimpleCxxNetwork`) (#591, #585)
 
   * added the weak rates from Langanke 2001 (#536)
 
@@ -144,7 +164,7 @@
   * added a network reduction algorithm (#529, #528, #527, #526, #525,
     #523)
 
-  * added a molar fraction method to Composition (#546)
+  * added a molar fraction method to `Composition` (#546)
 
   * added examples of interfacing with Julia (#539)
 
