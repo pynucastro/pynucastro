@@ -1,5 +1,7 @@
 # 2.3.0
 
+  * added a warning if we use the ReacLib n decay rate (#778)
+
   * doc updates, including an example of dealing with duplicate rates
     (#777), new theme (#775), axis label fixes (#774), some examples
     of nuclear astrophysics concepts (#762, #766)
