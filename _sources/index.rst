@@ -42,6 +42,7 @@ codes.
    :hidden:
 
    library-examples.ipynb
+   duplicate-rates.ipynb
    validate-example.ipynb
    electron-capture-example.ipynb
    electron-captures.ipynb
