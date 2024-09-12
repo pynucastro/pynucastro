@@ -24,18 +24,20 @@ class PythonNetwork(RateCollection):
             ostr += f"{indent}dYdt[j{nucleus.raw}] = 0.0\n\n"
         else:
             ostr += f"{indent}dYdt[j{nucleus.raw}] = (\n"
-            for r in self.nuclei_consumed[nucleus]:
-                c = r.reactants.count(nucleus)
-                if c == 1:
-                    ostr += f"{indent}   -{r.ydot_string_py()}\n"
-                else:
-                    ostr += f"{indent}   -{c}*{r.ydot_string_py()}\n"
-            for r in self.nuclei_produced[nucleus]:
-                c = r.products.count(nucleus)
-                if c == 1:
-                    ostr += f"{indent}   +{r.ydot_string_py()}\n"
-                else:
-                    ostr += f"{indent}   +{c}*{r.ydot_string_py()}\n"
+            for rp in self.nuclei_rate_pairs[nucleus]:
+                print(rp)
+                if rp.forward is not None:
+                    c = rp.forward.reactants.count(nucleus)
+                    if c == 1:
+                        ostr += f"{indent}   -{rp.forward.ydot_string_py()}\n"
+                    else:
+                        ostr += f"{indent}   -{c}*{rp.forward.ydot_string_py()}\n"
+                if rp.reverse is not None:
+                    c = rp.reverse.products.count(nucleus)
+                    if c == 1:
+                        ostr += f"{indent}   +{rp.reverse.ydot_string_py()}\n"
+                    else:
+                        ostr += f"{indent}   +{c}*{rp.reverse.ydot_string_py()}\n"
             ostr += f"{indent}   )\n\n"
 
         return ostr
