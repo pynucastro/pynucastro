@@ -569,7 +569,8 @@ class RateCollection:
                 if r not in self.reaclib_rates:
                     self.reaclib_rates.append(r)
                     if r.get_rate_id() == "n --> p <wc12_reaclib_weak_>":
-                        warnings.warn("ReacLib neutron decay rate (<n_to_p_weak_wc12>) does not account for degeneracy at high densities. Consider using tabular rate from Langanke.")
+                        msg = "ReacLib neutron decay rate (<n_to_p_weak_wc12>) does not account for degeneracy at high densities. Consider using tabular rate from Langanke."
+                        warnings.warn(msg)
             else:
                 raise NotImplementedError(f"Chapter type unknown for rate chapter {r.chapter}")
 
