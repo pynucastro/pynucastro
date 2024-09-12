@@ -6,6 +6,8 @@
 pynucastro
 ==========
 
+.. image:: logo.png
+
 `https://github.com/pynucastro/pynucastro <https://github.com/pynucastro/pynucastro>`_
 
 pynucastro is a set of python interfaces to nuclear reaction rate
@@ -18,6 +20,7 @@ codes.
 .. toctree::
    :maxdepth: 1
    :caption: Introduction
+   :hidden:
 
    intro
    rate_types
@@ -27,6 +30,7 @@ codes.
 .. toctree::
    :maxdepth: 1
    :caption: Exploring Networks in Python
+   :hidden:
 
    pynucastro-examples.ipynb
    plot-types.ipynb
@@ -35,6 +39,7 @@ codes.
 .. toctree::
    :maxdepth: 1
    :caption: Selecting Rates
+   :hidden:
 
    library-examples.ipynb
    validate-example.ipynb
@@ -44,6 +49,7 @@ codes.
 .. toctree::
    :maxdepth: 1
    :caption: Advanced Rate Operations
+   :hidden:
 
    screening-examples
    modify-example.ipynb
@@ -55,6 +61,7 @@ codes.
 .. toctree::
    :maxdepth: 1
    :caption: Nuclear Statistical Equilibrium
+   :hidden:
 
    NSE-example
    nse_table
@@ -62,12 +69,14 @@ codes.
 .. toctree::
    :maxdepth: 1
    :caption: Plasma Neutrinos
+   :hidden:
 
    neutrino-cooling.ipynb
 
 .. toctree::
    :maxdepth: 1
    :caption: Writing and Integrating Networks
+   :hidden:
 
    networks
    cxx-networks
@@ -75,12 +84,14 @@ codes.
 .. toctree::
    :maxdepth: 1
    :caption: Interfacing With Other Languages
+   :hidden:
 
    julia
 
 .. toctree::
    :maxdepth: 1
    :caption: Examples in Nuclear Astrophysics
+   :hidden:
 
    examples/pp-cno.ipynb
    examples/hot-CNO-breakout-example.ipynb
@@ -89,15 +100,17 @@ codes.
 .. toctree::
    :maxdepth: 1
    :caption: Reference
+   :hidden:
 
    citing
    API <modules>
    sources
    zreferences
 
-Indices and tables
-==================
+.. toctree::
+   :maxdepth: 1
+   :caption: Index
+   :hidden:
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+   genindex
+   modindex
