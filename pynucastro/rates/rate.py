@@ -1709,6 +1709,7 @@ class TabularRate(Rate):
 
         ax.set_xlabel(r"$\log(T)$ [K]")
         ax.set_ylabel(r"$\log(\rho Y_e)$ [g/cm$^3$]")
+        ax.set_title(fr"{self.pretty_string}" + "\n" + title)
 
         return fig
 
