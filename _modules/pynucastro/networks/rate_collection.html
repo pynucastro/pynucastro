@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.rate_collection &#8212; pynucastro 2.3.0 documentation</title>
+    <title>pynucastro.networks.rate_collection &#8212; pynucastro 2.3.0.post1+g3b52b425 documentation</title>
   
   
   
@@ -37,7 +37,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=10261ce1"></script>
+    <script src="../../../_static/documentation_options.js?v=37f44c2b"></script>
     <script src="../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -796,7 +796,7 @@ document.write(`
 
             <span class="c1"># bar chart parameters</span>
             <span class="n">trace_values</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">limited_trace_keys</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">other_trace_tot</span><span class="p">]</span>
-            <span class="n">trace_labels</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span><span class="o">.</span><span class="n">short_spec_name</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">limited_trace_keys</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;other&#39;</span><span class="p">]</span>
+            <span class="n">trace_labels</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">limited_trace_keys</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;other&#39;</span><span class="p">]</span>
             <span class="n">bottom</span> <span class="o">=</span> <span class="mi">1</span>
             <span class="n">width</span> <span class="o">=</span> <span class="mf">0.1</span>
 
