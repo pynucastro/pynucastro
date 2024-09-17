@@ -24,23 +24,34 @@ class PythonNetwork(RateCollection):
             ostr += f"{indent}dYdt[j{nucleus.raw}] = 0.0\n\n"
         else:
             ostr += f"{indent}dYdt[j{nucleus.raw}] = (\n"
-            for rp in self.nuclei_rate_pairs[nucleus]:
+            for ipair, rp in enumerate(self.nuclei_rate_pairs[nucleus]):
                 # when we are working with rate pairs, one or more of the
                 # rates may be missing.  We also have not clearly separated
                 # them into creation / destruction, so we'll figure that out
                 rlist = [r for r in [rp.forward, rp.reverse] if r is not None]
+                ostr += f"{indent}      "
+                if len(rlist) > 1:
+                    ostr += "( "
+
                 for rate in rlist:
                     c_reac = rate.reactants.count(nucleus)
                     c_prod = rate.products.count(nucleus)
                     c = c_prod - c_reac
                     if c == 1:
-                        ostr += f"{indent}   +{rate.ydot_string_py()}\n"
+                        ostr += f"+{rate.ydot_string_py()} "
                     elif c == -1:
-                        ostr += f"{indent}   -{rate.ydot_string_py()}\n"
+                        ostr += f"-{rate.ydot_string_py()} "
                     elif c > 1:
-                        ostr += f"{indent}   +{c}*{rate.ydot_string_py()}\n"
+                        ostr += f"+{c}*{rate.ydot_string_py()} "
                     else:
-                        ostr += f"{indent}   -{c}*{rate.ydot_string_py()}\n"
+                        ostr += f"-{c}*{rate.ydot_string_py()} "
+
+                if len(rlist) > 1:
+                    ostr += ")"
+                if ipair < len(self.nuclei_rate_pairs[nucleus]) - 1:
+                    ostr += " +"
+                ostr += "\n"
+
             ostr += f"{indent}   )\n\n"
 
         return ostr
