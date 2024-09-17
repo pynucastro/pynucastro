@@ -41,10 +41,8 @@ class PythonNetwork(RateCollection):
                         ostr += f"+{rate.ydot_string_py()} "
                     elif c == -1:
                         ostr += f"-{rate.ydot_string_py()} "
-                    elif c > 1:
-                        ostr += f"+{c}*{rate.ydot_string_py()} "
                     else:
-                        ostr += f"-{c}*{rate.ydot_string_py()} "
+                        ostr += f"+ {c}*{rate.ydot_string_py()} "
 
                 if len(rlist) > 1:
                     ostr += ")"
