@@ -25,19 +25,22 @@ class PythonNetwork(RateCollection):
         else:
             ostr += f"{indent}dYdt[j{nucleus.raw}] = (\n"
             for rp in self.nuclei_rate_pairs[nucleus]:
-                print(rp)
-                if rp.forward is not None:
-                    c = rp.forward.reactants.count(nucleus)
+                # when we are working with rate pairs, one or more of the
+                # rates may be missing.  We also have not clearly separated
+                # them into creation / destruction, so we'll figure that out
+                rlist = [r for r in [rp.forward, rp.reverse] if r is not None]
+                for rate in rlist:
+                    c_reac = rate.reactants.count(nucleus)
+                    c_prod = rate.products.count(nucleus)
+                    c = c_prod - c_reac
                     if c == 1:
-                        ostr += f"{indent}   -{rp.forward.ydot_string_py()}\n"
+                        ostr += f"{indent}   +{rate.ydot_string_py()}\n"
+                    elif c == -1:
+                        ostr += f"{indent}   -{rate.ydot_string_py()}\n"
+                    elif c > 1:
+                        ostr += f"{indent}   +{c}*{rate.ydot_string_py()}\n"
                     else:
-                        ostr += f"{indent}   -{c}*{rp.forward.ydot_string_py()}\n"
-                if rp.reverse is not None:
-                    c = rp.reverse.products.count(nucleus)
-                    if c == 1:
-                        ostr += f"{indent}   +{rp.reverse.ydot_string_py()}\n"
-                    else:
-                        ostr += f"{indent}   +{c}*{rp.reverse.ydot_string_py()}\n"
+                        ostr += f"{indent}   -{c}*{rate.ydot_string_py()}\n"
             ostr += f"{indent}   )\n\n"
 
         return ostr
