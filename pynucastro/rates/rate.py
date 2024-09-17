@@ -1489,6 +1489,15 @@ class TabularRate(Rate):
 
         self.get_tabular_rate()
 
+        # store the extrema of the thermodynamics
+        _rhoy = self.tabular_data_table[::self.table_temp_lines, TableIndex.RHOY.value]
+        _temp = self.tabular_data_table[0:self.table_temp_lines, TableIndex.T.value]
+
+        self.table_Tmin = 10.0**(_temp.min())
+        self.table_Tmax = 10.0**(_temp.max())
+        self.table_rhoYmin = 10.0**(_rhoy.min())
+        self.table_rhoYmax = 10.0**(_rhoy.max())
+
         self.interpolator = TableInterpolator(self.table_rhoy_lines, self.table_temp_lines,
                                               self.tabular_data_table)
 
@@ -1638,8 +1647,8 @@ class TabularRate(Rate):
                                           TableIndex.NU.value)
         return 10**r
 
-    def plot(self, Tmin=1.e8, Tmax=1.6e9, rhoYmin=3.9e8, rhoYmax=2.e9, color_field='rate',
-             figsize=(10, 10)):
+    def plot(self, *, Tmin=None, Tmax=None, rhoYmin=None, rhoYmax=None,
+             color_field='rate', figsize=(10, 10)):
         """plot the rate's temperature sensitivity vs temperature
 
         :param float Tmin:    minimum temperature for plot
@@ -1654,6 +1663,15 @@ class TabularRate(Rate):
         """
 
         fig, ax = plt.subplots(figsize=figsize)
+
+        if Tmin is None:
+            Tmin = self.table_Tmin
+        if Tmax is None:
+            Tmax = self.table_Tmax
+        if rhoYmin is None:
+            rhoYmin = self.table_rhoYmin
+        if rhoYmax is None:
+            rhoYmax = self.table_rhoYmax
 
         data = self.tabular_data_table
 
@@ -1685,19 +1703,13 @@ class TabularRate(Rate):
         except ValueError:
             print("Divide by zero encountered in log10\nChange the scale of T or rhoY")
 
-        im = ax.imshow(pivot_table, cmap=cmap)
+        im = ax.imshow(pivot_table, cmap=cmap, origin="lower",
+                       extent=[np.log10(Tmin), np.log10(Tmax), np.log10(rhoYmin), np.log10(rhoYmax)])
         fig.colorbar(im, ax=ax)
 
         ax.set_xlabel(r"$\log(T)$ [K]")
         ax.set_ylabel(r"$\log(\rho Y_e)$ [g/cm$^3$]")
         ax.set_title(fr"{self.pretty_string}" + "\n" + title)
-        ax.set_yticks(range(len(rows)))
-        ylabels = [f"{q:4.2f}" for q in rows]
-        ax.set_yticklabels(ylabels)
-        ax.set_xticks(range(len(cols)))
-        xlabels = [f"{q:4.2f}" for q in cols]
-        ax.set_xticklabels(xlabels, rotation=90, ha="right", rotation_mode="anchor")
-        ax.invert_yaxis()
 
         return fig
 
