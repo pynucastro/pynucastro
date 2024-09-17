@@ -353,7 +353,7 @@ class Composition(collections.UserDict):
 
             # bar chart parameters
             trace_values = [self[k] for k in limited_trace_keys] + [other_trace_tot]
-            trace_labels = [k.short_spec_name for k in limited_trace_keys] + ['other']
+            trace_labels = [f"{k}" for k in limited_trace_keys] + ['other']
             bottom = 1
             width = 0.1
 
@@ -568,6 +568,9 @@ class RateCollection:
             elif isinstance(r.chapter, int):
                 if r not in self.reaclib_rates:
                     self.reaclib_rates.append(r)
+                    if r.get_rate_id() == "n --> p <wc12_reaclib_weak_>":
+                        msg = "ReacLib neutron decay rate (<n_to_p_weak_wc12>) does not account for degeneracy at high densities. Consider using tabular rate from Langanke."
+                        warnings.warn(msg)
             else:
                 raise NotImplementedError(f"Chapter type unknown for rate chapter {r.chapter}")
 
