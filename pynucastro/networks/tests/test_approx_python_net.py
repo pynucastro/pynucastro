@@ -34,10 +34,8 @@ class TestPythonNetwork:
     def test_full_ydot_string(self, pynet):
         ostr = \
 """dYdt[jhe4] = (
-   -rho*Y[jhe4]*Y[jmg24]*rate_eval.Mg24_He4__Si28__approx
-   -rho*Y[jhe4]*Y[jsi28]*rate_eval.Si28_He4__S32__approx
-   +Y[jsi28]*rate_eval.Si28__Mg24_He4__approx
-   +Y[js32]*rate_eval.S32__Si28_He4__approx
+      ( -rho*Y[jhe4]*Y[jmg24]*rate_eval.Mg24_He4__Si28__approx +Y[jsi28]*rate_eval.Si28__Mg24_He4__approx ) +
+      ( -rho*Y[jhe4]*Y[jsi28]*rate_eval.Si28_He4__S32__approx +Y[js32]*rate_eval.S32__Si28_He4__approx )
    )
 
 """
