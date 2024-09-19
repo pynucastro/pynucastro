@@ -33,7 +33,8 @@ class MassTable:
 
         file = open(self.filename, 'r')
 
-        for _ in range(4):
+        # skip the header
+        for _ in range(5):
             file.readline()
 
         for line in file:
