@@ -12,7 +12,7 @@ This module extract the (A,Z, dm) tuples from `nubase_4.mas20.txt`, where:
 
 parser = argparse.ArgumentParser()
 parser.add_argument('input', type=str, help='Name of the input table')
-parser.add_argument('-o', '--output', type=str, default='mass_excess2020', help='Name of the formatted mass escess table')
+parser.add_argument('-o', '--output', type=str, default='mass_excess2020', help='Name of the formatted mass excess table')
 
 
 args = parser.parse_args()
