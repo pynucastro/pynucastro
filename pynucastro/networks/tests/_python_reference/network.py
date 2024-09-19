@@ -253,18 +253,18 @@ def rhs_eq(t, Y, rho, T, screen_func):
 
     dYdt[jn] = (
           -Y[jn]*rate_eval.n__p__weak__wc12  +
-          +5.00000000000000e-01*rho*Y[jc12]**2*rate_eval.C12_C12__n_Mg23 
+          +5.00000000000000e-01*rho*Y[jc12]**2*rate_eval.C12_C12__n_Mg23
        )
 
     dYdt[jp] = (
           +5.00000000000000e-01*rho*Y[jc12]**2*rate_eval.C12_C12__p_Na23  +
-          +Y[jn]*rate_eval.n__p__weak__wc12 
+          +Y[jn]*rate_eval.n__p__weak__wc12
        )
 
     dYdt[jhe4] = (
           +5.00000000000000e-01*rho*Y[jc12]**2*rate_eval.C12_C12__He4_Ne20  +
           -rho*Y[jhe4]*Y[jc12]*rate_eval.He4_C12__O16  +
-          + -3*1.66666666666667e-01*rho**2*Y[jhe4]**3*rate_eval.He4_He4_He4__C12 
+          + -3*1.66666666666667e-01*rho**2*Y[jhe4]**3*rate_eval.He4_He4_He4__C12
        )
 
     dYdt[jc12] = (
@@ -272,15 +272,15 @@ def rhs_eq(t, Y, rho, T, screen_func):
           + -2*5.00000000000000e-01*rho*Y[jc12]**2*rate_eval.C12_C12__p_Na23  +
           -rho*Y[jhe4]*Y[jc12]*rate_eval.He4_C12__O16  +
           +1.66666666666667e-01*rho**2*Y[jhe4]**3*rate_eval.He4_He4_He4__C12  +
-          + -2*5.00000000000000e-01*rho*Y[jc12]**2*rate_eval.C12_C12__n_Mg23 
+          + -2*5.00000000000000e-01*rho*Y[jc12]**2*rate_eval.C12_C12__n_Mg23
        )
 
     dYdt[jo16] = (
-          +rho*Y[jhe4]*Y[jc12]*rate_eval.He4_C12__O16 
+          +rho*Y[jhe4]*Y[jc12]*rate_eval.He4_C12__O16
        )
 
     dYdt[jne20] = (
-          +5.00000000000000e-01*rho*Y[jc12]**2*rate_eval.C12_C12__He4_Ne20 
+          +5.00000000000000e-01*rho*Y[jc12]**2*rate_eval.C12_C12__He4_Ne20
        )
 
     dYdt[jne23] = (
@@ -293,7 +293,7 @@ def rhs_eq(t, Y, rho, T, screen_func):
        )
 
     dYdt[jmg23] = (
-          +5.00000000000000e-01*rho*Y[jc12]**2*rate_eval.C12_C12__n_Mg23 
+          +5.00000000000000e-01*rho*Y[jc12]**2*rate_eval.C12_C12__n_Mg23
        )
 
     return dYdt

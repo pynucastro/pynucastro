@@ -48,7 +48,7 @@ class PythonNetwork(RateCollection):
                     ostr += ")"
                 if ipair < len(self.nuclei_rate_pairs[nucleus]) - 1:
                     ostr += " +"
-                ostr += "\n"
+                ostr = ostr.rstrip() + "\n"
 
             ostr += f"{indent}   )\n\n"
 
