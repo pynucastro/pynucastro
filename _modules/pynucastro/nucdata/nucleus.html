@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.nucdata.nucleus &#8212; pynucastro 2.3.0.post5+g0c386100 documentation</title>
+    <title>pynucastro.nucdata.nucleus &#8212; pynucastro 2.3.0.post6+g51478978 documentation</title>
   
   
   
@@ -37,7 +37,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=250602cd"></script>
+    <script src="../../../_static/documentation_options.js?v=65ca082f"></script>
     <script src="../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -446,8 +446,9 @@ document.write(`
 <span class="sd">    :var caps_name:       capitalized short species name (e.g. &quot;He4&quot;)</span>
 <span class="sd">    :var el:              element name (e.g. &quot;he&quot;)</span>
 <span class="sd">    :var pretty:          LaTeX formatted version of the nucleus name</span>
-<span class="sd">    :var A_nuc:           Nuclear Mass in amu</span>
-
+<span class="sd">    :var dm:              mass excess (MeV)</span>
+<span class="sd">    :var A_nuc:           nuclear mass (amu)</span>
+<span class="sd">    :var mass:            nuclear mass (MeV)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">_cache</span> <span class="o">=</span> <span class="p">{}</span>
 
@@ -540,11 +541,15 @@ document.write(`
             <span class="c1"># the binding energy table doesn&#39;t know about this nucleus</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">nucbind</span> <span class="o">=</span> <span class="kc">None</span>
 
-        <span class="c1"># Now we will define the Nuclear Mass,</span>
+        <span class="c1"># nuclear mass</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">A_nuc</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">A</span><span class="p">)</span> <span class="o">+</span> <span class="n">_mass_table</span><span class="o">.</span><span class="n">get_mass_diff</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">A</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">Z</span><span class="p">)</span> <span class="o">/</span> <span class="n">constants</span><span class="o">.</span><span class="n">m_u_MeV</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dm</span> <span class="o">=</span> <span class="n">_mass_table</span><span class="o">.</span><span class="n">get_mass_diff</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">A</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">Z</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">A_nuc</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">A</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">dm</span> <span class="o">/</span> <span class="n">constants</span><span class="o">.</span><span class="n">m_u_MeV</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mass</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">A</span> <span class="o">*</span> <span class="n">constants</span><span class="o">.</span><span class="n">m_u_MeV</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">dm</span>
         <span class="k">except</span> <span class="ne">NotImplementedError</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dm</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">A_nuc</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mass</span> <span class="o">=</span> <span class="kc">None</span>
 
 <div class="viewcode-block" id="Nucleus.from_cache">
 <a class="viewcode-back" href="../../../pynucastro.nucdata.html#pynucastro.nucdata.nucleus.Nucleus.from_cache">[docs]</a>
