@@ -37,22 +37,21 @@ recommended values (currently CODATA 18)
 
 * :cite:t:`codata:2018`
 
-Masses, binding energies, and spins from the Atomic Mass Data Center
----------------------------------------------------------------------
 
-We get the basic nuclear properties from the AME2016 evaluation.  This
+Nuclei properties
+-----------------
+
+We get the basic nuclear properties from the Nubase 2020 evaluation.  This
 is available online at `Nuclear Data Services <https://www-nds.iaea.org/amdc/>`_.
 
-Atomic Mass Evaluation 2016:
+* :cite:t:`nubase:2020`
 
-* :cite:t:`huang:2017`
-* :cite:t:`wang:2017`
+In particular, we get the mass excesses, $\Delta M$, and spins from there.  We then compute
+the binding energies from the mass excesses as:
 
-Atomic Mass Evaluation 2012:
+.. math::
 
-* :cite:t:`audi:2012`
-* :cite:t:`wang:2012`
-
+   B = Z (m_p + m_e) + N m_n - (A m_u + \Delta M)
 
 Partition functions
 -------------------
