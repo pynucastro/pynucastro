@@ -6,7 +6,6 @@ import os
 import re
 
 from pynucastro.constants import constants
-from pynucastro.nucdata.binding_table import BindingTable
 from pynucastro.nucdata.elements import PeriodicTable
 from pynucastro.nucdata.mass_table import MassTable
 from pynucastro.nucdata.partition_function import PartitionFunctionCollection
@@ -21,9 +20,6 @@ _mass_table = MassTable()
 
 #read the spin table once and store it at the module-level
 _spin_table = SpinTable(reliable=True)
-
-# read the binding energy table once and store it at the module-level
-_binding_table = BindingTable()
 
 # read the partition function table once and store it at the module-level
 _pcollection = PartitionFunctionCollection(use_high_temperatures=True, use_set='frdm')
@@ -135,17 +131,22 @@ class Nucleus:
         except ValueError:
             self.partition_function = None
 
+        # get the mass excess (in MeV)
         try:
-            self.nucbind = _binding_table.get_binding_energy(n=self.N, z=self.Z)
+            dm = _mass_table.get_mass_diff(a=self.A, z=self.Z)
         except NotImplementedError:
-            # the binding energy table doesn't know about this nucleus
-            self.nucbind = None
+            dm = None
 
-        # Now we will define the Nuclear Mass,
-        try:
-            self.A_nuc = float(self.A) + _mass_table.get_mass_diff(a=self.A, z=self.Z) / constants.m_u_MeV
-        except NotImplementedError:
-            self.A_nuc = None
+        # derive the binding energy per nuclei from the msas excess
+
+        M_nuc = dm + self.A * constants.m_u_MeV
+        B = (self.Z * (constants.m_p_MeV + constants.m_e_MeV) +
+             self.N * constants.m_n_MeV) - M_nuc
+        self.nucbind = B / self.A
+
+        # nuclear mass (in MeV) and A_nuc
+        self.A_nuc = float(self.A) + dm / constants.m_u_MeV
+        self.mass = M_nuc
 
     @classmethod
     def from_cache(cls, name, dummy=False):
