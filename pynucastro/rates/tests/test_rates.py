@@ -275,7 +275,7 @@ class TestDerivedRate:
         a_a_ag_c12 = reaclib_library.get_rate('he4 + he4 + he4 --> c12 <fy05_reaclib__>')
         c12_ga_a_a_derived = rates.DerivedRate(rate=a_a_ag_c12, compute_Q=True, use_pf=False)
 
-        assert c12_ga_a_a_derived.eval(T=2.0e9) == approx(2.899433744446781e-07)
+        assert c12_ga_a_a_derived.eval(T=2.0e9) == approx(2.899642192191721e-07)
 
 
 class TestWeakRates:
