@@ -14,7 +14,7 @@ AME 2016 table file `mass16.txt` and run:
 The 2020 Atomic Mass Evaluations were retrieved from
 https://www-nds.iaea.org/amdc/
 
-The Atomic Mass Evaluation 2020 is published as  Chinese Phys. C 45 (2021) 030002, 030003
+The Atomic Mass Evaluation 2020 is published as Chinese Phys. C 45 (2021) 030002, 030003
 
 The Nubase evaluation is published as Chinese Physics C 45 (2021) 030001
 

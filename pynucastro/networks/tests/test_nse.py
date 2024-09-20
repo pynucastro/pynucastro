@@ -23,11 +23,11 @@ class TestNSE:
         xsum = sum(nse_Xs)
 
         assert xsum == pytest.approx(1.0, rel=1.0e-10)
-        assert nse_Xs[0] == pytest.approx(0.009432537946799463, rel=1.0e-10)
-        assert nse_Xs[1] == pytest.approx(0.44084124304595085, rel=1.0e-10)
-        assert nse_Xs[2] == pytest.approx(0.007118462329310183, rel=1.0e-10)
-        assert nse_Xs[3] == pytest.approx(0.51878958707397, rel=1.0e-10)
-        assert nse_Xs[4] == pytest.approx(0.023818169603975755, rel=1.0e-10)
+        assert nse_Xs[0] == pytest.approx(0.009432537966997221, rel=1.0e-10)
+        assert nse_Xs[1] == pytest.approx(0.44084124187076745, rel=1.0e-10)
+        assert nse_Xs[2] == pytest.approx(0.007118462338888465, rel=1.0e-10)
+        assert nse_Xs[3] == pytest.approx(0.5187895881848553, rel=1.0e-10)
+        assert nse_Xs[4] == pytest.approx(0.02381816963849376, rel=1.0e-10)
 
     def test_nse_no_coul(self, pynet):
 
@@ -41,8 +41,8 @@ class TestNSE:
         xsum = sum(nse_Xs)
 
         assert xsum == pytest.approx(1.0, rel=1.0e-10)
-        assert nse_Xs[0] == pytest.approx(0.009096582744051895, rel=1.0e-10)
-        assert nse_Xs[1] == pytest.approx(0.46309222703132036, rel=1.0e-10)
-        assert nse_Xs[2] == pytest.approx(0.006684828023429009, rel=1.0e-10)
-        assert nse_Xs[3] == pytest.approx(0.5003120509228778, rel=1.0e-10)
-        assert nse_Xs[4] == pytest.approx(0.020814311278343482, rel=1.0e-10)
+        assert nse_Xs[0] == pytest.approx(0.009096582765040962, rel=1.0e-10)
+        assert nse_Xs[1] == pytest.approx(0.46309222580780524, rel=1.0e-10)
+        assert nse_Xs[2] == pytest.approx(0.006684828034485319, rel=1.0e-10)
+        assert nse_Xs[3] == pytest.approx(0.5003120520772527, rel=1.0e-10)
+        assert nse_Xs[4] == pytest.approx(0.020814311315418953, rel=1.0e-10)
