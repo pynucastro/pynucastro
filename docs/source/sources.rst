@@ -28,14 +28,14 @@ Tabulated weak nuclear reaction rates
   :cite:t:`langanke:2001`.
 
 
-Physical constants from CODATA
-------------------------------
+Physical constants
+------------------
 
-The standalone AMReX-Astro Microphysics
-networks rely on physical constants sourced from the 2014 CODATA
-recommended values, located at `<https://physics.nist.gov/cuu/Constants/archive2014.html>`_.
+We use the [scipy.constants](https://docs.scipy.org/doc/scipy/reference/constants.html) module
+from SciPy to get all the physical constants.  This in turn gets the constants from the CODATA
+recommended values (currently CODATA 18)
 
-* :cite:t:`codata:2014`
+* :cite:t:`codata:2018`
 
 Masses, binding energies, and spins from the Atomic Mass Data Center
 ---------------------------------------------------------------------
