@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Solving for nuclear statistical equilibrium &#8212; pynucastro 2.3.0.post3+g16da17e3 documentation</title>
+    <title>Solving for nuclear statistical equilibrium &#8212; pynucastro 2.3.0.post4+gccc9f295 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=6ed0595c"></script>
+    <script src="_static/documentation_options.js?v=1aee7f0b"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -549,36 +549,36 @@ document.write(`
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-  X(p) : 0.009350266553936523
-  X(He4) : 0.43364261546757593
-  X(C12) : 7.72871226059481e-06
-  X(N13) : 2.5920422743078603e-10
-  X(N14) : 1.3663280226864335e-09
-  X(O16) : 1.5697522575604407e-05
-  X(F18) : 2.4113970340564704e-11
-  X(Ne20) : 3.018742611629591e-07
-  X(Ne21) : 3.956305613197013e-09
-  X(Na22) : 9.687054732122895e-10
-  X(Na23) : 7.296885323033484e-08
-  X(Mg24) : 3.470174514366907e-05
-  X(Al27) : 3.352629310547804e-05
-  X(Si28) : 0.010439577058874177
-  X(P31) : 0.0021349882505817966
-  X(S32) : 0.009160654987345094
-  X(Cl35) : 0.004000867022400524
-  X(Ar36) : 0.004879643287995019
-  X(K39) : 0.005552709764833907
-  X(Ca40) : 0.004769872773173147
-  X(Sc43) : 0.00037268413288142247
-  X(Ti44) : 0.0002292585530589964
-  X(V47) : 0.004900619876477971
-  X(Cr48) : 0.001148869026063096
-  X(Mn51) : 0.06904763806934694
-  X(Fe52) : 0.005746888487287096
-  X(Co55) : 0.41561588269811806
-  X(Ni56) : 0.018914928299247527
+  X(p) : 0.009350266574298126
+  X(He4) : 0.4336426143159986
+  X(C12) : 7.728712263230988e-06
+  X(N13) : 2.592042273492072e-10
+  X(N14) : 1.3663280223921057e-09
+  X(O16) : 1.569752257721184e-05
+  X(F18) : 2.4113970352901534e-11
+  X(Ne20) : 3.0187426124540253e-07
+  X(Ne21) : 3.956305618265555e-09
+  X(Na22) : 9.687054738180061e-10
+  X(Na23) : 7.296885329815052e-08
+  X(Mg24) : 3.4701745252768506e-05
+  X(Al27) : 3.35262932875393e-05
+  X(Si28) : 0.010439577070085705
+  X(P31) : 0.0021349882457099433
+  X(S32) : 0.009160654967147823
+  X(Cl35) : 0.004000867019906003
+  X(Ar36) : 0.004879643277695136
+  X(K39) : 0.00555270977669994
+  X(Ca40) : 0.004769872777955282
+  X(Sc43) : 0.0003726841335918931
+  X(Ti44) : 0.00022925855334570013
+  X(V47) : 0.0049006198947801945
+  X(Cr48) : 0.001148869027630562
+  X(Mn51) : 0.06904763821666747
+  X(Fe52) : 0.005746888495780569
+  X(Co55) : 0.4156158836321719
+  X(Ni56) : 0.01891492832935047
 
-After solving, the chemical potential for proton and neutron are -7.738608573873926 and -9.99906602207694
+After solving, the chemical potential for proton and neutron are -7.738608574213004 and -9.99906602170847
 </pre></div></div>
 </div>
 <p>For <span class="math notranslate nohighlight">\(\rho = 10^7~\mathrm{g~cm^{-3}}\)</span> and electron fraction, <span class="math notranslate nohighlight">\(Y_e = 0.5\)</span>, we can explore how the NSE state changes with temperature.</p>
@@ -610,8 +610,8 @@ After solving, the chemical potential for proton and neutron are -7.738608573873
 <span class="n">nuc_names</span> <span class="o">=</span> <span class="n">nse</span><span class="o">.</span><span class="n">get_nuclei</span><span class="p">()</span>
 
 <span class="n">low_limit</span> <span class="o">=</span> <span class="mf">1e-2</span>
-<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
-<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+
 <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">nuc_names</span><span class="p">)):</span>
     <span class="n">line</span><span class="p">,</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">temps</span><span class="p">,</span> <span class="n">X_s</span><span class="p">[:,</span><span class="n">k</span><span class="p">])</span>
     <span class="k">if</span> <span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">X_s</span><span class="p">[:,</span><span class="n">k</span><span class="p">])</span> <span class="o">&gt;</span> <span class="n">low_limit</span><span class="p">):</span>
@@ -623,23 +623,16 @@ After solving, the chemical potential for proton and neutron are -7.738608573873
 <span class="n">ax</span><span class="o">.</span><span class="n">set_yscale</span><span class="p">(</span><span class="s1">&#39;log&#39;</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">([</span><span class="n">low_limit</span><span class="p">,</span><span class="mf">1.1</span><span class="p">])</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">rf</span><span class="s2">&quot;$Y_e = </span><span class="si">{</span><span class="n">ye</span><span class="si">}</span><span class="s2">$, $\rho = </span><span class="si">{</span><span class="n">rho</span><span class="si">:</span><span class="s2">6.3g</span><span class="si">}</span><span class="s2">$&quot;</span><span class="p">)</span>
+
+<span class="n">fig</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">((</span><span class="mi">7</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
 </pre></div>
 </div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
-</pre></div>
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-Text(0.5, 1.0, &#39;$Y_e = 0.5$, $\\rho =  1e+07$&#39;)
-</pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/NSE-example_10_1.png" src="_images/NSE-example_10_1.png" />
+<img alt="_images/NSE-example_10_0.png" src="_images/NSE-example_10_0.png" />
 </div>
 </div>
 <p>For <span class="math notranslate nohighlight">\(\rho = 10^7~\mathrm{g~cm^{-3}}\)</span> and a relatively high temperature of <span class="math notranslate nohighlight">\(T = 6 \times 10^9~\mathrm{K}\)</span>, we can look at how the NSE state changes with varying <span class="math notranslate nohighlight">\(Y_e\)</span>.</p>
@@ -678,35 +671,29 @@ Text(0.5, 1.0, &#39;$Y_e = 0.5$, $\\rho =  1e+07$&#39;)
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">X_s_1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">X_s_1</span><span class="p">)</span>
 <span class="n">nuc_names</span> <span class="o">=</span> <span class="n">nse</span><span class="o">.</span><span class="n">get_nuclei</span><span class="p">()</span>
 
-<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
-<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+
 <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">nuc_names</span><span class="p">)):</span>
     <span class="n">line</span><span class="p">,</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ye_s</span><span class="p">,</span> <span class="n">X_s_1</span><span class="p">[:,</span><span class="n">k</span><span class="p">])</span>
     <span class="k">if</span> <span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">X_s_1</span><span class="p">[:,</span><span class="n">k</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mf">0.01</span><span class="p">):</span>
         <span class="n">line</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">nuc_names</span><span class="p">[</span><span class="n">k</span><span class="p">]))</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span> <span class="o">=</span> <span class="s2">&quot;best&quot;</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;best&quot;</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;ye&#39;</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Mass Fraction&#39;</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set_yscale</span><span class="p">(</span><span class="s1">&#39;log&#39;</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">([</span><span class="mf">0.01</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">rf</span><span class="s2">&quot;$\rho = </span><span class="si">{</span><span class="n">rho</span><span class="si">:</span><span class="s2">6.3g</span><span class="si">}</span><span class="s2">$ and $T=</span><span class="si">{</span><span class="n">temp</span><span class="si">:</span><span class="s2">6.3g</span><span class="si">}</span><span class="s2">$&quot;</span><span class="p">)</span>
+
+<span class="n">fig</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">((</span><span class="mi">7</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
 </pre></div>
 </div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
-</pre></div>
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-Text(0.5, 1.0, &#39;$\\rho =  1e+07$ and $T= 6e+09$&#39;)
-</pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/NSE-example_14_1.png" src="_images/NSE-example_14_1.png" />
+<img alt="_images/NSE-example_14_0.png" src="_images/NSE-example_14_0.png" />
 </div>
 </div>
 </section>
