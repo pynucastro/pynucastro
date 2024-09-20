@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.screening package &#8212; pynucastro 2.3.0.post4+gccc9f295 documentation</title>
+    <title>pynucastro.screening package &#8212; pynucastro 2.3.0.post5+g0c386100 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=1aee7f0b"></script>
+    <script src="_static/documentation_options.js?v=250602cd"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -542,7 +542,7 @@ factor calculations.</p>
 </dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pynucastro.screening.screen.PlasmaState.class_type">
-<span class="sig-name descname"><span class="pre">class_type</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">jitclass.PlasmaState#7effc3509090&lt;temp:float64,dens:float64,qlam0z:float64,taufac:float64,aa:float64,abar:float64,zbar:float64,z2bar:float64,n_e:float64,gamma_e_fac:float64&gt;</span></em><a class="headerlink" href="#pynucastro.screening.screen.PlasmaState.class_type" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">class_type</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">jitclass.PlasmaState#7f78f851f550&lt;temp:float64,dens:float64,qlam0z:float64,taufac:float64,aa:float64,abar:float64,zbar:float64,z2bar:float64,n_e:float64,gamma_e_fac:float64&gt;</span></em><a class="headerlink" href="#pynucastro.screening.screen.PlasmaState.class_type" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -571,7 +571,7 @@ for a specific pair of nuclei.</p>
 </dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pynucastro.screening.screen.ScreenFactors.class_type">
-<span class="sig-name descname"><span class="pre">class_type</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">jitclass.ScreenFactors#7effb4f93cd0&lt;z1:int64,z2:int64,a1:int64,a2:int64,zs13:float64,zhat:float64,zhat2:float64,lzav:float64,aznut:float64,ztilde:float64&gt;</span></em><a class="headerlink" href="#pynucastro.screening.screen.ScreenFactors.class_type" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">class_type</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">jitclass.ScreenFactors#7f78e7398250&lt;z1:int64,z2:int64,a1:int64,a2:int64,zs13:float64,zhat:float64,zhat2:float64,lzav:float64,aznut:float64,ztilde:float64&gt;</span></em><a class="headerlink" href="#pynucastro.screening.screen.ScreenFactors.class_type" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -662,9 +662,9 @@ as returned by <a class="reference internal" href="pynucastro.networks.html#pynu
 <dl class="py function">
 <dt class="sig sig-object py" id="pynucastro.screening.screen.screen5">
 <span class="sig-prename descclassname"><span class="pre">pynucastro.screening.screen.</span></span><span class="sig-name descname"><span class="pre">screen5</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pynucastro.screening.screen.PlasmaState" title="pynucastro.screening.screen.PlasmaState"><span class="pre">PlasmaState</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">scn_fac</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/screening/screen.html#screen5"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.screening.screen.screen5" title="Link to this definition">#</a></dt>
-<dd><p>Calculates screening factors following the appendix of <span id="id5">Wallace <em>et al.</em> [<a class="reference internal" href="zreferences.html#id26" title="R. K. Wallace, S. E. Woosley, and T. A. Weaver. The thermonuclear model for X-ray transients. \apj , 258:696-715, July 1982. doi:10.1086/160119.">1982</a>]</span>.</p>
-<p>Based on <span id="id6">Graboske <em>et al.</em> [<a class="reference internal" href="zreferences.html#id23" title="H. C. Graboske, H. E. Dewitt, A. S. Grossman, and M. S. Cooper. Screening Factors for Nuclear Reactions. II. Intermediate Screen-Ing and Astrophysical Applications. \apj , 181:457-474, April 1973. doi:10.1086/152062.">1973</a>]</span> for weak screening. Based on
-<span id="id7">Alastuey and Jancovici [<a class="reference internal" href="zreferences.html#id24" title="A. Alastuey and B. Jancovici. Nuclear reaction rate enhancement in dense stellar matter. \apj , 226:1034-1040, December 1978. doi:10.1086/156681.">1978</a>]</span> with plasma parameters from <span id="id8">Itoh <em>et al.</em> [<a class="reference internal" href="zreferences.html#id25" title="N. Itoh, H. Totsuji, S. Ichimaru, and H. E. Dewitt. Enhancement of thermonuclear reaction rate due to strong screening. II - Ionic mixtures. \apj , 234:1079-1084, December 1979. doi:10.1086/157590.">1979</a>]</span>,
+<dd><p>Calculates screening factors following the appendix of <span id="id5">Wallace <em>et al.</em> [<a class="reference internal" href="zreferences.html#id27" title="R. K. Wallace, S. E. Woosley, and T. A. Weaver. The thermonuclear model for X-ray transients. \apj , 258:696-715, July 1982. doi:10.1086/160119.">1982</a>]</span>.</p>
+<p>Based on <span id="id6">Graboske <em>et al.</em> [<a class="reference internal" href="zreferences.html#id24" title="H. C. Graboske, H. E. Dewitt, A. S. Grossman, and M. S. Cooper. Screening Factors for Nuclear Reactions. II. Intermediate Screen-Ing and Astrophysical Applications. \apj , 181:457-474, April 1973. doi:10.1086/152062.">1973</a>]</span> for weak screening. Based on
+<span id="id7">Alastuey and Jancovici [<a class="reference internal" href="zreferences.html#id25" title="A. Alastuey and B. Jancovici. Nuclear reaction rate enhancement in dense stellar matter. \apj , 226:1034-1040, December 1978. doi:10.1086/156681.">1978</a>]</span> with plasma parameters from <span id="id8">Itoh <em>et al.</em> [<a class="reference internal" href="zreferences.html#id26" title="N. Itoh, H. Totsuji, S. Ichimaru, and H. E. Dewitt. Enhancement of thermonuclear reaction rate due to strong screening. II - Ionic mixtures. \apj , 234:1079-1084, December 1979. doi:10.1086/157590.">1979</a>]</span>,
 for strong screening.</p>
 </dd></dl>
 
