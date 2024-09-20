@@ -138,15 +138,19 @@ class Nucleus:
             dm = None
 
         # derive the binding energy per nuclei from the msas excess
+        if dm is not None:
+            M_nuc = dm + self.A * constants.m_u_MeV
+            B = (self.Z * (constants.m_p_MeV + constants.m_e_MeV) +
+                 self.N * constants.m_n_MeV) - M_nuc
+            self.nucbind = B / self.A
 
-        M_nuc = dm + self.A * constants.m_u_MeV
-        B = (self.Z * (constants.m_p_MeV + constants.m_e_MeV) +
-             self.N * constants.m_n_MeV) - M_nuc
-        self.nucbind = B / self.A
-
-        # nuclear mass (in MeV) and A_nuc
-        self.A_nuc = float(self.A) + dm / constants.m_u_MeV
-        self.mass = M_nuc
+            # nuclear mass (in MeV) and A_nuc
+            self.A_nuc = float(self.A) + dm / constants.m_u_MeV
+            self.mass = M_nuc
+        else:
+            self.nucbind = None
+            self.A_nuc = None
+            self.mass = None
 
     @classmethod
     def from_cache(cls, name, dummy=False):
