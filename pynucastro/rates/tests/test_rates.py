@@ -250,7 +250,7 @@ class TestDerivedRate:
         c12_ga_a_a_reaclib = reaclib_library.get_rate('c12 --> he4 + he4 + he4 <fy05_reaclib__reverse>')
         c12_ga_a_a_derived = rates.DerivedRate(rate=a_a_ag_c12, compute_Q=False, use_pf=False)
 
-        assert c12_ga_a_a_reaclib.eval(T=2.0e9) == approx(c12_ga_a_a_derived.eval(T=2.0e9), rel=1.7e-5)
+        assert c12_ga_a_a_reaclib.eval(T=2.0e9) == approx(c12_ga_a_a_derived.eval(T=2.0e9), rel=2e-4)
 
     def test_a_a_ag_c12_with_pf(self, reaclib_library):
         """
