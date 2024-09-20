@@ -47,8 +47,9 @@ class Nucleus:
     :var caps_name:       capitalized short species name (e.g. "He4")
     :var el:              element name (e.g. "he")
     :var pretty:          LaTeX formatted version of the nucleus name
-    :var A_nuc:           Nuclear Mass in amu
-
+    :var dm:              mass excess (MeV)
+    :var A_nuc:           nuclear mass (amu)
+    :var mass:            nuclear mass (MeV)
     """
     _cache = {}
 
@@ -141,11 +142,15 @@ class Nucleus:
             # the binding energy table doesn't know about this nucleus
             self.nucbind = None
 
-        # Now we will define the Nuclear Mass,
+        # nuclear mass
         try:
-            self.A_nuc = float(self.A) + _mass_table.get_mass_diff(a=self.A, z=self.Z) / constants.m_u_MeV
+            self.dm = _mass_table.get_mass_diff(a=self.A, z=self.Z)
+            self.A_nuc = float(self.A) + self.dm / constants.m_u_MeV
+            self.mass = self.A * constants.m_u_MeV + self.dm
         except NotImplementedError:
+            self.dm = None
             self.A_nuc = None
+            self.mass = None
 
     @classmethod
     def from_cache(cls, name, dummy=False):
