@@ -235,7 +235,6 @@ def get_all_nuclei():
         else:
             el = PeriodicTable.lookup_Z(Z)
             nuc = f"{el.abbreviation}{A}"
-        print("trying: ", nuc)
         nuc_list.append(Nucleus(nuc))
 
     return nuc_list
