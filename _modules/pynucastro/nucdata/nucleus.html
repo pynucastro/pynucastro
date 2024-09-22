@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.nucdata.nucleus &#8212; pynucastro 2.3.0.post6+g51478978 documentation</title>
+    <title>pynucastro.nucdata.nucleus &#8212; pynucastro 2.3.0.post7+g9c2e2e0e documentation</title>
   
   
   
@@ -37,7 +37,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=65ca082f"></script>
+    <script src="../../../_static/documentation_options.js?v=cb8e6087"></script>
     <script src="../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -637,6 +637,25 @@ document.write(`
         <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">amin</span><span class="p">,</span> <span class="n">amax</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
             <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">element</span><span class="o">.</span><span class="n">abbreviation</span><span class="si">}{</span><span class="n">a</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="n">nuc_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Nucleus</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">nuc_list</span></div>
+
+
+
+<div class="viewcode-block" id="get_all_nuclei">
+<a class="viewcode-back" href="../../../pynucastro.nucdata.html#pynucastro.nucdata.nucleus.get_all_nuclei">[docs]</a>
+<span class="k">def</span> <span class="nf">get_all_nuclei</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return a list will every Nucleus that has a known mass&quot;&quot;&quot;</span>
+
+    <span class="n">nuc_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">Z</span><span class="p">)</span> <span class="ow">in</span> <span class="n">_mass_table</span><span class="o">.</span><span class="n">mass_diff</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">Z</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">A</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">nuc</span> <span class="o">=</span> <span class="s2">&quot;n&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">el</span> <span class="o">=</span> <span class="n">PeriodicTable</span><span class="o">.</span><span class="n">lookup_Z</span><span class="p">(</span><span class="n">Z</span><span class="p">)</span>
+            <span class="n">nuc</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">el</span><span class="o">.</span><span class="n">abbreviation</span><span class="si">}{</span><span class="n">A</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">nuc_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Nucleus</span><span class="p">(</span><span class="n">nuc</span><span class="p">))</span>
 
     <span class="k">return</span> <span class="n">nuc_list</span></div>
 
