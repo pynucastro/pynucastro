@@ -229,7 +229,7 @@ def get_all_nuclei():
 
     nuc_list = []
 
-    for (A, Z) in _mass_table._mass_diff:
+    for (A, Z) in _mass_table.mass_diff:
         if Z == 0 and A == 1:
             nuc = "n"
         else:
