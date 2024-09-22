@@ -217,3 +217,19 @@ def get_nuclei_in_range(zmin, zmax, amin, amax):
             nuc_list.append(Nucleus(name))
 
     return nuc_list
+
+
+def get_all_nuclei():
+    """Return a list will every Nucleus that has a known mass"""
+
+    nuc_list = []
+
+    for (A, Z) in _mass_table.mass_diff:
+        if Z == 0 and A == 1:
+            nuc = "n"
+        else:
+            el = PeriodicTable.lookup_Z(Z)
+            nuc = f"{el.abbreviation}{A}"
+        nuc_list.append(Nucleus(nuc))
+
+    return nuc_list
