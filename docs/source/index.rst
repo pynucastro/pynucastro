@@ -103,6 +103,7 @@ codes.
    :caption: Examples in Nuclear Astrophysics
    :hidden:
 
+   examples/binding-energy.ipynb
    examples/pp-cno.ipynb
    examples/hot-CNO-breakout-example.ipynb
    examples/triple_alpha_eval.ipynb
