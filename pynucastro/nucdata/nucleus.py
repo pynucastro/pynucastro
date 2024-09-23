@@ -9,6 +9,7 @@ from pynucastro.constants import constants
 from pynucastro.nucdata.binding_table import BindingTable
 from pynucastro.nucdata.elements import PeriodicTable
 from pynucastro.nucdata.mass_table import MassTable
+from pynucastro.nucdata.halflife_table import HalfLifeTable
 from pynucastro.nucdata.partition_function import PartitionFunctionCollection
 from pynucastro.nucdata.spin_table import SpinTable
 
@@ -16,10 +17,9 @@ _pynucastro_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 _pynucastro_rates_dir = os.path.join(_pynucastro_dir, 'library')
 _pynucastro_tabular_dir = os.path.join(_pynucastro_rates_dir, 'tabular')
 
-#read the mass excess table once and store it at the module-level
+# read the mass various tables with nuclear properties at the module-level
 _mass_table = MassTable()
-
-#read the spin table once and store it at the module-level
+_halflife_table = HalfLifeTable()
 _spin_table = SpinTable(reliable=True)
 
 # read the binding energy table once and store it at the module-level
@@ -50,6 +50,7 @@ class Nucleus:
     :var dm:              mass excess (MeV)
     :var A_nuc:           nuclear mass (amu)
     :var mass:            nuclear mass (MeV)
+    :var tau              half life (s)
     """
     _cache = {}
 
@@ -151,6 +152,12 @@ class Nucleus:
             self.dm = None
             self.A_nuc = None
             self.mass = None
+
+        # halflife
+        try:
+            self.tau = _halflife_table.get_halflife(a=self.A, z=self.Z)
+        except NotImplementedError:
+            self.tau = None
 
     @classmethod
     def from_cache(cls, name, dummy=False):
