@@ -43,8 +43,9 @@ class Nucleus:
     :var caps_name:       capitalized short species name (e.g. "He4")
     :var el:              element name (e.g. "he")
     :var pretty:          LaTeX formatted version of the nucleus name
-    :var A_nuc:           Nuclear Mass in amu
-
+    :var dm:              mass excess (MeV)
+    :var A_nuc:           nuclear mass (amu)
+    :var mass:            nuclear mass (MeV)
     """
     _cache = {}
 
@@ -131,26 +132,20 @@ class Nucleus:
         except ValueError:
             self.partition_function = None
 
-        # get the mass excess (in MeV)
+        # nuclear mass
         try:
-            dm = _mass_table.get_mass_diff(a=self.A, z=self.Z)
-        except NotImplementedError:
-            dm = None
-
-        # derive the binding energy per nuclei from the msas excess
-        if dm is not None:
-            M_nuc = dm + self.A * constants.m_u_MeV
-            B = (self.Z * (constants.m_p_MeV + constants.m_e_MeV) +
-                 self.N * constants.m_n_MeV) - M_nuc
+            mass_H = _mass_table.get_mass_diff(a=1, z=1) + constants.m_u_MeV
+            self.dm = _mass_table.get_mass_diff(a=self.A, z=self.Z)
+            self.A_nuc = float(self.A) + self.dm / constants.m_u_MeV
+            self.mass = self.A * constants.m_u_MeV + self.dm
+            B = (self.Z * mass_H + self.N * constants.m_n_MeV) - self.mass
             self.nucbind = B / self.A
 
-            # nuclear mass (in MeV) and A_nuc
-            self.A_nuc = float(self.A) + dm / constants.m_u_MeV
-            self.mass = M_nuc
-        else:
-            self.nucbind = None
+        except NotImplementedError:
+            self.dm = None
             self.A_nuc = None
             self.mass = None
+            self.nucbind = None
 
     @classmethod
     def from_cache(cls, name, dummy=False):
@@ -220,5 +215,21 @@ def get_nuclei_in_range(zmin, zmax, amin, amax):
         for a in range(amin, amax+1):
             name = f"{element.abbreviation}{a}"
             nuc_list.append(Nucleus(name))
+
+    return nuc_list
+
+
+def get_all_nuclei():
+    """Return a list will every Nucleus that has a known mass"""
+
+    nuc_list = []
+
+    for (A, Z) in _mass_table.mass_diff:
+        if Z == 0 and A == 1:
+            nuc = "n"
+        else:
+            el = PeriodicTable.lookup_Z(Z)
+            nuc = f"{el.abbreviation}{A}"
+        nuc_list.append(Nucleus(nuc))
 
     return nuc_list
