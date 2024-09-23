@@ -8,8 +8,8 @@ import re
 from pynucastro.constants import constants
 from pynucastro.nucdata.binding_table import BindingTable
 from pynucastro.nucdata.elements import PeriodicTable
-from pynucastro.nucdata.mass_table import MassTable
 from pynucastro.nucdata.halflife_table import HalfLifeTable
+from pynucastro.nucdata.mass_table import MassTable
 from pynucastro.nucdata.partition_function import PartitionFunctionCollection
 from pynucastro.nucdata.spin_table import SpinTable
 
