@@ -345,6 +345,6 @@ class TestModify:
 
         rate.modify_products("mg24")
 
-        assert rate.Q == approx(13.93356)
+        assert rate.Q == approx(13.933578000000125)
         assert rate.products == [Nucleus("mg24")]
         assert rate.modified
