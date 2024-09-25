@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Combining ReacLib Rates with Electron Capture Tables &#8212; pynucastro 2.3.0.post7+g9c2e2e0e documentation</title>
+    <title>Combining ReacLib Rates with Electron Capture Tables &#8212; pynucastro 2.3.0.post8+g285245ed documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=cb8e6087"></script>
+    <script src="_static/documentation_options.js?v=a3f1e840"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -172,6 +172,11 @@
 <li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
 </ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Nuclear Properties</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="sources.html">Third Party Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nucleus.html">Nuclear Properties</a></li>
+</ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Exploring Networks in Python</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="pynucastro-examples.html">pynucastro usage examples</a></li>
@@ -239,7 +244,6 @@
 </details></li>
 </ul>
 </details></li>
-<li class="toctree-l1"><a class="reference internal" href="sources.html">Third Party Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="zreferences.html">References</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Index</span></p>
@@ -597,7 +601,7 @@ S32 ⟶ p + P31                  [Q =  -8.86 MeV] (S32 --&gt; p + P31 &lt;il10_r
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/electron-captures_12_0.png" src="_images/electron-captures_12_0.png" />
+<img alt="_images/electron-captures_13_0.png" src="_images/electron-captures_13_0.png" />
 </div>
 </div>
 <p>Let’s create a rate collection from just the ReacLib rates and look to see which are actually important</p>
@@ -642,7 +646,7 @@ S32 ⟶ p + P31                  [Q =  -8.86 MeV] (S32 --&gt; p + P31 &lt;il10_r
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/electron-captures_17_0.png" src="_images/electron-captures_17_0.png" />
+<img alt="_images/electron-captures_18_0.png" src="_images/electron-captures_18_0.png" />
 </div>
 </div>
 <p>Note, this rate collection already includes some weak rates from ReacLib – we want to remove those.</p>
@@ -689,7 +693,7 @@ S32 ⟶ p + P31                  [Q =  -8.86 MeV] (S32 --&gt; p + P31 &lt;il10_r
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/electron-captures_24_0.png" src="_images/electron-captures_24_0.png" />
+<img alt="_images/electron-captures_25_0.png" src="_images/electron-captures_25_0.png" />
 </div>
 </div>
 <p>We can see the values of the rates at our thermodynamic conditions easily:</p>
@@ -742,16 +746,8 @@ S32 ⟶ p + P31                  [Q =  -8.86 MeV] (S32 --&gt; p + P31 &lt;il10_r
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-9.667007169631513e+22
+9.667025588667893e+22
 </pre></div></div>
-</div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>
-</pre></div>
-</div>
 </div>
 </section>
 

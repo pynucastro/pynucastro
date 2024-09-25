@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Third Party Data &#8212; pynucastro 2.3.0.post7+g9c2e2e0e documentation</title>
+    <title>Third Party Data &#8212; pynucastro 2.3.0.post8+g285245ed documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=cb8e6087"></script>
+    <script src="_static/documentation_options.js?v=a3f1e840"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -51,8 +51,8 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'sources';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="References" href="zreferences.html" />
-    <link rel="prev" title="pynucastro.screening package" href="pynucastro.screening.html" />
+    <link rel="next" title="Nuclear Properties" href="nucleus.html" />
+    <link rel="prev" title="Contributing" href="contributing.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -171,6 +171,11 @@
 <li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
 </ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Nuclear Properties</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Third Party Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nucleus.html">Nuclear Properties</a></li>
+</ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Exploring Networks in Python</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="pynucastro-examples.html">pynucastro usage examples</a></li>
@@ -225,7 +230,7 @@
 <li class="toctree-l1"><a class="reference internal" href="examples/triple_alpha_eval.html">Computing the Screened Triple-alpha rate</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Reference</span></p>
-<ul class="current nav bd-sidenav">
+<ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="citing.html">Citing pynucastro</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="modules.html">API</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2 has-children"><a class="reference internal" href="pynucastro.html">pynucastro package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -238,7 +243,6 @@
 </details></li>
 </ul>
 </details></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Third Party Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="zreferences.html">References</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Index</span></p>
@@ -480,7 +484,7 @@ document.write(`
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#physical-constants">Physical constants</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#masses-binding-energies-and-spins-from-the-atomic-mass-data-center">Masses, binding energies, and spins from the Atomic Mass Data Center</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nuclei-properties">Nuclei properties</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#partition-functions">Partition functions</a></li>
 </ul>
             </nav>
@@ -529,27 +533,33 @@ recommended values (currently CODATA 18)</p>
 <li><p><span id="id4">Tiesinga <em>et al.</em> [<a class="reference internal" href="zreferences.html#id14" title="Eite Tiesinga, Peter J. Mohr, David B. Newell, and Barry N. Taylor. Codata recommended values of the fundamental physical constants: 2018. Journal of Physical and Chemical Reference Data, 50:033105, 2021. doi:10.1063/5.0064853.">2021</a>]</span></p></li>
 </ul>
 </section>
-<section id="masses-binding-energies-and-spins-from-the-atomic-mass-data-center">
-<h2>Masses, binding energies, and spins from the Atomic Mass Data Center<a class="headerlink" href="#masses-binding-energies-and-spins-from-the-atomic-mass-data-center" title="Link to this heading">#</a></h2>
-<p>We get the basic nuclear properties from the AME2016 evaluation.  This
-is available online at <a class="reference external" href="https://www-nds.iaea.org/amdc/">Nuclear Data Services</a>.</p>
-<p>Atomic Mass Evaluation 2016:</p>
+<section id="nuclei-properties">
+<h2>Nuclei properties<a class="headerlink" href="#nuclei-properties" title="Link to this heading">#</a></h2>
+<p>We get the basic nuclear properties from the Nubase 2020 evaluation.  This
+is available online at <a class="reference external" href="https://www-nds.iaea.org/amdc/">Nuclear Data Services</a>.
+We are currently using the file <a class="reference external" href="https://www-nds.iaea.org/amdc/ame2020/nubase_4.mas20.txt">nubase_4.mas20.txt</a>.</p>
 <ul class="simple">
-<li><p><span id="id5">Huang <em>et al.</em> [<a class="reference internal" href="zreferences.html#id15" title="W. J. Huang, G. Audi, M. Wang, F. G. Kondev, S. Naimi, and X. Xu. The ame2016 atomic mass evaluation (i). evaluation of input data; and adjustment procedures. Chinese Physics C, 41(3):030002, March 2017. doi:10.1088/1674-1137/41/3/030002.">2017</a>]</span></p></li>
-<li><p><span id="id6">Wang <em>et al.</em> [<a class="reference internal" href="zreferences.html#id16" title="M. Wang, G. Audi, F. G. Kondev, W. J. Huang, S. Naimi, and X. Xu. The ame2016 atomic mass evaluation (ii). tables, graphs and references. Chinese Physics C, 41(3):030003, March 2017. doi:10.1088/1674-1137/41/3/030003.">2017</a>]</span></p></li>
+<li><p><span id="id5">Kondev <em>et al.</em> [<a class="reference internal" href="zreferences.html#id20" title="F.G. Kondev, M. Wang, W.J. Huang, S. Naimi, and G. Audi. The nubase2020 evaluation of nuclear physics properties *. Chinese Physics C, 45(3):030001, mar 2021. URL: https://dx.doi.org/10.1088/1674-1137/abddae, doi:10.1088/1674-1137/abddae.">2021</a>]</span></p></li>
 </ul>
-<p>Atomic Mass Evaluation 2012:</p>
-<ul class="simple">
-<li><p><span id="id7">Audi <em>et al.</em> [<a class="reference internal" href="zreferences.html#id17" title="G. Audi, M. Wang, A. H. Wapstra, F. G. Kondev, M. MacCormick, X. Xu, and B. Pfeiffer. The ame2012 atomic mass evaluation. Chinese Physics C, 36(12):1287, December 2012. doi:10.1088/1674-1137/36/12/002.">2012</a>]</span></p></li>
-<li><p><span id="id8">Wang <em>et al.</em> [<a class="reference internal" href="zreferences.html#id18" title="M. Wang, G. Audi, A. H. Wapstra, F. G. Kondev, M. MacCormick, X. Xu, and B. Pfeiffer. The ame2012 atomic mass evaluation. Chinese Physics C, 36(12):1603, December 2012. doi:10.1088/1674-1137/36/12/003.">2012</a>]</span></p></li>
-</ul>
+<p>In particular, we get the mass excesses, <span class="math notranslate nohighlight">\(\Delta m\)</span>, and spins from there.  We then compute
+mass of the nucleus as:</p>
+<div class="math notranslate nohighlight">
+\[m = \Delta M + A m_u\]</div>
+<p>and the binding energies from the mass excesses as:</p>
+<div class="math notranslate nohighlight">
+\[B = Z m_H + N m_n - (A m_u + \Delta m)\]</div>
+<p>where <span class="math notranslate nohighlight">\(m_H\)</span> is the mass of the hydrogen atom, computed from the mass
+excess of <code class="docutils literal notranslate"><span class="pre">1H</span></code> listed in the table.  This is consistent with the
+discussion in section 2 of the AME 2020 paper <span id="id6">[<a class="reference internal" href="zreferences.html#id17" title="W.J. Huang, Meng Wang, F.G. Kondev, G. Audi, and S. Naimi. The ame 2020 atomic mass evaluation (i). evaluation of input data, and adjustment procedures*. Chinese Physics C, 45(3):030002, mar 2021. URL: https://dx.doi.org/10.1088/1674-1137/abddb0, doi:10.1088/1674-1137/abddb0.">Huang <em>et al.</em>, 2021</a>]</span>, and
+these numbers match the binding energies computed in the AME tables to
+the uncertainty in the nuclear masses.</p>
 </section>
 <section id="partition-functions">
 <h2>Partition functions<a class="headerlink" href="#partition-functions" title="Link to this heading">#</a></h2>
 <p>We use the tabulated partition functions from the following sources:</p>
 <ul class="simple">
-<li><p><span id="id9">Rauscher <em>et al.</em> [<a class="reference internal" href="zreferences.html#id19" title="Thomas Rauscher, Friedrich-Karl Thielemann, and Karl-Ludwig Kratz. Nuclear level density and the determination of thermonuclear rates for astrophysics. Phys. Rev. C, 56:1613–1625, September 1997. URL: https://link.aps.org/doi/10.1103/PhysRevC.56.1613, doi:10.1103/PhysRevC.56.1613.">1997</a>]</span></p></li>
-<li><p><span id="id10">Rauscher [<a class="reference internal" href="zreferences.html#id21" title="T. Rauscher. Nuclear partition functions at temperatures exceeding 10^10 K. The Astrophysical Journal Supplement Series, 147(2):403, August 2003. doi:10.1086/375733.">2003</a>]</span></p></li>
+<li><p><span id="id7">Rauscher <em>et al.</em> [<a class="reference internal" href="zreferences.html#id21" title="Thomas Rauscher, Friedrich-Karl Thielemann, and Karl-Ludwig Kratz. Nuclear level density and the determination of thermonuclear rates for astrophysics. Phys. Rev. C, 56:1613–1625, September 1997. URL: https://link.aps.org/doi/10.1103/PhysRevC.56.1613, doi:10.1103/PhysRevC.56.1613.">1997</a>]</span></p></li>
+<li><p><span id="id8">Rauscher [<a class="reference internal" href="zreferences.html#id23" title="T. Rauscher. Nuclear partition functions at temperatures exceeding 10^10 K. The Astrophysical Journal Supplement Series, 147(2):403, August 2003. doi:10.1086/375733.">2003</a>]</span></p></li>
 </ul>
 </section>
 </section>
@@ -566,20 +576,20 @@ is available online at <a class="reference external" href="https://www-nds.iaea.
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="pynucastro.screening.html"
+       href="contributing.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">pynucastro.screening package</p>
+        <p class="prev-next-title">Contributing</p>
       </div>
     </a>
     <a class="right-next"
-       href="zreferences.html"
+       href="nucleus.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">References</p>
+        <p class="prev-next-title">Nuclear Properties</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -605,7 +615,7 @@ is available online at <a class="reference external" href="https://www-nds.iaea.
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#physical-constants">Physical constants</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#masses-binding-energies-and-spins-from-the-atomic-mass-data-center">Masses, binding energies, and spins from the Atomic Mass Data Center</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nuclei-properties">Nuclei properties</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#partition-functions">Partition functions</a></li>
 </ul>
   </nav></div>

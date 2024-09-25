@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.reduction package &#8212; pynucastro 2.3.0.post7+g9c2e2e0e documentation</title>
+    <title>pynucastro.reduction package &#8212; pynucastro 2.3.0.post8+g285245ed documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=cb8e6087"></script>
+    <script src="_static/documentation_options.js?v=a3f1e840"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -169,6 +169,11 @@
 <li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
 </ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Nuclear Properties</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="sources.html">Third Party Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nucleus.html">Nuclear Properties</a></li>
+</ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Exploring Networks in Python</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="pynucastro-examples.html">pynucastro usage examples</a></li>
@@ -236,7 +241,6 @@
 </details></li>
 </ul>
 </details></li>
-<li class="toctree-l1"><a class="reference internal" href="sources.html">Third Party Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="zreferences.html">References</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Index</span></p>
@@ -558,7 +562,7 @@ document.write(`
 <dt class="sig sig-object py" id="pynucastro.reduction.drgep.drgep">
 <span class="sig-prename descclassname"><span class="pre">pynucastro.reduction.drgep.</span></span><span class="sig-name descname"><span class="pre">drgep</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">net</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">targets</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tols</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">returnobj</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'net'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_mpi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_numpy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/reduction/drgep.html#drgep"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.reduction.drgep.drgep" title="Link to this definition">#</a></dt>
 <dd><p>Implementation of Directed Relation Graph with Error Propagation (DRGEP) reduction
-method described in <span id="id1">Pepiot-Desjardins and Pitsch [<a class="reference internal" href="zreferences.html#id22" title="P. Pepiot-Desjardins and H. Pitsch. An efficient error-propagation-based reduction method for large chemical kinetic mechanisms. Combustion and Flame, 154(1):67-81, 2008. doi:10.1016/j.combustflame.2007.10.020.">2008</a>]</span> and <span id="id2">Niemeyer and Sung [<a class="reference internal" href="zreferences.html#id23" title="Kyle E. Niemeyer and Chih-Jen Sung. On the importance of graph search algorithms for DRGEP-based mechanism reduction methods. Combustion and Flame, 158(8):1439-1443, 2011. doi:10.1016/j.combustflame.2010.12.010.">2011</a>]</span>.</p>
+method described in <span id="id1">Pepiot-Desjardins and Pitsch [<a class="reference internal" href="zreferences.html#id24" title="P. Pepiot-Desjardins and H. Pitsch. An efficient error-propagation-based reduction method for large chemical kinetic mechanisms. Combustion and Flame, 154(1):67-81, 2008. doi:10.1016/j.combustflame.2007.10.020.">2008</a>]</span> and <span id="id2">Niemeyer and Sung [<a class="reference internal" href="zreferences.html#id25" title="Kyle E. Niemeyer and Chih-Jen Sung. On the importance of graph search algorithms for DRGEP-based mechanism reduction methods. Combustion and Flame, 158(8):1439-1443, 2011. doi:10.1016/j.combustflame.2010.12.010.">2011</a>]</span>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">

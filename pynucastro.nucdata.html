@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.nucdata package &#8212; pynucastro 2.3.0.post7+g9c2e2e0e documentation</title>
+    <title>pynucastro.nucdata package &#8212; pynucastro 2.3.0.post8+g285245ed documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=cb8e6087"></script>
+    <script src="_static/documentation_options.js?v=a3f1e840"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -169,6 +169,11 @@
 <li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
 </ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Nuclear Properties</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="sources.html">Third Party Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nucleus.html">Nuclear Properties</a></li>
+</ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Exploring Networks in Python</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="pynucastro-examples.html">pynucastro usage examples</a></li>
@@ -236,7 +241,6 @@
 </details></li>
 </ul>
 </details></li>
-<li class="toctree-l1"><a class="reference internal" href="sources.html">Third Party Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="zreferences.html">References</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Index</span></p>
@@ -473,15 +477,6 @@ document.write(`
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#submodules">Submodules</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-pynucastro.nucdata.binding_table">pynucastro.nucdata.binding_table module</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.binding_table.BindingTable"><code class="docutils literal notranslate"><span class="pre">BindingTable</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.binding_table.BindingTable.get_binding_energy"><code class="docutils literal notranslate"><span class="pre">BindingTable.get_binding_energy()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.binding_table.BindingTable.header_length"><code class="docutils literal notranslate"><span class="pre">BindingTable.header_length</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.binding_table.BindingTable.read"><code class="docutils literal notranslate"><span class="pre">BindingTable.read()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-pynucastro.nucdata.elements">pynucastro.nucdata.elements module</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.elements.Element"><code class="docutils literal notranslate"><span class="pre">Element</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.elements.PeriodicTable"><code class="docutils literal notranslate"><span class="pre">PeriodicTable</span></code></a><ul class="nav section-nav flex-column">
@@ -560,34 +555,6 @@ document.write(`
 particular, the binding energies)</p>
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">#</a></h2>
-</section>
-<section id="module-pynucastro.nucdata.binding_table">
-<span id="pynucastro-nucdata-binding-table-module"></span><h2>pynucastro.nucdata.binding_table module<a class="headerlink" href="#module-pynucastro.nucdata.binding_table" title="Link to this heading">#</a></h2>
-<p>Reads tabular binding energy/nucleon data file and supplies table data.</p>
-<dl class="py class">
-<dt class="sig sig-object py" id="pynucastro.nucdata.binding_table.BindingTable">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.nucdata.binding_table.</span></span><span class="sig-name descname"><span class="pre">BindingTable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datfile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/binding_table.html#BindingTable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.binding_table.BindingTable" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p>A simple class to manage reading and parsing the table of binding energy/nucleon.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="pynucastro.nucdata.binding_table.BindingTable.get_binding_energy">
-<span class="sig-name descname"><span class="pre">get_binding_energy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/binding_table.html#BindingTable.get_binding_energy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.binding_table.BindingTable.get_binding_energy" title="Link to this definition">#</a></dt>
-<dd><p>Returns the binding energy given n and z.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pynucastro.nucdata.binding_table.BindingTable.header_length">
-<span class="sig-name descname"><span class="pre">header_length</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#pynucastro.nucdata.binding_table.BindingTable.header_length" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pynucastro.nucdata.binding_table.BindingTable.read">
-<span class="sig-name descname"><span class="pre">read</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/binding_table.html#BindingTable.read"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.binding_table.BindingTable.read" title="Link to this definition">#</a></dt>
-<dd><p>Read the binding energy table</p>
-</dd></dl>
-
-</dd></dl>
-
 </section>
 <section id="module-pynucastro.nucdata.elements">
 <span id="pynucastro-nucdata-elements-module"></span><h2>pynucastro.nucdata.elements module<a class="headerlink" href="#module-pynucastro.nucdata.elements" title="Link to this heading">#</a></h2>
@@ -930,15 +897,6 @@ where only intervals are given and the values measured by strong experimental ar
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#submodules">Submodules</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-pynucastro.nucdata.binding_table">pynucastro.nucdata.binding_table module</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.binding_table.BindingTable"><code class="docutils literal notranslate"><span class="pre">BindingTable</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.binding_table.BindingTable.get_binding_energy"><code class="docutils literal notranslate"><span class="pre">BindingTable.get_binding_energy()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.binding_table.BindingTable.header_length"><code class="docutils literal notranslate"><span class="pre">BindingTable.header_length</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.binding_table.BindingTable.read"><code class="docutils literal notranslate"><span class="pre">BindingTable.read()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-pynucastro.nucdata.elements">pynucastro.nucdata.elements module</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.elements.Element"><code class="docutils literal notranslate"><span class="pre">Element</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.elements.PeriodicTable"><code class="docutils literal notranslate"><span class="pre">PeriodicTable</span></code></a><ul class="nav section-nav flex-column">

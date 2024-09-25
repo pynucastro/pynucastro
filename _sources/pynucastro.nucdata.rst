@@ -9,14 +9,6 @@ pynucastro.nucdata package
 Submodules
 ----------
 
-pynucastro.nucdata.binding\_table module
-----------------------------------------
-
-.. automodule:: pynucastro.nucdata.binding_table
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 pynucastro.nucdata.elements module
 ----------------------------------
 

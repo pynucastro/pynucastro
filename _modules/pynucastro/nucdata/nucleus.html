@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.nucdata.nucleus &#8212; pynucastro 2.3.0.post7+g9c2e2e0e documentation</title>
+    <title>pynucastro.nucdata.nucleus &#8212; pynucastro 2.3.0.post8+g285245ed documentation</title>
   
   
   
@@ -37,7 +37,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=cb8e6087"></script>
+    <script src="../../../_static/documentation_options.js?v=a3f1e840"></script>
     <script src="../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -168,6 +168,11 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing</a></li>
 </ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Nuclear Properties</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../sources.html">Third Party Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../nucleus.html">Nuclear Properties</a></li>
+</ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Exploring Networks in Python</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../../pynucastro-examples.html">pynucastro usage examples</a></li>
@@ -235,7 +240,6 @@
 </details></li>
 </ul>
 </details></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../sources.html">Third Party Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../zreferences.html">References</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Index</span></p>
@@ -400,7 +404,6 @@ document.write(`
 <span class="kn">import</span> <span class="nn">re</span>
 
 <span class="kn">from</span> <span class="nn">pynucastro.constants</span> <span class="kn">import</span> <span class="n">constants</span>
-<span class="kn">from</span> <span class="nn">pynucastro.nucdata.binding_table</span> <span class="kn">import</span> <span class="n">BindingTable</span>
 <span class="kn">from</span> <span class="nn">pynucastro.nucdata.elements</span> <span class="kn">import</span> <span class="n">PeriodicTable</span>
 <span class="kn">from</span> <span class="nn">pynucastro.nucdata.mass_table</span> <span class="kn">import</span> <span class="n">MassTable</span>
 <span class="kn">from</span> <span class="nn">pynucastro.nucdata.partition_function</span> <span class="kn">import</span> <span class="n">PartitionFunctionCollection</span>
@@ -415,9 +418,6 @@ document.write(`
 
 <span class="c1">#read the spin table once and store it at the module-level</span>
 <span class="n">_spin_table</span> <span class="o">=</span> <span class="n">SpinTable</span><span class="p">(</span><span class="n">reliable</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-<span class="c1"># read the binding energy table once and store it at the module-level</span>
-<span class="n">_binding_table</span> <span class="o">=</span> <span class="n">BindingTable</span><span class="p">()</span>
 
 <span class="c1"># read the partition function table once and store it at the module-level</span>
 <span class="n">_pcollection</span> <span class="o">=</span> <span class="n">PartitionFunctionCollection</span><span class="p">(</span><span class="n">use_high_temperatures</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">use_set</span><span class="o">=</span><span class="s1">&#39;frdm&#39;</span><span class="p">)</span>
@@ -535,21 +535,20 @@ document.write(`
         <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">partition_function</span> <span class="o">=</span> <span class="kc">None</span>
 
-        <span class="k">try</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">nucbind</span> <span class="o">=</span> <span class="n">_binding_table</span><span class="o">.</span><span class="n">get_binding_energy</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">Z</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">NotImplementedError</span><span class="p">:</span>
-            <span class="c1"># the binding energy table doesn&#39;t know about this nucleus</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">nucbind</span> <span class="o">=</span> <span class="kc">None</span>
-
         <span class="c1"># nuclear mass</span>
         <span class="k">try</span><span class="p">:</span>
+            <span class="n">mass_H</span> <span class="o">=</span> <span class="n">_mass_table</span><span class="o">.</span><span class="n">get_mass_diff</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">constants</span><span class="o">.</span><span class="n">m_u_MeV</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">dm</span> <span class="o">=</span> <span class="n">_mass_table</span><span class="o">.</span><span class="n">get_mass_diff</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">A</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">Z</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">A_nuc</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">A</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">dm</span> <span class="o">/</span> <span class="n">constants</span><span class="o">.</span><span class="n">m_u_MeV</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">mass</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">A</span> <span class="o">*</span> <span class="n">constants</span><span class="o">.</span><span class="n">m_u_MeV</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">dm</span>
+            <span class="n">B</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Z</span> <span class="o">*</span> <span class="n">mass_H</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">N</span> <span class="o">*</span> <span class="n">constants</span><span class="o">.</span><span class="n">m_n_MeV</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">mass</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nucbind</span> <span class="o">=</span> <span class="n">B</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">A</span>
+
         <span class="k">except</span> <span class="ne">NotImplementedError</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">dm</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">A_nuc</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">mass</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nucbind</span> <span class="o">=</span> <span class="kc">None</span>
 
 <div class="viewcode-block" id="Nucleus.from_cache">
 <a class="viewcode-back" href="../../../pynucastro.nucdata.html#pynucastro.nucdata.nucleus.Nucleus.from_cache">[docs]</a>

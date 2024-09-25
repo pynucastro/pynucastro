@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Solving for nuclear statistical equilibrium &#8212; pynucastro 2.3.0.post7+g9c2e2e0e documentation</title>
+    <title>Solving for nuclear statistical equilibrium &#8212; pynucastro 2.3.0.post8+g285245ed documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=cb8e6087"></script>
+    <script src="_static/documentation_options.js?v=a3f1e840"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -172,6 +172,11 @@
 <li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
 </ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Nuclear Properties</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="sources.html">Third Party Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nucleus.html">Nuclear Properties</a></li>
+</ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Exploring Networks in Python</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="pynucastro-examples.html">pynucastro usage examples</a></li>
@@ -239,7 +244,6 @@
 </details></li>
 </ul>
 </details></li>
-<li class="toctree-l1"><a class="reference internal" href="sources.html">Third Party Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="zreferences.html">References</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Index</span></p>
@@ -531,7 +535,7 @@ document.write(`
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/NSE-example_5_0.png" src="_images/NSE-example_5_0.png" />
+<img alt="_images/NSE-example_6_0.png" src="_images/NSE-example_6_0.png" />
 </div>
 </div>
 <p>We can also explicitly print the composition</p>
@@ -539,8 +543,8 @@ document.write(`
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">comp</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;After solving, the chemical potential for proton and neutron are </span><span class="si">{</span><span class="n">sol</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">sol</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">c</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">comp</span><span class="o">.</span><span class="n">X</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">c</span><span class="p">)</span><span class="si">:</span><span class="s2">6</span><span class="si">}</span><span class="s2"> : </span><span class="si">{</span><span class="n">v</span><span class="si">:</span><span class="s2">20.12g</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -549,42 +553,56 @@ document.write(`
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-  X(p) : 0.009350266574298126
-  X(He4) : 0.4336426143159986
-  X(C12) : 7.728712263230988e-06
-  X(N13) : 2.592042273492072e-10
-  X(N14) : 1.3663280223921057e-09
-  X(O16) : 1.569752257721184e-05
-  X(F18) : 2.4113970352901534e-11
-  X(Ne20) : 3.0187426124540253e-07
-  X(Ne21) : 3.956305618265555e-09
-  X(Na22) : 9.687054738180061e-10
-  X(Na23) : 7.296885329815052e-08
-  X(Mg24) : 3.4701745252768506e-05
-  X(Al27) : 3.35262932875393e-05
-  X(Si28) : 0.010439577070085705
-  X(P31) : 0.0021349882457099433
-  X(S32) : 0.009160654967147823
-  X(Cl35) : 0.004000867019906003
-  X(Ar36) : 0.004879643277695136
-  X(K39) : 0.00555270977669994
-  X(Ca40) : 0.004769872777955282
-  X(Sc43) : 0.0003726841335918931
-  X(Ti44) : 0.00022925855334570013
-  X(V47) : 0.0049006198947801945
-  X(Cr48) : 0.001148869027630562
-  X(Mn51) : 0.06904763821666747
-  X(Fe52) : 0.005746888495780569
-  X(Co55) : 0.4156158836321719
-  X(Ni56) : 0.01891492832935047
-
-After solving, the chemical potential for proton and neutron are -7.738608574213004 and -9.99906602170847
+p      :     0.00934989821059
+He4    :       0.433640616227
+C12    :    7.72859959965e-06
+N13    :    2.59190269463e-10
+N14    :    1.36631324171e-09
+O16    :    1.56975241119e-05
+F18    :    2.41138161836e-11
+Ne20   :    3.01874050001e-07
+Ne21   :    3.95638586959e-09
+Na22   :    9.68462282544e-10
+Na23   :    7.29695210583e-08
+Mg24   :    3.47019416232e-05
+Al27   :     3.3525821184e-05
+Si28   :      0.0104391634336
+P31    :     0.00213500726862
+S32    :     0.00916060183422
+Cl35   :     0.00400094977488
+Ar36   :     0.00487944875964
+K39    :     0.00555275469044
+Ca40   :     0.00477002847089
+Sc43   :      0.0003726716421
+Ti44   :    0.000229271130459
+V47    :     0.00490466077421
+Cr48   :      0.0011465823045
+Mn51   :      0.0689585743911
+Fe52   :     0.00576589690229
+Co55   :       0.415686733967
+Ni56   :      0.0189151049137
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;After solving, the chemical potential for proton and neutron are </span><span class="si">{</span><span class="n">sol</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">10.7f</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">sol</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">10.7f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+After solving, the chemical potential for proton and neutron are -7.7386289 and -9.9990481
 </pre></div></div>
 </div>
 <p>For <span class="math notranslate nohighlight">\(\rho = 10^7~\mathrm{g~cm^{-3}}\)</span> and electron fraction, <span class="math notranslate nohighlight">\(Y_e = 0.5\)</span>, we can explore how the NSE state changes with temperature.</p>
 <p>Here we used a guess for chemical potential of proton and neutron of -6.0 and -11.5, respectively.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rho</span> <span class="o">=</span> <span class="mf">1e7</span>
@@ -603,7 +621,7 @@ After solving, the chemical potential for proton and neutron are -7.738608574213
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">X_s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">X_s</span><span class="p">)</span>
@@ -632,13 +650,13 @@ After solving, the chemical potential for proton and neutron are -7.738608574213
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/NSE-example_10_0.png" src="_images/NSE-example_10_0.png" />
+<img alt="_images/NSE-example_12_0.png" src="_images/NSE-example_12_0.png" />
 </div>
 </div>
 <p>For <span class="math notranslate nohighlight">\(\rho = 10^7~\mathrm{g~cm^{-3}}\)</span> and a relatively high temperature of <span class="math notranslate nohighlight">\(T = 6 \times 10^9~\mathrm{K}\)</span>, we can look at how the NSE state changes with varying <span class="math notranslate nohighlight">\(Y_e\)</span>.</p>
 <p>Note: there will be a lowest <span class="math notranslate nohighlight">\(Y_e\)</span> that is attainable by the network, depending on what species are represented. As long as protons are in the network, we can reach a <span class="math notranslate nohighlight">\(Y_e\)</span> of <span class="math notranslate nohighlight">\(1\)</span>.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ye_low</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">nuc</span><span class="o">.</span><span class="n">Z</span><span class="o">/</span><span class="n">nuc</span><span class="o">.</span><span class="n">A</span> <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="n">nse</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">)</span>
@@ -646,7 +664,7 @@ After solving, the chemical potential for proton and neutron are -7.738608574213
 </div>
 </div>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rho</span> <span class="o">=</span> <span class="mf">1e7</span>
@@ -665,7 +683,7 @@ After solving, the chemical potential for proton and neutron are -7.738608574213
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">X_s_1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">X_s_1</span><span class="p">)</span>
@@ -693,7 +711,7 @@ After solving, the chemical potential for proton and neutron are -7.738608574213
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/NSE-example_14_0.png" src="_images/NSE-example_14_0.png" />
+<img alt="_images/NSE-example_16_0.png" src="_images/NSE-example_16_0.png" />
 </div>
 </div>
 </section>
