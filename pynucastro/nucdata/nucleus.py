@@ -6,7 +6,6 @@ import os
 import re
 
 from pynucastro.constants import constants
-from pynucastro.nucdata.binding_table import BindingTable
 from pynucastro.nucdata.elements import PeriodicTable
 from pynucastro.nucdata.mass_table import MassTable
 from pynucastro.nucdata.partition_function import PartitionFunctionCollection
@@ -21,9 +20,6 @@ _mass_table = MassTable()
 
 #read the spin table once and store it at the module-level
 _spin_table = SpinTable(reliable=True)
-
-# read the binding energy table once and store it at the module-level
-_binding_table = BindingTable()
 
 # read the partition function table once and store it at the module-level
 _pcollection = PartitionFunctionCollection(use_high_temperatures=True, use_set='frdm')
@@ -136,21 +132,20 @@ class Nucleus:
         except ValueError:
             self.partition_function = None
 
-        try:
-            self.nucbind = _binding_table.get_binding_energy(n=self.N, z=self.Z)
-        except NotImplementedError:
-            # the binding energy table doesn't know about this nucleus
-            self.nucbind = None
-
         # nuclear mass
         try:
+            mass_H = _mass_table.get_mass_diff(a=1, z=1) + constants.m_u_MeV
             self.dm = _mass_table.get_mass_diff(a=self.A, z=self.Z)
             self.A_nuc = float(self.A) + self.dm / constants.m_u_MeV
             self.mass = self.A * constants.m_u_MeV + self.dm
+            B = (self.Z * mass_H + self.N * constants.m_n_MeV) - self.mass
+            self.nucbind = B / self.A
+
         except NotImplementedError:
             self.dm = None
             self.A_nuc = None
             self.mass = None
+            self.nucbind = None
 
     @classmethod
     def from_cache(cls, name, dummy=False):
