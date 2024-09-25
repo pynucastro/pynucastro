@@ -250,7 +250,7 @@ class TestDerivedRate:
         c12_ga_a_a_reaclib = reaclib_library.get_rate('c12 --> he4 + he4 + he4 <fy05_reaclib__reverse>')
         c12_ga_a_a_derived = rates.DerivedRate(rate=a_a_ag_c12, compute_Q=False, use_pf=False)
 
-        assert c12_ga_a_a_reaclib.eval(T=2.0e9) == approx(c12_ga_a_a_derived.eval(T=2.0e9), rel=1.7e-5)
+        assert c12_ga_a_a_reaclib.eval(T=2.0e9) == approx(c12_ga_a_a_derived.eval(T=2.0e9), rel=2e-4)
 
     def test_a_a_ag_c12_with_pf(self, reaclib_library):
         """
@@ -275,7 +275,7 @@ class TestDerivedRate:
         a_a_ag_c12 = reaclib_library.get_rate('he4 + he4 + he4 --> c12 <fy05_reaclib__>')
         c12_ga_a_a_derived = rates.DerivedRate(rate=a_a_ag_c12, compute_Q=True, use_pf=False)
 
-        assert c12_ga_a_a_derived.eval(T=2.0e9) == approx(2.899433744446781e-07)
+        assert c12_ga_a_a_derived.eval(T=2.0e9) == approx(2.899642192191721e-07)
 
 
 class TestWeakRates:
@@ -345,6 +345,6 @@ class TestModify:
 
         rate.modify_products("mg24")
 
-        assert rate.Q == approx(13.93356)
+        assert rate.Q == approx(13.933578000000125)
         assert rate.products == [Nucleus("mg24")]
         assert rate.modified

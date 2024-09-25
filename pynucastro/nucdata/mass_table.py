@@ -18,7 +18,7 @@ class MassTable:
 
     def __init__(self, filename=None):
 
-        self._mass_diff = {}
+        self.mass_diff = {}
 
         if filename:
             self.filename = filename
@@ -33,7 +33,8 @@ class MassTable:
 
         file = open(self.filename, 'r')
 
-        for _ in range(4):
+        # skip the header
+        for _ in range(5):
             file.readline()
 
         for line in file:
@@ -48,11 +49,11 @@ class MassTable:
             Z = int(Z_str)
             dm = float(dm_str)
 
-            self._mass_diff[A, Z] = dm
+            self.mass_diff[A, Z] = dm
 
         file.close()
 
     def get_mass_diff(self, a, z):
-        if (a, z) in self._mass_diff:
-            return self._mass_diff[a, z]
+        if (a, z) in self.mass_diff:
+            return self.mass_diff[a, z]
         raise NotImplementedError("Nuclear mass difference is not available")

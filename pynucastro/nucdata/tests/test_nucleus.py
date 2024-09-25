@@ -84,12 +84,28 @@ class TestNucleus:
         assert self.ni61.partition_function.eval(32.0e9) == approx(1927800.437886083)
         assert self.pb237.partition_function.eval(32.0e9) == approx(5.05620611030359e+28)
 
-    def test_mass(self):
+    def test_A_nuc(self):
 
         assert self.p.A_nuc == approx(1.0078250307554963)
         assert self.n.A_nuc == approx(1.0086649179839473)
         assert self.o16.A_nuc == approx(15.994914621587304)
         assert self.c12.A_nuc == 12.0
+
+    def test_dm(self):
+
+        assert self.p.dm == approx(7.288971064)
+        assert self.n.dm == approx(8.0713181)
+        assert self.o16.dm == approx(-4.7370021)
+        assert self.c12.dm == 0.0
+        assert self.u238.dm == approx(47.3077)
+
+    def test_mass(self):
+
+        assert self.p.mass == approx(938.7830734839999)
+        assert self.n.mass == approx(939.56542052)
+        assert self.o16.mass == approx(14899.16863662)
+        assert self.c12.mass == approx(11177.92922904)
+        assert self.u238.mass == approx(221742.90407596)
 
     def test_range(self):
 

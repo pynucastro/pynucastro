@@ -6,7 +6,6 @@ import os
 import re
 
 from pynucastro.constants import constants
-from pynucastro.nucdata.binding_table import BindingTable
 from pynucastro.nucdata.elements import PeriodicTable
 from pynucastro.nucdata.mass_table import MassTable
 from pynucastro.nucdata.partition_function import PartitionFunctionCollection
@@ -21,9 +20,6 @@ _mass_table = MassTable()
 
 #read the spin table once and store it at the module-level
 _spin_table = SpinTable(reliable=True)
-
-# read the binding energy table once and store it at the module-level
-_binding_table = BindingTable()
 
 # read the partition function table once and store it at the module-level
 _pcollection = PartitionFunctionCollection(use_high_temperatures=True, use_set='frdm')
@@ -47,8 +43,9 @@ class Nucleus:
     :var caps_name:       capitalized short species name (e.g. "He4")
     :var el:              element name (e.g. "he")
     :var pretty:          LaTeX formatted version of the nucleus name
-    :var A_nuc:           Nuclear Mass in amu
-
+    :var dm:              mass excess (MeV)
+    :var A_nuc:           nuclear mass (amu)
+    :var mass:            nuclear mass (MeV)
     """
     _cache = {}
 
@@ -135,17 +132,20 @@ class Nucleus:
         except ValueError:
             self.partition_function = None
 
+        # nuclear mass
         try:
-            self.nucbind = _binding_table.get_binding_energy(n=self.N, z=self.Z)
-        except NotImplementedError:
-            # the binding energy table doesn't know about this nucleus
-            self.nucbind = None
+            mass_H = _mass_table.get_mass_diff(a=1, z=1) + constants.m_u_MeV
+            self.dm = _mass_table.get_mass_diff(a=self.A, z=self.Z)
+            self.A_nuc = float(self.A) + self.dm / constants.m_u_MeV
+            self.mass = self.A * constants.m_u_MeV + self.dm
+            B = (self.Z * mass_H + self.N * constants.m_n_MeV) - self.mass
+            self.nucbind = B / self.A
 
-        # Now we will define the Nuclear Mass,
-        try:
-            self.A_nuc = float(self.A) + _mass_table.get_mass_diff(a=self.A, z=self.Z) / constants.m_u_MeV
         except NotImplementedError:
+            self.dm = None
             self.A_nuc = None
+            self.mass = None
+            self.nucbind = None
 
     @classmethod
     def from_cache(cls, name, dummy=False):
@@ -215,5 +215,21 @@ def get_nuclei_in_range(zmin, zmax, amin, amax):
         for a in range(amin, amax+1):
             name = f"{element.abbreviation}{a}"
             nuc_list.append(Nucleus(name))
+
+    return nuc_list
+
+
+def get_all_nuclei():
+    """Return a list will every Nucleus that has a known mass"""
+
+    nuc_list = []
+
+    for (A, Z) in _mass_table.mass_diff:
+        if Z == 0 and A == 1:
+            nuc = "n"
+        else:
+            el = PeriodicTable.lookup_Z(Z)
+            nuc = f"{el.abbreviation}{A}"
+        nuc_list.append(Nucleus(nuc))
 
     return nuc_list
