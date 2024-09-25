@@ -46,7 +46,7 @@ class Nucleus:
     :var dm:              mass excess (MeV)
     :var A_nuc:           nuclear mass (amu)
     :var mass:            nuclear mass (MeV)
-    :var tau              half life (s)
+    :var tau:             half life (s)
     """
     _cache = {}
 
