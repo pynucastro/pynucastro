@@ -29,6 +29,14 @@ codes.
 
 .. toctree::
    :maxdepth: 1
+   :caption: Nuclear Properties
+   :hidden:
+
+   sources
+   nucleus
+
+.. toctree::
+   :maxdepth: 1
    :caption: Exploring Networks in Python
    :hidden:
 
@@ -106,7 +114,6 @@ codes.
 
    citing
    API <modules>
-   sources
    zreferences
 
 .. toctree::

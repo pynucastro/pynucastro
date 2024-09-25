@@ -71,25 +71,25 @@ class TestAmrexAstroCxxNetwork:
                   '            return 0.0_rt;\n' +
                   '        }\n' +
                   '        else if constexpr (spec == He4) {\n' +
-                  '            return 28.29566_rt;\n' +
+                  '            return 28.295662457999697_rt;\n' +
                   '        }\n' +
                   '        else if constexpr (spec == C12) {\n' +
-                  '            return 92.16172800000001_rt;\n' +
+                  '            return 92.16173498399803_rt;\n' +
                   '        }\n' +
                   '        else if constexpr (spec == O16) {\n' +
-                  '            return 127.619296_rt;\n' +
+                  '            return 127.6193154119992_rt;\n' +
                   '        }\n' +
                   '        else if constexpr (spec == Ne20) {\n' +
-                  '            return 160.6448_rt;\n' +
+                  '            return 160.64482384000075_rt;\n' +
                   '        }\n' +
                   '        else if constexpr (spec == Ne23) {\n' +
-                  '            return 182.970888_rt;\n' +
+                  '            return 182.97089593999772_rt;\n' +
                   '        }\n' +
                   '        else if constexpr (spec == Na23) {\n' +
-                  '            return 186.56433900000002_rt;\n' +
+                  '            return 186.56435240400242_rt;\n' +
                   '        }\n' +
                   '        else if constexpr (spec == Mg23) {\n' +
-                  '            return 181.725645_rt;\n' +
+                  '            return 181.7258218679999_rt;\n' +
                   '        }\n')
 
         assert self.cromulent_ftag(fn._ebind, answer, n_indent=2)
