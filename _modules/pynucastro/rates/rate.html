@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.rate &#8212; pynucastro 2.3.0.post8+g285245ed documentation</title>
+    <title>pynucastro.rates.rate &#8212; pynucastro 2.3.0.post9+geb8ed0db documentation</title>
   
   
   
@@ -37,7 +37,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=a3f1e840"></script>
+    <script src="../../../_static/documentation_options.js?v=48ddd1d3"></script>
     <script src="../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -843,15 +843,13 @@ document.write(`
     <span class="k">def</span> <span class="nf">_set_q</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;set the Q value of the reaction (in MeV)&quot;&quot;&quot;</span>
 
-        <span class="c1"># from the binding energy of the nuclei, Q = -B_reactants + B_products</span>
-        <span class="c1"># but note that nucbind is the binding energy *per* nucleon, so we need</span>
-        <span class="c1"># to multiply by the number of nucleons</span>
+        <span class="c1"># from the masses of the nuclei, Q = M_products - M_reactants</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">Q</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">Q</span> <span class="o">+=</span> <span class="o">-</span><span class="n">n</span><span class="o">.</span><span class="n">A</span> <span class="o">*</span> <span class="n">n</span><span class="o">.</span><span class="n">nucbind</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">Q</span> <span class="o">+=</span> <span class="n">n</span><span class="o">.</span><span class="n">mass</span>
         <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">products</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">Q</span> <span class="o">+=</span> <span class="n">n</span><span class="o">.</span><span class="n">A</span> <span class="o">*</span> <span class="n">n</span><span class="o">.</span><span class="n">nucbind</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">Q</span> <span class="o">+=</span> <span class="o">-</span><span class="n">n</span><span class="o">.</span><span class="n">mass</span>
 
     <span class="k">def</span> <span class="nf">_set_print_representation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
