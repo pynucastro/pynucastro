@@ -410,15 +410,13 @@ class Rate:
     def _set_q(self):
         """set the Q value of the reaction (in MeV)"""
 
-        # from the binding energy of the nuclei, Q = -B_reactants + B_products
-        # but note that nucbind is the binding energy *per* nucleon, so we need
-        # to multiply by the number of nucleons
+        # from the masses of the nuclei, Q = M_products - M_reactants
 
         self.Q = 0
         for n in self.reactants:
-            self.Q += -n.A * n.nucbind
+            self.Q += n.mass
         for n in self.products:
-            self.Q += n.A * n.nucbind
+            self.Q += -n.mass
 
     def _set_print_representation(self):
 
