@@ -25,6 +25,27 @@ class TestComposition:
         n = Nucleus("he4")
         assert comp["he4"] == comp[n] == comp.X[n]
 
+    def test_setter_and_getting(self, comp):
+        assert comp.X == {Nucleus("H1"): 1e-16, Nucleus("He4"): 1e-16, Nucleus("C12"): 1e-16,
+                          Nucleus("O16"): 1e-16, Nucleus("N14"): 1e-16, Nucleus("Ca40"): 1e-16}
+
+        comp.X[Nucleus("H1")] = 1.0
+
+        assert comp.X == {Nucleus("H1"): 1.0, Nucleus("He4"): 1e-16, Nucleus("C12"): 1e-16,
+                          Nucleus("O16"): 1e-16, Nucleus("N14"): 1e-16, Nucleus("Ca40"): 1e-16}
+
+    def test_A(self, comp):
+        assert comp.A == {Nucleus("H1"): 1, Nucleus("He4"): 4, Nucleus("C12"): 12,
+                          Nucleus("O16"): 16, Nucleus("N14"): 14, Nucleus("Ca40"): 40}
+
+    def test_Z(self, comp):
+        assert comp.Z == {Nucleus("H1"): 1, Nucleus("He4"): 2, Nucleus("C12"): 6,
+                          Nucleus("O16"): 8, Nucleus("N14"): 7, Nucleus("Ca40"): 20}
+
+    def get_nuclei(self, comp):
+        assert comp.get_nuclei() == [Nucleus("H1"), Nucleus("He4"), Nucleus("C12"),
+                                     Nucleus("O16"), Nucleus("N14"), Nucleus("Ca40")]
+
     def test_solar(self, comp):
         comp.set_solar_like()
 
@@ -56,6 +77,19 @@ class TestComposition:
     def test_set_random(self, comp):
         comp.set_random(seed=0)
         assert comp["C12"] == approx(0.005076173651329372)
+
+    def test_set_andnormalize(self, comp):
+        comp.set_array([1, 2, 3, 4, 5, 6])
+        assert comp.X == {Nucleus("H1"): 1, Nucleus("He4"): 2, Nucleus("C12"): 3,
+                          Nucleus("O16"): 4, Nucleus("N14"): 5, Nucleus("Ca40"): 6}
+        comp.normalize()
+
+        assert comp.X[Nucleus("H1")] == approx(0.047619047619047616)
+        assert comp.X[Nucleus("He4")] == approx(0.09523809523809523)
+        assert comp.X[Nucleus("C12")] == approx(0.14285714285714285)
+        assert comp.X[Nucleus("O16")] == approx(0.19047619047619047)
+        assert comp.X[Nucleus("N14")] == approx(0.23809523809523808)
+        assert comp.X[Nucleus("Ca40")] == approx(0.2857142857142857)
 
 
 class TestCompositionVars:
