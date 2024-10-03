@@ -51,6 +51,8 @@ extensions = ['sphinx.ext.autodoc',
 bibtex_bibfiles = ['refs.bib']
 bibtex_reference_style = 'author_year'
 
+linkcheck_ignore = [r"https://doi.org"]
+
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 
