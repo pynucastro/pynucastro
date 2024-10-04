@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Nuclear Properties &#8212; pynucastro 2.3.0.post14+ge64c1553 documentation</title>
+    <title>Simple C++ network &#8212; pynucastro 2.3.0.post14+ge64c1553 documentation</title>
   
   
   
@@ -31,7 +31,6 @@
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="_static/nbsphinx-code-cells.css?v=2aa19091" />
     <link rel="stylesheet" type="text/css" href="_static/myfile.css?v=15ab05d9" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
@@ -47,13 +46,11 @@
     <script src="_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
-    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
-    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'nucleus';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'simple-cxx-network';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="pynucastro usage examples" href="pynucastro-examples.html" />
-    <link rel="prev" title="Third Party Data" href="sources.html" />
+    <link rel="next" title="AMReX Astro Microphysics Networks" href="amrex-astro-cxx-networks.html" />
+    <link rel="prev" title="Python network" href="python-network.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -173,9 +170,9 @@
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Nuclear Properties</span></p>
-<ul class="current nav bd-sidenav">
+<ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="sources.html">Third Party Data</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Nuclear Properties</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nucleus.html">Nuclear Properties</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Exploring Networks in Python</span></p>
 <ul class="nav bd-sidenav">
@@ -211,10 +208,10 @@
 <li class="toctree-l1"><a class="reference internal" href="neutrino-cooling.html">Neutrino Cooling</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Exporting Networks</span></p>
-<ul class="nav bd-sidenav">
+<ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="networks.html">Exporting Networks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="python-network.html">Python network</a></li>
-<li class="toctree-l1"><a class="reference internal" href="simple-cxx-network.html">Simple C++ network</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Simple C++ network</a></li>
 <li class="toctree-l1"><a class="reference internal" href="amrex-astro-cxx-networks.html">AMReX Astro Microphysics Networks</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Interfacing With Other Languages</span></p>
@@ -323,7 +320,7 @@
       
       
       
-      <li><a href="https://github.com/pynucastro/pynucastro/blob/main/docs/source/nucleus.ipynb?plain=1" target="_blank"
+      <li><a href="https://github.com/pynucastro/pynucastro/blob/main/docs/source/simple-cxx-network.rst?plain=1" target="_blank"
    class="btn btn-sm btn-source-file-button dropdown-item"
    title="Show source"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -340,7 +337,7 @@
       
       
       
-      <li><a href="https://github.com/pynucastro/pynucastro/edit/main/docs/source/nucleus.ipynb" target="_blank"
+      <li><a href="https://github.com/pynucastro/pynucastro/edit/main/docs/source/simple-cxx-network.rst" target="_blank"
    class="btn btn-sm btn-source-edit-button dropdown-item"
    title="Suggest edit"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -357,7 +354,7 @@
       
       
       
-      <li><a href="https://github.com/pynucastro/pynucastro/issues/new?title=Issue%20on%20page%20%2Fnucleus.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/pynucastro/pynucastro/issues/new?title=Issue%20on%20page%20%2Fsimple-cxx-network.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -387,7 +384,7 @@
       
       
       
-      <li><a href="_sources/nucleus.ipynb" target="_blank"
+      <li><a href="_sources/simple-cxx-network.rst" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -397,7 +394,7 @@
 <span class="btn__icon-container">
   <i class="fas fa-file"></i>
   </span>
-<span class="btn__text-container">.ipynb</span>
+<span class="btn__text-container">.rst</span>
 </a>
 </li>
       
@@ -458,9 +455,7 @@ document.write(`
   </button>
 `);
 </script>
-<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <span class="fa-solid fa-list"></span>
-</button>
+
 </div></div>
       
     </div>
@@ -471,20 +466,11 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Nuclear Properties</h1>
+    <h1>Simple C++ network</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
             
-            <div>
-                <h2> Contents </h2>
-            </div>
-            <nav aria-label="Page">
-                <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Nucleus"><code class="docutils literal notranslate"><span class="pre">Nucleus</span></code></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Exploring-properties">Exploring properties</a></li>
-</ul>
-            </nav>
         </div>
     </div>
 </div>
@@ -494,168 +480,71 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="Nuclear-Properties">
-<h1>Nuclear Properties<a class="headerlink" href="#Nuclear-Properties" title="Link to this heading">#</a></h1>
-<p>pynucastro gets basic nuclear data from the <a class="reference external" href="https://www-nds.iaea.org/amdc/">Nubase evaluation</a> (currently the Nubase2020 data). This provides the mass excesses, <span class="math notranslate nohighlight">\(\Delta m\)</span>, and spins. From this, we compute the binding energy, <span class="math notranslate nohighlight">\(B\)</span>, and mass of the nucleus, <span class="math notranslate nohighlight">\(m\)</span> as:</p>
-<div class="math notranslate nohighlight">
-\[m = A m_u + \Delta m\]</div>
-<div class="math notranslate nohighlight">
-\[B = Z m_H + N m_n - m\]</div>
-<p>where <span class="math notranslate nohighlight">\(m_u\)</span> is the atomic mass unit and <span class="math notranslate nohighlight">\(m_n\)</span> is the neutron mass, both taken from the CODATA physical constants database. <span class="math notranslate nohighlight">\(m_H\)</span> is the mass of <span class="math notranslate nohighlight">\({}^{1}\mathrm{H}\)</span>, which is computed from the mass excess of <span class="math notranslate nohighlight">\({}^{1}\mathrm{H}\)</span>.</p>
-<p>Binding energies are also computed and tablulated in the AME mass evaluation (see <a class="reference external" href="https://www-nds.iaea.org/amdc/ame2020/mass_1.mas20.txt">AME2020 mass table</a>]. But note that the Nubase evaluation seems to more closely follow the “rounded” version of the table <a class="reference external" href="https://www-nds.iaea.org/amdc/ame2020/massround.mas20.txt">AME2020 rounded mass table</a>. The rounding procedure is discussed in Table I on the <a class="reference external" href="https://iopscience.iop.org/article/10.1088/1674-1137/abddaf">AME 2020 paper II</a> (also
-see the <a class="reference external" href="https://iopscience.iop.org/article/10.1088/1674-1137/abddae">Nubase2020 paper</a>, Table I).</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pynucastro</span> <span class="kn">import</span> <span class="n">Nucleus</span>
-</pre></div>
-</div>
-</div>
-<section id="Nucleus">
-<h2><code class="docutils literal notranslate"><span class="pre">Nucleus</span></code><a class="headerlink" href="#Nucleus" title="Link to this heading">#</a></h2>
-<p>The <code class="docutils literal notranslate"><span class="pre">Nucleus</span></code> class manages all of the properties of a nucleus. We create a <code class="docutils literal notranslate"><span class="pre">Nucleus</span></code> simply by giving the name of the isotope</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">he4</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<p>From this we can access the member data:</p>
+  <section id="simple-c-network">
+<h1>Simple C++ network<a class="headerlink" href="#simple-c-network" title="Link to this heading">#</a></h1>
+<p>A <code class="docutils literal notranslate"><span class="pre">SimpleCxxNetwork</span></code> is a very basic C++ network.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Currently, the following features are not supported:</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">Z</span></code>, <code class="docutils literal notranslate"><span class="pre">N</span></code>, <code class="docutils literal notranslate"><span class="pre">A</span></code> : the atomic number, neutron number, and atomic mass</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">mass</span></code> : the mass of the nucleus in MeV</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">dm</span></code> : the mass excess of the nucleus in MeV</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">nucbind</span></code> : the nuclear binding energy of the nucleus in MeV / nucleon</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">A_nuc</span></code> : the mass number of the nucleus (<code class="docutils literal notranslate"><span class="pre">mass</span></code> / atomic mass unit)</p></li>
+<li><p>tabular rates</p></li>
+<li><p>screening</p></li>
+<li><p>partition functions</p></li>
+<li><p>NSE</p></li>
+<li><p>temperature evolution</p></li>
+<li><p>plasma neutrino losses</p></li>
 </ul>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</div>
+<p>A simple C++ network can be created as:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pynucastro</span> <span class="k">as</span> <span class="nn">pyna</span>
+
+<span class="n">rl</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">ReacLibLibrary</span><span class="p">()</span>
+<span class="n">lib</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">([</span><span class="s2">&quot;he4&quot;</span><span class="p">,</span> <span class="s2">&quot;c12&quot;</span><span class="p">,</span> <span class="s2">&quot;o16&quot;</span><span class="p">])</span>
+
+<span class="n">net</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">SimpleCxxNetwork</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="p">[</span><span class="n">lib</span><span class="p">])</span>
+<span class="n">net</span><span class="o">.</span><span class="n">write_network</span><span class="p">()</span>
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">he4</span><span class="o">.</span><span class="n">Z</span><span class="p">,</span> <span class="n">he4</span><span class="o">.</span><span class="n">A</span>
-</pre></div>
+<p>The generated code is intended to be used to interface with a
+hydrodynamics code.  That application code will be responsible for
+providing the equation of state and adding any desired temperature /
+energy evolution to the network.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>A C++17 compiler is required</p>
 </div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
-</pre></div>
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-(2, 4)
-</pre></div></div>
-</div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">he4</span><span class="o">.</span><span class="n">nucbind</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
-</pre></div>
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-7.073915614499924
-</pre></div></div>
-</div>
-<p>We can also get the partition functions of the nucleus, if it exists. The data we use mostly provides these for the heavy nuclei.</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ni56</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;ni56&quot;</span><span class="p">)</span>
-<span class="n">ni56</span><span class="o">.</span><span class="n">partition_function</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="mf">4.e9</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
-</pre></div>
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-np.float64(1.002103)
-</pre></div></div>
-</div>
-</section>
-<section id="Exploring-properties">
-<h2>Exploring properties<a class="headerlink" href="#Exploring-properties" title="Link to this heading">#</a></h2>
-<p>Let’s look at some nuclei and look at their mass excess, mass, and binding energies</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">p</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">)</span>
-<span class="n">n</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;n&quot;</span><span class="p">)</span>
-<span class="n">c12</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;c12&quot;</span><span class="p">)</span>
-<span class="n">ne22</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;ne22&quot;</span><span class="p">)</span>
-<span class="n">ti43</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;ti43&quot;</span><span class="p">)</span>
-<span class="n">fe56</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;fe56&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="p">[</span><span class="n">p</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">c12</span><span class="p">,</span> <span class="n">ne22</span><span class="p">,</span> <span class="n">ti43</span><span class="p">,</span> <span class="n">fe56</span><span class="p">]:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">nuc</span><span class="p">)</span><span class="si">:</span><span class="s2">6</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">nuc</span><span class="o">.</span><span class="n">dm</span><span class="si">:</span><span class="s2">15.8</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">nuc</span><span class="o">.</span><span class="n">mass</span><span class="si">:</span><span class="s2">15.8f</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">nuc</span><span class="o">.</span><span class="n">nucbind</span><span class="si">:</span><span class="s2">15.8f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-p            7.2889711    938.78307348      0.00000000
-n            8.0713181    939.56542052      0.00000000
-C12                0.0  11177.92922904      7.68014458
-Ne22         -8.024716  20484.84553724      8.08046563
-Ti43           -29.316  40024.93040406      8.35281497
-Fe56         -60.60716  52103.06257552      8.79035626
-</pre></div></div>
-</div>
-<p>We see that the binding energy for protons and neutrons are zero, as expected.</p>
-<p>For <span class="math notranslate nohighlight">\({}^{12}\mathrm{C}\)</span> the binding energy compares well with the tablulated version from the rounded AME 2020 of <code class="docutils literal notranslate"><span class="pre">7680.145</span></code>.</p>
-<p>For <span class="math notranslate nohighlight">\({}^{22}\mathrm{Ne}\)</span> the binding energy compares well with the tablulated version from the rounded AME 2020 of <code class="docutils literal notranslate"><span class="pre">8080.466</span></code>.</p>
-<p>For <span class="math notranslate nohighlight">\({}^{43}\mathrm{Ti}\)</span> the binding energy compares well with the tablulated version from the rounded AME 2020 of <code class="docutils literal notranslate"><span class="pre">8352.81</span></code>.</p>
-<p>For <span class="math notranslate nohighlight">\({}^{56}\mathrm{Fe}\)</span> the binding energy compares well with the tablulated version from the rounded AME 2020 of <code class="docutils literal notranslate"><span class="pre">8790.356</span></code>.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pynucastro.constants</span> <span class="kn">import</span> <span class="n">constants</span>
-</pre></div>
-</div>
-</div>
-<p>We also see that the mass of <span class="math notranslate nohighlight">\({}^{12}\mathrm{C}\)</span> agrees with the atomic mass unit from the CODATA compilation:</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">c12</span><span class="o">.</span><span class="n">mass</span> <span class="o">/</span> <span class="mi">12</span> <span class="o">-</span> <span class="n">constants</span><span class="o">.</span><span class="n">m_u_MeV</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
-</pre></div>
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-1.1368683772161603e-13
-</pre></div></div>
-</div>
-</section>
-</section>
+<p>This will output the following files:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">actual_network_data.cpp</span></code> : this contains the initialization
+function, <code class="docutils literal notranslate"><span class="pre">actual_network_init()</span></code> and the definitions of the mass
+and binding energy arrays.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">actual_network.H</span></code> : this provides enums to index the rates and a
+vector of strings that give the rate names.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">actual_rhs.H</span></code> : this provides the righthand side function and Jacobian.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">amrex_bridge.H</span></code> : a header that defines some of the basic types that we
+use to store information.  It is derived from the AMReX library
+since we reuse some of the <code class="docutils literal notranslate"><span class="pre">AmrexAstroCxxNetwork</span></code> code to create a
+<code class="docutils literal notranslate"><span class="pre">SimpleNetwork</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">burn_type.H</span></code> : this is a simple struct, <code class="docutils literal notranslate"><span class="pre">burn_t</span></code>, that holds
+thermodynamic data.  An application code can add more members to the
+struct, as needed, to store additional data.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fundamental_constants.H</span></code> : this provides the fundamental constants
+needed throughout the network.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">GNUmakefile</span></code> : a GNU makefile to build the test program.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">main.cpp</span></code> : a simple driver that simply evaluates the righthand side and Jacobian
+for a single thermodynamic state and compute the energy release.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">network_properties.H</span></code> : a header providing the properties of the nuclei.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">reaclib_rates.H</span></code> : the functions that evaluate the ReacLib reaction rates.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tfactors.H</span></code> : a struct that stores the various temperature powers needed
+to compute reaction rates.</p></li>
+</ul>
+<p>The test driver can be built by simply doing:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><style type="text/css">
+span.prompt1:before {
+  content: "$ ";
+}
+</style><span class="prompt1">make</span>
+</pre></div></div></section>
 
 
                 </article>
@@ -669,20 +558,20 @@ Fe56         -60.60716  52103.06257552      8.79035626
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="sources.html"
+       href="python-network.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Third Party Data</p>
+        <p class="prev-next-title">Python network</p>
       </div>
     </a>
     <a class="right-next"
-       href="pynucastro-examples.html"
+       href="amrex-astro-cxx-networks.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">pynucastro usage examples</p>
+        <p class="prev-next-title">AMReX Astro Microphysics Networks</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -692,22 +581,6 @@ Fe56         -60.60716  52103.06257552      8.79035626
             </div>
             
             
-              
-                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
-
-
-  <div class="sidebar-secondary-item">
-  <div class="page-toc tocsection onthispage">
-    <i class="fa-solid fa-list"></i> Contents
-  </div>
-  <nav class="bd-toc-nav page-toc">
-    <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Nucleus"><code class="docutils literal notranslate"><span class="pre">Nucleus</span></code></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Exploring-properties">Exploring properties</a></li>
-</ul>
-  </nav></div>
-
-</div></div>
               
             
           </div>
