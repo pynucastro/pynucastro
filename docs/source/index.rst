@@ -85,11 +85,13 @@ codes.
 
 .. toctree::
    :maxdepth: 1
-   :caption: Writing and Integrating Networks
+   :caption: Exporting Networks
    :hidden:
 
    networks
-   cxx-networks
+   python-network
+   simple-cxx-network
+   amrex-astro-cxx-networks
 
 .. toctree::
    :maxdepth: 1
