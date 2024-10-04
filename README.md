@@ -116,7 +116,7 @@ the default location python searches for packages.
 
 ### Requirements
 
-pynucastro requires Python 3.8 or later and the following libraries:
+pynucastro is supported on Python 3.10 or later and the following libraries:
 
 * `numpy`
 
@@ -140,8 +140,8 @@ file, do:
 ```
 pip install -r requirements.txt
 ```
-Is important to stress out that all the dependencies should be 
-installed before `pynucastro`, otherwise the installation should be 
+Is important to stress out that all the dependencies should be
+installed before `pynucastro`, otherwise the installation should be
 repeated.
 
 
