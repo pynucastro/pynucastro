@@ -16,7 +16,7 @@ _pynucastro_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 _pynucastro_rates_dir = os.path.join(_pynucastro_dir, 'library')
 _pynucastro_tabular_dir = os.path.join(_pynucastro_rates_dir, 'tabular')
 
-# read the mass various tables with nuclear properties at the module-level
+# read the various tables with nuclear properties at the module-level
 _mass_table = MassTable()
 _halflife_table = HalfLifeTable()
 _spin_table = SpinTable(reliable=True)
