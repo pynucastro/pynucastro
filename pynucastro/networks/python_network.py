@@ -24,19 +24,59 @@ class PythonNetwork(RateCollection):
             ostr += f"{indent}dYdt[j{nucleus.raw}] = 0.0\n\n"
         else:
             ostr += f"{indent}dYdt[j{nucleus.raw}] = (\n"
-            for r in self.nuclei_consumed[nucleus]:
-                c = r.reactants.count(nucleus)
-                if c == 1:
-                    ostr += f"{indent}   -{r.ydot_string_py()}\n"
-                else:
-                    ostr += f"{indent}   -{c}*{r.ydot_string_py()}\n"
-            for r in self.nuclei_produced[nucleus]:
-                c = r.products.count(nucleus)
-                if c == 1:
-                    ostr += f"{indent}   +{r.ydot_string_py()}\n"
-                else:
-                    ostr += f"{indent}   +{c}*{r.ydot_string_py()}\n"
+            for ipair, rp in enumerate(self.nuclei_rate_pairs[nucleus]):
+                # when we are working with rate pairs, one or more of the
+                # rates may be missing.  We also have not clearly separated
+                # them into creation / destruction, so we'll figure that out
+                rlist = [r for r in [rp.forward, rp.reverse] if r is not None]
+                ostr += f"{indent}      "
+                if len(rlist) > 1:
+                    ostr += "( "
+
+                for rate in rlist:
+                    c_reac = rate.reactants.count(nucleus)
+                    c_prod = rate.products.count(nucleus)
+                    c = c_prod - c_reac
+                    if c == 1:
+                        ostr += f"+{rate.ydot_string_py()} "
+                    elif c == -1:
+                        ostr += f"-{rate.ydot_string_py()} "
+                    else:
+                        ostr += f"+ {c}*{rate.ydot_string_py()} "
+
+                if len(rlist) > 1:
+                    ostr += ")"
+                if ipair < len(self.nuclei_rate_pairs[nucleus]) - 1:
+                    ostr += " +"
+                ostr = ostr.rstrip() + "\n"
+
             ostr += f"{indent}   )\n\n"
+
+        return ostr
+
+    def enforce_equilibrium(self, indent=""):
+        """loop over all rate pairs and check if the forward and
+        reverse are in equilibrium.  If so, zero out the rates so we
+        analytically enforce that equilibrium.
+
+        """
+
+        ostr = ""
+        ostr = f"{indent}eps = 1.e-4\n"
+
+        for rp in self.get_rate_pairs():
+
+            if rp.forward is None or rp.reverse is None:
+                continue
+
+            # todo -- we need to deal with the count
+            forward = rp.forward.ydot_string_py()
+            reverse = rp.reverse.ydot_string_py()
+
+            ostr += f"{indent}if (-{forward} + {reverse}) < eps * (abs({forward}) + abs({reverse})):\n"
+            ostr += f"{indent}   rate_eval.{rp.forward.fname} = 0\n"
+            ostr += f"{indent}   rate_eval.{rp.reverse.fname} = 0\n"
+            ostr += "\n"
 
         return ostr
 
@@ -320,6 +360,9 @@ class PythonNetwork(RateCollection):
 
         of.write(f"{indent}dYdt = np.zeros((nnuc), dtype=np.float64)\n\n")
 
+        # zero out rates in equilibrium
+        of.write(self.enforce_equilibrium(indent=indent))
+
         # now make the RHSs
         for n in self.unique_nuclei:
             of.write(self.full_ydot_string(n, indent=indent))
@@ -341,6 +384,9 @@ class PythonNetwork(RateCollection):
         of.write(self.rates_string(indent=indent))
 
         of.write("\n")
+
+        # zero out rates in equilibrium
+        of.write(self.enforce_equilibrium(indent=indent))
 
         of.write(f"{indent}jac = np.zeros((nnuc, nnuc), dtype=np.float64)\n\n")
 
