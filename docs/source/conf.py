@@ -54,6 +54,11 @@ bibtex_reference_style = 'author_year'
 linkcheck_ignore = [r"https://doi.org",
                     r"https://link.aps.org"]
 
+linkcheck_retries = 3
+linkcheck_timeout = 100
+linkcheck_allow_unauthorized = True
+
+
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 
