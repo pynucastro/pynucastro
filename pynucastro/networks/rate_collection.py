@@ -353,7 +353,7 @@ class Composition(collections.UserDict):
 
             # bar chart parameters
             trace_values = [self[k] for k in limited_trace_keys] + [other_trace_tot]
-            trace_labels = [k.short_spec_name for k in limited_trace_keys] + ['other']
+            trace_labels = [f"{k}" for k in limited_trace_keys] + ['other']
             bottom = 1
             width = 0.1
 

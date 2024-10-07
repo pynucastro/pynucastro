@@ -1,19 +1,18 @@
-# Atomic Mass Evaluation
+# Atomic Mass Evaluation / Nubase
 
-The script `extract_table.py` along with the classes in `ame_table.py`
-and `ame_nuclide.py` can be used to read the Atomic Mass Evaluation
-tables.
+The Nubase / 2020 Atomic Mass Evaluations data were downloaded from:
+https://www-nds.iaea.org/amdc/
 
-For example, to generate the `binding_2016.txt` table, download the
-AME 2016 table file `mass16.txt` and run:
+The Atomic Mass Evaluation 2020 is published as Chinese Phys. C 45 (2021) 030002, 030003
 
-```
-./extract_table.py mass16.txt -o binding_2016.txt
-```
+The Nubase evaluation is published as Chinese Physics C 45 (2021) 030001
 
-The 2012 and 2016 Atomic Mass Evaluations were retrieved from
-https://www-nds.iaea.org/amdc.
 
-The Atomic Mass Evaluation 2016 is published as Chinese Physics C 41 (2017) 030002, 030003.
+## Scripts
 
-The Atomic Mass Evaluation 2012 is published as Chinese Physics C 36 (2012) 1287-1602.
+* `extract_spin_1.py` : this extracts the spins from the Nubase version of the data,
+  currently using `nubase_4.mas20`.
+
+* `extract_mass_excess.py` : this extracts the mass excess from the Nubase version of
+  the data, currently using `nubase_4.mas20`.
+
