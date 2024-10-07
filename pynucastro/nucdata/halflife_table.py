@@ -16,7 +16,7 @@ class HalfLifeTable:
         else:
             datafile_name = 'halflife2020.txt'
             nucdata_dir = os.path.dirname(os.path.realpath(__file__))
-            self.filename = os.path.join(os.path.join(nucdata_dir, 'AtomicMassEvaluation'), datafile_name)
+            self.filename = os.path.join(nucdata_dir, 'AtomicMassEvaluation', datafile_name)
 
         self._read_table()
 
