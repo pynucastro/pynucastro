@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.nucdata.nucleus &#8212; pynucastro 2.4.0.post1+g5c450d57 documentation</title>
+    <title>pynucastro.nucdata.nucleus &#8212; pynucastro 2.4.0.post2+g3a4cf8be documentation</title>
   
   
   
@@ -37,7 +37,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=a83ee0eb"></script>
+    <script src="../../../_static/documentation_options.js?v=37fea9e5"></script>
     <script src="../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -408,6 +408,7 @@ document.write(`
 
 <span class="kn">from</span> <span class="nn">pynucastro.constants</span> <span class="kn">import</span> <span class="n">constants</span>
 <span class="kn">from</span> <span class="nn">pynucastro.nucdata.elements</span> <span class="kn">import</span> <span class="n">PeriodicTable</span>
+<span class="kn">from</span> <span class="nn">pynucastro.nucdata.halflife_table</span> <span class="kn">import</span> <span class="n">HalfLifeTable</span>
 <span class="kn">from</span> <span class="nn">pynucastro.nucdata.mass_table</span> <span class="kn">import</span> <span class="n">MassTable</span>
 <span class="kn">from</span> <span class="nn">pynucastro.nucdata.partition_function</span> <span class="kn">import</span> <span class="n">PartitionFunctionCollection</span>
 <span class="kn">from</span> <span class="nn">pynucastro.nucdata.spin_table</span> <span class="kn">import</span> <span class="n">SpinTable</span>
@@ -416,10 +417,9 @@ document.write(`
 <span class="n">_pynucastro_rates_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_pynucastro_dir</span><span class="p">,</span> <span class="s1">&#39;library&#39;</span><span class="p">)</span>
 <span class="n">_pynucastro_tabular_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_pynucastro_rates_dir</span><span class="p">,</span> <span class="s1">&#39;tabular&#39;</span><span class="p">)</span>
 
-<span class="c1">#read the mass excess table once and store it at the module-level</span>
+<span class="c1"># read the various tables with nuclear properties at the module-level</span>
 <span class="n">_mass_table</span> <span class="o">=</span> <span class="n">MassTable</span><span class="p">()</span>
-
-<span class="c1">#read the spin table once and store it at the module-level</span>
+<span class="n">_halflife_table</span> <span class="o">=</span> <span class="n">HalfLifeTable</span><span class="p">()</span>
 <span class="n">_spin_table</span> <span class="o">=</span> <span class="n">SpinTable</span><span class="p">(</span><span class="n">reliable</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 <span class="c1"># read the partition function table once and store it at the module-level</span>
@@ -452,6 +452,7 @@ document.write(`
 <span class="sd">    :var dm:              mass excess (MeV)</span>
 <span class="sd">    :var A_nuc:           nuclear mass (amu)</span>
 <span class="sd">    :var mass:            nuclear mass (MeV)</span>
+<span class="sd">    :var tau:             half life (s)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">_cache</span> <span class="o">=</span> <span class="p">{}</span>
 
@@ -552,6 +553,12 @@ document.write(`
             <span class="bp">self</span><span class="o">.</span><span class="n">A_nuc</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">mass</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">nucbind</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># halflife</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tau</span> <span class="o">=</span> <span class="n">_halflife_table</span><span class="o">.</span><span class="n">get_halflife</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">A</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">Z</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">NotImplementedError</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tau</span> <span class="o">=</span> <span class="kc">None</span>
 
 <div class="viewcode-block" id="Nucleus.from_cache">
 <a class="viewcode-back" href="../../../pynucastro.nucdata.html#pynucastro.nucdata.nucleus.Nucleus.from_cache">[docs]</a>
