@@ -3,7 +3,7 @@
   * expanded documentation on exporting networks (#805) and physical
     constants (#793)
 
-  * some doc test fixes (#806, #807)
+  * some doc test fixes (#806, #807, #809)
 
   * expanded unit testing (#802)
 
