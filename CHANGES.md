@@ -1,3 +1,31 @@
+# 2.4.0
+
+  * expanded documentation on exporting networks (#805) and physical
+    constants (#793)
+
+  * some doc test fixes (#806, #807)
+
+  * expanded unit testing (#802)
+
+  * update pylint disabled features (#794)
+
+  * dropped support for python 3.9 (#787)
+
+  * we now compute the Q value for rates from masses instead of
+    binding energies if it is not available (#797)
+
+  * updated the nuclear properties to all be based on Nubase 2020,
+    with the mass excesses being the primary quantity used and binding
+    energies now derived from the mass excesses. (#788, #792, #796)
+
+  * added a `get_all_nuclei()` method that returns every nucleus for
+    which we have a mass (#798)
+
+  * removed unused scripts in the nucdata module (#789)
+
+  * fixed the labels for trace nuclei in a `Composition` pie chart
+    (#781)
+
 # 2.3.0
 
   * added a warning if we use the ReacLib n decay rate (#778)
