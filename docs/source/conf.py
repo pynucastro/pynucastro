@@ -136,6 +136,9 @@ html_theme_options = {
     "use_source_button": True,
     "repository_branch": "main",
     "path_to_docs": "docs/source",
+    "launch_buttons": {
+        "colab_url": "https://colab.research.google.com"
+    },
     "logo": {
         "text": f"pynucastro {version}",
         "image_light": "logo.png",
