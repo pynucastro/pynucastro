@@ -359,7 +359,7 @@ class PythonNetwork(RateCollection):
         # if the table file cannot be found, print a warning and continue.
         try:
             odir = outfile.parent
-        except TypeError:
+        except AttributeError:
             odir = None
 
         for tr in self.tabular_rates:
