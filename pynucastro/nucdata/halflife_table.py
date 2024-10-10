@@ -28,17 +28,15 @@ class HalfLifeTable:
             for _ in range(5):
                 f.readline()
 
-        for line in file:
+            for line in file:
 
-            A, Z, tau = line.strip().split()[:3]
-            #print(data_list)
+                A, Z, tau = line.strip().split()[:3]
+                #print(data_list)
 
-            if tau != "stable":
-                tau = float(tau)
+                if tau != "stable":
+                    tau = float(tau)
 
-            self.halflife[int(A), int(Z)] = tau
-
-        file.close()
+                self.halflife[int(A), int(Z)] = tau
 
     def get_halflife(self, a: int, z: int) -> float | str:
         try:
