@@ -4,9 +4,9 @@ rates that together make up a network."""
 import collections
 import functools
 import math
-import os
 import warnings
 from operator import mul
+from pathlib import Path
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
@@ -404,7 +404,7 @@ class RateCollection:
     """ a collection of rates that together define a network """
     # pylint: disable=too-many-public-methods
 
-    pynucastro_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+    pynucastro_dir = Path(__file__).resolve().parents[1]
 
     def __init__(self, rate_files=None, libraries=None, rates=None,
                  inert_nuclei=None,

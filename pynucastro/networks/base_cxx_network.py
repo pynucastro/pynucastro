@@ -6,12 +6,12 @@ comprised of the rates that are passed in.
 
 
 import itertools
-import os
 import re
 import shutil
 import sys
 import warnings
 from abc import ABC, abstractmethod
+from pathlib import Path
 
 import numpy as np
 import sympy
@@ -109,15 +109,14 @@ class BaseCxxNetwork(ABC, RateCollection):
 
         # Process template files
         for tfile in self.template_files:
-            tfile_basename = os.path.basename(tfile)
-            outfile = tfile_basename.replace('.template', '')
+            outfile = tfile.name.replace('.template', '')
             if odir is not None:
-                if not os.path.isdir(odir):
+                if not odir.is_dir():
                     try:
-                        os.mkdir(odir)
+                        odir.mkdir()
                     except OSError:
                         sys.exit(f"unable to create directory {odir}")
-                outfile = os.path.normpath(odir + "/" + outfile)
+                outfile = odir/outfile
 
             with open(tfile) as ifile, open(outfile, "w") as of:
                 for l in ifile:
@@ -134,11 +133,11 @@ class BaseCxxNetwork(ABC, RateCollection):
         # Copy any tables in the network to the current directory
         # if the table file cannot be found, print a warning and continue.
         for tr in self.tabular_rates:
-            tdir = os.path.dirname(tr.rfile_path)
-            if tdir != os.getcwd():
-                tdat_file = os.path.join(tdir, tr.table_file)
-                if os.path.isfile(tdat_file):
-                    shutil.copy(tdat_file, odir or os.getcwd())
+            tdir = tr.rfile_path.parent
+            if tdir != Path.cwd():
+                tdat_file = Path(tdir, tr.table_file)
+                if tdat_file.is_file():
+                    shutil.copy(tdat_file, odir or Path.cwd())
                 else:
                     warnings.warn(UserWarning(f'Table data file {tr.table_file} not found.'))
 

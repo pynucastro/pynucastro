@@ -1,7 +1,7 @@
 import collections
 import io
-import os
 import re
+from pathlib import Path
 
 from pynucastro.nucdata import Nucleus, UnsupportedNucleus
 from pynucastro.rates.known_duplicates import (find_duplicate_rates,
@@ -14,12 +14,12 @@ from pynucastro.rates.rate import (DerivedRate, Rate, RateFileError,
 def list_known_rates():
     """ list the rates found in the library """
 
-    lib_path = f"{os.path.dirname(__file__)}/../library/"
+    lib_path = Path(__file__).resolve()/".."/"library"
 
-    for _, _, filenames in os.walk(lib_path):
+    for _, _, filenames in lib_path.walk():
         for f in filenames:
             # skip over files that are not rate files
-            if f.endswith(".md") or f.endswith(".dat") or f.endswith(".py") or f.endswith(".ipynb"):
+            if Path(f).suffix in (".md", ".dat", ".py", "ipynb"):
                 continue
             try:
                 lib = Library(f)
@@ -243,9 +243,9 @@ class Library:
         """
 
         if prepend_rates_dir:
-            filename = os.path.join(get_rates_dir(), filename)
+            filename = get_rates_dir()/filename
 
-        with open(filename, 'w') as f:
+        with filename.open("w") as f:
             for rate in self.get_rates():
                 rate.write_to_file(f)
 
@@ -701,7 +701,7 @@ class ReacLibLibrary(Library):
 class TabularLibrary(Library):
     """Load all of the tabular rates known and return a Library"""
 
-    lib_path = f"{os.path.dirname(__file__)}/../library/tabular"
+    lib_path = Path(__file__).resolve().parent/"../library/tabular"
 
     def __init__(self):
         # find all of the tabular rates that pynucastro knows about
@@ -709,7 +709,7 @@ class TabularLibrary(Library):
 
         trates = []
 
-        for _, _, filenames in sorted(os.walk(self.lib_path)):
+        for _, _, filenames in sorted(self.lib_path.walk()):
             for f in sorted(filenames):
                 if f.endswith("-toki"):
                     trates.append(load_rate(f))
@@ -723,7 +723,7 @@ class SuzukiLibrary(TabularLibrary):
     and return a Library.
     """
 
-    lib_path = f"{os.path.dirname(__file__)}/../library/tabular/suzuki"
+    lib_path = Path(__file__).resolve().parent/"../library/tabular/suzuki"
 
 
 class LangankeLibrary(TabularLibrary):
@@ -732,4 +732,4 @@ class LangankeLibrary(TabularLibrary):
     and return a Library.
     """
 
-    lib_path = f"{os.path.dirname(__file__)}/../library/tabular/langanke"
+    lib_path = Path(__file__).resolve().parent/"../library/tabular/langanke"

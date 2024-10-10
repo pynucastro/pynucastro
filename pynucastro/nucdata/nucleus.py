@@ -2,8 +2,8 @@
 Classes and methods to interface with files storing rate data.
 """
 
-import os
 import re
+from pathlib import Path
 
 from pynucastro.constants import constants
 from pynucastro.nucdata.elements import PeriodicTable
@@ -12,9 +12,9 @@ from pynucastro.nucdata.mass_table import MassTable
 from pynucastro.nucdata.partition_function import PartitionFunctionCollection
 from pynucastro.nucdata.spin_table import SpinTable
 
-_pynucastro_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-_pynucastro_rates_dir = os.path.join(_pynucastro_dir, 'library')
-_pynucastro_tabular_dir = os.path.join(_pynucastro_rates_dir, 'tabular')
+_pynucastro_dir = Path(__file__).resolve().parents[1]
+_pynucastro_rates_dir = _pynucastro_dir/'library'
+_pynucastro_tabular_dir = _pynucastro_rates_dir/'tabular'
 
 # read the various tables with nuclear properties at the module-level
 _mass_table = MassTable()

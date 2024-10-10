@@ -1,10 +1,10 @@
 """Support modules to write a pure python reaction network ODE
 source"""
 
-import os
 import shutil
 import sys
 import warnings
+from pathlib import Path
 
 from pynucastro.constants import constants
 from pynucastro.networks.rate_collection import RateCollection
@@ -163,7 +163,7 @@ class PythonNetwork(RateCollection):
 
         return ostr
 
-    def _write_network(self, outfile=None):
+    def _write_network(self, outfile: str | Path = None):
         """
         This is the actual RHS for the system of ODEs that
         this network describes.
@@ -172,7 +172,8 @@ class PythonNetwork(RateCollection):
         if outfile is None:
             of = sys.stdout
         else:
-            of = open(outfile, "w")
+            outfile = Path(outfile)
+            of = outfile.open("w")
 
         indent = 4*" "
 
@@ -357,20 +358,20 @@ class PythonNetwork(RateCollection):
         # Copy any tables in the network to the current directory
         # if the table file cannot be found, print a warning and continue.
         try:
-            odir = os.path.dirname(outfile)
+            odir = outfile.parent
         except TypeError:
             odir = None
 
         for tr in self.tabular_rates:
-            tdir = os.path.dirname(tr.rfile_path)
-            if tdir != os.getcwd():
-                tdat_file = os.path.join(tdir, tr.table_file)
-                if os.path.isfile(tdat_file):
-                    shutil.copy(tdat_file, odir or os.getcwd())
+            tdir = tr.rfile_path.parent
+            if tdir != Path.cwd():
+                tdat_file = tdir/tr.table_file
+                if tdat_file.is_file():
+                    shutil.copy(tdat_file, odir or Path.cwd())
                 else:
                     warnings.warn(UserWarning(f'Table data file {tr.table_file} not found.'))
-                rtoki_file = os.path.join(tdir, tr.rfile)
-                if os.path.isfile(rtoki_file):
-                    shutil.copy(rtoki_file, odir or os.getcwd())
+                rtoki_file = tdir/tr.rfile
+                if rtoki_file.is_file():
+                    shutil.copy(rtoki_file, odir or Path.cwd())
                 else:
                     warnings.warn(UserWarning(f'Table metadata file {tr.rfile} not found.'))
