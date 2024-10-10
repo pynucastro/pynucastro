@@ -37,7 +37,7 @@ def compare_network_files(request):
         base_path = Path(__file__).relative_to(Path.cwd())
         ref_path = base_path/ref_path
 
-        skip_files = set(skip_files)
+        skip_files = set(Path(file) for file in skip_files)
         test_files = set(test_path.iterdir()) - skip_files
         ref_files = set(ref_path.iterdir()) - skip_files
         # files that are missing from test_path
@@ -50,9 +50,7 @@ def compare_network_files(request):
         for file in test_files & ref_files:
             # note, _test is written under whatever directory pytest is run from,
             # so it is not necessarily at the same place as _amrexastro_reference
-            if not filecmp.cmp((test_path/file).resolve(),
-                               (ref_path/file).resolve(),
-                               shallow=False):
+            if not filecmp.cmp(test_path/file, ref_path/file, shallow=False):
                 modified_files.add(file)
 
         # record which files make the test fail
@@ -76,8 +74,7 @@ def compare_network_files(request):
                 (ref_path/file).resolve().unlink()
             # copy new and modified files to ref_path
             for file in extra_files | modified_files:
-                shutil.copy((test_path/file).resolve(),
-                            (ref_path/file).resole())
+                shutil.copy(test_path/file, ref_path/file)
         else:
             assert not errors, "written network files don't match the stored reference"
 
