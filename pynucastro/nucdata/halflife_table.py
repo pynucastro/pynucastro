@@ -1,5 +1,6 @@
 from pathlib import Path
 
+
 class HalfLifeTable:
     """
     Read the table of halflives (in seconds) extracted from the Nubase

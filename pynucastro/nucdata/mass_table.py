@@ -1,5 +1,6 @@
 from pathlib import Path
 
+
 class MassTable:
     """
     The purpose of this class is to:
@@ -15,7 +16,7 @@ class MassTable:
     variable is not provided, then mass_excess2020.txt is considered by default.
     """
 
-    def __init__(self, filename: str | Path =None):
+    def __init__(self, filename: str | Path = None):
 
         self.mass_diff = {}
 
