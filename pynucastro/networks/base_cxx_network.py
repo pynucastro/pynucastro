@@ -134,7 +134,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         # Copy any tables in the network to the current directory
         # if the table file cannot be found, print a warning and continue.
         for tr in self.tabular_rates:
-            tdir = tr.rfile_path.parent
+            tdir = tr.rfile_path.resolve().parent
             if tdir != Path.cwd():
                 tdat_file = Path(tdir, tr.table_file)
                 if tdat_file.is_file():
