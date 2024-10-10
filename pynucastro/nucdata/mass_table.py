@@ -17,7 +17,7 @@ class MassTable:
 
     def __init__(self, filename: str | Path =None):
 
-        self._mass_diff = {}
+        self.mass_diff = {}
 
         if filename:
             self.filename = Path(filename)
@@ -37,10 +37,10 @@ class MassTable:
 
             for line in f:
                 A, Z, dm = line.strip().split()[:3]
-                self._mass_diff[int(A), int(Z)] = float(dm)
+                self.mass_diff[int(A), int(Z)] = float(dm)
 
     def get_mass_diff(self, a: int, z: int) -> float:
         try:
-            return self._mass_diff[a, z]
+            return self.mass_diff[a, z]
         except KeyError as exc:
             raise NotImplementedError(f"nuclear mass difference for A={a} and Z={z} not available") from exc
