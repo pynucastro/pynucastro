@@ -1,9 +1,10 @@
 import numba
 import numpy as np
-from scipy import constants
 from numba.experimental import jitclass
+from scipy import constants
 
-from pynucastro.rates import TableIndex, TableInterpolator, TabularRate, Tfactors
+from pynucastro.rates import (TableIndex, TableInterpolator, TabularRate,
+                              Tfactors)
 from pynucastro.screening import PlasmaState, ScreenFactors
 
 jn = 0
