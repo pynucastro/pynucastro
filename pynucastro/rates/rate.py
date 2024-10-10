@@ -5,9 +5,9 @@ Classes and methods to interface with files storing rate data.
 import io
 import math
 import warnings
-from pathlib import Path
 from collections import Counter
 from enum import Enum
+from pathlib import Path
 
 import matplotlib.pyplot as plt
 import numpy as np

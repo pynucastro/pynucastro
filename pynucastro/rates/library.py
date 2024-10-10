@@ -701,7 +701,7 @@ class ReacLibLibrary(Library):
 class TabularLibrary(Library):
     """Load all of the tabular rates known and return a Library"""
 
-    lib_path = Path(__file__).resolve().parent/"../library/tabular"
+    lib_path = Path(__file__).resolve().parent/".."/"library"/"tabular"
 
     def __init__(self):
         # find all of the tabular rates that pynucastro knows about
@@ -723,7 +723,7 @@ class SuzukiLibrary(TabularLibrary):
     and return a Library.
     """
 
-    lib_path = Path(__file__).resolve().parent/"../library/tabular/suzuki"
+    lib_path = Path(__file__).resolve().parent/".."/"library"/"tabular"/"suzuki"
 
 
 class LangankeLibrary(TabularLibrary):
@@ -732,4 +732,4 @@ class LangankeLibrary(TabularLibrary):
     and return a Library.
     """
 
-    lib_path = Path(__file__).resolve().parent/"../library/tabular/langanke"
+    lib_path = Path(__file__).resolve().parent/".."/"library"/"tabular"/"langanke"
