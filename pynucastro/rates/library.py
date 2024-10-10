@@ -15,7 +15,7 @@ from pynucastro.rates.rate import (DerivedRate, Rate, RateFileError,
 def list_known_rates() -> None:
     """ list the rates found in the library """
 
-    lib_path = Path(__file__, "..", "library").resolve()
+    lib_path = Path(__file__).parents[1]/"library"
 
     for _, _, filenames in walk(lib_path):
         for f in filenames:
