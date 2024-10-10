@@ -111,6 +111,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         for tfile in self.template_files:
             outfile = tfile.name.replace('.template', '')
             if odir is not None:
+                odir = Path(odir)
                 if not odir.is_dir():
                     try:
                         odir.mkdir()
