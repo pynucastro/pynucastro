@@ -2048,6 +2048,8 @@ class ApproximateRate(Rate):
                 super().__init__(reactants=[self.primary_product],
                                  products=[self.primary_reactant, Nucleus("he4")], label="approx")
 
+            self.chapter = "a"
+
         else:
             raise NotImplementedError(f"approximation type {self.approx_type} not supported")
 
