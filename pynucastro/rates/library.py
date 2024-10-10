@@ -701,7 +701,7 @@ class ReacLibLibrary(Library):
 class TabularLibrary(Library):
     """Load all of the tabular rates known and return a Library"""
 
-    lib_path = Path(__file__).resolve().parent/".."/"library"/"tabular"
+    lib_path = Path(__file__, "..", "library", "tabular").resolve().parent
 
     def __init__(self):
         # find all of the tabular rates that pynucastro knows about
