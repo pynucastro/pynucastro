@@ -21,14 +21,9 @@ class HalfLifeTable:
 
     def _read_table(self) -> None:
 
-        file = open(self.filename, 'r')
-
         with open(self.filename, "r") as f:
             # skip the header
-            for _ in range(5):
-                f.readline()
-
-            for line in file:
+            for line in f.readlines()[5:]:
 
                 A, Z, tau = line.strip().split()[:3]
                 #print(data_list)

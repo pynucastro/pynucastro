@@ -30,10 +30,7 @@ class SpinTable:
 
         with self.datafile.open("r") as f:
 
-            for _ in range(4):
-                f.readline()
-
-            for line in f:
+            for line in f.readlines()[4:]:
 
                 A, Z, _, spin_states, experimental = line.strip().split()[:4]
                 A, Z, spin_states = int(A), int(Z), int(spin_states)

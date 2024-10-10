@@ -32,10 +32,7 @@ class MassTable:
 
         with self.filename.open("r") as f:
             # skip the header
-            for _ in range(5):
-                f.readline()
-
-            for line in f:
+            for line in f.readlines()[5:]:
                 A, Z, dm = line.strip().split()[:3]
                 self.mass_diff[int(A), int(Z)] = float(dm)
 
