@@ -5,7 +5,7 @@ from numpy import array
 from pynucastro.nucdata import (PartitionFunctionCollection,
                                 PartitionFunctionTable)
 
-nucdata_dir = Path(__file__).resolve().parents[1]
+nucdata_dir = Path(__file__).parents[1]
 pf_dir = nucdata_dir/'PartitionFunction'
 
 dir_etfsiq_low = pf_dir/'etfsiq_low.txt'

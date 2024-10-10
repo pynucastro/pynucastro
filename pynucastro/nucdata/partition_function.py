@@ -220,7 +220,7 @@ class PartitionFunctionCollection:
     def _read_collection(self):
         """Read and construct all the tables from the data files."""
 
-        nucdata_dir = Path(__file__).resolve().parent
+        nucdata_dir = Path(__file__).parent
         partition_function_dir = nucdata_dir/'PartitionFunction'
 
         pft = PartitionFunctionTable(file_name=partition_function_dir/'etfsiq_low.txt')

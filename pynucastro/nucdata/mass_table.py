@@ -23,7 +23,7 @@ class MassTable:
         if filename:
             self.filename = Path(filename)
         else:
-            nucdata_dir = Path(__file__).resolve().parent
+            nucdata_dir = Path(__file__).parent
             datafile_name = 'mass_excess2020.txt'
             self.filename = nucdata_dir/'AtomicMassEvaluation'/datafile_name
 

@@ -12,7 +12,7 @@ from pynucastro.nucdata.mass_table import MassTable
 from pynucastro.nucdata.partition_function import PartitionFunctionCollection
 from pynucastro.nucdata.spin_table import SpinTable
 
-_pynucastro_dir = Path(__file__).resolve().parents[1]
+_pynucastro_dir = Path(__file__).parents[1]
 _pynucastro_rates_dir = _pynucastro_dir/'library'
 _pynucastro_tabular_dir = _pynucastro_rates_dir/'tabular'
 

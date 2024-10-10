@@ -20,7 +20,7 @@ class SpinTable:
         if datafile:
             self.datafile = Path(datafile)
         else:
-            nucdata_dir = Path(__file__).resolve().parent
+            nucdata_dir = Path(__file__).parent
             datafile_name = 'nubase2020_1.txt'
             self.datafile = nucdata_dir/'AtomicMassEvaluation'/datafile_name
 

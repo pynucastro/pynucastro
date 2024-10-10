@@ -404,7 +404,7 @@ class RateCollection:
     """ a collection of rates that together define a network """
     # pylint: disable=too-many-public-methods
 
-    pynucastro_dir = Path(__file__).resolve().parents[1]
+    pynucastro_dir = Path(__file__).parents[1]
 
     def __init__(self, rate_files=None, libraries=None, rates=None,
                  inert_nuclei=None,
