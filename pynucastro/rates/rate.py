@@ -46,7 +46,7 @@ except ImportError:
 from pynucastro.constants import constants
 from pynucastro.nucdata import Nucleus, UnsupportedNucleus
 
-_pynucastro_dir = Path(__file__).resolve().parent
+_pynucastro_dir = Path(__file__).resolve().parents[1]
 _pynucastro_rates_dir = _pynucastro_dir/"library"
 _pynucastro_tabular_dir = _pynucastro_dir/"tabular"
 _pynucastro_suzuki_dir = _pynucastro_dir/"suzuki"

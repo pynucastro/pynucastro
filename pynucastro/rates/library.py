@@ -11,10 +11,10 @@ from pynucastro.rates.rate import (DerivedRate, Rate, RateFileError,
                                    get_rates_dir, load_rate)
 
 
-def list_known_rates():
+def list_known_rates() -> None:
     """ list the rates found in the library """
 
-    lib_path = Path(__file__).resolve()/".."/"library"
+    lib_path = Path(__file__, "..", "library").resolve()
 
     for _, _, filenames in lib_path.walk():
         for f in filenames:
@@ -694,7 +694,7 @@ class ReacLibLibrary(Library):
     return a Library"""
 
     def __init__(self):
-        libfile = 'reaclib_default2_20220329'
+        libfile = Path('reaclib_default2_20220329')
         Library.__init__(self, libfile=libfile)
 
 
