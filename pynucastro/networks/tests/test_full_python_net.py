@@ -47,7 +47,7 @@ class TestFullPythonNetwork:
 
     def test_ydots(self, fn):
 
-        test_path = "_test_python/"
+        test_path = Path("_test_python/")
         test_file = "network.py"
 
         test_path.mkdir(parents=True, exist_ok=True)

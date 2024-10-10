@@ -3,7 +3,6 @@ Microphysics set of reaction networks used by astrophysical hydrodynamics
 codes"""
 
 
-import glob
 import re
 from pathlib import Path
 
@@ -35,12 +34,11 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
 
     def _get_template_files(self):
 
-        template_pattern = Path(self.pynucastro_dir,
+        path = Path(self.pynucastro_dir,
                                 'templates',
-                                'amrexastro-cxx-microphysics',
-                                '*.template')
+                                'amrexastro-cxx-microphysics')
 
-        return glob.glob(template_pattern)
+        return path.glob("*.template")
 
     def _rate_param_tests(self, n_indent, of):
 

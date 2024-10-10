@@ -178,7 +178,7 @@ class Library:
 
     def _read_library_file(self):
         # loop through library file, read lines
-        with open(self._library_file) as flib:
+        with self._library_file.open("r") as flib:
             for line in flib:
                 ls = line.rstrip('\n')
                 if ls.strip():
@@ -695,14 +695,14 @@ class ReacLibLibrary(Library):
     return a Library"""
 
     def __init__(self):
-        libfile = Path('reaclib_default2_20220329')
+        libfile = 'reaclib_default2_20220329'
         Library.__init__(self, libfile=libfile)
 
 
 class TabularLibrary(Library):
     """Load all of the tabular rates known and return a Library"""
 
-    lib_path = Path(__file__, "..", "library", "tabular").resolve().parent
+    lib_path = Path(__file__).resolve().parents[1]/"library"/"tabular"
 
     def __init__(self):
         # find all of the tabular rates that pynucastro knows about
@@ -724,7 +724,7 @@ class SuzukiLibrary(TabularLibrary):
     and return a Library.
     """
 
-    lib_path = Path(__file__).resolve().parent/".."/"library"/"tabular"/"suzuki"
+    lib_path = Path(__file__).resolve().parents[1]/"library"/"tabular"/"suzuki"
 
 
 class LangankeLibrary(TabularLibrary):
@@ -733,4 +733,4 @@ class LangankeLibrary(TabularLibrary):
     and return a Library.
     """
 
-    lib_path = Path(__file__).resolve().parent/".."/"library"/"tabular"/"langanke"
+    lib_path = Path(__file__).resolve().parents[1]/"library"/"tabular"/"langanke"

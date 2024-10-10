@@ -1,7 +1,6 @@
 """A simple C++ reaction network for integrating into other C++ codes"""
 
 
-import glob
 from pathlib import Path
 
 from pynucastro.networks.base_cxx_network import BaseCxxNetwork
@@ -19,12 +18,11 @@ class SimpleCxxNetwork(BaseCxxNetwork):
 
     def _get_template_files(self):
 
-        template_pattern = Path(self.pynucastro_dir,
-                                "templates",
-                                "simple-cxx-network",
-                                "*.template")
+        path = Path(self.pynucastro_dir,
+                                'templates',
+                                'simple-cxx-network')
 
-        return glob.glob(template_pattern)
+        return path.glob("*.template")
 
     def _write_network(self, odir=None):
         """

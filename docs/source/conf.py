@@ -21,7 +21,7 @@ import sys
 from pathlib import Path
 from importlib.metadata import version as importlib_version
 
-sys.path.insert(0, Path("..").resolve())
+sys.path.insert(0, Path.cwd().parent)
 
 
 # -- General configuration ------------------------------------------------

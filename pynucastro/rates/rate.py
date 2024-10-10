@@ -1024,7 +1024,9 @@ class ReacLibRate(Rate):
                 pass
 
             # sets are 3 lines long
-            s1, s2, s3 = set_lines
+            s1 = set_lines.pop(0)
+            s2 = set_lines.pop(0)
+            s3 = set_lines.pop(0)
 
             # first line of a set has up to 6 nuclei, then the label,
             # and finally the Q value
