@@ -1,6 +1,7 @@
 import collections
 import io
 import re
+from os import walk
 from pathlib import Path
 
 from pynucastro.nucdata import Nucleus, UnsupportedNucleus
@@ -16,7 +17,7 @@ def list_known_rates() -> None:
 
     lib_path = Path(__file__, "..", "library").resolve()
 
-    for _, _, filenames in lib_path.walk():
+    for _, _, filenames in walk(lib_path):
         for f in filenames:
             # skip over files that are not rate files
             if Path(f).suffix in (".md", ".dat", ".py", "ipynb"):
@@ -709,7 +710,7 @@ class TabularLibrary(Library):
 
         trates = []
 
-        for _, _, filenames in sorted(self.lib_path.walk()):
+        for _, _, filenames in sorted(walk(self.lib_path)):
             for f in sorted(filenames):
                 if f.endswith("-toki"):
                     trates.append(load_rate(f))
