@@ -92,7 +92,7 @@ def _find_rate_file(ratename: str | Path) -> Path:
     # is already the full path, or is in _dirs
 
     for path in ("", *_dirs):
-        x = Path(path, ratename)
+        x = Path(path, ratename).resolve()
         if x.is_file():
             return x.resolve()
 
