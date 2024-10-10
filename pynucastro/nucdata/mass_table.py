@@ -36,7 +36,7 @@ class MassTable:
                 f.readline()
 
             for line in f:
-                A, Z, dm = line.strip().split()
+                A, Z, dm = line.strip().split()[:3]
                 self._mass_diff[int(A), int(Z)] = float(dm)
 
     def get_mass_diff(self, a: int, z: int) -> float:

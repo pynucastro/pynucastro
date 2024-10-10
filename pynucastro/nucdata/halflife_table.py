@@ -30,7 +30,7 @@ class HalfLifeTable:
 
         for line in file:
 
-            A, Z, tau = line.strip().split()
+            A, Z, tau = line.strip().split()[:3]
             #print(data_list)
 
             if tau != "stable":
