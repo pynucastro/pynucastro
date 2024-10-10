@@ -84,7 +84,7 @@ def load_rate(rfile: str = None):
     return rate
 
 
-def _find_rate_file(ratename) -> Path:
+def _find_rate_file(ratename: str | Path) -> Path:
     """locate the Reaclib or tabular rate or library file given its name.  Return
     None if the file cannot be located, otherwise return its path."""
 
@@ -835,7 +835,7 @@ class ReacLibRate(Rate):
         if isinstance(rfile, Path):
             # read in the file, parse the different sets and store them as
             # SingleSet objects in sets[]
-            f = open(self.rfile_path)
+            f = self.rfile_path.open()
         elif isinstance(rfile, io.StringIO):
             # Set f to the io.StringIO object
             f = rfile
@@ -1419,7 +1419,7 @@ class TabularRate(Rate):
         if isinstance(rfile, Path):
             # read in the file, parse the different sets and store them as
             # SingleSet objects in sets[]
-            f = open(self.rfile_path)
+            f = self.rfile_path.open()
         elif isinstance(rfile, io.StringIO):
             # Set f to the io.StringIO object
             f = rfile
@@ -1565,7 +1565,7 @@ class TabularRate(Rate):
         # find .dat file and read it
         self.table_path = _find_rate_file(self.table_file)
         t_data2d = []
-        with open(self.table_path) as tabular_file:
+        with self.table_path.open() as tabular_file:
             for i, line in enumerate(tabular_file):
                 # skip header lines
                 if i < self.table_header_lines:

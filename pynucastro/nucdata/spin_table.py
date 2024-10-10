@@ -28,7 +28,7 @@ class SpinTable:
 
     def _read_table(self) -> None:
 
-        with open(self.datafile, "r") as f:
+        with self.datafile.open("r") as f:
 
             for _ in range(4):
                 f.readline()

@@ -30,13 +30,10 @@ class MassTable:
 
     def _read_table(self) -> None:
 
-        with open(self.filename, "r") as f:
+        with self.filename.open("r") as f:
             # skip the header
             for _ in range(5):
                 f.readline()
-
-        for _ in range(4):
-            f.readline()
 
             for line in f:
                 A, Z, dm = line.strip().split()
