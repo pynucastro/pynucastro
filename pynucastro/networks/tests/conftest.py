@@ -38,9 +38,9 @@ def compare_network_files(request):
         test_path = Path(test_path)
         ref_path = base_path/ref_path
 
-        skip_files = set(Path(file) for file in skip_files)
-        test_files = set(test_path.iterdir()) - skip_files
-        ref_files = set(ref_path.iterdir()) - skip_files
+        skip_files = set(skip_files)
+        test_files = set(file.name for file in test_path.iterdir()) - skip_files
+        ref_files = set(file.name for file in ref_path.iterdir()) - skip_files
         # files that are missing from test_path
         missing_files = ref_files - test_files
         # files that are present in test_path but not in ref_path
