@@ -34,7 +34,7 @@ def compare_network_files(request):
     update_networks = request.config.getoption("--update-networks")
 
     def _compare_network_files(test_path, ref_path, skip_files=()):
-        base_path = Path(__file__).relative_to(Path.cwd())
+        base_path = Path(__file__).parent.relative_to(Path.cwd())
         test_path = base_path/test_path
         ref_path = base_path/ref_path
 
