@@ -32,7 +32,7 @@ class SpinTable:
 
             for line in f.readlines()[4:]:
 
-                A, Z, _, spin_states, experimental = line.strip().split()[:4]
+                A, Z, _, spin_states, experimental = line.strip().split()[:5]
                 A, Z, spin_states = int(A), int(Z), int(spin_states)
 
                 if self.reliable:
