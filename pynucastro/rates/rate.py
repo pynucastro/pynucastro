@@ -1965,7 +1965,7 @@ class RatePair:
         return self.forward == other.forward and self.reverse == other.reverse
 
 
-class ApproximateRate(ReacLibRate):
+class ApproximateRate(Rate):
 
     def __init__(self, primary_rate, secondary_rates,
                  primary_reverse, secondary_reverse, is_reverse=False, approx_type="ap_pg"):
@@ -2043,12 +2043,10 @@ class ApproximateRate(ReacLibRate):
 
             if not self.is_reverse:
                 super().__init__(reactants=[self.primary_reactant, Nucleus("he4")],
-                                 products=[self.primary_product],
-                                 labelprops="approx", chapter=-1)
+                                 products=[self.primary_product], label="approx")
             else:
                 super().__init__(reactants=[self.primary_product],
-                                 products=[self.primary_reactant, Nucleus("he4")],
-                                 labelprops="approx", chapter=-1)
+                                 products=[self.primary_reactant, Nucleus("he4")], label="approx")
 
         else:
             raise NotImplementedError(f"approximation type {self.approx_type} not supported")
