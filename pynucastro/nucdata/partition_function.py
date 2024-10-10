@@ -1,4 +1,4 @@
-import os
+from pathlib import Path
 
 import numpy as np
 from scipy.interpolate import InterpolatedUnivariateSpline
@@ -157,8 +157,8 @@ class PartitionFunctionTable:
             return self._partition_function[nuc]
         return None
 
-    def _read_table(self, file_name):
-        with open(file_name, 'r') as fin:
+    def _read_table(self, file_name: str | Path):
+        with Path(file_name).open("r") as fin:
 
             # get headers name
             fhead = fin.readline()
@@ -220,19 +220,19 @@ class PartitionFunctionCollection:
     def _read_collection(self):
         """Read and construct all the tables from the data files."""
 
-        nucdata_dir = os.path.dirname(os.path.realpath(__file__))
-        partition_function_dir = os.path.join(nucdata_dir, 'PartitionFunction')
+        nucdata_dir = Path(__file__).parent
+        partition_function_dir = nucdata_dir/'PartitionFunction'
 
-        pft = PartitionFunctionTable(file_name=os.path.join(partition_function_dir, 'etfsiq_low.txt'))
+        pft = PartitionFunctionTable(file_name=partition_function_dir/'etfsiq_low.txt')
         self._add_table(pft)
 
-        pft = PartitionFunctionTable(file_name=os.path.join(partition_function_dir, 'frdm_low.txt'))
+        pft = PartitionFunctionTable(file_name=partition_function_dir/'frdm_low.txt')
         self._add_table(pft)
 
-        pft = PartitionFunctionTable(file_name=os.path.join(partition_function_dir, 'etfsiq_high.txt'))
+        pft = PartitionFunctionTable(file_name=partition_function_dir/'etfsiq_high.txt')
         self._add_table(pft)
 
-        pft = PartitionFunctionTable(file_name=os.path.join(partition_function_dir, 'frdm_high.txt'))
+        pft = PartitionFunctionTable(file_name=partition_function_dir/'frdm_high.txt')
         self._add_table(pft)
 
     def get_nuclei(self):

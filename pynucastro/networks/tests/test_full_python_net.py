@@ -1,5 +1,5 @@
-import os
 import shutil
+from pathlib import Path
 
 import numpy as np
 import pytest
@@ -28,9 +28,9 @@ class TestFullPythonNetwork:
 
     def test_write_network(self, fn, compare_network_files):
         """test the write_network function"""
-        test_path = "_test_python/"
+        test_path = Path("_test_python/")
         # subdirectory of pynucastro/networks/tests/
-        reference_path = "_python_reference/"
+        reference_path = Path("_python_reference/")
         # files that will be ignored if present in the generated directory
         skip_files = []
 
@@ -38,8 +38,8 @@ class TestFullPythonNetwork:
 
         # remove any previously generated files
         shutil.rmtree(test_path, ignore_errors=True)
-        os.makedirs(test_path, exist_ok=True)
-        fn.write_network(outfile=os.path.join(test_path, test_file))
+        test_path.mkdir(parents=True, exist_ok=True)
+        fn.write_network(outfile=test_path/test_file)
         compare_network_files(test_path, reference_path, skip_files)
 
         # clean up generated files if the test passed
@@ -47,11 +47,11 @@ class TestFullPythonNetwork:
 
     def test_ydots(self, fn):
 
-        test_path = "_test_python/"
+        test_path = Path("_test_python/")
         test_file = "network.py"
 
-        os.makedirs(test_path, exist_ok=True)
-        fn.write_network(outfile=os.path.join(test_path, test_file))
+        test_path.mkdir(parents=True, exist_ok=True)
+        fn.write_network(outfile=test_path/test_file)
 
         import _test_python.network as net
 

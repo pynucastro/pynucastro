@@ -1,17 +1,17 @@
-import os
+from pathlib import Path
 
 from numpy import array
 
 from pynucastro.nucdata import (PartitionFunctionCollection,
                                 PartitionFunctionTable)
 
-nucdata_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-pf_dir = os.path.join(nucdata_dir, 'PartitionFunction')
+nucdata_dir = Path(__file__).parents[1]
+pf_dir = nucdata_dir/'PartitionFunction'
 
-dir_etfsiq_low = os.path.join(pf_dir, 'etfsiq_low.txt')
-dir_frdm_low = os.path.join(pf_dir, 'frdm_low.txt')
-dir_etfsiq_high = os.path.join(pf_dir, 'etfsiq_high.txt')
-dir_frdm_high = os.path.join(pf_dir, 'frdm_high.txt')
+dir_etfsiq_low = pf_dir/'etfsiq_low.txt'
+dir_frdm_low = pf_dir/'frdm_low.txt'
+dir_etfsiq_high = pf_dir/'etfsiq_high.txt'
+dir_frdm_high = pf_dir/'frdm_high.txt'
 
 ANSWER_ETFSIQ_LOW = array([1.000271, 1.002656, 1.009124, 1.035543, 1.076750, 1.128518, 1.187847, 1.252797,
                            1.322103, 1.394926, 1.470693, 1.883077, 2.339548, 2.835353, 3.371056, 3.949365,

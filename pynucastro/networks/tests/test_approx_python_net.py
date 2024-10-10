@@ -1,7 +1,7 @@
 # unit tests for rates
 import importlib
-import os
 import sys
+from pathlib import Path
 
 import numpy as np
 import pytest
@@ -108,7 +108,7 @@ def He4_Mg24__Si28__removed(rate_eval, tf):
             assert answer[i] == approx(sol.y[i, -1])
 
         # clean up generated files if the test passed
-        os.remove("app.py")
+        Path("app.py").unlink()
         # remove imported module from cache
         del app
         del sys.modules["app"]
@@ -128,7 +128,7 @@ def He4_Mg24__Si28__removed(rate_eval, tf):
         assert comp_new.X == comp_orig.X
 
         # clean up generated files if the test passed
-        os.remove("app.py")
+        Path("app.py").unlink()
         # remove imported module from cache
         del app
         del sys.modules["app"]

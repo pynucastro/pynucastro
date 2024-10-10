@@ -1,5 +1,5 @@
 class Element:
-    def __init__(self, abbreviation, name, Z):
+    def __init__(self, abbreviation: str, name: str, Z: int) -> None:
         self.abbreviation = abbreviation
         self.name = name
         self.Z = Z
@@ -130,14 +130,14 @@ class PeriodicTable:
              'og': Element('og', 'oganesson', 118)}
 
     @classmethod
-    def lookup_abbreviation(cls, abbrev):
+    def lookup_abbreviation(cls, abbrev: str) -> Element:
         try:
             return cls.table[abbrev.lower()]
         except IndexError:
             raise UnidentifiedElement(f'Could not identify element: {abbrev}') from None
 
     @classmethod
-    def lookup_Z(cls, Z):
+    def lookup_Z(cls, Z: int) -> Element | None:
         for element in cls.table.values():
             if element.Z == Z:
                 return element

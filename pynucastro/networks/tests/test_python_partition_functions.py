@@ -1,6 +1,6 @@
 import importlib
-import os
 import sys
+from pathlib import Path
 
 import pytest
 
@@ -58,7 +58,7 @@ class TestPythonPartitionNetwork:
         assert rate_eval.Ni56__p_Co55__derived == pytest.approx(428973340937.6744, rel=1.e-10)
 
         # clean up generated files if the test passed
-        os.remove("der_net.py")
+        Path("der_net.py").unlink()
         # remove imported module from cache
         del der_net
         del sys.modules["der_net"]

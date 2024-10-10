@@ -1,7 +1,7 @@
 # unit tests for rates
 import importlib
-import os
 import sys
+from pathlib import Path
 
 import numpy as np
 import pytest
@@ -140,6 +140,6 @@ def N14_p__O15__generic(rate_eval, tf):
         for n in range(custom.nnuc):
             assert ydots[n] == approx(ydot_save[n])
 
-        os.remove("custom.py")
+        Path("custom.py").unlink()
         del custom
         del sys.modules["custom"]
