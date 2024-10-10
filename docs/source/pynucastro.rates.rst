@@ -9,6 +9,22 @@ pynucastro.rates package
 Submodules
 ----------
 
+pynucastro.rates.alternate\_rates module
+----------------------------------------
+
+.. automodule:: pynucastro.rates.alternate_rates
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+pynucastro.rates.approximate\_rates module
+------------------------------------------
+
+.. automodule:: pynucastro.rates.approximate_rates
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 pynucastro.rates.known\_duplicates module
 -----------------------------------------
 
