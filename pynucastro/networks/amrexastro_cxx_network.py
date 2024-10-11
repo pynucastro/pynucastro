@@ -34,9 +34,7 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
 
     def _get_template_files(self):
 
-        path = Path(self.pynucastro_dir,
-                                'templates',
-                                'amrexastro-cxx-microphysics')
+        path = self.pynucastro_dir/"templates/amrexastro-cxx-microphysics"
 
         return path.glob("*.template")
 
