@@ -18,9 +18,7 @@ class SimpleCxxNetwork(BaseCxxNetwork):
 
     def _get_template_files(self):
 
-        path = Path(self.pynucastro_dir,
-                                'templates',
-                                'simple-cxx-network')
+        path = self.pynucastro_dir/"templates/simple-cxx-network"
 
         return path.glob("*.template")
 
