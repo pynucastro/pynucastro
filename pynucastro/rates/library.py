@@ -724,7 +724,7 @@ class SuzukiLibrary(TabularLibrary):
     and return a Library.
     """
 
-    lib_path = Path(__file__).parents[1]/"library"/"tabular"/"suzuki"
+    lib_path = Path(__file__).parents[1]/"library/tabular/suzuki"
 
 
 class LangankeLibrary(TabularLibrary):
