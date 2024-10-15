@@ -1,4 +1,4 @@
-import os
+from pathlib import Path
 
 
 class HalfLifeTable:
@@ -7,45 +7,35 @@ class HalfLifeTable:
     compilation in halflife2020.txt
     """
 
-    def __init__(self, filename=None):
+    def __init__(self, filename: str | Path = None) -> None:
 
         self.halflife = {}
 
         if filename:
-            self.filename = filename
+            self.filename = Path(filename)
         else:
+            nucdata_dir = Path(__file__).parent
             datafile_name = 'halflife2020.txt'
-            nucdata_dir = os.path.dirname(os.path.realpath(__file__))
-            self.filename = os.path.join(nucdata_dir, 'AtomicMassEvaluation', datafile_name)
+            self.filename = nucdata_dir/'AtomicMassEvaluation'/datafile_name
 
         self._read_table()
 
-    def _read_table(self):
+    def _read_table(self) -> None:
 
-        file = open(self.filename, 'r')
+        with open(self.filename, "r") as f:
+            # skip the header
+            for line in f.readlines()[5:]:
 
-        # skip the header
-        for _ in range(5):
-            file.readline()
+                A, Z, tau = line.strip().split()[:3]
+                #print(data_list)
 
-        for line in file:
+                if tau != "stable":
+                    tau = float(tau)
 
-            data_list = line.strip().split()
-            #print(data_list)
-            A_str = data_list.pop(0)
-            Z_str = data_list.pop(0)
-            tau = data_list.pop(0)
+                self.halflife[int(A), int(Z)] = tau
 
-            A = int(A_str)
-            Z = int(Z_str)
-            if tau != "stable":
-                tau = float(tau)
-
-            self.halflife[A, Z] = tau
-
-        file.close()
-
-    def get_halflife(self, a, z):
-        if (a, z) in self.halflife:
+    def get_halflife(self, a: int, z: int) -> float | str:
+        try:
             return self.halflife[a, z]
-        raise NotImplementedError("Nuclear halflife is not available")
+        except KeyError as exc:
+            raise NotImplementedError(f"Nuclear halflife for A={a} and Z={z} not available") from exc

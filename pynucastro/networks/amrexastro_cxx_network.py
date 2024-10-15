@@ -3,9 +3,8 @@ Microphysics set of reaction networks used by astrophysical hydrodynamics
 codes"""
 
 
-import glob
-import os
 import re
+from pathlib import Path
 
 from pynucastro.networks.base_cxx_network import BaseCxxNetwork
 from pynucastro.nucdata import Nucleus
@@ -35,12 +34,9 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
 
     def _get_template_files(self):
 
-        template_pattern = os.path.join(self.pynucastro_dir,
-                                        'templates',
-                                        'amrexastro-cxx-microphysics',
-                                        '*.template')
+        path = self.pynucastro_dir/"templates/amrexastro-cxx-microphysics"
 
-        return glob.glob(template_pattern)
+        return path.glob("*.template")
 
     def _rate_param_tests(self, n_indent, of):
 
@@ -86,9 +82,9 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
         super()._write_network(odir=odir)
 
         if odir is None:
-            odir = os.getcwd()
+            odir = Path.cwd()
         # create a .net file with the nuclei properties
-        with open(os.path.join(odir, "pynucastro.net"), "w") as of:
+        with open(Path(odir, "pynucastro.net"), "w") as of:
             for nuc in self.unique_nuclei:
                 short_spec_name = nuc.short_spec_name
                 if nuc.short_spec_name != "n":
@@ -102,7 +98,7 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
                 of.write(f"__extra_{nuc.spec_name:17} {short_spec_name:6} {nuc.A:6.1f} {nuc.Z:6.1f}\n")
 
         # write the _parameters file
-        with open(os.path.join(odir, "_parameters"), "w") as of:
+        with open(Path(odir, "_parameters"), "w") as of:
             of.write("@namespace: network\n\n")
             if self.disable_rate_params:
                 for r in self.disable_rate_params:
