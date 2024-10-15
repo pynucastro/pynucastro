@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.rate &#8212; pynucastro 2.4.0.post2+g3a4cf8be documentation</title>
+    <title>pynucastro.rates.rate &#8212; pynucastro 2.4.0.post3+gca1c580d documentation</title>
   
   
   
@@ -37,8 +37,8 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=37fea9e5"></script>
-    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../_static/documentation_options.js?v=b4677dee"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../_static/copybutton.js?v=f281be69"></script>
@@ -405,10 +405,10 @@ document.write(`
 
 <span class="kn">import</span> <span class="nn">io</span>
 <span class="kn">import</span> <span class="nn">math</span>
-<span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span>
 <span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -447,23 +447,27 @@ document.write(`
 <span class="kn">from</span> <span class="nn">pynucastro.constants</span> <span class="kn">import</span> <span class="n">constants</span>
 <span class="kn">from</span> <span class="nn">pynucastro.nucdata</span> <span class="kn">import</span> <span class="n">Nucleus</span><span class="p">,</span> <span class="n">UnsupportedNucleus</span>
 
-<span class="n">_pynucastro_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)))</span>
-<span class="n">_pynucastro_rates_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_pynucastro_dir</span><span class="p">,</span> <span class="s1">&#39;library&#39;</span><span class="p">)</span>
-<span class="n">_pynucastro_tabular_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_pynucastro_rates_dir</span><span class="p">,</span> <span class="s1">&#39;tabular&#39;</span><span class="p">)</span>
-<span class="n">_pynucastro_suzuki_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_pynucastro_tabular_dir</span><span class="p">,</span> <span class="s1">&#39;suzuki&#39;</span><span class="p">)</span>
-<span class="n">_pynucastro_langanke_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_pynucastro_tabular_dir</span><span class="p">,</span> <span class="s1">&#39;langanke&#39;</span><span class="p">)</span>
+<span class="n">_pynucastro_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parents</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">_pynucastro_rates_dir</span> <span class="o">=</span> <span class="n">_pynucastro_dir</span><span class="o">/</span><span class="s2">&quot;library&quot;</span>
+<span class="n">_pynucastro_tabular_dir</span> <span class="o">=</span> <span class="n">_pynucastro_rates_dir</span><span class="o">/</span><span class="s2">&quot;tabular&quot;</span>
+<span class="n">_pynucastro_suzuki_dir</span> <span class="o">=</span> <span class="n">_pynucastro_tabular_dir</span><span class="o">/</span><span class="s2">&quot;suzuki&quot;</span>
+<span class="n">_pynucastro_langanke_dir</span> <span class="o">=</span> <span class="n">_pynucastro_tabular_dir</span><span class="o">/</span><span class="s2">&quot;langanke&quot;</span>
+<span class="n">_dirs</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">_pynucastro_dir</span><span class="p">,</span> <span class="n">_pynucastro_rates_dir</span><span class="p">,</span> <span class="n">_pynucastro_tabular_dir</span><span class="p">,</span>
+    <span class="n">_pynucastro_suzuki_dir</span><span class="p">,</span> <span class="n">_pynucastro_langanke_dir</span>
+<span class="p">]</span>
 
 
 <div class="viewcode-block" id="get_rates_dir">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.get_rates_dir">[docs]</a>
-<span class="k">def</span> <span class="nf">get_rates_dir</span><span class="p">():</span>
+<span class="k">def</span> <span class="nf">get_rates_dir</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
     <span class="k">return</span> <span class="n">_pynucastro_rates_dir</span></div>
 
 
 
 <div class="viewcode-block" id="get_tabular_dir">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.get_tabular_dir">[docs]</a>
-<span class="k">def</span> <span class="nf">get_tabular_dir</span><span class="p">():</span>
+<span class="k">def</span> <span class="nf">get_tabular_dir</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
     <span class="k">return</span> <span class="n">_pynucastro_tabular_dir</span></div>
 
 
@@ -477,7 +481,7 @@ document.write(`
 
 <div class="viewcode-block" id="load_rate">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.load_rate">[docs]</a>
-<span class="k">def</span> <span class="nf">load_rate</span><span class="p">(</span><span class="n">rfile</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">load_rate</span><span class="p">(</span><span class="n">rfile</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Try to load a rate of any type.</span>
 
 <span class="sd">    :raises: :class:`.RateFileError`, :class:`.UnsupportedNucleus`</span>
@@ -493,35 +497,17 @@ document.write(`
 
 
 
-<span class="k">def</span> <span class="nf">_find_rate_file</span><span class="p">(</span><span class="n">ratename</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_find_rate_file</span><span class="p">(</span><span class="n">ratename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;locate the Reaclib or tabular rate or library file given its name.  Return</span>
 <span class="sd">    None if the file cannot be located, otherwise return its path.&quot;&quot;&quot;</span>
 
-    <span class="c1"># check to see if the rate file is in the working dir or</span>
-    <span class="c1"># is already the full path</span>
-    <span class="n">x</span> <span class="o">=</span> <span class="n">ratename</span>
-    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="c1"># check to see if the rate file is in the working dir,</span>
+    <span class="c1"># is already the full path, or is in _dirs</span>
 
-    <span class="c1"># check to see if the rate file is in pynucastro/library</span>
-    <span class="n">x</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_pynucastro_rates_dir</span><span class="p">,</span> <span class="n">ratename</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-
-    <span class="c1"># check to see if the rate file is in pynucastro/library/tabular</span>
-    <span class="n">x</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_pynucastro_tabular_dir</span><span class="p">,</span> <span class="n">ratename</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-
-    <span class="c1"># check to see if the rate file is in pynucastro/library/tabular/suzuki</span>
-    <span class="n">x</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_pynucastro_suzuki_dir</span><span class="p">,</span> <span class="n">ratename</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-
-    <span class="c1"># check to see if the rate file is in pynucastro/library/tabular/langanke</span>
-    <span class="n">x</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_pynucastro_langanke_dir</span><span class="p">,</span> <span class="n">ratename</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="o">*</span><span class="n">_dirs</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">ratename</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
+            <span class="k">return</span> <span class="n">x</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
 
     <span class="c1"># notify user we can&#39;t find the file</span>
     <span class="k">raise</span> <span class="n">RateFileError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;File </span><span class="si">{</span><span class="n">ratename</span><span class="si">!r}</span><span class="s1"> not found in the working directory, </span><span class="si">{</span><span class="n">_pynucastro_rates_dir</span><span class="si">}</span><span class="s1">, or </span><span class="si">{</span><span class="n">_pynucastro_tabular_dir</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
@@ -555,7 +541,7 @@ document.write(`
 <span class="sd">    :var lnT9:  log(T9)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; return the Tfactors object.  Here, T is temperature in Kelvin &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">T9</span> <span class="o">=</span> <span class="n">T</span><span class="o">/</span><span class="mf">1.e9</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">T9i</span> <span class="o">=</span> <span class="mf">1.0</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">T9</span>
@@ -565,7 +551,7 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">lnT9</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">T9</span><span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">array</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">array</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;return t factors as array in order of lambda function&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">T9i</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">T913i</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">T913</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">T9</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">T953</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">lnT9</span><span class="p">])</span></div>
 
@@ -585,7 +571,7 @@ document.write(`
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">labelprops</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">labelprops</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;here a is iterable (e.g., list or numpy array), storing the</span>
 <span class="sd">           coefficients, a0, ..., a6</span>
 
@@ -599,7 +585,7 @@ document.write(`
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_update_label_properties</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">_update_label_properties</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_update_label_properties</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; Set label and flags indicating Set is resonant,</span>
 <span class="sd">            weak, or reverse. &quot;&quot;&quot;</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
@@ -610,7 +596,7 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">weak</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;w&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reverse</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;v&#39;</span>
 
-    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; Determine whether two SingleSet objects are equal to each other. &quot;&quot;&quot;</span>
         <span class="n">x</span> <span class="o">=</span> <span class="kc">True</span>
 
@@ -1258,9 +1244,10 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">rfile_path</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rfile</span> <span class="o">=</span> <span class="kc">None</span>
 
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rfile</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rfile</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">)):</span>
+            <span class="n">rfile</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">rfile</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">rfile_path</span> <span class="o">=</span> <span class="n">_find_rate_file</span><span class="p">(</span><span class="n">rfile</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">rfile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">rfile</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rfile</span> <span class="o">=</span> <span class="n">rfile</span><span class="o">.</span><span class="n">name</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">chapter</span> <span class="o">=</span> <span class="n">chapter</span>    <span class="c1"># the Reaclib chapter for this reaction</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">original_source</span> <span class="o">=</span> <span class="n">original_source</span>   <span class="c1"># the contents of the original rate file</span>
@@ -1308,10 +1295,10 @@ document.write(`
 
         <span class="bp">self</span><span class="o">.</span><span class="n">tabular</span> <span class="o">=</span> <span class="kc">False</span>
 
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rfile</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rfile</span><span class="p">,</span> <span class="n">Path</span><span class="p">):</span>
             <span class="c1"># read in the file, parse the different sets and store them as</span>
             <span class="c1"># SingleSet objects in sets[]</span>
-            <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rfile_path</span><span class="p">)</span>
+            <span class="n">f</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rfile_path</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rfile</span><span class="p">,</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">):</span>
             <span class="c1"># Set f to the io.StringIO object</span>
             <span class="n">f</span> <span class="o">=</span> <span class="n">rfile</span>
@@ -1544,73 +1531,33 @@ document.write(`
 
                 <span class="c1"># what&#39;s left are the nuclei -- their interpretation</span>
                 <span class="c1"># depends on the chapter</span>
-                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">chapter</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                    <span class="c1"># e1 -&gt; e2</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Nucleus</span><span class="o">.</span><span class="n">from_cache</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">products</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Nucleus</span><span class="o">.</span><span class="n">from_cache</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
 
-                <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">chapter</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-                    <span class="c1"># e1 -&gt; e2 + e3</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Nucleus</span><span class="o">.</span><span class="n">from_cache</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">products</span> <span class="o">+=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="o">.</span><span class="n">from_cache</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">Nucleus</span><span class="o">.</span><span class="n">from_cache</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">2</span><span class="p">])]</span>
+                <span class="n">chapter_dict</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="mi">1</span><span class="p">:</span> <span class="p">((</span><span class="mi">1</span><span class="p">,),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,)),</span>  <span class="c1"># e1 -&gt; e2</span>
+                    <span class="mi">2</span><span class="p">:</span> <span class="p">((</span><span class="mi">1</span><span class="p">,),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)),</span>  <span class="c1"># e1 -&gt; e2 + e3</span>
+                    <span class="mi">3</span><span class="p">:</span> <span class="p">((</span><span class="mi">1</span><span class="p">,),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)),</span>  <span class="c1"># e1 -&gt; e2 + e3 + e4</span>
+                    <span class="mi">4</span><span class="p">:</span> <span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,)),</span>  <span class="c1"># e1 + e2 -&gt; e3</span>
+                    <span class="mi">5</span><span class="p">:</span> <span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)),</span>  <span class="c1"># e1 + e2 -&gt; e3 + e4</span>
+                    <span class="mi">6</span><span class="p">:</span> <span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">)),</span>  <span class="c1"># e1 + e2 -&gt; e3 + e4 + e5</span>
+                    <span class="mi">7</span><span class="p">:</span> <span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">)),</span>  <span class="c1"># e1 + e2 -&gt; e3 + e4 + e5 + e6</span>
+                    <span class="mi">8</span><span class="p">:</span> <span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,)),</span>  <span class="c1"># e1 + e2 + e3 -&gt; e4</span>
+                    <span class="mi">9</span><span class="p">:</span> <span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">)),</span>  <span class="c1"># e1 + e2 + e3 -&gt; e4 + e5</span>
+                    <span class="mi">10</span><span class="p">:</span> <span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">)),</span>  <span class="c1"># e1 + e2 + e3 + e4 -&gt; e5 + e6</span>
+                    <span class="mi">11</span><span class="p">:</span> <span class="p">((</span><span class="mi">1</span><span class="p">,),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>  <span class="c1"># e1 -&gt; e2 + e3 + e4 + e5</span>
+                <span class="p">}</span>
 
-                <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">chapter</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
-                    <span class="c1"># e1 -&gt; e2 + e3 + e4</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Nucleus</span><span class="o">.</span><span class="n">from_cache</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">products</span> <span class="o">+=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="o">.</span><span class="n">from_cache</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">Nucleus</span><span class="o">.</span><span class="n">from_cache</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span>
-                                      <span class="n">Nucleus</span><span class="o">.</span><span class="n">from_cache</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">3</span><span class="p">])]</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">r</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="n">chapter_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">chapter</span><span class="p">]</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span> <span class="o">+=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="o">.</span><span class="n">from_cache</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">r</span><span class="p">]</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">products</span> <span class="o">+=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="o">.</span><span class="n">from_cache</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">p</span><span class="p">]</span>
 
-                <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">chapter</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
-                    <span class="c1"># e1 + e2 -&gt; e3</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span> <span class="o">+=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="o">.</span><span class="n">from_cache</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">Nucleus</span><span class="o">.</span><span class="n">from_cache</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">1</span><span class="p">])]</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">products</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Nucleus</span><span class="o">.</span><span class="n">from_cache</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
-
-                <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">chapter</span> <span class="o">==</span> <span class="mi">5</span><span class="p">:</span>
-                    <span class="c1"># e1 + e2 -&gt; e3 + e4</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span> <span class="o">+=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="o">.</span><span class="n">from_cache</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">Nucleus</span><span class="o">.</span><span class="n">from_cache</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">1</span><span class="p">])]</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">products</span> <span class="o">+=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="o">.</span><span class="n">from_cache</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span> <span class="n">Nucleus</span><span class="o">.</span><span class="n">from_cache</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">3</span><span class="p">])]</span>
-
-                <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">chapter</span> <span class="o">==</span> <span class="mi">6</span><span class="p">:</span>
-                    <span class="c1"># e1 + e2 -&gt; e3 + e4 + e5</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span> <span class="o">+=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="o">.</span><span class="n">from_cache</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">Nucleus</span><span class="o">.</span><span class="n">from_cache</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">1</span><span class="p">])]</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">products</span> <span class="o">+=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="o">.</span><span class="n">from_cache</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span> <span class="n">Nucleus</span><span class="o">.</span><span class="n">from_cache</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">3</span><span class="p">]),</span>
-                                      <span class="n">Nucleus</span><span class="o">.</span><span class="n">from_cache</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">4</span><span class="p">])]</span>
-
-                <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">chapter</span> <span class="o">==</span> <span class="mi">7</span><span class="p">:</span>
-                    <span class="c1"># e1 + e2 -&gt; e3 + e4 + e5 + e6</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span> <span class="o">+=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="o">.</span><span class="n">from_cache</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">Nucleus</span><span class="o">.</span><span class="n">from_cache</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">1</span><span class="p">])]</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">products</span> <span class="o">+=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="o">.</span><span class="n">from_cache</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span> <span class="n">Nucleus</span><span class="o">.</span><span class="n">from_cache</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">3</span><span class="p">]),</span>
-                                      <span class="n">Nucleus</span><span class="o">.</span><span class="n">from_cache</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">4</span><span class="p">]),</span> <span class="n">Nucleus</span><span class="o">.</span><span class="n">from_cache</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">5</span><span class="p">])]</span>
-
-                <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">chapter</span> <span class="o">==</span> <span class="mi">8</span><span class="p">:</span>
-                    <span class="c1"># e1 + e2 + e3 -&gt; e4</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span> <span class="o">+=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="o">.</span><span class="n">from_cache</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">Nucleus</span><span class="o">.</span><span class="n">from_cache</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
-                                       <span class="n">Nucleus</span><span class="o">.</span><span class="n">from_cache</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">2</span><span class="p">])]</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">products</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Nucleus</span><span class="o">.</span><span class="n">from_cache</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">3</span><span class="p">]))</span>
                     <span class="c1"># support historical format, where chapter 8 also handles what are</span>
                     <span class="c1"># now chapter 9 rates</span>
-                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="o">==</span> <span class="mi">5</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">chapter</span> <span class="o">==</span> <span class="mi">8</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="o">==</span> <span class="mi">5</span><span class="p">:</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">products</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Nucleus</span><span class="o">.</span><span class="n">from_cache</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">4</span><span class="p">]))</span>
 
-                <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">chapter</span> <span class="o">==</span> <span class="mi">9</span><span class="p">:</span>
-                    <span class="c1"># e1 + e2 + e3 -&gt; e4 + e5</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span> <span class="o">+=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="o">.</span><span class="n">from_cache</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">Nucleus</span><span class="o">.</span><span class="n">from_cache</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
-                                       <span class="n">Nucleus</span><span class="o">.</span><span class="n">from_cache</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">2</span><span class="p">])]</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">products</span> <span class="o">+=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="o">.</span><span class="n">from_cache</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">3</span><span class="p">]),</span> <span class="n">Nucleus</span><span class="o">.</span><span class="n">from_cache</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">4</span><span class="p">])]</span>
-
-                <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">chapter</span> <span class="o">==</span> <span class="mi">10</span><span class="p">:</span>
-                    <span class="c1"># e1 + e2 + e3 + e4 -&gt; e5 + e6</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span> <span class="o">+=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="o">.</span><span class="n">from_cache</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">Nucleus</span><span class="o">.</span><span class="n">from_cache</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
-                                       <span class="n">Nucleus</span><span class="o">.</span><span class="n">from_cache</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span> <span class="n">Nucleus</span><span class="o">.</span><span class="n">from_cache</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">3</span><span class="p">])]</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">products</span> <span class="o">+=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="o">.</span><span class="n">from_cache</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">4</span><span class="p">]),</span> <span class="n">Nucleus</span><span class="o">.</span><span class="n">from_cache</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">5</span><span class="p">])]</span>
-
-                <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">chapter</span> <span class="o">==</span> <span class="mi">11</span><span class="p">:</span>
-                    <span class="c1"># e1 -&gt; e2 + e3 + e4 + e5</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Nucleus</span><span class="o">.</span><span class="n">from_cache</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">products</span> <span class="o">+=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="o">.</span><span class="n">from_cache</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">Nucleus</span><span class="o">.</span><span class="n">from_cache</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span>
-                                      <span class="n">Nucleus</span><span class="o">.</span><span class="n">from_cache</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">3</span><span class="p">]),</span> <span class="n">Nucleus</span><span class="o">.</span><span class="n">from_cache</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">4</span><span class="p">])]</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="n">RateFileError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Chapter could not be identified in </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">original_source</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">RateFileError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Chapter </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">chapter</span><span class="si">}</span><span class="s1"> could not be identified in </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">original_source</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">exc</span>
 
                 <span class="n">first</span> <span class="o">=</span> <span class="mi">0</span>
 
@@ -1627,7 +1574,7 @@ document.write(`
 
 <div class="viewcode-block" id="ReacLibRate.write_to_file">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.ReacLibRate.write_to_file">[docs]</a>
-    <span class="k">def</span> <span class="nf">write_to_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">write_to_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; Given a file object, write rate data to the file. &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">original_source</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -1642,7 +1589,7 @@ document.write(`
 
 <div class="viewcode-block" id="ReacLibRate.get_rate_id">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.ReacLibRate.get_rate_id">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_rate_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_rate_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; Get an identifying string for this rate.</span>
 <span class="sd">        Don&#39;t include resonance state since we combine resonant and</span>
 <span class="sd">        non-resonant versions of reactions. &quot;&quot;&quot;</span>
@@ -1954,9 +1901,10 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">rfile_path</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rfile</span> <span class="o">=</span> <span class="kc">None</span>
 
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rfile</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rfile</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">)):</span>
+            <span class="n">rfile</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">rfile</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">rfile_path</span> <span class="o">=</span> <span class="n">_find_rate_file</span><span class="p">(</span><span class="n">rfile</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">rfile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">rfile</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rfile</span> <span class="o">=</span> <span class="n">rfile</span><span class="o">.</span><span class="n">name</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">fname</span> <span class="o">=</span> <span class="kc">None</span>
 
@@ -1966,10 +1914,10 @@ document.write(`
         <span class="c1"># we should initialize this somehow</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">weak_type</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
 
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rfile</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rfile</span><span class="p">,</span> <span class="n">Path</span><span class="p">):</span>
             <span class="c1"># read in the file, parse the different sets and store them as</span>
             <span class="c1"># SingleSet objects in sets[]</span>
-            <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rfile_path</span><span class="p">)</span>
+            <span class="n">f</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rfile_path</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rfile</span><span class="p">,</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">):</span>
             <span class="c1"># Set f to the io.StringIO object</span>
             <span class="n">f</span> <span class="o">=</span> <span class="n">rfile</span>
@@ -2123,7 +2071,7 @@ document.write(`
         <span class="c1"># find .dat file and read it</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">table_path</span> <span class="o">=</span> <span class="n">_find_rate_file</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table_file</span><span class="p">)</span>
         <span class="n">t_data2d</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">tabular_file</span><span class="p">:</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">table_path</span><span class="o">.</span><span class="n">open</span><span class="p">()</span> <span class="k">as</span> <span class="n">tabular_file</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tabular_file</span><span class="p">):</span>
                 <span class="c1"># skip header lines</span>
                 <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">table_header_lines</span><span class="p">:</span>

@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.python_network &#8212; pynucastro 2.4.0.post2+g3a4cf8be documentation</title>
+    <title>pynucastro.networks.python_network &#8212; pynucastro 2.4.0.post3+gca1c580d documentation</title>
   
   
   
@@ -37,8 +37,8 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=37fea9e5"></script>
-    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../_static/documentation_options.js?v=b4677dee"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../_static/copybutton.js?v=f281be69"></script>
@@ -402,10 +402,10 @@ document.write(`
 <span></span><span class="sd">&quot;&quot;&quot;Support modules to write a pure python reaction network ODE</span>
 <span class="sd">source&quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">shutil</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 
 <span class="kn">from</span> <span class="nn">pynucastro.constants</span> <span class="kn">import</span> <span class="n">constants</span>
 <span class="kn">from</span> <span class="nn">pynucastro.networks.rate_collection</span> <span class="kn">import</span> <span class="n">RateCollection</span>
@@ -578,7 +578,7 @@ document.write(`
         <span class="k">return</span> <span class="n">ostr</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_write_network</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outfile</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_write_network</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outfile</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This is the actual RHS for the system of ODEs that</span>
 <span class="sd">        this network describes.</span>
@@ -587,7 +587,8 @@ document.write(`
         <span class="k">if</span> <span class="n">outfile</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">of</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">of</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">outfile</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
+            <span class="n">outfile</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">outfile</span><span class="p">)</span>
+            <span class="n">of</span> <span class="o">=</span> <span class="n">outfile</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;w&quot;</span><span class="p">)</span>
 
         <span class="n">indent</span> <span class="o">=</span> <span class="mi">4</span><span class="o">*</span><span class="s2">&quot; &quot;</span>
 
@@ -772,21 +773,21 @@ document.write(`
         <span class="c1"># Copy any tables in the network to the current directory</span>
         <span class="c1"># if the table file cannot be found, print a warning and continue.</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">odir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">outfile</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+            <span class="n">odir</span> <span class="o">=</span> <span class="n">outfile</span><span class="o">.</span><span class="n">parent</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
             <span class="n">odir</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="k">for</span> <span class="n">tr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabular_rates</span><span class="p">:</span>
-            <span class="n">tdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">tr</span><span class="o">.</span><span class="n">rfile_path</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">tdir</span> <span class="o">!=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">():</span>
-                <span class="n">tdat_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tdir</span><span class="p">,</span> <span class="n">tr</span><span class="o">.</span><span class="n">table_file</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">tdat_file</span><span class="p">):</span>
-                    <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">tdat_file</span><span class="p">,</span> <span class="n">odir</span> <span class="ow">or</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">())</span>
+            <span class="n">tdir</span> <span class="o">=</span> <span class="n">tr</span><span class="o">.</span><span class="n">rfile_path</span><span class="o">.</span><span class="n">parent</span>
+            <span class="k">if</span> <span class="n">tdir</span> <span class="o">!=</span> <span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">():</span>
+                <span class="n">tdat_file</span> <span class="o">=</span> <span class="n">tdir</span><span class="o">/</span><span class="n">tr</span><span class="o">.</span><span class="n">table_file</span>
+                <span class="k">if</span> <span class="n">tdat_file</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
+                    <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">tdat_file</span><span class="p">,</span> <span class="n">odir</span> <span class="ow">or</span> <span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">())</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="ne">UserWarning</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Table data file </span><span class="si">{</span><span class="n">tr</span><span class="o">.</span><span class="n">table_file</span><span class="si">}</span><span class="s1"> not found.&#39;</span><span class="p">))</span>
-                <span class="n">rtoki_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tdir</span><span class="p">,</span> <span class="n">tr</span><span class="o">.</span><span class="n">rfile</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">rtoki_file</span><span class="p">):</span>
-                    <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">rtoki_file</span><span class="p">,</span> <span class="n">odir</span> <span class="ow">or</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">())</span>
+                <span class="n">rtoki_file</span> <span class="o">=</span> <span class="n">tdir</span><span class="o">/</span><span class="n">tr</span><span class="o">.</span><span class="n">rfile</span>
+                <span class="k">if</span> <span class="n">rtoki_file</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
+                    <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">rtoki_file</span><span class="p">,</span> <span class="n">odir</span> <span class="ow">or</span> <span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">())</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="ne">UserWarning</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Table metadata file </span><span class="si">{</span><span class="n">tr</span><span class="o">.</span><span class="n">rfile</span><span class="si">}</span><span class="s1"> not found.&#39;</span><span class="p">))</span></div>
 

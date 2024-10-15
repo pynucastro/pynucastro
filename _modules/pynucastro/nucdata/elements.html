@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.nucdata.elements &#8212; pynucastro 2.4.0.post2+g3a4cf8be documentation</title>
+    <title>pynucastro.nucdata.elements &#8212; pynucastro 2.4.0.post3+gca1c580d documentation</title>
   
   
   
@@ -37,8 +37,8 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=37fea9e5"></script>
-    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../_static/documentation_options.js?v=b4677dee"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../_static/copybutton.js?v=f281be69"></script>
@@ -402,7 +402,7 @@ document.write(`
 <div class="viewcode-block" id="Element">
 <a class="viewcode-back" href="../../../pynucastro.nucdata.html#pynucastro.nucdata.elements.Element">[docs]</a>
 <span></span><span class="k">class</span> <span class="nc">Element</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">abbreviation</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">Z</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">abbreviation</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">Z</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">abbreviation</span> <span class="o">=</span> <span class="n">abbreviation</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">Z</span> <span class="o">=</span> <span class="n">Z</span></div>
@@ -541,7 +541,7 @@ document.write(`
 <div class="viewcode-block" id="PeriodicTable.lookup_abbreviation">
 <a class="viewcode-back" href="../../../pynucastro.nucdata.html#pynucastro.nucdata.elements.PeriodicTable.lookup_abbreviation">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">lookup_abbreviation</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">abbrev</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">lookup_abbreviation</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">abbrev</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Element</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="n">abbrev</span><span class="o">.</span><span class="n">lower</span><span class="p">()]</span>
         <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
@@ -551,7 +551,7 @@ document.write(`
 <div class="viewcode-block" id="PeriodicTable.lookup_Z">
 <a class="viewcode-back" href="../../../pynucastro.nucdata.html#pynucastro.nucdata.elements.PeriodicTable.lookup_Z">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">lookup_Z</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">Z</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">lookup_Z</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">Z</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Element</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
             <span class="k">if</span> <span class="n">element</span><span class="o">.</span><span class="n">Z</span> <span class="o">==</span> <span class="n">Z</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">element</span>
