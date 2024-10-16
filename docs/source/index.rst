@@ -85,11 +85,13 @@ codes.
 
 .. toctree::
    :maxdepth: 1
-   :caption: Writing and Integrating Networks
+   :caption: Exporting Networks
    :hidden:
 
    networks
-   cxx-networks
+   python-network
+   simple-cxx-network
+   amrex-astro-cxx-networks
 
 .. toctree::
    :maxdepth: 1
@@ -103,6 +105,7 @@ codes.
    :caption: Examples in Nuclear Astrophysics
    :hidden:
 
+   examples/binding-energy.ipynb
    examples/pp-cno.ipynb
    examples/hot-CNO-breakout-example.ipynb
    examples/triple_alpha_eval.ipynb

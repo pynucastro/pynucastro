@@ -1,4 +1,4 @@
-import os
+from pathlib import Path
 
 import numpy as np
 import pytest
@@ -59,8 +59,8 @@ class TestNSETable:
         # this creates a file called `nse.tbl`, which we want to compare
         # to the stored benchmark
 
-        base_path = os.path.relpath(os.path.dirname(__file__))
-        ref_path = os.path.join(base_path, "_nse_table")
+        base_path = Path(__file__).parent.relative_to(Path.cwd())
+        ref_path = base_path/"_nse_table"
 
         with open("nse.tbl") as new_table, open(f"{ref_path}/nse.tbl") as ref_table:
 

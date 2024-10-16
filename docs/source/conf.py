@@ -15,13 +15,13 @@
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
-# documentation root, use os.path.abspath to make it absolute, like shown here.
+# documentation root, use pathlib.Path.resolve to make it absolute, like shown here.
 #
-import os
 import sys
+from pathlib import Path
 from importlib.metadata import version as importlib_version
 
-sys.path.insert(0, os.path.abspath('..'))
+sys.path.insert(0, Path.cwd().parent)
 
 
 # -- General configuration ------------------------------------------------
@@ -50,6 +50,14 @@ extensions = ['sphinx.ext.autodoc',
 # bibtex
 bibtex_bibfiles = ['refs.bib']
 bibtex_reference_style = 'author_year'
+
+linkcheck_ignore = [r"https://doi.org",
+                    r"https://link.aps.org"]
+
+linkcheck_retries = 3
+linkcheck_timeout = 100
+linkcheck_allow_unauthorized = True
+
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
