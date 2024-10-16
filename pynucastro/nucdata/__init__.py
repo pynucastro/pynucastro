@@ -3,12 +3,12 @@ particular, the binding energies)
 
 """
 
-#__all__ = [binding_nuclide, binding_table, elements, partition_function]
+#__all__ = [elements, partition_function]
 
-from .binding_table import BindingTable
 from .elements import Element, PeriodicTable, UnidentifiedElement
 from .mass_table import MassTable
-from .nucleus import Nucleus, UnsupportedNucleus, get_nuclei_in_range
+from .nucleus import (Nucleus, UnsupportedNucleus, get_all_nuclei,
+                      get_nuclei_in_range)
 from .partition_function import (PartitionFunction,
                                  PartitionFunctionCollection,
                                  PartitionFunctionTable)

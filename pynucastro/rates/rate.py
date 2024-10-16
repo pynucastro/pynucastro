@@ -4,10 +4,10 @@ Classes and methods to interface with files storing rate data.
 
 import io
 import math
-import os
 import warnings
 from collections import Counter
 from enum import Enum
+from pathlib import Path
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -46,18 +46,22 @@ except ImportError:
 from pynucastro.constants import constants
 from pynucastro.nucdata import Nucleus, UnsupportedNucleus
 
-_pynucastro_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-_pynucastro_rates_dir = os.path.join(_pynucastro_dir, 'library')
-_pynucastro_tabular_dir = os.path.join(_pynucastro_rates_dir, 'tabular')
-_pynucastro_suzuki_dir = os.path.join(_pynucastro_tabular_dir, 'suzuki')
-_pynucastro_langanke_dir = os.path.join(_pynucastro_tabular_dir, 'langanke')
+_pynucastro_dir = Path(__file__).parents[1]
+_pynucastro_rates_dir = _pynucastro_dir/"library"
+_pynucastro_tabular_dir = _pynucastro_rates_dir/"tabular"
+_pynucastro_suzuki_dir = _pynucastro_tabular_dir/"suzuki"
+_pynucastro_langanke_dir = _pynucastro_tabular_dir/"langanke"
+_dirs = [
+    _pynucastro_dir, _pynucastro_rates_dir, _pynucastro_tabular_dir,
+    _pynucastro_suzuki_dir, _pynucastro_langanke_dir
+]
 
 
-def get_rates_dir():
+def get_rates_dir() -> Path:
     return _pynucastro_rates_dir
 
 
-def get_tabular_dir():
+def get_tabular_dir() -> Path:
     return _pynucastro_tabular_dir
 
 
@@ -65,7 +69,7 @@ class RateFileError(Exception):
     """An error occurred while trying to read a Rate from a file."""
 
 
-def load_rate(rfile=None):
+def load_rate(rfile: str = None):
     """Try to load a rate of any type.
 
     :raises: :class:`.RateFileError`, :class:`.UnsupportedNucleus`
@@ -80,35 +84,17 @@ def load_rate(rfile=None):
     return rate
 
 
-def _find_rate_file(ratename):
+def _find_rate_file(ratename: str | Path) -> Path:
     """locate the Reaclib or tabular rate or library file given its name.  Return
     None if the file cannot be located, otherwise return its path."""
 
-    # check to see if the rate file is in the working dir or
-    # is already the full path
-    x = ratename
-    if os.path.isfile(x):
-        return os.path.realpath(x)
+    # check to see if the rate file is in the working dir,
+    # is already the full path, or is in _dirs
 
-    # check to see if the rate file is in pynucastro/library
-    x = os.path.join(_pynucastro_rates_dir, ratename)
-    if os.path.isfile(x):
-        return os.path.realpath(x)
-
-    # check to see if the rate file is in pynucastro/library/tabular
-    x = os.path.join(_pynucastro_tabular_dir, ratename)
-    if os.path.isfile(x):
-        return os.path.realpath(x)
-
-    # check to see if the rate file is in pynucastro/library/tabular/suzuki
-    x = os.path.join(_pynucastro_suzuki_dir, ratename)
-    if os.path.isfile(x):
-        return os.path.realpath(x)
-
-    # check to see if the rate file is in pynucastro/library/tabular/langanke
-    x = os.path.join(_pynucastro_langanke_dir, ratename)
-    if os.path.isfile(x):
-        return os.path.realpath(x)
+    for path in ("", *_dirs):
+        x = Path(path, ratename).resolve()
+        if x.is_file():
+            return x.resolve()
 
     # notify user we can't find the file
     raise RateFileError(f'File {ratename!r} not found in the working directory, {_pynucastro_rates_dir}, or {_pynucastro_tabular_dir}')
@@ -140,7 +126,7 @@ class Tfactors:
     :var lnT9:  log(T9)
     """
 
-    def __init__(self, T):
+    def __init__(self, T: float) -> None:
         """ return the Tfactors object.  Here, T is temperature in Kelvin """
         self.T9 = T/1.e9
         self.T9i = 1.0/self.T9
@@ -150,7 +136,7 @@ class Tfactors:
         self.lnT9 = np.log(self.T9)
 
     @property
-    def array(self):
+    def array(self) -> np.ndarray:
         """return t factors as array in order of lambda function"""
         return np.array([1, self.T9i, self.T913i, self.T913, self.T9, self.T953, self.lnT9])
 
@@ -167,7 +153,7 @@ class SingleSet:
 
     """
 
-    def __init__(self, a, labelprops):
+    def __init__(self, a, labelprops) -> None:
         """here a is iterable (e.g., list or numpy array), storing the
            coefficients, a0, ..., a6
 
@@ -181,7 +167,7 @@ class SingleSet:
 
         self._update_label_properties()
 
-    def _update_label_properties(self):
+    def _update_label_properties(self) -> None:
         """ Set label and flags indicating Set is resonant,
             weak, or reverse. """
         assert isinstance(self.labelprops, str)
@@ -192,7 +178,7 @@ class SingleSet:
         self.weak = self.labelprops[4] == 'w'
         self.reverse = self.labelprops[5] == 'v'
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         """ Determine whether two SingleSet objects are equal to each other. """
         x = True
 
@@ -208,13 +194,13 @@ class SingleSet:
     def f(self):
         """ return a function for rate(tf) where tf is a Tfactors
         object """
-        return lambda tf: np.exp(self.a[0] +
-                                 self.a[1]*tf.T9i +
-                                 self.a[2]*tf.T913i +
-                                 self.a[3]*tf.T913 +
-                                 self.a[4]*tf.T9 +
-                                 self.a[5]*tf.T953 +
-                                 self.a[6]*tf.lnT9)
+        return lambda tf: float(np.exp(self.a[0] +
+                                       self.a[1]*tf.T9i +
+                                       self.a[2]*tf.T913i +
+                                       self.a[3]*tf.T913 +
+                                       self.a[4]*tf.T9 +
+                                       self.a[5]*tf.T953 +
+                                       self.a[6]*tf.lnT9))
 
     def dfdT(self):
         """ return a function for this dratedT(tf), where tf is a
@@ -410,15 +396,13 @@ class Rate:
     def _set_q(self):
         """set the Q value of the reaction (in MeV)"""
 
-        # from the binding energy of the nuclei, Q = -B_reactants + B_products
-        # but note that nucbind is the binding energy *per* nucleon, so we need
-        # to multiply by the number of nucleons
+        # from the masses of the nuclei, Q = M_products - M_reactants
 
         self.Q = 0
         for n in self.reactants:
-            self.Q += -n.A * n.nucbind
+            self.Q += n.mass
         for n in self.products:
-            self.Q += n.A * n.nucbind
+            self.Q += -n.mass
 
     def _set_print_representation(self):
 
@@ -794,9 +778,10 @@ class ReacLibRate(Rate):
         self.rfile_path = None
         self.rfile = None
 
-        if isinstance(rfile, str):
+        if isinstance(rfile, (str, Path)):
+            rfile = Path(rfile)
             self.rfile_path = _find_rate_file(rfile)
-            self.rfile = os.path.basename(rfile)
+            self.rfile = rfile.name
 
         self.chapter = chapter    # the Reaclib chapter for this reaction
         self.original_source = original_source   # the contents of the original rate file
@@ -844,10 +829,10 @@ class ReacLibRate(Rate):
 
         self.tabular = False
 
-        if isinstance(rfile, str):
+        if isinstance(rfile, Path):
             # read in the file, parse the different sets and store them as
             # SingleSet objects in sets[]
-            f = open(self.rfile_path)
+            f = self.rfile_path.open()
         elif isinstance(rfile, io.StringIO):
             # Set f to the io.StringIO object
             f = rfile
@@ -1077,73 +1062,33 @@ class ReacLibRate(Rate):
 
                 # what's left are the nuclei -- their interpretation
                 # depends on the chapter
-                if self.chapter == 1:
-                    # e1 -> e2
-                    self.reactants.append(Nucleus.from_cache(f[0]))
-                    self.products.append(Nucleus.from_cache(f[1]))
 
-                elif self.chapter == 2:
-                    # e1 -> e2 + e3
-                    self.reactants.append(Nucleus.from_cache(f[0]))
-                    self.products += [Nucleus.from_cache(f[1]), Nucleus.from_cache(f[2])]
+                chapter_dict = {
+                    1: ((1,), (2,)),  # e1 -> e2
+                    2: ((1,), (2, 3)),  # e1 -> e2 + e3
+                    3: ((1,), (2, 3, 4)),  # e1 -> e2 + e3 + e4
+                    4: ((1, 2), (3,)),  # e1 + e2 -> e3
+                    5: ((1, 2), (3, 4)),  # e1 + e2 -> e3 + e4
+                    6: ((1, 2), (3, 4, 5)),  # e1 + e2 -> e3 + e4 + e5
+                    7: ((1, 2), (3, 4, 5, 6)),  # e1 + e2 -> e3 + e4 + e5 + e6
+                    8: ((1, 2, 3), (4,)),  # e1 + e2 + e3 -> e4
+                    9: ((1, 2, 3), (4, 5)),  # e1 + e2 + e3 -> e4 + e5
+                    10: ((1, 2, 3, 4), (5, 6)),  # e1 + e2 + e3 + e4 -> e5 + e6
+                    11: ((1,), (2, 3, 4, 5))  # e1 -> e2 + e3 + e4 + e5
+                }
 
-                elif self.chapter == 3:
-                    # e1 -> e2 + e3 + e4
-                    self.reactants.append(Nucleus.from_cache(f[0]))
-                    self.products += [Nucleus.from_cache(f[1]), Nucleus.from_cache(f[2]),
-                                      Nucleus.from_cache(f[3])]
+                try:
+                    r, p = chapter_dict[self.chapter]
+                    self.reactants += [Nucleus.from_cache(f[i-1]) for i in r]
+                    self.products += [Nucleus.from_cache(f[j-1]) for j in p]
 
-                elif self.chapter == 4:
-                    # e1 + e2 -> e3
-                    self.reactants += [Nucleus.from_cache(f[0]), Nucleus.from_cache(f[1])]
-                    self.products.append(Nucleus.from_cache(f[2]))
-
-                elif self.chapter == 5:
-                    # e1 + e2 -> e3 + e4
-                    self.reactants += [Nucleus.from_cache(f[0]), Nucleus.from_cache(f[1])]
-                    self.products += [Nucleus.from_cache(f[2]), Nucleus.from_cache(f[3])]
-
-                elif self.chapter == 6:
-                    # e1 + e2 -> e3 + e4 + e5
-                    self.reactants += [Nucleus.from_cache(f[0]), Nucleus.from_cache(f[1])]
-                    self.products += [Nucleus.from_cache(f[2]), Nucleus.from_cache(f[3]),
-                                      Nucleus.from_cache(f[4])]
-
-                elif self.chapter == 7:
-                    # e1 + e2 -> e3 + e4 + e5 + e6
-                    self.reactants += [Nucleus.from_cache(f[0]), Nucleus.from_cache(f[1])]
-                    self.products += [Nucleus.from_cache(f[2]), Nucleus.from_cache(f[3]),
-                                      Nucleus.from_cache(f[4]), Nucleus.from_cache(f[5])]
-
-                elif self.chapter == 8:
-                    # e1 + e2 + e3 -> e4
-                    self.reactants += [Nucleus.from_cache(f[0]), Nucleus.from_cache(f[1]),
-                                       Nucleus.from_cache(f[2])]
-                    self.products.append(Nucleus.from_cache(f[3]))
                     # support historical format, where chapter 8 also handles what are
                     # now chapter 9 rates
-                    if len(f) == 5:
+                    if self.chapter == 8 and len(f) == 5:
                         self.products.append(Nucleus.from_cache(f[4]))
 
-                elif self.chapter == 9:
-                    # e1 + e2 + e3 -> e4 + e5
-                    self.reactants += [Nucleus.from_cache(f[0]), Nucleus.from_cache(f[1]),
-                                       Nucleus.from_cache(f[2])]
-                    self.products += [Nucleus.from_cache(f[3]), Nucleus.from_cache(f[4])]
-
-                elif self.chapter == 10:
-                    # e1 + e2 + e3 + e4 -> e5 + e6
-                    self.reactants += [Nucleus.from_cache(f[0]), Nucleus.from_cache(f[1]),
-                                       Nucleus.from_cache(f[2]), Nucleus.from_cache(f[3])]
-                    self.products += [Nucleus.from_cache(f[4]), Nucleus.from_cache(f[5])]
-
-                elif self.chapter == 11:
-                    # e1 -> e2 + e3 + e4 + e5
-                    self.reactants.append(Nucleus.from_cache(f[0]))
-                    self.products += [Nucleus.from_cache(f[1]), Nucleus.from_cache(f[2]),
-                                      Nucleus.from_cache(f[3]), Nucleus.from_cache(f[4])]
-                else:
-                    raise RateFileError(f'Chapter could not be identified in {self.original_source}')
+                except KeyError as exc:
+                    raise RateFileError(f'Chapter {self.chapter} could not be identified in {self.original_source}') from exc
 
                 first = 0
 
@@ -1158,7 +1103,7 @@ class ReacLibRate(Rate):
             self.sets.append(SingleSet(a, labelprops=labelprops))
             self._set_label_properties(labelprops)
 
-    def write_to_file(self, f):
+    def write_to_file(self, f) -> None:
         """ Given a file object, write rate data to the file. """
 
         if self.original_source is None:
@@ -1170,7 +1115,7 @@ class ReacLibRate(Rate):
 
         print(self.original_source, file=f)
 
-    def get_rate_id(self):
+    def get_rate_id(self) -> str:
         """ Get an identifying string for this rate.
         Don't include resonance state since we combine resonant and
         non-resonant versions of reactions. """
@@ -1209,16 +1154,17 @@ class ReacLibRate(Rate):
         fstring += f"    rate_eval.{self.fname} = rate\n\n"
         return fstring
 
-    def function_string_cxx(self, dtype="double", specifiers="inline", leave_open=False):
+    def function_string_cxx(self, dtype="double", specifiers="inline", leave_open=False, extra_args=()):
         """
         Return a string containing C++ function that computes the
         rate
         """
 
+        args = ["const tf_t& tfactors", f"{dtype}& rate", f"{dtype}& drate_dT", *extra_args]
         fstring = ""
         fstring += "template <int do_T_derivatives>\n"
         fstring += f"{specifiers}\n"
-        fstring += f"void rate_{self.cname()}(const tf_t& tfactors, {dtype}& rate, {dtype}& drate_dT) {{\n\n"
+        fstring += f"void rate_{self.cname()}({', '.join(args)}) {{\n\n"
         fstring += f"    // {self.rid}\n\n"
         fstring += "    rate = 0.0;\n"
         fstring += "    drate_dT = 0.0;\n\n"
@@ -1456,9 +1402,10 @@ class TabularRate(Rate):
         self.rfile_path = None
         self.rfile = None
 
-        if isinstance(rfile, str):
+        if isinstance(rfile, (str, Path)):
+            rfile = Path(rfile)
             self.rfile_path = _find_rate_file(rfile)
-            self.rfile = os.path.basename(rfile)
+            self.rfile = rfile.name
 
         self.fname = None
 
@@ -1468,10 +1415,10 @@ class TabularRate(Rate):
         # we should initialize this somehow
         self.weak_type = ""
 
-        if isinstance(rfile, str):
+        if isinstance(rfile, Path):
             # read in the file, parse the different sets and store them as
             # SingleSet objects in sets[]
-            f = open(self.rfile_path)
+            f = self.rfile_path.open()
         elif isinstance(rfile, io.StringIO):
             # Set f to the io.StringIO object
             f = rfile
@@ -1487,6 +1434,15 @@ class TabularRate(Rate):
         self._set_print_representation()
 
         self.get_tabular_rate()
+
+        # store the extrema of the thermodynamics
+        _rhoy = self.tabular_data_table[::self.table_temp_lines, TableIndex.RHOY.value]
+        _temp = self.tabular_data_table[0:self.table_temp_lines, TableIndex.T.value]
+
+        self.table_Tmin = 10.0**(_temp.min())
+        self.table_Tmax = 10.0**(_temp.max())
+        self.table_rhoYmin = 10.0**(_rhoy.min())
+        self.table_rhoYmax = 10.0**(_rhoy.max())
 
         self.interpolator = TableInterpolator(self.table_rhoy_lines, self.table_temp_lines,
                                               self.tabular_data_table)
@@ -1608,7 +1564,7 @@ class TabularRate(Rate):
         # find .dat file and read it
         self.table_path = _find_rate_file(self.table_file)
         t_data2d = []
-        with open(self.table_path) as tabular_file:
+        with self.table_path.open() as tabular_file:
             for i, line in enumerate(tabular_file):
                 # skip header lines
                 if i < self.table_header_lines:
@@ -1637,8 +1593,8 @@ class TabularRate(Rate):
                                           TableIndex.NU.value)
         return 10**r
 
-    def plot(self, Tmin=1.e8, Tmax=1.6e9, rhoYmin=3.9e8, rhoYmax=2.e9, color_field='rate',
-             figsize=(10, 10)):
+    def plot(self, *, Tmin=None, Tmax=None, rhoYmin=None, rhoYmax=None,
+             color_field='rate', figsize=(10, 10)):
         """plot the rate's temperature sensitivity vs temperature
 
         :param float Tmin:    minimum temperature for plot
@@ -1653,6 +1609,15 @@ class TabularRate(Rate):
         """
 
         fig, ax = plt.subplots(figsize=figsize)
+
+        if Tmin is None:
+            Tmin = self.table_Tmin
+        if Tmax is None:
+            Tmax = self.table_Tmax
+        if rhoYmin is None:
+            rhoYmin = self.table_rhoYmin
+        if rhoYmax is None:
+            rhoYmax = self.table_rhoYmax
 
         data = self.tabular_data_table
 
@@ -1684,19 +1649,13 @@ class TabularRate(Rate):
         except ValueError:
             print("Divide by zero encountered in log10\nChange the scale of T or rhoY")
 
-        im = ax.imshow(pivot_table, cmap=cmap)
+        im = ax.imshow(pivot_table, cmap=cmap, origin="lower",
+                       extent=[np.log10(Tmin), np.log10(Tmax), np.log10(rhoYmin), np.log10(rhoYmax)])
         fig.colorbar(im, ax=ax)
 
         ax.set_xlabel(r"$\log(T)$ [K]")
         ax.set_ylabel(r"$\log(\rho Y_e)$ [g/cm$^3$]")
         ax.set_title(fr"{self.pretty_string}" + "\n" + title)
-        ax.set_yticks(range(len(rows)))
-        ylabels = [f"{q:4.2f}" for q in rows]
-        ax.set_yticklabels(ylabels)
-        ax.set_xticks(range(len(cols)))
-        xlabels = [f"{q:4.2f}" for q in cols]
-        ax.set_xticklabels(xlabels, rotation=90, ha="right", rotation_mode="anchor")
-        ax.invert_yaxis()
 
         return fig
 
@@ -1837,7 +1796,7 @@ class DerivedRate(ReacLibRate):
 
         return fstring
 
-    def function_string_cxx(self, dtype="double", specifiers="inline", leave_open=False):
+    def function_string_cxx(self, dtype="double", specifiers="inline", leave_open=False, extra_args=()):
         """
         Return a string containing C++ function that computes the
         rate
@@ -1845,7 +1804,8 @@ class DerivedRate(ReacLibRate):
 
         self._warn_about_missing_pf_tables()
 
-        fstring = super().function_string_cxx(dtype=dtype, specifiers=specifiers, leave_open=True)
+        extra_args = ["[[maybe_unused]] part_fun::pf_cache_t& pf_cache", *extra_args]
+        fstring = super().function_string_cxx(dtype=dtype, specifiers=specifiers, leave_open=True, extra_args=extra_args)
 
         # right now we have rate and drate_dT without the partition function
         # now the partition function corrections
@@ -1858,7 +1818,7 @@ class DerivedRate(ReacLibRate):
 
                 if nuc.partition_function:
                     fstring += f"    // interpolating {nuc} partition function\n"
-                    fstring += f"    get_partition_function({nuc.cindex()}, tfactors, {nuc}_pf, d{nuc}_pf_dT);\n"
+                    fstring += f"    get_partition_function_cached({nuc.cindex()}, tfactors, pf_cache, {nuc}_pf, d{nuc}_pf_dT);\n"
                 else:
                     fstring += f"    // setting {nuc} partition function to 1.0 by default, independent of T\n"
                     fstring += f"    {nuc}_pf = 1.0_rt;\n"
@@ -1951,227 +1911,3 @@ class RatePair:
 
     def __eq__(self, other):
         return self.forward == other.forward and self.reverse == other.reverse
-
-
-class ApproximateRate(ReacLibRate):
-
-    def __init__(self, primary_rate, secondary_rates,
-                 primary_reverse, secondary_reverse, is_reverse=False, approx_type="ap_pg"):
-        """the primary rate has the same reactants and products and the final
-        approximate rate would have.  The secondary rates are ordered such that
-        together they would give the same sequence"""
-
-        self.primary_rate = primary_rate
-        self.secondary_rates = secondary_rates
-
-        self.primary_reverse = primary_reverse
-        self.secondary_reverse = secondary_reverse
-
-        self.is_reverse = is_reverse
-
-        self.approx_type = approx_type
-
-        if self.approx_type == "ap_pg":
-
-            # an ap_pg approximate rate combines A(a,g)B and A(a,p)X(p,g)B into a
-            # single effective rate by assuming proton equilibrium.
-
-            assert len(secondary_rates) == 2
-
-            # make sure that the primary forward rate makes sense
-            # this should be A(a,g)B
-
-            assert Nucleus("he4") in self.primary_rate.reactants and len(self.primary_rate.products) == 1
-
-            # we are going to define the product A and reactant B from this reaction
-
-            self.primary_reactant = max(self.primary_rate.reactants)
-            self.primary_product = max(self.primary_rate.products)
-
-            # the first secondary rate should be A(a,p)X, where X is the
-            # intermediate nucleus
-
-            assert (self.primary_reactant in self.secondary_rates[0].reactants and
-                    Nucleus("he4") in self.secondary_rates[0].reactants and
-                    Nucleus("p") in self.secondary_rates[0].products)
-
-            # the intermediate nucleus is not in our network, so make it
-            # dummy
-
-            self.intermediate_nucleus = max(self.secondary_rates[0].products)
-            #self.intermediate_nucleus.dummy = True
-
-            # now the second secondary rate show be X(p,g)B
-
-            assert (self.intermediate_nucleus in self.secondary_rates[1].reactants and
-                    Nucleus("p") in self.secondary_rates[1].reactants and
-                    self.primary_product in secondary_rates[1].products)
-
-            # now ensure that the reverse rate makes sense
-
-            # the primary reverse rate is B(g,a)A
-
-            assert (self.primary_product in self.primary_reverse.reactants and
-                    self.primary_reactant in self.primary_reverse.products)
-
-            # now the first secondary reverse rate should be B(g,p)X
-
-            assert (self.primary_product in self.secondary_reverse[0].reactants and
-                    self.intermediate_nucleus in secondary_reverse[0].products and
-                    Nucleus("p") in secondary_reverse[0].products)
-
-            # and the second secondary reverse rate should be X(p,a)A
-
-            assert (self.intermediate_nucleus in self.secondary_reverse[1].reactants and
-                    Nucleus("p") in self.secondary_reverse[1].reactants and
-                    self.primary_reactant in self.secondary_reverse[1].products and
-                    Nucleus("he4") in self.secondary_reverse[1].products)
-
-            # now initialize the super class with these reactants and products
-
-            if not self.is_reverse:
-                super().__init__(reactants=[self.primary_reactant, Nucleus("he4")],
-                                 products=[self.primary_product],
-                                 labelprops="approx", chapter=-1)
-            else:
-                super().__init__(reactants=[self.primary_product],
-                                 products=[self.primary_reactant, Nucleus("he4")],
-                                 labelprops="approx", chapter=-1)
-
-        else:
-            raise NotImplementedError(f"approximation type {self.approx_type} not supported")
-
-        # update the Q value
-        self._set_q()
-
-    def get_child_rates(self):
-        """return a list of all of the rates that are used in this approximation"""
-        tlist = [self.primary_rate]
-        tlist += self.secondary_rates
-        tlist += [self.primary_reverse]
-        tlist += self.secondary_reverse
-        return tlist
-
-    def _set_screening(self):
-        # the individual rates are screened -- we don't screen the combination of them
-        pass
-
-    def eval(self, T, rhoY=None):
-        """evaluate the approximate rate"""
-
-        if self.approx_type == "ap_pg":
-            if not self.is_reverse:  # pylint: disable=no-else-return
-                # the approximate forward rate is r_ag + r_ap r_pg / (r_pg + r_pa)
-                r_ag = self.primary_rate.eval(T)
-                r_ap = self.secondary_rates[0].eval(T)
-                r_pg = self.secondary_rates[1].eval(T)
-
-                r_pa = self.secondary_reverse[1].eval(T)
-
-                return r_ag + r_ap * r_pg / (r_pg + r_pa)
-
-            else:
-                # the approximate reverse rate is r_ga + r_pa r_gp / (r_pg + r_pa)
-
-                r_ga = self.primary_reverse.eval(T)
-                r_gp = self.secondary_reverse[0].eval(T)
-                r_pa = self.secondary_reverse[1].eval(T)
-
-                r_pg = self.secondary_rates[1].eval(T)
-
-                return r_ga + r_pa * r_gp / (r_pg + r_pa)
-        raise NotImplementedError(f"approximation type {self.approx_type} not supported")
-
-    def function_string_py(self):
-        """
-        Return a string containing python function that computes the
-        approximate rate
-        """
-
-        if self.approx_type != "ap_pg":
-            raise NotImplementedError("don't know how to work with this approximation")
-
-        string = ""
-        string += "@numba.njit()\n"
-        string += f"def {self.fname}(rate_eval, tf):\n"
-
-        if not self.is_reverse:
-
-            # first we need to get all of the rates that make this up
-            string += f"    r_ag = rate_eval.{self.primary_rate.fname}\n"
-            string += f"    r_ap = rate_eval.{self.secondary_rates[0].fname}\n"
-            string += f"    r_pg = rate_eval.{self.secondary_rates[1].fname}\n"
-            string += f"    r_pa = rate_eval.{self.secondary_reverse[1].fname}\n"
-
-            # now the approximation
-            string += "    rate = r_ag + r_ap * r_pg / (r_pg + r_pa)\n"
-
-        else:
-
-            # first we need to get all of the rates that make this up
-            string += f"    r_ga = rate_eval.{self.primary_reverse.fname}\n"
-            string += f"    r_pa = rate_eval.{self.secondary_reverse[1].fname}\n"
-            string += f"    r_gp = rate_eval.{self.secondary_reverse[0].fname}\n"
-            string += f"    r_pg = rate_eval.{self.secondary_rates[1].fname}\n"
-
-            # now the approximation
-            string += "    rate = r_ga + r_pa * r_gp / (r_pg + r_pa)\n"
-
-        string += f"    rate_eval.{self.fname} = rate\n\n"
-        return string
-
-    def function_string_cxx(self, dtype="double", specifiers="inline", leave_open=False):
-        """
-        Return a string containing C++ function that computes the
-        approximate rate
-        """
-
-        if self.approx_type != "ap_pg":
-            raise NotImplementedError("don't know how to work with this approximation")
-
-        fstring = ""
-        fstring = "template <typename T>\n"
-        fstring += f"{specifiers}\n"
-        fstring += f"void rate_{self.cname()}(const T& rate_eval, {dtype}& rate, {dtype}& drate_dT) {{\n\n"
-
-        if not self.is_reverse:
-
-            # first we need to get all of the rates that make this up
-            fstring += f"    {dtype} r_ag = rate_eval.screened_rates(k_{self.primary_rate.cname()});\n"
-            fstring += f"    {dtype} r_ap = rate_eval.screened_rates(k_{self.secondary_rates[0].cname()});\n"
-            fstring += f"    {dtype} r_pg = rate_eval.screened_rates(k_{self.secondary_rates[1].cname()});\n"
-            fstring += f"    {dtype} r_pa = rate_eval.screened_rates(k_{self.secondary_reverse[1].cname()});\n"
-
-            # now the approximation
-            fstring += f"    {dtype} dd = 1.0_rt / (r_pg + r_pa);\n"
-            fstring += "    rate = r_ag + r_ap * r_pg * dd;\n"
-            fstring += "    if constexpr (std::is_same_v<T, rate_derivs_t>) {\n"
-            fstring += f"        {dtype} drdT_ag = rate_eval.dscreened_rates_dT(k_{self.primary_rate.cname()});\n"
-            fstring += f"        {dtype} drdT_ap = rate_eval.dscreened_rates_dT(k_{self.secondary_rates[0].cname()});\n"
-            fstring += f"        {dtype} drdT_pg = rate_eval.dscreened_rates_dT(k_{self.secondary_rates[1].cname()});\n"
-            fstring += f"        {dtype} drdT_pa = rate_eval.dscreened_rates_dT(k_{self.secondary_reverse[1].cname()});\n"
-            fstring += "        drate_dT = drdT_ag + drdT_ap * r_pg * dd + r_ap * drdT_pg * dd - r_ap * r_pg * dd * dd * (drdT_pg + drdT_pa);\n"
-            fstring += "    }\n"
-        else:
-
-            # first we need to get all of the rates that make this up
-            fstring += f"    {dtype} r_ga = rate_eval.screened_rates(k_{self.primary_reverse.cname()});\n"
-            fstring += f"    {dtype} r_pa = rate_eval.screened_rates(k_{self.secondary_reverse[1].cname()});\n"
-            fstring += f"    {dtype} r_gp = rate_eval.screened_rates(k_{self.secondary_reverse[0].cname()});\n"
-            fstring += f"    {dtype} r_pg = rate_eval.screened_rates(k_{self.secondary_rates[1].cname()});\n"
-
-            # now the approximation
-            fstring += f"    {dtype} dd = 1.0_rt / (r_pg + r_pa);\n"
-            fstring += "    rate = r_ga + r_gp * r_pa * dd;\n"
-            fstring += "    if constexpr (std::is_same_v<T, rate_derivs_t>) {\n"
-            fstring += f"        {dtype} drdT_ga = rate_eval.dscreened_rates_dT(k_{self.primary_reverse.cname()});\n"
-            fstring += f"        {dtype} drdT_pa = rate_eval.dscreened_rates_dT(k_{self.secondary_reverse[1].cname()});\n"
-            fstring += f"        {dtype} drdT_gp = rate_eval.dscreened_rates_dT(k_{self.secondary_reverse[0].cname()});\n"
-            fstring += f"        {dtype} drdT_pg = rate_eval.dscreened_rates_dT(k_{self.secondary_rates[1].cname()});\n"
-            fstring += "        drate_dT = drdT_ga + drdT_gp * r_pa * dd + r_gp * drdT_pa * dd - r_gp * r_pa * dd * dd * (drdT_pg + drdT_pa);\n"
-            fstring += "    }\n"
-
-        if not leave_open:
-            fstring += "}\n\n"
-
-        return fstring

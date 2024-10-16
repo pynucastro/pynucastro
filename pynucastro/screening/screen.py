@@ -15,7 +15,8 @@ else:
         return func
 
 __all__ = ["PlasmaState", "ScreenFactors", "chugunov_2007", "chugunov_2009",
-           "make_plasma_state", "make_screen_factors", "potekhin_1998"]
+           "make_plasma_state", "make_screen_factors", "potekhin_1998",
+           "screen5"]
 
 
 @jitclass()
@@ -26,6 +27,9 @@ class PlasmaState:
 
     :var temp:        temperature in K
     :var dens:        density in g/cm^3
+    :var qlam0z:      TODO: from screen5
+    :var taufac:      TODO: from screen5
+    :var aa:          TODO: from screen5
     :var abar:        average atomic mass
     :var zbar:        average ion charge
     :var z2bar:       average (ion charge)^2
@@ -34,6 +38,9 @@ class PlasmaState:
     """
     temp: float
     dens: float
+    qlam0z: float
+    taufac: float
+    aa: float
     abar: float
     zbar: float
     z2bar: float
@@ -55,6 +62,27 @@ class PlasmaState:
         self.abar = 1 / ytot
         self.zbar = np.sum(Zs * Ys) / ytot
         self.z2bar = np.sum(Zs ** 2 * Ys) / ytot
+
+        # ntot
+        rr = dens * ytot
+
+        # Part version of Eq. 19 in Graboske:1973
+        # pp = sqrt( \tilde{z}*(rho/u_I/T) )
+        pp = np.sqrt(rr/temp*(self.z2bar + self.zbar))
+        self.qlam0z = 1.88e8 / temp * pp
+
+        # Part of Eq.6 in Itoh:1979
+        # 4.248719e3 = (27*pi^2*e^4*m_u/(2*k_B*hbar^2))^(1/3)
+        # the extra (1/3) to make tau -> tau/3
+        co2 = np.cbrt(27*np.pi**2*constants.q_e**4*constants.m_u/(2*constants.k*constants.hbar**2)) / 3
+        self.taufac = co2 / np.cbrt(temp)
+
+        xni = np.cbrt(rr * self.zbar)
+
+        # Part of Eq.4 in Itoh:1979
+        # 2.27493e5 = e^2 / ( (3*m_u/(4pi))^(1/3) *k_B )
+        aa_factor = constants.q_e**2 / (np.cbrt(3*constants.m_u/(4*np.pi)) * constants.k)
+        self.aa = aa_factor / temp * xni
 
         # Average mass and total number density
         mbar = self.abar * constants.m_u
@@ -130,6 +158,10 @@ class ScreenFactors:
     :var z2: atomic number of second nucleus
     :var a1: atomic mass of first nucleus
     :var a2: atomic mass of second nucleus
+    :var zs13: (z1+z2)**(1/3)
+    :var zhat: combination of z1 and z2 raised to the 5/3 power
+    :var zhat2: combination of z1 and z2 raised to the 5/12 power
+    :var lzav: log of effective charge
     :var aznut: combination of a1, z1, a2, z2 raised to 1/3 power
     :var ztilde: effective ion radius factor for a MCP
     """
@@ -137,6 +169,10 @@ class ScreenFactors:
     z2: int
     a1: int
     a2: int
+    zs13: float
+    zhat: float
+    zhat2: float
+    lzav: float
     aznut: float
     ztilde: float
 
@@ -145,6 +181,10 @@ class ScreenFactors:
         self.z2 = z2
         self.a1 = a1
         self.a2 = a2
+        self.zs13 = np.cbrt(z1 + z2)
+        self.zhat = (z1 + z2) ** (5/3) - z1 ** (5/3) - z2 ** (5/3)
+        self.zhat2 = (z1 + z2) ** (5/12) - z1 ** (5/12) - z2 ** (5/12)
+        self.lzav = (5/3) * np.log(z1 * z2 / (z1 + z2))
         self.aznut = np.cbrt(z1 ** 2 * z2 ** 2 * a1 * a2 / (a1 + a2))
         self.ztilde = 0.5 * (np.cbrt(z1) + np.cbrt(z2))
 
@@ -159,6 +199,139 @@ def make_screen_factors(n1, n2):
     n1 = Nucleus.cast(n1)
     n2 = Nucleus.cast(n2)
     return ScreenFactors(n1.Z, n1.A, n2.Z, n2.A)
+
+
+@njit
+def screen5(state: PlasmaState, scn_fac):
+    """Calculates screening factors following the appendix of :cite:t:`Wallace:1982`.
+
+    Based on :cite:t:`graboske:1973` for weak screening. Based on
+    :cite:t:`alastuey:1978` with plasma parameters from :cite:t:`itoh:1979`,
+    for strong screening.
+    """
+    fact = np.cbrt(2)
+    gamefx = 0.3e0  # lower gamma limit for intermediate screening
+    gamefs = 0.8e0  # upper gamma limit for intermediate screening
+    h12_max = 300.e0
+
+    # Get the ion data based on the input index
+    z1 = scn_fac.z1
+    z2 = scn_fac.z2
+
+    # calculate individual screening factors
+    bb = z1 * z2
+    gamp = state.aa
+
+    # In Eq.4 in Itoh:1979, this term is 2*Z_1*Z_2/(Z_1^(1/3) + Z_2^(1/3))
+    # However here we follow Wallace:1982 Eq. A13, which is Z_1*Z_2*(2/(Z_1+Z_2))^(1/3)
+
+    qq = fact * bb / scn_fac.zs13
+
+    # Full Equation of Wallace:1982 Eq. A13
+
+    gamef = qq * gamp
+
+    # Full version of Eq.6 in Itoh:1979 with extra 1/3 factor
+    # the extra 1/3 factor is there for convenience.
+    # tau12 = Eq.6 / 3
+
+    tau12 = state.taufac * scn_fac.aznut
+
+    # alph12 = 3*gamma_ij/tau_ij
+
+    alph12 = gamef / tau12
+
+    # limit alph12 to 1.6 to prevent unphysical behavior.
+    # See Introduction in Alastuey:1978
+
+    # this should really be replaced by a pycnonuclear reaction rate formula
+    if alph12 > 1.6:
+        alph12 = 1.6e0
+
+        # redetermine previous factors if 3*gamma_ij/tau_ij > 1.6
+
+        gamef = 1.6e0 * tau12
+
+        gamp = gamef * scn_fac.zs13/(fact * bb)
+
+    # weak screening regime
+    # Full version of Eq. 19 in Graboske:1973 by considering weak regime
+    # and Wallace:1982 Eq. A14. Here the degeneracy factor is assumed to be 1.
+
+    h12w = bb * state.qlam0z
+
+    h12 = h12w
+
+    # intermediate and strong sceening regime
+
+    if gamef > gamefx:
+
+        # gamma_ij^(1/4)
+        gamp14 = gamp ** 0.25
+
+        # Here we follow Eq. A9 in Wallace:1982
+        # See Eq. 25 Alastuey:1978, Eq. 16 and 17 in Jancovici:1977 for reference
+        cc = (0.896434e0 * gamp * scn_fac.zhat +
+              -3.44740e0 * gamp14 * scn_fac.zhat2 +
+              -0.5551e0 * (np.log(gamp) + scn_fac.lzav) +
+              -2.996e0)
+
+        # (3gamma_ij/tau_ij)^3
+        a3 = alph12 * alph12 * alph12
+
+        # Part of Eq. 28 in Alastuey:1978
+        qq = 0.014e0 + 0.0128e0*alph12
+
+        # Part of Eq. 28 in Alastuey:1978
+        rr = (5.0/32.0) - alph12*qq
+
+        # Part of Eq. 28 in Alastuey:1978
+        ss = tau12*rr
+
+        # Part of Eq. 31 in Alastuey:1978
+        tt = -0.0098e0 + 0.0048e0*alph12
+
+        # Part of Eq. 31 in Alastuey:1978
+        uu = 0.0055e0 + alph12*tt
+
+        # Part of Eq. 31 in Alastuey:1978
+        vv = gamef * alph12 * uu
+
+        # Exponent of Eq. 32 in Alastuey:1978, which uses Eq.28 and Eq.31
+        # Strong screening factor
+        h12 = cc - a3 * (ss + vv)
+
+        # See conclusion and Eq. 34 in Alastuey:1978
+        # This is an extra factor to account for quantum effects
+        rr = 1.0 - 0.0562e0*a3
+
+        # In extreme case, rr is 0.77, see conclusion in Alastuey:1978
+        xlgfac = max(0.77, rr)
+
+        # Include the extra factor that accounts for quantum effects
+        h12 += np.log(xlgfac)
+
+        # If gamma_ij < upper limit of intermediate regime
+        # then it is in the intermediate regime, else strong screening.
+        if gamef <= gamefs:
+            dgamma = 1.0e0/(gamefs - gamefx)
+
+            rr = dgamma*(gamefs - gamef)
+
+            ss = dgamma*(gamef - gamefx)
+
+            # Then the screening factor is a combination
+            # of the strong and weak screening factor.
+            h12 = h12w*rr + h12*ss
+
+        # end of intermediate and strong screening
+
+    # machine limit the output
+    # further limit to avoid the pycnonuclear regime
+    h12 = max(min(h12, h12_max), 0.0)
+    scor = np.exp(h12)
+
+    return scor
 
 
 @njit

@@ -1,10 +1,12 @@
 # pynucastro
 
+[![PyPI Version](https://img.shields.io/pypi/v/pynucastro)](https://pypi.org/project/pynucastro)
+[![Conda Version](https://img.shields.io/conda/vn/conda-forge/pynucastro.svg)](https://anaconda.org/conda-forge/pynucastro)
+
 [![pytest-all](https://github.com/pynucastro/pynucastro/actions/workflows/pytest-all.yml/badge.svg?branch=main)](https://github.com/pynucastro/pynucastro/actions/workflows/pytest-all.yml)
 [![pylint](https://github.com/pynucastro/pynucastro/actions/workflows/pylint.yml/badge.svg?branch=main)](https://github.com/pynucastro/pynucastro/actions/workflows/pylint.yml)
 [![flake8](https://github.com/pynucastro/pynucastro/actions/workflows/flake8.yml/badge.svg?branch=main)](https://github.com/pynucastro/pynucastro/actions/workflows/flake8.yml)
 [![docs build](https://github.com/pynucastro/pynucastro/actions/workflows/docs-test.yml/badge.svg)](https://github.com/pynucastro/pynucastro/actions/workflows/docs-test.yml)
-
 [![Docs](https://github.com/pynucastro/pynucastro/workflows/github%20pages/badge.svg)](http://pynucastro.github.io/pynucastro/)
 
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
@@ -13,6 +15,9 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1202434.svg)](https://doi.org/10.5281/zenodo.1202434)
 
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/pynucastro/pynucastro/main?filepath=examples%2Fpynucastro-examples.ipynb)
+
+
+![logo](logo/logo.png)
 
 pynucastro is a python library for interactively creating and
 exploring nuclear reaction networks.  It provides interfaces to
@@ -111,7 +116,7 @@ the default location python searches for packages.
 
 ### Requirements
 
-This package requires Python 3 (release 3.6 or later) and the following Python packages:
+pynucastro is supported on Python 3.10 or later and the following libraries:
 
 * `numpy`
 
@@ -135,8 +140,8 @@ file, do:
 ```
 pip install -r requirements.txt
 ```
-Is important to stress out that all the dependencies should be 
-installed before `pynucastro`, otherwise the installation should be 
+Is important to stress out that all the dependencies should be
+installed before `pynucastro`, otherwise the installation should be
 repeated.
 
 

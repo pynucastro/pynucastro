@@ -66,6 +66,14 @@ namespace part_fun {
 
     }
 
+    struct pf_cache_t {
+        // Store the coefficient and derivative adjacent in memory, as they're
+        // always accessed at the same time.
+        // The entries will be default-initialized to zero, which is fine since
+        // log10(x) is never zero.
+        amrex::Array2D<amrex::Real, 1, NumSpecTotal, 1, 2, Order::C> data{};
+    };
+
 }
 
 // main interface
@@ -88,6 +96,22 @@ void get_partition_function(const int inuc, [[maybe_unused]] const tf_t& tfactor
 
 }
 
+AMREX_GPU_HOST_DEVICE AMREX_INLINE
+void get_partition_function_cached(const int inuc, const tf_t& tfactors,
+                                   part_fun::pf_cache_t& pf_cache,
+                                   amrex::Real& pf, amrex::Real& dpf_dT) {
+    if (pf_cache.data(inuc, 1) != 0.0_rt) {
+        // present in cache
+        amrex::ignore_unused(tfactors);
+        pf = pf_cache.data(inuc, 1);
+        dpf_dT = pf_cache.data(inuc, 2);
+    } else {
+        get_partition_function(inuc, tfactors, pf, dpf_dT);
+        pf_cache.data(inuc, 1) = pf;
+        pf_cache.data(inuc, 2) = dpf_dT;
+    }
+}
+
 // spins
 
 AMREX_GPU_HOST_DEVICE AMREX_INLINE
@@ -95,7 +119,7 @@ constexpr amrex::Real get_spin_state(const int inuc) {
 
     amrex::Real spin = -1.0;
 
-    switch (inuc) {
+    switch (inuc) {  // NOLINT(bugprone-switch-missing-default-case)
 
     case He4:
     case Mg24:

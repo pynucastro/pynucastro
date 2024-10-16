@@ -734,6 +734,7 @@ def sneut5(rho, T, comp=None, *, abar=None, zbar=None,
 
         zeta = 1.579e5 * zbar * zbar * tempi
 
+        # pylint: disable-next=possibly-used-before-assignment
         c00 = 1.0 / (1.0 + f1 * nu + f2 * nu2 + f3 * nu3)
         dum = zeta * c00
 
@@ -743,6 +744,7 @@ def sneut5(rho, T, comp=None, *, abar=None, zbar=None,
         c00 = a1 * z + a2 * dd00 + a3 * dd01
 
         z = np.exp(c * nu)
+        # pylint: disable-next=possibly-used-before-assignment
         dd00 = b * z * (1.0 + d * dum)
         gum = 1.0 + dd00
 

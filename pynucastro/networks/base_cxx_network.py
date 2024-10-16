@@ -6,18 +6,19 @@ comprised of the rates that are passed in.
 
 
 import itertools
-import os
 import re
 import shutil
 import sys
 import warnings
 from abc import ABC, abstractmethod
+from pathlib import Path
 
 import numpy as np
 import sympy
 
 from pynucastro.networks.rate_collection import RateCollection
 from pynucastro.networks.sympy_network_support import SympyRates
+from pynucastro.rates import DerivedRate
 from pynucastro.screening import get_screening_map
 
 
@@ -65,6 +66,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.ftags['<table_init_meta>'] = self._table_init_meta
         self.ftags['<compute_tabular_rates>'] = self._compute_tabular_rates
         self.ftags['<ydot>'] = self._ydot
+        self.ftags['<ydot_weak>'] = self._ydot_weak
         self.ftags['<enuc_add_energy_rate>'] = self._enuc_add_energy_rate
         self.ftags['<jacnuc>'] = self._jacnuc
         self.ftags['<initial_mass_fractions>'] = self._initial_mass_fractions
@@ -107,15 +109,15 @@ class BaseCxxNetwork(ABC, RateCollection):
 
         # Process template files
         for tfile in self.template_files:
-            tfile_basename = os.path.basename(tfile)
-            outfile = tfile_basename.replace('.template', '')
+            outfile = tfile.name.replace('.template', '')
             if odir is not None:
-                if not os.path.isdir(odir):
+                odir = Path(odir)
+                if not odir.is_dir():
                     try:
-                        os.mkdir(odir)
+                        odir.mkdir()
                     except OSError:
                         sys.exit(f"unable to create directory {odir}")
-                outfile = os.path.normpath(odir + "/" + outfile)
+                outfile = odir/outfile
 
             with open(tfile) as ifile, open(outfile, "w") as of:
                 for l in ifile:
@@ -132,11 +134,11 @@ class BaseCxxNetwork(ABC, RateCollection):
         # Copy any tables in the network to the current directory
         # if the table file cannot be found, print a warning and continue.
         for tr in self.tabular_rates:
-            tdir = os.path.dirname(tr.rfile_path)
-            if tdir != os.getcwd():
-                tdat_file = os.path.join(tdir, tr.table_file)
-                if os.path.isfile(tdat_file):
-                    shutil.copy(tdat_file, odir or os.getcwd())
+            tdir = tr.rfile_path.resolve().parent
+            if tdir != Path.cwd():
+                tdat_file = Path(tdir, tr.table_file)
+                if tdat_file.is_file():
+                    shutil.copy(tdat_file, odir or Path.cwd())
                 else:
                     warnings.warn(UserWarning(f'Table data file {tr.table_file} not found.'))
 
@@ -216,7 +218,7 @@ class BaseCxxNetwork(ABC, RateCollection):
                 # compiler to evaluate the screen factor at compile time.
                 of.write(f'\n{self.indent*(n_indent+1)}static_assert(scn_fac.z1 == {float(scr.n1.Z)}_rt);\n\n')
 
-                of.write(f'\n{self.indent*(n_indent+1)}actual_screen<do_T_derivatives>(pstate, scn_fac, scor, dscor_dt);\n')
+                of.write(f'\n{self.indent*(n_indent+1)}actual_screen(pstate, scn_fac, scor, dscor_dt);\n')
 
                 of.write(f'{self.indent*n_indent}' + '}\n\n')
 
@@ -234,7 +236,7 @@ class BaseCxxNetwork(ABC, RateCollection):
 
                 of.write(f'\n{self.indent*(n_indent+1)}static_assert(scn_fac2.z1 == {float(scr.n1.Z)}_rt);\n\n')
 
-                of.write(f'\n{self.indent*(n_indent+1)}actual_screen<do_T_derivatives>(pstate, scn_fac2, scor2, dscor2_dt);\n')
+                of.write(f'\n{self.indent*(n_indent+1)}actual_screen(pstate, scn_fac2, scor2, dscor2_dt);\n')
 
                 of.write(f'\n{self.indent*n_indent}' + '}\n\n')
 
@@ -356,51 +358,108 @@ class BaseCxxNetwork(ABC, RateCollection):
         # This is a helper function that converts sympy cxxcode to the actual c++ code we use.
         return self.symbol_rates.cxxify(s)
 
+    def _write_ydot_nuc(self, n_indent, of, ydot_nuc):
+        # Helper function to write out ydot of a specific nuclei
+
+        for j, pair in enumerate(ydot_nuc):
+            # pair here is the forward, reverse pair for a single rate as it affects
+            # nucleus n
+
+            if pair.count(None) == 0:
+                num = 2
+            elif pair.count(None) == 1:
+                num = 1
+            else:
+                raise NotImplementedError("a rate pair must contain at least one rate")
+
+            of.write(f"{2*self.indent*n_indent}")
+            if num == 2:
+                of.write("(")
+
+            if pair[0] is not None:
+                sol_value = self._cxxify(sympy.cxxcode(pair[0], precision=15,
+                                                       standard="c++11"))
+
+                of.write(f"{sol_value}")
+
+            if num == 2:
+                of.write(" + ")
+
+            if pair[1] is not None:
+                sol_value = self._cxxify(sympy.cxxcode(pair[1], precision=15,
+                                                       standard="c++11"))
+
+                of.write(f"{sol_value}")
+
+            if num == 2:
+                of.write(")")
+
+            if j == len(ydot_nuc)-1:
+                of.write(";\n\n")
+            else:
+                of.write(" +\n")
+
     def _ydot(self, n_indent, of):
         # Write YDOT
         for n in self.unique_nuclei:
             if self.ydot_out_result[n] is None:
-                of.write(f"{self.indent*n_indent}{self.symbol_rates.name_ydot_nuc}({n.cindex()}) = 0.0;\n\n")
+                of.write(f"{self.indent*n_indent}{self.symbol_rates.name_ydot_nuc}({n.cindex()}) = 0.0_rt;\n\n")
                 continue
 
             of.write(f"{self.indent*n_indent}{self.symbol_rates.name_ydot_nuc}({n.cindex()}) =\n")
-            for j, pair in enumerate(self.ydot_out_result[n]):
-                # pair here is the forward, reverse pair for a single rate as it affects
-                # nucleus n
 
-                if pair.count(None) == 0:
-                    num = 2
-                elif pair.count(None) == 1:
-                    num = 1
-                else:
-                    raise NotImplementedError("a rate pair must contain at least one rate")
+            self._write_ydot_nuc(n_indent, of, self.ydot_out_result[n])
 
-                of.write(f"{2*self.indent*n_indent}")
-                if num == 2:
-                    of.write("(")
+    def _ydot_weak(self, n_indent, of):
+        # Writes ydot for tabular weak reactions only
 
-                if pair[0] is not None:
-                    sol_value = self._cxxify(sympy.cxxcode(pair[0], precision=15,
-                                                                       standard="c++11"))
+        # Get the tabular weak rates first.
+        idnt = self.indent*n_indent
 
-                    of.write(f"{sol_value}")
+        if len(self.tabular_rates) > 0:
+            for r in self.tabular_rates:
 
-                if num == 2:
-                    of.write(" + ")
+                of.write(f'{idnt}tabular_evaluate({r.table_index_name}_meta, {r.table_index_name}_rhoy, {r.table_index_name}_temp, {r.table_index_name}_data,\n')
+                of.write(f'{idnt}                 rhoy, state.T, rate, drate_dt, edot_nu, edot_gamma);\n')
 
-                if pair[1] is not None:
-                    sol_value = self._cxxify(sympy.cxxcode(pair[1], precision=15,
-                                                                       standard="c++11"))
+                of.write(f'{idnt}rate_eval.screened_rates(k_{r.cname()}) = rate;\n')
 
-                    of.write(f"{sol_value}")
+                of.write(f'{idnt}rate_eval.enuc_weak += C::Legacy::n_A * {self.symbol_rates.name_y}({r.reactants[0].cindex()}) * (edot_nu + edot_gamma);\n')
 
-                if num == 2:
-                    of.write(")")
+                of.write('\n')
+            of.write(f'{idnt}auto screened_rates = rate_eval.screened_rates;\n')
+        of.write('\n')
 
-                if j == len(self.ydot_out_result[n])-1:
-                    of.write(";\n\n")
-                else:
-                    of.write(" +\n")
+        # Compose and write ydot weak
+
+        for n in self.unique_nuclei:
+
+            has_weak_rates = any(
+                (rp.forward is not None and rp.forward.tabular) or
+                (rp.reverse is not None and rp.reverse.tabular)
+                for rp in self.nuclei_rate_pairs[n]
+            )
+
+            if not self.nuclei_rate_pairs[n] or not has_weak_rates:
+                of.write(f"{self.indent*n_indent}{self.symbol_rates.name_ydot_nuc}({n.cindex()}) = 0.0_rt;\n\n")
+                continue
+
+            ydot_sym_terms = []
+            for rp in self.nuclei_rate_pairs[n]:
+                fwd = None
+                if rp.forward is not None and rp.forward.tabular:
+                    fwd = self.symbol_rates.ydot_term_symbol(rp.forward, n)
+
+                rvs = None
+                if rp.reverse is not None and rp.reverse.tabular:
+                    rvs = self.symbol_rates.ydot_term_symbol(rp.reverse, n)
+
+                if (fwd, rvs).count(None) < 2:
+                    ydot_sym_terms.append((fwd, rvs))
+
+            of.write(f"{self.indent*n_indent}{self.symbol_rates.name_ydot_nuc}({n.cindex()}) =\n")
+
+            self._write_ydot_nuc(n_indent, of, ydot_sym_terms)
 
     def _enuc_add_energy_rate(self, n_indent, of):
         # Add tabular per-reaction neutrino energy generation rates to the energy generation rate
@@ -458,8 +517,14 @@ class BaseCxxNetwork(ABC, RateCollection):
             of.write(r.function_string_cxx(dtype=self.dtype, specifiers=self.function_specifier))
 
     def _fill_reaclib_rates(self, n_indent, of):
+        if self.derived_rates:
+            of.write(f"{self.indent*n_indent}part_fun::pf_cache_t pf_cache{{}};\n\n")
+
         for r in self.reaclib_rates + self.derived_rates:
-            of.write(f"{self.indent*n_indent}rate_{r.cname()}<do_T_derivatives>(tfactors, rate, drate_dT);\n")
+            if isinstance(r, DerivedRate):
+                of.write(f"{self.indent*n_indent}rate_{r.cname()}<do_T_derivatives>(tfactors, rate, drate_dT, pf_cache);\n")
+            else:
+                of.write(f"{self.indent*n_indent}rate_{r.cname()}<do_T_derivatives>(tfactors, rate, drate_dT);\n")
             of.write(f"{self.indent*n_indent}rate_eval.screened_rates(k_{r.cname()}) = rate;\n")
             of.write(f"{self.indent*n_indent}if constexpr (std::is_same_v<T, rate_derivs_t>) {{\n")
             of.write(f"{self.indent*n_indent}    rate_eval.dscreened_rates_dT(k_{r.cname()}) = drate_dT;\n\n")

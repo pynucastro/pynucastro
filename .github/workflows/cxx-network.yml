@@ -9,7 +9,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Install Python 3.10
+      - name: Install Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
@@ -48,26 +48,26 @@ jobs:
           sudo apt-get update -y -qq
           sudo apt-get -qq -y install curl cmake jq clang g++>=9.3.0
 
-      - name: Regenerate subch_approx network
+      - name: Regenerate subch_simple network
         run: |
-          cd external/Microphysics/networks/subch_approx
-          python subch_approx.py
+          cd external/Microphysics/networks/subch_simple
+          python subch_simple.py
 
-      - name: Compile burn_cell (subch_approx)
+      - name: Compile burn_cell (subch_simple)
         run: |
           cd external/Microphysics/unit_test/burn_cell
           make realclean
-          make NETWORK_DIR=subch_approx -j 4
+          make NETWORK_DIR=subch_simple -j 4
 
-      - name: Run burn_cell (subch_approx)
+      - name: Run burn_cell (subch_simple)
         run: |
           cd external/Microphysics/unit_test/burn_cell
-          ./main3d.gnu.ex inputs_subch_approx > test.out
+          ./main3d.gnu.ex inputs_subch_simple > test.out
 
-      - name: Compare to stored output (subch_approx)
+      - name: Compare to stored output (subch_simple)
         run: |
           cd external/Microphysics/unit_test/burn_cell
-          diff -I "^Initializing AMReX" -I "^AMReX" -I "^reading in reaclib rates" test.out ${GITHUB_WORKSPACE}/.github/workflows/microphysics-benchmarks/subch_approx_unit_test.out
+          diff -I "^Initializing AMReX" -I "^AMReX" -I "^reading in reaclib rates" test.out ${GITHUB_WORKSPACE}/.github/workflows/microphysics-benchmarks/subch_simple_unit_test.out
 
       - name: Regenerate ECSN network
         run: |
@@ -95,18 +95,18 @@ jobs:
           cd external/Microphysics/networks/ase
           python ase.py
 
-      - name: Compile test_ase (NSE_NET, ase)
+      - name: Compile test_nse_net (NSE_NET, ase)
         run: |
-          cd external/Microphysics/unit_test/test_ase
+          cd external/Microphysics/unit_test/test_nse_net
           make realclean
           make -j 4
 
-      - name: Run test_ase (NSE_NET, ase)
+      - name: Run test_nse_net (NSE_NET, ase)
         run: |
-          cd external/Microphysics/unit_test/test_ase
+          cd external/Microphysics/unit_test/test_nse_net
           ./main3d.gnu.ex inputs_ase > test.out
 
       - name: Compare to stored output (NSE_NET, ase)
         run: |
-          cd external/Microphysics/unit_test/test_ase
-          diff -I "^Initializing AMReX" -I "^AMReX" -I "^reading in reaclib rates" test.out ${GITHUB_WORKSPACE}/.github/workflows/microphysics-benchmarks/ase_nse_net_unit_test.out
+          cd external/Microphysics/unit_test/test_nse_net
+          diff -I "^Initializing AMReX" -I "^AMReX" -I "^reading in reaclib rates" test.out ${GITHUB_WORKSPACE}/.github/workflows/microphysics-benchmarks/nse_net_unit_test.out
