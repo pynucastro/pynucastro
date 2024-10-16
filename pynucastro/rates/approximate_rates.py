@@ -5,10 +5,14 @@ from pynucastro.rates.rate import Rate
 class ApproximateRate(Rate):
 
     def __init__(self, primary_rate, secondary_rates,
-                 primary_reverse, secondary_reverse, is_reverse=False, approx_type="ap_pg"):
-        """the primary rate has the same reactants and products and the final
-        approximate rate would have.  The secondary rates are ordered such that
-        together they would give the same sequence"""
+                 primary_reverse, secondary_reverse, *,
+                 is_reverse=False, approx_type="ap_pg"):
+        """the primary rate has the same reactants and products and
+        the final approximate rate would have.  It can be None.  The
+        secondary rates are ordered such that together they would give
+        the same sequence
+
+        """
 
         self.primary_rate = primary_rate
         self.secondary_rates = secondary_rates
@@ -95,9 +99,12 @@ class ApproximateRate(Rate):
 
     def get_child_rates(self):
         """return a list of all of the rates that are used in this approximation"""
-        tlist = [self.primary_rate]
+        tlist = []
+        if self.primary_rate:
+            tlist += [self.primary_rate]
         tlist += self.secondary_rates
-        tlist += [self.primary_reverse]
+        if self.primary_reverse:
+            tlist += [self.primary_reverse]
         tlist += self.secondary_reverse
         return tlist
 
