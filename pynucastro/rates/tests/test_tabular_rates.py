@@ -428,8 +428,6 @@ class TestTabularRates:
             'Si28__Al28': 9.226341626912568e-15,
         }
 
-        ye_su = comp_su.eval_ye()
-
         for r in rc_su.get_rates():
             nu_loss = r.get_nu_loss(T, rho=rho, comp=comp_su)
             if r.fname in stored_nu_loss_su:
