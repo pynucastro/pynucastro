@@ -109,6 +109,7 @@ codes.
    examples/pp-cno.ipynb
    examples/hot-CNO-breakout-example.ipynb
    examples/triple_alpha_eval.ipynb
+   examples/supernova-lightcurve.ipynb
 
 .. toctree::
    :maxdepth: 1
