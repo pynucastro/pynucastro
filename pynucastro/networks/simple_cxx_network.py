@@ -1,8 +1,7 @@
 """A simple C++ reaction network for integrating into other C++ codes"""
 
 
-import glob
-import os
+from pathlib import Path
 
 from pynucastro.networks.base_cxx_network import BaseCxxNetwork
 
@@ -19,12 +18,9 @@ class SimpleCxxNetwork(BaseCxxNetwork):
 
     def _get_template_files(self):
 
-        template_pattern = os.path.join(self.pynucastro_dir,
-                                        'templates',
-                                        'simple-cxx-network',
-                                        '*.template')
+        path = self.pynucastro_dir/"templates/simple-cxx-network"
 
-        return glob.glob(template_pattern)
+        return path.glob("*.template")
 
     def _write_network(self, odir=None):
         """
@@ -38,9 +34,9 @@ class SimpleCxxNetwork(BaseCxxNetwork):
         super()._write_network(odir=odir)
 
         if odir is None:
-            odir = os.getcwd()
+            odir = Path.cwd()
         # create a header file with the nuclei properties
-        with open(os.path.join(odir, "network_properties.H"), "w") as of:
+        with open(Path(odir, "network_properties.H"), "w") as of:
             of.write("#ifndef NETWORK_PROPERTIES_H\n")
             of.write("#define NETWORK_PROPERTIES_H\n")
             of.write("#include <vector>\n")
