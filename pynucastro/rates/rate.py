@@ -4,10 +4,10 @@ Classes and methods to interface with files storing rate data.
 
 import io
 import math
-import os
 import warnings
 from collections import Counter
 from enum import Enum
+from pathlib import Path
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -46,18 +46,22 @@ except ImportError:
 from pynucastro.constants import constants
 from pynucastro.nucdata import Nucleus, UnsupportedNucleus
 
-_pynucastro_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-_pynucastro_rates_dir = os.path.join(_pynucastro_dir, 'library')
-_pynucastro_tabular_dir = os.path.join(_pynucastro_rates_dir, 'tabular')
-_pynucastro_suzuki_dir = os.path.join(_pynucastro_tabular_dir, 'suzuki')
-_pynucastro_langanke_dir = os.path.join(_pynucastro_tabular_dir, 'langanke')
+_pynucastro_dir = Path(__file__).parents[1]
+_pynucastro_rates_dir = _pynucastro_dir/"library"
+_pynucastro_tabular_dir = _pynucastro_rates_dir/"tabular"
+_pynucastro_suzuki_dir = _pynucastro_tabular_dir/"suzuki"
+_pynucastro_langanke_dir = _pynucastro_tabular_dir/"langanke"
+_dirs = [
+    _pynucastro_dir, _pynucastro_rates_dir, _pynucastro_tabular_dir,
+    _pynucastro_suzuki_dir, _pynucastro_langanke_dir
+]
 
 
-def get_rates_dir():
+def get_rates_dir() -> Path:
     return _pynucastro_rates_dir
 
 
-def get_tabular_dir():
+def get_tabular_dir() -> Path:
     return _pynucastro_tabular_dir
 
 
@@ -65,7 +69,7 @@ class RateFileError(Exception):
     """An error occurred while trying to read a Rate from a file."""
 
 
-def load_rate(rfile=None):
+def load_rate(rfile: str = None):
     """Try to load a rate of any type.
 
     :raises: :class:`.RateFileError`, :class:`.UnsupportedNucleus`
@@ -80,35 +84,17 @@ def load_rate(rfile=None):
     return rate
 
 
-def _find_rate_file(ratename):
+def _find_rate_file(ratename: str | Path) -> Path:
     """locate the Reaclib or tabular rate or library file given its name.  Return
     None if the file cannot be located, otherwise return its path."""
 
-    # check to see if the rate file is in the working dir or
-    # is already the full path
-    x = ratename
-    if os.path.isfile(x):
-        return os.path.realpath(x)
+    # check to see if the rate file is in the working dir,
+    # is already the full path, or is in _dirs
 
-    # check to see if the rate file is in pynucastro/library
-    x = os.path.join(_pynucastro_rates_dir, ratename)
-    if os.path.isfile(x):
-        return os.path.realpath(x)
-
-    # check to see if the rate file is in pynucastro/library/tabular
-    x = os.path.join(_pynucastro_tabular_dir, ratename)
-    if os.path.isfile(x):
-        return os.path.realpath(x)
-
-    # check to see if the rate file is in pynucastro/library/tabular/suzuki
-    x = os.path.join(_pynucastro_suzuki_dir, ratename)
-    if os.path.isfile(x):
-        return os.path.realpath(x)
-
-    # check to see if the rate file is in pynucastro/library/tabular/langanke
-    x = os.path.join(_pynucastro_langanke_dir, ratename)
-    if os.path.isfile(x):
-        return os.path.realpath(x)
+    for path in ("", *_dirs):
+        x = Path(path, ratename).resolve()
+        if x.is_file():
+            return x.resolve()
 
     # notify user we can't find the file
     raise RateFileError(f'File {ratename!r} not found in the working directory, {_pynucastro_rates_dir}, or {_pynucastro_tabular_dir}')
@@ -140,7 +126,7 @@ class Tfactors:
     :var lnT9:  log(T9)
     """
 
-    def __init__(self, T):
+    def __init__(self, T: float) -> None:
         """ return the Tfactors object.  Here, T is temperature in Kelvin """
         self.T9 = T/1.e9
         self.T9i = 1.0/self.T9
@@ -150,7 +136,7 @@ class Tfactors:
         self.lnT9 = np.log(self.T9)
 
     @property
-    def array(self):
+    def array(self) -> np.ndarray:
         """return t factors as array in order of lambda function"""
         return np.array([1, self.T9i, self.T913i, self.T913, self.T9, self.T953, self.lnT9])
 
@@ -167,7 +153,7 @@ class SingleSet:
 
     """
 
-    def __init__(self, a, labelprops):
+    def __init__(self, a, labelprops) -> None:
         """here a is iterable (e.g., list or numpy array), storing the
            coefficients, a0, ..., a6
 
@@ -181,7 +167,7 @@ class SingleSet:
 
         self._update_label_properties()
 
-    def _update_label_properties(self):
+    def _update_label_properties(self) -> None:
         """ Set label and flags indicating Set is resonant,
             weak, or reverse. """
         assert isinstance(self.labelprops, str)
@@ -192,7 +178,7 @@ class SingleSet:
         self.weak = self.labelprops[4] == 'w'
         self.reverse = self.labelprops[5] == 'v'
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         """ Determine whether two SingleSet objects are equal to each other. """
         x = True
 
@@ -792,9 +778,10 @@ class ReacLibRate(Rate):
         self.rfile_path = None
         self.rfile = None
 
-        if isinstance(rfile, str):
+        if isinstance(rfile, (str, Path)):
+            rfile = Path(rfile)
             self.rfile_path = _find_rate_file(rfile)
-            self.rfile = os.path.basename(rfile)
+            self.rfile = rfile.name
 
         self.chapter = chapter    # the Reaclib chapter for this reaction
         self.original_source = original_source   # the contents of the original rate file
@@ -842,10 +829,10 @@ class ReacLibRate(Rate):
 
         self.tabular = False
 
-        if isinstance(rfile, str):
+        if isinstance(rfile, Path):
             # read in the file, parse the different sets and store them as
             # SingleSet objects in sets[]
-            f = open(self.rfile_path)
+            f = self.rfile_path.open()
         elif isinstance(rfile, io.StringIO):
             # Set f to the io.StringIO object
             f = rfile
@@ -1075,73 +1062,33 @@ class ReacLibRate(Rate):
 
                 # what's left are the nuclei -- their interpretation
                 # depends on the chapter
-                if self.chapter == 1:
-                    # e1 -> e2
-                    self.reactants.append(Nucleus.from_cache(f[0]))
-                    self.products.append(Nucleus.from_cache(f[1]))
 
-                elif self.chapter == 2:
-                    # e1 -> e2 + e3
-                    self.reactants.append(Nucleus.from_cache(f[0]))
-                    self.products += [Nucleus.from_cache(f[1]), Nucleus.from_cache(f[2])]
+                chapter_dict = {
+                    1: ((1,), (2,)),  # e1 -> e2
+                    2: ((1,), (2, 3)),  # e1 -> e2 + e3
+                    3: ((1,), (2, 3, 4)),  # e1 -> e2 + e3 + e4
+                    4: ((1, 2), (3,)),  # e1 + e2 -> e3
+                    5: ((1, 2), (3, 4)),  # e1 + e2 -> e3 + e4
+                    6: ((1, 2), (3, 4, 5)),  # e1 + e2 -> e3 + e4 + e5
+                    7: ((1, 2), (3, 4, 5, 6)),  # e1 + e2 -> e3 + e4 + e5 + e6
+                    8: ((1, 2, 3), (4,)),  # e1 + e2 + e3 -> e4
+                    9: ((1, 2, 3), (4, 5)),  # e1 + e2 + e3 -> e4 + e5
+                    10: ((1, 2, 3, 4), (5, 6)),  # e1 + e2 + e3 + e4 -> e5 + e6
+                    11: ((1,), (2, 3, 4, 5))  # e1 -> e2 + e3 + e4 + e5
+                }
 
-                elif self.chapter == 3:
-                    # e1 -> e2 + e3 + e4
-                    self.reactants.append(Nucleus.from_cache(f[0]))
-                    self.products += [Nucleus.from_cache(f[1]), Nucleus.from_cache(f[2]),
-                                      Nucleus.from_cache(f[3])]
+                try:
+                    r, p = chapter_dict[self.chapter]
+                    self.reactants += [Nucleus.from_cache(f[i-1]) for i in r]
+                    self.products += [Nucleus.from_cache(f[j-1]) for j in p]
 
-                elif self.chapter == 4:
-                    # e1 + e2 -> e3
-                    self.reactants += [Nucleus.from_cache(f[0]), Nucleus.from_cache(f[1])]
-                    self.products.append(Nucleus.from_cache(f[2]))
-
-                elif self.chapter == 5:
-                    # e1 + e2 -> e3 + e4
-                    self.reactants += [Nucleus.from_cache(f[0]), Nucleus.from_cache(f[1])]
-                    self.products += [Nucleus.from_cache(f[2]), Nucleus.from_cache(f[3])]
-
-                elif self.chapter == 6:
-                    # e1 + e2 -> e3 + e4 + e5
-                    self.reactants += [Nucleus.from_cache(f[0]), Nucleus.from_cache(f[1])]
-                    self.products += [Nucleus.from_cache(f[2]), Nucleus.from_cache(f[3]),
-                                      Nucleus.from_cache(f[4])]
-
-                elif self.chapter == 7:
-                    # e1 + e2 -> e3 + e4 + e5 + e6
-                    self.reactants += [Nucleus.from_cache(f[0]), Nucleus.from_cache(f[1])]
-                    self.products += [Nucleus.from_cache(f[2]), Nucleus.from_cache(f[3]),
-                                      Nucleus.from_cache(f[4]), Nucleus.from_cache(f[5])]
-
-                elif self.chapter == 8:
-                    # e1 + e2 + e3 -> e4
-                    self.reactants += [Nucleus.from_cache(f[0]), Nucleus.from_cache(f[1]),
-                                       Nucleus.from_cache(f[2])]
-                    self.products.append(Nucleus.from_cache(f[3]))
                     # support historical format, where chapter 8 also handles what are
                     # now chapter 9 rates
-                    if len(f) == 5:
+                    if self.chapter == 8 and len(f) == 5:
                         self.products.append(Nucleus.from_cache(f[4]))
 
-                elif self.chapter == 9:
-                    # e1 + e2 + e3 -> e4 + e5
-                    self.reactants += [Nucleus.from_cache(f[0]), Nucleus.from_cache(f[1]),
-                                       Nucleus.from_cache(f[2])]
-                    self.products += [Nucleus.from_cache(f[3]), Nucleus.from_cache(f[4])]
-
-                elif self.chapter == 10:
-                    # e1 + e2 + e3 + e4 -> e5 + e6
-                    self.reactants += [Nucleus.from_cache(f[0]), Nucleus.from_cache(f[1]),
-                                       Nucleus.from_cache(f[2]), Nucleus.from_cache(f[3])]
-                    self.products += [Nucleus.from_cache(f[4]), Nucleus.from_cache(f[5])]
-
-                elif self.chapter == 11:
-                    # e1 -> e2 + e3 + e4 + e5
-                    self.reactants.append(Nucleus.from_cache(f[0]))
-                    self.products += [Nucleus.from_cache(f[1]), Nucleus.from_cache(f[2]),
-                                      Nucleus.from_cache(f[3]), Nucleus.from_cache(f[4])]
-                else:
-                    raise RateFileError(f'Chapter could not be identified in {self.original_source}')
+                except KeyError as exc:
+                    raise RateFileError(f'Chapter {self.chapter} could not be identified in {self.original_source}') from exc
 
                 first = 0
 
@@ -1156,7 +1103,7 @@ class ReacLibRate(Rate):
             self.sets.append(SingleSet(a, labelprops=labelprops))
             self._set_label_properties(labelprops)
 
-    def write_to_file(self, f):
+    def write_to_file(self, f) -> None:
         """ Given a file object, write rate data to the file. """
 
         if self.original_source is None:
@@ -1168,7 +1115,7 @@ class ReacLibRate(Rate):
 
         print(self.original_source, file=f)
 
-    def get_rate_id(self):
+    def get_rate_id(self) -> str:
         """ Get an identifying string for this rate.
         Don't include resonance state since we combine resonant and
         non-resonant versions of reactions. """
@@ -1455,9 +1402,10 @@ class TabularRate(Rate):
         self.rfile_path = None
         self.rfile = None
 
-        if isinstance(rfile, str):
+        if isinstance(rfile, (str, Path)):
+            rfile = Path(rfile)
             self.rfile_path = _find_rate_file(rfile)
-            self.rfile = os.path.basename(rfile)
+            self.rfile = rfile.name
 
         self.fname = None
 
@@ -1467,10 +1415,10 @@ class TabularRate(Rate):
         # we should initialize this somehow
         self.weak_type = ""
 
-        if isinstance(rfile, str):
+        if isinstance(rfile, Path):
             # read in the file, parse the different sets and store them as
             # SingleSet objects in sets[]
-            f = open(self.rfile_path)
+            f = self.rfile_path.open()
         elif isinstance(rfile, io.StringIO):
             # Set f to the io.StringIO object
             f = rfile
@@ -1616,7 +1564,7 @@ class TabularRate(Rate):
         # find .dat file and read it
         self.table_path = _find_rate_file(self.table_file)
         t_data2d = []
-        with open(self.table_path) as tabular_file:
+        with self.table_path.open() as tabular_file:
             for i, line in enumerate(tabular_file):
                 # skip header lines
                 if i < self.table_header_lines:
