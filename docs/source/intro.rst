@@ -37,7 +37,7 @@ The main classes are:
     how the weak rate (electron captures and beta-decays) are stored.
     Interpolation is used to find the rate at any thermodynamic state.
 
-  * :func:`ApproximateRate <pynucastro.rates.rate.ApproximateRate>`:
+  * :func:`ApproximateRate <pynucastro.rates.approximate_rates.ApproximateRate>`:
     An approximate rate groups together :math:`A(\alpha, \gamma)B` and
     :math:`A(\alpha,p)X(p,\gamma)B` into a single effective rate, assuming
     equilibrium of :math:`p` and :math:`X`.

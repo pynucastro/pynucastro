@@ -8,7 +8,7 @@ from pathlib import Path
 
 from pynucastro.constants import constants
 from pynucastro.networks.rate_collection import RateCollection
-from pynucastro.rates.rate import ApproximateRate
+from pynucastro.rates import ApproximateRate
 from pynucastro.screening import get_screening_map
 
 
