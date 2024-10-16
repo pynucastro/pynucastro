@@ -1214,6 +1214,8 @@ class ReacLibRate(Rate):
 
     def eval_deriv(self, T, *, rho=None, comp=None):
         """ evauate the derivative of reaction rate with respect to T """
+        _ = rho  # unused by this subclass
+        _ = comp  # unused by this subclass
 
         tf = Tfactors(T)
         drdT = 0.0
