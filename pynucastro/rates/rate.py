@@ -597,9 +597,11 @@ class Rate:
         # and convert all other "__" to single "_"
         return self.fname.replace("__", "_to_", 1).replace("__", "_")
 
-    def get_rate_id(self):
+    def get_rate_id(self) -> str:
         """ Get an identifying string for this rate."""
         return f'{self.rid} <{self.label.strip()}>'
+
+    id = property(get_rate_id)
 
     def heaviest(self):
         """
