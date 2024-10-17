@@ -120,10 +120,9 @@ class Library:
 
     def __init__(self, libfile: str = None, rates: list[Rate] = None) -> None:
         self._library_file = libfile
-        self._rates = None
+        self._rates = {}
 
         if rates:
-            self._rates = {}
             if isinstance(rates, Rate):
                 rates = [rates]
             if isinstance(rates, dict):
@@ -177,8 +176,6 @@ class Library:
 
     def add_rates(self, ratelist: list[Rate]) -> None:
         """ Add to the rate dictionary from the supplied list of Rate objects."""
-        if self._rates is None:
-            self._rates = {}
 
         for rate in ratelist:
             if rate in self.rates:
@@ -261,8 +258,6 @@ class Library:
 
     def _read_library_file(self) -> None:
         # loop through library file, read lines
-        if self._rates is None:
-            self._rates = {}
 
         with self._library_file.open("r") as flib:
             for line in flib:
