@@ -49,17 +49,18 @@ def _rate_name_to_nuc(name: str) -> tuple[list[Nucleus], list[Nucleus]]:
         if nuc == "":
             continue
         try:
-            reactants.append(nuc)
+            n = Nucleus(nuc)
+            reactants.append(n)
         except (ValueError, AssertionError):
             # we need to interpret some things specially
             if nuc.lower() in ["e", "nu", "_", "g", "gamma"]:
                 # first electrons and neutrins, and nothing
                 continue
             if nuc.lower() == "pp":
-                reactants += ["p", "p"]
+                reactants += [Nucleus("p"), Nucleus("p")]
                 continue
             if nuc.lower() == "aa":
-                reactants += ["he4", "he4"]
+                reactants += [Nucleus("he4"), Nucleus("he4")]
                 continue
             print(f"couldn't deal with {nuc}")
             raise
@@ -70,17 +71,18 @@ def _rate_name_to_nuc(name: str) -> tuple[list[Nucleus], list[Nucleus]]:
         if nuc == "":
             continue
         try:
-            products.append(nuc)
+            n = Nucleus(nuc)
+            products.append(n)
         except (ValueError, AssertionError):
             # we need to interpret some things specially
             if nuc.lower() in ["e", "nu", "_", "g", "gamma"]:
                 # first electrons and neutrinos, gammas, and nothing
                 continue
             if nuc.lower() == "pp":
-                products += ["p", "p"]
+                products += [Nucleus("p"), Nucleus("p")]
                 continue
             if nuc.lower() == "aa":
-                products += ["he4", "he4"]
+                products += [Nucleus("he4"), Nucleus("he4")]
                 continue
             print(f"couldn't deal with {nuc}")
             raise
