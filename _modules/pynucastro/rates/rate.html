@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.rate &#8212; pynucastro 2.4.0.post7+g4f4a38ad documentation</title>
+    <title>pynucastro.rates.rate &#8212; pynucastro 2.4.0.post8+g9a2c4aee documentation</title>
   
   
   
@@ -37,7 +37,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=d25148b0"></script>
+    <script src="../../../_static/documentation_options.js?v=4d00db4b"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -752,7 +752,9 @@ document.write(`
 <span class="sd">    this and extend to their particular format.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reactants</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">products</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">Q</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">weak_type</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;generic&quot;</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reactants</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">products</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">Q</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">weak_type</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;generic&quot;</span><span class="p">,</span>
+                 <span class="n">use_identical_particle_factor</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;a generic Rate class that acts as a base class for specific</span>
 <span class="sd">        sources.  Here we only specify the reactants and products and Q value&quot;&quot;&quot;</span>
 
@@ -779,6 +781,13 @@ document.write(`
             <span class="bp">self</span><span class="o">.</span><span class="n">Q</span> <span class="o">=</span> <span class="n">Q</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">weak_type</span> <span class="o">=</span> <span class="n">weak_type</span>
+
+        <span class="c1"># the identical particle factor scales the rate to prevent</span>
+        <span class="c1"># double counting for a rate that has the same nucleus</span>
+        <span class="c1"># multiple times as a reactant.  Usually we want this</span>
+        <span class="c1"># behavior, but for approximate rates, sometimes we need to</span>
+        <span class="c1"># disable it.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">use_identical_particle_factor</span> <span class="o">=</span> <span class="n">use_identical_particle_factor</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_set_rhs_properties</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_set_screening</span><span class="p">()</span>
@@ -976,8 +985,9 @@ document.write(`
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; compute statistical prefactor and density exponent from the reactants. &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">prefactor</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c1"># this is 1/2 for rates like a + a (double counting)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">inv_prefactor</span> <span class="o">=</span> <span class="mi">1</span>
-        <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">inv_prefactor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inv_prefactor</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">factorial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">r</span><span class="p">))</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_identical_particle_factor</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">inv_prefactor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inv_prefactor</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">factorial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">r</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">prefactor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefactor</span><span class="o">/</span><span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">inv_prefactor</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dens_exp</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">weak_type</span> <span class="o">==</span> <span class="s1">&#39;electron_capture&#39;</span><span class="p">:</span>
@@ -1295,6 +1305,8 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">Q</span> <span class="o">=</span> <span class="n">Q</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">tabular</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">use_identical_particle_factor</span> <span class="o">=</span> <span class="kc">True</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rfile</span><span class="p">,</span> <span class="n">Path</span><span class="p">):</span>
             <span class="c1"># read in the file, parse the different sets and store them as</span>
@@ -2014,8 +2026,9 @@ document.write(`
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; compute statistical prefactor and density exponent from the reactants. &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">prefactor</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c1"># this is 1/2 for rates like a + a (double counting)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">inv_prefactor</span> <span class="o">=</span> <span class="mi">1</span>
-        <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">inv_prefactor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inv_prefactor</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">factorial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">r</span><span class="p">))</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_identical_particle_factor</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">inv_prefactor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inv_prefactor</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">factorial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">r</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">prefactor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefactor</span><span class="o">/</span><span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">inv_prefactor</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dens_exp</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span>
 

@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.approximate_rates &#8212; pynucastro 2.4.0.post7+g4f4a38ad documentation</title>
+    <title>pynucastro.rates.approximate_rates &#8212; pynucastro 2.4.0.post8+g9a2c4aee documentation</title>
   
   
   
@@ -37,7 +37,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=d25148b0"></script>
+    <script src="../../../_static/documentation_options.js?v=4d00db4b"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -409,7 +409,9 @@ document.write(`
 <span class="k">class</span> <span class="nc">ApproximateRate</span><span class="p">(</span><span class="n">Rate</span><span class="p">):</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">primary_rate</span><span class="p">,</span> <span class="n">secondary_rates</span><span class="p">,</span>
-                 <span class="n">primary_reverse</span><span class="p">,</span> <span class="n">secondary_reverse</span><span class="p">,</span> <span class="n">is_reverse</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">approx_type</span><span class="o">=</span><span class="s2">&quot;ap_pg&quot;</span><span class="p">):</span>
+                 <span class="n">primary_reverse</span><span class="p">,</span> <span class="n">secondary_reverse</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+                 <span class="n">is_reverse</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">approx_type</span><span class="o">=</span><span class="s2">&quot;ap_pg&quot;</span><span class="p">,</span>
+                 <span class="n">use_identical_particle_factor</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;the primary rate has the same reactants and products and the final</span>
 <span class="sd">        approximate rate would have.  The secondary rates are ordered such that</span>
 <span class="sd">        together they would give the same sequence&quot;&quot;&quot;</span>
@@ -484,10 +486,14 @@ document.write(`
 
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_reverse</span><span class="p">:</span>
                 <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">reactants</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">primary_reactant</span><span class="p">,</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">)],</span>
-                                 <span class="n">products</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">primary_product</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;approx&quot;</span><span class="p">)</span>
+                                 <span class="n">products</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">primary_product</span><span class="p">],</span>
+                                 <span class="n">label</span><span class="o">=</span><span class="s2">&quot;approx&quot;</span><span class="p">,</span>
+                                 <span class="n">use_identical_particle_factor</span><span class="o">=</span><span class="n">use_identical_particle_factor</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">reactants</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">primary_product</span><span class="p">],</span>
-                                 <span class="n">products</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">primary_reactant</span><span class="p">,</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">)],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;approx&quot;</span><span class="p">)</span>
+                                 <span class="n">products</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">primary_reactant</span><span class="p">,</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">)],</span>
+                                 <span class="n">label</span><span class="o">=</span><span class="s2">&quot;approx&quot;</span><span class="p">,</span>
+                                 <span class="n">use_identical_particle_factor</span><span class="o">=</span><span class="n">use_identical_particle_factor</span><span class="p">)</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">chapter</span> <span class="o">=</span> <span class="s2">&quot;a&quot;</span>
 
