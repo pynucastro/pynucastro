@@ -29,6 +29,8 @@ from pynucastro.rates.library import _rate_name_to_nuc, capitalize_rid
 from pynucastro.screening import (get_screening_map, make_plasma_state,
                                   make_screen_factors)
 
+from microphysics.pynucastro.pynucastro.nucdata import nucleus
+
 mpl.rcParams['figure.dpi'] = 100
 
 
@@ -36,7 +38,7 @@ class RateDuplicationError(Exception):
     """An error of multiple rates linking the same nuclei occurred"""
 
 
-def _skip_xalpha(n, p, r):
+def _skip_xalpha(n, p, r) -> bool:
     """utility function to consider if we show an (a, x) or (x, a) rate.  Here, p is the
     product we want to link to"""
 
@@ -91,7 +93,7 @@ class Composition(collections.UserDict):
     -- useful for evaluating the rates
 
     """
-    def __init__(self, nuclei, small=1.e-16):
+    def __init__(self, nuclei: list[str] | list[Nucleus], small=1.e-16) -> None:
         """nuclei is an iterable of the nuclei in the network"""
         try:
             super().__init__({Nucleus.cast(k): small for k in nuclei})
@@ -99,53 +101,53 @@ class Composition(collections.UserDict):
             raise ValueError("must supply an iterable of Nucleus objects or strings") from None
 
     @property
-    def X(self):
+    def X(self) -> dict:
         """backwards-compatible getter for self.X"""
         return self.data
 
     @X.setter
-    def X(self, new_value):
+    def X(self, new_value) -> None:
         """backwards-compatible setter for self.X"""
         self.data = new_value
 
-    def __delitem__(self, key):
+    def __delitem__(self, key) -> None:
         super().__delitem__(Nucleus.cast(key))
 
-    def __getitem__(self, key):
+    def __getitem__(self, key) -> float:
         return super().__getitem__(Nucleus.cast(key))
 
-    def __setitem__(self, key, value):
+    def __setitem__(self, key, value) -> None:
         super().__setitem__(Nucleus.cast(key), value)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "Composition(" + super().__repr__() + ")"
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "".join(f"  X({k}) : {v}\n" for k, v in self.items())
 
     @property
-    def A(self):
+    def A(self) -> dict[Nucleus: int]:
         """ return nuclei: molar mass pairs for elements in composition"""
         return {n: n.A for n in self}
 
     @property
-    def Z(self):
+    def Z(self) -> dict[Nucleus: int]:
         """ return nuclei: charge pairs for elements in composition"""
         return {n: n.Z for n in self}
 
-    def get_nuclei(self):
+    def get_nuclei(self) -> list[Nucleus]:
         """return a list of Nuclei objects that make up this composition"""
         return list(self)
 
-    def get_molar(self):
+    def get_molar(self) -> dict[Nucleus: int]:
         """ return a dictionary of molar fractions"""
         return {k: v/k.A for k, v in self.items()}
 
-    def get_sum_X(self):
+    def get_sum_X(self) -> float:
         """return the sum of the mass fractions"""
         return math.fsum(self.values())
 
-    def set_solar_like(self, Z=0.02):
+    def set_solar_like(self, Z: float = 0.02) -> None:
         """ approximate a solar abundance, setting p to 0.7, He4 to 0.3 - Z and
         the remainder evenly distributed with Z """
         rem = Z/(len(self)-2)
@@ -159,22 +161,22 @@ class Composition(collections.UserDict):
 
         self.normalize()
 
-    def set_array(self, arr):
+    def set_array(self, arr: list | np.ndarray) -> None:
         """ set all species from a sequence of mass fractions, in the same
         order as returned by get_nuclei() """
         for i, k in enumerate(self):
             self[k] = arr[i]
 
-    def set_all(self, xval):
+    def set_all(self, xval: float) -> None:
         """ set all species to a particular value """
         for k in self:
             self[k] = xval
 
-    def set_equal(self):
+    def set_equal(self) -> None:
         """ set all species to be equal"""
         self.set_all(1.0 / len(self))
 
-    def set_random(self, alpha=None, seed=None):
+    def set_random(self, alpha: np.ndarray, seed: int = None) -> None:
         """ set all species using a Dirichlet distribution with
         parameters alpha and specified rng seed """
         # initializes random seed
@@ -190,32 +192,40 @@ class Composition(collections.UserDict):
         # ensures exact normalization
         self.normalize()
 
-    def set_nuc(self, name, xval):
+    def set_nuc(self, name: str, xval: float) -> None:
         """ set nuclei name to the mass fraction xval """
         self[name] = xval
 
-    def normalize(self):
+    def normalize(self) -> None:
         """ normalize the mass fractions to sum to 1 """
         X_sum = self.get_sum_X()
 
         for k in self:
             self[k] /= X_sum
 
-    def eval_ye(self):
+    def eval_ye(self) -> float:
         """ return the electron fraction """
         electron_frac = math.fsum(self[n] * n.Z / n.A for n in self) / self.get_sum_X()
         return electron_frac
 
-    def eval_abar(self):
+    ye = property(eval_ye)
+
+    def eval_abar(self) -> float:
         """ return the mean molecular weight """
         abar = math.fsum(self[n] / n.A for n in self)
         return 1. / abar
 
-    def eval_zbar(self):
-        """ return the mean charge, Zbar """
-        return self.eval_abar() * self.eval_ye()
+    abar = property(eval_abar)
 
-    def bin_as(self, nuclei, *, verbose=False, exclude=None):
+    def eval_zbar(self) -> float:
+        """ return the mean charge, Zbar """
+        return self.abar * self.ye
+
+    zbar = property(eval_zbar)
+
+    def bin_as(self, nuclei: list[Nucleus], *,
+               verbose: bool = False,
+               exclude: bool = None):
         """given a list of nuclei, return a new Composition object with the
         current composition mass fractions binned into the new nuclei.
 
@@ -289,7 +299,9 @@ class Composition(collections.UserDict):
 
         return new_comp
 
-    def plot(self, trace_threshold=0.1, hard_limit=None, size=(9, 5)):
+    def plot(self, trace_threshold: float = 0.1,
+             hard_limit: float = None,
+             size: tuple[float, float] = (9, 5)) -> plt.Figure:
         """ Make a pie chart of Composition. group trace nuclei together and explode into bar chart
 
         parameters
