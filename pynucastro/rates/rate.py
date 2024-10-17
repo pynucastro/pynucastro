@@ -1410,7 +1410,7 @@ class TabularRate(Rate):
 
     :raises: :class:`.RateFileError`, :class:`.UnsupportedNucleus`
     """
-    def __init__(self, rfile = None, source: str = None) -> None:
+    def __init__(self, rfile=None, source: str = None) -> None:
         """ rfile can be either a string specifying the path to a rate file or
         an io.StringIO object from which to read rate information. """
         super().__init__(source=source)
