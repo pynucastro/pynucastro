@@ -166,9 +166,6 @@ class Library:
     def add_rate(self, rate: Rate) -> None:
         """Manually add a rate by giving a Rate object"""
 
-        if self._rates is None:
-            self._rates = {}
-
         try:
             rid = rate.id
         except AttributeError as exc:
@@ -179,6 +176,9 @@ class Library:
 
     def add_rates(self, ratelist: list[Rate]) -> None:
         """ Add to the rate dictionary from the supplied list of Rate objects."""
+        if self._rates is None:
+            self._rates = {}
+
         for rate in ratelist:
             if rate in self.rates:
                 raise ValueError(f"supplied a Rate object already in the Library: {rate.id}")
@@ -554,7 +554,7 @@ class RateFilter:
 
     def __init__(self, reactants=None, products=None, exact=True,
                  reverse=None, min_reactants=None, max_reactants=None,
-                 min_products=None, max_products=None, filter_function=None):
+                 min_products=None, max_products=None, filter_function=None) -> None:
         """Create a new RateFilter with the given selection rules
 
         Keyword Arguments:
@@ -617,7 +617,7 @@ class RateFilter:
             self.products = Nucleus.cast_list(products, allow_single=True)
 
     @staticmethod
-    def _contents_equal(a, b):
+    def _contents_equal(a, b) -> bool:
         """
         Return True if the contents of a and b exactly match, ignoring ordering.
         If either a or b is None, return True only if both a and b are None.
@@ -627,7 +627,7 @@ class RateFilter:
         return (not a) and (not b)
 
     @staticmethod
-    def _compare_nuclides(test, reference, exact=True):
+    def _compare_nuclides(test, reference, exact=True) -> bool:
         """
         test and reference should be iterables of Nucleus objects.
         If an exact match is desired, test and reference should exactly match, ignoring ordering.
@@ -643,7 +643,7 @@ class RateFilter:
                     break
         return matches
 
-    def matches(self, r):
+    def matches(self, r) -> bool:
         """ Given a Rate r, see if it matches this RateFilter. """
         # do cheaper checks first
         matches_reverse = True
@@ -695,7 +695,7 @@ class ReacLibLibrary(Library):
     """Load the latest stored version of the ReacLib library and
     return a Library"""
 
-    def __init__(self):
+    def __init__(self) -> None:
         libfile = 'reaclib_default2_20220329'
         Library.__init__(self, libfile=libfile)
 
@@ -705,16 +705,19 @@ class TabularLibrary(Library):
 
     lib_path = Path(__file__).parents[1]/"library/tabular"
 
-    def __init__(self):
+    def __init__(self, source: str = None) -> None:
         # find all of the tabular rates that pynucastro knows about
         # we'll assume that these are of the form *-toki
+
+        if source:
+            self.source = source
 
         trates = []
 
         for _, _, filenames in sorted(walk(self.lib_path)):
             for f in sorted(filenames):
                 if f.endswith("-toki"):
-                    trates.append(load_rate(f))
+                    trates.append(load_rate(f, source=self.source))
 
         Library.__init__(self, rates=trates)
 
@@ -724,8 +727,8 @@ class SuzukiLibrary(TabularLibrary):
     Load all of the tabular rates inside /library/tabular/suzuki/
     and return a Library.
     """
-
     lib_path = Path(__file__).parents[1]/"library/tabular/suzuki"
+    source = "suzuki"
 
 
 class LangankeLibrary(TabularLibrary):
@@ -735,3 +738,4 @@ class LangankeLibrary(TabularLibrary):
     """
 
     lib_path = Path(__file__).parents[1]/"library/tabular/langanke"
+    source = "langanke"

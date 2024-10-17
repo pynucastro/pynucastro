@@ -69,7 +69,7 @@ class RateFileError(Exception):
     """An error occurred while trying to read a Rate from a file."""
 
 
-def load_rate(rfile: str = None):
+def load_rate(rfile: str = None, source: str = None):
     """Try to load a rate of any type.
 
     :raises: :class:`.RateFileError`, :class:`.UnsupportedNucleus`
@@ -77,9 +77,9 @@ def load_rate(rfile: str = None):
 
     rate: Rate
     try:
-        rate = TabularRate(rfile=rfile)
+        rate = TabularRate(rfile=rfile, source=source)
     except (RateFileError, UnsupportedNucleus):
-        rate = ReacLibRate(rfile=rfile)
+        rate = ReacLibRate(rfile=rfile, source=source)
 
     return rate
 
@@ -319,7 +319,8 @@ class Rate:
                  products: list[str] | list[Nucleus] = None,
                  Q: float = None, weak_type: str = "",
                  label: str = "generic",
-                 use_identical_particle_factor: bool = True) -> None:
+                 use_identical_particle_factor: bool = True,
+                 source: str = None) -> None:
         """a generic Rate class that acts as a base class for specific
         sources.  Here we only specify the reactants and products and Q value"""
 
@@ -332,6 +333,9 @@ class Rate:
             self.products = Nucleus.cast_list(products)
 
         self.label = label
+
+        if source:
+            self.source = source
 
         # the fname is used when writing the code to evaluate the rate
         reactants_str = '_'.join([repr(nuc) for nuc in self.reactants])
@@ -783,7 +787,7 @@ class ReacLibRate(Rate):
                  reactants: list[str] | list[Nucleus] = None,
                  products: list[str] | list[Nucleus] = None,
                  sets: list[SingleSet] = None, labelprops: str = None,
-                 Q: float = None) -> None:
+                 Q: float = None, source: str = None) -> None:
         """ rfile can be either a string specifying the path to a rate file or
         an io.StringIO object from which to read rate information. """
         # pylint: disable=super-init-not-called
@@ -832,6 +836,9 @@ class ReacLibRate(Rate):
         self.removed = None
 
         self.Q = Q
+
+        if source:
+            self.source = source
 
         self.tabular = False
 
@@ -1403,10 +1410,11 @@ class TabularRate(Rate):
 
     :raises: :class:`.RateFileError`, :class:`.UnsupportedNucleus`
     """
-    def __init__(self, rfile: str | Path | io.StringIO = None) -> None:
+    def __init__(self, rfile: str | Path | io.StringIO = None,
+                 source: str = None) -> None:
         """ rfile can be either a string specifying the path to a rate file or
         an io.StringIO object from which to read rate information. """
-        super().__init__()
+        super().__init__(source=source)
 
         self.rfile_path = None
         self.rfile = None
