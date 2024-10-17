@@ -29,8 +29,6 @@ from pynucastro.rates.library import _rate_name_to_nuc, capitalize_rid
 from pynucastro.screening import (get_screening_map, make_plasma_state,
                                   make_screen_factors)
 
-from microphysics.pynucastro.pynucastro.nucdata import nucleus
-
 mpl.rcParams['figure.dpi'] = 100
 
 
@@ -65,7 +63,7 @@ def _skip_xalpha(n, p, r) -> bool:
     return False
 
 
-def _skip_xp(n, p, r):
+def _skip_xp(n, p, r) -> bool:
     """utility function to consider if we show an (p, x) or (x, p) rate.  Here, p is the
     product we want to link to"""
 
@@ -93,7 +91,7 @@ class Composition(collections.UserDict):
     -- useful for evaluating the rates
 
     """
-    def __init__(self, nuclei: list[str] | list[Nucleus], small=1.e-16) -> None:
+    def __init__(self, nuclei: list[Nucleus], small=1.e-16) -> None:
         """nuclei is an iterable of the nuclei in the network"""
         try:
             super().__init__({Nucleus.cast(k): small for k in nuclei})
@@ -480,7 +478,7 @@ class RateCollection:
 
         self._build_collection()
 
-    def _build_collection(self):
+    def _build_collection(self) -> None:
 
         # get the unique nuclei
         u = []
@@ -594,7 +592,7 @@ class RateCollection:
         if self.find_duplicate_links():
             raise RateDuplicationError("Duplicate rates found")
 
-    def _read_rate_files(self, rate_files):
+    def _read_rate_files(self, rate_files) -> Library:
         # get the rates
         self.files = rate_files
         combined_library = Library()
@@ -610,7 +608,7 @@ class RateCollection:
             combined_library += rflib
         return combined_library
 
-    def get_forward_rates(self):
+    def get_forward_rates(self) -> list[Rate]:
         """return a list of the forward (exothermic) rates"""
 
         # first handle the ones that have Q defined
@@ -618,7 +616,7 @@ class RateCollection:
 
         return forward_rates
 
-    def get_reverse_rates(self):
+    def get_reverse_rates(self) -> list[Rate]:
         """return a list of the reverse (endothermic) rates)"""
 
         # first handle the ones that have Q defined
@@ -626,7 +624,7 @@ class RateCollection:
 
         return reverse_rates
 
-    def find_reverse(self, forward_rate, reverse_rates=None):
+    def find_reverse(self, forward_rate: Rate, reverse_rates: list[Rate] = None) -> Rate:
         """given a forward rate, locate the rate that is its reverse"""
 
         if reverse_rates is None:
@@ -642,7 +640,7 @@ class RateCollection:
 
         return reverse
 
-    def get_rate_pairs(self):
+    def get_rate_pairs(self) -> list[RatePair]:
         """ return a list of RatePair objects, grouping the rates together
             by forward and reverse"""
 
@@ -673,11 +671,11 @@ class RateCollection:
 
         return rate_pairs
 
-    def get_nuclei(self):
+    def get_nuclei(self) -> list[Nucleus]:
         """ get all the nuclei that are part of the network """
         return self.unique_nuclei
 
-    def linking_nuclei(self, nuclei, return_type=None, **kwargs):
+    def linking_nuclei(self, nuclei: Nucleus, return_type=None, **kwargs):
         """
         Return a new RateCollection/Network object containing only rates linking the
         given nuclei (parameter *nuclei*). Nuclei can be provided as an iterable of Nucleus
@@ -692,11 +690,11 @@ class RateCollection:
         lib = Library(rates=self.rates)
         return return_type(libraries=lib.linking_nuclei(nuclei, **kwargs))
 
-    def get_rates(self):
+    def get_rates(self) -> list[Rate]:
         """ get a list of the reaction rates in this network"""
         return self.rates
 
-    def get_rate(self, rid):
+    def get_rate(self, rid: str) -> list[Rate]:
         """ Return a rate matching the id provided.  Here rid should be
         the string return by Rate.fname"""
         try:
@@ -705,7 +703,8 @@ class RateCollection:
         except IndexError:
             raise LookupError(f"rate identifier {rid!r} does not match a rate in this network.") from None
 
-    def get_rate_by_nuclei(self, reactants, products):
+    def get_rate_by_nuclei(self, reactants: list[Nucleus],
+                           products: list[Nucleus]) -> list[Rate] | None:
         """given a list of reactants and products, return any matching rates"""
         reactants = sorted(Nucleus.cast_list(reactants))
         products = sorted(Nucleus.cast_list(products))
@@ -717,7 +716,7 @@ class RateCollection:
             return None
         return _tmp
 
-    def get_rate_by_name(self, name):
+    def get_rate_by_name(self, name: str) -> None | Rate | list[Rate]:
         """given a rate in the form 'A(x,y)B' return the Rate"""
 
         reactants, products = _rate_name_to_nuc(name)
@@ -728,7 +727,7 @@ class RateCollection:
             return _r[0]
         return _r
 
-    def get_nuclei_needing_partition_functions(self):
+    def get_nuclei_needing_partition_functions(self) -> list[Nucleus]:
         """return a list of Nuclei that require partition functions for one or
         more DerivedRates in the collection"""
 
@@ -740,7 +739,7 @@ class RateCollection:
                         nuclei_pfs.add(nuc)
         return sorted(nuclei_pfs)
 
-    def dedupe_partition_function_temperatures(self):
+    def dedupe_partition_function_temperatures(self) -> tuple[list, dict]:
         """return a list of unique temperature arrays, along with a dictionary
         mapping each Nucleus to the corresponding index into that list"""
 
@@ -763,7 +762,7 @@ class RateCollection:
 
         return temp_arrays, temp_indices
 
-    def remove_nuclei(self, nuc_list):
+    def remove_nuclei(self, nuc_list: list[Nucleus]) -> None:
         """remove the nuclei in nuc_list from the network along with any rates
         that directly involve them (this doesn't affect approximate rates that
         may have these nuclei as hidden intermediate links)"""
@@ -781,7 +780,7 @@ class RateCollection:
 
         self._build_collection()
 
-    def remove_rates(self, rates):
+    def remove_rates(self, rates: list[Rate] | Rate) -> None:
         """remove the Rate objects in rates from the network.  Note, if
         rate list is a dict, then the keys are assumed to be the rates
         to remove"""
@@ -794,7 +793,7 @@ class RateCollection:
 
         self._build_collection()
 
-    def add_rates(self, rates):
+    def add_rates(self, rates: Rate | list[Rate]) -> None:
         """add the Rate objects in rates from the network."""
 
         if isinstance(rates, Rate):
@@ -808,7 +807,7 @@ class RateCollection:
 
         self._build_collection()
 
-    def make_ap_pg_approx(self, intermediate_nuclei=None):
+    def make_ap_pg_approx(self, intermediate_nuclei: list[Nucleus] = None) -> None:
         """combine the rates A(a,g)B and A(a,p)X(p,g)B (and the reverse) into a single
         effective approximate rate."""
 
@@ -905,7 +904,7 @@ class RateCollection:
         # regenerate the links
         self._build_collection()
 
-    def evaluate_rates(self, rho, T, composition, screen_func=None):
+    def evaluate_rates(self, rho, T, composition, screen_func=None) -> dict:
         """evaluate the rates for a specific density, temperature, and
         composition, with optional screening
 
@@ -972,7 +971,7 @@ class RateCollection:
 
         return jac
 
-    def validate(self, other_library, *, forward_only=True):
+    def validate(self, other_library, *, forward_only=True) -> bool:
         """perform various checks on the library, comparing to other_library,
         to ensure that we are not missing important rates.  The idea
         is that self should be a reduced library where we filtered out
@@ -1028,7 +1027,7 @@ class RateCollection:
 
         return passed_validation
 
-    def find_duplicate_links(self):
+    def find_duplicate_links(self) -> list[list[Rate]]:
         """report on an rates where another rate exists that has the
         same reactants and products.  These may not be the same Rate
         object (e.g., one could be tabular the other a simple decay),
@@ -1068,7 +1067,8 @@ class RateCollection:
                 largest_ratio[r] = max(largest_ratio[r], value / fastest)
         return {r: ratio for r, ratio in largest_ratio.items() if ratio < cutoff_ratio}
 
-    def evaluate_screening(self, rho, T, composition, screen_func):
+    def evaluate_screening(self, rho: float, T: float,
+                           composition: Composition, screen_func) -> dict:
         """Evaluate the screening factors for each rate, using one of the
         methods in :py:mod:`pynucastro.screening`"""
         # this follows the same logic as BaseCxxNetwork._compute_screening_factors()
@@ -1111,7 +1111,7 @@ class RateCollection:
 
         return factors
 
-    def evaluate_ydots(self, rho, T, composition, screen_func=None, rate_filter=None):
+    def evaluate_ydots(self, rho, T, composition, screen_func=None, rate_filter=None) -> dict:
         """evaluate net rate of change of molar abundance for each nucleus
         for a specific density, temperature, and composition
 
@@ -1157,7 +1157,8 @@ class RateCollection:
 
         return ydots
 
-    def evaluate_energy_generation(self, rho, T, composition,
+    def evaluate_energy_generation(self, rho: float, T: float,
+                                   composition: Composition,
                                    screen_func=None, return_enu=False):
         """evaluate the specific energy generation rate of the network for a specific
         density, temperature and composition
@@ -1200,7 +1201,8 @@ class RateCollection:
             return enuc, enu
         return enuc
 
-    def evaluate_activity(self, rho, T, composition, screen_func=None):
+    def evaluate_activity(self, rho: float, T: float,
+                          composition: Composition, screen_func=None) -> dict:
         """sum over all of the terms contributing to ydot,
         neglecting sign"""
 
@@ -1223,7 +1225,8 @@ class RateCollection:
 
         return act
 
-    def _get_network_chart(self, rho, T, composition):
+    def _get_network_chart(self, rho: float, T: float,
+                           composition: Composition) -> dict[Rate: tuple]:
         """a network chart is a dict, keyed by rate that holds a list of tuples (Nucleus, ydot)"""
 
         rvals = self.evaluate_rates(rho, T, composition)
@@ -1240,7 +1243,7 @@ class RateCollection:
 
         return nc
 
-    def network_overview(self):
+    def network_overview(self) -> str:
         """ return a verbose network overview """
         ostr = ""
         for n in self.unique_nuclei:
@@ -1256,7 +1259,7 @@ class RateCollection:
             ostr += "\n"
         return ostr
 
-    def rate_pair_overview(self):
+    def rate_pair_overview(self) -> str:
         """ return a verbose network overview in terms of forward-reverse pairs"""
         ostr = ""
         for n in self.unique_nuclei:
@@ -1265,7 +1268,7 @@ class RateCollection:
                 ostr += f"     {rp}\n"
         return ostr
 
-    def get_nuclei_latex_string(self):
+    def get_nuclei_latex_string(self) -> str:
         """return a string listing the nuclei in latex format"""
 
         ostr = ""
@@ -1275,7 +1278,7 @@ class RateCollection:
                 ostr += ", "
         return ostr
 
-    def get_rates_latex_table_string(self):
+    def get_rates_latex_table_string(self) -> str:
         ostr = ""
         for rp in sorted(self.get_rate_pairs()):
             if rp.forward:
@@ -1292,13 +1295,13 @@ class RateCollection:
 
         return ostr
 
-    def write_network(self, *args, **kwargs):
+    def write_network(self, *args, **kwargs) -> None:
         """Before writing the network, check to make sure the rates
         are distinguishable by name."""
         assert self._distinguishable_rates(), "ERROR: Rates not uniquely identified by Rate.fname"
         self._write_network(*args, **kwargs)
 
-    def _distinguishable_rates(self):
+    def _distinguishable_rates(self) -> bool:
         """Every Rate in this RateCollection should have a unique Rate.fname,
         as the network writers distinguish the rates on this basis."""
         names = [r.fname for r in self.rates]
@@ -1310,7 +1313,7 @@ class RateCollection:
                 print(f'Rate {r} is in chapter {r.chapter}')
         return len(set(names)) == len(self.rates)
 
-    def _write_network(self, *args, **kwargs):
+    def _write_network(self, *args, **kwargs) -> None:
         """A stub for function to output the network -- this is implementation
         dependent."""
         # pylint: disable=unused-argument
@@ -1671,10 +1674,11 @@ class RateCollection:
 
         return fig
 
-    def plot_jacobian(self, rho, T, comp, *,
+    def plot_jacobian(self, rho: float, T: float,
+                      comp: Composition, *,
                       outfile=None, screen_func=None,
                       rate_scaling=1.e10,
-                      size=(800, 800), dpi=100):
+                      size=(800, 800), dpi=100) -> plt.Figure:
         """plot the Jacobian matrix of the system.  Here, rate_scaling is used
         to set the cutoff of values that we show, relative to the peak.  Any
         Jacobian element smaller than this will not be shown."""
@@ -1714,9 +1718,10 @@ class RateCollection:
 
         return fig
 
-    def plot_network_chart(self, rho=None, T=None, comp=None, *,
-                           outfile=None,
-                           size=(800, 800), dpi=100, force_one_column=False):
+    def plot_network_chart(self, rho: float = None, T: float = None,
+                           comp: Composition = None, *, outfile=None,
+                           size=(800, 800), dpi=100,
+                           force_one_column: bool = False) -> plt.Figure:
 
         nc = self._get_network_chart(rho, T, comp)
 
@@ -1812,7 +1817,7 @@ class RateCollection:
         return fig
 
     @staticmethod
-    def _safelog(arr, small):
+    def _safelog(arr: np.ndarray, small: float) -> np.ndarray:
 
         arr = np.copy(arr)
         if np.any(arr < 0.0):
@@ -1822,7 +1827,8 @@ class RateCollection:
         return np.log10(arr)
 
     @staticmethod
-    def _symlog(arr, linthresh=1.0, linscale=1.0):
+    def _symlog(arr: np.ndarray, linthresh: float = 1.0,
+                linscale: float = 1.0) -> np.ndarray:
 
         symlog_transform = SymmetricalLogTransform(10, linthresh, linscale)
         arr = symlog_transform.transform_non_affine(arr)
@@ -1830,7 +1836,7 @@ class RateCollection:
         return arr
 
     @staticmethod
-    def _scale(arr, minval=None, maxval=None):
+    def _scale(arr: np.ndarray, minval: float = None, maxval: float= None) -> np.ndarray:
 
         if minval is None:
             minval = arr.min()
@@ -1844,7 +1850,9 @@ class RateCollection:
         scaled[scaled > 1.0] = 1.0
         return scaled
 
-    def gridplot(self, comp=None, color_field="X", rho=None, T=None, **kwargs):
+    def gridplot(self, comp: Composition = None,
+                 color_field="X", rho: float = None,
+                 T: float = None, **kwargs) -> plt.Figure:
         """
         Plot nuclides as cells on a grid of Z vs. N, colored by *color_field*. If called
         without a composition, the function will just plot the grid with no color field.
@@ -2055,7 +2063,7 @@ class RateCollection:
 
         return fig
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         string = ""
         for r in self.rates:
             string += f"{r.string}\n"
@@ -2064,7 +2072,7 @@ class RateCollection:
 
 class Explorer:
     """ interactively explore a rate collection """
-    def __init__(self, rc, comp, **kwargs):
+    def __init__(self, rc: RateCollection, comp: Composition, **kwargs) -> None:
         """ take a RateCollection and a composition """
         self.rc = rc
         self.comp = comp
@@ -2074,10 +2082,10 @@ class Explorer:
         kwargs.pop("T", None)
         kwargs.pop("rho", None)
 
-    def _make_plot(self, logrho, logT):
+    def _make_plot(self, logrho, logT) -> None:
         self.rc.plot(rho=10.0**logrho, T=10.0**logT,
                      comp=self.comp, **self.kwargs)
 
-    def explore(self, logrho=(2, 6, 0.1), logT=(7, 9, 0.1)):
+    def explore(self, logrho=(2, 6, 0.1), logT=(7, 9, 0.1)) -> None:
         """Perform interactive exploration of the network structure."""
         interact(self._make_plot, logrho=logrho, logT=logT)

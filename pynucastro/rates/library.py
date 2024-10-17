@@ -361,8 +361,8 @@ class Library:
     def __sub__(self, other):
         return self.diff(other)
 
-    def get_rate_by_nuclei(self, reactants: list[str] | list[Nucleus],
-                           products: list[str] | list[Nucleus]) -> None | Rate | list[Rate]:
+    def get_rate_by_nuclei(self, reactants: list[Nucleus],
+                           products: list[Nucleus]) -> None | Rate | list[Rate]:
         """given a list of reactants and products, return any matching rates"""
         reactants = sorted(Nucleus.cast_list(reactants))
         products = sorted(Nucleus.cast_list(products))
