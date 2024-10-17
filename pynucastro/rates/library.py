@@ -710,7 +710,7 @@ class TabularLibrary(Library):
         # find all of the tabular rates that pynucastro knows about
         # we'll assume that these are of the form *-toki
 
-        if source:
+        if not hasattr(self, "source"):
             self.source = source
 
         trates = []
