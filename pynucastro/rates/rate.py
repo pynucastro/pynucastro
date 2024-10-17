@@ -315,7 +315,9 @@ class Rate:
     this and extend to their particular format.
 
     """
-    def __init__(self, reactants=None, products=None, Q=None, weak_type="", label="generic"):
+    def __init__(self, reactants=None, products=None,
+                 Q=None, weak_type="", label="generic",
+                 use_identical_particle_factor=True):
         """a generic Rate class that acts as a base class for specific
         sources.  Here we only specify the reactants and products and Q value"""
 
@@ -350,6 +352,13 @@ class Rate:
         self.tabular = False
 
         self.reverse = None
+
+        # the identical particle factor scales the rate to prevent
+        # double counting for a rate that has the same nucleus
+        # multiple times as a reactant.  Usually we want this
+        # behavior, but for approximate rates, sometimes we need to
+        # disable it.
+        self.use_identical_particle_factor = use_identical_particle_factor
 
     def __repr__(self):
         return self.string
@@ -539,8 +548,9 @@ class Rate:
         """ compute statistical prefactor and density exponent from the reactants. """
         self.prefactor = 1.0  # this is 1/2 for rates like a + a (double counting)
         self.inv_prefactor = 1
-        for r in set(self.reactants):
-            self.inv_prefactor = self.inv_prefactor * math.factorial(self.reactants.count(r))
+        if self.use_identical_particle_factor:
+            for r in set(self.reactants):
+                self.inv_prefactor = self.inv_prefactor * math.factorial(self.reactants.count(r))
         self.prefactor = self.prefactor/float(self.inv_prefactor)
         self.dens_exp = len(self.reactants)-1
         if self.weak_type == 'electron_capture':
@@ -828,6 +838,8 @@ class ReacLibRate(Rate):
         self.Q = Q
 
         self.tabular = False
+
+        self.use_identical_particle_factor = True
 
         if isinstance(rfile, Path):
             # read in the file, parse the different sets and store them as
@@ -1513,8 +1525,9 @@ class TabularRate(Rate):
         """ compute statistical prefactor and density exponent from the reactants. """
         self.prefactor = 1.0  # this is 1/2 for rates like a + a (double counting)
         self.inv_prefactor = 1
-        for r in set(self.reactants):
-            self.inv_prefactor = self.inv_prefactor * math.factorial(self.reactants.count(r))
+        if self.use_identical_particle_factor:
+            for r in set(self.reactants):
+                self.inv_prefactor = self.inv_prefactor * math.factorial(self.reactants.count(r))
         self.prefactor = self.prefactor/float(self.inv_prefactor)
         self.dens_exp = len(self.reactants)-1
 
