@@ -779,10 +779,11 @@ class ReacLibRate(Rate):
     :raises: :class:`.RateFileError`, :class:`.UnsupportedNucleus`
     """
     def __init__(self, rfile: str | Path = None,
-                 chapter: int= None, original_source: str = None,
+                 chapter: int = None, original_source: str = None,
                  reactants: list[str] | list[Nucleus] = None,
                  products: list[str] | list[Nucleus] = None,
-                 sets=None, labelprops=None, Q=None) -> None:
+                 sets: list[SingleSet] = None, labelprops: str = None,
+                 Q: float = None) -> None:
         """ rfile can be either a string specifying the path to a rate file or
         an io.StringIO object from which to read rate information. """
         # pylint: disable=super-init-not-called

@@ -1836,7 +1836,7 @@ class RateCollection:
         return arr
 
     @staticmethod
-    def _scale(arr: np.ndarray, minval: float = None, maxval: float= None) -> np.ndarray:
+    def _scale(arr: np.ndarray, minval: float = None, maxval: float = None) -> np.ndarray:
 
         if minval is None:
             minval = arr.min()
