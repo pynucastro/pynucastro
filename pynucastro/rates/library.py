@@ -118,10 +118,11 @@ class Library:
     specified by RateFilter objects.
     """
 
-    def __init__(self, libfile=None, rates=None) -> None:
+    def __init__(self, libfile: str = None, rates: list[Rate] = None) -> None:
         self._library_file = libfile
+        self._rates = None
+
         if rates:
-            self._rates = {}
             if isinstance(rates, Rate):
                 rates = [rates]
             if isinstance(rates, dict):
@@ -164,6 +165,9 @@ class Library:
 
     def add_rate(self, rate: Rate) -> None:
         """Manually add a rate by giving a Rate object"""
+
+        if self._rates is None:
+            self._rates = {}
 
         try:
             rid = rate.id
