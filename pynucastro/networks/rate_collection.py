@@ -418,7 +418,7 @@ class RateCollection:
 
     def __init__(self, rate_files=None, libraries=None, rates=None,
                  inert_nuclei=None,
-                 symmetric_screening=False, do_screening=True):
+                 symmetric_screening=False, do_screening=True) -> None:
         """rate_files are the files that together define the network.  This
         can be any iterable or single string.
 
@@ -937,7 +937,7 @@ class RateCollection:
 
         return rvals
 
-    def evaluate_jacobian(self, rho, T, comp, screen_func=None):
+    def evaluate_jacobian(self, rho, T, comp, screen_func=None) -> np.ndarray:
         """return an array of the form J_ij = dYdot_i/dY_j for the network"""
 
         # the rate.eval_jacobian_term does not compute the screening,
@@ -1051,7 +1051,8 @@ class RateCollection:
 
         return duplicates
 
-    def find_unimportant_rates(self, states, cutoff_ratio, screen_func=None):
+    def find_unimportant_rates(self, states, cutoff_ratio,
+                               screen_func=None) -> dict[Rate: float]:
         """evaluate the rates at multiple thermodynamic states, and find the
         rates that are always less than `cutoff_ratio` times the fastest rate
         for each state
@@ -1068,7 +1069,7 @@ class RateCollection:
         return {r: ratio for r, ratio in largest_ratio.items() if ratio < cutoff_ratio}
 
     def evaluate_screening(self, rho: float, T: float,
-                           composition: Composition, screen_func) -> dict:
+                           composition: Composition, screen_func) -> dict[Rate: float]:
         """Evaluate the screening factors for each rate, using one of the
         methods in :py:mod:`pynucastro.screening`"""
         # this follows the same logic as BaseCxxNetwork._compute_screening_factors()
@@ -1111,7 +1112,9 @@ class RateCollection:
 
         return factors
 
-    def evaluate_ydots(self, rho, T, composition, screen_func=None, rate_filter=None) -> dict:
+    def evaluate_ydots(self, rho: float, T: float,
+                       composition: Composition,
+                       screen_func=None, rate_filter=None) -> dict[Rate: float]:
         """evaluate net rate of change of molar abundance for each nucleus
         for a specific density, temperature, and composition
 
@@ -1319,7 +1322,8 @@ class RateCollection:
         # pylint: disable=unused-argument
         print('To create network integration source code, use a class that implements a specific network type.')
 
-    def plot(self, rho=None, T=None, comp=None, *,
+    def plot(self, rho: float = None, T: float = None,
+             comp: Composition = None, *,
              outfile=None,
              size=(800, 600), dpi=100, title=None,
              ydot_cutoff_value=None, show_small_ydot=False,
