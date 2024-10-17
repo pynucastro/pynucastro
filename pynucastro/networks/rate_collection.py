@@ -174,7 +174,7 @@ class Composition(collections.UserDict):
         """ set all species to be equal"""
         self.set_all(1.0 / len(self))
 
-    def set_random(self, alpha: np.ndarray, seed: int = None) -> None:
+    def set_random(self, alpha: np.ndarray = None, seed: int = None) -> None:
         """ set all species using a Dirichlet distribution with
         parameters alpha and specified rng seed """
         # initializes random seed
