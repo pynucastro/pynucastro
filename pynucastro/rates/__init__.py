@@ -2,7 +2,7 @@
 
 __all__ = ["approximate_rates", "rate", "library"]
 
-from .approximate_rates import ApproximateRate
+from .approximate_rates import ApproximateRate, create_double_neutron_capture
 from .known_duplicates import find_duplicate_rates, is_allowed_dupe
 from .library import (LangankeLibrary, Library, RateFilter, ReacLibLibrary,
                       SuzukiLibrary, TabularLibrary, list_known_rates)

@@ -2,6 +2,23 @@ from pynucastro.nucdata import Nucleus
 from pynucastro.rates.rate import Rate
 
 
+def create_double_neutron_capture(lib, reactant, product):
+    """a helper function that will return an ApproximateRate object
+    for the "nn_g" approximation"""
+
+    intermediate = Nucleus(f"{reactant.el}{reactant.A+1}")
+
+    forward_1 = lib.get_rate_by_name(f"{reactant.raw}(n,){intermediate.raw}")
+    forward_2 = lib.get_rate_by_name(f"{intermediate.raw}(n,){product.raw}")
+
+    reverse_1 = lib.get_rate_by_name(f"{product.raw}(,n){intermediate.raw}")
+    reverse_2 = lib.get_rate_by_name(f"{intermediate.raw}(,n){reactant.raw}")
+
+    return ApproximateRate(None, [forward_1, forward_2],
+                           None, [reverse_1, reverse_2],
+                           approx_type="nn_g")
+
+
 class ApproximateRate(Rate):
 
     def __init__(self, primary_rate, secondary_rates,
