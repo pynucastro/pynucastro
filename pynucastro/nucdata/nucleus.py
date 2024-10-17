@@ -50,7 +50,7 @@ class Nucleus:
     """
     _cache = {}
 
-    def __init__(self, name, dummy=False):
+    def __init__(self, name: str, dummy: bool = False) -> None:
         name = name.lower()
         self.raw = name
 
@@ -161,23 +161,23 @@ class Nucleus:
             cls._cache[key] = Nucleus(name, dummy)
         return cls._cache[key]
 
-    def __repr__(self):
+    def __repr__(self) -> str :
         if self.raw not in ("p", "d", "t", "n"):
             return self.raw.capitalize()
         return self.raw
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         return hash((self.Z, self.A))
 
-    def c(self):
+    def c(self) -> str:
         """return the capitalized-style name"""
         return self.caps_name
 
-    def cindex(self):
+    def cindex(self) -> str:
         """return the name for C++ indexing"""
         return self.short_spec_name.capitalize()
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         if isinstance(other, Nucleus):
             return self.el == other.el and \
                 self.Z == other.Z and self.A == other.A
@@ -185,7 +185,7 @@ class Nucleus:
             return (self.Z, self.A) == other
         return NotImplemented
 
-    def __lt__(self, other):
+    def __lt__(self, other) -> bool:
         if not self.Z == other.Z:
             return self.Z < other.Z
         return self.A < other.A
