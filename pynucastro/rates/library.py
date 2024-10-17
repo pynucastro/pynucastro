@@ -169,7 +169,7 @@ class Library:
         try:
             rid = rate.id
         except AttributeError as exc:
-            raise TypeError("invalid Rate object") from exc
+            raise TypeError(f"invalid Rate object {rate}") from exc
 
         if rid not in self._rates:
             self._rates[rid] = rate
@@ -178,7 +178,7 @@ class Library:
         """ Add to the rate dictionary from the supplied list of Rate objects."""
 
         for rate in ratelist:
-            if rate in self.rates:
+            if rate.id in self._rates:
                 raise ValueError(f"supplied a Rate object already in the Library: {rate.id}")
             self.add_rate(rate)
 

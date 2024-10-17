@@ -124,12 +124,12 @@ class Composition(collections.UserDict):
         return "".join(f"  X({k}) : {v}\n" for k, v in self.items())
 
     @property
-    def A(self) -> dict[Nucleus: int]:
+    def A(self) -> dict[Nucleus, int]:
         """ return nuclei: molar mass pairs for elements in composition"""
         return {n: n.A for n in self}
 
     @property
-    def Z(self) -> dict[Nucleus: int]:
+    def Z(self) -> dict[Nucleus, int]:
         """ return nuclei: charge pairs for elements in composition"""
         return {n: n.Z for n in self}
 
@@ -137,7 +137,7 @@ class Composition(collections.UserDict):
         """return a list of Nuclei objects that make up this composition"""
         return list(self)
 
-    def get_molar(self) -> dict[Nucleus: int]:
+    def get_molar(self) -> dict[Nucleus, int]:
         """ return a dictionary of molar fractions"""
         return {k: v/k.A for k, v in self.items()}
 
@@ -1052,7 +1052,7 @@ class RateCollection:
         return duplicates
 
     def find_unimportant_rates(self, states, cutoff_ratio,
-                               screen_func=None) -> dict[Rate: float]:
+                               screen_func=None) -> dict[Rate, float]:
         """evaluate the rates at multiple thermodynamic states, and find the
         rates that are always less than `cutoff_ratio` times the fastest rate
         for each state
@@ -1069,7 +1069,7 @@ class RateCollection:
         return {r: ratio for r, ratio in largest_ratio.items() if ratio < cutoff_ratio}
 
     def evaluate_screening(self, rho: float, T: float,
-                           composition: Composition, screen_func) -> dict[Rate: float]:
+                           composition: Composition, screen_func) -> dict[Rate, float]:
         """Evaluate the screening factors for each rate, using one of the
         methods in :py:mod:`pynucastro.screening`"""
         # this follows the same logic as BaseCxxNetwork._compute_screening_factors()
@@ -1114,7 +1114,7 @@ class RateCollection:
 
     def evaluate_ydots(self, rho: float, T: float,
                        composition: Composition,
-                       screen_func=None, rate_filter=None) -> dict[Rate: float]:
+                       screen_func=None, rate_filter=None) -> dict[Rate, float]:
         """evaluate net rate of change of molar abundance for each nucleus
         for a specific density, temperature, and composition
 
@@ -1229,7 +1229,7 @@ class RateCollection:
         return act
 
     def _get_network_chart(self, rho: float, T: float,
-                           composition: Composition) -> dict[Rate: tuple]:
+                           composition: Composition) -> dict[Rate, tuple]:
         """a network chart is a dict, keyed by rate that holds a list of tuples (Nucleus, ydot)"""
 
         rvals = self.evaluate_rates(rho, T, composition)

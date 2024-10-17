@@ -135,7 +135,7 @@ class NseState:
 
 
 def make_plasma_state(temp: float, dens: float,
-                      molar_fractions: dict[Nucleus: float]) -> PlasmaState:
+                      molar_fractions: dict[Nucleus, float]) -> PlasmaState:
     """
     Construct a PlasmaState object from simulation data.
 
