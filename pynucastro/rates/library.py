@@ -121,7 +121,7 @@ class Library:
     def __init__(self, libfile=None, rates=None) -> None:
         self._library_file = libfile
         if rates:
-            self._rates = None
+            self._rates = {}
             if isinstance(rates, Rate):
                 rates = [rates]
             if isinstance(rates, dict):
@@ -130,8 +130,7 @@ class Library:
                 self.add_rates(rates)
             else:
                 raise TypeError("rates in Library constructor must be a Rate object, list of Rate objects, or dictionary of Rate objects keyed by Rate.get_rate_id()")
-        else:
-            self._rates = {}
+
         self._library_source_lines = collections.deque()
 
         if self._library_file:
