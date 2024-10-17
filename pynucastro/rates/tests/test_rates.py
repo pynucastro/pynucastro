@@ -233,6 +233,13 @@ class TestRate:
         assert self.rate2.lightest() == Nucleus("n")
         assert self.rate2.heaviest() == Nucleus("t")
 
+    def test_identical_particle_factor(self):
+        assert self.rate8.prefactor == approx(0.16666667)
+
+        self.rate8.use_identical_particle_factor = False
+        self.rate8._set_rhs_properties()
+
+        assert self.rate8.prefactor == 1.0
 
 class TestDerivedRate:
 
