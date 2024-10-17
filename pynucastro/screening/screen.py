@@ -47,8 +47,7 @@ class PlasmaState:
     n_e: float
     gamma_e_fac: float
 
-    def __init__(self, temp: float, dens: float,
-                 Ys: np.ndarray, Zs: np.ndarray) -> None:
+    def __init__(self, temp: float, dens: float, Ys, Zs) -> None:
         """
         :param temp: temperature in K
         :param dens: density in g/cm^3

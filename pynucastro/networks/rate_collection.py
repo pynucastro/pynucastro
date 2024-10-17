@@ -159,7 +159,7 @@ class Composition(collections.UserDict):
 
         self.normalize()
 
-    def set_array(self, arr: list | np.ndarray) -> None:
+    def set_array(self, arr: list) -> None:
         """ set all species from a sequence of mass fractions, in the same
         order as returned by get_nuclei() """
         for i, k in enumerate(self):
@@ -174,7 +174,7 @@ class Composition(collections.UserDict):
         """ set all species to be equal"""
         self.set_all(1.0 / len(self))
 
-    def set_random(self, alpha: np.ndarray = None, seed: int = None) -> None:
+    def set_random(self, alpha: list = None, seed: int = None) -> None:
         """ set all species using a Dirichlet distribution with
         parameters alpha and specified rng seed """
         # initializes random seed
@@ -694,7 +694,7 @@ class RateCollection:
         """ get a list of the reaction rates in this network"""
         return self.rates
 
-    def get_rate(self, rid: str) -> list[Rate]:
+    def get_rate(self, rid: str) -> Rate:
         """ Return a rate matching the id provided.  Here rid should be
         the string return by Rate.fname"""
         try:
@@ -937,7 +937,7 @@ class RateCollection:
 
         return rvals
 
-    def evaluate_jacobian(self, rho, T, comp, screen_func=None) -> np.ndarray:
+    def evaluate_jacobian(self, rho, T, comp, screen_func=None):
         """return an array of the form J_ij = dYdot_i/dY_j for the network"""
 
         # the rate.eval_jacobian_term does not compute the screening,
@@ -1821,7 +1821,7 @@ class RateCollection:
         return fig
 
     @staticmethod
-    def _safelog(arr: np.ndarray, small: float) -> np.ndarray:
+    def _safelog(arr, small: float):
 
         arr = np.copy(arr)
         if np.any(arr < 0.0):
@@ -1831,8 +1831,7 @@ class RateCollection:
         return np.log10(arr)
 
     @staticmethod
-    def _symlog(arr: np.ndarray, linthresh: float = 1.0,
-                linscale: float = 1.0) -> np.ndarray:
+    def _symlog(arr, linthresh: float = 1.0, linscale: float = 1.0):
 
         symlog_transform = SymmetricalLogTransform(10, linthresh, linscale)
         arr = symlog_transform.transform_non_affine(arr)
@@ -1840,7 +1839,7 @@ class RateCollection:
         return arr
 
     @staticmethod
-    def _scale(arr: np.ndarray, minval: float = None, maxval: float = None) -> np.ndarray:
+    def _scale(arr, minval: float = None, maxval: float = None):
 
         if minval is None:
             minval = arr.min()

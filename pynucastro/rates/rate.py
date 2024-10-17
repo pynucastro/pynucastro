@@ -136,7 +136,7 @@ class Tfactors:
         self.lnT9 = np.log(self.T9)
 
     @property
-    def array(self) -> np.ndarray:
+    def array(self):
         """return t factors as array in order of lambda function"""
         return np.array([1, self.T9i, self.T913i, self.T913, self.T9, self.T953, self.lnT9])
 
@@ -1410,8 +1410,7 @@ class TabularRate(Rate):
 
     :raises: :class:`.RateFileError`, :class:`.UnsupportedNucleus`
     """
-    def __init__(self, rfile: str | Path | io.StringIO = None,
-                 source: str = None) -> None:
+    def __init__(self, rfile = None, source: str = None) -> None:
         """ rfile can be either a string specifying the path to a rate file or
         an io.StringIO object from which to read rate information. """
         super().__init__(source=source)
