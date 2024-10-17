@@ -47,7 +47,8 @@ class PlasmaState:
     n_e: float
     gamma_e_fac: float
 
-    def __init__(self, temp, dens, Ys, Zs):
+    def __init__(self, temp: float, dens: float,
+                 Ys: np.ndarray, Zs: np.ndarray) -> None:
         """
         :param temp: temperature in K
         :param dens: density in g/cm^3
@@ -113,7 +114,7 @@ class NseState:
     ye: float
     gamma_e_fac: float
 
-    def __init__(self, temp, dens, ye):
+    def __init__(self, temp: float, dens: float, ye: float) -> None:
 
         """
         :param temp:        temperature in K
@@ -133,7 +134,8 @@ class NseState:
         self.gamma_e_fac = constants.q_e ** 2 / constants.k * np.cbrt(4.0 * np.pi / 3.0)
 
 
-def make_plasma_state(temp, dens, molar_fractions):
+def make_plasma_state(temp: float, dens: float,
+                      molar_fractions: dict[Nucleus: float]) -> PlasmaState:
     """
     Construct a PlasmaState object from simulation data.
 
@@ -176,7 +178,7 @@ class ScreenFactors:
     aznut: float
     ztilde: float
 
-    def __init__(self, z1, a1, z2, a2):
+    def __init__(self, z1: int, a1: int, z2: int, a2: int) -> None:
         self.z1 = z1
         self.z2 = z2
         self.a1 = a1
@@ -189,7 +191,7 @@ class ScreenFactors:
         self.ztilde = 0.5 * (np.cbrt(z1) + np.cbrt(z2))
 
 
-def make_screen_factors(n1, n2):
+def make_screen_factors(n1: Nucleus, n2: Nucleus) -> ScreenFactors:
     """
     Construct a ScreenFactors object from a pair of nuclei.
 
@@ -202,7 +204,7 @@ def make_screen_factors(n1, n2):
 
 
 @njit
-def screen5(state: PlasmaState, scn_fac):
+def screen5(state: PlasmaState, scn_fac: ScreenFactors) -> float:
     """Calculates screening factors following the appendix of :cite:t:`Wallace:1982`.
 
     Based on :cite:t:`graboske:1973` for weak screening. Based on
@@ -335,7 +337,7 @@ def screen5(state: PlasmaState, scn_fac):
 
 
 @njit
-def smooth_clip(x, limit, start):
+def smooth_clip(x: float, limit: float, start: float) -> float:
     """Smoothly transition between y=limit and y=x with a half-cosine.
 
     Clips smaller values if limit < start and larger values if start < limit.
@@ -364,7 +366,7 @@ def smooth_clip(x, limit, start):
 
 
 @njit
-def chugunov_2007(state, scn_fac):
+def chugunov_2007(state: PlasmaState, scn_fac: ScreenFactors) -> float:
     """Calculates screening factors based on :cite:t:`chugunov:2007`.
 
     Follows the approach in :cite:t:`yakovlev:2006` to extend to a
@@ -462,7 +464,7 @@ def chugunov_2007(state, scn_fac):
 
 
 @njit
-def f0(gamma):
+def f0(gamma: float) -> float:
     r"""Calculate the free energy per ion in a OCP from :cite:t:`chugunov:2009` eq. 24
 
     :param gamma: Coulomb coupling parameter
@@ -492,7 +494,7 @@ def f0(gamma):
 
 
 @njit
-def chugunov_2009(state, scn_fac):
+def chugunov_2009(state: PlasmaState, scn_fac: ScreenFactors) -> float:
     """Calculates screening factors based on :cite:t:`chugunov:2009`.
 
     :param PlasmaState state:     the precomputed plasma state factors
@@ -557,7 +559,7 @@ def chugunov_2009(state, scn_fac):
 
 
 @njit
-def potekhin_1998(state, scn_fac):
+def potekhin_1998(state: PlasmaState, scn_fac: ScreenFactors) -> float:
     """Calculates screening factors based on :cite:t:`chabrier_potekhin:1998`.
 
     :param PlasmaState state:     the precomputed plasma state factors
