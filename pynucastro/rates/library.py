@@ -123,6 +123,7 @@ class Library:
         self._rates = None
 
         if rates:
+            self._rates = {}
             if isinstance(rates, Rate):
                 rates = [rates]
             if isinstance(rates, dict):
@@ -260,6 +261,9 @@ class Library:
 
     def _read_library_file(self) -> None:
         # loop through library file, read lines
+        if self._rates is None:
+            self._rates = {}
+
         with self._library_file.open("r") as flib:
             for line in flib:
                 ls = line.rstrip('\n')
@@ -312,7 +316,7 @@ class Library:
                 except UnsupportedNucleus:
                     pass
                 else:
-                    rid = r.get_rate_id()
+                    rid = r.id
                     if rid in self._rates:
                         self._rates[rid] = self._rates[rid] + r
                     else:
