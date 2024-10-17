@@ -662,7 +662,7 @@ class Rate:
 
         return "*".join(ydot_string_components)
 
-    def eval(self, T, rhoY=None):
+    def eval(self, T, *, rho=None, comp=None):
         raise NotImplementedError("base Rate class does not know how to eval()")
 
     def jacobian_string_py(self, y_i):
@@ -755,7 +755,7 @@ class Rate:
             y_e_term = 1.0
 
         # finally evaluate the rate -- for tabular rates, we need to set rhoY
-        rate_eval = self.eval(T, rhoY=rho*comp.eval_ye())
+        rate_eval = self.eval(T, rho=rho, comp=comp)
 
         return self.prefactor * dens_term * y_e_term * Y_term * rate_eval
 
@@ -1213,7 +1213,7 @@ class ReacLibRate(Rate):
 
         return fstring
 
-    def eval(self, T, rhoY=None):
+    def eval(self, T, *, rho=None, comp=None):
         """ evauate the reaction rate for temperature T """
 
         tf = Tfactors(T)
@@ -1224,9 +1224,10 @@ class ReacLibRate(Rate):
 
         return r
 
-    def eval_deriv(self, T, rhoY=None):
+    def eval_deriv(self, T, *, rho=None, comp=None):
         """ evauate the derivative of reaction rate with respect to T """
-        _ = rhoY  # unused by this subclass
+        _ = rho  # unused by this subclass
+        _ = comp  # unused by this subclass
 
         tf = Tfactors(T)
         drdT = 0.0
@@ -1592,16 +1593,16 @@ class TabularRate(Rate):
         # convert the nested list of string values into a numpy float array
         self.tabular_data_table = np.array(t_data2d, dtype=np.float64)
 
-    def eval(self, T, rhoY=None):
+    def eval(self, T, *, rho=None, comp=None):
         """ evauate the reaction rate for temperature T """
-
+        rhoY = rho * comp.eval_ye()
         r = self.interpolator.interpolate(np.log10(rhoY), np.log10(T),
                                           TableIndex.RATE.value)
         return 10.0**r
 
-    def get_nu_loss(self, T, rhoY):
+    def get_nu_loss(self, T, *, rho=None, comp=None):
         """ get the neutrino loss rate for the reaction if tabulated"""
-
+        rhoY = rho * comp.eval_ye()
         r = self.interpolator.interpolate(np.log10(rhoY), np.log10(T),
                                           TableIndex.NU.value)
         return 10**r
@@ -1674,9 +1675,10 @@ class TabularRate(Rate):
 
 
 class DerivedRate(ReacLibRate):
-    """
-    This class is a derived class from `Rate` with the purpose of computing the inverse rate
-    by the application of detailed balance to the forward reactions.
+    """This class is a derived class from `Rate` with the purpose of
+    computing the inverse rate by the application of detailed balance
+    to the forward reactions.
+
     """
 
     def __init__(self, rate, compute_Q=False, use_pf=False):
@@ -1749,9 +1751,9 @@ class DerivedRate(ReacLibRate):
             if not nuc.partition_function:
                 warnings.warn(UserWarning(f'{nuc} partition function is not supported by tables: set pf = 1.0 by default'))
 
-    def eval(self, T, rhoY=None):
+    def eval(self, T, *, rho=None, comp=None):
 
-        r = super().eval(T=T, rhoY=rhoY)
+        r = super().eval(T=T, rho=rho, comp=comp)
         z_r = 1.0
         z_p = 1.0
         if self.use_pf:

@@ -918,7 +918,7 @@ class RateCollection:
             screen_factors = {}
 
         for r in self.rates:
-            val = r.prefactor * rho**r.dens_exp * r.eval(T, rho * y_e)
+            val = r.prefactor * rho**r.dens_exp * r.eval(T, rho=rho, comp=composition)
             if (r.weak_type == 'electron_capture' and not isinstance(r, TabularRate)):
                 val = val * y_e
             yfac = functools.reduce(mul, [ys[q] for q in r.reactants])
@@ -1178,11 +1178,10 @@ class RateCollection:
             if isinstance(r, TabularRate):
                 # get composition
                 ys = composition.get_molar()
-                y_e = composition.eval_ye()
 
                 # need to get reactant nucleus
                 nuc = r.reactants[0]
-                enu += constants.N_A * ys[nuc] * r.get_nu_loss(T, rho * y_e)
+                enu += constants.N_A * ys[nuc] * r.get_nu_loss(T, rho=rho, comp=composition)
 
         enuc -= enu
         if return_enu:

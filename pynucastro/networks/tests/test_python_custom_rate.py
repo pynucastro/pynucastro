@@ -33,7 +33,7 @@ class MyRate(pyna.Rate):
         fstring += f"    rate_eval.{self.fname} = {self.r0} * (tf.T9 * 1.e9 / {self.T0} )**({self.nu})\n\n"
         return fstring
 
-    def eval(self, T, rhoY=None):
+    def eval(self, T, *, rho=None, comp=None):
         return self.r0 * (T / self.T0)**self.nu
 
 
