@@ -345,6 +345,13 @@ class Rate:
 
         self.weak_type = weak_type
 
+        # the identical particle factor scales the rate to prevent
+        # double counting for a rate that has the same nucleus
+        # multiple times as a reactant.  Usually we want this
+        # behavior, but for approximate rates, sometimes we need to
+        # disable it.
+        self.use_identical_particle_factor = use_identical_particle_factor
+
         self._set_rhs_properties()
         self._set_screening()
         self._set_print_representation()
@@ -352,13 +359,6 @@ class Rate:
         self.tabular = False
 
         self.reverse = None
-
-        # the identical particle factor scales the rate to prevent
-        # double counting for a rate that has the same nucleus
-        # multiple times as a reactant.  Usually we want this
-        # behavior, but for approximate rates, sometimes we need to
-        # disable it.
-        self.use_identical_particle_factor = use_identical_particle_factor
 
     def __repr__(self):
         return self.string
