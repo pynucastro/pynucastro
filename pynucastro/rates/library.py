@@ -178,8 +178,8 @@ class Library:
         """ Add to the rate dictionary from the supplied list of Rate objects."""
         for rate in ratelist:
             if rate in self.rates:
-                rid = rate.id
-                raise ValueError(f"supplied a Rate object already in the Library: {rid}")
+                raise ValueError(f"supplied a Rate object already in the Library: {rate.id}")
+            self.add_rate(rate)
 
     def get_rate_by_name(self, name: str | list[str]) -> Rate | list[Rate]:
         """Given a string representing a rate in the form 'A(x,y)B'
