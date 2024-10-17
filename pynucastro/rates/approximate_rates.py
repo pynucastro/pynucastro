@@ -29,7 +29,7 @@ class ApproximateRate(Rate):
             # an ap_pg approximate rate combines A(a,g)B and A(a,p)X(p,g)B into a
             # single effective rate by assuming proton equilibrium.
 
-            assert len(secondary_rates) == 2
+            assert len(self.secondary_rates) == 2
 
             # make sure that the primary forward rate makes sense
             # this should be A(a,g)B
@@ -88,6 +88,66 @@ class ApproximateRate(Rate):
             else:
                 super().__init__(reactants=[self.primary_product],
                                  products=[self.primary_reactant, Nucleus("he4")], label="approx")
+
+            self.chapter = "a"
+
+        elif self.approx_type == "nn_g":
+
+            # a nn_g approximate rate combines A(n,g)X(n,g)B into a
+            # single effective rate by assuming neutron equilibrium.
+
+            assert self.primary_rate is None
+            assert len(self.secondary_rates) == 2
+
+            # make sure that the pair of forward secondary makes sense
+
+            for rr in self.secondary_rates:
+                assert Nucleus("n") in rr.reactants and len(rr.products) == 1
+
+            # make sure that the intermediate nucleus matches
+            assert self.secondary_rates[0].products[0] == max(self.secondary_rates[1].reactants)
+
+            # we are going to define the product A and reactant B from
+            # these forward secondary rates
+
+            self.primary_reactant = max(self.secondary_rates[0].reactants)
+            self.primary_product = max(self.secondary_rates[1].products)
+
+            # the intermediate nucleus is not in our network, so make it
+            # dummy
+
+            self.intermediate_nucleus = max(self.secondary_rates[0].products)
+            #self.intermediate_nucleus.dummy = True
+
+            # now ensure that the reverse rates makes sense
+
+            assert self.primary_reverse is None
+            assert len(self.secondary_reverse) == 2
+
+            for rr in self.secondary_reverse:
+                assert len(rr.reactants) == 1
+
+            # now the first secondary reverse rate should be B(g,n)X
+
+            assert (self.primary_product in self.secondary_reverse[0].reactants and
+                    self.intermediate_nucleus in secondary_reverse[0].products and
+                    Nucleus("n") in secondary_reverse[0].products)
+
+            # and the second secondary reverse rate should be X(g,n)A
+
+            assert (self.intermediate_nucleus in self.secondary_reverse[1].reactants and
+                    self.primary_reactant in self.secondary_reverse[1].products and
+                    Nucleus("n") in self.secondary_reverse[1].products)
+
+            # now initialize the super class with these reactants and products
+
+            # todo: need to prevent identical particle factor
+            if not self.is_reverse:
+                super().__init__(reactants=[self.primary_reactant, Nucleus("n"), Nucleus("n")],
+                                 products=[self.primary_product], label="approx")
+            else:
+                super().__init__(reactants=[self.primary_product],
+                                 products=[self.primary_reactant, Nucleus("n"), Nucleus("n")], label="approx")
 
             self.chapter = "a"
 
