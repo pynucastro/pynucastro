@@ -5,7 +5,9 @@ from pynucastro.rates.rate import Rate
 class ApproximateRate(Rate):
 
     def __init__(self, primary_rate, secondary_rates,
-                 primary_reverse, secondary_reverse, is_reverse=False, approx_type="ap_pg"):
+                 primary_reverse, secondary_reverse, *,
+                 is_reverse=False, approx_type="ap_pg",
+                 use_identical_particle_factor=True):
         """the primary rate has the same reactants and products and the final
         approximate rate would have.  The secondary rates are ordered such that
         together they would give the same sequence"""
@@ -80,10 +82,14 @@ class ApproximateRate(Rate):
 
             if not self.is_reverse:
                 super().__init__(reactants=[self.primary_reactant, Nucleus("he4")],
-                                 products=[self.primary_product], label="approx")
+                                 products=[self.primary_product],
+                                 label="approx",
+                                 use_identical_particle_factor=use_identical_particle_factor)
             else:
                 super().__init__(reactants=[self.primary_product],
-                                 products=[self.primary_reactant, Nucleus("he4")], label="approx")
+                                 products=[self.primary_reactant, Nucleus("he4")],
+                                 label="approx",
+                                 use_identical_particle_factor=use_identical_particle_factor)
 
             self.chapter = "a"
 
