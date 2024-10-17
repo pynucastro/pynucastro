@@ -4,10 +4,10 @@ from pynucastro.rates.rate import Rate
 
 class ApproximateRate(Rate):
 
-    def __init__(self, primary_rate, secondary_rates,
-                 primary_reverse, secondary_reverse, *,
-                 is_reverse=False, approx_type="ap_pg",
-                 use_identical_particle_factor=True):
+    def __init__(self, primary_rate: Rate, secondary_rates: list[Rate],
+                 primary_reverse: Rate, secondary_reverse: list[Rate],
+                 *,  is_reverse: bool = False, approx_type: str= "ap_pg",
+                 use_identical_particle_factor: bool = True) -> None:
         """the primary rate has the same reactants and products and the final
         approximate rate would have.  The secondary rates are ordered such that
         together they would give the same sequence"""
@@ -99,7 +99,7 @@ class ApproximateRate(Rate):
         # update the Q value
         self._set_q()
 
-    def get_child_rates(self):
+    def get_child_rates(self) -> list[Rate]:
         """return a list of all of the rates that are used in this approximation"""
         tlist = [self.primary_rate]
         tlist += self.secondary_rates
@@ -107,11 +107,11 @@ class ApproximateRate(Rate):
         tlist += self.secondary_reverse
         return tlist
 
-    def _set_screening(self):
+    def _set_screening(self) -> None:
         # the individual rates are screened -- we don't screen the combination of them
         pass
 
-    def eval(self, T, *, rho=None, comp=None):
+    def eval(self, T: float, *, rho: float = None, comp=None) -> float:
         """evaluate the approximate rate"""
 
         if self.approx_type == "ap_pg":
@@ -137,7 +137,7 @@ class ApproximateRate(Rate):
                 return r_ga + r_pa * r_gp / (r_pg + r_pa)
         raise NotImplementedError(f"approximation type {self.approx_type} not supported")
 
-    def function_string_py(self):
+    def function_string_py(self) -> str:
         """
         Return a string containing python function that computes the
         approximate rate
@@ -175,7 +175,7 @@ class ApproximateRate(Rate):
         string += f"    rate_eval.{self.fname} = rate\n\n"
         return string
 
-    def function_string_cxx(self, dtype="double", specifiers="inline", leave_open=False, extra_args=()):
+    def function_string_cxx(self, dtype="double", specifiers="inline", leave_open=False, extra_args=()) -> str:
         """
         Return a string containing C++ function that computes the
         approximate rate
