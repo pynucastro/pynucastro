@@ -12,7 +12,7 @@ from pynucastro.rates.rate import (DerivedRate, Rate, RateFileError,
                                    get_rates_dir, load_rate)
 
 
-def list_known_rates() -> None:
+def list_known_rates():
     """ list the rates found in the library """
 
     lib_path = Path(__file__).parents[1]/"library"
@@ -31,7 +31,7 @@ def list_known_rates() -> None:
                 print(f"                                 : {r}")
 
 
-def _rate_name_to_nuc(name: str) -> tuple[list[Nucleus], list[Nucleus]]:
+def _rate_name_to_nuc(name):
 
     # first try to interpret name as A(x,y)B
     rate_str = re.compile(r"([A-Za-z0-9]+)\(([A-Za-z0-9_]*),([A-Za-z0-9_]*)\)([A-Za-z0-9]+)",
@@ -91,7 +91,7 @@ def _rate_name_to_nuc(name: str) -> tuple[list[Nucleus], list[Nucleus]]:
     return reactants, products
 
 
-def capitalize_rid(rid: str, delimiter: str) -> str:
+def capitalize_rid(rid, delimiter):
     # Used to capitalize rid or fname given the delimiter
     # delimiter is usually either "_" or " "
 
@@ -120,7 +120,7 @@ class Library:
     specified by RateFilter objects.
     """
 
-    def __init__(self, libfile: str = None, rates: list[Rate] = None) -> None:
+    def __init__(self, libfile=None, rates=None):
         self._library_file = libfile
         self._rates = {}
 
@@ -140,11 +140,11 @@ class Library:
             self._library_file = _find_rate_file(self._library_file)
             self._read_library_file()
 
-    def get_rates(self) -> list[Rate]:
+    def get_rates(self):
         """ Return a list of the rates in this library."""
         return list(self._rates.values())
 
-    def get_rate(self, rid: str) -> Rate:
+    def get_rate(self, rid):
         """ Return a rate matching the id provided. """
         try:
             rid_mod = capitalize_rid(rid, " ")
@@ -160,10 +160,10 @@ class Library:
             raise LookupError(f"rate identifier {rid!r} does not match a rate in this library.") from None
 
     @property
-    def num_rates(self) -> int:
+    def num_rates(self):
         return len(self.get_rates())
 
-    def add_rate(self, rate: Rate) -> None:
+    def add_rate(self, rate):
         """Manually add a rate by giving a Rate object"""
 
         try:
@@ -174,7 +174,7 @@ class Library:
         if rid not in self._rates:
             self._rates[rid] = rate
 
-    def add_rates(self, ratelist: list[Rate]) -> None:
+    def add_rates(self, ratelist):
         """ Add to the rate dictionary from the supplied list of Rate objects."""
 
         for rate in ratelist:
@@ -182,7 +182,7 @@ class Library:
                 raise ValueError(f"supplied a Rate object already in the Library: {rate.id}")
             self.add_rate(rate)
 
-    def get_rate_by_name(self, name: str | list[str]) -> Rate | list[Rate]:
+    def get_rate_by_name(self, name):
         """Given a string representing a rate in the form 'A(x,y)B'
         (or a list of strings for multiple rates) return the Rate
         objects that match from the Library.  If there are multiple
@@ -212,7 +212,7 @@ class Library:
             return rates_out[0]
         return rates_out
 
-    def remove_rate(self, rate: str | Rate) -> None:
+    def remove_rate(self, rate):
         """Manually remove a rate from the library by supplying the
         short name "A(x,y)B, a Rate object, or the rate id"""
 
@@ -226,11 +226,11 @@ class Library:
             # we assume that a rate id as provided
             self._rates.pop(rate)
 
-    def get_nuclei(self) -> set[Nucleus]:
+    def get_nuclei(self):
         """get the list of unique nuclei"""
         return {nuc for r in self.get_rates() for nuc in r.reactants + r.products}
 
-    def heaviest(self) -> Nucleus:
+    def heaviest(self):
         """ Return the heaviest nuclide in this library. """
         nuc = None
         for r in self.get_rates():
@@ -242,7 +242,7 @@ class Library:
                 nuc = rnuc
         return nuc
 
-    def lightest(self) -> Nucleus:
+    def lightest(self):
         """ Return the lightest nuclide in this library. """
         nuc = None
         for r in self.get_rates():
@@ -254,7 +254,7 @@ class Library:
                 nuc = rnuc
         return nuc
 
-    def _read_library_file(self) -> None:
+    def _read_library_file(self):
         # loop through library file, read lines
 
         with self._library_file.open("r") as flib:
@@ -315,7 +315,7 @@ class Library:
                     else:
                         self._rates[rid] = r
 
-    def write_to_file(self, filename, prepend_rates_dir=False) -> None:
+    def write_to_file(self, filename, prepend_rates_dir=False):
         """
         Write the library out to a file of the given name in Reaclib format. Will be
         automatically written to the pynucastro rate file directory if True is passed
@@ -366,8 +366,7 @@ class Library:
         new_library = Library(rates=diff_rates)
         return new_library
 
-    def get_rate_by_nuclei(self, reactants: list[Nucleus],
-                           products: list[Nucleus]) -> None | Rate | list[Rate]:
+    def get_rate_by_nuclei(self, reactants, products):
         """given a list of reactants and products, return any matching rates"""
         reactants = sorted(Nucleus.cast_list(reactants))
         products = sorted(Nucleus.cast_list(products))
@@ -381,7 +380,7 @@ class Library:
             return _tmp[0]
         return _tmp
 
-    def find_duplicate_links(self) -> list[list[Rate]]:
+    def find_duplicate_links(self):
         """report on an rates where another rate exists that has the
         same reactants and products.  These may not be the same Rate
         object (e.g., one could be tabular the other a simple decay),
@@ -548,7 +547,7 @@ class RateFilter:
 
     def __init__(self, reactants=None, products=None, exact=True,
                  reverse=None, min_reactants=None, max_reactants=None,
-                 min_products=None, max_products=None, filter_function=None) -> None:
+                 min_products=None, max_products=None, filter_function=None):
         """Create a new RateFilter with the given selection rules
 
         Keyword Arguments:
@@ -611,7 +610,7 @@ class RateFilter:
             self.products = Nucleus.cast_list(products, allow_single=True)
 
     @staticmethod
-    def _contents_equal(a, b) -> bool:
+    def _contents_equal(a, b):
         """
         Return True if the contents of a and b exactly match, ignoring ordering.
         If either a or b is None, return True only if both a and b are None.
@@ -621,7 +620,7 @@ class RateFilter:
         return (not a) and (not b)
 
     @staticmethod
-    def _compare_nuclides(test, reference, exact=True) -> bool:
+    def _compare_nuclides(test, reference, exact=True):
         """
         test and reference should be iterables of Nucleus objects.
         If an exact match is desired, test and reference should exactly match, ignoring ordering.
@@ -637,7 +636,7 @@ class RateFilter:
                     break
         return matches
 
-    def matches(self, r) -> bool:
+    def matches(self, r):
         """ Given a Rate r, see if it matches this RateFilter. """
         # do cheaper checks first
         matches_reverse = True
@@ -689,7 +688,7 @@ class ReacLibLibrary(Library):
     """Load the latest stored version of the ReacLib library and
     return a Library"""
 
-    def __init__(self) -> None:
+    def __init__(self):
         libfile = 'reaclib_default2_20220329'
         Library.__init__(self, libfile=libfile)
 
@@ -699,7 +698,7 @@ class TabularLibrary(Library):
 
     lib_path = Path(__file__).parents[1]/"library/tabular"
 
-    def __init__(self) -> None:
+    def __init__(self):
         # find all of the tabular rates that pynucastro knows about
         # we'll assume that these are of the form *-toki
 

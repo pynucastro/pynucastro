@@ -50,7 +50,7 @@ class Nucleus:
     """
     _cache = {}
 
-    def __init__(self, name: str, dummy: bool = False) -> None:
+    def __init__(self, name, dummy=False):
         name = name.lower()
         self.raw = name
 
@@ -155,29 +155,29 @@ class Nucleus:
             self.tau = None
 
     @classmethod
-    def from_cache(cls, name: str, dummy: bool = False):
+    def from_cache(cls, name, dummy=False):
         key = (name.lower(), dummy)
         if key not in cls._cache:
             cls._cache[key] = Nucleus(name, dummy)
         return cls._cache[key]
 
-    def __repr__(self) -> str:
+    def __repr__(self):
         if self.raw not in ("p", "d", "t", "n"):
             return self.raw.capitalize()
         return self.raw
 
-    def __hash__(self) -> int:
+    def __hash__(self):
         return hash((self.Z, self.A))
 
-    def c(self) -> str:
+    def c(self):
         """return the capitalized-style name"""
         return self.caps_name
 
-    def cindex(self) -> str:
+    def cindex(self):
         """return the name for C++ indexing"""
         return self.short_spec_name.capitalize()
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other):
         if isinstance(other, Nucleus):
             return self.el == other.el and \
                 self.Z == other.Z and self.A == other.A
@@ -185,7 +185,7 @@ class Nucleus:
             return (self.Z, self.A) == other
         return NotImplemented
 
-    def __lt__(self, other) -> bool:
+    def __lt__(self, other):
         if not self.Z == other.Z:
             return self.Z < other.Z
         return self.A < other.A
@@ -199,9 +199,7 @@ class Nucleus:
         raise TypeError("Invalid type passed to Nucleus.cast() (expected str or Nucleus)")
 
     @classmethod
-    def cast_list(cls, lst: list[str], *,
-                  allow_None: bool = False,
-                  allow_single: bool = False):
+    def cast_list(cls, lst, *, allow_None=False, allow_single=False):
         if allow_None and lst is None:
             return lst
         if isinstance(lst, (str, cls)):
@@ -211,8 +209,7 @@ class Nucleus:
         return [cls.cast(obj) for obj in lst]
 
 
-def get_nuclei_in_range(zmin: int, zmax: int,
-                        amin: int, amax: int) -> list[Nucleus]:
+def get_nuclei_in_range(zmin, zmax, amin, amax):
     """given a range of Z = [zmin, zmax], and A = [amin, amax],
     return a list of Nucleus objects for all nuclei in this range"""
 
@@ -229,7 +226,7 @@ def get_nuclei_in_range(zmin: int, zmax: int,
     return nuc_list
 
 
-def get_all_nuclei() -> list[Nucleus]:
+def get_all_nuclei():
     """Return a list will every Nucleus that has a known mass"""
 
     nuc_list = []

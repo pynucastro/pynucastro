@@ -8,8 +8,7 @@ class ScreeningPair:
     """a pair of nuclei that will have rate screening applied.  We store a
     list of all rates that match this pair of nuclei"""
 
-    def __init__(self, name: str, nuc1: Nucleus,
-                 nuc2: Nucleus, rate=None) -> None:
+    def __init__(self, name, nuc1, nuc2, rate=None):
         self.name = name
         self.n1 = nuc1
         self.n2 = nuc2
@@ -19,25 +18,25 @@ class ScreeningPair:
         else:
             self.rates = [rate]
 
-    def add_rate(self, rate) -> None:
+    def add_rate(self, rate):
         if rate not in self.rates:
             self.rates.append(rate)
 
-    def __str__(self) -> str:
+    def __str__(self):
         ostr = f"screening for {self.n1} + {self.n2}\n"
         ostr += "rates:\n"
         for r in self.rates:
             ostr += f"  {r}\n"
         return ostr
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other):
         """all we care about is whether the names are the same -- that conveys
         what the reaction is"""
 
         return self.name == other.name
 
 
-def get_screening_map(rates, *, symmetric_screening=False) -> list[ScreeningPair]:
+def get_screening_map(rates, *, symmetric_screening=False):
     """a screening map is just a list of ScreeningPair objects
     containing the information about nuclei pairs for screening If
     symmetric_screening=True, then for reverse rates, we screen using

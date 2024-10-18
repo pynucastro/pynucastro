@@ -57,11 +57,11 @@ _dirs = [
 ]
 
 
-def get_rates_dir() -> Path:
+def get_rates_dir():
     return _pynucastro_rates_dir
 
 
-def get_tabular_dir() -> Path:
+def get_tabular_dir():
     return _pynucastro_tabular_dir
 
 
@@ -69,7 +69,7 @@ class RateFileError(Exception):
     """An error occurred while trying to read a Rate from a file."""
 
 
-def load_rate(rfile: str = None):
+def load_rate(rfile=None):
     """Try to load a rate of any type.
 
     :raises: :class:`.RateFileError`, :class:`.UnsupportedNucleus`
@@ -84,7 +84,7 @@ def load_rate(rfile: str = None):
     return rate
 
 
-def _find_rate_file(ratename: str | Path) -> Path:
+def _find_rate_file(ratename):
     """locate the Reaclib or tabular rate or library file given its name.  Return
     None if the file cannot be located, otherwise return its path."""
 
@@ -126,7 +126,7 @@ class Tfactors:
     :var lnT9:  log(T9)
     """
 
-    def __init__(self, T: float) -> None:
+    def __init__(self, T):
         """ return the Tfactors object.  Here, T is temperature in Kelvin """
         self.T9 = T/1.e9
         self.T9i = 1.0/self.T9
@@ -153,7 +153,7 @@ class SingleSet:
 
     """
 
-    def __init__(self, a, labelprops) -> None:
+    def __init__(self, a, labelprops):
         """here a is iterable (e.g., list or numpy array), storing the
            coefficients, a0, ..., a6
 
@@ -167,7 +167,7 @@ class SingleSet:
 
         self._update_label_properties()
 
-    def _update_label_properties(self) -> None:
+    def _update_label_properties(self):
         """ Set label and flags indicating Set is resonant,
             weak, or reverse. """
         assert isinstance(self.labelprops, str)
@@ -178,7 +178,7 @@ class SingleSet:
         self.weak = self.labelprops[4] == 'w'
         self.reverse = self.labelprops[5] == 'v'
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other):
         """ Determine whether two SingleSet objects are equal to each other. """
         x = True
 
@@ -315,11 +315,9 @@ class Rate:
     this and extend to their particular format.
 
     """
-    def __init__(self, reactants: list[str] | list[Nucleus] = None,
-                 products: list[str] | list[Nucleus] = None,
-                 Q: float = None, weak_type: str = "",
-                 label: str = "generic",
-                 use_identical_particle_factor: bool = True) -> None:
+    def __init__(self, reactants=None, products=None,
+                 Q=None, weak_type="", label="generic",
+                 use_identical_particle_factor=True):
         """a generic Rate class that acts as a base class for specific
         sources.  Here we only specify the reactants and products and Q value"""
 
@@ -362,19 +360,19 @@ class Rate:
 
         self.reverse = None
 
-    def __repr__(self) -> str:
+    def __repr__(self):
         return self.string
 
-    def __hash__(self) -> int:
+    def __hash__(self):
         return hash(self.__repr__())
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other):
         """ Determine whether two Rate objects are equal.
         They are equal if they contain identical reactants and products"""
 
         return (self.reactants, self.products) == (other.reactants, other.products)
 
-    def __lt__(self, other) -> bool:
+    def __lt__(self, other):
         """sort such that lightest reactants come first, and then look at products"""
 
         # this sort will make two nuclei with the same A be in order of Z
@@ -401,7 +399,7 @@ class Rate:
         # if we made it here, then the rates are the same
         return True
 
-    def _set_q(self) -> None:
+    def _set_q(self):
         """set the Q value of the reaction (in MeV)"""
 
         # from the masses of the nuclei, Q = M_products - M_reactants
@@ -412,7 +410,7 @@ class Rate:
         for n in self.products:
             self.Q += -n.mass
 
-    def _set_print_representation(self) -> None:
+    def _set_print_representation(self):
 
         # string is output to the terminal, rid is used as a dict key,
         # and pretty_string is latex
@@ -543,7 +541,7 @@ class Rate:
 
         self.pretty_string += r"$"
 
-    def _set_rhs_properties(self) -> None:
+    def _set_rhs_properties(self):
         """ compute statistical prefactor and density exponent from the reactants. """
         self.prefactor = 1.0  # this is 1/2 for rates like a + a (double counting)
         self.inv_prefactor = 1
@@ -555,7 +553,7 @@ class Rate:
         if self.weak_type == 'electron_capture':
             self.dens_exp = self.dens_exp + 1
 
-    def _set_screening(self) -> None:
+    def _set_screening(self):
         """ determine if this rate is eligible for screening and the nuclei to use. """
         # Tells if this rate is eligible for screening
         # using screenz.f90 provided by StarKiller Microphysics.
@@ -590,21 +588,21 @@ class Rate:
         else:
             self.symmetric_screen = self.ion_screen
 
-    def cname(self) -> str:
+    def cname(self):
         """a C++-safe version of the rate name"""
         # replace the "__" separating reactants and products with "_to_"
         # and convert all other "__" to single "_"
         return self.fname.replace("__", "_to_", 1).replace("__", "_")
 
-    def get_rate_id(self) -> str:
+    def get_rate_id(self):
         """ Get an identifying string for this rate."""
         return f'{self.rid} <{self.label.strip()}>'
 
     @property
-    def id(self) -> str:
+    def id(self):
         return self.get_rate_id()
 
-    def heaviest(self) -> Nucleus:
+    def heaviest(self):
         """
         Return the heaviest nuclide in this Rate.
 
@@ -617,7 +615,7 @@ class Rate:
                 nuc = n
         return nuc
 
-    def lightest(self) -> Nucleus:
+    def lightest(self):
         """
         Return the lightest nuclide in this Rate.
 
@@ -665,7 +663,7 @@ class Rate:
 
         return "*".join(ydot_string_components)
 
-    def eval(self, T: float, *, rho: float = None, comp=None) -> float:
+    def eval(self, T, *, rho=None, comp=None):
         raise NotImplementedError("base Rate class does not know how to eval()")
 
     def jacobian_string_py(self, y_i):
@@ -719,7 +717,7 @@ class Rate:
 
         return "*".join(jac_string_components)
 
-    def eval_jacobian_term(self, T, rho, comp, y_i) -> float:
+    def eval_jacobian_term(self, T, rho, comp, y_i):
         """Evaluate drate/d(y_i), y_i is a Nucleus object.  This rate
         term has the full composition and density dependence, i.e.:
 
@@ -782,12 +780,8 @@ class ReacLibRate(Rate):
 
     :raises: :class:`.RateFileError`, :class:`.UnsupportedNucleus`
     """
-    def __init__(self, rfile: str | Path = None,
-                 chapter: int = None, original_source: str = None,
-                 reactants: list[str] | list[Nucleus] = None,
-                 products: list[str] | list[Nucleus] = None,
-                 sets: list[SingleSet] = None, labelprops: str = None,
-                 Q: float = None) -> None:
+    def __init__(self, rfile=None, chapter=None, original_source=None,
+                 reactants=None, products=None, sets=None, labelprops=None, Q=None):
         """ rfile can be either a string specifying the path to a rate file or
         an io.StringIO object from which to read rate information. """
         # pylint: disable=super-init-not-called
@@ -863,7 +857,7 @@ class ReacLibRate(Rate):
         self._set_screening()
         self._set_print_representation()
 
-    def _set_print_representation(self) -> None:
+    def _set_print_representation(self):
         """ compose the string representations of this Rate. """
 
         super()._set_print_representation()
@@ -886,7 +880,7 @@ class ReacLibRate(Rate):
         if self.removed:
             self.fname += "__removed"
 
-    def modify_products(self, new_products) -> None:
+    def modify_products(self, new_products):
         self.products = Nucleus.cast_list(new_products, allow_single=True)
         self.modified = True
 
@@ -897,10 +891,10 @@ class ReacLibRate(Rate):
         self.fname = None    # reset so it will be updated
         self._set_print_representation()
 
-    def __hash__(self) -> int:
+    def __hash__(self):
         return hash(self.__repr__())
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other):
         """ Determine whether two Rate objects are equal.
         They are equal if they contain identical reactants and products and
         if they contain the same SingleSet sets and if their chapters are equal."""
@@ -950,7 +944,7 @@ class ReacLibRate(Rate):
                                Q=self.Q)
         return new_rate
 
-    def _set_label_properties(self, labelprops=None) -> None:
+    def _set_label_properties(self, labelprops=None):
         """ Calls _update_resonance_combined and then
             _update_label_properties. """
         if labelprops:
@@ -961,7 +955,7 @@ class ReacLibRate(Rate):
         self._update_resonance_combined()
         self._update_label_properties()
 
-    def _update_resonance_combined(self) -> None:
+    def _update_resonance_combined(self):
         """ Checks the Sets in this Rate and updates the
             resonance_combined flag as well as
             self.labelprops[4] """
@@ -969,13 +963,13 @@ class ReacLibRate(Rate):
         if True in sres and False in sres:
             self._labelprops_combine_resonance()
 
-    def _labelprops_combine_resonance(self) -> None:
+    def _labelprops_combine_resonance(self):
         """ Update self.labelprops[4] = 'c'"""
         llp = list(self.labelprops)
         llp[4] = 'c'
         self.labelprops = ''.join(llp)
 
-    def _update_label_properties(self) -> None:
+    def _update_label_properties(self):
         """ Set label and flags indicating Rate is resonant,
             weak, or reverse. """
         assert isinstance(self.labelprops, str)
@@ -1005,7 +999,7 @@ class ReacLibRate(Rate):
                 self.weak_type = None
             self.reverse = self.labelprops[5] == 'v'
 
-    def _read_from_file(self, f) -> None:
+    def _read_from_file(self, f):
         """ given a file object, read rate data from the file. """
         lines = f.readlines()
         f.close()
@@ -1117,7 +1111,7 @@ class ReacLibRate(Rate):
             self.sets.append(SingleSet(a, labelprops=labelprops))
             self._set_label_properties(labelprops)
 
-    def write_to_file(self, f) -> None:
+    def write_to_file(self, f):
         """ Given a file object, write rate data to the file. """
 
         if self.original_source is None:
@@ -1129,7 +1123,7 @@ class ReacLibRate(Rate):
 
         print(self.original_source, file=f)
 
-    def get_rate_id(self) -> str:
+    def get_rate_id(self):
         """ Get an identifying string for this rate.
         Don't include resonance state since we combine resonant and
         non-resonant versions of reactions. """
@@ -1146,7 +1140,7 @@ class ReacLibRate(Rate):
 
         return f'{self.rid} <{self.label.strip()}_{ssrc}_{sweak}_{srev}>'
 
-    def function_string_py(self) -> str:
+    def function_string_py(self):
         """
         Return a string containing python function that computes the
         rate
@@ -1168,7 +1162,7 @@ class ReacLibRate(Rate):
         fstring += f"    rate_eval.{self.fname} = rate\n\n"
         return fstring
 
-    def function_string_cxx(self, dtype="double", specifiers="inline", leave_open=False, extra_args=()) -> str:
+    def function_string_cxx(self, dtype="double", specifiers="inline", leave_open=False, extra_args=()):
         """
         Return a string containing C++ function that computes the
         rate
@@ -1215,7 +1209,7 @@ class ReacLibRate(Rate):
 
         return fstring
 
-    def eval(self, T: float, *, rho: float = None, comp=None) -> float:
+    def eval(self, T, *, rho=None, comp=None):
         """ evauate the reaction rate for temperature T """
 
         tf = Tfactors(T)
@@ -1239,7 +1233,7 @@ class ReacLibRate(Rate):
 
         return drdT
 
-    def get_rate_exponent(self, T0: float) -> float:
+    def get_rate_exponent(self, T0: float):
         """
         for a rate written as a power law, r = r_0 (T/T0)**nu, return
         nu corresponding to T0
@@ -1254,7 +1248,7 @@ class ReacLibRate(Rate):
         return (T0/r1)*drdT
 
     def plot(self, Tmin=1.e8, Tmax=1.6e9, rhoYmin=3.9e8, rhoYmax=2.e9,
-             figsize=(10, 10)) -> plt.Figure:
+             figsize=(10, 10)):
         """plot the rate's temperature sensitivity vs temperature
 
         :param float Tmin:    minimum temperature for plot
@@ -1309,7 +1303,7 @@ class TableInterpolator:
     """A simple class that holds a pointer to the table data and
     methods that allow us to interpolate a variable"""
 
-    def __init__(self, table_rhoy_lines, table_temp_lines, table_data) -> None:
+    def __init__(self, table_rhoy_lines, table_temp_lines, table_data):
 
         self.data = table_data
         self.table_rhoy_lines = table_rhoy_lines
@@ -1319,7 +1313,7 @@ class TableInterpolator:
         self.rhoy = self.data[::self.table_temp_lines, TableIndex.RHOY.value]
         self.temp = self.data[0:self.table_temp_lines, TableIndex.T.value]
 
-    def _get_logT_idx(self, logt0) -> int:
+    def _get_logT_idx(self, logt0):
         """return the index into the temperatures such that
         T[i-1] < t0 <= T[i].  We return i-1 here, corresponding to
         the lower value.
@@ -1329,7 +1323,7 @@ class TableInterpolator:
         max_idx = len(self.temp) - 1
         return max(0, min(max_idx, np.searchsorted(self.temp, logt0)) - 1)
 
-    def _get_logrhoy_idx(self, logrhoy0) -> int:
+    def _get_logrhoy_idx(self, logrhoy0):
         """return the index into rho*Y such that
         rhoY[i-1] < rhoy0 <= rhoY[i].  We return i-1 here,
         corresponding to the lower value.
@@ -1409,7 +1403,7 @@ class TabularRate(Rate):
 
     :raises: :class:`.RateFileError`, :class:`.UnsupportedNucleus`
     """
-    def __init__(self, rfile=None) -> None:
+    def __init__(self, rfile=None):
         """ rfile can be either a string specifying the path to a rate file or
         an io.StringIO object from which to read rate information. """
         super().__init__()
@@ -1464,10 +1458,10 @@ class TabularRate(Rate):
         self.interpolator = TableInterpolator(self.table_rhoy_lines, self.table_temp_lines,
                                               self.tabular_data_table)
 
-    def __hash__(self) -> int:
+    def __hash__(self):
         return hash(self.__repr__())
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other):
         """ Determine whether two Rate objects are equal.
         They are equal if they contain identical reactants and products."""
 
@@ -1479,7 +1473,7 @@ class TabularRate(Rate):
     def __add__(self, other):
         raise NotImplementedError("addition not defined for tabular rates")
 
-    def _read_from_file(self, f) -> None:
+    def _read_from_file(self, f):
         """ given a file object, read rate data from the file. """
         lines = f.readlines()
         f.close()
@@ -1526,7 +1520,7 @@ class TabularRate(Rate):
         # to recompute Q -- this is used for finding rate pairs
         self._set_q()
 
-    def _set_rhs_properties(self) -> None:
+    def _set_rhs_properties(self):
         """ compute statistical prefactor and density exponent from the reactants. """
         self.prefactor = 1.0  # this is 1/2 for rates like a + a (double counting)
         self.inv_prefactor = 1
@@ -1536,7 +1530,7 @@ class TabularRate(Rate):
         self.prefactor = self.prefactor/float(self.inv_prefactor)
         self.dens_exp = len(self.reactants)-1
 
-    def _set_screening(self) -> None:
+    def _set_screening(self):
         """ tabular rates are not currently screened (they are e-capture or beta-decay)"""
         self.ion_screen = []
         self.symmetric_screen = []
@@ -1549,7 +1543,7 @@ class TabularRate(Rate):
             products_str = '_'.join([repr(nuc) for nuc in self.products])
             self.fname = f'{reactants_str}__{products_str}'
 
-    def get_rate_id(self) -> str:
+    def get_rate_id(self):
         """ Get an identifying string for this rate.
         Don't include resonance state since we combine resonant and
         non-resonant versions of reactions. """
@@ -1558,7 +1552,7 @@ class TabularRate(Rate):
 
         return f'{self.rid} <{self.label.strip()}_{ssrc}>'
 
-    def function_string_py(self) -> str:
+    def function_string_py(self):
         """
         Return a string containing python function that computes the
         rate
@@ -1576,7 +1570,7 @@ class TabularRate(Rate):
 
         return fstring
 
-    def get_tabular_rate(self) -> None:
+    def get_tabular_rate(self):
         """read the rate data from .dat file """
 
         # find .dat file and read it
@@ -1598,14 +1592,14 @@ class TabularRate(Rate):
         # convert the nested list of string values into a numpy float array
         self.tabular_data_table = np.array(t_data2d, dtype=np.float64)
 
-    def eval(self, T: float, *, rho: float = None, comp=None) -> float:
+    def eval(self, T, *, rho=None, comp=None):
         """ evauate the reaction rate for temperature T """
         rhoY = rho * comp.ye
         r = self.interpolator.interpolate(np.log10(rhoY), np.log10(T),
                                           TableIndex.RATE.value)
         return 10.0**r
 
-    def get_nu_loss(self, T: float, *, rho: float = None, comp=None) -> float:
+    def get_nu_loss(self, T, *, rho=None, comp=None):
         """ get the neutrino loss rate for the reaction if tabulated"""
         rhoY = rho * comp.ye
         r = self.interpolator.interpolate(np.log10(rhoY), np.log10(T),
@@ -1613,7 +1607,7 @@ class TabularRate(Rate):
         return 10**r
 
     def plot(self, *, Tmin=None, Tmax=None, rhoYmin=None, rhoYmax=None,
-             color_field='rate', figsize=(10, 10)) -> plt.Figure:
+             color_field='rate', figsize=(10, 10)):
         """plot the rate's temperature sensitivity vs temperature
 
         :param float Tmin:    minimum temperature for plot
@@ -1686,7 +1680,7 @@ class DerivedRate(ReacLibRate):
 
     """
 
-    def __init__(self, rate: Rate, compute_Q: bool = False, use_pf: bool = False) -> None:
+    def __init__(self, rate, compute_Q=False, use_pf=False):
 
         self.use_pf = use_pf
         self.rate = rate
@@ -1746,13 +1740,13 @@ class DerivedRate(ReacLibRate):
         super().__init__(rfile=self.rate.rfile, chapter=self.rate.chapter, original_source=self.rate.original_source,
                 reactants=self.rate.products, products=self.rate.reactants, sets=derived_sets, labelprops="derived", Q=-Q)
 
-    def _warn_about_missing_pf_tables(self) -> None:
+    def _warn_about_missing_pf_tables(self):
         skip_nuclei = {Nucleus("h1"), Nucleus("n"), Nucleus("he4")}
         for nuc in set(self.rate.reactants + self.rate.products) - skip_nuclei:
             if not nuc.partition_function:
                 warnings.warn(UserWarning(f'{nuc} partition function is not supported by tables: set pf = 1.0 by default'))
 
-    def eval(self, T: float, *, rho: float = None, comp=None) -> float:
+    def eval(self, T, *, rho=None, comp=None):
 
         r = super().eval(T=T, rho=rho, comp=comp)
         z_r = 1.0
@@ -1775,7 +1769,7 @@ class DerivedRate(ReacLibRate):
             return r*z_r/z_p
         return r
 
-    def function_string_py(self) -> str:
+    def function_string_py(self):
         """
         Return a string containing python function that computes the
         rate
@@ -1812,7 +1806,7 @@ class DerivedRate(ReacLibRate):
 
         return fstring
 
-    def function_string_cxx(self, dtype="double", specifiers="inline", leave_open=False, extra_args=()) -> str:
+    def function_string_cxx(self, dtype="double", specifiers="inline", leave_open=False, extra_args=()):
         """
         Return a string containing C++ function that computes the
         rate
@@ -1878,7 +1872,7 @@ class DerivedRate(ReacLibRate):
 
         return fstring
 
-    def counter_factors(self) -> tuple[float, float]:
+    def counter_factors(self):
         """This function returns the nucr! = nucr_1! * ... * nucr_r!
         for each repeated nucr reactant and nucp! = nucp_1! * ... *
         nucp_p! for each reactant nucp product in a ordered pair
@@ -1911,19 +1905,19 @@ class RatePair:
 
     """
 
-    def __init__(self, forward: Rate = None, reverse: Rate = None) -> None:
+    def __init__(self, forward=None, reverse=None):
         self.forward = forward
         self.reverse = reverse
 
-    def __repr__(self) -> str:
+    def __repr__(self):
         return f"forward: {self.forward} ; reverse: {self.reverse}"
 
-    def __lt__(self, other) -> bool:
+    def __lt__(self, other):
         if self.forward is not None and other.forward is not None:
             return self.forward < other.forward
         if self.forward is None:
             return False
         return True
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other):
         return self.forward == other.forward and self.reverse == other.reverse
