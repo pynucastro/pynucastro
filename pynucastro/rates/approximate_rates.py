@@ -2,15 +2,43 @@ from pynucastro.nucdata import Nucleus
 from pynucastro.rates.rate import Rate
 
 
+def create_double_neutron_capture(lib, reactant, product):
+    """a helper function that will return an ApproximateRate object
+    for the "nn_g" approximation"""
+
+    intermediate = Nucleus(f"{reactant.el}{reactant.A+1}")
+
+    forward_1 = lib.get_rate_by_name(f"{reactant.raw}(n,){intermediate.raw}")
+    forward_2 = lib.get_rate_by_name(f"{intermediate.raw}(n,){product.raw}")
+
+    reverse_1 = lib.get_rate_by_name(f"{product.raw}(,n){intermediate.raw}")
+    reverse_2 = lib.get_rate_by_name(f"{intermediate.raw}(,n){reactant.raw}")
+
+    forward = ApproximateRate(None, [forward_1, forward_2],
+                              None, [reverse_1, reverse_2],
+                              approx_type="nn_g",
+                              use_identical_particle_factor=False)
+
+    reverse = ApproximateRate(None, [forward_1, forward_2],
+                              None, [reverse_1, reverse_2],
+                              approx_type="nn_g", is_reverse=True,
+                              use_identical_particle_factor=False)
+
+    return forward, reverse
+
+
 class ApproximateRate(Rate):
 
     def __init__(self, primary_rate, secondary_rates,
                  primary_reverse, secondary_reverse, *,
                  is_reverse=False, approx_type="ap_pg",
                  use_identical_particle_factor=True):
-        """the primary rate has the same reactants and products and the final
-        approximate rate would have.  The secondary rates are ordered such that
-        together they would give the same sequence"""
+        """the primary rate has the same reactants and products as the
+        final approximate rate would have.  It can be None.  The
+        secondary rates are ordered such that together they would give
+        the same sequence
+
+        """
 
         self.primary_rate = primary_rate
         self.secondary_rates = secondary_rates
@@ -27,7 +55,7 @@ class ApproximateRate(Rate):
             # an ap_pg approximate rate combines A(a,g)B and A(a,p)X(p,g)B into a
             # single effective rate by assuming proton equilibrium.
 
-            assert len(secondary_rates) == 2
+            assert len(self.secondary_rates) == 2
 
             # make sure that the primary forward rate makes sense
             # this should be A(a,g)B
@@ -93,6 +121,69 @@ class ApproximateRate(Rate):
 
             self.chapter = "a"
 
+        elif self.approx_type == "nn_g":
+
+            # a nn_g approximate rate combines A(n,g)X(n,g)B into a
+            # single effective rate by assuming neutron equilibrium.
+
+            assert self.primary_rate is None
+            assert len(self.secondary_rates) == 2
+
+            # make sure that the pair of forward secondary makes sense
+
+            for rr in self.secondary_rates:
+                assert Nucleus("n") in rr.reactants and len(rr.products) == 1
+
+            # make sure that the intermediate nucleus matches
+            assert self.secondary_rates[0].products[0] == max(self.secondary_rates[1].reactants)
+
+            # we are going to define the product A and reactant B from
+            # these forward secondary rates
+
+            self.primary_reactant = max(self.secondary_rates[0].reactants)
+            self.primary_product = max(self.secondary_rates[1].products)
+
+            # the intermediate nucleus is not in our network, so make it
+            # dummy
+
+            self.intermediate_nucleus = max(self.secondary_rates[0].products)
+            #self.intermediate_nucleus.dummy = True
+
+            # now ensure that the reverse rates makes sense
+
+            assert self.primary_reverse is None
+            assert len(self.secondary_reverse) == 2
+
+            for rr in self.secondary_reverse:
+                assert len(rr.reactants) == 1
+
+            # now the first secondary reverse rate should be B(g,n)X
+
+            assert (self.primary_product in self.secondary_reverse[0].reactants and
+                    self.intermediate_nucleus in secondary_reverse[0].products and
+                    Nucleus("n") in secondary_reverse[0].products)
+
+            # and the second secondary reverse rate should be X(g,n)A
+
+            assert (self.intermediate_nucleus in self.secondary_reverse[1].reactants and
+                    self.primary_reactant in self.secondary_reverse[1].products and
+                    Nucleus("n") in self.secondary_reverse[1].products)
+
+            # now initialize the super class with these reactants and products
+
+            if not self.is_reverse:
+                super().__init__(reactants=[self.primary_reactant, Nucleus("n"), Nucleus("n")],
+                                 products=[self.primary_product],
+                                 label="approx",
+                                 use_identical_particle_factor=use_identical_particle_factor)
+            else:
+                super().__init__(reactants=[self.primary_product],
+                                 products=[self.primary_reactant, Nucleus("n"), Nucleus("n")],
+                                 label="approx",
+                                 use_identical_particle_factor=use_identical_particle_factor)
+
+            self.chapter = "a"
+
         else:
             raise NotImplementedError(f"approximation type {self.approx_type} not supported")
 
@@ -101,9 +192,12 @@ class ApproximateRate(Rate):
 
     def get_child_rates(self):
         """return a list of all of the rates that are used in this approximation"""
-        tlist = [self.primary_rate]
+        tlist = []
+        if self.primary_rate:
+            tlist += [self.primary_rate]
         tlist += self.secondary_rates
-        tlist += [self.primary_reverse]
+        if self.primary_reverse:
+            tlist += [self.primary_reverse]
         tlist += self.secondary_reverse
         return tlist
 
@@ -135,6 +229,31 @@ class ApproximateRate(Rate):
                 r_pg = self.secondary_rates[1].eval(T)
 
                 return r_ga + r_pa * r_gp / (r_pg + r_pa)
+
+        elif self.approx_type == "nn_g":
+
+            # we are approximating A(n,g)X(n,g)B
+
+            Yn = comp.get_molar()[Nucleus("n")]
+
+            if not self.is_reverse:  # pylint: disable=no-else-return
+                # the forward rate
+                A_ng_X = self.secondary_rates[0].eval(T)  # A(n,g)X
+                X_ng_B = self.secondary_rates[1].eval(T)  # X(n,g)B
+
+                X_gn_A = self.secondary_reverse[1].eval(T)  # X(g,n)A
+
+                return A_ng_X * X_ng_B / (rho * Yn * X_ng_B + X_gn_A)
+
+            else:
+                # the reverse rate
+                B_gn_X = self.secondary_reverse[0].eval(T)
+                X_gn_A = self.secondary_reverse[1].eval(T)
+
+                X_ng_B = self.secondary_rates[1].eval(T)
+
+                return B_gn_X * X_gn_A / (rho * Yn * X_ng_B + X_gn_A)
+
         raise NotImplementedError(f"approximation type {self.approx_type} not supported")
 
     def function_string_py(self):
