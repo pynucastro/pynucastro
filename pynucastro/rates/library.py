@@ -706,19 +706,16 @@ class TabularLibrary(Library):
 
     lib_path = Path(__file__).parents[1]/"library/tabular"
 
-    def __init__(self, source: str = None) -> None:
+    def __init__(self) -> None:
         # find all of the tabular rates that pynucastro knows about
         # we'll assume that these are of the form *-toki
-
-        if not hasattr(self, "source"):
-            self.source = source
 
         trates = []
 
         for _, _, filenames in sorted(walk(self.lib_path)):
             for f in sorted(filenames):
                 if f.endswith("-toki"):
-                    trates.append(load_rate(f, source=self.source))
+                    trates.append(load_rate(f))
 
         Library.__init__(self, rates=trates)
 
@@ -729,7 +726,6 @@ class SuzukiLibrary(TabularLibrary):
     and return a Library.
     """
     lib_path = Path(__file__).parents[1]/"library/tabular/suzuki"
-    source = "suzuki"
 
 
 class LangankeLibrary(TabularLibrary):
@@ -739,4 +735,3 @@ class LangankeLibrary(TabularLibrary):
     """
 
     lib_path = Path(__file__).parents[1]/"library/tabular/langanke"
-    source = "langanke"

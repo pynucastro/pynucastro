@@ -69,7 +69,7 @@ class RateFileError(Exception):
     """An error occurred while trying to read a Rate from a file."""
 
 
-def load_rate(rfile: str = None, source: str = None):
+def load_rate(rfile: str = None):
     """Try to load a rate of any type.
 
     :raises: :class:`.RateFileError`, :class:`.UnsupportedNucleus`
@@ -77,9 +77,9 @@ def load_rate(rfile: str = None, source: str = None):
 
     rate: Rate
     try:
-        rate = TabularRate(rfile=rfile, source=source)
+        rate = TabularRate(rfile=rfile)
     except (RateFileError, UnsupportedNucleus):
-        rate = ReacLibRate(rfile=rfile, source=source)
+        rate = ReacLibRate(rfile=rfile)
 
     return rate
 
@@ -94,7 +94,7 @@ def _find_rate_file(ratename: str | Path) -> Path:
     for path in ("", *_dirs):
         x = Path(path, ratename).resolve()
         if x.is_file():
-            return x.resolve()
+            return x
 
     # notify user we can't find the file
     raise RateFileError(f'File {ratename!r} not found in the working directory, {_pynucastro_rates_dir}, or {_pynucastro_tabular_dir}')
@@ -319,8 +319,7 @@ class Rate:
                  products: list[str] | list[Nucleus] = None,
                  Q: float = None, weak_type: str = "",
                  label: str = "generic",
-                 use_identical_particle_factor: bool = True,
-                 source: str = None) -> None:
+                 use_identical_particle_factor: bool = True) -> None:
         """a generic Rate class that acts as a base class for specific
         sources.  Here we only specify the reactants and products and Q value"""
 
@@ -334,8 +333,7 @@ class Rate:
 
         self.label = label
 
-        if source:
-            self.source = source
+        self.source = None
 
         # the fname is used when writing the code to evaluate the rate
         reactants_str = '_'.join([repr(nuc) for nuc in self.reactants])
@@ -787,17 +785,19 @@ class ReacLibRate(Rate):
                  reactants: list[str] | list[Nucleus] = None,
                  products: list[str] | list[Nucleus] = None,
                  sets: list[SingleSet] = None, labelprops: str = None,
-                 Q: float = None, source: str = None) -> None:
+                 Q: float = None) -> None:
         """ rfile can be either a string specifying the path to a rate file or
         an io.StringIO object from which to read rate information. """
         # pylint: disable=super-init-not-called
 
         self.rfile_path = None
         self.rfile = None
+        self.source = None
 
         if isinstance(rfile, (str, Path)):
             rfile = Path(rfile)
             self.rfile_path = _find_rate_file(rfile)
+            self.source = "reaclib"
             self.rfile = rfile.name
 
         self.chapter = chapter    # the Reaclib chapter for this reaction
@@ -836,9 +836,6 @@ class ReacLibRate(Rate):
         self.removed = None
 
         self.Q = Q
-
-        if source:
-            self.source = source
 
         self.tabular = False
 
@@ -1412,17 +1409,19 @@ class TabularRate(Rate):
 
     :raises: :class:`.RateFileError`, :class:`.UnsupportedNucleus`
     """
-    def __init__(self, rfile=None, source: str = None) -> None:
+    def __init__(self, rfile=None) -> None:
         """ rfile can be either a string specifying the path to a rate file or
         an io.StringIO object from which to read rate information. """
-        super().__init__(source=source)
+        super().__init__()
 
         self.rfile_path = None
         self.rfile = None
+        self.source = None
 
         if isinstance(rfile, (str, Path)):
             rfile = Path(rfile)
             self.rfile_path = _find_rate_file(rfile)
+            self.source = self.rfile_path.parent.name
             self.rfile = rfile.name
 
         self.fname = None
@@ -1584,6 +1583,7 @@ class TabularRate(Rate):
 
         # find .dat file and read it
         self.table_path = _find_rate_file(self.table_file)
+        self.source = self.rfile_path.parent.name
         t_data2d = []
         with self.table_path.open() as tabular_file:
             for i, line in enumerate(tabular_file):
