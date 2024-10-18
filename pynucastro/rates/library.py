@@ -155,13 +155,13 @@ class Library:
         # fallback to the rate fname
         try:
             rid_mod = capitalize_rid(rid, "_")
-            return [q for q in self.rates if q.fname == rid_mod][0]
+            return [q for q in self.get_rates() if q.fname == rid_mod][0]
         except IndexError:
             raise LookupError(f"rate identifier {rid!r} does not match a rate in this library.") from None
 
     @property
     def num_rates(self) -> int:
-        return len(self.rates)
+        return len(self.get_rates())
 
     def add_rate(self, rate: Rate) -> None:
         """Manually add a rate by giving a Rate object"""
@@ -228,7 +228,7 @@ class Library:
 
     def get_nuclei(self) -> set[Nucleus]:
         """get the list of unique nuclei"""
-        return {nuc for r in self.rates for nuc in r.reactants + r.products}
+        return {nuc for r in self.get_rates() for nuc in r.reactants + r.products}
 
     def heaviest(self) -> Nucleus:
         """ Return the heaviest nuclide in this library. """
@@ -245,7 +245,7 @@ class Library:
     def lightest(self) -> Nucleus:
         """ Return the lightest nuclide in this library. """
         nuc = None
-        for r in self.rates:
+        for r in self.get_rates():
             rnuc = r.lightest()
             if nuc:
                 if rnuc.A < nuc.A or (rnuc.A == nuc.A and rnuc.Z > nuc.Z):
