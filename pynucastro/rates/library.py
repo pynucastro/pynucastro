@@ -144,10 +144,6 @@ class Library:
         """ Return a list of the rates in this library."""
         return list(self._rates.values())
 
-    @property
-    def rates(self) -> list[Rate]:
-        return self.get_rates()
-
     def get_rate(self, rid: str) -> Rate:
         """ Return a rate matching the id provided. """
         try:
@@ -234,13 +230,11 @@ class Library:
         """get the list of unique nuclei"""
         return {nuc for r in self.rates for nuc in r.reactants + r.products}
 
-    nuclei = property(get_nuclei)
-
     def heaviest(self) -> Nucleus:
         """ Return the heaviest nuclide in this library. """
         nuc = None
         for _, r in self._rates.items():
-            rnuc = r.heaviest()
+            rnuc = r.heaviest
             if nuc:
                 if rnuc.A > nuc.A or (rnuc.A == nuc.A and rnuc.Z < nuc.Z):
                     nuc = rnuc
@@ -365,7 +359,12 @@ class Library:
         return new_library
 
     def __sub__(self, other):
-        return self.diff(other)
+        """Return a Library containing the rates in this library that are not
+        contained in other_library"""
+
+        diff_rates = set(self.get_rates()) - set(other.get_rates())
+        new_library = Library(rates=diff_rates)
+        return new_library
 
     def get_rate_by_nuclei(self, reactants: list[Nucleus],
                            products: list[Nucleus]) -> None | Rate | list[Rate]:
@@ -382,7 +381,7 @@ class Library:
             return _tmp[0]
         return _tmp
 
-    def find_duplicate_links(self):
+    def find_duplicate_links(self) -> list[list[Rate]]:
         """report on an rates where another rate exists that has the
         same reactants and products.  These may not be the same Rate
         object (e.g., one could be tabular the other a simple decay),
@@ -405,14 +404,6 @@ class Library:
             duplicates.remove(dupe)
 
         return duplicates
-
-    def diff(self, other_library):
-        """Return a Library containing the rates in this library that are not
-        contained in other_library"""
-
-        diff_rates = set(self.get_rates()) - set(other_library.get_rates())
-        new_library = Library(rates=diff_rates)
-        return new_library
 
     def linking_nuclei(self, nuclist, with_reverse=True, print_warning=True):
         """
