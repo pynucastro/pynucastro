@@ -4,5 +4,5 @@ Integrating using DifferentialEquations.jl
 .. toctree::
    :maxdepth: 1
    
-   Installing-Diffeqpy-Julia.ipynb
+   installing-diffeqpy-julia.rst
    Example-Integrating-Network-diffeqpy.ipynb
