@@ -753,7 +753,7 @@ class Rate:
 
         # electron fraction dependence
         if self.weak_type == 'electron_capture' and not self.tabular:
-            y_e_term = comp.eval_ye()
+            y_e_term = comp.ye
         else:
             y_e_term = 1.0
 
@@ -1602,14 +1602,14 @@ class TabularRate(Rate):
 
     def eval(self, T: float, *, rho: float = None, comp=None) -> float:
         """ evauate the reaction rate for temperature T """
-        rhoY = rho * comp.eval_ye()
+        rhoY = rho * comp.ye
         r = self.interpolator.interpolate(np.log10(rhoY), np.log10(T),
                                           TableIndex.RATE.value)
         return 10.0**r
 
     def get_nu_loss(self, T: float, *, rho: float = None, comp=None) -> float:
         """ get the neutrino loss rate for the reaction if tabulated"""
-        rhoY = rho * comp.eval_ye()
+        rhoY = rho * comp.ye
         r = self.interpolator.interpolate(np.log10(rhoY), np.log10(T),
                                           TableIndex.NU.value)
         return 10**r

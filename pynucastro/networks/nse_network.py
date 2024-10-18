@@ -38,7 +38,7 @@ class NSETableEntry:
 
         if comp:
             # mean molecular weight of the full NSE state
-            self.abar = comp.eval_abar()
+            self.abar = comp.abar
 
             # average binding energy / nucleon for the full NSE state
             self.bea = sum(q.nucbind * self.comp.X[q] for q in self.comp.X)

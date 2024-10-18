@@ -223,7 +223,7 @@ class Composition(collections.UserDict):
 
     def bin_as(self, nuclei: list[Nucleus], *,
                verbose: bool = False,
-               exclude: bool = None):
+               exclude: list[Nucleus] = None):
         """given a list of nuclei, return a new Composition object with the
         current composition mass fractions binned into the new nuclei.
 
@@ -921,7 +921,7 @@ class RateCollection:
         """
         rvals = {}
         ys = composition.get_molar()
-        y_e = composition.eval_ye()
+        y_e = composition.ye
 
         if screen_func is not None:
             screen_factors = self.evaluate_screening(rho, T, composition, screen_func)
