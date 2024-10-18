@@ -5,7 +5,7 @@ from pynucastro.rates.rate import Rate
 class ApproximateRate(Rate):
 
     def __init__(self, primary_rate, secondary_rates,
-                 primary_reverse, secondary_reverse, *, 
+                 primary_reverse, secondary_reverse, *,
                  is_reverse=False, approx_type="ap_pg",
                  use_identical_particle_factor=True):
         """the primary rate has the same reactants and products and the final
