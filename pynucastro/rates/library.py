@@ -233,8 +233,8 @@ class Library:
     def heaviest(self) -> Nucleus:
         """ Return the heaviest nuclide in this library. """
         nuc = None
-        for _, r in self._rates.items():
-            rnuc = r.heaviest
+        for r in self.get_rates():
+            rnuc = r.heaviest()
             if nuc:
                 if rnuc.A > nuc.A or (rnuc.A == nuc.A and rnuc.Z < nuc.Z):
                     nuc = rnuc
