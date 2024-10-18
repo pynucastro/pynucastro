@@ -14,9 +14,17 @@ def create_double_neutron_capture(lib, reactant, product):
     reverse_1 = lib.get_rate_by_name(f"{product.raw}(,n){intermediate.raw}")
     reverse_2 = lib.get_rate_by_name(f"{intermediate.raw}(,n){reactant.raw}")
 
-    return ApproximateRate(None, [forward_1, forward_2],
-                           None, [reverse_1, reverse_2],
-                           approx_type="nn_g")
+    forward = ApproximateRate(None, [forward_1, forward_2],
+                              None, [reverse_1, reverse_2],
+                              approx_type="nn_g",
+                              use_identical_particle_factor=False)
+
+    reverse = ApproximateRate(None, [forward_1, forward_2],
+                              None, [reverse_1, reverse_2],
+                              approx_type="nn_g", is_reverse=True,
+                              use_identical_particle_factor=False)
+
+    return forward, reverse
 
 
 class ApproximateRate(Rate):
@@ -163,13 +171,16 @@ class ApproximateRate(Rate):
 
             # now initialize the super class with these reactants and products
 
-            # todo: need to prevent identical particle factor
             if not self.is_reverse:
                 super().__init__(reactants=[self.primary_reactant, Nucleus("n"), Nucleus("n")],
-                                 products=[self.primary_product], label="approx")
+                                 products=[self.primary_product],
+                                 label="approx",
+                                 use_identical_particle_factor=use_identical_particle_factor)
             else:
                 super().__init__(reactants=[self.primary_product],
-                                 products=[self.primary_reactant, Nucleus("n"), Nucleus("n")], label="approx")
+                                 products=[self.primary_reactant, Nucleus("n"), Nucleus("n")],
+                                 label="approx",
+                                 use_identical_particle_factor=use_identical_particle_factor)
 
             self.chapter = "a"
 
@@ -218,6 +229,31 @@ class ApproximateRate(Rate):
                 r_pg = self.secondary_rates[1].eval(T)
 
                 return r_ga + r_pa * r_gp / (r_pg + r_pa)
+
+        elif self.approx_type == "nn_g":
+
+            # we are approximating A(n,g)X(n,g)B
+
+            Yn = comp.get_molar()[Nucleus("n")]
+
+            if not self.is_reverse:  # pylint: disable=no-else-return
+                # the forward rate
+                A_ng_X = self.secondary_rates[0].eval(T)  # A(n,g)X
+                X_ng_B = self.secondary_rates[1].eval(T)  # X(n,g)B
+
+                X_gn_A = self.secondary_reverse[1].eval(T)  # X(g,n)A
+
+                return A_ng_X * X_ng_B / (rho * Yn * X_ng_B + X_gn_A)
+
+            else:
+                # the reverse rate
+                B_gn_X = self.secondary_reverse[0].eval(T)
+                X_gn_A = self.secondary_reverse[1].eval(T)
+
+                X_ng_B = self.secondary_rates[1].eval(T)
+
+                return B_gn_X * X_gn_A / (rho * Yn * X_ng_B + X_gn_A)
+
         raise NotImplementedError(f"approximation type {self.approx_type} not supported")
 
     def function_string_py(self):
