@@ -202,7 +202,7 @@ def make_screen_factors(n1, n2):
 
 
 @njit
-def screen5(state: PlasmaState, scn_fac):
+def screen5(state, scn_fac):
     """Calculates screening factors following the appendix of :cite:t:`Wallace:1982`.
 
     Based on :cite:t:`graboske:1973` for weak screening. Based on

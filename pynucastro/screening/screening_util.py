@@ -37,7 +37,7 @@ class ScreeningPair:
 
 
 def get_screening_map(rates, *, symmetric_screening=False):
-    """a screening map is just a list of ScreeningPar objects
+    """a screening map is just a list of ScreeningPair objects
     containing the information about nuclei pairs for screening If
     symmetric_screening=True, then for reverse rates, we screen using
     the forward rate nuclei (assuming that we got here via detailed

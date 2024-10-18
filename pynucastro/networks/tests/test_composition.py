@@ -110,20 +110,20 @@ class TestCompositionVars:
 
         # 1/Abar = sum_k X_k / A_k
         Abar_inv = sum(comp[n] / n.A for n in comp)
-        assert 1.0 / Abar_inv == approx(comp.eval_abar())
+        assert 1.0 / Abar_inv == approx(comp.abar)
 
     def test_zbar(self, comp):
 
         # Zbar = Abar sum_k Z_k X_k / A_k
         Abar_inv = sum(comp[n] / n.A for n in comp)
         Zbar = 1.0 / Abar_inv * sum(comp[n] * n.Z / n.A for n in comp)
-        assert Zbar == approx(comp.eval_zbar())
+        assert Zbar == approx(comp.zbar)
 
     def test_ye(self, comp):
 
         # Ye = sum_k Z_k X_k / A_k
         Ye = sum(comp[n] * n.Z / n.A for n in comp)
-        assert Ye == approx(comp.eval_ye())
+        assert Ye == approx(comp.ye)
 
 
 class TestCompBinning:

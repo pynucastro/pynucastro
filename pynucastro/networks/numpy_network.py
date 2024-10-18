@@ -175,7 +175,7 @@ class NumpyNetwork(RateCollection):
         exponents. The results are stored in the :attr:`.prefac` array.
         """
 
-        y_e = composition.eval_ye()
+        y_e = composition.ye
         prefac = np.zeros(len(self.rates))
         for i, r in enumerate(self.rates):
             if r.label == "tabular":
