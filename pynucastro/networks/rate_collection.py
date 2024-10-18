@@ -206,20 +206,26 @@ class Composition(collections.UserDict):
         electron_frac = math.fsum(self[n] * n.Z / n.A for n in self) / self.get_sum_X()
         return electron_frac
 
-    ye = property(eval_ye)
+    @property
+    def ye(self) -> float:
+        return self.eval_ye()
 
     def eval_abar(self) -> float:
         """ return the mean molecular weight """
         abar = math.fsum(self[n] / n.A for n in self)
         return 1. / abar
 
-    abar = property(eval_abar)
+    @property
+    def abar(self) -> float:
+        return self.eval_abar()
 
     def eval_zbar(self) -> float:
         """ return the mean charge, Zbar """
         return self.abar * self.ye
 
-    zbar = property(eval_zbar)
+    @property
+    def zbar(self) -> float:
+        return self.eval_zbar()
 
     def bin_as(self, nuclei: list[Nucleus], *,
                verbose: bool = False,

@@ -600,7 +600,9 @@ class Rate:
         """ Get an identifying string for this rate."""
         return f'{self.rid} <{self.label.strip()}>'
 
-    id = property(get_rate_id)
+    @property
+    def id(self) -> str:
+        return self.get_rate_id()
 
     def heaviest(self) -> Nucleus:
         """
@@ -1144,8 +1146,6 @@ class ReacLibRate(Rate):
 
         return f'{self.rid} <{self.label.strip()}_{ssrc}_{sweak}_{srev}>'
 
-    id = property(get_rate_id)
-
     def function_string_py(self) -> str:
         """
         Return a string containing python function that computes the
@@ -1557,8 +1557,6 @@ class TabularRate(Rate):
         ssrc = 'tabular'
 
         return f'{self.rid} <{self.label.strip()}_{ssrc}>'
-
-    id = property(get_rate_id)
 
     def function_string_py(self) -> str:
         """

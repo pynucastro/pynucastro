@@ -144,7 +144,9 @@ class Library:
         """ Return a list of the rates in this library."""
         return list(self._rates.values())
 
-    rates = property(get_rates)
+    @property
+    def rates(self) -> list[Rate]:
+        return self.get_rates()
 
     def get_rate(self, rid: str) -> Rate:
         """ Return a rate matching the id provided. """
