@@ -358,7 +358,6 @@ class ApproximateRate(Rate):
 
         raise NotImplementedError("don't know how to work with this approximation")
 
-
     def function_string_cxx(self, dtype="double", specifiers="inline", leave_open=False, extra_args=()):
         """
         Return a string containing C++ function that computes the
