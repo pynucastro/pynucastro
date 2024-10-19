@@ -40,7 +40,12 @@ class ApproximateRate(Rate):
 
         """
 
+        # this will hold all of the rates
         self.rates = {}
+
+        # this will hold only those rates that are approximated out.  This is
+        # used primarily for the RateCollection plot()
+        self.hidden_rates = []
 
         self.is_reverse = is_reverse
 
@@ -128,6 +133,11 @@ class ApproximateRate(Rate):
 
             self.chapter = "a"
 
+            self.hidden_rates = [self.rates["A(a,p)X"],
+                                 self.rates["X(p,g)B"],
+                                 self.rates["B(g,p)X"],
+                                 self.rates["X(p,a)A"]]
+
         elif self.approx_type == "nn_g":
 
             # a nn_g approximate rate combines A(n,g)X(n,g)B into a
@@ -196,6 +206,9 @@ class ApproximateRate(Rate):
                                  use_identical_particle_factor=use_identical_particle_factor)
 
             self.chapter = "a"
+
+            # none of these rates directly appear as links in the network
+            self.hidden_rates = list(self.rates.values())
 
         else:
             raise NotImplementedError(f"approximation type {self.approx_type} not supported")
