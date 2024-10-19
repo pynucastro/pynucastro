@@ -12,7 +12,12 @@ class ApproximateRate(Rate):
         approximate rate would have.  The secondary rates are ordered such that
         together they would give the same sequence"""
 
+        # this will hold all of the rates
         self.rates = {}
+
+        # this will hold only those rates that are approximated out.  This is
+        # used primarily for the RateCollection plot()
+        self.hidden_rates = []
 
         self.is_reverse = is_reverse
 
@@ -99,6 +104,11 @@ class ApproximateRate(Rate):
                                  use_identical_particle_factor=use_identical_particle_factor)
 
             self.chapter = "a"
+
+            self.hidden_rates = [self.rates["A(a,p)X"],
+                                 self.rates["X(p,g)B"],
+                                 self.rates["B(g,p)X"],
+                                 self.rates["X(p,a)A"]]
 
         else:
             raise NotImplementedError(f"approximation type {self.approx_type} not supported")

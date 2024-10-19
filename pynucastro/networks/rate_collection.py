@@ -1514,7 +1514,7 @@ class RateCollection:
         for r in self.rates:
             if not isinstance(r, ApproximateRate):
                 continue
-            for sr in r.secondary_rates + r.secondary_reverse:
+            for sr in r.hidden_rates:
                 if sr in rate_seen:
                     continue
                 rate_seen.append(sr)
