@@ -278,10 +278,10 @@ class ApproximateRate(Rate):
         if not self.is_reverse:
 
             # first we need to get all of the rates that make this up
-            string += f"    r_ag = rate_eval.{self.rates["A(a,g)B"].fname}\n"
-            string += f"    r_ap = rate_eval.{self.rates["A(a,p)X"].fname}\n"
-            string += f"    r_pg = rate_eval.{self.rates["X(p,g)B"].fname}\n"
-            string += f"    r_pa = rate_eval.{self.rates["X(p,a)A"].fname}\n"
+            string += f"    r_ag = rate_eval.{self.rates['A(a,g)B'].fname}\n"
+            string += f"    r_ap = rate_eval.{self.rates['A(a,p)X'].fname}\n"
+            string += f"    r_pg = rate_eval.{self.rates['X(p,g)B'].fname}\n"
+            string += f"    r_pa = rate_eval.{self.rates['X(p,a)A'].fname}\n"
 
             # now the approximation
             string += "    rate = r_ag + r_ap * r_pg / (r_pg + r_pa)\n"
@@ -289,10 +289,10 @@ class ApproximateRate(Rate):
         else:
 
             # first we need to get all of the rates that make this up
-            string += f"    r_ga = rate_eval.{self.rates["B(g,a)A"].fname}\n"
-            string += f"    r_pa = rate_eval.{self.rates["X(p,a)A"].fname}\n"
-            string += f"    r_gp = rate_eval.{self.rates["B(g,p)X"].fname}\n"
-            string += f"    r_pg = rate_eval.{self.rates["X(p,g)B"].fname}\n"
+            string += f"    r_ga = rate_eval.{self.rates['B(g,a)A'].fname}\n"
+            string += f"    r_pa = rate_eval.{self.rates['X(p,a)A'].fname}\n"
+            string += f"    r_gp = rate_eval.{self.rates['B(g,p)X'].fname}\n"
+            string += f"    r_pg = rate_eval.{self.rates['X(p,g)B'].fname}\n"
 
             # now the approximation
             string += "    rate = r_ga + r_pa * r_gp / (r_pg + r_pa)\n"
