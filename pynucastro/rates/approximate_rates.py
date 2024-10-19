@@ -281,37 +281,47 @@ class ApproximateRate(Rate):
         approximate rate
         """
 
-        if self.approx_type != "ap_pg":
-            raise NotImplementedError("don't know how to work with this approximation")
-
         string = ""
         string += "@numba.njit()\n"
         string += f"def {self.fname}(rate_eval, tf):\n"
 
-        if not self.is_reverse:
+        if self.approx_type == "ap_pg":
 
-            # first we need to get all of the rates that make this up
-            string += f"    r_ag = rate_eval.{self.rates['A(a,g)B'].fname}\n"
-            string += f"    r_ap = rate_eval.{self.rates['A(a,p)X'].fname}\n"
-            string += f"    r_pg = rate_eval.{self.rates['X(p,g)B'].fname}\n"
-            string += f"    r_pa = rate_eval.{self.rates['X(p,a)A'].fname}\n"
+            # we are approximating A(a,p)X(p,g)B
 
-            # now the approximation
-            string += "    rate = r_ag + r_ap * r_pg / (r_pg + r_pa)\n"
+            if not self.is_reverse:
 
-        else:
+                # first we need to get all of the rates that make this up
+                string += f"    r_ag = rate_eval.{self.rates['A(a,g)B'].fname}\n"
+                string += f"    r_ap = rate_eval.{self.rates['A(a,p)X'].fname}\n"
+                string += f"    r_pg = rate_eval.{self.rates['X(p,g)B'].fname}\n"
+                string += f"    r_pa = rate_eval.{self.rates['X(p,a)A'].fname}\n"
 
-            # first we need to get all of the rates that make this up
-            string += f"    r_ga = rate_eval.{self.rates['B(g,a)A'].fname}\n"
-            string += f"    r_pa = rate_eval.{self.rates['X(p,a)A'].fname}\n"
-            string += f"    r_gp = rate_eval.{self.rates['B(g,p)X'].fname}\n"
-            string += f"    r_pg = rate_eval.{self.rates['X(p,g)B'].fname}\n"
+                # now the approximation
+                string += "    rate = r_ag + r_ap * r_pg / (r_pg + r_pa)\n"
 
-            # now the approximation
-            string += "    rate = r_ga + r_pa * r_gp / (r_pg + r_pa)\n"
+            else:
 
-        string += f"    rate_eval.{self.fname} = rate\n\n"
-        return string
+                # first we need to get all of the rates that make this up
+                string += f"    r_ga = rate_eval.{self.rates['B(g,a)A'].fname}\n"
+                string += f"    r_pa = rate_eval.{self.rates['X(p,a)A'].fname}\n"
+                string += f"    r_gp = rate_eval.{self.rates['B(g,p)X'].fname}\n"
+                string += f"    r_pg = rate_eval.{self.rates['X(p,g)B'].fname}\n"
+
+                # now the approximation
+                string += "    rate = r_ga + r_pa * r_gp / (r_pg + r_pa)\n"
+
+            string += f"    rate_eval.{self.fname} = rate\n\n"
+            return string
+
+        elif self.approx_type == "nn_g":
+
+            # we are approximating A(n,g)X(n,g)B
+
+            Yn = comp.get_molar()[Nucleus("n")]
+
+        raise NotImplementedError("don't know how to work with this approximation")
+
 
     def function_string_cxx(self, dtype="double", specifiers="inline", leave_open=False, extra_args=()):
         """
