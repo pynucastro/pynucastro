@@ -360,6 +360,9 @@ class Rate:
 
         self.reverse = None
 
+        self.rate_eval_needs_rho = False
+        self.rate_eval_needs_comp = False
+
     def __repr__(self):
         return self.string
 
@@ -840,6 +843,9 @@ class ReacLibRate(Rate):
         self.tabular = False
 
         self.use_identical_particle_factor = True
+
+        self.rate_eval_needs_rho = False
+        self.rate_eval_needs_comp = False
 
         if isinstance(rfile, Path):
             # read in the file, parse the different sets and store them as
@@ -1411,6 +1417,8 @@ class TabularRate(Rate):
         """ rfile can be either a string specifying the path to a rate file or
         an io.StringIO object from which to read rate information. """
         super().__init__()
+        self.rate_eval_needs_rho = True
+        self.rate_eval_needs_comp = True
 
         self.rfile_path = None
         self.rfile = None
@@ -1562,8 +1570,9 @@ class TabularRate(Rate):
 
         fstring = ""
         fstring += "@numba.njit()\n"
-        fstring += f"def {self.fname}(rate_eval, T, rhoY):\n"
+        fstring += f"def {self.fname}(rate_eval, T, rho, Y):\n"
         fstring += f"    # {self.rid}\n"
+        fstring += "    rhoY = rho * ye(Y)\n"
 
         fstring += f"    {self.fname}_interpolator = TableInterpolator(*{self.fname}_info)\n"
 

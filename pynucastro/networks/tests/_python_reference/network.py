@@ -196,15 +196,17 @@ def He4_He4_He4__C12(rate_eval, tf):
     rate_eval.He4_He4_He4__C12 = rate
 
 @numba.njit()
-def Na23__Ne23(rate_eval, T, rhoY):
+def Na23__Ne23(rate_eval, T, rho, Y):
     # Na23 --> Ne23
+    rhoY = rho * ye(Y)
     Na23__Ne23_interpolator = TableInterpolator(*Na23__Ne23_info)
     r = Na23__Ne23_interpolator.interpolate(np.log10(rhoY), np.log10(T), TableIndex.RATE.value)
     rate_eval.Na23__Ne23 = 10.0**r
 
 @numba.njit()
-def Ne23__Na23(rate_eval, T, rhoY):
+def Ne23__Na23(rate_eval, T, rho, Y):
     # Ne23 --> Na23
+    rhoY = rho * ye(Y)
     Ne23__Na23_interpolator = TableInterpolator(*Ne23__Na23_info)
     r = Ne23__Na23_interpolator.interpolate(np.log10(rhoY), np.log10(T), TableIndex.RATE.value)
     rate_eval.Ne23__Na23 = 10.0**r
@@ -227,8 +229,8 @@ def rhs_eq(t, Y, rho, T, screen_func):
     He4_He4_He4__C12(rate_eval, tf)
 
     # tabular rates
-    Na23__Ne23(rate_eval, T, rho*ye(Y))
-    Ne23__Na23(rate_eval, T, rho*ye(Y))
+    Na23__Ne23(rate_eval, T, rho=rho, Y=Y)
+    Ne23__Na23(rate_eval, T, rho=rho, Y=Y)
 
     if screen_func is not None:
         plasma_state = PlasmaState(T, rho, Y, Z)
@@ -318,8 +320,8 @@ def jacobian_eq(t, Y, rho, T, screen_func):
     He4_He4_He4__C12(rate_eval, tf)
 
     # tabular rates
-    Na23__Ne23(rate_eval, T, rho*ye(Y))
-    Ne23__Na23(rate_eval, T, rho*ye(Y))
+    Na23__Ne23(rate_eval, T, rho=rho, Y=Y)
+    Ne23__Na23(rate_eval, T, rho=rho, Y=Y)
 
     if screen_func is not None:
         plasma_state = PlasmaState(T, rho, Y, Z)
