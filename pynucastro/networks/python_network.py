@@ -130,25 +130,38 @@ class PythonNetwork(RateCollection):
 
     def rates_string(self, indent=""):
         """section for evaluating the rates and storing them in rate_eval"""
+
+        def format_rate_call(r, use_tf=True):
+            args = ["rate_eval"]
+            if use_tf:
+                args.append("tf")
+            else:
+                args.append("T")
+            if r.rate_eval_needs_rho:
+                args.append("rho=rho")
+            if r.rate_eval_needs_comp:
+                args.append("Y=Y")
+            return f"{indent}{r.fname}({', '.join(args)})\n"
+
         ostr = ""
         ostr += f"{indent}# reaclib rates\n"
         for r in self.reaclib_rates:
-            ostr += f"{indent}{r.fname}(rate_eval, tf)\n"
+            ostr += format_rate_call(r)
 
         if self.derived_rates:
             ostr += f"\n{indent}# derived rates\n"
         for r in self.derived_rates:
-            ostr += f"{indent}{r.fname}(rate_eval, tf)\n"
+            ostr += format_rate_call(r)
 
         if self.tabular_rates:
             ostr += f"\n{indent}# tabular rates\n"
         for r in self.tabular_rates:
-            ostr += f"{indent}{r.fname}(rate_eval, T, rho*ye(Y))\n"
+            ostr += format_rate_call(r, use_tf=False)
 
         if self.custom_rates:
             ostr += f"\n{indent}# custom rates\n"
         for r in self.custom_rates:
-            ostr += f"{indent}{r.fname}(rate_eval, tf)\n"
+            ostr += format_rate_call(r)
 
         ostr += "\n"
 
@@ -159,12 +172,7 @@ class PythonNetwork(RateCollection):
         if self.approx_rates:
             ostr += f"\n{indent}# approximate rates\n"
         for r in self.approx_rates:
-            args = []
-            if r.rate_eval_needs_rho:
-                args.append("rho=rho")
-            if r.rate_eval_needs_comp:
-                args.append("Y=Y")
-            ostr += f"{indent}{r.fname}(rate_eval, tf, {', '.join(args)})\n"
+            ostr += format_rate_call(r)
 
         return ostr
 
