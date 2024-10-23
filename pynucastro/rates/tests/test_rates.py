@@ -101,6 +101,9 @@ class TestRate:
     def teardown_method(self):
         """ this is run after each test """
 
+    def test_source(self):
+        assert self.rate1.source["Year"] == "2012"
+
     def test_reactants(self):
 
         # o15--n15-wc12
