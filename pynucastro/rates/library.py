@@ -132,7 +132,7 @@ class Library:
             elif isinstance(rates, (list, set)):
                 self.add_rates(rates)
             else:
-                raise TypeError("rates in Library constructor must be a Rate object, list of Rate objects, or dictionary of Rate objects keyed by Rate.get_rate_id()")
+                raise TypeError("rates in Library constructor must be a Rate object, list of Rate objects, or dictionary of Rate objects keyed by Rate.id")
 
         self._library_source_lines = collections.deque()
 
@@ -335,10 +335,10 @@ class Library:
         tmp_rates = [v for k, v in self._rates.items()]
         for r in sorted(tmp_rates):
             if r.Q is not None and r.Q >= 0:
-                rstrings.append(f'{r.__repr__():30} [Q = {float(r.Q):6.2f} MeV] ({r.get_rate_id()})')
+                rstrings.append(f'{r.__repr__():30} [Q = {float(r.Q):6.2f} MeV] ({r.id})')
         for r in sorted(tmp_rates):
             if r.Q is not None and r.Q < 0:
-                rstrings.append(f'{r.__repr__():30} [Q = {float(r.Q):6.2f} MeV] ({r.get_rate_id()})')
+                rstrings.append(f'{r.__repr__():30} [Q = {float(r.Q):6.2f} MeV] ({r.id})')
 
         for r in sorted(tmp_rates):
             if r.Q is None:
