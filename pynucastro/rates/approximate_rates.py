@@ -329,7 +329,7 @@ class ApproximateRate(Rate):
 
             string = ""
             string += "@numba.njit()\n"
-            string += f"def {self.fname}(rate_eval, tf, *, rho=None, Y=None):\n"
+            string += f"def {self.fname}(rate_eval, tf, rho=None, Y=None):\n"
 
             string += "    Yn = Y[jn]\n"
 
