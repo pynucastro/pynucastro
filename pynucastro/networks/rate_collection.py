@@ -1414,7 +1414,7 @@ class RateCollection:
                 colors.append(node_color)
             else:
                 for r in self.rates:
-                    if r.reactants.count(n) > 1:
+                    if not isinstance(r, ApproximateRate) and r.reactants.count(n) > 1:
                         node_nuclei.append(n)
                         colors.append(node_color)
                         break
