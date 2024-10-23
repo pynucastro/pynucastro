@@ -4,7 +4,7 @@ import math
 import pytest
 from pytest import approx
 
-from pynucastro import rates
+from pynucastro import Composition, rates
 from pynucastro.nucdata import Nucleus
 
 
@@ -233,6 +233,14 @@ class TestRate:
         assert self.rate2.lightest() == Nucleus("n")
         assert self.rate2.heaviest() == Nucleus("t")
 
+    def test_identical_particle_factor(self):
+        assert self.rate8.prefactor == approx(0.16666667)
+
+        self.rate8.use_identical_particle_factor = False
+        self.rate8._set_rhs_properties()  # pylint: disable=protected-access
+
+        assert self.rate8.prefactor == 1.0
+
 
 class TestDerivedRate:
 
@@ -305,35 +313,39 @@ class TestWeakRates:
 
     def test_reactants(self, rate1, rate2, rate3, rate4, rate5, rate6):
 
+        # pick a composition that gives Ye = 0.5 just for testing
+        comp = Composition(["c12", "o16"])
+        comp.set_equal()
+
         assert len(rate1.reactants) == 1 and len(rate1.products) == 1
         assert rate1.products[0] == Nucleus("f18")
         assert rate1.reactants[0] == Nucleus("o18")
-        assert rate1.eval(2.5e9, 1.e8) == approx(8.032467196099662e-16, rel=1.e-6, abs=1.e-20)
+        assert rate1.eval(2.5e9, rho=2.e8, comp=comp) == approx(8.032467196099662e-16, rel=1.e-6, abs=1.e-20)
 
         assert len(rate2.reactants) == 1 and len(rate2.products) == 1
         assert rate2.products[0] == Nucleus("ne22")
         assert rate2.reactants[0] == Nucleus("na22")
-        assert rate2.eval(1.e9, 2.e7) == approx(3.232714235735518e-05, rel=1.e-6, abs=1.e-20)
+        assert rate2.eval(1.e9, rho=4.e7, comp=comp) == approx(3.232714235735518e-05, rel=1.e-6, abs=1.e-20)
 
         assert len(rate3.reactants) == 1 and len(rate3.products) == 1
         assert rate3.products[0] == Nucleus("ca45")
         assert rate3.reactants[0] == Nucleus("sc45")
-        assert math.log10(rate3.eval(1.e9, 1.e11)) == approx(3.4400000000000004)
+        assert math.log10(rate3.eval(1.e9, rho=2.e11, comp=comp)) == approx(3.4400000000000004)
 
         assert len(rate4.reactants) == 1 and len(rate4.products) == 1
         assert rate4.products[0] == Nucleus("sc45")
         assert rate4.reactants[0] == Nucleus("ti45")
-        assert math.log10(rate4.eval(1.e9, 1.e11)) == approx(3.853)
+        assert math.log10(rate4.eval(1.e9, rho=2.e11, comp=comp)) == approx(3.853)
 
         assert len(rate5.reactants) == 1 and len(rate5.products) == 1
         assert rate5.products[0] == Nucleus("ti45")
         assert rate5.reactants[0] == Nucleus("v45")
-        assert math.log10(rate5.eval(1.e9, 1.e11)) == approx(4.71501)
+        assert math.log10(rate5.eval(1.e9, rho=2.e11, comp=comp)) == approx(4.71501)
 
         assert len(rate6.reactants) == 1 and len(rate6.products) == 1
         assert rate6.products[0] == Nucleus("sc45")
         assert rate6.reactants[0] == Nucleus("ca45")
-        assert math.log10(rate6.eval(1.e9, 1.e11)) == approx(-99.69797)
+        assert math.log10(rate6.eval(1.e9, rho=2.e11, comp=comp)) == approx(-99.69797)
 
 
 class TestModify:

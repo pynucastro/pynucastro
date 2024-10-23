@@ -315,7 +315,9 @@ class Rate:
     this and extend to their particular format.
 
     """
-    def __init__(self, reactants=None, products=None, Q=None, weak_type="", label="generic"):
+    def __init__(self, reactants=None, products=None,
+                 Q=None, weak_type="", label="generic",
+                 use_identical_particle_factor=True):
         """a generic Rate class that acts as a base class for specific
         sources.  Here we only specify the reactants and products and Q value"""
 
@@ -343,6 +345,13 @@ class Rate:
 
         self.weak_type = weak_type
 
+        # the identical particle factor scales the rate to prevent
+        # double counting for a rate that has the same nucleus
+        # multiple times as a reactant.  Usually we want this
+        # behavior, but for approximate rates, sometimes we need to
+        # disable it.
+        self.use_identical_particle_factor = use_identical_particle_factor
+
         self._set_rhs_properties()
         self._set_screening()
         self._set_print_representation()
@@ -350,6 +359,9 @@ class Rate:
         self.tabular = False
 
         self.reverse = None
+
+        self.rate_eval_needs_rho = False
+        self.rate_eval_needs_comp = False
 
     def __repr__(self):
         return self.string
@@ -539,8 +551,9 @@ class Rate:
         """ compute statistical prefactor and density exponent from the reactants. """
         self.prefactor = 1.0  # this is 1/2 for rates like a + a (double counting)
         self.inv_prefactor = 1
-        for r in set(self.reactants):
-            self.inv_prefactor = self.inv_prefactor * math.factorial(self.reactants.count(r))
+        if self.use_identical_particle_factor:
+            for r in set(self.reactants):
+                self.inv_prefactor = self.inv_prefactor * math.factorial(self.reactants.count(r))
         self.prefactor = self.prefactor/float(self.inv_prefactor)
         self.dens_exp = len(self.reactants)-1
         if self.weak_type == 'electron_capture':
@@ -652,7 +665,7 @@ class Rate:
 
         return "*".join(ydot_string_components)
 
-    def eval(self, T, rhoY=None):
+    def eval(self, T, *, rho=None, comp=None):
         raise NotImplementedError("base Rate class does not know how to eval()")
 
     def jacobian_string_py(self, y_i):
@@ -745,7 +758,7 @@ class Rate:
             y_e_term = 1.0
 
         # finally evaluate the rate -- for tabular rates, we need to set rhoY
-        rate_eval = self.eval(T, rhoY=rho*comp.eval_ye())
+        rate_eval = self.eval(T, rho=rho, comp=comp)
 
         return self.prefactor * dens_term * y_e_term * Y_term * rate_eval
 
@@ -828,6 +841,11 @@ class ReacLibRate(Rate):
         self.Q = Q
 
         self.tabular = False
+
+        self.use_identical_particle_factor = True
+
+        self.rate_eval_needs_rho = False
+        self.rate_eval_needs_comp = False
 
         if isinstance(rfile, Path):
             # read in the file, parse the different sets and store them as
@@ -1201,7 +1219,7 @@ class ReacLibRate(Rate):
 
         return fstring
 
-    def eval(self, T, rhoY=None):
+    def eval(self, T, *, rho=None, comp=None):
         """ evauate the reaction rate for temperature T """
 
         tf = Tfactors(T)
@@ -1212,9 +1230,10 @@ class ReacLibRate(Rate):
 
         return r
 
-    def eval_deriv(self, T, rhoY=None):
+    def eval_deriv(self, T, *, rho=None, comp=None):
         """ evauate the derivative of reaction rate with respect to T """
-        _ = rhoY  # unused by this subclass
+        _ = rho  # unused by this subclass
+        _ = comp  # unused by this subclass
 
         tf = Tfactors(T)
         drdT = 0.0
@@ -1398,6 +1417,8 @@ class TabularRate(Rate):
         """ rfile can be either a string specifying the path to a rate file or
         an io.StringIO object from which to read rate information. """
         super().__init__()
+        self.rate_eval_needs_rho = True
+        self.rate_eval_needs_comp = True
 
         self.rfile_path = None
         self.rfile = None
@@ -1513,8 +1534,9 @@ class TabularRate(Rate):
         """ compute statistical prefactor and density exponent from the reactants. """
         self.prefactor = 1.0  # this is 1/2 for rates like a + a (double counting)
         self.inv_prefactor = 1
-        for r in set(self.reactants):
-            self.inv_prefactor = self.inv_prefactor * math.factorial(self.reactants.count(r))
+        if self.use_identical_particle_factor:
+            for r in set(self.reactants):
+                self.inv_prefactor = self.inv_prefactor * math.factorial(self.reactants.count(r))
         self.prefactor = self.prefactor/float(self.inv_prefactor)
         self.dens_exp = len(self.reactants)-1
 
@@ -1548,8 +1570,9 @@ class TabularRate(Rate):
 
         fstring = ""
         fstring += "@numba.njit()\n"
-        fstring += f"def {self.fname}(rate_eval, T, rhoY):\n"
+        fstring += f"def {self.fname}(rate_eval, T, rho, Y):\n"
         fstring += f"    # {self.rid}\n"
+        fstring += "    rhoY = rho * ye(Y)\n"
 
         fstring += f"    {self.fname}_interpolator = TableInterpolator(*{self.fname}_info)\n"
 
@@ -1579,16 +1602,16 @@ class TabularRate(Rate):
         # convert the nested list of string values into a numpy float array
         self.tabular_data_table = np.array(t_data2d, dtype=np.float64)
 
-    def eval(self, T, rhoY=None):
+    def eval(self, T, *, rho=None, comp=None):
         """ evauate the reaction rate for temperature T """
-
+        rhoY = rho * comp.eval_ye()
         r = self.interpolator.interpolate(np.log10(rhoY), np.log10(T),
                                           TableIndex.RATE.value)
         return 10.0**r
 
-    def get_nu_loss(self, T, rhoY):
+    def get_nu_loss(self, T, *, rho=None, comp=None):
         """ get the neutrino loss rate for the reaction if tabulated"""
-
+        rhoY = rho * comp.eval_ye()
         r = self.interpolator.interpolate(np.log10(rhoY), np.log10(T),
                                           TableIndex.NU.value)
         return 10**r
@@ -1661,9 +1684,10 @@ class TabularRate(Rate):
 
 
 class DerivedRate(ReacLibRate):
-    """
-    This class is a derived class from `Rate` with the purpose of computing the inverse rate
-    by the application of detailed balance to the forward reactions.
+    """This class is a derived class from `Rate` with the purpose of
+    computing the inverse rate by the application of detailed balance
+    to the forward reactions.
+
     """
 
     def __init__(self, rate, compute_Q=False, use_pf=False):
@@ -1736,9 +1760,9 @@ class DerivedRate(ReacLibRate):
             if not nuc.partition_function:
                 warnings.warn(UserWarning(f'{nuc} partition function is not supported by tables: set pf = 1.0 by default'))
 
-    def eval(self, T, rhoY=None):
+    def eval(self, T, *, rho=None, comp=None):
 
-        r = super().eval(T=T, rhoY=rhoY)
+        r = super().eval(T=T, rho=rho, comp=comp)
         z_r = 1.0
         z_p = 1.0
         if self.use_pf:
