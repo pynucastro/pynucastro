@@ -159,7 +159,12 @@ class PythonNetwork(RateCollection):
         if self.approx_rates:
             ostr += f"\n{indent}# approximate rates\n"
         for r in self.approx_rates:
-            ostr += f"{indent}{r.fname}(rate_eval, tf)\n"
+            args = []
+            if r.rate_eval_needs_rho:
+                args.append("rho=rho")
+            if r.rate_eval_needs_comp:
+                args.append("Y=Y")
+            ostr += f"{indent}{r.fname}(rate_eval, tf, {', '.join(args)})\n"
 
         return ostr
 

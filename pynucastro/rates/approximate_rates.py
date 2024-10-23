@@ -329,9 +329,9 @@ class ApproximateRate(Rate):
 
             string = ""
             string += "@numba.njit()\n"
-            string += f"def {self.fname}(rate_eval, tf, *, rho=None, comp=None):\n"
+            string += f"def {self.fname}(rate_eval, tf, *, rho=None, Y=None):\n"
 
-            string += "    Yn = comp.get_molar()[Nucleus('n')]\n"
+            string += "    Yn = Y[jn]\n"
 
             if not self.is_reverse:
 
