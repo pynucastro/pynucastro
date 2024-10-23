@@ -600,10 +600,13 @@ class Rate:
         # and convert all other "__" to single "_"
         return self.fname.replace("__", "_to_", 1).replace("__", "_")
 
-    @property
-    def id(self):
+    def get_rate_id(self):
         """ Get an identifying string for this rate."""
         return f'{self._rid} <{self.label.strip()}>'
+
+    @property
+    def id(self):
+        return self.get_rate_id()
 
     def heaviest(self):
         """
