@@ -427,7 +427,7 @@ class Rate:
         rhs_other = []
 
         self.string = ""
-        self._rid = ""
+        self.rid = ""
         self.pretty_string = r"$"
 
         # put p, n, and alpha second
@@ -503,11 +503,11 @@ class Rate:
 
         for n, r in enumerate(treactants):
             self.string += f"{r.c()}"
-            self._rid += f"{r}"
+            self.rid += f"{r}"
             self.pretty_string += fr"{r.pretty}"
             if not n == len(self.reactants)-1:
                 self.string += " + "
-                self._rid += " + "
+                self.rid += " + "
                 self.pretty_string += r" + "
 
         for o in lhs_other:
@@ -516,16 +516,16 @@ class Rate:
                 self.pretty_string += r" + \mathrm{e}^-"
 
         self.string += " ⟶ "
-        self._rid += " --> "
+        self.rid += " --> "
         self.pretty_string += r" \rightarrow "
 
         for n, p in enumerate(self.products):
             self.string += f"{p.c()}"
-            self._rid += f"{p}"
+            self.rid += f"{p}"
             self.pretty_string += fr"{p.pretty}"
             if not n == len(self.products)-1:
                 self.string += " + "
-                self._rid += " + "
+                self.rid += " + "
                 self.pretty_string += r" + "
 
         for o in rhs_other:
@@ -602,7 +602,7 @@ class Rate:
 
     def get_rate_id(self):
         """ Get an identifying string for this rate."""
-        return f'{self._rid} <{self.label.strip()}>'
+        return f'{self.rid} <{self.label.strip()}>'
 
     @property
     def id(self):
@@ -1152,7 +1152,7 @@ class ReacLibRate(Rate):
 
         ssrc = 'reaclib'
 
-        return f'{self._rid} <{self.label.strip()}_{ssrc}_{sweak}_{srev}>'
+        return f'{self.rid} <{self.label.strip()}_{ssrc}_{sweak}_{srev}>'
 
     def function_string_py(self):
         """
@@ -1163,7 +1163,7 @@ class ReacLibRate(Rate):
         fstring = ""
         fstring += "@numba.njit()\n"
         fstring += f"def {self.fname}(rate_eval, tf):\n"
-        fstring += f"    # {self._rid}\n"
+        fstring += f"    # {self.rid}\n"
         fstring += "    rate = 0.0\n\n"
 
         for s in self.sets:
@@ -1187,7 +1187,7 @@ class ReacLibRate(Rate):
         fstring += "template <int do_T_derivatives>\n"
         fstring += f"{specifiers}\n"
         fstring += f"void rate_{self.cname()}({', '.join(args)}) {{\n\n"
-        fstring += f"    // {self._rid}\n\n"
+        fstring += f"    // {self.rid}\n\n"
         fstring += "    rate = 0.0;\n"
         fstring += "    drate_dT = 0.0;\n\n"
         fstring += f"    {dtype} ln_set_rate{{0.0}};\n"
@@ -1564,7 +1564,7 @@ class TabularRate(Rate):
 
         ssrc = 'tabular'
 
-        return f'{self._rid} <{self.label.strip()}_{ssrc}>'
+        return f'{self.rid} <{self.label.strip()}_{ssrc}>'
 
     def function_string_py(self):
         """
@@ -1575,7 +1575,7 @@ class TabularRate(Rate):
         fstring = ""
         fstring += "@numba.njit()\n"
         fstring += f"def {self.fname}(rate_eval, T, rho, Y):\n"
-        fstring += f"    # {self._rid}\n"
+        fstring += f"    # {self.rid}\n"
         fstring += "    rhoY = rho * ye(Y)\n"
 
         fstring += f"    {self.fname}_interpolator = TableInterpolator(*{self.fname}_info)\n"

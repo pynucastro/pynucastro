@@ -284,7 +284,7 @@ class PythonNetwork(RateCollection):
 
         for r in self.tabular_rates:
 
-            of.write(f"# load data for {r._rid}\n")
+            of.write(f"# load data for {r.rid}\n")
             of.write(f"{r.fname}_rate = TabularRate(rfile='{r.rfile}')\n")
             of.write(f"{r.fname}_info = ({r.fname}_rate.table_rhoy_lines,\n")
             of.write(f"                  {r.fname}_rate.table_temp_lines,\n")
