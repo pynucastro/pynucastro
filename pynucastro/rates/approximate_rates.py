@@ -364,6 +364,11 @@ class ApproximateRate(Rate):
         approximate rate
         """
 
+        if dtype == "amrex::Real":
+            array_type = "amrex::Array1D"
+        else:
+            array_type = "Array1D"
+
         if self.approx_type == "ap_pg":
 
             args = ["const T& rate_eval", f"{dtype}& rate", f"{dtype}& drate_dT", *extra_args]
@@ -416,13 +421,13 @@ class ApproximateRate(Rate):
 
         if self.approx_type == "nn_g":
 
-            args = ["const T& rate_eval", "const amrex::Real rho", "amrex::Array1D<amrex::Real, 1, NumSpec>& Y",
+            args = ["const T& rate_eval", f"const {dtype} rho", f"const {array_type}<{dtype}, 1, NumSpec>& Y",
                     f"{dtype}& rate", f"{dtype}& drate_dT", *extra_args]
             fstring = ""
             fstring = "template <typename T>\n"
             fstring += f"{specifiers}\n"
             fstring += f"void rate_{self.cname()}({', '.join(args)}) {{\n\n"
-            fstring += "    {dtype} Yn = Y(N)\n;"
+            fstring += f"    {dtype} Yn = Y(N);\n"
 
             if not self.is_reverse:
 
