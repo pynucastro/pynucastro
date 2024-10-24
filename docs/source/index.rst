@@ -63,7 +63,7 @@ codes.
 
    screening-examples
    modify-example.ipynb
-   approx-rates-examples.ipynb
+   approximate-rates
    custom-rates.ipynb
    unimportant-rates.ipynb
    partition-function
