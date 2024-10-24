@@ -714,8 +714,6 @@ class RateCollection:
         _r = self.get_rate_by_nuclei(reactants, products)
         if _r is None:
             return None
-        if len(_r) == 1:
-            return _r[0]
         return _r
 
     def get_nuclei_needing_partition_functions(self):
@@ -858,7 +856,8 @@ class RateCollection:
             ar = ApproximateRate(r_ag, [r_ap, r_pg], r_ga, [r_gp, r_pa], approx_type="ap_pg")
             ar_reverse = ApproximateRate(r_ag, [r_ap, r_pg], r_ga, [r_gp, r_pa], is_reverse=True, approx_type="ap_pg")
 
-            print(f"using approximate rates: {ar}, {ar_reverse}")
+            print(f"using approximate rate {ar}")
+            print(f"using approximate rate {ar_reverse}")
 
             # approximate rates
             approx_rates += [ar, ar_reverse]
