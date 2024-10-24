@@ -703,6 +703,8 @@ class RateCollection:
 
         if not _tmp:
             return None
+        if len(_tmp) == 1:
+            return _tmp[0]
         return _tmp
 
     def get_rate_by_name(self, name):
@@ -828,51 +830,35 @@ class RateCollection:
                 continue
 
             # look for A(a,p)X
-            _r = self.get_rate_by_nuclei([prim_nuc, Nucleus("he4")], [inter_nuc, Nucleus("p")])
-
-            if _r:
-                r_ap = _r[-1]
-            else:
+            if not (r_ap := self.get_rate_by_nuclei([prim_nuc, Nucleus("he4")],
+                                                    [inter_nuc, Nucleus("p")])):
                 continue
 
             # look for X(p,g)B
-            _r = self.get_rate_by_nuclei([inter_nuc, Nucleus("p")], [prim_prod])
-
-            if _r:
-                r_pg = _r[-1]
-            else:
+            if not (r_pg := self.get_rate_by_nuclei([inter_nuc, Nucleus("p")],
+                                                    [prim_prod])):
                 continue
 
             # look for reverse B(g,a)A
-            _r = self.get_rate_by_nuclei([prim_prod], [prim_nuc, Nucleus("he4")])
-
-            if _r:
-                r_ga = _r[-1]
-            else:
+            if not (r_ga := self.get_rate_by_nuclei([prim_prod],
+                                                    [prim_nuc, Nucleus("he4")])):
                 continue
 
             # look for reverse B(g,p)X
-            _r = self.get_rate_by_nuclei([prim_prod], [inter_nuc, Nucleus("p")])
-
-            if _r:
-                r_gp = _r[-1]
-            else:
+            if not (r_gp := self.get_rate_by_nuclei([prim_prod],
+                                                    [inter_nuc, Nucleus("p")])):
                 continue
 
             # look for reverse X(p,a)A
-            _r = self.get_rate_by_nuclei([inter_nuc, Nucleus("p")], [Nucleus("he4"), prim_nuc])
-
-            if _r:
-                r_pa = _r[-1]
-            else:
+            if not (r_pa := self.get_rate_by_nuclei([inter_nuc, Nucleus("p")],
+                                                    [Nucleus("he4"), prim_nuc])):
                 continue
 
             # build the approximate rates
             ar = ApproximateRate(r_ag, [r_ap, r_pg], r_ga, [r_gp, r_pa], approx_type="ap_pg")
             ar_reverse = ApproximateRate(r_ag, [r_ap, r_pg], r_ga, [r_gp, r_pa], is_reverse=True, approx_type="ap_pg")
 
-            print(f"using approximate rate {ar}")
-            print(f"using approximate rate {ar_reverse}")
+            print(f"using approximate rates: {ar}, {ar_reverse}")
 
             # approximate rates
             approx_rates += [ar, ar_reverse]
