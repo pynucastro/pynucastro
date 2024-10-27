@@ -78,7 +78,7 @@ class TestDoubleN:
 
     def test_func(self, nn):
 
-        rf, rr = nn
+        rf, _ = nn
 
         assert rf.function_string_py() == \
 """@numba.njit()
@@ -108,7 +108,7 @@ def Fe52_n_n__Fe54__approx(rate_eval, tf, rho=None, Y=None):
         T = 1.e9
         rho = 2.e7
 
-        rf1, rf2, rr2, rr1 = rr.hidden_rates
+        rf1, _, __, ___ = rr.hidden_rates
 
         assert rf1.eval(T, rho=rho, comp=comp) == approx(6511141.861787519)
 
