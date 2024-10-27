@@ -6,6 +6,12 @@ def create_double_neutron_capture(lib, reactant, product):
     """a helper function that will return an ApproximateRate object
     for the "nn_g" approximation"""
 
+    if isinstance(reactant, str):
+        reactant = Nucleus(reactant)
+
+    if isinstance(product, str):
+        product = Nucleus(product)
+
     intermediate = Nucleus(f"{reactant.el}{reactant.A+1}")
 
     forward_1 = lib.get_rate_by_name(f"{reactant.raw}(n,){intermediate.raw}")
