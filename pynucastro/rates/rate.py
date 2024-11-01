@@ -776,24 +776,31 @@ class TableIndex(Enum):
 class RateSource:
     """A class that stores the reference label information for various rates."""
 
-    csv_path = _find_rate_file("Rate Sources.csv")
-    labels = {}
+    csv_path = _find_rate_file("rate_sources.csv")
 
-    urls = {
-        "debo": "https://doi.org/10.1103/RevModPhys.89.035007",
-        "langanke": "https://doi.org/10.1006/adnd.2001.0865",
-        "suzuki": "https://doi.org/10.3847/0004-637X/817/2/163",
-        "reaclib": "https://reaclib.jinaweb.org/labels.php?action=viewLabel&label="
-    }
+    @staticmethod
+    def _read_rate_sources(csv_path: Path) -> dict[str, dict[str, str]]:
+        """Builds the labels dictionary from the supplied csv file."""
 
-    with csv_path.open("r") as csv:
-        lines = csv.readlines()
-        column_titles = lines[0].split("|")
-        for line in lines[1:]:
-            cells = [cell.strip() for cell in line.split("|")]
-            label = cells[0]
-            label_data = labels[label.lower()] = dict(zip(column_titles, cells))
-            label_data["URL"] = urls.get(label, urls["reaclib"] + label)
+        urls = {
+            "debo": "https://doi.org/10.1103/RevModPhys.89.035007",
+            "langanke": "https://doi.org/10.1006/adnd.2001.0865",
+            "suzuki": "https://doi.org/10.3847/0004-637X/817/2/163",
+            "reaclib": "https://reaclib.jinaweb.org/labels.php?action=viewLabel&label="
+        }
+
+        labels = {}
+        with csv_path.open("r") as csv:
+            lines = csv.readlines()
+            column_titles = lines[0].split("|")
+            for line in lines[1:]:
+                cells = [cell.strip() for cell in line.split("|")]
+                label = cells[0]
+                label_data = labels[label.lower()] = dict(zip(column_titles, cells))
+                label_data["URL"] = urls.get(label, urls["reaclib"] + label)
+        return labels
+
+    labels = _read_rate_sources(csv_path)
 
     @classmethod
     def source(cls, label: str) -> dict[str, str] | None:
