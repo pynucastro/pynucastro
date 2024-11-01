@@ -164,10 +164,10 @@ class Library:
     def add_rate(self, rate):
         """Manually add a rate by giving a Rate object"""
 
-        try:
+        if isinstance(rate, Rate):
             rid = rate.id
-        except AttributeError as exc:
-            raise TypeError(f"invalid Rate object {rate}") from exc
+        else:
+            raise TypeError(f"invalid Rate object {rate}")
 
         if rid not in self._rates:
             self._rates[rid] = rate
