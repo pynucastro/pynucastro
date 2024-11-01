@@ -64,7 +64,6 @@ def _rate_name_to_nuc(name):
                 continue
             print(f"couldn't deal with {nuc}")
             raise
-    reactants = Nucleus.cast_list(reactants)
 
     products = []
     for nuc in _p:
@@ -86,7 +85,6 @@ def _rate_name_to_nuc(name):
                 continue
             print(f"couldn't deal with {nuc}")
             raise
-    products = Nucleus.cast_list(products)
 
     return reactants, products
 
