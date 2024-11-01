@@ -1459,7 +1459,7 @@ class TabularRate(Rate):
         if isinstance(rfile, (str, Path)):
             rfile = Path(rfile)
             self.rfile_path = _find_rate_file(rfile)
-            self.source = self.rfile_path.parent.name
+            self.source = RateSource.source(self.rfile_path.parent.name)
             self.rfile = rfile.name
 
         self.fname = None
@@ -1620,7 +1620,6 @@ class TabularRate(Rate):
 
         # find .dat file and read it
         self.table_path = _find_rate_file(self.table_file)
-        self.source = RateSource.source(self.rfile_path.parent.name)
         t_data2d = []
         with self.table_path.open() as tabular_file:
             for i, line in enumerate(tabular_file):
