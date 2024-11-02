@@ -165,11 +165,25 @@ class Nucleus:
     def from_Z_A(cls, Z, A, dummy=False):
         """creates a nucleus given Z and A"""
 
+        # checks if Z and A are valid inputs
+        if not (isinstance(Z, int) and isinstance(A, int)):
+            raise TypeError("Nucleus Z and A must be integers")
+        if not (Z >= 0 and A >= 0):
+            raise ValueError("Nucleus Z and A must be non-negative")
+        if Z == A == 0:
+            raise ValueError("Nucleus Z and A can't both be zero")
+
+        # uses abbreviations if possible
         if (Z, A) == (1, 0):
             return cls("p", dummy)
         if (Z, A) == (0, 1):
             return cls("n", dummy)
+
+        # otherwise, finds element Z on the periodic table
         i = PeriodicTable.lookup_Z(Z)
+        if i is None:
+            raise ValueError(f"Element {Z} could not be found")
+
         name = i.abbreviation + str(A)
         return cls.from_cache(name, dummy)
 
