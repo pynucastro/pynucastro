@@ -173,9 +173,7 @@ class Nucleus:
         if Z == A == 0:
             raise ValueError("Nucleus Z and A can't both be zero")
 
-        # uses abbreviations if possible
-        if (Z, A) == (1, 0):
-            return cls("p", dummy)
+        # checks if neutron
         if (Z, A) == (0, 1):
             return cls("n", dummy)
 
