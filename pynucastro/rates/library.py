@@ -164,20 +164,18 @@ class Library:
     def add_rate(self, rate):
         """Manually add a rate by giving a Rate object"""
 
-        if isinstance(rate, Rate):
-            rid = rate.id
-        else:
+        if not isinstance(rate, Rate):
             raise TypeError(f"invalid Rate object {rate}")
+        rid = rate.id
 
-        if rid not in self._rates:
-            self._rates[rid] = rate
+        if rate.id in self._rates:
+            raise ValueError(f"supplied a Rate object already in the Library: {rate.id}")
+        self._rates[rid] = rate
 
     def add_rates(self, ratelist):
         """ Add to the rate dictionary from the supplied list of Rate objects."""
 
         for rate in ratelist:
-            if rate.id in self._rates:
-                raise ValueError(f"supplied a Rate object already in the Library: {rate.id}")
             self.add_rate(rate)
 
     def get_rate_by_name(self, name):
