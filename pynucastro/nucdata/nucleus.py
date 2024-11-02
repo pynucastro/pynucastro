@@ -161,6 +161,18 @@ class Nucleus:
             cls._cache[key] = Nucleus(name, dummy)
         return cls._cache[key]
 
+    @classmethod
+    def from_Z_A(cls, Z, A, dummy=False):
+        """creates a nucleus given Z and A"""
+
+        if (Z, A) == (1, 0):
+            return cls("p", dummy)
+        if (Z, A) == (0, 1):
+            return cls("n", dummy)
+        i = PeriodicTable.lookup_Z(Z)
+        name = i.abbreviation + str(A)
+        return cls.from_cache(name, dummy)
+
     def __repr__(self):
         if self.raw not in ("p", "d", "t", "n"):
             return self.raw.capitalize()
@@ -189,6 +201,18 @@ class Nucleus:
         if not self.Z == other.Z:
             return self.Z < other.Z
         return self.A < other.A
+
+    def __add__(self, other):
+        Z = self.Z + other.Z
+        A = self.A + other.A
+        dummy = self.dummy and other.dummy
+        return Nucleus.from_Z_A(Z, A, dummy)
+
+    def __sub__(self, other):
+        Z = self.Z - other.Z
+        A = self.A - other.A
+        dummy = self.dummy and other.dummy
+        return Nucleus.from_Z_A(Z, A, dummy)
 
     @classmethod
     def cast(cls, obj):
