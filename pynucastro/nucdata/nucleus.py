@@ -6,7 +6,7 @@ import re
 from pathlib import Path
 
 from pynucastro.constants import constants
-from pynucastro.nucdata.elements import PeriodicTable
+from pynucastro.nucdata.elements import PeriodicTable, UnidentifiedElement
 from pynucastro.nucdata.halflife_table import HalfLifeTable
 from pynucastro.nucdata.mass_table import MassTable
 from pynucastro.nucdata.partition_function import PartitionFunctionCollection
@@ -182,7 +182,7 @@ class Nucleus:
         # otherwise, finds element Z on the periodic table
         i = PeriodicTable.lookup_Z(Z)
         if i is None:
-            raise ValueError(f"Element {Z} could not be found")
+            raise UnidentifiedElement(f"Element {Z} could not be found")
 
         name = i.abbreviation + str(A)
         return cls.from_cache(name, dummy)
