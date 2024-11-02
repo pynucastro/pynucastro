@@ -168,8 +168,8 @@ class Library:
             raise TypeError(f"invalid Rate object {rate}")
         rid = rate.id
 
-        if rate.id in self._rates:
-            raise ValueError(f"supplied a Rate object already in the Library: {rate.id}")
+        if rid in self._rates:
+            raise ValueError(f"supplied a Rate object already in the Library: {rid}")
         self._rates[rid] = rate
 
     def add_rates(self, ratelist):
