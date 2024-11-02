@@ -170,8 +170,8 @@ class Nucleus:
             raise TypeError("Nucleus Z and A must be integers")
         if not (Z >= 0 and A >= 0):
             raise ValueError("Nucleus Z and A must be non-negative")
-        if Z == A == 0:
-            raise ValueError("Nucleus Z and A can't both be zero")
+        if Z > A:
+            raise ValueError("Nucleus Z can't be bigger than A")
 
         # checks if neutron
         if (Z, A) == (0, 1):
