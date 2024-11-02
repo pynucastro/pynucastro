@@ -175,7 +175,7 @@ class Nucleus:
 
         # checks if neutron
         if (Z, A) == (0, 1):
-            return cls("n", dummy)
+            return cls.from_cache("n", dummy)
 
         # otherwise, finds element Z on the periodic table
         i = PeriodicTable.lookup_Z(Z)
