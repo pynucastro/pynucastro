@@ -44,7 +44,7 @@ class TestScreening:
         factors = rc.evaluate_screening(1.e6, 1.e8, c, screen_func=chugunov_2007)
 
         for r, factor in factors.items():
-            assert factor == approx(rates[r.get_rate_id()])
+            assert factor == approx(rates[r.id])
 
     def test_screening_chugunov_2009(self, rc):
         c = networks.Composition(rc.unique_nuclei)
@@ -59,4 +59,4 @@ class TestScreening:
         factors = rc.evaluate_screening(1.e6, 1.e8, c, screen_func=chugunov_2009)
 
         for r, factor in factors.items():
-            assert factor == approx(rates[r.get_rate_id()])
+            assert factor == approx(rates[r.id])

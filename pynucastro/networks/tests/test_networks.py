@@ -48,7 +48,7 @@ class TestRateCollection:
         rv = rc.evaluate_rates(1.e4, 1.e8, c)
 
         for r in rv:
-            assert rv[r] == approx(rates[r.get_rate_id()])
+            assert rv[r] == approx(rates[r.id])
 
     def test_overview(self, rc):
 
