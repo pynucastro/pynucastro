@@ -57,11 +57,11 @@ _dirs = [
 ]
 
 
-def get_rates_dir() -> Path:
+def get_rates_dir():
     return _pynucastro_rates_dir
 
 
-def get_tabular_dir() -> Path:
+def get_tabular_dir():
     return _pynucastro_tabular_dir
 
 
@@ -69,13 +69,12 @@ class RateFileError(Exception):
     """An error occurred while trying to read a Rate from a file."""
 
 
-def load_rate(rfile: str = None):
+def load_rate(rfile=None):
     """Try to load a rate of any type.
 
     :raises: :class:`.RateFileError`, :class:`.UnsupportedNucleus`
     """
 
-    rate: Rate
     try:
         rate = TabularRate(rfile=rfile)
     except (RateFileError, UnsupportedNucleus):
@@ -84,7 +83,7 @@ def load_rate(rfile: str = None):
     return rate
 
 
-def _find_rate_file(ratename: str | Path) -> Path:
+def _find_rate_file(ratename):
     """locate the Reaclib or tabular rate or library file given its name.  Return
     None if the file cannot be located, otherwise return its path."""
 
@@ -94,7 +93,7 @@ def _find_rate_file(ratename: str | Path) -> Path:
     for path in ("", *_dirs):
         x = Path(path, ratename).resolve()
         if x.is_file():
-            return x.resolve()
+            return x
 
     # notify user we can't find the file
     raise RateFileError(f'File {ratename!r} not found in the working directory, {_pynucastro_rates_dir}, or {_pynucastro_tabular_dir}')
@@ -126,7 +125,7 @@ class Tfactors:
     :var lnT9:  log(T9)
     """
 
-    def __init__(self, T: float) -> None:
+    def __init__(self, T):
         """ return the Tfactors object.  Here, T is temperature in Kelvin """
         self.T9 = T/1.e9
         self.T9i = 1.0/self.T9
@@ -136,7 +135,7 @@ class Tfactors:
         self.lnT9 = np.log(self.T9)
 
     @property
-    def array(self) -> np.ndarray:
+    def array(self):
         """return t factors as array in order of lambda function"""
         return np.array([1, self.T9i, self.T913i, self.T913, self.T9, self.T953, self.lnT9])
 
@@ -153,7 +152,7 @@ class SingleSet:
 
     """
 
-    def __init__(self, a, labelprops) -> None:
+    def __init__(self, a, labelprops):
         """here a is iterable (e.g., list or numpy array), storing the
            coefficients, a0, ..., a6
 
@@ -167,7 +166,7 @@ class SingleSet:
 
         self._update_label_properties()
 
-    def _update_label_properties(self) -> None:
+    def _update_label_properties(self):
         """ Set label and flags indicating Set is resonant,
             weak, or reverse. """
         assert isinstance(self.labelprops, str)
@@ -178,7 +177,7 @@ class SingleSet:
         self.weak = self.labelprops[4] == 'w'
         self.reverse = self.labelprops[5] == 'v'
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other):
         """ Determine whether two SingleSet objects are equal to each other. """
         x = True
 
@@ -333,6 +332,8 @@ class Rate:
 
         self.label = label
 
+        self.source = None
+
         # the fname is used when writing the code to evaluate the rate
         reactants_str = '_'.join([repr(nuc) for nuc in self.reactants])
         products_str = '_'.join([repr(nuc) for nuc in self.products])
@@ -372,11 +373,8 @@ class Rate:
     def __eq__(self, other):
         """ Determine whether two Rate objects are equal.
         They are equal if they contain identical reactants and products"""
-        x = True
 
-        x = x and (self.reactants == other.reactants)
-        x = x and (self.products == other.products)
-        return x
+        return (self.reactants, self.products) == (other.reactants, other.products)
 
     def __lt__(self, other):
         """sort such that lightest reactants come first, and then look at products"""
@@ -604,6 +602,10 @@ class Rate:
         """ Get an identifying string for this rate."""
         return f'{self.rid} <{self.label.strip()}>'
 
+    @property
+    def id(self):
+        return self.get_rate_id()
+
     def heaviest(self):
         """
         Return the heaviest nuclide in this Rate.
@@ -753,7 +755,7 @@ class Rate:
 
         # electron fraction dependence
         if self.weak_type == 'electron_capture' and not self.tabular:
-            y_e_term = comp.eval_ye()
+            y_e_term = comp.ye
         else:
             y_e_term = 1.0
 
@@ -775,6 +777,42 @@ class TableIndex(Enum):
     GAMMA = 7
 
 
+class RateSource:
+    """A class that stores the reference label information for various rates."""
+
+    csv_path = _find_rate_file("rate_sources.csv")
+
+    urls = {
+        "debo": "https://doi.org/10.1103/RevModPhys.89.035007",
+        "langanke": "https://doi.org/10.1006/adnd.2001.0865",
+        "suzuki": "https://doi.org/10.3847/0004-637X/817/2/163",
+        "reaclib": "https://reaclib.jinaweb.org/labels.php?action=viewLabel&label="
+    }
+
+    @staticmethod
+    def _read_rate_sources(urls: dict[str, str], csv_path: Path) -> dict[str, dict[str, str]]:
+        """Builds the labels dictionary from the supplied csv file."""
+
+        labels = {}
+        with csv_path.open("r") as csv:
+            lines = csv.readlines()
+            column_titles = lines[0].split("|")
+            for line in lines[1:]:
+                cells = [cell.strip() for cell in line.split("|")]
+                label = cells[0]
+                label_data = labels[label.lower()] = dict(zip(column_titles, cells))
+                label_data["URL"] = urls.get(label, urls["reaclib"] + label)
+        return labels
+
+    labels = _read_rate_sources(urls, csv_path)
+
+    @classmethod
+    def source(cls, label: str) -> dict[str, str] | None:
+        """Returns the source of a rate given its label, and None if not found."""
+
+        return cls.labels.get(label.lower().strip())
+
+
 class ReacLibRate(Rate):
     """A single reaction rate.  Currently, this is a ReacLib rate, which
     can be composed of multiple sets, or a tabulated electron capture
@@ -790,6 +828,7 @@ class ReacLibRate(Rate):
 
         self.rfile_path = None
         self.rfile = None
+        self.source = None
 
         if isinstance(rfile, (str, Path)):
             rfile = Path(rfile)
@@ -822,13 +861,9 @@ class ReacLibRate(Rate):
 
         self.labelprops = labelprops
 
-        self.approx = False
-        if self.labelprops == "approx":
-            self.approx = True
+        self.approx = self.labelprops == "approx"
 
-        self.derived = False
-        if self.labelprops == "derived":
-            self.derived = True
+        self.derived = self.labelprops == "derived"
 
         self.label = None
         self.resonant = None
@@ -1008,6 +1043,7 @@ class ReacLibRate(Rate):
             else:
                 self.weak_type = None
             self.reverse = self.labelprops[5] == 'v'
+            self.source = RateSource.source(self.label)
 
     def _read_from_file(self, f):
         """ given a file object, read rate data from the file. """
@@ -1021,7 +1057,7 @@ class ReacLibRate(Rate):
         self.chapter = int(self.chapter)
 
         # remove any blank lines
-        set_lines = [l for l in lines[1:] if not l.strip() == ""]
+        set_lines = [line for line in lines[1:] if not line.strip() == ""]
 
         # the rest is the sets
         first = 1
@@ -1121,7 +1157,7 @@ class ReacLibRate(Rate):
             self.sets.append(SingleSet(a, labelprops=labelprops))
             self._set_label_properties(labelprops)
 
-    def write_to_file(self, f) -> None:
+    def write_to_file(self, f):
         """ Given a file object, write rate data to the file. """
 
         if self.original_source is None:
@@ -1133,7 +1169,7 @@ class ReacLibRate(Rate):
 
         print(self.original_source, file=f)
 
-    def get_rate_id(self) -> str:
+    def get_rate_id(self):
         """ Get an identifying string for this rate.
         Don't include resonance state since we combine resonant and
         non-resonant versions of reactions. """
@@ -1422,10 +1458,12 @@ class TabularRate(Rate):
 
         self.rfile_path = None
         self.rfile = None
+        self.source = None
 
         if isinstance(rfile, (str, Path)):
             rfile = Path(rfile)
             self.rfile_path = _find_rate_file(rfile)
+            self.source = RateSource.source(self.rfile_path.parent.name)
             self.rfile = rfile.name
 
         self.fname = None
@@ -1496,7 +1534,7 @@ class TabularRate(Rate):
             raise RateFileError(f"Invalid chapter for TabularRate ({self.chapter})")
 
         # remove any blank lines
-        set_lines = [l for l in lines[1:] if not l.strip() == ""]
+        set_lines = [line for line in lines[1:] if not line.strip() == ""]
 
         # e1 -> e2, Tabulated
         s1 = set_lines.pop(0)
@@ -1604,14 +1642,14 @@ class TabularRate(Rate):
 
     def eval(self, T, *, rho=None, comp=None):
         """ evauate the reaction rate for temperature T """
-        rhoY = rho * comp.eval_ye()
+        rhoY = rho * comp.ye
         r = self.interpolator.interpolate(np.log10(rhoY), np.log10(T),
                                           TableIndex.RATE.value)
         return 10.0**r
 
     def get_nu_loss(self, T, *, rho=None, comp=None):
         """ get the neutrino loss rate for the reaction if tabulated"""
-        rhoY = rho * comp.eval_ye()
+        rhoY = rho * comp.ye
         r = self.interpolator.interpolate(np.log10(rhoY), np.log10(T),
                                           TableIndex.NU.value)
         return 10**r
@@ -1703,15 +1741,11 @@ class DerivedRate(ReacLibRate):
             self.rate.reverse):
             raise ValueError('The rate is reverse or weak or tabular')
 
-        for nuc in self.rate.reactants:
+        if not all(nuc.spin_states for nuc in self.rate.reactants):
+            raise ValueError('One of the reactants spin ground state, is not defined')
 
-            if not nuc.spin_states:
-                raise ValueError('One of the reactants spin ground state, is not defined')
-
-        for nuc in self.rate.products:
-
-            if not nuc.spin_states:
-                raise ValueError('One of the products spin ground state, is not defined')
+        if not all(nuc.spin_states for nuc in self.rate.products):
+            raise ValueError('One of the products spin ground state, is not defined')
 
         derived_sets = []
         for ssets in self.rate.sets:
