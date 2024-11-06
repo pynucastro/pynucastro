@@ -119,8 +119,8 @@ def sneut5(rho, T, comp=None, *, abar=None, zbar=None,
     # snu    = total neutrino loss rate in erg/g/sec
 
     if abar is None or zbar is None:
-        abar = comp.eval_abar()
-        zbar = comp.eval_zbar()
+        abar = comp.abar
+        zbar = comp.zbar
 
     # numerical constants
 

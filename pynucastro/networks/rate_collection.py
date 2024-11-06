@@ -201,19 +201,22 @@ class Composition(collections.UserDict):
         for k in self:
             self[k] /= X_sum
 
-    def eval_ye(self):
+    @property
+    def ye(self):
         """ return the electron fraction """
         electron_frac = math.fsum(self[n] * n.Z / n.A for n in self) / self.get_sum_X()
         return electron_frac
 
-    def eval_abar(self):
+    @property
+    def abar(self):
         """ return the mean molecular weight """
         abar = math.fsum(self[n] / n.A for n in self)
         return 1. / abar
 
-    def eval_zbar(self):
+    @property
+    def zbar(self):
         """ return the mean charge, Zbar """
-        return self.eval_abar() * self.eval_ye()
+        return self.abar * self.ye
 
     def bin_as(self, nuclei, *, verbose=False, exclude=None):
         """given a list of nuclei, return a new Composition object with the
@@ -568,7 +571,7 @@ class RateCollection:
             elif isinstance(r.chapter, int):
                 if r not in self.reaclib_rates:
                     self.reaclib_rates.append(r)
-                    if r.get_rate_id() == "n --> p <wc12_reaclib_weak_>":
+                    if r.id == "n --> p <wc12_reaclib_weak_>":
                         msg = "ReacLib neutron decay rate (<n_to_p_weak_wc12>) does not account for degeneracy at high densities. Consider using tabular rate from Langanke."
                         warnings.warn(msg)
             else:
@@ -910,7 +913,7 @@ class RateCollection:
         """
         rvals = {}
         ys = composition.get_molar()
-        y_e = composition.eval_ye()
+        y_e = composition.ye
 
         if screen_func is not None:
             screen_factors = self.evaluate_screening(rho, T, composition, screen_func)
