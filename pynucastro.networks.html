@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.networks package &#8212; pynucastro 2.4.0.post13+g1deb3944 documentation</title>
+    <title>pynucastro.networks package &#8212; pynucastro 2.4.0.post14+g71cb0e1a documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
 
-    <script src="_static/documentation_options.js?v=9349f15b"></script>
+    <script src="_static/documentation_options.js?v=89e77321"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -521,10 +521,8 @@
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.rate_collection.Composition.A"><code class="docutils literal notranslate"><span class="pre">Composition.A</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.rate_collection.Composition.X"><code class="docutils literal notranslate"><span class="pre">Composition.X</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.rate_collection.Composition.Z"><code class="docutils literal notranslate"><span class="pre">Composition.Z</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.rate_collection.Composition.abar"><code class="docutils literal notranslate"><span class="pre">Composition.abar</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.rate_collection.Composition.bin_as"><code class="docutils literal notranslate"><span class="pre">Composition.bin_as()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.rate_collection.Composition.eval_abar"><code class="docutils literal notranslate"><span class="pre">Composition.eval_abar()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.rate_collection.Composition.eval_ye"><code class="docutils literal notranslate"><span class="pre">Composition.eval_ye()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.rate_collection.Composition.eval_zbar"><code class="docutils literal notranslate"><span class="pre">Composition.eval_zbar()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.rate_collection.Composition.get_molar"><code class="docutils literal notranslate"><span class="pre">Composition.get_molar()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.rate_collection.Composition.get_nuclei"><code class="docutils literal notranslate"><span class="pre">Composition.get_nuclei()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.rate_collection.Composition.get_sum_X"><code class="docutils literal notranslate"><span class="pre">Composition.get_sum_X()</span></code></a></li>
@@ -536,6 +534,8 @@
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.rate_collection.Composition.set_nuc"><code class="docutils literal notranslate"><span class="pre">Composition.set_nuc()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.rate_collection.Composition.set_random"><code class="docutils literal notranslate"><span class="pre">Composition.set_random()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.rate_collection.Composition.set_solar_like"><code class="docutils literal notranslate"><span class="pre">Composition.set_solar_like()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.rate_collection.Composition.ye"><code class="docutils literal notranslate"><span class="pre">Composition.ye</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.rate_collection.Composition.zbar"><code class="docutils literal notranslate"><span class="pre">Composition.zbar</span></code></a></li>
 </ul>
 </li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.rate_collection.Explorer"><code class="docutils literal notranslate"><span class="pre">Explorer</span></code></a><ul class="nav section-nav flex-column">
@@ -923,6 +923,12 @@ rates that together make up a network.</p>
 <dd><p>return nuclei: charge pairs for elements in composition</p>
 </dd></dl>
 
+<dl class="py property">
+<dt class="sig sig-object py" id="pynucastro.networks.rate_collection.Composition.abar">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">abar</span></span><a class="headerlink" href="#pynucastro.networks.rate_collection.Composition.abar" title="Link to this definition">#</a></dt>
+<dd><p>return the mean molecular weight</p>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.networks.rate_collection.Composition.bin_as">
 <span class="sig-name descname"><span class="pre">bin_as</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nuclei</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/rate_collection.html#Composition.bin_as"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.rate_collection.Composition.bin_as" title="Link to this definition">#</a></dt>
@@ -930,24 +936,6 @@ rates that together make up a network.</p>
 current composition mass fractions binned into the new nuclei.</p>
 <p>if a list of nuclei is provided by exclude, then only exact
 matches will be binned into the nuclei in that list</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pynucastro.networks.rate_collection.Composition.eval_abar">
-<span class="sig-name descname"><span class="pre">eval_abar</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/rate_collection.html#Composition.eval_abar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.rate_collection.Composition.eval_abar" title="Link to this definition">#</a></dt>
-<dd><p>return the mean molecular weight</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pynucastro.networks.rate_collection.Composition.eval_ye">
-<span class="sig-name descname"><span class="pre">eval_ye</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/rate_collection.html#Composition.eval_ye"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.rate_collection.Composition.eval_ye" title="Link to this definition">#</a></dt>
-<dd><p>return the electron fraction</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pynucastro.networks.rate_collection.Composition.eval_zbar">
-<span class="sig-name descname"><span class="pre">eval_zbar</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/rate_collection.html#Composition.eval_zbar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.rate_collection.Composition.eval_zbar" title="Link to this definition">#</a></dt>
-<dd><p>return the mean charge, Zbar</p>
 </dd></dl>
 
 <dl class="py method">
@@ -1023,6 +1011,18 @@ parameters alpha and specified rng seed</p>
 <span class="sig-name descname"><span class="pre">set_solar_like</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Z</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.02</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/rate_collection.html#Composition.set_solar_like"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.rate_collection.Composition.set_solar_like" title="Link to this definition">#</a></dt>
 <dd><p>approximate a solar abundance, setting p to 0.7, He4 to 0.3 - Z and
 the remainder evenly distributed with Z</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pynucastro.networks.rate_collection.Composition.ye">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ye</span></span><a class="headerlink" href="#pynucastro.networks.rate_collection.Composition.ye" title="Link to this definition">#</a></dt>
+<dd><p>return the electron fraction</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pynucastro.networks.rate_collection.Composition.zbar">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">zbar</span></span><a class="headerlink" href="#pynucastro.networks.rate_collection.Composition.zbar" title="Link to this definition">#</a></dt>
+<dd><p>return the mean charge, Zbar</p>
 </dd></dl>
 
 </dd></dl>
@@ -1561,10 +1561,8 @@ the ydot term for nuclide y_i.</p>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.rate_collection.Composition.A"><code class="docutils literal notranslate"><span class="pre">Composition.A</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.rate_collection.Composition.X"><code class="docutils literal notranslate"><span class="pre">Composition.X</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.rate_collection.Composition.Z"><code class="docutils literal notranslate"><span class="pre">Composition.Z</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.rate_collection.Composition.abar"><code class="docutils literal notranslate"><span class="pre">Composition.abar</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.rate_collection.Composition.bin_as"><code class="docutils literal notranslate"><span class="pre">Composition.bin_as()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.rate_collection.Composition.eval_abar"><code class="docutils literal notranslate"><span class="pre">Composition.eval_abar()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.rate_collection.Composition.eval_ye"><code class="docutils literal notranslate"><span class="pre">Composition.eval_ye()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.rate_collection.Composition.eval_zbar"><code class="docutils literal notranslate"><span class="pre">Composition.eval_zbar()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.rate_collection.Composition.get_molar"><code class="docutils literal notranslate"><span class="pre">Composition.get_molar()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.rate_collection.Composition.get_nuclei"><code class="docutils literal notranslate"><span class="pre">Composition.get_nuclei()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.rate_collection.Composition.get_sum_X"><code class="docutils literal notranslate"><span class="pre">Composition.get_sum_X()</span></code></a></li>
@@ -1576,6 +1574,8 @@ the ydot term for nuclide y_i.</p>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.rate_collection.Composition.set_nuc"><code class="docutils literal notranslate"><span class="pre">Composition.set_nuc()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.rate_collection.Composition.set_random"><code class="docutils literal notranslate"><span class="pre">Composition.set_random()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.rate_collection.Composition.set_solar_like"><code class="docutils literal notranslate"><span class="pre">Composition.set_solar_like()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.rate_collection.Composition.ye"><code class="docutils literal notranslate"><span class="pre">Composition.ye</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.rate_collection.Composition.zbar"><code class="docutils literal notranslate"><span class="pre">Composition.zbar</span></code></a></li>
 </ul>
 </li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.rate_collection.Explorer"><code class="docutils literal notranslate"><span class="pre">Explorer</span></code></a><ul class="nav section-nav flex-column">

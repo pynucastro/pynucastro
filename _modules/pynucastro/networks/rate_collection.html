@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.rate_collection &#8212; pynucastro 2.4.0.post13+g1deb3944 documentation</title>
+    <title>pynucastro.networks.rate_collection &#8212; pynucastro 2.4.0.post14+g71cb0e1a documentation</title>
   
   
   
@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
 
-    <script src="../../../_static/documentation_options.js?v=9349f15b"></script>
+    <script src="../../../_static/documentation_options.js?v=89e77321"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -619,28 +619,22 @@
             <span class="bp">self</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">/=</span> <span class="n">X_sum</span></div>
 
 
-<div class="viewcode-block" id="Composition.eval_ye">
-<a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.Composition.eval_ye">[docs]</a>
-    <span class="k">def</span> <span class="nf">eval_ye</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">ye</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; return the electron fraction &quot;&quot;&quot;</span>
         <span class="n">electron_frac</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">fsum</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">*</span> <span class="n">n</span><span class="o">.</span><span class="n">Z</span> <span class="o">/</span> <span class="n">n</span><span class="o">.</span><span class="n">A</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_sum_X</span><span class="p">()</span>
-        <span class="k">return</span> <span class="n">electron_frac</span></div>
+        <span class="k">return</span> <span class="n">electron_frac</span>
 
-
-<div class="viewcode-block" id="Composition.eval_abar">
-<a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.Composition.eval_abar">[docs]</a>
-    <span class="k">def</span> <span class="nf">eval_abar</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">abar</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; return the mean molecular weight &quot;&quot;&quot;</span>
         <span class="n">abar</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">fsum</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">/</span> <span class="n">n</span><span class="o">.</span><span class="n">A</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">)</span>
-        <span class="k">return</span> <span class="mf">1.</span> <span class="o">/</span> <span class="n">abar</span></div>
+        <span class="k">return</span> <span class="mf">1.</span> <span class="o">/</span> <span class="n">abar</span>
 
-
-<div class="viewcode-block" id="Composition.eval_zbar">
-<a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.Composition.eval_zbar">[docs]</a>
-    <span class="k">def</span> <span class="nf">eval_zbar</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">zbar</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; return the mean charge, Zbar &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">eval_abar</span><span class="p">()</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">eval_ye</span><span class="p">()</span></div>
-
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">abar</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">ye</span>
 
 <div class="viewcode-block" id="Composition.bin_as">
 <a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.Composition.bin_as">[docs]</a>
@@ -1004,7 +998,7 @@
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">chapter</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
                 <span class="k">if</span> <span class="n">r</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reaclib_rates</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">reaclib_rates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
-                    <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">get_rate_id</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;n --&gt; p &lt;wc12_reaclib_weak_&gt;&quot;</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="s2">&quot;n --&gt; p &lt;wc12_reaclib_weak_&gt;&quot;</span><span class="p">:</span>
                         <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;ReacLib neutron decay rate (&lt;n_to_p_weak_wc12&gt;) does not account for degeneracy at high densities. Consider using tabular rate from Langanke.&quot;</span>
                         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
@@ -1396,7 +1390,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">rvals</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">ys</span> <span class="o">=</span> <span class="n">composition</span><span class="o">.</span><span class="n">get_molar</span><span class="p">()</span>
-        <span class="n">y_e</span> <span class="o">=</span> <span class="n">composition</span><span class="o">.</span><span class="n">eval_ye</span><span class="p">()</span>
+        <span class="n">y_e</span> <span class="o">=</span> <span class="n">composition</span><span class="o">.</span><span class="n">ye</span>
 
         <span class="k">if</span> <span class="n">screen_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">screen_factors</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_screening</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">composition</span><span class="p">,</span> <span class="n">screen_func</span><span class="p">)</span>

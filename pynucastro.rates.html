@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.rates package &#8212; pynucastro 2.4.0.post13+g1deb3944 documentation</title>
+    <title>pynucastro.rates package &#8212; pynucastro 2.4.0.post14+g71cb0e1a documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
 
-    <script src="_static/documentation_options.js?v=9349f15b"></script>
+    <script src="_static/documentation_options.js?v=89e77321"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -488,15 +488,14 @@
 </li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.Library"><code class="docutils literal notranslate"><span class="pre">Library</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.Library.add_rate"><code class="docutils literal notranslate"><span class="pre">Library.add_rate()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.Library.add_rates"><code class="docutils literal notranslate"><span class="pre">Library.add_rates()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.Library.backward"><code class="docutils literal notranslate"><span class="pre">Library.backward()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.Library.derived_backward"><code class="docutils literal notranslate"><span class="pre">Library.derived_backward()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.Library.derived_forward"><code class="docutils literal notranslate"><span class="pre">Library.derived_forward()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.Library.diff"><code class="docutils literal notranslate"><span class="pre">Library.diff()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.Library.filter"><code class="docutils literal notranslate"><span class="pre">Library.filter()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.Library.find_duplicate_links"><code class="docutils literal notranslate"><span class="pre">Library.find_duplicate_links()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.Library.forward"><code class="docutils literal notranslate"><span class="pre">Library.forward()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.Library.get_nuclei"><code class="docutils literal notranslate"><span class="pre">Library.get_nuclei()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.Library.get_num_rates"><code class="docutils literal notranslate"><span class="pre">Library.get_num_rates()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.Library.get_rate"><code class="docutils literal notranslate"><span class="pre">Library.get_rate()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.Library.get_rate_by_name"><code class="docutils literal notranslate"><span class="pre">Library.get_rate_by_name()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.Library.get_rate_by_nuclei"><code class="docutils literal notranslate"><span class="pre">Library.get_rate_by_nuclei()</span></code></a></li>
@@ -504,6 +503,7 @@
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.Library.heaviest"><code class="docutils literal notranslate"><span class="pre">Library.heaviest()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.Library.lightest"><code class="docutils literal notranslate"><span class="pre">Library.lightest()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.Library.linking_nuclei"><code class="docutils literal notranslate"><span class="pre">Library.linking_nuclei()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.Library.num_rates"><code class="docutils literal notranslate"><span class="pre">Library.num_rates</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.Library.remove_rate"><code class="docutils literal notranslate"><span class="pre">Library.remove_rate()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.Library.write_to_file"><code class="docutils literal notranslate"><span class="pre">Library.write_to_file()</span></code></a></li>
 </ul>
@@ -540,6 +540,7 @@
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.rate.Rate.eval_jacobian_term"><code class="docutils literal notranslate"><span class="pre">Rate.eval_jacobian_term()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.rate.Rate.get_rate_id"><code class="docutils literal notranslate"><span class="pre">Rate.get_rate_id()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.rate.Rate.heaviest"><code class="docutils literal notranslate"><span class="pre">Rate.heaviest()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.rate.Rate.id"><code class="docutils literal notranslate"><span class="pre">Rate.id</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.rate.Rate.jacobian_string_py"><code class="docutils literal notranslate"><span class="pre">Rate.jacobian_string_py()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.rate.Rate.lightest"><code class="docutils literal notranslate"><span class="pre">Rate.lightest()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.rate.Rate.ydot_string_py"><code class="docutils literal notranslate"><span class="pre">Rate.ydot_string_py()</span></code></a></li>
@@ -715,6 +716,12 @@ specified by RateFilter objects.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="pynucastro.rates.library.Library.add_rates">
+<span class="sig-name descname"><span class="pre">add_rates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ratelist</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/library.html#Library.add_rates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.Library.add_rates" title="Link to this definition">#</a></dt>
+<dd><p>Add to the rate dictionary from the supplied list of Rate objects.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.library.Library.backward">
 <span class="sig-name descname"><span class="pre">backward</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/library.html#Library.backward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.Library.backward" title="Link to this definition">#</a></dt>
 <dd><p>Select only the reverse rates, obtained by detailed balance.</p>
@@ -740,13 +747,6 @@ computing the detailed balance twice.</p>
 <p>The idea of derived_forward is to eliminate the reverse and weak, and see if our job gives the same Reaclib
 predictions, checking the NSE convergence with the pf functions. In the future, I want to move this function
 in a unit test.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pynucastro.rates.library.Library.diff">
-<span class="sig-name descname"><span class="pre">diff</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other_library</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/library.html#Library.diff"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.Library.diff" title="Link to this definition">#</a></dt>
-<dd><p>Return a Library containing the rates in this library that are not
-contained in other_library</p>
 </dd></dl>
 
 <dl class="py method">
@@ -782,12 +782,6 @@ by detailed balance.</p>
 <dt class="sig sig-object py" id="pynucastro.rates.library.Library.get_nuclei">
 <span class="sig-name descname"><span class="pre">get_nuclei</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/library.html#Library.get_nuclei"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.Library.get_nuclei" title="Link to this definition">#</a></dt>
 <dd><p>get the list of unique nuclei</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pynucastro.rates.library.Library.get_num_rates">
-<span class="sig-name descname"><span class="pre">get_num_rates</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/library.html#Library.get_num_rates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.Library.get_num_rates" title="Link to this definition">#</a></dt>
-<dd><p>Return the number of rates known to the library</p>
 </dd></dl>
 
 <dl class="py method">
@@ -838,6 +832,11 @@ nuclei provided in the list of Nucleus objects or nucleus abbreviations ‘nucli
 include only forward rates.</p>
 <p>If print_warning is True, then print out a warning if one of the input nuclei is not linked.</p>
 </dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pynucastro.rates.library.Library.num_rates">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">num_rates</span></span><a class="headerlink" href="#pynucastro.rates.library.Library.num_rates" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.library.Library.remove_rate">
@@ -917,7 +916,7 @@ and return a Library.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pynucastro.rates.library.list_known_rates">
-<span class="sig-prename descclassname"><span class="pre">pynucastro.rates.library.</span></span><span class="sig-name descname"><span class="pre">list_known_rates</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="_modules/pynucastro/rates/library.html#list_known_rates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.list_known_rates" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">pynucastro.rates.library.</span></span><span class="sig-name descname"><span class="pre">list_known_rates</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/library.html#list_known_rates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.list_known_rates" title="Link to this definition">#</a></dt>
 <dd><p>list the rates found in the library</p>
 </dd></dl>
 
@@ -1007,6 +1006,11 @@ nucleus y_i.</p>
 <p>If two nuclei are tied in mass number, return the one with the
 lowest atomic number.</p>
 </dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pynucastro.rates.rate.Rate.id">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#pynucastro.rates.rate.Rate.id" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.Rate.jacobian_string_py">
@@ -1280,7 +1284,7 @@ object</p>
 methods that allow us to interpolate a variable</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.TableInterpolator.class_type">
-<span class="sig-name descname"><span class="pre">class_type</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">jitclass.TableInterpolator#7f2a81574490&lt;data:array(float64,</span> <span class="pre">2d,</span> <span class="pre">A),table_rhoy_lines:int32,table_temp_lines:int32,rhoy:array(float64,</span> <span class="pre">1d,</span> <span class="pre">A),temp:array(float64,</span> <span class="pre">1d,</span> <span class="pre">A)&gt;</span></em><a class="headerlink" href="#pynucastro.rates.rate.TableInterpolator.class_type" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">class_type</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">jitclass.TableInterpolator#7fab99e31010&lt;data:array(float64,</span> <span class="pre">2d,</span> <span class="pre">A),table_rhoy_lines:int32,table_temp_lines:int32,rhoy:array(float64,</span> <span class="pre">1d,</span> <span class="pre">A),temp:array(float64,</span> <span class="pre">1d,</span> <span class="pre">A)&gt;</span></em><a class="headerlink" href="#pynucastro.rates.rate.TableInterpolator.class_type" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -1375,7 +1379,7 @@ non-resonant versions of reactions.</p>
 </dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.Tfactors.class_type">
-<span class="sig-name descname"><span class="pre">class_type</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">jitclass.Tfactors#7f2a8885ca90&lt;T9:float64,T9i:float64,T913:float64,T913i:float64,T953:float64,lnT9:float64&gt;</span></em><a class="headerlink" href="#pynucastro.rates.rate.Tfactors.class_type" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">class_type</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">jitclass.Tfactors#7fab99feae90&lt;T9:float64,T9i:float64,T913:float64,T913i:float64,T953:float64,lnT9:float64&gt;</span></em><a class="headerlink" href="#pynucastro.rates.rate.Tfactors.class_type" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -1477,15 +1481,14 @@ non-resonant versions of reactions.</p>
 </li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.Library"><code class="docutils literal notranslate"><span class="pre">Library</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.Library.add_rate"><code class="docutils literal notranslate"><span class="pre">Library.add_rate()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.Library.add_rates"><code class="docutils literal notranslate"><span class="pre">Library.add_rates()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.Library.backward"><code class="docutils literal notranslate"><span class="pre">Library.backward()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.Library.derived_backward"><code class="docutils literal notranslate"><span class="pre">Library.derived_backward()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.Library.derived_forward"><code class="docutils literal notranslate"><span class="pre">Library.derived_forward()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.Library.diff"><code class="docutils literal notranslate"><span class="pre">Library.diff()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.Library.filter"><code class="docutils literal notranslate"><span class="pre">Library.filter()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.Library.find_duplicate_links"><code class="docutils literal notranslate"><span class="pre">Library.find_duplicate_links()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.Library.forward"><code class="docutils literal notranslate"><span class="pre">Library.forward()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.Library.get_nuclei"><code class="docutils literal notranslate"><span class="pre">Library.get_nuclei()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.Library.get_num_rates"><code class="docutils literal notranslate"><span class="pre">Library.get_num_rates()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.Library.get_rate"><code class="docutils literal notranslate"><span class="pre">Library.get_rate()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.Library.get_rate_by_name"><code class="docutils literal notranslate"><span class="pre">Library.get_rate_by_name()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.Library.get_rate_by_nuclei"><code class="docutils literal notranslate"><span class="pre">Library.get_rate_by_nuclei()</span></code></a></li>
@@ -1493,6 +1496,7 @@ non-resonant versions of reactions.</p>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.Library.heaviest"><code class="docutils literal notranslate"><span class="pre">Library.heaviest()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.Library.lightest"><code class="docutils literal notranslate"><span class="pre">Library.lightest()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.Library.linking_nuclei"><code class="docutils literal notranslate"><span class="pre">Library.linking_nuclei()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.Library.num_rates"><code class="docutils literal notranslate"><span class="pre">Library.num_rates</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.Library.remove_rate"><code class="docutils literal notranslate"><span class="pre">Library.remove_rate()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.Library.write_to_file"><code class="docutils literal notranslate"><span class="pre">Library.write_to_file()</span></code></a></li>
 </ul>
@@ -1529,6 +1533,7 @@ non-resonant versions of reactions.</p>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.rate.Rate.eval_jacobian_term"><code class="docutils literal notranslate"><span class="pre">Rate.eval_jacobian_term()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.rate.Rate.get_rate_id"><code class="docutils literal notranslate"><span class="pre">Rate.get_rate_id()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.rate.Rate.heaviest"><code class="docutils literal notranslate"><span class="pre">Rate.heaviest()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.rate.Rate.id"><code class="docutils literal notranslate"><span class="pre">Rate.id</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.rate.Rate.jacobian_string_py"><code class="docutils literal notranslate"><span class="pre">Rate.jacobian_string_py()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.rate.Rate.lightest"><code class="docutils literal notranslate"><span class="pre">Rate.lightest()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.rate.Rate.ydot_string_py"><code class="docutils literal notranslate"><span class="pre">Rate.ydot_string_py()</span></code></a></li>

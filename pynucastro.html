@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro package &#8212; pynucastro 2.4.0.post13+g1deb3944 documentation</title>
+    <title>pynucastro package &#8212; pynucastro 2.4.0.post14+g71cb0e1a documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
 
-    <script src="_static/documentation_options.js?v=9349f15b"></script>
+    <script src="_static/documentation_options.js?v=89e77321"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -646,10 +646,8 @@ a given choice of reaction rates.</p>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.html#pynucastro.networks.rate_collection.Composition.A"><code class="docutils literal notranslate"><span class="pre">Composition.A</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.html#pynucastro.networks.rate_collection.Composition.X"><code class="docutils literal notranslate"><span class="pre">Composition.X</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.html#pynucastro.networks.rate_collection.Composition.Z"><code class="docutils literal notranslate"><span class="pre">Composition.Z</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.html#pynucastro.networks.rate_collection.Composition.abar"><code class="docutils literal notranslate"><span class="pre">Composition.abar</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.html#pynucastro.networks.rate_collection.Composition.bin_as"><code class="docutils literal notranslate"><span class="pre">Composition.bin_as()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.html#pynucastro.networks.rate_collection.Composition.eval_abar"><code class="docutils literal notranslate"><span class="pre">Composition.eval_abar()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.html#pynucastro.networks.rate_collection.Composition.eval_ye"><code class="docutils literal notranslate"><span class="pre">Composition.eval_ye()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.html#pynucastro.networks.rate_collection.Composition.eval_zbar"><code class="docutils literal notranslate"><span class="pre">Composition.eval_zbar()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.html#pynucastro.networks.rate_collection.Composition.get_molar"><code class="docutils literal notranslate"><span class="pre">Composition.get_molar()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.html#pynucastro.networks.rate_collection.Composition.get_nuclei"><code class="docutils literal notranslate"><span class="pre">Composition.get_nuclei()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.html#pynucastro.networks.rate_collection.Composition.get_sum_X"><code class="docutils literal notranslate"><span class="pre">Composition.get_sum_X()</span></code></a></li>
@@ -661,6 +659,8 @@ a given choice of reaction rates.</p>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.html#pynucastro.networks.rate_collection.Composition.set_nuc"><code class="docutils literal notranslate"><span class="pre">Composition.set_nuc()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.html#pynucastro.networks.rate_collection.Composition.set_random"><code class="docutils literal notranslate"><span class="pre">Composition.set_random()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.html#pynucastro.networks.rate_collection.Composition.set_solar_like"><code class="docutils literal notranslate"><span class="pre">Composition.set_solar_like()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.html#pynucastro.networks.rate_collection.Composition.ye"><code class="docutils literal notranslate"><span class="pre">Composition.ye</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.html#pynucastro.networks.rate_collection.Composition.zbar"><code class="docutils literal notranslate"><span class="pre">Composition.zbar</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="pynucastro.networks.html#pynucastro.networks.rate_collection.Explorer"><code class="docutils literal notranslate"><span class="pre">Explorer</span></code></a><ul>
@@ -817,15 +817,14 @@ a given choice of reaction rates.</p>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="pynucastro.rates.html#pynucastro.rates.library.Library"><code class="docutils literal notranslate"><span class="pre">Library</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.html#pynucastro.rates.library.Library.add_rate"><code class="docutils literal notranslate"><span class="pre">Library.add_rate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.html#pynucastro.rates.library.Library.add_rates"><code class="docutils literal notranslate"><span class="pre">Library.add_rates()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.html#pynucastro.rates.library.Library.backward"><code class="docutils literal notranslate"><span class="pre">Library.backward()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.html#pynucastro.rates.library.Library.derived_backward"><code class="docutils literal notranslate"><span class="pre">Library.derived_backward()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.html#pynucastro.rates.library.Library.derived_forward"><code class="docutils literal notranslate"><span class="pre">Library.derived_forward()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.html#pynucastro.rates.library.Library.diff"><code class="docutils literal notranslate"><span class="pre">Library.diff()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.html#pynucastro.rates.library.Library.filter"><code class="docutils literal notranslate"><span class="pre">Library.filter()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.html#pynucastro.rates.library.Library.find_duplicate_links"><code class="docutils literal notranslate"><span class="pre">Library.find_duplicate_links()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.html#pynucastro.rates.library.Library.forward"><code class="docutils literal notranslate"><span class="pre">Library.forward()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.html#pynucastro.rates.library.Library.get_nuclei"><code class="docutils literal notranslate"><span class="pre">Library.get_nuclei()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.html#pynucastro.rates.library.Library.get_num_rates"><code class="docutils literal notranslate"><span class="pre">Library.get_num_rates()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.html#pynucastro.rates.library.Library.get_rate"><code class="docutils literal notranslate"><span class="pre">Library.get_rate()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.html#pynucastro.rates.library.Library.get_rate_by_name"><code class="docutils literal notranslate"><span class="pre">Library.get_rate_by_name()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.html#pynucastro.rates.library.Library.get_rate_by_nuclei"><code class="docutils literal notranslate"><span class="pre">Library.get_rate_by_nuclei()</span></code></a></li>
@@ -833,6 +832,7 @@ a given choice of reaction rates.</p>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.html#pynucastro.rates.library.Library.heaviest"><code class="docutils literal notranslate"><span class="pre">Library.heaviest()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.html#pynucastro.rates.library.Library.lightest"><code class="docutils literal notranslate"><span class="pre">Library.lightest()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.html#pynucastro.rates.library.Library.linking_nuclei"><code class="docutils literal notranslate"><span class="pre">Library.linking_nuclei()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.html#pynucastro.rates.library.Library.num_rates"><code class="docutils literal notranslate"><span class="pre">Library.num_rates</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.html#pynucastro.rates.library.Library.remove_rate"><code class="docutils literal notranslate"><span class="pre">Library.remove_rate()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.html#pynucastro.rates.library.Library.write_to_file"><code class="docutils literal notranslate"><span class="pre">Library.write_to_file()</span></code></a></li>
 </ul>
@@ -869,6 +869,7 @@ a given choice of reaction rates.</p>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.html#pynucastro.rates.rate.Rate.eval_jacobian_term"><code class="docutils literal notranslate"><span class="pre">Rate.eval_jacobian_term()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.html#pynucastro.rates.rate.Rate.get_rate_id"><code class="docutils literal notranslate"><span class="pre">Rate.get_rate_id()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.html#pynucastro.rates.rate.Rate.heaviest"><code class="docutils literal notranslate"><span class="pre">Rate.heaviest()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.html#pynucastro.rates.rate.Rate.id"><code class="docutils literal notranslate"><span class="pre">Rate.id</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.html#pynucastro.rates.rate.Rate.jacobian_string_py"><code class="docutils literal notranslate"><span class="pre">Rate.jacobian_string_py()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.html#pynucastro.rates.rate.Rate.lightest"><code class="docutils literal notranslate"><span class="pre">Rate.lightest()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.html#pynucastro.rates.rate.Rate.ydot_string_py"><code class="docutils literal notranslate"><span class="pre">Rate.ydot_string_py()</span></code></a></li>

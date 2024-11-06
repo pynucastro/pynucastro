@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.rate &#8212; pynucastro 2.4.0.post13+g1deb3944 documentation</title>
+    <title>pynucastro.rates.rate &#8212; pynucastro 2.4.0.post14+g71cb0e1a documentation</title>
   
   
   
@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
 
-    <script src="../../../_static/documentation_options.js?v=9349f15b"></script>
+    <script src="../../../_static/documentation_options.js?v=89e77321"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -1026,6 +1026,10 @@
         <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rid</span><span class="si">}</span><span class="s1"> &lt;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="si">}</span><span class="s1">&gt;&#39;</span></div>
 
 
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_rate_id</span><span class="p">()</span>
+
 <div class="viewcode-block" id="Rate.heaviest">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.Rate.heaviest">[docs]</a>
     <span class="k">def</span> <span class="nf">heaviest</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1192,7 +1196,7 @@
 
         <span class="c1"># electron fraction dependence</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">weak_type</span> <span class="o">==</span> <span class="s1">&#39;electron_capture&#39;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabular</span><span class="p">:</span>
-            <span class="n">y_e_term</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">eval_ye</span><span class="p">()</span>
+            <span class="n">y_e_term</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">ye</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">y_e_term</span> <span class="o">=</span> <span class="mf">1.0</span>
 
@@ -2136,7 +2140,7 @@
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.TabularRate.eval">[docs]</a>
     <span class="k">def</span> <span class="nf">eval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; evauate the reaction rate for temperature T &quot;&quot;&quot;</span>
-        <span class="n">rhoY</span> <span class="o">=</span> <span class="n">rho</span> <span class="o">*</span> <span class="n">comp</span><span class="o">.</span><span class="n">eval_ye</span><span class="p">()</span>
+        <span class="n">rhoY</span> <span class="o">=</span> <span class="n">rho</span> <span class="o">*</span> <span class="n">comp</span><span class="o">.</span><span class="n">ye</span>
         <span class="n">r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">interpolator</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">rhoY</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">T</span><span class="p">),</span>
                                           <span class="n">TableIndex</span><span class="o">.</span><span class="n">RATE</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
         <span class="k">return</span> <span class="mf">10.0</span><span class="o">**</span><span class="n">r</span></div>
@@ -2146,7 +2150,7 @@
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.TabularRate.get_nu_loss">[docs]</a>
     <span class="k">def</span> <span class="nf">get_nu_loss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; get the neutrino loss rate for the reaction if tabulated&quot;&quot;&quot;</span>
-        <span class="n">rhoY</span> <span class="o">=</span> <span class="n">rho</span> <span class="o">*</span> <span class="n">comp</span><span class="o">.</span><span class="n">eval_ye</span><span class="p">()</span>
+        <span class="n">rhoY</span> <span class="o">=</span> <span class="n">rho</span> <span class="o">*</span> <span class="n">comp</span><span class="o">.</span><span class="n">ye</span>
         <span class="n">r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">interpolator</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">rhoY</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">T</span><span class="p">),</span>
                                           <span class="n">TableIndex</span><span class="o">.</span><span class="n">NU</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
         <span class="k">return</span> <span class="mi">10</span><span class="o">**</span><span class="n">r</span></div>
