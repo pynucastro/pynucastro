@@ -1,5 +1,5 @@
 module pynet
-  integer, parameter :: nspec = 7
+  <nspec_fortran>(1)
 
   interface
      subroutine rhs_f(rho, T, X, dYdt, size) bind(C, name="rhs_f")
