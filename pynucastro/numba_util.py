@@ -3,6 +3,9 @@ Drop-in for numba that provides no-op stubs if numba isn't installed.
 """
 
 try:
+    # the linters really don't like this
+    # pylint: disable=unused-import, wildcard-import, unused-wildcard-import
+    # flake8: noqa: F401, F403
     from numba import jit, njit
     from numba.experimental import jitclass
     from numba.types import *
@@ -16,7 +19,6 @@ except ImportError:
             return obj(*args, **kwargs)
         return wrapper
 
-
     def jit(*args, **kwargs):
         if len(args) == 1 and not kwargs and callable(args[0]):
             # used as a normal decorator with no arguments (`@jit`)
@@ -24,9 +26,7 @@ except ImportError:
         # used as a decorator factory (`@jit(...)`)
         return _noop_wrapper
 
-
     njit = jit
-
 
     def jitclass(*args, **kwargs):
         if len(args) == 1 and not kwargs and isinstance(args[0], type):
@@ -35,13 +35,11 @@ except ImportError:
         # used as a decorator factory
         return _noop_wrapper
 
-
     # placeholders for numba types, needed for jitclass specs
     class _FakeNumbaType:
         def __getitem__(self, _key):
             return self
 
-
     # assume everything not defined above is a type
-    def __getattr__(name):
+    def __getattr__(_name):
         return _FakeNumbaType()
