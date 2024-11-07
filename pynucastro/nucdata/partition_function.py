@@ -120,7 +120,8 @@ class PartitionFunction:
         except ValueError:
             print("invalid temperature")
             raise
-        return 10**self._interpolant(T, ext='const')  # extrapolates keeping the boundaries fixed.
+        # extrapolates keeping the boundaries fixed.
+        return float(10**self._interpolant(T, ext='const'))
 
 
 class PartitionFunctionTable:

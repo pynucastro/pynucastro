@@ -706,6 +706,8 @@ class RateCollection:
 
         if not _tmp:
             return None
+        if len(_tmp) == 1:
+            return _tmp[0]
         return _tmp
 
     def get_rate_by_name(self, name):
@@ -715,8 +717,6 @@ class RateCollection:
         _r = self.get_rate_by_nuclei(reactants, products)
         if _r is None:
             return None
-        if len(_r) == 1:
-            return _r[0]
         return _r
 
     def get_nuclei_needing_partition_functions(self):
@@ -831,43 +831,28 @@ class RateCollection:
                 continue
 
             # look for A(a,p)X
-            _r = self.get_rate_by_nuclei([prim_nuc, Nucleus("he4")], [inter_nuc, Nucleus("p")])
-
-            if _r:
-                r_ap = _r[-1]
-            else:
+            if not (r_ap := self.get_rate_by_nuclei([prim_nuc, Nucleus("he4")],
+                                                    [inter_nuc, Nucleus("p")])):
                 continue
 
             # look for X(p,g)B
-            _r = self.get_rate_by_nuclei([inter_nuc, Nucleus("p")], [prim_prod])
-
-            if _r:
-                r_pg = _r[-1]
-            else:
+            if not (r_pg := self.get_rate_by_nuclei([inter_nuc, Nucleus("p")],
+                                                    [prim_prod])):
                 continue
 
             # look for reverse B(g,a)A
-            _r = self.get_rate_by_nuclei([prim_prod], [prim_nuc, Nucleus("he4")])
-
-            if _r:
-                r_ga = _r[-1]
-            else:
+            if not (r_ga := self.get_rate_by_nuclei([prim_prod],
+                                                    [prim_nuc, Nucleus("he4")])):
                 continue
 
             # look for reverse B(g,p)X
-            _r = self.get_rate_by_nuclei([prim_prod], [inter_nuc, Nucleus("p")])
-
-            if _r:
-                r_gp = _r[-1]
-            else:
+            if not (r_gp := self.get_rate_by_nuclei([prim_prod],
+                                                    [inter_nuc, Nucleus("p")])):
                 continue
 
             # look for reverse X(p,a)A
-            _r = self.get_rate_by_nuclei([inter_nuc, Nucleus("p")], [Nucleus("he4"), prim_nuc])
-
-            if _r:
-                r_pa = _r[-1]
-            else:
+            if not (r_pa := self.get_rate_by_nuclei([inter_nuc, Nucleus("p")],
+                                                    [Nucleus("he4"), prim_nuc])):
                 continue
 
             # build the approximate rates
@@ -1316,6 +1301,7 @@ class RateCollection:
              N_range=None, Z_range=None, rotated=False,
              always_show_p=False, always_show_alpha=False,
              hide_xp=False, hide_xalpha=False,
+             edge_labels=None,
              highlight_filter_function=None,
              nucleus_filter_function=None, rate_filter_function=None):
         """Make a plot of the network structure showing the links between
@@ -1375,6 +1361,10 @@ class RateCollection:
 
         hide_xp=False: dont connect the links to p for heavy
         nuclei reactions of the form A(p,X)B or A(X,p)B.
+
+        edge_labels: a dictionary of the form {(n1, n2): "label"}
+        that gives labels for the edges in the network connecting
+        nucleus n1 to n2.
 
         highlight_filter_function: name of a custom function that
         takes a Rate object and returns true or false if we want
@@ -1603,6 +1593,12 @@ class RateCollection:
                                    edgelist=highlight_edges, edge_color="C0", alpha=0.25,
                                    connectionstyle=connectionstyle,
                                    node_size=node_size, ax=ax)
+
+        if edge_labels:
+            nx.draw_networkx_edge_labels(G, G.position,
+                                         connectionstyle=connectionstyle,
+                                         font_size=node_font_size,
+                                         edge_labels=edge_labels)
 
         if ydots is not None:
             pc = mpl.collections.PatchCollection(real_edges_lc, cmap=plt.cm.viridis)
