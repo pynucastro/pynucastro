@@ -125,7 +125,7 @@ class TestReductionHelpers:
 
     def test_ye_dot(self, net_info, net, thermo_state):
         comp = thermo_state[2]
-        y_e = comp.eval_ye()
+        y_e = comp.ye
 
         Y_dot = net.evaluate_ydots(*thermo_state)
         nuc = net.unique_nuclei
@@ -141,7 +141,7 @@ class TestReductionHelpers:
 
     def test_abar_dot(self, net_info, net, thermo_state):
         comp = thermo_state[2]
-        abar = comp.eval_abar()
+        abar = comp.abar
 
         ydots = net.evaluate_ydots(*thermo_state)
         abar_dot = -abar**2 * sum(Y for Y in ydots.values())
