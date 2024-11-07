@@ -13,10 +13,10 @@ ReacLib
 
 The `JINA ReacLib database <https://reaclib.jinaweb.org/>`_ provides
 the core thermonuclear rates.  These are managed in pynucastro through
-the :func:`ReacLibRate <pynucastro.rates.rate.ReacLibRate>` class.
+the :func:`ReacLibRate <pynucastro.rates.reaclib_rate.ReacLibRate>` class.
 
 A ReacLib rate is composed of several sets (managed as
-:func:`SingleSet <pynucastro.rates.rate.SingleSet>` objects, each
+:func:`SingleSet <pynucastro.rates.reaclib_rate.SingleSet>` objects, each
 taking the form:
 
 .. math::
@@ -114,7 +114,7 @@ As noted above, rates with the ``v`` flag in the label are reverse
 rates that were computed from the forward rate via detailed balance.
 These rates do not include the corrections from partition functions,
 and therefore, should not be used directly.  Instead, the
-:func:`DerivedRate <pynucastro.rates.rate.DerivedRate>` functionality in pynucastro can be used to redo the
+:func:`DerivedRate <pynucastro.rates.derived_rate.DerivedRate>` functionality in pynucastro can be used to redo the
 detailed balance including the effects of partition functions.
 
 .. note::
@@ -128,9 +128,9 @@ Rate evaluation functions
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The ``ReacLibRate`` class has functions :func:`function_string_py
-<pynucastro.rates.rate.ReacLibRate.function_string_py>` and
+<pynucastro.rates.reaclib_rate.ReacLibRate.function_string_py>` and
 :func:`function_string_cxx
-<pynucastro.rates.rate.ReacLibRate.function_string_cxx>` to write out
+<pynucastro.rates.reaclib_rate.ReacLibRate.function_string_cxx>` to write out
 the python and C++ code needed to evaluate the T-dependent portion of
 the reaction rate (basically what is encoded in the ReacLib database).
 

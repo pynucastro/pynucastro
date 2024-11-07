@@ -1,5 +1,5 @@
 from pynucastro.nucdata import Nucleus
-from pynucastro.rates import ReacLibRate, SingleSet
+from pynucastro.rates.reaclib_rate import ReacLibRate, SingleSet
 
 
 class DeBoerC12agO16(ReacLibRate):
