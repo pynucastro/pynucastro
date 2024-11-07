@@ -6,8 +6,9 @@ program test
 
   double precision :: rho, T
   double precision :: X(nspec), dYdt(nspec)
+  double precision :: Jac(nspec, nspec)
 
-  integer :: i
+  integer :: i, j
 
   rho = 2.e8
   T = 1.e9
@@ -15,10 +16,17 @@ program test
   X(:) = 1.0 / nspec
   dYdt(:) = 0.0
 
-  call rhs_f(rho, T, X, dYdt, size(X))
+  call rhs_f(rho, T, X, dYdt, nspec)
+  call jac_f(rho, T, X, Jac, nspec)
 
   do i = 1, nspec
      print *, dYdt(i)
+  end do
+
+  do j = 1, nspec
+     do i = 1, nspec
+        print *, "jac(", i, ",", j, ") = ", Jac(i,j)
+     end do
   end do
 
 end program test
