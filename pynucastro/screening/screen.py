@@ -5,14 +5,7 @@ import numpy as np
 
 from pynucastro.constants import constants
 from pynucastro.nucdata import Nucleus
-# use the jitclass placeholder from rate.py
-from pynucastro.rates.rate import jitclass, numba
-
-if numba is not None:
-    njit = numba.njit
-else:
-    def njit(func):
-        return func
+from pynucastro.numba_util import jitclass, njit
 
 __all__ = ["PlasmaState", "ScreenFactors", "chugunov_2007", "chugunov_2009",
            "make_plasma_state", "make_screen_factors", "potekhin_1998",
