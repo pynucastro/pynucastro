@@ -1,0 +1,24 @@
+program test
+
+  use pynet
+
+  implicit none
+
+  double precision :: rho, T
+  double precision :: X(nspec), dYdt(nspec)
+
+  integer :: i
+
+  rho = 2.e8
+  T = 1.e9
+
+  X(:) = 1.0 / nspec
+  dYdt(:) = 0.0
+
+  call rhs_f(rho, T, X, dYdt, size(X))
+
+  do i = 1, nspec
+     print *, dYdt(i)
+  end do
+
+end program test

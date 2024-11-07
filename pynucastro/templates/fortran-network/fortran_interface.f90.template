@@ -1,0 +1,16 @@
+module pynet
+  integer, parameter :: nspec = 7
+
+  interface
+     subroutine rhs_f(rho, T, X, dYdt, size) bind(C, name="rhs_f")
+       use, intrinsic :: iso_c_binding, only: c_double, c_int
+       real(kind=c_double), intent(in), value :: rho, T
+       real(kind=c_double), intent(in), dimension(*) :: X
+       real(kind=c_double), intent(inout), dimension(*) :: dYdt
+       integer(c_int), value :: size
+     end subroutine rhs_f
+  end interface
+
+end module pynet
+
+
