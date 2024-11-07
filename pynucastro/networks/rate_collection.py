@@ -1313,6 +1313,7 @@ class RateCollection:
              N_range=None, Z_range=None, rotated=False,
              always_show_p=False, always_show_alpha=False,
              hide_xp=False, hide_xalpha=False,
+             edge_labels=None,
              highlight_filter_function=None,
              nucleus_filter_function=None, rate_filter_function=None):
         """Make a plot of the network structure showing the links between
@@ -1372,6 +1373,10 @@ class RateCollection:
 
         hide_xp=False: dont connect the links to p for heavy
         nuclei reactions of the form A(p,X)B or A(X,p)B.
+
+        edge_labels: a dictionary of the form {(n1, n2): "label"}
+        that gives labels for the edges in the network connecting
+        nucleus n1 to n2.
 
         highlight_filter_function: name of a custom function that
         takes a Rate object and returns true or false if we want
@@ -1600,6 +1605,12 @@ class RateCollection:
                                    edgelist=highlight_edges, edge_color="C0", alpha=0.25,
                                    connectionstyle=connectionstyle,
                                    node_size=node_size, ax=ax)
+
+        if edge_labels:
+            nx.draw_networkx_edge_labels(G, G.position,
+                                         connectionstyle=connectionstyle,
+                                         font_size=node_font_size,
+                                         edge_labels=edge_labels)
 
         if ydots is not None:
             pc = mpl.collections.PatchCollection(real_edges_lc, cmap=plt.cm.viridis)
