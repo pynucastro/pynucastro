@@ -1,6 +1,6 @@
 import re
 
-with open('ffnrates.dat','r') as file:
+with open('ffnrates.dat', 'r') as file:
     header = 0
     for l in file:
 
