@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Selecting Rates from a Library &#8212; pynucastro 2.4.0.post15+gcdf0074e documentation</title>
+    <title>Selecting Rates from a Library &#8212; pynucastro 2.4.0.post16+g12d1fa46 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
 
-    <script src="_static/documentation_options.js?v=acd357af"></script>
+    <script src="_static/documentation_options.js?v=24cd402e"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -735,7 +735,7 @@ Ni56
 </pre></div></div>
 </div>
 <p>We will next print out the library we constructed, seeing that we have both forward and reverse rates for the alpha chain.</p>
-<p>Note that at this time <code class="docutils literal notranslate"><span class="pre">pynucastro</span></code> has not yet implemented nuclear partition functions, so these reverse rates are calculated only from detailed balance in the Reaclib library.</p>
+<p>Note that in this example, we are just using the reverse rates provided by ReacLib and not rederiving them via detailed balance together with the nuclear partition function. This can be done using the <code class="docutils literal notranslate"><span class="pre">DerivedRate</span></code> class.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
 </pre></div>
