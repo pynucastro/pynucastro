@@ -5,11 +5,14 @@ from os import walk
 from pathlib import Path
 
 from pynucastro.nucdata import Nucleus, UnsupportedNucleus
+from pynucastro.rates.derived_rate import DerivedRate
+from pynucastro.rates.files import (RateFileError, _find_rate_file,
+                                    get_rates_dir)
 from pynucastro.rates.known_duplicates import (find_duplicate_rates,
                                                is_allowed_dupe)
-from pynucastro.rates.rate import (DerivedRate, Rate, RateFileError,
-                                   ReacLibRate, TabularRate, _find_rate_file,
-                                   get_rates_dir, load_rate)
+from pynucastro.rates.rate import Rate
+from pynucastro.rates.reaclib_rate import ReacLibRate
+from pynucastro.rates.tabular_rate import TabularRate
 
 
 def list_known_rates():
@@ -703,7 +706,7 @@ class TabularLibrary(Library):
         for _, _, filenames in sorted(walk(self.lib_path)):
             for f in sorted(filenames):
                 if f.endswith("-toki"):
-                    trates.append(load_rate(f))
+                    trates.append(TabularRate(rfile=f))
 
         Library.__init__(self, rates=trates)
 
