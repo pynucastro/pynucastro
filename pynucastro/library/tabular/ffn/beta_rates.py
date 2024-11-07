@@ -64,7 +64,7 @@ for loc in tables:
     #Loading the DataFrame:
     #======================
     #Fields: 't9', 'lrho', 'uf', 'lbeta+', 'leps-', 'lnu', 'lbeta-', 'leps+', 'lnubar'
-    table = pd.read_table(loc, sep='\s+', header=0, comment='#', skiprows=3)
+    table = pd.read_table(loc, sep=r'\s+', header=0, comment='#', skiprows=3)
     table = table.dropna()
 
     #Common Variables:
