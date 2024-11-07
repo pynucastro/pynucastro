@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.simple_cxx_network &#8212; pynucastro 2.4.0.post21+gdefe92c3 documentation</title>
+    <title>pynucastro.rates.files &#8212; pynucastro 2.4.0.post21+gdefe92c3 documentation</title>
   
   
   
@@ -48,7 +48,7 @@
     <script src="../../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/pynucastro/networks/simple_cxx_network';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/pynucastro/rates/files';</script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -310,7 +310,7 @@
       
       
       
-      <li><a href="https://github.com/pynucastro/pynucastro/issues/new?title=Issue%20on%20page%20%2F_modules/pynucastro/networks/simple_cxx_network.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/pynucastro/pynucastro/issues/new?title=Issue%20on%20page%20%2F_modules/pynucastro/rates/files.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -380,88 +380,58 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <h1>Source code for pynucastro.networks.simple_cxx_network</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;A simple C++ reaction network for integrating into other C++ codes&quot;&quot;&quot;</span>
-
-
+  <h1>Source code for pynucastro.rates.files</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Functions for dealing with the rate data directories.</span>
+<span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 
-<span class="kn">from</span> <span class="nn">pynucastro.networks.base_cxx_network</span> <span class="kn">import</span> <span class="n">BaseCxxNetwork</span>
+<span class="n">_pynucastro_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parents</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">_pynucastro_rates_dir</span> <span class="o">=</span> <span class="n">_pynucastro_dir</span><span class="o">/</span><span class="s2">&quot;library&quot;</span>
+<span class="n">_pynucastro_tabular_dir</span> <span class="o">=</span> <span class="n">_pynucastro_rates_dir</span><span class="o">/</span><span class="s2">&quot;tabular&quot;</span>
+<span class="n">_pynucastro_suzuki_dir</span> <span class="o">=</span> <span class="n">_pynucastro_tabular_dir</span><span class="o">/</span><span class="s2">&quot;suzuki&quot;</span>
+<span class="n">_pynucastro_langanke_dir</span> <span class="o">=</span> <span class="n">_pynucastro_tabular_dir</span><span class="o">/</span><span class="s2">&quot;langanke&quot;</span>
+<span class="n">_dirs</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">_pynucastro_dir</span><span class="p">,</span> <span class="n">_pynucastro_rates_dir</span><span class="p">,</span> <span class="n">_pynucastro_tabular_dir</span><span class="p">,</span>
+    <span class="n">_pynucastro_suzuki_dir</span><span class="p">,</span> <span class="n">_pynucastro_langanke_dir</span>
+<span class="p">]</span>
 
 
-<div class="viewcode-block" id="SimpleCxxNetwork">
-<a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.simple_cxx_network.SimpleCxxNetwork">[docs]</a>
-<span class="k">class</span> <span class="nc">SimpleCxxNetwork</span><span class="p">(</span><span class="n">BaseCxxNetwork</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="get_rates_dir">
+<a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.files.get_rates_dir">[docs]</a>
+<span class="k">def</span> <span class="nf">get_rates_dir</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">_pynucastro_rates_dir</span></div>
 
-        <span class="c1"># Initialize BaseCxxNetwork parent class</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">function_specifier</span> <span class="o">=</span> <span class="s2">&quot;inline&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span> <span class="o">=</span> <span class="s2">&quot;Real&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">array_namespace</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">_get_template_files</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="get_tabular_dir">
+<a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.files.get_tabular_dir">[docs]</a>
+<span class="k">def</span> <span class="nf">get_tabular_dir</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">_pynucastro_tabular_dir</span></div>
 
-        <span class="n">path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pynucastro_dir</span><span class="o">/</span><span class="s2">&quot;templates/simple-cxx-network&quot;</span>
 
-        <span class="k">return</span> <span class="n">path</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;*.template&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_write_network</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">odir</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        This writes the RHS, jacobian and ancillary files for the system of ODEs that</span>
-<span class="sd">        this network describes, using the template files.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="RateFileError">
+<a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.files.RateFileError">[docs]</a>
+<span class="k">class</span> <span class="nc">RateFileError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;An error occurred while trying to read a Rate from a file.&quot;&quot;&quot;</span></div>
 
-        <span class="c1"># at the moment, we don&#39;t support TabularRates</span>
-        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tabular_rates</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;SimpleCxxNetwork does not support tabular rates&quot;</span>
 
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_write_network</span><span class="p">(</span><span class="n">odir</span><span class="o">=</span><span class="n">odir</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">odir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">odir</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span>
-        <span class="c1"># create a header file with the nuclei properties</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">odir</span><span class="p">,</span> <span class="s2">&quot;network_properties.H&quot;</span><span class="p">),</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">of</span><span class="p">:</span>
-            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;#ifndef NETWORK_PROPERTIES_H</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;#define NETWORK_PROPERTIES_H</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;#include &lt;vector&gt;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;#include &lt;string&gt;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;#include &lt;amrex_bridge.H&gt;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">_find_rate_file</span><span class="p">(</span><span class="n">ratename</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;locate the Reaclib or tabular rate or library file given its name.  Return</span>
+<span class="sd">    None if the file cannot be located, otherwise return its path.&quot;&quot;&quot;</span>
 
-            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;constexpr int NumSpec = </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">)</span><span class="si">}</span><span class="s2">;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="c1"># check to see if the rate file is in the working dir,</span>
+    <span class="c1"># is already the full path, or is in _dirs</span>
 
-            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;constexpr Real aion[NumSpec] = {</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">):</span>
-                <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">nuc</span><span class="o">.</span><span class="n">A</span><span class="si">:</span><span class="s2">6.1f</span><span class="si">}</span><span class="s2">, // </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot; };</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="o">*</span><span class="n">_dirs</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">ratename</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
+            <span class="k">return</span> <span class="n">x</span>
 
-            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;constexpr Real aion_inv[NumSpec] = {</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">):</span>
-                <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    1.0/</span><span class="si">{</span><span class="n">nuc</span><span class="o">.</span><span class="n">A</span><span class="si">:</span><span class="s2">6.1f</span><span class="si">}</span><span class="s2">, // </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot; };</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
-
-            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;constexpr Real zion[NumSpec] = {</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">):</span>
-                <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">nuc</span><span class="o">.</span><span class="n">Z</span><span class="si">:</span><span class="s2">6.1f</span><span class="si">}</span><span class="s2">, // </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot; };</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
-
-            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;static const std::vector&lt;std::string&gt; spec_names = {</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">):</span>
-                <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    </span><span class="se">\&quot;</span><span class="si">{</span><span class="n">nuc</span><span class="o">.</span><span class="n">short_spec_name</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2">, // </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot; };</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
-
-            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;namespace Species {</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;  enum NetworkSpecies {</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">):</span>
-                <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                    <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">nuc</span><span class="o">.</span><span class="n">short_spec_name</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span><span class="si">}</span><span class="s2">=1,</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">nuc</span><span class="o">.</span><span class="n">short_spec_name</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span><span class="si">}</span><span class="s2">,</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;  };</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;}</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
-
-            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;#endif</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span></div>
-
+    <span class="c1"># notify user we can&#39;t find the file</span>
+    <span class="k">raise</span> <span class="n">RateFileError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;File </span><span class="si">{</span><span class="n">ratename</span><span class="si">!r}</span><span class="s1"> not found in the working directory, </span><span class="si">{</span><span class="n">_pynucastro_rates_dir</span><span class="si">}</span><span class="s1">, or </span><span class="si">{</span><span class="n">_pynucastro_tabular_dir</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
 </pre></div>
 
                 </article>

@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.library &#8212; pynucastro 2.4.0.post20+g3ebecc16 documentation</title>
+    <title>pynucastro.rates.library &#8212; pynucastro 2.4.0.post21+gdefe92c3 documentation</title>
   
   
   
@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
 
-    <script src="../../../_static/documentation_options.js?v=8a31fcef"></script>
+    <script src="../../../_static/documentation_options.js?v=c24b7303"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -388,11 +388,14 @@
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 
 <span class="kn">from</span> <span class="nn">pynucastro.nucdata</span> <span class="kn">import</span> <span class="n">Nucleus</span><span class="p">,</span> <span class="n">UnsupportedNucleus</span>
+<span class="kn">from</span> <span class="nn">pynucastro.rates.derived_rate</span> <span class="kn">import</span> <span class="n">DerivedRate</span>
+<span class="kn">from</span> <span class="nn">pynucastro.rates.files</span> <span class="kn">import</span> <span class="p">(</span><span class="n">RateFileError</span><span class="p">,</span> <span class="n">_find_rate_file</span><span class="p">,</span>
+                                    <span class="n">get_rates_dir</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">pynucastro.rates.known_duplicates</span> <span class="kn">import</span> <span class="p">(</span><span class="n">find_duplicate_rates</span><span class="p">,</span>
                                                <span class="n">is_allowed_dupe</span><span class="p">)</span>
-<span class="kn">from</span> <span class="nn">pynucastro.rates.rate</span> <span class="kn">import</span> <span class="p">(</span><span class="n">DerivedRate</span><span class="p">,</span> <span class="n">Rate</span><span class="p">,</span> <span class="n">RateFileError</span><span class="p">,</span>
-                                   <span class="n">ReacLibRate</span><span class="p">,</span> <span class="n">TabularRate</span><span class="p">,</span> <span class="n">_find_rate_file</span><span class="p">,</span>
-                                   <span class="n">get_rates_dir</span><span class="p">,</span> <span class="n">load_rate</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">pynucastro.rates.rate</span> <span class="kn">import</span> <span class="n">Rate</span>
+<span class="kn">from</span> <span class="nn">pynucastro.rates.reaclib_rate</span> <span class="kn">import</span> <span class="n">ReacLibRate</span>
+<span class="kn">from</span> <span class="nn">pynucastro.rates.tabular_rate</span> <span class="kn">import</span> <span class="n">TabularRate</span>
 
 
 <div class="viewcode-block" id="list_known_rates">
@@ -1163,7 +1166,7 @@
         <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">filenames</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">walk</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lib_path</span><span class="p">)):</span>
             <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">filenames</span><span class="p">):</span>
                 <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;-toki&quot;</span><span class="p">):</span>
-                    <span class="n">trates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">load_rate</span><span class="p">(</span><span class="n">f</span><span class="p">))</span>
+                    <span class="n">trates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">TabularRate</span><span class="p">(</span><span class="n">rfile</span><span class="o">=</span><span class="n">f</span><span class="p">))</span>
 
         <span class="n">Library</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rates</span><span class="o">=</span><span class="n">trates</span><span class="p">)</span></div>
 

@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Overview of pynucastro &#8212; pynucastro 2.4.0.post20+g3ebecc16 documentation</title>
+    <title>Overview of pynucastro &#8212; pynucastro 2.4.0.post21+gdefe92c3 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
 
-    <script src="_static/documentation_options.js?v=8a31fcef"></script>
+    <script src="_static/documentation_options.js?v=c24b7303"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -498,10 +498,10 @@ dependence.  A <cite>Rate</cite> also knows how to the generate code (C++ and
 python) needed to evaluate it.</p>
 <p>There are a few special rates derived from <cite>Rate</cite>:</p>
 <ul class="simple">
-<li><p><a class="reference internal" href="pynucastro.rates.html#pynucastro.rates.rate.ReacLibRate" title="pynucastro.rates.rate.ReacLibRate"><code class="xref py py-func docutils literal notranslate"><span class="pre">ReacLibRate</span></code></a>: This is a rate in the
+<li><p><a class="reference internal" href="pynucastro.rates.html#pynucastro.rates.reaclib_rate.ReacLibRate" title="pynucastro.rates.reaclib_rate.ReacLibRate"><code class="xref py py-func docutils literal notranslate"><span class="pre">ReacLibRate</span></code></a>: This is a rate in the
 JINA ReacLib format, with the temperature dependence specified by an interpolant
 with 7 different coefficients.</p></li>
-<li><p><a class="reference internal" href="pynucastro.rates.html#pynucastro.rates.rate.TabularRate" title="pynucastro.rates.rate.TabularRate"><code class="xref py py-func docutils literal notranslate"><span class="pre">TabularRate</span></code></a>: This is a
+<li><p><a class="reference internal" href="pynucastro.rates.html#pynucastro.rates.tabular_rate.TabularRate" title="pynucastro.rates.tabular_rate.TabularRate"><code class="xref py py-func docutils literal notranslate"><span class="pre">TabularRate</span></code></a>: This is a
 rate that is tabulated in terms of <span class="math notranslate nohighlight">\((T, \rho Y_e)\)</span>.  This is
 how the weak rate (electron captures and beta-decays) are stored.
 Interpolation is used to find the rate at any thermodynamic state.</p></li>
@@ -509,7 +509,7 @@ Interpolation is used to find the rate at any thermodynamic state.</p></li>
 An approximate rate groups together <span class="math notranslate nohighlight">\(A(\alpha, \gamma)B\)</span> and
 <span class="math notranslate nohighlight">\(A(\alpha,p)X(p,\gamma)B\)</span> into a single effective rate, assuming
 equilibrium of <span class="math notranslate nohighlight">\(p\)</span> and <span class="math notranslate nohighlight">\(X\)</span>.</p></li>
-<li><p><a class="reference internal" href="pynucastro.rates.html#pynucastro.rates.rate.DerivedRate" title="pynucastro.rates.rate.DerivedRate"><code class="xref py py-func docutils literal notranslate"><span class="pre">DerivedRate</span></code></a>: A
+<li><p><a class="reference internal" href="pynucastro.rates.html#pynucastro.rates.derived_rate.DerivedRate" title="pynucastro.rates.derived_rate.DerivedRate"><code class="xref py py-func docutils literal notranslate"><span class="pre">DerivedRate</span></code></a>: A
 derived rate uses detailed balance to recompute a reverse rate from the forward rate.</p></li>
 </ul>
 </li>
