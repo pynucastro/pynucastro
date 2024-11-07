@@ -1,26 +1,32 @@
 module pynet
-  <nspec_fortran>(1)
+    <nspec_fortran>(1)
 
-  interface
-     subroutine rhs_f(rho, T, X, dYdt, size) bind(C, name="rhs_f")
-       use, intrinsic :: iso_c_binding, only: c_double, c_int
-       import nspec
-       real(kind=c_double), intent(in), value :: rho, T
-       real(kind=c_double), intent(in), dimension(nspec) :: X
-       real(kind=c_double), intent(inout), dimension(nspec) :: dYdt
-       integer(c_int), value :: size
-     end subroutine rhs_f
+    <aion_fortran>(1)
 
-     subroutine jac_f(rho, T, X, J, size) bind(C, name="jac_f")
-       use, intrinsic :: iso_c_binding, only: c_double, c_int
-       import nspec
-       real(kind=c_double), intent(in), value :: rho, T
-       real(kind=c_double), intent(in), dimension(nspec) :: X
-       real(kind=c_double), intent(inout), dimension(nspec, nspec) :: J
-       integer(c_int), value :: size
-     end subroutine jac_f
+    <zion_fortran>(1)
 
-  end interface
+    <name_fortran>(1)
+
+    interface
+       subroutine rhs_f(rho, T, X, dYdt, size) bind(C, name="rhs_f")
+         use, intrinsic :: iso_c_binding, only: c_double, c_int
+         import nspec
+         real(kind=c_double), intent(in), value :: rho, T
+         real(kind=c_double), intent(in), dimension(nspec) :: X
+         real(kind=c_double), intent(inout), dimension(nspec) :: dYdt
+         integer(c_int), value :: size
+       end subroutine rhs_f
+
+       subroutine jac_f(rho, T, X, J, size) bind(C, name="jac_f")
+         use, intrinsic :: iso_c_binding, only: c_double, c_int
+         import nspec
+         real(kind=c_double), intent(in), value :: rho, T
+         real(kind=c_double), intent(in), dimension(nspec) :: X
+         real(kind=c_double), intent(inout), dimension(nspec, nspec) :: J
+         integer(c_int), value :: size
+       end subroutine jac_f
+
+    end interface
 
 end module pynet
 

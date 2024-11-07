@@ -20,12 +20,14 @@ program test
   call jac_f(rho, T, X, Jac, nspec)
 
   do i = 1, nspec
-     print *, dYdt(i)
+     print *, "ydot(", spec_names(i), ") = ", dYdt(i)
   end do
+
+  print *, " "
 
   do j = 1, nspec
      do i = 1, nspec
-        print *, "jac(", i, ",", j, ") = ", Jac(i,j)
+        print *, "jac(", spec_names(i), ", ", spec_names(j), ") = ", Jac(i,j)
      end do
   end do
 
