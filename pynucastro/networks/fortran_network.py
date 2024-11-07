@@ -15,4 +15,3 @@ class FortranNetwork(SimpleCxxNetwork):
         path = self.pynucastro_dir/"templates/fortran-network"
 
         return path.glob("*.template")
-
