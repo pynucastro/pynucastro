@@ -36,13 +36,13 @@ class SimpleCxxNetwork(BaseCxxNetwork):
 
             if not (scr.n1.dummy or scr.n2.dummy):
                 # Scope the screening calculation to avoid multiple definitions of scn_fac.
-                of.write(f'\n{self.indent*n_indent}' + '{')
+                of.write(f'\n{self.indent*n_indent}' + '{\n')
 
-                of.write(f'\n{self.indent*(n_indent+1)}auto scn_fac = scrn::calculate_screen_factor({nuc1_info}, {nuc2_info});\n\n')
+                of.write(f'{self.indent*(n_indent+1)}auto scn_fac = scrn::calculate_screen_factor({nuc1_info}, {nuc2_info});\n')
 
-                of.write(f'\n{self.indent*(n_indent+1)}actual_screen(pstate, scn_fac, scor);\n')
+                of.write(f'{self.indent*(n_indent+1)}actual_screen(pstate, scn_fac, scor);\n')
 
-                of.write(f'{self.indent*n_indent}' + '}\n\n')
+                of.write(f'{self.indent*n_indent}' + '}\n')
 
             if scr.name == "He4_He4_He4":
                 # we don't need to do anything here, but we want to avoid immediately applying the screening
@@ -52,27 +52,27 @@ class SimpleCxxNetwork(BaseCxxNetwork):
                 # make sure the previous iteration was the first part of 3-alpha
                 assert screening_map[i - 1].name == "He4_He4_He4"
                 # handle the second part of the screening for 3-alpha
-                of.write(f'\n{self.indent*n_indent}' + '{')
+                of.write(f'\n{self.indent*n_indent}' + '{\n')
 
-                of.write(f'\n{self.indent*(n_indent+1)}auto scn_fac2 = scrn::calculate_screen_factor({nuc1_info}, {nuc2_info});\n\n')
+                of.write(f'{self.indent*(n_indent+1)}auto scn_fac2 = scrn::calculate_screen_factor({nuc1_info}, {nuc2_info});\n')
 
-                of.write(f'\n{self.indent*(n_indent+1)}actual_screen(pstate, scn_fac2, scor2);\n')
+                of.write(f'{self.indent*(n_indent+1)}actual_screen(pstate, scn_fac2, scor2);\n')
 
-                of.write(f'\n{self.indent*n_indent}' + '}\n\n')
+                of.write(f'{self.indent*n_indent}' + '}\n')
 
                 # there might be both the forward and reverse 3-alpha
                 # if we are doing symmetric screening
 
+                of.write('\n')
                 for rr in scr.rates:
-                    of.write('\n')
                     of.write(f'{self.indent*n_indent}rate_eval.screened_rates(k_{rr.cname()}) *= scor * scor2;\n')
             else:
                 # there might be several rates that have the same
                 # reactants and therefore the same screening applies
                 # -- handle them all now
 
+                of.write('\n')
                 for rr in scr.rates:
-                    of.write('\n')
                     of.write(f'{self.indent*n_indent}rate_eval.screened_rates(k_{rr.cname()}) *= scor;\n')
 
             of.write('\n')
