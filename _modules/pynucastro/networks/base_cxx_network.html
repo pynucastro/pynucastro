@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.base_cxx_network &#8212; pynucastro 2.4.0.post21+gdefe92c3 documentation</title>
+    <title>pynucastro.networks.base_cxx_network &#8212; pynucastro 2.4.0.post22+g2900ccdb documentation</title>
   
   
   
@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
 
-    <script src="../../../_static/documentation_options.js?v=c24b7303"></script>
+    <script src="../../../_static/documentation_options.js?v=0f4e9d00"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -465,8 +465,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">&#39;&lt;spin_state_cases&gt;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fill_spin_state_cases</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">indent</span> <span class="o">=</span> <span class="s1">&#39;    &#39;</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">num_screen_calls</span> <span class="o">=</span> <span class="kc">None</span>
-
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">_get_template_files</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># This method should be overridden by derived classes</span>
@@ -660,12 +658,6 @@
                     <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="si">}</span><span class="se">}}\n</span><span class="s1">&#39;</span><span class="p">)</span>
 
             <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
-
-        <span class="c1"># the C++ screen.H code requires that there be at least 1 screening</span>
-        <span class="c1"># factor because it statically allocates some arrays, so if we turned</span>
-        <span class="c1"># off screening, just set num_screen_calls = 1 here.</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">num_screen_calls</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">screening_map</span><span class="p">))</span>
 
     <span class="k">def</span> <span class="nf">_nrat_reaclib</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
         <span class="c1"># Writes the number of Reaclib rates</span>
