@@ -51,6 +51,13 @@ void evaluate_rates(const burn_t& state, T& rate_eval) {
 
     fill_reaclib_rates<do_T_derivatives, T>(tfactors, rate_eval);
 
+    // Evaluating screening factors
+
+    Real scor;
+    [[maybe_unused]] Real scor2;
+
+    <compute_screening_factors>(1)
+
     // Fill approximate rates
 
     fill_approx_rates<do_T_derivatives, T>(tfactors, rate_eval);
