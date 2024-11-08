@@ -63,4 +63,20 @@ extern "C" {
         }
 
     }
+
+
+    void
+    ener_gener_f(Real* dYdt, int size, Real& enuc) {
+
+        assert(size == NumSpec);
+
+        Array1D<Real, 1, NumSpec> ydot;
+        for (int n = 0; n < NumSpec; ++n) {
+            ydot(n+1) = dYdt[n];
+        }
+
+        ener_gener_rate(ydot, enuc);
+
+    }
+
 }

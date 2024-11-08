@@ -7,6 +7,7 @@ program test
   double precision :: rho, T
   double precision :: X(nspec), dYdt(nspec)
   double precision :: Jac(nspec, nspec)
+  double precision :: enuc
 
   integer :: i, j
 
@@ -32,5 +33,9 @@ program test
         print *, "jac(", spec_names(i), ", ", spec_names(j), ") = ", Jac(i,j)
      end do
   end do
+
+  call ener_gener_f(dYdt, nspec, enuc)
+
+  print *, "energy generation rate = ", enuc
 
 end program test
