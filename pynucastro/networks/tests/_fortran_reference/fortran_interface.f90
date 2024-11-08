@@ -35,6 +35,9 @@ module pynet
          integer(c_int), value :: size
        end subroutine jac_f
 
+       subroutine network_init() bind(C, name="network_init")
+       end subroutine network_init
+
     end interface
 
 end module pynet

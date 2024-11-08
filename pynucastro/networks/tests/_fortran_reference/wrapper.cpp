@@ -3,9 +3,15 @@
 #include <cassert>
 
 #include <burn_type.H>
+#include <actual_network.H>
 #include <actual_rhs.H>
 
 extern "C" {
+
+    void
+    network_init() {
+        actual_network_init();
+    }
 
     void
     rhs_f(Real rho, Real T, Real* X, Real* dYdt, int size) {
