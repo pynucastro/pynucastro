@@ -103,4 +103,15 @@ struct MathArray2D
     Real arr[(XHI-XLO+1)*(YHI-YLO+1)];
 };
 
+
+// copied from AMReX.H
+
+namespace amrex {
+
+template <class... Ts>
+inline
+void ignore_unused (const Ts&...) {}
+
+} // namespace amrex
+
 #endif
