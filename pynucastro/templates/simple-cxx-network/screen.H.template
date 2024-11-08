@@ -16,10 +16,10 @@ struct plasma_state_t {
     Real taufac;
     Real aa;
     Real temp;
-    amrex::Real zbar;
-    amrex::Real z2bar;
-    amrex::Real n_e;
-    amrex::Real gamma_e_fac;
+    Real zbar;
+    Real z2bar;
+    Real n_e;
+    Real gamma_e_fac;
 };
 
 
@@ -86,8 +86,8 @@ fill_plasma_state(plasma_state_t& state, const Real& temp,
 
 
 inline
-Real chugunov2007 (const plasma_state_t<Real>& state,
-                     const scrn::screen_factors_t& scn_fac)
+Real chugunov2007 (const plasma_state_t& state,
+                   const scrn::screen_factors_t& scn_fac)
 {
     // Calculates screening factors based on Chugunov et al. 2007, following the
     // the approach in Yakovlev 2006 to extend to a multi-component plasma.
