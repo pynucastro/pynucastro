@@ -7,6 +7,8 @@ module pynet
 
     <name_fortran>(1)
 
+    <indices_fortran>(1)
+
     interface
        subroutine rhs_f(rho, T, X, dYdt, size) bind(C, name="rhs_f")
          use, intrinsic :: iso_c_binding, only: c_double, c_int

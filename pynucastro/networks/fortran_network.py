@@ -14,6 +14,7 @@ class FortranNetwork(SimpleCxxNetwork):
         self.ftags['<aion_fortran>'] = self._aion_fortran
         self.ftags['<zion_fortran>'] = self._zion_fortran
         self.ftags['<name_fortran>'] = self._name_fortran
+        self.ftags['<indices_fortran>'] = self._indices_fortran
 
     def _get_template_files(self):
 
@@ -67,3 +68,10 @@ class FortranNetwork(SimpleCxxNetwork):
         if len(self.unique_nuclei) % 4 == 0:
             of.write('       ')
         of.write(']\n')
+
+    def _indices_fortran(self, n_indent, of):
+        # fortran doesn't allow leading underscores nor does it have
+        # namespaces, so we'll use a trailing underscore to prevent
+        # name clashes.
+        for n, nuc in enumerate(self.unique_nuclei):
+            of.write(f"{self.indent*n_indent}integer, parameter :: {nuc.short_spec_name}_ = {n+1}\n")

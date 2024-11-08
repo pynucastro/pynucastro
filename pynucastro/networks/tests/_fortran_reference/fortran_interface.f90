@@ -16,6 +16,16 @@ module pynet
                             "o16", "ne20", "na23", "mg23",  &
                             "mg24"]
 
+    integer, parameter :: n_ = 1
+    integer, parameter :: h1_ = 2
+    integer, parameter :: he4_ = 3
+    integer, parameter :: c12_ = 4
+    integer, parameter :: o16_ = 5
+    integer, parameter :: ne20_ = 6
+    integer, parameter :: na23_ = 7
+    integer, parameter :: mg23_ = 8
+    integer, parameter :: mg24_ = 9
+
     interface
        subroutine rhs_f(rho, T, X, dYdt, size) bind(C, name="rhs_f")
          use, intrinsic :: iso_c_binding, only: c_double, c_int
