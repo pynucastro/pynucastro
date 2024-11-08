@@ -16,6 +16,8 @@ program test
   X(:) = 1.0 / nspec
   dYdt(:) = 0.0
 
+  call network_init()
+
   call rhs_f(rho, T, X, dYdt, nspec)
   call jac_f(rho, T, X, Jac, nspec)
 
