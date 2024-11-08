@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.nucdata package &#8212; pynucastro 2.4.0.post22+g2900ccdb documentation</title>
+    <title>pynucastro.nucdata package &#8212; pynucastro 2.4.0.post23+g6d518fae documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
 
-    <script src="_static/documentation_options.js?v=0f4e9d00"></script>
+    <script src="_static/documentation_options.js?v=3bf548e9"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -473,6 +473,13 @@
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.elements.UnidentifiedElement"><code class="docutils literal notranslate"><span class="pre">UnidentifiedElement</span></code></a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-pynucastro.nucdata.halflife_table">pynucastro.nucdata.halflife_table module</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.halflife_table.HalfLifeTable"><code class="docutils literal notranslate"><span class="pre">HalfLifeTable</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.halflife_table.HalfLifeTable.get_halflife"><code class="docutils literal notranslate"><span class="pre">HalfLifeTable.get_halflife()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-pynucastro.nucdata.mass_table">pynucastro.nucdata.mass_table module</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.mass_table.MassTable"><code class="docutils literal notranslate"><span class="pre">MassTable</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.mass_table.MassTable.get_mass_diff"><code class="docutils literal notranslate"><span class="pre">MassTable.get_mass_diff()</span></code></a></li>
@@ -574,6 +581,22 @@ particular, the binding energies)</p>
 <dt class="sig sig-object py" id="pynucastro.nucdata.elements.UnidentifiedElement">
 <em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.nucdata.elements.</span></span><span class="sig-name descname"><span class="pre">UnidentifiedElement</span></span><a class="reference internal" href="_modules/pynucastro/nucdata/elements.html#UnidentifiedElement"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.elements.UnidentifiedElement" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></a></p>
+</dd></dl>
+
+</section>
+<section id="module-pynucastro.nucdata.halflife_table">
+<span id="pynucastro-nucdata-halflife-table-module"></span><h2>pynucastro.nucdata.halflife_table module<a class="headerlink" href="#module-pynucastro.nucdata.halflife_table" title="Link to this heading">#</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pynucastro.nucdata.halflife_table.HalfLifeTable">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.nucdata.halflife_table.</span></span><span class="sig-name descname"><span class="pre">HalfLifeTable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><span class="pre">Path</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/halflife_table.html#HalfLifeTable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.halflife_table.HalfLifeTable" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Read the table of halflives (in seconds) extracted from the Nubase
+compilation in halflife2020.txt</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pynucastro.nucdata.halflife_table.HalfLifeTable.get_halflife">
+<span class="sig-name descname"><span class="pre">get_halflife</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></span><a class="reference internal" href="_modules/pynucastro/nucdata/halflife_table.html#HalfLifeTable.get_halflife"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.halflife_table.HalfLifeTable.get_halflife" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 </section>
@@ -893,6 +916,13 @@ where only intervals are given and the values measured by strong experimental ar
 </ul>
 </li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.elements.UnidentifiedElement"><code class="docutils literal notranslate"><span class="pre">UnidentifiedElement</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-pynucastro.nucdata.halflife_table">pynucastro.nucdata.halflife_table module</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.halflife_table.HalfLifeTable"><code class="docutils literal notranslate"><span class="pre">HalfLifeTable</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.halflife_table.HalfLifeTable.get_halflife"><code class="docutils literal notranslate"><span class="pre">HalfLifeTable.get_halflife()</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-pynucastro.nucdata.mass_table">pynucastro.nucdata.mass_table module</a><ul class="nav section-nav flex-column">

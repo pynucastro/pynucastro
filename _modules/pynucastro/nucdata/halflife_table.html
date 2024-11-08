@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.reduction.sensitivity_analysis &#8212; pynucastro 2.4.0.post23+g6d518fae documentation</title>
+    <title>pynucastro.nucdata.halflife_table &#8212; pynucastro 2.4.0.post23+g6d518fae documentation</title>
   
   
   
@@ -48,7 +48,7 @@
     <script src="../../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/pynucastro/reduction/sensitivity_analysis';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/pynucastro/nucdata/halflife_table';</script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -310,7 +310,7 @@
       
       
       
-      <li><a href="https://github.com/pynucastro/pynucastro/issues/new?title=Issue%20on%20page%20%2F_modules/pynucastro/reduction/sensitivity_analysis.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/pynucastro/pynucastro/issues/new?title=Issue%20on%20page%20%2F_modules/pynucastro/nucdata/halflife_table.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -380,159 +380,53 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <h1>Source code for pynucastro.reduction.sensitivity_analysis</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-
-<span class="kn">from</span> <span class="nn">pynucastro.nucdata</span> <span class="kn">import</span> <span class="n">Nucleus</span>
-<span class="kn">from</span> <span class="nn">pynucastro.reduction.reduction_utils</span> <span class="kn">import</span> <span class="n">mpi_importer</span>
-
-<span class="n">MPI</span> <span class="o">=</span> <span class="n">mpi_importer</span><span class="p">()</span>
+  <h1>Source code for pynucastro.nucdata.halflife_table</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 
 
-<div class="viewcode-block" id="binary_search_trim">
-<a class="viewcode-back" href="../../../pynucastro.reduction.html#pynucastro.reduction.sensitivity_analysis.binary_search_trim">[docs]</a>
-<span class="k">def</span> <span class="nf">binary_search_trim</span><span class="p">(</span><span class="n">network</span><span class="p">,</span> <span class="n">nuclei</span><span class="p">,</span> <span class="n">errfunc</span><span class="p">,</span> <span class="n">thresh</span><span class="o">=</span><span class="mf">0.05</span><span class="p">):</span>
+<div class="viewcode-block" id="HalfLifeTable">
+<a class="viewcode-back" href="../../../pynucastro.nucdata.html#pynucastro.nucdata.halflife_table.HalfLifeTable">[docs]</a>
+<span class="k">class</span> <span class="nc">HalfLifeTable</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Given an array of nuclei sorted roughly by relative importance, perform a binary search to trim</span>
-<span class="sd">    out nuclei from the network until the error is as close as possible to the given threshold</span>
-<span class="sd">    without exceeding it. Nuclei whose removal will result in only a small increase in error need to</span>
-<span class="sd">    be packed towards the back of the array for the binary search to work effectively.</span>
-
-<span class="sd">    :param network: The network to reduce.</span>
-<span class="sd">    :param nuclei: Nuclei to consider for the final network, sorted by decreasing importance (i.e.</span>
-<span class="sd">        most important nuclei first). Importance can be determined by something like the *drgep*</span>
-<span class="sd">        function.</span>
-<span class="sd">    :param errfunc: Error function to use when evaluating error. Should take a reduced network as</span>
-<span class="sd">        an argument and return the relative error produced by the reduction. This can be a parallel</span>
-<span class="sd">        (MPI) function.</span>
-<span class="sd">    :param thresh: Threshold for acceptable error. Default is 0.05.</span>
-
-<span class="sd">    :return: A reduced reaction network with an evaluated error approximately equal to the supplied</span>
-<span class="sd">        threshold.</span>
+<span class="sd">    Read the table of halflives (in seconds) extracted from the Nubase</span>
+<span class="sd">    compilation in halflife2020.txt</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">nuclei</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="o">.</span><span class="n">cast_list</span><span class="p">(</span><span class="n">nuclei</span><span class="p">)</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 
-    <span class="n">start_idx</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="n">seg_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">nuclei</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">halflife</span> <span class="o">=</span> <span class="p">{}</span>
 
-    <span class="k">while</span> <span class="n">seg_size</span> <span class="o">&gt;=</span> <span class="mf">0.5</span><span class="p">:</span>
-
-        <span class="c1"># Divide up into segments</span>
-        <span class="n">end_idx</span> <span class="o">=</span> <span class="n">start_idx</span> <span class="o">+</span> <span class="nb">round</span><span class="p">(</span><span class="n">seg_size</span><span class="p">)</span>
-        <span class="n">red_net</span> <span class="o">=</span> <span class="n">network</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">(</span><span class="n">nuclei</span><span class="p">[:</span><span class="n">end_idx</span><span class="p">])</span>
-
-        <span class="c1"># Evaluate error</span>
-        <span class="n">err</span> <span class="o">=</span> <span class="n">errfunc</span><span class="p">(</span><span class="n">red_net</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">err</span> <span class="o">&lt;=</span> <span class="n">thresh</span><span class="p">:</span>
-            <span class="n">seg_size</span> <span class="o">/=</span> <span class="mi">2</span>
+        <span class="k">if</span> <span class="n">filename</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">start_idx</span> <span class="o">+=</span> <span class="nb">round</span><span class="p">(</span><span class="n">seg_size</span><span class="p">)</span>
-            <span class="n">seg_size</span> <span class="o">/=</span> <span class="mi">2</span>
+            <span class="n">nucdata_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span>
+            <span class="n">datafile_name</span> <span class="o">=</span> <span class="s1">&#39;halflife2020.txt&#39;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">nucdata_dir</span><span class="o">/</span><span class="s1">&#39;AtomicMassEvaluation&#39;</span><span class="o">/</span><span class="n">datafile_name</span>
 
-    <span class="k">return</span> <span class="n">network</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">(</span><span class="n">nuclei</span><span class="p">[:</span><span class="n">start_idx</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_read_table</span><span class="p">()</span>
 
+    <span class="k">def</span> <span class="nf">_read_table</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="c1"># skip the header</span>
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()[</span><span class="mi">5</span><span class="p">:]:</span>
 
-<span class="k">def</span> <span class="nf">_progress_bar</span><span class="p">(</span><span class="n">frac</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">50</span><span class="p">):</span>
+                <span class="n">A</span><span class="p">,</span> <span class="n">Z</span><span class="p">,</span> <span class="n">tau</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()[:</span><span class="mi">3</span><span class="p">]</span>
+                <span class="c1">#print(data_list)</span>
 
-    <span class="n">n</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">size</span><span class="o">*</span><span class="n">frac</span><span class="p">)</span>
-    <span class="n">progress_bar</span> <span class="o">=</span> <span class="s1">&#39;[&#39;</span> <span class="o">+</span> <span class="s1">&#39;⊙&#39;</span><span class="o">*</span><span class="n">n</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span><span class="o">*</span><span class="p">(</span><span class="n">size</span><span class="o">-</span><span class="n">n</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;]&#39;</span>
-    <span class="k">if</span> <span class="n">frac</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">:</span>
-        <span class="n">end</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\r</span><span class="s1">&#39;</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">end</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">progress_bar</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="nb">round</span><span class="p">(</span><span class="mi">100</span><span class="o">*</span><span class="n">frac</span><span class="p">)</span><span class="si">}</span><span class="s1">%&#39;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">end</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">tau</span> <span class="o">!=</span> <span class="s2">&quot;stable&quot;</span><span class="p">:</span>
+                    <span class="n">tau</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">tau</span><span class="p">)</span>
 
+                <span class="bp">self</span><span class="o">.</span><span class="n">halflife</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">A</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">Z</span><span class="p">)]</span> <span class="o">=</span> <span class="n">tau</span>
 
-<div class="viewcode-block" id="sens_analysis">
-<a class="viewcode-back" href="../../../pynucastro.reduction.html#pynucastro.reduction.sensitivity_analysis.sens_analysis">[docs]</a>
-<span class="k">def</span> <span class="nf">sens_analysis</span><span class="p">(</span><span class="n">network</span><span class="p">,</span> <span class="n">errfunc</span><span class="p">,</span> <span class="n">thresh</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">use_mpi</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">print_prog</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Given a reaction network, remove nuclei from the network one-by-one until the induced error is</span>
-<span class="sd">    as close to the given threshold as possible without exceeding it. This will test nuclei for</span>
-<span class="sd">    removal individually and remove the one that induces the smallest error on each pass. Since</span>
-<span class="sd">    it requires O(n^2) error function evaluations, this routine is much more expensive than</span>
-<span class="sd">    *binary_search*, but it will typically trim the network down significantly more.</span>
-
-<span class="sd">    :param network: The network to reduce.</span>
-<span class="sd">    :param errfunc: Error function to use when evaluating error. Should take a reduced network as</span>
-<span class="sd">        an argument and return the relative error produced by the reduction. If *use_mpi* is *False*,</span>
-<span class="sd">        the error function can be parallelized with MPI. Otherwise *sens_analysis* will be</span>
-<span class="sd">        parallelized and the error function should not be.</span>
-<span class="sd">    :param thresh: Threshold for acceptable error. Default is 0.05.</span>
-<span class="sd">    :param use_mpi: Whether to parallelize the loop over nuclei with each pass or not using MPI.</span>
-<span class="sd">        For *p* MPI processes, the parallelized function will require O(n^2/p) error function</span>
-<span class="sd">        evaluations per process. This option is *False* by default. If the error function is</span>
-<span class="sd">        parallelized using MPI, this option should be set to *False*.</span>
-<span class="sd">    :param print_prog: Whether to print out the progress of the function as it runs or not. Includes</span>
-<span class="sd">        a progress bar for each pass and messages indicating when the algorithm starts and ends.</span>
-
-<span class="sd">    :return: A reduced reaction network with an evaluated error approximately equal to the supplied</span>
-<span class="sd">        threshold.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">if</span> <span class="n">use_mpi</span><span class="p">:</span>
-        <span class="n">comm</span> <span class="o">=</span> <span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span>
-        <span class="n">MPI_N</span> <span class="o">=</span> <span class="n">comm</span><span class="o">.</span><span class="n">Get_size</span><span class="p">()</span>
-        <span class="n">MPI_rank</span> <span class="o">=</span> <span class="n">comm</span><span class="o">.</span><span class="n">Get_rank</span><span class="p">()</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">MPI_N</span> <span class="o">=</span> <span class="mi">1</span>
-        <span class="n">MPI_rank</span> <span class="o">=</span> <span class="mi">0</span>
-
-    <span class="n">nuclei</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">network</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">)</span>
-    <span class="n">err</span> <span class="o">=</span> <span class="mf">0.0</span>
-
-    <span class="n">nrem</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="n">print_prog</span> <span class="o">=</span> <span class="n">print_prog</span> <span class="ow">and</span> <span class="p">(</span><span class="n">MPI_rank</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">print_prog</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Performing sensitivity analysis...&quot;</span><span class="p">)</span>
-
-    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-
-        <span class="n">err</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">)</span>
-
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">MPI_rank</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">nuclei</span><span class="p">),</span> <span class="n">MPI_N</span><span class="p">):</span>
-
-            <span class="k">if</span> <span class="n">print_prog</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Pass </span><span class="si">{</span><span class="n">nrem</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">:&quot;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
-                <span class="n">_progress_bar</span><span class="p">(</span><span class="n">i</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">nuclei</span><span class="p">))</span>
-
-            <span class="n">nuc</span> <span class="o">=</span> <span class="n">nuclei</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
-            <span class="n">err_i</span> <span class="o">=</span> <span class="n">errfunc</span><span class="p">(</span><span class="n">network</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">(</span><span class="n">nuclei</span><span class="p">,</span> <span class="n">print_warning</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
-            <span class="k">if</span> <span class="n">err_i</span> <span class="o">&lt;</span> <span class="n">err</span><span class="p">:</span>
-                <span class="n">err</span> <span class="o">=</span> <span class="n">err_i</span>
-                <span class="n">min_idx</span> <span class="o">=</span> <span class="n">i</span>
-            <span class="n">nuclei</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">nuc</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">use_mpi</span><span class="p">:</span>
-
-            <span class="n">err</span> <span class="o">=</span> <span class="n">comm</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="n">err</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-            <span class="n">min_idx</span> <span class="o">=</span> <span class="n">comm</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="n">min_idx</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-
-            <span class="k">if</span> <span class="n">MPI_rank</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="n">min_rank</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
-                <span class="n">err</span> <span class="o">=</span> <span class="n">err</span><span class="p">[</span><span class="n">min_rank</span><span class="p">]</span>
-                <span class="n">min_idx</span> <span class="o">=</span> <span class="n">min_idx</span><span class="p">[</span><span class="n">min_rank</span><span class="p">]</span>
-
-            <span class="n">err</span> <span class="o">=</span> <span class="n">comm</span><span class="o">.</span><span class="n">bcast</span><span class="p">(</span><span class="n">err</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-            <span class="n">min_idx</span> <span class="o">=</span> <span class="n">comm</span><span class="o">.</span><span class="n">bcast</span><span class="p">(</span><span class="n">min_idx</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">print_prog</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Pass </span><span class="si">{</span><span class="n">nrem</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">:&quot;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
-            <span class="n">_progress_bar</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">err</span> <span class="o">&lt;=</span> <span class="n">thresh</span><span class="p">:</span>
-            <span class="n">nuclei</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">min_idx</span><span class="p">)</span>
-            <span class="n">nrem</span> <span class="o">+=</span> <span class="mi">1</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">break</span>
-
-    <span class="k">if</span> <span class="n">print_prog</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Done. Removed </span><span class="si">{</span><span class="n">nrem</span><span class="si">}</span><span class="s2"> nuclei.&quot;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">network</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">(</span><span class="n">nuclei</span><span class="p">)</span></div>
+<div class="viewcode-block" id="HalfLifeTable.get_halflife">
+<a class="viewcode-back" href="../../../pynucastro.nucdata.html#pynucastro.nucdata.halflife_table.HalfLifeTable.get_halflife">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_halflife</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">z</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">halflife</span><span class="p">[</span><span class="n">a</span><span class="p">,</span> <span class="n">z</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Nuclear halflife for A=</span><span class="si">{</span><span class="n">a</span><span class="si">}</span><span class="s2"> and Z=</span><span class="si">{</span><span class="n">z</span><span class="si">}</span><span class="s2"> not available&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">exc</span></div>
+</div>
 
 </pre></div>
 
