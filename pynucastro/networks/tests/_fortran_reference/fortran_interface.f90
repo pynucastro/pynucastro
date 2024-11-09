@@ -27,29 +27,26 @@ module pynet
     integer, parameter :: mg24_ = 9
 
     interface
-       subroutine rhs_f(rho, T, X, dYdt, size) bind(C, name="rhs_f")
-         use, intrinsic :: iso_c_binding, only: c_double, c_int
+       subroutine rhs_f(rho, T, X, dYdt) bind(C, name="rhs_f")
+         use, intrinsic :: iso_c_binding, only: c_double
          import nspec
          real(kind=c_double), intent(in), value :: rho, T
          real(kind=c_double), intent(in), dimension(nspec) :: X
          real(kind=c_double), intent(inout), dimension(nspec) :: dYdt
-         integer(c_int), value :: size
        end subroutine rhs_f
 
-       subroutine jac_f(rho, T, X, J, size) bind(C, name="jac_f")
-         use, intrinsic :: iso_c_binding, only: c_double, c_int
+       subroutine jac_f(rho, T, X, J) bind(C, name="jac_f")
+         use, intrinsic :: iso_c_binding, only: c_double
          import nspec
          real(kind=c_double), intent(in), value :: rho, T
          real(kind=c_double), intent(in), dimension(nspec) :: X
          real(kind=c_double), intent(inout), dimension(nspec, nspec) :: J
-         integer(c_int), value :: size
        end subroutine jac_f
 
-       subroutine ener_gener_f(dYdt, size, enuc) bind(C, name="ener_gener_f")
-         use, intrinsic :: iso_c_binding, only: c_double, c_int
+       subroutine ener_gener_f(dYdt, enuc) bind(C, name="ener_gener_f")
+         use, intrinsic :: iso_c_binding, only: c_double
          import nspec
          real(kind=c_double), intent(in), dimension(nspec) :: dYdt
-         integer(c_int), value :: size
          real(kind=c_double), intent(out) :: enuc
        end subroutine ener_gener_f
 

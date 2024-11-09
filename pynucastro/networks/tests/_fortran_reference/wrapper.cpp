@@ -1,6 +1,5 @@
 #include <amrex_bridge.H>
 #include <iostream>
-#include <cassert>
 
 #include <burn_type.H>
 #include <actual_network.H>
@@ -14,9 +13,7 @@ extern "C" {
     }
 
     void
-    rhs_f(Real rho, Real T, Real* X, Real* dYdt, int size) {
-
-        assert(size == NumSpec);
+    rhs_f(Real rho, Real T, Real* X, Real* dYdt) {
 
         burn_t state;
         state.rho = rho;
@@ -38,9 +35,7 @@ extern "C" {
 
 
     void
-    jac_f(Real rho, Real T, Real* X, Real* J, int size) {
-
-        assert(size == NumSpec);
+    jac_f(Real rho, Real T, Real* X, Real* J) {
 
         MathArray2D<1, NumSpec, 1, NumSpec> jac;
 
@@ -66,9 +61,7 @@ extern "C" {
 
 
     void
-    ener_gener_f(Real* dYdt, int size, Real& enuc) {
-
-        assert(size == NumSpec);
+    ener_gener_f(Real* dYdt, Real& enuc) {
 
         Array1D<Real, 1, NumSpec> ydot;
         for (int n = 0; n < NumSpec; ++n) {

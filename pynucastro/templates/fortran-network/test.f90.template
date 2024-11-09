@@ -19,8 +19,8 @@ program test
 
   call network_init()
 
-  call rhs_f(rho, T, X, dYdt, nspec)
-  call jac_f(rho, T, X, Jac, nspec)
+  call rhs_f(rho, T, X, dYdt)
+  call jac_f(rho, T, X, Jac)
 
   do i = 1, nspec
      print *, "ydot(", spec_names(i), ") = ", dYdt(i)
@@ -34,7 +34,7 @@ program test
      end do
   end do
 
-  call ener_gener_f(dYdt, nspec, enuc)
+  call ener_gener_f(dYdt, enuc)
 
   print *, "energy generation rate = ", enuc
 
