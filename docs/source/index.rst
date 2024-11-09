@@ -102,6 +102,13 @@ codes.
 
 .. toctree::
    :maxdepth: 1
+   :caption: Some Useful Networks
+   :hidden:
+
+   he-burning-example
+
+.. toctree::
+   :maxdepth: 1
    :caption: Examples in Nuclear Astrophysics
    :hidden:
 
