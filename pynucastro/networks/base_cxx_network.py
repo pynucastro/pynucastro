@@ -80,8 +80,6 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.ftags['<spin_state_cases>'] = self._fill_spin_state_cases
         self.indent = '    '
 
-        self.num_screen_calls = None
-
     @abstractmethod
     def _get_template_files(self):
         # This method should be overridden by derived classes
@@ -266,12 +264,6 @@ class BaseCxxNetwork(ABC, RateCollection):
                     of.write(f'{self.indent*n_indent}}}\n')
 
             of.write('\n')
-
-        # the C++ screen.H code requires that there be at least 1 screening
-        # factor because it statically allocates some arrays, so if we turned
-        # off screening, just set num_screen_calls = 1 here.
-
-        self.num_screen_calls = max(1, len(screening_map))
 
     def _nrat_reaclib(self, n_indent, of):
         # Writes the number of Reaclib rates
