@@ -1,3 +1,44 @@
+# 2.5.0
+
+  * Fix a compiler issue with `SimpleCxxNetwork` and ReacLib weak rates
+    (#846)
+
+  * Documentation improvements (#831, #832, #843), including new
+    examples (#783, #800)
+
+  * Clean-up unused class data in `SimpleCxxNetwork` (#845)
+
+  * Clean up the rate module by separating it into submodules (#840, #842)
+
+  * Add the ability to label edges in network plots (#837)
+
+  * Clean-up the `make_ap_pg_approx` code (#830)
+
+  * `PartitionFunction.eval` now returns a python float instead of a
+    numpy float (#839)
+
+  * Rates now store their source from publications (#822, #834)
+
+  * Change some methods to properties in `Composition`, `Library`, and
+    `Rate` (#829)
+
+  * `PythonNetwork` rates now can take rho and Y. (#828)
+
+  * CI fixes (#827)
+
+  * Child rates in `ApproximateRate` are now stored as a dictionary
+    (#824) + additional cleaning (#812)
+
+  * Allow the identical particle factor in `Rate` to be disabled (#821)
+
+  * `Rate.eval()` now take rho and comp (#820)
+
+  * Update Zenodo authors (#815)
+
+  * Use python's `pathlib.Path` throughout (#811)
+
+  * `Nucleus` now stores the halflife (#801)
+
 # 2.4.0
 
   * expanded documentation on exporting networks (#805) and physical
