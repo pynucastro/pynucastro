@@ -1,5 +1,10 @@
 # 2.5.0
 
+  * A `FortranNetwork` is now available that provides a wrapper around
+    `SimpleCxxNetwork` with Fortran interfaces. (#841, #847)
+
+  * `Nucleus` objects can now be added and subtracted (#835)
+
   * Fix a compiler issue with `SimpleCxxNetwork` and ReacLib weak rates
     (#846)
 
