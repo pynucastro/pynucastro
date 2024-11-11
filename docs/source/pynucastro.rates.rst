@@ -25,6 +25,22 @@ pynucastro.rates.approximate\_rates module
    :undoc-members:
    :show-inheritance:
 
+pynucastro.rates.derived\_rate module
+-------------------------------------
+
+.. automodule:: pynucastro.rates.derived_rate
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+pynucastro.rates.files module
+-----------------------------
+
+.. automodule:: pynucastro.rates.files
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 pynucastro.rates.known\_duplicates module
 -----------------------------------------
 
@@ -45,6 +61,22 @@ pynucastro.rates.rate module
 ----------------------------
 
 .. automodule:: pynucastro.rates.rate
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+pynucastro.rates.reaclib\_rate module
+-------------------------------------
+
+.. automodule:: pynucastro.rates.reaclib_rate
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+pynucastro.rates.tabular\_rate module
+-------------------------------------
+
+.. automodule:: pynucastro.rates.tabular_rate
    :members:
    :undoc-members:
    :show-inheritance:
