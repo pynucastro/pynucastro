@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.networks package &#8212; pynucastro 2.4.0.post25+g3668e40f documentation</title>
+    <title>pynucastro.networks package &#8212; pynucastro 2.4.0.post26+g5366bbe6 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
 
-    <script src="_static/documentation_options.js?v=ee8c34e4"></script>
+    <script src="_static/documentation_options.js?v=9cb626cf"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -201,6 +201,7 @@
 <li class="toctree-l1"><a class="reference internal" href="networks.html">Exporting Networks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="python-network.html">Python network</a></li>
 <li class="toctree-l1"><a class="reference internal" href="simple-cxx-network.html">Simple C++ network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fortran-network.html">Fortran Networks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="amrex-astro-cxx-networks.html">AMReX Astro Microphysics Networks</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Interfacing With Other Languages</span></p>
@@ -475,6 +476,10 @@
 </li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-pynucastro.networks.fortran_network">pynucastro.networks.fortran_network module</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.fortran_network.FortranNetwork"><code class="docutils literal notranslate"><span class="pre">FortranNetwork</span></code></a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-pynucastro.networks.nse_network">pynucastro.networks.nse_network module</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.nse_network.NSENetwork"><code class="docutils literal notranslate"><span class="pre">NSENetwork</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.nse_network.NSENetwork.generate_table"><code class="docutils literal notranslate"><span class="pre">NSENetwork.generate_table()</span></code></a></li>
@@ -675,6 +680,16 @@ value is a list of tuples, with the forward-reverse pairs of a rate</p>
 <dd><p>determine the amount of spaces to indent a line</p>
 </dd></dl>
 
+</dd></dl>
+
+</section>
+<section id="module-pynucastro.networks.fortran_network">
+<span id="pynucastro-networks-fortran-network-module"></span><h2>pynucastro.networks.fortran_network module<a class="headerlink" href="#module-pynucastro.networks.fortran_network" title="Link to this heading">#</a></h2>
+<p>A Fortran wrapper around the SimpleCxxNetwork</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="pynucastro.networks.fortran_network.FortranNetwork">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.networks.fortran_network.</span></span><span class="sig-name descname"><span class="pre">FortranNetwork</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/fortran_network.html#FortranNetwork"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.fortran_network.FortranNetwork" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pynucastro.networks.simple_cxx_network.SimpleCxxNetwork" title="pynucastro.networks.simple_cxx_network.SimpleCxxNetwork"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleCxxNetwork</span></code></a></p>
 </dd></dl>
 
 </section>
@@ -1516,6 +1531,10 @@ the ydot term for nuclide y_i.</p>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.base_cxx_network.BaseCxxNetwork.get_indent_amt"><code class="docutils literal notranslate"><span class="pre">BaseCxxNetwork.get_indent_amt()</span></code></a></li>
 </ul>
 </li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-pynucastro.networks.fortran_network">pynucastro.networks.fortran_network module</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.fortran_network.FortranNetwork"><code class="docutils literal notranslate"><span class="pre">FortranNetwork</span></code></a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-pynucastro.networks.nse_network">pynucastro.networks.nse_network module</a><ul class="nav section-nav flex-column">
