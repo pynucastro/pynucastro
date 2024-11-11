@@ -6,7 +6,7 @@ import re
 from pathlib import Path
 
 from pynucastro.constants import constants
-from pynucastro.nucdata.elements import PeriodicTable
+from pynucastro.nucdata.elements import PeriodicTable, UnidentifiedElement
 from pynucastro.nucdata.halflife_table import HalfLifeTable
 from pynucastro.nucdata.mass_table import MassTable
 from pynucastro.nucdata.partition_function import PartitionFunctionCollection
@@ -158,8 +158,32 @@ class Nucleus:
     def from_cache(cls, name, dummy=False):
         key = (name.lower(), dummy)
         if key not in cls._cache:
-            cls._cache[key] = Nucleus(name, dummy)
+            cls._cache[key] = cls(name, dummy)
         return cls._cache[key]
+
+    @classmethod
+    def from_Z_A(cls, Z, A, dummy=False):
+        """creates a nucleus given Z and A"""
+
+        # checks if Z and A are valid inputs
+        if not (isinstance(Z, int) and isinstance(A, int)):
+            raise TypeError("Nucleus Z and A must be integers")
+        if not (Z >= 0 and A >= 0):
+            raise ValueError("Nucleus Z and A must be non-negative")
+        if Z > A:
+            raise ValueError("Nucleus Z can't be bigger than A")
+
+        # checks if neutron
+        if (Z, A) == (0, 1):
+            return cls.from_cache("n", dummy)
+
+        # otherwise, finds element Z on the periodic table
+        i = PeriodicTable.lookup_Z(Z)
+        if i is None:
+            raise UnidentifiedElement(f"Element {Z} could not be found")
+
+        name = i.abbreviation + str(A)
+        return cls.from_cache(name, dummy)
 
     def __repr__(self):
         if self.raw not in ("p", "d", "t", "n"):
@@ -189,6 +213,18 @@ class Nucleus:
         if not self.Z == other.Z:
             return self.Z < other.Z
         return self.A < other.A
+
+    def __add__(self, other):
+        Z = self.Z + other.Z
+        A = self.A + other.A
+        dummy = self.dummy and other.dummy
+        return Nucleus.from_Z_A(Z, A, dummy)
+
+    def __sub__(self, other):
+        Z = self.Z - other.Z
+        A = self.A - other.A
+        dummy = self.dummy and other.dummy
+        return Nucleus.from_Z_A(Z, A, dummy)
 
     @classmethod
     def cast(cls, obj):

@@ -1,0 +1,43 @@
+module pynet
+    <nspec_fortran>(1)
+
+    <aion_fortran>(1)
+
+    <zion_fortran>(1)
+
+    <name_fortran>(1)
+
+    <indices_fortran>(1)
+
+    interface
+       subroutine rhs_f(rho, T, X, dYdt) bind(C, name="rhs_f")
+         use, intrinsic :: iso_c_binding, only: c_double
+         import nspec
+         real(kind=c_double), intent(in), value :: rho, T
+         real(kind=c_double), intent(in), dimension(nspec) :: X
+         real(kind=c_double), intent(inout), dimension(nspec) :: dYdt
+       end subroutine rhs_f
+
+       subroutine jac_f(rho, T, X, J) bind(C, name="jac_f")
+         use, intrinsic :: iso_c_binding, only: c_double
+         import nspec
+         real(kind=c_double), intent(in), value :: rho, T
+         real(kind=c_double), intent(in), dimension(nspec) :: X
+         real(kind=c_double), intent(inout), dimension(nspec, nspec) :: J
+       end subroutine jac_f
+
+       subroutine ener_gener_f(dYdt, enuc) bind(C, name="ener_gener_f")
+         use, intrinsic :: iso_c_binding, only: c_double
+         import nspec
+         real(kind=c_double), intent(in), dimension(nspec) :: dYdt
+         real(kind=c_double), intent(out) :: enuc
+       end subroutine ener_gener_f
+
+       subroutine network_init() bind(C, name="network_init")
+       end subroutine network_init
+
+    end interface
+
+end module pynet
+
+

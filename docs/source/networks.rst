@@ -14,6 +14,8 @@ the appropriate network class:
 
 * :class:`SimpleCxxNetwork <pynucastro.networks.simple_cxx_network.SimpleCxxNetwork>` for a basic, pure C++ network.
 
+* :class:`FortranNetwork <pynucastro.networks.fortran_network.FortranNetwork>` a set of Fortran interfaces for a ``SimpleCxxNetwork``.
+
 * :class:`AmrexAstroCxxNetwork <pynucastro.networks.amrexastro_cxx_network.AmrexAstroCxxNetwork>` for an AMReX-Astro C++ network.
 
 Usually the steps are something like:
