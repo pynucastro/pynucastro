@@ -47,8 +47,8 @@ class TestLibrary:
     def test_lightest(self):
         assert self.library.lightest() == pyna.Nucleus("p")
 
-    def test_get_num_rates(self):
-        assert self.library.get_num_rates() == 8
+    def test_num_rates(self):
+        assert self.library.num_rates == 8
 
     def test_get_rate(self):
         # get by rate id

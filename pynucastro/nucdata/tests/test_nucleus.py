@@ -156,3 +156,10 @@ class TestNucleus:
             Nucleus.cast_list(None)
         assert Nucleus.cast_list(None, allow_None=True) is None
         assert Nucleus.cast_list([]) == []
+
+    def test_from_Z_A(self):
+        assert self.he4 == Nucleus.from_Z_A(2, 4)
+
+    def test_add_subtract(self):
+        assert self.c12 + self.n == Nucleus("c13")
+        assert self.d - self.n == self.h1

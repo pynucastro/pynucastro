@@ -210,19 +210,22 @@ class Composition(collections.UserDict):
         for k in self:
             self[k] /= X_sum
 
-    def eval_ye(self):
+    @property
+    def ye(self):
         """ return the electron fraction """
         electron_frac = math.fsum(self[n] * n.Z / n.A for n in self) / self.get_sum_X()
         return electron_frac
 
-    def eval_abar(self):
+    @property
+    def abar(self):
         """ return the mean molecular weight """
         abar = math.fsum(self[n] / n.A for n in self)
         return 1. / abar
 
-    def eval_zbar(self):
+    @property
+    def zbar(self):
         """ return the mean charge, Zbar """
-        return self.eval_abar() * self.eval_ye()
+        return self.abar * self.ye
 
     def bin_as(self, nuclei, *, verbose=False, exclude=None):
         """given a list of nuclei, return a new Composition object with the
@@ -577,7 +580,7 @@ class RateCollection:
             elif isinstance(r.chapter, int):
                 if r not in self.reaclib_rates:
                     self.reaclib_rates.append(r)
-                    if r.get_rate_id() == "n --> p <wc12_reaclib_weak_>":
+                    if r.id == "n --> p <wc12_reaclib_weak_>":
                         msg = "ReacLib neutron decay rate (<n_to_p_weak_wc12>) does not account for degeneracy at high densities. Consider using tabular rate from Langanke."
                         warnings.warn(msg)
             else:
@@ -712,6 +715,8 @@ class RateCollection:
 
         if not _tmp:
             return None
+        if len(_tmp) == 1:
+            return _tmp[0]
         return _tmp
 
     def get_rate_by_name(self, name):
@@ -721,8 +726,6 @@ class RateCollection:
         _r = self.get_rate_by_nuclei(reactants, products)
         if _r is None:
             return None
-        if len(_r) == 1:
-            return _r[0]
         return _r
 
     def get_nuclei_needing_partition_functions(self):
@@ -837,43 +840,28 @@ class RateCollection:
                 continue
 
             # look for A(a,p)X
-            _r = self.get_rate_by_nuclei([prim_nuc, Nucleus("he4")], [inter_nuc, Nucleus("p")])
-
-            if _r:
-                r_ap = _r[-1]
-            else:
+            if not (r_ap := self.get_rate_by_nuclei([prim_nuc, Nucleus("he4")],
+                                                    [inter_nuc, Nucleus("p")])):
                 continue
 
             # look for X(p,g)B
-            _r = self.get_rate_by_nuclei([inter_nuc, Nucleus("p")], [prim_prod])
-
-            if _r:
-                r_pg = _r[-1]
-            else:
+            if not (r_pg := self.get_rate_by_nuclei([inter_nuc, Nucleus("p")],
+                                                    [prim_prod])):
                 continue
 
             # look for reverse B(g,a)A
-            _r = self.get_rate_by_nuclei([prim_prod], [prim_nuc, Nucleus("he4")])
-
-            if _r:
-                r_ga = _r[-1]
-            else:
+            if not (r_ga := self.get_rate_by_nuclei([prim_prod],
+                                                    [prim_nuc, Nucleus("he4")])):
                 continue
 
             # look for reverse B(g,p)X
-            _r = self.get_rate_by_nuclei([prim_prod], [inter_nuc, Nucleus("p")])
-
-            if _r:
-                r_gp = _r[-1]
-            else:
+            if not (r_gp := self.get_rate_by_nuclei([prim_prod],
+                                                    [inter_nuc, Nucleus("p")])):
                 continue
 
             # look for reverse X(p,a)A
-            _r = self.get_rate_by_nuclei([inter_nuc, Nucleus("p")], [Nucleus("he4"), prim_nuc])
-
-            if _r:
-                r_pa = _r[-1]
-            else:
+            if not (r_pa := self.get_rate_by_nuclei([inter_nuc, Nucleus("p")],
+                                                    [Nucleus("he4"), prim_nuc])):
                 continue
 
             # build the approximate rates
@@ -919,7 +907,7 @@ class RateCollection:
         """
         rvals = {}
         ys = composition.get_molar()
-        y_e = composition.eval_ye()
+        y_e = composition.ye
 
         if screen_func is not None:
             screen_factors = self.evaluate_screening(rho, T, composition, screen_func)
@@ -927,7 +915,7 @@ class RateCollection:
             screen_factors = {}
 
         for r in self.rates:
-            val = r.prefactor * rho**r.dens_exp * r.eval(T, rho * y_e)
+            val = r.prefactor * rho**r.dens_exp * r.eval(T, rho=rho, comp=composition)
             if (r.weak_type == 'electron_capture' and not isinstance(r, TabularRate)):
                 val = val * y_e
             yfac = functools.reduce(mul, [ys[q] for q in r.reactants])
@@ -1187,11 +1175,10 @@ class RateCollection:
             if isinstance(r, TabularRate):
                 # get composition
                 ys = composition.get_molar()
-                y_e = composition.eval_ye()
 
                 # need to get reactant nucleus
                 nuc = r.reactants[0]
-                enu += constants.N_A * ys[nuc] * r.get_nu_loss(T, rho * y_e)
+                enu += constants.N_A * ys[nuc] * r.get_nu_loss(T, rho=rho, comp=composition)
 
         enuc -= enu
         if return_enu:
@@ -1323,6 +1310,7 @@ class RateCollection:
              N_range=None, Z_range=None, rotated=False,
              always_show_p=False, always_show_alpha=False,
              hide_xp=False, hide_xalpha=False,
+             edge_labels=None,
              highlight_filter_function=None,
              nucleus_filter_function=None, rate_filter_function=None,
              legend_coord=None):
@@ -1383,6 +1371,10 @@ class RateCollection:
 
         hide_xp=False: dont connect the links to p for heavy
         nuclei reactions of the form A(p,X)B or A(X,p)B.
+
+        edge_labels: a dictionary of the form {(n1, n2): "label"}
+        that gives labels for the edges in the network connecting
+        nucleus n1 to n2.
 
         highlight_filter_function: name of a custom function that
         takes a Rate object and returns true or false if we want
@@ -1525,7 +1517,7 @@ class RateCollection:
         for r in self.rates:
             if not isinstance(r, ApproximateRate):
                 continue
-            for sr in r.secondary_rates + r.secondary_reverse:
+            for sr in r.hidden_rates:
                 if sr in rate_seen:
                     continue
                 rate_seen.append(sr)
@@ -1611,6 +1603,12 @@ class RateCollection:
                                    edgelist=highlight_edges, edge_color="C0", alpha=0.25,
                                    connectionstyle=connectionstyle,
                                    node_size=node_size, ax=ax)
+
+        if edge_labels:
+            nx.draw_networkx_edge_labels(G, G.position,
+                                         connectionstyle=connectionstyle,
+                                         font_size=node_font_size,
+                                         edge_labels=edge_labels)
 
         if ydots is not None:
             pc = mpl.collections.PatchCollection(real_edges_lc, cmap=plt.cm.viridis)
