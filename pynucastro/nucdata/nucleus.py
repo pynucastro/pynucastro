@@ -158,7 +158,7 @@ class Nucleus:
     def from_cache(cls, name, dummy=False):
         key = (name.lower(), dummy)
         if key not in cls._cache:
-            cls._cache[key] = Nucleus(name, dummy)
+            cls._cache[key] = cls(name, dummy)
         return cls._cache[key]
 
     @classmethod
