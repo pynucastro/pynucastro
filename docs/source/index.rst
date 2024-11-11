@@ -91,6 +91,7 @@ codes.
    networks
    python-network
    simple-cxx-network
+   fortran-network
    amrex-astro-cxx-networks
 
 .. toctree::
