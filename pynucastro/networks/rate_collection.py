@@ -21,7 +21,7 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 # Import Rate
 from pynucastro.constants import constants
-from pynucastro.nucdata import Nucleus, PeriodicTable
+from pynucastro.nucdata import Nucleus
 from pynucastro.rates import (ApproximateRate, DerivedRate, Library, Rate,
                               RateFileError, RatePair, TabularRate,
                               find_duplicate_rates, is_allowed_dupe, load_rate)
