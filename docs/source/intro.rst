@@ -91,6 +91,10 @@ The main classes are:
     computing the righthand side and Jacobian of a network.
     Not all pynucastro features are supported in this network.
 
+  * :func:`FortranNetwork
+    <pynucastro.networks.fortran_network.FortranNetwork>`:
+    A network that provides Fortran wrappers to ``SimpleCxxNetwork``.
+
   * :func:`AmrexAstroCxxNetwork
     <pynucastro.networks.amrexastro_cxx_network.AmrexAstroCxxNetwork>`:
     This is a C++ network of the form needed by the `AMReX
