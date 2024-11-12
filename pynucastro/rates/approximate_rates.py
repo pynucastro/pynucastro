@@ -12,7 +12,7 @@ def create_double_neutron_capture(lib, reactant, product):
     if isinstance(product, str):
         product = Nucleus(product)
 
-    intermediate = Nucleus(f"{reactant.el}{reactant.A+1}")
+    intermediate = reactant + Nucleus("n")
 
     forward_1 = lib.get_rate_by_name(f"{reactant.raw}(n,){intermediate.raw}")
     forward_2 = lib.get_rate_by_name(f"{intermediate.raw}(n,){product.raw}")

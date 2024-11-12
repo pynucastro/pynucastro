@@ -881,6 +881,73 @@ class RateCollection:
         # regenerate the links
         self._build_collection()
 
+    def make_nn_g_approx(self, intermediate_nuclei=None):
+        """combine the rates A(n,g)X(n,g)B into a single effective rate."""
+
+        # make sure that the intermediate_nuclei list are Nuclei objects
+        intermediate_nuclei = Nucleus.cast_list(intermediate_nuclei, allow_None=True)
+
+        # for each intermediate nuclei X, look to see if we have A(n,g)X and X(n,g)B
+        approx_rates = []
+
+        for inter_nuc in intermediate_nuclei:
+
+            nuc_A = inter_nuc - Nucleus("n")
+            nuc_B = inter_nuc + Nucleus("n")
+
+            # look for A(n,g)X
+            if not (rf1 := self.get_rate_by_nuclei([nuc_A, Nucleus("n")],
+                                                   [inter_nuc])):
+                continue
+
+            # look for X(n,g)B
+            if not (rf2 := self.get_rate_by_nuclei([inter_nuc, Nucleus("n")],
+                                                   [nuc_B])):
+                continue
+
+            # look for reverse B(g,n)X
+            if not (rr1 := self.get_rate_by_nuclei([nuc_B],
+                                                   [inter_nuc, Nucleus("n")])):
+                continue
+
+            # look for reverse B(g,p)X
+            if not (rr2 := self.get_rate_by_nuclei([inter_nuc],
+                                                   [nuc_A, Nucleus("n")])):
+                continue
+
+            # build the approximate rates
+            ar = ApproximateRate(None, [rf1, rf2],
+                                 None, [rr1, rr2],
+                                 approx_type="nn_g",
+                                 use_identical_particle_factor=False)
+
+            ar_reverse = ApproximateRate(None, [rf1, rf2],
+                                         None, [rr1, rr2],
+                                         is_reverse=True, approx_type="nn_g",
+                                         use_identical_particle_factor=False)
+
+            print(f"using approximate rate {ar}")
+            print(f"using approximate rate {ar_reverse}")
+
+            # approximate rates
+            approx_rates += [ar, ar_reverse]
+
+        # remove the old rates from the rate list and add the approximate rate
+        for ar in approx_rates:
+            for r in ar.get_child_rates():
+                try:
+                    self.rates.remove(r)
+
+                    print(f"removing rate {r}")
+                except ValueError:
+                    pass
+
+            # add the approximate rates
+            self.rates.append(ar)
+
+        # regenerate the links
+        self._build_collection()
+
     def evaluate_rates(self, rho, T, composition, screen_func=None):
         """evaluate the rates for a specific density, temperature, and
         composition, with optional screening
