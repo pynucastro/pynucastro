@@ -820,12 +820,7 @@ class RateCollection:
             prim_nuc = sorted(r_ag.reactants)[-1]
             prim_prod = sorted(r_ag.products)[-1]
 
-            inter_nuc_Z = prim_nuc.Z + 1
-            inter_nuc_A = prim_nuc.A + 3
-
-            element = PeriodicTable.lookup_Z(inter_nuc_Z)
-
-            inter_nuc = Nucleus(f"{element.abbreviation}{inter_nuc_A}")
+            inter_nuc = Nucleus.from_Z_A(prim_nuc.Z+1, prim_nuc.A+3)
 
             if intermediate_nuclei and inter_nuc not in intermediate_nuclei:
                 continue
