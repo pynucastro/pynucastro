@@ -371,6 +371,22 @@ class Rate:
                 nuc = n
         return nuc
 
+    def modify_products(self, new_products):
+        """
+        change the products of the rate to new_products.  This will recompute
+        the Q value and update the print respresentation.
+        """
+
+        self.products = Nucleus.cast_list(new_products, allow_single=True)
+        self.modified = True
+
+        # we need to update the Q value and the print string for the rate
+
+        self._set_q()
+        self._set_screening()
+        self.fname = None    # reset so it will be updated
+        self._set_print_representation()
+
     def ydot_string_py(self):
         """
         Return a string containing the term in a dY/dt equation
