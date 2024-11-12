@@ -72,6 +72,7 @@ class Rate:
         self.label = label
 
         self.source = None
+        self.modified = False
 
         # the fname is used when writing the code to evaluate the rate
         reactants_str = '_'.join([repr(nuc) for nuc in self.reactants])
