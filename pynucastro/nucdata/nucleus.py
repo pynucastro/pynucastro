@@ -103,7 +103,7 @@ class Nucleus:
             self.short_spec_name = "p_nse"
             self.spec_name = "proton-nse"
             self.pretty = r"\mathrm{p}_\mathrm{NSE}"
-            self.caps_name = "p-NSE"
+            self.caps_name = "p_NSE"
             self.nse = True
         elif name.strip() in ("al-6", "al*6"):
             raise UnsupportedNucleus()
