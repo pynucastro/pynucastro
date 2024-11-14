@@ -57,6 +57,7 @@ class Nucleus:
         # a dummy nucleus is one that we can use where a nucleus is needed
         # but it is not considered to be part of the network
         self.dummy = dummy
+        self.nse = False
 
         # element symbol and atomic weight
         if name == "p":
@@ -91,6 +92,19 @@ class Nucleus:
             self.spec_name = "neutron"
             self.pretty = fr"\mathrm{{{self.el}}}"
             self.caps_name = "n"
+        elif name == "p-nse":
+            # this is a proton with a different name
+            # it is meant to be used in iron-group rates
+            # in NSE
+            self.el = "h"
+            self.A = 1
+            self.Z = 1
+            self.N = 0
+            self.short_spec_name = "p_nse"
+            self.spec_name = "proton-nse"
+            self.pretty = r"\mathrm{p}_\mathrm{NSE}"
+            self.caps_name = "p-NSE"
+            self.nse = True
         elif name.strip() in ("al-6", "al*6"):
             raise UnsupportedNucleus()
         else:
@@ -106,7 +120,7 @@ class Nucleus:
         self.el = self.el.lower()
 
         # atomic number comes from periodic table
-        if name != "n":
+        if name not in ["n", "p-nse"]:
             i = PeriodicTable.lookup_abbreviation(self.el)
             self.Z = i.Z
             assert isinstance(self.Z, int)
@@ -204,7 +218,8 @@ class Nucleus:
     def __eq__(self, other):
         if isinstance(other, Nucleus):
             return self.el == other.el and \
-                self.Z == other.Z and self.A == other.A
+                   self.Z == other.Z and self.A == other.A and \
+                   self.nse == other.nse
         if isinstance(other, tuple):
             return (self.Z, self.A) == other
         return NotImplemented
