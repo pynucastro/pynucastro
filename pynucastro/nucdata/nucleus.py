@@ -217,9 +217,9 @@ class Nucleus:
 
     def __eq__(self, other):
         if isinstance(other, Nucleus):
-            return self.el == other.el and \
-                   self.Z == other.Z and self.A == other.A and \
-                   self.nse == other.nse
+            return (self.el == other.el and
+                    self.Z == other.Z and self.A == other.A and
+                    self.nse == other.nse)
         if isinstance(other, tuple):
             return (self.Z, self.A) == other
         return NotImplemented
