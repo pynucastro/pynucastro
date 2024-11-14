@@ -200,7 +200,7 @@ class Nucleus:
         return cls.from_cache(name, dummy)
 
     def __repr__(self):
-        if self.raw not in ("p", "d", "t", "n"):
+        if self.raw not in ("p", "p-nse", "d", "t", "n"):
             return self.raw.capitalize()
         return self.raw
 
