@@ -92,7 +92,7 @@ class Nucleus:
             self.spec_name = "neutron"
             self.pretty = fr"\mathrm{{{self.el}}}"
             self.caps_name = "n"
-        elif name == "p-nse":
+        elif name == "p_nse":
             # this is a proton with a different name
             # it is meant to be used in iron-group rates
             # in NSE
@@ -120,7 +120,7 @@ class Nucleus:
         self.el = self.el.lower()
 
         # atomic number comes from periodic table
-        if name not in ["n", "p-nse"]:
+        if name not in ["n", "p_nse"]:
             i = PeriodicTable.lookup_abbreviation(self.el)
             self.Z = i.Z
             assert isinstance(self.Z, int)
@@ -200,7 +200,7 @@ class Nucleus:
         return cls.from_cache(name, dummy)
 
     def __repr__(self):
-        if self.raw not in ("p", "p-nse", "d", "t", "n"):
+        if self.raw not in ("p", "p_nse", "d", "t", "n"):
             return self.raw.capitalize()
         return self.raw
 
