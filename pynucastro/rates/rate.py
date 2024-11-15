@@ -377,7 +377,7 @@ class Rate:
         the network."""
 
         p = Nucleus("p")
-        p_nse = Nucleus("p-nse")
+        p_nse = Nucleus("p_nse")
 
         for n, nuc in enumerate(self.reactants):
             if nuc == p:

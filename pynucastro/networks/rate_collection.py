@@ -1433,7 +1433,7 @@ class RateCollection:
         hidden_nuclei = ["n"]
         if not always_show_p:
             hidden_nuclei.append("p")
-            hidden_nuclei.append("p-nse")
+            hidden_nuclei.append("p_nse")
         if not always_show_alpha:
             hidden_nuclei.append("he4")
 
