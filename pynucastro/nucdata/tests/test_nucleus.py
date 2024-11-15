@@ -192,4 +192,5 @@ class TestNSEProtons:
         assert self.p_nse.Z == self.p.Z
         assert self.p_nse.A == self.p.A
         assert self.p_nse.mass == self.p.mass
-
+        assert not self.p.nse
+        assert self.p_nse.nse
