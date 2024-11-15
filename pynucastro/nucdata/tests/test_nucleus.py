@@ -164,6 +164,7 @@ class TestNucleus:
         assert self.c12 + self.n == Nucleus("c13")
         assert self.d - self.n == self.h1
 
+
 class TestNSEProtons:
     @classmethod
     def setup_class(cls):
