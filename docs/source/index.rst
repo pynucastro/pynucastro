@@ -91,6 +91,7 @@ codes.
    networks
    python-network
    simple-cxx-network
+   fortran-network
    amrex-astro-cxx-networks
 
 .. toctree::
@@ -109,6 +110,7 @@ codes.
    examples/pp-cno.ipynb
    examples/hot-CNO-breakout-example.ipynb
    examples/triple_alpha_eval.ipynb
+   examples/supernova-lightcurve.ipynb
 
 .. toctree::
    :maxdepth: 1

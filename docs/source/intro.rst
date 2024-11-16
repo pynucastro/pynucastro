@@ -28,11 +28,11 @@ The main classes are:
 
   There are a few special rates derived from `Rate`:
 
-  * :func:`ReacLibRate <pynucastro.rates.rate.ReacLibRate>`: This is a rate in the
+  * :func:`ReacLibRate <pynucastro.rates.reaclib_rate.ReacLibRate>`: This is a rate in the
     JINA ReacLib format, with the temperature dependence specified by an interpolant
     with 7 different coefficients.
 
-  * :func:`TabularRate <pynucastro.rates.rate.TabularRate>`: This is a
+  * :func:`TabularRate <pynucastro.rates.tabular_rate.TabularRate>`: This is a
     rate that is tabulated in terms of :math:`(T, \rho Y_e)`.  This is
     how the weak rate (electron captures and beta-decays) are stored.
     Interpolation is used to find the rate at any thermodynamic state.
@@ -42,7 +42,7 @@ The main classes are:
     :math:`A(\alpha,p)X(p,\gamma)B` into a single effective rate, assuming
     equilibrium of :math:`p` and :math:`X`.
 
-  * :func:`DerivedRate <pynucastro.rates.rate.DerivedRate>`: A
+  * :func:`DerivedRate <pynucastro.rates.derived_rate.DerivedRate>`: A
     derived rate uses detailed balance to recompute a reverse rate from the forward rate.
 
 * :func:`RatePair <pynucastro.rates.rate.RatePair>`: For a single nuclear process,
@@ -90,6 +90,10 @@ The main classes are:
     This is a simple C++ network that provides functions for
     computing the righthand side and Jacobian of a network.
     Not all pynucastro features are supported in this network.
+
+  * :func:`FortranNetwork
+    <pynucastro.networks.fortran_network.FortranNetwork>`:
+    A network that provides Fortran wrappers to ``SimpleCxxNetwork``.
 
   * :func:`AmrexAstroCxxNetwork
     <pynucastro.networks.amrexastro_cxx_network.AmrexAstroCxxNetwork>`:

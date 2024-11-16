@@ -38,7 +38,7 @@ class NSETableEntry:
 
         if comp:
             # mean molecular weight of the full NSE state
-            self.abar = comp.eval_abar()
+            self.abar = comp.abar
 
             # average binding energy / nucleon for the full NSE state
             self.bea = sum(q.nucbind * self.comp.X[q] for q in self.comp.X)
@@ -139,7 +139,7 @@ class NSENetwork(RateCollection):
         """ Constraint Equations used to evaluate chemical potential for proton and neutron,
         which is used when evaluating composition at NSE"""
 
-        # Don't use eval_ye() since it does automatic mass fraction normalization.
+        # Don't use state.ye since it does automatic mass fraction normalization.
         # However, we should force normalization through constraint eq1.
 
         Xs = self._nucleon_fraction_nse(u, u_c, state)
