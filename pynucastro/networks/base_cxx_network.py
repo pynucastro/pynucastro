@@ -6,17 +6,19 @@ comprised of the rates that are passed in.
 
 
 import itertools
-import os
 import re
 import shutil
 import sys
+import warnings
 from abc import ABC, abstractmethod
+from pathlib import Path
 
 import numpy as np
 import sympy
 
 from pynucastro.networks.rate_collection import RateCollection
 from pynucastro.networks.sympy_network_support import SympyRates
+from pynucastro.rates import DerivedRate
 from pynucastro.screening import get_screening_map
 
 
@@ -47,6 +49,7 @@ class BaseCxxNetwork(ABC, RateCollection):
 
         self.function_specifier = "inline"
         self.dtype = "double"
+        self.array_namespace = ""
 
         # a dictionary of functions to call to handle specific parts
         # of the C++ template
@@ -63,6 +66,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.ftags['<table_init_meta>'] = self._table_init_meta
         self.ftags['<compute_tabular_rates>'] = self._compute_tabular_rates
         self.ftags['<ydot>'] = self._ydot
+        self.ftags['<ydot_weak>'] = self._ydot_weak
         self.ftags['<enuc_add_energy_rate>'] = self._enuc_add_energy_rate
         self.ftags['<jacnuc>'] = self._jacnuc
         self.ftags['<initial_mass_fractions>'] = self._initial_mass_fractions
@@ -75,8 +79,6 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.ftags['<part_fun_cases>'] = self._fill_partition_function_cases
         self.ftags['<spin_state_cases>'] = self._fill_spin_state_cases
         self.indent = '    '
-
-        self.num_screen_calls = None
 
     @abstractmethod
     def _get_template_files(self):
@@ -105,15 +107,15 @@ class BaseCxxNetwork(ABC, RateCollection):
 
         # Process template files
         for tfile in self.template_files:
-            tfile_basename = os.path.basename(tfile)
-            outfile = tfile_basename.replace('.template', '')
+            outfile = tfile.name.replace('.template', '')
             if odir is not None:
-                if not os.path.isdir(odir):
+                odir = Path(odir)
+                if not odir.is_dir():
                     try:
-                        os.mkdir(odir)
+                        odir.mkdir()
                     except OSError:
                         sys.exit(f"unable to create directory {odir}")
-                outfile = os.path.normpath(odir + "/" + outfile)
+                outfile = odir/outfile
 
             with open(tfile) as ifile, open(outfile, "w") as of:
                 for l in ifile:
@@ -130,13 +132,13 @@ class BaseCxxNetwork(ABC, RateCollection):
         # Copy any tables in the network to the current directory
         # if the table file cannot be found, print a warning and continue.
         for tr in self.tabular_rates:
-            tdir = os.path.dirname(tr.rfile_path)
-            if tdir != os.getcwd():
-                tdat_file = os.path.join(tdir, tr.table_file)
-                if os.path.isfile(tdat_file):
-                    shutil.copy(tdat_file, odir or os.getcwd())
+            tdir = tr.rfile_path.resolve().parent
+            if tdir != Path.cwd():
+                tdat_file = Path(tdir, tr.table_file)
+                if tdat_file.is_file():
+                    shutil.copy(tdat_file, odir or Path.cwd())
                 else:
-                    print(f'WARNING: Table data file {tr.table_file} not found.')
+                    warnings.warn(UserWarning(f'Table data file {tr.table_file} not found.'))
 
     def compose_ydot(self):
         """create the expressions for dYdt for the nuclei, where Y is the
@@ -214,7 +216,7 @@ class BaseCxxNetwork(ABC, RateCollection):
                 # compiler to evaluate the screen factor at compile time.
                 of.write(f'\n{self.indent*(n_indent+1)}static_assert(scn_fac.z1 == {float(scr.n1.Z)}_rt);\n\n')
 
-                of.write(f'\n{self.indent*(n_indent+1)}actual_screen<do_T_derivatives>(pstate, scn_fac, scor, dscor_dt);\n')
+                of.write(f'\n{self.indent*(n_indent+1)}actual_screen(pstate, scn_fac, scor, dscor_dt);\n')
 
                 of.write(f'{self.indent*n_indent}' + '}\n\n')
 
@@ -232,7 +234,7 @@ class BaseCxxNetwork(ABC, RateCollection):
 
                 of.write(f'\n{self.indent*(n_indent+1)}static_assert(scn_fac2.z1 == {float(scr.n1.Z)}_rt);\n\n')
 
-                of.write(f'\n{self.indent*(n_indent+1)}actual_screen<do_T_derivatives>(pstate, scn_fac2, scor2, dscor2_dt);\n')
+                of.write(f'\n{self.indent*(n_indent+1)}actual_screen(pstate, scn_fac2, scor2, dscor2_dt);\n')
 
                 of.write(f'\n{self.indent*n_indent}' + '}\n\n')
 
@@ -243,7 +245,7 @@ class BaseCxxNetwork(ABC, RateCollection):
                     of.write('\n')
                     of.write(f'{self.indent*n_indent}ratraw = rate_eval.screened_rates(k_{rr.cname()});\n')
                     of.write(f'{self.indent*n_indent}rate_eval.screened_rates(k_{rr.cname()}) *= scor * scor2;\n')
-                    of.write(f'{self.indent*n_indent}if constexpr (std::is_same<T, rate_derivs_t>::value) {{\n')
+                    of.write(f'{self.indent*n_indent}if constexpr (std::is_same_v<T, rate_derivs_t>) {{\n')
                     of.write(f'{self.indent*n_indent}    dratraw_dT = rate_eval.dscreened_rates_dT(k_{rr.cname()});\n')
                     of.write(f'{self.indent*n_indent}    rate_eval.dscreened_rates_dT(k_{rr.cname()}) = ratraw * (scor * dscor2_dt + dscor_dt * scor2) + dratraw_dT * scor * scor2;\n')
                     of.write(f'{self.indent*n_indent}}}\n')
@@ -256,18 +258,12 @@ class BaseCxxNetwork(ABC, RateCollection):
                     of.write('\n')
                     of.write(f'{self.indent*n_indent}ratraw = rate_eval.screened_rates(k_{rr.cname()});\n')
                     of.write(f'{self.indent*n_indent}rate_eval.screened_rates(k_{rr.cname()}) *= scor;\n')
-                    of.write(f'{self.indent*n_indent}if constexpr (std::is_same<T, rate_derivs_t>::value) {{\n')
+                    of.write(f'{self.indent*n_indent}if constexpr (std::is_same_v<T, rate_derivs_t>) {{\n')
                     of.write(f'{self.indent*n_indent}    dratraw_dT = rate_eval.dscreened_rates_dT(k_{rr.cname()});\n')
                     of.write(f'{self.indent*n_indent}    rate_eval.dscreened_rates_dT(k_{rr.cname()}) = ratraw * dscor_dt + dratraw_dT * scor;\n')
                     of.write(f'{self.indent*n_indent}}}\n')
 
             of.write('\n')
-
-        # the C++ screen.H code requires that there be at least 1 screening
-        # factor because it statically allocates some arrays, so if we turned
-        # off screening, just set num_screen_calls = 1 here.
-
-        self.num_screen_calls = max(1, len(screening_map))
 
     def _nrat_reaclib(self, n_indent, of):
         # Writes the number of Reaclib rates
@@ -302,9 +298,9 @@ class BaseCxxNetwork(ABC, RateCollection):
             idnt = self.indent*n_indent
 
             of.write(f'{idnt}extern AMREX_GPU_MANAGED table_t {r.table_index_name}_meta;\n')
-            of.write(f'{idnt}extern AMREX_GPU_MANAGED Array3D<Real, 1, {r.table_temp_lines}, 1, {r.table_rhoy_lines}, 1, {r.table_num_vars}> {r.table_index_name}_data;\n')
-            of.write(f'{idnt}extern AMREX_GPU_MANAGED Array1D<Real, 1, {r.table_rhoy_lines}> {r.table_index_name}_rhoy;\n')
-            of.write(f'{idnt}extern AMREX_GPU_MANAGED Array1D<Real, 1, {r.table_temp_lines}> {r.table_index_name}_temp;\n')
+            of.write(f'{idnt}extern AMREX_GPU_MANAGED {self.array_namespace}Array3D<{self.dtype}, 1, {r.table_temp_lines}, 1, {r.table_rhoy_lines}, 1, {r.table_num_vars}> {r.table_index_name}_data;\n')
+            of.write(f'{idnt}extern AMREX_GPU_MANAGED {self.array_namespace}Array1D<{self.dtype}, 1, {r.table_rhoy_lines}> {r.table_index_name}_rhoy;\n')
+            of.write(f'{idnt}extern AMREX_GPU_MANAGED {self.array_namespace}Array1D<{self.dtype}, 1, {r.table_temp_lines}> {r.table_index_name}_temp;\n')
             of.write('\n')
 
     def _table_declare_meta(self, n_indent, of):
@@ -313,10 +309,10 @@ class BaseCxxNetwork(ABC, RateCollection):
 
             of.write(f"{idnt}AMREX_GPU_MANAGED table_t {r.table_index_name}_meta;\n")
 
-            of.write(f'{idnt}AMREX_GPU_MANAGED Array3D<Real, 1, {r.table_temp_lines}, 1, {r.table_rhoy_lines}, 1, {r.table_num_vars}> {r.table_index_name}_data;\n')
+            of.write(f'{idnt}AMREX_GPU_MANAGED {self.array_namespace}Array3D<{self.dtype}, 1, {r.table_temp_lines}, 1, {r.table_rhoy_lines}, 1, {r.table_num_vars}> {r.table_index_name}_data;\n')
 
-            of.write(f'{idnt}AMREX_GPU_MANAGED Array1D<Real, 1, {r.table_rhoy_lines}> {r.table_index_name}_rhoy;\n')
-            of.write(f'{idnt}AMREX_GPU_MANAGED Array1D<Real, 1, {r.table_temp_lines}> {r.table_index_name}_temp;\n\n')
+            of.write(f'{idnt}AMREX_GPU_MANAGED {self.array_namespace}Array1D<{self.dtype}, 1, {r.table_rhoy_lines}> {r.table_index_name}_rhoy;\n')
+            of.write(f'{idnt}AMREX_GPU_MANAGED {self.array_namespace}Array1D<{self.dtype}, 1, {r.table_temp_lines}> {r.table_index_name}_temp;\n\n')
 
     def _table_init_meta(self, n_indent, of):
         for r in self.tabular_rates:
@@ -342,7 +338,7 @@ class BaseCxxNetwork(ABC, RateCollection):
 
                 of.write(f'{idnt}rate_eval.screened_rates(k_{r.cname()}) = rate;\n')
 
-                of.write(f'{idnt}if constexpr (std::is_same<T, rate_derivs_t>::value) {{\n')
+                of.write(f'{idnt}if constexpr (std::is_same_v<T, rate_derivs_t>) {{\n')
                 of.write(f'{idnt}    rate_eval.dscreened_rates_dT(k_{r.cname()}) = drate_dt;\n')
                 of.write(f'{idnt}}}\n')
 
@@ -350,51 +346,112 @@ class BaseCxxNetwork(ABC, RateCollection):
 
                 of.write('\n')
 
+    def _cxxify(self, s):
+        # This is a helper function that converts sympy cxxcode to the actual c++ code we use.
+        return self.symbol_rates.cxxify(s)
+
+    def _write_ydot_nuc(self, n_indent, of, ydot_nuc):
+        # Helper function to write out ydot of a specific nuclei
+
+        for j, pair in enumerate(ydot_nuc):
+            # pair here is the forward, reverse pair for a single rate as it affects
+            # nucleus n
+
+            if pair.count(None) == 0:
+                num = 2
+            elif pair.count(None) == 1:
+                num = 1
+            else:
+                raise NotImplementedError("a rate pair must contain at least one rate")
+
+            of.write(f"{2*self.indent*n_indent}")
+            if num == 2:
+                of.write("(")
+
+            if pair[0] is not None:
+                sol_value = self._cxxify(sympy.cxxcode(pair[0], precision=15,
+                                                       standard="c++11"))
+
+                of.write(f"{sol_value}")
+
+            if num == 2:
+                of.write(" + ")
+
+            if pair[1] is not None:
+                sol_value = self._cxxify(sympy.cxxcode(pair[1], precision=15,
+                                                       standard="c++11"))
+
+                of.write(f"{sol_value}")
+
+            if num == 2:
+                of.write(")")
+
+            if j == len(ydot_nuc)-1:
+                of.write(";\n\n")
+            else:
+                of.write(" +\n")
+
     def _ydot(self, n_indent, of):
         # Write YDOT
         for n in self.unique_nuclei:
             if self.ydot_out_result[n] is None:
-                of.write(f"{self.indent*n_indent}{self.symbol_rates.name_ydot_nuc}({n.cindex()}) = 0.0;\n\n")
+                of.write(f"{self.indent*n_indent}{self.symbol_rates.name_ydot_nuc}({n.cindex()}) = 0.0_rt;\n\n")
                 continue
 
             of.write(f"{self.indent*n_indent}{self.symbol_rates.name_ydot_nuc}({n.cindex()}) =\n")
-            for j, pair in enumerate(self.ydot_out_result[n]):
-                # pair here is the forward, reverse pair for a single rate as it affects
-                # nucleus n
 
-                if pair.count(None) == 0:
-                    num = 2
-                elif pair.count(None) == 1:
-                    num = 1
-                else:
-                    raise NotImplementedError("a rate pair must contain at least one rate")
+            self._write_ydot_nuc(n_indent, of, self.ydot_out_result[n])
 
-                of.write(f"{2*self.indent*n_indent}")
-                if num == 2:
-                    of.write("(")
+    def _ydot_weak(self, n_indent, of):
+        # Writes ydot for tabular weak reactions only
 
-                if pair[0] is not None:
-                    sol_value = self.symbol_rates.cxxify(sympy.cxxcode(pair[0], precision=15,
-                                                                       standard="c++11"))
+        # Get the tabular weak rates first.
+        idnt = self.indent*n_indent
 
-                    of.write(f"{sol_value}")
+        if len(self.tabular_rates) > 0:
+            for r in self.tabular_rates:
 
-                if num == 2:
-                    of.write(" + ")
+                of.write(f'{idnt}tabular_evaluate({r.table_index_name}_meta, {r.table_index_name}_rhoy, {r.table_index_name}_temp, {r.table_index_name}_data,\n')
+                of.write(f'{idnt}                 rhoy, state.T, rate, drate_dt, edot_nu, edot_gamma);\n')
 
-                if pair[1] is not None:
-                    sol_value = self.symbol_rates.cxxify(sympy.cxxcode(pair[1], precision=15,
-                                                                       standard="c++11"))
+                of.write(f'{idnt}rate_eval.screened_rates(k_{r.cname()}) = rate;\n')
 
-                    of.write(f"{sol_value}")
+                of.write(f'{idnt}rate_eval.enuc_weak += C::Legacy::n_A * {self.symbol_rates.name_y}({r.reactants[0].cindex()}) * (edot_nu + edot_gamma);\n')
 
-                if num == 2:
-                    of.write(")")
+                of.write('\n')
+            of.write(f'{idnt}auto screened_rates = rate_eval.screened_rates;\n')
+        of.write('\n')
 
-                if j == len(self.ydot_out_result[n])-1:
-                    of.write(";\n\n")
-                else:
-                    of.write(" +\n")
+        # Compose and write ydot weak
+
+        for n in self.unique_nuclei:
+
+            has_weak_rates = any(
+                (rp.forward is not None and rp.forward.tabular) or
+                (rp.reverse is not None and rp.reverse.tabular)
+                for rp in self.nuclei_rate_pairs[n]
+            )
+
+            if not self.nuclei_rate_pairs[n] or not has_weak_rates:
+                of.write(f"{self.indent*n_indent}{self.symbol_rates.name_ydot_nuc}({n.cindex()}) = 0.0_rt;\n\n")
+                continue
+
+            ydot_sym_terms = []
+            for rp in self.nuclei_rate_pairs[n]:
+                fwd = None
+                if rp.forward is not None and rp.forward.tabular:
+                    fwd = self.symbol_rates.ydot_term_symbol(rp.forward, n)
+
+                rvs = None
+                if rp.reverse is not None and rp.reverse.tabular:
+                    rvs = self.symbol_rates.ydot_term_symbol(rp.reverse, n)
+
+                if (fwd, rvs).count(None) < 2:
+                    ydot_sym_terms.append((fwd, rvs))
+
+            of.write(f"{self.indent*n_indent}{self.symbol_rates.name_ydot_nuc}({n.cindex()}) =\n")
+
+            self._write_ydot_nuc(n_indent, of, ydot_sym_terms)
 
     def _enuc_add_energy_rate(self, n_indent, of):
         # Add tabular per-reaction neutrino energy generation rates to the energy generation rate
@@ -416,7 +473,7 @@ class BaseCxxNetwork(ABC, RateCollection):
             for ini, ni in enumerate(self.unique_nuclei):
                 jac_idx = n_unique_nuclei*jnj + ini
                 if not self.jac_null_entries[jac_idx]:
-                    jvalue = self.symbol_rates.cxxify(sympy.cxxcode(self.jac_out_result[jac_idx], precision=15,
+                    jvalue = self._cxxify(sympy.cxxcode(self.jac_out_result[jac_idx], precision=15,
                                                                      standard="c++11"))
                     of.write(f"{self.indent*(n_indent)}scratch = {jvalue};\n")
                     of.write(f"{self.indent*n_indent}jac.set({nj.cindex()}, {ni.cindex()}, scratch);\n\n")
@@ -437,13 +494,13 @@ class BaseCxxNetwork(ABC, RateCollection):
         assert n_indent == 0, "function definitions must be at top level"
 
         of.write("struct rate_t {\n")
-        of.write("    Array1D<Real, 1, NumRates>  screened_rates;\n")
-        of.write("    Real enuc_weak;\n")
+        of.write(f"    {self.array_namespace}Array1D<{self.dtype}, 1, NumRates>  screened_rates;\n")
+        of.write(f"    {self.dtype} enuc_weak;\n")
         of.write("};\n\n")
         of.write("struct rate_derivs_t {\n")
-        of.write("    Array1D<Real, 1, NumRates>  screened_rates;\n")
-        of.write("    Array1D<Real, 1, NumRates>  dscreened_rates_dT;\n")
-        of.write("    Real enuc_weak;\n")
+        of.write(f"    {self.array_namespace}Array1D<{self.dtype}, 1, NumRates>  screened_rates;\n")
+        of.write(f"    {self.array_namespace}Array1D<{self.dtype}, 1, NumRates>  dscreened_rates_dT;\n")
+        of.write(f"    {self.dtype} enuc_weak;\n")
         of.write("};\n\n")
 
     def _approx_rate_functions(self, n_indent, of):
@@ -452,10 +509,16 @@ class BaseCxxNetwork(ABC, RateCollection):
             of.write(r.function_string_cxx(dtype=self.dtype, specifiers=self.function_specifier))
 
     def _fill_reaclib_rates(self, n_indent, of):
+        if self.derived_rates:
+            of.write(f"{self.indent*n_indent}part_fun::pf_cache_t pf_cache{{}};\n\n")
+
         for r in self.reaclib_rates + self.derived_rates:
-            of.write(f"{self.indent*n_indent}rate_{r.cname()}<do_T_derivatives>(tfactors, rate, drate_dT);\n")
+            if isinstance(r, DerivedRate):
+                of.write(f"{self.indent*n_indent}rate_{r.cname()}<do_T_derivatives>(tfactors, rate, drate_dT, pf_cache);\n")
+            else:
+                of.write(f"{self.indent*n_indent}rate_{r.cname()}<do_T_derivatives>(tfactors, rate, drate_dT);\n")
             of.write(f"{self.indent*n_indent}rate_eval.screened_rates(k_{r.cname()}) = rate;\n")
-            of.write(f"{self.indent*n_indent}if constexpr (std::is_same<T, rate_derivs_t>::value) {{\n")
+            of.write(f"{self.indent*n_indent}if constexpr (std::is_same_v<T, rate_derivs_t>) {{\n")
             of.write(f"{self.indent*n_indent}    rate_eval.dscreened_rates_dT(k_{r.cname()}) = drate_dT;\n\n")
             of.write(f"{self.indent*n_indent}}}\n")
 
@@ -463,7 +526,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         for r in self.approx_rates:
             of.write(f"{self.indent*n_indent}rate_{r.cname()}<T>(rate_eval, rate, drate_dT);\n")
             of.write(f"{self.indent*n_indent}rate_eval.screened_rates(k_{r.cname()}) = rate;\n")
-            of.write(f"{self.indent*n_indent}if constexpr (std::is_same<T, rate_derivs_t>::value) {{\n")
+            of.write(f"{self.indent*n_indent}if constexpr (std::is_same_v<T, rate_derivs_t>) {{\n")
             of.write(f"{self.indent*n_indent}    rate_eval.dscreened_rates_dT(k_{r.cname()}) = drate_dT;\n\n")
             of.write(f"{self.indent*n_indent}}}\n")
 
@@ -480,7 +543,7 @@ class BaseCxxNetwork(ABC, RateCollection):
 
         temp_arrays, temp_indices = self.dedupe_partition_function_temperatures()
 
-        decl = "MICROPHYSICS_UNUSED HIP_CONSTEXPR static AMREX_GPU_MANAGED amrex::Real"
+        decl = f"MICROPHYSICS_UNUSED HIP_CONSTEXPR static AMREX_GPU_MANAGED {self.dtype}"
 
         for i, temp in enumerate(temp_arrays):
             # number of points

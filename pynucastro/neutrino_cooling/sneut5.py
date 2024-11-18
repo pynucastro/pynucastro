@@ -101,93 +101,6 @@ def ifermi12(f):
     return ifermi12r
 
 
-def zfermim12(x):
-    """apply a rational function expansion to get the fermi-dirac
-    integral of order -1/2 evaluated at x. maximum error is 1.23e-12_rt.
-    reference: antia apjs 84,101 1993"""
-
-    # coefficients of the expansion from Table 2 of Antia
-
-    m1 = 6
-    k1 = 6
-    m2 = 10
-    k2 = 10
-
-    a1 = np.array([1.71446374704454e7,
-                   3.88148302324068e7,
-                   3.16743385304962e7,
-                   1.14587609192151e7,
-                   1.83696370756153e6,
-                   1.14980998186874e5,
-                   1.98276889924768e3,
-                   1.0])
-
-    b1 = np.array([9.67282587452899e6,
-                   2.87386436731785e7,
-                   3.26070130734158e7,
-                   1.77657027846367e7,
-                   4.81648022267831e6,
-                   6.13709569333207e5,
-                   3.13595854332114e4,
-                   4.35061725080755e2])
-
-    a2 = np.array([-4.46620341924942e-15,
-                   -1.58654991146236e-12,
-                   -4.44467627042232e-10,
-                   -6.84738791621745e-8,
-                   -6.64932238528105e-6,
-                   -3.69976170193942e-4,
-                   -1.12295393687006e-2,
-                   -1.60926102124442e-1,
-                   -8.52408612877447e-1,
-                   -7.45519953763928e-1,
-                   2.98435207466372e0,
-                   1.0])
-
-    b2 = np.array([-2.23310170962369e-15,
-                   -7.94193282071464e-13,
-                   -2.22564376956228e-10,
-                   -3.43299431079845e-8,
-                   -3.33919612678907e-6,
-                   -1.86432212187088e-4,
-                   -5.69764436880529e-3,
-                   -8.34904593067194e-2,
-                   -4.78770844009440e-1,
-                   -4.99759250374148e-1,
-                   1.86795964993052e0,
-                   4.16485970495288e-1])
-
-    if x < 2.0:
-
-        xx = np.exp(x)
-
-        rn = xx + a1[m1]
-        for i in reversed(range(m1)):
-            rn = rn * xx + a1[i]
-
-        den = b1[k1 + 1]
-        for i in reversed(range(k1 + 1)):
-            den = den * xx + b1[i]
-
-        zfermim12r = xx * rn / den
-
-    else:
-
-        xx = 1.0 / (x * x)
-
-        rn = xx + a2[m2]
-        for i in reversed(range(m2)):
-            rn = rn * xx + a2[i]
-
-        den = b2[k2 + 1]
-        for i in reversed(range(k2 + 1)):
-            den = den * xx + b2[i]
-
-        zfermim12r = np.sqrt(x) * rn / den
-
-    return zfermim12r
-
-
 def sneut5(rho, T, comp=None, *, abar=None, zbar=None,
            full_output=False):
     """compute thermal neutrino losses from the analytic fits of Itoh
@@ -206,8 +119,8 @@ def sneut5(rho, T, comp=None, *, abar=None, zbar=None,
     # snu    = total neutrino loss rate in erg/g/sec
 
     if abar is None or zbar is None:
-        abar = comp.eval_abar()
-        zbar = comp.eval_zbar()
+        abar = comp.abar
+        zbar = comp.zbar
 
     # numerical constants
 
@@ -218,7 +131,6 @@ def sneut5(rho, T, comp=None, *, abar=None, zbar=None,
     twoth = 2.0 / 3.0
     con1 = 1.0 / 5.9302e0
     sixth = 1.0 / 6.0
-    iln10 = 4.342944819032518e-1
 
     # theta is sin**2(theta_weinberg) = 0.2319 plus/minus 0.00005 (1996)
     # xnufam is the number of neutrino flavors = 3.02 plus/minus 0.005 (1998)
@@ -276,8 +188,6 @@ def sneut5(rho, T, comp=None, *, abar=None, zbar=None,
     a0 = rm * 1.0e-9
     a1 = a0**oneth
     zeta = a1 * xlm1
-    a2 = oneth * a1 * rmi * xlm1
-
     zeta2 = zeta * zeta
     zeta3 = zeta2 * zeta
 
@@ -291,7 +201,6 @@ def sneut5(rho, T, comp=None, *, abar=None, zbar=None,
     # equation 2.7
 
     a1 = 6.002e19 + 2.084e20 * zeta + 1.872e21 * zeta2
-    a2 = 2.084e20 + 2.0 * 1.872e21 * zeta
 
     if t9 < 10.0:
         b1 = np.exp(-5.5924 * zeta)
@@ -304,8 +213,6 @@ def sneut5(rho, T, comp=None, *, abar=None, zbar=None,
         a1 = 9.383e-1 * xlm1 - 4.141e-1 * xlm2 + 5.829e-2 * xlm3
     else:
         a1 = 1.2383 * xlm1 - 8.141e-1 * xlm2
-
-    b1 = 3.0 * zeta2
 
     xden = zeta3 + a1
 
@@ -323,8 +230,6 @@ def sneut5(rho, T, comp=None, *, abar=None, zbar=None,
     b1 = 1.0 + rm * c
 
     xden = b1**-0.3
-
-    d = -0.3 * xden / b1
 
     qpair = xnum * xden
 
@@ -363,7 +268,6 @@ def sneut5(rho, T, comp=None, *, abar=None, zbar=None,
     # equation 4.7
 
     ft = 2.4 + 0.6 * gl12 + 0.51 * gl + 1.25 * gl32
-    gum = 1.0 / gl2
 
     # equation 4.8
 
@@ -397,7 +301,6 @@ def sneut5(rho, T, comp=None, *, abar=None, zbar=None,
         a3 = c / d
         c00 = np.exp(-a3 * a3)
 
-        f1 = -c00 * 2.0 * a3 / d
         fxy = 1.05 + (a1 - b1) * c00
 
     # equation 4.1 and 4.5
@@ -552,8 +455,6 @@ def sneut5(rho, T, comp=None, *, abar=None, zbar=None,
         dd24 = -4.489e9
         dd25 = -2.185e9
 
-    taudt = iln10 * tempi
-
     # equation 3.7, compute the expensive trig functions only one time
 
     cos1 = np.cos(fac1 * tau)
@@ -568,7 +469,6 @@ def sneut5(rho, T, comp=None, *, abar=None, zbar=None,
     sin3 = np.sin(fac1 * 3.0 * tau)
     sin4 = np.sin(fac1 * 4.0 * tau)
     sin5 = np.sin(fac1 * 5.0 * tau)
-    xast = np.sin(fac2 * tau)
 
     a0 = (0.5 * c00 +
           c01 * cos1 + dd01 * sin1 +
@@ -586,14 +486,6 @@ def sneut5(rho, T, comp=None, *, abar=None, zbar=None,
           c15 * cos5 + dd15 * sin5 +
           0.5 * c16 * last)
 
-    f1 = (taudt * fac1 *
-          (-c11 * sin1 + dd11 * cos1 -
-           c12 * sin2 * 2.0 + dd12 * cos2 * 2.0 -
-           c13 * sin3 * 3.0 + dd13 * cos3 * 3.0 -
-           c14 * sin4 * 4.0 + dd14 * cos4 * 4.0 -
-           c15 * sin5 * 5.0 + dd15 * cos5 * 5.0) -
-          0.5 * c16 * xast * fac2 * taudt)
-
     a2 = (0.5 * c20 +
           c21 * cos1 + dd21 * sin1 +
           c22 * cos2 + dd22 * sin2 +
@@ -601,14 +493,6 @@ def sneut5(rho, T, comp=None, *, abar=None, zbar=None,
           c24 * cos4 + dd24 * sin4 +
           c25 * cos5 + dd25 * sin5 +
           0.5 * c26 * last)
-
-    f2 = (taudt * fac1 *
-          (-c21 * sin1 + dd21 * cos1 -
-           c22 * sin2 * 2.0 + dd22 * cos2 * 2.0 -
-           c23 * sin3 * 3.0 + dd23 * cos3 * 3.0 -
-           c24 * sin4 * 4.0 + dd24 * cos4 * 4.0 -
-           c25 * sin5 * 5.0 + dd25 * cos5 * 5.0) -
-          0.5 * c26 * xast * fac2 * taudt)
 
     # equation 3.4
 
@@ -635,7 +519,6 @@ def sneut5(rho, T, comp=None, *, abar=None, zbar=None,
 
     z = 1.0 / xden
     qphot = xnum * z
-    dum = -qphot * z
 
     # equation 3.2
 
@@ -645,8 +528,6 @@ def sneut5(rho, T, comp=None, *, abar=None, zbar=None,
     sphot = rm * a1
 
     a1 = tfac4 * (1.0 - tfac3 * qphot)
-    a2 = -tfac4 * tfac3
-
     a3 = sphot
     sphot = a1 * a3
 
@@ -686,7 +567,6 @@ def sneut5(rho, T, comp=None, *, abar=None, zbar=None,
 
         etam1 = 1.0 / eta
         etam2 = etam1 * etam1
-        etam3 = etam2 * etam1
 
         # equation 5.2
 
@@ -694,10 +574,8 @@ def sneut5(rho, T, comp=None, *, abar=None, zbar=None,
         xnum = 1.0 / a0
 
         dum = 1.0 + 1.47 * etam1 + 3.29e-2 * etam2
-        z = -1.47 * etam2 - 2.0 * 3.29e-2 * etam3
 
         c00 = 1.26 * (1.0 + etam1)
-        z = -1.26 * etam2
 
         z = 1.0 / dum
         xden = c00 * z
@@ -710,10 +588,8 @@ def sneut5(rho, T, comp=None, *, abar=None, zbar=None,
 
         z = 1.0 + rm * 1.0e-9
         dum = a0 * z
-        z = a0 * 1.0e-9
 
         xnum = 1.0 / dum
-        z = -xnum * xnum
 
         c00 = 7.75e5 * t832 + 247.0 * t8**3.85
         c01 = 4.07 + 0.0240 * t8**1.4
@@ -721,10 +597,8 @@ def sneut5(rho, T, comp=None, *, abar=None, zbar=None,
 
         z = rho**0.656
         dum = c00 * rmi + c01 + c02 * z
-        z = -c00 * rmi * rmi
 
         xden = 1.0 / dum
-        z = -xden * xden
 
         gbrem = xnum + xden
 
@@ -740,7 +614,6 @@ def sneut5(rho, T, comp=None, *, abar=None, zbar=None,
     else:
 
         u = fac3 * (np.log10(rho) - 3.0)
-        # a0    = iln10*fac3*deni;
 
         # compute the expensive trig functions of equation 5.21 only once
         cos1 = np.cos(u)
@@ -794,19 +667,14 @@ def sneut5(rho, T, comp=None, *, abar=None, zbar=None,
         dum = 2.275e-1 * zbar * zbar * t8m1 * (den6 * abari)**oneth
 
         gm1 = 1.0 / dum
-        gm2 = gm1 * gm1
         gm13 = gm1**oneth
         gm23 = gm13 * gm13
-        gm43 = gm13 * gm1
-        gm53 = gm23 * gm1
 
         # equation 5.25 and 5.26
 
         v = -0.05483 - 0.01946 * gm13 + 1.86310 * gm23 - 0.78873 * gm1
-        a0 = oneth * 0.01946 * gm43 - twoth * 1.86310 * gm53 + 0.78873 * gm2
 
         w = -0.06711 + 0.06859 * gm13 + 1.74360 * gm23 - 0.74498 * gm1
-        a1 = -oneth * 0.06859 * gm43 - twoth * 1.74360 * gm53 + 0.74498 * gm2
 
         # equation 5.19 and 5.20
 
@@ -830,10 +698,6 @@ def sneut5(rho, T, comp=None, *, abar=None, zbar=None,
     # the chemical potential
 
     nu = ifermi12(xnum)
-
-    # a0 is d(nu)/d(xnum)
-
-    a0 = 1.0 / (0.5 * zfermim12(nu))
 
     nu2 = nu * nu
     nu3 = nu2 * nu
@@ -870,17 +734,17 @@ def sneut5(rho, T, comp=None, *, abar=None, zbar=None,
 
         zeta = 1.579e5 * zbar * zbar * tempi
 
+        # pylint: disable-next=possibly-used-before-assignment
         c00 = 1.0 / (1.0 + f1 * nu + f2 * nu2 + f3 * nu3)
-        c01 = f1 + f2 * 2.0 * nu + f3 * 3.0 * nu2
         dum = zeta * c00
 
         z = 1.0 / dum
         dd00 = dum**-2.25
         dd01 = dum**-4.55
         c00 = a1 * z + a2 * dd00 + a3 * dd01
-        c01 = -(a1 * z + 2.25 * a2 * dd00 + 4.55 * a3 * dd01) * z
 
         z = np.exp(c * nu)
+        # pylint: disable-next=possibly-used-before-assignment
         dd00 = b * z * (1.0 + d * dum)
         gum = 1.0 + dd00
 
@@ -893,7 +757,6 @@ def sneut5(rho, T, comp=None, *, abar=None, zbar=None,
         z = np.exp(zeta + nu)
         dum = 1.0 + z
         a1 = 1.0 / dum
-        a2 = 1.0 / bigj
 
         sreco = tfac6 * 2.649e-18 * ye * zbar**13.0 * rho * bigj * a1
 

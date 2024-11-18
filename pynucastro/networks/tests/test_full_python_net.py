@@ -1,17 +1,16 @@
-import os
 import shutil
+from pathlib import Path
 
 import numpy as np
 import pytest
 from numpy.testing import assert_allclose
 
 from pynucastro import networks
-from pynucastro.rates import SuzukiLibrary
 
 
 class TestFullPythonNetwork:
     @pytest.fixture(scope="class")
-    def fn(self, reaclib_library):
+    def fn(self, reaclib_library, suzuki_library):
         rate_names = ["c12(c12,a)ne20",
                       "c12(c12,n)mg23",
                       "c12(c12,p)na23",
@@ -20,7 +19,6 @@ class TestFullPythonNetwork:
                       "he4(aa,g)c12"]
         rates = reaclib_library.get_rate_by_name(rate_names)
 
-        suzuki_library = SuzukiLibrary()
         tabular_rate_names = ["na23(,)ne23",
                               "ne23(,)na23"]
         tabular_rates = suzuki_library.get_rate_by_name(tabular_rate_names)
@@ -30,9 +28,9 @@ class TestFullPythonNetwork:
 
     def test_write_network(self, fn, compare_network_files):
         """test the write_network function"""
-        test_path = "_test_python/"
+        test_path = Path("_test_python/")
         # subdirectory of pynucastro/networks/tests/
-        reference_path = "_python_reference/"
+        reference_path = Path("_python_reference/")
         # files that will be ignored if present in the generated directory
         skip_files = []
 
@@ -40,8 +38,8 @@ class TestFullPythonNetwork:
 
         # remove any previously generated files
         shutil.rmtree(test_path, ignore_errors=True)
-        os.makedirs(test_path, exist_ok=True)
-        fn.write_network(outfile=os.path.join(test_path, test_file))
+        test_path.mkdir(parents=True, exist_ok=True)
+        fn.write_network(outfile=test_path/test_file)
         compare_network_files(test_path, reference_path, skip_files)
 
         # clean up generated files if the test passed
@@ -49,11 +47,11 @@ class TestFullPythonNetwork:
 
     def test_ydots(self, fn):
 
-        test_path = "_test_python/"
+        test_path = Path("_test_python/")
         test_file = "network.py"
 
-        os.makedirs(test_path, exist_ok=True)
-        fn.write_network(outfile=os.path.join(test_path, test_file))
+        test_path.mkdir(parents=True, exist_ok=True)
+        fn.write_network(outfile=test_path/test_file)
 
         import _test_python.network as net
 

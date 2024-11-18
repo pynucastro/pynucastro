@@ -1,7 +1,7 @@
 # unit tests for rates
 import importlib
-import os
 import sys
+from pathlib import Path
 
 import numpy as np
 import pytest
@@ -33,7 +33,7 @@ class MyRate(pyna.Rate):
         fstring += f"    rate_eval.{self.fname} = {self.r0} * (tf.T9 * 1.e9 / {self.T0} )**({self.nu})\n\n"
         return fstring
 
-    def eval(self, T, rhoY=None):
+    def eval(self, T, *, rho=None, comp=None):
         return self.r0 * (T / self.T0)**self.nu
 
 
@@ -96,6 +96,29 @@ def N14_p__O15__generic(rate_eval, tf):
 
         assert r_custom.function_string_py() == func
 
+    def test_evaluate_ydots(self, pynet):
+        rho = 1.e4
+        T = 4e7
+        comp = pyna.Composition(pynet.unique_nuclei)
+        comp.set_equal()
+
+        ydots = pynet.evaluate_ydots(rho, T, comp)
+
+        ydots_ref = {
+            pyna.Nucleus("p"): -4.89131088e-06,
+            pyna.Nucleus("he4"): 4.84655620e-06,
+            pyna.Nucleus("c12"): 4.83556908e-06,
+            pyna.Nucleus("c13"): 9.87368448e-06,
+            pyna.Nucleus("n13"): -9.89635377e-06,
+            pyna.Nucleus("n14"): 7.79536222e-05,
+            pyna.Nucleus("n15"): 3.72390497e-05,
+            pyna.Nucleus("o14"): -7.79200769e-05,
+            pyna.Nucleus("o15"): -4.20854947e-05,
+        }
+
+        for n, value in ydots_ref.items():
+            assert ydots[n] == approx(value)
+
     def test_import(self, pynet):
         pynet.write_network("custom.py")
         custom = importlib.import_module("custom")
@@ -117,6 +140,6 @@ def N14_p__O15__generic(rate_eval, tf):
         for n in range(custom.nnuc):
             assert ydots[n] == approx(ydot_save[n])
 
-        os.remove("custom.py")
+        Path("custom.py").unlink()
         del custom
         del sys.modules["custom"]

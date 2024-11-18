@@ -3,8 +3,8 @@ Microphysics set of reaction networks used by astrophysical hydrodynamics
 codes"""
 
 
-import glob
-import os
+import re
+from pathlib import Path
 
 from pynucastro.networks.base_cxx_network import BaseCxxNetwork
 from pynucastro.nucdata import Nucleus
@@ -29,16 +29,14 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
 
         self.disable_rate_params = disable_rate_params
         self.function_specifier = "AMREX_GPU_HOST_DEVICE AMREX_INLINE"
-        self.dtype = "Real"
+        self.dtype = "amrex::Real"
+        self.array_namespace = "amrex::"
 
     def _get_template_files(self):
 
-        template_pattern = os.path.join(self.pynucastro_dir,
-                                        'templates',
-                                        'amrexastro-cxx-microphysics',
-                                        '*.template')
+        path = self.pynucastro_dir/"templates/amrexastro-cxx-microphysics"
 
-        return glob.glob(template_pattern)
+        return path.glob("*.template")
 
     def _rate_param_tests(self, n_indent, of):
 
@@ -46,17 +44,34 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
             if r in self.disable_rate_params:
                 of.write(f"{self.indent*n_indent}if (disable_{r.cname()}) {{\n")
                 of.write(f"{self.indent*n_indent}    rate_eval.screened_rates(k_{r.cname()}) = 0.0;\n")
-                of.write(f"{self.indent*n_indent}    if constexpr (std::is_same<T, rate_derivs_t>::value) {{\n")
+                of.write(f"{self.indent*n_indent}    if constexpr (std::is_same_v<T, rate_derivs_t>) {{\n")
                 of.write(f"{self.indent*n_indent}        rate_eval.dscreened_rates_dT(k_{r.cname()}) = 0.0;\n")
                 of.write(f"{self.indent*n_indent}    }}\n")
                 # check for the reverse too -- we disable it with the same parameter
                 rr = self.find_reverse(r)
                 if rr is not None:
                     of.write(f"{self.indent*n_indent}    rate_eval.screened_rates(k_{rr.cname()}) = 0.0;\n")
-                    of.write(f"{self.indent*n_indent}    if constexpr (std::is_same<T, rate_derivs_t>::value) {{\n")
+                    of.write(f"{self.indent*n_indent}    if constexpr (std::is_same_v<T, rate_derivs_t>) {{\n")
                     of.write(f"{self.indent*n_indent}        rate_eval.dscreened_rates_dT(k_{rr.cname()}) = 0.0;\n")
                     of.write(f"{self.indent*n_indent}    }}\n")
                 of.write(f"{self.indent*n_indent}}}\n\n")
+
+    def _ebind(self, n_indent, of):
+        for n, nuc in enumerate(self.unique_nuclei):
+            if n == 0:
+                of.write(f"{self.indent*n_indent}if constexpr (spec == {nuc.cindex()}) {{\n")
+            else:
+                of.write(f"{self.indent*n_indent}else if constexpr (spec == {nuc.cindex()}) {{\n")
+            of.write(f"{self.indent*(n_indent+1)}return {nuc.nucbind * nuc.A}_rt;\n")
+            of.write(f"{self.indent*(n_indent)}}}\n")
+
+    def _cxxify(self, s):
+        # Replace std::pow(x, n) with amrex::Math::powi<n>(x) for amrexastro_cxx_network
+
+        cxx_code = super()._cxxify(s)
+        std_pow_pattern = r"std::pow\(([^,]+),\s*(\d+)\)"
+        amrex_powi_replacement = r"amrex::Math::powi<\2>(\1)"
+        return re.sub(std_pow_pattern, amrex_powi_replacement, cxx_code)
 
     def _write_network(self, odir=None):
         """
@@ -67,9 +82,9 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
         super()._write_network(odir=odir)
 
         if odir is None:
-            odir = os.getcwd()
+            odir = Path.cwd()
         # create a .net file with the nuclei properties
-        with open(os.path.join(odir, "pynucastro.net"), "w") as of:
+        with open(Path(odir, "pynucastro.net"), "w") as of:
             for nuc in self.unique_nuclei:
                 short_spec_name = nuc.short_spec_name
                 if nuc.short_spec_name != "n":
@@ -83,7 +98,7 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
                 of.write(f"__extra_{nuc.spec_name:17} {short_spec_name:6} {nuc.A:6.1f} {nuc.Z:6.1f}\n")
 
         # write the _parameters file
-        with open(os.path.join(odir, "_parameters"), "w") as of:
+        with open(Path(odir, "_parameters"), "w") as of:
             of.write("@namespace: network\n\n")
             if self.disable_rate_params:
                 for r in self.disable_rate_params:

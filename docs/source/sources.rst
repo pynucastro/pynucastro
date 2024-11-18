@@ -5,51 +5,73 @@ pynucastro incorporates the following publicly-available
 third-party data. Links to this data as well as citations to the
 relevant publications are as follows.
 
+Reaction rates
+--------------
+
 Nuclear reaction rates from JINA Reaclib
-----------------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The reaction rate parameterizations in `pynucastro/library <https://github.com/pynucastro/pynucastro/tree/main/pynucastro/library>`_
 were obtained from the `JINA Reaclib database <https://reaclib.jinaweb.org/>`_.
 
-`Cyburt et al., ApJS 189 (2010) 240 <https://iopscience.iop.org/article/10.1088/0067-0049/189/1/240>`_
+* :cite:t:`ReacLib`
 
 Tabulated weak nuclear reaction rates
--------------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The weak reaction rate tables in `pynucastro/library/tabular/suzuki <https://github.com/pynucastro/pynucastro/tree/main/pynucastro/library/tabular/suzuki>`_
-were obtained from:
+* For nuclei with $A = 17$ to $28$ we use the weak rates from
+  :cite:t:`suzuki:2016`.
 
-`<https://www.phys.chs.nihon-u.ac.jp/suzuki/data2/link.html>`_
+  The data tables were obtained from `<https://www.phys.chs.nihon-u.ac.jp/suzuki/data2/link.html>`_.
 
-`Suzuki et al., ApJ 817 (2016) 163 <https://iopscience.iop.org/article/10.3847/0004-637X/817/2/163>`_
+* For nuclei with $A = 45$ to $65$ we use the weak rates from
+  :cite:t:`langanke:2001`.
 
-Physical constants from CODATA
-------------------------------
 
-The standalone AMReX-Astro Microphysics
-networks rely on physical constants sourced from the 2014 CODATA
-recommended values.
+Physical constants
+------------------
 
-`P.J. Mohr, D.B. Newell, and B.N. Taylor (2016), "The 2014 CODATA Recommended Values of the Fundamental Physical Constants" <https://physics.nist.gov/cuu/Constants/index.html>`_
+We use the [scipy.constants](https://docs.scipy.org/doc/scipy/reference/constants.html) module
+from SciPy to get all the physical constants.  This in turn gets the constants from the CODATA
+recommended values (currently CODATA 18)
 
-`Mohr et al., Rev. Mod. Phys. 88, 035009 <https://journals.aps.org/rmp/abstract/10.1103/RevModPhys.88.035009>`_
+* :cite:t:`codata:2018`
 
-Nuclear binding energies from the Atomic Mass Data Center
----------------------------------------------------------
 
-The standalone AMReX-Astro Microphysics
-networks rely on binding energy per nucleon sourced from the Atomic
-Mass Evaluation 2016 (default) and 2012 of the Atomic Mass Data
-Center.
+Nuclei properties
+-----------------
 
-The Atomic Mass Evaluation 2016 and 2012 are available `online <https://www-nds.iaea.org/amdc/>`_.
+We get the basic nuclear properties from the Nubase 2020 evaluation.  This
+is available online at `Nuclear Data Services <https://www-nds.iaea.org/amdc/>`_.
+We are currently using the file `nubase_4.mas20.txt <https://www-nds.iaea.org/amdc/ame2020/nubase_4.mas20.txt>`_.
 
-Atomic Mass Evaluation 2016:
+* :cite:t:`nubase:2020`
 
-* `Huang et al., Chinese Physics C 41, 030002 <https://iopscience.iop.org/article/10.1088/1674-1137/41/3/030002>`_
-* `Wang et al., Chinese Physics C 41, 030003 <https://iopscience.iop.org/article/10.1088/1674-1137/41/3/030003>`_
+In particular, we get the mass excesses, $\Delta m$, and spins from there.  We then compute
+mass of the nucleus as:
 
-Atomic Mass Evaluation 2012:
+.. math::
 
-* `Audi et al., Chinese Physics C 36, 1287-1602 <https://iopscience.iop.org/article/10.1088/1674-1137/36/12/002>`_
-* `Wang et al., Chinese Physics C 36, 1603-2014 <https://iopscience.iop.org/article/10.1088/1674-1137/36/12/003>`_
+   m = \Delta M + A m_u
+
+and the binding energies from the mass excesses as:
+
+.. math::
+
+   B = Z m_H + N m_n - (A m_u + \Delta m)
+
+where $m_H$ is the mass of the hydrogen atom, computed from the mass
+excess of ``1H`` listed in the table.  This is consistent with the
+discussion in section 2 of the AME 2020 paper :cite:`ame2020_1`, and
+these numbers match the binding energies computed in the AME tables to
+the uncertainty in the nuclear masses.
+
+
+Partition functions
+-------------------
+
+We use the tabulated partition functions from the following sources:
+
+* :cite:t:`rauscher:1997`
+
+* :cite:t:`rauscher:2003`

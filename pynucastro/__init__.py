@@ -59,6 +59,14 @@ rates, including:
   and produces an interactive visualization that can be explored
   in Jupyter notebooks.
 
+* NSENetwork : this extends the RateCollection to allow for solving
+  for the nuclear statistical equilibrium state of a collection of
+  nuclei.
+
+* NumpyNetwork : this extends the RateCollection to allow evaluating
+  reaction rates using vectorized NumPy arrays, which may be
+  more efficient for some applications.
+
 * PythonNetwork : this extends the RateCollection to enable output
   of python code that can be used with ODE integrators to solve
   a network.
@@ -75,6 +83,9 @@ rates, including:
   output of basic C++ code that can be as the starting point
   for incorporating a pynucastro network into a non-AMReX
   simulation code.
+
+* FortranNetwork : this is a set of wrappers around SimpleCxxNetwork
+  that provide a Fortran interface.
 
 
 rates
@@ -122,10 +133,11 @@ __version__ = version
 
 import pynucastro.screening
 from pynucastro.networks import (AmrexAstroCxxNetwork, BaseCxxNetwork,
-                                 Composition, Explorer, PythonNetwork,
+                                 Composition, Explorer, FortranNetwork,
+                                 NSENetwork, NumpyNetwork, PythonNetwork,
                                  RateCollection, SimpleCxxNetwork,
                                  StarKillerCxxNetwork, SympyRates)
-from pynucastro.nucdata import Nucleus, get_nuclei_in_range
+from pynucastro.nucdata import Nucleus, get_all_nuclei, get_nuclei_in_range
 from pynucastro.rates import (ApproximateRate, DerivedRate, LangankeLibrary,
                               Library, Rate, RateFilter, ReacLibLibrary,
                               SuzukiLibrary, TabularLibrary, Tfactors,

@@ -1,10 +1,12 @@
 # pynucastro
 
+[![PyPI Version](https://img.shields.io/pypi/v/pynucastro)](https://pypi.org/project/pynucastro)
+[![Conda Version](https://img.shields.io/conda/vn/conda-forge/pynucastro.svg)](https://anaconda.org/conda-forge/pynucastro)
+
 [![pytest-all](https://github.com/pynucastro/pynucastro/actions/workflows/pytest-all.yml/badge.svg?branch=main)](https://github.com/pynucastro/pynucastro/actions/workflows/pytest-all.yml)
 [![pylint](https://github.com/pynucastro/pynucastro/actions/workflows/pylint.yml/badge.svg?branch=main)](https://github.com/pynucastro/pynucastro/actions/workflows/pylint.yml)
 [![flake8](https://github.com/pynucastro/pynucastro/actions/workflows/flake8.yml/badge.svg?branch=main)](https://github.com/pynucastro/pynucastro/actions/workflows/flake8.yml)
 [![docs build](https://github.com/pynucastro/pynucastro/actions/workflows/docs-test.yml/badge.svg)](https://github.com/pynucastro/pynucastro/actions/workflows/docs-test.yml)
-
 [![Docs](https://github.com/pynucastro/pynucastro/workflows/github%20pages/badge.svg)](http://pynucastro.github.io/pynucastro/)
 
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
@@ -14,10 +16,13 @@
 
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/pynucastro/pynucastro/main?filepath=examples%2Fpynucastro-examples.ipynb)
 
+
+![logo](logo/logo.png)
+
 pynucastro is a python library for interactively creating and
 exploring nuclear reaction networks.  It provides interfaces to
 nuclear reaction rate databases, including the JINA Reaclib nuclear
-reactions database.  
+reactions database.
 
 The main features are:
 
@@ -41,14 +46,14 @@ The main features are:
     functions, spins, masses, etc.
 
 
-# documentation
+## Documentation
 
 Documentation for pynucastro is available here:
 
-http://pynucastro.github.io/pynucastro/
+https://pynucastro.github.io/pynucastro/
 
 
-# example
+## Examples
 
 The following example reads in the ReacLib rate database and
 gets the rate for C13(p,g)N14 and evaluates it at a
@@ -90,7 +95,7 @@ then the breakout of hot-CNO when the alpha capture on O14 becomes
 faster than its decay.
 
 
-# install
+## Installation
 
 pynucastro is available on PyPI and can be installed via:
 ```
@@ -109,9 +114,9 @@ for a single-user install.  This will put the pynucastro modules and library in
 the default location python searches for packages.
 
 
-# requirements
+### Requirements
 
-This package requires Python 3 (release 3.6 or later) and the following Python packages:
+pynucastro is supported on Python 3.10 or later and the following libraries:
 
 * `numpy`
 
@@ -127,8 +132,6 @@ This package requires Python 3 (release 3.6 or later) and the following Python p
 
 * `numba`
 
-* `setuptools_scm`
-
 To build the documentation or run the unit tests, `sphinx` and
 `pytest` are additionally required along with some supporting
 packages. See the included `requirements.txt` file for a list of these
@@ -137,29 +140,22 @@ file, do:
 ```
 pip install -r requirements.txt
 ```
-Is important to stress out that all the dependencies should be 
-installed before `pynucastro`, otherwise the installation should be 
+Is important to stress out that all the dependencies should be
+installed before `pynucastro`, otherwise the installation should be
 repeated.
 
-# unit tests
 
-We use py.test to do unit tests.  In `pynucastro/`, do:
-```
-pytest -v .
-```
+## Contributing
 
-to see coverage, do:
-```
-pytest --cov=pynucastro .
-```
+We welcome contributions from anyone, including posting issues or
+submitting pull requests to the [pynucastro github][1]. For more details
+on how to contribute to pynucastro, please see [CONTRIBUTING.md][2].
 
-to test the notebooks, do:
-```
-py.test --nbval examples
-```
+[1]: https://github.com/pynucastro/pynucastro
+[2]: https://github.com/pynucastro/pynucastro/blob/main/CONTRIBUTING.md
 
 
-# Core Developers
+### Core Developers
 
 People who make a number of substantive contributions (new features,
 bug fixes, etc.) will be named "core developers" of pynucastro.
@@ -180,3 +176,10 @@ Core developers will be recognized in the following ways:
 If a core developer is inactive for 3 years, we may reassess their
 status as a core developer.
 
+
+## Getting Help
+
+We use our [Github Discussions][3] page for requesting help and
+interacting with the community.
+
+[3]: https://github.com/pynucastro/pynucastro/discussions

@@ -1,5 +1,6 @@
 import numpy as np
 
+from pynucastro.nucdata import Nucleus
 from pynucastro.reduction.reduction_utils import (mpi_importer,
                                                   mpi_numpy_decomp, to_list)
 
@@ -219,8 +220,6 @@ def _drgep_numpy(net, conds, targets, tols):
 
     comp_L, rho_L, T_L = conds
 
-    net.calc_count_matrices()
-    net.update_rate_coef_arr()
     adj_nuc = get_adj_nuc(net)
 
     #------------------------------------------------
@@ -250,8 +249,6 @@ def _drgep_mpi_numpy(net, conds, targets, tols):
     n = tuple(map(len, conds))
     comp_L, rho_L, T_L = conds
 
-    net.calc_count_matrices()
-    net.update_rate_coef_arr()
     adj_nuc = get_adj_nuc(net)
 
     #-----------------------------------
@@ -291,8 +288,7 @@ def _drgep_mpi_numpy(net, conds, targets, tols):
 def drgep(net, conds, targets, tols, returnobj='net', use_mpi=False, use_numpy=False):
     """
     Implementation of Directed Relation Graph with Error Propagation (DRGEP) reduction
-    method described in Pepiot-Desjardins and Pitch 2008 (doi:10.1016/j.combustflame.2007.10.020)
-    and Niemeyer and Sung 2011 (doi:10.1016/j.combustflame.2010.12.010).
+    method described in :cite:t:`pepiot-desjardins:2008` and :cite:t:`niemeyer:2011`.
 
     :param net: The network (RateCollection) to reduce.
     :param conds: A set of conditions to reduce over. Should either be a sequence of (composition,
@@ -301,7 +297,7 @@ def drgep(net, conds, targets, tols, returnobj='net', use_mpi=False, use_numpy=F
         latter case, the sequences will be permuted to create the dataset. The compositions should
         be pynucastro Composition objects.
     :param targets: A collection of target nuclei (or a single target nucleus) to run the
-        graph search algorithm from. Should be supplied as pynucastro Nucleus objects.
+        graph search algorithm from. Should be supplied as pynucastro Nucleus objects or strings.
     :param tols: Tolerance(s) or cutoff threshold(s) to use for paths from each of the target nuclei.
         Nuclei whose interaction coefficients do not meet the specified tolerance will have their
         interaction coefficients set to 0.0. Can be a single number (will be the same for all targets)
@@ -324,7 +320,7 @@ def drgep(net, conds, targets, tols, returnobj='net', use_mpi=False, use_numpy=F
 
     if returnobj not in {'net', 'nuclei', 'coeff'}:
         raise ValueError(f"Invalid 'returnobj' argument: '{returnobj}'.")
-    targets = to_list(targets)
+    targets = Nucleus.cast_list(targets)
     tols = to_list(tols, len(targets))
 
     #-------------------------------------------------------

@@ -7,7 +7,6 @@ from pynucastro import networks
 
 
 class TestSimpleCxxNetwork:
-    # pylint: disable=protected-access
     @pytest.fixture(scope="class")
     def fn(self, reaclib_library):
         rate_names = ["c12(c12,a)ne20",

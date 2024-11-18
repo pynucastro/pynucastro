@@ -1,4 +1,4 @@
-from pytest import approx
+from pytest import approx, raises
 
 from pynucastro.nucdata import Nucleus, get_nuclei_in_range
 
@@ -84,12 +84,28 @@ class TestNucleus:
         assert self.ni61.partition_function.eval(32.0e9) == approx(1927800.437886083)
         assert self.pb237.partition_function.eval(32.0e9) == approx(5.05620611030359e+28)
 
-    def test_mass(self):
+    def test_A_nuc(self):
 
         assert self.p.A_nuc == approx(1.0078250307554963)
         assert self.n.A_nuc == approx(1.0086649179839473)
         assert self.o16.A_nuc == approx(15.994914621587304)
         assert self.c12.A_nuc == 12.0
+
+    def test_dm(self):
+
+        assert self.p.dm == approx(7.288971064)
+        assert self.n.dm == approx(8.0713181)
+        assert self.o16.dm == approx(-4.7370021)
+        assert self.c12.dm == 0.0
+        assert self.u238.dm == approx(47.3077)
+
+    def test_mass(self):
+
+        assert self.p.mass == approx(938.7830734839999)
+        assert self.n.mass == approx(939.56542052)
+        assert self.o16.mass == approx(14899.16863662)
+        assert self.c12.mass == approx(11177.92922904)
+        assert self.u238.mass == approx(221742.90407596)
 
     def test_range(self):
 
@@ -111,3 +127,39 @@ class TestNucleus:
         assert nuc_list[12] == Nucleus("o14")
         assert nuc_list[13] == Nucleus("o15")
         assert nuc_list[14] == Nucleus("o16")
+
+    def test_cast(self):
+        assert Nucleus.cast("c12") == self.c12
+        assert Nucleus.cast("C12") == self.c12
+        assert Nucleus.cast(self.c12) == self.c12
+        assert Nucleus.cast("n") == Nucleus("n")
+
+    def test_cast_list(self):
+        expected = [self.p, self.n, self.he4, self.c12, self.pb237]
+        assert Nucleus.cast_list(["p", self.n, "a", "c12", self.pb237]) == expected
+        assert Nucleus.cast_list(["p", "n", "he4", "c12", "pb237"]) == expected
+        assert Nucleus.cast_list(expected) == expected
+        assert Nucleus.cast_list([self.p, "n", "he4", self.c12, self.pb237], allow_single=True) == expected
+        assert Nucleus.cast_list(expected, allow_None=True, allow_single=True) == expected
+        assert Nucleus.cast_list(expected, allow_None=True, allow_single=True) == expected
+
+        with raises(ValueError):
+            Nucleus.cast_list("he4")
+        with raises(ValueError):
+            Nucleus.cast_list(self.he4)
+        assert Nucleus.cast_list(self.he4, allow_single=True) == [self.he4]
+        assert Nucleus.cast_list("he4", allow_single=True) == [self.he4]
+        assert Nucleus.cast_list([self.he4], allow_single=True) == [self.he4]
+        assert Nucleus.cast_list(["he4"]) == [self.he4]
+
+        with raises(TypeError):
+            Nucleus.cast_list(None)
+        assert Nucleus.cast_list(None, allow_None=True) is None
+        assert Nucleus.cast_list([]) == []
+
+    def test_from_Z_A(self):
+        assert self.he4 == Nucleus.from_Z_A(2, 4)
+
+    def test_add_subtract(self):
+        assert self.c12 + self.n == Nucleus("c13")
+        assert self.d - self.n == self.h1

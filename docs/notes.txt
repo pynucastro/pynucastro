@@ -10,11 +10,15 @@ To automatically generate the API docs (from the repository root):
 
 To support notebooks:
 
-pip3 install nbsphinx --user
-dnf install pandoc
+   pip3 install nbsphinx --user
+   dnf install pandoc
 
 
 For the theme:
 
-pip install sphinx_rtd_theme
+   pip install sphinx_rtd_theme
 
+
+To re-run a notebook without spinning up an entire Jupyter instance:
+
+   docs/regen_notebook.sh <path to .ipynb>

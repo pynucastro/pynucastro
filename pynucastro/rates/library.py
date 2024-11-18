@@ -1,25 +1,29 @@
 import collections
 import io
-import os
 import re
+from os import walk
+from pathlib import Path
 
 from pynucastro.nucdata import Nucleus, UnsupportedNucleus
+from pynucastro.rates.derived_rate import DerivedRate
+from pynucastro.rates.files import (RateFileError, _find_rate_file,
+                                    get_rates_dir)
 from pynucastro.rates.known_duplicates import (find_duplicate_rates,
                                                is_allowed_dupe)
-from pynucastro.rates.rate import (DerivedRate, Rate, RateFileError,
-                                   ReacLibRate, TabularRate, _find_rate_file,
-                                   get_rates_dir, load_rate)
+from pynucastro.rates.rate import Rate
+from pynucastro.rates.reaclib_rate import ReacLibRate
+from pynucastro.rates.tabular_rate import TabularRate
 
 
 def list_known_rates():
     """ list the rates found in the library """
 
-    lib_path = f"{os.path.dirname(__file__)}/../library/"
+    lib_path = Path(__file__).parents[1]/"library"
 
-    for _, _, filenames in os.walk(lib_path):
+    for _, _, filenames in walk(lib_path):
         for f in filenames:
             # skip over files that are not rate files
-            if f.endswith(".md") or f.endswith(".dat") or f.endswith(".py") or f.endswith(".ipynb"):
+            if Path(f).suffix in (".md", ".dat", ".py", "ipynb"):
                 continue
             try:
                 lib = Library(f)
@@ -56,12 +60,10 @@ def _rate_name_to_nuc(name):
                 # first electrons and neutrins, and nothing
                 continue
             if nuc.lower() == "pp":
-                reactants.append(Nucleus("p"))
-                reactants.append(Nucleus("p"))
+                reactants += [Nucleus("p"), Nucleus("p")]
                 continue
             if nuc.lower() == "aa":
-                reactants.append(Nucleus("he4"))
-                reactants.append(Nucleus("he4"))
+                reactants += [Nucleus("he4"), Nucleus("he4")]
                 continue
             print(f"couldn't deal with {nuc}")
             raise
@@ -79,12 +81,10 @@ def _rate_name_to_nuc(name):
                 # first electrons and neutrinos, gammas, and nothing
                 continue
             if nuc.lower() == "pp":
-                products.append(Nucleus("p"))
-                products.append(Nucleus("p"))
+                products += [Nucleus("p"), Nucleus("p")]
                 continue
             if nuc.lower() == "aa":
-                products.append(Nucleus("he4"))
-                products.append(Nucleus("he4"))
+                products += [Nucleus("he4"), Nucleus("he4")]
                 continue
             print(f"couldn't deal with {nuc}")
             raise
@@ -123,28 +123,116 @@ class Library:
 
     def __init__(self, libfile=None, rates=None):
         self._library_file = libfile
+        self._rates = {}
+
         if rates:
-            self._rates = None
             if isinstance(rates, Rate):
                 rates = [rates]
             if isinstance(rates, dict):
                 self._rates = rates
             elif isinstance(rates, (list, set)):
-                self._add_from_rate_list(rates)
+                self.add_rates(rates)
             else:
-                raise TypeError("rates in Library constructor must be a Rate object, list of Rate objects, or dictionary of Rate objects keyed by Rate.get_rate_id()")
-        else:
-            self._rates = {}
+                raise TypeError("rates in Library constructor must be a Rate object, list of Rate objects, or dictionary of Rate objects keyed by Rate.id")
+
         self._library_source_lines = collections.deque()
 
         if self._library_file:
             self._library_file = _find_rate_file(self._library_file)
             self._read_library_file()
 
+    def get_rates(self):
+        """ Return a list of the rates in this library."""
+        return list(self._rates.values())
+
+    def get_rate(self, rid):
+        """ Return a rate matching the id provided. """
+        try:
+            rid_mod = capitalize_rid(rid, " ")
+            return self._rates[rid_mod]
+        except KeyError:
+            pass
+
+        # fallback to the rate fname
+        try:
+            rid_mod = capitalize_rid(rid, "_")
+            return [q for q in self.get_rates() if q.fname == rid_mod][0]
+        except IndexError:
+            raise LookupError(f"rate identifier {rid!r} does not match a rate in this library.") from None
+
+    @property
+    def num_rates(self):
+        return len(self.get_rates())
+
+    def add_rate(self, rate):
+        """Manually add a rate by giving a Rate object"""
+
+        if not isinstance(rate, Rate):
+            raise TypeError(f"invalid Rate object {rate}")
+        rid = rate.id
+
+        if rid in self._rates:
+            raise ValueError(f"supplied a Rate object already in the Library: {rid}")
+        self._rates[rid] = rate
+
+    def add_rates(self, ratelist):
+        """ Add to the rate dictionary from the supplied list of Rate objects."""
+
+        for rate in ratelist:
+            self.add_rate(rate)
+
+    def get_rate_by_name(self, name):
+        """Given a string representing a rate in the form 'A(x,y)B'
+        (or a list of strings for multiple rates) return the Rate
+        objects that match from the Library.  If there are multiple
+        inputs, then a list of Rate objects is returned.
+
+        """
+
+        rate_name_list = name
+        if isinstance(name, str):
+            rate_name_list = [name]
+
+        rates_out = []
+
+        for rname in rate_name_list:
+            reactants, products = _rate_name_to_nuc(rname)
+
+            rf = RateFilter(reactants=reactants, products=products)
+            _lib = self.filter(rf)
+            if _lib is None:
+                print(f"rate {rname} not found")
+                continue
+            rates_out += _lib.get_rates()
+
+        if len(rates_out) == 0:
+            return None
+        if len(rates_out) == 1:
+            return rates_out[0]
+        return rates_out
+
+    def remove_rate(self, rate):
+        """Manually remove a rate from the library by supplying the
+        short name "A(x,y)B, a Rate object, or the rate id"""
+
+        if isinstance(rate, Rate):
+            rid = rate.id
+            self._rates.pop(rid)
+        elif isinstance(rate, str):
+            rid = self.get_rate_by_name(rate).id
+            self._rates.pop(rid)
+        else:
+            # we assume that a rate id as provided
+            self._rates.pop(rate)
+
+    def get_nuclei(self):
+        """get the list of unique nuclei"""
+        return {nuc for r in self.get_rates() for nuc in r.reactants + r.products}
+
     def heaviest(self):
         """ Return the heaviest nuclide in this library. """
         nuc = None
-        for _, r in self._rates.items():
+        for r in self.get_rates():
             rnuc = r.heaviest()
             if nuc:
                 if rnuc.A > nuc.A or (rnuc.A == nuc.A and rnuc.Z < nuc.Z):
@@ -156,7 +244,7 @@ class Library:
     def lightest(self):
         """ Return the lightest nuclide in this library. """
         nuc = None
-        for _, r in self._rates.items():
+        for r in self.get_rates():
             rnuc = r.lightest()
             if nuc:
                 if rnuc.A < nuc.A or (rnuc.A == nuc.A and rnuc.Z > nuc.Z):
@@ -165,19 +253,10 @@ class Library:
                 nuc = rnuc
         return nuc
 
-    def _add_from_rate_list(self, ratelist):
-        """ Add to the rate dictionary from the supplied list of Rate objects. """
-        if not self._rates:
-            self._rates = {}
-        for r in ratelist:
-            rid = r.get_rate_id()
-            if rid in self._rates:
-                raise ValueError(f"supplied a Rate object already in the Library: {r}")
-            self._rates[rid] = r
-
     def _read_library_file(self):
         # loop through library file, read lines
-        with open(self._library_file) as flib:
+
+        with self._library_file.open("r") as flib:
             for line in flib:
                 ls = line.rstrip('\n')
                 if ls.strip():
@@ -229,7 +308,7 @@ class Library:
                 except UnsupportedNucleus:
                     pass
                 else:
-                    rid = r.get_rate_id()
+                    rid = r.id
                     if rid in self._rates:
                         self._rates[rid] = self._rates[rid] + r
                     else:
@@ -243,9 +322,9 @@ class Library:
         """
 
         if prepend_rates_dir:
-            filename = os.path.join(get_rates_dir(), filename)
+            filename = get_rates_dir()/filename
 
-        with open(filename, 'w') as f:
+        with filename.open("w") as f:
             for rate in self.get_rates():
                 rate.write_to_file(f)
 
@@ -255,14 +334,14 @@ class Library:
         tmp_rates = [v for k, v in self._rates.items()]
         for r in sorted(tmp_rates):
             if r.Q is not None and r.Q >= 0:
-                rstrings.append(f'{r.__repr__():30} [Q = {float(r.Q):6.2f} MeV] ({r.get_rate_id()})')
+                rstrings.append(f'{r.__repr__():30} [Q = {float(r.Q):6.2f} MeV] ({r.id})')
         for r in sorted(tmp_rates):
             if r.Q is not None and r.Q < 0:
-                rstrings.append(f'{r.__repr__():30} [Q = {float(r.Q):6.2f} MeV] ({r.get_rate_id()})')
+                rstrings.append(f'{r.__repr__():30} [Q = {float(r.Q):6.2f} MeV] ({r.id})')
 
         for r in sorted(tmp_rates):
             if r.Q is None:
-                rstrings.append(f'{r.__repr__():30} ({r.get_rate_id()})')
+                rstrings.append(f'{r.__repr__():30} ({r.id})')
 
         return '\n'.join(rstrings)
 
@@ -279,74 +358,26 @@ class Library:
         return new_library
 
     def __sub__(self, other):
-        return self.diff(other)
+        """Return a Library containing the rates in this library that are not
+        contained in other_library"""
 
-    def get_num_rates(self):
-        """Return the number of rates known to the library"""
-        return len(self._rates)
-
-    def get_rates(self):
-        """ Return a list of the rates in this library. """
-        rlist = [r for _, r in self._rates.items()]
-        return rlist
-
-    def get_rate(self, rid):
-        """ Return a rate matching the id provided. """
-        try:
-            rid_mod = capitalize_rid(rid, " ")
-            return self._rates[rid_mod]
-        except KeyError:
-            pass
-
-        # fallback to the rate fname
-        try:
-            rid_mod = capitalize_rid(rid, "_")
-            return [q for q in self.get_rates() if q.fname == rid_mod][0]
-        except IndexError:
-            raise LookupError(f"rate identifier {rid!r} does not match a rate in this library.") from None
+        diff_rates = set(self.get_rates()) - set(other.get_rates())
+        new_library = Library(rates=diff_rates)
+        return new_library
 
     def get_rate_by_nuclei(self, reactants, products):
         """given a list of reactants and products, return any matching rates"""
+        reactants = sorted(Nucleus.cast_list(reactants))
+        products = sorted(Nucleus.cast_list(products))
         _tmp = [r for r in self.get_rates() if
-                sorted(r.reactants) == sorted(reactants) and
-                sorted(r.products) == sorted(products)]
+                sorted(r.reactants) == reactants and
+                sorted(r.products) == products]
 
         if not _tmp:
             return None
         if len(_tmp) == 1:
             return _tmp[0]
         return _tmp
-
-    def get_rate_by_name(self, name):
-        """Given a string representing a rate in the form 'A(x,y)B'
-        (or a list of strings for multiple rates) return the Rate
-        objects that match from the Library.  If there are multiple
-        inputs, then a list of Rate objects is returned.
-
-        """
-
-        if isinstance(name, str):
-            rate_name_list = [name]
-        else:
-            rate_name_list = name
-
-        rates_out = []
-
-        for rname in rate_name_list:
-            reactants, products = _rate_name_to_nuc(rname)
-
-            rf = RateFilter(reactants=reactants, products=products)
-            _lib = self.filter(rf)
-            if _lib is None:
-                print(f"rate {rname} not found")
-                continue
-            rates_out += _lib.get_rates()
-
-        if len(rates_out) == 0:
-            return None
-        if len(rates_out) == 1:
-            return rates_out[0]
-        return rates_out
 
     def find_duplicate_links(self):
         """report on an rates where another rate exists that has the
@@ -372,41 +403,6 @@ class Library:
 
         return duplicates
 
-    def get_nuclei(self):
-        """get the list of unique nuclei"""
-        return {nuc for r in self.get_rates() for nuc in r.reactants + r.products}
-
-    def diff(self, other_library):
-        """Return a Library containing the rates in this library that are not
-        contained in other_library"""
-
-        diff_rates = set(self.get_rates()) - set(other_library.get_rates())
-        new_library = Library(rates=diff_rates)
-        return new_library
-
-    def remove_rate(self, rate):
-        """Manually remove a rate from the library by supplying the
-        short name "A(x,y)B, a Rate object, or the rate id"""
-
-        if isinstance(rate, Rate):
-            rid = rate.get_rate_id()
-            self._rates.pop(rid)
-        elif isinstance(rate, str):
-            rid = self.get_rate_by_name(rate).get_rate_id()
-            self._rates.pop(rid)
-        else:
-            # we assume that a rate id as provided
-            self._rates.pop(rate)
-
-    def add_rate(self, rate):
-        """Manually add a rate by giving a Rate object"""
-
-        if isinstance(rate, Rate):
-            if rate not in self._rates:
-                self._rates[rate.get_rate_id()] = rate
-        else:
-            raise TypeError("invalid Rate object")
-
     def linking_nuclei(self, nuclist, with_reverse=True, print_warning=True):
         """
         Return a Library object containing the rates linking the
@@ -418,16 +414,7 @@ class Library:
         If print_warning is True, then print out a warning if one of the input nuclei is not linked.
         """
 
-        if isinstance(nuclist, (Nucleus, str)):
-            nuclist = [nuclist]
-
-        nucleus_set = set()
-        for nuc in nuclist:
-            if isinstance(nuc, Nucleus):
-                nucleus_set.add(nuc)
-            else:
-                anuc = Nucleus(nuc)
-                nucleus_set.add(anuc)
+        nucleus_set = set(Nucleus.cast_list(nuclist))
 
         # Discard rates with nuclei that are not in nucleus_set
         filtered_rates = []
@@ -617,21 +604,9 @@ class RateFilter:
         self.filter_function = filter_function
 
         if reactants:
-            if isinstance(reactants, (Nucleus, str)):
-                reactants = [reactants]
-            self.reactants = [self._cast_nucleus(r) for r in reactants]
+            self.reactants = Nucleus.cast_list(reactants, allow_single=True)
         if products:
-            if isinstance(products, (Nucleus, str)):
-                products = [products]
-            self.products = [self._cast_nucleus(r) for r in products]
-
-    @staticmethod
-    def _cast_nucleus(r):
-        """ Make sure r is of type Nucleus. """
-        if not isinstance(r, Nucleus):
-            rnuc = Nucleus(r)
-            return rnuc
-        return r
+            self.products = Nucleus.cast_list(products, allow_single=True)
 
     @staticmethod
     def _contents_equal(a, b):
@@ -720,61 +695,34 @@ class ReacLibLibrary(Library):
 class TabularLibrary(Library):
     """Load all of the tabular rates known and return a Library"""
 
+    lib_path = Path(__file__).parents[1]/"library/tabular"
+
     def __init__(self):
         # find all of the tabular rates that pynucastro knows about
         # we'll assume that these are of the form *-toki
 
-        lib_path = f"{os.path.dirname(__file__)}/../library/tabular"
-
         trates = []
 
-        for _, _, filenames in os.walk(lib_path):
-            for f in filenames:
+        for _, _, filenames in sorted(walk(self.lib_path)):
+            for f in sorted(filenames):
                 if f.endswith("-toki"):
-                    trates.append(load_rate(f))
+                    trates.append(TabularRate(rfile=f))
 
         Library.__init__(self, rates=trates)
 
 
-class SuzukiLibrary(Library):
+class SuzukiLibrary(TabularLibrary):
     """
     Load all of the tabular rates inside /library/tabular/suzuki/
     and return a Library.
     """
-
-    def __init__(self):
-        # find all of the tabular rates that pynucastro knows about
-        # we'll assume that these are of the form *-toki
-
-        lib_path = f"{os.path.dirname(__file__)}/../library/tabular/suzuki"
-
-        trates = []
-
-        for _, _, filenames in os.walk(lib_path):
-            for f in filenames:
-                if f.endswith("-toki"):
-                    trates.append(load_rate(f))
-
-        Library.__init__(self, rates=trates)
+    lib_path = Path(__file__).parents[1]/"library/tabular/suzuki"
 
 
-class LangankeLibrary(Library):
+class LangankeLibrary(TabularLibrary):
     """
     Load all of the tabular rates inside /library/tabular/langanke/
     and return a Library.
     """
 
-    def __init__(self):
-        # find all of the tabular rates that pynucastro knows about
-        # we'll assume that these are of the form *-toki
-
-        lib_path = f"{os.path.dirname(__file__)}/../library/tabular/langanke"
-
-        trates = []
-
-        for _, _, filenames in os.walk(lib_path):
-            for f in filenames:
-                if f.endswith("-toki"):
-                    trates.append(load_rate(f))
-
-        Library.__init__(self, rates=trates)
+    lib_path = Path(__file__).parents[1]/"library/tabular/langanke"

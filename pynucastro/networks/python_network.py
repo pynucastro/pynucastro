@@ -1,12 +1,14 @@
 """Support modules to write a pure python reaction network ODE
 source"""
 
-import os
 import shutil
 import sys
+import warnings
+from pathlib import Path
 
+from pynucastro.constants import constants
 from pynucastro.networks.rate_collection import RateCollection
-from pynucastro.rates.rate import ApproximateRate
+from pynucastro.rates import ApproximateRate
 from pynucastro.screening import get_screening_map
 
 
@@ -128,25 +130,38 @@ class PythonNetwork(RateCollection):
 
     def rates_string(self, indent=""):
         """section for evaluating the rates and storing them in rate_eval"""
+
+        def format_rate_call(r, use_tf=True):
+            args = ["rate_eval"]
+            if use_tf:
+                args.append("tf")
+            else:
+                args.append("T")
+            if r.rate_eval_needs_rho:
+                args.append("rho=rho")
+            if r.rate_eval_needs_comp:
+                args.append("Y=Y")
+            return f"{indent}{r.fname}({', '.join(args)})\n"
+
         ostr = ""
         ostr += f"{indent}# reaclib rates\n"
         for r in self.reaclib_rates:
-            ostr += f"{indent}{r.fname}(rate_eval, tf)\n"
+            ostr += format_rate_call(r)
 
         if self.derived_rates:
             ostr += f"\n{indent}# derived rates\n"
         for r in self.derived_rates:
-            ostr += f"{indent}{r.fname}(rate_eval, tf)\n"
+            ostr += format_rate_call(r)
 
         if self.tabular_rates:
             ostr += f"\n{indent}# tabular rates\n"
         for r in self.tabular_rates:
-            ostr += f"{indent}{r.fname}(rate_eval, T, rho*ye(Y))\n"
+            ostr += format_rate_call(r, use_tf=False)
 
         if self.custom_rates:
             ostr += f"\n{indent}# custom rates\n"
         for r in self.custom_rates:
-            ostr += f"{indent}{r.fname}(rate_eval, tf)\n"
+            ostr += format_rate_call(r)
 
         ostr += "\n"
 
@@ -157,11 +172,11 @@ class PythonNetwork(RateCollection):
         if self.approx_rates:
             ostr += f"\n{indent}# approximate rates\n"
         for r in self.approx_rates:
-            ostr += f"{indent}{r.fname}(rate_eval, tf)\n"
+            ostr += format_rate_call(r)
 
         return ostr
 
-    def _write_network(self, outfile=None):
+    def _write_network(self, outfile: str | Path = None):
         """
         This is the actual RHS for the system of ODEs that
         this network describes.
@@ -170,12 +185,14 @@ class PythonNetwork(RateCollection):
         if outfile is None:
             of = sys.stdout
         else:
-            of = open(outfile, "w")
+            outfile = Path(outfile)
+            of = outfile.open("w")
 
         indent = 4*" "
 
         of.write("import numba\n")
         of.write("import numpy as np\n")
+        of.write("from scipy import constants\n")
         of.write("from numba.experimental import jitclass\n\n")
         of.write("from pynucastro.rates import TableIndex, TableInterpolator, TabularRate, Tfactors\n")
         of.write("from pynucastro.screening import PlasmaState, ScreenFactors\n\n")
@@ -199,6 +216,16 @@ class PythonNetwork(RateCollection):
         for n in self.unique_nuclei:
             of.write(f"Z[j{n.raw}] = {n.Z}\n")
 
+        # we'll compute the masses here in erg
+
+        of.write("\n")
+
+        of.write("# masses in ergs\n")
+        of.write("mass = np.zeros((nnuc), dtype=np.float64)\n\n")
+        for n in self.unique_nuclei:
+            mass = n.A_nuc * constants.m_u_MeV * constants.MeV2erg
+            of.write(f"mass[j{n.raw}] = {mass}\n")
+
         of.write("\n")
 
         of.write("names = []\n")
@@ -218,6 +245,16 @@ class PythonNetwork(RateCollection):
         of.write(f'{indent}'"for i, nuc in enumerate(nuclei):\n")
         of.write(f'{indent*2}'"comp.X[nuc] = Y[i] * A[i]\n")
         of.write(f'{indent}'"return comp\n\n")
+
+        of.write("\n")
+
+        of.write("def energy_release(dY):\n")
+        of.write(f'{indent}''"""return the energy release in erg/g (/s if dY is actually dY/dt)"""\n')
+        of.write(f'{indent}'"enuc = 0.0\n")
+        of.write(f'{indent}'"for i, y in enumerate(dY):\n")
+        of.write(f'{indent*2}'"enuc += y * mass[i]\n")
+        of.write(f'{indent}'"enuc *= -1*constants.Avogadro\n")
+        of.write(f'{indent}'"return enuc\n\n")
 
         # partition function data (if needed)
 
@@ -328,23 +365,26 @@ class PythonNetwork(RateCollection):
 
         of.write(f"{indent}return jac\n")
 
+        if outfile is not None:
+            of.close()
+
         # Copy any tables in the network to the current directory
         # if the table file cannot be found, print a warning and continue.
         try:
-            odir = os.path.dirname(outfile)
-        except TypeError:
+            odir = outfile.parent
+        except AttributeError:
             odir = None
 
         for tr in self.tabular_rates:
-            tdir = os.path.dirname(tr.rfile_path)
-            if tdir != os.getcwd():
-                tdat_file = os.path.join(tdir, tr.table_file)
-                if os.path.isfile(tdat_file):
-                    shutil.copy(tdat_file, odir or os.getcwd())
+            tdir = tr.rfile_path.parent
+            if tdir != Path.cwd():
+                tdat_file = tdir/tr.table_file
+                if tdat_file.is_file():
+                    shutil.copy(tdat_file, odir or Path.cwd())
                 else:
-                    print(f'WARNING: Table data file {tr.table_file} not found.')
-                rtoki_file = os.path.join(tdir, tr.rfile)
-                if os.path.isfile(rtoki_file):
-                    shutil.copy(rtoki_file, odir or os.getcwd())
+                    warnings.warn(UserWarning(f'Table data file {tr.table_file} not found.'))
+                rtoki_file = tdir/tr.rfile
+                if rtoki_file.is_file():
+                    shutil.copy(rtoki_file, odir or Path.cwd())
                 else:
-                    print(f'WARNING: Table metadata file {tr.rfile} not found.')
+                    warnings.warn(UserWarning(f'Table metadata file {tr.rfile} not found.'))

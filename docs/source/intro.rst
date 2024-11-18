@@ -28,21 +28,21 @@ The main classes are:
 
   There are a few special rates derived from `Rate`:
 
-  * :func:`ReacLibRate <pynucastro.rates.rate.ReacLibRate>`: This is a rate in the
+  * :func:`ReacLibRate <pynucastro.rates.reaclib_rate.ReacLibRate>`: This is a rate in the
     JINA ReacLib format, with the temperature dependence specified by an interpolant
     with 7 different coefficients.
 
-  * :func:`TabularRate <pynucastro.rates.rate.TabularRate>`: This is a
+  * :func:`TabularRate <pynucastro.rates.tabular_rate.TabularRate>`: This is a
     rate that is tabulated in terms of :math:`(T, \rho Y_e)`.  This is
     how the weak rate (electron captures and beta-decays) are stored.
     Interpolation is used to find the rate at any thermodynamic state.
 
-  * :func:`ApproximateRate <pynucastro.rates.rate.ApproximateRate>`:
+  * :func:`ApproximateRate <pynucastro.rates.approximate_rates.ApproximateRate>`:
     An approximate rate groups together :math:`A(\alpha, \gamma)B` and
     :math:`A(\alpha,p)X(p,\gamma)B` into a single effective rate, assuming
     equilibrium of :math:`p` and :math:`X`.
 
-  * :func:`DerivedRate <pynucastro.rates.rate.DerivedRate>`: A
+  * :func:`DerivedRate <pynucastro.rates.derived_rate.DerivedRate>`: A
     derived rate uses detailed balance to recompute a reverse rate from the forward rate.
 
 * :func:`RatePair <pynucastro.rates.rate.RatePair>`: For a single nuclear process,
@@ -73,7 +73,12 @@ The main classes are:
   reaction networks.  A ``RateCollection`` has methods to evaluate the
   rates and make a plot of the links between rates.
 
-  There are three important subclasses:
+  There are a few important subclasses:
+
+  * :func:`NSENetwork
+    <pynucastro.networks.nse_network.NSENetwork>`: This allows
+    a user to find the nuclear statistical equilibrium state
+    of a collection of nuclei.
 
   * :func:`PythonNetwork
     <pynucastro.networks.python_network.PythonNetwork>`: This is a
@@ -85,6 +90,10 @@ The main classes are:
     This is a simple C++ network that provides functions for
     computing the righthand side and Jacobian of a network.
     Not all pynucastro features are supported in this network.
+
+  * :func:`FortranNetwork
+    <pynucastro.networks.fortran_network.FortranNetwork>`:
+    A network that provides Fortran wrappers to ``SimpleCxxNetwork``.
 
   * :func:`AmrexAstroCxxNetwork
     <pynucastro.networks.amrexastro_cxx_network.AmrexAstroCxxNetwork>`:
@@ -113,21 +122,11 @@ There are two modes of usage for pynucastro.
 
   where the :math:`\lambda`'s are the rates of destruction and creation
   of species i, represented by the molar fraction :math:`Y_i` (see,
-  e.g., `Timmes 1999
-  <https://ui.adsabs.harvard.edu/abs/1999ApJS..124..241T>`_).  pynucastro
+  e.g., :cite:t:`timmes:1999`).  pynucastro
   will create the righthand sides of this system of ODEs (as python or
   C++ code) from the list of rates you provide. One can use this to
   add reaction networks to existing simulation codes, for example, the
   `MAESTROeX <https://amrex-astro.github.io/MAESTROeX/>`_ and `Castro
   <https://amrex-astro.github.io/Castro/>`_ codes.
 
-
-Data sources
-------------
-
-pynucastro can currently read rates from:
-
-* `JINA Reaclib <https://reaclib.jinaweb.org/>`_
-
-* Electron-capture / :math:`\beta`-decay rates from Suzuki et al. 2016
 

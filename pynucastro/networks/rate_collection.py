@@ -2,12 +2,11 @@
 rates that together make up a network."""
 
 import collections
-import copy
 import functools
 import math
-import os
 import warnings
 from operator import mul
+from pathlib import Path
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
@@ -19,18 +18,17 @@ from matplotlib.patches import ConnectionPatch
 from matplotlib.scale import SymmetricalLogTransform
 from matplotlib.ticker import MaxNLocator
 from mpl_toolkits.axes_grid1 import make_axes_locatable
-from scipy import constants
 from scipy.optimize import brentq, fsolve
 
-# Import Rate
+from pynucastro.constants import constants
 from pynucastro.neutrino_cooling import sneut5
 from pynucastro.nucdata import Nucleus, PeriodicTable
 from pynucastro.rates import (ApproximateRate, DerivedRate, Library, Rate,
-                              RateFileError, RatePair, TabularRate, Tfactors,
+                              RateFileError, RatePair, TabularRate,
                               find_duplicate_rates, is_allowed_dupe, load_rate)
 from pynucastro.rates.library import _rate_name_to_nuc, capitalize_rid
-from pynucastro.screening import (NseState, get_screening_map,
-                                  make_plasma_state, make_screen_factors)
+from pynucastro.screening import (get_screening_map, make_plasma_state,
+                                  make_screen_factors)
 
 mpl.rcParams['figure.dpi'] = 100
 
@@ -89,88 +87,137 @@ def _skip_xp(n, p, r):
     return False
 
 
-class Composition:
+class Composition(collections.UserDict):
     """a composition holds the mass fractions of the nuclei in a network
     -- useful for evaluating the rates
 
     """
     def __init__(self, nuclei, small=1.e-16):
-        """nuclei is an iterable of the nuclei (Nucleus objects) in the network"""
-        if not isinstance(nuclei[0], Nucleus):
-            raise ValueError("must supply an iterable of Nucleus objects")
-        self.X = {k: small for k in nuclei}
+        """nuclei is an iterable of the nuclei in the network"""
+        try:
+            super().__init__({Nucleus.cast(k): small for k in nuclei})
+        except TypeError:
+            raise ValueError("must supply an iterable of Nucleus objects or strings") from None
+
+    @property
+    def X(self):
+        """backwards-compatible getter for self.X"""
+        return self.data
+
+    @X.setter
+    def X(self, new_value):
+        """backwards-compatible setter for self.X"""
+        self.data = new_value
+
+    def __delitem__(self, key):
+        super().__delitem__(Nucleus.cast(key))
+
+    def __getitem__(self, key):
+        return super().__getitem__(Nucleus.cast(key))
+
+    def __setitem__(self, key, value):
+        super().__setitem__(Nucleus.cast(key), value)
+
+    def __repr__(self):
+        return "Composition(" + super().__repr__() + ")"
 
     def __str__(self):
-        ostr = ""
-        for k in self.X:
-            ostr += f"  X({k}) : {self.X[k]}\n"
-        return ostr
+        return "".join(f"  X({k}) : {v}\n" for k, v in self.items())
+
+    @property
+    def A(self):
+        """ return nuclei: molar mass pairs for elements in composition"""
+        return {n: n.A for n in self}
+
+    @property
+    def Z(self):
+        """ return nuclei: charge pairs for elements in composition"""
+        return {n: n.Z for n in self}
 
     def get_nuclei(self):
         """return a list of Nuclei objects that make up this composition"""
-        return list(self.X)
+        return list(self)
+
+    def get_molar(self):
+        """ return a dictionary of molar fractions"""
+        return {k: v/k.A for k, v in self.items()}
 
     def get_sum_X(self):
         """return the sum of the mass fractions"""
-        return sum(self.X[q] for q in self.X)
+        return math.fsum(self.values())
 
     def set_solar_like(self, Z=0.02):
         """ approximate a solar abundance, setting p to 0.7, He4 to 0.3 - Z and
         the remainder evenly distributed with Z """
-        num = len(self.X)
-        rem = Z/(num-2)
-        for k in self.X:
+        rem = Z/(len(self)-2)
+        for k in self:
             if k == Nucleus("p"):
-                self.X[k] = 0.7
+                self[k] = 0.7
             elif k.raw == "he4":
-                self.X[k] = 0.3 - Z
+                self[k] = 0.3 - Z
             else:
-                self.X[k] = rem
+                self[k] = rem
 
         self.normalize()
 
+    def set_array(self, arr):
+        """ set all species from a sequence of mass fractions, in the same
+        order as returned by get_nuclei() """
+        for i, k in enumerate(self):
+            self[k] = arr[i]
+
     def set_all(self, xval):
         """ set all species to a particular value """
-        for k in self.X:
-            self.X[k] = xval
+        for k in self:
+            self[k] = xval
 
     def set_equal(self):
         """ set all species to be equal"""
-        for k in self.X:
-            self.X[k] = 1.0 / len(self.X)
+        self.set_all(1.0 / len(self))
+
+    def set_random(self, alpha=None, seed=None):
+        """ set all species using a Dirichlet distribution with
+        parameters alpha and specified rng seed """
+        # initializes random seed
+        rng = np.random.default_rng(seed)
+
+        # default is a flat Dirichlet distribution
+        if alpha is None:
+            alpha = np.ones(len(self))
+
+        fracs = rng.dirichlet(alpha)
+        self.set_array(fracs)
+
+        # ensures exact normalization
+        self.normalize()
 
     def set_nuc(self, name, xval):
         """ set nuclei name to the mass fraction xval """
-        for k in self.X:
-            if k.raw == name:
-                self.X[k] = xval
-                break
+        self[name] = xval
 
     def normalize(self):
         """ normalize the mass fractions to sum to 1 """
-        X_sum = sum(self.X[k] for k in self.X)
+        X_sum = self.get_sum_X()
 
-        for k in self.X:
-            self.X[k] /= X_sum
+        for k in self:
+            self[k] /= X_sum
 
-    def get_molar(self):
-        """ return a dictionary of molar fractions"""
-        molar_frac = {k: v/k.A for k, v in self.X.items()}
-        return molar_frac
-
-    def eval_ye(self):
+    @property
+    def ye(self):
         """ return the electron fraction """
-        electron_frac = sum(self.X[n] * n.Z / n.A for n in self.X) / sum(self.X[n] for n in self.X)
+        electron_frac = math.fsum(self[n] * n.Z / n.A for n in self) / self.get_sum_X()
         return electron_frac
 
-    def eval_abar(self):
+    @property
+    def abar(self):
         """ return the mean molecular weight """
-        abar = sum(self.X[n] / n.A for n in self.X)
+        abar = math.fsum(self[n] / n.A for n in self)
         return 1. / abar
 
-    def eval_zbar(self):
+    @property
+    def zbar(self):
         """ return the mean charge, Zbar """
-        return self.eval_abar() * self.eval_ye()
+        return self.abar * self.ye
 
     def bin_as(self, nuclei, *, verbose=False, exclude=None):
         """given a list of nuclei, return a new Composition object with the
@@ -179,6 +226,9 @@ class Composition:
         if a list of nuclei is provided by exclude, then only exact
         matches will be binned into the nuclei in that list
         """
+
+        nuclei = Nucleus.cast_list(nuclei)
+        exclude = Nucleus.cast_list(exclude, allow_None=True)
 
         # sort the input nuclei by A, then Z
         nuclei.sort(key=lambda n: (n.A, n.Z))
@@ -196,9 +246,9 @@ class Composition:
             # the abundance in the new, reduced composition and
             # remove the nucleus from consideration for the other
             # original nuclei
-            if ex_nuc in nuclei and ex_nuc in self.X:
+            if ex_nuc in nuclei and ex_nuc in self:
                 nuclei.remove(ex_nuc)
-                new_comp.X[ex_nuc] = self.X[ex_nuc]
+                new_comp[ex_nuc] = self[ex_nuc]
                 if verbose:
                     print(f"storing {ex_nuc} as {ex_nuc}")
 
@@ -208,7 +258,7 @@ class Composition:
         # loop over our original nuclei.  Find the new nucleus such
         # that n_orig.A >= n_new.A.  If there are multiple, then do
         # the same for Z
-        for old_n, v in self.X.items():
+        for old_n, v in self.items():
 
             if old_n in exclude:
                 # we should have already dealt with this above
@@ -239,7 +289,7 @@ class Composition:
 
             if verbose:
                 print(f"storing {old_n} as {match_nuc}")
-            new_comp.X[match_nuc] += v
+            new_comp[match_nuc] += v
 
         return new_comp
 
@@ -261,11 +311,11 @@ class Composition:
         trace_keys = []
         trace_tot = 0.
         main_keys = []
-        for k in self.X:
+        for k in self:
             # if below threshold, count as trace element
-            if self.X[k] < trace_threshold:
+            if self[k] < trace_threshold:
                 trace_keys.append(k)
-                trace_tot += self.X[k]
+                trace_tot += self[k]
             else:
                 main_keys.append(k)
 
@@ -275,7 +325,7 @@ class Composition:
 
             fig, ax = plt.subplots(1, 1, figsize=size)
 
-            ax.pie(self.X.values(), labels=self.X.keys(), autopct=lambda p: f"{p/100:0.3f}")
+            ax.pie(self.values(), labels=self.keys(), autopct=lambda p: f"{p/100:0.3f}")
 
         else:
             # find trace nuclei which contribute little to trace proportion
@@ -286,8 +336,8 @@ class Composition:
             limited_trace_keys = []
             other_trace_tot = 0.
             for k in trace_keys:
-                if self.X[k] < hard_limit:
-                    other_trace_tot += self.X[k]
+                if self[k] < hard_limit:
+                    other_trace_tot += self[k]
                 else:
                     limited_trace_keys.append(k)
 
@@ -296,7 +346,7 @@ class Composition:
             fig.subplots_adjust(wspace=0)
 
             # pie chart parameters
-            main_values = [trace_tot] + [self.X[k] for k in main_keys]
+            main_values = [trace_tot] + [self[k] for k in main_keys]
             main_labels = ['trace'] + main_keys
             explode = [0.2] + [0. for i in range(len(main_keys))]
 
@@ -306,8 +356,8 @@ class Composition:
                                 labels=main_labels, explode=explode)
 
             # bar chart parameters
-            trace_values = [self.X[k] for k in limited_trace_keys] + [other_trace_tot]
-            trace_labels = [k.short_spec_name for k in limited_trace_keys] + ['other']
+            trace_values = [self[k] for k in limited_trace_keys] + [other_trace_tot]
+            trace_labels = [f"{k}" for k in limited_trace_keys] + ['other']
             bottom = 1
             width = 0.1
 
@@ -358,9 +408,9 @@ class RateCollection:
     """ a collection of rates that together define a network """
     # pylint: disable=too-many-public-methods
 
-    pynucastro_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+    pynucastro_dir = Path(__file__).parents[1]
 
-    def __init__(self, rate_files=None, libraries=None, rates=None, precedence=(),
+    def __init__(self, rate_files=None, libraries=None, rates=None,
                  inert_nuclei=None,
                  symmetric_screening=False, do_screening=True):
         """rate_files are the files that together define the network.  This
@@ -374,16 +424,9 @@ class RateCollection:
         If rates is supplied, initialize a RateCollection using the
         Rate objects in the list 'rates'.
 
-        Precedence should be sequence of rate labels (e.g. wc17) to be used to
-        resolve name conflicts. If a nonempty sequence is provided, the rate
-        collection will automatically be scanned for multiple rates with the
-        same name. If all of their labels were given a ranking, the rate with
-        the label that comes first in the sequence will be retained and the
-        rest discarded.
-
-        inert_nuclei is a list of nuclei (as Nucleus objects) that
-        should be part of the collection but are not linked via reactions
-        to the other nuclei in the network.
+        inert_nuclei is a list of nuclei that should be part of the
+        collection but are not linked via reactions to the other nuclei
+        in the network.
 
         symmetric_screening means that we screen the reverse rates
         using the same factor as the forward rates, for rates computed
@@ -397,12 +440,10 @@ class RateCollection:
         self.rates = []
         combined_library = Library()
 
-        self.inert_nuclei = inert_nuclei
+        self.inert_nuclei = Nucleus.cast_list(inert_nuclei, allow_None=True)
 
         self.symmetric_screening = symmetric_screening
         self.do_screening = do_screening
-
-        self.inert_nuclei = inert_nuclei
 
         if rate_files:
             if isinstance(rate_files, str):
@@ -429,19 +470,7 @@ class RateCollection:
 
         self.rates = self.rates + combined_library.get_rates()
 
-        if precedence:
-            self._make_distinguishable(precedence)
-
         self._build_collection()
-
-        # cached values for vectorized evaluation
-        self.nuc_prod_count = None
-        self.nuc_cons_count = None
-        self.nuc_used = None
-        self.coef_arr = None
-        self.coef_mask = None
-        self.prefac = None
-        self.yfac = None
 
     def _build_collection(self):
 
@@ -460,12 +489,8 @@ class RateCollection:
                 if r.intermediate_nucleus not in self.unique_nuclei + self.approx_nuclei:
                     self.approx_nuclei.append(r.intermediate_nucleus)
 
-        if self.inert_nuclei:
-            for n in self.inert_nuclei:
-                if isinstance(n, Nucleus):
-                    nuc = n
-                else:
-                    nuc = Nucleus(n)
+        if self.inert_nuclei is not None:
+            for nuc in self.inert_nuclei:
                 if nuc not in self.unique_nuclei:
                     self.unique_nuclei.append(nuc)
 
@@ -547,6 +572,9 @@ class RateCollection:
             elif isinstance(r.chapter, int):
                 if r not in self.reaclib_rates:
                     self.reaclib_rates.append(r)
+                    if r.id == "n --> p <wc12_reaclib_weak_>":
+                        msg = "ReacLib neutron decay rate (<n_to_p_weak_wc12>) does not account for degeneracy at high densities. Consider using tabular rate from Langanke."
+                        warnings.warn(msg)
             else:
                 raise NotImplementedError(f"Chapter type unknown for rate chapter {r.chapter}")
 
@@ -671,12 +699,16 @@ class RateCollection:
 
     def get_rate_by_nuclei(self, reactants, products):
         """given a list of reactants and products, return any matching rates"""
+        reactants = sorted(Nucleus.cast_list(reactants))
+        products = sorted(Nucleus.cast_list(products))
         _tmp = [r for r in self.rates if
-                sorted(r.reactants) == sorted(reactants) and
-                sorted(r.products) == sorted(products)]
+                sorted(r.reactants) == reactants and
+                sorted(r.products) == products]
 
         if not _tmp:
             return None
+        if len(_tmp) == 1:
+            return _tmp[0]
         return _tmp
 
     def get_rate_by_name(self, name):
@@ -686,8 +718,6 @@ class RateCollection:
         _r = self.get_rate_by_nuclei(reactants, products)
         if _r is None:
             return None
-        if len(_r) == 1:
-            return _r[0]
         return _r
 
     def get_nuclei_needing_partition_functions(self):
@@ -730,13 +760,11 @@ class RateCollection:
         that directly involve them (this doesn't affect approximate rates that
         may have these nuclei as hidden intermediate links)"""
 
+        nuc_list = Nucleus.cast_list(nuc_list)
         rates_to_delete = []
         for nuc in nuc_list:
-            nn = nuc
-            if not isinstance(nuc, Nucleus):
-                nn = Nucleus(nuc)
             for rate in self.rates:
-                if nn in rate.reactants + rate.products:
+                if nuc in rate.reactants + rate.products:
                     print(f"looking to remove {rate}")
                     rates_to_delete.append(rate)
 
@@ -777,13 +805,7 @@ class RateCollection:
         effective approximate rate."""
 
         # make sure that the intermediate_nuclei list are Nuclei objects
-        _inter_nuclei_remove = []
-        if intermediate_nuclei is not None:
-            for nn in intermediate_nuclei:
-                if isinstance(nn, Nucleus):
-                    _inter_nuclei_remove.append(nn)
-                else:
-                    _inter_nuclei_remove.append(Nucleus(nn))
+        intermediate_nuclei = Nucleus.cast_list(intermediate_nuclei, allow_None=True)
 
         # find all of the (a,g) rates
         ag_rates = []
@@ -806,47 +828,32 @@ class RateCollection:
 
             inter_nuc = Nucleus(f"{element.abbreviation}{inter_nuc_A}")
 
-            if intermediate_nuclei and inter_nuc not in _inter_nuclei_remove:
+            if intermediate_nuclei and inter_nuc not in intermediate_nuclei:
                 continue
 
             # look for A(a,p)X
-            _r = self.get_rate_by_nuclei([prim_nuc, Nucleus("he4")], [inter_nuc, Nucleus("p")])
-
-            if _r:
-                r_ap = _r[-1]
-            else:
+            if not (r_ap := self.get_rate_by_nuclei([prim_nuc, Nucleus("he4")],
+                                                    [inter_nuc, Nucleus("p")])):
                 continue
 
             # look for X(p,g)B
-            _r = self.get_rate_by_nuclei([inter_nuc, Nucleus("p")], [prim_prod])
-
-            if _r:
-                r_pg = _r[-1]
-            else:
+            if not (r_pg := self.get_rate_by_nuclei([inter_nuc, Nucleus("p")],
+                                                    [prim_prod])):
                 continue
 
             # look for reverse B(g,a)A
-            _r = self.get_rate_by_nuclei([prim_prod], [prim_nuc, Nucleus("he4")])
-
-            if _r:
-                r_ga = _r[-1]
-            else:
+            if not (r_ga := self.get_rate_by_nuclei([prim_prod],
+                                                    [prim_nuc, Nucleus("he4")])):
                 continue
 
             # look for reverse B(g,p)X
-            _r = self.get_rate_by_nuclei([prim_prod], [inter_nuc, Nucleus("p")])
-
-            if _r:
-                r_gp = _r[-1]
-            else:
+            if not (r_gp := self.get_rate_by_nuclei([prim_prod],
+                                                    [inter_nuc, Nucleus("p")])):
                 continue
 
             # look for reverse X(p,a)A
-            _r = self.get_rate_by_nuclei([inter_nuc, Nucleus("p")], [Nucleus("he4"), prim_nuc])
-
-            if _r:
-                r_pa = _r[-1]
-            else:
+            if not (r_pa := self.get_rate_by_nuclei([inter_nuc, Nucleus("p")],
+                                                    [Nucleus("he4"), prim_nuc])):
                 continue
 
             # build the approximate rates
@@ -877,10 +884,22 @@ class RateCollection:
 
     def evaluate_rates(self, rho, T, composition, screen_func=None):
         """evaluate the rates for a specific density, temperature, and
-        composition, with optional screening."""
+        composition, with optional screening.
+
+        Note: this returns that rate as dY/dt, where Y is the molar fraction.
+        For a 2 body reaction, a + b, this will be of the form:
+
+        rho Y_a Y_b N_A <sigma v> / (1 + delta_{ab}
+
+        where delta is the Kronecker delta that accounts for a = b.
+
+        If you want dn/dt, where n is the number density (so you get
+        n_a n_b <sigma v>), then you need to multiply the results here
+        by rho N_A (where N_A is Avogadro's number).
+        """
         rvals = {}
         ys = composition.get_molar()
-        y_e = composition.eval_ye()
+        y_e = composition.ye
 
         if screen_func is not None:
             screen_factors = self.evaluate_screening(rho, T, composition, screen_func)
@@ -888,7 +907,7 @@ class RateCollection:
             screen_factors = {}
 
         for r in self.rates:
-            val = r.prefactor * rho**r.dens_exp * r.eval(T, rho * y_e)
+            val = r.prefactor * rho**r.dens_exp * r.eval(T, rho=rho, comp=composition)
             if (r.weak_type == 'electron_capture' and not isinstance(r, TabularRate)):
                 val = val * y_e
             yfac = functools.reduce(mul, [ys[q] for q in r.reactants])
@@ -1058,6 +1077,7 @@ class RateCollection:
                 # if we are doing symmetric screening
                 for r in scr.rates:
                     # use scor from the previous loop iteration
+                    # pylint: disable-next=possibly-used-before-assignment
                     factors[r] = scor * scor2
             else:
                 # there might be several rates that have the same
@@ -1067,182 +1087,6 @@ class RateCollection:
                     factors[r] = scor
 
         return factors
-
-    def _evaluate_n_e(self, state, Xs):
-
-        m_u = constants.value("unified atomic mass unit") * 1.0e3  # atomic unit mass in g
-
-        n_e = 0.0
-        for nuc in self.unique_nuclei:
-            n_e += nuc.Z * state.dens * Xs[nuc] / (nuc.A * m_u)
-
-        return n_e
-
-    def _evaluate_mu_c(self, n_e, state, use_coulomb_corr=True):
-        """ A helper equation that finds the mass fraction of each nuclide in NSE state,
-        u[0] is chemical potential of proton  while u[1] is chemical potential of neutron"""
-
-        # If there is proton included in network, upper limit of ye is 1
-        # And if neutron is included in network, lower limit of ye is 0.
-        # However, there are networks where either of them are included
-        # So here I add a general check to find the upper and lower limit of ye
-        # so the input doesn't go outside of the scope and the solver won't be able to converge if it did
-        ye_low = min(nuc.Z/nuc.A for nuc in self.unique_nuclei)
-        ye_max = max(nuc.Z/nuc.A for nuc in self.unique_nuclei)
-        assert state.ye >= ye_low and state.ye <= ye_max, "input electron fraction goes outside of scope for current network"
-
-        # Setting up the constants needed to compute mu_c
-        k = constants.value("Boltzmann constant") * 1.0e7          # boltzmann in erg/K
-        Erg2MeV = 624151.0
-
-        # u_c is the coulomb correction term for NSE
-        # Calculate the composition at NSE, equations found in appendix of Calder paper
-        u_c = {}
-
-        for nuc in set(list(self.unique_nuclei) + [Nucleus("p")]):
-            if use_coulomb_corr:
-                # These are three constants for calculating coulomb corrections of chemical energy, see Calders paper: iopscience 510709, appendix
-                A_1 = -0.9052
-                A_2 = 0.6322
-                A_3 = -0.5 * np.sqrt(3.0) - A_1 / np.sqrt(A_2)
-
-                Gamma = state.gamma_e_fac * n_e ** (1.0/3.0) * nuc.Z ** (5.0 / 3.0) / state.temp
-                u_c[nuc] = Erg2MeV * k * state.temp * (A_1 * (np.sqrt(Gamma * (A_2 + Gamma)) - A_2 * np.log(np.sqrt(Gamma / A_2) +
-                                      np.sqrt(1.0 + Gamma / A_2))) + 2.0 * A_3 * (np.sqrt(Gamma) - np.arctan(np.sqrt(Gamma))))
-            else:
-                u_c[nuc] = 0.0
-
-        return u_c
-
-    def _nucleon_fraction_nse(self, u, u_c, state):
-
-        # Define constants: amu, boltzmann, planck, and electron charge
-        m_u = constants.value("unified atomic mass unit") * 1.0e3  # atomic unit mass in g
-        k = constants.value("Boltzmann constant") * 1.0e7          # boltzmann in erg/K
-        h = constants.value("Planck constant") * 1.0e7             # in cgs
-        Erg2MeV = 624151.0
-
-        Xs = {}
-        up_c = u_c[Nucleus("p")]
-
-        for nuc in self.unique_nuclei:
-            if nuc.partition_function:
-                pf = nuc.partition_function.eval(state.temp)
-            else:
-                pf = 1.0
-
-            if not nuc.spin_states:
-                raise ValueError(f"The spin of {nuc} is not implemented for now.")
-
-            nse_exponent = (nuc.Z * u[0] + nuc.N * u[1] - u_c[nuc] + nuc.Z * up_c + nuc.nucbind * nuc.A) / k / state.temp / Erg2MeV
-            nse_exponent = min(500.0, nse_exponent)
-
-            Xs[nuc] = m_u * nuc.A_nuc * pf * nuc.spin_states / state.dens * (2.0 * np.pi * m_u * nuc.A_nuc * k * state.temp / h**2) ** (3. / 2.) \
-                    * np.exp(nse_exponent)
-
-        return Xs
-
-    def _constraint_eq(self, u, u_c, state):
-        """ Constraint Equations used to evaluate chemical potential for proton and neutron,
-        which is used when evaluating composition at NSE"""
-
-        # Don't use eval_ye() since it does automatic mass fraction normalization.
-        # However, we should force normalization through constraint eq1.
-
-        Xs = self._nucleon_fraction_nse(u, u_c, state)
-
-        eq1 = -1.0
-        for nuc in self.unique_nuclei:
-            eq1 += Xs[nuc]
-
-        eq2 = -state.ye
-        for nuc in self.unique_nuclei:
-            eq2 += Xs[nuc] * nuc.Z / nuc.A
-
-        return [eq1, eq2]
-
-    def get_comp_nse(self, rho, T, ye, init_guess=(-3.5, -15), tol=1.0e-11, use_coulomb_corr=False, return_sol=False):
-        """
-        Returns the NSE composition given density, temperature and prescribed electron fraction
-        using scipy.fsolve.
-
-        Parameters:
-        -------------------------------------
-        rho: NSE state density
-
-        T: NSE state Temperature
-
-        ye: prescribed electron fraction
-
-        init_guess: optional, initial guess of chemical potential of proton and neutron, [mu_p, mu_n]
-
-        tol: optional, sets the tolerance of scipy.fsolve
-
-        use_coulomb_corr: Whether to include coulomb correction terms
-
-        return_sol: Whether to return the solution of the proton and neutron chemical potential.
-        """
-
-        #From here we convert the init_guess list into a np.array object:
-
-        init_guess = np.array(init_guess)
-        state = NseState(T, rho, ye)
-
-        u_c = {}
-        for nuc in set(list(self.unique_nuclei) + [Nucleus("p")]):
-            u_c[nuc] = 0.0
-
-        Xs = {}
-
-        j = 0
-        init_guess = np.array(init_guess)
-        is_pos_old = False
-        found_sol = False
-
-        # Filter out runtimewarnings from fsolve, here we check convergence by np.isclose
-        warnings.filterwarnings("ignore", category=RuntimeWarning)
-
-        # This nested loops should fine-tune the initial guess if fsolve is unable to find a solution
-        while j < 20:
-            i = 0
-            guess = copy.deepcopy(init_guess)
-            init_dx = 0.5
-
-            while i < 20:
-                u = fsolve(self._constraint_eq, guess, args=(u_c, state), xtol=tol, maxfev=800)
-                Xs = self._nucleon_fraction_nse(u, u_c, state)
-                n_e = self._evaluate_n_e(state, Xs)
-                u_c = self._evaluate_mu_c(n_e, state, use_coulomb_corr)
-
-                res = self._constraint_eq(u, u_c, state)
-                is_pos_new = all(k > 0 for k in res)
-                found_sol = np.all(np.isclose(res, [0.0, 0.0], rtol=1.0e-7, atol=1.0e-7))
-
-                if found_sol:
-                    Xs = self._nucleon_fraction_nse(u, u_c, state)
-                    comp = Composition(self.unique_nuclei)
-                    comp.X = Xs
-
-                    if return_sol:
-                        return comp, u
-
-                    return comp
-
-                if is_pos_old != is_pos_new:
-                    init_dx *= 0.8
-
-                if is_pos_new:
-                    guess -= init_dx
-                else:
-                    guess += init_dx
-
-                is_pos_old = is_pos_new
-                i += 1
-
-            j += 1
-            init_guess[0] -= 0.5
-
-        raise ValueError("Unable to find a solution, try to adjust initial guess manually")
 
     def evaluate_ydots(self, rho, T, composition, screen_func=None, rate_filter=None):
         """evaluate net rate of change of molar abundance for each nucleus
@@ -1305,19 +1149,17 @@ class RateCollection:
         enuc = 0.
 
         # compute constants and units
-        m_n_MeV = constants.value('neutron mass energy equivalent in MeV')
-        m_p_MeV = constants.value('proton mass energy equivalent in MeV')
-        m_e_MeV = constants.value('electron mass energy equivalent in MeV')
-        MeV2erg = (constants.eV * constants.mega) / constants.erg
 
         # ion binding energy contributions. basically e=mc^2
         for nuc in self.unique_nuclei:
             # add up mass in MeV then convert to erg
-            mass = ((nuc.A - nuc.Z) * m_n_MeV + nuc.Z * (m_p_MeV + m_e_MeV) - nuc.A * nuc.nucbind) * MeV2erg
+            mass = ((nuc.A - nuc.Z) * constants.m_n_MeV +
+                    nuc.Z * (constants.m_p_MeV + constants.m_e_MeV) -
+                    nuc.A * nuc.nucbind) * constants.MeV2erg
             enuc += ydots[nuc] * mass
 
         # convert from molar value to erg/g/s
-        enuc *= -1*constants.Avogadro
+        enuc *= -1*constants.N_A
 
         # subtract neutrino losses for tabular weak reactions
         enu = 0.0
@@ -1325,11 +1167,10 @@ class RateCollection:
             if isinstance(r, TabularRate):
                 # get composition
                 ys = composition.get_molar()
-                y_e = composition.eval_ye()
 
                 # need to get reactant nucleus
                 nuc = r.reactants[0]
-                enu += constants.Avogadro * ys[nuc] * r.get_nu_loss(T, rho * y_e)
+                enu += constants.N_A * ys[nuc] * r.get_nu_loss(T, rho=rho, comp=composition)
 
         enuc -= enu
         if return_enu:
@@ -1358,198 +1199,6 @@ class RateCollection:
             act[nuc] = sum(produced) + sum(consumed)
 
         return act
-
-    def calc_count_matrices(self):
-        """
-        Compute and store 3 count matrices that can be used for vectorized rate calculations.
-        Each matrix has shape *number_of_species × number_of_rates*. The first matrix (*nuc_prod_count*)
-        stores the count of each nucleus in rates producing that nucleus. The second
-        (*nuc_cons_count*) stores the count of each nucleus in rates consuming that nucleus. The
-        third (*nuc_used*) stores a Boolean matrix of whether the nucleus is involved in the reaction
-        or not.
-        """
-
-        # Rate -> index mapping
-        r_map = {}
-        for i, r in enumerate(self.rates):
-            r_map[r] = i
-
-        N_species = len(self.unique_nuclei)
-        N_rates = len(self.rates)
-
-        # Counts for reactions producing nucleus
-        self.nuc_prod_count = np.zeros((N_species, N_rates), dtype=np.int32)
-        # Counts for reactions consuming nucleus
-        self.nuc_cons_count = np.zeros((N_species, N_rates), dtype=np.int32)
-
-        for i, n in enumerate(self.unique_nuclei):
-
-            for r in self.nuclei_produced[n]:
-                self.nuc_prod_count[i, r_map[r]] = r.products.count(n)
-
-            for r in self.nuclei_consumed[n]:
-                self.nuc_cons_count[i, r_map[r]] = r.reactants.count(n)
-
-        # Whether the nucleus is involved in the reaction or not
-        self.nuc_used = np.logical_or(self.nuc_prod_count, self.nuc_cons_count).T
-
-    def update_rate_coef_arr(self):
-        """
-        Store Reaclib rate coefficient array, as well as a Boolean mask array determining
-        how many sets to include in the final rate evaluation. The first array (*coef_arr*)
-        has shape *number_of_rates × number_of_species × 7*, while the second has shape
-        *number_of_rates × number_of_species*.
-        """
-
-        # coef arr can be precomputed if evaluate_rates_arr is called multiple times
-        N_sets = max(len(r.sets) for r in self.rates)
-
-        coef_arr = np.zeros((len(self.rates), N_sets, 7), dtype=np.float64)
-        coef_mask = np.zeros((len(self.rates), N_sets), dtype=np.bool_)
-
-        for i, r in enumerate(self.rates):
-            for j, s in enumerate(r.sets):
-                coef_arr[i, j, :] = s.a
-                coef_mask[i, j] = True
-
-        self.coef_arr = coef_arr
-        self.coef_mask = coef_mask
-
-    def update_yfac_arr(self, composition):
-        """
-        Calculate and store molar fraction component of each rate (Y of each reactant raised to
-        the appropriate power). The results are stored in an array called *yfac*. The method
-        *calc_count_matrices* needs to have been called with this net beforehand.
-        """
-
-        # yfac must be evaluated each time composition changes, probably pretty cheap
-        yfac = np.ones((len(self.rates), len(self.unique_nuclei)), dtype=np.float64)
-        ys = np.array(list(composition.get_molar().values()), dtype=np.float64)
-
-        yfac *= ys**self.nuc_cons_count.T
-        yfac = np.prod(yfac, axis=1)
-        self.yfac = yfac
-
-    def update_prefac_arr(self, rho, composition):
-        """
-        Calculate and store rate prefactors, which include both statistical prefactors and
-        mass density raised to the corresponding density exponents. The results are stored in
-        an array called *prefac*.
-        """
-
-        y_e = composition.eval_ye()
-        prefac = np.zeros(len(self.rates))
-        for i, r in enumerate(self.rates):
-            if r.label == "tabular":
-                raise ValueError('Tabular rates are not supported in vectorized rate calculations.')
-            prefac[i] = r.prefactor * rho**r.dens_exp
-            if r.weak_type == 'electron_capture':
-                prefac[i] *= y_e
-
-        self.prefac = prefac
-
-    def evaluate_rates_arr(self, T):
-        """
-        Evaluate the rates in the network for a specific temperature, assuming necessary precalculations
-        have been carried out (calling the methods *calc_count_matrices*, *update_rate_coef_arr*,
-        *update_yfac_arr*, and *update_prefac_arr*). The latter two set the composition and density.
-
-        This performs a vectorized calculation, and returns an array ordered by the rates in the *rates*
-        member variable. This does not support tabular rates.
-
-        See *evaluate_rates* method for non-vectorized version. Relative performance between the
-        two varies based on the setup. See *clear_arrays* for freeing memory post calculation.
-        """
-
-        # T9 arr only needs to be evaluated when T changes
-        T9_arr = Tfactors(T).array[None, None, :]
-
-        rvals = self.prefac*self.yfac*np.sum(np.exp(np.sum(self.coef_arr*T9_arr, axis=2))*self.coef_mask, axis=1)
-
-        return rvals
-
-    def evaluate_ydots_arr(self, T):
-        """
-        Evaluate net rate of change of molar abundance for each nucleus in the network for a
-        specific temperature, assuming necessary precalculations have been carried out (calling the
-        methods *calc_count_matrices*, *update_rate_coef_arr*, *update_yfac_arr*, and
-        *update_prefac_arr*). The latter two set the composition and density.
-
-        This performs a vectorized calculation, and returns an array ordered by the nuclei in the
-        *unique_nuclei* member variable. This does not support tabular rates.
-
-        See *evaluate_ydots* method for non-vectorized version. Relative performance between the
-        two varies based on the setup. See *clear_arrays* for freeing memory post calculation.
-        """
-
-        rvals_arr = self.evaluate_rates_arr(T)
-
-        p_A = np.sum(self.nuc_prod_count*rvals_arr, axis=1)
-        c_A = np.sum(self.nuc_cons_count*rvals_arr, axis=1)
-
-        return p_A - c_A
-
-    def evaluate_activity_arr(self, T):
-        """
-        sum over all of the terms contributing to dY/dt for a specific temperature, neglecting sign,
-        assuming necessary precalculations have been carried out (calling the methods
-        *calc_count_matrices*, *update_rate_coef_arr*, *update_yfac_arr*, and *update_prefac_arr*).
-        The latter two set the composition and density.
-
-        This performs a vectorized calculation, and returns an array ordered by the nuclei in the
-        *unique_nuclei* member variable. This does not support tabular rates.
-
-        See *evaluate_activity* method for non-vectorized version. Relative performance between the
-        two varies based on the setup. See *clear_arrays* for freeing memory post calculation.
-        """
-
-        rvals_arr = self.evaluate_rates_arr(T)
-
-        p_A = np.sum(self.nuc_prod_count*rvals_arr, axis=1)
-        c_A = np.sum(self.nuc_cons_count*rvals_arr, axis=1)
-
-        return p_A + c_A
-
-    def clear_arrays(self):
-        """
-        Clear all temporary variables created/set by the *calc_count_matrices*, *update_rate_coef_arr*,
-        *update_yfac_arr*, and *update_prefac_arr* member functions, freeing up memory.
-        """
-
-        try:
-            del self.nuc_prod_count
-        except AttributeError:
-            pass
-
-        try:
-            del self.nuc_cons_count
-        except AttributeError:
-            pass
-
-        try:
-            del self.nuc_used
-        except AttributeError:
-            pass
-
-        try:
-            del self.coef_arr
-        except AttributeError:
-            pass
-
-        try:
-            del self.coef_mask
-        except AttributeError:
-            pass
-
-        try:
-            del self.prefac
-        except AttributeError:
-            pass
-
-        try:
-            del self.yfac
-        except AttributeError:
-            pass
 
     def _get_network_chart(self, rho, T, composition):
         """a network chart is a dict, keyed by rate that holds a list of tuples (Nucleus, ydot)"""
@@ -1638,45 +1287,14 @@ class RateCollection:
                 print(f'Rate {r} is in chapter {r.chapter}')
         return len(set(names)) == len(self.rates)
 
-    def _make_distinguishable(self, precedence):
-        """If multiple rates have the same name, eliminate the extraneous ones according to their
-        labels' positions in the precedence list. Only do this if all of the labels have
-        rankings in the list."""
-
-        nameset = {r.fname for r in self.rates}
-        precedence = {lab: i for i, lab in enumerate(precedence)}
-
-        def sorting_key(i):
-            return precedence[self.rates[i].label]
-
-        for n in nameset:
-
-            # Count instances of name, and cycle if there is only one
-            ind = [i for i, r in enumerate(self.rates) if r.fname == n]
-            k = len(ind)
-            if k <= 1:
-                continue
-
-            # If there were multiple instances, use the precedence settings to delete extraneous
-            # rates
-            labels = [self.rates[i].label for i in ind]
-
-            if all(lab in precedence for lab in labels):
-
-                sorted_ind = sorted(ind, key=sorting_key)
-                r = self.rates[sorted_ind[0]]
-                for i in sorted(sorted_ind[1:], reverse=True):
-                    del self.rates[i]
-                print(f'Found rate {r} named {n} with {k} entries in the RateCollection.')
-                print(f'Kept only entry with label {r.label} out of {labels}.')
-
     def _write_network(self, *args, **kwargs):
         """A stub for function to output the network -- this is implementation
         dependent."""
         # pylint: disable=unused-argument
         print('To create network integration source code, use a class that implements a specific network type.')
 
-    def plot(self, outfile=None, rho=None, T=None, comp=None,
+    def plot(self, rho=None, T=None, comp=None, *,
+             outfile=None,
              size=(800, 600), dpi=100, title=None,
              ydot_cutoff_value=None, show_small_ydot=False,
              node_size=1000, node_font_size=13, node_color="#A0CBE2", node_shape="o",
@@ -1684,6 +1302,7 @@ class RateCollection:
              N_range=None, Z_range=None, rotated=False,
              always_show_p=False, always_show_alpha=False,
              hide_xp=False, hide_xalpha=False,
+             edge_labels=None,
              highlight_filter_function=None,
              nucleus_filter_function=None, rate_filter_function=None):
         """Make a plot of the network structure showing the links between
@@ -1743,6 +1362,10 @@ class RateCollection:
 
         hide_xp=False: dont connect the links to p for heavy
         nuclei reactions of the form A(p,X)B or A(X,p)B.
+
+        edge_labels: a dictionary of the form {(n1, n2): "label"}
+        that gives labels for the edges in the network connecting
+        nucleus n1 to n2.
 
         highlight_filter_function: name of a custom function that
         takes a Rate object and returns true or false if we want
@@ -1885,7 +1508,7 @@ class RateCollection:
         for r in self.rates:
             if not isinstance(r, ApproximateRate):
                 continue
-            for sr in r.secondary_rates + r.secondary_reverse:
+            for sr in r.hidden_rates:
                 if sr in rate_seen:
                     continue
                 rate_seen.append(sr)
@@ -1972,6 +1595,12 @@ class RateCollection:
                                    connectionstyle=connectionstyle,
                                    node_size=node_size, ax=ax)
 
+        if edge_labels:
+            nx.draw_networkx_edge_labels(G, G.position,
+                                         connectionstyle=connectionstyle,
+                                         font_size=node_font_size,
+                                         edge_labels=edge_labels)
+
         if ydots is not None:
             pc = mpl.collections.PatchCollection(real_edges_lc, cmap=plt.cm.viridis)
             pc.set_array(real_weights)
@@ -2030,16 +1659,20 @@ class RateCollection:
 
         return fig
 
-    def plot_jacobian(self, outfile=None, rho=None, T=None, comp=None,
-                      screen_func=None,
+    def plot_jacobian(self, rho, T, comp, *,
+                      outfile=None, screen_func=None,
+                      rate_scaling=1.e10,
                       size=(800, 800), dpi=100):
+        """plot the Jacobian matrix of the system.  Here, rate_scaling is used
+        to set the cutoff of values that we show, relative to the peak.  Any
+        Jacobian element smaller than this will not be shown."""
 
         jac = self.evaluate_jacobian(rho, T, comp, screen_func=screen_func)
 
         valid_max = np.abs(jac).max()
 
         # pylint: disable-next=redundant-keyword-arg
-        norm = SymLogNorm(valid_max/1.e10, vmin=-valid_max, vmax=valid_max)
+        norm = SymLogNorm(valid_max/rate_scaling, vmin=-valid_max, vmax=valid_max)
 
         fig, ax = plt.subplots()
         fig.set_size_inches(size[0]/dpi, size[1]/dpi)
@@ -2069,7 +1702,8 @@ class RateCollection:
 
         return fig
 
-    def plot_network_chart(self, outfile=None, rho=None, T=None, comp=None,
+    def plot_network_chart(self, rho=None, T=None, comp=None, *,
+                           outfile=None,
                            size=(800, 800), dpi=100, force_one_column=False):
 
         nc = self._get_network_chart(rho, T, comp)
@@ -2262,7 +1896,7 @@ class RateCollection:
 
         # Get figure, colormap
         fig, ax = plt.subplots()
-        cmap = mpl.cm.get_cmap(cmap)
+        cmap = mpl.colormaps.get_cmap(cmap)
 
         # Get nuclei and all 3 numbers
         nuclei = self.unique_nuclei
@@ -2283,7 +1917,7 @@ class RateCollection:
 
         elif color_field == "x":
 
-            values = np.array([comp.X[nuc] for nuc in nuclei])
+            values = np.array([comp[nuc] for nuc in nuclei])
 
         elif color_field == "y":
 

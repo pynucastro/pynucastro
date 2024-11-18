@@ -9,7 +9,7 @@ class TestNSE:
 
         lib = reaclib_library.linking_nuclei(["p", "he4", "fe52",
                                               "co55", "ni56"])
-        return pyna.RateCollection(libraries=lib)
+        return pyna.NSENetwork(libraries=lib)
 
     def test_nse_coul(self, pynet):
 
@@ -23,11 +23,11 @@ class TestNSE:
         xsum = sum(nse_Xs)
 
         assert xsum == pytest.approx(1.0, rel=1.0e-10)
-        assert nse_Xs[0] == pytest.approx(0.009432528259141131, rel=1.0e-10)
-        assert nse_Xs[1] == pytest.approx(0.44084190707382365, rel=1.0e-10)
-        assert nse_Xs[2] == pytest.approx(0.007118438690709681, rel=1.0e-10)
-        assert nse_Xs[3] == pytest.approx(0.5187890542527211, rel=1.0e-10)
-        assert nse_Xs[4] == pytest.approx(0.023818071723544595, rel=1.0e-10)
+        assert nse_Xs[0] == pytest.approx(0.009432340970989602, rel=1.0e-10)
+        assert nse_Xs[1] == pytest.approx(0.44083376851072315, rel=1.0e-10)
+        assert nse_Xs[2] == pytest.approx(0.007140861274574405, rel=1.0e-10)
+        assert nse_Xs[3] == pytest.approx(0.5187787534043939, rel=1.0e-10)
+        assert nse_Xs[4] == pytest.approx(0.023814275839289616, rel=1.0e-10)
 
     def test_nse_no_coul(self, pynet):
 
@@ -41,8 +41,8 @@ class TestNSE:
         xsum = sum(nse_Xs)
 
         assert xsum == pytest.approx(1.0, rel=1.0e-10)
-        assert nse_Xs[0] == pytest.approx(0.009096572438869752, rel=1.0e-10)
-        assert nse_Xs[1] == pytest.approx(0.4630929175748844, rel=1.0e-10)
-        assert nse_Xs[2] == pytest.approx(0.006684804511147247, rel=1.0e-10)
-        assert nse_Xs[3] == pytest.approx(0.5003114841378136, rel=1.0e-10)
-        assert nse_Xs[4] == pytest.approx(0.020814221337257847, rel=1.0e-10)
+        assert nse_Xs[0] == pytest.approx(0.009096405176710266, rel=1.0e-10)
+        assert nse_Xs[1] == pytest.approx(0.46308446535589587, rel=1.0e-10)
+        assert nse_Xs[2] == pytest.approx(0.006705879462385593, rel=1.0e-10)
+        assert nse_Xs[3] == pytest.approx(0.5003022847190655, rel=1.0e-10)
+        assert nse_Xs[4] == pytest.approx(0.02081096528594651, rel=1.0e-10)

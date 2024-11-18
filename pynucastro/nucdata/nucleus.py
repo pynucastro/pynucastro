@@ -2,32 +2,24 @@
 Classes and methods to interface with files storing rate data.
 """
 
-import os
 import re
+from pathlib import Path
 
-from scipy.constants import physical_constants
-
-from pynucastro.nucdata.binding_table import BindingTable
-from pynucastro.nucdata.elements import PeriodicTable
+from pynucastro.constants import constants
+from pynucastro.nucdata.elements import PeriodicTable, UnidentifiedElement
+from pynucastro.nucdata.halflife_table import HalfLifeTable
 from pynucastro.nucdata.mass_table import MassTable
 from pynucastro.nucdata.partition_function import PartitionFunctionCollection
 from pynucastro.nucdata.spin_table import SpinTable
 
-_pynucastro_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-_pynucastro_rates_dir = os.path.join(_pynucastro_dir, 'library')
-_pynucastro_tabular_dir = os.path.join(_pynucastro_rates_dir, 'tabular')
+_pynucastro_dir = Path(__file__).parents[1]
+_pynucastro_rates_dir = _pynucastro_dir/'library'
+_pynucastro_tabular_dir = _pynucastro_rates_dir/'tabular'
 
-#set the atomic mass unit constant in MeV
-m_u, _, _ = physical_constants['atomic mass constant energy equivalent in MeV']
-
-#read the mass excess table once and store it at the module-level
+# read the various tables with nuclear properties at the module-level
 _mass_table = MassTable()
-
-#read the spin table once and store it at the module-level
+_halflife_table = HalfLifeTable()
 _spin_table = SpinTable(reliable=True)
-
-# read the binding energy table once and store it at the module-level
-_binding_table = BindingTable()
 
 # read the partition function table once and store it at the module-level
 _pcollection = PartitionFunctionCollection(use_high_temperatures=True, use_set='frdm')
@@ -51,8 +43,10 @@ class Nucleus:
     :var caps_name:       capitalized short species name (e.g. "He4")
     :var el:              element name (e.g. "he")
     :var pretty:          LaTeX formatted version of the nucleus name
-    :var A_nuc:           Nuclear Mass in amu
-
+    :var dm:              mass excess (MeV)
+    :var A_nuc:           nuclear mass (amu)
+    :var mass:            nuclear mass (MeV)
+    :var tau:             half life (s)
     """
     _cache = {}
 
@@ -139,24 +133,57 @@ class Nucleus:
         except ValueError:
             self.partition_function = None
 
+        # nuclear mass
         try:
-            self.nucbind = _binding_table.get_binding_energy(n=self.N, z=self.Z)
+            mass_H = _mass_table.get_mass_diff(a=1, z=1) + constants.m_u_MeV
+            self.dm = _mass_table.get_mass_diff(a=self.A, z=self.Z)
+            self.A_nuc = float(self.A) + self.dm / constants.m_u_MeV
+            self.mass = self.A * constants.m_u_MeV + self.dm
+            B = (self.Z * mass_H + self.N * constants.m_n_MeV) - self.mass
+            self.nucbind = B / self.A
+
         except NotImplementedError:
-            # the binding energy table doesn't know about this nucleus
+            self.dm = None
+            self.A_nuc = None
+            self.mass = None
             self.nucbind = None
 
-        # Now we will define the Nuclear Mass,
+        # halflife
         try:
-            self.A_nuc = float(self.A) + _mass_table.get_mass_diff(a=self.A, z=self.Z) / m_u
+            self.tau = _halflife_table.get_halflife(a=self.A, z=self.Z)
         except NotImplementedError:
-            self.A_nuc = None
+            self.tau = None
 
     @classmethod
     def from_cache(cls, name, dummy=False):
         key = (name.lower(), dummy)
         if key not in cls._cache:
-            cls._cache[key] = Nucleus(name, dummy)
+            cls._cache[key] = cls(name, dummy)
         return cls._cache[key]
+
+    @classmethod
+    def from_Z_A(cls, Z, A, dummy=False):
+        """creates a nucleus given Z and A"""
+
+        # checks if Z and A are valid inputs
+        if not (isinstance(Z, int) and isinstance(A, int)):
+            raise TypeError("Nucleus Z and A must be integers")
+        if not (Z >= 0 and A >= 0):
+            raise ValueError("Nucleus Z and A must be non-negative")
+        if Z > A:
+            raise ValueError("Nucleus Z can't be bigger than A")
+
+        # checks if neutron
+        if (Z, A) == (0, 1):
+            return cls.from_cache("n", dummy)
+
+        # otherwise, finds element Z on the periodic table
+        i = PeriodicTable.lookup_Z(Z)
+        if i is None:
+            raise UnidentifiedElement(f"Element {Z} could not be found")
+
+        name = i.abbreviation + str(A)
+        return cls.from_cache(name, dummy)
 
     def __repr__(self):
         if self.raw not in ("p", "d", "t", "n"):
@@ -187,6 +214,36 @@ class Nucleus:
             return self.Z < other.Z
         return self.A < other.A
 
+    def __add__(self, other):
+        Z = self.Z + other.Z
+        A = self.A + other.A
+        dummy = self.dummy and other.dummy
+        return Nucleus.from_Z_A(Z, A, dummy)
+
+    def __sub__(self, other):
+        Z = self.Z - other.Z
+        A = self.A - other.A
+        dummy = self.dummy and other.dummy
+        return Nucleus.from_Z_A(Z, A, dummy)
+
+    @classmethod
+    def cast(cls, obj):
+        if isinstance(obj, cls):
+            return obj
+        if isinstance(obj, str):
+            return cls.from_cache(obj)
+        raise TypeError("Invalid type passed to Nucleus.cast() (expected str or Nucleus)")
+
+    @classmethod
+    def cast_list(cls, lst, *, allow_None=False, allow_single=False):
+        if allow_None and lst is None:
+            return lst
+        if isinstance(lst, (str, cls)):
+            if allow_single:
+                return [cls.cast(lst)]
+            raise ValueError("Single object passed to Nucleus.cast_list() instead of list")
+        return [cls.cast(obj) for obj in lst]
+
 
 def get_nuclei_in_range(zmin, zmax, amin, amax):
     """given a range of Z = [zmin, zmax], and A = [amin, amax],
@@ -201,5 +258,21 @@ def get_nuclei_in_range(zmin, zmax, amin, amax):
         for a in range(amin, amax+1):
             name = f"{element.abbreviation}{a}"
             nuc_list.append(Nucleus(name))
+
+    return nuc_list
+
+
+def get_all_nuclei():
+    """Return a list will every Nucleus that has a known mass"""
+
+    nuc_list = []
+
+    for (A, Z) in _mass_table.mass_diff:
+        if Z == 0 and A == 1:
+            nuc = "n"
+        else:
+            el = PeriodicTable.lookup_Z(Z)
+            nuc = f"{el.abbreviation}{A}"
+        nuc_list.append(Nucleus(nuc))
 
     return nuc_list

@@ -1,5 +1,6 @@
 import numba
 import numpy as np
+from scipy import constants
 from numba.experimental import jitclass
 
 from pynucastro.rates import TableIndex, TableInterpolator, TabularRate, Tfactors
@@ -40,6 +41,19 @@ Z[jne23] = 10
 Z[jna23] = 11
 Z[jmg23] = 12
 
+# masses in ergs
+mass = np.zeros((nnuc), dtype=np.float64)
+
+mass[jn] = 0.001505349762871528
+mass[jp] = 0.0015040963047307696
+mass[jhe4] = 0.0059735574859708365
+mass[jc12] = 0.017909017027273523
+mass[jo16] = 0.023871099855618198
+mass[jne20] = 0.029837079292893483
+mass[jne23] = 0.03431735827046045
+mass[jna23] = 0.03431034746033777
+mass[jmg23] = 0.03431684618276469
+
 names = []
 names.append("n")
 names.append("H1")
@@ -59,6 +73,15 @@ def to_composition(Y):
     for i, nuc in enumerate(nuclei):
         comp.X[nuc] = Y[i] * A[i]
     return comp
+
+
+def energy_release(dY):
+    """return the energy release in erg/g (/s if dY is actually dY/dt)"""
+    enuc = 0.0
+    for i, y in enumerate(dY):
+        enuc += y * mass[i]
+    enuc *= -1*constants.Avogadro
+    return enuc
 
 @jitclass([
     ("C12_C12__He4_Ne20", numba.float64),
@@ -173,15 +196,17 @@ def He4_He4_He4__C12(rate_eval, tf):
     rate_eval.He4_He4_He4__C12 = rate
 
 @numba.njit()
-def Na23__Ne23(rate_eval, T, rhoY):
+def Na23__Ne23(rate_eval, T, rho, Y):
     # Na23 --> Ne23
+    rhoY = rho * ye(Y)
     Na23__Ne23_interpolator = TableInterpolator(*Na23__Ne23_info)
     r = Na23__Ne23_interpolator.interpolate(np.log10(rhoY), np.log10(T), TableIndex.RATE.value)
     rate_eval.Na23__Ne23 = 10.0**r
 
 @numba.njit()
-def Ne23__Na23(rate_eval, T, rhoY):
+def Ne23__Na23(rate_eval, T, rho, Y):
     # Ne23 --> Na23
+    rhoY = rho * ye(Y)
     Ne23__Na23_interpolator = TableInterpolator(*Ne23__Na23_info)
     r = Ne23__Na23_interpolator.interpolate(np.log10(rhoY), np.log10(T), TableIndex.RATE.value)
     rate_eval.Ne23__Na23 = 10.0**r
@@ -204,8 +229,8 @@ def rhs_eq(t, Y, rho, T, screen_func):
     He4_He4_He4__C12(rate_eval, tf)
 
     # tabular rates
-    Na23__Ne23(rate_eval, T, rho*ye(Y))
-    Ne23__Na23(rate_eval, T, rho*ye(Y))
+    Na23__Ne23(rate_eval, T, rho=rho, Y=Y)
+    Ne23__Na23(rate_eval, T, rho=rho, Y=Y)
 
     if screen_func is not None:
         plasma_state = PlasmaState(T, rho, Y, Z)
@@ -295,8 +320,8 @@ def jacobian_eq(t, Y, rho, T, screen_func):
     He4_He4_He4__C12(rate_eval, tf)
 
     # tabular rates
-    Na23__Ne23(rate_eval, T, rho*ye(Y))
-    Ne23__Na23(rate_eval, T, rho*ye(Y))
+    Na23__Ne23(rate_eval, T, rho=rho, Y=Y)
+    Ne23__Na23(rate_eval, T, rho=rho, Y=Y)
 
     if screen_func is not None:
         plasma_state = PlasmaState(T, rho, Y, Z)

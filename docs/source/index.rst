@@ -4,9 +4,18 @@
    contain the root `toctree` directive.
 
 pynucastro
-==========
+==============
 
-`https://github.com/pynucastro/pynucastro <https://github.com/pynucastro/pynucastro>`_
+`http://github.com/pynucastro/pynucastro <http://github.com/pynucastro/pynucastro>`_
+
+.. note::
+
+   pynucastro does not yet calculate nuclear partition functions to
+   correct reverse rates in the Reaclib library. Work is ongoing to
+   implement this functionality. We recommend you consider what
+   problem you wish to study using pynucastro to determine whether
+   reverse rates and partition function corrections are significant at
+   the temperatures of interest.
 
 pynucastro is a set of python interfaces to nuclear reaction rate
 databases (including the JINA reaclib nuclear reaction rate database).
@@ -16,71 +25,14 @@ codes.
 
 
 .. toctree::
-   :maxdepth: 1
-   :caption: Introduction
+   :maxdepth: 2
+   :caption: Contents
 
    intro
-   data_sources
-   install
-
-.. toctree::
-   :maxdepth: 1
-   :caption: Exploring Networks in Python
-
    pynucastro-examples.ipynb
-   plot-types.ipynb
-   pynucastro-integration.ipynb
-
-.. toctree::
-   :maxdepth: 1
-   :caption: Selecting Rates
-
-   library-examples.ipynb
-   validate-example.ipynb
-   electron-capture-example.ipynb
-   electron-captures.ipynb
-
-.. toctree::
-   :maxdepth: 1
-   :caption: Advanced Rate Operations
-
-   screening-examples
-   modify-example.ipynb
-   approx-rates-examples.ipynb
-   custom-rates.ipynb
-   unimportant-rates.ipynb
-   partition-function
-
-.. toctree::
-   :maxdepth: 1
-   :caption: Writing Networks
-
+   library-examples-nuclei.ipynb
+   library-examples-filtering.ipynb
    networks
-   cxx-networks
-
-.. toctree::
-   :maxdepth: 1
-   :caption: Nuclear Statistical Equilibrium
-
-   NSE-example.ipynb
-
-.. toctree::
-   :maxdepth: 1
-   :caption: Plasma Neutrinos
-
-   neutrino-cooling.ipynb
-
-.. toctree::
-   :maxdepth: 1
-   :caption: Interfacing With Other Languages
-
-   julia
-
-.. toctree::
-   :maxdepth: 1
-   :caption: Reference
-
-   citing
    API <modules>
    sources
 

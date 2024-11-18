@@ -5,13 +5,12 @@ import shutil
 import pytest
 
 from pynucastro import networks
-from pynucastro.rates import SuzukiLibrary
 
 
 class TestAmrexAstroCxxNetwork:
     # pylint: disable=protected-access
     @pytest.fixture(scope="class")
-    def fn(self, reaclib_library):
+    def fn(self, reaclib_library, suzuki_library):
         rate_names = ["c12(c12,a)ne20",
                       "c12(c12,n)mg23",
                       "c12(c12,p)na23",
@@ -19,7 +18,6 @@ class TestAmrexAstroCxxNetwork:
                       "n(,)p"]
         rates = reaclib_library.get_rate_by_name(rate_names)
 
-        suzuki_library = SuzukiLibrary()
         tabular_rate_names = ["na23(,)ne23",
                               "ne23(,)na23"]
         tabular_rates = suzuki_library.get_rate_by_name(tabular_rate_names)
@@ -66,15 +64,34 @@ class TestAmrexAstroCxxNetwork:
     def test_ebind(self, fn):
         """ test the _ebind function """
 
-        answer = ('        ebind_per_nucleon(N) = 0.0_rt;\n' +
-                  '        ebind_per_nucleon(H1) = 0.0_rt;\n' +
-                  '        ebind_per_nucleon(He4) = 7.073915_rt;\n' +
-                  '        ebind_per_nucleon(C12) = 7.680144_rt;\n' +
-                  '        ebind_per_nucleon(O16) = 7.976206_rt;\n' +
-                  '        ebind_per_nucleon(Ne20) = 8.03224_rt;\n' +
-                  '        ebind_per_nucleon(Ne23) = 7.955256_rt;\n' +
-                  '        ebind_per_nucleon(Na23) = 8.111493000000001_rt;\n' +
-                  '        ebind_per_nucleon(Mg23) = 7.901115_rt;\n')
+        answer = ('        if constexpr (spec == N) {\n' +
+                  '            return 0.0_rt;\n' +
+                  '        }\n' +
+                  '        else if constexpr (spec == H1) {\n' +
+                  '            return 0.0_rt;\n' +
+                  '        }\n' +
+                  '        else if constexpr (spec == He4) {\n' +
+                  '            return 28.295662457999697_rt;\n' +
+                  '        }\n' +
+                  '        else if constexpr (spec == C12) {\n' +
+                  '            return 92.16173498399803_rt;\n' +
+                  '        }\n' +
+                  '        else if constexpr (spec == O16) {\n' +
+                  '            return 127.6193154119992_rt;\n' +
+                  '        }\n' +
+                  '        else if constexpr (spec == Ne20) {\n' +
+                  '            return 160.64482384000075_rt;\n' +
+                  '        }\n' +
+                  '        else if constexpr (spec == Ne23) {\n' +
+                  '            return 182.97089593999772_rt;\n' +
+                  '        }\n' +
+                  '        else if constexpr (spec == Na23) {\n' +
+                  '            return 186.56435240400242_rt;\n' +
+                  '        }\n' +
+                  '        else if constexpr (spec == Mg23) {\n' +
+                  '            return 181.7258218679999_rt;\n' +
+                  '        }\n')
+
         assert self.cromulent_ftag(fn._ebind, answer, n_indent=2)
 
     def test_write_network(self, fn, compare_network_files):
