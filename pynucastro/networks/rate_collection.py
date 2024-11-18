@@ -18,7 +18,7 @@ from matplotlib.patches import ConnectionPatch
 from matplotlib.scale import SymmetricalLogTransform
 from matplotlib.ticker import MaxNLocator
 from mpl_toolkits.axes_grid1 import make_axes_locatable
-from scipy.optimize import brentq, fsolve
+from scipy.optimize import brentq
 
 from pynucastro.constants import constants
 from pynucastro.neutrino_cooling import sneut5
@@ -2063,9 +2063,9 @@ class RateCollection:
         # rate for a sequence, in which case we should provide the Q
         # (in MeV) for the entire sequence.
         if Q_override:
-            Q_erg = Q_override * (constants.eV * constants.mega) / constants.erg
+            Q_erg = Q_override * constants.MeV2erg
         else:
-            Q_erg = rate.Q * (constants.eV * constants.mega) / constants.erg
+            Q_erg = rate.Q * constants.MeV2erg
 
         for rho in _rhos:
             try:
@@ -2073,8 +2073,7 @@ class RateCollection:
                 # of the form r = n_A n_B <sigma v>, we need to multiply by rho N_A
                 # then to get eps, we do eps = r Q / rho, so the extra rho cancels
                 r = brentq(lambda T:
-                           Q_erg * constants.N_A * self.evaluate_rates(rho, T, comp, screen_func=screen_func)[rate] -
-                           sneut5(rho, T, comp), T_min, T_max)
+                           Q_erg * constants.N_A * self.evaluate_rates(rho, T, comp, screen_func=screen_func)[rate] - sneut5(rho, T, comp), T_min, T_max)
                 rhos.append(rho)
                 Ts.append(r)
             except ValueError:
