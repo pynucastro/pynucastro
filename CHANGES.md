@@ -8,8 +8,8 @@
   * Fix a compiler issue with `SimpleCxxNetwork` and ReacLib weak rates
     (#846)
 
-  * Documentation improvements (#831, #832, #843), including new
-    examples (#783, #800)
+  * Documentation improvements (#782, #831, #832, #843, #848, #852,
+    #855, #858), including new examples (#783, #800, #826)
 
   * Clean-up unused class data in `SimpleCxxNetwork` (#845)
 
