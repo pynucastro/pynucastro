@@ -93,13 +93,14 @@ codes.
    simple-cxx-network
    fortran-network
    amrex-astro-cxx-networks
+   julia
 
 .. toctree::
    :maxdepth: 1
-   :caption: Interfacing With Other Languages
+   :caption: Some Useful Networks
    :hidden:
 
-   julia
+   he-burning-example
 
 .. toctree::
    :maxdepth: 1
@@ -110,6 +111,7 @@ codes.
    examples/pp-cno.ipynb
    examples/hot-CNO-breakout-example.ipynb
    examples/triple_alpha_eval.ipynb
+   examples/he-burning.ipynb
    examples/supernova-lightcurve.ipynb
 
 .. toctree::
