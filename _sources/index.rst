@@ -111,6 +111,7 @@ codes.
    examples/pp-cno.ipynb
    examples/hot-CNO-breakout-example.ipynb
    examples/triple_alpha_eval.ipynb
+   examples/he-burning.ipynb
    examples/supernova-lightcurve.ipynb
 
 .. toctree::
