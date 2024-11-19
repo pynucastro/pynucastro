@@ -93,12 +93,6 @@ codes.
    simple-cxx-network
    fortran-network
    amrex-astro-cxx-networks
-
-.. toctree::
-   :maxdepth: 1
-   :caption: Interfacing With Other Languages
-   :hidden:
-
    julia
 
 .. toctree::
