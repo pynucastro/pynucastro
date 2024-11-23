@@ -1,5 +1,8 @@
 # 2.5.0
 
+  * Fix an issue with AMD HIP/ROCm memory access on the GPU in the
+    partition functions (#859)
+
   * A `FortranNetwork` is now available that provides a wrapper around
     `SimpleCxxNetwork` with Fortran interfaces. (#841, #847)
 
