@@ -471,6 +471,17 @@ class RateCollection:
 
         self._build_collection()
 
+    class _Decorators:
+        @classmethod
+        def modifies_rates(cls, func):
+            # a decorator that calls _build_collection after the func
+            @functools.wraps(func)
+            def wrapper(self, *args, **kwargs):
+                func(self, *args, **kwargs)
+                # pylint: disable-next=protected-access
+                self._build_collection()
+            return wrapper
+
     def _build_collection(self):
 
         # get the unique nuclei
@@ -754,6 +765,7 @@ class RateCollection:
 
         return temp_arrays, temp_indices
 
+    @_Decorators.modifies_rates
     def remove_nuclei(self, nuc_list):
         """remove the nuclei in nuc_list from the network along with any rates
         that directly involve them (this doesn't affect approximate rates that
@@ -770,8 +782,7 @@ class RateCollection:
         for rate in set(rates_to_delete):
             self.rates.remove(rate)
 
-        self._build_collection()
-
+    @_Decorators.modifies_rates
     def remove_rates(self, rates):
         """remove the Rate objects in rates from the network.  Note, if
         rate list is a dict, then the keys are assumed to be the rates
@@ -783,8 +794,7 @@ class RateCollection:
             for r in rates:
                 self.rates.remove(r)
 
-        self._build_collection()
-
+    @_Decorators.modifies_rates
     def add_rates(self, rates):
         """add the Rate objects in rates from the network."""
 
@@ -797,8 +807,7 @@ class RateCollection:
                 if r not in self.rates:
                     self.rates.append(r)
 
-        self._build_collection()
-
+    @_Decorators.modifies_rates
     def make_ap_pg_approx(self, intermediate_nuclei=None):
         """combine the rates A(a,g)B and A(a,p)X(p,g)B (and the reverse) into a single
         effective approximate rate."""
@@ -877,9 +886,6 @@ class RateCollection:
 
             # add the approximate rates
             self.rates.append(ar)
-
-        # regenerate the links
-        self._build_collection()
 
     def evaluate_rates(self, rho, T, composition, screen_func=None):
         """evaluate the rates for a specific density, temperature, and
