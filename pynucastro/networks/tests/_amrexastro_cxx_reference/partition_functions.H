@@ -17,21 +17,21 @@ namespace part_fun {
 
     // interpolation routine
 
-    template <int npts>
+    template <typename T>
     AMREX_GPU_HOST_DEVICE AMREX_INLINE
-    void interpolate_pf(const amrex::Real t9, const amrex::Real (&temp_array)[npts], const amrex::Real (&pf_array)[npts],
+    void interpolate_pf(const amrex::Real t9, const T& temp_array, const T& pf_array,
                         amrex::Real& pf, amrex::Real& dpf_dT) {
 
-        if (t9 >= temp_array[0] && t9 < temp_array[npts-1]) {
+        if (t9 >= temp_array.lo() && t9 < temp_array.hi()) {
 
             // find the largest temperature element <= t9 using a binary search
 
-            int left = 0;
-            int right = npts;
+            int left = temp_array.lo();
+            int right = temp_array.hi();
 
             while (left < right) {
                 int mid = (left + right) / 2;
-                if (temp_array[mid] > t9) {
+                if (temp_array(mid) > t9) {
                     right = mid;
                 } else {
                     left = mid + 1;
@@ -44,11 +44,12 @@ namespace part_fun {
 
             // construct the slope -- this is (log10(pf_{i+1}) - log10(pf_i)) / (T_{i+1} - T_i)
 
-            amrex::Real slope = (pf_array[idx+1] - pf_array[idx]) / (temp_array[idx+1] - temp_array[idx]);
+            amrex::Real slope = (pf_array(idx+1) - pf_array(idx)) /
+                                (temp_array(idx+1) - temp_array(idx));
 
             // find the PF
 
-            amrex::Real log10_pf = pf_array[idx] + slope * (t9 - temp_array[idx]);
+            amrex::Real log10_pf = pf_array(idx) + slope * (t9 - temp_array(idx));
             pf = std::pow(10.0_rt, log10_pf);
 
             // find the derivative (with respect to T, not T9)
