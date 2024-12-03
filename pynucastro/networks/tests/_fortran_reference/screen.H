@@ -39,7 +39,6 @@ fill_plasma_state(plasma_state_t& state, const Real& temp,
 
     // ntot
     Real rr = dens * ytot;
-    Real tempi = 1.0_rt / temp;
 
     state.temp = temp;
 
