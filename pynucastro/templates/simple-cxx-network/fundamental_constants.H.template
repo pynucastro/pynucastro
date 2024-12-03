@@ -13,6 +13,9 @@ namespace C
     // boltzmann's constant
     constexpr Real k_B = 1.3806488e-16;  // erg/K
 
+    // planck's constant over 2pi
+    constexpr Real hbar = 1.054571726e-27;  // erg s
+
     // avogradro's Number
     constexpr Real n_A = 6.02214129e23;  // mol^-1
 
@@ -39,6 +42,15 @@ namespace C
 
     // atomic mass unit
     constexpr Real m_u = 1.6605390666e-24; // g
+
+    // electron charge
+    // NIST: q_e = 1.602176565e-19 C
+    //
+    // C is the SI unit Coulomb; in cgs we have the definition:
+    //     1 C = 0.1 * |c_light| * 1 statC
+    // where statC is the cgs unit statCoulomb; 1 statC = 1 erg^1/2 cm^1/2
+    // and |c_light| is the speed of light in cgs (but without units)
+    constexpr Real q_e = 4.80320451e-10;  // erg^1/2 cm^1/2
 
 }
 
