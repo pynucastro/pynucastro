@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Simple C++ network &#8212; pynucastro 2.4.0.post38+g1998303f documentation</title>
+    <title>Simple C++ network &#8212; pynucastro 2.4.0.post39+gb8dddd0c documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
 
-    <script src="_static/documentation_options.js?v=ac955ffe"></script>
+    <script src="_static/documentation_options.js?v=f4f38474"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -49,6 +49,8 @@
     <script src="_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'simple-cxx-network';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -468,16 +470,16 @@
                   
   <section id="simple-c-network">
 <h1>Simple C++ network<a class="headerlink" href="#simple-c-network" title="Link to this heading">#</a></h1>
-<p>A <code class="docutils literal notranslate"><span class="pre">SimpleCxxNetwork</span></code> is a very basic C++ network.</p>
+<p>A <code class="docutils literal notranslate"><span class="pre">SimpleCxxNetwork</span></code> is a very basic C++ network.  It supports
+ReacLib rates, approximate rates, and screening (via
+the method of <span id="id1">[<a class="reference internal" href="zreferences.html#id4" title="A. I. Chugunov, H. E. DeWitt, and D. G. Yakovlev. Coulomb tunneling for fusion reactions in dense matter: Path integral Monte Carlo versus mean field. Physical Review D, 76(2):025028, July 2007. arXiv:0707.3500, doi:10.1103/PhysRevD.76.025028.">Chugunov <em>et al.</em>, 2007</a>]</span>).</p>
 <div class="admonition important">
 <p class="admonition-title">Important</p>
 <p>Currently, the following features are not supported:</p>
 <ul class="simple">
 <li><p>tabular rates</p></li>
-<li><p>screening</p></li>
 <li><p>partition functions</p></li>
 <li><p>NSE</p></li>
-<li><p>temperature evolution</p></li>
 <li><p>plasma neutrino losses</p></li>
 </ul>
 </div>
@@ -491,10 +493,15 @@
 <span class="n">net</span><span class="o">.</span><span class="n">write_network</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>The generated code is intended to be used to interface with a
-hydrodynamics code.  That application code will be responsible for
-providing the equation of state and adding any desired temperature /
-energy evolution to the network.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">SimpleCxxNetwork</span></code> outputs the righthand side function
+(<span class="math notranslate nohighlight">\(dY/dt\)</span>) and Jacobian.  It is meant to be used in an application
+code that provides its own time integrator.  Furthermore, there
+is no energy/temperature evolution, but the application code can
+augment the set of equations being integrated with an energy
+equation as needed.</p>
+</div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>A C++17 compiler is required</p>
