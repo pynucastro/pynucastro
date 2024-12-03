@@ -4,6 +4,7 @@ import pytest
 
 from pynucastro.nucdata import Nucleus
 
+
 class TestRate:
 
     def test_swap_protons(self, reaclib_library):
