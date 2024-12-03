@@ -31,29 +31,15 @@ fill_plasma_state(plasma_state_t& state, const Real& temp,
     Real ytot = sum;
 
     sum = 0.0_rt;
-    Real sum2 = 0.0_rt;
     for (int n = 1; n <= NumSpec; n++) {
         sum += zion[n-1]*y(n);
-        sum2 += zion[n-1]*zion[n-1]*y(n);
     }
 
-    // Part of Eq.6 in Itoh:1979
-    // 4.248719e3 = (27*pi^2*e^4*m_u/(2*k_B*hbar^2))^(1/3)
-    // the extra (1/3) to make tau -> tau/3
-    const Real co2 = (1.0_rt/3.0_rt) * 4.248719e3_rt;
-
     Real zbar = sum * abar;
-    Real z2bar = sum2 * abar;
 
     // ntot
     Real rr = dens * ytot;
     Real tempi = 1.0_rt / temp;
-
-    // Part of Eq. 19 in Graboske:1973
-    // pp = sqrt( \tilde{z}*(rho/u_I/T) )
-    Real pp = std::sqrt(rr*tempi*(z2bar + zbar));
-
-    Real xni = std::cbrt(rr * zbar);
 
     state.temp = temp;
 
