@@ -1,5 +1,8 @@
 # 2.5.0
 
+  * `SimpleCxxNetwork` now includes electron screening using the
+    prescription in Chugunov 2007 (#844)
+
   * added "NSE protons" that evaluate the same as a proton but can be
     used to decouple light and heavy reactions (#853)
 
@@ -18,7 +21,7 @@
     (#846)
 
   * Documentation improvements (#782, #831, #832, #843, #848, #852,
-    #855, #858), including new examples (#783, #800, #826)
+    #855, #858, #861), including new examples (#783, #800, #826)
 
   * Clean-up unused class data in `SimpleCxxNetwork` (#845)
 
