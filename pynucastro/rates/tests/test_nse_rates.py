@@ -1,16 +1,22 @@
 # unit tests for rates
 
-from pynucastro.nucdata import Nucleus
+import pynucastro as pyna
 
 
 class TestRate:
 
-    def test_swap_protons(self, reaclib_library):
+    def test_swap_protons(self):
 
-        mn51pg = reaclib_library.get_rate_by_name("mn51(p,g)fe52")
+        # note: we can't use the reaclib_library fixture we've
+        # setup in pytest because we will be modifying rates,
+        # which will be reflected in the fixture and affect
+        # later tests
+        rl = pyna.ReacLibLibrary()
 
-        p = Nucleus("p")
-        p_nse = Nucleus("p_nse")
+        mn51pg = rl.get_rate_by_name("mn51(p,g)fe52")
+
+        p = pyna.Nucleus("p")
+        p_nse = pyna.Nucleus("p_nse")
 
         assert p in mn51pg.reactants
         assert p_nse not in mn51pg.reactants
