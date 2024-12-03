@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.reaclib_rate &#8212; pynucastro 2.4.0.post35+g0d9f4f44 documentation</title>
+    <title>pynucastro.rates.reaclib_rate &#8212; pynucastro 2.4.0.post36+g56f435f0 documentation</title>
   
   
   
@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
 
-    <script src="../../../_static/documentation_options.js?v=2ed31a80"></script>
+    <script src="../../../_static/documentation_options.js?v=e635fb66"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -695,20 +695,6 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">fname</span> <span class="o">+=</span> <span class="s2">&quot;__derived&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">removed</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">fname</span> <span class="o">+=</span> <span class="s2">&quot;__removed&quot;</span>
-
-<div class="viewcode-block" id="ReacLibRate.modify_products">
-<a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.reaclib_rate.ReacLibRate.modify_products">[docs]</a>
-    <span class="k">def</span> <span class="nf">modify_products</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_products</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">products</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="o">.</span><span class="n">cast_list</span><span class="p">(</span><span class="n">new_products</span><span class="p">,</span> <span class="n">allow_single</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">modified</span> <span class="o">=</span> <span class="kc">True</span>
-
-        <span class="c1"># we need to update the Q value and the print string for the rate</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_set_q</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_set_screening</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">fname</span> <span class="o">=</span> <span class="kc">None</span>    <span class="c1"># reset so it will be updated</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_set_print_representation</span><span class="p">()</span></div>
-
 
     <span class="k">def</span> <span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">())</span>

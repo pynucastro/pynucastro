@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.rate &#8212; pynucastro 2.4.0.post35+g0d9f4f44 documentation</title>
+    <title>pynucastro.rates.rate &#8212; pynucastro 2.4.0.post36+g56f435f0 documentation</title>
   
   
   
@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
 
-    <script src="../../../_static/documentation_options.js?v=2ed31a80"></script>
+    <script src="../../../_static/documentation_options.js?v=e635fb66"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -463,6 +463,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="n">label</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">source</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">modified</span> <span class="o">=</span> <span class="kc">False</span>
 
         <span class="c1"># the fname is used when writing the code to evaluate the rate</span>
         <span class="n">reactants_str</span> <span class="o">=</span> <span class="s1">&#39;_&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">repr</span><span class="p">(</span><span class="n">nuc</span><span class="p">)</span> <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">])</span>
@@ -772,6 +773,25 @@
             <span class="k">if</span> <span class="n">n</span><span class="o">.</span><span class="n">A</span> <span class="o">&lt;</span> <span class="n">nuc</span><span class="o">.</span><span class="n">A</span> <span class="ow">or</span> <span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">A</span> <span class="o">==</span> <span class="n">nuc</span><span class="o">.</span><span class="n">A</span> <span class="ow">and</span> <span class="n">n</span><span class="o">.</span><span class="n">Z</span> <span class="o">&gt;</span> <span class="n">nuc</span><span class="o">.</span><span class="n">Z</span><span class="p">):</span>
                 <span class="n">nuc</span> <span class="o">=</span> <span class="n">n</span>
         <span class="k">return</span> <span class="n">nuc</span></div>
+
+
+<div class="viewcode-block" id="Rate.modify_products">
+<a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.Rate.modify_products">[docs]</a>
+    <span class="k">def</span> <span class="nf">modify_products</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_products</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        change the products of the rate to new_products.  This will recompute</span>
+<span class="sd">        the Q value and update the print respresentation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">products</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="o">.</span><span class="n">cast_list</span><span class="p">(</span><span class="n">new_products</span><span class="p">,</span> <span class="n">allow_single</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">modified</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="c1"># we need to update the Q value and the print string for the rate</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_q</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_screening</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fname</span> <span class="o">=</span> <span class="kc">None</span>    <span class="c1"># reset so it will be updated</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_print_representation</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="Rate.ydot_string_py">
