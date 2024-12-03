@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.nucdata.nucleus &#8212; pynucastro 2.4.0.post34+gdc727fc9 documentation</title>
+    <title>pynucastro.nucdata.nucleus &#8212; pynucastro 2.4.0.post35+g0d9f4f44 documentation</title>
   
   
   
@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
 
-    <script src="../../../_static/documentation_options.js?v=e90de9b8"></script>
+    <script src="../../../_static/documentation_options.js?v=2ed31a80"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -448,6 +448,7 @@
         <span class="c1"># a dummy nucleus is one that we can use where a nucleus is needed</span>
         <span class="c1"># but it is not considered to be part of the network</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dummy</span> <span class="o">=</span> <span class="n">dummy</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nse</span> <span class="o">=</span> <span class="kc">False</span>
 
         <span class="c1"># element symbol and atomic weight</span>
         <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;p&quot;</span><span class="p">:</span>
@@ -482,6 +483,19 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">spec_name</span> <span class="o">=</span> <span class="s2">&quot;neutron&quot;</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="sa">fr</span><span class="s2">&quot;\mathrm</span><span class="se">{{</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">el</span><span class="si">}</span><span class="se">}}</span><span class="s2">&quot;</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">caps_name</span> <span class="o">=</span> <span class="s2">&quot;n&quot;</span>
+        <span class="k">elif</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;p_nse&quot;</span><span class="p">:</span>
+            <span class="c1"># this is a proton with a different name</span>
+            <span class="c1"># it is meant to be used in iron-group rates</span>
+            <span class="c1"># in NSE</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">el</span> <span class="o">=</span> <span class="s2">&quot;h&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">A</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">Z</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">N</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">short_spec_name</span> <span class="o">=</span> <span class="s2">&quot;p_nse&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">spec_name</span> <span class="o">=</span> <span class="s2">&quot;proton-nse&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;\mathrm</span><span class="si">{p}</span><span class="s2">_\mathrm</span><span class="si">{NSE}</span><span class="s2">&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">caps_name</span> <span class="o">=</span> <span class="s2">&quot;p_NSE&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nse</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">elif</span> <span class="n">name</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;al-6&quot;</span><span class="p">,</span> <span class="s2">&quot;al*6&quot;</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">UnsupportedNucleus</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
@@ -497,7 +511,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">el</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">el</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
 
         <span class="c1"># atomic number comes from periodic table</span>
-        <span class="k">if</span> <span class="n">name</span> <span class="o">!=</span> <span class="s2">&quot;n&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;n&quot;</span><span class="p">,</span> <span class="s2">&quot;p_nse&quot;</span><span class="p">]:</span>
             <span class="n">i</span> <span class="o">=</span> <span class="n">PeriodicTable</span><span class="o">.</span><span class="n">lookup_abbreviation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">el</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">Z</span> <span class="o">=</span> <span class="n">i</span><span class="o">.</span><span class="n">Z</span>
             <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Z</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
@@ -583,7 +597,7 @@
 
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">,</span> <span class="s2">&quot;d&quot;</span><span class="p">,</span> <span class="s2">&quot;t&quot;</span><span class="p">,</span> <span class="s2">&quot;n&quot;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">,</span> <span class="s2">&quot;p_nse&quot;</span><span class="p">,</span> <span class="s2">&quot;d&quot;</span><span class="p">,</span> <span class="s2">&quot;t&quot;</span><span class="p">,</span> <span class="s2">&quot;n&quot;</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw</span>
 
@@ -606,8 +620,9 @@
 
     <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Nucleus</span><span class="p">):</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">el</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">el</span> <span class="ow">and</span> \
-                <span class="bp">self</span><span class="o">.</span><span class="n">Z</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">Z</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">A</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">A</span>
+            <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">el</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">el</span> <span class="ow">and</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">Z</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">Z</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">A</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">A</span> <span class="ow">and</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">nse</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">nse</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
             <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Z</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">A</span><span class="p">)</span> <span class="o">==</span> <span class="n">other</span>
         <span class="k">return</span> <span class="bp">NotImplemented</span>
