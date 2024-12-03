@@ -1,7 +1,5 @@
 # unit tests for rates
 
-import pytest
-
 from pynucastro.nucdata import Nucleus
 
 
