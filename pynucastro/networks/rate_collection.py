@@ -894,14 +894,14 @@ class RateCollection:
         for rp in self.get_rate_pairs():
 
             update = False
-            if rp.forward:
+            if rp.forward is not None:
                 heavy = [n for n in rp.forward.reactants + rp.forward.products
                          if n not in [Nucleus("p"), Nucleus("n"), Nucleus("he4")]]
                 if heavy:
                     if (min(heavy, key=lambda x: x.A).A >= A and
                         Nucleus("p") in rp.forward.reactants + rp.forward.products):
                         update = True
-            elif rp.reverse:
+            elif rp.reverse is not None:
                 heavy = [n for n in rp.reverse.reactants + rp.reverse.products
                          if n not in [Nucleus("p"), Nucleus("n"), Nucleus("he4")]]
                 if heavy:
