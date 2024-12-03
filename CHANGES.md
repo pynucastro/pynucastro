@@ -1,5 +1,11 @@
 # 2.5.0
 
+  * added "NSE protons" that evaluate the same as a proton but can be
+    used to decouple light and heavy reactions (#853)
+
+  * `modify_products` was moved to the base `Rate` class all rate classes
+    can use it (#851)
+
   * Fix an issue with AMD HIP/ROCm memory access on the GPU in the
     partition functions (#859)
 
@@ -20,7 +26,7 @@
 
   * Add the ability to label edges in network plots (#837)
 
-  * Clean-up the `make_ap_pg_approx` code (#830)
+  * Clean-up the `make_ap_pg_approx` code (#830, #850)
 
   * `PartitionFunction.eval` now returns a python float instead of a
     numpy float (#839)
