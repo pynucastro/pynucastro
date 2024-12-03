@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.rate_collection &#8212; pynucastro 2.4.0.post36+g56f435f0 documentation</title>
+    <title>pynucastro.networks.rate_collection &#8212; pynucastro 2.4.0.post37+gcd872051 documentation</title>
   
   
   
@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
 
-    <script src="../../../_static/documentation_options.js?v=e635fb66"></script>
+    <script src="../../../_static/documentation_options.js?v=d60c080c"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -407,7 +407,7 @@
 
 <span class="c1"># Import Rate</span>
 <span class="kn">from</span> <span class="nn">pynucastro.constants</span> <span class="kn">import</span> <span class="n">constants</span>
-<span class="kn">from</span> <span class="nn">pynucastro.nucdata</span> <span class="kn">import</span> <span class="n">Nucleus</span><span class="p">,</span> <span class="n">PeriodicTable</span>
+<span class="kn">from</span> <span class="nn">pynucastro.nucdata</span> <span class="kn">import</span> <span class="n">Nucleus</span>
 <span class="kn">from</span> <span class="nn">pynucastro.rates</span> <span class="kn">import</span> <span class="p">(</span><span class="n">ApproximateRate</span><span class="p">,</span> <span class="n">DerivedRate</span><span class="p">,</span> <span class="n">Library</span><span class="p">,</span> <span class="n">Rate</span><span class="p">,</span>
                               <span class="n">RateFileError</span><span class="p">,</span> <span class="n">RatePair</span><span class="p">,</span> <span class="n">TabularRate</span><span class="p">,</span>
                               <span class="n">find_duplicate_rates</span><span class="p">,</span> <span class="n">is_allowed_dupe</span><span class="p">,</span> <span class="n">load_rate</span><span class="p">)</span>
@@ -1297,12 +1297,7 @@
             <span class="n">prim_nuc</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">r_ag</span><span class="o">.</span><span class="n">reactants</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
             <span class="n">prim_prod</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">r_ag</span><span class="o">.</span><span class="n">products</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
-            <span class="n">inter_nuc_Z</span> <span class="o">=</span> <span class="n">prim_nuc</span><span class="o">.</span><span class="n">Z</span> <span class="o">+</span> <span class="mi">1</span>
-            <span class="n">inter_nuc_A</span> <span class="o">=</span> <span class="n">prim_nuc</span><span class="o">.</span><span class="n">A</span> <span class="o">+</span> <span class="mi">3</span>
-
-            <span class="n">element</span> <span class="o">=</span> <span class="n">PeriodicTable</span><span class="o">.</span><span class="n">lookup_Z</span><span class="p">(</span><span class="n">inter_nuc_Z</span><span class="p">)</span>
-
-            <span class="n">inter_nuc</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">element</span><span class="o">.</span><span class="n">abbreviation</span><span class="si">}{</span><span class="n">inter_nuc_A</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">inter_nuc</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="o">.</span><span class="n">from_Z_A</span><span class="p">(</span><span class="n">prim_nuc</span><span class="o">.</span><span class="n">Z</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">prim_nuc</span><span class="o">.</span><span class="n">A</span><span class="o">+</span><span class="mi">3</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">intermediate_nuclei</span> <span class="ow">and</span> <span class="n">inter_nuc</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">intermediate_nuclei</span><span class="p">:</span>
                 <span class="k">continue</span>
