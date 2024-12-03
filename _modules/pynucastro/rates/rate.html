@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.rate &#8212; pynucastro 2.4.0.post39+gb8dddd0c documentation</title>
+    <title>pynucastro.rates.rate &#8212; pynucastro 2.4.0.post40+g7597357b documentation</title>
   
   
   
@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
 
-    <script src="../../../_static/documentation_options.js?v=f4f38474"></script>
+    <script src="../../../_static/documentation_options.js?v=4ffe3bd7"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -773,6 +773,32 @@
             <span class="k">if</span> <span class="n">n</span><span class="o">.</span><span class="n">A</span> <span class="o">&lt;</span> <span class="n">nuc</span><span class="o">.</span><span class="n">A</span> <span class="ow">or</span> <span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">A</span> <span class="o">==</span> <span class="n">nuc</span><span class="o">.</span><span class="n">A</span> <span class="ow">and</span> <span class="n">n</span><span class="o">.</span><span class="n">Z</span> <span class="o">&gt;</span> <span class="n">nuc</span><span class="o">.</span><span class="n">Z</span><span class="p">):</span>
                 <span class="n">nuc</span> <span class="o">=</span> <span class="n">n</span>
         <span class="k">return</span> <span class="n">nuc</span></div>
+
+
+<div class="viewcode-block" id="Rate.swap_protons">
+<a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.Rate.swap_protons">[docs]</a>
+    <span class="k">def</span> <span class="nf">swap_protons</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Change any protons in the rate to NSE protons.  These</span>
+<span class="sd">        act the same as protons but will be kept as distinct in</span>
+<span class="sd">        the network.&quot;&quot;&quot;</span>
+
+        <span class="n">p</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">)</span>
+        <span class="n">p_nse</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;p_nse&quot;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">nuc</span> <span class="o">==</span> <span class="n">p</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">p_nse</span>
+
+        <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">products</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">nuc</span> <span class="o">==</span> <span class="n">p</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">products</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">p_nse</span>
+
+        <span class="c1"># we need to update the Q value and the print string for the rate</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_q</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_screening</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fname</span> <span class="o">=</span> <span class="kc">None</span>    <span class="c1"># reset so it will be updated</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_print_representation</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="Rate.modify_products">

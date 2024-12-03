@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.rate_collection &#8212; pynucastro 2.4.0.post39+gb8dddd0c documentation</title>
+    <title>pynucastro.networks.rate_collection &#8212; pynucastro 2.4.0.post40+g7597357b documentation</title>
   
   
   
@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
 
-    <script src="../../../_static/documentation_options.js?v=f4f38474"></script>
+    <script src="../../../_static/documentation_options.js?v=4ffe3bd7"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -1354,9 +1354,51 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_build_collection</span><span class="p">()</span></div>
 
 
+<div class="viewcode-block" id="RateCollection.make_nse_protons">
+<a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.make_nse_protons">[docs]</a>
+    <span class="k">def</span> <span class="nf">make_nse_protons</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">A</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;for rates involving nuclei with mass number &gt;= A, swap any</span>
+<span class="sd">        protons for NSE protons.  This will decouple these rates from</span>
+<span class="sd">        the proton captures at lower mass number, simplifying the</span>
+<span class="sd">        linear algebra.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># we want to update both the forward and reverse rates,</span>
+        <span class="c1"># so we are consistent</span>
+        <span class="k">for</span> <span class="n">rp</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_rate_pairs</span><span class="p">():</span>
+
+            <span class="n">update</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">if</span> <span class="n">rp</span><span class="o">.</span><span class="n">forward</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">heavy</span> <span class="o">=</span> <span class="p">[</span><span class="n">n</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">rp</span><span class="o">.</span><span class="n">forward</span><span class="o">.</span><span class="n">reactants</span> <span class="o">+</span> <span class="n">rp</span><span class="o">.</span><span class="n">forward</span><span class="o">.</span><span class="n">products</span>
+                         <span class="k">if</span> <span class="n">n</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;n&quot;</span><span class="p">),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">)]]</span>
+                <span class="k">if</span> <span class="n">heavy</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">heavy</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">A</span><span class="p">)</span><span class="o">.</span><span class="n">A</span> <span class="o">&gt;=</span> <span class="n">A</span> <span class="ow">and</span>
+                        <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">rp</span><span class="o">.</span><span class="n">forward</span><span class="o">.</span><span class="n">reactants</span> <span class="o">+</span> <span class="n">rp</span><span class="o">.</span><span class="n">forward</span><span class="o">.</span><span class="n">products</span><span class="p">):</span>
+                        <span class="n">update</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">elif</span> <span class="n">rp</span><span class="o">.</span><span class="n">reverse</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">heavy</span> <span class="o">=</span> <span class="p">[</span><span class="n">n</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">rp</span><span class="o">.</span><span class="n">reverse</span><span class="o">.</span><span class="n">reactants</span> <span class="o">+</span> <span class="n">rp</span><span class="o">.</span><span class="n">reverse</span><span class="o">.</span><span class="n">products</span>
+                         <span class="k">if</span> <span class="n">n</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;n&quot;</span><span class="p">),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">)]]</span>
+                <span class="k">if</span> <span class="n">heavy</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">heavy</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">A</span><span class="p">)</span><span class="o">.</span><span class="n">A</span> <span class="o">&gt;=</span> <span class="n">A</span> <span class="ow">and</span>
+                        <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">rp</span><span class="o">.</span><span class="n">reverse</span><span class="o">.</span><span class="n">reactants</span> <span class="o">+</span> <span class="n">rp</span><span class="o">.</span><span class="n">reverse</span><span class="o">.</span><span class="n">products</span><span class="p">):</span>
+                        <span class="n">update</span> <span class="o">=</span> <span class="kc">True</span>
+
+            <span class="k">if</span> <span class="n">update</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">rp</span><span class="o">.</span><span class="n">forward</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;modifying </span><span class="si">{</span><span class="n">rp</span><span class="o">.</span><span class="n">forward</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2"> to use NSE protons&quot;</span><span class="p">)</span>
+                    <span class="n">rp</span><span class="o">.</span><span class="n">forward</span><span class="o">.</span><span class="n">swap_protons</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">rp</span><span class="o">.</span><span class="n">reverse</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;modifying </span><span class="si">{</span><span class="n">rp</span><span class="o">.</span><span class="n">reverse</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2"> to use NSE protons&quot;</span><span class="p">)</span>
+                    <span class="n">rp</span><span class="o">.</span><span class="n">reverse</span><span class="o">.</span><span class="n">swap_protons</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_build_collection</span><span class="p">()</span></div>
+
+
 <div class="viewcode-block" id="RateCollection.evaluate_rates">
 <a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.evaluate_rates">[docs]</a>
     <span class="k">def</span> <span class="nf">evaluate_rates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">composition</span><span class="p">,</span> <span class="n">screen_func</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;evaluate the rates for a specific density, temperature, and</span>
 <span class="sd">        composition, with optional screening</span>
 
@@ -1911,6 +1953,7 @@
         <span class="n">hidden_nuclei</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;n&quot;</span><span class="p">]</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">always_show_p</span><span class="p">:</span>
             <span class="n">hidden_nuclei</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">)</span>
+            <span class="n">hidden_nuclei</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;p_nse&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">always_show_alpha</span><span class="p">:</span>
             <span class="n">hidden_nuclei</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">)</span>
 

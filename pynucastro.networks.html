@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.networks package &#8212; pynucastro 2.4.0.post39+gb8dddd0c documentation</title>
+    <title>pynucastro.networks package &#8212; pynucastro 2.4.0.post40+g7597357b documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
 
-    <script src="_static/documentation_options.js?v=f4f38474"></script>
+    <script src="_static/documentation_options.js?v=4ffe3bd7"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -575,6 +575,7 @@
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.rate_collection.RateCollection.gridplot"><code class="docutils literal notranslate"><span class="pre">RateCollection.gridplot()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.rate_collection.RateCollection.linking_nuclei"><code class="docutils literal notranslate"><span class="pre">RateCollection.linking_nuclei()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.rate_collection.RateCollection.make_ap_pg_approx"><code class="docutils literal notranslate"><span class="pre">RateCollection.make_ap_pg_approx()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.rate_collection.RateCollection.make_nse_protons"><code class="docutils literal notranslate"><span class="pre">RateCollection.make_nse_protons()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.rate_collection.RateCollection.network_overview"><code class="docutils literal notranslate"><span class="pre">RateCollection.network_overview()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.rate_collection.RateCollection.plot"><code class="docutils literal notranslate"><span class="pre">RateCollection.plot()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.rate_collection.RateCollection.plot_jacobian"><code class="docutils literal notranslate"><span class="pre">RateCollection.plot_jacobian()</span></code></a></li>
@@ -1297,6 +1298,15 @@ effective approximate rate.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="pynucastro.networks.rate_collection.RateCollection.make_nse_protons">
+<span class="sig-name descname"><span class="pre">make_nse_protons</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/rate_collection.html#RateCollection.make_nse_protons"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.rate_collection.RateCollection.make_nse_protons" title="Link to this definition">#</a></dt>
+<dd><p>for rates involving nuclei with mass number &gt;= A, swap any
+protons for NSE protons.  This will decouple these rates from
+the proton captures at lower mass number, simplifying the
+linear algebra.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.networks.rate_collection.RateCollection.network_overview">
 <span class="sig-name descname"><span class="pre">network_overview</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/rate_collection.html#RateCollection.network_overview"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.rate_collection.RateCollection.network_overview" title="Link to this definition">#</a></dt>
 <dd><p>return a verbose network overview</p>
@@ -1632,6 +1642,7 @@ the ydot term for nuclide y_i.</p>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.rate_collection.RateCollection.gridplot"><code class="docutils literal notranslate"><span class="pre">RateCollection.gridplot()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.rate_collection.RateCollection.linking_nuclei"><code class="docutils literal notranslate"><span class="pre">RateCollection.linking_nuclei()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.rate_collection.RateCollection.make_ap_pg_approx"><code class="docutils literal notranslate"><span class="pre">RateCollection.make_ap_pg_approx()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.rate_collection.RateCollection.make_nse_protons"><code class="docutils literal notranslate"><span class="pre">RateCollection.make_nse_protons()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.rate_collection.RateCollection.network_overview"><code class="docutils literal notranslate"><span class="pre">RateCollection.network_overview()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.rate_collection.RateCollection.plot"><code class="docutils literal notranslate"><span class="pre">RateCollection.plot()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.rate_collection.RateCollection.plot_jacobian"><code class="docutils literal notranslate"><span class="pre">RateCollection.plot_jacobian()</span></code></a></li>
