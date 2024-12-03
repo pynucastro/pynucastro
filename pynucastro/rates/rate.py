@@ -372,6 +372,29 @@ class Rate:
                 nuc = n
         return nuc
 
+    def swap_protons(self):
+        """Change any protons in the rate to NSE protons.  These
+        act the same as protons but will be kept as distinct in
+        the network."""
+
+        p = Nucleus("p")
+        p_nse = Nucleus("p_nse")
+
+        for n, nuc in enumerate(self.reactants):
+            if nuc == p:
+                self.reactants[n] = p_nse
+
+        for n, nuc in enumerate(self.products):
+            if nuc == p:
+                self.products[n] = p_nse
+
+        # we need to update the Q value and the print string for the rate
+
+        self._set_q()
+        self._set_screening()
+        self.fname = None    # reset so it will be updated
+        self._set_print_representation()
+
     def modify_products(self, new_products):
         """
         change the products of the rate to new_products.  This will recompute
