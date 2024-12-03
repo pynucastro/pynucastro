@@ -72,6 +72,7 @@ class Rate:
         self.label = label
 
         self.source = None
+        self.modified = False
 
         # the fname is used when writing the code to evaluate the rate
         reactants_str = '_'.join([repr(nuc) for nuc in self.reactants])
@@ -370,6 +371,22 @@ class Rate:
             if n.A < nuc.A or (n.A == nuc.A and n.Z > nuc.Z):
                 nuc = n
         return nuc
+
+    def modify_products(self, new_products):
+        """
+        change the products of the rate to new_products.  This will recompute
+        the Q value and update the print respresentation.
+        """
+
+        self.products = Nucleus.cast_list(new_products, allow_single=True)
+        self.modified = True
+
+        # we need to update the Q value and the print string for the rate
+
+        self._set_q()
+        self._set_screening()
+        self.fname = None    # reset so it will be updated
+        self._set_print_representation()
 
     def ydot_string_py(self):
         """
