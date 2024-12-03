@@ -525,7 +525,14 @@ class BaseCxxNetwork(ABC, RateCollection):
 
     def _fill_approx_rates(self, n_indent, of):
         for r in self.approx_rates:
-            of.write(f"{self.indent*n_indent}rate_{r.cname()}<T>(rate_eval, rate, drate_dT);\n")
+            args = ["rate_eval"]
+            if r.rate_eval_needs_rho:
+                args.append("rho")
+            if r.rate_eval_needs_comp:
+                args.append("Y")
+            args += ["rate", "drate_dT"]
+
+            of.write(f"{self.indent*n_indent}rate_{r.cname()}<T>({', '.join(args)});\n")
             of.write(f"{self.indent*n_indent}rate_eval.screened_rates(k_{r.cname()}) = rate;\n")
             of.write(f"{self.indent*n_indent}if constexpr (std::is_same_v<T, rate_derivs_t>) {{\n")
             of.write(f"{self.indent*n_indent}    rate_eval.dscreened_rates_dT(k_{r.cname()}) = drate_dT;\n\n")

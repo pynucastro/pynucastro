@@ -4,9 +4,10 @@ import pytest
 from pytest import approx
 
 import pynucastro as pyna
+from pynucastro.rates import create_double_neutron_capture
 
 
-class TestTfactors:
+class TestAlphaGammaTfactors:
     @pytest.fixture(scope="class")
     def rc(self, reaclib_library):
         mylib = reaclib_library.linking_nuclei(["mg24", "al27", "si28", "he4", "p"])
@@ -53,3 +54,68 @@ class TestTfactors:
         assert cr[5].fname == "p_Al27__He4_Mg24"
 
         assert len(cr) == 6
+
+
+class TestDoubleN:
+
+    @pytest.fixture(scope="class")
+    def nn(self, reaclib_library):
+        return create_double_neutron_capture(reaclib_library, "Fe52", "Fe54")
+
+    def test_nn_name(self, nn):
+        """ this is run before each test """
+
+        rf, rr = nn
+
+        assert rf.fname == "Fe52_n_n__Fe54__approx"
+        assert rr.fname == "Fe54__Fe52_n_n__approx"
+
+    def test_Q(self, nn):
+
+        rf, _ = nn
+
+        assert rf.Q == approx(24.06513619999896)
+
+    def test_func(self, nn):
+
+        rf, _ = nn
+
+        assert rf.function_string_py() == \
+"""@numba.njit()
+def Fe52_n_n__Fe54__approx(rate_eval, tf, rho=None, Y=None):
+    Yn = Y[jn]
+    r1_ng = rate_eval.n_Fe52__Fe53
+    r2_ng = rate_eval.n_Fe53__Fe54
+    r1_gn = rate_eval.Fe53__n_Fe52
+    rate = r1_ng * r2_ng / (rho * Yn * r2_ng + r1_gn)
+    rate_eval.Fe52_n_n__Fe54__approx = rate
+
+"""
+
+    def test_particle_factor(self, nn):
+
+        rf, _ = nn
+
+        assert not rf.use_identical_particle_factor
+
+    def test_eval(self, nn):
+
+        rf, rr = nn
+
+        comp = pyna.Composition(["n", "fe52", "fe54"])
+        comp.set_equal()
+
+        T = 1.e9
+        rho = 2.e7
+
+        rf1, _, __, ___ = rr.hidden_rates
+
+        assert rf1.eval(T, rho=rho, comp=comp) == approx(6511141.861787519)
+
+        Yn = comp.get_molar()[pyna.Nucleus("n")]
+
+        # at low temperature, the reverse rate is ~ zero,
+        # so the total rate will just be the first forward
+        # rate scaled by rho Y(n)
+
+        assert rf.eval(T, rho=rho, comp=comp) == approx(rf1.eval(T, rho=rho, comp=comp) / rho / Yn)
