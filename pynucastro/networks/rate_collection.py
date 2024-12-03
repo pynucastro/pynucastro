@@ -910,10 +910,10 @@ class RateCollection:
                         update = True
 
             if update:
-                if rp.forward:
+                if rp.forward is not None:
                     print(f"modifying {rp.forward.fname} to use NSE protons")
                     rp.forward.swap_protons()
-                if rp.reverse:
+                if rp.reverse is not None:
                     print(f"modifying {rp.reverse.fname} to use NSE protons")
                     rp.reverse.swap_protons()
 
