@@ -21,7 +21,7 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 # Import Rate
 from pynucastro.constants import constants
-from pynucastro.nucdata import Nucleus, PeriodicTable
+from pynucastro.nucdata import Nucleus
 from pynucastro.rates import (ApproximateRate, DerivedRate, Library, Rate,
                               RateFileError, RatePair, TabularRate,
                               find_duplicate_rates, is_allowed_dupe, load_rate)
@@ -820,12 +820,7 @@ class RateCollection:
             prim_nuc = sorted(r_ag.reactants)[-1]
             prim_prod = sorted(r_ag.products)[-1]
 
-            inter_nuc_Z = prim_nuc.Z + 1
-            inter_nuc_A = prim_nuc.A + 3
-
-            element = PeriodicTable.lookup_Z(inter_nuc_Z)
-
-            inter_nuc = Nucleus(f"{element.abbreviation}{inter_nuc_A}")
+            inter_nuc = Nucleus.from_Z_A(prim_nuc.Z+1, prim_nuc.A+3)
 
             if intermediate_nuclei and inter_nuc not in intermediate_nuclei:
                 continue
@@ -881,7 +876,46 @@ class RateCollection:
         # regenerate the links
         self._build_collection()
 
+    def make_nse_protons(self, A):
+        """for rates involving nuclei with mass number >= A, swap any
+        protons for NSE protons.  This will decouple these rates from
+        the proton captures at lower mass number, simplifying the
+        linear algebra.
+
+        """
+
+        # we want to update both the forward and reverse rates,
+        # so we are consistent
+        for rp in self.get_rate_pairs():
+
+            update = False
+            if rp.forward is not None:
+                heavy = [n for n in rp.forward.reactants + rp.forward.products
+                         if n not in [Nucleus("p"), Nucleus("n"), Nucleus("he4")]]
+                if heavy:
+                    if (min(heavy, key=lambda x: x.A).A >= A and
+                        Nucleus("p") in rp.forward.reactants + rp.forward.products):
+                        update = True
+            elif rp.reverse is not None:
+                heavy = [n for n in rp.reverse.reactants + rp.reverse.products
+                         if n not in [Nucleus("p"), Nucleus("n"), Nucleus("he4")]]
+                if heavy:
+                    if (min(heavy, key=lambda x: x.A).A >= A and
+                        Nucleus("p") in rp.reverse.reactants + rp.reverse.products):
+                        update = True
+
+            if update:
+                if rp.forward is not None:
+                    print(f"modifying {rp.forward.fname} to use NSE protons")
+                    rp.forward.swap_protons()
+                if rp.reverse is not None:
+                    print(f"modifying {rp.reverse.fname} to use NSE protons")
+                    rp.reverse.swap_protons()
+
+        self._build_collection()
+
     def evaluate_rates(self, rho, T, composition, screen_func=None):
+
         """evaluate the rates for a specific density, temperature, and
         composition, with optional screening
 
@@ -1414,6 +1448,7 @@ class RateCollection:
         hidden_nuclei = ["n"]
         if not always_show_p:
             hidden_nuclei.append("p")
+            hidden_nuclei.append("p_nse")
         if not always_show_alpha:
             hidden_nuclei.append("he4")
 
