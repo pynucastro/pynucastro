@@ -12,12 +12,7 @@
 #include <screen_data.H>
 
 struct plasma_state_t {
-    Real qlam0z;
-    Real taufac;
-    Real aa;
     Real temp;
-    Real zbar;
-    Real z2bar;
     Real n_e;
     Real gamma_e_fac;
 };
@@ -58,21 +53,9 @@ fill_plasma_state(plasma_state_t& state, const Real& temp,
     // pp = sqrt( \tilde{z}*(rho/u_I/T) )
     Real pp = std::sqrt(rr*tempi*(z2bar + zbar));
 
-    // Part version of Eq. 19 in Graboske:1973
-    state.qlam0z = 1.88e8_rt * tempi * pp;
-
-    // Part of Eq.6 in Itoh:1979
-    state.taufac = co2 * std::cbrt(tempi);
-
     Real xni = std::cbrt(rr * zbar);
 
-    // Part of Eq.4 in Itoh:1979
-    // 2.27493e5 = e^2 / ( (3*m_u/(4pi))^(1/3) *k_B )
-    state.aa = 2.27493e5_rt * tempi * xni;
-
     state.temp = temp;
-    state.zbar = zbar;
-    state.z2bar = z2bar;
 
     // Electron number density
     // zbar * ntot works out to sum(z[i] * n[i]), after cancelling terms
