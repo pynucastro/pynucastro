@@ -1,5 +1,3 @@
-import pytest
-
 import pynucastro as pyna
 
 
@@ -27,4 +25,3 @@ modifying p_Co55__He4_Fe52 to use NSE protons
 """
 
         assert captured.out == output
-
