@@ -68,6 +68,12 @@ nbsphinx_execute = 'always'
 nbsphinx_allow_errors = True
 nbsphinx_timeout = 1000
 
+# myst-nb control of notebooks
+nb_execution_timeout = 500
+nb_execution_allow_errors = True
+
+
+
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
 #
