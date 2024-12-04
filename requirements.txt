@@ -26,4 +26,5 @@ sphinx-prompt
 sphinx_rtd_theme>=1.1.0
 sphinxcontrib-bibtex
 sphinx-book-theme
+myst-nb
 jupyterlab_myst
