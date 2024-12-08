@@ -4,7 +4,7 @@
     prescription in Chugunov 2007 (#844)
 
   * added "NSE protons" that evaluate the same as a proton but can be
-    used to decouple light and heavy reactions (#853, #854)
+    used to decouple light and heavy reactions (#853, #854, #862, #863)
 
   * `modify_products` was moved to the base `Rate` class all rate classes
     can use it (#851)
