@@ -127,6 +127,7 @@ codes.
    :hidden:
 
    citing
+   changes
    API <modules>
    zreferences
 
