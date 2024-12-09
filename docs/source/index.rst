@@ -71,7 +71,7 @@ codes.
    :caption: Advanced Network Operations
    :hidden:
 
-   approx-rates-examples.ipynb
+   approximate-rates
    nse-protons.ipynb
    unimportant-rates.ipynb
 
