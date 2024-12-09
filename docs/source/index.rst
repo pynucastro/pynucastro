@@ -46,7 +46,7 @@ codes.
 
 .. toctree::
    :maxdepth: 1
-   :caption: Selecting Rates
+   :caption: Building Networks
    :hidden:
 
    library-examples.ipynb
@@ -63,10 +63,17 @@ codes.
 
    screening-examples
    modify-example.ipynb
-   approximate-rates
    custom-rates.ipynb
-   unimportant-rates.ipynb
    partition-function
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Advanced Network Operations
+   :hidden:
+
+   approximate-rates
+   nse-protons.ipynb
+   unimportant-rates.ipynb
 
 .. toctree::
    :maxdepth: 1
