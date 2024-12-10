@@ -153,12 +153,15 @@ class ApproximateRate(Rate):
         elif self.approx_type == "nn_g":
 
             # a nn_g approximate rate combines A(n,g)X(n,g)B into a
-            # single effective rate by assuming neutron equilibrium.
+            # single effective rate by assuming equilibrium of X and n.
 
             assert primary_rate is None
             assert len(secondary_rates) == 2
 
             # make sure that the pair of forward secondary makes sense
+
+            # the first secondary rate should be A(n,g)X and the
+            # second should be X(n,g)B
 
             for rr in secondary_rates:
                 assert Nucleus("n") in rr.reactants and len(rr.products) == 1
