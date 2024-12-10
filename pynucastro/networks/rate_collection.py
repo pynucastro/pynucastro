@@ -882,6 +882,11 @@ class RateCollection:
         # make sure that the intermediate_nuclei list are Nuclei objects
         intermediate_nuclei = Nucleus.cast_list(intermediate_nuclei, allow_None=True)
 
+        # if we didn't pass in a list of nuclei, consider all as targets
+        # for approximation
+        if not intermediate_nuclei:
+            intermediate_nuclei = self.unique_nuclei
+
         # for each intermediate nuclei X, look to see if we have A(n,g)X and X(n,g)B
         approx_rates = []
 
