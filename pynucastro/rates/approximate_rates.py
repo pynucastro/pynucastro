@@ -153,7 +153,7 @@ class ApproximateRate(Rate):
         elif self.approx_type == "nn_g":
 
             # a nn_g approximate rate combines A(n,g)X(n,g)B into a
-            # single effective rate by assuming equilibrium of X and n.
+            # single effective rate by assuming equilibrium of X.
 
             assert primary_rate is None
             assert len(secondary_rates) == 2
