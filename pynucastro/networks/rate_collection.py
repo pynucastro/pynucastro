@@ -876,6 +876,91 @@ class RateCollection:
         # regenerate the links
         self._build_collection()
 
+    def make_nn_g_approx(self, intermediate_nuclei=None):
+        """combine the rates A(n,g)X(n,g)B into a single effective rate."""
+
+        # make sure that the intermediate_nuclei list are Nuclei objects
+        intermediate_nuclei = Nucleus.cast_list(intermediate_nuclei, allow_None=True)
+
+        # if we didn't pass in a list of nuclei, consider all as targets
+        # for approximation
+        if not intermediate_nuclei:
+            intermediate_nuclei = self.unique_nuclei
+
+        # for each intermediate nuclei X, look to see if we have A(n,g)X and X(n,g)B
+        approx_rates = []
+        nuclei_approximated_out = []
+
+        for inter_nuc in intermediate_nuclei:
+
+            if inter_nuc.A < 2:
+                # can't approximate out protons or neutrons
+                continue
+
+            nuc_A = inter_nuc - Nucleus("n")
+            nuc_B = inter_nuc + Nucleus("n")
+
+            if nuc_A in nuclei_approximated_out:
+                # don't try to approximate a rate sequence starting with
+                # a nucleus that we already approximated out
+                continue
+
+            # look for A(n,g)X
+            if not (rf1 := self.get_rate_by_nuclei([nuc_A, Nucleus("n")],
+                                                   [inter_nuc])):
+                continue
+
+            # look for X(n,g)B
+            if not (rf2 := self.get_rate_by_nuclei([inter_nuc, Nucleus("n")],
+                                                   [nuc_B])):
+                continue
+
+            # look for reverse B(g,n)X
+            if not (rr1 := self.get_rate_by_nuclei([nuc_B],
+                                                   [inter_nuc, Nucleus("n")])):
+                continue
+
+            # look for reverse X(g,n)A
+            if not (rr2 := self.get_rate_by_nuclei([inter_nuc],
+                                                   [nuc_A, Nucleus("n")])):
+                continue
+
+            # build the approximate rates
+            ar = ApproximateRate(None, [rf1, rf2],
+                                 None, [rr1, rr2],
+                                 approx_type="nn_g",
+                                 use_identical_particle_factor=False)
+
+            ar_reverse = ApproximateRate(None, [rf1, rf2],
+                                         None, [rr1, rr2],
+                                         is_reverse=True, approx_type="nn_g",
+                                         use_identical_particle_factor=False)
+
+            nuclei_approximated_out.append(inter_nuc)
+            print(f"approximating out {inter_nuc}")
+
+            print(f"using approximate rate {ar}")
+            print(f"using approximate rate {ar_reverse}")
+
+            # approximate rates
+            approx_rates += [ar, ar_reverse]
+
+        # remove the old rates from the rate list and add the approximate rate
+        for ar in approx_rates:
+            for r in ar.get_child_rates():
+                try:
+                    self.rates.remove(r)
+
+                    print(f"removing rate {r}")
+                except ValueError:
+                    pass
+
+            # add the approximate rates
+            self.rates.append(ar)
+
+        # regenerate the links
+        self._build_collection()
+
     def make_nse_protons(self, A):
         """for rates involving nuclei with mass number >= A, swap any
         protons for NSE protons.  This will decouple these rates from
@@ -1442,7 +1527,7 @@ class RateCollection:
                 colors.append(node_color)
             else:
                 for r in self.rates:
-                    if r.reactants.count(n) > 1:
+                    if not isinstance(r, ApproximateRate) and r.reactants.count(n) > 1:
                         node_nuclei.append(n)
                         colors.append(node_color)
                         break
