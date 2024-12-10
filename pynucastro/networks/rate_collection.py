@@ -920,7 +920,7 @@ class RateCollection:
                                                    [inter_nuc, Nucleus("n")])):
                 continue
 
-            # look for reverse B(g,p)X
+            # look for reverse X(g,n)A
             if not (rr2 := self.get_rate_by_nuclei([inter_nuc],
                                                    [nuc_A, Nucleus("n")])):
                 continue
