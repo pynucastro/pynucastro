@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Index &#8212; pynucastro 2.4.0.post42+g1c81d9b7 documentation</title>
+    <title>Index &#8212; pynucastro 2.4.0.post43+g68819b43 documentation</title>
   
   
   
@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
 
-    <script src="_static/documentation_options.js?v=e4021ffa"></script>
+    <script src="_static/documentation_options.js?v=159194f9"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -184,7 +184,11 @@
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Advanced Network Operations</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="approx-rates-examples.html">Approximate Rates</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="approximate-rates.html">Approximate Rates</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="alpha-gamma-approx.html">Approximating alpha-capture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="double-n-capture.html">Approximating double n-capture</a></li>
+</ul>
+</details></li>
 <li class="toctree-l1"><a class="reference internal" href="nse-protons.html">Using NSE Protons</a></li>
 <li class="toctree-l1"><a class="reference internal" href="unimportant-rates.html">Removing Unimportant Rates</a></li>
 </ul>
@@ -512,6 +516,8 @@
       <li><a href="pynucastro.nucdata.html#pynucastro.nucdata.partition_function.PartitionFunction.construct_spline_interpolant">construct_spline_interpolant() (pynucastro.nucdata.partition_function.PartitionFunction method)</a>
 </li>
       <li><a href="pynucastro.rates.html#pynucastro.rates.derived_rate.DerivedRate.counter_factors">counter_factors() (pynucastro.rates.derived_rate.DerivedRate method)</a>
+</li>
+      <li><a href="pynucastro.rates.html#pynucastro.rates.approximate_rates.create_double_neutron_capture">create_double_neutron_capture() (in module pynucastro.rates.approximate_rates)</a>
 </li>
       <li><a href="pynucastro.rates.html#pynucastro.rates.rate.RateSource.csv_path">csv_path (pynucastro.rates.rate.RateSource attribute)</a>
 </li>
@@ -876,6 +882,8 @@
 </li>
       </ul></li>
       <li><a href="pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.make_ap_pg_approx">make_ap_pg_approx() (pynucastro.networks.rate_collection.RateCollection method)</a>
+</li>
+      <li><a href="pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.make_nn_g_approx">make_nn_g_approx() (pynucastro.networks.rate_collection.RateCollection method)</a>
 </li>
       <li><a href="pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.make_nse_protons">make_nse_protons() (pynucastro.networks.rate_collection.RateCollection method)</a>
 </li>
