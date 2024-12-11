@@ -2,6 +2,9 @@
 
 ## 2.5.0
 
+  * Added the ability to approximate A(n,gamma)X(n,gamma)B into an
+    effective rate A(nn,gamma)B (#818)
+
   * `SimpleCxxNetwork` now includes electron screening using the
     prescription in Chugunov 2007 (#844)
 
@@ -23,7 +26,7 @@
     (#846)
 
   * Documentation improvements (#782, #831, #832, #843, #848, #852,
-    #855, #858, #861), including new examples (#783, #800, #826)
+    #855, #858, #861, #866), including new examples (#783, #800, #826)
 
   * Clean-up unused class data in `SimpleCxxNetwork` (#845)
 
