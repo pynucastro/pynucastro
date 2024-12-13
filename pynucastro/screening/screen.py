@@ -1,6 +1,8 @@
 """
 Python implementations of screening routines.
 """
+from functools import wraps
+
 import numpy as np
 
 from pynucastro.constants import constants
@@ -8,8 +10,8 @@ from pynucastro.nucdata import Nucleus
 from pynucastro.numba_util import jitclass, njit
 
 __all__ = ["PlasmaState", "ScreenFactors", "chugunov_2007", "chugunov_2009",
-           "make_plasma_state", "make_screen_factors", "potekhin_1998",
-           "screen5"]
+           "debye_huckel", "make_plasma_state", "make_screen_factors",
+           "potekhin_1998", "screen5"]
 
 
 @jitclass()
@@ -192,6 +194,25 @@ def make_screen_factors(n1, n2):
     n1 = Nucleus.cast(n1)
     n2 = Nucleus.cast(n2)
     return ScreenFactors(n1.Z, n1.A, n2.Z, n2.A)
+
+
+@njit
+def debye_huckel(state, scn_fac) -> float:
+    """Calculates the Debye-Huckel enhancement factor for weak Coloumb coupling,
+    following the appendix of :cite:t:`chugunov:2009`.
+
+    :param PlasmaState state:     the precomputed plasma state factors
+    :param ScreenFactors scn_fac: the precomputed ion pair factors
+    :returns: screening correction factor
+    """
+    z1z2 = scn_fac.z1 * scn_fac.z2
+
+    # Gamma_e from eq. 6
+    Gamma_e = state.gamma_e_fac / state.temp
+
+    # eq. A1
+    h_DH = z1z2 * np.sqrt(3 * Gamma_e**3 * state.z2bar / state.zbar)
+    return np.exp(h_DH)
 
 
 @njit
