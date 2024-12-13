@@ -607,3 +607,26 @@ def potekhin_1998(state, scn_fac):
     scor = np.exp(h12)
 
     return scor
+
+
+@njit
+def wrap_screen_func(screen_func, screen_check=debye_huckel, threshold: float = 1.01):
+    """
+    Wraps a screening function with a check that
+    determines whether that function can be skipped
+    for a given screening calculation.
+
+    :param screen_func: the screening function being wrapped
+    :param screen_check: the approximate screening function to
+    check against the threshold
+    :param threshold: the threshold to check against.
+    If screen_check is less than the threshold, skip screen_func
+    :returns: a wrapped screening function that performs this check
+    """
+    @wraps(screen_func)
+    def new_screen_func(state, scn_fac):
+        F0 = screen_check(state, scn_fac)
+        if F0 <= threshold:
+            return F0
+        return screen_func(state, scn_fac)
+    return new_screen_func
