@@ -212,7 +212,11 @@ def debye_huckel(state, scn_fac) -> float:
 
     # eq. A1
     h_DH = z1z2 * np.sqrt(3 * Gamma_e**3 * state.z2bar / state.zbar)
-    return np.exp(h_DH)
+
+    # machine limit the output
+    h_max = 300
+    h = min(h_DH, h_max)
+    return np.exp(h)
 
 
 @njit
