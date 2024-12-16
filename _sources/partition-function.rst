@@ -5,8 +5,8 @@ In this section we will implement the partition functions discussed in
 :cite:t:`rauscher:2000` and :cite:t:`rauscher:2003`
 with the purpose to compute inverse rates at extreme temperatures and heavy nuclide conditions.
 
-The Semi-Relativistic Ideal Gas Model
--------------------------------------
+Semi-relativistic ideal gas model
+---------------------------------
 
 In order to illustrate our implementation, we will start first by computing the number density of reaction specie in terms of its chemical potential. Let us start our discussion by introducing the 1-particle *canonical partition function* by
 
@@ -54,8 +54,8 @@ or equivalently,
 
 as summarized in :cite:`rauscher:2000`.
 
-The Reverse Rates Definition
-----------------------------
+Reverse rate definition
+-----------------------
 
 The forward and reverse reactions are entangled due to thermodynamical and nuclear equilibrium aspects. In this section we will see how this connection is introduced
 and explore its consequences in the nuclear rates computation, as discussed in :cite:`rauscher:2000`. Starting with the reaction:
@@ -122,8 +122,8 @@ we can compute the reverse rate :math:`\langle \sigma v \rangle_{CD}` in terms o
 .. math:: \dfrac{N_a\langle \sigma v \rangle_{CD}}{N_a\langle \sigma v \rangle_{AB}} = \left(\dfrac{A_AA_B}{A_CA_D} \right)^{3/2}\dfrac{g_Ag_B}{g_Cg_D}  \times e^{-Q/(kT)}
 
 
-The Role of Partition Functions
--------------------------------
+Partition functions
+-------------------
 
 Until now, we have not discussed the role of :math:`g`, which encompasses the number of spin states that a particle may adopt. In reactions :math:`i(j,o)m`  the target :math:`i` and residual nucleus :math:`m` contributes significantly more in the calculation of the rates than the incident and outgoing particles due to their complexity and the number of quantum levels they may assume. Therefore we may consider :math:`\langle \sigma v \rangle_{ij} \rightarrow \langle \sigma v \rangle_i`  and  :math:`\langle \sigma v \rangle_{om} \rightarrow \langle \sigma v \rangle_m`, which symbolize the nucleus :math:`i`, or :math:`m`, and all the remaining particles in their channels. 
 
@@ -168,7 +168,7 @@ or equivalently, after absorbing all the quantites in the forward rate with the 
    
 where the quantites :math:`\lambda_{\gamma}'` and :math:`N_a\langle \sigma v \rangle_m'` are provided by REACLIB, under the ``-v`` flag.
    
-Implementing Partition Functions
+Implementing partition functions
 --------------------------------
 
 The partition function information is contained in three main classes:

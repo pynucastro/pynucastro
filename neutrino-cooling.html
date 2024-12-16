@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Neutrino Cooling &#8212; pynucastro 2.4.0.post44+g03fec80e documentation</title>
+    <title>Neutrino Cooling &#8212; pynucastro 2.4.0.post45+g630df533 documentation</title>
   
   
   
@@ -33,7 +33,7 @@
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="_static/nbsphinx-code-cells.css?v=2aa19091" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
     <link rel="stylesheet" type="text/css" href="_static/myfile.css?v=15ab05d9" />
   
   <!-- So that users can add custom icons -->
@@ -42,14 +42,13 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
 
-    <script src="_static/documentation_options.js?v=b3fe22f8"></script>
+    <script src="_static/documentation_options.js?v=bb8ecbbd"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="_static/copybutton.js?v=f281be69"></script>
     <script src="_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
     <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'neutrino-cooling';</script>
@@ -200,7 +199,7 @@
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Nuclear Statistical Equilibrium</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="NSE-example.html">Solving for nuclear statistical equilibrium</a></li>
+<li class="toctree-l1"><a class="reference internal" href="NSE-example.html">Solving for  nuclear statistical equilibrium</a></li>
 <li class="toctree-l1"><a class="reference internal" href="nse_table.html">Creating an NSE table</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Plasma Neutrinos</span></p>
@@ -476,8 +475,8 @@
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Evaluating-\epsilon_\nu-for-a-thermodynamic-state">Evaluating <span class="math notranslate nohighlight">\(\epsilon_\nu\)</span> for a thermodynamic state</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Plotting-\epsilon_\nu-in-the-\rho-T-plane">Plotting <span class="math notranslate nohighlight">\(\epsilon_\nu\)</span> in the <span class="math notranslate nohighlight">\(\rho\)</span>-<span class="math notranslate nohighlight">\(T\)</span> plane</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#evaluating-epsilon-nu-for-a-thermodynamic-state">Evaluating <span class="math notranslate nohighlight">\(\epsilon_\nu\)</span> for a thermodynamic state</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plotting-epsilon-nu-in-the-rho-t-plane">Plotting <span class="math notranslate nohighlight">\(\epsilon_\nu\)</span> in the <span class="math notranslate nohighlight">\(\rho\)</span>-<span class="math notranslate nohighlight">\(T\)</span> plane</a></li>
 </ul>
             </nav>
         </div>
@@ -489,88 +488,73 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="Neutrino-Cooling">
-<h1>Neutrino Cooling<a class="headerlink" href="#Neutrino-Cooling" title="Link to this heading">#</a></h1>
+  <section id="neutrino-cooling">
+<h1>Neutrino Cooling<a class="headerlink" href="#neutrino-cooling" title="Link to this heading">#</a></h1>
 <p>At high temperatures, pair, plasma, Bremmstrahlung, and photo neutrinos become important. These are often treated as a source term to an energy equation when integrating the temperature evolution due to reactions.</p>
-<p>pynucastro implements the functions of <span id="id1">Itoh <em>et al.</em> [<a class="reference internal" href="zreferences.html#id12" title="Naoki Itoh, Hiroshi Hayashi, Akinori Nishikawa, and Yasuharu Kohyama. Neutrino Energy Loss in Stellar Interiors. VII. Pair, Photo-, Plasma, Bremsstrahlung, and Recombination Neutrino Processes. The Astrophysical Journal Supplement Series, 102:411, February 1996. doi:10.1086/192264.">1996</a>]</span> to incorporate these effects. In many codes, a routine called <code class="docutils literal notranslate"><span class="pre">sneut5</span></code> was used for this implementation. pynucastro contains a port of that routine.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pynucastro.neutrino_cooling</span> <span class="kn">import</span> <span class="n">sneut5</span><span class="p">,</span> <span class="n">NeutrinoCooling</span>
+<p>pynucastro implements the functions of <cite data-cite-t="itoh:1996">Itoh et al. 1996</cite> to incorporate these effects.  In many codes, a routine called <code class="docutils literal notranslate"><span class="pre">sneut5</span></code> was used for this implementation.  pynucastro contains a port of that routine.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pynucastro.neutrino_cooling</span> <span class="kn">import</span> <span class="n">sneut5</span><span class="p">,</span> <span class="n">NeutrinoCooling</span>
 <span class="kn">from</span> <span class="nn">pynucastro</span> <span class="kn">import</span> <span class="n">Composition</span><span class="p">,</span> <span class="n">Nucleus</span>
 </pre></div>
 </div>
 </div>
-<section id="Evaluating-\epsilon_\nu-for-a-thermodynamic-state">
-<h2>Evaluating <span class="math notranslate nohighlight">\(\epsilon_\nu\)</span> for a thermodynamic state<a class="headerlink" href="#Evaluating-\epsilon_\nu-for-a-thermodynamic-state" title="Link to this heading">#</a></h2>
-<p>We can evaluate the cooling term given a density, temperature and composition.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
-</pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rho</span> <span class="o">=</span> <span class="mf">1.e8</span>
+<section id="evaluating-epsilon-nu-for-a-thermodynamic-state">
+<h2>Evaluating <span class="math notranslate nohighlight">\(\epsilon_\nu\)</span> for a thermodynamic state<a class="headerlink" href="#evaluating-epsilon-nu-for-a-thermodynamic-state" title="Link to this heading">#</a></h2>
+<p>We can evaluate the cooling term given a density, temperature and composition.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rho</span> <span class="o">=</span> <span class="mf">1.e8</span>
 <span class="n">T</span> <span class="o">=</span> <span class="mf">2.e9</span>
 <span class="n">c</span> <span class="o">=</span> <span class="n">Composition</span><span class="p">([</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;a&quot;</span><span class="p">),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;fe56&quot;</span><span class="p">)])</span>
 <span class="n">c</span><span class="o">.</span><span class="n">set_equal</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
-</pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">snu</span> <span class="o">=</span> <span class="n">sneut5</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">snu</span> <span class="o">=</span> <span class="n">sneut5</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">snu</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>773682819.5195054
+</pre></div>
 </div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-773682819.5195054
-</pre></div></div>
+</div>
 </div>
 <p>This is the value in CGS units (erg/g/s)</p>
 <p>If we want to see the breakdown of the different contributions, we pass <code class="docutils literal notranslate"><span class="pre">full_output=True</span></code></p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">snu</span><span class="p">,</span> <span class="n">scomps</span> <span class="o">=</span> <span class="n">sneut5</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">full_output</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">snu</span><span class="p">,</span> <span class="n">scomps</span> <span class="o">=</span> <span class="n">sneut5</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">full_output</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">scomps</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-splas: 537968613.1923463; spair: 131726610.15324067; sphot: 92135106.99413596; sbrem: 11852489.17978244; sreco: 0.0
-</pre></div></div>
-</div>
-</section>
-<section id="Plotting-\epsilon_\nu-in-the-\rho-T-plane">
-<h2>Plotting <span class="math notranslate nohighlight">\(\epsilon_\nu\)</span> in the <span class="math notranslate nohighlight">\(\rho\)</span>-<span class="math notranslate nohighlight">\(T\)</span> plane<a class="headerlink" href="#Plotting-\epsilon_\nu-in-the-\rho-T-plane" title="Link to this heading">#</a></h2>
-<p>We can see the trend with thermodynamics state by using the <code class="docutils literal notranslate"><span class="pre">NeutrinoCooling</span></code> class</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>splas: 537968613.1923463; spair: 131726610.15324067; sphot: 92135106.99413596; sbrem: 11852489.17978244; sreco: 0.0
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">nc</span> <span class="o">=</span> <span class="n">NeutrinoCooling</span><span class="p">()</span>
+</div>
+</div>
+</section>
+<section id="plotting-epsilon-nu-in-the-rho-t-plane">
+<h2>Plotting <span class="math notranslate nohighlight">\(\epsilon_\nu\)</span> in the <span class="math notranslate nohighlight">\(\rho\)</span>-<span class="math notranslate nohighlight">\(T\)</span> plane<a class="headerlink" href="#plotting-epsilon-nu-in-the-rho-t-plane" title="Link to this heading">#</a></h2>
+<p>We can see the trend with thermodynamics state by using the <code class="docutils literal notranslate"><span class="pre">NeutrinoCooling</span></code> class</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">nc</span> <span class="o">=</span> <span class="n">NeutrinoCooling</span><span class="p">()</span>
 <span class="n">fig</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">Tmin</span><span class="o">=</span><span class="mf">1.e7</span><span class="p">,</span> <span class="n">Tmax</span><span class="o">=</span><span class="mf">1.e10</span><span class="p">,</span> <span class="n">rhomin</span><span class="o">=</span><span class="mf">1.e3</span><span class="p">,</span> <span class="n">rhomax</span><span class="o">=</span><span class="mf">1.e10</span><span class="p">,</span>
               <span class="n">abar</span><span class="o">=</span><span class="n">c</span><span class="o">.</span><span class="n">abar</span><span class="p">,</span> <span class="n">zbar</span><span class="o">=</span><span class="n">c</span><span class="o">.</span><span class="n">zbar</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<img alt="_images/neutrino-cooling_12_0.png" src="_images/neutrino-cooling_12_0.png" />
+<div class="cell_output docutils container">
+<img alt="_images/ab10e1c155be5b9dd22769406effa966f6917c0cde5836278eb20520535f006e.png" src="_images/ab10e1c155be5b9dd22769406effa966f6917c0cde5836278eb20520535f006e.png" />
 </div>
 </div>
 </section>
@@ -622,8 +606,8 @@ splas: 537968613.1923463; spair: 131726610.15324067; sphot: 92135106.99413596; s
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Evaluating-\epsilon_\nu-for-a-thermodynamic-state">Evaluating <span class="math notranslate nohighlight">\(\epsilon_\nu\)</span> for a thermodynamic state</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Plotting-\epsilon_\nu-in-the-\rho-T-plane">Plotting <span class="math notranslate nohighlight">\(\epsilon_\nu\)</span> in the <span class="math notranslate nohighlight">\(\rho\)</span>-<span class="math notranslate nohighlight">\(T\)</span> plane</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#evaluating-epsilon-nu-for-a-thermodynamic-state">Evaluating <span class="math notranslate nohighlight">\(\epsilon_\nu\)</span> for a thermodynamic state</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plotting-epsilon-nu-in-the-rho-t-plane">Plotting <span class="math notranslate nohighlight">\(\epsilon_\nu\)</span> in the <span class="math notranslate nohighlight">\(\rho\)</span>-<span class="math notranslate nohighlight">\(T\)</span> plane</a></li>
 </ul>
   </nav></div>
 

@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Reverse Rates &#8212; pynucastro 2.4.0.post44+g03fec80e documentation</title>
+    <title>Reverse Rates &#8212; pynucastro 2.4.0.post45+g630df533 documentation</title>
   
   
   
@@ -33,6 +33,7 @@
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
     <link rel="stylesheet" type="text/css" href="_static/myfile.css?v=15ab05d9" />
   
   <!-- So that users can add custom icons -->
@@ -41,14 +42,13 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
 
-    <script src="_static/documentation_options.js?v=b3fe22f8"></script>
+    <script src="_static/documentation_options.js?v=bb8ecbbd"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="_static/copybutton.js?v=f281be69"></script>
     <script src="_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
     <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'partition-function';</script>
@@ -199,7 +199,7 @@
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Nuclear Statistical Equilibrium</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="NSE-example.html">Solving for nuclear statistical equilibrium</a></li>
+<li class="toctree-l1"><a class="reference internal" href="NSE-example.html">Solving for  nuclear statistical equilibrium</a></li>
 <li class="toctree-l1"><a class="reference internal" href="nse_table.html">Creating an NSE table</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Plasma Neutrinos</span></p>
@@ -475,10 +475,10 @@
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-semi-relativistic-ideal-gas-model">The Semi-Relativistic Ideal Gas Model</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-reverse-rates-definition">The Reverse Rates Definition</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-role-of-partition-functions">The Role of Partition Functions</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#implementing-partition-functions">Implementing Partition Functions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#semi-relativistic-ideal-gas-model">Semi-relativistic ideal gas model</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reverse-rate-definition">Reverse rate definition</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#partition-functions">Partition functions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#implementing-partition-functions">Implementing partition functions</a></li>
 </ul>
             </nav>
         </div>
@@ -495,8 +495,8 @@
 <p>In this section we will implement the partition functions discussed in
 <span id="id1">Rauscher and Thielemann [<a class="reference internal" href="zreferences.html#id22" title="Thomas Rauscher and Friedrich-Karl Thielemann. Astrophysical Reaction Rates From Statistical Model Calculations. Atomic Data and Nuclear Data Tables, 75(1-2):1-351, May 2000. arXiv:astro-ph/0004059, doi:10.1006/adnd.2000.0834.">2000</a>]</span> and <span id="id2">Rauscher [<a class="reference internal" href="zreferences.html#id23" title="T. Rauscher. Nuclear partition functions at temperatures exceeding 10^10 K. The Astrophysical Journal Supplement Series, 147(2):403, August 2003. doi:10.1086/375733.">2003</a>]</span>
 with the purpose to compute inverse rates at extreme temperatures and heavy nuclide conditions.</p>
-<section id="the-semi-relativistic-ideal-gas-model">
-<h2>The Semi-Relativistic Ideal Gas Model<a class="headerlink" href="#the-semi-relativistic-ideal-gas-model" title="Link to this heading">#</a></h2>
+<section id="semi-relativistic-ideal-gas-model">
+<h2>Semi-relativistic ideal gas model<a class="headerlink" href="#semi-relativistic-ideal-gas-model" title="Link to this heading">#</a></h2>
 <p>In order to illustrate our implementation, we will start first by computing the number density of reaction specie in terms of its chemical potential. Let us start our discussion by introducing the 1-particle <em>canonical partition function</em> by</p>
 <div class="math notranslate nohighlight">
 \[Z_{1-p} = \dfrac{g}{(2\pi \hbar)^3} \int \, d^3q \,d^3p \, \exp(-E/(kT))\]</div>
@@ -530,8 +530,8 @@ semi-relativistic ideal gas by:</p>
 \[\mu = kT \log \left[\dfrac{n}{g}\left( \dfrac{2\pi \hbar^2}{mkT} \right)^{3/2} \right] + mc^2\]</div>
 <p>as summarized in <span id="id3">[<a class="reference internal" href="zreferences.html#id22" title="Thomas Rauscher and Friedrich-Karl Thielemann. Astrophysical Reaction Rates From Statistical Model Calculations. Atomic Data and Nuclear Data Tables, 75(1-2):1-351, May 2000. arXiv:astro-ph/0004059, doi:10.1006/adnd.2000.0834.">Rauscher and Thielemann, 2000</a>]</span>.</p>
 </section>
-<section id="the-reverse-rates-definition">
-<h2>The Reverse Rates Definition<a class="headerlink" href="#the-reverse-rates-definition" title="Link to this heading">#</a></h2>
+<section id="reverse-rate-definition">
+<h2>Reverse rate definition<a class="headerlink" href="#reverse-rate-definition" title="Link to this heading">#</a></h2>
 <p>The forward and reverse reactions are entangled due to thermodynamical and nuclear equilibrium aspects. In this section we will see how this connection is introduced
 and explore its consequences in the nuclear rates computation, as discussed in <span id="id4">[<a class="reference internal" href="zreferences.html#id22" title="Thomas Rauscher and Friedrich-Karl Thielemann. Astrophysical Reaction Rates From Statistical Model Calculations. Atomic Data and Nuclear Data Tables, 75(1-2):1-351, May 2000. arXiv:astro-ph/0004059, doi:10.1006/adnd.2000.0834.">Rauscher and Thielemann, 2000</a>]</span>. Starting with the reaction:</p>
 <div class="math notranslate nohighlight">
@@ -572,8 +572,8 @@ and explore its consequences in the nuclear rates computation, as discussed in <
 <div class="math notranslate nohighlight">
 \[\dfrac{N_a\langle \sigma v \rangle_{CD}}{N_a\langle \sigma v \rangle_{AB}} = \left(\dfrac{A_AA_B}{A_CA_D} \right)^{3/2}\dfrac{g_Ag_B}{g_Cg_D}  \times e^{-Q/(kT)}\]</div>
 </section>
-<section id="the-role-of-partition-functions">
-<h2>The Role of Partition Functions<a class="headerlink" href="#the-role-of-partition-functions" title="Link to this heading">#</a></h2>
+<section id="partition-functions">
+<h2>Partition functions<a class="headerlink" href="#partition-functions" title="Link to this heading">#</a></h2>
 <p>Until now, we have not discussed the role of <span class="math notranslate nohighlight">\(g\)</span>, which encompasses the number of spin states that a particle may adopt. In reactions <span class="math notranslate nohighlight">\(i(j,o)m\)</span>  the target <span class="math notranslate nohighlight">\(i\)</span> and residual nucleus <span class="math notranslate nohighlight">\(m\)</span> contributes significantly more in the calculation of the rates than the incident and outgoing particles due to their complexity and the number of quantum levels they may assume. Therefore we may consider <span class="math notranslate nohighlight">\(\langle \sigma v \rangle_{ij} \rightarrow \langle \sigma v \rangle_i\)</span>  and  <span class="math notranslate nohighlight">\(\langle \sigma v \rangle_{om} \rightarrow \langle \sigma v \rangle_m\)</span>, which symbolize the nucleus <span class="math notranslate nohighlight">\(i\)</span>, or <span class="math notranslate nohighlight">\(m\)</span>, and all the remaining particles in their channels.</p>
 <p>Using this notation, capture reactions rates of the type <span class="math notranslate nohighlight">\((p,\gamma)\)</span>, <span class="math notranslate nohighlight">\((n,\gamma)\)</span>, <span class="math notranslate nohighlight">\((\alpha,\gamma)\)</span>, and their reverse photodisintegration decay rates, are then related by:</p>
 <div class="math notranslate nohighlight">
@@ -600,7 +600,7 @@ N_a\langle \sigma v \rangle_m &amp;=&amp; N_a\langle \sigma v \rangle_m' \dfrac{
 \end{eqnarray}</div><p>where the quantites <span class="math notranslate nohighlight">\(\lambda_{\gamma}'\)</span> and <span class="math notranslate nohighlight">\(N_a\langle \sigma v \rangle_m'\)</span> are provided by REACLIB, under the <code class="docutils literal notranslate"><span class="pre">-v</span></code> flag.</p>
 </section>
 <section id="implementing-partition-functions">
-<h2>Implementing Partition Functions<a class="headerlink" href="#implementing-partition-functions" title="Link to this heading">#</a></h2>
+<h2>Implementing partition functions<a class="headerlink" href="#implementing-partition-functions" title="Link to this heading">#</a></h2>
 <p>The partition function information is contained in three main classes:</p>
 <ul class="simple">
 <li><p><a class="reference internal" href="pynucastro.nucdata.html#pynucastro.nucdata.partition_function.PartitionFunction" title="pynucastro.nucdata.partition_function.PartitionFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">PartitionFunction</span></code></a> materialize the temperature and the partition function values into an object, interpolating across all the defined points using a cubic spline interpolation. If a temperature value is outside the temperature range, we keep its value constant to the nearest boundary value.</p></li>
@@ -684,10 +684,10 @@ and setup all the nucleus inside the reaction rate. Let us illustrate now, how i
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-semi-relativistic-ideal-gas-model">The Semi-Relativistic Ideal Gas Model</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-reverse-rates-definition">The Reverse Rates Definition</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-role-of-partition-functions">The Role of Partition Functions</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#implementing-partition-functions">Implementing Partition Functions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#semi-relativistic-ideal-gas-model">Semi-relativistic ideal gas model</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reverse-rate-definition">Reverse rate definition</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#partition-functions">Partition functions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#implementing-partition-functions">Implementing partition functions</a></li>
 </ul>
   </nav></div>
 

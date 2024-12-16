@@ -66,6 +66,8 @@ discussion in section 2 of the AME 2020 paper :cite:`ame2020_1`, and
 these numbers match the binding energies computed in the AME tables to
 the uncertainty in the nuclear masses.
 
+Binding energies are also computed and tablulated in the AME mass evaluation (see [AME2020 mass table](https://www-nds.iaea.org/amdc/ame2020/mass_1.mas20.txt)].  But note that the Nubase evaluation seems to more closely follow
+the "rounded" version of the table [AME2020 rounded mass table](https://www-nds.iaea.org/amdc/ame2020/massround.mas20.txt).  The rounding procedure is discussed in Table I on the [AME 2020 paper II](https://iopscience.iop.org/article/10.1088/1674-1137/abddaf) (also see the [Nubase2020 paper](https://iopscience.iop.org/article/10.1088/1674-1137/abddae), Table I).
 
 Partition functions
 -------------------

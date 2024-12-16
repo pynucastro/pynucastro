@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Approximating alpha-capture &#8212; pynucastro 2.4.0.post44+g03fec80e documentation</title>
+    <title>Approximating alpha-capture &#8212; pynucastro 2.4.0.post45+g630df533 documentation</title>
   
   
   
@@ -33,7 +33,7 @@
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="_static/nbsphinx-code-cells.css?v=2aa19091" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
     <link rel="stylesheet" type="text/css" href="_static/myfile.css?v=15ab05d9" />
   
   <!-- So that users can add custom icons -->
@@ -42,14 +42,13 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
 
-    <script src="_static/documentation_options.js?v=b3fe22f8"></script>
+    <script src="_static/documentation_options.js?v=bb8ecbbd"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="_static/copybutton.js?v=f281be69"></script>
     <script src="_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
     <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'alpha-gamma-approx';</script>
@@ -200,7 +199,7 @@
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Nuclear Statistical Equilibrium</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="NSE-example.html">Solving for nuclear statistical equilibrium</a></li>
+<li class="toctree-l1"><a class="reference internal" href="NSE-example.html">Solving for  nuclear statistical equilibrium</a></li>
 <li class="toctree-l1"><a class="reference internal" href="nse_table.html">Creating an NSE table</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Plasma Neutrinos</span></p>
@@ -476,11 +475,11 @@
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Integrating-the-full-network">Integrating the full network</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Approximate-Version">Approximate Version</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Integrating-the-approximate-network">Integrating the approximate network</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Comparison">Comparison</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#No-approximation">No approximation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#integrating-the-full-network">Integrating the full network</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#approximate-version">Approximate version</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#integrating-the-approximate-network">Integrating the approximate network</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#comparison">Comparison</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#no-approximation">No approximation</a></li>
 </ul>
             </nav>
         </div>
@@ -492,70 +491,61 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="Approximating-alpha-capture">
-<h1>Approximating alpha-capture<a class="headerlink" href="#Approximating-alpha-capture" title="Link to this heading">#</a></h1>
-<p>pynucastro can use rate approximations for <span class="math notranslate nohighlight">\(A(\alpha,\gamma)B\)</span> and <span class="math notranslate nohighlight">\(A(\alpha,p)X(p,\gamma)B\)</span>, combining them into a single effective rate by assuming that the protons and nucleus <span class="math notranslate nohighlight">\(X\)</span> are in equilibrium.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pynucastro</span> <span class="k">as</span> <span class="nn">pyna</span>
+  <section id="approximating-alpha-capture">
+<h1>Approximating alpha-capture<a class="headerlink" href="#approximating-alpha-capture" title="Link to this heading">#</a></h1>
+<p>pynucastro can use rate approximations for <span class="math notranslate nohighlight">\(A(\alpha,\gamma)B\)</span> and <span class="math notranslate nohighlight">\(A(\alpha,p)X(p,\gamma)B\)</span>,
+combining them into a single effective rate by assuming that the protons and nucleus <span class="math notranslate nohighlight">\(X\)</span> are in equilibrium.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pynucastro</span> <span class="k">as</span> <span class="nn">pyna</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">from</span> <span class="nn">scipy.integrate</span> <span class="kn">import</span> <span class="n">solve_ivp</span>
 </pre></div>
 </div>
 </div>
-<p>Let’s create a simple network that has both an <span class="math notranslate nohighlight">\((\alpha, \gamma)\)</span> and <span class="math notranslate nohighlight">\((\alpha, p)(p, \gamma)\)</span> sequence.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
-</pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">reaclib_library</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">ReacLibLibrary</span><span class="p">()</span>
+<p>Let’s create a simple network that has both an <span class="math notranslate nohighlight">\((\alpha, \gamma)\)</span> and
+<span class="math notranslate nohighlight">\((\alpha, p)(p, \gamma)\)</span> sequence.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">reaclib_library</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">ReacLibLibrary</span><span class="p">()</span>
 <span class="n">mylib</span> <span class="o">=</span> <span class="n">reaclib_library</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">([</span><span class="s2">&quot;mg24&quot;</span><span class="p">,</span> <span class="s2">&quot;al27&quot;</span><span class="p">,</span> <span class="s2">&quot;si28&quot;</span><span class="p">,</span> <span class="s2">&quot;p31&quot;</span><span class="p">,</span> <span class="s2">&quot;s32&quot;</span><span class="p">,</span> <span class="s2">&quot;he4&quot;</span><span class="p">,</span> <span class="s2">&quot;p&quot;</span><span class="p">])</span>
 <span class="n">pynet</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">PythonNetwork</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="p">[</span><span class="n">mylib</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
-</pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">pynet</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rotated</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">curved_edges</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<img alt="_images/alpha-gamma-approx_5_0.png" src="_images/alpha-gamma-approx_5_0.png" />
-</div>
-</div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pynet</span><span class="o">.</span><span class="n">write_network</span><span class="p">(</span><span class="s2">&quot;full_net.py&quot;</span><span class="p">)</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">pynet</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rotated</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">curved_edges</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+<div class="cell_output docutils container">
+<img alt="_images/d629302dd6aa75e76059a5936a6568883a91466890b5363e446945e67b8d0b09.png" src="_images/d629302dd6aa75e76059a5936a6568883a91466890b5363e446945e67b8d0b09.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pynet</span><span class="o">.</span><span class="n">write_network</span><span class="p">(</span><span class="s2">&quot;full_net.py&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">full_net</span>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">full_net</span>
 </pre></div>
 </div>
 </div>
-<section id="Integrating-the-full-network">
-<h2>Integrating the full network<a class="headerlink" href="#Integrating-the-full-network" title="Link to this heading">#</a></h2>
-<p>Now let’s integrate this. We’ll start with half <span class="math notranslate nohighlight">\({}^{24}\mathrm{Mg}\)</span> and half <span class="math notranslate nohighlight">\(\alpha\)</span> by mass.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
-</pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rho</span> <span class="o">=</span> <span class="mf">1.e7</span>
+<section id="integrating-the-full-network">
+<h2>Integrating the full network<a class="headerlink" href="#integrating-the-full-network" title="Link to this heading">#</a></h2>
+<p>Now let’s integrate this.  We’ll start with half <span class="math notranslate nohighlight">\({}^{24}\mathrm{Mg}\)</span> and half <span class="math notranslate nohighlight">\(\alpha\)</span> by mass.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rho</span> <span class="o">=</span> <span class="mf">1.e7</span>
 <span class="n">T</span> <span class="o">=</span> <span class="mf">3e9</span>
 
 <span class="n">X0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">full_net</span><span class="o">.</span><span class="n">nnuc</span><span class="p">)</span>
@@ -566,21 +556,19 @@
 </pre></div>
 </div>
 </div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
-</pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tmax</span> <span class="o">=</span> <span class="mf">1.e-3</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tmax</span> <span class="o">=</span> <span class="mf">1.e-3</span>
 <span class="n">sol</span> <span class="o">=</span> <span class="n">solve_ivp</span><span class="p">(</span><span class="n">full_net</span><span class="o">.</span><span class="n">rhs</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">tmax</span><span class="p">],</span> <span class="n">Y0</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;BDF&quot;</span><span class="p">,</span>
                 <span class="n">dense_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">),</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1.e-6</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1.e-10</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
-</pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
 <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
 
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">full_net</span><span class="o">.</span><span class="n">nnuc</span><span class="p">):</span>
@@ -594,32 +582,25 @@
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<img alt="_images/alpha-gamma-approx_11_0.png" src="_images/alpha-gamma-approx_11_0.png" />
+<div class="cell_output docutils container">
+<img alt="_images/e14627261e4c1bfc0cd66c04bf4b4f5b942c33c41fc57b950ac212e560270a97.png" src="_images/e14627261e4c1bfc0cd66c04bf4b4f5b942c33c41fc57b950ac212e560270a97.png" />
 </div>
 </div>
 </section>
-<section id="Approximate-Version">
-<h2>Approximate Version<a class="headerlink" href="#Approximate-Version" title="Link to this heading">#</a></h2>
-<p>Now we will approximate the rates, combining <span class="math notranslate nohighlight">\((\alpha, \gamma)\)</span> and <span class="math notranslate nohighlight">\((\alpha, p)(p, \gamma)\)</span> into a single effective rate.</p>
-<p>The routine <code class="docutils literal notranslate"><span class="pre">make_ap_pg_approx()</span></code> will find all of the rates that make up that sequence and create a single <code class="docutils literal notranslate"><span class="pre">ApproximateRate</span></code> that captures the effective rate. The original rates will still be stored in the <code class="docutils literal notranslate"><span class="pre">ApproximateRate</span></code> object and will be evaluated to compute the needed approximation when the effective rate is evaluated.</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+<section id="approximate-version">
+<h2>Approximate version<a class="headerlink" href="#approximate-version" title="Link to this heading">#</a></h2>
+<p>Now we will approximate the rates, combining <span class="math notranslate nohighlight">\((\alpha, \gamma)\)</span> and
+<span class="math notranslate nohighlight">\((\alpha, p)(p, \gamma)\)</span> into a single effective rate.</p>
+<p>The routine <code class="docutils literal notranslate"><span class="pre">make_ap_pg_approx()</span></code> will find all of the rates that make up that sequence and create a
+single <code class="docutils literal notranslate"><span class="pre">ApproximateRate</span></code> that captures the effective rate.  The original rates will still be stored in the <code class="docutils literal notranslate"><span class="pre">ApproximateRate</span></code> object and will be evaluated to compute the needed approximation when the effective rate is evaluated.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pynet</span><span class="o">.</span><span class="n">make_ap_pg_approx</span><span class="p">()</span>
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pynet</span><span class="o">.</span><span class="n">make_ap_pg_approx</span><span class="p">()</span>
-</pre></div>
 </div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-using approximate rate Mg24 + He4 ⟶ Si28 + 𝛾
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>using approximate rate Mg24 + He4 ⟶ Si28 + 𝛾
 using approximate rate Si28 ⟶ Mg24 + He4
 using approximate rate Si28 + He4 ⟶ S32 + 𝛾
 using approximate rate S32 ⟶ Si28 + He4
@@ -635,65 +616,56 @@ removing rate P31 + p ⟶ S32 + 𝛾
 removing rate S32 ⟶ He4 + Si28
 removing rate S32 ⟶ p + P31
 removing rate P31 + p ⟶ He4 + Si28
-</pre></div></div>
-</div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pynet</span>
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pynet</span>
 </pre></div>
 </div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-P31 ⟶ He4 + Al27
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>P31 ⟶ He4 + Al27
 Al27 + He4 ⟶ P31 + 𝛾
 Mg24 + He4 ⟶ Si28 + 𝛾
 Si28 ⟶ Mg24 + He4
 Si28 + He4 ⟶ S32 + 𝛾
 S32 ⟶ Si28 + He4
-</pre></div></div>
-</div>
-<p>Since we no longer care about the <span class="math notranslate nohighlight">\({}^{27}\mathrm{Al}\)</span> and <span class="math notranslate nohighlight">\({}^{31}\mathrm{P}\)</span>, we can remove them from the network. The <code class="docutils literal notranslate"><span class="pre">ApproximateRate</span></code> object still knows that these are the intermediate nucleus, but now they won’t explicitly appear as one of the nuclei in the network.</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pynet</span><span class="o">.</span><span class="n">remove_nuclei</span><span class="p">([</span><span class="s2">&quot;al27&quot;</span><span class="p">,</span> <span class="s2">&quot;p31&quot;</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
 </div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-looking to remove P31 ⟶ He4 + Al27
+<p>Since we no longer care about the <span class="math notranslate nohighlight">\({}^{27}\mathrm{Al}\)</span> and <span class="math notranslate nohighlight">\({}^{31}\mathrm{P}\)</span>, we can remove them from the network.  The <code class="docutils literal notranslate"><span class="pre">ApproximateRate</span></code> object still knows that these are the intermediate nucleus, but now they
+won’t explicitly appear as one of the nuclei in the network.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pynet</span><span class="o">.</span><span class="n">remove_nuclei</span><span class="p">([</span><span class="s2">&quot;al27&quot;</span><span class="p">,</span> <span class="s2">&quot;p31&quot;</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>looking to remove P31 ⟶ He4 + Al27
 looking to remove Al27 + He4 ⟶ P31 + 𝛾
 looking to remove P31 ⟶ He4 + Al27
 looking to remove Al27 + He4 ⟶ P31 + 𝛾
-</pre></div></div>
-</div>
-<p>Note that since no reactions consume protons after that removal, the protons are all removed from the network, reducing its size from 7 nuclei to 4</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">pynet</span><span class="o">.</span><span class="n">network_overview</span><span class="p">())</span>
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
 </div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-He4
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Since no reactions consume protons after that removal, the protons are all removed from the network, reducing its size from 7 nuclei to 4.</p>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">pynet</span><span class="o">.</span><span class="n">network_overview</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>He4
   consumed by:
      Mg24 + He4 ⟶ Si28 + 𝛾
      Si28 + He4 ⟶ S32 + 𝛾
@@ -720,82 +692,63 @@ S32
      S32 ⟶ Si28 + He4
   produced by:
      Si28 + He4 ⟶ S32 + 𝛾
-
-
-</pre></div></div>
-</div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">pynet</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rotated</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">curved_edges</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
 </div>
-<div class="output_area docutils container">
-<img alt="_images/alpha-gamma-approx_19_0.png" src="_images/alpha-gamma-approx_19_0.png" />
-</div>
-</div>
-<p>As we see above, the nuclei <span class="math notranslate nohighlight">\({}^{27}\mathrm{Al}\)</span> and <span class="math notranslate nohighlight">\({}^{31}\mathrm{P}\)</span> no longer appear in the network, but the links to them are still understood to the network. This reduces the size of the network, while still preserving those flows.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pynet</span><span class="o">.</span><span class="n">write_network</span><span class="p">(</span><span class="s2">&quot;approx_net.py&quot;</span><span class="p">)</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">pynet</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rotated</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">curved_edges</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">approx_net</span>
-</pre></div>
+<div class="cell_output docutils container">
+<img alt="_images/9a0e777a479f9bf0221f6d79483a3ecf3778250ea49e44db254386b40f4dca0e.png" src="_images/9a0e777a479f9bf0221f6d79483a3ecf3778250ea49e44db254386b40f4dca0e.png" />
 </div>
 </div>
-<p>The <code class="docutils literal notranslate"><span class="pre">PythonNetwork</span></code> knows how to write out the code needed to evaluate the rate approximation. For instance, the evolution of <span class="math notranslate nohighlight">\({}^{4}\mathrm{He}\)</span> is determined as:</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">pynet</span><span class="o">.</span><span class="n">full_ydot_string</span><span class="p">(</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">)))</span>
+<p>As we see above, the nuclei <span class="math notranslate nohighlight">\({}^{27}\mathrm{Al}\)</span> and <span class="math notranslate nohighlight">\({}^{31}\mathrm{P}\)</span> no longer appear in the network, but  the links to them are still understood to the network.  This reduces the size of the network, while still preserving those flows.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pynet</span><span class="o">.</span><span class="n">write_network</span><span class="p">(</span><span class="s2">&quot;approx_net.py&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
 </div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-dYdt[jhe4] = (
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">approx_net</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">PythonNetwork</span></code> knows how to write out the code needed to evaluate the rate approximation.  For instance, the evolution of <span class="math notranslate nohighlight">\({}^{4}\mathrm{He}\)</span> is determined as:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">pynet</span><span class="o">.</span><span class="n">full_ydot_string</span><span class="p">(</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">)))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>dYdt[jhe4] = (
    -rho*Y[jhe4]*Y[jmg24]*rate_eval.Mg24_He4__Si28__approx
    -rho*Y[jhe4]*Y[jsi28]*rate_eval.Si28_He4__S32__approx
    +Y[jsi28]*rate_eval.Si28__Mg24_He4__approx
    +Y[js32]*rate_eval.S32__Si28_He4__approx
    )
-
-
-</pre></div></div>
-</div>
-<p>And the rate approximations are computed as:</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">r</span> <span class="o">=</span> <span class="n">pynet</span><span class="o">.</span><span class="n">get_rate</span><span class="p">(</span><span class="s2">&quot;mg24_he4__si28__approx&quot;</span><span class="p">)</span>
+</div>
+</div>
+<p>And the rate approximations are computed as:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">r</span> <span class="o">=</span> <span class="n">pynet</span><span class="o">.</span><span class="n">get_rate</span><span class="p">(</span><span class="s2">&quot;mg24_he4__si28__approx&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">function_string_py</span><span class="p">())</span>
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-@numba.njit()
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>@numba.njit()
 def Mg24_He4__Si28__approx(rate_eval, tf):
     r_ag = rate_eval.He4_Mg24__Si28__removed
     r_ap = rate_eval.He4_Mg24__p_Al27__removed
@@ -803,20 +756,18 @@ def Mg24_He4__Si28__approx(rate_eval, tf):
     r_pa = rate_eval.p_Al27__He4_Mg24__removed
     rate = r_ag + r_ap * r_pg / (r_pg + r_pa)
     rate_eval.Mg24_He4__Si28__approx = rate
-
-
-</pre></div></div>
+</pre></div>
+</div>
+</div>
 </div>
 <p>where the 4 lines before the rate approximation is made are evaluating the original, unapproximated rates.</p>
 </section>
-<section id="Integrating-the-approximate-network">
-<h2>Integrating the approximate network<a class="headerlink" href="#Integrating-the-approximate-network" title="Link to this heading">#</a></h2>
+<section id="integrating-the-approximate-network">
+<h2>Integrating the approximate network<a class="headerlink" href="#integrating-the-approximate-network" title="Link to this heading">#</a></h2>
 <p>Let’s integrate this approximate net and compare to above</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rho</span> <span class="o">=</span> <span class="mf">1.e7</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rho</span> <span class="o">=</span> <span class="mf">1.e7</span>
 <span class="n">T</span> <span class="o">=</span> <span class="mf">3.e9</span>
 
 <span class="n">X0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">approx_net</span><span class="o">.</span><span class="n">nnuc</span><span class="p">)</span>
@@ -827,21 +778,19 @@ def Mg24_He4__Si28__approx(rate_eval, tf):
 </pre></div>
 </div>
 </div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
-</pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tmax</span> <span class="o">=</span> <span class="mf">1.e-3</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tmax</span> <span class="o">=</span> <span class="mf">1.e-3</span>
 <span class="n">approx_sol</span> <span class="o">=</span> <span class="n">solve_ivp</span><span class="p">(</span><span class="n">approx_net</span><span class="o">.</span><span class="n">rhs</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">tmax</span><span class="p">],</span> <span class="n">Y0</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;BDF&quot;</span><span class="p">,</span>
                        <span class="n">dense_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">),</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1.e-6</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1.e-10</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
-</pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
 <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
 
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">approx_net</span><span class="o">.</span><span class="n">nnuc</span><span class="p">):</span>
@@ -855,22 +804,17 @@ def Mg24_He4__Si28__approx(rate_eval, tf):
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<img alt="_images/alpha-gamma-approx_31_0.png" src="_images/alpha-gamma-approx_31_0.png" />
+<div class="cell_output docutils container">
+<img alt="_images/3910d9311f37c79e1ab53a3d7d57e184b2f202984b78bcf122c22ce769931df7.png" src="_images/3910d9311f37c79e1ab53a3d7d57e184b2f202984b78bcf122c22ce769931df7.png" />
 </div>
 </div>
 </section>
-<section id="Comparison">
-<h2>Comparison<a class="headerlink" href="#Comparison" title="Link to this heading">#</a></h2>
+<section id="comparison">
+<h2>Comparison<a class="headerlink" href="#comparison" title="Link to this heading">#</a></h2>
 <p>Let’s plot both on the same axes to see the comparison.</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
 <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
 
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">approx_net</span><span class="o">.</span><span class="n">nnuc</span><span class="p">):</span>
@@ -879,7 +823,7 @@ def Mg24_He4__Si28__approx(rate_eval, tf):
 
     <span class="n">idx</span> <span class="o">=</span> <span class="n">full_net</span><span class="o">.</span><span class="n">names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">approx_net</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">sol</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">sol</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="n">idx</span><span class="p">,:]</span> <span class="o">*</span> <span class="n">full_net</span><span class="o">.</span><span class="n">A</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span>
-              <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;X(</span><span class="si">{</span><span class="n">full_net</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
+              <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;X(</span><span class="si">{</span><span class="n">full_net</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>              
               <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;C</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
 
@@ -891,49 +835,38 @@ def Mg24_He4__Si28__approx(rate_eval, tf):
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<img alt="_images/alpha-gamma-approx_33_0.png" src="_images/alpha-gamma-approx_33_0.png" />
+<div class="cell_output docutils container">
+<img alt="_images/70636c920a11bdbb595f9b553a2048b6e8da0aa3c32f50b9c099c8f76d4676e3.png" src="_images/70636c920a11bdbb595f9b553a2048b6e8da0aa3c32f50b9c099c8f76d4676e3.png" />
 </div>
 </div>
-<p>Here the dotted line is the approximate network. We see that the results agree well.</p>
+<p>Here the dotted line is the approximate network.  We see that the results agree well.</p>
 </section>
-<section id="No-approximation">
-<h2>No approximation<a class="headerlink" href="#No-approximation" title="Link to this heading">#</a></h2>
-<p>What if we just create a 4 nuclei network without the <span class="math notranslate nohighlight">\((\alpha,p)(p,\gamma)\)</span> links? How does this compare?</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">newlib</span> <span class="o">=</span> <span class="n">reaclib_library</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">([</span><span class="s2">&quot;he4&quot;</span><span class="p">,</span> <span class="s2">&quot;mg24&quot;</span><span class="p">,</span> <span class="s2">&quot;si28&quot;</span><span class="p">,</span> <span class="s2">&quot;s32&quot;</span><span class="p">])</span>
+<section id="no-approximation">
+<h2>No approximation<a class="headerlink" href="#no-approximation" title="Link to this heading">#</a></h2>
+<p>What if we just create a 4 nuclei network without the <span class="math notranslate nohighlight">\((\alpha,p)(p,\gamma)\)</span> links?  How does this compare?</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">newlib</span> <span class="o">=</span> <span class="n">reaclib_library</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">([</span><span class="s2">&quot;he4&quot;</span><span class="p">,</span> <span class="s2">&quot;mg24&quot;</span><span class="p">,</span> <span class="s2">&quot;si28&quot;</span><span class="p">,</span> <span class="s2">&quot;s32&quot;</span><span class="p">])</span>
 <span class="n">newpynet</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">PythonNetwork</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="p">[</span><span class="n">newlib</span><span class="p">])</span>
 <span class="n">fig</span> <span class="o">=</span> <span class="n">newpynet</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rotated</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">curved_edges</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<img alt="_images/alpha-gamma-approx_36_0.png" src="_images/alpha-gamma-approx_36_0.png" />
+<div class="cell_output docutils container">
+<img alt="_images/896f817b8d54c71df5834ca5c3c15c71ad239532a746b46785f8c31c5e718e61.png" src="_images/896f817b8d54c71df5834ca5c3c15c71ad239532a746b46785f8c31c5e718e61.png" />
 </div>
 </div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">newpynet</span><span class="o">.</span><span class="n">write_network</span><span class="p">(</span><span class="s2">&quot;simple_net.py&quot;</span><span class="p">)</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">newpynet</span><span class="o">.</span><span class="n">write_network</span><span class="p">(</span><span class="s2">&quot;simple_net.py&quot;</span><span class="p">)</span>
 <span class="kn">import</span> <span class="nn">simple_net</span>
 </pre></div>
 </div>
 </div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
-</pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rho</span> <span class="o">=</span> <span class="mf">1.e7</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rho</span> <span class="o">=</span> <span class="mf">1.e7</span>
 <span class="n">T</span> <span class="o">=</span> <span class="mf">3e9</span>
 
 <span class="n">X0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">simple_net</span><span class="o">.</span><span class="n">nnuc</span><span class="p">)</span>
@@ -944,38 +877,31 @@ def Mg24_He4__Si28__approx(rate_eval, tf):
 </pre></div>
 </div>
 </div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">simple_net</span><span class="o">.</span><span class="n">names</span> <span class="o">==</span> <span class="n">approx_net</span><span class="o">.</span><span class="n">names</span>
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">simple_net</span><span class="o">.</span><span class="n">names</span> <span class="o">==</span> <span class="n">approx_net</span><span class="o">.</span><span class="n">names</span>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>True
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
-</pre></div>
 </div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-True
-</pre></div></div>
-</div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tmax</span> <span class="o">=</span> <span class="mf">1.e-3</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tmax</span> <span class="o">=</span> <span class="mf">1.e-3</span>
 <span class="n">simple_sol</span> <span class="o">=</span> <span class="n">solve_ivp</span><span class="p">(</span><span class="n">simple_net</span><span class="o">.</span><span class="n">rhs</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">tmax</span><span class="p">],</span> <span class="n">Y0</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;BDF&quot;</span><span class="p">,</span>
                        <span class="n">dense_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">),</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1.e-6</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1.e-10</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[27]:
-</pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
 <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
 
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">approx_net</span><span class="o">.</span><span class="n">nnuc</span><span class="p">):</span>
@@ -984,7 +910,7 @@ True
 
     <span class="n">idx</span> <span class="o">=</span> <span class="n">full_net</span><span class="o">.</span><span class="n">names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">approx_net</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">sol</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">sol</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="n">idx</span><span class="p">,:]</span> <span class="o">*</span> <span class="n">full_net</span><span class="o">.</span><span class="n">A</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span>
-              <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;X(</span><span class="si">{</span><span class="n">full_net</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
+              <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;X(</span><span class="si">{</span><span class="n">full_net</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>              
               <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;C</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
     <span class="n">idx</span> <span class="o">=</span> <span class="n">simple_net</span><span class="o">.</span><span class="n">names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">approx_net</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
@@ -1000,14 +926,11 @@ True
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<img alt="_images/alpha-gamma-approx_41_0.png" src="_images/alpha-gamma-approx_41_0.png" />
+<div class="cell_output docutils container">
+<img alt="_images/86e9aea69954b7f21bcb990e36a92d6e3f474782287fd7105b3d98ba13c92ae0.png" src="_images/86e9aea69954b7f21bcb990e36a92d6e3f474782287fd7105b3d98ba13c92ae0.png" />
 </div>
 </div>
-<p>Here we see all 3 networks. The full network (7 nuclei) is the solid lines. The approximate version of that is the dotted line. We see that they track reasonably well, especially when the abundance is high. The dashed line is the version of the network that has the same 4 nuclei as the approximate network, but with out approximating the <span class="math notranslate nohighlight">\((\alpha, p)(p,\gamma)\)</span> links, so we see that the <span class="math notranslate nohighlight">\({}^{24}\mathrm{Mg}\)</span> takes longer to burn.</p>
+<p>Here we see all 3 networks.  The full network (7 nuclei) is the solid lines.  The approximate version of that is the dotted line.  We see that they track reasonably well, especially when the abundance is high.  The dashed line is the version of the network that has the same 4 nuclei as the approximate network, but with out approximating the <span class="math notranslate nohighlight">\((\alpha, p)(p,\gamma)\)</span> links, so we see that the <span class="math notranslate nohighlight">\({}^{24}\mathrm{Mg}\)</span> takes longer to burn.</p>
 </section>
 </section>
 
@@ -1057,11 +980,11 @@ True
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Integrating-the-full-network">Integrating the full network</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Approximate-Version">Approximate Version</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Integrating-the-approximate-network">Integrating the approximate network</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Comparison">Comparison</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#No-approximation">No approximation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#integrating-the-full-network">Integrating the full network</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#approximate-version">Approximate version</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#integrating-the-approximate-network">Integrating the approximate network</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#comparison">Comparison</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#no-approximation">No approximation</a></li>
 </ul>
   </nav></div>
 

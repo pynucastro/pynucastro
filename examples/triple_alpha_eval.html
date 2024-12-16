@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Computing the Screened Triple-alpha rate &#8212; pynucastro 2.4.0.post44+g03fec80e documentation</title>
+    <title>Computing the Screened Triple-alpha rate &#8212; pynucastro 2.4.0.post45+g630df533 documentation</title>
   
   
   
@@ -33,7 +33,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css?v=2aa19091" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
     <link rel="stylesheet" type="text/css" href="../_static/myfile.css?v=15ab05d9" />
   
   <!-- So that users can add custom icons -->
@@ -42,14 +42,13 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
 
-    <script src="../_static/documentation_options.js?v=b3fe22f8"></script>
+    <script src="../_static/documentation_options.js?v=bb8ecbbd"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../_static/copybutton.js?v=f281be69"></script>
     <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
     <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'examples/triple_alpha_eval';</script>
@@ -200,7 +199,7 @@
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Nuclear Statistical Equilibrium</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../NSE-example.html">Solving for nuclear statistical equilibrium</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../NSE-example.html">Solving for  nuclear statistical equilibrium</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../nse_table.html">Creating an NSE table</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Plasma Neutrinos</span></p>
@@ -476,8 +475,8 @@
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Manual-method">Manual method</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Computing-it-via-a-RateCollection">Computing it via a RateCollection</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#manual-method">Manual method</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#computing-it-via-a-ratecollection">Computing it via a RateCollection</a></li>
 </ul>
             </nav>
         </div>
@@ -489,32 +488,29 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="Computing-the-Screened-Triple-alpha-rate">
-<h1>Computing the Screened Triple-alpha rate<a class="headerlink" href="#Computing-the-Screened-Triple-alpha-rate" title="Link to this heading">#</a></h1>
-<p>We want to evaluate the 3-<span class="math notranslate nohighlight">\(\alpha\)</span> rate with screening to understand how temperature sensitive it is. We’ll do this 2 different ways (but both will get the same answer).</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+  <section id="computing-the-screened-triple-alpha-rate">
+<h1>Computing the Screened Triple-alpha rate<a class="headerlink" href="#computing-the-screened-triple-alpha-rate" title="Link to this heading">#</a></h1>
+<p>We want to evaluate the 3-<span class="math notranslate nohighlight">\(\alpha\)</span> rate with screening to understand how temperature sensitive it is.
+We’ll do this 2 different ways (but both will get the same answer).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pynucastro</span> <span class="k">as</span> <span class="nn">pyna</span>
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pynucastro</span> <span class="k">as</span> <span class="nn">pyna</span>
-</pre></div>
 </div>
 </div>
 <p>We’ll define the thermodynamics first – a composition of just He and C</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">temp</span> <span class="o">=</span> <span class="mf">1.e8</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">temp</span> <span class="o">=</span> <span class="mf">1.e8</span>
 <span class="n">dens</span> <span class="o">=</span> <span class="mf">1.e6</span>
 </pre></div>
 </div>
 </div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
-</pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">he4</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">)</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">he4</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">)</span>
 <span class="n">c12</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;c12&quot;</span><span class="p">)</span>
 
 <span class="n">nuclei</span> <span class="o">=</span> <span class="p">[</span><span class="n">he4</span><span class="p">,</span> <span class="n">c12</span><span class="p">]</span>
@@ -526,63 +522,51 @@
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<img alt="../_images/examples_triple_alpha_eval_5_0.png" src="../_images/examples_triple_alpha_eval_5_0.png" />
+<div class="cell_output docutils container">
+<img alt="../_images/1e5b5284634ed60ecf90b1af735ad5c4866e57e3609967f5ae79fcefd33c9f44.png" src="../_images/1e5b5284634ed60ecf90b1af735ad5c4866e57e3609967f5ae79fcefd33c9f44.png" />
 </div>
 </div>
-<section id="Manual-method">
-<h2>Manual method<a class="headerlink" href="#Manual-method" title="Link to this heading">#</a></h2>
+<section id="manual-method">
+<h2>Manual method<a class="headerlink" href="#manual-method" title="Link to this heading">#</a></h2>
 <p>Here well read in this rate and compute the screening factors ourselves and then build up the full form of the rate</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rl</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">ReacLibLibrary</span><span class="p">()</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rl</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">ReacLibLibrary</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">triple_alpha</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="s2">&quot;a(aa,)c12&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">triple_alpha</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="s2">&quot;a(aa,)c12&quot;</span><span class="p">)</span>
-</pre></div>
 </div>
 </div>
 <p>Here’s the temperature sensitivity of just the 3-<span class="math notranslate nohighlight">\(\alpha\)</span> rate</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">triple_alpha</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">Tmin</span><span class="o">=</span><span class="mf">5.e7</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">triple_alpha</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">Tmin</span><span class="o">=</span><span class="mf">5.e7</span><span class="p">)</span>
-</pre></div>
 </div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<img alt="../_images/examples_triple_alpha_eval_10_0.png" src="../_images/examples_triple_alpha_eval_10_0.png" />
+<div class="cell_output docutils container">
+<img alt="../_images/9dcf3fbe992f679557eb6fd6e6e41131f391ef26020593c1d8e2a9ed5c2fa97f.png" src="../_images/9dcf3fbe992f679557eb6fd6e6e41131f391ef26020593c1d8e2a9ed5c2fa97f.png" />
 </div>
 </div>
 <p>To compute the screening, we first need to get the plasma state</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plasma</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">make_plasma_state</span><span class="p">(</span><span class="n">temp</span><span class="p">,</span> <span class="n">dens</span><span class="p">,</span> <span class="n">comp</span><span class="o">.</span><span class="n">get_molar</span><span class="p">())</span>
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plasma</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">make_plasma_state</span><span class="p">(</span><span class="n">temp</span><span class="p">,</span> <span class="n">dens</span><span class="p">,</span> <span class="n">comp</span><span class="o">.</span><span class="n">get_molar</span><span class="p">())</span>
-</pre></div>
 </div>
 </div>
-<p>Now, the 3-<span class="math notranslate nohighlight">\(\alpha\)</span> rate requires 2 separate screening terms, first <span class="math notranslate nohighlight">\(\alpha + \alpha\)</span> and then <span class="math notranslate nohighlight">\(\alpha + {}^8\mathrm{Be}\)</span></p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scn_fac1</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">make_screen_factors</span><span class="p">(</span><span class="n">he4</span><span class="p">,</span> <span class="n">he4</span><span class="p">)</span>
+<p>Now, the 3-<span class="math notranslate nohighlight">\(\alpha\)</span> rate requires 2 separate screening terms, first <span class="math notranslate nohighlight">\(\alpha + \alpha\)</span> and then
+<span class="math notranslate nohighlight">\(\alpha + {}^8\mathrm{Be}\)</span></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scn_fac1</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">make_screen_factors</span><span class="p">(</span><span class="n">he4</span><span class="p">,</span> <span class="n">he4</span><span class="p">)</span>
 <span class="n">scn1</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">screening</span><span class="o">.</span><span class="n">screen5</span><span class="p">(</span><span class="n">plasma</span><span class="p">,</span> <span class="n">scn_fac1</span><span class="p">)</span>
 
 <span class="n">scn_fac2</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">make_screen_factors</span><span class="p">(</span><span class="n">he4</span><span class="p">,</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;be8&quot;</span><span class="p">))</span>
@@ -593,77 +577,63 @@
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>5.802207275136419
 </pre></div>
 </div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-5.802207275136419
-</pre></div></div>
+</div>
 </div>
 <p>This shows that our our thermodynamic conditions, screening speeds up the rate by almost <span class="math notranslate nohighlight">\(6\times\)</span>.</p>
 <p>Now, the total rate is:</p>
-<div class="math notranslate nohighlight">
+<p><div class="math notranslate nohighlight">
 \[r = f \rho^2 [Y({}^4\mathrm{He})]^3 \frac{N_A^2 \langle \sigma v \rangle}{3!}\]</div>
+</p>
 <p>where <span class="math notranslate nohighlight">\(f\)</span> is the screening factor and the <span class="math notranslate nohighlight">\(3!\)</span> is because there are 3 identical particles appearing in the reation.</p>
 <p>We get <span class="math notranslate nohighlight">\(N_A^2 \langle \sigma v \rangle\)</span> by evaluating the temperature sensitivity of the rate from ReacLib.</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">r</span> <span class="o">=</span> <span class="n">scn</span> <span class="o">*</span> <span class="n">dens</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="mf">6.0</span> <span class="o">*</span> <span class="n">comp</span><span class="o">.</span><span class="n">get_molar</span><span class="p">()[</span><span class="n">he4</span><span class="p">]</span><span class="o">**</span><span class="mi">3</span> <span class="o">*</span> <span class="n">triple_alpha</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">temp</span><span class="p">)</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">r</span> <span class="o">=</span> <span class="n">scn</span> <span class="o">*</span> <span class="n">dens</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="mf">6.0</span> <span class="o">*</span> <span class="n">comp</span><span class="o">.</span><span class="n">get_molar</span><span class="p">()[</span><span class="n">he4</span><span class="p">]</span><span class="o">**</span><span class="mi">3</span> <span class="o">*</span> <span class="n">triple_alpha</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">temp</span><span class="p">)</span>
 <span class="n">r</span>
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2.2474377346308396e-14
 </pre></div>
 </div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-2.2474377346308396e-14
-</pre></div></div>
+</div>
 </div>
 <p>This is the rate in units of <span class="math notranslate nohighlight">\(\mathrm{cm}^{-3}~\mathrm{s}^{-1}\)</span></p>
 </section>
-<section id="Computing-it-via-a-RateCollection">
-<h2>Computing it via a RateCollection<a class="headerlink" href="#Computing-it-via-a-RateCollection" title="Link to this heading">#</a></h2>
+<section id="computing-it-via-a-ratecollection">
+<h2>Computing it via a RateCollection<a class="headerlink" href="#computing-it-via-a-ratecollection" title="Link to this heading">#</a></h2>
 <p>We can build a simple <code class="docutils literal notranslate"><span class="pre">RateCollection</span></code> containing only this rate</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rc</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">RateCollection</span><span class="p">(</span><span class="n">rates</span><span class="o">=</span><span class="p">[</span><span class="n">triple_alpha</span><span class="p">])</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rc</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">RateCollection</span><span class="p">(</span><span class="n">rates</span><span class="o">=</span><span class="p">[</span><span class="n">triple_alpha</span><span class="p">])</span>
 <span class="n">fig</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Ignoring fixed x limits to fulfill fixed data aspect with adjustable data limits.
+</pre></div>
 </div>
-<div class="output_area docutils container">
-<img alt="../_images/examples_triple_alpha_eval_21_0.png" src="../_images/examples_triple_alpha_eval_21_0.png" />
+<img alt="../_images/ab68a6e629431ca1ebe6eefb71c47ca14f3362e6ba8da6ba5e4fb2f1344fba20.png" src="../_images/ab68a6e629431ca1ebe6eefb71c47ca14f3362e6ba8da6ba5e4fb2f1344fba20.png" />
 </div>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">evaluate_rates()</span></code> method will take the thermodynamic state and screening function (optionally) and compute the value of each of the rates in the network.</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rc</span><span class="o">.</span><span class="n">evaluate_rates</span><span class="p">(</span><span class="n">dens</span><span class="p">,</span> <span class="n">temp</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span> <span class="n">screen_func</span><span class="o">=</span><span class="n">pyna</span><span class="o">.</span><span class="n">screening</span><span class="o">.</span><span class="n">screen5</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rc</span><span class="o">.</span><span class="n">evaluate_rates</span><span class="p">(</span><span class="n">dens</span><span class="p">,</span> <span class="n">temp</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span> <span class="n">screen_func</span><span class="o">=</span><span class="n">pyna</span><span class="o">.</span><span class="n">screening</span><span class="o">.</span><span class="n">screen5</span><span class="p">)</span>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{He4 + He4 + He4 ⟶ C12 + 𝛾: 2.2474377346308393e-14}
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
-</pre></div>
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-{He4 + He4 + He4 ⟶ C12 + 𝛾: 2.2474377346308393e-14}
-</pre></div></div>
 </div>
 <p>We see that we get the same value as computing it manually.</p>
 </section>
@@ -715,8 +685,8 @@
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Manual-method">Manual method</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Computing-it-via-a-RateCollection">Computing it via a RateCollection</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#manual-method">Manual method</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#computing-it-via-a-ratecollection">Computing it via a RateCollection</a></li>
 </ul>
   </nav></div>
 

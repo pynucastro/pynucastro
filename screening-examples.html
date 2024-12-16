@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Screening Rates &#8212; pynucastro 2.4.0.post44+g03fec80e documentation</title>
+    <title>Screening Rates &#8212; pynucastro 2.4.0.post45+g630df533 documentation</title>
   
   
   
@@ -33,7 +33,7 @@
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="_static/nbsphinx-code-cells.css?v=2aa19091" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
     <link rel="stylesheet" type="text/css" href="_static/myfile.css?v=15ab05d9" />
   
   <!-- So that users can add custom icons -->
@@ -42,14 +42,13 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
 
-    <script src="_static/documentation_options.js?v=b3fe22f8"></script>
+    <script src="_static/documentation_options.js?v=bb8ecbbd"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="_static/copybutton.js?v=f281be69"></script>
     <script src="_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
     <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'screening-examples';</script>
@@ -200,7 +199,7 @@
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Nuclear Statistical Equilibrium</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="NSE-example.html">Solving for nuclear statistical equilibrium</a></li>
+<li class="toctree-l1"><a class="reference internal" href="NSE-example.html">Solving for  nuclear statistical equilibrium</a></li>
 <li class="toctree-l1"><a class="reference internal" href="nse_table.html">Creating an NSE table</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Plasma Neutrinos</span></p>
@@ -476,10 +475,10 @@
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Screening-Implementations">Screening Implementations</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Using-Screening">Using Screening</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Screening-Map">Screening Map</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Screening-and-a-Python-Network">Screening and a Python Network</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#screening-implementations">Screening implementations</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#using-screening">Using screening</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#screening-map">Screening map</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#screening-and-a-python-network">Screening and a python network</a></li>
 </ul>
             </nav>
         </div>
@@ -491,41 +490,39 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="Screening-Rates">
-<h1>Screening Rates<a class="headerlink" href="#Screening-Rates" title="Link to this heading">#</a></h1>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pynucastro</span> <span class="k">as</span> <span class="nn">pyna</span>
-</pre></div>
-</div>
-</div>
-<section id="Screening-Implementations">
-<h2>Screening Implementations<a class="headerlink" href="#Screening-Implementations" title="Link to this heading">#</a></h2>
+  <section id="screening-rates">
+<h1>Screening Rates<a class="headerlink" href="#screening-rates" title="Link to this heading">#</a></h1>
+<section id="screening-implementations">
+<h2>Screening implementations<a class="headerlink" href="#screening-implementations" title="Link to this heading">#</a></h2>
 <p>pynucastro currently has 4 screening implementations:</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">screen5</span></code> based on <span id="id1">Wallace <em>et al.</em> [<a class="reference internal" href="zreferences.html#id29" title="R. K. Wallace, S. E. Woosley, and T. A. Weaver. The thermonuclear model for X-ray transients. \apj , 258:696-715, July 1982. doi:10.1086/160119.">1982</a>]</span></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">potekhin_1998</span></code> based on <span id="id2">Chabrier and Potekhin [<a class="reference internal" href="zreferences.html#id8" title="Gilles Chabrier and Alexander Y. Potekhin. Equation of state of fully ionized electron-ion plasmas. Physical Review E, 58(4):4941–4949, October 1998. doi:10.1103/PhysRevE.58.4941.">1998</a>]</span></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">chugunov_2007</span></code> based on <span id="id3">Chugunov <em>et al.</em> [<a class="reference internal" href="zreferences.html#id4" title="A. I. Chugunov, H. E. DeWitt, and D. G. Yakovlev. Coulomb tunneling for fusion reactions in dense matter: Path integral Monte Carlo versus mean field. Physical Review D, 76(2):025028, July 2007. arXiv:0707.3500, doi:10.1103/PhysRevD.76.025028.">2007</a>]</span></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">chugunov_2009</span></code> based on <span id="id4">Chugunov and DeWitt [<a class="reference internal" href="zreferences.html#id6" title="A. I. Chugunov and H. E. DeWitt. Nuclear fusion reaction rates for strongly coupled ionic mixtures. Physical Review C, 80(1):014611, July 2009. arXiv:0905.3844, doi:10.1103/PhysRevC.80.014611.">2009</a>]</span></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">screen5</span></code> based on <cite data-cite-t="Wallace:1982">Wallace et al. (1982)</cite></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">potekhin_1998</span></code> based on <cite data-cite-t="chabrier_potekhin:1998">Chabrier &amp; Potekhin (1998)</cite></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">chugunov_2007</span></code> based on <cite data-cite-t="chugunov:2007">Chugunov et al. (2007)</cite></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">chugunov_2009</span></code> based on <cite data-cite-t="chugunov:2009">Chugunov &amp; DeWitt (2009)</cite></p></li>
 </ul>
 <p>Each of these use various approximations to account for the influence of the plasma on screening the electric charge of the nuclei that are fusing.</p>
 </section>
-<section id="Using-Screening">
-<h2>Using Screening<a class="headerlink" href="#Using-Screening" title="Link to this heading">#</a></h2>
-<p>To compute the screening factor for a rate, we need to know the entire composition (since the electron number density matters) as well as the two nuclei involved in the reaction. There are two special types that store this information:</p>
+<section id="using-screening">
+<h2>Using screening<a class="headerlink" href="#using-screening" title="Link to this heading">#</a></h2>
+<p>To compute the screening factor for a rate, we need to know the entire composition (since the electron number density matters) as well as the two nuclei involved in the reaction.  There are two special types that store this information:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">PlasmaState</span></code> : stores the aggregate information about the entire plasma</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">ScreenFactors</span></code> : stores the information about the two nuclei</p></li>
 </ul>
 <p>We create these objects separate before we call the screening routine since there are some computational expensive calculations here that don’t change with repeated calls.</p>
-<p>Here we create a <code class="docutils literal notranslate"><span class="pre">PlasmaState</span></code> that knows about the conditions where the screening is taking place and then we use that to compute the screening factor for a rate. The helper function <code class="docutils literal notranslate"><span class="pre">make_plasma_state</span></code> can create the <code class="docutils literal notranslate"><span class="pre">PlasmaState</span></code> object</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+<p>Here we create a <code class="docutils literal notranslate"><span class="pre">PlasmaState</span></code> that knows about the conditions where the screening is taking place and then we use that to compute the screening factor for a rate.  The helper function
+<code class="docutils literal notranslate"><span class="pre">make_plasma_state</span></code> can create the <code class="docutils literal notranslate"><span class="pre">PlasmaState</span></code> object</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pynucastro</span> <span class="k">as</span> <span class="nn">pyna</span>
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">nuclei</span> <span class="o">=</span> <span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;h1&quot;</span><span class="p">),</span>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">nuclei</span> <span class="o">=</span> <span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;h1&quot;</span><span class="p">),</span>
           <span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">),</span>
           <span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;c12&quot;</span><span class="p">),</span>
           <span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;o16&quot;</span><span class="p">),</span>
@@ -542,114 +539,98 @@
 </pre></div>
 </div>
 </div>
-<p>Now let’s get the <span class="math notranslate nohighlight">\({}^{12}\mathrm{C}(\alpha,\gamma){}^{16}\mathrm{O}\)</span> rate and compute the screening factor</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
-</pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">reaclib_library</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">ReacLibLibrary</span><span class="p">()</span>
+<p>Now let’s get the <span class="math notranslate nohighlight">\({}^{12}\mathrm{C}(\alpha,\gamma){}^{16}\mathrm{O}\)</span> rate and compute the screening factor</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">reaclib_library</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">ReacLibLibrary</span><span class="p">()</span>
 <span class="n">rfilter</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">RateFilter</span><span class="p">(</span><span class="n">reactants</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;c12&quot;</span><span class="p">,</span> <span class="s2">&quot;he4&quot;</span><span class="p">],</span> <span class="n">products</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;o16&quot;</span><span class="p">])</span>
 <span class="n">r</span> <span class="o">=</span> <span class="n">reaclib_library</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">rfilter</span><span class="p">)</span><span class="o">.</span><span class="n">get_rates</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
 <span class="n">r</span>
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>C12 + He4 ⟶ O16 + 𝛾
 </pre></div>
 </div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-C12 + He4 ⟶ O16 + 𝛾
-</pre></div></div>
+</div>
 </div>
 <p>For the rate, we need the <code class="docutils literal notranslate"><span class="pre">ScreenFactor</span></code></p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scn_fac</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">make_screen_factors</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">ion_screen</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">r</span><span class="o">.</span><span class="n">ion_screen</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-</pre></div>
-</div>
-</div>
-<p>Finally, we’ll select the Chugunov (2009) screening and compute the screening factor. All of the needed thermodynamic information is contained in the <code class="docutils literal notranslate"><span class="pre">PlasmaState</span></code> and all of the needed reaction rate information is contained in the <code class="docutils literal notranslate"><span class="pre">ScreenFactor</span></code></p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pynucastro.screening</span> <span class="kn">import</span> <span class="n">chugunov_2009</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scn_fac</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">make_screen_factors</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">ion_screen</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">r</span><span class="o">.</span><span class="n">ion_screen</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</div>
+<p>Finally, we’ll select the Chugunov (2009) screening and compute the screening factor.  All of the needed thermodynamic information is contained in the <code class="docutils literal notranslate"><span class="pre">PlasmaState</span></code> and all of the needed
+reaction rate information is contained in the <code class="docutils literal notranslate"><span class="pre">ScreenFactor</span></code></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pynucastro.screening</span> <span class="kn">import</span> <span class="n">chugunov_2009</span>
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scn</span> <span class="o">=</span> <span class="n">chugunov_2009</span><span class="p">(</span><span class="n">plasma</span><span class="p">,</span> <span class="n">scn_fac</span><span class="p">)</span>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scn</span> <span class="o">=</span> <span class="n">chugunov_2009</span><span class="p">(</span><span class="n">plasma</span><span class="p">,</span> <span class="n">scn_fac</span><span class="p">)</span>
 <span class="n">scn</span>
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>4.42076841169158
 </pre></div>
 </div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-4.42076841169158
-</pre></div></div>
+</div>
 </div>
 </section>
-<section id="Screening-Map">
-<h2>Screening Map<a class="headerlink" href="#Screening-Map" title="Link to this heading">#</a></h2>
-<p>For a <code class="docutils literal notranslate"><span class="pre">RateCollection</span></code> or a network derived from it, there are a lot of rates that will need to be screened, and some might have the same nuclei that need to be screened. A “screening map” keeps track of all of the rates that need to be screened for the same set of reactants.</p>
-<p>Some networks (like the <code class="docutils literal notranslate"><span class="pre">aprox</span></code> networks in the literature) use the same screening factor for the forward and reverse rates. A <code class="docutils literal notranslate"><span class="pre">RateCollection</span></code> takes a keyword argument <code class="docutils literal notranslate"><span class="pre">symmetric_screening</span></code> that tells the network to use the same screening for forward and reverse. The screening map will then take this into account.</p>
-<p>The screening map returns a list of <code class="docutils literal notranslate"><span class="pre">ScreeningPair</span></code> objects which contain the pair of nuclei that need a screening factor computed as well as the list of all the rates that screening factor applies to.</p>
-<p>Here’s an example: let’s build a helium and carbon burning network.</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
-</pre></div>
+<section id="screening-map">
+<h2>Screening map<a class="headerlink" href="#screening-map" title="Link to this heading">#</a></h2>
+<p>For a <code class="docutils literal notranslate"><span class="pre">RateCollection</span></code> or a network derived from it, there are a lot of rates that will need to be screened, and some might have the same nuclei that need to be screened.  A “screening map” keeps track of all of the rates that need to be screened for the same set of reactants.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Some networks (like the <code class="docutils literal notranslate"><span class="pre">aprox</span></code> networks in the literature) use the same screening factor for the forward and reverse rates.  A <code class="docutils literal notranslate"><span class="pre">RateCollection</span></code> takes a keyword argument <code class="docutils literal notranslate"><span class="pre">symmetric_screening</span></code> that tells the network to use the same screening for forward and reverse.  The screening map will then take this into account.</p>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mynet</span> <span class="o">=</span> <span class="n">reaclib_library</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">([</span><span class="s2">&quot;p&quot;</span><span class="p">,</span> <span class="s2">&quot;n&quot;</span><span class="p">,</span> <span class="s2">&quot;he4&quot;</span><span class="p">,</span> <span class="s2">&quot;c12&quot;</span><span class="p">,</span> <span class="s2">&quot;o16&quot;</span><span class="p">,</span>
+<p>The screening map returns a list of <code class="docutils literal notranslate"><span class="pre">ScreeningPair</span></code> objects which contain
+the pair of nuclei that need a screening factor computed as well as the list of all
+the rates that screening factor applies to.</p>
+<p>Here’s an example: let’s build a helium and carbon burning network.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mynet</span> <span class="o">=</span> <span class="n">reaclib_library</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">([</span><span class="s2">&quot;p&quot;</span><span class="p">,</span> <span class="s2">&quot;n&quot;</span><span class="p">,</span> <span class="s2">&quot;he4&quot;</span><span class="p">,</span> <span class="s2">&quot;c12&quot;</span><span class="p">,</span> <span class="s2">&quot;o16&quot;</span><span class="p">,</span>
                                         <span class="s2">&quot;na23&quot;</span><span class="p">,</span> <span class="s2">&quot;mg24&quot;</span><span class="p">,</span> <span class="s2">&quot;ne20&quot;</span><span class="p">])</span>
 <span class="n">pynet</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">PythonNetwork</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="p">[</span><span class="n">mynet</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-/opt/hostedtoolcache/Python/3.11.10/x64/lib/python3.11/site-packages/pynucastro/networks/rate_collection.py:576: UserWarning: ReacLib neutron decay rate (&lt;n_to_p_weak_wc12&gt;) does not account for degeneracy at high densities. Consider using tabular rate from Langanke.
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.11.11/x64/lib/python3.11/site-packages/pynucastro/networks/rate_collection.py:576: UserWarning: ReacLib neutron decay rate (&lt;n_to_p_weak_wc12&gt;) does not account for degeneracy at high densities. Consider using tabular rate from Langanke.
   warnings.warn(msg)
-</pre></div></div>
-</div>
-<p>From the <code class="docutils literal notranslate"><span class="pre">RateCollection</span></code>, we can get the screening map (the list of <code class="docutils literal notranslate"><span class="pre">ScreeningPair</span></code> objects)</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pynucastro.screening</span> <span class="kn">import</span> <span class="n">get_screening_map</span>
+</div>
+</div>
+<p>From the <code class="docutils literal notranslate"><span class="pre">RateCollection</span></code>, we can get the screening map (the list of <code class="docutils literal notranslate"><span class="pre">ScreeningPair</span></code> objects)</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pynucastro.screening</span> <span class="kn">import</span> <span class="n">get_screening_map</span>
 <span class="n">screen_map</span> <span class="o">=</span> <span class="n">get_screening_map</span><span class="p">(</span><span class="n">pynet</span><span class="o">.</span><span class="n">get_rates</span><span class="p">(),</span> <span class="n">symmetric_screening</span><span class="o">=</span><span class="n">pynet</span><span class="o">.</span><span class="n">symmetric_screening</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
-</pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">screen_map</span><span class="p">:</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">screen_map</span><span class="p">:</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-screening for He4 + C12
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>screening for He4 + C12
 rates:
   C12 + He4 ⟶ O16 + 𝛾
 
@@ -689,40 +670,37 @@ rates:
 screening for He4 + Be8
 rates:
   He4 + He4 + He4 ⟶ C12 + 𝛾
-
-</pre></div></div>
+</pre></div>
+</div>
+</div>
 </div>
 <p>Here we see that the screening for some pairs of nuclei (like <span class="math notranslate nohighlight">\(p + {}^{23}\mathrm{Na}\)</span>) apply to several rates.</p>
 </section>
-<section id="Screening-and-a-Python-Network">
-<h2>Screening and a Python Network<a class="headerlink" href="#Screening-and-a-Python-Network" title="Link to this heading">#</a></h2>
-<p>When we write out the module that defines a python network, it contains all of the information needed to define the righthand side and Jacobian, if screening is not used. But the <code class="docutils literal notranslate"><span class="pre">rhs</span></code> and <code class="docutils literal notranslate"><span class="pre">jacobian</span></code> functions can take an optional argument that is the name of the screening function to use, and if this is provided, then the rates will be screened. Here we demonstrate this.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<section id="screening-and-a-python-network">
+<h2>Screening and a python network<a class="headerlink" href="#screening-and-a-python-network" title="Link to this heading">#</a></h2>
+<p>When we write out the module that defines a python network, it contains all of the information needed to define the righthand side and Jacobian, if screening is not used.  But the <code class="docutils literal notranslate"><span class="pre">rhs</span></code> and <code class="docutils literal notranslate"><span class="pre">jacobian</span></code> functions can take an optional argument that is the name of the screening function to use, and if this is provided, then the rates will be screened.  Here we demonstrate this.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">from</span> <span class="nn">scipy.integrate</span> <span class="kn">import</span> <span class="n">solve_ivp</span>
 </pre></div>
 </div>
 </div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
-</pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pynet</span><span class="o">.</span><span class="n">write_network</span><span class="p">(</span><span class="s2">&quot;cburn.py&quot;</span><span class="p">)</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pynet</span><span class="o">.</span><span class="n">write_network</span><span class="p">(</span><span class="s2">&quot;cburn.py&quot;</span><span class="p">)</span>
 <span class="kn">import</span> <span class="nn">cburn</span>
 </pre></div>
 </div>
 </div>
-<p>First we’ll run with screening. Here we pass the name of the screening function to the <code class="docutils literal notranslate"><span class="pre">rhs</span></code> and <code class="docutils literal notranslate"><span class="pre">jacobian</span></code> function through the <code class="docutils literal notranslate"><span class="pre">args</span></code> keyword</p>
-<p>We’ll pick conditions appropriate for the center of a Chandra mass white dwarf just after a carbon flame ignites.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
-</pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rho</span> <span class="o">=</span> <span class="mf">1.e9</span>
+<p>First we’ll run with screening.  Here we pass the name of the screening function to the <code class="docutils literal notranslate"><span class="pre">rhs</span></code> and <code class="docutils literal notranslate"><span class="pre">jacobian</span></code> function through the <code class="docutils literal notranslate"><span class="pre">args</span></code> keyword</p>
+<p>We’ll pick conditions appropriate for the center of a Chandra mass white dwarf just after a carbon flame ignites.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rho</span> <span class="o">=</span> <span class="mf">1.e9</span>
 <span class="n">T</span> <span class="o">=</span> <span class="mf">2.e9</span>
 
 <span class="n">X0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">cburn</span><span class="o">.</span><span class="n">nnuc</span><span class="p">)</span>
@@ -738,22 +716,20 @@ rates:
 </pre></div>
 </div>
 </div>
-<p>Now we run without screening:</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
-</pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sol_noscreen</span> <span class="o">=</span> <span class="n">solve_ivp</span><span class="p">(</span><span class="n">cburn</span><span class="o">.</span><span class="n">rhs</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">tmax</span><span class="p">],</span> <span class="n">Y0</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;BDF&quot;</span><span class="p">,</span> <span class="n">jac</span><span class="o">=</span><span class="n">cburn</span><span class="o">.</span><span class="n">jacobian</span><span class="p">,</span>
+<p>Now we run without screening:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sol_noscreen</span> <span class="o">=</span> <span class="n">solve_ivp</span><span class="p">(</span><span class="n">cburn</span><span class="o">.</span><span class="n">rhs</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">tmax</span><span class="p">],</span> <span class="n">Y0</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;BDF&quot;</span><span class="p">,</span> <span class="n">jac</span><span class="o">=</span><span class="n">cburn</span><span class="o">.</span><span class="n">jacobian</span><span class="p">,</span>
                          <span class="n">dense_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">),</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1.e-6</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1.e-10</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-<p>and we can plot the two cases together. The non-screened X’s will be shown with a dotted line.</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
-</pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<p>and we can plot the two cases together.  The non-screened X’s will be shown with a dotted line.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
 <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
 
 <span class="n">threshold</span> <span class="o">=</span> <span class="mf">1.e-4</span>
@@ -767,7 +743,7 @@ rates:
         <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">sol_noscreen</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">sol_noscreen</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span> <span class="o">*</span> <span class="n">cburn</span><span class="o">.</span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
                   <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;:&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;C</span><span class="si">{</span><span class="n">icolor</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">icolor</span> <span class="o">+=</span> <span class="mi">1</span>
-
+        
 <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mf">1.e-8</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="s2">&quot;small&quot;</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;t (s)&quot;</span><span class="p">)</span>
@@ -777,11 +753,8 @@ rates:
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<img alt="_images/screening-examples_33_0.png" src="_images/screening-examples_33_0.png" />
+<div class="cell_output docutils container">
+<img alt="_images/676c6c3d951491b9cf652b5f6e0689d3e1f33965802d790f61f42b4af53cb8b7.png" src="_images/676c6c3d951491b9cf652b5f6e0689d3e1f33965802d790f61f42b4af53cb8b7.png" />
 </div>
 </div>
 <p>As expected, using screening makes the carbon burn much more quickly.</p>
@@ -834,10 +807,10 @@ rates:
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Screening-Implementations">Screening Implementations</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Using-Screening">Using Screening</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Screening-Map">Screening Map</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Screening-and-a-Python-Network">Screening and a Python Network</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#screening-implementations">Screening implementations</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#using-screening">Using screening</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#screening-map">Screening map</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#screening-and-a-python-network">Screening and a python network</a></li>
 </ul>
   </nav></div>
 

@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Creating an NSE table &#8212; pynucastro 2.4.0.post44+g03fec80e documentation</title>
+    <title>Creating an NSE table &#8212; pynucastro 2.4.0.post45+g630df533 documentation</title>
   
   
   
@@ -33,7 +33,7 @@
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="_static/nbsphinx-code-cells.css?v=2aa19091" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
     <link rel="stylesheet" type="text/css" href="_static/myfile.css?v=15ab05d9" />
   
   <!-- So that users can add custom icons -->
@@ -42,14 +42,13 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
 
-    <script src="_static/documentation_options.js?v=b3fe22f8"></script>
+    <script src="_static/documentation_options.js?v=bb8ecbbd"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="_static/copybutton.js?v=f281be69"></script>
     <script src="_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
     <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'nse_table';</script>
@@ -200,7 +199,7 @@
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Nuclear Statistical Equilibrium</span></p>
 <ul class="current nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="NSE-example.html">Solving for nuclear statistical equilibrium</a></li>
+<li class="toctree-l1"><a class="reference internal" href="NSE-example.html">Solving for  nuclear statistical equilibrium</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Creating an NSE table</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Plasma Neutrinos</span></p>
@@ -478,8 +477,8 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="Creating-an-NSE-table">
-<h1>Creating an NSE table<a class="headerlink" href="#Creating-an-NSE-table" title="Link to this heading">#</a></h1>
+  <section id="creating-an-nse-table">
+<h1>Creating an NSE table<a class="headerlink" href="#creating-an-nse-table" title="Link to this heading">#</a></h1>
 <p>We can tabulate the NSE state on a grid <span class="math notranslate nohighlight">\((\rho, T, Y_e)\)</span>, giving:</p>
 <ul class="simple">
 <li><p><span class="math notranslate nohighlight">\(\bar{A}\)</span> : the mean molecular weight</p></li>
@@ -489,21 +488,18 @@
 <li><p><span class="math notranslate nohighlight">\(d\langle B/A\rangle/dt\)</span> : the time-evolution of the binding energy per nucleon due to weak reactions [MeV/s]</p></li>
 <li><p><span class="math notranslate nohighlight">\(\epsilon_\nu\)</span> : the energy loss due to neutrinos [erg / g / s]</p></li>
 </ul>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pynucastro</span> <span class="k">as</span> <span class="nn">pyna</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pynucastro</span> <span class="k">as</span> <span class="nn">pyna</span>
 <span class="kn">from</span> <span class="nn">pynucastro</span> <span class="kn">import</span> <span class="n">Nucleus</span>
 </pre></div>
 </div>
 </div>
-<p>First we’ll create a simple NSE network with a few nuclei. We’ll include tabulated weak rates so we can compute the change in the state due to electron/positron captures and decays.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
-</pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">nucs</span> <span class="o">=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;n&quot;</span><span class="p">),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">),</span>
+<p>First we’ll create a simple NSE network with a few nuclei.  We’ll include tabulated weak rates so we can compute the change in the state due to electron/positron captures and decays.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">nucs</span> <span class="o">=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;n&quot;</span><span class="p">),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">),</span>
         <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;fe52&quot;</span><span class="p">),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;fe53&quot;</span><span class="p">),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;fe54&quot;</span><span class="p">),</span>
         <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;fe55&quot;</span><span class="p">),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;fe56&quot;</span><span class="p">),</span>
         <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;co54&quot;</span><span class="p">),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;co55&quot;</span><span class="p">),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;co56&quot;</span><span class="p">),</span>
@@ -511,32 +507,27 @@
 </pre></div>
 </div>
 </div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
-</pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tl</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">TabularLibrary</span><span class="p">()</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">(</span><span class="n">nucs</span><span class="p">)</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tl</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">TabularLibrary</span><span class="p">()</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">(</span><span class="n">nucs</span><span class="p">)</span>
 <span class="n">rl</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">ReacLibLibrary</span><span class="p">()</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">(</span><span class="n">nucs</span><span class="p">)</span>
 <span class="n">all_lib</span> <span class="o">=</span> <span class="n">tl</span> <span class="o">+</span> <span class="n">rl</span>
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-warning: He4 was not able to be linked
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>warning: He4 was not able to be linked
 warning: Fe53 was not able to be linked
 warning: Fe52 was not able to be linked
 warning: Ni57 was not able to be linked
-</pre></div></div>
-</div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dupes</span> <span class="o">=</span> <span class="n">all_lib</span><span class="o">.</span><span class="n">find_duplicate_links</span><span class="p">()</span>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dupes</span> <span class="o">=</span> <span class="n">all_lib</span><span class="o">.</span><span class="n">find_duplicate_links</span><span class="p">()</span>
 <span class="n">rates_to_remove</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dupes</span><span class="p">:</span>
     <span class="n">rates_to_remove</span> <span class="o">+=</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">d</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">pyna</span><span class="o">.</span><span class="n">rates</span><span class="o">.</span><span class="n">ReacLibRate</span><span class="p">)]</span>
@@ -546,101 +537,97 @@ warning: Ni57 was not able to be linked
 </pre></div>
 </div>
 </div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">nse</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">NSENetwork</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="p">[</span><span class="n">all_lib</span><span class="p">])</span>
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">nse</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">NSENetwork</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="p">[</span><span class="n">all_lib</span><span class="p">])</span>
-</pre></div>
 </div>
 </div>
 <p>Now we’ll create a grid of temperature, density, and <span class="math notranslate nohighlight">\(Y_e\)</span> where we want to compute the NSE state</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-</pre></div>
 </div>
 </div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Ts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="mf">9.6</span><span class="p">,</span> <span class="mf">10.4</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Ts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="mf">9.6</span><span class="p">,</span> <span class="mf">10.4</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
 <span class="n">rhos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
 <span class="n">yes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.43</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-<p>Finally we can generate the table. This will compute the NSE state at each combination of <span class="math notranslate nohighlight">\((\rho, T, Y_e)\)</span>. To help accelerate the convergence, it will start at the highest temperature and loop over <span class="math notranslate nohighlight">\(\rho\)</span> and <span class="math notranslate nohighlight">\(Y_e\)</span> and cache the values of the proton and neutron chemical potentials for the next temperature.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
-</pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">nse</span><span class="o">.</span><span class="n">generate_table</span><span class="p">(</span><span class="n">rho_values</span><span class="o">=</span><span class="n">rhos</span><span class="p">,</span>
+<p>Finally we can generate the table.  This will compute the NSE state at each combination of <span class="math notranslate nohighlight">\((\rho, T, Y_e)\)</span>.  To help accelerate the convergence,
+it will start at the highest temperature and loop over <span class="math notranslate nohighlight">\(\rho\)</span> and <span class="math notranslate nohighlight">\(Y_e\)</span> and cache the values of the proton and neutron chemical potentials for the
+next temperature.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">nse</span><span class="o">.</span><span class="n">generate_table</span><span class="p">(</span><span class="n">rho_values</span><span class="o">=</span><span class="n">rhos</span><span class="p">,</span>
                    <span class="n">T_values</span><span class="o">=</span><span class="n">Ts</span><span class="p">,</span>
                    <span class="n">Ye_values</span><span class="o">=</span><span class="n">yes</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
+</div>
 <p>The table is stored as <code class="docutils literal notranslate"><span class="pre">nse.tbl</span></code></p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+<div class="cell tag_nbval-ignore-output docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">cat</span> nse.tbl
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">cat</span> nse.tbl
-</pre></div>
 </div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-# NSE table generated by pynucastro 2.4.0.post44+g03fec80e
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span># NSE table generated by pynucastro 2.4.0.post45+g630df533
 # original NSENetwork had 13 nuclei
 #
-#   log10(rho)       log10(T)           Ye             Abar            &lt;B/A&gt;          dYe/dt         dAbar/dt        d&lt;B/A&gt;/dt         e_nu
-   7.0000000000    9.6000000000    0.5000000000   50.2051965167    8.6280555771  -4.3798684e-05              -0   2.3285948e-06   7.4765875e+13
-   7.0000000000    9.6000000000    0.4650000000   55.7461181559    8.7870631885  -5.5253373e-09  -1.1145835e-21   3.9317237e-10   1.3980145e+10
-   7.0000000000    9.6000000000    0.4300000000   11.0637644863    8.1412181124   0.00017699678  -2.9553154e-26  -1.8453759e-12   2.7707299e+14
-   7.0000000000   10.0000000000    0.5000000000    1.2148721368    1.6682000987     0.084056593   -6.583548e-57   5.7350248e-41   7.8635828e+17
-   7.0000000000   10.0000000000    0.4650000000    1.2129154977    1.6556759493      0.10066493  -5.9529967e-56   3.5220152e-41   8.3544455e+17
-   7.0000000000   10.0000000000    0.4300000000    1.2071216016    1.6183519865       0.1178642    1.513528e-55   5.9197765e-42   8.8944343e+17
-   7.0000000000   10.4000000000    0.5000000000    1.0000000000    0.0000000002       5.7463273  1.9226178e-218   6.744271e-203   2.3050257e+20
-   7.0000000000   10.4000000000    0.4650000000    1.0000000000    0.0000000002       7.2542055 -7.0032754e-219  5.8190855e-203    2.360043e+20
-   7.0000000000   10.4000000000    0.4300000000    1.0000000000    0.0000000002       8.7650901 -2.6690723e-219  3.8278045e-203   2.4155562e+20
-   8.0000000000    9.6000000000    0.5000000000   54.3190287662    8.6383977879  -0.00084867596   3.1990002e-16   4.3696922e-05   1.4741939e+15
-   8.0000000000    9.6000000000    0.4650000000   55.8970086078    8.7873938438  -4.9038114e-08  -2.6006588e-20    4.195729e-09   1.2981616e+11
-   8.0000000000    9.6000000000    0.4300000000   11.0638264094    8.1412220464   9.2047376e-06  -3.3885397e-29  -5.6069146e-13   1.1254068e+13
-   8.0000000000   10.0000000000    0.5000000000    2.5712548608    5.7636834391    -0.019589285   5.2225195e-34   1.7213902e-19   1.6310989e+17
-   8.0000000000   10.0000000000    0.4650000000    2.5124367565    5.6778079210   -0.0041256863  -1.8948014e-33   2.1068176e-19   1.5065028e+17
-   8.0000000000   10.0000000000    0.4300000000    2.3664071228    5.4461458125    0.0093041571  -2.1633157e-33   1.1443317e-19    1.616981e+17
-   8.0000000000   10.4000000000    0.5000000000    1.0000000214    0.0000002024        1.213841  2.5731991e-165  9.8468142e-150   2.1894106e+20
-   8.0000000000   10.4000000000    0.4650000000    1.0000000212    0.0000002004       2.8346072  9.3782403e-166  8.4165829e-150   2.2127881e+20
-   8.0000000000   10.4000000000    0.4300000000    1.0000000206    0.0000001945       4.4726034  3.2632729e-166  5.4823209e-150   2.2397331e+20
-   9.0000000000    9.6000000000    0.5000000000   55.5133155462    8.6413416287    -0.060150514              -0    0.0031209543   1.5551546e+17
-   9.0000000000    9.6000000000    0.4650000000   55.9133553778    8.7874269700  -3.9837589e-06   7.4477304e-19   3.6045209e-07   1.0369016e+13
-   9.0000000000    9.6000000000    0.4300000000   11.0638296395    8.1412222516   1.0225013e-08  -9.8140885e-34  -5.2463927e-15   1.1664591e+10
-   9.0000000000   10.0000000000    0.5000000000    4.3121776451    7.1515970038     -0.10742171              -0   2.9758632e-05   4.7264474e+17
-   9.0000000000   10.0000000000    0.4650000000    5.1247512774    7.3995936852    -0.019430688  -7.2863326e-20   3.3567893e-06    8.738192e+16
-   9.0000000000   10.0000000000    0.4300000000    4.4162917436    7.0777667298   -0.0059568646   2.9604104e-21   5.1854462e-07   3.2607547e+16
-   9.0000000000   10.4000000000    0.5000000000    1.0000214391    0.0002025496      -17.715252  2.0751102e-111   3.7269651e-96   2.7735801e+20
-   9.0000000000   10.4000000000    0.4650000000    1.0000212299    0.0002005606      -15.005795 -5.4639132e-112   3.0828763e-96   2.5962747e+20
-   9.0000000000   10.4000000000    0.4300000000    1.0000206076    0.0001946701      -12.327315  2.9766209e-112   1.9401569e-96   2.4324142e+20
-  10.0000000000    9.6000000000    0.5000000000   55.8690710156    8.6423241378      -5.2274435              -0      0.27200888   2.9375322e+19
-  10.0000000000    9.6000000000    0.4650000000   55.9152992533    8.7874248629  -0.00092936032  -1.9067515e-16     8.53828e-05   4.3024741e+15
-  10.0000000000    9.6000000000    0.4300000000   11.0638297827    8.1412222607   5.0971987e-15  -9.3106432e-42  -6.8646472e-21       5801.4456
-  10.0000000000   10.0000000000    0.5000000000   13.9373408169    8.2743569660      -5.5783268              -0      0.10960359   3.9379731e+19
-  10.0000000000   10.0000000000    0.4650000000   28.2439837438    8.6492581227    -0.075077755   4.8295467e-16   0.00050735877   5.2201547e+17
-  10.0000000000   10.0000000000    0.4300000000   10.2419481655    8.0844804259   -0.0025107086  -8.2806269e-20    1.107337e-06   1.7236325e+16
-  10.0000000000   10.4000000000    0.5000000000    1.0197762664    0.1829102375      -196.64449  -8.6978104e-58   3.9060715e-42   2.3555843e+21
-  10.0000000000   10.4000000000    0.4650000000    1.0195859199    0.1811835464       -167.5422  -8.2805369e-59   3.0444336e-42   1.9968627e+21
-  10.0000000000   10.4000000000    0.4300000000    1.0190251346    0.1760927406      -140.99607   4.1357153e-58   1.8184629e-42   1.6720802e+21
-</pre></div></div>
+#   log10(rho)       log10(T)           Ye             Abar            &lt;B/A&gt;          dYe/dt         dAbar/dt        d&lt;B/A&gt;/dt         e_nu       
+   7.0000000000    9.6000000000    0.5000000000   50.2051965167    8.6280555771  -4.3798684e-05              -0   2.3285948e-06   7.4765875e+13 
+   7.0000000000    9.6000000000    0.4650000000   55.7461181559    8.7870631885  -5.5253373e-09  -1.1145835e-21   3.9317237e-10   1.3980145e+10 
+   7.0000000000    9.6000000000    0.4300000000   11.0637644863    8.1412181124   0.00017699678  -2.9553154e-26  -1.8453759e-12   2.7707299e+14 
+   7.0000000000   10.0000000000    0.5000000000    1.2148721368    1.6682000987     0.084056593   -6.583548e-57   5.7350248e-41   7.8635828e+17 
+   7.0000000000   10.0000000000    0.4650000000    1.2129154977    1.6556759493      0.10066493  -5.9529967e-56   3.5220152e-41   8.3544455e+17 
+   7.0000000000   10.0000000000    0.4300000000    1.2071216016    1.6183519865       0.1178642    1.513528e-55   5.9197765e-42   8.8944343e+17 
+   7.0000000000   10.4000000000    0.5000000000    1.0000000000    0.0000000002       5.7463273  1.9226178e-218   6.744271e-203   2.3050257e+20 
+   7.0000000000   10.4000000000    0.4650000000    1.0000000000    0.0000000002       7.2542055 -7.0032754e-219  5.8190855e-203    2.360043e+20 
+   7.0000000000   10.4000000000    0.4300000000    1.0000000000    0.0000000002       8.7650901 -2.6690723e-219  3.8278045e-203   2.4155562e+20 
+   8.0000000000    9.6000000000    0.5000000000   54.3190287662    8.6383977879  -0.00084867596   3.1990002e-16   4.3696922e-05   1.4741939e+15 
+   8.0000000000    9.6000000000    0.4650000000   55.8970086078    8.7873938438  -4.9038114e-08  -2.6006588e-20    4.195729e-09   1.2981616e+11 
+   8.0000000000    9.6000000000    0.4300000000   11.0638264094    8.1412220464   9.2047376e-06  -3.3885397e-29  -5.6069146e-13   1.1254068e+13 
+   8.0000000000   10.0000000000    0.5000000000    2.5712548608    5.7636834391    -0.019589285   5.2225195e-34   1.7213902e-19   1.6310989e+17 
+   8.0000000000   10.0000000000    0.4650000000    2.5124367565    5.6778079210   -0.0041256863  -1.8948014e-33   2.1068176e-19   1.5065028e+17 
+   8.0000000000   10.0000000000    0.4300000000    2.3664071228    5.4461458125    0.0093041571  -2.1633157e-33   1.1443317e-19    1.616981e+17 
+   8.0000000000   10.4000000000    0.5000000000    1.0000000214    0.0000002024        1.213841  2.5731991e-165  9.8468142e-150   2.1894106e+20 
+   8.0000000000   10.4000000000    0.4650000000    1.0000000212    0.0000002004       2.8346072  9.3782403e-166  8.4165829e-150   2.2127881e+20 
+   8.0000000000   10.4000000000    0.4300000000    1.0000000206    0.0000001945       4.4726034  3.2632729e-166  5.4823209e-150   2.2397331e+20 
+   9.0000000000    9.6000000000    0.5000000000   55.5133155462    8.6413416287    -0.060150514              -0    0.0031209543   1.5551546e+17 
+   9.0000000000    9.6000000000    0.4650000000   55.9133553778    8.7874269700  -3.9837589e-06   7.4477304e-19   3.6045209e-07   1.0369016e+13 
+   9.0000000000    9.6000000000    0.4300000000   11.0638296395    8.1412222516   1.0225013e-08  -9.8140885e-34  -5.2463927e-15   1.1664591e+10 
+   9.0000000000   10.0000000000    0.5000000000    4.3121776451    7.1515970038     -0.10742171              -0   2.9758632e-05   4.7264474e+17 
+   9.0000000000   10.0000000000    0.4650000000    5.1247512774    7.3995936852    -0.019430688  -7.2863326e-20   3.3567893e-06    8.738192e+16 
+   9.0000000000   10.0000000000    0.4300000000    4.4162917436    7.0777667298   -0.0059568646   2.9604104e-21   5.1854462e-07   3.2607547e+16 
+   9.0000000000   10.4000000000    0.5000000000    1.0000214391    0.0002025496      -17.715252  2.0751102e-111   3.7269651e-96   2.7735801e+20 
+   9.0000000000   10.4000000000    0.4650000000    1.0000212299    0.0002005606      -15.005795 -5.4639132e-112   3.0828763e-96   2.5962747e+20 
+   9.0000000000   10.4000000000    0.4300000000    1.0000206076    0.0001946701      -12.327315  2.9766209e-112   1.9401569e-96   2.4324142e+20 
+  10.0000000000    9.6000000000    0.5000000000   55.8690710156    8.6423241378      -5.2274435              -0      0.27200888   2.9375322e+19 
+  10.0000000000    9.6000000000    0.4650000000   55.9152992533    8.7874248629  -0.00092936032  -1.9067515e-16     8.53828e-05   4.3024741e+15 
+  10.0000000000    9.6000000000    0.4300000000   11.0638297827    8.1412222607   5.0971987e-15  -9.3106432e-42  -6.8646472e-21       5801.4456 
+  10.0000000000   10.0000000000    0.5000000000   13.9373408169    8.2743569660      -5.5783268              -0      0.10960359   3.9379731e+19 
+  10.0000000000   10.0000000000    0.4650000000   28.2439837438    8.6492581227    -0.075077755   4.8295467e-16   0.00050735877   5.2201547e+17 
+  10.0000000000   10.0000000000    0.4300000000   10.2419481655    8.0844804259   -0.0025107086  -8.2806269e-20    1.107337e-06   1.7236325e+16 
+  10.0000000000   10.4000000000    0.5000000000    1.0197762664    0.1829102375      -196.64449  -8.6978104e-58   3.9060715e-42   2.3555843e+21 
+  10.0000000000   10.4000000000    0.4650000000    1.0195859199    0.1811835464       -167.5422  -8.2805369e-59   3.0444336e-42   1.9968627e+21 
+  10.0000000000   10.4000000000    0.4300000000    1.0190251346    0.1760927406      -140.99607   4.1357153e-58   1.8184629e-42   1.6720802e+21 
+</pre></div>
 </div>
-<p>There are other options to the NSE table writing, including storing the mass fractions or a reduced composition constructed by binning the nuclei into the closest nuclei in a smaller set.</p>
+</div>
+</div>
+<p>There are other options to the NSE table writing, including storing the mass fractions or a reduced composition constructed by binning the nuclei
+into the closest nuclei in a smaller set.</p>
 </section>
 
 
@@ -660,7 +647,7 @@ warning: Ni57 was not able to be linked
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Solving for nuclear statistical equilibrium</p>
+        <p class="prev-next-title">Solving for  nuclear statistical equilibrium</p>
       </div>
     </a>
     <a class="right-next"
