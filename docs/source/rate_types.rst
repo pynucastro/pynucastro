@@ -119,7 +119,7 @@ detailed balance including the effects of partition functions.
 
 .. note::
 
-   In ReacLib, _reverse_ does not always mean :math:`Q < 0`.  Sometimes the
+   In ReacLib, *reverse* does not always mean :math:`Q < 0`.  Sometimes the
    rate with :math:`Q < 0` is easier to measure experimentally, and so
    that is measured and then the :math:`Q > 0` rate is computed via
    detailed balance.
