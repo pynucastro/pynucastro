@@ -1,8 +1,6 @@
 """
 Python implementations of screening routines.
 """
-from functools import wraps
-
 import numpy as np
 
 from pynucastro.constants import constants
@@ -11,7 +9,7 @@ from pynucastro.numba_util import jitclass, njit
 
 __all__ = ["PlasmaState", "ScreenFactors", "chugunov_2007", "chugunov_2009",
            "debye_huckel", "make_plasma_state", "make_screen_factors",
-           "potekhin_1998", "screen5"]
+           "potekhin_1998", "screen5", "screening_check"]
 
 
 @jitclass()
@@ -613,24 +611,30 @@ def potekhin_1998(state, scn_fac):
     return scor
 
 
-@njit
-def wrap_screen_func(screen_func, screen_check=debye_huckel, threshold: float = 1.01):
-    """
-    Wraps a screening function with a check that
-    determines whether that function can be skipped
-    for a given screening calculation.
+def screening_check(check_func=debye_huckel, threshold: float = 1.01):
+    """A decorator factory that wraps a screening function with a
+    check that determines whether that function can be skipped for a
+    given plasma state and screening pair.
 
-    :param screen_func: the screening function being wrapped
-    :param screen_check: the approximate screening function to
-    check against the threshold
-    :param threshold: the threshold to check against.
-    If screen_check is less than the threshold, skip screen_func
-    :returns: a wrapped screening function that performs this check
+    :param func: the function to check against the threshold
+    :param threshold: the threshold to check against. If screen_check
+    is less than the threshold, skip screen_func
+    :returns: a decorator for wrapping screening functions
     """
-    @wraps(screen_func)
-    def new_screen_func(state, scn_fac):
-        F0 = screen_check(state, scn_fac)
-        if F0 <= threshold:
-            return F0
-        return screen_func(state, scn_fac)
-    return new_screen_func
+
+    def screening_decorator(screen_func):
+        """Decorates a screening function with a computation
+        that determines whether the check is skippable.
+
+        :param screen_func: the screening function being wrapped
+        :returns: a wrapped screening function that performs this check
+        """
+
+        @njit
+        def screening_wrapper(state, scn_fac):
+            F0 = check_func(state, scn_fac)
+            if F0 <= threshold:
+                return F0
+            return screen_func(state, scn_fac)
+        return screening_wrapper
+    return screening_decorator
