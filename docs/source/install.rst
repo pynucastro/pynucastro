@@ -18,7 +18,7 @@ The easiest way to install pynucastro is via pip:
 
    .. prompt:: bash
 
-      pip install numba==0.61.0rc1
+      pip install numba==0.61.0rc2
 
 
 Conda
