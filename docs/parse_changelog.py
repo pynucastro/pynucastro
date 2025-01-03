@@ -5,6 +5,7 @@ PR_URL_BASE = r"https://github.com/pynucastro/pynucastro/pull/"
 
 pr = re.compile(r"(\#)(\d+)")
 
+
 def doit(clfile):
 
     with open(clfile) as cl:
