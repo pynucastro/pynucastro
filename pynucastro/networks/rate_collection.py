@@ -1728,9 +1728,6 @@ class RateCollection:
             else:
                 plt.colorbar(pc, ax=ax, label="log10(rate)", orientation="horizontal", fraction=0.05)
 
-        Ns = [n.N for n in node_nuclei]
-        Zs = [n.Z for n in node_nuclei]
-
         if not rotated:
             plt.xlabel(r"$N$", fontsize="large")
             plt.ylabel(r"$Z$", fontsize="large")
