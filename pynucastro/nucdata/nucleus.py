@@ -149,11 +149,12 @@ class Nucleus:
 
         # nuclear mass
         try:
-            mass_H = _mass_table.get_mass_diff(a=1, z=1) + constants.m_u_MeV
+            # Note: for Nubase 2020, we need to use the CODATA 18 constants
+            mass_H = _mass_table.get_mass_diff(a=1, z=1) + constants.m_u_MeV_C18
             self.dm = _mass_table.get_mass_diff(a=self.A, z=self.Z)
-            self.A_nuc = float(self.A) + self.dm / constants.m_u_MeV
-            self.mass = self.A * constants.m_u_MeV + self.dm
-            B = (self.Z * mass_H + self.N * constants.m_n_MeV) - self.mass
+            self.A_nuc = float(self.A) + self.dm / constants.m_u_MeV_C18
+            self.mass = self.A * constants.m_u_MeV_C18 + self.dm
+            B = (self.Z * mass_H + self.N * constants.m_n_MeV_C18) - self.mass
             self.nucbind = B / self.A
 
         except NotImplementedError:

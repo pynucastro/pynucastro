@@ -3,7 +3,7 @@ from pathlib import Path
 
 class SpinTable:
     """
-    This class stores the nubase2020_1.txt table information in a dictionary data structure
+    This class stores the spins2020.txt table information in a dictionary data structure
     that maps nuclides to their number of nuclear spin states.
     Therefore, after setting an SpinTable class in rates.py, we can retrieve the
     spin states for a designated Nucleus class.
@@ -21,7 +21,7 @@ class SpinTable:
             self.datafile = Path(datafile)
         else:
             nucdata_dir = Path(__file__).parent
-            datafile_name = 'nubase2020_1.txt'
+            datafile_name = 'spins2020.txt'
             self.datafile = nucdata_dir/'AtomicMassEvaluation'/datafile_name
 
         self._read_table()
