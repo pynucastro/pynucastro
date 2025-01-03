@@ -17,4 +17,6 @@ help:
 # Catch-all target: route all unknown targets to Sphinx using the new
 # "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).
 %: Makefile
+	# download the current zenodo bibtex cite
+	curl https://zenodo.org/records/13899727/export/bibtex > source/zenodo.bibtex.txt
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
