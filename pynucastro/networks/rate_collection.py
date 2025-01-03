@@ -30,6 +30,7 @@ from pynucastro.screening import (get_screening_map, make_plasma_state,
                                   make_screen_factors)
 
 mpl.rcParams['figure.dpi'] = 100
+mpl.set_loglevel("error")
 
 
 class RateDuplicationError(Exception):
