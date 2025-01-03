@@ -45,6 +45,7 @@ extensions = ['sphinx.ext.autodoc',
     'sphinx-prompt',
     'sphinx_math_dollar',
     'sphinx_mdinclude',
+    'myst_nb',
     'IPython.sphinxext.ipython_console_highlighting']
 
 # bibtex
@@ -65,6 +66,13 @@ templates_path = ['_templates']
 # always execute notebooks
 nbsphinx_execute = 'always'
 nbsphinx_allow_errors = True
+nbsphinx_timeout = 1000
+
+# myst-nb control of notebooks
+nb_execution_timeout = 500
+nb_execution_allow_errors = True
+
+
 
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
