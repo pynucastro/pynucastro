@@ -1724,16 +1724,6 @@ class RateCollection:
             else:
                 plt.colorbar(pc, ax=ax, label="log10(rate)", orientation="horizontal", fraction=0.05)
 
-        Ns = [n.N for n in node_nuclei]
-        Zs = [n.Z for n in node_nuclei]
-
-        if not rotated:
-            ax.set_xlim(min(Ns)-1, max(Ns)+1)
-        else:
-            ax.set_xlim(min(Zs)-1, max(Zs)+1)
-
-        #plt.ylim(min(Zs)-1, max(Zs)+1)
-
         if not rotated:
             plt.xlabel(r"$N$", fontsize="large")
             plt.ylabel(r"$Z$", fontsize="large")
