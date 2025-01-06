@@ -38,5 +38,5 @@ MeV2erg = (physical_constants.eV * physical_constants.mega) / physical_constants
 m_u_MeV_C18 = 931.49410242
 m_n_MeV_C18 = 939.56542052
 
-m_u_C18 = 931.49410242 * MeV2erg
-m_n_C18 = 939.56542052 * MeV2erg
+m_u_C18 = 931.49410242 * MeV2erg / c_light**2
+m_n_C18 = 939.56542052 * MeV2erg / c_light**2
