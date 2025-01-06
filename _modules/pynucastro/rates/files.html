@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.files &#8212; pynucastro 2.4.0.post46+g32f6ba95 documentation</title>
+    <title>pynucastro.rates.files &#8212; pynucastro 2.4.0.post47+g05d59b3b documentation</title>
   
   
   
@@ -29,7 +29,7 @@
   <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=150a0cbc"></script>
+    <script src="../../../_static/documentation_options.js?v=8b061f93"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -401,7 +401,7 @@
 <span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Functions for dealing with the rate data directories.</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
 <span class="n">_pynucastro_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parents</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 <span class="n">_pynucastro_rates_dir</span> <span class="o">=</span> <span class="n">_pynucastro_dir</span><span class="o">/</span><span class="s2">&quot;library&quot;</span>
@@ -416,26 +416,26 @@
 
 <div class="viewcode-block" id="get_rates_dir">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.files.get_rates_dir">[docs]</a>
-<span class="k">def</span> <span class="nf">get_rates_dir</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_rates_dir</span><span class="p">():</span>
     <span class="k">return</span> <span class="n">_pynucastro_rates_dir</span></div>
 
 
 
 <div class="viewcode-block" id="get_tabular_dir">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.files.get_tabular_dir">[docs]</a>
-<span class="k">def</span> <span class="nf">get_tabular_dir</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_tabular_dir</span><span class="p">():</span>
     <span class="k">return</span> <span class="n">_pynucastro_tabular_dir</span></div>
 
 
 
 <div class="viewcode-block" id="RateFileError">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.files.RateFileError">[docs]</a>
-<span class="k">class</span> <span class="nc">RateFileError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">RateFileError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;An error occurred while trying to read a Rate from a file.&quot;&quot;&quot;</span></div>
 
 
 
-<span class="k">def</span> <span class="nf">_find_rate_file</span><span class="p">(</span><span class="n">ratename</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_find_rate_file</span><span class="p">(</span><span class="n">ratename</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;locate the Reaclib or tabular rate or library file given its name.  Return</span>
 <span class="sd">    None if the file cannot be located, otherwise return its path.&quot;&quot;&quot;</span>
 

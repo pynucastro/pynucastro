@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.base_cxx_network &#8212; pynucastro 2.4.0.post46+g32f6ba95 documentation</title>
+    <title>pynucastro.networks.base_cxx_network &#8212; pynucastro 2.4.0.post47+g05d59b3b documentation</title>
   
   
   
@@ -29,7 +29,7 @@
   <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=150a0cbc"></script>
+    <script src="../../../_static/documentation_options.js?v=8b061f93"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -405,32 +405,32 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 
-<span class="kn">import</span> <span class="nn">itertools</span>
-<span class="kn">import</span> <span class="nn">re</span>
-<span class="kn">import</span> <span class="nn">shutil</span>
-<span class="kn">import</span> <span class="nn">sys</span>
-<span class="kn">import</span> <span class="nn">warnings</span>
-<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">itertools</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">sympy</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sympy</span>
 
-<span class="kn">from</span> <span class="nn">pynucastro.networks.rate_collection</span> <span class="kn">import</span> <span class="n">RateCollection</span>
-<span class="kn">from</span> <span class="nn">pynucastro.networks.sympy_network_support</span> <span class="kn">import</span> <span class="n">SympyRates</span>
-<span class="kn">from</span> <span class="nn">pynucastro.rates</span> <span class="kn">import</span> <span class="n">DerivedRate</span>
-<span class="kn">from</span> <span class="nn">pynucastro.screening</span> <span class="kn">import</span> <span class="n">get_screening_map</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.networks.rate_collection</span><span class="w"> </span><span class="kn">import</span> <span class="n">RateCollection</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.networks.sympy_network_support</span><span class="w"> </span><span class="kn">import</span> <span class="n">SympyRates</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates</span><span class="w"> </span><span class="kn">import</span> <span class="n">DerivedRate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.screening</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_screening_map</span>
 
 
 <div class="viewcode-block" id="BaseCxxNetwork">
 <a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.base_cxx_network.BaseCxxNetwork">[docs]</a>
-<span class="k">class</span> <span class="nc">BaseCxxNetwork</span><span class="p">(</span><span class="n">ABC</span><span class="p">,</span> <span class="n">RateCollection</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">BaseCxxNetwork</span><span class="p">(</span><span class="n">ABC</span><span class="p">,</span> <span class="n">RateCollection</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Interpret the collection of rates and nuclei and produce the</span>
 <span class="sd">    C++ code needed to integrate the network.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the C++ network.  We take a single argument: a list</span>
 <span class="sd">        of rate files that will make up the network</span>
 
@@ -484,7 +484,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">indent</span> <span class="o">=</span> <span class="s1">&#39;    &#39;</span>
 
     <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="nf">_get_template_files</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_template_files</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># This method should be overridden by derived classes</span>
         <span class="c1"># to support specific output templates.</span>
         <span class="c1"># This method returns a list of strings that are file paths to template files.</span>
@@ -492,13 +492,13 @@
 
 <div class="viewcode-block" id="BaseCxxNetwork.get_indent_amt">
 <a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.base_cxx_network.BaseCxxNetwork.get_indent_amt">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_indent_amt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_indent_amt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;determine the amount of spaces to indent a line&quot;&quot;&quot;</span>
         <span class="n">rem</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\A&#39;</span><span class="o">+</span><span class="n">k</span><span class="o">+</span><span class="sa">r</span><span class="s1">&#39;\(([0-9]*)\)\Z&#39;</span><span class="p">,</span> <span class="n">l</span><span class="p">)</span>
         <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">rem</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_write_network</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">odir</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_write_network</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">odir</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This writes the RHS, jacobian and ancillary files for the system of ODEs that</span>
 <span class="sd">        this network describes, using the template files.</span>
@@ -548,7 +548,7 @@
 
 <div class="viewcode-block" id="BaseCxxNetwork.compose_ydot">
 <a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.base_cxx_network.BaseCxxNetwork.compose_ydot">[docs]</a>
-    <span class="k">def</span> <span class="nf">compose_ydot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compose_ydot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;create the expressions for dYdt for the nuclei, where Y is the</span>
 <span class="sd">        molar fraction.</span>
 
@@ -583,7 +583,7 @@
 
 <div class="viewcode-block" id="BaseCxxNetwork.compose_jacobian">
 <a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.base_cxx_network.BaseCxxNetwork.compose_jacobian">[docs]</a>
-    <span class="k">def</span> <span class="nf">compose_jacobian</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compose_jacobian</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create the Jacobian matrix, df/dY&quot;&quot;&quot;</span>
         <span class="n">jac_null</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">jac_sym</span> <span class="o">=</span> <span class="p">[]</span>
@@ -607,7 +607,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">solved_jacobian</span> <span class="o">=</span> <span class="kc">True</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_compute_screening_factors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compute_screening_factors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_screening</span><span class="p">:</span>
             <span class="n">screening_map</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">else</span><span class="p">:</span>
@@ -677,20 +677,20 @@
 
             <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_nrat_reaclib</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_nrat_reaclib</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
         <span class="c1"># Writes the number of Reaclib rates</span>
         <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="si">}</span><span class="s1">const int NrateReaclib = </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reaclib_rates</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">derived_rates</span><span class="p">)</span><span class="si">}</span><span class="s1">;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_nrat_tabular</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_nrat_tabular</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
         <span class="c1"># Writes the number of tabular rates</span>
         <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="si">}</span><span class="s1">const int NrateTabular = </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tabular_rates</span><span class="p">)</span><span class="si">}</span><span class="s1">;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_nrxn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_nrxn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">all_rates</span><span class="p">):</span>
             <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="si">}</span><span class="s1">k_</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">cname</span><span class="p">()</span><span class="si">}</span><span class="s1"> = </span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s1">,</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
         <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="si">}</span><span class="s1">NumRates = k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">all_rates</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">cname</span><span class="p">()</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_rate_names</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_rate_names</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">all_rates</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">all_rates</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
                 <span class="n">cont</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span>
@@ -698,14 +698,14 @@
                 <span class="n">cont</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
             <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="si">}</span><span class="s1">&quot;</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">cname</span><span class="p">()</span><span class="si">}</span><span class="s1">&quot;</span><span class="si">{</span><span class="n">cont</span><span class="si">}</span><span class="s1">  // </span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s1">,</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_ebind</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_ebind</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">:</span>
             <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="si">}</span><span class="s1">ebind_per_nucleon(</span><span class="si">{</span><span class="n">nuc</span><span class="o">.</span><span class="n">cindex</span><span class="p">()</span><span class="si">}</span><span class="s1">) = </span><span class="si">{</span><span class="n">nuc</span><span class="o">.</span><span class="n">nucbind</span><span class="si">}</span><span class="s1">_rt;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_table_num</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_table_num</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
         <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="si">}</span><span class="s1">const int num_tables = </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tabular_rates</span><span class="p">)</span><span class="si">}</span><span class="s1">;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_declare_tables</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_declare_tables</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabular_rates</span><span class="p">:</span>
             <span class="n">idnt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span>
 
@@ -715,7 +715,7 @@
             <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">idnt</span><span class="si">}</span><span class="s1">extern AMREX_GPU_MANAGED </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">array_namespace</span><span class="si">}</span><span class="s1">Array1D&lt;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s1">, 1, </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">table_temp_lines</span><span class="si">}</span><span class="s1">&gt; </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">table_index_name</span><span class="si">}</span><span class="s1">_temp;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
             <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_table_declare_meta</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_table_declare_meta</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabular_rates</span><span class="p">:</span>
             <span class="n">idnt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span>
 
@@ -726,7 +726,7 @@
             <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">idnt</span><span class="si">}</span><span class="s1">AMREX_GPU_MANAGED </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">array_namespace</span><span class="si">}</span><span class="s1">Array1D&lt;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s1">, 1, </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">table_rhoy_lines</span><span class="si">}</span><span class="s1">&gt; </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">table_index_name</span><span class="si">}</span><span class="s1">_rhoy;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
             <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">idnt</span><span class="si">}</span><span class="s1">AMREX_GPU_MANAGED </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">array_namespace</span><span class="si">}</span><span class="s1">Array1D&lt;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s1">, 1, </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">table_temp_lines</span><span class="si">}</span><span class="s1">&gt; </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">table_index_name</span><span class="si">}</span><span class="s1">_temp;</span><span class="se">\n\n</span><span class="s1">&#39;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_table_init_meta</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_table_init_meta</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabular_rates</span><span class="p">:</span>
             <span class="n">idnt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span>
             <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">idnt</span><span class="si">}{</span><span class="n">r</span><span class="o">.</span><span class="n">table_index_name</span><span class="si">}</span><span class="s1">_meta.ntemp = </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">table_temp_lines</span><span class="si">}</span><span class="s1">;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
@@ -738,7 +738,7 @@
 
             <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_compute_tabular_rates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compute_tabular_rates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tabular_rates</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
 
             <span class="n">idnt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span>
@@ -758,11 +758,11 @@
 
                 <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_cxxify</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_cxxify</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="p">):</span>
         <span class="c1"># This is a helper function that converts sympy cxxcode to the actual c++ code we use.</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">symbol_rates</span><span class="o">.</span><span class="n">cxxify</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_write_ydot_nuc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">,</span> <span class="n">ydot_nuc</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_write_ydot_nuc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">,</span> <span class="n">ydot_nuc</span><span class="p">):</span>
         <span class="c1"># Helper function to write out ydot of a specific nuclei</span>
 
         <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">pair</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ydot_nuc</span><span class="p">):</span>
@@ -803,7 +803,7 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot; +</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_ydot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_ydot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
         <span class="c1"># Write YDOT</span>
         <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ydot_out_result</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -814,7 +814,7 @@
 
             <span class="bp">self</span><span class="o">.</span><span class="n">_write_ydot_nuc</span><span class="p">(</span><span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ydot_out_result</span><span class="p">[</span><span class="n">n</span><span class="p">])</span>
 
-    <span class="k">def</span> <span class="nf">_ydot_weak</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_ydot_weak</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
         <span class="c1"># Writes ydot for tabular weak reactions only</span>
 
         <span class="c1"># Get the tabular weak rates first.</span>
@@ -865,7 +865,7 @@
 
             <span class="bp">self</span><span class="o">.</span><span class="n">_write_ydot_nuc</span><span class="p">(</span><span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">,</span> <span class="n">ydot_sym_terms</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_enuc_add_energy_rate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_enuc_add_energy_rate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
         <span class="c1"># Add tabular per-reaction neutrino energy generation rates to the energy generation rate</span>
         <span class="c1"># (not thermal neutrinos)</span>
 
@@ -878,7 +878,7 @@
                 <span class="n">reactant</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
                 <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">idnt</span><span class="si">}</span><span class="s1">enuc += C::Legacy::n_A * </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">symbol_rates</span><span class="o">.</span><span class="n">name_y</span><span class="si">}</span><span class="s1">(</span><span class="si">{</span><span class="n">reactant</span><span class="o">.</span><span class="n">cindex</span><span class="p">()</span><span class="si">}</span><span class="s1">) * rate_eval.add_energy_rate(k_</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">cname</span><span class="p">()</span><span class="si">}</span><span class="s1">);</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_jacnuc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_jacnuc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
         <span class="c1"># now make the Jacobian</span>
         <span class="n">n_unique_nuclei</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">jnj</span><span class="p">,</span> <span class="n">nj</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">):</span>
@@ -890,19 +890,19 @@
                     <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="p">(</span><span class="n">n_indent</span><span class="p">)</span><span class="si">}</span><span class="s2">scratch = </span><span class="si">{</span><span class="n">jvalue</span><span class="si">}</span><span class="s2">;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
                     <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="si">}</span><span class="s2">jac.set(</span><span class="si">{</span><span class="n">nj</span><span class="o">.</span><span class="n">cindex</span><span class="p">()</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">ni</span><span class="o">.</span><span class="n">cindex</span><span class="p">()</span><span class="si">}</span><span class="s2">, scratch);</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_initial_mass_fractions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_initial_mass_fractions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="si">}</span><span class="s2">unit_test.X</span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2"> = 1.0</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="si">}</span><span class="s2">unit_test.X</span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2"> = 0.0</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_reaclib_rate_functions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_reaclib_rate_functions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
         <span class="k">assert</span> <span class="n">n_indent</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;function definitions must be at top level&quot;</span>
         <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reaclib_rates</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">derived_rates</span><span class="p">:</span>
             <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">function_string_cxx</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">specifiers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">function_specifier</span><span class="p">))</span>
 
-    <span class="k">def</span> <span class="nf">_rate_struct</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_rate_struct</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
         <span class="k">assert</span> <span class="n">n_indent</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;function definitions must be at top level&quot;</span>
 
         <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;struct rate_t {</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -915,12 +915,12 @@
         <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> enuc_weak;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;};</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_approx_rate_functions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_approx_rate_functions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
         <span class="k">assert</span> <span class="n">n_indent</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;function definitions must be at top level&quot;</span>
         <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">approx_rates</span><span class="p">:</span>
             <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">function_string_cxx</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">specifiers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">function_specifier</span><span class="p">))</span>
 
-    <span class="k">def</span> <span class="nf">_fill_reaclib_rates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_fill_reaclib_rates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">derived_rates</span><span class="p">:</span>
             <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="si">}</span><span class="s2">part_fun::pf_cache_t pf_cache</span><span class="se">{{}}</span><span class="s2">;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
 
@@ -934,7 +934,7 @@
             <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="si">}</span><span class="s2">    rate_eval.dscreened_rates_dT(k_</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">cname</span><span class="p">()</span><span class="si">}</span><span class="s2">) = drate_dT;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="si">}</span><span class="se">}}\n</span><span class="s2">&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_fill_approx_rates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_fill_approx_rates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">approx_rates</span><span class="p">:</span>
             <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;rate_eval&quot;</span><span class="p">]</span>
             <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">rate_eval_needs_rho</span><span class="p">:</span>
@@ -949,7 +949,7 @@
             <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="si">}</span><span class="s2">    rate_eval.dscreened_rates_dT(k_</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">cname</span><span class="p">()</span><span class="si">}</span><span class="s2">) = drate_dT;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="si">}</span><span class="se">}}\n</span><span class="s2">&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_fill_partition_function_declare</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_fill_partition_function_declare</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
 
         <span class="n">temp_arrays</span><span class="p">,</span> <span class="n">temp_indices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dedupe_partition_function_temperatures</span><span class="p">()</span>
 
@@ -976,9 +976,9 @@
             <span class="n">decl</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;extern AMREX_GPU_MANAGED amrex::Array1D&lt;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s2">, 0, npts_</span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">&gt;&quot;</span>
             <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="si">}{</span><span class="n">decl</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">_pf_array;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_fill_partition_function_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_fill_partition_function_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
         <span class="c1"># itertools recipe</span>
-        <span class="k">def</span> <span class="nf">batched</span><span class="p">(</span><span class="n">iterable</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">batched</span><span class="p">(</span><span class="n">iterable</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
             <span class="s2">&quot;Batch data into tuples of length n. The last batch may be shorter.&quot;</span>
             <span class="c1"># batched(&#39;ABCDEFG&#39;, 3) --&gt; ABC DEF G</span>
             <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
@@ -1022,7 +1022,7 @@
                 <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="p">(</span><span class="n">n_indent</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="si">}{</span><span class="n">tmp</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="si">}</span><span class="se">}}</span><span class="s2">;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_fill_partition_function_cases</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_fill_partition_function_cases</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
 
         <span class="n">_</span><span class="p">,</span> <span class="n">temp_indices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dedupe_partition_function_temperatures</span><span class="p">()</span>
 
@@ -1031,9 +1031,9 @@
             <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="p">(</span><span class="n">n_indent</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s2">part_fun::interpolate_pf(tfactors.T9, part_fun::temp_array_</span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">, part_fun::</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">_pf_array, pf, dpf_dT);</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="p">(</span><span class="n">n_indent</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s2">break;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_fill_spin_state_cases</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_fill_spin_state_cases</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
 
-        <span class="k">def</span> <span class="nf">key_func</span><span class="p">(</span><span class="n">nuc</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">key_func</span><span class="p">(</span><span class="n">nuc</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">nuc</span><span class="o">.</span><span class="n">spin_states</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
             <span class="k">return</span> <span class="n">nuc</span><span class="o">.</span><span class="n">spin_states</span>

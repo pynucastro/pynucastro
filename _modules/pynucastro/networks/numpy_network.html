@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.numpy_network &#8212; pynucastro 2.4.0.post46+g32f6ba95 documentation</title>
+    <title>pynucastro.networks.numpy_network &#8212; pynucastro 2.4.0.post47+g05d59b3b documentation</title>
   
   
   
@@ -29,7 +29,7 @@
   <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=150a0cbc"></script>
+    <script src="../../../_static/documentation_options.js?v=8b061f93"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -398,15 +398,15 @@
                 <article class="bd-article">
                   
   <h1>Source code for pynucastro.networks.numpy_network</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">pynucastro.networks.rate_collection</span> <span class="kn">import</span> <span class="n">RateCollection</span>
-<span class="kn">from</span> <span class="nn">pynucastro.rates</span> <span class="kn">import</span> <span class="n">Tfactors</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.networks.rate_collection</span><span class="w"> </span><span class="kn">import</span> <span class="n">RateCollection</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates</span><span class="w"> </span><span class="kn">import</span> <span class="n">Tfactors</span>
 
 
 <div class="viewcode-block" id="NumpyNetwork">
 <a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.numpy_network.NumpyNetwork">[docs]</a>
-<span class="k">class</span> <span class="nc">NumpyNetwork</span><span class="p">(</span><span class="n">RateCollection</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">NumpyNetwork</span><span class="p">(</span><span class="n">RateCollection</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A network that uses numpy arrays to evaluate rates more efficiently.</span>
 
 <span class="sd">    Cached arrays</span>
@@ -456,7 +456,7 @@
 <span class="sd">    -------</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rate_files</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">libraries</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rates</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rate_files</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">libraries</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rates</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">inert_nuclei</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">symmetric_screening</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">do_screening</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">rate_files</span><span class="p">,</span> <span class="n">libraries</span><span class="p">,</span> <span class="n">rates</span><span class="p">,</span> <span class="n">inert_nuclei</span><span class="p">,</span>
@@ -471,30 +471,30 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">prefac</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">yfac</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="nf">_build_collection</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_build_collection</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_build_collection</span><span class="p">()</span>
         <span class="c1"># clear the cached arrays after changing any of the rates</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">clear_arrays</span><span class="p">()</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">nuc_prod_count</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">nuc_prod_count</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nuc_prod_count</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_calc_count_matrices</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nuc_prod_count</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">nuc_cons_count</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">nuc_cons_count</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nuc_cons_count</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_calc_count_matrices</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nuc_cons_count</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">nuc_used</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">nuc_used</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nuc_used</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_calc_count_matrices</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nuc_used</span>
 
-    <span class="k">def</span> <span class="nf">_calc_count_matrices</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_calc_count_matrices</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compute and store 3 count matrices that can be used for vectorized rate</span>
 <span class="sd">        calculations.</span>
@@ -525,18 +525,18 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_nuc_used</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_or</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nuc_prod_count</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nuc_cons_count</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">coef_arr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">coef_arr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coef_arr</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_update_rate_coef_arr</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coef_arr</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">coef_mask</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">coef_mask</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coef_mask</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_update_rate_coef_arr</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coef_mask</span>
 
-    <span class="k">def</span> <span class="nf">_update_rate_coef_arr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_update_rate_coef_arr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Update the :attr:`.coef_arr` and :attr:`.coef_mask` arrays.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -557,7 +557,7 @@
 
 <div class="viewcode-block" id="NumpyNetwork.update_yfac_arr">
 <a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.numpy_network.NumpyNetwork.update_yfac_arr">[docs]</a>
-    <span class="k">def</span> <span class="nf">update_yfac_arr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">composition</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_yfac_arr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">composition</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate and store molar fraction component of each rate (Y of each</span>
 <span class="sd">        reactant raised to the appropriate power). The results are stored in</span>
@@ -575,7 +575,7 @@
 
 <div class="viewcode-block" id="NumpyNetwork.update_prefac_arr">
 <a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.numpy_network.NumpyNetwork.update_prefac_arr">[docs]</a>
-    <span class="k">def</span> <span class="nf">update_prefac_arr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">composition</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_prefac_arr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">composition</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate and store rate prefactors, which include both statistical</span>
 <span class="sd">        prefactors and mass density raised to the corresponding density</span>
@@ -596,7 +596,7 @@
 
 <div class="viewcode-block" id="NumpyNetwork.evaluate_rates_arr">
 <a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.numpy_network.NumpyNetwork.evaluate_rates_arr">[docs]</a>
-    <span class="k">def</span> <span class="nf">evaluate_rates_arr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">evaluate_rates_arr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Evaluate the rates in the network for a specific temperature, assuming</span>
 <span class="sd">        necessary precalculations have been carried out (calling the methods</span>
@@ -622,7 +622,7 @@
 
 <div class="viewcode-block" id="NumpyNetwork.evaluate_ydots_arr">
 <a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.numpy_network.NumpyNetwork.evaluate_ydots_arr">[docs]</a>
-    <span class="k">def</span> <span class="nf">evaluate_ydots_arr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">evaluate_ydots_arr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Evaluate net rate of change of molar abundance for each nucleus in the</span>
 <span class="sd">        network for a specific temperature, assuming necessary precalculations</span>
@@ -648,7 +648,7 @@
 
 <div class="viewcode-block" id="NumpyNetwork.evaluate_activity_arr">
 <a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.numpy_network.NumpyNetwork.evaluate_activity_arr">[docs]</a>
-    <span class="k">def</span> <span class="nf">evaluate_activity_arr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">evaluate_activity_arr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Sum over all of the terms contributing to dY/dt for a specific</span>
 <span class="sd">        temperature, neglecting sign, assuming necessary precalculations have</span>
@@ -674,7 +674,7 @@
 
 <div class="viewcode-block" id="NumpyNetwork.clear_arrays">
 <a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.numpy_network.NumpyNetwork.clear_arrays">[docs]</a>
-    <span class="k">def</span> <span class="nf">clear_arrays</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">clear_arrays</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Clear all cached arrays stored by the :meth:`.update_yfac_arr` and</span>
 <span class="sd">        :meth:`.update_prefac_arr` member functions, freeing up memory.</span>

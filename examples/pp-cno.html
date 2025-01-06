@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>p-p chain vs. CNO &#8212; pynucastro 2.4.0.post46+g32f6ba95 documentation</title>
+    <title>p-p chain vs. CNO &#8212; pynucastro 2.4.0.post47+g05d59b3b documentation</title>
   
   
   
@@ -30,7 +30,7 @@
   <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../_static/documentation_options.js?v=150a0cbc"></script>
+    <script src="../_static/documentation_options.js?v=8b061f93"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -499,7 +499,7 @@
 <p>We will explore the p-p chain and the CNO cycle to learn which rates are the slowest in each and when each dominates inside of stars.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pynucastro</span> <span class="k">as</span> <span class="nn">pyna</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pynucastro</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pyna</span>
 </pre></div>
 </div>
 </div>
@@ -552,7 +552,7 @@ He3 + He3 ⟶ p + p + He4
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/796bb8d2a23efbfbf36c2e83e76ccd5adeec34a209929cbf7eb1c33de2a317dd.png" src="../_images/796bb8d2a23efbfbf36c2e83e76ccd5adeec34a209929cbf7eb1c33de2a317dd.png" />
+<img alt="../_images/780648c687968de7404d264141fe85ef9661cd703e5a0cdedf65fdf81ede19a6.png" src="../_images/780648c687968de7404d264141fe85ef9661cd703e5a0cdedf65fdf81ede19a6.png" />
 </div>
 </div>
 <p>We see that it is very temperature dependent</p>
@@ -598,7 +598,7 @@ He3 + He3 ⟶ p + p + He4
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/ec21ba16efb11e7c1f01829b37c676049c4cf8ac098a5a915d7ad6fe1b825a97.png" src="../_images/ec21ba16efb11e7c1f01829b37c676049c4cf8ac098a5a915d7ad6fe1b825a97.png" />
+<img alt="../_images/be804abef180958fb253e2ac855c9d5e6151cf606caba5dc30025a7875c03f4a.png" src="../_images/be804abef180958fb253e2ac855c9d5e6151cf606caba5dc30025a7875c03f4a.png" />
 </div>
 </div>
 <p>We can therefore approximate the p-p chain based on the slowest rate.  If we express the rate as:</p>
@@ -723,10 +723,7 @@ T = 40000000.0, nu = 14.11535
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Ignoring fixed x limits to fulfill fixed data aspect with adjustable data limits.
-</pre></div>
-</div>
-<img alt="../_images/43fed03776b5c8a75f998a4a76d5bb334a2f990192ed865ce4e03bb75de90a7a.png" src="../_images/43fed03776b5c8a75f998a4a76d5bb334a2f990192ed865ce4e03bb75de90a7a.png" />
+<img alt="../_images/c6295c924ecced53b7f191a1dbf5fc751f555319205d2061101bc31b029861fb.png" src="../_images/c6295c924ecced53b7f191a1dbf5fc751f555319205d2061101bc31b029861fb.png" />
 </div>
 </div>
 </section>
@@ -735,8 +732,8 @@ T = 40000000.0, nu = 14.11535
 <p>The temperature dependence suggests that if the temperature were a little higher, then CNO would go faster then p-p.  We can plot the two rate-limiting rates on the same axes</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 </pre></div>
 </div>
 </div>
@@ -762,7 +759,7 @@ T = 40000000.0, nu = 14.11535
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/5dea11548afe5e0aba38f76bbb693035804450ad3c69075529f102711cd65f28.png" src="../_images/5dea11548afe5e0aba38f76bbb693035804450ad3c69075529f102711cd65f28.png" />
+<img alt="../_images/52bc34750487e635453bae460c8e836268411b71ae4b79c37f78b227357a5770.png" src="../_images/52bc34750487e635453bae460c8e836268411b71ae4b79c37f78b227357a5770.png" />
 </div>
 </div>
 <p>Notice that they cross over at a temperature just hotter than the Sun’s core.  This means that stars more massive than the Sun (actually, about <span class="math notranslate nohighlight">\(1.5~M_\odot\)</span>) are powered by CNO and less massive stars are powered by p-p.  The strong <span class="math notranslate nohighlight">\(T\)</span> dependence of CNO will play a role in determining the structure of those more massive stars.</p>

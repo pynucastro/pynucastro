@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.derived_rate &#8212; pynucastro 2.4.0.post46+g32f6ba95 documentation</title>
+    <title>pynucastro.rates.derived_rate &#8212; pynucastro 2.4.0.post47+g05d59b3b documentation</title>
   
   
   
@@ -29,7 +29,7 @@
   <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=150a0cbc"></script>
+    <script src="../../../_static/documentation_options.js?v=8b061f93"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -398,29 +398,29 @@
                 <article class="bd-article">
                   
   <h1>Source code for pynucastro.rates.derived_rate</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">math</span>
-<span class="kn">import</span> <span class="nn">warnings</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">Counter</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">pynucastro.constants</span> <span class="kn">import</span> <span class="n">constants</span>
-<span class="kn">from</span> <span class="nn">pynucastro.nucdata</span> <span class="kn">import</span> <span class="n">Nucleus</span>
-<span class="kn">from</span> <span class="nn">pynucastro.rates.rate</span> <span class="kn">import</span> <span class="n">Rate</span>
-<span class="kn">from</span> <span class="nn">pynucastro.rates.reaclib_rate</span> <span class="kn">import</span> <span class="n">ReacLibRate</span><span class="p">,</span> <span class="n">SingleSet</span>
-<span class="kn">from</span> <span class="nn">pynucastro.rates.tabular_rate</span> <span class="kn">import</span> <span class="n">TabularRate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">constants</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.nucdata</span><span class="w"> </span><span class="kn">import</span> <span class="n">Nucleus</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.rate</span><span class="w"> </span><span class="kn">import</span> <span class="n">Rate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.reaclib_rate</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReacLibRate</span><span class="p">,</span> <span class="n">SingleSet</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.tabular_rate</span><span class="w"> </span><span class="kn">import</span> <span class="n">TabularRate</span>
 
 
 <div class="viewcode-block" id="DerivedRate">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.derived_rate.DerivedRate">[docs]</a>
-<span class="k">class</span> <span class="nc">DerivedRate</span><span class="p">(</span><span class="n">ReacLibRate</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">DerivedRate</span><span class="p">(</span><span class="n">ReacLibRate</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;This class is a derived class from `Rate` with the purpose of</span>
 <span class="sd">    computing the inverse rate by the application of detailed balance</span>
 <span class="sd">    to the forward reactions.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rate</span><span class="p">,</span> <span class="n">compute_Q</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">use_pf</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rate</span><span class="p">,</span> <span class="n">compute_Q</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">use_pf</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">use_pf</span> <span class="o">=</span> <span class="n">use_pf</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rate</span> <span class="o">=</span> <span class="n">rate</span>
@@ -480,7 +480,7 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">rfile</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">rfile</span><span class="p">,</span> <span class="n">chapter</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">chapter</span><span class="p">,</span> <span class="n">original_source</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">original_source</span><span class="p">,</span>
                 <span class="n">reactants</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">products</span><span class="p">,</span> <span class="n">products</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">reactants</span><span class="p">,</span> <span class="n">sets</span><span class="o">=</span><span class="n">derived_sets</span><span class="p">,</span> <span class="n">labelprops</span><span class="o">=</span><span class="s2">&quot;derived&quot;</span><span class="p">,</span> <span class="n">Q</span><span class="o">=-</span><span class="n">Q</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_warn_about_missing_pf_tables</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_warn_about_missing_pf_tables</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">skip_nuclei</span> <span class="o">=</span> <span class="p">{</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;h1&quot;</span><span class="p">),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;n&quot;</span><span class="p">),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">)}</span>
         <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">reactants</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">products</span><span class="p">)</span> <span class="o">-</span> <span class="n">skip_nuclei</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">nuc</span><span class="o">.</span><span class="n">partition_function</span><span class="p">:</span>
@@ -488,7 +488,7 @@
 
 <div class="viewcode-block" id="DerivedRate.eval">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.derived_rate.DerivedRate.eval">[docs]</a>
-    <span class="k">def</span> <span class="nf">eval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">eval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 
         <span class="n">r</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">T</span><span class="o">=</span><span class="n">T</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">)</span>
         <span class="n">z_r</span> <span class="o">=</span> <span class="mf">1.0</span>
@@ -514,7 +514,7 @@
 
 <div class="viewcode-block" id="DerivedRate.function_string_py">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.derived_rate.DerivedRate.function_string_py">[docs]</a>
-    <span class="k">def</span> <span class="nf">function_string_py</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">function_string_py</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return a string containing python function that computes the</span>
 <span class="sd">        rate</span>
@@ -554,7 +554,7 @@
 
 <div class="viewcode-block" id="DerivedRate.function_string_cxx">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.derived_rate.DerivedRate.function_string_cxx">[docs]</a>
-    <span class="k">def</span> <span class="nf">function_string_cxx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;double&quot;</span><span class="p">,</span> <span class="n">specifiers</span><span class="o">=</span><span class="s2">&quot;inline&quot;</span><span class="p">,</span> <span class="n">leave_open</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">extra_args</span><span class="o">=</span><span class="p">()):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">function_string_cxx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;double&quot;</span><span class="p">,</span> <span class="n">specifiers</span><span class="o">=</span><span class="s2">&quot;inline&quot;</span><span class="p">,</span> <span class="n">leave_open</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">extra_args</span><span class="o">=</span><span class="p">()):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return a string containing C++ function that computes the</span>
 <span class="sd">        rate</span>
@@ -623,7 +623,7 @@
 
 <div class="viewcode-block" id="DerivedRate.counter_factors">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.derived_rate.DerivedRate.counter_factors">[docs]</a>
-    <span class="k">def</span> <span class="nf">counter_factors</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">counter_factors</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;This function returns the nucr! = nucr_1! * ... * nucr_r!</span>
 <span class="sd">        for each repeated nucr reactant and nucp! = nucp_1! * ... *</span>
 <span class="sd">        nucp_p! for each reactant nucp product in a ordered pair</span>

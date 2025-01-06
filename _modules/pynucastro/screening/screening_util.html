@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.screening.screening_util &#8212; pynucastro 2.4.0.post46+g32f6ba95 documentation</title>
+    <title>pynucastro.screening.screening_util &#8212; pynucastro 2.4.0.post47+g05d59b3b documentation</title>
   
   
   
@@ -29,7 +29,7 @@
   <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=150a0cbc"></script>
+    <script src="../../../_static/documentation_options.js?v=8b061f93"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -400,17 +400,17 @@
   <h1>Source code for pynucastro.screening.screening_util</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Some helper functions for determining which rates need screening&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">pynucastro.nucdata</span> <span class="kn">import</span> <span class="n">Nucleus</span>
-<span class="kn">from</span> <span class="nn">pynucastro.rates</span> <span class="kn">import</span> <span class="n">ApproximateRate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.nucdata</span><span class="w"> </span><span class="kn">import</span> <span class="n">Nucleus</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates</span><span class="w"> </span><span class="kn">import</span> <span class="n">ApproximateRate</span>
 
 
 <div class="viewcode-block" id="ScreeningPair">
 <a class="viewcode-back" href="../../../pynucastro.screening.html#pynucastro.screening.screening_util.ScreeningPair">[docs]</a>
-<span class="k">class</span> <span class="nc">ScreeningPair</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ScreeningPair</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;a pair of nuclei that will have rate screening applied.  We store a</span>
 <span class="sd">    list of all rates that match this pair of nuclei&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">nuc1</span><span class="p">,</span> <span class="n">nuc2</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">nuc1</span><span class="p">,</span> <span class="n">nuc2</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">n1</span> <span class="o">=</span> <span class="n">nuc1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">n2</span> <span class="o">=</span> <span class="n">nuc2</span>
@@ -422,19 +422,19 @@
 
 <div class="viewcode-block" id="ScreeningPair.add_rate">
 <a class="viewcode-back" href="../../../pynucastro.screening.html#pynucastro.screening.screening_util.ScreeningPair.add_rate">[docs]</a>
-    <span class="k">def</span> <span class="nf">add_rate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rate</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_rate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rate</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">rate</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rate</span><span class="p">)</span></div>
 
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">ostr</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;screening for </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n1</span><span class="si">}</span><span class="s2"> + </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n2</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="n">ostr</span> <span class="o">+=</span> <span class="s2">&quot;rates:</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">:</span>
             <span class="n">ostr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">r</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="k">return</span> <span class="n">ostr</span>
 
-    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;all we care about is whether the names are the same -- that conveys</span>
 <span class="sd">        what the reaction is&quot;&quot;&quot;</span>
 
@@ -444,7 +444,7 @@
 
 <div class="viewcode-block" id="get_screening_map">
 <a class="viewcode-back" href="../../../pynucastro.screening.html#pynucastro.screening.screening_util.get_screening_map">[docs]</a>
-<span class="k">def</span> <span class="nf">get_screening_map</span><span class="p">(</span><span class="n">rates</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">symmetric_screening</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_screening_map</span><span class="p">(</span><span class="n">rates</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">symmetric_screening</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;a screening map is just a list of ScreeningPair objects</span>
 <span class="sd">    containing the information about nuclei pairs for screening If</span>
 <span class="sd">    symmetric_screening=True, then for reverse rates, we screen using</span>

@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Ratio of C/O from He burning &#8212; pynucastro 2.4.0.post46+g32f6ba95 documentation</title>
+    <title>Ratio of C/O from He burning &#8212; pynucastro 2.4.0.post47+g05d59b3b documentation</title>
   
   
   
@@ -30,7 +30,7 @@
   <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../_static/documentation_options.js?v=150a0cbc"></script>
+    <script src="../_static/documentation_options.js?v=8b061f93"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -488,7 +488,7 @@
 If the 3-<span class="math notranslate nohighlight">\(\alpha\)</span> rate is fast, then all of the He can be locked up in C before much O gets a chance to form.  Here we look at the ratio of C and O as a function of density and temperature.  We hold the density and temperature constant during the burn.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pynucastro</span> <span class="k">as</span> <span class="nn">pyna</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pynucastro</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pyna</span>
 </pre></div>
 </div>
 </div>
@@ -513,15 +513,15 @@ If the 3-<span class="math notranslate nohighlight">\(\alpha\)</span> rate is fa
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">heburn</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">heburn</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">scipy.integrate</span> <span class="kn">import</span> <span class="n">solve_ivp</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.integrate</span><span class="w"> </span><span class="kn">import</span> <span class="n">solve_ivp</span>
 </pre></div>
 </div>
 </div>
@@ -541,14 +541,14 @@ We’ll also pass in a screening function so we evaluate with screened rates.</p
 <p>We can use an event to set the stop time – we will stop when <span class="math notranslate nohighlight">\(X({}^{4}\mathrm{He}) &lt; 10^{-7}\)</span></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pynucastro.screening</span> <span class="kn">import</span> <span class="n">screen5</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.screening</span><span class="w"> </span><span class="kn">import</span> <span class="n">screen5</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">he_exhaustion</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">screening_fun</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">he_exhaustion</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">screening_fun</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">y</span><span class="p">[</span><span class="n">heburn</span><span class="o">.</span><span class="n">jhe4</span><span class="p">]</span> <span class="o">-</span> <span class="mf">1.e-7</span>
 
 <span class="n">he_exhaustion</span><span class="o">.</span><span class="n">terminal</span> <span class="o">=</span> <span class="kc">True</span>
@@ -561,7 +561,7 @@ We’ll also pass in a screening function so we evaluate with screened rates.</p
 and then return <span class="math notranslate nohighlight">\(X({}^{12}\mathrm{C})/(X({}^{12}\mathrm{C}) + X({}^{16}\mathrm{O}))\)</span></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">doit</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">):</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">doit</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">):</span>
     <span class="c1"># set a really long stop time -- most runs will end before this</span>
     <span class="c1"># because of the event trigger</span>
     <span class="n">tmax</span> <span class="o">=</span> <span class="mf">1.e35</span>
@@ -613,7 +613,7 @@ and then return <span class="math notranslate nohighlight">\(X({}^{12}\mathrm{C}
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 </pre></div>
 </div>
 </div>
@@ -639,7 +639,7 @@ and then return <span class="math notranslate nohighlight">\(X({}^{12}\mathrm{C}
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0.5, 1.0, &#39;X(C)/(X(C) + X(O))&#39;)
 </pre></div>
 </div>
-<img alt="../_images/3502a8bc8a16bf8e32ab09a522c2fc443379ce93dc2cab9a38dff0641a4b6373.png" src="../_images/3502a8bc8a16bf8e32ab09a522c2fc443379ce93dc2cab9a38dff0641a4b6373.png" />
+<img alt="../_images/8977e7be0c37651ee3d7411bde948e33c9de65c168b32ae03e64d05d30bb03ed.png" src="../_images/8977e7be0c37651ee3d7411bde948e33c9de65c168b32ae03e64d05d30bb03ed.png" />
 </div>
 </div>
 </section>

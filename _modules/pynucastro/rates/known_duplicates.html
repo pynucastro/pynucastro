@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.known_duplicates &#8212; pynucastro 2.4.0.post46+g32f6ba95 documentation</title>
+    <title>pynucastro.rates.known_duplicates &#8212; pynucastro 2.4.0.post47+g05d59b3b documentation</title>
   
   
   
@@ -29,7 +29,7 @@
   <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=150a0cbc"></script>
+    <script src="../../../_static/documentation_options.js?v=8b061f93"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -398,7 +398,7 @@
                 <article class="bd-article">
                   
   <h1>Source code for pynucastro.rates.known_duplicates</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">collections</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">collections</span>
 
 <span class="c1"># there are some exceptions to the no-duplicate rates restriction.  We</span>
 <span class="c1"># list them here by class name and then fname</span>
@@ -410,7 +410,7 @@
 
 <div class="viewcode-block" id="find_duplicate_rates">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.known_duplicates.find_duplicate_rates">[docs]</a>
-<span class="k">def</span> <span class="nf">find_duplicate_rates</span><span class="p">(</span><span class="n">rate_list</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">find_duplicate_rates</span><span class="p">(</span><span class="n">rate_list</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;given a list of rates, return a list of groups of duplicate rates&quot;&quot;&quot;</span>
 
     <span class="c1"># Group the rates into lists of potential duplicates, keyed by their</span>
@@ -429,7 +429,7 @@
 
 <div class="viewcode-block" id="is_allowed_dupe">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.known_duplicates.is_allowed_dupe">[docs]</a>
-<span class="k">def</span> <span class="nf">is_allowed_dupe</span><span class="p">(</span><span class="n">rate_list</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_allowed_dupe</span><span class="p">(</span><span class="n">rate_list</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;rate_list is a list of rates that provide the same connection</span>
 <span class="sd">    in a network.  Return True if this is an allowed duplicate&quot;&quot;&quot;</span>
 

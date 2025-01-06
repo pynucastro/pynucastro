@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.reduction.sensitivity_analysis &#8212; pynucastro 2.4.0.post46+g32f6ba95 documentation</title>
+    <title>pynucastro.reduction.sensitivity_analysis &#8212; pynucastro 2.4.0.post47+g05d59b3b documentation</title>
   
   
   
@@ -29,7 +29,7 @@
   <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=150a0cbc"></script>
+    <script src="../../../_static/documentation_options.js?v=8b061f93"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -398,17 +398,17 @@
                 <article class="bd-article">
                   
   <h1>Source code for pynucastro.reduction.sensitivity_analysis</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">pynucastro.nucdata</span> <span class="kn">import</span> <span class="n">Nucleus</span>
-<span class="kn">from</span> <span class="nn">pynucastro.reduction.reduction_utils</span> <span class="kn">import</span> <span class="n">mpi_importer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.nucdata</span><span class="w"> </span><span class="kn">import</span> <span class="n">Nucleus</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.reduction.reduction_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">mpi_importer</span>
 
 <span class="n">MPI</span> <span class="o">=</span> <span class="n">mpi_importer</span><span class="p">()</span>
 
 
 <div class="viewcode-block" id="binary_search_trim">
 <a class="viewcode-back" href="../../../pynucastro.reduction.html#pynucastro.reduction.sensitivity_analysis.binary_search_trim">[docs]</a>
-<span class="k">def</span> <span class="nf">binary_search_trim</span><span class="p">(</span><span class="n">network</span><span class="p">,</span> <span class="n">nuclei</span><span class="p">,</span> <span class="n">errfunc</span><span class="p">,</span> <span class="n">thresh</span><span class="o">=</span><span class="mf">0.05</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">binary_search_trim</span><span class="p">(</span><span class="n">network</span><span class="p">,</span> <span class="n">nuclei</span><span class="p">,</span> <span class="n">errfunc</span><span class="p">,</span> <span class="n">thresh</span><span class="o">=</span><span class="mf">0.05</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Given an array of nuclei sorted roughly by relative importance, perform a binary search to trim</span>
 <span class="sd">    out nuclei from the network until the error is as close as possible to the given threshold</span>
@@ -452,7 +452,7 @@
 
 
 
-<span class="k">def</span> <span class="nf">_progress_bar</span><span class="p">(</span><span class="n">frac</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">50</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_progress_bar</span><span class="p">(</span><span class="n">frac</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">50</span><span class="p">):</span>
 
     <span class="n">n</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">size</span><span class="o">*</span><span class="n">frac</span><span class="p">)</span>
     <span class="n">progress_bar</span> <span class="o">=</span> <span class="s1">&#39;[&#39;</span> <span class="o">+</span> <span class="s1">&#39;⊙&#39;</span><span class="o">*</span><span class="n">n</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span><span class="o">*</span><span class="p">(</span><span class="n">size</span><span class="o">-</span><span class="n">n</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;]&#39;</span>
@@ -465,7 +465,7 @@
 
 <div class="viewcode-block" id="sens_analysis">
 <a class="viewcode-back" href="../../../pynucastro.reduction.html#pynucastro.reduction.sensitivity_analysis.sens_analysis">[docs]</a>
-<span class="k">def</span> <span class="nf">sens_analysis</span><span class="p">(</span><span class="n">network</span><span class="p">,</span> <span class="n">errfunc</span><span class="p">,</span> <span class="n">thresh</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">use_mpi</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">print_prog</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">sens_analysis</span><span class="p">(</span><span class="n">network</span><span class="p">,</span> <span class="n">errfunc</span><span class="p">,</span> <span class="n">thresh</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">use_mpi</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">print_prog</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Given a reaction network, remove nuclei from the network one-by-one until the induced error is</span>
 <span class="sd">    as close to the given threshold as possible without exceeding it. This will test nuclei for</span>

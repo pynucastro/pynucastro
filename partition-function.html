@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Reverse Rates &#8212; pynucastro 2.4.0.post46+g32f6ba95 documentation</title>
+    <title>Reverse Rates &#8212; pynucastro 2.4.0.post47+g05d59b3b documentation</title>
   
   
   
@@ -30,7 +30,7 @@
   <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=150a0cbc"></script>
+    <script src="_static/documentation_options.js?v=8b061f93"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -613,7 +613,7 @@ N_a\langle \sigma v \rangle_m &amp;=&amp; N_a\langle \sigma v \rangle_m' \dfrac{
 <li><p><a class="reference internal" href="pynucastro.nucdata.html#pynucastro.nucdata.partition_function.PartitionFunctionCollection" title="pynucastro.nucdata.partition_function.PartitionFunctionCollection"><code class="xref py py-class docutils literal notranslate"><span class="pre">PartitionFunctionCollection</span></code></a> collects all the formatted table information, inside <code class="docutils literal notranslate"><span class="pre">/nucdata/PartitionFunction/</span></code>. It allow us to include the high temperature tables in <span id="id6">[<a class="reference internal" href="zreferences.html#id23" title="T. Rauscher. Nuclear partition functions at temperatures exceeding 10^10 K. The Astrophysical Journal Supplement Series, 147(2):403, August 2003. doi:10.1086/375733.">Rauscher, 2003</a>]</span> and to select the model used to compute the partition functions, respectively. By default, we include high temperatures, and our partition function model to be the <em>finite range droplet model (FRDM)</em>. If a nucleus is not in the collection, we set the partition function values to 1.0 by default.</p></li>
 </ul>
 <p>Inside the <a class="reference internal" href="pynucastro.nucdata.html#pynucastro.nucdata.nucleus.Nucleus" title="pynucastro.nucdata.nucleus.Nucleus"><code class="xref py py-class docutils literal notranslate"><span class="pre">Nucleus</span></code></a> class, we have defined <code class="docutils literal notranslate"><span class="pre">set_partition_function()</span></code> which setup our partition function collection, our high temperatures consideration, and the model used to compute the partition function data. On the other hand, <code class="docutils literal notranslate"><span class="pre">get_partition_function()</span></code> assigns a partition function class object to the defined nucleus. Let us illustrate how it work:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pynucastro</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pynucastro</span>
 
 <span class="n">co46</span> <span class="o">=</span> <span class="n">pynucastro</span><span class="o">.</span><span class="n">rates</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s1">&#39;co46&#39;</span><span class="p">)</span>
 <span class="n">pCollection</span> <span class="o">=</span> <span class="n">pynucastro</span><span class="o">.</span><span class="n">nucdata</span><span class="o">.</span><span class="n">PartitionFunctionCollection</span><span class="p">()</span>
@@ -624,7 +624,7 @@ N_a\langle \sigma v \rangle_m &amp;=&amp; N_a\langle \sigma v \rangle_m' \dfrac{
 </div>
 <p>Now, from this point we define a method inside a <a class="reference internal" href="pynucastro.rates.html#pynucastro.rates.rate.Rate" title="pynucastro.rates.rate.Rate"><code class="xref py py-class docutils literal notranslate"><span class="pre">Rate</span></code></a> named <code class="docutils literal notranslate"><span class="pre">set_partition_function()</span></code> which reads a partition function collection
 and setup all the nucleus inside the reaction rate. Let us illustrate now, how it works:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pynucastro</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pynucastro</span>
 
 <span class="n">p_collection</span> <span class="o">=</span> <span class="n">pynucastro</span><span class="o">.</span><span class="n">nucdata</span><span class="o">.</span><span class="n">PartitionFunctionCollection</span><span class="p">()</span>
 

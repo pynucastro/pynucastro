@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>A Supernova Lightcurve &#8212; pynucastro 2.4.0.post46+g32f6ba95 documentation</title>
+    <title>A Supernova Lightcurve &#8212; pynucastro 2.4.0.post47+g05d59b3b documentation</title>
   
   
   
@@ -30,7 +30,7 @@
   <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../_static/documentation_options.js?v=150a0cbc"></script>
+    <script src="../_static/documentation_options.js?v=8b061f93"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -487,11 +487,11 @@
 <p>ReacLib provides the beta-decay constants for radioactive nuclei, and these can be treated like any other rate.  So we can build a network with <span class="math notranslate nohighlight">\({}^{56}\mathrm{Ni}\)</span> and compute its decay.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pynucastro</span> <span class="k">as</span> <span class="nn">pyna</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pynucastro</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pyna</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">from</span> <span class="nn">scipy.integrate</span> <span class="kn">import</span> <span class="n">solve_ivp</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.integrate</span><span class="w"> </span><span class="kn">import</span> <span class="n">solve_ivp</span>
 </pre></div>
 </div>
 </div>
@@ -550,7 +550,7 @@ Ni56 ⟶ Co56 + e⁺ + 𝜈           [Q =   2.13 MeV] (Ni56 --&gt; Co56 &lt;wc1
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">decay</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">decay</span>
 </pre></div>
 </div>
 </div>
@@ -609,7 +609,7 @@ Ni56 ⟶ Co56 + e⁺ + 𝜈           [Q =   2.13 MeV] (Ni56 --&gt; Co56 &lt;wc1
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0, 0.5, &#39;X&#39;)
 </pre></div>
 </div>
-<img alt="../_images/5af0ff0c37fc057d5463088506feb658b3e4f2c588237b0aa44d071c5fecd7a1.png" src="../_images/5af0ff0c37fc057d5463088506feb658b3e4f2c588237b0aa44d071c5fecd7a1.png" />
+<img alt="../_images/5401338468f2bd29ce9f6c6e45d58349abe0eb1356388a8f293c51999613034c.png" src="../_images/5401338468f2bd29ce9f6c6e45d58349abe0eb1356388a8f293c51999613034c.png" />
 </div>
 </div>
 <p>If we want the luminosity, we can compute that as the instantaneous energy release.  Note: this assumes that all of the energy release is given to photons.  For this, we need the rates, which we can get these by iterating over the solution</p>
@@ -657,7 +657,7 @@ Ni56 ⟶ Co56 + e⁺ + 𝜈           [Q =   2.13 MeV] (Ni56 --&gt; Co56 &lt;wc1
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0, 0.5, &#39;luminosity (solar)&#39;)
 </pre></div>
 </div>
-<img alt="../_images/13d2cb811e2f027adbc136c04042853306f7af7363c388609fa7d02477da085f.png" src="../_images/13d2cb811e2f027adbc136c04042853306f7af7363c388609fa7d02477da085f.png" />
+<img alt="../_images/5fc17237e1c68f2e399aac650317d3ec9417e076616807c93715937bda809221.png" src="../_images/5fc17237e1c68f2e399aac650317d3ec9417e076616807c93715937bda809221.png" />
 </div>
 </div>
 </section>

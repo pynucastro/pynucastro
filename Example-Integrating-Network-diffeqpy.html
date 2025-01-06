@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Example of Integrating a Network &#8212; pynucastro 2.4.0.post46+g32f6ba95 documentation</title>
+    <title>Example of Integrating a Network &#8212; pynucastro 2.4.0.post47+g05d59b3b documentation</title>
   
   
   
@@ -30,7 +30,7 @@
   <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=150a0cbc"></script>
+    <script src="_static/documentation_options.js?v=8b061f93"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -503,7 +503,7 @@
 <p>We will start by looking at the CNO network for simplicity. We will first need to import pynucastro, read through the ReacLib library, and pass in the names of the reaction rates we are interested in.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pynucastro</span> <span class="k">as</span> <span class="nn">pyna</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pynucastro</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pyna</span>
 <span class="n">rl</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">ReacLibLibrary</span><span class="p">()</span>
 <span class="n">rate_names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;c12(p,g)n13&quot;</span><span class="p">,</span>
               <span class="s2">&quot;c13(p,g)n14&quot;</span><span class="p">,</span>
@@ -552,10 +552,10 @@
 <p>There are a wide variety of ODE integration solvers within the Julia DifferentialEquation package. They can be located at the <a class="reference external" href="https://docs.sciml.ai/DiffEqDocs/stable/solvers/ode_solve/">DifferentialEquation.jl docs</a> along with other useful information about the package.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numba</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">diffeqpy</span> <span class="kn">import</span> <span class="n">de</span>
-<span class="kn">import</span> <span class="nn">cno_test_integrate</span> <span class="k">as</span> <span class="nn">cno</span> <span class="c1">#importing network created</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numba</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">diffeqpy</span><span class="w"> </span><span class="kn">import</span> <span class="n">de</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cno_test_integrate</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cno</span> <span class="c1">#importing network created</span>
 </pre></div>
 </div>
 </div>
@@ -563,10 +563,10 @@
 <div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
 <span class="ne">ModuleNotFoundError</span><span class="g g-Whitespace">                       </span>Traceback (most recent call last)
 <span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="n">line</span> <span class="mi">3</span>
-<span class="g g-Whitespace">      </span><span class="mi">1</span> <span class="kn">import</span> <span class="nn">numba</span>
-<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="ne">----&gt; </span><span class="mi">3</span> <span class="kn">from</span> <span class="nn">diffeqpy</span> <span class="kn">import</span> <span class="n">de</span>
-<span class="g g-Whitespace">      </span><span class="mi">4</span> <span class="kn">import</span> <span class="nn">cno_test_integrate</span> <span class="k">as</span> <span class="nn">cno</span> <span class="c1">#importing network created</span>
+<span class="g g-Whitespace">      </span><span class="mi">1</span> <span class="kn">import</span><span class="w"> </span><span class="nn">numba</span>
+<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="ne">----&gt; </span><span class="mi">3</span> <span class="kn">from</span><span class="w"> </span><span class="nn">diffeqpy</span><span class="w"> </span><span class="kn">import</span> <span class="n">de</span>
+<span class="g g-Whitespace">      </span><span class="mi">4</span> <span class="kn">import</span><span class="w"> </span><span class="nn">cno_test_integrate</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cno</span> <span class="c1">#importing network created</span>
 
 <span class="ne">ModuleNotFoundError</span>: No module named &#39;diffeqpy&#39;
 </pre></div>
@@ -612,12 +612,12 @@
 <p>We can then write the functions to return the jacobian and the RHS of the Differential Equations. Numba can be used to do just-in-time compilation of the functions to speed up the code.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span> <span class="c1">#u = array of unknowns, p = array of parameters, t = array of time</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">f</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span> <span class="c1">#u = array of unknowns, p = array of parameters, t = array of time</span>
    <span class="n">rho</span><span class="p">,</span> <span class="n">T</span> <span class="o">=</span> <span class="n">p</span>
    <span class="n">Y</span> <span class="o">=</span> <span class="n">u</span>
    <span class="k">return</span> <span class="n">cno</span><span class="o">.</span><span class="n">rhs_eq</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="c1">#calling RHS </span>
 
-<span class="k">def</span> <span class="nf">f_jac</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">f_jac</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
    <span class="n">rho</span><span class="p">,</span> <span class="n">T</span> <span class="o">=</span> <span class="n">p</span>
    <span class="n">Y</span> <span class="o">=</span> <span class="n">u</span>
    <span class="k">return</span> <span class="n">cno</span><span class="o">.</span><span class="n">jacobian_eq</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="c1">#Calling Jacobian</span>
@@ -721,7 +721,7 @@
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
 <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
 
@@ -754,7 +754,7 @@
 <span class="ne">NameError</span>: name &#39;tspan&#39; is not defined
 </pre></div>
 </div>
-<img alt="_images/9e13561b06f5d2c575e2e9d0ab28f3ca3efd7ae4d5738c0cd619a55149090489.png" src="_images/9e13561b06f5d2c575e2e9d0ab28f3ca3efd7ae4d5738c0cd619a55149090489.png" />
+<img alt="_images/a00066a55595cf891a1428a345f3824f3f67aaefe294515a8416334c8606803d.png" src="_images/a00066a55595cf891a1428a345f3824f3f67aaefe294515a8416334c8606803d.png" />
 </div>
 </div>
 </section>

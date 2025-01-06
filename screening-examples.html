@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Screening Rates &#8212; pynucastro 2.4.0.post46+g32f6ba95 documentation</title>
+    <title>Screening Rates &#8212; pynucastro 2.4.0.post47+g05d59b3b documentation</title>
   
   
   
@@ -30,7 +30,7 @@
   <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=150a0cbc"></script>
+    <script src="_static/documentation_options.js?v=8b061f93"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -520,7 +520,7 @@
 <code class="docutils literal notranslate"><span class="pre">make_plasma_state</span></code> can create the <code class="docutils literal notranslate"><span class="pre">PlasmaState</span></code> object</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pynucastro</span> <span class="k">as</span> <span class="nn">pyna</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pynucastro</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pyna</span>
 </pre></div>
 </div>
 </div>
@@ -573,7 +573,7 @@
 reaction rate information is contained in the <code class="docutils literal notranslate"><span class="pre">ScreenFactor</span></code></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pynucastro.screening</span> <span class="kn">import</span> <span class="n">chugunov_2009</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.screening</span><span class="w"> </span><span class="kn">import</span> <span class="n">chugunov_2009</span>
 </pre></div>
 </div>
 </div>
@@ -586,7 +586,7 @@ reaction rate information is contained in the <code class="docutils literal notr
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>4.42076841169158
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>4.420768407699876
 </pre></div>
 </div>
 </div>
@@ -621,7 +621,7 @@ the rates that screening factor applies to.</p>
 <p>From the <code class="docutils literal notranslate"><span class="pre">RateCollection</span></code>, we can get the screening map (the list of <code class="docutils literal notranslate"><span class="pre">ScreeningPair</span></code> objects)</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pynucastro.screening</span> <span class="kn">import</span> <span class="n">get_screening_map</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.screening</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_screening_map</span>
 <span class="n">screen_map</span> <span class="o">=</span> <span class="n">get_screening_map</span><span class="p">(</span><span class="n">pynet</span><span class="o">.</span><span class="n">get_rates</span><span class="p">(),</span> <span class="n">symmetric_screening</span><span class="o">=</span><span class="n">pynet</span><span class="o">.</span><span class="n">symmetric_screening</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -686,9 +686,9 @@ rates:
 <p>When we write out the module that defines a python network, it contains all of the information needed to define the righthand side and Jacobian, if screening is not used.  But the <code class="docutils literal notranslate"><span class="pre">rhs</span></code> and <code class="docutils literal notranslate"><span class="pre">jacobian</span></code> functions can take an optional argument that is the name of the screening function to use, and if this is provided, then the rates will be screened.  Here we demonstrate this.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">from</span> <span class="nn">scipy.integrate</span> <span class="kn">import</span> <span class="n">solve_ivp</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.integrate</span><span class="w"> </span><span class="kn">import</span> <span class="n">solve_ivp</span>
 </pre></div>
 </div>
 </div>
@@ -696,7 +696,7 @@ rates:
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pynet</span><span class="o">.</span><span class="n">write_network</span><span class="p">(</span><span class="s2">&quot;cburn.py&quot;</span><span class="p">)</span>
-<span class="kn">import</span> <span class="nn">cburn</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cburn</span>
 </pre></div>
 </div>
 </div>
@@ -759,7 +759,7 @@ rates:
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/676c6c3d951491b9cf652b5f6e0689d3e1f33965802d790f61f42b4af53cb8b7.png" src="_images/676c6c3d951491b9cf652b5f6e0689d3e1f33965802d790f61f42b4af53cb8b7.png" />
+<img alt="_images/94a40f462db727b34ace268bfcef57afe3f3302441cdcbc5caa9ce14ce58268f.png" src="_images/94a40f462db727b34ace268bfcef57afe3f3302441cdcbc5caa9ce14ce58268f.png" />
 </div>
 </div>
 <p>As expected, using screening makes the carbon burn much more quickly.</p>

@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.reduction.generate_data &#8212; pynucastro 2.4.0.post46+g32f6ba95 documentation</title>
+    <title>pynucastro.reduction.generate_data &#8212; pynucastro 2.4.0.post47+g05d59b3b documentation</title>
   
   
   
@@ -29,7 +29,7 @@
   <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=150a0cbc"></script>
+    <script src="../../../_static/documentation_options.js?v=8b061f93"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -400,15 +400,15 @@
   <h1>Source code for pynucastro.reduction.generate_data</h1><div class="highlight"><pre>
 <span></span><span class="ch">#!/usr/bin/env python3</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">pynucastro</span> <span class="kn">import</span> <span class="n">Composition</span><span class="p">,</span> <span class="n">Nucleus</span>
-<span class="kn">from</span> <span class="nn">pynucastro.reduction.load_network</span> <span class="kn">import</span> <span class="n">load_network</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro</span><span class="w"> </span><span class="kn">import</span> <span class="n">Composition</span><span class="p">,</span> <span class="n">Nucleus</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.reduction.load_network</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_network</span>
 
 
 <div class="viewcode-block" id="dataset">
 <a class="viewcode-back" href="../../../pynucastro.reduction.html#pynucastro.reduction.generate_data.dataset">[docs]</a>
-<span class="k">def</span> <span class="nf">dataset</span><span class="p">(</span><span class="n">network</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">permute</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">b_rho</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">b_T</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">b_Z</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">dataset</span><span class="p">(</span><span class="n">network</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">permute</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">b_rho</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">b_T</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">b_Z</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Generate a dataset with *n* datapoints. Will either be returned as a sequence of tuples,</span>
 <span class="sd">    each with order (composition, density, temperature) if *permute* is *True* (default),</span>
@@ -467,7 +467,7 @@
 
 <div class="viewcode-block" id="main">
 <a class="viewcode-back" href="../../../pynucastro.reduction.html#pynucastro.reduction.generate_data.main">[docs]</a>
-<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
     <span class="n">network</span> <span class="o">=</span> <span class="n">load_network</span><span class="p">(</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;ni56&quot;</span><span class="p">))</span>
     <span class="n">conds_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">dataset</span><span class="p">(</span><span class="n">network</span><span class="p">))</span>
     <span class="n">rho</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">({</span><span class="n">conds</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">conds</span> <span class="ow">in</span> <span class="n">conds_list</span><span class="p">})</span>
@@ -482,7 +482,7 @@
     <span class="nb">print</span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">comp_converter</span><span class="p">(</span><span class="n">comp</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">comp_converter</span><span class="p">(</span><span class="n">comp</span><span class="p">):</span>
 
         <span class="n">X</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">)]</span>
         <span class="n">Y</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">)]</span>

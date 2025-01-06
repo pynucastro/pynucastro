@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>alternate_rates &#8212; pynucastro 2.4.0.post46+g32f6ba95 documentation</title>
+    <title>alternate_rates &#8212; pynucastro 2.4.0.post47+g05d59b3b documentation</title>
   
   
   
@@ -30,7 +30,7 @@
   <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=150a0cbc"></script>
+    <script src="_static/documentation_options.js?v=8b061f93"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -504,7 +504,7 @@
 <p>These rates can be added individually to the <code class="docutils literal notranslate"><span class="pre">alternate_rates</span></code> module.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pynucastro</span> <span class="k">as</span> <span class="nn">pyna</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pynucastro</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pyna</span>
 </pre></div>
 </div>
 </div>
@@ -524,7 +524,7 @@
 <p>Now the DeBoer version:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pynucastro.rates.alternate_rates</span> <span class="kn">import</span> <span class="n">DeBoerC12agO16</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.alternate_rates</span><span class="w"> </span><span class="kn">import</span> <span class="n">DeBoerC12agO16</span>
 <span class="n">c12_deboer</span> <span class="o">=</span> <span class="n">DeBoerC12agO16</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -547,8 +547,8 @@
 <p>Let’s plot a comparison of the rates</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 </pre></div>
 </div>
 </div>
@@ -575,10 +575,10 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x7f3d30396050&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x7f53cf39e750&gt;
 </pre></div>
 </div>
-<img alt="_images/3b8f376231b0de01a46e396bff87b51a1116dde2ce1465063eaec9d44cdf6140.png" src="_images/3b8f376231b0de01a46e396bff87b51a1116dde2ce1465063eaec9d44cdf6140.png" />
+<img alt="_images/318f1463c9e00866bb9ca5b68255139255cb80b996c5cf01385c632b85c08e19.png" src="_images/318f1463c9e00866bb9ca5b68255139255cb80b996c5cf01385c632b85c08e19.png" />
 </div>
 </div>
 <p>Here’s the relative difference</p>
@@ -593,7 +593,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/3a72f273fa5680ad54baca30c289dd6eeff4ddf6bd33005a4959d623047a7c1f.png" src="_images/3a72f273fa5680ad54baca30c289dd6eeff4ddf6bd33005a4959d623047a7c1f.png" />
+<img alt="_images/5f24cb043a147f85f6209f49bd7000bf38305f468952f7e8f37ecc379fff0631.png" src="_images/5f24cb043a147f85f6209f49bd7000bf38305f468952f7e8f37ecc379fff0631.png" />
 </div>
 </div>
 </section>

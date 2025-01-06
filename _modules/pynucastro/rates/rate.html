@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.rate &#8212; pynucastro 2.4.0.post46+g32f6ba95 documentation</title>
+    <title>pynucastro.rates.rate &#8212; pynucastro 2.4.0.post47+g05d59b3b documentation</title>
   
   
   
@@ -29,7 +29,7 @@
   <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=150a0cbc"></script>
+    <script src="../../../_static/documentation_options.js?v=8b061f93"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -402,15 +402,15 @@
 <span class="sd">Classes and methods to interface with files storing rate data.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">math</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">import</span> <span class="nn">pynucastro.numba_util</span> <span class="k">as</span> <span class="nn">numba</span>
-<span class="kn">from</span> <span class="nn">pynucastro.nucdata</span> <span class="kn">import</span> <span class="n">Nucleus</span>
-<span class="kn">from</span> <span class="nn">pynucastro.numba_util</span> <span class="kn">import</span> <span class="n">jitclass</span>
-<span class="kn">from</span> <span class="nn">pynucastro.rates.files</span> <span class="kn">import</span> <span class="n">_find_rate_file</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pynucastro.numba_util</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">numba</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.nucdata</span><span class="w"> </span><span class="kn">import</span> <span class="n">Nucleus</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.numba_util</span><span class="w"> </span><span class="kn">import</span> <span class="n">jitclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.files</span><span class="w"> </span><span class="kn">import</span> <span class="n">_find_rate_file</span>
 
 
 <div class="viewcode-block" id="Tfactors">
@@ -423,7 +423,7 @@
     <span class="p">(</span><span class="s1">&#39;T953&#39;</span><span class="p">,</span> <span class="n">numba</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
     <span class="p">(</span><span class="s1">&#39;lnT9&#39;</span><span class="p">,</span> <span class="n">numba</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
 <span class="p">])</span>
-<span class="k">class</span> <span class="nc">Tfactors</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Tfactors</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; precompute temperature factors for speed</span>
 
 <span class="sd">    :param float T: input temperature (Kelvin)</span>
@@ -435,7 +435,7 @@
 <span class="sd">    :var lnT9:  log(T9)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; return the Tfactors object.  Here, T is temperature in Kelvin &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">T9</span> <span class="o">=</span> <span class="n">T</span><span class="o">/</span><span class="mf">1.e9</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">T9i</span> <span class="o">=</span> <span class="mf">1.0</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">T9</span>
@@ -445,7 +445,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">lnT9</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">T9</span><span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">array</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">array</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;return t factors as array in order of lambda function&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">T9i</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">T913i</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">T913</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">T9</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">T953</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">lnT9</span><span class="p">])</span></div>
 
@@ -453,12 +453,12 @@
 
 <div class="viewcode-block" id="Rate">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.Rate">[docs]</a>
-<span class="k">class</span> <span class="nc">Rate</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Rate</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The base reaction rate class.  Most rate types will subclass</span>
 <span class="sd">    this and extend to their particular format.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reactants</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">products</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reactants</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">products</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">Q</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">weak_type</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;generic&quot;</span><span class="p">,</span>
                  <span class="n">use_identical_particle_factor</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;a generic Rate class that acts as a base class for specific</span>
@@ -509,19 +509,19 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">rate_eval_needs_rho</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rate_eval_needs_comp</span> <span class="o">=</span> <span class="kc">False</span>
 
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">string</span>
 
-    <span class="k">def</span> <span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">())</span>
 
-    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; Determine whether two Rate objects are equal.</span>
 <span class="sd">        They are equal if they contain identical reactants and products&quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">products</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">reactants</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">products</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__lt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__lt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;sort such that lightest reactants come first, and then look at products&quot;&quot;&quot;</span>
 
         <span class="c1"># this sort will make two nuclei with the same A be in order of Z</span>
@@ -548,7 +548,7 @@
         <span class="c1"># if we made it here, then the rates are the same</span>
         <span class="k">return</span> <span class="kc">True</span>
 
-    <span class="k">def</span> <span class="nf">_set_q</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_set_q</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;set the Q value of the reaction (in MeV)&quot;&quot;&quot;</span>
 
         <span class="c1"># from the masses of the nuclei, Q = M_products - M_reactants</span>
@@ -559,7 +559,7 @@
         <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">products</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">Q</span> <span class="o">+=</span> <span class="o">-</span><span class="n">n</span><span class="o">.</span><span class="n">mass</span>
 
-    <span class="k">def</span> <span class="nf">_set_print_representation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_set_print_representation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="c1"># string is output to the terminal, rid is used as a dict key,</span>
         <span class="c1"># and pretty_string is latex</span>
@@ -690,7 +690,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">pretty_string</span> <span class="o">+=</span> <span class="sa">r</span><span class="s2">&quot;$&quot;</span>
 
-    <span class="k">def</span> <span class="nf">_set_rhs_properties</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_set_rhs_properties</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; compute statistical prefactor and density exponent from the reactants. &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">prefactor</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c1"># this is 1/2 for rates like a + a (double counting)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">inv_prefactor</span> <span class="o">=</span> <span class="mi">1</span>
@@ -702,7 +702,7 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">weak_type</span> <span class="o">==</span> <span class="s1">&#39;electron_capture&#39;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">dens_exp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dens_exp</span> <span class="o">+</span> <span class="mi">1</span>
 
-    <span class="k">def</span> <span class="nf">_set_screening</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_set_screening</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; determine if this rate is eligible for screening and the nuclei to use. &quot;&quot;&quot;</span>
         <span class="c1"># Tells if this rate is eligible for screening</span>
         <span class="c1"># using screenz.f90 provided by StarKiller Microphysics.</span>
@@ -739,7 +739,7 @@
 
 <div class="viewcode-block" id="Rate.cname">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.Rate.cname">[docs]</a>
-    <span class="k">def</span> <span class="nf">cname</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">cname</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;a C++-safe version of the rate name&quot;&quot;&quot;</span>
         <span class="c1"># replace the &quot;__&quot; separating reactants and products with &quot;_to_&quot;</span>
         <span class="c1"># and convert all other &quot;__&quot; to single &quot;_&quot;</span>
@@ -748,18 +748,18 @@
 
 <div class="viewcode-block" id="Rate.get_rate_id">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.Rate.get_rate_id">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_rate_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_rate_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; Get an identifying string for this rate.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rid</span><span class="si">}</span><span class="s1"> &lt;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="si">}</span><span class="s1">&gt;&#39;</span></div>
 
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_rate_id</span><span class="p">()</span>
 
 <div class="viewcode-block" id="Rate.heaviest">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.Rate.heaviest">[docs]</a>
-    <span class="k">def</span> <span class="nf">heaviest</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">heaviest</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the heaviest nuclide in this Rate.</span>
 
@@ -775,7 +775,7 @@
 
 <div class="viewcode-block" id="Rate.lightest">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.Rate.lightest">[docs]</a>
-    <span class="k">def</span> <span class="nf">lightest</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">lightest</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the lightest nuclide in this Rate.</span>
 
@@ -791,7 +791,7 @@
 
 <div class="viewcode-block" id="Rate.swap_protons">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.Rate.swap_protons">[docs]</a>
-    <span class="k">def</span> <span class="nf">swap_protons</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">swap_protons</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Change any protons in the rate to NSE protons.  These</span>
 <span class="sd">        act the same as protons but will be kept as distinct in</span>
 <span class="sd">        the network.&quot;&quot;&quot;</span>
@@ -817,7 +817,7 @@
 
 <div class="viewcode-block" id="Rate.modify_products">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.Rate.modify_products">[docs]</a>
-    <span class="k">def</span> <span class="nf">modify_products</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_products</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">modify_products</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_products</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        change the products of the rate to new_products.  This will recompute</span>
 <span class="sd">        the Q value and update the print respresentation.</span>
@@ -836,7 +836,7 @@
 
 <div class="viewcode-block" id="Rate.ydot_string_py">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.Rate.ydot_string_py">[docs]</a>
-    <span class="k">def</span> <span class="nf">ydot_string_py</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ydot_string_py</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return a string containing the term in a dY/dt equation</span>
 <span class="sd">        in a reaction network corresponding to this rate.</span>
@@ -874,13 +874,13 @@
 
 <div class="viewcode-block" id="Rate.eval">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.Rate.eval">[docs]</a>
-    <span class="k">def</span> <span class="nf">eval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">eval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;base Rate class does not know how to eval()&quot;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Rate.jacobian_string_py">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.Rate.jacobian_string_py">[docs]</a>
-    <span class="k">def</span> <span class="nf">jacobian_string_py</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y_i</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">jacobian_string_py</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y_i</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return a string containing the term in a jacobian matrix</span>
 <span class="sd">        in a reaction network corresponding to this rate differentiated</span>
@@ -934,7 +934,7 @@
 
 <div class="viewcode-block" id="Rate.eval_jacobian_term">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.Rate.eval_jacobian_term">[docs]</a>
-    <span class="k">def</span> <span class="nf">eval_jacobian_term</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span> <span class="n">y_i</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">eval_jacobian_term</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span> <span class="n">y_i</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate drate/d(y_i), y_i is a Nucleus object.  This rate</span>
 <span class="sd">        term has the full composition and density dependence, i.e.:</span>
 
@@ -982,7 +982,7 @@
 
 <div class="viewcode-block" id="RateSource">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.RateSource">[docs]</a>
-<span class="k">class</span> <span class="nc">RateSource</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">RateSource</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A class that stores the reference label information for various rates.&quot;&quot;&quot;</span>
 
     <span class="n">csv_path</span> <span class="o">=</span> <span class="n">_find_rate_file</span><span class="p">(</span><span class="s2">&quot;rate_sources.csv&quot;</span><span class="p">)</span>
@@ -995,7 +995,7 @@
     <span class="p">}</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_read_rate_sources</span><span class="p">(</span><span class="n">urls</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">csv_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_read_rate_sources</span><span class="p">(</span><span class="n">urls</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">csv_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Builds the labels dictionary from the supplied csv file.&quot;&quot;&quot;</span>
 
         <span class="n">labels</span> <span class="o">=</span> <span class="p">{}</span>
@@ -1014,7 +1014,7 @@
 <div class="viewcode-block" id="RateSource.source">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.RateSource.source">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">source</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">source</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the source of a rate given its label, and None if not found.&quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">labels</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">label</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span></div>
@@ -1024,7 +1024,7 @@
 
 <div class="viewcode-block" id="RatePair">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.RatePair">[docs]</a>
-<span class="k">class</span> <span class="nc">RatePair</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">RatePair</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;the forward and reverse rates for a single reaction sequence.</span>
 <span class="sd">    Forward rates are those with Q &gt;= 0.</span>
 
@@ -1033,21 +1033,21 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">forward</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">forward</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">forward</span> <span class="o">=</span> <span class="n">forward</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reverse</span> <span class="o">=</span> <span class="n">reverse</span>
 
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;forward: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">forward</span><span class="si">}</span><span class="s2"> ; reverse: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">reverse</span><span class="si">}</span><span class="s2">&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__lt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__lt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">other</span><span class="o">.</span><span class="n">forward</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward</span> <span class="o">&lt;</span> <span class="n">other</span><span class="o">.</span><span class="n">forward</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
         <span class="k">return</span> <span class="kc">True</span>
 
-    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">forward</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">reverse</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">reverse</span></div>
 
 </pre></div>

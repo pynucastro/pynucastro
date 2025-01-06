@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Computing the Screened Triple-alpha rate &#8212; pynucastro 2.4.0.post46+g32f6ba95 documentation</title>
+    <title>Computing the Screened Triple-alpha rate &#8212; pynucastro 2.4.0.post47+g05d59b3b documentation</title>
   
   
   
@@ -30,7 +30,7 @@
   <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../_static/documentation_options.js?v=150a0cbc"></script>
+    <script src="../_static/documentation_options.js?v=8b061f93"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -499,7 +499,7 @@
 We’ll do this 2 different ways (but both will get the same answer).</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pynucastro</span> <span class="k">as</span> <span class="nn">pyna</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pynucastro</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pyna</span>
 </pre></div>
 </div>
 </div>
@@ -528,7 +528,7 @@ We’ll do this 2 different ways (but both will get the same answer).</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/1e5b5284634ed60ecf90b1af735ad5c4866e57e3609967f5ae79fcefd33c9f44.png" src="../_images/1e5b5284634ed60ecf90b1af735ad5c4866e57e3609967f5ae79fcefd33c9f44.png" />
+<img alt="../_images/79eca30503c23784c32f91f16d6eb6995800dc1af5f4485b2f45a3e90635a8f8.png" src="../_images/79eca30503c23784c32f91f16d6eb6995800dc1af5f4485b2f45a3e90635a8f8.png" />
 </div>
 </div>
 <section id="manual-method">
@@ -556,7 +556,7 @@ We’ll do this 2 different ways (but both will get the same answer).</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/9dcf3fbe992f679557eb6fd6e6e41131f391ef26020593c1d8e2a9ed5c2fa97f.png" src="../_images/9dcf3fbe992f679557eb6fd6e6e41131f391ef26020593c1d8e2a9ed5c2fa97f.png" />
+<img alt="../_images/56ab45abb0ae0c4544b74f93d3c3efe7de1479e90db3c2a7ce4e7e1acf06757f.png" src="../_images/56ab45abb0ae0c4544b74f93d3c3efe7de1479e90db3c2a7ce4e7e1acf06757f.png" />
 </div>
 </div>
 <p>To compute the screening, we first need to get the plasma state</p>
@@ -583,7 +583,7 @@ We’ll do this 2 different ways (but both will get the same answer).</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>5.802207275136419
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>5.802207272763388
 </pre></div>
 </div>
 </div>
@@ -603,7 +603,7 @@ We’ll do this 2 different ways (but both will get the same answer).</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2.2474377346308396e-14
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2.2474377337116652e-14
 </pre></div>
 </div>
 </div>
@@ -621,10 +621,7 @@ We’ll do this 2 different ways (but both will get the same answer).</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Ignoring fixed x limits to fulfill fixed data aspect with adjustable data limits.
-</pre></div>
-</div>
-<img alt="../_images/ab68a6e629431ca1ebe6eefb71c47ca14f3362e6ba8da6ba5e4fb2f1344fba20.png" src="../_images/ab68a6e629431ca1ebe6eefb71c47ca14f3362e6ba8da6ba5e4fb2f1344fba20.png" />
+<img alt="../_images/ca5cdc54fb129121efd25254245e65296feabb4fcca96a137831fe3308c365b7.png" src="../_images/ca5cdc54fb129121efd25254245e65296feabb4fcca96a137831fe3308c365b7.png" />
 </div>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">evaluate_rates()</span></code> method will take the thermodynamic state and screening function (optionally) and compute the value of each of the rates in the network.</p>
@@ -635,7 +632,7 @@ We’ll do this 2 different ways (but both will get the same answer).</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{He4 + He4 + He4 ⟶ C12 + 𝛾: 2.2474377346308393e-14}
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{He4 + He4 + He4 ⟶ C12 + 𝛾: 2.2474377337116652e-14}
 </pre></div>
 </div>
 </div>

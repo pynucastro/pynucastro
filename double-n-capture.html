@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Approximating double n-capture &#8212; pynucastro 2.4.0.post46+g32f6ba95 documentation</title>
+    <title>Approximating double n-capture &#8212; pynucastro 2.4.0.post47+g05d59b3b documentation</title>
   
   
   
@@ -30,7 +30,7 @@
   <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=150a0cbc"></script>
+    <script src="_static/documentation_options.js?v=8b061f93"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -501,7 +501,7 @@
 <span class="math notranslate nohighlight">\({}^{52}\mathrm{Fe}(n,\gamma){}^{53}\mathrm{Fe}(n,\gamma){}^{54}\mathrm{Fe}\)</span>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pynucastro</span> <span class="k">as</span> <span class="nn">pyna</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pynucastro</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pyna</span>
 </pre></div>
 </div>
 </div>
@@ -533,7 +533,7 @@
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">ncapture</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">ncapture</span>
 </pre></div>
 </div>
 </div>
@@ -545,15 +545,15 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/a0154cf13de6977c0cc555db304e5f801c7633e1ae7989123d4fed4350d0a126.png" src="_images/a0154cf13de6977c0cc555db304e5f801c7633e1ae7989123d4fed4350d0a126.png" />
+<img alt="_images/a6e62338ada776cb04e71c0aebddbbfa100f13291b109eaf8302f142125dea79.png" src="_images/a6e62338ada776cb04e71c0aebddbbfa100f13291b109eaf8302f142125dea79.png" />
 </div>
 </div>
 <p>Now we’ll integrate it, starting with a mix of <span class="math notranslate nohighlight">\({}^{52}\mathrm{Fe}\)</span> and <span class="math notranslate nohighlight">\(n\)</span>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">scipy.integrate</span> <span class="kn">import</span> <span class="n">solve_ivp</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.integrate</span><span class="w"> </span><span class="kn">import</span> <span class="n">solve_ivp</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 </pre></div>
 </div>
 </div>
@@ -601,7 +601,7 @@
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0, 0.5, &#39;X&#39;)
 </pre></div>
 </div>
-<img alt="_images/a8f9d05e9a98b7422774939eec1be6300484ed4e53f35a2f12ac23c243ee1a11.png" src="_images/a8f9d05e9a98b7422774939eec1be6300484ed4e53f35a2f12ac23c243ee1a11.png" />
+<img alt="_images/e9e75abc96b3c4e70f43eeddd4ea836f2cedcc1502094e5c80ae1cabe3434c12.png" src="_images/e9e75abc96b3c4e70f43eeddd4ea836f2cedcc1502094e5c80ae1cabe3434c12.png" />
 </div>
 </div>
 <p>We see that the long term evolution is that all the iron winds up as <span class="math notranslate nohighlight">\({}^{54}\mathrm{Fe}\)</span>.</p>
@@ -652,7 +652,7 @@
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">ncapture_approx</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">ncapture_approx</span>
 </pre></div>
 </div>
 </div>
@@ -664,7 +664,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/6a00be852fcd12ce85009b6b51dd52ea9494a3808fc7afdb8c07fd48e5ee1672.png" src="_images/6a00be852fcd12ce85009b6b51dd52ea9494a3808fc7afdb8c07fd48e5ee1672.png" />
+<img alt="_images/dc6eee02bdc0c71a4c1514c5b3ef52f86ba0df6800ae1e44f41f08c99978efcd.png" src="_images/dc6eee02bdc0c71a4c1514c5b3ef52f86ba0df6800ae1e44f41f08c99978efcd.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -711,7 +711,7 @@
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0, 0.5, &#39;X&#39;)
 </pre></div>
 </div>
-<img alt="_images/94d58472e1575cd71108ac44092152470f11517a42a8b33a345344495792d7ea.png" src="_images/94d58472e1575cd71108ac44092152470f11517a42a8b33a345344495792d7ea.png" />
+<img alt="_images/d978a9bb3b324b9c891446918fdfdc075df40b2f5b1819e37da01719b8f6043f.png" src="_images/d978a9bb3b324b9c891446918fdfdc075df40b2f5b1819e37da01719b8f6043f.png" />
 </div>
 </div>
 </section>
@@ -742,7 +742,7 @@
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(1e-06, 1)
 </pre></div>
 </div>
-<img alt="_images/d47f494a1ae80eed1b341c1d6507c3d0d107ffe7e73439c0b513ceff8f9069de.png" src="_images/d47f494a1ae80eed1b341c1d6507c3d0d107ffe7e73439c0b513ceff8f9069de.png" />
+<img alt="_images/7d8d247645002ec82bf9fd596031761cbf3a4db36feef59019799b4a13a9a1ee.png" src="_images/7d8d247645002ec82bf9fd596031761cbf3a4db36feef59019799b4a13a9a1ee.png" />
 </div>
 </div>
 <p>Here the dotted line is the approximate version.  We see that the <span class="math notranslate nohighlight">\({}^{52}\mathrm{Fe}\)</span> is consumed at the same rate.  The approximate net produces <span class="math notranslate nohighlight">\({}^{54}\mathrm{Fe}\)</span> faster simply because there is no intermediate <span class="math notranslate nohighlight">\({}^{53}\mathrm{Fe}\)</span> in the network.</p>

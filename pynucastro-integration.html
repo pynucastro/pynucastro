@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Example of integrating a network &#8212; pynucastro 2.4.0.post46+g32f6ba95 documentation</title>
+    <title>Example of integrating a network &#8212; pynucastro 2.4.0.post47+g05d59b3b documentation</title>
   
   
   
@@ -30,7 +30,7 @@
   <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=150a0cbc"></script>
+    <script src="_static/documentation_options.js?v=8b061f93"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -502,7 +502,7 @@
 it with the scipy library.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pynucastro</span> <span class="k">as</span> <span class="nn">pyna</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pynucastro</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pyna</span>
 </pre></div>
 </div>
 </div>
@@ -560,10 +560,7 @@ and pass in the names of the rates in the form of a string <code class="docutils
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Ignoring fixed x limits to fulfill fixed data aspect with adjustable data limits.
-</pre></div>
-</div>
-<img alt="_images/64a02c6bc9a7c2c65a5e256739b9d1debb7a6541bf3fd3eee391c8cfd943c13d.png" src="_images/64a02c6bc9a7c2c65a5e256739b9d1debb7a6541bf3fd3eee391c8cfd943c13d.png" />
+<img alt="_images/5b3a0881fcab630511d53f0171664bc22b7d3540b754efde5a04342afb5ea265.png" src="_images/5b3a0881fcab630511d53f0171664bc22b7d3540b754efde5a04342afb5ea265.png" />
 </div>
 </div>
 <p>For example, this network knows how to write the full term for a reaction that goes into the <span class="math notranslate nohighlight">\(dY/dt\)</span> equation of the ODE system.</p>
@@ -688,15 +685,15 @@ Z[jo15] = 8
 # masses in ergs
 mass = np.zeros((nnuc), dtype=np.float64)
 
-mass[jp] = 0.0015040963047307696
-mass[jhe4] = 0.0059735574859708365
-mass[jc12] = 0.017909017027273523
-mass[jc13] = 0.01940644192976114
-mass[jn13] = 0.01940999951603316
-mass[jn14] = 0.020898440897976135
-mass[jn15] = 0.022386433805845516
-mass[jo14] = 0.020906683078094165
-mass[jo15] = 0.02239084645968795
+mass[jp] = 0.0015040963068135994
+mass[jhe4] = 0.005973557494302156
+mass[jc12] = 0.017909017052267474
+mass[jc13] = 0.019406441956837925
+mass[jn13] = 0.019409999543109947
+mass[jn14] = 0.02089844092713575
+mass[jn15] = 0.022386433837087962
+mass[jo14] = 0.020906683107253778
+mass[jo15] = 0.022390846490930396
 
 names = []
 names.append(&quot;H1&quot;)
@@ -1142,7 +1139,7 @@ def jacobian_eq(t, Y, rho, T, screen_func):
 <p>We can now import the network that was just created and integrate it using the SciPy ODE solvers</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cno_test_integrate</span> <span class="k">as</span> <span class="nn">cno</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">cno_test_integrate</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cno</span>
 </pre></div>
 </div>
 </div>
@@ -1152,8 +1149,8 @@ def jacobian_eq(t, Y, rho, T, screen_func):
 <p>We can use the stiff ODE integration solvers that are part of SciPy to integrate this system now</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">scipy.integrate</span> <span class="kn">import</span> <span class="n">solve_ivp</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">scipy.integrate</span><span class="w"> </span><span class="kn">import</span> <span class="n">solve_ivp</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 </pre></div>
 </div>
 </div>
@@ -1194,7 +1191,7 @@ def jacobian_eq(t, Y, rho, T, screen_func):
 <h2>Plotting the results<a class="headerlink" href="#plotting-the-results" title="Link to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 </pre></div>
 </div>
 </div>
@@ -1218,7 +1215,7 @@ def jacobian_eq(t, Y, rho, T, screen_func):
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/2ea15b11bb9db5789c581d405d4e6e6b245e191ab4553678d5d6be235765181e.png" src="_images/2ea15b11bb9db5789c581d405d4e6e6b245e191ab4553678d5d6be235765181e.png" />
+<img alt="_images/9dbdade6e7a784e4568ec02645dd1856f1d577251c5f353bfced1b16be391985.png" src="_images/9dbdade6e7a784e4568ec02645dd1856f1d577251c5f353bfced1b16be391985.png" />
 </div>
 </div>
 </section>

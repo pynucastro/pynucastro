@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Creating a Custom Rate &#8212; pynucastro 2.4.0.post46+g32f6ba95 documentation</title>
+    <title>Creating a Custom Rate &#8212; pynucastro 2.4.0.post47+g05d59b3b documentation</title>
   
   
   
@@ -30,7 +30,7 @@
   <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=150a0cbc"></script>
+    <script src="_static/documentation_options.js?v=8b061f93"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -510,7 +510,7 @@
 <p>and likewise for the other nuclei.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pynucastro</span> <span class="k">as</span> <span class="nn">pyna</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pynucastro</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pyna</span>
 </pre></div>
 </div>
 </div>
@@ -553,8 +553,8 @@
 </ul>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyRate</span><span class="p">(</span><span class="n">pyna</span><span class="o">.</span><span class="n">Rate</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reactants</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">products</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">MyRate</span><span class="p">(</span><span class="n">pyna</span><span class="o">.</span><span class="n">Rate</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reactants</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">products</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">r0</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">T0</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">nu</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
 
         <span class="c1"># we set the chapter to custom so the network knows how to deal with it</span>
@@ -567,7 +567,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">T0</span> <span class="o">=</span> <span class="n">T0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">nu</span> <span class="o">=</span> <span class="n">nu</span>
 
-    <span class="k">def</span> <span class="nf">function_string_py</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">function_string_py</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;return a string containing a python function that computes</span>
 <span class="sd">        the rate&quot;&quot;&quot;</span>
         <span class="n">fstring</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
@@ -576,7 +576,7 @@
         <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    rate_eval.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">r0</span><span class="si">}</span><span class="s2"> * (tf.T9 * 1.e9 / </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">T0</span><span class="si">}</span><span class="s2"> )**(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">nu</span><span class="si">}</span><span class="s2">)</span><span class="se">\n\n</span><span class="s2">&quot;</span>
         <span class="k">return</span> <span class="n">fstring</span>
 
-    <span class="k">def</span> <span class="nf">eval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">eval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">r0</span> <span class="o">*</span> <span class="p">(</span><span class="n">T</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">T0</span><span class="p">)</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">nu</span>
 </pre></div>
 </div>
@@ -662,10 +662,7 @@ def N14_p__O15__generic(rate_eval, tf):
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Ignoring fixed x limits to fulfill fixed data aspect with adjustable data limits.
-</pre></div>
-</div>
-<img alt="_images/39b66844d575f80cc3a65f8b2ab43c5a98d055acab2683a037b8066a0b2811b6.png" src="_images/39b66844d575f80cc3a65f8b2ab43c5a98d055acab2683a037b8066a0b2811b6.png" />
+<img alt="_images/5cecec13bc47ac4719c73f51a043b1b0abd1952f3939bcff1e711ecfd1b96c09.png" src="_images/5cecec13bc47ac4719c73f51a043b1b0abd1952f3939bcff1e711ecfd1b96c09.png" />
 </div>
 </div>
 <p>Now a higher temperature</p>
@@ -683,10 +680,7 @@ def N14_p__O15__generic(rate_eval, tf):
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Ignoring fixed x limits to fulfill fixed data aspect with adjustable data limits.
-</pre></div>
-</div>
-<img alt="_images/ed9f27906a47fedd9b45300df984d6cb6ddfb92c5cccb70ed11f29b2e37016cd.png" src="_images/ed9f27906a47fedd9b45300df984d6cb6ddfb92c5cccb70ed11f29b2e37016cd.png" />
+<img alt="_images/400ecdcdd30446b96af847d4821af97d5c3eafd4c51fcd05aa423d3e20c9f7b0.png" src="_images/400ecdcdd30446b96af847d4821af97d5c3eafd4c51fcd05aa423d3e20c9f7b0.png" />
 </div>
 </div>
 <p>Notice that at the higher temperature, this rate becomes higher than the beta decay to <span class="math notranslate nohighlight">\({}^{13}\mathrm{C}\)</span>.</p>
