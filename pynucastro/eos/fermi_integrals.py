@@ -87,7 +87,7 @@ def compute_quadrature(k: float, eta:float, theta:float, int n)->float
 
     return integral
 
-def compute_fermi_dirac_quadrature(k, eta, theta):
+def fermi_dirac(k, eta, theta):
 
     sum = 0.0
 
