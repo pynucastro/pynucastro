@@ -124,6 +124,13 @@ integration driver routines. pynucastro processes these template files
 by replacing tags of the form `<tag>` with generated code specific to
 a given choice of reaction rates.
 
+eos
+---
+
+eos provides the required toolbox to reconstruct the Helmholtz electron-positron
+equation of state table for the free energy and its derivatives for a particular
+network, and grid.
+
 """
 
 from ._version import version
@@ -143,3 +150,4 @@ from pynucastro.rates import (ApproximateRate, DerivedRate, LangankeLibrary,
                               SuzukiLibrary, TabularLibrary, Tfactors,
                               list_known_rates, load_rate)
 from pynucastro.screening import make_plasma_state, make_screen_factors
+from pynucastro.eos import fermi_dirac
