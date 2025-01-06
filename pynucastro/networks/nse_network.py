@@ -77,7 +77,7 @@ class NSENetwork(RateCollection):
 
         n_e = 0.0
         for nuc in self.unique_nuclei:
-            n_e += nuc.Z * state.dens * Xs[nuc] / (nuc.A * constants.m_u)
+            n_e += nuc.Z * state.dens * Xs[nuc] / (nuc.A * constants.m_u_C18)
 
         return n_e
 

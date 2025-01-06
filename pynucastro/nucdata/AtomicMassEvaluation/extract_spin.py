@@ -59,7 +59,7 @@ def num_states(spin_str_element):
 
 parser = argparse.ArgumentParser()
 parser.add_argument('table', type=str, help='Name of the input spin stable')
-parser.add_argument('-o', '--output', type=str, default='nubase2020_test', help='Pynucastro Formatted Table')
+parser.add_argument('-o', '--output', type=str, default='spins2020', help='Pynucastro Formatted Table')
 
 args = parser.parse_args()
 
