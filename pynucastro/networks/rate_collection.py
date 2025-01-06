@@ -1270,11 +1270,7 @@ class RateCollection:
 
         # ion binding energy contributions. basically e=mc^2
         for nuc in self.unique_nuclei:
-            # add up mass in MeV then convert to erg
-            mass = ((nuc.A - nuc.Z) * constants.m_n_MeV +
-                    nuc.Z * (constants.m_p_MeV + constants.m_e_MeV) -
-                    nuc.A * nuc.nucbind) * constants.MeV2erg
-            enuc += ydots[nuc] * mass
+            enuc += ydots[nuc] * nuc.mass * constants.MeV2erg
 
         # convert from molar value to erg/g/s
         enuc *= -1*constants.N_A
