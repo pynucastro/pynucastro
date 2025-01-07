@@ -55,32 +55,32 @@ def interval_points(eta:float)-> "np.array64":
 
     return points
 
-def compute_quadrature(k: float, eta:float, theta:float, int n)->float
+def compute_quadrature(k: float, eta:float, theta:float, n:int)->float:
 
     X_a, X_b, X_c = interval_points(eta)
 
-    if(n = 0):
+    if(n == 0):
         a = 0.0
         b = X_a
         roots, weights = roots_legendre(20)
         scaled_roots = (b-a)/2 * roots + (a+b)/2
         integral = (b-a)/2 * quadrature_function(k=k, eta=eta, theta=theta, x=scaled_roots, first=false).dot(weights)
 
-    elif(n = 1):
+    elif(n == 1):
         a = X_a
         b = X_b
         roots, weights = roots_legendre(20)
         scaled_roots = (b-a)/2 * roots + (a+b)/2
         integral = (b-a)/2 * quadrature_function(k=k, eta=eta, theta=theta, x=scaled_roots, first=false).dot(weights)
 
-    elif(n==2):
+    elif(n == 2):
         a = X_b
         b = X_c
         roots, weights = roots_legendre(20)
         scaled_roots = (b-a)/2 * roots + (a+b)/2
         integral (b-a)/2 * quadrature_function(k=k, eta=eta, theta=theta, x=scaled_roots, first=false).dot(weights)
 
-    elif(n=3):
+    elif(n == 3):
         roots, weights = roots_laguerre(20)
         scaled_roots = roots + X_c
         integral = np.exp(x) * quadrature_function(k=k, eta=eta, theta=theta, x=scaled_roots, first=false).dot(weights)
