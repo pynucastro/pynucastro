@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Solving for nuclear statistical equilibrium &#8212; pynucastro 2.4.0.post48+gc962e187 documentation</title>
+    <title>Solving for nuclear statistical equilibrium &#8212; pynucastro 2.4.0.post49+ge3728015 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=f10d72a5"></script>
+    <script src="_static/documentation_options.js?v=28090242"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -532,46 +532,46 @@ and solved using <code class="docutils literal notranslate"><span class="pre">sc
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/39d8a2dcbc2f2304027e579d2ba0592832dbe414cec13f1f28b6e6dbf0d2c8b9.png" src="_images/39d8a2dcbc2f2304027e579d2ba0592832dbe414cec13f1f28b6e6dbf0d2c8b9.png" />
+<img alt="_images/8d1c523d1bfad995c910bb98d1255d252f25be818cb25b5b1c7fe16e801a8c72.png" src="_images/8d1c523d1bfad995c910bb98d1255d252f25be818cb25b5b1c7fe16e801a8c72.png" />
 </div>
 </div>
 <p>We can also explicitly print the composition</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">c</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">comp</span><span class="o">.</span><span class="n">X</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">c</span><span class="p">)</span><span class="si">:</span><span class="s2">6</span><span class="si">}</span><span class="s2"> : </span><span class="si">{</span><span class="n">v</span><span class="si">:</span><span class="s2">20.12g</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">c</span><span class="p">)</span><span class="si">:</span><span class="s2">6</span><span class="si">}</span><span class="s2"> : </span><span class="si">{</span><span class="n">v</span><span class="si">:</span><span class="s2">15.8g</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>p      :     0.00934989819402
-He4    :       0.433640617421
-C12    :    7.72859960949e-06
-N13    :    2.59190268431e-10
-N14    :    1.36631324293e-09
-O16    :      1.569752412e-05
-F18    :     2.4113816187e-11
-Ne20   :    3.01874049928e-07
-Ne21   :    3.95638588789e-09
-Na22   :    9.68462281938e-10
-Na23   :    7.29695213679e-08
-Mg24   :    3.47019415886e-05
-Al27   :    3.35258213003e-05
-Si28   :      0.0104391634151
-P31    :     0.00213500727437
-S32    :     0.00916060181085
-Cl35   :     0.00400094978254
-Ar36   :     0.00487944874342
-K39    :     0.00555275469674
-Ca40   :     0.00477002845126
-Sc43   :    0.000372671642232
-Ti44   :    0.000229271129333
-V47    :     0.00490466077203
-Cr48   :     0.00114658229798
-Mn51   :      0.0689585743052
-Fe52   :     0.00576589686487
-Co55   :       0.415686733119
-Ni56   :      0.0189151047754
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>p      :    0.0093498982
+He4    :      0.43364062
+C12    :   7.7285996e-06
+N13    :   2.5919027e-10
+N14    :   1.3663132e-09
+O16    :   1.5697524e-05
+F18    :   2.4113816e-11
+Ne20   :   3.0187405e-07
+Ne21   :   3.9563859e-09
+Na22   :   9.6846228e-10
+Na23   :   7.2969521e-08
+Mg24   :   3.4701942e-05
+Al27   :   3.3525821e-05
+Si28   :     0.010439163
+P31    :    0.0021350073
+S32    :    0.0091606018
+Cl35   :    0.0040009498
+Ar36   :    0.0048794487
+K39    :    0.0055527547
+Ca40   :    0.0047700285
+Sc43   :   0.00037267164
+Ti44   :   0.00022927113
+V47    :    0.0049046608
+Cr48   :    0.0011465823
+Mn51   :     0.068958574
+Fe52   :    0.0057658969
+Co55   :      0.41568673
+Ni56   :     0.018915105
 </pre></div>
 </div>
 </div>
@@ -583,7 +583,7 @@ Ni56   :      0.0189151047754
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>After solving, the chemical potential for proton and neutron are -7.7386289 and -9.9990482
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>After solving, the chemical potential for proton and neutron are -7.7386289 and -9.9990481
 </pre></div>
 </div>
 </div>

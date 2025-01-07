@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Nuclear Properties &#8212; pynucastro 2.4.0.post48+gc962e187 documentation</title>
+    <title>Nuclear Properties &#8212; pynucastro 2.4.0.post49+ge3728015 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=f10d72a5"></script>
+    <script src="_static/documentation_options.js?v=28090242"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -497,6 +497,12 @@
   <section id="nuclear-properties">
 <h1>Nuclear Properties<a class="headerlink" href="#nuclear-properties" title="Link to this heading">#</a></h1>
 <p>Here we explore how to access some of the nuclear properties from a <code class="docutils literal notranslate"><span class="pre">Nucleus</span></code> object.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>pynucastro gets the nuclear data from the Nubase 2020 compilation, which uses the CODATA 2018
+constants.  To be consistent, the CODATA 2018 values of the atomic mass unit and neutron
+mass are provided in <code class="docutils literal notranslate"><span class="pre">pynucastro.constants</span></code> as <code class="docutils literal notranslate"><span class="pre">constants.m_u_MeV_C18</span></code> and <code class="docutils literal notranslate"><span class="pre">constants.m_n_MeV_C18</span></code></p>
+</div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro</span><span class="w"> </span><span class="kn">import</span> <span class="n">Nucleus</span>
@@ -542,7 +548,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>7.073915674499972
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>7.073915614499924
 </pre></div>
 </div>
 </div>
@@ -599,7 +605,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>12114.76882836
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>12114.76881146
 </pre></div>
 </div>
 </div>
@@ -640,12 +646,12 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>p            7.2889711    938.78307478      0.00000000
-n            8.0713181    939.56542182      0.00000012
-C12                0.0  11177.92924464      7.68014464
-Ne22         -8.024716  20484.84556584      8.08046569
-Ti43           -29.316  40024.93045996      8.35281502
-Fe56         -60.60716  52103.06264832      8.79035633
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>p            7.2889711    938.78307348      0.00000000
+n            8.0713181    939.56542052      0.00000000
+C12                0.0  11177.92922904      7.68014458
+Ne22         -8.024716  20484.84553724      8.08046563
+Ti43           -29.316  40024.93040406      8.35281497
+Fe56         -60.60716  52103.06257552      8.79035626
 </pre></div>
 </div>
 </div>
@@ -668,12 +674,12 @@ Fe56         -60.60716  52103.06264832      8.79035633
 <p>We also see that the mass of <span class="math notranslate nohighlight">\({}^{12}\mathrm{C}\)</span> agrees with the atomic mass unit from the CODATA compilation:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">c12</span><span class="o">.</span><span class="n">mass</span> <span class="o">/</span> <span class="mi">12</span> <span class="o">-</span> <span class="n">constants</span><span class="o">.</span><span class="n">m_u_MeV</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">c12</span><span class="o">.</span><span class="n">mass</span> <span class="o">/</span> <span class="mi">12</span> <span class="o">-</span> <span class="n">constants</span><span class="o">.</span><span class="n">m_u_MeV_C18</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.0
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>1.1368683772161603e-13
 </pre></div>
 </div>
 </div>

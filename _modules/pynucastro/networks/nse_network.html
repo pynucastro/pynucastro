@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.nse_network &#8212; pynucastro 2.4.0.post48+gc962e187 documentation</title>
+    <title>pynucastro.networks.nse_network &#8212; pynucastro 2.4.0.post49+ge3728015 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=f10d72a5"></script>
+    <script src="../../../_static/documentation_options.js?v=28090242"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -485,7 +485,7 @@
 
         <span class="n">n_e</span> <span class="o">=</span> <span class="mf">0.0</span>
         <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">:</span>
-            <span class="n">n_e</span> <span class="o">+=</span> <span class="n">nuc</span><span class="o">.</span><span class="n">Z</span> <span class="o">*</span> <span class="n">state</span><span class="o">.</span><span class="n">dens</span> <span class="o">*</span> <span class="n">Xs</span><span class="p">[</span><span class="n">nuc</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="n">nuc</span><span class="o">.</span><span class="n">A</span> <span class="o">*</span> <span class="n">constants</span><span class="o">.</span><span class="n">m_u</span><span class="p">)</span>
+            <span class="n">n_e</span> <span class="o">+=</span> <span class="n">nuc</span><span class="o">.</span><span class="n">Z</span> <span class="o">*</span> <span class="n">state</span><span class="o">.</span><span class="n">dens</span> <span class="o">*</span> <span class="n">Xs</span><span class="p">[</span><span class="n">nuc</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="n">nuc</span><span class="o">.</span><span class="n">A</span> <span class="o">*</span> <span class="n">constants</span><span class="o">.</span><span class="n">m_u_C18</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">n_e</span>
 
