@@ -1270,11 +1270,7 @@ class RateCollection:
 
         # ion binding energy contributions. basically e=mc^2
         for nuc in self.unique_nuclei:
-            # add up mass in MeV then convert to erg
-            mass = ((nuc.A - nuc.Z) * constants.m_n_MeV +
-                    nuc.Z * (constants.m_p_MeV + constants.m_e_MeV) -
-                    nuc.A * nuc.nucbind) * constants.MeV2erg
-            enuc += ydots[nuc] * mass
+            enuc += ydots[nuc] * nuc.mass * constants.MeV2erg
 
         # convert from molar value to erg/g/s
         enuc *= -1*constants.N_A
@@ -1727,16 +1723,6 @@ class RateCollection:
                 plt.colorbar(pc, ax=ax, label="log10(rate)")
             else:
                 plt.colorbar(pc, ax=ax, label="log10(rate)", orientation="horizontal", fraction=0.05)
-
-        Ns = [n.N for n in node_nuclei]
-        Zs = [n.Z for n in node_nuclei]
-
-        if not rotated:
-            ax.set_xlim(min(Ns)-1, max(Ns)+1)
-        else:
-            ax.set_xlim(min(Zs)-1, max(Zs)+1)
-
-        #plt.ylim(min(Zs)-1, max(Zs)+1)
 
         if not rotated:
             plt.xlabel(r"$N$", fontsize="large")
