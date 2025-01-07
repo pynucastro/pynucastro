@@ -2,6 +2,13 @@
 
 ## 2.5.0
 
+  * Fix a CODATA constants inconsistency between Nubase and SciPy
+    (#877)
+
+  * Address a new warning in matplotlib 3.10.0 (#879, #885)
+
+  * Bump up jinja2 version (#871)
+
   * Added the ability to approximate A(n,gamma)X(n,gamma)B into an
     effective rate A(nn,gamma)B (#818)
 
@@ -26,7 +33,8 @@
     (#846)
 
   * Documentation improvements (#782, #831, #832, #843, #848, #852,
-    #855, #858, #861, #866), including new examples (#783, #800, #826)
+    #855, #858, #861, #864, #866), including new examples (#783, #800,
+    #826)
 
   * Clean-up unused class data in `SimpleCxxNetwork` (#845)
 
