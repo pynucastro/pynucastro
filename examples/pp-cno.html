@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>p-p chain vs. CNO &#8212; pynucastro 2.4.0.post51+g7258f3a9 documentation</title>
+    <title>p-p chain vs. CNO &#8212; pynucastro 2.4.0.post52+gdcb80254 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../_static/documentation_options.js?v=90a85e78"></script>
+    <script src="../_static/documentation_options.js?v=22b49ad4"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -167,15 +167,15 @@
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Exploring Networks in Python</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../pynucastro-examples.html">pynucastro usage examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pynucastro-examples.html">pynucastro Usage Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../plot-types.html">Plotting Examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../pynucastro-integration.html">Example of integrating a network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pynucastro-integration.html">Integrating a Network</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Building Networks</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../library-examples.html">Selecting Rates from a Library</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../duplicate-rates.html">Dealing with Duplicate Rates</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../validate-example.html">Checking your network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../validate-example.html">Checking Your Network</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../electron-capture-example.html">Tabulated Weak Rate Example</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../electron-captures.html">Combining ReacLib Rates with Electron Capture Tables</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../alternate-rates.html"><code class="docutils literal notranslate"><span class="pre">alternate_rates</span></code></a></li>
@@ -199,7 +199,7 @@
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Nuclear Statistical Equilibrium</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../NSE-example.html">Solving for  nuclear statistical equilibrium</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../NSE-example.html">Solving for Nuclear Statistical Equilibrium</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../nse_table.html">Creating an NSE table</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Plasma Neutrinos</span></p>
@@ -716,7 +716,7 @@ T = 40000000.0, nu = 14.11535
 </div>
 <p>So it varies from <span class="math notranslate nohighlight">\(T^{23}\)</span> to <span class="math notranslate nohighlight">\(T^{14}\)</span> in a temperature range that includes the Sun’s core.</p>
 <p>Here’s what the CNO cycle looks like</p>
-<div class="cell docutils container">
+<div class="cell tag_nbval-ignore-output docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">net_cno</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">,</span> <span class="n">hide_xp</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>

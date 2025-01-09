@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>A He-burning Network &#8212; pynucastro 2.4.0.post51+g7258f3a9 documentation</title>
+    <title>A He-burning Network &#8212; pynucastro 2.4.0.post52+gdcb80254 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=90a85e78"></script>
+    <script src="_static/documentation_options.js?v=22b49ad4"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -167,15 +167,15 @@
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Exploring Networks in Python</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="pynucastro-examples.html">pynucastro usage examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pynucastro-examples.html">pynucastro Usage Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="plot-types.html">Plotting Examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="pynucastro-integration.html">Example of integrating a network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pynucastro-integration.html">Integrating a Network</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Building Networks</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="library-examples.html">Selecting Rates from a Library</a></li>
 <li class="toctree-l1"><a class="reference internal" href="duplicate-rates.html">Dealing with Duplicate Rates</a></li>
-<li class="toctree-l1"><a class="reference internal" href="validate-example.html">Checking your network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="validate-example.html">Checking Your Network</a></li>
 <li class="toctree-l1"><a class="reference internal" href="electron-capture-example.html">Tabulated Weak Rate Example</a></li>
 <li class="toctree-l1"><a class="reference internal" href="electron-captures.html">Combining ReacLib Rates with Electron Capture Tables</a></li>
 <li class="toctree-l1"><a class="reference internal" href="alternate-rates.html"><code class="docutils literal notranslate"><span class="pre">alternate_rates</span></code></a></li>
@@ -199,7 +199,7 @@
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Nuclear Statistical Equilibrium</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="NSE-example.html">Solving for  nuclear statistical equilibrium</a></li>
+<li class="toctree-l1"><a class="reference internal" href="NSE-example.html">Solving for Nuclear Statistical Equilibrium</a></li>
 <li class="toctree-l1"><a class="reference internal" href="nse_table.html">Creating an NSE table</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Plasma Neutrinos</span></p>
@@ -457,7 +457,9 @@
 <button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass fa-lg"></i>
 </button>
-
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
 </div></div>
       
     </div>
@@ -473,6 +475,23 @@
     <div id="print-main-content">
         <div id="jb-print-toc">
             
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#assembling-our-library">Assembling our library</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#core-nuclei">Core nuclei</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#iron-group">Iron group</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#detailed-balance">Detailed balance</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#removing-duplicates">Removing duplicates</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#creating-the-network-and-rate-approximations">Creating the network and rate approximations</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visualizing-the-network">Visualizing the network</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#test-integration">Test integration</a></li>
+</ul>
+            </nav>
         </div>
     </div>
 </div>
@@ -484,7 +503,7 @@
                   
   <section id="a-he-burning-network">
 <h1>A He-burning Network<a class="headerlink" href="#a-he-burning-network" title="Link to this heading">#</a></h1>
-<p>Here we create a network that can be used as an <span class="math notranslate nohighlight">\(\alpha\)</span>-chain for modeling He detonations.  It is similar in goals to the classic <code class="docutils literal notranslate"><span class="pre">aprox13</span></code> network, but it has some additional rates.</p>
+<p>Here we create a network that can be used as an <span class="math notranslate nohighlight">\(\alpha\)</span>-chain for modeling He detonations, and includes some of the iron group.  It is similar in goals to the classic <code class="docutils literal notranslate"><span class="pre">aprox19</span></code> network, but it has some additional rates that are important.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pynucastro</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pyna</span>
@@ -492,9 +511,14 @@
 </div>
 </div>
 </div>
+<section id="assembling-our-library">
+<h2>Assembling our library<a class="headerlink" href="#assembling-our-library" title="Link to this heading">#</a></h2>
+<section id="core-nuclei">
+<h3>Core nuclei<a class="headerlink" href="#core-nuclei" title="Link to this heading">#</a></h3>
 <p>We start with a list of nuclei, including all <span class="math notranslate nohighlight">\(\alpha\)</span>-nuclei up to <span class="math notranslate nohighlight">\({}^{56}\mathrm{Ni}\)</span>.
 We also add the intermediate nuclei that would participate in <span class="math notranslate nohighlight">\((\alpha,p)(p,\gamma)\)</span> reactions,
-as well as a few more nuclei, including those identified by <a class="reference external" href="https://ui.adsabs.harvard.edu/abs/2009ApJ...699.1365S/abstract">Shen &amp; Bildsten 2009</a> for bypassing the <span class="math notranslate nohighlight">\({}^{12}\mathrm{C}(\alpha,\gamma){}^{16}\mathrm{O}\)</span> rate.</p>
+as well as a few more nuclei, including those identified by <a class="reference external" href="https://ui.adsabs.harvard.edu/abs/2009ApJ...699.1365S/abstract">Shen &amp; Bildsten 2009</a> for bypassing the <span class="math notranslate nohighlight">\({}^{12}\mathrm{C}(\alpha,\gamma){}^{16}\mathrm{O}\)</span> rate.  These rates are not present in the classic <code class="docutils literal notranslate"><span class="pre">aprox</span></code> networks, but can
+be very important for the ignition of a detonation.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">nuclei</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;p&quot;</span><span class="p">,</span>
@@ -506,11 +530,11 @@ as well as a few more nuclei, including those identified by <a class="reference 
 </div>
 </div>
 </div>
-<p>For our initial library, we take all of the reaclib rates that link these.</p>
+<p>For our initial library, we take all of the ReacLib rates that link these.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">reaclib_lib</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">ReacLibLibrary</span><span class="p">()</span>
-<span class="n">subch</span> <span class="o">=</span> <span class="n">reaclib_lib</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">(</span><span class="n">nuclei</span><span class="p">)</span>
+<span class="n">core_lib</span> <span class="o">=</span> <span class="n">reaclib_lib</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">(</span><span class="n">nuclei</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -526,20 +550,20 @@ that the original <span class="math notranslate nohighlight">\((X, n)\)</span> r
 <span class="k">for</span> <span class="n">r</span><span class="p">,</span> <span class="n">mp</span> <span class="ow">in</span> <span class="n">other_rates</span><span class="p">:</span>
     <span class="n">_r</span> <span class="o">=</span> <span class="n">reaclib_lib</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
     <span class="n">_r</span><span class="o">.</span><span class="n">modify_products</span><span class="p">(</span><span class="n">mp</span><span class="p">)</span>
-    <span class="n">subch</span> <span class="o">+=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Library</span><span class="p">(</span><span class="n">rates</span><span class="o">=</span><span class="p">[</span><span class="n">_r</span><span class="p">])</span>
+    <span class="n">core_lib</span> <span class="o">+=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Library</span><span class="p">(</span><span class="n">rates</span><span class="o">=</span><span class="p">[</span><span class="n">_r</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
 </div>
-<p>Now we remove some rates that traditionally are not present in the “aprox”-style networks.  This includes the
+<p>Now we remove some rates that traditionally are not present in the <code class="docutils literal notranslate"><span class="pre">aprox</span></code>-style networks.  This includes the
 reverse rates of <span class="math notranslate nohighlight">\({}^{12}\mathrm{C} + {}^{12}\mathrm{C}\)</span>, <span class="math notranslate nohighlight">\({}^{16}\mathrm{O} + {}^{12}\mathrm{C}\)</span>, and <span class="math notranslate nohighlight">\({}^{16}\mathrm{O} + {}^{16}\mathrm{O}\)</span>.  We also remove some <span class="math notranslate nohighlight">\(\alpha\)</span>-captures and <span class="math notranslate nohighlight">\(p\)</span>-captures on neutron-rich nuclei that will be eliminated when we approximate them out of the network.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">subch</span><span class="o">.</span><span class="n">get_rates</span><span class="p">():</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">core_lib</span><span class="o">.</span><span class="n">get_rates</span><span class="p">():</span>
     <span class="k">if</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">products</span><span class="p">)</span> <span class="ow">in</span> <span class="p">[[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;c12&quot;</span><span class="p">),</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;c12&quot;</span><span class="p">)],</span>
                               <span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;c12&quot;</span><span class="p">),</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;o16&quot;</span><span class="p">)],</span>
                               <span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;o16&quot;</span><span class="p">),</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;o16&quot;</span><span class="p">)]]:</span>
-        <span class="n">subch</span><span class="o">.</span><span class="n">remove_rate</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+        <span class="n">core_lib</span><span class="o">.</span><span class="n">remove_rate</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
 
 <span class="n">rates_to_remove</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;p31(p,c12)ne20&quot;</span><span class="p">,</span>
                    <span class="s2">&quot;si28(a,c12)ne20&quot;</span><span class="p">,</span>
@@ -551,15 +575,16 @@ reverse rates of <span class="math notranslate nohighlight">\({}^{12}\mathrm{C} 
                    <span class="s2">&quot;p31(g,a)al27&quot;</span><span class="p">]</span>
 
 <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">rates_to_remove</span><span class="p">:</span>
-    <span class="n">_r</span> <span class="o">=</span> <span class="n">subch</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
-    <span class="n">subch</span><span class="o">.</span><span class="n">remove_rate</span><span class="p">(</span><span class="n">_r</span><span class="p">)</span>
+    <span class="n">_r</span> <span class="o">=</span> <span class="n">core_lib</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+    <span class="n">core_lib</span><span class="o">.</span><span class="n">remove_rate</span><span class="p">(</span><span class="n">_r</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
+<p>Here’s the current list of rates</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">subch</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">core_lib</span>
 </pre></div>
 </div>
 </div>
@@ -661,11 +686,57 @@ Ni56 ⟶ p + Co55                [Q =  -7.17 MeV] (Ni56 --&gt; p + Co55 &lt;ths8
 </div>
 </div>
 </div>
+</section>
+<section id="iron-group">
+<h3>Iron group<a class="headerlink" href="#iron-group" title="Link to this heading">#</a></h3>
+<p>Now we’ll add some more nuclei in the iron group.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">iron_peak</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;n&quot;</span><span class="p">,</span> <span class="s2">&quot;p&quot;</span><span class="p">,</span> <span class="s2">&quot;he4&quot;</span><span class="p">,</span>
+             <span class="s2">&quot;mn51&quot;</span><span class="p">,</span>
+             <span class="s2">&quot;fe52&quot;</span><span class="p">,</span> <span class="s2">&quot;fe53&quot;</span><span class="p">,</span> <span class="s2">&quot;fe54&quot;</span><span class="p">,</span> <span class="s2">&quot;fe55&quot;</span><span class="p">,</span> <span class="s2">&quot;fe56&quot;</span><span class="p">,</span>
+             <span class="s2">&quot;co55&quot;</span><span class="p">,</span> <span class="s2">&quot;co56&quot;</span><span class="p">,</span> <span class="s2">&quot;co57&quot;</span><span class="p">,</span>
+             <span class="s2">&quot;ni56&quot;</span><span class="p">,</span> <span class="s2">&quot;ni57&quot;</span><span class="p">,</span> <span class="s2">&quot;ni58&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">iron_reaclib</span> <span class="o">=</span> <span class="n">reaclib_lib</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">(</span><span class="n">iron_peak</span><span class="p">)</span>
+
+<span class="n">weak_lib</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">TabularLibrary</span><span class="p">()</span>
+<span class="n">iron_weak_lib</span> <span class="o">=</span> <span class="n">weak_lib</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">(</span><span class="n">iron_peak</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>warning: He4 was not able to be linked
+warning: Fe53 was not able to be linked
+warning: Mn51 was not able to be linked
+warning: Ni58 was not able to be linked
+warning: Fe52 was not able to be linked
+warning: Fe54 was not able to be linked
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">all_lib</span> <span class="o">=</span> <span class="n">core_lib</span> <span class="o">+</span> <span class="n">iron_reaclib</span> <span class="o">+</span> <span class="n">iron_weak_lib</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="detailed-balance">
+<h2>Detailed balance<a class="headerlink" href="#detailed-balance" title="Link to this heading">#</a></h2>
 <p>Finally, we replace the reverse rates from ReacLib by rederiving them via detailed balance, and including the partition functions.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rates_to_derive</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">subch</span><span class="o">.</span><span class="n">get_rates</span><span class="p">():</span>
+<span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">all_lib</span><span class="o">.</span><span class="n">get_rates</span><span class="p">():</span>
     <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">reverse</span><span class="p">:</span>
         <span class="c1"># this rate was computed using detailed balance, regardless</span>
         <span class="c1"># of whether Q &lt; 0 or not.  We want to remove it and then</span>
@@ -675,12 +746,12 @@ Ni56 ⟶ p + Co55                [Q =  -7.17 MeV] (Ni56 --&gt; p + Co55 &lt;ths8
 <span class="c1"># now for each of those derived rates, look to see if the pair exists</span>
 
 <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">rates_to_derive</span><span class="p">:</span>
-    <span class="n">fr</span> <span class="o">=</span> <span class="n">subch</span><span class="o">.</span><span class="n">get_rate_by_nuclei</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">products</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span>
+    <span class="n">fr</span> <span class="o">=</span> <span class="n">all_lib</span><span class="o">.</span><span class="n">get_rate_by_nuclei</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">products</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">fr</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;modifying </span><span class="si">{</span><span class="n">r</span><span class="si">}</span><span class="s2"> from </span><span class="si">{</span><span class="n">fr</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="n">subch</span><span class="o">.</span><span class="n">remove_rate</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+        <span class="n">all_lib</span><span class="o">.</span><span class="n">remove_rate</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
         <span class="n">d</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">DerivedRate</span><span class="p">(</span><span class="n">rate</span><span class="o">=</span><span class="n">fr</span><span class="p">,</span> <span class="n">compute_Q</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">use_pf</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">subch</span><span class="o">.</span><span class="n">add_rate</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+        <span class="n">all_lib</span><span class="o">.</span><span class="n">add_rate</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -727,23 +798,76 @@ modifying Ca40 + He4 ⟶ p + Sc43 from Sc43 + p ⟶ He4 + Ca40
 modifying V47 + p ⟶ He4 + Ti44 from Ti44 + He4 ⟶ p + V47
 modifying Mn51 + p ⟶ He4 + Cr48 from Cr48 + He4 ⟶ p + Mn51
 modifying Co55 + p ⟶ He4 + Fe52 from Fe52 + He4 ⟶ p + Co55
+modifying Fe53 ⟶ n + Fe52 from Fe52 + n ⟶ Fe53 + 𝛾
+modifying Fe54 ⟶ n + Fe53 from Fe53 + n ⟶ Fe54 + 𝛾
+modifying Fe55 ⟶ n + Fe54 from Fe54 + n ⟶ Fe55 + 𝛾
+modifying Fe56 ⟶ n + Fe55 from Fe55 + n ⟶ Fe56 + 𝛾
+modifying Co55 ⟶ p + Fe54 from Fe54 + p ⟶ Co55 + 𝛾
+modifying Co56 ⟶ n + Co55 from Co55 + n ⟶ Co56 + 𝛾
+modifying Co56 ⟶ p + Fe55 from Fe55 + p ⟶ Co56 + 𝛾
+modifying Co57 ⟶ n + Co56 from Co56 + n ⟶ Co57 + 𝛾
+modifying Co57 ⟶ p + Fe56 from Fe56 + p ⟶ Co57 + 𝛾
+modifying Ni57 ⟶ n + Ni56 from Ni56 + n ⟶ Ni57 + 𝛾
+modifying Ni57 ⟶ p + Co56 from Co56 + p ⟶ Ni57 + 𝛾
+modifying Ni57 ⟶ He4 + Fe53 from Fe53 + He4 ⟶ Ni57 + 𝛾
+modifying Ni58 ⟶ n + Ni57 from Ni57 + n ⟶ Ni58 + 𝛾
+modifying Ni58 ⟶ p + Co57 from Co57 + p ⟶ Ni58 + 𝛾
+modifying Ni58 ⟶ He4 + Fe54 from Fe54 + He4 ⟶ Ni58 + 𝛾
+modifying Fe53 + He4 ⟶ n + Ni56 from Ni56 + n ⟶ He4 + Fe53
+modifying Fe54 + p ⟶ He4 + Mn51 from Mn51 + He4 ⟶ p + Fe54
+modifying Fe54 + He4 ⟶ n + Ni57 from Ni57 + n ⟶ He4 + Fe54
+modifying Fe54 + He4 ⟶ p + Co57 from Co57 + p ⟶ He4 + Fe54
+modifying Fe55 + p ⟶ n + Co55 from Co55 + n ⟶ p + Fe55
+modifying Fe55 + He4 ⟶ n + Ni58 from Ni58 + n ⟶ He4 + Fe55
+modifying Fe56 + p ⟶ n + Co56 from Co56 + n ⟶ p + Fe56
+modifying Co56 + p ⟶ n + Ni56 from Ni56 + n ⟶ p + Co56
+modifying Co56 + p ⟶ He4 + Fe53 from Fe53 + He4 ⟶ p + Co56
+modifying Co57 + p ⟶ n + Ni57 from Ni57 + n ⟶ p + Co57
+modifying Ni58 + p ⟶ He4 + Co55 from Co55 + He4 ⟶ p + Ni58
 </pre></div>
 </div>
 </div>
 </div>
-<p>Now that we have our library, we can make a network.  This can be a <code class="docutils literal notranslate"><span class="pre">RateCollection</span></code>, <code class="docutils literal notranslate"><span class="pre">PythonNetwork</span></code>, or <code class="docutils literal notranslate"><span class="pre">AmrexAstroCxxNetwork</span></code>.  For a <code class="docutils literal notranslate"><span class="pre">SimpleCxxNetwork</span></code> or <code class="docutils literal notranslate"><span class="pre">FortranNetwork</span></code>, we do not currently support partition functions, so we would need to comment out the above cell that rederives the reverse rates via detailed balance.</p>
+</section>
+<section id="removing-duplicates">
+<h2>Removing duplicates<a class="headerlink" href="#removing-duplicates" title="Link to this heading">#</a></h2>
+<p>There will be some duplicate rates now because we pulled rates both from ReacLib and from tabulated sources.  Here we keep the tabulated version of any duplicate rates.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">net</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">RateCollection</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="p">[</span><span class="n">subch</span><span class="p">])</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dupes</span> <span class="o">=</span> <span class="n">all_lib</span><span class="o">.</span><span class="n">find_duplicate_links</span><span class="p">()</span>
+
+<span class="n">rates_to_remove</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dupes</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">d</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">pyna</span><span class="o">.</span><span class="n">rates</span><span class="o">.</span><span class="n">ReacLibRate</span><span class="p">):</span>
+            <span class="n">rates_to_remove</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">rates_to_remove</span><span class="p">:</span>
+    <span class="n">all_lib</span><span class="o">.</span><span class="n">remove_rate</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
-<p>Finally, we will do the <span class="math notranslate nohighlight">\((\alpha,p)(p,\gamma)\)</span> approximation and eliminate the intermediate nuclei</p>
+</section>
+<section id="creating-the-network-and-rate-approximations">
+<h2>Creating the network and rate approximations<a class="headerlink" href="#creating-the-network-and-rate-approximations" title="Link to this heading">#</a></h2>
+<p>Now that we have our library, we can make a network.  This can be a <code class="docutils literal notranslate"><span class="pre">RateCollection</span></code>, <code class="docutils literal notranslate"><span class="pre">PythonNetwork</span></code>, or <code class="docutils literal notranslate"><span class="pre">AmrexAstroCxxNetwork</span></code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>For a <code class="docutils literal notranslate"><span class="pre">SimpleCxxNetwork</span></code> or <code class="docutils literal notranslate"><span class="pre">FortranNetwork</span></code>, we do not currently support partition functions, so we would need to comment out the above cell that rederives the reverse rates via detailed balance.</p>
+</div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">net</span><span class="o">.</span><span class="n">make_ap_pg_approx</span><span class="p">(</span><span class="n">intermediate_nuclei</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;cl35&quot;</span><span class="p">,</span> <span class="s2">&quot;k39&quot;</span><span class="p">,</span> <span class="s2">&quot;sc43&quot;</span><span class="p">,</span> <span class="s2">&quot;v47&quot;</span><span class="p">,</span> <span class="s2">&quot;mn51&quot;</span><span class="p">,</span> <span class="s2">&quot;co55&quot;</span><span class="p">])</span>
-<span class="n">net</span><span class="o">.</span><span class="n">remove_nuclei</span><span class="p">([</span><span class="s2">&quot;cl35&quot;</span><span class="p">,</span> <span class="s2">&quot;k39&quot;</span><span class="p">,</span> <span class="s2">&quot;sc43&quot;</span><span class="p">,</span> <span class="s2">&quot;v47&quot;</span><span class="p">,</span> <span class="s2">&quot;mn51&quot;</span><span class="p">,</span> <span class="s2">&quot;co55&quot;</span><span class="p">])</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">net</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">PythonNetwork</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="p">[</span><span class="n">all_lib</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Next, we will do the <span class="math notranslate nohighlight">\((\alpha,p)(p,\gamma)\)</span> approximation and eliminate the intermediate nuclei</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">net</span><span class="o">.</span><span class="n">make_ap_pg_approx</span><span class="p">(</span><span class="n">intermediate_nuclei</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;cl35&quot;</span><span class="p">,</span> <span class="s2">&quot;k39&quot;</span><span class="p">,</span> <span class="s2">&quot;sc43&quot;</span><span class="p">,</span> <span class="s2">&quot;v47&quot;</span><span class="p">])</span>
+<span class="n">net</span><span class="o">.</span><span class="n">remove_nuclei</span><span class="p">([</span><span class="s2">&quot;cl35&quot;</span><span class="p">,</span> <span class="s2">&quot;k39&quot;</span><span class="p">,</span> <span class="s2">&quot;sc43&quot;</span><span class="p">,</span> <span class="s2">&quot;v47&quot;</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
@@ -756,10 +880,6 @@ using approximate rate Ca40 + He4 ⟶ Ti44 + 𝛾
 using approximate rate Ti44 ⟶ Ca40 + He4
 using approximate rate Ti44 + He4 ⟶ Cr48 + 𝛾
 using approximate rate Cr48 ⟶ Ti44 + He4
-using approximate rate Cr48 + He4 ⟶ Fe52 + 𝛾
-using approximate rate Fe52 ⟶ Cr48 + He4
-using approximate rate Fe52 + He4 ⟶ Ni56 + 𝛾
-using approximate rate Ni56 ⟶ Fe52 + He4
 removing rate S32 + He4 ⟶ Ar36 + 𝛾
 removing rate S32 + He4 ⟶ p + Cl35
 removing rate Cl35 + p ⟶ Ar36 + 𝛾
@@ -784,18 +904,6 @@ removing rate V47 + p ⟶ Cr48 + 𝛾
 removing rate Cr48 ⟶ He4 + Ti44
 removing rate Cr48 ⟶ p + V47
 removing rate V47 + p ⟶ He4 + Ti44
-removing rate Cr48 + He4 ⟶ Fe52 + 𝛾
-removing rate Cr48 + He4 ⟶ p + Mn51
-removing rate Mn51 + p ⟶ Fe52 + 𝛾
-removing rate Fe52 ⟶ He4 + Cr48
-removing rate Fe52 ⟶ p + Mn51
-removing rate Mn51 + p ⟶ He4 + Cr48
-removing rate Fe52 + He4 ⟶ Ni56 + 𝛾
-removing rate Fe52 + He4 ⟶ p + Co55
-removing rate Co55 + p ⟶ Ni56 + 𝛾
-removing rate Ni56 ⟶ He4 + Fe52
-removing rate Ni56 ⟶ p + Co55
-removing rate Co55 + p ⟶ He4 + Fe52
 looking to remove P31 + He4 ⟶ Cl35 + 𝛾
 looking to remove Cl35 + He4 ⟶ K39 + 𝛾
 looking to remove Cl35 ⟶ He4 + P31
@@ -812,16 +920,108 @@ looking to remove Sc43 + He4 ⟶ V47 + 𝛾
 looking to remove V47 + He4 ⟶ Mn51 + 𝛾
 looking to remove V47 ⟶ He4 + Sc43
 looking to remove Mn51 ⟶ He4 + V47
-looking to remove V47 + He4 ⟶ Mn51 + 𝛾
-looking to remove Mn51 + He4 ⟶ Co55 + 𝛾
-looking to remove Mn51 ⟶ He4 + V47
-looking to remove Co55 ⟶ He4 + Mn51
-looking to remove Mn51 + He4 ⟶ Co55 + 𝛾
-looking to remove Co55 ⟶ He4 + Mn51
 </pre></div>
 </div>
 </div>
 </div>
+<p>We will also approximate some of the neutron captures:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">net</span><span class="o">.</span><span class="n">make_nn_g_approx</span><span class="p">(</span><span class="n">intermediate_nuclei</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;fe53&quot;</span><span class="p">,</span> <span class="s2">&quot;fe55&quot;</span><span class="p">,</span> <span class="s2">&quot;ni57&quot;</span><span class="p">])</span>
+<span class="n">net</span><span class="o">.</span><span class="n">remove_nuclei</span><span class="p">([</span><span class="s2">&quot;fe53&quot;</span><span class="p">,</span> <span class="s2">&quot;fe55&quot;</span><span class="p">,</span> <span class="s2">&quot;ni57&quot;</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>approximating out Fe53
+using approximate rate Fe52 + n + n ⟶ Fe54 + 𝛾
+using approximate rate Fe54 ⟶ Fe52 + n + n
+approximating out Fe55
+using approximate rate Fe54 + n + n ⟶ Fe56 + 𝛾
+using approximate rate Fe56 ⟶ Fe54 + n + n
+approximating out Ni57
+using approximate rate Ni56 + n + n ⟶ Ni58 + 𝛾
+using approximate rate Ni58 ⟶ Ni56 + n + n
+removing rate Fe52 + n ⟶ Fe53 + 𝛾
+removing rate Fe53 + n ⟶ Fe54 + 𝛾
+removing rate Fe54 ⟶ n + Fe53
+removing rate Fe53 ⟶ n + Fe52
+removing rate Fe54 + n ⟶ Fe55 + 𝛾
+removing rate Fe55 + n ⟶ Fe56 + 𝛾
+removing rate Fe56 ⟶ n + Fe55
+removing rate Fe55 ⟶ n + Fe54
+removing rate Ni56 + n ⟶ Ni57 + 𝛾
+removing rate Ni57 + n ⟶ Ni58 + 𝛾
+removing rate Ni58 ⟶ n + Ni57
+removing rate Ni57 ⟶ n + Ni56
+looking to remove Fe53 + He4 ⟶ Ni57 + 𝛾
+looking to remove Fe53 + He4 ⟶ p + Co56
+looking to remove Ni56 + n ⟶ He4 + Fe53
+looking to remove Ni57 ⟶ He4 + Fe53
+looking to remove Fe53 + He4 ⟶ n + Ni56
+looking to remove Co56 + p ⟶ He4 + Fe53
+looking to remove Fe55 + p ⟶ Co56 + 𝛾
+looking to remove Co55 + n ⟶ p + Fe55
+looking to remove Ni58 + n ⟶ He4 + Fe55
+looking to remove Co56 ⟶ p + Fe55
+looking to remove Fe55 + p ⟶ n + Co55
+looking to remove Fe55 + He4 ⟶ n + Ni58
+looking to remove Co55 + e⁻ ⟶ Fe55 + 𝜈
+looking to remove Fe55 ⟶ Co55 + e⁻ + 𝜈
+looking to remove Fe53 + He4 ⟶ Ni57 + 𝛾
+looking to remove Co56 + p ⟶ Ni57 + 𝛾
+looking to remove Ni57 + n ⟶ p + Co57
+looking to remove Ni57 + n ⟶ He4 + Fe54
+looking to remove Ni57 ⟶ p + Co56
+looking to remove Ni57 ⟶ He4 + Fe53
+looking to remove Fe54 + He4 ⟶ n + Ni57
+looking to remove Co57 + p ⟶ n + Ni57
+looking to remove Co57 ⟶ Ni57 + e⁻ + 𝜈
+looking to remove Ni57 + e⁻ ⟶ Co57 + 𝜈
+</pre></div>
+</div>
+</div>
+</div>
+<p>and finally, make some of the protons into NSE protons</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># make all rates with A &gt;= 48 use NSE protons</span>
+<span class="n">net</span><span class="o">.</span><span class="n">make_nse_protons</span><span class="p">(</span><span class="mi">48</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>modifying p_Mn51__Fe52 to use NSE protons
+modifying Fe52__p_Mn51__derived to use NSE protons
+modifying p_Co55__Ni56 to use NSE protons
+modifying Ni56__p_Co55__derived to use NSE protons
+modifying He4_Cr48__p_Mn51 to use NSE protons
+modifying p_Mn51__He4_Cr48__derived to use NSE protons
+modifying He4_Fe52__p_Co55 to use NSE protons
+modifying p_Co55__He4_Fe52__derived to use NSE protons
+modifying p_Fe54__Co55 to use NSE protons
+modifying Co55__p_Fe54__derived to use NSE protons
+modifying p_Fe56__Co57 to use NSE protons
+modifying Co57__p_Fe56__derived to use NSE protons
+modifying p_Co57__Ni58 to use NSE protons
+modifying Ni58__p_Co57__derived to use NSE protons
+modifying He4_Mn51__p_Fe54 to use NSE protons
+modifying p_Fe54__He4_Mn51__derived to use NSE protons
+modifying He4_Co55__p_Ni58 to use NSE protons
+modifying p_Ni58__He4_Co55__derived to use NSE protons
+modifying n_Co56__p_Fe56 to use NSE protons
+modifying p_Fe56__n_Co56__derived to use NSE protons
+modifying p_Co57__He4_Fe54 to use NSE protons
+modifying He4_Fe54__p_Co57__derived to use NSE protons
+modifying n_Ni56__p_Co56 to use NSE protons
+modifying p_Co56__n_Ni56__derived to use NSE protons
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="visualizing-the-network">
+<h2>Visualizing the network<a class="headerlink" href="#visualizing-the-network" title="Link to this heading">#</a></h2>
 <p>Let’s visualize the network</p>
 <div class="cell tag_nbval-ignore-output docutils container">
 <div class="cell_input docutils container">
@@ -836,8 +1036,7 @@ looking to remove Co55 ⟶ He4 + Mn51
 <span class="n">fig</span> <span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span> <span class="n">outfile</span><span class="o">=</span><span class="s2">&quot;subch_simple.png&quot;</span><span class="p">,</span>
                <span class="n">rotated</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">hide_xalpha</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">curved_edges</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">1500</span><span class="p">,</span> <span class="mi">450</span><span class="p">),</span>
-               <span class="n">node_size</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">node_font_size</span><span class="o">=</span><span class="mi">11</span><span class="p">,</span> <span class="n">node_color</span><span class="o">=</span><span class="s2">&quot;#337dff&quot;</span><span class="p">,</span> <span class="n">node_shape</span><span class="o">=</span><span class="s2">&quot;s&quot;</span><span class="p">,</span>
-               <span class="n">Z_range</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">29</span><span class="p">))</span>
+               <span class="n">node_size</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">node_font_size</span><span class="o">=</span><span class="mi">11</span><span class="p">,</span> <span class="n">node_color</span><span class="o">=</span><span class="s2">&quot;#337dff&quot;</span><span class="p">,</span> <span class="n">node_shape</span><span class="o">=</span><span class="s2">&quot;s&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -848,12 +1047,112 @@ looking to remove Co55 ⟶ He4 + Mn51
   warnings.warn(UserWarning(f&#39;{nuc} partition function is not supported by tables: set pf = 1.0 by default&#39;))
 /opt/hostedtoolcache/Python/3.11.11/x64/lib/python3.11/site-packages/pynucastro/rates/derived_rate.py:86: UserWarning: N14 partition function is not supported by tables: set pf = 1.0 by default
   warnings.warn(UserWarning(f&#39;{nuc} partition function is not supported by tables: set pf = 1.0 by default&#39;))
+/opt/hostedtoolcache/Python/3.11.11/x64/lib/python3.11/site-packages/pynucastro/rates/derived_rate.py:86: UserWarning: p_nse partition function is not supported by tables: set pf = 1.0 by default
+  warnings.warn(UserWarning(f&#39;{nuc} partition function is not supported by tables: set pf = 1.0 by default&#39;))
 </pre></div>
 </div>
-<img alt="_images/c2237ff4459f2160adfbc0e9c02e2bb9e0030f827847d4f1b09ab28c9bd3448d.png" src="_images/c2237ff4459f2160adfbc0e9c02e2bb9e0030f827847d4f1b09ab28c9bd3448d.png" />
+<img alt="_images/7f31f790c63d136a68ad5de63b3f665936fe0c858af84be18a51bdc641678066.png" src="_images/7f31f790c63d136a68ad5de63b3f665936fe0c858af84be18a51bdc641678066.png" />
 </div>
 </div>
-<p>At this point, we could write the network and use it in another code, depending on which network class we used for the construction.</p>
+</section>
+<section id="test-integration">
+<h2>Test integration<a class="headerlink" href="#test-integration" title="Link to this heading">#</a></h2>
+<p>We’ll write out the network to a python module and do a test integration with it.</p>
+<div class="cell tag_nbval-ignore-output docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">net</span><span class="o">.</span><span class="n">write_network</span><span class="p">(</span><span class="s2">&quot;he_burn.py&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.11.11/x64/lib/python3.11/site-packages/pynucastro/rates/derived_rate.py:86: UserWarning: C12 partition function is not supported by tables: set pf = 1.0 by default
+  warnings.warn(UserWarning(f&#39;{nuc} partition function is not supported by tables: set pf = 1.0 by default&#39;))
+/opt/hostedtoolcache/Python/3.11.11/x64/lib/python3.11/site-packages/pynucastro/rates/derived_rate.py:86: UserWarning: N13 partition function is not supported by tables: set pf = 1.0 by default
+  warnings.warn(UserWarning(f&#39;{nuc} partition function is not supported by tables: set pf = 1.0 by default&#39;))
+/opt/hostedtoolcache/Python/3.11.11/x64/lib/python3.11/site-packages/pynucastro/rates/derived_rate.py:86: UserWarning: N14 partition function is not supported by tables: set pf = 1.0 by default
+  warnings.warn(UserWarning(f&#39;{nuc} partition function is not supported by tables: set pf = 1.0 by default&#39;))
+/opt/hostedtoolcache/Python/3.11.11/x64/lib/python3.11/site-packages/pynucastro/rates/derived_rate.py:86: UserWarning: p_nse partition function is not supported by tables: set pf = 1.0 by default
+  warnings.warn(UserWarning(f&#39;{nuc} partition function is not supported by tables: set pf = 1.0 by default&#39;))
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">he_burn</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">scipy.integrate</span><span class="w"> </span><span class="kn">import</span> <span class="n">solve_ivp</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rho</span> <span class="o">=</span> <span class="mf">1.e6</span>
+<span class="n">T</span> <span class="o">=</span> <span class="mf">3.e9</span>
+
+<span class="n">X0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">he_burn</span><span class="o">.</span><span class="n">nnuc</span><span class="p">)</span>
+<span class="n">X0</span><span class="p">[</span><span class="n">he_burn</span><span class="o">.</span><span class="n">jhe4</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.95</span>
+<span class="n">X0</span><span class="p">[</span><span class="n">he_burn</span><span class="o">.</span><span class="n">jc12</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.02</span>
+
+<span class="n">Y0</span> <span class="o">=</span> <span class="n">X0</span><span class="o">/</span><span class="n">he_burn</span><span class="o">.</span><span class="n">A</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.screening</span><span class="w"> </span><span class="kn">import</span> <span class="n">chugunov_2007</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell tag_nbval-ignore-output docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tmax</span> <span class="o">=</span> <span class="mf">10.0</span>
+
+<span class="n">sol</span> <span class="o">=</span> <span class="n">solve_ivp</span><span class="p">(</span><span class="n">he_burn</span><span class="o">.</span><span class="n">rhs</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">tmax</span><span class="p">],</span> <span class="n">Y0</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;BDF&quot;</span><span class="p">,</span> <span class="n">jac</span><span class="o">=</span><span class="n">he_burn</span><span class="o">.</span><span class="n">jacobian</span><span class="p">,</span>
+                <span class="n">dense_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">chugunov_2007</span><span class="p">),</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1.e-6</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1.e-6</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell tag_nbval-ignore-output docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">he_burn</span><span class="o">.</span><span class="n">nnuc</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">sol</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mf">5.e-4</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">sol</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">sol</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span> <span class="o">*</span> <span class="n">he_burn</span><span class="o">.</span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;X(</span><span class="si">{</span><span class="n">he_burn</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mf">1.e-8</span><span class="p">,</span> <span class="mf">1.1</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="s2">&quot;small&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;t (s)&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;X&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0, 0.5, &#39;X&#39;)
+</pre></div>
+</div>
+<img alt="_images/d454be9eb2d723d13a47ff766e623219e5318ad9749a2a1fbd34177b8266077b.png" src="_images/d454be9eb2d723d13a47ff766e623219e5318ad9749a2a1fbd34177b8266077b.png" />
+</div>
+</div>
+</section>
 </section>
 
 
@@ -891,6 +1190,31 @@ looking to remove Co55 ⟶ He4 + Mn51
             </div>
             
             
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#assembling-our-library">Assembling our library</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#core-nuclei">Core nuclei</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#iron-group">Iron group</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#detailed-balance">Detailed balance</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#removing-duplicates">Removing duplicates</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#creating-the-network-and-rate-approximations">Creating the network and rate approximations</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visualizing-the-network">Visualizing the network</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#test-integration">Test integration</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>

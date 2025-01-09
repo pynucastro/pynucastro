@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Computing the Screened Triple-alpha rate &#8212; pynucastro 2.4.0.post51+g7258f3a9 documentation</title>
+    <title>Computing the Screened Triple-alpha rate &#8212; pynucastro 2.4.0.post52+gdcb80254 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../_static/documentation_options.js?v=90a85e78"></script>
+    <script src="../_static/documentation_options.js?v=22b49ad4"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -167,15 +167,15 @@
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Exploring Networks in Python</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../pynucastro-examples.html">pynucastro usage examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pynucastro-examples.html">pynucastro Usage Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../plot-types.html">Plotting Examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../pynucastro-integration.html">Example of integrating a network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pynucastro-integration.html">Integrating a Network</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Building Networks</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../library-examples.html">Selecting Rates from a Library</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../duplicate-rates.html">Dealing with Duplicate Rates</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../validate-example.html">Checking your network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../validate-example.html">Checking Your Network</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../electron-capture-example.html">Tabulated Weak Rate Example</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../electron-captures.html">Combining ReacLib Rates with Electron Capture Tables</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../alternate-rates.html"><code class="docutils literal notranslate"><span class="pre">alternate_rates</span></code></a></li>
@@ -199,7 +199,7 @@
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Nuclear Statistical Equilibrium</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../NSE-example.html">Solving for  nuclear statistical equilibrium</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../NSE-example.html">Solving for Nuclear Statistical Equilibrium</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../nse_table.html">Creating an NSE table</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Plasma Neutrinos</span></p>
@@ -513,7 +513,7 @@ We’ll do this 2 different ways (but both will get the same answer).</p>
 </div>
 </div>
 </div>
-<div class="cell docutils container">
+<div class="cell tag_nbval-ignore-output docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">he4</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">)</span>
 <span class="n">c12</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;c12&quot;</span><span class="p">)</span>
@@ -549,7 +549,7 @@ We’ll do this 2 different ways (but both will get the same answer).</p>
 </div>
 </div>
 <p>Here’s the temperature sensitivity of just the 3-<span class="math notranslate nohighlight">\(\alpha\)</span> rate</p>
-<div class="cell docutils container">
+<div class="cell tag_nbval-ignore-output docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">triple_alpha</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">Tmin</span><span class="o">=</span><span class="mf">5.e7</span><span class="p">)</span>
 </pre></div>
@@ -578,12 +578,12 @@ We’ll do this 2 different ways (but both will get the same answer).</p>
 <span class="n">scn2</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">screening</span><span class="o">.</span><span class="n">screen5</span><span class="p">(</span><span class="n">plasma</span><span class="p">,</span> <span class="n">scn_fac2</span><span class="p">)</span>
 
 <span class="n">scn</span> <span class="o">=</span> <span class="n">scn1</span> <span class="o">*</span> <span class="n">scn2</span>
-<span class="n">scn</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">scn</span><span class="si">:</span><span class="s2">20.10g</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>5.802207272763388
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>         5.802207273
 </pre></div>
 </div>
 </div>
@@ -598,12 +598,12 @@ We’ll do this 2 different ways (but both will get the same answer).</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">r</span> <span class="o">=</span> <span class="n">scn</span> <span class="o">*</span> <span class="n">dens</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="mf">6.0</span> <span class="o">*</span> <span class="n">comp</span><span class="o">.</span><span class="n">get_molar</span><span class="p">()[</span><span class="n">he4</span><span class="p">]</span><span class="o">**</span><span class="mi">3</span> <span class="o">*</span> <span class="n">triple_alpha</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">temp</span><span class="p">)</span>
-<span class="n">r</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="si">:</span><span class="s2">20.10g</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2.2474377337116652e-14
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>     2.247437734e-14
 </pre></div>
 </div>
 </div>
@@ -613,7 +613,7 @@ We’ll do this 2 different ways (but both will get the same answer).</p>
 <section id="computing-it-via-a-ratecollection">
 <h2>Computing it via a RateCollection<a class="headerlink" href="#computing-it-via-a-ratecollection" title="Link to this heading">#</a></h2>
 <p>We can build a simple <code class="docutils literal notranslate"><span class="pre">RateCollection</span></code> containing only this rate</p>
-<div class="cell docutils container">
+<div class="cell tag_nbval-ignore-output docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rc</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">RateCollection</span><span class="p">(</span><span class="n">rates</span><span class="o">=</span><span class="p">[</span><span class="n">triple_alpha</span><span class="p">])</span>
 <span class="n">fig</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>

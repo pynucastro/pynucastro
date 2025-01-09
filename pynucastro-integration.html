@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Example of integrating a network &#8212; pynucastro 2.4.0.post51+g7258f3a9 documentation</title>
+    <title>Integrating a Network &#8212; pynucastro 2.4.0.post52+gdcb80254 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=90a85e78"></script>
+    <script src="_static/documentation_options.js?v=22b49ad4"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -169,15 +169,15 @@
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Exploring Networks in Python</span></p>
 <ul class="current nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="pynucastro-examples.html">pynucastro usage examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pynucastro-examples.html">pynucastro Usage Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="plot-types.html">Plotting Examples</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Example of integrating a network</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Integrating a Network</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Building Networks</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="library-examples.html">Selecting Rates from a Library</a></li>
 <li class="toctree-l1"><a class="reference internal" href="duplicate-rates.html">Dealing with Duplicate Rates</a></li>
-<li class="toctree-l1"><a class="reference internal" href="validate-example.html">Checking your network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="validate-example.html">Checking Your Network</a></li>
 <li class="toctree-l1"><a class="reference internal" href="electron-capture-example.html">Tabulated Weak Rate Example</a></li>
 <li class="toctree-l1"><a class="reference internal" href="electron-captures.html">Combining ReacLib Rates with Electron Capture Tables</a></li>
 <li class="toctree-l1"><a class="reference internal" href="alternate-rates.html"><code class="docutils literal notranslate"><span class="pre">alternate_rates</span></code></a></li>
@@ -201,7 +201,7 @@
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Nuclear Statistical Equilibrium</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="NSE-example.html">Solving for  nuclear statistical equilibrium</a></li>
+<li class="toctree-l1"><a class="reference internal" href="NSE-example.html">Solving for Nuclear Statistical Equilibrium</a></li>
 <li class="toctree-l1"><a class="reference internal" href="nse_table.html">Creating an NSE table</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Plasma Neutrinos</span></p>
@@ -472,7 +472,7 @@
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Example of integrating a network</h1>
+    <h1>Integrating a Network</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -496,8 +496,8 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="example-of-integrating-a-network">
-<h1>Example of integrating a network<a class="headerlink" href="#example-of-integrating-a-network" title="Link to this heading">#</a></h1>
+  <section id="integrating-a-network">
+<h1>Integrating a Network<a class="headerlink" href="#integrating-a-network" title="Link to this heading">#</a></h1>
 <p>This notebook illustrates how to create a python network and integrate
 it with the scipy library.</p>
 <div class="cell docutils container">
@@ -553,7 +553,7 @@ and pass in the names of the rates in the form of a string <code class="docutils
 </div>
 </div>
 </div>
-<div class="cell docutils container">
+<div class="cell tag_nbval-ignore-output docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">pynet</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 </pre></div>
@@ -1196,7 +1196,7 @@ def jacobian_eq(t, Y, rho, T, screen_func):
 </div>
 </div>
 </div>
-<div class="cell docutils container">
+<div class="cell tag_nbval-ignore-output docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
 <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>

@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Plotting Examples &#8212; pynucastro 2.4.0.post51+g7258f3a9 documentation</title>
+    <title>Plotting Examples &#8212; pynucastro 2.4.0.post52+gdcb80254 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=90a85e78"></script>
+    <script src="_static/documentation_options.js?v=22b49ad4"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -54,8 +54,8 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'plot-types';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Example of integrating a network" href="pynucastro-integration.html" />
-    <link rel="prev" title="pynucastro usage examples" href="pynucastro-examples.html" />
+    <link rel="next" title="Integrating a Network" href="pynucastro-integration.html" />
+    <link rel="prev" title="pynucastro Usage Examples" href="pynucastro-examples.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="2.4" />
@@ -167,15 +167,15 @@
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Exploring Networks in Python</span></p>
 <ul class="current nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="pynucastro-examples.html">pynucastro usage examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pynucastro-examples.html">pynucastro Usage Examples</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Plotting Examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="pynucastro-integration.html">Example of integrating a network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pynucastro-integration.html">Integrating a Network</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Building Networks</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="library-examples.html">Selecting Rates from a Library</a></li>
 <li class="toctree-l1"><a class="reference internal" href="duplicate-rates.html">Dealing with Duplicate Rates</a></li>
-<li class="toctree-l1"><a class="reference internal" href="validate-example.html">Checking your network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="validate-example.html">Checking Your Network</a></li>
 <li class="toctree-l1"><a class="reference internal" href="electron-capture-example.html">Tabulated Weak Rate Example</a></li>
 <li class="toctree-l1"><a class="reference internal" href="electron-captures.html">Combining ReacLib Rates with Electron Capture Tables</a></li>
 <li class="toctree-l1"><a class="reference internal" href="alternate-rates.html"><code class="docutils literal notranslate"><span class="pre">alternate_rates</span></code></a></li>
@@ -199,7 +199,7 @@
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Nuclear Statistical Equilibrium</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="NSE-example.html">Solving for  nuclear statistical equilibrium</a></li>
+<li class="toctree-l1"><a class="reference internal" href="NSE-example.html">Solving for Nuclear Statistical Equilibrium</a></li>
 <li class="toctree-l1"><a class="reference internal" href="nse_table.html">Creating an NSE table</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Plasma Neutrinos</span></p>
@@ -517,7 +517,7 @@
 </div>
 </div>
 </div>
-<div class="cell docutils container">
+<div class="cell tag_nbval-ignore-output docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sub</span> <span class="o">=</span> <span class="n">library</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">([</span><span class="s2">&quot;p&quot;</span><span class="p">,</span> <span class="s2">&quot;n&quot;</span><span class="p">,</span> <span class="s2">&quot;he4&quot;</span><span class="p">,</span> <span class="s2">&quot;c12&quot;</span><span class="p">,</span> <span class="s2">&quot;n13&quot;</span><span class="p">,</span> <span class="s2">&quot;n14&quot;</span><span class="p">,</span> <span class="s2">&quot;o16&quot;</span><span class="p">,</span>
                               <span class="s2">&quot;ne20&quot;</span><span class="p">,</span> <span class="s2">&quot;ne21&quot;</span><span class="p">,</span> <span class="s2">&quot;na23&quot;</span><span class="p">,</span> <span class="s2">&quot;mg23&quot;</span><span class="p">,</span> <span class="s2">&quot;mg24&quot;</span><span class="p">,</span> <span class="s2">&quot;al27&quot;</span><span class="p">,</span>
@@ -534,7 +534,7 @@
 </div>
 </div>
 <p>The standard network plot of this is:</p>
-<div class="cell docutils container">
+<div class="cell tag_nbval-ignore-output docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 </pre></div>
@@ -559,7 +559,7 @@
 </div>
 </div>
 </div>
-<div class="cell docutils container">
+<div class="cell tag_nbval-ignore-output docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span> <span class="n">rotated</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
@@ -570,7 +570,7 @@
 </div>
 </div>
 <p>This looks a bit crowded, since it is showing all of the links to <span class="math notranslate nohighlight">\({}^4\mathrm{He}\)</span> from reactions of the form <span class="math notranslate nohighlight">\(A(x, \alpha)B\)</span>.  We can hide those links with <code class="docutils literal notranslate"><span class="pre">hide_xalpha=True</span></code></p>
-<div class="cell docutils container">
+<div class="cell tag_nbval-ignore-output docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span> <span class="n">rotated</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">hide_xalpha</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
@@ -581,7 +581,7 @@
 </div>
 </div>
 <p>We can also plot the edges curved, to help distinguish the forward and reverse rates</p>
-<div class="cell docutils container">
+<div class="cell tag_nbval-ignore-output docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span> <span class="n">rotated</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">hide_xalpha</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
               <span class="n">curved_edges</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -601,7 +601,7 @@
 </div>
 </div>
 </div>
-<div class="cell docutils container">
+<div class="cell tag_nbval-ignore-output docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span> <span class="n">rotated</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">hide_xalpha</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
               <span class="n">edge_labels</span><span class="o">=</span><span class="n">edge_labels</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">1200</span><span class="p">,</span> <span class="mi">700</span><span class="p">),</span>
@@ -617,7 +617,7 @@
 <section id="filters">
 <h2>Filters<a class="headerlink" href="#filters" title="Link to this heading">#</a></h2>
 <p>We can use a rate filter to show only certain links.  For example, to show only links involving proton capture, we can do:</p>
-<div class="cell docutils container">
+<div class="cell tag_nbval-ignore-output docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span> <span class="n">rotated</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">hide_xalpha</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
               <span class="n">rate_filter_function</span><span class="o">=</span><span class="k">lambda</span> <span class="n">r</span><span class="p">:</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span>
@@ -630,7 +630,7 @@
 </div>
 <p>We can also highlight rates using the <code class="docutils literal notranslate"><span class="pre">highlight_filter_function</span></code> mechanism.  This takes a function that operates on a rate and returns <code class="docutils literal notranslate"><span class="pre">True</span></code> if we wish to highlight the rate (i.e., as if we used a highlighter marker over the line).</p>
 <p>Here’s an example where we highlight the rates that have <span class="math notranslate nohighlight">\(Q &gt; 0\)</span></p>
-<div class="cell docutils container">
+<div class="cell tag_nbval-ignore-output docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rotated</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">hide_xalpha</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">1500</span><span class="p">,</span> <span class="mi">600</span><span class="p">),</span>
               <span class="n">highlight_filter_function</span><span class="o">=</span><span class="k">lambda</span> <span class="n">r</span><span class="p">:</span> <span class="n">r</span><span class="o">.</span><span class="n">Q</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span>
@@ -655,7 +655,7 @@ in solving for the update.</p>
 where</p>
 <p>$$\frac{\mathrm{max}<em>{i,j} (|J</em>{ij}|)}{|J_{ij}|} &gt; 10^{10}$$</p>
 <p>but this ratio can be set via the <code class="docutils literal notranslate"><span class="pre">rate_scaling</span></code> keyword argument.</p>
-<div class="cell docutils container">
+<div class="cell tag_nbval-ignore-output docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rho</span> <span class="o">=</span> <span class="mf">1.e4</span>
 <span class="n">T</span> <span class="o">=</span> <span class="mf">2.e9</span>
@@ -703,7 +703,7 @@ where</p>
 </div>
 </div>
 </div>
-<div class="cell docutils container">
+<div class="cell tag_nbval-ignore-output docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">gridplot</span><span class="p">(</span><span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">,</span> <span class="n">color_field</span><span class="o">=</span><span class="s2">&quot;X&quot;</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">,</span> <span class="n">area</span><span class="o">=</span><span class="mi">36</span><span class="p">)</span>
 </pre></div>
@@ -714,7 +714,7 @@ where</p>
 </div>
 </div>
 <p>The plot is configurable through a large number of keyword arguments. Here we want to look at the rates at which nuclides are being created or destroyed, so we color by <span class="math notranslate nohighlight">\(\dot{Y}\)</span>, the rate of change of molar abundance. Density and temperature need to be supplied to evaluate the rates. A full list of valid keyword arguments can be found in the API documentation.</p>
-<div class="cell docutils container">
+<div class="cell tag_nbval-ignore-output docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">gridplot</span><span class="p">(</span><span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="n">T</span><span class="p">,</span> <span class="n">color_field</span><span class="o">=</span><span class="s2">&quot;ydot&quot;</span><span class="p">,</span> <span class="n">area</span><span class="o">=</span><span class="mi">36</span><span class="p">,</span>
                   <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;RdGy&quot;</span><span class="p">,</span> <span class="n">cbar_bounds</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">))</span>
@@ -727,7 +727,7 @@ where</p>
 </div>
 <p>Unlike the network plot, this won’t omit hydrogen and helium by default. To just look at the heavier nuclides, we can define a function to filter by proton number.  Here we also plot
 <em>activity</em>, which is the sum of all rates contributions to Ydot ignoring the sign.</p>
-<div class="cell docutils container">
+<div class="cell tag_nbval-ignore-output docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ff</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">nuc</span><span class="p">:</span> <span class="n">nuc</span><span class="o">.</span><span class="n">Z</span> <span class="o">&gt;</span> <span class="mi">2</span>
 <span class="n">fig</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">gridplot</span><span class="p">(</span><span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="n">T</span><span class="p">,</span> <span class="n">color_field</span><span class="o">=</span><span class="s2">&quot;activity&quot;</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">,</span>
@@ -743,7 +743,7 @@ where</p>
 <section id="network-chart">
 <h2>Network chart<a class="headerlink" href="#network-chart" title="Link to this heading">#</a></h2>
 <p>A network chart shows how each rate affects each nucleus</p>
-<div class="cell docutils container">
+<div class="cell tag_nbval-ignore-output docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">plot_network_chart</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">)</span>
 </pre></div>
@@ -773,7 +773,7 @@ where</p>
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">pynucastro usage examples</p>
+        <p class="prev-next-title">pynucastro Usage Examples</p>
       </div>
     </a>
     <a class="right-next"
@@ -781,7 +781,7 @@ where</p>
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Example of integrating a network</p>
+        <p class="prev-next-title">Integrating a Network</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
