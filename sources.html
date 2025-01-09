@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Third Party Data &#8212; pynucastro 2.4.0.post49+ge3728015 documentation</title>
+    <title>Third Party Data &#8212; pynucastro 2.4.0.post50+g317bfcf0 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=28090242"></script>
+    <script src="_static/documentation_options.js?v=7b17973b"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -509,10 +509,7 @@ relevant publications are as follows.</p>
 <section id="nuclear-reaction-rates-from-jina-reaclib">
 <h3>Nuclear reaction rates from JINA Reaclib<a class="headerlink" href="#nuclear-reaction-rates-from-jina-reaclib" title="Link to this heading">#</a></h3>
 <p>The reaction rate parameterizations in <a class="reference external" href="https://github.com/pynucastro/pynucastro/tree/main/pynucastro/library">pynucastro/library</a>
-were obtained from the <a class="reference external" href="https://reaclib.jinaweb.org/">JINA Reaclib database</a>.</p>
-<ul class="simple">
-<li><p><span id="id1">Cyburt <em>et al.</em> [<a class="reference internal" href="zreferences.html#id3" title="Richard H. Cyburt, A. Matthew Amthor, Ryan Ferguson, Zach Meisel, Karl Smith, Scott Warren, Alexander Heger, R. D. Hoffman, Thomas Rauscher, Alexander Sakharuk, Hendrik Schatz, F. K. Thielemann, and Michael Wiescher. The JINA REACLIB database: its recent updates and impact on type-i x-ray bursts. The Astrophysical Journal Supplement Series, 189(1):240, 2010. URL: https://stacks.iop.org/0067-0049/189/i=1/a=240.">2010</a>]</span></p></li>
-</ul>
+were obtained from the <a class="reference external" href="https://reaclib.jinaweb.org/">JINA Reaclib database</a>, <span id="id1">Cyburt <em>et al.</em> [<a class="reference internal" href="zreferences.html#id3" title="Richard H. Cyburt, A. Matthew Amthor, Ryan Ferguson, Zach Meisel, Karl Smith, Scott Warren, Alexander Heger, R. D. Hoffman, Thomas Rauscher, Alexander Sakharuk, Hendrik Schatz, F. K. Thielemann, and Michael Wiescher. The JINA REACLIB database: its recent updates and impact on type-i x-ray bursts. The Astrophysical Journal Supplement Series, 189(1):240, 2010. URL: https://stacks.iop.org/0067-0049/189/i=1/a=240.">2010</a>]</span>.</p>
 </section>
 <section id="tabulated-weak-nuclear-reaction-rates">
 <h3>Tabulated weak nuclear reaction rates<a class="headerlink" href="#tabulated-weak-nuclear-reaction-rates" title="Link to this heading">#</a></h3>
@@ -528,21 +525,16 @@ were obtained from the <a class="reference external" href="https://reaclib.jinaw
 </section>
 <section id="physical-constants">
 <h2>Physical constants<a class="headerlink" href="#physical-constants" title="Link to this heading">#</a></h2>
-<p>We use the [scipy.constants](<a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/constants.html">https://docs.scipy.org/doc/scipy/reference/constants.html</a>) module
+<p>We use the <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/constants.html">scipy.constants</a> module
 from SciPy to get all the physical constants.  This in turn gets the constants from the CODATA
-recommended values (currently CODATA 18)</p>
-<ul class="simple">
-<li><p><span id="id4">Tiesinga <em>et al.</em> [<a class="reference internal" href="zreferences.html#id14" title="Eite Tiesinga, Peter J. Mohr, David B. Newell, and Barry N. Taylor. Codata recommended values of the fundamental physical constants: 2018. Journal of Physical and Chemical Reference Data, 50:033105, 2021. doi:10.1063/5.0064853.">2021</a>]</span></p></li>
-</ul>
+recommended values (for SciPy versions 1.14 and earlier, this is CODATA 2018, <span id="id4">Tiesinga <em>et al.</em> [<a class="reference internal" href="zreferences.html#id14" title="Eite Tiesinga, Peter J. Mohr, David B. Newell, and Barry N. Taylor. Codata recommended values of the fundamental physical constants: 2018. Journal of Physical and Chemical Reference Data, 50:033105, 2021. doi:10.1063/5.0064853.">2021</a>]</span>;
+for SciPy 1.15 they are CODATA 2022).</p>
 </section>
 <section id="nuclei-properties">
 <h2>Nuclei properties<a class="headerlink" href="#nuclei-properties" title="Link to this heading">#</a></h2>
-<p>We get the basic nuclear properties from the Nubase 2020 evaluation.  This
+<p>We get the basic nuclear properties from the Nubase 2020 evaluation <span id="id5">Kondev <em>et al.</em> [<a class="reference internal" href="zreferences.html#id20" title="F.G. Kondev, M. Wang, W.J. Huang, S. Naimi, and G. Audi. The nubase2020 evaluation of nuclear physics properties *. Chinese Physics C, 45(3):030001, mar 2021. URL: https://dx.doi.org/10.1088/1674-1137/abddae, doi:10.1088/1674-1137/abddae.">2021</a>]</span>.  This
 is available online at <a class="reference external" href="https://www-nds.iaea.org/amdc/">Nuclear Data Services</a>.
 We are currently using the file <a class="reference external" href="https://www-nds.iaea.org/amdc/ame2020/nubase_4.mas20.txt">nubase_4.mas20.txt</a>.</p>
-<ul class="simple">
-<li><p><span id="id5">Kondev <em>et al.</em> [<a class="reference internal" href="zreferences.html#id20" title="F.G. Kondev, M. Wang, W.J. Huang, S. Naimi, and G. Audi. The nubase2020 evaluation of nuclear physics properties *. Chinese Physics C, 45(3):030001, mar 2021. URL: https://dx.doi.org/10.1088/1674-1137/abddae, doi:10.1088/1674-1137/abddae.">2021</a>]</span></p></li>
-</ul>
 <p>In particular, we get the mass excesses, <span class="math notranslate nohighlight">\(\Delta m\)</span>, and spins from there.  We then compute
 mass of the nucleus as:</p>
 <div class="math notranslate nohighlight">
@@ -555,8 +547,16 @@ excess of <code class="docutils literal notranslate"><span class="pre">1H</span>
 discussion in section 2 of the AME 2020 paper <span id="id6">[<a class="reference internal" href="zreferences.html#id17" title="W.J. Huang, Meng Wang, F.G. Kondev, G. Audi, and S. Naimi. The ame 2020 atomic mass evaluation (i). evaluation of input data, and adjustment procedures*. Chinese Physics C, 45(3):030002, mar 2021. URL: https://dx.doi.org/10.1088/1674-1137/abddb0, doi:10.1088/1674-1137/abddb0.">Huang <em>et al.</em>, 2021</a>]</span>, and
 these numbers match the binding energies computed in the AME tables to
 the uncertainty in the nuclear masses.</p>
-<p>Binding energies are also computed and tablulated in the AME mass evaluation (see [AME2020 mass table](<a class="reference external" href="https://www-nds.iaea.org/amdc/ame2020/mass_1.mas20.txt">https://www-nds.iaea.org/amdc/ame2020/mass_1.mas20.txt</a>)].  But note that the Nubase evaluation seems to more closely follow
-the “rounded” version of the table [AME2020 rounded mass table](<a class="reference external" href="https://www-nds.iaea.org/amdc/ame2020/massround.mas20.txt">https://www-nds.iaea.org/amdc/ame2020/massround.mas20.txt</a>).  The rounding procedure is discussed in Table I on the [AME 2020 paper II](<a class="reference external" href="https://iopscience.iop.org/article/10.1088/1674-1137/abddaf">https://iopscience.iop.org/article/10.1088/1674-1137/abddaf</a>) (also see the [Nubase2020 paper](<a class="reference external" href="https://iopscience.iop.org/article/10.1088/1674-1137/abddae">https://iopscience.iop.org/article/10.1088/1674-1137/abddae</a>), Table I).</p>
+<p>Binding energies are also computed and tablulated in the AME mass
+evaluation (see <a class="reference external" href="https://www-nds.iaea.org/amdc/ame2020/mass_1.mas20.txt">AME2020 mass table</a>).  But note
+that the Nubase evaluation seems to more closely follow the “rounded”
+version of the table <a class="reference external" href="https://www-nds.iaea.org/amdc/ame2020/massround.mas20.txt">AME2020 rounded mass
+table</a>.
+The rounding procedure is discussed in Table I on the <a class="reference external" href="https://iopscience.iop.org/article/10.1088/1674-1137/abddaf">AME 2020 paper
+II</a> (also
+see the <a class="reference external" href="https://iopscience.iop.org/article/10.1088/1674-1137/abddae">Nubase2020
+paper</a>,
+Table I).</p>
 </section>
 <section id="partition-functions">
 <h2>Partition functions<a class="headerlink" href="#partition-functions" title="Link to this heading">#</a></h2>
