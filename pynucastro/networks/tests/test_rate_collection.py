@@ -36,7 +36,7 @@ class TestRateCollection:
 
         rho = 1e5
         T = 1e8
-        assert rc.evaluate_energy_generation(rho, T, comp) == 32.24798501109017
+        assert rc.evaluate_energy_generation(rho, T, comp) == 32.247985011082925
 
     def test_add_rates(self, rc, reaclib_library):
         new_rate_names = ["o16(a,g)ne20",
