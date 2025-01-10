@@ -19,4 +19,5 @@ help:
 %: Makefile
 	# download the current zenodo bibtex cite
 	curl https://zenodo.org/records/13899727/export/bibtex > source/zenodo.bibtex.txt
+	python parse_changelog.py ../CHANGES.md > source/changelog.md
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
