@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Neutrino Cooling &#8212; pynucastro 2.4.0.post54+g1e3a1015 documentation</title>
+    <title>Neutrino Cooling &#8212; pynucastro 2.4.0.post55+gcd2c35d2 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=db5f935b"></script>
+    <script src="_static/documentation_options.js?v=b376bd3e"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -496,7 +496,7 @@
   <section id="neutrino-cooling">
 <h1>Neutrino Cooling<a class="headerlink" href="#neutrino-cooling" title="Link to this heading">#</a></h1>
 <p>At high temperatures, pair, plasma, Bremmstrahlung, and photo neutrinos become important. These are often treated as a source term to an energy equation when integrating the temperature evolution due to reactions.</p>
-<p>pynucastro implements the functions of <cite data-cite-t="itoh:1996">Itoh et al. 1996</cite> to incorporate these effects.  In many codes, a routine called <code class="docutils literal notranslate"><span class="pre">sneut5</span></code> was used for this implementation.  pynucastro contains a port of that routine.</p>
+<p>pynucastro implements the functions of <span id="id1">Itoh <em>et al.</em> [<a class="reference internal" href="zreferences.html#id12" title="Naoki Itoh, Hiroshi Hayashi, Akinori Nishikawa, and Yasuharu Kohyama. Neutrino Energy Loss in Stellar Interiors. VII. Pair, Photo-, Plasma, Bremsstrahlung, and Recombination Neutrino Processes. The Astrophysical Journal Supplement Series, 102:411, February 1996. doi:10.1086/192264.">1996</a>]</span> to incorporate these effects.  In many codes, a routine called <code class="docutils literal notranslate"><span class="pre">sneut5</span></code> was used for this implementation.  pynucastro contains a port of that routine.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.neutrino_cooling</span><span class="w"> </span><span class="kn">import</span> <span class="n">sneut5</span><span class="p">,</span> <span class="n">NeutrinoCooling</span>
