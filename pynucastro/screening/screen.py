@@ -618,7 +618,7 @@ def screening_check(check_func=debye_huckel, threshold: float = 1.01):
 
     :param func: the function to check against the threshold
     :param threshold: the threshold to check against. If screen_check
-    is less than the threshold, skip screen_func
+                      is less than the threshold, skip screen_func
     :returns: a decorator for wrapping screening functions
     """
 
