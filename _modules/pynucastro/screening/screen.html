@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.screening.screen &#8212; pynucastro 2.4.0.post55+gcd2c35d2 documentation</title>
+    <title>pynucastro.screening.screen &#8212; pynucastro 2.4.0.post56+g54a8f901 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=b376bd3e"></script>
+    <script src="../../../_static/documentation_options.js?v=16243818"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -408,8 +408,8 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.numba_util</span><span class="w"> </span><span class="kn">import</span> <span class="n">jitclass</span><span class="p">,</span> <span class="n">njit</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;PlasmaState&quot;</span><span class="p">,</span> <span class="s2">&quot;ScreenFactors&quot;</span><span class="p">,</span> <span class="s2">&quot;chugunov_2007&quot;</span><span class="p">,</span> <span class="s2">&quot;chugunov_2009&quot;</span><span class="p">,</span>
-           <span class="s2">&quot;make_plasma_state&quot;</span><span class="p">,</span> <span class="s2">&quot;make_screen_factors&quot;</span><span class="p">,</span> <span class="s2">&quot;potekhin_1998&quot;</span><span class="p">,</span>
-           <span class="s2">&quot;screen5&quot;</span><span class="p">]</span>
+           <span class="s2">&quot;debye_huckel&quot;</span><span class="p">,</span> <span class="s2">&quot;make_plasma_state&quot;</span><span class="p">,</span> <span class="s2">&quot;make_screen_factors&quot;</span><span class="p">,</span>
+           <span class="s2">&quot;potekhin_1998&quot;</span><span class="p">,</span> <span class="s2">&quot;screen5&quot;</span><span class="p">,</span> <span class="s2">&quot;screening_check&quot;</span><span class="p">]</span>
 
 
 <div class="viewcode-block" id="PlasmaState">
@@ -603,6 +603,32 @@
     <span class="n">n1</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">n1</span><span class="p">)</span>
     <span class="n">n2</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">n2</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">ScreenFactors</span><span class="p">(</span><span class="n">n1</span><span class="o">.</span><span class="n">Z</span><span class="p">,</span> <span class="n">n1</span><span class="o">.</span><span class="n">A</span><span class="p">,</span> <span class="n">n2</span><span class="o">.</span><span class="n">Z</span><span class="p">,</span> <span class="n">n2</span><span class="o">.</span><span class="n">A</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="debye_huckel">
+<a class="viewcode-back" href="../../../pynucastro.screening.html#pynucastro.screening.screen.debye_huckel">[docs]</a>
+<span class="nd">@njit</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">debye_huckel</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">scn_fac</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculates the Debye-Huckel enhancement factor for weak Coloumb coupling,</span>
+<span class="sd">    following the appendix of :cite:t:`chugunov:2009`.</span>
+
+<span class="sd">    :param PlasmaState state:     the precomputed plasma state factors</span>
+<span class="sd">    :param ScreenFactors scn_fac: the precomputed ion pair factors</span>
+<span class="sd">    :returns: screening correction factor</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">z1z2</span> <span class="o">=</span> <span class="n">scn_fac</span><span class="o">.</span><span class="n">z1</span> <span class="o">*</span> <span class="n">scn_fac</span><span class="o">.</span><span class="n">z2</span>
+
+    <span class="c1"># Gamma_e from eq. 6</span>
+    <span class="n">Gamma_e</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">gamma_e_fac</span> <span class="o">/</span> <span class="n">state</span><span class="o">.</span><span class="n">temp</span>
+
+    <span class="c1"># eq. A1</span>
+    <span class="n">h_DH</span> <span class="o">=</span> <span class="n">z1z2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="n">Gamma_e</span><span class="o">**</span><span class="mi">3</span> <span class="o">*</span> <span class="n">state</span><span class="o">.</span><span class="n">z2bar</span> <span class="o">/</span> <span class="n">state</span><span class="o">.</span><span class="n">zbar</span><span class="p">)</span>
+
+    <span class="c1"># machine limit the output</span>
+    <span class="n">h_max</span> <span class="o">=</span> <span class="mi">300</span>
+    <span class="n">h</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">h_DH</span><span class="p">,</span> <span class="n">h_max</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">h</span><span class="p">)</span></div>
 
 
 
@@ -1009,6 +1035,38 @@
     <span class="n">scor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">h12</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">scor</span></div>
+
+
+
+<div class="viewcode-block" id="screening_check">
+<a class="viewcode-back" href="../../../pynucastro.screening.html#pynucastro.screening.screen.screening_check">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">screening_check</span><span class="p">(</span><span class="n">check_func</span><span class="o">=</span><span class="n">debye_huckel</span><span class="p">,</span> <span class="n">threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.01</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A decorator factory that wraps a screening function with a</span>
+<span class="sd">    check that determines whether that function can be skipped for a</span>
+<span class="sd">    given plasma state and screening pair.</span>
+
+<span class="sd">    :param func: the function to check against the threshold</span>
+<span class="sd">    :param threshold: the threshold to check against. If screen_check</span>
+<span class="sd">                      is less than the threshold, skip screen_func</span>
+<span class="sd">    :returns: a decorator for wrapping screening functions</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">screening_decorator</span><span class="p">(</span><span class="n">screen_func</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Decorates a screening function with a computation</span>
+<span class="sd">        that determines whether the check is skippable.</span>
+
+<span class="sd">        :param screen_func: the screening function being wrapped</span>
+<span class="sd">        :returns: a wrapped screening function that performs this check</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="nd">@njit</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">screening_wrapper</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">scn_fac</span><span class="p">):</span>
+            <span class="n">F0</span> <span class="o">=</span> <span class="n">check_func</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">scn_fac</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">F0</span> <span class="o">&lt;=</span> <span class="n">threshold</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">F0</span>
+            <span class="k">return</span> <span class="n">screen_func</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">scn_fac</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">screening_wrapper</span>
+    <span class="k">return</span> <span class="n">screening_decorator</span></div>
 
 </pre></div>
 
