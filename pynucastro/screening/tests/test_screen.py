@@ -2,9 +2,9 @@ import pytest
 from pytest import approx
 
 import pynucastro as pyna
-from pynucastro.screening import (chugunov_2007, chugunov_2009,
+from pynucastro.screening import (chugunov_2007, chugunov_2009, debye_huckel,
                                   make_plasma_state, make_screen_factors,
-                                  potekhin_1998, screen5)
+                                  potekhin_1998, screen5, screening_check)
 
 
 class TestScreen:
@@ -63,6 +63,10 @@ class TestScreen:
         scor = chugunov_2009(plasma_state, scn_fac)
         assert scor == approx(2.87983449091315e+33)
 
+    def test_debye_huckel(self, plasma_state, scn_fac):
+        scor = debye_huckel(plasma_state, scn_fac)
+        assert scor == approx(1.9424263952412558e+130)
+
     def test_potekhin_1998(self, plasma_state, scn_fac):
         scor = potekhin_1998(plasma_state, scn_fac)
         assert scor == approx(1.0508243810383098e+36)
@@ -70,3 +74,10 @@ class TestScreen:
     def test_screen5(self, plasma_state, scn_fac):
         scor = screen5(plasma_state, scn_fac)
         assert scor == approx(4.049488384394272e+33)
+
+    @pytest.mark.parametrize("screen_func", [chugunov_2007, chugunov_2009, potekhin_1998, screen5])
+    def test_screening_check(self, plasma_state, scn_fac, screen_func):
+        wrapped_screen_func = screening_check()(screen_func)
+        scor_wrapped = wrapped_screen_func(plasma_state, scn_fac)
+        scor = screen_func(plasma_state, scn_fac)
+        assert scor_wrapped == approx(scor)
