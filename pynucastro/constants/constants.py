@@ -25,6 +25,8 @@ k = physical_constants.value("Boltzmann constant") / physical_constants.erg
 # SciPy 1.15.0 fixed how exact values are calculated, which makes them slightly
 # more accurate compared to 1.14.1 and earlier. Calculate this one manually for
 # consistency between versions (should match 1.15.0).
+# This calculation comes directly from scipy.constants._codata, and works
+# because 1 eV = 1 V * q_e = 1 J/C * 1.602e-19 C = 1.602e-19 J.
 k_MeV = physical_constants.value("Boltzmann constant") / physical_constants.e / physical_constants.mega
 
 h = physical_constants.value("Planck constant") / physical_constants.erg
