@@ -42,9 +42,9 @@ class TestPythonPartitionNetwork:
         der_net.p_Co55__He4_Fe52__derived(rate_eval, tf)
         der_net.Ni56__p_Co55__derived(rate_eval, tf)
 
-        assert rate_eval.p_Co55__He4_Fe52__derived == pytest.approx(4.570999237208017, rel=1.e-10)
+        assert rate_eval.p_Co55__He4_Fe52__derived == pytest.approx(4.5709992373566735, rel=1.e-10)
 
-        assert rate_eval.Ni56__p_Co55__derived == pytest.approx(23790871.142981946, rel=1.e-10)
+        assert rate_eval.Ni56__p_Co55__derived == pytest.approx(23790871.142872408, rel=1.e-10)
 
         T = 9.e9
         tf = pyna.Tfactors(T)
@@ -54,8 +54,8 @@ class TestPythonPartitionNetwork:
         der_net.p_Co55__He4_Fe52__derived(rate_eval, tf)
         der_net.Ni56__p_Co55__derived(rate_eval, tf)
 
-        assert rate_eval.p_Co55__He4_Fe52__derived == pytest.approx(15485.753590182012, rel=1.e-10)
-        assert rate_eval.Ni56__p_Co55__derived == pytest.approx(428973340217.90436, rel=1.e-10)
+        assert rate_eval.p_Co55__He4_Fe52__derived == pytest.approx(15485.753590461827, rel=1.e-10)
+        assert rate_eval.Ni56__p_Co55__derived == pytest.approx(428973340215.9292, rel=1.e-10)
 
         # clean up generated files if the test passed
         Path("der_net.py").unlink()
