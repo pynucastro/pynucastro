@@ -1851,7 +1851,7 @@ class RateCollection:
         if not rotated:
             ax.set_aspect("equal", "datalim")
 
-        fig.set_szie_inches(size[0]/dpi, size[1]/dpi)
+        fig.set_size_inches(size[0]/dpi, size[1]/dpi)
 
         if title is not None:
             fig.suptitle(title)
