@@ -125,12 +125,12 @@ class Composition(collections.UserDict):
 
     @property
     def A(self):
-        """Return nuclei: molar mass pairs for elements in composition"""
+        """Return {nuclei: molar-mass} pairs for elements in composition"""
         return {n: n.A for n in self}
 
     @property
     def Z(self):
-        """Return nuclei: charge pairs for elements in composition"""
+        """Return {nuclei: charge} pairs for elements in composition"""
         return {n: n.Z for n in self}
 
     def get_nuclei(self):
@@ -172,7 +172,7 @@ class Composition(collections.UserDict):
 
         Parameters
         ----------
-        arr : array_like
+        arr : (list, tuple, numpy.ndarray)
             input values of mass fractions
         """
         for i, k in enumerate(self):
@@ -199,7 +199,7 @@ class Composition(collections.UserDict):
 
         Parameters
         ----------
-        alpha : array_like
+        alpha : (list, tuple, numpy.ndarray)
             distribution length for the Dirichlet distribution
         seed : float
             seed for the random number generator
@@ -1081,7 +1081,7 @@ class RateCollection:
             temperature used to evaluate rates
         composition : Composition
             composition used to evaluate rates
-        screen_func : function
+        screen_func : callable
             one of the screening functions from :py:mod:`pynucastro.screening`
             -- if provided, then the evaluated rates will include the screening
             correction.
@@ -1120,7 +1120,7 @@ class RateCollection:
             temperature used to evaluate Jacobian terms
         comp : Composition
             composition used to evaluate Jacobian terms
-        screen_func : function
+        screen_func : callable
             one of the screening functions from :py:mod:`pynucastro.screening`
             -- if provided, then the evaluated rates will include the screening
             correction.
@@ -1313,10 +1313,10 @@ class RateCollection:
             temperature used to evaluate rates
         composition : Composition
             composition used to evaluate rates
-        screen_func : function
+        screen_func : callable
             a function from :py:mod:`pynucastro.screening` used to compute the
             screening enhancement for the rates.
-        rate_filter_funcion : function
+        rate_filter_funcion : callable
             a function that takes a `Rate` object and returns True
             or False if it is to be shown as an edge.
 
@@ -1577,13 +1577,13 @@ class RateCollection:
             a dictionary of the form {(n1, n2): "label"}
             that gives labels for the edges in the network connecting
             nucleus n1 to n2.
-        highlight_filter_function : function
+        highlight_filter_function : callable
             a function that takes a `Rate` object and returns True or
             False if we want to highlight the rate edge.
-        nucleus_filter_funcion : function
+        nucleus_filter_funcion : callable
             a function that takes a `Nucleus` object and returns
             True or False if it is to be shown as a node.
-        rate_filter_funcion : function
+        rate_filter_funcion : callable
             a function that takes a `Rate` object
             and returns True or False if it is to be shown as an edge.
 
