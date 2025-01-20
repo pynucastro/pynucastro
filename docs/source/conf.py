@@ -17,6 +17,7 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use pathlib.Path.resolve to make it absolute, like shown here.
 #
+import os
 import sys
 from pathlib import Path
 from importlib.metadata import version as importlib_version
@@ -64,7 +65,13 @@ linkcheck_allow_unauthorized = True
 templates_path = ['_templates']
 
 # always execute notebooks
-nbsphinx_execute = 'always'
+env_skip_execute = os.getenv("SKIP_EXECUTE")
+
+if not env_skip_execute:
+    nb_execution_mode = "force"
+else:
+    nb_execution_mode = "off"
+
 nbsphinx_allow_errors = True
 nbsphinx_timeout = 1000
 
