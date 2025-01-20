@@ -199,7 +199,7 @@ class Composition(collections.UserDict):
 
         Parameters
         ----------
-        alpha : array_like, optional
+        alpha : array_like
             distribution length for the Dirichlet distribution
         seed : float
             seed for the random number generator
@@ -348,12 +348,12 @@ class Composition(collections.UserDict):
 
         Parameters
         ----------
-        trace_threshold : float, optional
+        trace_threshold : float
             the threshold to consider a component to be trace.
-        hard_limit : float, optional
+        hard_limit : float
             limit below which an abundance will not be included
             in the trace nuclei wedget of the plot.
-        size: tuple, optional
+        size: tuple
             width, height of the plot in inches
 
         Returns
@@ -1081,7 +1081,7 @@ class RateCollection:
             temperature used to evaluate rates
         composition : Composition
             composition used to evaluate rates
-        screen_func : function, optional
+        screen_func : function
             one of the screening functions from :py:mod:`pynucastro.screening`
             -- if provided, then the evaluated rates will include the screening
             correction.
@@ -1120,7 +1120,7 @@ class RateCollection:
             temperature used to evaluate Jacobian terms
         comp : Composition
             composition used to evaluate Jacobian terms
-        screen_func : function, optional
+        screen_func : function
             one of the screening functions from :py:mod:`pynucastro.screening`
             -- if provided, then the evaluated rates will include the screening
             correction.
@@ -1313,10 +1313,10 @@ class RateCollection:
             temperature used to evaluate rates
         composition : Composition
             composition used to evaluate rates
-        screen_func : function, optional
+        screen_func : function
             a function from :py:mod:`pynucastro.screening` used to compute the
             screening enhancement for the rates.
-        rate_filter_funcion : function, optional
+        rate_filter_funcion : function
             a function that takes a `Rate` object and returns True
             or False if it is to be shown as an edge.
 
@@ -1525,65 +1525,65 @@ class RateCollection:
 
         Parameters
         ----------
-        rho : float, optional
+        rho : float
            density to evaluate rates with
-        T : float, optional
+        T : float
             temperature to evaluate rates with
         comp : Composition
             composition to evaluate rates with
         outfile : str
             output name of the plot (extension determines the type)
-        size : (tuple, list), optional
+        size : (tuple, list)
             (width, height) of the plot in pixels
-        dpi : int, optional
+        dpi : int
             dots per inch used with size to set output image size
-        title : str, optional
+        title : str
             title to display on the plot
-        ydot_cutoff_value : float, optional
+        ydot_cutoff_value : float
             rate threshold below which we do not show a
             line corresponding to a rate
-        show_small_ydot : bool, optional
+        show_small_ydot : bool
             show visible dashed lines for rates below ydot_cutoff_value
-        node_size : float, optional
+        node_size : float
             size of a node (in networkx units)
-        node_font_size : float, optional
+        node_font_size : float
             size of the font used to write the isotope in the node
-        node_color : str, optional
+        node_color : str
             color to make the nodes
-        node_shape : str, optional
+        node_shape : str
             shape of the node (using matplotlib marker names)
-        curved_edges : bool, optional
+        curved_edges : bool
             do we use arcs to connect the nodes?
-        N_range : (tuple, list), optional
+        N_range : (tuple, list)
             range of neutron number to zoom in on
-        Z_range : (tuple, list), optional
+        Z_range : (tuple, list)
             range of proton number to zoom in on
-        rotate : bool, optional
+        rotate : bool
             plot A - 2Z vs. Z instead of the default Z vs. N
-        always_show_p : bool, optional
+        always_show_p : bool
             include p as a node on the plot even if we
             don't have p+p reactions
-        always_show_alpha : bool, optional
+        always_show_alpha : bool
             include He4 as a node on the plot even if
             we don't have 3-alpha
-        hide_xalpha : bool, optional
+        hide_xalpha : bool
             dont connect the links to alpha for heavy
             nuclei reactions of the form A(alpha,X)B or A(X,alpha)B,
             except if alpha is the heaviest product.
-        hide_xp : bool, optional
+        hide_xp : bool
             dont connect the links to p for heavy
             nuclei reactions of the form A(p,X)B or A(X,p)B.
-        edge_labels : dict, optional
+        edge_labels : dict
             a dictionary of the form {(n1, n2): "label"}
             that gives labels for the edges in the network connecting
             nucleus n1 to n2.
-        highlight_filter_function : function, optional
+        highlight_filter_function : function
             a function that takes a `Rate` object and returns True or
             False if we want to highlight the rate edge.
-        nucleus_filter_funcion : function, optional
+        nucleus_filter_funcion : function
             a function that takes a `Nucleus` object and returns
             True or False if it is to be shown as a node.
-        rate_filter_funcion : function, optional
+        rate_filter_funcion : function
             a function that takes a `Rate` object
             and returns True or False if it is to be shown as an edge.
 
@@ -1876,14 +1876,14 @@ class RateCollection:
             temperature used to evaluate terms
         comp : Composition
             composition used to evaluate terms
-        outfile : str, optional
+        outfile : str
             output file for plot (extension is used to specify file type)
-        rate_scaling : float, optional
+        rate_scaling : float
             the cutoff of values that we show, relative to the peak.  Any
             Jacobian element smaller than this will not be shown.
-        size : (tuple, list), optional
+        size : (tuple, list)
             size in pixels for the output plot
-        dpi : float, optional
+        dpi : float
             dots per inch for the output plot
 
         Returns
@@ -1935,11 +1935,11 @@ class RateCollection:
 
         Parameters
         ----------
-        rho : float, optional
+        rho : float
             density used to evaluate rates
-        T : float, optional
+        T : float
             temperature used to evaluate rates
-        comp : Composition, optional
+        comp : Composition
             composition used to evaluate rates
         outfile
 

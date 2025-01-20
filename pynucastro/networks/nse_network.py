@@ -155,21 +155,29 @@ class NSENetwork(RateCollection):
         Returns the NSE composition given density, temperature and prescribed electron fraction
         using scipy.fsolve.
 
-        Parameters:
-        -------------------------------------
-        rho: NSE state density
+        Parameters
+        ----------
+        rho : float
+            NSE state density
+        T : float
+            NSE state Temperature
+        ye : float
+            prescribed electron fraction
+        init_guess : (tuple, list), optional
+            initial guess of chemical potential of proton and neutron, [mu_p, mu_n]
+        tol : float, optional
+            tolerance of scipy.fsolve
+        use_coulomb_corr : bool, optional
+            whether to include coulomb correction terms
+        return_sol : bool, optional
+            whether to return the solution of the proton and neutron chemical potential.
 
-        T: NSE state Temperature
-
-        ye: prescribed electron fraction
-
-        init_guess: optional, initial guess of chemical potential of proton and neutron, [mu_p, mu_n]
-
-        tol: optional, sets the tolerance of scipy.fsolve
-
-        use_coulomb_corr: Whether to include coulomb correction terms
-
-        return_sol: Whether to return the solution of the proton and neutron chemical potential.
+        Returns
+        -------
+        comp : Composition
+            the NSE composition
+        u : ndarray, optional
+            the chemical potentials found by solving the nonlinear system.
         """
 
         # From here we convert the init_guess list into a np.array object:
