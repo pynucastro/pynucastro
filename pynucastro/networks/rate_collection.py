@@ -125,12 +125,12 @@ class Composition(collections.UserDict):
 
     @property
     def A(self):
-        """Get {nuclei: molar-mass} pairs for elements in composition"""
+        """Generate a dict of "nuclei: molar-mass" pairs for elements in composition"""
         return {n: n.A for n in self}
 
     @property
     def Z(self):
-        """Get {nuclei: charge} pairs for elements in composition"""
+        """Generate a dict of "nuclei: charge" pairs for elements in composition"""
         return {n: n.Z for n in self}
 
     def get_nuclei(self):
