@@ -163,20 +163,20 @@ class NSENetwork(RateCollection):
             NSE state Temperature
         ye : float
             prescribed electron fraction
-        init_guess : (tuple, list), optional
+        init_guess : (tuple, list)
             initial guess of chemical potential of proton and neutron, [mu_p, mu_n]
-        tol : float, optional
+        tol : float
             tolerance of scipy.fsolve
-        use_coulomb_corr : bool, optional
+        use_coulomb_corr : bool
             whether to include coulomb correction terms
-        return_sol : bool, optional
+        return_sol : bool
             whether to return the solution of the proton and neutron chemical potential.
 
         Returns
         -------
         comp : Composition
             the NSE composition
-        u : ndarray, optional
+        u : ndarray
             the chemical potentials found by solving the nonlinear system.
         """
 
