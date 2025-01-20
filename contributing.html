@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Contributing &#8212; pynucastro 2.4.0.post56+g54a8f901 documentation</title>
+    <title>Contributing &#8212; pynucastro 2.4.0.post57+g94c3fe1a documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=16243818"></script>
+    <script src="_static/documentation_options.js?v=ca753e83"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -480,6 +480,7 @@
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#issues">Issues</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pull-requests">Pull Requests</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#documentation">Documentation</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#testing">Testing</a></li>
 </ul>
             </nav>
@@ -520,6 +521,19 @@ modifications prior to merging the PR.</p>
 to squash commits upon merge to have a clean history.  <em>Please ensure
 that your PR title and first post are descriptive, since these will be
 used for a squashed commit message.</em></p>
+</section>
+<section id="documentation">
+<h2>Documentation<a class="headerlink" href="#documentation" title="Link to this heading">#</a></h2>
+<p>The documentation is in <code class="docutils literal notranslate"><span class="pre">docs/source</span></code> and uses MyST-flavored markdown,
+managed by Sphinx.  To build the docs, in the <code class="docutils literal notranslate"><span class="pre">docs/</span></code> directory, do:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">make</span> <span class="n">html</span>
+</pre></div>
+</div>
+<p>by default, this will execute all of the Jupyter notebooks.  To skip this,
+build as:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">SKIP_EXECUTE</span><span class="o">=</span><span class="n">TRUE</span> <span class="n">make</span> <span class="n">html</span>
+</pre></div>
+</div>
 </section>
 <section id="testing">
 <h2>Testing<a class="headerlink" href="#testing" title="Link to this heading">#</a></h2>
@@ -617,6 +631,7 @@ network templates are changed.</p>
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#issues">Issues</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pull-requests">Pull Requests</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#documentation">Documentation</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#testing">Testing</a></li>
 </ul>
   </nav></div>
