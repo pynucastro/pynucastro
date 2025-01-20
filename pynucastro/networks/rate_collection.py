@@ -125,20 +125,20 @@ class Composition(collections.UserDict):
 
     @property
     def A(self):
-        """ return nuclei: molar mass pairs for elements in composition"""
+        """Return nuclei: molar mass pairs for elements in composition"""
         return {n: n.A for n in self}
 
     @property
     def Z(self):
-        """ return nuclei: charge pairs for elements in composition"""
+        """Return nuclei: charge pairs for elements in composition"""
         return {n: n.Z for n in self}
 
     def get_nuclei(self):
-        """return a list of Nuclei objects that make up this composition"""
+        """Return a list of Nuclei objects that make up this composition"""
         return list(self)
 
     def get_molar(self):
-        """ return a dictionary of molar fractions"""
+        """Return a dictionary of molar fractions"""
         return {k: v/k.A for k, v in self.items()}
 
     def get_sum_X(self):
@@ -146,8 +146,15 @@ class Composition(collections.UserDict):
         return math.fsum(self.values())
 
     def set_solar_like(self, Z=0.02):
-        """ approximate a solar abundance, setting p to 0.7, He4 to 0.3 - Z and
-        the remainder evenly distributed with Z """
+        """Approximate a solar abundance, setting p to 0.7, He4 to 0.3
+        - Z and the remainder evenly distributed with Z
+
+        Parameters
+        ----------
+        Z : float
+            The desired metalicity
+        """
+
         rem = Z/(len(self)-2)
         for k in self:
             if k == Nucleus("p"):
@@ -160,23 +167,44 @@ class Composition(collections.UserDict):
         self.normalize()
 
     def set_array(self, arr):
-        """ set all species from a sequence of mass fractions, in the same
-        order as returned by get_nuclei() """
+        """Set the mass fractions of all species to the values
+        in arr, `get_nuclei()`
+
+        Parameters
+        ----------
+        arr : array_like
+            input values of mass fractions
+        """
         for i, k in enumerate(self):
             self[k] = arr[i]
 
-    def set_all(self, xval):
-        """ set all species to a particular value """
+    def set_all(self, xval: float):
+        """Set all species to the same scalar value.
+
+        Parameters
+        ----------
+        xval : float
+            mass fraction value for all species
+        """
         for k in self:
             self[k] = xval
 
     def set_equal(self):
-        """ set all species to be equal"""
+        """Set all species to be equal"""
         self.set_all(1.0 / len(self))
 
     def set_random(self, alpha=None, seed=None):
-        """ set all species using a Dirichlet distribution with
-        parameters alpha and specified rng seed """
+        """Set all species using a Dirichlet distribution with
+        parameters alpha and specified rng seed.
+
+        Parameters
+        ----------
+        alpha : array_like, optional
+            distribution length for the Dirichlet distribution
+        seed : float
+            seed for the random number generator
+        """
+
         # initializes random seed
         rng = np.random.default_rng(seed)
 
@@ -190,12 +218,19 @@ class Composition(collections.UserDict):
         # ensures exact normalization
         self.normalize()
 
-    def set_nuc(self, name, xval):
-        """ set nuclei name to the mass fraction xval """
+    def set_nuc(self, name, xval: float):
+        """Set nuclei name to the mass fraction xval
+
+        Parameters
+        ----------
+        name : Nucleus
+            the nucleus to set
+        xval: float
+        """
         self[name] = xval
 
     def normalize(self):
-        """ normalize the mass fractions to sum to 1 """
+        """Normalize the mass fractions to sum to 1 """
         X_sum = self.get_sum_X()
 
         for k in self:
@@ -203,7 +238,7 @@ class Composition(collections.UserDict):
 
     @property
     def ye(self):
-        """ return the electron fraction """
+        """Return the electron fraction """
         electron_frac = math.fsum(self[n] * n.Z / n.A for n in self) / self.get_sum_X()
         return electron_frac
 
@@ -215,15 +250,30 @@ class Composition(collections.UserDict):
 
     @property
     def zbar(self):
-        """ return the mean charge, Zbar """
+        """Return the mean charge, Zbar """
         return self.abar * self.ye
 
     def bin_as(self, nuclei, *, verbose=False, exclude=None):
-        """given a list of nuclei, return a new Composition object with the
-        current composition mass fractions binned into the new nuclei.
+        """Given a list of nuclei, return a new Composition object
+        with the current composition mass fractions binned into the
+        new nuclei.
 
-        if a list of nuclei is provided by exclude, then only exact
-        matches will be binned into the nuclei in that list
+        Parameters
+        ----------
+        nuclei : list
+            Input nuclei (either as string names or
+            Nucleus objects) defining the new composition.
+        verbose : bool
+            Output more information
+        exclude : bool
+            List of nuclei in `nuclei` that only
+            exact matches from the original composition can
+            map into
+
+        Returns
+        -------
+        new_composition : Composition
+            The new binned composition
         """
 
         nuclei = Nucleus.cast_list(nuclei)
@@ -293,17 +343,22 @@ class Composition(collections.UserDict):
         return new_comp
 
     def plot(self, trace_threshold=0.1, hard_limit=None, size=(9, 5)):
-        """ Make a pie chart of Composition. group trace nuclei together and explode into bar chart
+        """Make a pie chart of Composition. group trace nuclei
+        together and explode into bar chart
 
-        parameters
+        Parameters
         ----------
+        trace_threshold : float, optional
+            the threshold to consider a component to be trace.
+        hard_limit : float, optional
+            limit below which an abundance will not be included
+            in the trace nuclei wedget of the plot.
+        size: tuple, optional
+            width, height of the plot in inches
 
-        trace_threshold : the threshold to consider a component to be trace.
-
-        hard_limit : hard limit for nuclei to be labeled in the plot. Default is None which will set the limit to 5% of total trace abundance
-
-        size: tuple giving width x height of the plot in inches
-
+        Returns
+        -------
+        matplotlib.figure.Figure
         """
 
         # find trace nuclei

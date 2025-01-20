@@ -46,6 +46,7 @@ extensions = ['sphinx.ext.autodoc',
     'sphinx_math_dollar',
     'sphinx_mdinclude',
     'myst_nb',
+    'numpydoc',
     'IPython.sphinxext.ipython_console_highlighting']
 
 # bibtex
@@ -60,11 +61,14 @@ linkcheck_timeout = 100
 linkcheck_allow_unauthorized = True
 
 
+# docstrings
+autodoc_typehints = "none"
+
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 
 # always execute notebooks
-nbsphinx_execute = 'always'
+#nbsphinx_execute = 'always'
 nbsphinx_allow_errors = True
 nbsphinx_timeout = 1000
 
