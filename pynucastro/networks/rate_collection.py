@@ -90,9 +90,14 @@ class Composition(collections.UserDict):
     """a composition holds the mass fractions of the nuclei in a network
     -- useful for evaluating the rates
 
+    Parameters
+    ----------
+    nuclei : (list, tuple)
+        an interable of Nucleus objects
+    small : float
+        a floor for nuclei mass fractions, used as the default value
     """
     def __init__(self, nuclei, small=1.e-16):
-        """nuclei is an iterable of the nuclei in the network"""
         try:
             super().__init__({Nucleus.cast(k): small for k in nuclei})
         except TypeError:
@@ -146,15 +151,31 @@ class Composition(collections.UserDict):
         return {n: n.Z for n in self}
 
     def get_nuclei(self):
-        """Return a list of Nuclei objects that make up this composition"""
+        """Return a list of Nuclei objects that make up this composition.
+
+        Returns
+        -------
+        list
+        """
         return list(self)
 
     def get_molar(self):
-        """Return a dictionary of molar fractions"""
+        """Return a dictionary of molar fractions, Y = X/A
+
+        Returns
+        -------
+        molar : dict
+            {Nucleus : Y}
+        """
         return {k: v/k.A for k, v in self.items()}
 
     def get_sum_X(self):
-        """return the sum of the mass fractions"""
+        """return the sum of the mass fractions
+
+        Returns
+        -------
+        float
+        """
         return math.fsum(self.values())
 
     def set_solar_like(self, Z=0.02):
@@ -250,19 +271,34 @@ class Composition(collections.UserDict):
 
     @property
     def ye(self):
-        """Return the electron fraction """
+        """Return the electron fraction of the composition
+
+        Returns
+        -------
+        float
+        """
         electron_frac = math.fsum(self[n] * n.Z / n.A for n in self) / self.get_sum_X()
         return electron_frac
 
     @property
     def abar(self):
-        """ return the mean molecular weight """
+        """Return the mean molecular weight
+
+        Returns
+        -------
+        float
+        """
         abar = math.fsum(self[n] / n.A for n in self)
         return 1. / abar
 
     @property
     def zbar(self):
-        """Return the mean charge, Zbar """
+        """Return the mean charge, Zbar
+
+        Returns
+        -------
+        float
+        """
         return self.abar * self.ye
 
     def bin_as(self, nuclei, *, verbose=False, exclude=None):
@@ -471,7 +507,31 @@ class Composition(collections.UserDict):
 
 
 class RateCollection:
-    """ a collection of rates that together define a network """
+    """A collection of rates that together define a network.
+    There are several arguments to the constructor -- any combination
+    may be supplied.
+
+    Parameters
+    ----------
+    rate_files : (str, list, tuple)
+        an string or iterable or strings of file names that define valid
+        rates. This can include Reaclib library files storing multiple
+        rates.
+    libraries : (Library, list, tuple)
+        a Library or iterable of Library objects
+    rates : (Rate, list, tuple)
+        a Rate or iterable of Rate objects
+    inert_nuclei : (list, tuple)
+        an iterable of Nuclei that should be part of the collection but
+        are not linked via reactions to the other Nuclei in the network.
+    symmetric_screening : bool
+        symmetric screening means that we screen the reverse rates
+        using the same factor as the forward rates, for rates computed
+        via detailed balance.
+    do_screening : bool
+        should we consider screening at all -- this mainly affects
+        whether we build the screening map
+    """
     # pylint: disable=too-many-public-methods
 
     pynucastro_dir = Path(__file__).parents[1]
@@ -479,28 +539,6 @@ class RateCollection:
     def __init__(self, rate_files=None, libraries=None, rates=None,
                  inert_nuclei=None,
                  symmetric_screening=False, do_screening=True):
-        """rate_files are the files that together define the network.  This
-        can be any iterable or single string.
-
-        This can include Reaclib library files storing multiple rates.
-
-        If libraries is supplied, initialize a RateCollection using the rates
-        in the Library object(s) in list 'libraries'.
-
-        If rates is supplied, initialize a RateCollection using the
-        Rate objects in the list 'rates'.
-
-        inert_nuclei is a list of nuclei that should be part of the
-        collection but are not linked via reactions to the other nuclei
-        in the network.
-
-        symmetric_screening means that we screen the reverse rates
-        using the same factor as the forward rates, for rates computed
-        via detailed balance.
-
-        Any combination of these options may be supplied.
-
-        """
 
         self.files = []
         self.rates = []
@@ -1365,13 +1403,30 @@ class RateCollection:
 
     def evaluate_energy_generation(self, rho, T, composition,
                                    screen_func=None, return_enu=False):
-        """evaluate the specific energy generation rate of the network for a specific
+        """Evaluate the specific energy generation rate of the network for a specific
         density, temperature and composition
 
-        screen_func: (optional) a function object to call to apply screening
+        Parameters
+        ----------
+        rho : float
+            density to evaluate the rates with
+        T : float
+            temperature to evaluate the rates with
+        composition : Composition
+            composition to evaluate the rates with
+        screen_func : Callable
+            a function from :py:mod:`pynucastro.screening` to
+            call to compute the screening factor
+        return_enu : bool
+            return both enuc and enu -- the energy loss
+            from neutrinos from weak reactions
 
-        return_enu: (optional) return both enuc and enu -- the energy loss
-        from neutrinos from weak reactions
+        Returns
+        -------
+        enuc : float
+            the energy generation rate
+        enu : float
+            the neutrino loss rate from weak reactions
         """
 
         ydots = self.evaluate_ydots(rho, T, composition, screen_func)
