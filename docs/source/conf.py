@@ -72,7 +72,8 @@ templates_path = ['_templates']
 # always execute notebooks
 env_skip_execute = os.getenv("SKIP_EXECUTE")
 
-if env_skip_execute is None:
+
+if not env_skip_execute:
     nb_execution_mode = "force"
 else:
     nb_execution_mode = "off"
