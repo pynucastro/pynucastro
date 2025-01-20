@@ -1300,7 +1300,7 @@ class RateCollection:
 
         return factors
 
-    def evaluate_ydots(self, rho, T, composition, *,
+    def evaluate_ydots(self, rho, T, composition,
                        screen_func=None, rate_filter=None):
         """evaluate net rate of change of molar abundance for each nucleus
         for a specific density, temperature, and composition
