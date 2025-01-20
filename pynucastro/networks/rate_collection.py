@@ -1081,7 +1081,7 @@ class RateCollection:
             temperature used to evaluate rates
         composition : Composition
             composition used to evaluate rates
-        screen_func : callable
+        screen_func : Callable
             one of the screening functions from :py:mod:`pynucastro.screening`
             -- if provided, then the evaluated rates will include the screening
             correction.
@@ -1120,7 +1120,7 @@ class RateCollection:
             temperature used to evaluate Jacobian terms
         comp : Composition
             composition used to evaluate Jacobian terms
-        screen_func : callable
+        screen_func : Callable
             one of the screening functions from :py:mod:`pynucastro.screening`
             -- if provided, then the evaluated rates will include the screening
             correction.
@@ -1313,10 +1313,10 @@ class RateCollection:
             temperature used to evaluate rates
         composition : Composition
             composition used to evaluate rates
-        screen_func : callable
+        screen_func : Callable
             a function from :py:mod:`pynucastro.screening` used to compute the
             screening enhancement for the rates.
-        rate_filter_funcion : callable
+        rate_filter_funcion : Callable
             a function that takes a `Rate` object and returns True
             or False if it is to be shown as an edge.
 
@@ -1577,13 +1577,13 @@ class RateCollection:
             a dictionary of the form {(n1, n2): "label"}
             that gives labels for the edges in the network connecting
             nucleus n1 to n2.
-        highlight_filter_function : callable
+        highlight_filter_function : Callable
             a function that takes a `Rate` object and returns True or
             False if we want to highlight the rate edge.
-        nucleus_filter_funcion : callable
+        nucleus_filter_funcion : Callable
             a function that takes a `Nucleus` object and returns
             True or False if it is to be shown as a node.
-        rate_filter_funcion : callable
+        rate_filter_funcion : Callable
             a function that takes a `Rate` object
             and returns True or False if it is to be shown as an edge.
 
