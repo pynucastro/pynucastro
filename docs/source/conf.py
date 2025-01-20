@@ -47,7 +47,7 @@ extensions = ['sphinx.ext.autodoc',
     'sphinx_math_dollar',
     'sphinx_mdinclude',
     'myst_nb',
-    'numpydoc',
+    'sphinx.ext.napoleon',
     'IPython.sphinxext.ipython_console_highlighting']
 
 # bibtex
@@ -61,6 +61,7 @@ linkcheck_retries = 3
 linkcheck_timeout = 100
 linkcheck_allow_unauthorized = True
 
+autosummary_generate = True
 
 # docstrings
 #autodoc_typehints = "none"
