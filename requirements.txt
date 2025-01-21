@@ -1,7 +1,7 @@
 # runtime dependencies
 ipywidgets>=7.1.2
 matplotlib
-networkx>=2.1
+networkx>=3.3
 numpy>=1.13.3,<3.0
 scipy>=1.0.0
 sympy>=1.1.1
@@ -27,4 +27,4 @@ sphinx_rtd_theme>=1.1.0
 sphinxcontrib-bibtex
 sphinx-book-theme
 myst-nb
-jupyterlab_myst
+jupyterlab-myst
