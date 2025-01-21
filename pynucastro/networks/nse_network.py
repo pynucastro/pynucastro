@@ -12,19 +12,34 @@ from pynucastro.screening import NseState, potekhin_1998
 
 
 class NSETableEntry:
+    """A simple container to hold a single entry in the NSE table.
+
+    Parameters
+    ----------
+    rho : float
+        the density of the NSE state
+    T : float
+        the temperature of the NSE state
+    Ye : float
+        the electron fraction
+    comp : Composition
+        the NSE composition
+    ydots : dict
+        a dictionary of dY/dt keyed by Nucleus.  This is meant to be
+        the weak nuclear rates only, since those affect the NSE state.
+    enu : float
+        the weak rate neutrino energy loss
+    comp_reduction_function : Callable
+        a function that converts the NSE composition into a smaller set
+        of nuclei.  It takes a Composition object and returns a dictionary
+        with the nucleus name (like "Ni56") as the key and the corresponding
+        mass fraction as the value.  It should be ordered in the way you
+        want the nuclei output into the NSE table file.
+    """
+
     def __init__(self, rho, T, Ye, *,
                  comp=None, ydots=None, enu=None,
                  comp_reduction_func=None):
-        """a simple container to hold a single entry in the NSE table.
-
-        Here, comp_reduction_func(comp) is a function that converts
-        the NSE composition into a smaller set of nuclei.  It takes a
-        Composition object and returns a dictionary with the nucleus
-        name (like "Ni56") as the key and the corresponding mass fraction
-        as the value.  It should be ordered in the way you want the nuclei
-        output into the NSE table file.
-
-        """
 
         self.rho = rho
         self.T = T
