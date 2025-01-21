@@ -243,6 +243,26 @@ class NSENetwork(RateCollection):
     def generate_table(self, rho_values=None, T_values=None, Ye_values=None,
                        comp_reduction_func=None,
                        verbose=False, outfile="nse.tbl"):
+        """Generate a table of NSE properties.  For every combination of
+        density, temperature, and Ye, we solve for the NSE state and output
+        composition properties to a file.
+
+        Parameters
+        ----------
+        rho_values : numpy.ndarray
+            values of density to use in the tabulation
+        T_values : numpy.ndarray
+            values of temperature to use in the tabulation
+        Ye_values : numpy.ndarray
+            values of electron fraction to use in the tabulation
+        comp_reduction_func : Callable
+            a function that takes the NSE composition and return a reduced
+            composition
+        verbose : bool
+            output progress on creating the table as we go along
+        outfile : str
+            filename for the NSE table output
+        """
 
         # initial guess
         mu_p0 = -3.5
