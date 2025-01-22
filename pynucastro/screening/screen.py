@@ -8,8 +8,8 @@ from pynucastro.nucdata import Nucleus
 from pynucastro.numba_util import jitclass, njit
 
 __all__ = ["PlasmaState", "ScreenFactors", "chugunov_2007", "chugunov_2009",
-           "make_plasma_state", "make_screen_factors", "potekhin_1998",
-           "screen5"]
+           "debye_huckel", "make_plasma_state", "make_screen_factors",
+           "potekhin_1998", "screen5", "screening_check"]
 
 
 @jitclass()
@@ -192,6 +192,29 @@ def make_screen_factors(n1, n2):
     n1 = Nucleus.cast(n1)
     n2 = Nucleus.cast(n2)
     return ScreenFactors(n1.Z, n1.A, n2.Z, n2.A)
+
+
+@njit
+def debye_huckel(state, scn_fac) -> float:
+    """Calculates the Debye-Huckel enhancement factor for weak Coloumb coupling,
+    following the appendix of :cite:t:`chugunov:2009`.
+
+    :param PlasmaState state:     the precomputed plasma state factors
+    :param ScreenFactors scn_fac: the precomputed ion pair factors
+    :returns: screening correction factor
+    """
+    z1z2 = scn_fac.z1 * scn_fac.z2
+
+    # Gamma_e from eq. 6
+    Gamma_e = state.gamma_e_fac / state.temp
+
+    # eq. A1
+    h_DH = z1z2 * np.sqrt(3 * Gamma_e**3 * state.z2bar / state.zbar)
+
+    # machine limit the output
+    h_max = 300
+    h = min(h_DH, h_max)
+    return np.exp(h)
 
 
 @njit
@@ -586,3 +609,32 @@ def potekhin_1998(state, scn_fac):
     scor = np.exp(h12)
 
     return scor
+
+
+def screening_check(check_func=debye_huckel, threshold: float = 1.01):
+    """A decorator factory that wraps a screening function with a
+    check that determines whether that function can be skipped for a
+    given plasma state and screening pair.
+
+    :param func: the function to check against the threshold
+    :param threshold: the threshold to check against. If screen_check
+                      is less than the threshold, skip screen_func
+    :returns: a decorator for wrapping screening functions
+    """
+
+    def screening_decorator(screen_func):
+        """Decorates a screening function with a computation
+        that determines whether the check is skippable.
+
+        :param screen_func: the screening function being wrapped
+        :returns: a wrapped screening function that performs this check
+        """
+
+        @njit
+        def screening_wrapper(state, scn_fac):
+            F0 = check_func(state, scn_fac)
+            if F0 <= threshold:
+                return F0
+            return screen_func(state, scn_fac)
+        return screening_wrapper
+    return screening_decorator
