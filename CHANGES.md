@@ -2,6 +2,13 @@
 
 ## 2.5.0
 
+  * fix the zenodo authors (#898) and automate the zenodo bibtex in
+    the docs (#880)
+
+  * codespell fixes (#897)
+
+  * AmrexAstroCxxNetwork now ifdefs out neutrinos (#884)
+  
   * officially support python 3.13 (#860)
 
   * update package requirements (#896)
@@ -9,7 +16,7 @@
   * Implement Debye-Huckel screening (#870)
 
   * Fix a CODATA constants inconsistency between Nubase and SciPy
-    (#877)
+    (#877) and compatibility with SciPy < 1.15.0 (#889)
 
   * Address a new warning in matplotlib 3.10.0 (#879, #885)
 
@@ -125,7 +132,7 @@
 
   * `AmrexAstroCxxNetwork` now create a ydot_weak function that
     evaluates the weak rate contributions to compute dYe/dt (#739)
-
+   
 ## 2.2.1
 
   * numpy 2.0 support added (#748)
