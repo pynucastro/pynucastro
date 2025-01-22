@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.python_network &#8212; pynucastro 2.4.0.post61+gbbb2ba05 documentation</title>
+    <title>pynucastro.networks.python_network &#8212; pynucastro 2.4.0.post62+ged5f26d8 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=071a1047"></script>
+    <script src="../../../_static/documentation_options.js?v=901fe4fd"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -637,7 +637,7 @@
         <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;# masses in ergs</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;mass = np.zeros((nnuc), dtype=np.float64)</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">:</span>
-            <span class="n">mass</span> <span class="o">=</span> <span class="n">n</span><span class="o">.</span><span class="n">A_nuc</span> <span class="o">*</span> <span class="n">constants</span><span class="o">.</span><span class="n">m_u_MeV</span> <span class="o">*</span> <span class="n">constants</span><span class="o">.</span><span class="n">MeV2erg</span>
+            <span class="n">mass</span> <span class="o">=</span> <span class="n">n</span><span class="o">.</span><span class="n">A_nuc</span> <span class="o">*</span> <span class="n">constants</span><span class="o">.</span><span class="n">m_u_MeV_C18</span> <span class="o">*</span> <span class="n">constants</span><span class="o">.</span><span class="n">MeV2erg</span>
             <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;mass[j</span><span class="si">{</span><span class="n">n</span><span class="o">.</span><span class="n">raw</span><span class="si">}</span><span class="s2">] = </span><span class="si">{</span><span class="n">mass</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
