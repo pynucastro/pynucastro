@@ -40,7 +40,7 @@ abstract = {We describe pynucastro 2.0, an open-source library for
 
 https://joss.theoj.org/papers/10.21105/joss.00588
 
-```
+```bibtex
 @article{pynucastro,
    author = {{Willcox}, D.~E. and {Zingale}, M.},
     title = "{pynucastro: an interface to nuclear reaction rates and code generator for reaction network equations}",
