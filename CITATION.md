@@ -2,7 +2,7 @@ If you use pynucastro, please CITE the "2.0" paper _and_ the latest
 Zenodo DOI.  You can also cite the JOSS paper.
 
 
-## Astrophysical Journal ("2.0 paper":)
+## Astrophysical Journal ("2.0 paper")
 
 https://iopscience.iop.org/article/10.3847/1538-4357/acbaff
 
