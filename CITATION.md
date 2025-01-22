@@ -57,5 +57,7 @@ https://joss.theoj.org/papers/10.21105/joss.00588
 
 ## Zenodo
 
+https://doi.org/10.5281/zenodo.1202434
+
 The bibtex for the latest version is always here:
 https://zenodo.org/records/13899727/export/bibtex
