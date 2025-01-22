@@ -2,6 +2,10 @@
 
 ## 2.5.0
 
+  * officially support python 3.13 (#860)
+
+  * update package requirements (#896)
+
   * Implement Debye-Huckel screening (#870)
 
   * Fix a CODATA constants inconsistency between Nubase and SciPy
@@ -36,7 +40,8 @@
 
   * Documentation improvements (#782, #831, #832, #843, #848, #852,
     #855, #858, #861, #864, #866, #867, #874, #881, #887, #888),
-    including new examples (#783, #800, #826)
+    including new examples (#783, #800, #826) and build enhancements
+    (#893)
 
   * Clean-up unused class data in `SimpleCxxNetwork` (#845)
 
@@ -56,7 +61,7 @@
 
   * `PythonNetwork` rates now can take rho and Y. (#828)
 
-  * CI fixes (#827)
+  * CI fixes and updates (#827, #890)
 
   * Child rates in `ApproximateRate` are now stored as a dictionary
     (#824) + additional cleaning (#812)
