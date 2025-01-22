@@ -18,6 +18,6 @@ help:
 # "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).
 %: Makefile
 	# download the current zenodo bibtex cite
-	curl https://zenodo.org/records/13899727/export/bibtex > source/zenodo.bibtex.txt
+	curl -L -H 'Accept: application/x-bibtex' https://zenodo.org/api/records/1202434 > source/zenodo.bibtex.txt
 	python parse_changelog.py ../CHANGES.md > source/changelog.md
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
