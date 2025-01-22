@@ -10,7 +10,7 @@ class TestAME:
         # by definition, the proton and neutron should have 0 binding
         # energy.  this will only be true if we are using the CODATA
         # values of m_u and m_n that are consistent with the Nubase
-        # compliation,.
+        # compilation,.
 
         p = Nucleus("p")
         assert p.nucbind == 0.0

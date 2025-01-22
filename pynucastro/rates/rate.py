@@ -398,7 +398,7 @@ class Rate:
     def modify_products(self, new_products):
         """
         change the products of the rate to new_products.  This will recompute
-        the Q value and update the print respresentation.
+        the Q value and update the print representation.
         """
 
         self.products = Nucleus.cast_list(new_products, allow_single=True)

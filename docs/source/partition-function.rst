@@ -156,7 +156,7 @@ The quantities :math:`G_i` and :math:`G_j` are the target and residual partition
    \dfrac{N_a\langle \sigma v \rangle_m}{N_a\langle \sigma v \rangle_i} &=& \left(\dfrac{A_iA_j}{A_oA_m} \right)^{3/2}\dfrac{(2J_i+1)(2J_j+1)}{(2J_o+1)(2J_m+1)} \dfrac{G_i}{G_m}  \times e^{-Q/(kT)}
    \end{eqnarray}
    
-or equivalently, after absorbing all the quantites in the forward rate with the exception of :math:`G_i`:
+or equivalently, after absorbing all the quantities in the forward rate with the exception of :math:`G_i`:
 
 .. math::
    :nowrap:
@@ -166,7 +166,7 @@ or equivalently, after absorbing all the quantites in the forward rate with the 
    N_a\langle \sigma v \rangle_m &=& N_a\langle \sigma v \rangle_m' \dfrac{G_i}{G_m}
    \end{eqnarray}
    
-where the quantites :math:`\lambda_{\gamma}'` and :math:`N_a\langle \sigma v \rangle_m'` are provided by REACLIB, under the ``-v`` flag.
+where the quantities :math:`\lambda_{\gamma}'` and :math:`N_a\langle \sigma v \rangle_m'` are provided by REACLIB, under the ``-v`` flag.
    
 Implementing partition functions
 --------------------------------
