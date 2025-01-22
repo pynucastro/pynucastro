@@ -7,7 +7,7 @@ Zenodo DOI.  You can also cite the JOSS paper.
 https://iopscience.iop.org/article/10.3847/1538-4357/acbaff
 
 
-```
+```bibtex
 @ARTICLE{pynucastro2,
 doi = {10.3847/1538-4357/acbaff},
 url = {https://dx.doi.org/10.3847/1538-4357/acbaff},
