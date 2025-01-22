@@ -347,7 +347,7 @@
 
   * NSE solver now can return chemical potentials (#415)
 
-  * Add spins to NSE calculatons (#405)
+  * Add spins to NSE calculations (#405)
 
   * Separate the Coulomb calculation from the NSE screening, make it
     switchable (#398, #380)
