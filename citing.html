@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Citing pynucastro &#8212; pynucastro 2.4.0.post63+gffe004b0 documentation</title>
+    <title>Citing pynucastro &#8212; pynucastro 2.4.0.post64+g389cc683 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=f8747c6f"></script>
+    <script src="_static/documentation_options.js?v=2e64ed6a"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -455,7 +455,9 @@
 <button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass fa-lg"></i>
 </button>
-
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
 </div></div>
       
     </div>
@@ -471,6 +473,16 @@
     <div id="print-main-content">
         <div id="jb-print-toc">
             
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astrophysical-journal-2-0-paper">Astrophysical Journal (“2.0 paper”)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#joss">JOSS</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#zenodo">Zenodo</a></li>
+</ul>
+            </nav>
         </div>
     </div>
 </div>
@@ -484,73 +496,82 @@
 <h1>Citing pynucastro<a class="headerlink" href="#citing-pynucastro" title="Link to this heading">#</a></h1>
 <p>If you use pynucastro, please CITE the “2.0” paper <em>and</em> the latest
 Zenodo DOI.  You can also cite the JOSS paper.</p>
-<p>Astrophysical Journal (“2.0 paper:): <a class="reference external" href="https://iopscience.iop.org/article/10.3847/1538-4357/acbaff">https://iopscience.iop.org/article/10.3847/1538-4357/acbaff</a></p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@ARTICLE</span><span class="p">{</span><span class="n">pynucastro2</span><span class="p">,</span>
-<span class="n">doi</span> <span class="o">=</span> <span class="p">{</span><span class="mf">10.3847</span><span class="o">/</span><span class="mi">1538</span><span class="o">-</span><span class="mi">4357</span><span class="o">/</span><span class="n">acbaff</span><span class="p">},</span>
-<span class="n">url</span> <span class="o">=</span> <span class="p">{</span><span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">dx</span><span class="o">.</span><span class="n">doi</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="mf">10.3847</span><span class="o">/</span><span class="mi">1538</span><span class="o">-</span><span class="mi">4357</span><span class="o">/</span><span class="n">acbaff</span><span class="p">},</span>
-<span class="n">year</span> <span class="o">=</span> <span class="p">{</span><span class="mi">2023</span><span class="p">},</span>
-<span class="n">month</span> <span class="o">=</span> <span class="p">{</span><span class="n">apr</span><span class="p">},</span>
-<span class="n">publisher</span> <span class="o">=</span> <span class="p">{</span><span class="n">The</span> <span class="n">American</span> <span class="n">Astronomical</span> <span class="n">Society</span><span class="p">},</span>
-<span class="n">volume</span> <span class="o">=</span> <span class="p">{</span><span class="mi">947</span><span class="p">},</span>
-<span class="n">number</span> <span class="o">=</span> <span class="p">{</span><span class="mi">2</span><span class="p">},</span>
-<span class="n">pages</span> <span class="o">=</span> <span class="p">{</span><span class="mi">65</span><span class="p">},</span>
-<span class="n">author</span> <span class="o">=</span> <span class="p">{</span><span class="n">Alexander</span> <span class="n">I</span><span class="o">.</span> <span class="n">Smith</span> <span class="ow">and</span> <span class="n">Eric</span> <span class="n">T</span><span class="o">.</span> <span class="n">Johnson</span> <span class="ow">and</span> <span class="n">Zhi</span> <span class="n">Chen</span> <span class="ow">and</span>
-          <span class="n">Kiran</span> <span class="n">Eiden</span> <span class="ow">and</span> <span class="n">Donald</span> <span class="n">E</span><span class="o">.</span> <span class="n">Willcox</span> <span class="ow">and</span> <span class="n">Brendan</span> <span class="n">Boyd</span> <span class="ow">and</span>
-          <span class="n">Lyra</span> <span class="n">Cao</span> <span class="ow">and</span> <span class="n">Christopher</span> <span class="n">J</span><span class="o">.</span> <span class="n">DeGrendele</span> <span class="ow">and</span> <span class="n">Michael</span> <span class="n">Zingale</span><span class="p">},</span>
-<span class="n">title</span> <span class="o">=</span> <span class="p">{</span><span class="n">pynucastro</span><span class="p">:</span> <span class="n">A</span> <span class="n">Python</span> <span class="n">Library</span> <span class="k">for</span> <span class="n">Nuclear</span> <span class="n">Astrophysics</span><span class="p">},</span>
-<span class="n">journal</span> <span class="o">=</span> <span class="p">{</span><span class="n">The</span> <span class="n">Astrophysical</span> <span class="n">Journal</span><span class="p">},</span>
-<span class="n">abstract</span> <span class="o">=</span> <span class="p">{</span><span class="n">We</span> <span class="n">describe</span> <span class="n">pynucastro</span> <span class="mf">2.0</span><span class="p">,</span> <span class="n">an</span> <span class="nb">open</span><span class="o">-</span><span class="n">source</span> <span class="n">library</span> <span class="k">for</span>
-            <span class="n">interactively</span> <span class="n">creating</span> <span class="ow">and</span> <span class="n">exploring</span> <span class="n">astrophysical</span> <span class="n">nuclear</span>
-            <span class="n">reaction</span> <span class="n">networks</span><span class="o">.</span>  <span class="n">We</span> <span class="n">demonstrate</span> <span class="n">new</span> <span class="n">methods</span> <span class="k">for</span>
-            <span class="n">approximating</span> <span class="n">rates</span> <span class="ow">and</span> <span class="n">use</span> <span class="n">detailed</span> <span class="n">balance</span> <span class="n">to</span> <span class="n">create</span>
-            <span class="n">reverse</span> <span class="n">rates</span><span class="p">,</span> <span class="n">show</span> <span class="n">how</span> <span class="n">to</span> <span class="n">build</span> <span class="n">networks</span> <span class="ow">and</span> <span class="n">determine</span>
-            <span class="n">whether</span> <span class="n">they</span> <span class="n">are</span> <span class="n">appropriate</span> <span class="k">for</span> <span class="n">a</span> <span class="n">particular</span> <span class="n">science</span> <span class="n">application</span><span class="p">,</span>
-            <span class="ow">and</span> <span class="n">discuss</span> <span class="n">the</span> <span class="n">changes</span> <span class="n">made</span> <span class="n">to</span> <span class="n">the</span> <span class="n">library</span> <span class="n">over</span> <span class="n">the</span> <span class="n">past</span> <span class="n">few</span>
-            <span class="n">years</span><span class="o">.</span> <span class="n">Finally</span><span class="p">,</span> <span class="n">we</span> <span class="n">demonstrate</span> <span class="n">the</span> <span class="n">validity</span> <span class="n">of</span> <span class="n">the</span> <span class="n">networks</span>
-            <span class="n">produced</span> <span class="ow">and</span> <span class="n">share</span> <span class="n">how</span> <span class="n">we</span> <span class="n">use</span> <span class="n">pynucastro</span> <span class="n">networks</span> <span class="ow">in</span> <span class="n">simulation</span>
-            <span class="n">codes</span><span class="o">.</span><span class="p">}</span>
+<section id="astrophysical-journal-2-0-paper">
+<h2>Astrophysical Journal (“2.0 paper”)<a class="headerlink" href="#astrophysical-journal-2-0-paper" title="Link to this heading">#</a></h2>
+<p><a class="reference external" href="https://iopscience.iop.org/article/10.3847/1538-4357/acbaff">https://iopscience.iop.org/article/10.3847/1538-4357/acbaff</a></p>
+<div class="highlight-bibtex notranslate"><div class="highlight"><pre><span></span><span class="nc">@ARTICLE</span><span class="p">{</span><span class="nl">pynucastro2</span><span class="p">,</span>
+<span class="na">doi</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{10.3847/1538-4357/acbaff}</span><span class="p">,</span>
+<span class="na">url</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{https://dx.doi.org/10.3847/1538-4357/acbaff}</span><span class="p">,</span>
+<span class="na">year</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{2023}</span><span class="p">,</span>
+<span class="na">month</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{apr}</span><span class="p">,</span>
+<span class="na">publisher</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{The American Astronomical Society}</span><span class="p">,</span>
+<span class="na">volume</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{947}</span><span class="p">,</span>
+<span class="na">number</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{2}</span><span class="p">,</span>
+<span class="na">pages</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{65}</span><span class="p">,</span>
+<span class="na">author</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{Alexander I. Smith and Eric T. Johnson and Zhi Chen and</span>
+<span class="s">          Kiran Eiden and Donald E. Willcox and Brendan Boyd and</span>
+<span class="s">          Lyra Cao and Christopher J. DeGrendele and Michael Zingale}</span><span class="p">,</span>
+<span class="na">title</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{pynucastro: A Python Library for Nuclear Astrophysics}</span><span class="p">,</span>
+<span class="na">journal</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{The Astrophysical Journal}</span><span class="p">,</span>
+<span class="na">abstract</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{We describe pynucastro 2.0, an open-source library for</span>
+<span class="s">            interactively creating and exploring astrophysical nuclear</span>
+<span class="s">            reaction networks.  We demonstrate new methods for</span>
+<span class="s">            approximating rates and use detailed balance to create</span>
+<span class="s">            reverse rates, show how to build networks and determine</span>
+<span class="s">            whether they are appropriate for a particular science application,</span>
+<span class="s">            and discuss the changes made to the library over the past few</span>
+<span class="s">            years. Finally, we demonstrate the validity of the networks</span>
+<span class="s">            produced and share how we use pynucastro networks in simulation</span>
+<span class="s">            codes.}</span>
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>JOSS: <a class="reference external" href="https://joss.theoj.org/papers/10.21105/joss.00588">https://joss.theoj.org/papers/10.21105/joss.00588</a></p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@article</span><span class="p">{</span><span class="n">pynucastro</span><span class="p">,</span>
-   <span class="n">author</span> <span class="o">=</span> <span class="p">{{</span><span class="n">Willcox</span><span class="p">},</span> <span class="n">D</span><span class="o">.~</span><span class="n">E</span><span class="o">.</span> <span class="ow">and</span> <span class="p">{</span><span class="n">Zingale</span><span class="p">},</span> <span class="n">M</span><span class="o">.</span><span class="p">},</span>
-    <span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;{pynucastro: an interface to nuclear reaction rates and code generator for reaction network equations}&quot;</span><span class="p">,</span>
-  <span class="n">journal</span> <span class="o">=</span> <span class="p">{</span><span class="n">Journal</span> <span class="n">of</span> <span class="n">Open</span> <span class="n">Source</span> <span class="n">Software</span><span class="p">},</span>
-     <span class="n">year</span> <span class="o">=</span> <span class="mi">2018</span><span class="p">,</span>
-   <span class="n">volume</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
-   <span class="n">number</span> <span class="o">=</span> <span class="mi">23</span><span class="p">,</span>
-   <span class="n">pages</span> <span class="o">=</span> <span class="mi">588</span><span class="p">,</span>
-     <span class="n">url</span> <span class="o">=</span> <span class="p">{</span><span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">doi</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="mf">10.21105</span><span class="o">/</span><span class="n">joss</span><span class="mf">.00588</span><span class="p">},</span>
-     <span class="n">doi</span> <span class="o">=</span> <span class="p">{</span><span class="mf">10.21105</span><span class="o">/</span><span class="n">joss</span><span class="mf">.00588</span><span class="p">},</span>
- <span class="n">subject</span> <span class="o">=</span> <span class="p">{</span><span class="n">nuclear</span> <span class="n">astrophysics</span><span class="p">}</span>
+</section>
+<section id="joss">
+<h2>JOSS<a class="headerlink" href="#joss" title="Link to this heading">#</a></h2>
+<p><a class="reference external" href="https://joss.theoj.org/papers/10.21105/joss.00588">https://joss.theoj.org/papers/10.21105/joss.00588</a></p>
+<div class="highlight-bibtex notranslate"><div class="highlight"><pre><span></span><span class="nc">@article</span><span class="p">{</span><span class="nl">pynucastro</span><span class="p">,</span>
+<span class="w">   </span><span class="na">author</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{{Willcox}, D.~E. and {Zingale}, M.}</span><span class="p">,</span>
+<span class="w">    </span><span class="na">title</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">&quot;{pynucastro: an interface to nuclear reaction rates and code generator for reaction network equations}&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="na">journal</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{Journal of Open Source Software}</span><span class="p">,</span>
+<span class="w">     </span><span class="na">year</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="m">2018</span><span class="p">,</span>
+<span class="w">   </span><span class="na">volume</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="m">3</span><span class="p">,</span>
+<span class="w">   </span><span class="na">number</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="m">23</span><span class="p">,</span>
+<span class="w">   </span><span class="na">pages</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="m">588</span><span class="p">,</span>
+<span class="w">     </span><span class="na">url</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{https://doi.org/10.21105/joss.00588}</span><span class="p">,</span>
+<span class="w">     </span><span class="na">doi</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{10.21105/joss.00588}</span><span class="p">,</span>
+<span class="w"> </span><span class="na">subject</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{nuclear astrophysics}</span>
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>Zenodo:</p>
-<p>The latest version is always here:
+</section>
+<section id="zenodo">
+<h2>Zenodo<a class="headerlink" href="#zenodo" title="Link to this heading">#</a></h2>
+<p>The Zenodo record is:
 <a class="reference external" href="https://doi.org/10.5281/zenodo.1202434">https://doi.org/10.5281/zenodo.1202434</a></p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@software</span><span class="p">{</span><span class="n">the_pynucastro_development_2022_7239007</span><span class="p">,</span>
-  <span class="n">author</span>       <span class="o">=</span> <span class="p">{</span><span class="n">the</span> <span class="n">pynucastro</span> <span class="n">development</span> <span class="ow">and</span>
-                  <span class="n">Boyd</span><span class="p">,</span> <span class="n">Brendan</span> <span class="ow">and</span>
-                  <span class="n">Cao</span><span class="p">,</span> <span class="n">Lyra</span> <span class="ow">and</span>
-                  <span class="n">Chen</span><span class="p">,</span> <span class="n">Zhi</span> <span class="ow">and</span>
-                  <span class="n">Eiden</span><span class="p">,</span> <span class="n">Kiran</span> <span class="ow">and</span>
-                  <span class="n">Johnson</span><span class="p">,</span> <span class="n">Eric</span> <span class="ow">and</span>
-                  <span class="n">Li</span><span class="p">,</span> <span class="n">Xinlong</span> <span class="ow">and</span>
-                  <span class="n">Smith</span> <span class="n">Clark</span><span class="p">,</span> <span class="n">Alexander</span> <span class="ow">and</span>
-                  <span class="n">Willcox</span><span class="p">,</span> <span class="n">Donald</span> <span class="ow">and</span>
-                  <span class="n">Zingale</span><span class="p">,</span> <span class="n">Michael</span><span class="p">},</span>
-  <span class="n">title</span>        <span class="o">=</span> <span class="p">{</span><span class="n">pynucastro</span><span class="o">/</span><span class="n">pynucastro</span><span class="p">:</span> <span class="n">pynucastro</span> <span class="mf">2.0.2</span><span class="p">},</span>
-  <span class="n">month</span>        <span class="o">=</span> <span class="nb">oct</span><span class="p">,</span>
-  <span class="n">year</span>         <span class="o">=</span> <span class="mi">2022</span><span class="p">,</span>
-  <span class="n">publisher</span>    <span class="o">=</span> <span class="p">{</span><span class="n">Zenodo</span><span class="p">},</span>
-  <span class="n">version</span>      <span class="o">=</span> <span class="p">{</span><span class="mf">2.0.2</span><span class="p">},</span>
-  <span class="n">doi</span>          <span class="o">=</span> <span class="p">{</span><span class="mf">10.5281</span><span class="o">/</span><span class="n">zenodo</span><span class="mf">.7239007</span><span class="p">},</span>
-  <span class="n">url</span>          <span class="o">=</span> <span class="p">{</span><span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">doi</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="mf">10.5281</span><span class="o">/</span><span class="n">zenodo</span><span class="mf">.7239007</span><span class="p">}</span>
+<p>The bibtex for the latest version is included below (updated automatically):</p>
+<div class="highlight-bibtex notranslate"><div class="highlight"><pre><span></span><span class="nc">@software</span><span class="p">{</span><span class="nl">the_pynucastro_development_2024_13899727</span><span class="p">,</span>
+<span class="w">  </span><span class="na">author</span><span class="w">       </span><span class="p">=</span><span class="w"> </span><span class="s">{the pynucastro development and</span>
+<span class="s">                  Boyd, Brendan and</span>
+<span class="s">                  Cao, Lyra and</span>
+<span class="s">                  Chen, Zhi and</span>
+<span class="s">                  Eiden, Kiran and</span>
+<span class="s">                  Johnson, Eric and</span>
+<span class="s">                  Li, Xinlong and</span>
+<span class="s">                  Smith Clark, Alexander and</span>
+<span class="s">                  Willcox, Donald and</span>
+<span class="s">                  Zingale, Michael}</span><span class="p">,</span>
+<span class="w">  </span><span class="na">title</span><span class="w">        </span><span class="p">=</span><span class="w"> </span><span class="s">{pynucastro/pynucastro: pynucastro 2.4.0}</span><span class="p">,</span>
+<span class="w">  </span><span class="na">month</span><span class="w">        </span><span class="p">=</span><span class="w"> </span><span class="nv">oct</span><span class="p">,</span>
+<span class="w">  </span><span class="na">year</span><span class="w">         </span><span class="p">=</span><span class="w"> </span><span class="m">2024</span><span class="p">,</span>
+<span class="w">  </span><span class="na">publisher</span><span class="w">    </span><span class="p">=</span><span class="w"> </span><span class="s">{Zenodo}</span><span class="p">,</span>
+<span class="w">  </span><span class="na">version</span><span class="w">      </span><span class="p">=</span><span class="w"> </span><span class="s">{2.4.0}</span><span class="p">,</span>
+<span class="w">  </span><span class="na">doi</span><span class="w">          </span><span class="p">=</span><span class="w"> </span><span class="s">{10.5281/zenodo.13899727}</span><span class="p">,</span>
+<span class="w">  </span><span class="na">url</span><span class="w">          </span><span class="p">=</span><span class="w"> </span><span class="s">{https://doi.org/10.5281/zenodo.13899727}</span><span class="p">,</span>
 <span class="p">}</span>
 </pre></div>
 </div>
+</section>
 </section>
 
 
@@ -588,6 +609,24 @@ Zenodo DOI.  You can also cite the JOSS paper.</p>
             </div>
             
             
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astrophysical-journal-2-0-paper">Astrophysical Journal (“2.0 paper”)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#joss">JOSS</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#zenodo">Zenodo</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>
