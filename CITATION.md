@@ -57,6 +57,5 @@ https://joss.theoj.org/papers/10.21105/joss.00588
 
 ## Zenodo
 
+The Zenodo record is:
 https://doi.org/10.5281/zenodo.1202434
-
-The bibtex for the latest version is included below (updated automatically):
