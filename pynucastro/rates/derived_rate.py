@@ -52,7 +52,7 @@ class DerivedRate(ReacLibRate):
                 Q -= nucp.A_nuc
 
             if self.compute_Q:
-                Q = Q * constants.m_u_MeV
+                Q = Q * constants.m_u_MeV_C18
             else:
                 Q = self.rate.Q
 
@@ -61,7 +61,8 @@ class DerivedRate(ReacLibRate):
             if len(self.rate.reactants) == len(self.rate.products):
                 prefactor += 0.0
             else:
-                F = (constants.m_u * constants.k * 1.0e9 / (2.0*np.pi*constants.hbar**2))**(1.5*(len(self.rate.reactants) - len(self.rate.products)))
+                F = (constants.m_u_C18 * constants.k * 1.0e9 /
+                     (2.0*np.pi*constants.hbar**2))**(1.5*(len(self.rate.reactants) - len(self.rate.products)))
                 prefactor += np.log(F)
 
             a_rev = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]

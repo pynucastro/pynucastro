@@ -17,6 +17,7 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use pathlib.Path.resolve to make it absolute, like shown here.
 #
+import os
 import sys
 from pathlib import Path
 from importlib.metadata import version as importlib_version
@@ -45,6 +46,7 @@ extensions = ['sphinx.ext.autodoc',
     'sphinx-prompt',
     'sphinx_math_dollar',
     'sphinx_mdinclude',
+    'myst_nb',
     'IPython.sphinxext.ipython_console_highlighting']
 
 # bibtex
@@ -63,8 +65,21 @@ linkcheck_allow_unauthorized = True
 templates_path = ['_templates']
 
 # always execute notebooks
-nbsphinx_execute = 'always'
+env_skip_execute = os.getenv("SKIP_EXECUTE")
+
+if not env_skip_execute:
+    nb_execution_mode = "force"
+else:
+    nb_execution_mode = "off"
+
 nbsphinx_allow_errors = True
+nbsphinx_timeout = 1000
+
+# myst-nb control of notebooks
+nb_execution_timeout = 500
+nb_execution_allow_errors = True
+
+
 
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
@@ -102,7 +117,7 @@ language = "en"
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This patterns also effect to html_static_path and html_extra_path
-exclude_patterns = []
+exclude_patterns = ["changelog.md"]
 
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = 'sphinx'

@@ -1,4 +1,4 @@
-# Ground state spin evaluation table: nubase2020_1
+# Ground state spin evaluation table: spins2020
 # if the ==Spin== column contain more than two values, the gs state is uncertain.
 #
 #==A==                      ==Z==                  ==Spin==                  ==Number=of=States==            ==Experimental==            ==Theoretical==

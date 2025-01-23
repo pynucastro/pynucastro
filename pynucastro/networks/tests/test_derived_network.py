@@ -1,5 +1,4 @@
 # unit tests for rates
-import numpy as np
 import pytest
 
 import pynucastro as pyna
@@ -53,19 +52,16 @@ class TestPythonDerivedNetwork:
 
         assert pynet.full_ydot_string(pyna.Nucleus("cr48")) == ostr
 
-    def test_approx_function_string(self, pynet):
+    def test_derived_function_string(self, pynet):
 
-        dispute_values = np.array([61.72798916565748, 61.72798916565747])
-        ostr = [""" """, """ """]
-        for i in range(2):
-            ostr[i] = \
+        ostr = \
 """@numba.njit()
 def Fe52__p_Mn51__derived(rate_eval, tf):
     # Fe52 --> p + Mn51
     rate = 0.0
 
     # ths8r
-    rate += np.exp(  {:.14f} + -85.6326403498911*tf.T9i + -36.1825*tf.T913i + 0.873042*tf.T913
+    rate += np.exp(  61.72798916381932 + -85.63264034844842*tf.T9i + -36.1825*tf.T913i + 0.873042*tf.T913
                   + -2.89731*tf.T9 + 0.364394*tf.T953 + 0.833333*tf.lnT9)
 
     rate_eval.Fe52__p_Mn51__derived = rate
@@ -85,7 +81,7 @@ def Fe52__p_Mn51__derived(rate_eval, tf):
     z_r = p_pf*Mn51_pf
     z_p = Fe52_pf
     rate_eval.Fe52__p_Mn51__derived *= z_r/z_p
-""".format(dispute_values[i])
+"""
 
         r = pynet.get_rate("fe52__p_mn51__derived")
-        assert r.function_string_py() == ostr[0] or r.function_string_py() == ostr[1]
+        assert r.function_string_py() == ostr

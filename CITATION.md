@@ -2,10 +2,12 @@ If you use pynucastro, please CITE the "2.0" paper _and_ the latest
 Zenodo DOI.  You can also cite the JOSS paper.
 
 
-Astrophysical Journal ("2.0 paper:): https://iopscience.iop.org/article/10.3847/1538-4357/acbaff
+## Astrophysical Journal ("2.0 paper")
+
+https://iopscience.iop.org/article/10.3847/1538-4357/acbaff
 
 
-```
+```bibtex
 @ARTICLE{pynucastro2,
 doi = {10.3847/1538-4357/acbaff},
 url = {https://dx.doi.org/10.3847/1538-4357/acbaff},
@@ -34,9 +36,11 @@ abstract = {We describe pynucastro 2.0, an open-source library for
 ```
 
 
-JOSS: https://joss.theoj.org/papers/10.21105/joss.00588
+## JOSS
 
-```
+https://joss.theoj.org/papers/10.21105/joss.00588
+
+```bibtex
 @article{pynucastro,
    author = {{Willcox}, D.~E. and {Zingale}, M.},
     title = "{pynucastro: an interface to nuclear reaction rates and code generator for reaction network equations}",
@@ -51,29 +55,7 @@ JOSS: https://joss.theoj.org/papers/10.21105/joss.00588
 }
 ```
 
-Zenodo:
+## Zenodo
 
-The latest version is always here:
+The Zenodo record is:
 https://doi.org/10.5281/zenodo.1202434
-
-```
-@software{the_pynucastro_development_2022_7239007,
-  author       = {the pynucastro development and
-                  Boyd, Brendan and
-                  Cao, Lyra and
-                  Chen, Zhi and
-                  Eiden, Kiran and
-                  Johnson, Eric and
-                  Li, Xinlong and
-                  Smith Clark, Alexander and
-                  Willcox, Donald and
-                  Zingale, Michael},
-  title        = {pynucastro/pynucastro: pynucastro 2.0.2},
-  month        = oct,
-  year         = 2022,
-  publisher    = {Zenodo},
-  version      = {2.0.2},
-  doi          = {10.5281/zenodo.7239007},
-  url          = {https://doi.org/10.5281/zenodo.7239007}
-}
-```

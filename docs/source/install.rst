@@ -10,16 +10,6 @@ The easiest way to install pynucastro is via pip:
 
    pip install pynucastro
 
-.. note::
-
-   If you are using python 3.13, then you will need to install
-   the release candidate of numba until the final release is out.
-   This can be done as:
-
-   .. prompt:: bash
-
-      pip install numba==0.61.0rc1
-
 
 Conda
 -----
