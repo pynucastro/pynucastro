@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.rate_collection &#8212; pynucastro 2.5.0 documentation</title>
+    <title>pynucastro.networks.rate_collection &#8212; pynucastro 2.5.0.post1+g43e473e1 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=7769aa4a"></script>
+    <script src="../../../_static/documentation_options.js?v=bb727c21"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -879,7 +879,6 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">files</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rates</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">combined_library</span> <span class="o">=</span> <span class="n">Library</span><span class="p">()</span>
 
@@ -1031,9 +1030,8 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_read_rate_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rate_files</span><span class="p">):</span>
         <span class="c1"># get the rates</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">files</span> <span class="o">=</span> <span class="n">rate_files</span>
         <span class="n">combined_library</span> <span class="o">=</span> <span class="n">Library</span><span class="p">()</span>
-        <span class="k">for</span> <span class="n">rf</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">rf</span> <span class="ow">in</span> <span class="n">rate_files</span><span class="p">:</span>
             <span class="c1"># create the appropriate rate object first</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">rate</span> <span class="o">=</span> <span class="n">load_rate</span><span class="p">(</span><span class="n">rf</span><span class="p">)</span>
