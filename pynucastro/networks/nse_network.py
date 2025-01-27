@@ -12,19 +12,34 @@ from pynucastro.screening import NseState, potekhin_1998
 
 
 class NSETableEntry:
+    """A simple container to hold a single entry in the NSE table.
+
+    Parameters
+    ----------
+    rho : float
+        the density of the NSE state
+    T : float
+        the temperature of the NSE state
+    Ye : float
+        the electron fraction
+    comp : Composition
+        the NSE composition
+    ydots : dict
+        a dictionary of dY/dt keyed by Nucleus.  This is meant to be
+        the weak nuclear rates only, since those affect the NSE state.
+    enu : float
+        the weak rate neutrino energy loss
+    comp_reduction_function : Callable
+        a function that converts the NSE composition into a smaller set
+        of nuclei.  It takes a Composition object and returns a dictionary
+        with the nucleus name (like "Ni56") as the key and the corresponding
+        mass fraction as the value.  It should be ordered in the way you
+        want the nuclei output into the NSE table file.
+    """
+
     def __init__(self, rho, T, Ye, *,
                  comp=None, ydots=None, enu=None,
                  comp_reduction_func=None):
-        """a simple container to hold a single entry in the NSE table.
-
-        Here, comp_reduction_func(comp) is a function that converts
-        the NSE composition into a smaller set of nuclei.  It takes a
-        Composition object and returns a dictionary with the nucleus
-        name (like "Ni56") as the key and the corresponding mass fraction
-        as the value.  It should be ordered in the way you want the nuclei
-        output into the NSE table file.
-
-        """
 
         self.rho = rho
         self.T = T
@@ -155,21 +170,29 @@ class NSENetwork(RateCollection):
         Returns the NSE composition given density, temperature and prescribed electron fraction
         using scipy.fsolve.
 
-        Parameters:
-        -------------------------------------
-        rho: NSE state density
+        Parameters
+        ----------
+        rho : float
+            NSE state density
+        T : float
+            NSE state Temperature
+        ye : float
+            prescribed electron fraction
+        init_guess : (tuple, list)
+            initial guess of chemical potential of proton and neutron, [mu_p, mu_n]
+        tol : float
+            tolerance of scipy.fsolve
+        use_coulomb_corr : bool
+            whether to include coulomb correction terms
+        return_sol : bool
+            whether to return the solution of the proton and neutron chemical potential.
 
-        T: NSE state Temperature
-
-        ye: prescribed electron fraction
-
-        init_guess: optional, initial guess of chemical potential of proton and neutron, [mu_p, mu_n]
-
-        tol: optional, sets the tolerance of scipy.fsolve
-
-        use_coulomb_corr: Whether to include coulomb correction terms
-
-        return_sol: Whether to return the solution of the proton and neutron chemical potential.
+        Returns
+        -------
+        comp : Composition
+            the NSE composition
+        u : ndarray
+            the chemical potentials found by solving the nonlinear system.
         """
 
         # From here we convert the init_guess list into a np.array object:
@@ -235,6 +258,26 @@ class NSENetwork(RateCollection):
     def generate_table(self, rho_values=None, T_values=None, Ye_values=None,
                        comp_reduction_func=None,
                        verbose=False, outfile="nse.tbl"):
+        """Generate a table of NSE properties.  For every combination of
+        density, temperature, and Ye, we solve for the NSE state and output
+        composition properties to a file.
+
+        Parameters
+        ----------
+        rho_values : numpy.ndarray
+            values of density to use in the tabulation
+        T_values : numpy.ndarray
+            values of temperature to use in the tabulation
+        Ye_values : numpy.ndarray
+            values of electron fraction to use in the tabulation
+        comp_reduction_func : Callable
+            a function that takes the NSE composition and return a reduced
+            composition
+        verbose : bool
+            output progress on creating the table as we go along
+        outfile : str
+            filename for the NSE table output
+        """
 
         # initial guess
         mu_p0 = -3.5
