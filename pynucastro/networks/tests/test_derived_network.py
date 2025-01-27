@@ -42,10 +42,8 @@ class TestPythonDerivedNetwork:
 
         ostr = \
 """dYdt[jcr48] = (
-   -rho*Y[jhe4]*Y[jcr48]*rate_eval.He4_Cr48__Fe52
-   -rho*Y[jhe4]*Y[jcr48]*rate_eval.He4_Cr48__p_Mn51
-   +Y[jfe52]*rate_eval.Fe52__He4_Cr48__derived
-   +rho*Y[jp]*Y[jmn51]*rate_eval.p_Mn51__He4_Cr48__derived
+      ( -rho*Y[jhe4]*Y[jcr48]*rate_eval.He4_Cr48__Fe52 +Y[jfe52]*rate_eval.Fe52__He4_Cr48__derived ) +
+      ( -rho*Y[jhe4]*Y[jcr48]*rate_eval.He4_Cr48__p_Mn51 +rho*Y[jp]*Y[jmn51]*rate_eval.p_Mn51__He4_Cr48__derived )
    )
 
 """
