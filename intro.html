@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Overview of pynucastro &#8212; pynucastro 2.5.0.post2+g3db1c3c7 documentation</title>
+    <title>Overview of pynucastro &#8212; pynucastro 2.5.0.post3+gd981dbf8 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=7218c1c4"></script>
+    <script src="_static/documentation_options.js?v=6593515a"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -523,9 +523,16 @@ rate that is tabulated in terms of <span class="math notranslate nohighlight">\(
 how the weak rate (electron captures and beta-decays) are stored.
 Interpolation is used to find the rate at any thermodynamic state.</p></li>
 <li><p><a class="reference internal" href="pynucastro.rates.html#pynucastro.rates.approximate_rates.ApproximateRate" title="pynucastro.rates.approximate_rates.ApproximateRate"><code class="xref py py-func docutils literal notranslate"><span class="pre">ApproximateRate</span></code></a>:
-An approximate rate groups together <span class="math notranslate nohighlight">\(A(\alpha, \gamma)B\)</span> and
-<span class="math notranslate nohighlight">\(A(\alpha,p)X(p,\gamma)B\)</span> into a single effective rate, assuming
-equilibrium of <span class="math notranslate nohighlight">\(p\)</span> and <span class="math notranslate nohighlight">\(X\)</span>.</p></li>
+An approximate rate assumes equilibration of intermediate nuclei to create
+an approximation for a rate sequence.  Currently, there are two
+approximations that can be made:</p>
+<ul>
+<li><p>grouping <span class="math notranslate nohighlight">\(A(\alpha, \gamma)B\)</span> and <span class="math notranslate nohighlight">\(A(\alpha,p)X(p,\gamma)B\)</span> into
+a single effective rate, assuming equilibrium of <span class="math notranslate nohighlight">\(p\)</span> and <span class="math notranslate nohighlight">\(X\)</span>.</p></li>
+<li><p>converting <span class="math notranslate nohighlight">\(A(n,\gamma)X(n,\gamma)B\)</span> into <span class="math notranslate nohighlight">\(A(nn,\gamma)B\)</span>
+by assuming equilibrium of <span class="math notranslate nohighlight">\(X\)</span>.</p></li>
+</ul>
+</li>
 <li><p><a class="reference internal" href="pynucastro.rates.html#pynucastro.rates.derived_rate.DerivedRate" title="pynucastro.rates.derived_rate.DerivedRate"><code class="xref py py-func docutils literal notranslate"><span class="pre">DerivedRate</span></code></a>: A
 derived rate uses detailed balance to recompute a reverse rate from the forward rate.</p></li>
 </ul>
