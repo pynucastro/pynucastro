@@ -150,4 +150,4 @@ from pynucastro.rates import (ApproximateRate, DerivedRate, LangankeLibrary,
                               SuzukiLibrary, TabularLibrary, Tfactors,
                               list_known_rates, load_rate)
 from pynucastro.screening import make_plasma_state, make_screen_factors
-from pynucastro.eos import ElectronPositronTable
+from pynucastro.eos import ElectronPositron
