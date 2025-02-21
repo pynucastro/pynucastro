@@ -435,7 +435,6 @@ class RateCollection:
 
         """
 
-        self.files = []
         self.rates = []
         combined_library = Library()
 
@@ -587,9 +586,8 @@ class RateCollection:
 
     def _read_rate_files(self, rate_files):
         # get the rates
-        self.files = rate_files
         combined_library = Library()
-        for rf in self.files:
+        for rf in rate_files:
             # create the appropriate rate object first
             try:
                 rate = load_rate(rf)
