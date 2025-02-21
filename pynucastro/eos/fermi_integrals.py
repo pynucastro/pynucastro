@@ -39,7 +39,7 @@ def qdfermi_dbeta(k, eta, beta, x, first=False):
         z = np.sqrt(x)
         f = 2*z**(2*k+1) * np.sqrt(1 + (z**2*beta/2)) * z**2 / ((np.exp(z**2-eta) + 1) * (4 + 2*beta*z**2))
     else:
-        f = x**k*np.sqrt(1 + (x*beta/2))*x/((np.exp(x - eta) + 1)*(4 + 2*beta*x))
+        f = x**k*np.sqrt(1 + (x*beta/2))*x / ((np.exp(x-eta) + 1)*(4 + 2*beta*x))
 
     return f
 
@@ -131,26 +131,26 @@ def compute_fermi(k, eta, beta, n, function_fermi, der):
     if n == 0:
         a = 0.0
         b = np.sqrt(S_1)
-        roots, weights, _ = roots_legendre(point_per_interval)
+        roots, weights = roots_legendre(point_per_interval)
         scaled_roots = (b-a)/2 * roots + (a+b)/2
         integral = (b-a)/2 * function_fermi(k=k, eta=eta, beta=beta, x=scaled_roots, first=True).dot(weights)
 
     elif n == 1:
         a = S_1
         b = S_2
-        roots, weights, _ = roots_legendre(point_per_interval)
+        roots, weights = roots_legendre(point_per_interval)
         scaled_roots = (b-a)/2 * roots + (a+b)/2
         integral = (b-a)/2 * function_fermi(k=k, eta=eta, beta=beta, x=scaled_roots).dot(weights)
 
     elif n == 2:
         a = S_2
         b = S_3
-        roots, weights, _ = roots_legendre(point_per_interval)
+        roots, weights = roots_legendre(point_per_interval)
         scaled_roots = (b-a)/2 * roots + (a+b)/2
         integral = (b-a)/2 * function_fermi(k=k, eta=eta, beta=beta, x=scaled_roots).dot(weights)
 
     elif n == 3:
-        roots, weights, _ = roots_laguerre(point_per_interval)
+        roots, weights = roots_laguerre(point_per_interval)
         scaled_roots = roots + S_3
         integral = (np.exp(scaled_roots) * function_fermi(k=k, eta=eta, beta=beta, x=scaled_roots)).dot(weights)
 
@@ -174,6 +174,6 @@ def dfermi_deta(k, eta, beta):
 def dfermi_dbeta(k, eta, beta):
     f = 0.0
     for n in range(4):
-        f += compute_fermi(k, eta, beta, n, qdfermi_dbeta, der=True)
+        f += compute_fermi(k, eta, beta, n, qdfermi_dbeta, der=False)
 
     return f

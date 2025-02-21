@@ -17,10 +17,10 @@ class ElectronPositron:
 
         self.rho = rho
         self.temp = temp
+        self.ye = ye
         self.beta = k*temp / (m_e*c**2)
         self.eta = self._compute_eta()
         self.eta_eff = -self.eta - 2/self.beta
-        self.ye = ye
 
         self.f = None
         self.df_dd = None
@@ -43,7 +43,6 @@ class ElectronPositron:
         # self.d4_dd2t2 = self._compute_d4f_dd2t2()
 
     def n_ele(self, eta):
-        eta = self.eta
         beta = self.beta
         nconst = 8*np.pi*np.sqrt(2)*m_e**3*c**3 / h**3
         n_minus = nconst * np.sqrt(beta)**3*(fermi(0.5, eta, beta) + beta*fermi(1.5, eta, beta))
