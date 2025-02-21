@@ -9,6 +9,7 @@ h = constants.h
 c = constants.c_light
 k = constants.k
 
+
 class ElectronPositron:
 
     def __init__(self, rho, temp, ye=1.0):
@@ -40,7 +41,7 @@ class ElectronPositron:
         # self.d3_ddt2 = self._compute_d3f_ddt2()
         # self.d4_dd2t2 = self._compute_d4f_dd2t2()
 
-    def n_ele(self,eta):
+    def n_ele(self, eta):
         eta = self.eta
         beta = self.beta
         nconst = 8*np.pi*np.sqrt(2)*m_e**3*c**3 / h**3
@@ -62,12 +63,12 @@ class ElectronPositron:
         dn_ele_deta = nconst * np.sqrt(beta)**3 * (dfermi_deta(0.5, eta, beta) + beta*dfermi_deta(1.5, eta, beta))
         dn_pos_deta = -nconst * np.sqrt(beta)**3 * (dfermi_deta(0.5, eta_eff, beta) + beta*dfermi_deta(1.5, eta_eff, beta))
 
-        dn_ele_dbeta = nconst*(3/2)*np.sqrt(beta)*(fermi(0.5,eta,beta) + beta*fermi(1.5,eta,beta)) + \
-                       nconst + np.sqrt(beta)**3 * (dfermi_dbeta(0.5, eta, beta) + fermi(1.5, eta, beta) + \
+        dn_ele_dbeta = nconst*(3/2)*np.sqrt(beta)*(fermi(0.5, eta, beta) + beta*fermi(1.5, eta, beta)) + \
+                       nconst + np.sqrt(beta)**3 * (dfermi_dbeta(0.5, eta, beta) + fermi(1.5, eta, beta) +
                        beta*dfermi_dbeta(1.5, eta, beta))
 
-        dn_pos_dbeta = nconst*(3/2)*np.sqrt(beta)*(fermi(0.5,eta_eff,beta) + beta*fermi(1.5,eta_eff,beta)) + \
-                       nconst*np.sqrt(beta)**3*( (dfermi_deta(0.5, eta_eff, beta) + beta*dfermi_deta(1.5, eta_eff, beta))*(2/(beta**2)) + \
+        dn_pos_dbeta = nconst*(3/2)*np.sqrt(beta)*(fermi(0.5, eta_eff, beta) + beta*fermi(1.5, eta_eff, beta)) + \
+                       nconst*np.sqrt(beta)**3*((dfermi_deta(0.5, eta_eff, beta) + beta*dfermi_deta(1.5, eta_eff, beta))*(2/(beta**2)) +
                        dfermi_dbeta(0.5, eta_eff, beta) + fermi(1.5, eta_eff, beta) + beta*dfermi_dbeta(1.5, eta_eff, beta))
 
         return dn_ele_deta, dn_pos_deta, dn_ele_dbeta, dn_pos_dbeta
@@ -82,7 +83,7 @@ class ElectronPositron:
 
         return deta_dd, deta_dt, dbeta_dd, dbeta_dt
 
-    def target_function(self,eta):
+    def target_function(self, eta):
         rho = self.rho
         ye = self.ye
         n_ele_matter = rho*ye/m_u
@@ -117,12 +118,13 @@ class ElectronPositron:
     def _compute_pressure(self, details=False):
         eta = self.eta
         beta = self.beta
+        eta_eff = self.eta_eff
 
         pconst = 16*np.pi*np.sqrt(2)*m_e**4*c**5/(h**3)
-        p_ele = pconst * np.sqrt(beta)**5*(fermi(1.5, eta, beta) + \
+        p_ele = pconst * np.sqrt(beta)**5*(fermi(1.5, eta, beta) +
                        0.5*beta*fermi(2.5, eta, beta))
-        p_pos = pconst * np.sqrt(beta)**5*(fermi(1.5,-eta-2/beta, beta) + \
-                       0.5*beta*fermi(2.5,-eta-2/beta, beta))
+        p_pos = pconst * np.sqrt(beta)**5*(fermi(1.5, eta_eff, beta) +
+                       0.5*beta*fermi(2.5, eta_eff, beta))
 
         p = p_ele + p_pos
 
@@ -137,23 +139,22 @@ class ElectronPositron:
         eta_eff = -eta - 2/beta
 
         econst = 8*np.pi*np.sqrt(2)*m_e**4*c**5/h**3
-        e_ele = econst * np.sqrt(beta)**5*(fermi(1.5, eta, beta) + \
+        e_ele = econst * np.sqrt(beta)**5*(fermi(1.5, eta, beta) +
                 beta*fermi(2.5, eta, beta))
-        e_pos = econst * np.sqrt(beta)**5*(fermi(1.5, eta_eff, beta) + \
+        e_pos = econst * np.sqrt(beta)**5*(fermi(1.5, eta_eff, beta) +
                 beta*fermi(2.5, eta_eff, beta)) + 2*m_e*c**2*self.n_pos(eta)
         e = e_ele + e_pos
         if details:
-            return  e_ele/rho, e_pos/rho, (e_ele + e_pos)/rho
+            return e_ele/rho, e_pos/rho, (e_ele + e_pos)/rho
         return e
 
     def _compute_entropy(self):
         rho = self.rho
         eta = self.eta
-        beta = self.beta
+        temp = self.temp
 
-        V= 1/rho
-        temp = m_e*c**2*beta / k
-        eta_eff = -eta - 2/beta
+        V = 1/rho
+        eta_eff = self.eta_eff
         e_ele, e_pos, _ = self._compute_energy(details=True)
         p_ele, p_pos, _ = self._compute_pressure(details=True)
         s_ele = (rho*e_ele + p_ele*V - V*self.n_ele(eta)*eta) / temp
@@ -200,20 +201,19 @@ class ElectronPositron:
 
         econst = 8*np.pi*np.sqrt(2)*m_e**4*c**5/(h**3)
 
-        de_ele_deta = econst*np.sqrt(beta)**5*(dfermi_deta(1.5, eta, beta) + \
+        de_ele_deta = econst*np.sqrt(beta)**5*(dfermi_deta(1.5, eta, beta) +
                                 beta*dfermi_deta(2.5, eta, beta))
-        de_ele_dbeta = econst*(5/2)*np.sqrt(beta)**3*(fermi(1.5, eta, beta) + \
+        de_ele_dbeta = econst*(5/2)*np.sqrt(beta)**3*(fermi(1.5, eta, beta) +
                                 beta*dfermi_deta(2.5, eta, beta)) + \
-                       econst*np.sqrt(beta)**5 #check this
+                       econst*np.sqrt(beta)**5  # check this
 
-
-        de_pos_deta = -econst*np.sqrt(beta)**5*(dfermi_deta(1.5, eta_eff, beta) + \
+        de_pos_deta = -econst*np.sqrt(beta)**5*(dfermi_deta(1.5, eta_eff, beta) +
                                 beta*dfermi_deta(2.5, eta_eff, beta))
-        de_pos_dbeta = econst*(5/2)*np.sqrt(beta)**3*(fermi(1.5, eta_eff, beta) + \
+        de_pos_dbeta = econst*(5/2)*np.sqrt(beta)**3*(fermi(1.5, eta_eff, beta) +
                                 beta*fermi(2.5, eta_eff, beta)) + \
-                      econst*np.sqrt(beta)**3*((dfermi_deta(1.5, eta_eff, beta) + \
-                                beta*dfermi_deta(2.5, eta_eff, beta))*(2/beta**2) + \
-                                    (dfermi_dbeta(1.5, eta_eff, beta) + 0.5*fermi(2.5, eta_eff, beta)+
+                      econst*np.sqrt(beta)**3*((dfermi_deta(1.5, eta_eff, beta) +
+                                beta*dfermi_deta(2.5, eta_eff, beta))*(2/beta**2) +
+                                    (dfermi_dbeta(1.5, eta_eff, beta) + 0.5*fermi(2.5, eta_eff, beta) +
                                     beta*fermi(2.5, eta_eff, beta))) + \
                                     2*m_e*c**2*dn_pos_deta*(2/beta**2) + 2*m_e*c**2*dn_pos_dbeta
 
@@ -235,14 +235,14 @@ class ElectronPositron:
 
         dp_ele_deta = pconst*np.sqrt(beta)**5*(dfermi_deta(1.5, eta, beta) + 0.5*beta*dfermi_deta(2.5, eta, beta))
         dp_ele_dbeta = pconst*(5/2)*np.sqrt(beta)**3*(fermi(1.5, eta, beta) + 0.5*beta*fermi(2.5, eta, beta)) + \
-                       pconst*np.sqrt(beta)**5*(dfermi_dbeta(1.5, beta, eta) + 0.5*fermi(2.5,eta,beta) + \
+                       pconst*np.sqrt(beta)**5*(dfermi_dbeta(1.5, beta, eta) + 0.5*fermi(2.5, eta, beta) +
                                                 0.5*beta*dfermi_dbeta(2.5, eta, beta))
 
         dp_pos_deta = -pconst*np.sqrt(beta)**5*(dfermi_deta(1.5, eta, beta) + 0.5*beta*dfermi_deta(2.5, eta, beta))
         dp_pos_dbeta = pconst*(5/2)*np.sqrt(beta)**3*(fermi(1.5, eta_eff, beta) + 0.5*beta*fermi(2.5, eta_eff, beta)) + \
-                       pconst*np.sqrt(beta)**5*((dfermi_deta(1.5, eta_eff, beta) + 0.5*beta*dfermi_deta(2.5, eta_eff, beta))* \
-                                                (2/beta) + (dfermi_dbeta(2.5,eta_eff,beta) + 0.5*fermi(2.5, eta_eff, beta) + \
-                                                 0.5*beta*dfermi_dbeta(2.5, eta_eff, beta)) )
+                       pconst*np.sqrt(beta)**5*((dfermi_deta(1.5, eta_eff, beta) + 0.5*beta*dfermi_deta(2.5, eta_eff, beta)) *
+                                                (2/beta) + (dfermi_dbeta(2.5, eta_eff, beta) + 0.5*fermi(2.5, eta_eff, beta) +
+                                                 0.5*beta*dfermi_dbeta(2.5, eta_eff, beta)))
 
         dp_deta = dp_ele_deta + dp_pos_deta
         dp_dbeta = dp_ele_dbeta + dp_pos_dbeta
@@ -258,6 +258,7 @@ class ElectronPositron:
 
     def _compute_d4f_dd2t2(self):
         pass
+
 
 class ElectronPositronTable:
 

@@ -15,36 +15,38 @@ def qfermi(k, eta, beta, x, first=False):
 
     if first:
         z = np.sqrt(x)
-        f = 2*z**(2*k+1) * np.sqrt(1 + (z**2*beta/2))/(np.exp(z**2-eta) + 1) # There is a missing 2 factor in eq. 5
+        f = 2*z**(2*k+1) * np.sqrt(1 + (z**2*beta/2))/(np.exp(z**2-eta) + 1)  # There is a missing 2 factor in eq. 5
     else:
         f = x**k * np.sqrt(1 + (x*beta/2))/(np.exp(x-eta) + 1)
 
     return f
 
+
 def qdfermi_deta(k, eta, beta, x, first=False):
 
     if first:
         z = np.sqrt(x)
-        f = 2*z**(2*k+1) * np.sqrt(1 + (z**2*beta/2)) / ( (np.exp(z**2-eta) + 1) * (1+(np.exp(eta-z**2))) )
+        f = 2*z**(2*k+1) * np.sqrt(1 + (z**2*beta/2)) / ((np.exp(z**2-eta) + 1) * (1+(np.exp(eta-z**2))))
     else:
-        f = x**k * np.sqrt(1 + (x*beta/2)) / ( (np.exp(x-eta) + 1) * (1 + np.exp(eta-x)) )
+        f = x**k * np.sqrt(1 + (x*beta/2)) / ((np.exp(x-eta) + 1) * (1 + np.exp(eta-x)))
 
     return f
+
 
 def qdfermi_dbeta(k, eta, beta, x, first=False):
 
     if first:
         z = np.sqrt(x)
-        f = 2*z**(2*k+1) * np.sqrt(1 + (z**2*beta/2)) * z**2 / ( (np.exp(z**2-eta) + 1) * (4 + 2*beta*z**2) )
+        f = 2*z**(2*k+1) * np.sqrt(1 + (z**2*beta/2)) * z**2 / ((np.exp(z**2-eta) + 1) * (4 + 2*beta*z**2))
     else:
-        f =  x**k * np.sqrt(1 + (x*beta/2)) * x / ( (np.exp(x-eta) + 1) * (4 + 2*beta*x) )
+        f = x**k*np.sqrt(1 + (x*beta/2))*x/((np.exp(x - eta) + 1)*(4 + 2*beta*x))
 
     return f
 
 
 def fermi_points(eta):
 
-    D =  3.3609
+    D = 3.3609
     sigma = 9.1186e-2
 
     xi = (1/sigma)*np.log(1+np.exp(sigma*(eta-D)))
@@ -73,11 +75,11 @@ def fermi_points(eta):
     S_2 = X_a
     S_3 = X_a + X_c
 
-
     points = [S_1, S_2, S_3]
     points = np.array(points, dtype=np.double)
 
     return points
+
 
 def dfermi_points(eta):
 
@@ -114,6 +116,7 @@ def dfermi_points(eta):
     points = np.array(points, dtype=np.double)
 
     return points
+
 
 def compute_fermi(k, eta, beta, n, function_fermi, der):
 
@@ -153,17 +156,20 @@ def compute_fermi(k, eta, beta, n, function_fermi, der):
 
     return integral
 
+
 def fermi(k, eta, beta):
     f = 0.0
     for n in range(4):
         f += compute_fermi(k, eta, beta, n, qfermi, der=False)
     return f
 
+
 def dfermi_deta(k, eta, beta):
     f = 0.0
     for n in range(4):
         f += compute_fermi(k, eta, beta, n, qdfermi_deta, der=True)
     return f
+
 
 def dfermi_dbeta(k, eta, beta):
     f = 0.0
