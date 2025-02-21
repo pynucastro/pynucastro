@@ -13,7 +13,7 @@ from scipy.special import roots_legendre, roots_laguerre
 
 def qfermi(k, eta, beta, x, first=False):
 
-    if(first):
+    if first:
         z = np.sqrt(x)
         f = 2*z**(2*k+1) * np.sqrt(1 + (z**2*beta/2))/(np.exp(z**2-eta) + 1) # There is a missing 2 factor in eq. 5
     else:
@@ -23,7 +23,7 @@ def qfermi(k, eta, beta, x, first=False):
 
 def qdfermi_deta(k, eta, beta, x, first=False):
 
-    if(first):
+    if first:
         z = np.sqrt(x)
         f = 2*z**(2*k+1) * np.sqrt(1 + (z**2*beta/2)) / ( (np.exp(z**2-eta) + 1) * (1+(np.exp(eta-z**2))) )
     else:
@@ -33,7 +33,7 @@ def qdfermi_deta(k, eta, beta, x, first=False):
 
 def qdfermi_dbeta(k, eta, beta, x, first=False):
 
-    if(first):
+    if first:
         z = np.sqrt(x)
         f = 2*z**(2*k+1) * np.sqrt(1 + (z**2*beta/2)) * z**2 / ( (np.exp(z**2-eta) + 1) * (4 + 2*beta*z**2) )
     else:
@@ -115,66 +115,59 @@ def dfermi_points(eta):
 
     return points
 
-def compute_fermi(k, eta, beta, n, function_fermi):
+def compute_fermi(k, eta, beta, n, function_fermi, der):
 
     point_per_interval = 50
+    integral = 0
 
-    if(function_fermi == qdfermi_deta):
+    if der:
         S_1, S_2, S_3 = dfermi_points(eta)
     else:
         S_1, S_2, S_3 = fermi_points(eta)
 
-    if(n == 0):
+    if n == 0:
         a = 0.0
         b = np.sqrt(S_1)
-        roots, weights = roots_legendre(point_per_interval)
+        roots, weights, _ = roots_legendre(point_per_interval)
         scaled_roots = (b-a)/2 * roots + (a+b)/2
         integral = (b-a)/2 * function_fermi(k=k, eta=eta, beta=beta, x=scaled_roots, first=True).dot(weights)
 
-    elif(n == 1):
+    elif n == 1:
         a = S_1
         b = S_2
-        roots, weights = roots_legendre(point_per_interval)
+        roots, weights, _ = roots_legendre(point_per_interval)
         scaled_roots = (b-a)/2 * roots + (a+b)/2
         integral = (b-a)/2 * function_fermi(k=k, eta=eta, beta=beta, x=scaled_roots).dot(weights)
 
-    elif(n == 2):
+    elif n == 2:
         a = S_2
         b = S_3
-        roots, weights = roots_legendre(point_per_interval)
+        roots, weights, _ = roots_legendre(point_per_interval)
         scaled_roots = (b-a)/2 * roots + (a+b)/2
         integral = (b-a)/2 * function_fermi(k=k, eta=eta, beta=beta, x=scaled_roots).dot(weights)
 
-    elif(n == 3):
-        roots, weights = roots_laguerre(point_per_interval)
+    elif n == 3:
+        roots, weights, _ = roots_laguerre(point_per_interval)
         scaled_roots = roots + S_3
         integral = (np.exp(scaled_roots) * function_fermi(k=k, eta=eta, beta=beta, x=scaled_roots)).dot(weights)
 
     return integral
 
 def fermi(k, eta, beta):
-
-    sum = 0.0
-
+    f = 0.0
     for n in range(4):
-        sum += compute_fermi(k, eta, beta, n, qfermi)
-
-    return sum
+        f += compute_fermi(k, eta, beta, n, qfermi, der=False)
+    return f
 
 def dfermi_deta(k, eta, beta):
-
-    sum = 0.0
-
+    f = 0.0
     for n in range(4):
-        sum += compute_fermi(k, eta, beta, n, qdfermi_deta)
-
-    return sum
+        f += compute_fermi(k, eta, beta, n, qdfermi_deta, der=True)
+    return f
 
 def dfermi_dbeta(k, eta, beta):
-
-    sum = 0.0
-
+    f = 0.0
     for n in range(4):
-        sum += compute_fermi(k, eta, beta, n, qdfermi_dbeta)
+        f += compute_fermi(k, eta, beta, n, qdfermi_dbeta, der=True)
 
-    return sum
+    return f
