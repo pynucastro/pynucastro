@@ -8,7 +8,7 @@
 # singularity near the origin.
 
 import numpy as np
-from scipy.special import roots_legendre, roots_laguerre
+from scipy.special import roots_laguerre, roots_legendre
 
 
 def qfermi(k, eta, beta, x, first=False):

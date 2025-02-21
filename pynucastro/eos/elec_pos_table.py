@@ -1,7 +1,8 @@
 import numpy as np
-from pynucastro.eos.fermi_integrals import fermi, dfermi_deta, dfermi_dbeta
+from scipy.optimize import brentq, newton
+
 from pynucastro.constants import constants
-from scipy.optimize import newton, brentq
+from pynucastro.eos.fermi_integrals import dfermi_dbeta, dfermi_deta, fermi
 
 m_u = constants.m_u
 m_e = constants.m_e
