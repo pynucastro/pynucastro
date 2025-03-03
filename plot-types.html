@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Plotting Examples &#8212; pynucastro 2.5.0.post3+gd981dbf8 documentation</title>
+    <title>Plotting Examples &#8212; pynucastro 2.5.0.post5+g102c9931 documentation</title>
   
   
   
@@ -16,33 +16,30 @@
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
-  <!--
-    this give us a css class that will be invisible only if js is disabled
-  -->
-  <noscript>
-    <style>
-      .pst-js-only { display: none !important; }
-
-    </style>
-  </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+  <link href="_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
-    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=a3416100" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=eba8b062" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
     <link rel="stylesheet" type="text/css" href="_static/myfile.css?v=15ab05d9" />
   
-  <!-- So that users can add custom icons -->
-  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=6593515a"></script>
+    <script src="_static/documentation_options.js?v=df40ebc1"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -58,7 +55,6 @@
     <link rel="prev" title="pynucastro Usage Examples" href="pynucastro-examples.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="2.5" />
   </head>
   
   
@@ -74,8 +70,19 @@
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
 
   
-  <dialog id="pst-search-dialog">
-    
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
 <form class="bd-search d-flex align-items-center"
       action="search.html"
       method="get">
@@ -83,6 +90,7 @@
   <input type="search"
          class="form-control"
          name="q"
+         id="search-input"
          placeholder="Search..."
          aria-label="Search..."
          autocomplete="off"
@@ -90,8 +98,8 @@
          autocapitalize="off"
          spellcheck="false"/>
   <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
-</form>
-  </dialog>
+</form></div>
+  </div>
 
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
@@ -107,8 +115,7 @@
       
       
       
-      <dialog id="pst-primary-sidebar-modal"></dialog>
-      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+      <div class="bd-sidebar-primary bd-sidebar">
         
 
   
@@ -138,7 +145,7 @@
     
     
     <img src="_static/logo.png" class="logo__image only-light" alt=""/>
-    <img src="_static/logo.png" class="logo__image only-dark pst-js-only" alt=""/>
+    <script>document.write(`<img src="_static/logo.png" class="logo__image only-dark" alt=""/>`);</script>
   
   
     <p class="title logo__title">pynucastro 2.5</p>
@@ -146,11 +153,15 @@
 </a></div>
         <div class="sidebar-primary-item">
 
-<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
- <i class="fa-solid fa-magnifying-glass"></i>
- <span class="search-button__default-text">Search</span>
- <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-</button></div>
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
         <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Introduction</span></p>
@@ -262,14 +273,9 @@
   
   
   <div class="sidebar-primary-items__end sidebar-primary__section">
-      <div class="sidebar-primary-item">
-<div id="ethical-ad-placement"
-      class="flat"
-      data-ea-publisher="readthedocs"
-      data-ea-type="readthedocs-sidebar"
-      data-ea-manual="true">
-</div></div>
   </div>
+  
+  <div id="rtd-footer-container"></div>
 
 
       </div>
@@ -447,16 +453,24 @@
 
 
 
-<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
-  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
-  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
-  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
-</button>
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
 
 
-<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass fa-lg"></i>
-</button>
+  </button>
+`);
+</script>
 <button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <span class="fa-solid fa-list"></span>
 </button>
@@ -541,7 +555,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/f9932b745b6379aef8ef278937730623df9913abe45564c1119e3c0083f53032.png" src="_images/f9932b745b6379aef8ef278937730623df9913abe45564c1119e3c0083f53032.png" />
+<img alt="_images/3b3a958ce317e4e2bb53e1faf90fef46bf8d62ccbe93d8739148e1201bee951f.png" src="_images/3b3a958ce317e4e2bb53e1faf90fef46bf8d62ccbe93d8739148e1201bee951f.png" />
 </div>
 </div>
 </section>
@@ -566,7 +580,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/95ba5f9fdeb4ab89d311ac2cff0b5fec022457e63be864ca9ec82bbfde757551.png" src="_images/95ba5f9fdeb4ab89d311ac2cff0b5fec022457e63be864ca9ec82bbfde757551.png" />
+<img alt="_images/4a2f25ff959bc201e55749238d3725270115a766c91a1b453bc7a46bc5bc38be.png" src="_images/4a2f25ff959bc201e55749238d3725270115a766c91a1b453bc7a46bc5bc38be.png" />
 </div>
 </div>
 <p>This looks a bit crowded, since it is showing all of the links to <span class="math notranslate nohighlight">\({}^4\mathrm{He}\)</span> from reactions of the form <span class="math notranslate nohighlight">\(A(x, \alpha)B\)</span>.  We can hide those links with <code class="docutils literal notranslate"><span class="pre">hide_xalpha=True</span></code></p>
@@ -577,7 +591,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/33c27af9ee8185cc9831490ba283c6cf993a9aa8918c286f3e3a4fdd356c6b8c.png" src="_images/33c27af9ee8185cc9831490ba283c6cf993a9aa8918c286f3e3a4fdd356c6b8c.png" />
+<img alt="_images/0d7750c13e01e42ed899d5505b39b872cdbc54c87942199b0094c5b705b303df.png" src="_images/0d7750c13e01e42ed899d5505b39b872cdbc54c87942199b0094c5b705b303df.png" />
 </div>
 </div>
 <p>We can also plot the edges curved, to help distinguish the forward and reverse rates</p>
@@ -589,7 +603,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/359b7fd2b0e0e65efc00dc64fb7617cf705846d0ceb9ffb4418a66a803a2d6af.png" src="_images/359b7fd2b0e0e65efc00dc64fb7617cf705846d0ceb9ffb4418a66a803a2d6af.png" />
+<img alt="_images/c85964079337f1a7b6a72c586f88c3544184a70287d92e2e6a0e102b98a3f575.png" src="_images/c85964079337f1a7b6a72c586f88c3544184a70287d92e2e6a0e102b98a3f575.png" />
 </div>
 </div>
 <p>We can also label edges if desired</p>
@@ -610,7 +624,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/49ec124930b16063d776b021994073bedb81fb72896f23a5073ac8e4fcf94aef.png" src="_images/49ec124930b16063d776b021994073bedb81fb72896f23a5073ac8e4fcf94aef.png" />
+<img alt="_images/1b025f5d3086ea543409ab9a8aee81df9a79a84af644a02478a32b23839f50ba.png" src="_images/1b025f5d3086ea543409ab9a8aee81df9a79a84af644a02478a32b23839f50ba.png" />
 </div>
 </div>
 </section>
@@ -625,7 +639,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/d2af3036441956182398029bb37510855d6a570c7e844238af66b08e9c9a9df7.png" src="_images/d2af3036441956182398029bb37510855d6a570c7e844238af66b08e9c9a9df7.png" />
+<img alt="_images/6b93c60417acf2fe454ffdd4ea4080483d93203ab766f969889fbcc72399fb41.png" src="_images/6b93c60417acf2fe454ffdd4ea4080483d93203ab766f969889fbcc72399fb41.png" />
 </div>
 </div>
 <p>We can also highlight rates using the <code class="docutils literal notranslate"><span class="pre">highlight_filter_function</span></code> mechanism.  This takes a function that operates on a rate and returns <code class="docutils literal notranslate"><span class="pre">True</span></code> if we wish to highlight the rate (i.e., as if we used a highlighter marker over the line).</p>
@@ -639,7 +653,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/ba3a01180f53632f32433b8df359d7b26b32d162db9204b355e9d92ea85c7ccd.png" src="_images/ba3a01180f53632f32433b8df359d7b26b32d162db9204b355e9d92ea85c7ccd.png" />
+<img alt="_images/3735f4134fd68c40c36bd7ede50fd5debaa274ffe15809aa621cbb5bf7bfecf0.png" src="_images/3735f4134fd68c40c36bd7ede50fd5debaa274ffe15809aa621cbb5bf7bfecf0.png" />
 </div>
 </div>
 </section>
@@ -665,7 +679,7 @@ where</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/0cd447408cdd1bc4a8168fb0053665087c69688011c19f9b4494769d050d4875.png" src="_images/0cd447408cdd1bc4a8168fb0053665087c69688011c19f9b4494769d050d4875.png" />
+<img alt="_images/2cecfb8dbad893f66791983792e6a5f081fe4051f2fbc695474cbeaf9b20392b.png" src="_images/2cecfb8dbad893f66791983792e6a5f081fe4051f2fbc695474cbeaf9b20392b.png" />
 </div>
 </div>
 <div class="admonition note">
@@ -710,7 +724,7 @@ where</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/81aba4d3a0218931262b58d245d834ff1f927844738574aaacec8b6f692de965.png" src="_images/81aba4d3a0218931262b58d245d834ff1f927844738574aaacec8b6f692de965.png" />
+<img alt="_images/90421b02571a8246e652ca04ac3c2377c15c2f3a3e6ac4f5dcfc835289e63c44.png" src="_images/90421b02571a8246e652ca04ac3c2377c15c2f3a3e6ac4f5dcfc835289e63c44.png" />
 </div>
 </div>
 <p>The plot is configurable through a large number of keyword arguments. Here we want to look at the rates at which nuclides are being created or destroyed, so we color by <span class="math notranslate nohighlight">\(\dot{Y}\)</span>, the rate of change of molar abundance. Density and temperature need to be supplied to evaluate the rates. A full list of valid keyword arguments can be found in the API documentation.</p>
@@ -722,7 +736,7 @@ where</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/a2ef888bd5af98be129e6e2d0503123877ffe1bffb911e34bc749361cc757c38.png" src="_images/a2ef888bd5af98be129e6e2d0503123877ffe1bffb911e34bc749361cc757c38.png" />
+<img alt="_images/8256f1bd36f79178c8e706e70f7c0f9585416cd5e21d9028a06fbac3985667e9.png" src="_images/8256f1bd36f79178c8e706e70f7c0f9585416cd5e21d9028a06fbac3985667e9.png" />
 </div>
 </div>
 <p>Unlike the network plot, this won’t omit hydrogen and helium by default. To just look at the heavier nuclides, we can define a function to filter by proton number.  Here we also plot
@@ -736,7 +750,7 @@ where</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/9371c0ff15d48a0ffc86b82c19cb1190bd209b15e71044759110fb59c6fc42e0.png" src="_images/9371c0ff15d48a0ffc86b82c19cb1190bd209b15e71044759110fb59c6fc42e0.png" />
+<img alt="_images/cb6c1c17e1986ed7eaa9b2f8a817ff8e029c40faf9c0d4195b7296536f0a6185.png" src="_images/cb6c1c17e1986ed7eaa9b2f8a817ff8e029c40faf9c0d4195b7296536f0a6185.png" />
 </div>
 </div>
 </section>
@@ -750,7 +764,7 @@ where</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/e23f67c991b397848f1241cdef67ca236e8a18a05ea952a122ad0566d631114b.png" src="_images/e23f67c991b397848f1241cdef67ca236e8a18a05ea952a122ad0566d631114b.png" />
+<img alt="_images/23ffd338a3c8d776c4df2faeeb2b1de11779e9c796c2e91924caa2bc96e6de75.png" src="_images/23ffd338a3c8d776c4df2faeeb2b1de11779e9c796c2e91924caa2bc96e6de75.png" />
 </div>
 </div>
 </section>
@@ -792,8 +806,7 @@ where</p>
             
             
               
-                <dialog id="pst-secondary-sidebar-modal"></dialog>
-                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
 
   <div class="sidebar-secondary-item">
@@ -856,8 +869,8 @@ By pynucastro development team
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
-<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+  <script src="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
 
   <footer class="bd-footer">
   </footer>
