@@ -8,9 +8,10 @@ _pynucastro_rates_dir = _pynucastro_dir/"library"
 _pynucastro_tabular_dir = _pynucastro_rates_dir/"tabular"
 _pynucastro_suzuki_dir = _pynucastro_tabular_dir/"suzuki"
 _pynucastro_langanke_dir = _pynucastro_tabular_dir/"langanke"
+_pynucastro_ffn_dir = _pynucastro_tabular_dir/"ffn"
 _dirs = [
     _pynucastro_dir, _pynucastro_rates_dir, _pynucastro_tabular_dir,
-    _pynucastro_suzuki_dir, _pynucastro_langanke_dir
+    _pynucastro_suzuki_dir, _pynucastro_langanke_dir, _pynucastro_ffn_dir
 ]
 
 
