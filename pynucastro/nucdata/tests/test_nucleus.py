@@ -163,3 +163,35 @@ class TestNucleus:
     def test_add_subtract(self):
         assert self.c12 + self.n == Nucleus("c13")
         assert self.d - self.n == self.h1
+
+
+class TestNSEProtons:
+    @classmethod
+    def setup_class(cls):
+        """ this is run once for each class before any tests """
+
+    @classmethod
+    def teardown_class(cls):
+        """ this is run once for each class after all tests """
+
+    def setup_method(self):
+        """ this is run before each test """
+
+        self.p = Nucleus("p")
+        self.p_nse = Nucleus("p_nse")
+
+    def teardown_method(self):
+        """ this is run after each test """
+
+    def test_equal(self):
+        assert self.p != self.p_nse
+
+    def test_name(self):
+        assert self.p_nse.raw == "p_nse"
+
+    def test_properties(self):
+        assert self.p_nse.Z == self.p.Z
+        assert self.p_nse.A == self.p.A
+        assert self.p_nse.mass == self.p.mass
+        assert not self.p.nse
+        assert self.p_nse.nse

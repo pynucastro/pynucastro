@@ -46,7 +46,7 @@ codes.
 
 .. toctree::
    :maxdepth: 1
-   :caption: Selecting Rates
+   :caption: Building Networks
    :hidden:
 
    library-examples.ipynb
@@ -63,10 +63,17 @@ codes.
 
    screening-examples
    modify-example.ipynb
-   approx-rates-examples.ipynb
    custom-rates.ipynb
-   unimportant-rates.ipynb
    partition-function
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Advanced Network Operations
+   :hidden:
+
+   approximate-rates
+   nse-protons.ipynb
+   unimportant-rates.ipynb
 
 .. toctree::
    :maxdepth: 1
@@ -91,14 +98,16 @@ codes.
    networks
    python-network
    simple-cxx-network
+   fortran-network
    amrex-astro-cxx-networks
+   julia
 
 .. toctree::
    :maxdepth: 1
-   :caption: Interfacing With Other Languages
+   :caption: Some Useful Networks
    :hidden:
 
-   julia
+   he-burning-example
 
 .. toctree::
    :maxdepth: 1
@@ -109,6 +118,7 @@ codes.
    examples/pp-cno.ipynb
    examples/hot-CNO-breakout-example.ipynb
    examples/triple_alpha_eval.ipynb
+   examples/he-burning.ipynb
    examples/supernova-lightcurve.ipynb
 
 .. toctree::
@@ -117,6 +127,7 @@ codes.
    :hidden:
 
    citing
+   changes
    API <modules>
    zreferences
 

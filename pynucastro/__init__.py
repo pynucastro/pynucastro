@@ -84,6 +84,9 @@ rates, including:
   for incorporating a pynucastro network into a non-AMReX
   simulation code.
 
+* FortranNetwork : this is a set of wrappers around SimpleCxxNetwork
+  that provide a Fortran interface.
+
 
 rates
 -----
@@ -130,10 +133,10 @@ __version__ = version
 
 import pynucastro.screening
 from pynucastro.networks import (AmrexAstroCxxNetwork, BaseCxxNetwork,
-                                 Composition, Explorer, NSENetwork,
-                                 NumpyNetwork, PythonNetwork, RateCollection,
-                                 SimpleCxxNetwork, StarKillerCxxNetwork,
-                                 SympyRates)
+                                 Composition, Explorer, FortranNetwork,
+                                 NSENetwork, NumpyNetwork, PythonNetwork,
+                                 RateCollection, SimpleCxxNetwork,
+                                 StarKillerCxxNetwork, SympyRates)
 from pynucastro.nucdata import Nucleus, get_all_nuclei, get_nuclei_in_range
 from pynucastro.rates import (ApproximateRate, DerivedRate, LangankeLibrary,
                               Library, Rate, RateFilter, ReacLibLibrary,

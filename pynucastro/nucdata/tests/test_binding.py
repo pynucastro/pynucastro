@@ -7,6 +7,17 @@ from pynucastro import Nucleus
 class TestAME:
     def test_get(self):
 
+        # by definition, the proton and neutron should have 0 binding
+        # energy.  this will only be true if we are using the CODATA
+        # values of m_u and m_n that are consistent with the Nubase
+        # compilation,.
+
+        p = Nucleus("p")
+        assert p.nucbind == 0.0
+
+        n = Nucleus("n")
+        assert n.nucbind == 0.0
+
         d = Nucleus("d")
         assert d.nucbind == approx(1.1122831344998758)
 

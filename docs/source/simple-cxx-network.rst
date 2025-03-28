@@ -1,18 +1,17 @@
 Simple C++ network
 ==================
 
-A ``SimpleCxxNetwork`` is a very basic C++ network.
-
+A ``SimpleCxxNetwork`` is a very basic C++ network.  It supports
+ReacLib rates, approximate rates, and screening (via
+the method of :cite:`chugunov:2007`).
 
 .. important::
 
    Currently, the following features are not supported:
 
    * tabular rates
-   * screening
    * partition functions
    * NSE
-   * temperature evolution
    * plasma neutrino losses
 
 A simple C++ network can be created as:
@@ -27,10 +26,14 @@ A simple C++ network can be created as:
    net = pyna.SimpleCxxNetwork(libraries=[lib])
    net.write_network()
 
-The generated code is intended to be used to interface with a
-hydrodynamics code.  That application code will be responsible for
-providing the equation of state and adding any desired temperature /
-energy evolution to the network.
+.. note::
+
+   The ``SimpleCxxNetwork`` outputs the righthand side function
+   ($dY/dt$) and Jacobian.  It is meant to be used in an application
+   code that provides its own time integrator.  Furthermore, there
+   is no energy/temperature evolution, but the application code can
+   augment the set of equations being integrated with an energy
+   equation as needed.
 
 .. note::
 

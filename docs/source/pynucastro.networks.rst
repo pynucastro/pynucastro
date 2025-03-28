@@ -25,6 +25,14 @@ pynucastro.networks.base\_cxx\_network module
    :undoc-members:
    :show-inheritance:
 
+pynucastro.networks.fortran\_network module
+-------------------------------------------
+
+.. automodule:: pynucastro.networks.fortran_network
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 pynucastro.networks.nse\_network module
 ---------------------------------------
 

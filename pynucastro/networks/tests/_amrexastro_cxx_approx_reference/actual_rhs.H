@@ -10,7 +10,9 @@
 #include <jacobian_utilities.H>
 #include <screen.H>
 #include <microphysics_autodiff.H>
+#ifdef NEUTRINOS
 #include <sneut5.H>
+#endif
 #include <reaclib_rates.H>
 #include <table_rates.H>
 
@@ -186,7 +188,7 @@ void evaluate_rates(const burn_t& state, T& rate_eval) {
 
     // Fill approximate rates
 
-    fill_approx_rates<do_T_derivatives, T>(tfactors, rate_eval);
+    fill_approx_rates<do_T_derivatives, T>(tfactors, state.rho, Y, rate_eval);
 
     // Calculate tabular rates
 
@@ -298,9 +300,12 @@ void actual_rhs (burn_t& state, amrex::Array1D<amrex::Real, 1, neqs>& ydot)
 
     // Get the thermal neutrino losses
 
-    amrex::Real sneut, dsneutdt, dsneutdd, dsnuda, dsnudz;
+    amrex::Real sneut{};
+#ifdef NEUTRINOS
     constexpr int do_derivatives{0};
+    amrex::Real dsneutdt{}, dsneutdd{}, dsnuda{}, dsnudz{};
     sneut5<do_derivatives>(state.T, state.rho, state.abar, state.zbar, sneut, dsneutdt, dsneutdd, dsnuda, dsnudz);
+#endif
 
     // Append the energy equation (this is erg/g/s)
 
@@ -399,7 +404,9 @@ void actual_jac(const burn_t& state, MatrixType& jac)
 
     // Account for the thermal neutrino losses
 
-    amrex::Real sneut, dsneutdt, dsneutdd, dsnuda, dsnudz;
+    amrex::Real dsneutdt{};
+#ifdef NEUTRINOS
+    amrex::Real sneut, dsneutdd, dsnuda, dsnudz;
     constexpr int do_derivatives{1};
     sneut5<do_derivatives>(state.T, state.rho, state.abar, state.zbar, sneut, dsneutdt, dsneutdd, dsnuda, dsnudz);
 
@@ -407,7 +414,7 @@ void actual_jac(const burn_t& state, MatrixType& jac)
        amrex::Real b1 = (-state.abar * state.abar * dsnuda + (zion[j-1] - state.zbar) * state.abar * dsnudz);
        jac.add(net_ienuc, j, -b1);
     }
-
+#endif
 
     // Evaluate the Jacobian elements with respect to energy by
     // calling the RHS using d(rate) / dT and then transform them

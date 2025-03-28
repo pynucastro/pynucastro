@@ -38,9 +38,15 @@ The main classes are:
     Interpolation is used to find the rate at any thermodynamic state.
 
   * :func:`ApproximateRate <pynucastro.rates.approximate_rates.ApproximateRate>`:
-    An approximate rate groups together :math:`A(\alpha, \gamma)B` and
-    :math:`A(\alpha,p)X(p,\gamma)B` into a single effective rate, assuming
-    equilibrium of :math:`p` and :math:`X`.
+    An approximate rate assumes equilibration of intermediate nuclei to create
+    an approximation for a rate sequence.  Currently, there are two
+    approximations that can be made:
+
+    * grouping $A(\alpha, \gamma)B$ and $A(\alpha,p)X(p,\gamma)B$ into
+      a single effective rate, assuming equilibrium of $p$ and $X$.
+
+    * converting $A(n,\gamma)X(n,\gamma)B$ into $A(nn,\gamma)B$
+      by assuming equilibrium of $X$.
 
   * :func:`DerivedRate <pynucastro.rates.derived_rate.DerivedRate>`: A
     derived rate uses detailed balance to recompute a reverse rate from the forward rate.
@@ -90,6 +96,10 @@ The main classes are:
     This is a simple C++ network that provides functions for
     computing the righthand side and Jacobian of a network.
     Not all pynucastro features are supported in this network.
+
+  * :func:`FortranNetwork
+    <pynucastro.networks.fortran_network.FortranNetwork>`:
+    A network that provides Fortran wrappers to ``SimpleCxxNetwork``.
 
   * :func:`AmrexAstroCxxNetwork
     <pynucastro.networks.amrexastro_cxx_network.AmrexAstroCxxNetwork>`:

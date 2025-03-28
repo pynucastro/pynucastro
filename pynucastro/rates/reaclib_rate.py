@@ -290,17 +290,6 @@ class ReacLibRate(Rate):
         if self.removed:
             self.fname += "__removed"
 
-    def modify_products(self, new_products):
-        self.products = Nucleus.cast_list(new_products, allow_single=True)
-        self.modified = True
-
-        # we need to update the Q value and the print string for the rate
-
-        self._set_q()
-        self._set_screening()
-        self.fname = None    # reset so it will be updated
-        self._set_print_representation()
-
     def __hash__(self):
         return hash(self.__repr__())
 

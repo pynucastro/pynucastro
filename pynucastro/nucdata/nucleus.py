@@ -57,6 +57,7 @@ class Nucleus:
         # a dummy nucleus is one that we can use where a nucleus is needed
         # but it is not considered to be part of the network
         self.dummy = dummy
+        self.nse = False
 
         # element symbol and atomic weight
         if name == "p":
@@ -91,6 +92,19 @@ class Nucleus:
             self.spec_name = "neutron"
             self.pretty = fr"\mathrm{{{self.el}}}"
             self.caps_name = "n"
+        elif name == "p_nse":
+            # this is a proton with a different name
+            # it is meant to be used in iron-group rates
+            # in NSE
+            self.el = "h"
+            self.A = 1
+            self.Z = 1
+            self.N = 0
+            self.short_spec_name = "p_nse"
+            self.spec_name = "proton-nse"
+            self.pretty = r"\mathrm{p}_\mathrm{NSE}"
+            self.caps_name = "p_NSE"
+            self.nse = True
         elif name.strip() in ("al-6", "al*6"):
             raise UnsupportedNucleus()
         else:
@@ -106,7 +120,7 @@ class Nucleus:
         self.el = self.el.lower()
 
         # atomic number comes from periodic table
-        if name != "n":
+        if name not in ["n", "p_nse"]:
             i = PeriodicTable.lookup_abbreviation(self.el)
             self.Z = i.Z
             assert isinstance(self.Z, int)
@@ -135,11 +149,12 @@ class Nucleus:
 
         # nuclear mass
         try:
-            mass_H = _mass_table.get_mass_diff(a=1, z=1) + constants.m_u_MeV
+            # Note: for Nubase 2020, we need to use the CODATA 18 constants
+            mass_H = _mass_table.get_mass_diff(a=1, z=1) + constants.m_u_MeV_C18
             self.dm = _mass_table.get_mass_diff(a=self.A, z=self.Z)
-            self.A_nuc = float(self.A) + self.dm / constants.m_u_MeV
-            self.mass = self.A * constants.m_u_MeV + self.dm
-            B = (self.Z * mass_H + self.N * constants.m_n_MeV) - self.mass
+            self.A_nuc = float(self.A) + self.dm / constants.m_u_MeV_C18
+            self.mass = self.A * constants.m_u_MeV_C18 + self.dm
+            B = (self.Z * mass_H + self.N * constants.m_n_MeV_C18) - self.mass
             self.nucbind = B / self.A
 
         except NotImplementedError:
@@ -186,7 +201,7 @@ class Nucleus:
         return cls.from_cache(name, dummy)
 
     def __repr__(self):
-        if self.raw not in ("p", "d", "t", "n"):
+        if self.raw not in ("p", "p_nse", "d", "t", "n"):
             return self.raw.capitalize()
         return self.raw
 
@@ -203,8 +218,9 @@ class Nucleus:
 
     def __eq__(self, other):
         if isinstance(other, Nucleus):
-            return self.el == other.el and \
-                self.Z == other.Z and self.A == other.A
+            return (self.el == other.el and
+                    self.Z == other.Z and self.A == other.A and
+                    self.nse == other.nse)
         if isinstance(other, tuple):
             return (self.Z, self.A) == other
         return NotImplemented

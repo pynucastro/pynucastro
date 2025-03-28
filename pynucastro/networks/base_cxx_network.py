@@ -76,6 +76,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.ftags['<approx_rate_functions>'] = self._approx_rate_functions
         self.ftags['<fill_approx_rates>'] = self._fill_approx_rates
         self.ftags['<part_fun_data>'] = self._fill_partition_function_data
+        self.ftags['<part_fun_declare>'] = self._fill_partition_function_declare
         self.ftags['<part_fun_cases>'] = self._fill_partition_function_cases
         self.ftags['<spin_state_cases>'] = self._fill_spin_state_cases
         self.indent = '    '
@@ -524,11 +525,45 @@ class BaseCxxNetwork(ABC, RateCollection):
 
     def _fill_approx_rates(self, n_indent, of):
         for r in self.approx_rates:
-            of.write(f"{self.indent*n_indent}rate_{r.cname()}<T>(rate_eval, rate, drate_dT);\n")
+            args = ["rate_eval"]
+            if r.rate_eval_needs_rho:
+                args.append("rho")
+            if r.rate_eval_needs_comp:
+                args.append("Y")
+            args += ["rate", "drate_dT"]
+
+            of.write(f"{self.indent*n_indent}rate_{r.cname()}<T>({', '.join(args)});\n")
             of.write(f"{self.indent*n_indent}rate_eval.screened_rates(k_{r.cname()}) = rate;\n")
             of.write(f"{self.indent*n_indent}if constexpr (std::is_same_v<T, rate_derivs_t>) {{\n")
             of.write(f"{self.indent*n_indent}    rate_eval.dscreened_rates_dT(k_{r.cname()}) = drate_dT;\n\n")
             of.write(f"{self.indent*n_indent}}}\n")
+
+    def _fill_partition_function_declare(self, n_indent, of):
+
+        temp_arrays, temp_indices = self.dedupe_partition_function_temperatures()
+
+        for i, temp in enumerate(temp_arrays):
+
+            decl = f"extern AMREX_GPU_MANAGED amrex::Array1D<{self.dtype}, 0, npts_{i+1}>"
+
+            # number of points
+            of.write(f"{self.indent*n_indent}constexpr int npts_{i+1} = {len(temp)};\n\n")
+
+            # write the temperature out, but for readability, split it to 5 values per line
+
+            of.write(f"{self.indent*n_indent}// this is T9\n\n")
+
+            of.write(f"{self.indent*n_indent}{decl} temp_array_{i+1};\n\n")
+
+        for n, i in temp_indices.items():
+            # write the partition function data out, but for readability, split
+            # it to 5 values per line
+            # temp_indices is keyed by the nucleus and the value is the temperature index
+
+            of.write(f"{self.indent*n_indent}// this is log10(partition function)\n\n")
+
+            decl = f"extern AMREX_GPU_MANAGED amrex::Array1D<{self.dtype}, 0, npts_{i+1}>"
+            of.write(f"{self.indent*n_indent}{decl} {n}_pf_array;\n\n")
 
     def _fill_partition_function_data(self, n_indent, of):
         # itertools recipe
@@ -543,17 +578,16 @@ class BaseCxxNetwork(ABC, RateCollection):
 
         temp_arrays, temp_indices = self.dedupe_partition_function_temperatures()
 
-        decl = f"MICROPHYSICS_UNUSED HIP_CONSTEXPR static AMREX_GPU_MANAGED {self.dtype}"
-
         for i, temp in enumerate(temp_arrays):
             # number of points
-            of.write(f"{self.indent*n_indent}constexpr int npts_{i+1} = {len(temp)};\n\n")
+
+            decl = f"AMREX_GPU_MANAGED amrex::Array1D<{self.dtype}, 0, npts_{i+1}>"
 
             # write the temperature out, but for readability, split it to 5 values per line
 
             of.write(f"{self.indent*n_indent}// this is T9\n\n")
 
-            of.write(f"{self.indent*n_indent}{decl} temp_array_{i+1}[npts_{i+1}] = {{\n")
+            of.write(f"{self.indent*n_indent}{decl} temp_array_{i+1}= {{\n")
 
             for data in batched(temp / 1.0e9, 5):
                 tmp = " ".join([f"{t}," for t in data])
@@ -569,7 +603,8 @@ class BaseCxxNetwork(ABC, RateCollection):
 
             of.write(f"{self.indent*n_indent}// this is log10(partition function)\n\n")
 
-            of.write(f"{self.indent*n_indent}{decl} {n}_pf_array[npts_{i+1}] = {{\n")
+            decl = f"AMREX_GPU_MANAGED amrex::Array1D<{self.dtype}, 0, npts_{i+1}>"
+            of.write(f"{self.indent*n_indent}{decl} {n}_pf_array = {{\n")
 
             for data in batched(np.log10(n.partition_function.partition_function), 5):
                 tmp = " ".join([f"{x}," for x in data])
@@ -582,7 +617,7 @@ class BaseCxxNetwork(ABC, RateCollection):
 
         for n, i in temp_indices.items():
             of.write(f"{self.indent*n_indent}case {n.cindex()}:\n")
-            of.write(f"{self.indent*(n_indent+1)}part_fun::interpolate_pf<part_fun::npts_{i+1}>(tfactors.T9, part_fun::temp_array_{i+1}, part_fun::{n}_pf_array, pf, dpf_dT);\n")
+            of.write(f"{self.indent*(n_indent+1)}part_fun::interpolate_pf(tfactors.T9, part_fun::temp_array_{i+1}, part_fun::{n}_pf_array, pf, dpf_dT);\n")
             of.write(f"{self.indent*(n_indent+1)}break;\n\n")
 
     def _fill_spin_state_cases(self, n_indent, of):
