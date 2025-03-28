@@ -732,3 +732,12 @@ class LangankeLibrary(TabularLibrary):
     """
 
     lib_path = Path(__file__).parents[1]/"library/tabular/langanke"
+
+class FFNLibrary(TabularLibrary):
+    """
+    Load all of the tabular rates inside /library/tabular/ffn/
+    and return a Library.
+    """
+
+    lib_path = Path(__file__).parents[1]/"library/tabular/ffn"
+    skip_wildcards = []
