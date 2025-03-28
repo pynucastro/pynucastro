@@ -1765,9 +1765,9 @@ class RateCollection:
         if legend_coord is not None:
             assert len(legend_coord) == 2
             eps = 0.1
-            for label in RATE_LINES:
-                dZ = RATE_LINES[label][0]
-                dN = RATE_LINES[label][1]
+            for label, dd in RATE_LINES.items():
+                dZ = dd[0]
+                dN = dd[1]
                 if rotated:
                     ax.arrow(legend_coord[0], legend_coord[1],
                              dZ, dN-dZ, width=0.04,
