@@ -45,12 +45,12 @@ for loc in tables:
     # Defining Output:
     #=================
 
-    with open(f"{parent_str}-{daughter_str}_electroncapture.dat", 'w') as outfile:
+    with open(f"ffn-{parent_str}-{daughter_str}_electroncapture.dat", 'w') as outfile:
         outfile.write(f"!{parent_str} -> {daughter_str}, e- capture\n")
         outfile.write(f"!Q={Qcap} MeV\n")
         outfile.write("!\n")
 
-    with open(f"{daughter_str}-{parent_str}_betadecay.dat", 'w') as outfile:
+    with open(f"ffn-{daughter_str}-{parent_str}_betadecay.dat", 'w') as outfile:
         outfile.write(f"!{daughter_str} -> {parent_str}, beta-decay\n")
         outfile.write(f"!Q={Qbeta} MeV\n")
         outfile.write("!\n")
@@ -122,24 +122,24 @@ for loc in tables:
     # Appending tables and writing output toki files:
     # ==============================================
 
-    with open(f"{parent_str}-{daughter_str}_electroncapture.dat", 'a') as outfile:
+    with open(f"ffn-{parent_str}-{daughter_str}_electroncapture.dat", 'a') as outfile:
         df_p.to_string(outfile, justify='left', index=False)
 
-    with open(f"{daughter_str}-{parent_str}_betadecay.dat", 'a') as outfile:
+    with open(f"ffn-{daughter_str}-{parent_str}_betadecay.dat", 'a') as outfile:
         df_m.to_string(outfile, justify='left', index=False)
 
-    with open(f"{parent}--{daughter}-toki", 'w') as outfile:
+    with open(f"ffn-{parent}--{daughter}-toki", 'w') as outfile:
         outfile.write("t\n")
         outfile.write(f"       {parent} {daughter}\n")
-        outfile.write(f"{parent_str}-{daughter_str}_electroncapture.dat\n")
+        outfile.write(f"ffn-{parent_str}-{daughter_str}_electroncapture.dat\n")
         outfile.write("5\n")
         outfile.write("11\n")
         outfile.write("13\n")
 
-    with open(f"{daughter}--{parent}-toki", 'w') as outfile:
+    with open(f"ffn-{daughter}--{parent}-toki", 'w') as outfile:
         outfile.write("t\n")
         outfile.write(f"       {daughter} {parent}\n")
-        outfile.write(f"{daughter_str}-{parent_str}_betadecay.dat\n")
+        outfile.write(f"ffn-{daughter_str}-{parent_str}_betadecay.dat\n")
         outfile.write("5\n")
         outfile.write("11\n")
         outfile.write("13\n")
