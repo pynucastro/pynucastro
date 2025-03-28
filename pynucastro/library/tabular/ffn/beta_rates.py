@@ -139,7 +139,7 @@ for loc in tables:
     with open(f"{daughter}--{parent}-toki", 'w') as outfile:
         outfile.write("t\n")
         outfile.write(f"       {daughter} {parent}\n")
-        outfile.write(f"{daughter_str}-{parent_str}_beta_decay.dat\n")
+        outfile.write(f"{daughter_str}-{parent_str}_betadecay.dat\n")
         outfile.write("5\n")
         outfile.write("11\n")
         outfile.write("13\n")
