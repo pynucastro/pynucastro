@@ -1065,20 +1065,12 @@ class RateCollection:
 
         return jac
 
-    def validate(self, other_library, *, forward_only=True):
-        """perform various checks on the library, comparing to other_library,
-        to ensure that we are not missing important rates.  The idea
-        is that self should be a reduced library where we filtered out
-        a few rates and then we want to compare to the larger
-        other_library to see if we missed something important.
-        """
+    def find_endpoints(self):
+        """return a list of all the nuclei that do not have
+        forward reactions carrying them to heavier nuclei"""
 
         current_rates = sorted(self.get_rates())
-
-        # check the forward rates to see if any of the products are
-        # not consumed by other forward rates
-
-        passed_validation = True
+        endpoint_nuclei = []
 
         for rate in current_rates:
             if rate.reverse:
@@ -1094,11 +1086,34 @@ class RateCollection:
                         found = True
                         break
                 if not found:
-                    passed_validation = False
-                    msg = f"validation: {p} produced in {rate} never consumed."
-                    print(msg)
+                    endpoint_nuclei.append(p)
 
-        # now check if we are missing any rates from other_library with the exact same reactants
+        return set(endpoint_nuclei)
+
+    def validate(self, other_library, *, forward_only=True):
+        """perform various checks on the library, comparing to other_library,
+        to ensure that we are not missing important rates.  The idea
+        is that self should be a reduced library where we filtered out
+        a few rates and then we want to compare to the larger
+        other_library to see if we missed something important.
+        """
+
+        current_rates = sorted(self.get_rates())
+
+        # check the forward rates to see if any of the products are
+        # not consumed by other forward rates
+
+        passed_validation = True
+
+        endpoint_nuclei = self.find_endpoints()
+
+        if endpoint_nuclei:
+            passed_validation = False
+            for nuc in endpoint_nuclei:
+                print(f"validation: nucleus {nuc} is produced but never consumed")
+
+        # now check if we are missing any rates from other_library
+        # with the exact same reactants
 
         other_by_reactants = collections.defaultdict(list)
         for rate in sorted(other_library.get_rates()):
