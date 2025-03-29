@@ -1082,6 +1082,8 @@ class RateCollection:
                         continue
                     if orate.reverse:
                         continue
+                    if isinstance(orate, ApproximateRate) and orate.is_reverse:
+                        continue
                     if p in orate.reactants:
                         found = True
                         break
