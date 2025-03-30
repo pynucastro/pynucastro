@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.derived_rate &#8212; pynucastro 2.5.0.post7+g2aa502b4 documentation</title>
+    <title>pynucastro.rates.derived_rate &#8212; pynucastro 2.5.0.post8+geafdf0e9 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=0e627a90"></script>
+    <script src="../../../_static/documentation_options.js?v=0287fd17"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -492,8 +492,13 @@ document.write(`
             <span class="n">sset_d</span> <span class="o">=</span> <span class="n">SingleSet</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="n">a_rev</span><span class="p">,</span> <span class="n">labelprops</span><span class="o">=</span><span class="n">rate</span><span class="o">.</span><span class="n">labelprops</span><span class="p">)</span>
             <span class="n">derived_sets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sset_d</span><span class="p">)</span>
 
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">rfile</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">rfile</span><span class="p">,</span> <span class="n">chapter</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">chapter</span><span class="p">,</span> <span class="n">original_source</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">original_source</span><span class="p">,</span>
-                <span class="n">reactants</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">products</span><span class="p">,</span> <span class="n">products</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">reactants</span><span class="p">,</span> <span class="n">sets</span><span class="o">=</span><span class="n">derived_sets</span><span class="p">,</span> <span class="n">labelprops</span><span class="o">=</span><span class="s2">&quot;derived&quot;</span><span class="p">,</span> <span class="n">Q</span><span class="o">=-</span><span class="n">Q</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">rfile</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">rfile</span><span class="p">,</span> <span class="n">chapter</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">chapter</span><span class="p">,</span>
+                         <span class="n">original_source</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">original_source</span><span class="p">,</span>
+                         <span class="n">reactants</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">products</span><span class="p">,</span> <span class="n">products</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">reactants</span><span class="p">,</span>
+                         <span class="n">sets</span><span class="o">=</span><span class="n">derived_sets</span><span class="p">,</span> <span class="n">labelprops</span><span class="o">=</span><span class="s2">&quot;derived&quot;</span><span class="p">,</span> <span class="n">Q</span><span class="o">=-</span><span class="n">Q</span><span class="p">)</span>
+
+        <span class="c1"># explicitly mark it as reverse</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reverse</span> <span class="o">=</span> <span class="kc">True</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_warn_about_missing_pf_tables</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">skip_nuclei</span> <span class="o">=</span> <span class="p">{</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;h1&quot;</span><span class="p">),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;n&quot;</span><span class="p">),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">)}</span>
