@@ -69,11 +69,11 @@ def He4_Mg24__Si28__removed(rate_eval, tf):
     rate = 0.0
 
     # st08r
-    rate += np.exp(  -50.5494 + -12.8332*tf.T9i + 21.3721*tf.T913i + 37.7649*tf.T913
-                  + -4.10635*tf.T9 + 0.249618*tf.T953 + -1.5*tf.lnT9)
-    # st08r
     rate += np.exp(  8.03977 + -15.629*tf.T9i
                   + -1.5*tf.lnT9)
+    # st08r
+    rate += np.exp(  -50.5494 + -12.8332*tf.T9i + 21.3721*tf.T913i + 37.7649*tf.T913
+                  + -4.10635*tf.T9 + 0.249618*tf.T953 + -1.5*tf.lnT9)
 
     rate_eval.He4_Mg24__Si28__removed = rate
 
