@@ -19,6 +19,15 @@ were obtained from the `JINA Reaclib database <https://reaclib.jinaweb.org/>`_, 
 Tabulated weak nuclear reaction rates
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+The weak rates come from several different sources, each of which focuses on
+a particular range of masses.
+
+.. warning::
+
+   In the C++ networks, no error is produced if you try to evaluate a rate outside of the table
+   limits.  Instead, an extrapolation is done using the data at the edge of the table.
+
+
 * For nuclei with $A = 17$ to $28$ we use the weak rates from
   :cite:t:`suzuki:2016`.  The data tables were obtained from
   `<https://www.phys.chs.nihon-u.ac.jp/suzuki/data2/link.html>`_.
@@ -32,12 +41,6 @@ Tabulated weak nuclear reaction rates
 
      The paper :cite:`suzuki:2016` says that the rates are evaluated are in the range $8 \le \log_{10}(\rho Y_e) \le 11$,
      but the tables provided have the lower limit as $\log_{10}(\rho Y_e) = 7$.
-
-  .. warning::
-
-     In the C++ networks, no error is produced if you try to evaluate a rate outside of the table
-     limits.  Instead, an extrapolation is done using the data at the edge of the table.
-
 
 * For nuclei with $A = 45$ to $65$ we use the weak rates from
   :cite:t:`langanke:2001`.  That journal link includes the data tables.
