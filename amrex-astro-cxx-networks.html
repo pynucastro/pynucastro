@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>AMReX Astro Microphysics Networks &#8212; pynucastro 2.5.0.post9+g2aa607b1 documentation</title>
+    <title>AMReX Astro Microphysics Networks &#8212; pynucastro 2.5.0.post10+g27f2957a documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=5ae0ca5a"></script>
+    <script src="_static/documentation_options.js?v=ce1d2fbc"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -545,8 +545,16 @@ and include any plasma neutrino losses.</p>
 for each rate.</p>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">table_rates.H</span></code></p>
-<p>This manages reading in tabular rates.  It has function tags to define how many tables
+<p>This manages reading in tabular rates and interpolating the data.
+It has function tags to define how many tables
 there are as well as declare the memory for storing the tables.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>We do not check if the thermodynamic conditions for evaluating the
+rate fall outside of the tabulation.  Instead we simply extrapolate
+from the edge of the table.  See <a class="reference internal" href="sources.html#tabulated-rate-sources"><span class="std std-ref">Tabulated weak nuclear reaction rates</span></a> for
+the bounds of the data.</p>
+</div>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">tfactors.H</span></code></p>
 <p>This stores the <code class="docutils literal notranslate"><span class="pre">struct</span></code> that holds the different temperature factors
