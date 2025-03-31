@@ -50,7 +50,7 @@ class TestPythonDerivedNetwork:
 
         assert pynet.full_ydot_string(pyna.Nucleus("cr48")) == ostr
 
-    def test_approx_function_string(self, pynet):
+    def test_derived_function_string(self, pynet):
 
         ostr = \
 """@numba.njit()
@@ -59,7 +59,7 @@ def Fe52__p_Mn51__derived(rate_eval, tf):
     rate = 0.0
 
     # ths8r
-    rate += np.exp(  61.72798916382393 + -85.63264034844842*tf.T9i + -36.1825*tf.T913i + 0.873042*tf.T913
+    rate += np.exp(  61.72798916381932 + -85.63264034844842*tf.T9i + -36.1825*tf.T913i + 0.873042*tf.T913
                   + -2.89731*tf.T9 + 0.364394*tf.T953 + 0.833333*tf.lnT9)
 
     rate_eval.Fe52__p_Mn51__derived = rate

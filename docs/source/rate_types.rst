@@ -193,7 +193,7 @@ A tabular rate is described by 2 files.  The first file mimics the
 ReacLib header, with a chapter indicated as ``t`` and gives the name
 of the table and the number of columns, density, and temperature
 points.  For example,
-`pynucastro/library/tabular/suzuki/na23--ne23-toki <https://github.com/pynucastro/pynucastro/blob/main/pynucastro/library/tabular/suzuki/na23--ne23-toki>`_ demonstrates the following
+`pynucastro/library/tabular/suzuki/suzuki-na23--ne23-toki <https://github.com/pynucastro/pynucastro/blob/main/pynucastro/library/tabular/suzuki/suzuki-na23--ne23-toki>`_ demonstrates the following
 format:
 
 .. code-block:: none
@@ -207,7 +207,7 @@ format:
 
 
 The second file is the table itself.  For now they must be in
-the form of, e.g. `23na-23ne_electroncapture.dat <https://github.com/pynucastro/pynucastro/blob/main/pynucastro/library/tabular/suzuki/23na-23ne_electroncapture.dat>`_ in
+the form of, e.g. `suzuki-23na-23ne_electroncapture.dat <https://github.com/pynucastro/pynucastro/blob/main/pynucastro/library/tabular/suzuki/suzuki-23na-23ne_electroncapture.dat>`_ in
 ``pynucastro/library/tabular/suzuki``, indexed by the product of density and
 electron fraction :math:`\rm{\rho Y_e}` and temperature
 :math:`\rm{T}`, with the same number and order of variables.

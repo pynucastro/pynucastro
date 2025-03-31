@@ -44,15 +44,15 @@ Z[jmg23] = 12
 # masses in ergs
 mass = np.zeros((nnuc), dtype=np.float64)
 
-mass[jn] = 0.001505349764972405
-mass[jp] = 0.0015040963068298973
-mass[jhe4] = 0.0059735574943075775
-mass[jc12] = 0.017909017052267474
-mass[jo16] = 0.023871099888932882
-mass[jne20] = 0.02983707933453433
-mass[jne23] = 0.03431735831835401
-mass[jna23] = 0.034310347508221546
-mass[jmg23] = 0.03431684623065753
+mass[jn] = 0.001505349762871528
+mass[jp] = 0.0015040963047307696
+mass[jhe4] = 0.0059735574859708365
+mass[jc12] = 0.017909017027273523
+mass[jo16] = 0.023871099855618198
+mass[jne20] = 0.029837079292893483
+mass[jne23] = 0.03431735827046045
+mass[jna23] = 0.03431034746033777
+mass[jmg23] = 0.03431684618276469
 
 names = []
 names.append("n")
@@ -106,13 +106,13 @@ class RateEval:
 
 # note: we cannot make the TableInterpolator global, since numba doesn't like global jitclass
 # load data for Na23 --> Ne23
-Na23__Ne23_rate = TabularRate(rfile='na23--ne23-toki')
+Na23__Ne23_rate = TabularRate(rfile='suzuki-na23--ne23-toki')
 Na23__Ne23_info = (Na23__Ne23_rate.table_rhoy_lines,
                   Na23__Ne23_rate.table_temp_lines,
                   Na23__Ne23_rate.tabular_data_table)
 
 # load data for Ne23 --> Na23
-Ne23__Na23_rate = TabularRate(rfile='ne23--na23-toki')
+Ne23__Na23_rate = TabularRate(rfile='suzuki-ne23--na23-toki')
 Ne23__Na23_info = (Ne23__Na23_rate.table_rhoy_lines,
                   Ne23__Na23_rate.table_temp_lines,
                   Ne23__Na23_rate.tabular_data_table)

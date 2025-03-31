@@ -237,7 +237,7 @@ class PythonNetwork(RateCollection):
         of.write("# masses in ergs\n")
         of.write("mass = np.zeros((nnuc), dtype=np.float64)\n\n")
         for n in self.unique_nuclei:
-            mass = n.A_nuc * constants.m_u_MeV * constants.MeV2erg
+            mass = n.A_nuc * constants.m_u_MeV_C18 * constants.MeV2erg
             of.write(f"mass[j{n.raw}] = {mass}\n")
 
         of.write("\n")

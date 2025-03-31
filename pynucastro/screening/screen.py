@@ -8,8 +8,8 @@ from pynucastro.nucdata import Nucleus
 from pynucastro.numba_util import jitclass, njit
 
 __all__ = ["PlasmaState", "ScreenFactors", "chugunov_2007", "chugunov_2009",
-           "make_plasma_state", "make_screen_factors", "potekhin_1998",
-           "screen5"]
+           "debye_huckel", "make_plasma_state", "make_screen_factors",
+           "potekhin_1998", "screen5", "screening_check"]
 
 
 @jitclass()
@@ -67,18 +67,18 @@ class PlasmaState:
         # Part of Eq.6 in Itoh:1979
         # 4.248719e3 = (27*pi^2*e^4*m_u/(2*k_B*hbar^2))^(1/3)
         # the extra (1/3) to make tau -> tau/3
-        co2 = np.cbrt(27*np.pi**2*constants.q_e**4*constants.m_u/(2*constants.k*constants.hbar**2)) / 3
+        co2 = np.cbrt(27*np.pi**2*constants.q_e**4*constants.m_u_C18/(2*constants.k*constants.hbar**2)) / 3
         self.taufac = co2 / np.cbrt(temp)
 
         xni = np.cbrt(rr * self.zbar)
 
         # Part of Eq.4 in Itoh:1979
         # 2.27493e5 = e^2 / ( (3*m_u/(4pi))^(1/3) *k_B )
-        aa_factor = constants.q_e**2 / (np.cbrt(3*constants.m_u/(4*np.pi)) * constants.k)
+        aa_factor = constants.q_e**2 / (np.cbrt(3*constants.m_u_C18/(4*np.pi)) * constants.k)
         self.aa = aa_factor / temp * xni
 
         # Average mass and total number density
-        mbar = self.abar * constants.m_u
+        mbar = self.abar * constants.m_u_C18
         ntot = self.dens / mbar
         # Electron number density
         # zbar * ntot works out to sum(z[i] * n[i]), after cancelling terms
@@ -192,6 +192,29 @@ def make_screen_factors(n1, n2):
     n1 = Nucleus.cast(n1)
     n2 = Nucleus.cast(n2)
     return ScreenFactors(n1.Z, n1.A, n2.Z, n2.A)
+
+
+@njit
+def debye_huckel(state, scn_fac) -> float:
+    """Calculates the Debye-Huckel enhancement factor for weak Coloumb coupling,
+    following the appendix of :cite:t:`chugunov:2009`.
+
+    :param PlasmaState state:     the precomputed plasma state factors
+    :param ScreenFactors scn_fac: the precomputed ion pair factors
+    :returns: screening correction factor
+    """
+    z1z2 = scn_fac.z1 * scn_fac.z2
+
+    # Gamma_e from eq. 6
+    Gamma_e = state.gamma_e_fac / state.temp
+
+    # eq. A1
+    h_DH = z1z2 * np.sqrt(3 * Gamma_e**3 * state.z2bar / state.zbar)
+
+    # machine limit the output
+    h_max = 300
+    h = min(h_DH, h_max)
+    return np.exp(h)
 
 
 @njit
@@ -390,7 +413,7 @@ def chugunov_2007(state, scn_fac):
     mu12 = scn_fac.a1 * scn_fac.a2 / (scn_fac.a1 + scn_fac.a2)
     z_factor = scn_fac.z1 * scn_fac.z2
     n_i = state.n_e / scn_fac.ztilde ** 3
-    m_i = 2 * mu12 * constants.m_u
+    m_i = 2 * mu12 * constants.m_u_C18
 
     T_p = constants.hbar / constants.k * constants.q_e * np.sqrt(4 * np.pi * z_factor * n_i / m_i)
 
@@ -506,7 +529,7 @@ def chugunov_2009(state, scn_fac):
     Gamma_12 = Gamma_e * z1z2 / scn_fac.ztilde
 
     # Coulomb barrier penetrability, eq. 10
-    tau_factor = np.cbrt(27 / 2 * (np.pi * constants.q_e ** 2 / constants.hbar) ** 2 * constants.m_u / constants.k)
+    tau_factor = np.cbrt(27 / 2 * (np.pi * constants.q_e ** 2 / constants.hbar) ** 2 * constants.m_u_C18 / constants.k)
     tau_12 = tau_factor * scn_fac.aznut / np.cbrt(state.temp)
 
     # eq. 12
@@ -586,3 +609,32 @@ def potekhin_1998(state, scn_fac):
     scor = np.exp(h12)
 
     return scor
+
+
+def screening_check(check_func=debye_huckel, threshold: float = 1.01):
+    """A decorator factory that wraps a screening function with a
+    check that determines whether that function can be skipped for a
+    given plasma state and screening pair.
+
+    :param func: the function to check against the threshold
+    :param threshold: the threshold to check against. If screen_check
+                      is less than the threshold, skip screen_func
+    :returns: a decorator for wrapping screening functions
+    """
+
+    def screening_decorator(screen_func):
+        """Decorates a screening function with a computation
+        that determines whether the check is skippable.
+
+        :param screen_func: the screening function being wrapped
+        :returns: a wrapped screening function that performs this check
+        """
+
+        @njit
+        def screening_wrapper(state, scn_fac):
+            F0 = check_func(state, scn_fac)
+            if F0 <= threshold:
+                return F0
+            return screen_func(state, scn_fac)
+        return screening_wrapper
+    return screening_decorator
