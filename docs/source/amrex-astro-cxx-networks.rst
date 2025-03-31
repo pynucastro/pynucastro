@@ -63,8 +63,16 @@ and source files.  These are:
 
 * ``table_rates.H``
 
-  This manages reading in tabular rates.  It has function tags to define how many tables
+  This manages reading in tabular rates and interpolating the data.
+  It has function tags to define how many tables
   there are as well as declare the memory for storing the tables.
+
+  .. warning::
+
+     We do not check if the thermodynamic conditions for evaluating the
+     rate fall outside of the tabulation.  Instead we simply extrapolate
+     from the edge of the table.  See :ref:`tabulated_rate_sources` for
+     the bounds of the data.
 
 * ``tfactors.H``
 

@@ -106,13 +106,13 @@ class RateEval:
 
 # note: we cannot make the TableInterpolator global, since numba doesn't like global jitclass
 # load data for Na23 --> Ne23
-Na23__Ne23_rate = TabularRate(rfile='na23--ne23-toki')
+Na23__Ne23_rate = TabularRate(rfile='suzuki-na23--ne23-toki')
 Na23__Ne23_info = (Na23__Ne23_rate.table_rhoy_lines,
                   Na23__Ne23_rate.table_temp_lines,
                   Na23__Ne23_rate.tabular_data_table)
 
 # load data for Ne23 --> Na23
-Ne23__Na23_rate = TabularRate(rfile='ne23--na23-toki')
+Ne23__Na23_rate = TabularRate(rfile='suzuki-ne23--na23-toki')
 Ne23__Na23_info = (Ne23__Na23_rate.table_rhoy_lines,
                   Ne23__Na23_rate.table_temp_lines,
                   Ne23__Na23_rate.tabular_data_table)
