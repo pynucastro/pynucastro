@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Plotting Examples &#8212; pynucastro 2.5.0.post8+geafdf0e9 documentation</title>
+    <title>Plotting Examples &#8212; pynucastro 2.5.0.post9+g2aa607b1 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=0287fd17"></script>
+    <script src="_static/documentation_options.js?v=5ae0ca5a"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -513,7 +513,15 @@ document.write(`
                   
   <section id="plotting-examples">
 <h1>Plotting Examples<a class="headerlink" href="#plotting-examples" title="Link to this heading">#</a></h1>
-<p>There are a variety of methods that can be used to visualize a network.</p>
+<p>There are a variety of methods that can be used to visualize a network, which we demonstrate below.  For most plots, <a class="reference external" href="https://networkx.org/">NetworkX</a> is used to create the structure of the network and <a class="reference external" href="https://matplotlib.org/">matplotlib</a> manages the drawing.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>You can interactively zoom and pan a network’s visualization within Jupyter by installing the <a class="reference external" href="https://matplotlib.org/ipympl/">ipympl</a> package and then adding:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="n">matplotlib</span> <span class="n">widget</span>
+</pre></div>
+</div>
+<p>to the notebook (in a cell that is executed).</p>
+</div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pynucastro</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pyna</span>
