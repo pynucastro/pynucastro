@@ -1703,8 +1703,15 @@ class RateCollection:
         # highlight edges
         highlight_edges = [(u, v) for u, v, e in G.edges(data=True) if e["highlight"]]
 
+        if rho is None:
+            # we are not coloring edges by reaction rate, so highlight in yellow
+            highlight_color = "yellow"
+        else:
+            # use C0 since it doesn't blend in with viridis
+            highlight_color = "C0"
+
         _ = nx.draw_networkx_edges(G, G.position, width=5,
-                                   edgelist=highlight_edges, edge_color="C0", alpha=0.25,
+                                   edgelist=highlight_edges, edge_color=highlight_color, alpha=0.5,
                                    connectionstyle=connectionstyle,
                                    node_size=node_size, ax=ax)
 
