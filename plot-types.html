@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Plotting Examples &#8212; pynucastro 2.5.0.post14+g6b689c75 documentation</title>
+    <title>Plotting Examples &#8212; pynucastro 2.5.0.post15+g6e362a75 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=511f29eb"></script>
+    <script src="_static/documentation_options.js?v=e7c217a0"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -496,6 +496,10 @@ document.write(`
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#standard-view">Standard view</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#rotated-view">Rotated view</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hiding-links">Hiding links</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#curved-edges">Curved edges</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adding-a-legend">Adding a legend</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#labeling-edges">Labeling edges</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#filters">Filters</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plotting-the-jacobian">Plotting the Jacobian</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plot-nuclides-on-a-grid">Plot nuclides on a grid</a></li>
@@ -549,7 +553,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.11.11/x64/lib/python3.11/site-packages/pynucastro/networks/rate_collection.py:575: UserWarning: ReacLib neutron decay rate (&lt;n_to_p_weak_wc12&gt;) does not account for degeneracy at high densities. Consider using tabular rate from Langanke.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.11.11/x64/lib/python3.11/site-packages/pynucastro/networks/rate_collection.py:584: UserWarning: ReacLib neutron decay rate (&lt;n_to_p_weak_wc12&gt;) does not account for degeneracy at high densities. Consider using tabular rate from Langanke.
   warnings.warn(msg)
 </pre></div>
 </div>
@@ -591,6 +595,9 @@ document.write(`
 <img alt="_images/4a2f25ff959bc201e55749238d3725270115a766c91a1b453bc7a46bc5bc38be.png" src="_images/4a2f25ff959bc201e55749238d3725270115a766c91a1b453bc7a46bc5bc38be.png" />
 </div>
 </div>
+</section>
+<section id="hiding-links">
+<h2>Hiding links<a class="headerlink" href="#hiding-links" title="Link to this heading">#</a></h2>
 <p>This looks a bit crowded, since it is showing all of the links to <span class="math notranslate nohighlight">\({}^4\mathrm{He}\)</span> from reactions of the form <span class="math notranslate nohighlight">\(A(x, \alpha)B\)</span>.  We can hide those links with <code class="docutils literal notranslate"><span class="pre">hide_xalpha=True</span></code></p>
 <div class="cell tag_nbval-ignore-output docutils container">
 <div class="cell_input docutils container">
@@ -602,6 +609,9 @@ document.write(`
 <img alt="_images/0d7750c13e01e42ed899d5505b39b872cdbc54c87942199b0094c5b705b303df.png" src="_images/0d7750c13e01e42ed899d5505b39b872cdbc54c87942199b0094c5b705b303df.png" />
 </div>
 </div>
+</section>
+<section id="curved-edges">
+<h2>Curved edges<a class="headerlink" href="#curved-edges" title="Link to this heading">#</a></h2>
 <p>We can also plot the edges curved, to help distinguish the forward and reverse rates</p>
 <div class="cell tag_nbval-ignore-output docutils container">
 <div class="cell_input docutils container">
@@ -614,7 +624,25 @@ document.write(`
 <img alt="_images/c85964079337f1a7b6a72c586f88c3544184a70287d92e2e6a0e102b98a3f575.png" src="_images/c85964079337f1a7b6a72c586f88c3544184a70287d92e2e6a0e102b98a3f575.png" />
 </div>
 </div>
-<p>We can also label edges if desired</p>
+</section>
+<section id="adding-a-legend">
+<h2>Adding a legend<a class="headerlink" href="#adding-a-legend" title="Link to this heading">#</a></h2>
+<p>We can also add a “compass rose” style legend that shows the directions of key captures.  We specify the location in terms of (Z, N)</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span> <span class="n">rotated</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">hide_xalpha</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+              <span class="n">curved_edges</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">legend_coord</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/2c2abef9db75cad500a0cdced6650c3542903200ca2614633fd115cd61463e18.png" src="_images/2c2abef9db75cad500a0cdced6650c3542903200ca2614633fd115cd61463e18.png" />
+</div>
+</div>
+</section>
+<section id="labeling-edges">
+<h2>Labeling edges<a class="headerlink" href="#labeling-edges" title="Link to this heading">#</a></h2>
+<p>Any edge can be labelled.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">edge_labels</span> <span class="o">=</span> <span class="p">{(</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">),</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;c12&quot;</span><span class="p">)):</span>
@@ -825,6 +853,10 @@ where</p>
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#standard-view">Standard view</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#rotated-view">Rotated view</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hiding-links">Hiding links</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#curved-edges">Curved edges</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adding-a-legend">Adding a legend</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#labeling-edges">Labeling edges</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#filters">Filters</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plotting-the-jacobian">Plotting the Jacobian</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plot-nuclides-on-a-grid">Plot nuclides on a grid</a></li>
