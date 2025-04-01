@@ -1972,7 +1972,7 @@ class RateCollection:
         scaled[scaled > 1.0] = 1.0
         return scaled
 
-    def gridplot(self, comp=None, color_field="X", rho=None, T=None, **kwargs):
+    def gridplot(self, comp=None, color_field="X", rho=None, T=None, minN=None, maxN=None, minZ=None, maxZ=None, **kwargs):
         """
         Plot nuclides as cells on a grid of Z vs. N, colored by *color_field*. If called
         without a composition, the function will just plot the grid with no color field.
@@ -2097,9 +2097,12 @@ class RateCollection:
                     facecolor=cmap(weight), edgecolor=edgecolor)
             ax.add_patch(square)
 
-        # Set limits
-        maxN, minN = max(Ns), min(Ns)
-        maxZ, minZ = max(Zs), min(Zs)
+        # Set limits:
+
+        #If the limits are setup by the user
+        if not minN and not maxN:
+            maxN, minN = max(Ns), min(Ns)
+            maxZ, minZ = max(Zs), min(Zs)
 
         plt.xlim(minN - 0.5, maxN + 0.6)
         plt.ylim(minZ - 0.5, maxZ + 0.6)
