@@ -77,7 +77,7 @@ class Nucleus:
         is this a dummy nucleus
     nse : bool
         an NSE proton has the same properties
-        as a proton by compares as being distinct
+        as a proton but compares as being distinct
     """
 
     _cache = {}
