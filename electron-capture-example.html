@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Tabulated Weak Rate Example &#8212; pynucastro 2.5.0.post13+g51282d76 documentation</title>
+    <title>Tabulated Weak Rate Example &#8212; pynucastro 2.5.0.post14+g6b689c75 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=42183fad"></script>
+    <script src="_static/documentation_options.js?v=511f29eb"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -500,10 +500,12 @@ document.write(`
 <h1>Tabulated Weak Rate Example<a class="headerlink" href="#tabulated-weak-rate-example" title="Link to this heading">#</a></h1>
 <p>Here we walk through an example of a single network consisting of just 2 nuclei linked together by electron-capture and beta-decay.</p>
 <p>We’ll consider <span class="math notranslate nohighlight">\({}^{56}\mathrm{Ni}\)</span> and <span class="math notranslate nohighlight">\({}^{56}\mathrm{Co}\)</span>.  The evolution of this system is:</p>
-<p>\begin{align*}
-\frac{dY_\mathrm{Ni}}{dt} &amp;= -\lambda_\mathrm{e-cap} Y_\mathrm{Ni} + \lambda_\mathrm{\beta} Y_\mathrm{Co} \
-\frac{dY_\mathrm{Co}}{dt} &amp;= +\lambda_\mathrm{e-cap} Y_\mathrm{Ni} - \lambda_\mathrm{\beta} Y_\mathrm{Co}
-\end{align*}</p>
+<p><div class="math notranslate nohighlight">
+\[\frac{dY_\mathrm{Ni}}{dt} = -\lambda_\mathrm{e-cap} Y_\mathrm{Ni} + \lambda_\mathrm{\beta} Y_\mathrm{Co}\]</div>
+</p>
+<p><div class="math notranslate nohighlight">
+\[\frac{dY_\mathrm{Co}}{dt} = +\lambda_\mathrm{e-cap} Y_\mathrm{Ni} - \lambda_\mathrm{\beta} Y_\mathrm{Co}\]</div>
+</p>
 <p>where <span class="math notranslate nohighlight">\(Y_\mathrm{Ni}\)</span> and <span class="math notranslate nohighlight">\(Y_\mathrm{Co}\)</span> are the molar fractions of the nuclei.</p>
 <p>Let’s create a network with these rates.</p>
 <p>pynucastro will use the tabulated rates from <span id="id1">Langanke and Martínez-Pinedo [<a class="reference internal" href="zreferences.html#id9" title="K. Langanke and G. Martínez-Pinedo. Rate tables for the weak processes of pf-shell nuclei in stellar environments. Atomic Data and Nuclear Data Tables, 79(1):1-46, 2001. doi:10.1006/adnd.2001.0865.">2001</a>]</span>.</p>
