@@ -93,7 +93,7 @@ class Composition(collections.UserDict):
     Parameters
     ----------
     nuclei : (list, tuple)
-        an interable of Nucleus objects
+        an iterable of Nucleus objects
     small : float
         a floor for nuclei mass fractions, used as the default value
     """
